@@ -31,21 +31,22 @@ public class StockTest
    public static void StockChartTest()
    {
       int row, col, price;
-      game.StockChart chart = new game.StockChart("1830");
-      StockPrice square;
+	  Game game = Game.getInstance("1830");
+	  StockMarketI chart = game.getStockMarket();
+      StockSpaceI square;
 
       System.out.print(" ");
-      for (col = 0; col < chart.getNumCols(); col++)
+      for (col = 0; col < chart.getNumberOfColumns(); col++)
       {
          System.out.print("   " + Character.toString((char) ('A' + col)));
       }
       System.out.println();
-      for (row = 0; row < chart.getNumRows(); row++)
+      for (row = 0; row < chart.getNumberOfRows(); row++)
       {
          System.out.print((row < 9 ? " " : "") + (row + 1));
-         for (col = 0; col < chart.getNumCols(); col++)
+         for (col = 0; col < chart.getNumberOfColumns(); col++)
          {
-            square = chart.getStockPrice(row, col);
+            square = chart.getStockSpace(row, col);
             if (square != null)
             {
                price = square.getPrice();
