@@ -1,0 +1,14 @@
+<companies>
+  <company name="GT" fgcolour="black" bgcolour="#40B0A0"/>
+  <company name="THB" fgcolour="black" bgcolour="#B0B040"/>
+  <company name="BBG" fgcolour="black" bgcolour="pink"/>
+  <company name="LPS" fgcolour="black" bgcolour="#A0A0F0"/>
+  <company name="WGB" fgcolour="white" bgcolour="blue"/>
+  <company name="WR" fgcolour="white" bgcolour="#808030"/>
+  <company name="CV" fgcolour="white" bgcolour="#800080"/>
+  <company name="CPR" fgcolour="black" bgcolour="#ffa0ff"/>
+  <company name="CA" fgcolour="white" bgcolour="red"/>
+  <company name="CGR" fgcolour="white" bgcolour="black"/>
+  <company name="TGB" fgcolour="white" bgcolour="orange"/>
+  <company name="GW" fgcolour="black" bgcolour="#b090b0"/>
+</companies>
