@@ -1,0 +1,136 @@
+<stockmarket type="rectangular">
+  <square name="a1" price="70" />
+  <square name="a2" price="65" />
+  <square name="a3" price="60" />
+  <square name="a4" price="55" />
+  <square name="a5" price="50" colour="yellow" />
+  <square name="a6" price="45" colour="yellow" />
+  <square name="a7" price="40" colour="orange" />
+  <square name="a8" price="35" colour="orange" />
+  <square name="a9" price="30" colour="orange" />
+  <square name="a10" price="0">
+    <closesCompany/>
+  </square>
+  <square name="a11" price="0">
+    <closesCompany/>
+  </square>
+  <square name="b1" price="75" />
+  <square name="b2" price="70" />
+  <square name="b3" price="65" />
+  <square name="b4" price="60" />
+  <square name="b5" price="55" />
+  <square name="b6" price="50" colour="yellow" />
+  <square name="b7" price="45" colour="yellow" />
+  <square name="b8" price="40" colour="orange" />
+  <square name="b9" price="35" colour="orange" />
+  <square name="b10" price="30" colour="orange" />
+  <square name="b11" price="0">
+    <closesCompany/>
+  </square>
+  <square name="c1" price="80" />
+  <square name="c2" price="75" />
+  <square name="c3" price="70" />
+  <square name="c4" price="65" />
+  <square name="c5" price="60" />
+  <square name="c6" price="55" />
+  <square name="c7" price="50" colour="yellow" />
+  <square name="c8" price="45" colour="yellow" />
+  <square name="c9" price="40" colour="orange" />
+  <square name="c10" price="35" colour="orange" />
+  <square name="c11" price="30" colour="orange" />
+  <square name="d1" price="90" />
+  <square name="d2" price="80" />
+  <square name="d3" price="75" />
+  <square name="d4" price="70" />
+  <square name="d5" price="65" />
+  <square name="d6" price="60" />
+  <square name="d7" price="55" />
+  <square name="d8" price="50" colour="yellow" />
+  <square name="d9" price="45" colour="yellow" />
+  <square name="d10" price="40" colour="orange" />
+  <square name="d11" price="35" colour="orange" />
+  <square name="e1" price="100" >
+    <start/>
+  </square>
+  <square name="e2" price="90" >
+    <start/>
+  </square>
+  <square name="e3" price="80" >
+    <start/>
+  </square>
+  <square name="e4" price="75" >
+    <start/>
+  </square>
+  <square name="e5" price="70" >
+    <start/>
+  </square>
+  <square name="e6" price="65" >
+    <start/>
+  </square>
+  <square name="e7" price="60" />
+  <square name="e8" price="55" />
+  <square name="e9" price="50" colour="yellow" />
+  <square name="e10" price="45" colour="yellow" />
+  <square name="e11" price="40" colour="orange" />
+  <square name="f1" price="110" />
+  <square name="f2" price="100" />
+  <square name="f3" price="90" />
+  <square name="f4" price="80" />
+  <square name="f5" price="75" />
+  <square name="f6" price="70" />
+  <square name="f7" price="65" />
+  <square name="f8" price="60" />
+  <square name="g1" price="125" />
+  <square name="g2" price="110" />
+  <square name="g3" price="100" />
+  <square name="g4" price="90" />
+  <square name="g5" price="80" />
+  <square name="g6" price="75" />
+  <square name="g7" price="70" />
+  <square name="h1" price="150" />
+  <square name="h2" price="125" />
+  <square name="h3" price="110" />
+  <square name="h4" price="100" />
+  <square name="h5" price="90" />
+  <square name="h6" price="80" />
+  <square name="i1" price="175" />
+  <square name="i2" price="150" />
+  <square name="i3" price="125" />
+  <square name="i4" price="110" />
+  <square name="i5" price="100" />
+  <square name="i6" price="90" />
+  <square name="j1" price="200" />
+  <square name="j2" price="175" />
+  <square name="j3" price="150" />
+  <square name="j4" price="125" />
+  <square name="j5" price="110" />
+  <square name="k1" price="225" />
+  <square name="k2" price="200" />
+  <square name="k3" price="175" />
+  <square name="k4" price="150" />
+  <square name="k5" price="125" />
+  <square name="l1" price="250" />
+  <square name="l2" price="225" />
+  <square name="l3" price="200" />
+  <square name="l4" price="175" />
+  <square name="m1" price="275" />
+  <square name="m2" price="250" />
+  <square name="m3" price="225" />
+  <square name="m4" price="200" />
+  <square name="n1" price="300" />
+  <square name="n2" price="272" />
+  <square name="n3" price="250" />
+  <square name="o1" price="325" />
+  <square name="o2" price="300" />
+  <square name="o3" price="275" />
+  <square name="p1" price="350" />
+  <square name="p2" price="325" />
+  <square name="q1" price="375" />
+  <square name="q2" price="350" />
+  <square name="r1" price="400" />
+  <square name="r2" price="375" />
+  <square name="s1" price="425" />
+  <square name="s2" price="400" />
+  <square name="t1" price="450" />
+  <square name="t2" price="425" />
+</stockmarket>
