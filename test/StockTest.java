@@ -20,11 +20,10 @@ package test;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.w3c.dom.Element;
-
 import ui.StockChart;
 import game.*;
+//import util.XmlUtils;
 
 public class StockTest
 {
@@ -64,8 +63,8 @@ public class StockTest
       if (args.length<1){
           throw new ConfigurationException("No config file specified.");
       }
-      Element elem = XmlUtils.findElementInFile(args[0], ComponentManager.ELEMENT_ID);
-      ComponentManager.configureInstance(elem);
+      //Element elem = XmlUtils.findElementInFile(args[0], ComponentManager.ELEMENT_ID);
+      //ComponentManager.configureInstance(elem);
 
       ComponentManager componentMan = ComponentManager.getInstance();
       CompanyManagerI companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
