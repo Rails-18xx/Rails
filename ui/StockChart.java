@@ -1,21 +1,20 @@
 /*
-Rails: an 18xx game system.
-Copyright (C) 2005 Brett Lentz
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ * Rails: an 18xx game system. Copyright (C) 2005 Brett Lentz
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package ui;
 
@@ -23,97 +22,127 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/*
+ * The layout idea is this:
+ * 
+ * JFrame (GridBag)
+ *    |
+ * 	  ---> StockMarket JPanel (Grid)
+ * 		---> Shows the stockmarket chart
+ * 		---> Shows chits for every company
+ * 	  |
+ *	  ---> Status JPanel (Grid)
+ *		---> Shows at-a-glance information about each player's holdings.
+ *		---> Shows at-a-glance information about each company's performance.
+ *	  |
+ *	  ---> Button JPanel (Flow)
+ *		---> Buy Button
+ *		---> Sell Button
+ * 
+ */
+
 public class StockChart extends JFrame
 {
-   private int numRows, numCols, 
-   				hgap, vgap, 
-   				bhoriz, bvert;
-   
+   private int numRows, numCols;
    private Border lineBorder;
    private JTextField text;
+   
    private JPanel stockPanel;
    private JPanel statusPanel;
-   private JPanel buttonPanel;   
+   private JPanel buttonPanel;
+   
    private JButton buyButton;
    private JButton sellButton;
    
    private GridBagConstraints gc;
+   private GridLayout stockGrid;
+   private GridLayout statusGrid;
+   private FlowLayout flow;
    
    private void initialize()
    {
       this.setSize(640, 480);
       this.setTitle("Stock Chart");
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      this.getContentPane().setLayout(new GridBagLayout());
       
-      lineBorder = BorderFactory.createLineBorder(Color.black);
-      text = new JTextField("Foo");      
-      text.setBorder(lineBorder);
-      text.setEditable(false);
+      text = new JTextField("Foo");
       
       stockPanel = new JPanel();
       statusPanel = new JPanel();
       buttonPanel = new JPanel();
       
-      stockPanel.setBackground(Color.WHITE);
-      statusPanel.setBackground(Color.RED);
-      buttonPanel.setBackground(Color.LIGHT_GRAY);
+      stockGrid = new GridLayout();
+      statusGrid = new GridLayout();
+      flow = new FlowLayout();
       
+      stockPanel.setLayout(stockGrid);
+      statusPanel.setLayout(statusGrid);
+      buttonPanel.setLayout(flow);
+
       buyButton = new JButton("buy");
       sellButton = new JButton("sell");
-      
+
       gc = new GridBagConstraints();
    }
- 
-   public StockChart()
+   private void populateGridBag()
    {
-      super();
-      
-      hgap = 5;
-      vgap = 5;
-      bhoriz = 50;
-      bvert = 100;
-      
-      //Need to create these methods, not necessarily with these 
-      //method names.
-      //numRows = getRowsFromXML();
-      //numCols = getColsFromXML();
-      
-      numRows = 5;
-      numCols = 5;
-      
-      initialize();
-      
-      this.getContentPane().setLayout(new GridBagLayout());
-      
       gc.gridx = 0;
       gc.gridy = 0;
+      gc.weightx = 1.0;
+      gc.weighty = 1.0;
+      gc.gridwidth = 2;
+      gc.ipadx = 500;
+      gc.ipady = 50;
       gc.fill = GridBagConstraints.BOTH;
       this.getContentPane().add(stockPanel, gc);
-      
+
       gc.gridx = 1;
       gc.gridy = 1;
       gc.fill = 0;
+      gc.weightx = 0.5;
+      gc.weighty = 0.5;
+      gc.gridwidth = 1;
       this.getContentPane().add(statusPanel, gc);
-      
+
       gc.gridx = 0;
       gc.gridy = 2;
+      gc.weightx = 0.0;
+      gc.weighty = 0.0;
       gc.gridwidth = 2;
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPanel, gc);
+   }
+   public StockChart()
+   {
+      super();
+      initialize();
+
+      lineBorder = BorderFactory.createLineBorder(Color.black);     
+      text.setBorder(lineBorder);
+      text.setEditable(false);
+      text.setBackground(Color.RED);
+
+      stockPanel.setBackground(Color.WHITE);
+      statusPanel.setBackground(Color.BLACK);
+      buttonPanel.setBackground(Color.LIGHT_GRAY);
       
-      stockPanel.setLayout(new GridLayout(numRows, numCols));
-            
-      for(int x=0; x<20; x++)
+      stockGrid.setColumns(25);
+      stockGrid.setRows(10);
+   
+      populateGridBag();
+
+      for (int x = 0; x < 200; x++)
       {
          stockPanel.add(new JTextField(Integer.toString(x)));
       }
-      
+
       statusPanel.add(text);
       
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
 
       this.pack();
-      this.setVisible(true);      
+      this.setVisible(true);
    }
 }
