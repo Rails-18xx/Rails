@@ -35,11 +35,18 @@ public class StockChart extends DefaultHandler {
 	private static ClassLoader classLoader =
 		StockChart.class.getClassLoader();
 
+	/* Preferred Constructor */
 	public StockChart(String game) {
 		System.setProperty(
 			"org.xml.sax.driver",
 			"org.apache.crimson.parser.XMLReaderImpl");
 		loadMarket(game);
+	}
+	
+	/* Default Constructor */
+	public StockChart()
+	{
+	   this("1830");
 	}
 
 	/**

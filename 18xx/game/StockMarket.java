@@ -19,7 +19,6 @@
 package game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class StockMarket
 {
@@ -30,9 +29,16 @@ public class StockMarket
 
    ArrayList companiesStarted;
 
+   /* Preferred Constructor */
    public StockMarket(String game)
    {
       stockChart = new StockChart(game);
+   }
+   
+   /* Default Constructor */
+   public StockMarket()
+   {
+      this("1830");
    }
 
    /**
