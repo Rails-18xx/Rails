@@ -19,9 +19,7 @@ public class StockMarket {
 	public StockMarket(String game) {
 
 		stockChart = new StockChart(game);
-		
-		/* Start PRR with price 67 */
-		stockChart.startCompany ("PRR", 5, 6);
+	
 	}
 
 	/**
@@ -93,25 +91,25 @@ public class StockMarket {
 	}
 
 	/** To be called if shares are sold. The number sold does not always matter! */
-	public void sell (BigCompany company, int number) {
+	public void sell (Company company, int number) {
 		/* For now ignore the company. Will be dealt with in the next version. */
-		stockChart.moveDown (number);
+		stockChart.moveDown (company, number);
 		
 	}
 	/** To be called if a company is sold out at the end of an SR */
-	public void soldOut (BigCompany company) {
+	public void soldOut (Company company) {
 		/* For now ignore the company. Will be dealt with in the next version. */
-		stockChart.moveUp ();
+		stockChart.moveUp (company);
 	}
 	/** To be called on dividend payout. The amount may matter! */
-	public void payout (BigCompany company, int amount) {
+	public void payout (Company company) {
 		/* For now ignore the company. Will be dealt with in the next version. */
-		stockChart.moveRightOrUp (amount);
+		stockChart.moveRightOrUp (company);
 	}
 	/** To be called if a complany withholds */
-	public void withhold(BigCompany company) {
+	public void withhold(Company company) {
 		/* For now ignore the company. Will be dealt with in the next version. */
-		stockChart.moveLeftOrDown ();
+		stockChart.moveLeftOrDown (company);
 	}
 	
 	/*--- Getters ---*/
