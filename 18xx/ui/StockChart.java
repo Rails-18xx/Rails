@@ -43,7 +43,6 @@ import javax.swing.border.*;
 
 public class StockChart extends JFrame
 {
-   private int numRows, numCols;
    private Border lineBorder;
    private JTextField text;
    
@@ -59,9 +58,11 @@ public class StockChart extends JFrame
    private GridLayout statusGrid;
    private FlowLayout flow;
    
+   private game.StockChart modelChart;
+   
    private void initialize()
    {
-      this.setSize(640, 480);
+      this.setSize(10, 10);
       this.setTitle("Stock Chart");
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
@@ -84,7 +85,9 @@ public class StockChart extends JFrame
       sellButton = new JButton("sell");
 
       gc = new GridBagConstraints();
-   }
+      
+      modelChart = new game.StockChart("1830");
+    }
    private void populateGridBag()
    {
       gc.gridx = 0;
@@ -113,11 +116,40 @@ public class StockChart extends JFrame
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPanel, gc);
    }
+   private void populateStockPanel()
+   {
+      game.StockPrice[][] market = modelChart.getStockChart();
+
+      stockGrid.setColumns(market[0].length);
+      stockGrid.setRows(market.length);
+      
+      for(int x = 0; x < market.length; x++)
+      {
+         for(int y = 0; y < market.length; y++)
+         {
+            JTextField foo;
+            
+            try
+            {
+               foo = new JTextField(market[x][y].getName());
+            }
+            catch (NullPointerException e)
+            {
+               foo = new JTextField("Null");
+            }
+            
+            foo.setEditable(false);
+            stockPanel.add(foo);
+         }
+      }
+   }
    public StockChart()
    {
       super();
       initialize();
-
+      populateGridBag();
+      populateStockPanel();
+      
       lineBorder = BorderFactory.createLineBorder(Color.black);     
       text.setBorder(lineBorder);
       text.setEditable(false);
@@ -126,19 +158,8 @@ public class StockChart extends JFrame
       stockPanel.setBackground(Color.WHITE);
       statusPanel.setBackground(Color.BLACK);
       buttonPanel.setBackground(Color.LIGHT_GRAY);
-      
-      stockGrid.setColumns(25);
-      stockGrid.setRows(10);
-   
-      populateGridBag();
-
-      for (int x = 0; x < 200; x++)
-      {
-         stockPanel.add(new JTextField(Integer.toString(x)));
-      }
-
-      statusPanel.add(text);
-      
+    
+      statusPanel.add(text);      
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
 
