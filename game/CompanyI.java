@@ -5,8 +5,6 @@
  */
 package game;
 
-import java.util.ArrayList;
-
 /**
  * @author iadams
  *
@@ -23,11 +21,7 @@ public interface CompanyI {
     /** The name of the XML attribute for the company's type. */
     public static final String COMPANY_TYPE_TAG = "type";
 
-	/** The name of the XML attribute for the company's type. */
-	public static final String COMPANY_FG_COLOUR_TAG = "fgcolour";
-
-	/** The name of the XML attribute for the company's type. */
-	public static final String COMPANY_BG_COLOUR_TAG = "bgcolour";
+	void init (String name, CompanyTypeI type);
 
     /**
      * Returns the name of the Company
@@ -36,67 +30,32 @@ public interface CompanyI {
     String getName();
     
     /**
-     * Returns the type of the Company
+     * Returns the CompanyType of the Company
      * @return the type of the Company
      */
-    String getType();
+    CompanyTypeI getType();
     
-    String getFgColour();
-    
-    String getBgColour();
-    
-	void start (StockSpaceI startPrice);
 
-	boolean canBuyStock();
-	
-	boolean hasFloated();
-
-
+	/**
+     * Returns the type name of the Company
+	 * @return
+	 */
+	public String getTypeName();
 	/**
 	 * @return
 	 */
-	ArrayList getPortfolio();
+	int getValue();
 
-	/**
-	 * @return
-	 */
-	StockSpaceI getParPrice();
-
-	/**
-	 * @return
-	 */
-	ArrayList getTrainsOwned();
-
-	/**
-	 * @return
-	 */
-	int getTreasury();
-
-	/**
-	 * @param list
-	 */
-	void setTrainsOwned(ArrayList list);
 
 	/**
 	 * @param i
 	 */
-	void setTreasury(int i);
+	void setValue(int i);
 
 	/**
 	 * @return
 	 */
-	StockSpaceI getCurrentPrice();
-	
-	/**
-	 * @param price
-	 */
-	void setCurrentPrice(StockSpaceI price);
-
-
-	/**
-	 * @return
-	 */
-	int getNumber();
+	int getCompanyNumber();
 	
 	/**
 	 * @return
@@ -108,19 +67,13 @@ public interface CompanyI {
 	void setClosed(boolean b);
 
 	/**
-	 * @param string
+	 * @return
 	 */
-	void setBgColour(String string);
-
+	public int getCertLimitCount();
 	/**
-	 * @param string
+	 * @param i
 	 */
-	void setFgColour(String string);
-
-	/**
-	 * @param b
-	 */
-	void setFloated(boolean b);
+	public void setCertLimitCount(int i);
 
 
 }

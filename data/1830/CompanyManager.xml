@@ -1,17 +1,26 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <Company name="SVNRR" type="Private"/>
-  <Company name="C&amp;StL" type="Private"/>
-  <Company name="D&amp;H" type="Private"/>
-  <Company name="M&amp;H" type="Private"/>
-  <Company name="C&amp;A" type="Private"/>
-  <Company name="B&amp;Opr" type="Private"/>
-  <Company name="B&amp;O" type="Public" fgcolour="white" bgcolour="blue"/>
-  <Company name="PRR" type="Public" fgcolour="white" bgcolour="darkgreen"/>
-  <Company name="NYNH" type="Public" fgcolour="black" bgcolour="orange"/>
-  <Company name="NYC" type="Public" fgcolour="white" bgcolour="black"/>
-  <Company name="Erie" type="Public" fgcolour="black" bgcolour="yellow"/>
-  <Company name="B&amp;M" type="Public" fgcolour="black" bgcolour="lightgreen"/>
-  <Company name="C&amp;O" type="Public" fgcolour="black" bgcolour="lightblue"/>
-  <Company name="CPR" type="Public" fgcolour="white" bgcolour="darkred"/>
+  <CompanyType name="Private" class="game.PrivateCompany">
+    <Auction type="1830"/>
+    <AllClose phase="5"/>
+  </CompanyType>
+  <CompanyType name="Public" class="game.PublicCompany">
+    <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+    <PoolPaysOut/>
+  </CompanyType>
+  
+  <Company name="SVNRR" type="Private" basePrice="20" revenue="5"/>
+  <Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"/>
+  <Company name="D&amp;H" type="Private" basePrice="70" revenue="15"/>
+  <Company name="M&amp;H" type="Private" basePrice="110" revenue="20"/>
+  <Company name="C&amp;A" type="Private" basePrice="160" revenue="25"/>
+  <Company name="B&amp;Opr" type="Private" basePrice="220" revenue="30"	/>
+  <Company name="B&amp;O" type="Public" fgColour="white" bgColour="blue"/>
+  <Company name="PRR" type="Public" fgColour="white" bgColour="darkgreen"/>
+  <Company name="NYNH" type="Public" fgColour="black" bgColour="orange"/>
+  <Company name="NYC" type="Public" fgColour="white" bgColour="black"/>
+  <Company name="Erie" type="Public" fgColour="black" bgColour="yellow"/>
+  <Company name="B&amp;M" type="Public" fgColour="black" bgColour="lightgreen"/>
+  <Company name="C&amp;O" type="Public" fgColour="black" bgColour="lightblue"/>
+  <Company name="CPR" type="Public" fgColour="white" bgColour="darkred"/>
 </CompanyManager>

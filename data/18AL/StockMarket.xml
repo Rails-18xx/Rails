@@ -1,51 +1,31 @@
 <StockMarket type="rectangular">
+  <StockSpaceType name="yellow" colour="yellow">
+    <NoCertLimit/>
+  </StockSpaceType>
+
   <StockSpace name="A1" price="60" />
   <StockSpace name="A2" price="55" />
-  <StockSpace name="A3" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A4" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A5" price="40">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A6" price="35">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A7" price="30">
-    <NoCertLimit/>
-  </StockSpace>
+  <StockSpace name="A3" price="50" type="yellow"/>
+  <StockSpace name="A4" price="45" type="yellow"/>
+  <StockSpace name="A5" price="40" type="yellow"/>
+  <StockSpace name="A6" price="35" type="yellow"/>
+  <StockSpace name="A7" price="30" type="yellow"/>
   <StockSpace name="B1" price="65" />
   <StockSpace name="B2" price="60" />
   <StockSpace name="B3" price="55" />
-  <StockSpace name="B4" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B5" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B6" price="40">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B7" price="35">
-    <NoCertLimit/>
-  </StockSpace>
+  <StockSpace name="B4" price="50" type="yellow"/>
+  <StockSpace name="B5" price="45" type="yellow"/>
+  <StockSpace name="B6" price="40" type="yellow"/>
+  <StockSpace name="B7" price="35" type="yellow"/>
   <StockSpace name="C1" price="70" />
   <StockSpace name="C2" price="65" />
   <StockSpace name="C3" price="60">
     <StartSpace/>
   </StockSpace>
   <StockSpace name="C4" price="55" />
-  <StockSpace name="C5" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C6" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C7" price="40">
-    <NoCertLimit/>
-  </StockSpace>
+  <StockSpace name="C5" price="50" type="yellow"/>
+  <StockSpace name="C6" price="45" type="yellow"/>
+  <StockSpace name="C7" price="40" type="yellow"/>
   <StockSpace name="D1" price="75" />
   <StockSpace name="D2" price="70">
     <StartSpace/>
@@ -53,12 +33,8 @@
   <StockSpace name="D3" price="65" />
   <StockSpace name="D4" price="60" />
   <StockSpace name="D5" price="55" />
-  <StockSpace name="D6" price="50" >
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D7" price="45">
-    <NoCertLimit/>
-  </StockSpace>
+  <StockSpace name="D6" price="50" type="yellow"/>
+  <StockSpace name="D7" price="45" type="yellow"/>
   <StockSpace name="E1" price="80"/>
   <StockSpace name="E2" price="75">
     <StartSpace/>
@@ -66,12 +42,8 @@
   <StockSpace name="E3" price="70"/>
   <StockSpace name="E4" price="65"/>
   <StockSpace name="E5" price="60"/>
-  <StockSpace name="E6" price="55">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E7" price="50">
-    <NoCertLimit/>
-  </StockSpace>
+  <StockSpace name="E6" price="55" type="yellow"/>
+  <StockSpace name="E7" price="50" type="yellow"/>
   <StockSpace name="F1" price="90">
     <StartSpace/>
   </StockSpace>

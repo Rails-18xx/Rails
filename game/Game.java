@@ -70,6 +70,14 @@ public class Game
 		return instance;
 	}
 	
+	/**
+	 * Public instancegetter.
+	 * @return The instance.
+	 */
+	public static Game getInstance () {
+		return instance;
+	}
+	
 	/*----- Getters -----*/
 	
 	/**

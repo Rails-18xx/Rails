@@ -18,9 +18,7 @@
 
 package test;
 
-import java.util.Collections;
 import java.util.List;
-import org.w3c.dom.Element;
 import ui.StockChart;
 import game.*;
 //import util.XmlUtils;
@@ -70,14 +68,20 @@ public class StockTest
       ComponentManager componentMan = ComponentManager.getInstance();
       CompanyManagerI companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
 
-      List compNames = companyManager.getAllNames();
-      System.out.println(compNames.size()+" companies are registered");
-      Collections.sort(compNames);
-      String[] names = (String[])compNames.toArray(new String[compNames.size()]);
-      for (int i = 0; i< names.length; i++){
-          CompanyI company = companyManager.getCompany(names[i]);
+      List companies = companyManager.getAllCompanies();
+      System.out.println(companies.size()+" companies are registered");
+      for (int i = 0; i< companies.size(); i++){
+          CompanyI company = (CompanyI) companies.get(i);
           System.out.println("Company " + i + " is called " + company.getName() +
                   ", and is of type " + company.getType());
+          if (company instanceof PrivateCompanyI) {
+          	System.out.println("  Base price: "+((PrivateCompanyI)company).getBasePrice()
+          		+ " revenue: " + ((PrivateCompanyI)company).getRevenue());
+          } else {
+			System.out.println("  Foreground colour: "+((PublicCompanyI)company).getFgColour()
+				+ " background colour: " + ((PublicCompanyI)company).getBgColour());
+         	
+          }
       }
   }
    

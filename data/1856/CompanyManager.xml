@@ -1,4 +1,21 @@
+<?xml version="1.0"?>
 <CompanyManager>
+  <CompanyType name="Private" class="game.PrivateCompany">
+    <Auction type="1830"/>
+    <AllClose phase="5"/>
+  </CompanyType>
+  <CompanyType name="Public" class="game.PublicCompany">
+    <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+    <PoolPaysOut/>
+  </CompanyType>
+  
+  <Company name="Flos" type="Private" basePrice="20" revenue="5"/>
+  <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10"/>
+  <Company name="TCC" type="Private" basePrice="50" revenue="10"/>
+  <Company name="Ship" type="Private" basePrice="70" revenue="15"/>
+  <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
+  <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
+  
   <Company name="GT"  type="Public" fgcolour="black" bgcolour="#40B0A0"/>
   <Company name="THB" type="Public" fgcolour="black" bgcolour="#B0B040"/>
   <Company name="BBG" type="Public" fgcolour="black" bgcolour="pink"/>

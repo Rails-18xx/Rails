@@ -1,166 +1,66 @@
 <StockMarket type="rectangular">
-  <StockSpace name="A1" price="60">
+  <StockSpaceType name="yellow" colour="yellow">
     <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A2" price="53">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A3" price="46">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A4" price="39">
+  </StockSpaceType>
+  <StockSpaceType name="orange" colour="orange">
     <NoCertLimit/>
     <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="A5" price="32">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="A6" price="25">
+  </StockSpaceType>
+  <StockSpaceType name="brown" colour="brown">
     <NoCertLimit/>
     <NoHoldLimit/>
     <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="A7" price="18">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="A8" price="10">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  </StockSpaceType>
+  
+  <StockSpace name="A1" price="60" type="yellow"/>
+  <StockSpace name="A2" price="53" type="yellow"/>
+  <StockSpace name="A3" price="46" type="yellow"/>
+  <StockSpace name="A4" price="39" type="orange"/>
+  <StockSpace name="A5" price="32" type="orange"/>
+  <StockSpace name="A6" price="25" type="brown"/>
+  <StockSpace name="A7" price="18" type="brown"/>
+  <StockSpace name="A8" price="10" type="brown"/>
   <StockSpace name="B1" price="67" />
-  <StockSpace name="B2" price="60">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B3" price="55">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B4" price="48">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B5" price="41">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="B6" price="34">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="B7" price="27">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="B8" price="20">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="B9" price="10">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  <StockSpace name="B2" price="60" type="yellow"/>
+  <StockSpace name="B3" price="55" type="yellow"/>
+  <StockSpace name="B4" price="48" type="yellow"/>
+  <StockSpace name="B5" price="41" type="orange"/>
+  <StockSpace name="B6" price="34" type="orange"/>
+  <StockSpace name="B7" price="27" type="brown"/>
+  <StockSpace name="B8" price="20" type="brown"/>
+  <StockSpace name="B9" price="10" type="brown"/>
   <StockSpace name="C1" price="71" />
   <StockSpace name="C2" price="66" />
-  <StockSpace name="C3" price="60">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C4" price="54">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C5" price="48">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C6" price="42">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="C7" price="36">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="C8" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="C9" price="20">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="C10" price="10">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  <StockSpace name="C3" price="60" type="yellow"/>
+  <StockSpace name="C4" price="54" type="yellow"/>
+  <StockSpace name="C5" price="48" type="yellow"/>
+  <StockSpace name="C6" price="42" type="orange"/>
+  <StockSpace name="C7" price="36" type="orange"/>
+  <StockSpace name="C8" price="30" type="brown"/>
+  <StockSpace name="C9" price="20" type="brown"/>
+  <StockSpace name="C10" price="10" type="brown"/>
   <StockSpace name="D1" price="76" />
   <StockSpace name="D2" price="70" />
   <StockSpace name="D3" price="65" />
-  <StockSpace name="D4" price="60">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D5" price="55">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D6" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D7" price="45">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="D8" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="D9" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="D10" price="20">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="D11" price="10">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  <StockSpace name="D4" price="60" type="yellow"/>
+  <StockSpace name="D5" price="55" type="yellow"/>
+  <StockSpace name="D6" price="50" type="yellow"/>
+  <StockSpace name="D7" price="45" type="orange"/>
+  <StockSpace name="D8" price="40" type="orange"/>
+  <StockSpace name="D9" price="30" type="brown"/>
+  <StockSpace name="D10" price="20" type="brown"/>
+  <StockSpace name="D11" price="10" type="brown"/>
   <StockSpace name="E1" price="82" />
   <StockSpace name="E2" price="76" />
   <StockSpace name="E3" price="70" />
   <StockSpace name="E4" price="66" />
   <StockSpace name="E5" price="62" />
-  <StockSpace name="E6" price="58">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E7" price="54">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E8" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E9" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="E10" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
-  <StockSpace name="E11" price="20">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  <StockSpace name="E6" price="58" type="yellow"/>
+  <StockSpace name="E7" price="54" type="yellow"/>
+  <StockSpace name="E8" price="50" type="yellow"/>
+  <StockSpace name="E9" price="40" type="orange"/>
+  <StockSpace name="E10" price="30" type="brown"/>
+  <StockSpace name="E11" price="20" type="brown"/>
   <StockSpace name="F1" price="90" />
   <StockSpace name="F2" price="82" />
   <StockSpace name="F3" price="76" />
@@ -168,21 +68,10 @@
   <StockSpace name="F5" price="67" />
   <StockSpace name="F6" price="65" />
   <StockSpace name="F7" price="63" />
-  <StockSpace name="F8" price="60">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="F9" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="F10" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="F11" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-    <NoBuyLimit/>
-  </StockSpace>
+  <StockSpace name="F8" price="60" type="yellow"/>
+  <StockSpace name="F9" price="50" type="yellow"/>
+  <StockSpace name="F10" price="40" type="orange"/>
+  <StockSpace name="F11" price="30" type="brown"/>
   <StockSpace name="G1" price="100" >
     <StartSpace/>
   </StockSpace>
@@ -203,16 +92,9 @@
   </StockSpace>
   <StockSpace name="G7" price="67" />
   <StockSpace name="G8" price="67" />
-  <StockSpace name="G9" price="60">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="G10" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="G11" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="G9" price="60" type="yellow"/>
+  <StockSpace name="G10" price="50" type="yellow"/>
+  <StockSpace name="G11" price="40" type="orange"/>
   <StockSpace name="H1" price="112" />
   <StockSpace name="H2" price="100" />
   <StockSpace name="H3" price="90" />
