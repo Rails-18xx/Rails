@@ -131,11 +131,12 @@ public class StockChart extends JFrame
             
             try
             {
-               foo = new JTextField(market[x][y].getName());
+               foo = new JTextField(Integer.toString(market[x][y].getPrice()));
             }
             catch (NullPointerException e)
             {
-               foo = new JTextField("Null");
+               foo = new JTextField("");
+               foo.setBorder(null);
             }
             
             try
@@ -171,10 +172,11 @@ public class StockChart extends JFrame
       {
          square.setBackground(Color.GREEN);
       }
-      else
-      {
-         square.setBackground(Color.WHITE);
-      }
+      
+      /* There is no final else because the condition 
+       * covered by the final else results in a    
+       * null pointer exception. 
+       */
    }
    public StockChart()
    {
@@ -186,9 +188,9 @@ public class StockChart extends JFrame
       lineBorder = BorderFactory.createLineBorder(Color.black);     
       text.setBorder(lineBorder);
       text.setEditable(false);
-      text.setBackground(Color.RED);
+      text.setBackground(Color.LIGHT_GRAY);
 
-      stockPanel.setBackground(Color.WHITE);
+      stockPanel.setBackground(Color.LIGHT_GRAY);
       statusPanel.setBackground(Color.BLACK);
       buttonPanel.setBackground(Color.LIGHT_GRAY);
     
