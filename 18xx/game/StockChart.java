@@ -25,10 +25,6 @@ public class StockChart extends DefaultHandler
    protected int numRows = 0;
    protected int numCols = 0;
 
-   /* Used in parsing the XML file */
-   protected final String[] colourNames = { "white", "yellow", "orange",
-         "brown" };
-
    protected StockPrice currentSquare;
    protected ArrayList startSpaces = new ArrayList();
 
@@ -110,8 +106,8 @@ public class StockChart extends DefaultHandler
    {
       String qname;
       String location = null;
+      String colour = null;
       int price = 0;
-      int colour = 0;
       boolean belowLedge = false;
       boolean closesCompany = false;
       boolean endsGame = false;
@@ -145,11 +141,7 @@ public class StockChart extends DefaultHandler
                   price = Integer.parseInt(atts.getValue(index));
                } else if (qname.equals("colour"))
                {
-                  for (i = 0; i < colourNames.length; i++)
-                  {
-                     if ((atts.getValue(index)).equals(colourNames[i]))
-                        colour = i;
-                  }
+                        colour = atts.getValue(index);
                } else
                {
                   System.err

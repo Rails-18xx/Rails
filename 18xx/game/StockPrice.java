@@ -36,45 +36,29 @@ public class StockPrice
 
    /*--- Instance attributes ---*/
    protected String name;
-
+   protected String colour;
+   
    protected int row;
-
    protected int column;
-
    protected int price;
 
-   protected int colour;
-
    protected boolean belowLedge = false; // For 1870
-
    protected boolean leftOfLedge = false; // For 1870
-
    protected boolean closesCompany = false;// For 1856 and other games
-
    protected boolean endsGame = false; // For 1841 and other games
-
    protected boolean start = false; // Company may start here
 
    protected ArrayList tokens = new ArrayList();
 
    /*--- Constants ---*/
-   public static final int WHITE = 0;
-
-   public static final int YELLOW = 1;
-
-   public static final int ORANGE = 2;
-
-   public static final int BROWN = 3;
-
-   // Other colours exist but can probably be mapped to this set.
 
    /*--- Contructors ---*/
    public StockPrice(String name, int price)
    {
-      this(name, price, WHITE);
+      this(name, price, "white");
    }
 
-   public StockPrice(String name, int price, int colour)
+   public StockPrice(String name, int price, String colour)
    {
       this.name = name;
       this.price = price;
@@ -106,7 +90,7 @@ public class StockPrice
    /**
     * @return The square's colour.
     */
-   public int getColour()
+   public String getColour()
    {
       return colour;
    }
