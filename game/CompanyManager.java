@@ -43,13 +43,15 @@ public class CompanyManager implements CompanyManagerI, ConfigurableComponentI {
             String name = XmlUtils.extractStringAttribute(nnp, CompanyI.COMPANY_NAME_TAG);
             if (name == null) {  throw new ConfigurationException("Unnamed company found."); }
             String type = XmlUtils.extractStringAttribute(nnp, CompanyI.COMPANY_TYPE_TAG);
-            if (name == null) {  throw new ConfigurationException("Company " + name + " has no type defined."); }
+            if (type == null) {  throw new ConfigurationException("Company " + name + " has no type defined."); }
+			String fgColour = XmlUtils.extractStringAttribute(nnp, CompanyI.COMPANY_FG_COLOUR_TAG);
+			String bgColour = XmlUtils.extractStringAttribute(nnp, CompanyI.COMPANY_BG_COLOUR_TAG);
             
             if (mCompanies.get(name)!=null){
                 throw new ConfigurationException("Company " + name + " configured twice");
             }
 
-            CompanyI company = new SimpleCompany(name, type);
+            CompanyI company = new Company(name, type, fgColour, bgColour);
             mCompanies.put(name, company);
         }
     }

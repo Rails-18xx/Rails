@@ -18,8 +18,87 @@
 
 package game;
 
+import org.w3c.dom.Element;
+
+import util.XmlUtils;
+
 public class Game
 {
+	/* EV, 12mar2005:
+	 * Generic game startup code, mostly copied from Iain Adam's TestApp class. 
+	 */
+	
+	/**
+	 * Game is a singleton class.
+	 * @author Erik Vos
+	 */
+	protected static Game instance;
+	/** The component Manager */
+	ComponentManager componentMan;
+	CompanyManagerI companyManager;
+	StockMarketI stockMarket;
+	
+	/**
+	 * Protected constructor.
+	 * @param name Name of the game (e.g. "1830").
+	 */
+	protected Game (String name) {
+		
+		String file = "data/"+name+"/Game.xml";
+		
+		try{
+			Element elem = XmlUtils.findElementInFile(file, ComponentManager.ELEMENT_ID);
+			ComponentManager.configureInstance(name, elem);
+	
+			componentMan = ComponentManager.getInstance();
+			companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
+			stockMarket = (StockMarketI)componentMan.findComponent(StockMarketI.COMPONENT_NAME);
+		} catch (Exception e) {
+			System.out.println ("Game setup from file " + file + " failed");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Public instance creator and getter.
+	 * @param name Name of the game (e.g. "1830").
+	 * @return The instance.
+	 */
+	public static Game getInstance (String name) {
+		if (instance == null) instance = new Game (name);
+		return instance;
+	}
+	
+	/*----- Getters -----*/
+	
+	/**
+	 * @return The company manager
+	 */
+	public CompanyManagerI getCompanyManager() {
+		return companyManager;
+	}
+
+	/**
+	 * @return The company manager
+	 */
+	public StockMarketI getStockMarket() {
+		return stockMarket;
+	}
+
+	/**
+	 * @return The compinent manager (maybe this getter is not needed)  
+	 */
+	public ComponentManager getComponentMan() {
+		return componentMan;
+	}
+	
+	/* EV, 12mar2005:
+	 * The below was the original code by Brett Lentz.
+	 * I suppose these things will get moved elsewhere, 
+	 * but I'll leave all of it now as a reminder. 
+	 */
+	/*
    private static int MAX_NUM_PLAYERS;
 
    private static int MAX_NUM_SHARES;
@@ -84,9 +163,6 @@ public class Game
       return fastestAvailableTrain;
    }
 
-   /**
-    * @return Returns the maxNumTrains.
-    */
    public static int getMaxNumTrains()
    {
       return maxNumTrains;
@@ -121,4 +197,6 @@ public class Game
          maxNumTrains = 0;
       }
    }
+   */
+
 }

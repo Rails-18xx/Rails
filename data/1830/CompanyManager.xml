@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<CompanyManager>
+  <Company name="SVNRR" type="Private"/>
+  <Company name="C&amp;StL" type="Private"/>
+  <Company name="D&amp;H" type="Private"/>
+  <Company name="M&amp;H" type="Private"/>
+  <Company name="C&amp;A" type="Private"/>
+  <Company name="B&amp;Opr" type="Private"/>
+  <Company name="B&amp;O" type="Public" fgcolour="white" bgcolour="blue"/>
+  <Company name="PRR" type="Public" fgcolour="white" bgcolour="darkgreen"/>
+  <Company name="NYNH" type="Public" fgcolour="black" bgcolour="orange"/>
+  <Company name="NYC" type="Public" fgcolour="white" bgcolour="black"/>
+  <Company name="Erie" type="Public" fgcolour="black" bgcolour="yellow"/>
+  <Company name="B&amp;M" type="Public" fgcolour="black" bgcolour="lightgreen"/>
+  <Company name="C&amp;O" type="Public" fgcolour="black" bgcolour="lightblue"/>
+  <Company name="CPR" type="Public" fgcolour="white" bgcolour="darkred"/>
+</CompanyManager>

@@ -1,0 +1,12 @@
+<CompanyManager>
+  <Company name="KATY" type="Public" fgcolour="white" bgcolour="green"/>
+  <Company name="MP"   type="Public" fgcolour="white" bgcolour="red"/>
+  <Company name="ATSF" type="Public" fgcolour="white" bgcolour="blue"/>
+  <Company name="SP"   type="Public" fgcolour="orange" bgcolour="black"/>
+  <Company name="GMO"  type="Public" fgcolour="white" bgcolour="#ff0040"/>
+  <Company name="SLSF" type="Public" fgcolour="white" bgcolour="d04000"/>
+  <Company name="TP"   type="Public" fgcolour="white" bgcolour="black"/>
+  <Company name="FW"   type="Public" fgcolour="red" bgcolour="black"/>
+  <Company name="SSW"  type="Public" fgcolour="white" bgcolour="#6000ff"/>
+  <Company name="IC"   type="Public" fgcolour="black" bgcolour="#c0ff40"/>
+</CompanyManager>

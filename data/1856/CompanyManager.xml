@@ -1,0 +1,14 @@
+<CompanyManager>
+  <Company name="GT"  type="Public" fgcolour="black" bgcolour="#40B0A0"/>
+  <Company name="THB" type="Public" fgcolour="black" bgcolour="#B0B040"/>
+  <Company name="BBG" type="Public" fgcolour="black" bgcolour="pink"/>
+  <Company name="LPS" type="Public" fgcolour="black" bgcolour="#A0A0F0"/>
+  <Company name="WGB" type="Public" fgcolour="white" bgcolour="blue"/>
+  <Company name="WR"  type="Public" fgcolour="white" bgcolour="#808030"/>
+  <Company name="CV"  type="Public" fgcolour="white" bgcolour="#800080"/>
+  <Company name="CPR" type="Public" fgcolour="black" bgcolour="#ffa0ff"/>
+  <Company name="CA"  type="Public" fgcolour="white" bgcolour="red"/>
+  <Company name="CGR" type="Public" fgcolour="white" bgcolour="black"/>
+  <Company name="TGB" type="Public" fgcolour="white" bgcolour="orange"/>
+  <Company name="GW"  type="Public" fgcolour="black" bgcolour="#b090b0"/>
+</CompanyManager>

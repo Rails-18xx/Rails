@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ComponentManager>
+    <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
+    <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
+</ComponentManager>

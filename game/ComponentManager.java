@@ -23,6 +23,8 @@ import util.XmlUtils;
  * point for other components to find them.
  */
 public class ComponentManager {
+	
+	private String gameName;
 
     /** The name of the XML tag used to configure the ComponentManager. */
     public static final String ELEMENT_ID = "ComponentManager";
@@ -46,14 +48,15 @@ public class ComponentManager {
         throw new ConfigurationException("ComponentManager has not yet been configured.");
     }
 
-    public static synchronized void configureInstance(Element element) throws ConfigurationException{
+    public static synchronized void configureInstance(String gameName, Element element) throws ConfigurationException{
         if (sTheOne != null){
             throw new ConfigurationException("Cannot reconfigure the ComponentManager");
         }
-        sTheOne = new ComponentManager(element);
+        sTheOne = new ComponentManager(gameName, element);
     }
 
-    private ComponentManager(Element element) throws ConfigurationException {
+    private ComponentManager(String gameName, Element element) throws ConfigurationException {
+    	this.gameName = gameName;
         NodeList children = element.getElementsByTagName(COMPONENT_ELEMENT_ID);
         for (int i = 0; i<children.getLength(); i++){
             Element compElement = (Element) children.item(i);
@@ -65,6 +68,7 @@ public class ComponentManager {
             String clazz = XmlUtils.extractStringAttribute(nnp, COMPONENT_CLASS_TAG);
             if (name == null) {  throw new ConfigurationException("Component " + name + " has no class defined."); }
             String file = XmlUtils.extractStringAttribute(nnp, COMPONENT_FILE_TAG);
+            String filePath = "./data/" + gameName + "/" + file;
 
             // Only one component per name.
             if( mComponentMap.get(name) != null) {
@@ -89,7 +93,7 @@ public class ComponentManager {
             // Configure the component, from a file, or the embedded XML.
             Element configElement = compElement;
             if (file !=null){
-                configElement = XmlUtils.findElementInFile(file, name);
+                configElement = XmlUtils.findElementInFile(filePath, name);
             }
             component.configureFromXML(configElement);
 

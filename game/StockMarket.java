@@ -19,165 +19,312 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-public class StockMarket
-{
-   //int[][] stockChart; // Can possibly be replaced by:
-   StockChart stockChart;
+import org.w3c.dom.*;
 
-   ArrayList ipoPile;
+import util.XmlUtils;
 
-   ArrayList companiesStarted;
+public class StockMarket implements StockMarketI, ConfigurableComponentI {
+	
+	protected StockSpace stockChart[][];
+	protected HashMap stockChartSpaces = new HashMap();
+	protected int numRows = 0;
+	protected int numCols = 0;
 
-   /* Preferred Constructor */
-   public StockMarket(String game)
-   {
-      stockChart = new StockChart(game);
-   }
-   
-   /* Default Constructor */
-   public StockMarket()
-   {
-      this("1830");
-   }
+	protected StockSpace currentSquare;
+	protected ArrayList startSpaces = new ArrayList();
 
-   /**
-    * @return Returns the companiesStarted.
-    */
-   public ArrayList getCompaniesStarted()
-   {
-      return companiesStarted;
-   }
+	/* Game-specific flags */
+	protected boolean upOrDownRight = false; /* Sold out and at top: go down right (1870) */
 
-   /**
-    * @param companiesStarted
-    *           The companiesStarted to set.
-    */
-   public void setCompaniesStarted(BigCompany companyStarted)
-   {
-      companiesStarted.add(companyStarted);
-   }
+	/* States */
+	protected boolean gameOver = false; /* Some games have "game over" stockmarket squares */
 
-   /**
-    * @return Returns the ipoPile.
-    */
-   public ArrayList getIpoPile()
-   {
-      return ipoPile;
-   }
+	ArrayList ipoPile;
 
-   /**
-    * @param ipoPile
-    *           The ipoPile to set.
-    */
-   public void addShareToPile(Stock stock)
-   {
-      ipoPile.add(stock);
-   }
+	ArrayList companiesStarted;
 
-   public Stock removeShareFromPile(Stock stock)
-   {
-      if (ipoPile.contains(stock))
-      {
-         int index = ipoPile.lastIndexOf(stock);
-         stock = (Stock) ipoPile.get(index);
-         ipoPile.remove(index);
-         return stock;
-      } else
-      {
-         return null;
-      }
+	public StockMarket() {
+	}
 
-   }
+	/**
+		* @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+		*/
+	public void configureFromXML(Element topElement) throws ConfigurationException {
 
-   /**
-    * @deprecated by EV: Have moved it to StockChart, and replaced by
-    *             higher-level actions
-    */
-   public void moveChitUp(BigCompany company)
-   {
-      //if not at the top
-      //move chit up
-      //else
-      //move chit forward
-   }
+		NodeList spaces = topElement.getElementsByTagName(StockSpaceI.STOCK_SPACE_ELEMENT_ID);
+		NodeList spaceFlags;
+		int row, col;
+		for (int i = 0; i < spaces.getLength(); i++) {
+			Element spaceElement = (Element) spaces.item(i);
+			NamedNodeMap nnp = spaceElement.getAttributes();
 
-   /**
-    * @deprecated by EV: Have moved it to StockChart, and replaced by
-    *             higher-level actions
-    */
-   public void moveChitDown(BigCompany company)
-   {
-      //if not on a ledge
-      //move chit down
-      //
-      //for games like 1870, we'll need to know if there's any values
-      //below the ledge that can be moved down if the player sells >2
-      //shares of a company's stock during his turn
-      //or if the ledge is the end of the road.
-   }
+			//Extract the attributes of the Stock space
+			String name = XmlUtils.extractStringAttribute(nnp, StockSpaceI.STOCK_SPACE_NAME_TAG);
+			if (name == null) {
+				throw new ConfigurationException("Unnamed stock space found.");
+			}
+			String price = XmlUtils.extractStringAttribute(nnp, StockSpaceI.STOCK_SPACE_PRICE_TAG);
+			if (price == null) {
+				throw new ConfigurationException("Stock space " + name + " has no price defined.");
+			}
 
-   /**
-    * @deprecated by EV: Have moved it to StockChart, and replaced by
-    *             higher-level actions
-    */
-   public void moveChitForward(BigCompany company)
-   {
-      //if not on a ledge
-      //move chit forward
-      //else
-      //move chit up
-   }
+			if (stockChartSpaces.get(name) != null) {
+				throw new ConfigurationException("Company " + name + " configured twice");
+			}
 
-   /**
-    * @deprecated by EV: Have moved it to StockChart, and replaced by
-    *             higher-level actions
-    */
-   public void moveChitBackward(BigCompany company)
-   {
-      //if not on the edge (rare)
-      //move chit back
-      //else
-      //move chit down
-   }
+			StockSpaceI space = new StockSpace(name, Integer.parseInt(price));
+			stockChartSpaces.put(name, space);
 
-   /** To be called if shares are sold. The number sold does not always matter! */
-   public void sell(Company company, int number)
-   {
-      /* For now ignore the company. Will be dealt with in the next version. */
-      stockChart.moveDown(company, number);
+			row = Integer.parseInt(name.substring(1));
+			col = (int) (name.toUpperCase().charAt(0) - '@');
+			if (row > numRows)
+				numRows = row;
+			if (col > numCols)
+				numCols = col;
 
-   }
+			// Loop through the stock space flags
+			spaceFlags = spaceElement.getChildNodes();
+			for (int j = 0; j < spaceFlags.getLength(); j++) {
 
-   /** To be called if a company is sold out at the end of an SR */
-   public void soldOut(Company company)
-   {
-      /* For now ignore the company. Will be dealt with in the next version. */
-      stockChart.moveUp(company);
-   }
+				String flagName = spaceFlags.item(j).getLocalName();
+				if (flagName == null)
+					continue;
 
-   /** To be called on dividend payout. The amount may matter! */
-   public void payout(Company company)
-   {
-      /* For now ignore the company. Will be dealt with in the next version. */
-      stockChart.moveRightOrUp(company);
-   }
+				if (flagName.equalsIgnoreCase("StartSpace")) {
+					space.setStart(true);
+					startSpaces.add(space);
+				} else if (flagName.equalsIgnoreCase("ClosesCompany")) {
+					space.setClosesCompany(true);
+				} else if (flagName.equalsIgnoreCase("GameOver")) {
+					space.setEndsGame(true);
+				} else if (flagName.equalsIgnoreCase("NoCertLimit")) {
+					space.setNoCertLimit(true);
+				} else if (flagName.equalsIgnoreCase("NoHoldLimit")) {
+					space.setNoHoldLimit(true);
+				} else if (flagName.equalsIgnoreCase("NoBuyLimit")) {
+					space.setNoBuyLimit(true);
+				} else if (flagName.equalsIgnoreCase("BelowLedge")) {
+					space.setBelowLedge(true);
+				} else if (flagName.equalsIgnoreCase("LeftOfLedge")) {
+					space.setLeftOfLedge(true);
+				}
+			}
 
-   /** To be called if a complany withholds */
-   public void withhold(Company company)
-   {
-      /* For now ignore the company. Will be dealt with in the next version. */
-      stockChart.moveLeftOrDown(company);
-   }
+		}
 
-   /*--- Getters ---*/
+		stockChart = new StockSpace[numRows][numCols];
+		Iterator it = stockChartSpaces.values().iterator();
+		StockSpace space;
+		while (it.hasNext()) {
+			space = (StockSpace) it.next();
+			stockChart[space.getRow()][space.getColumn()] = space;
+		}
+		
+		if (topElement.getElementsByTagName("UpOrDownRight").getLength() > 0) {
+			upOrDownRight = true;
+		}
 
-   /**
-    * @return
-    */
-   public StockChart getStockChart()
-   {
-      return stockChart;
-   }
+	}
+
+	/**
+		* @return
+		*/
+	public StockSpace[][] getStockChart() {
+		return stockChart;
+	}
+
+	public StockSpace getStockSpace(int row, int col) {
+		if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
+			return stockChart[row][col];
+		} else {
+			return null;
+		}
+	}
+
+	/*--- Actions ---*/
+
+	public void payOut(CompanyI company) {
+		moveRightOrUp(company);
+	}
+	public void withhold(CompanyI company) {
+		moveLeftOrDown(company);
+	}
+	public void sell(CompanyI company, int numberOfSpaces) {
+		moveDown(company, numberOfSpaces);
+	}
+	public void soldOut(CompanyI company) {
+		moveUp(company);
+	}
+
+	protected void moveUp(CompanyI company) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
+		int row = oldsquare.getRow();
+		int col = oldsquare.getColumn();
+		if (row > 0) {
+			newsquare = getStockSpace(row - 1, col);
+		} else if (upOrDownRight && col < numCols - 1) {
+			newsquare = getStockSpace(row + 1, col + 1);
+		}
+		processMove(company, oldsquare, newsquare);
+	}
+
+	protected void moveDown(CompanyI company, int numberOfSpaces) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
+		int row = oldsquare.getRow();
+		int col = oldsquare.getColumn();
+
+		/* Drop the indicated number of rows */
+		int newrow = row + numberOfSpaces;
+
+		/* Don't drop below the bottom of the chart */
+		while (newrow >= numRows || getStockSpace(newrow, col) == null)
+			newrow--;
+
+		/* If marker landed just below a ledge, and NOT because it was bounced by the 
+			* bottom of the chart, it will stay just above the ledge.
+			*/
+		if (getStockSpace(newrow, col).isBelowLedge() && newrow == row + numberOfSpaces)
+			newrow--;
+
+		if (newrow > row) {
+			newsquare = getStockSpace(newrow, col);
+		}
+		if (newsquare != null && newsquare.closesCompany()) {
+			company.setClosed(true);
+			oldsquare.removeToken(company);
+			System.out.println(company.getName() + " closes at " + newsquare.getName());
+		} else {
+			processMove(company, oldsquare, newsquare);
+		}
+	}
+
+	protected void moveRightOrUp(CompanyI company) {
+		/* Ignore the amount for now */
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
+		int row = oldsquare.getRow();
+		int col = oldsquare.getColumn();
+		if (col < numCols - 1
+			&& !oldsquare.isLeftOfLedge()
+			&& (newsquare = getStockSpace(row, col + 1)) != null) {
+		} else if (row > 0 && (newsquare = getStockSpace(row - 1, col)) != null) {
+		}
+		processMove(company, oldsquare, newsquare);
+	}
+
+	protected void moveLeftOrDown(CompanyI company) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
+		int row = oldsquare.getRow();
+		int col = oldsquare.getColumn();
+		if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {
+		} else if (row < numRows - 1 && (newsquare = getStockSpace(row + 1, col)) != null) {
+		}
+		if (newsquare != null && newsquare.closesCompany()) {
+			company.setClosed(true);
+			oldsquare.removeToken(company);
+			System.out.println(company.getName() + " closes at " + newsquare.getName());
+		} else {
+			processMove(company, oldsquare, newsquare);
+		}
+	}
+
+	protected void processMove(CompanyI company, StockSpaceI from, StockSpaceI to) {
+		// To be written to a log file in the future.
+		if (to == null || from == to) {
+			System.out.println(company.getName() + " stays at " + from.getName());
+		} else {
+			from.removeToken(company);
+			to.addToken(company);
+			company.setCurrentPrice(to);
+			System.out.println(
+				company.getName() + " moved from " + from.getName() + " to " + to.getName());
+
+			/* Check for game closure */
+			if (to.endsGame()) {
+				System.out.println("Game over!");
+				gameOver = true;
+			}
+
+		}
+	}
+
+	/**
+		* @return
+		*/
+	public List getStartSpaces() {
+		return startSpaces;
+	}
+
+	/**
+		* @return
+		*/
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	/* Brett's original code */
+
+	/**
+	 * @return Returns the companiesStarted.
+	 */
+	public ArrayList getCompaniesStarted() {
+		return companiesStarted;
+	}
+
+	/**
+	 * @param companiesStarted
+	 *           The companiesStarted to set.
+	 */
+	public void setCompaniesStarted(BigCompany companyStarted) {
+		companiesStarted.add(companyStarted);
+	}
+
+	/**
+	 * @return Returns the ipoPile.
+	 */
+	public ArrayList getIpoPile() {
+		return ipoPile;
+	}
+
+	/**
+	 * @param ipoPile
+	 *           The ipoPile to set.
+	 */
+	public void addShareToPile(Stock stock) {
+		ipoPile.add(stock);
+	}
+
+	public Stock removeShareFromPile(Stock stock) {
+		if (ipoPile.contains(stock)) {
+			int index = ipoPile.lastIndexOf(stock);
+			stock = (Stock) ipoPile.get(index);
+			ipoPile.remove(index);
+			return stock;
+		} else {
+			return null;
+		}
+
+	}
+
+	/**
+	 * @return
+	 */
+	public int getNumberOfColumns() {
+		return numCols;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getNumberOfRows() {
+		return numRows;
+	}
 
 }
