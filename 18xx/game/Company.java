@@ -1,253 +1,205 @@
+
 /*
- Rails: an 18xx game system.
- Copyright (C) 2005 Brett Lentz
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Created on 05mar2005
+ *
  */
-
 package game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * @author Erik Vos
  */
-public class Company
-{
+public class Company implements CompanyI {
+	
+	protected static int numberOfCompanies = 0;
+	protected String name;
+	protected String type;
+	protected String fgcolour;
+	protected String bgcolour;
+	protected int number; // For internal use
+	
+	protected StockSpaceI parPrice = null;
+	protected StockSpaceI currentPrice = null;
+	
+	protected int treasury;
+	protected boolean hasFloated = false;
+	protected boolean closed = false;
+	protected boolean canBuyStock;
+	protected ArrayList trainsOwned;
+	protected ArrayList portfolio;
+	protected ArrayList littleCoOwned;
 
-   protected static int numberOfCompanies = 0;
+	public Company(String name, String type, String fgColour, String bgColour) {
+		this.name = name;
+		this.type = type;
+		this.fgcolour = fgColour;
+		this.bgcolour = bgColour;
+		this.number = numberOfCompanies++;
+	}
+	
+	public void start (StockSpaceI startPrice) {
+		parPrice = currentPrice = startPrice;
+		hasFloated = true;
+		parPrice.addToken(this);
+	}
+	
+	
 
-   protected String name;
+	/**
+	 * @return
+	 */
+	public String getBgColour() {
+		return bgcolour;
+	}
 
-   protected String fgcolour;
+	/**
+	 * @return
+	 */
+	public boolean canBuyStock() {
+		return canBuyStock;
+	}
 
-   protected String bgcolour;
+	/**
+	 * @return
+	 */
+	public String getFgColour() {
+		return fgcolour;
+	}
 
-   protected int number; // For internal use
+	/**
+	 * @return
+	 */
+	public boolean hasFloated() {
+		return hasFloated;
+	}
 
-   protected StockPrice parPrice = null;
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
 
-   protected StockPrice currentPrice = null;
+	/**
+	 * @return
+	 */
+	public ArrayList getPortfolio() {
+		return portfolio;
+	}
 
-   protected int treasury;
+	/**
+	 * @return
+	 */
+	public StockSpaceI getParPrice() {
+		return parPrice;
+	}
 
-   protected boolean hasFloated = false;
+	/**
+	 * @return
+	 */
+	public ArrayList getTrainsOwned() {
+		return trainsOwned;
+	}
 
-   protected boolean closed = false;
+	/**
+	 * @return
+	 */
+	public int getTreasury() {
+		return treasury;
+	}
 
-   protected boolean canBuyStock;
+	/**
+	 * @param list
+	 */
+	public void setTrainsOwned(ArrayList list) {
+		trainsOwned = list;
+	}
 
-   protected ArrayList trainsOwned;
+	/**
+	 * @param i
+	 */
+	public void setTreasury(int i) {
+		treasury = i;
+	}
 
-   protected ArrayList portfolio;
+	/**
+	 * @return
+	 */
+	public StockSpaceI getCurrentPrice() {
+		return currentPrice;
+	}
 
-   protected ArrayList littleCoOwned;
+	/**
+	 * @param price
+	 */
+	public void setCurrentPrice(StockSpaceI price) {
+		currentPrice = price;
+	}
 
-   /* List of companies */
-   protected static HashMap companies = new HashMap();
+	/**
+	 * @param b
+	 */
+	public void setFloated(boolean b) {
+		hasFloated = b;
+	}
 
-   /* Initialiser */
-   static public void initialise(String game)
-   {
-      CompanyLoader cl = new CompanyLoader(game);
-   }
+	/**
+	 * @return
+	 */
+	public static int getNumberOfCompanies() {
+		return numberOfCompanies;
+	}
 
-   public Company(String name, String fgColour, String bgColour)
-   {
-      this.name = name;
-      this.fgcolour = fgColour;
-      this.bgcolour = bgColour;
-      this.number = numberOfCompanies++;
-   }
+	/**
+	 * @return
+	 */
+	public int getNumber() {
+		return number;
+	}
 
-   public static void addCompany(Company company)
-   {
-      companies.put(company.getName(), company);
-   }
+	/**
+	 * @param i
+	 */
+	public static void setNumberOfCompanies(int i) {
+		numberOfCompanies = i;
+	}
 
-   public static Company get(String companyName)
-   {
-      return (Company) companies.get(companyName);
-   }
+	/**
+	 * @return
+	 */
+	public boolean isClosed() {
+		return closed;
+	}
 
-   public static Iterator getIterator()
-   {
-      return companies.values().iterator();
-   }
+	/**
+	 * @param b
+	 */
+	public void setClosed(boolean b) {
+		closed = b;
+		if (closed) currentPrice = null;
+	}
 
-   public void start(StockPrice startPrice)
-   {
-      parPrice = currentPrice = startPrice;
-      hasFloated = true;
-      parPrice.addToken(this);
-   }
+	/**
+	 * @return
+	 */
+	public String getType() {
+		return type;
+	}
 
-   /**
-    * @return
-    */
-   public String getBgColour()
-   {
-      return bgcolour;
-   }
+	/**
+	 * @param string
+	 */
+	public void setBgColour(String string) {
+		bgcolour = string;
+	}
 
-   /**
-    * @return
-    */
-   public boolean canBuyStock()
-   {
-      return canBuyStock;
-   }
+	/**
+	 * @param string
+	 */
+	public void setFgColour(String string) {
+		fgcolour = string;
+	}
 
-   /**
-    * @return
-    */
-   public String getFgColour()
-   {
-      return fgcolour;
-   }
-
-   /**
-    * @return
-    */
-   public boolean hasFloated()
-   {
-      return hasFloated;
-   }
-
-   /**
-    * @return
-    */
-   public String getName()
-   {
-      return name;
-   }
-
-   /**
-    * @return
-    */
-   public ArrayList getPortfolio()
-   {
-      return portfolio;
-   }
-
-   /**
-    * @return
-    */
-   public StockPrice getParPrice()
-   {
-      return parPrice;
-   }
-
-   /**
-    * @return
-    */
-   public ArrayList getTrainsOwned()
-   {
-      return trainsOwned;
-   }
-
-   /**
-    * @return
-    */
-   public int getTreasury()
-   {
-      return treasury;
-   }
-
-   /**
-    * @param list
-    */
-   public void setTrainsOwned(ArrayList list)
-   {
-      trainsOwned = list;
-   }
-
-   /**
-    * @param i
-    */
-   public void setTreasury(int i)
-   {
-      treasury = i;
-   }
-
-   /**
-    * @return
-    */
-   public StockPrice getCurrentPrice()
-   {
-      return currentPrice;
-   }
-
-   /**
-    * @param price
-    */
-   public void setCurrentPrice(StockPrice price)
-   {
-      currentPrice = price;
-   }
-
-   /**
-    * @param b
-    */
-   public void setFloated(boolean b)
-   {
-      hasFloated = b;
-   }
-
-   /**
-    * @return
-    */
-   public static int getNumberOfCompanies()
-   {
-      return numberOfCompanies;
-   }
-
-   /**
-    * @return
-    */
-   public int getNumber()
-   {
-      return number;
-   }
-
-   /**
-    * @param i
-    */
-   public static void setNumberOfCompanies(int i)
-   {
-      numberOfCompanies = i;
-   }
-
-   /**
-    * @return
-    */
-   public boolean isClosed()
-   {
-      return closed;
-   }
-
-   /**
-    * @param b
-    */
-   public void setClosed(boolean b)
-   {
-      closed = b;
-      if (closed)
-         currentPrice = null;
-   }
 
 }

@@ -1,0 +1,8 @@
+<CompanyManager>
+  <Company name="WRA"  type="Public" fgcolour="black" bgcolour="orange"/>
+  <Company name="TAG"  type="Public" fgcolour="white" bgcolour="violet"/>
+  <Company name="M&amp;O" type="Public"  fgcolour="black" bgcolour="green"/>
+  <Company name="ATN"  type="Public" fgcolour="black" bgcolour="grey"/>
+  <Company name="ABC"  type="Public" fgcolour="black" bgcolour="yellow"/>
+  <Company name="L&amp;N"  type="Public" fgcolour="black" bgcolour="red"/>
+</CompanyManager>
