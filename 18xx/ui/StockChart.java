@@ -103,9 +103,4 @@ public class StockChart extends JFrame
       this.pack();
       this.setVisible(true);
    }
-   
-   public static void main (String[] args)
-   {
-      StockChart sc = new StockChart();
-   }
 }
