@@ -1,26 +1,21 @@
 <StockMarket type="rectangular">
+  <StockSpaceType name="yellow" colour="yellow">
+    <NoCertLimit/>
+  </StockSpaceType>
+  <StockSpaceType name="orange" colour="brown">
+    <NoCertLimit/>
+    <NoHoldLimit/>
+  </StockSpaceType>
+  
   <StockSpace name="A1" price="70" />
   <StockSpace name="A2" price="65" />
   <StockSpace name="A3" price="60" />
   <StockSpace name="A4" price="55" />
-  <StockSpace name="A5" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A6" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="A7" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="A8" price="35">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="A9" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="A5" price="50" type="yellow"/>
+  <StockSpace name="A6" price="45" type="yellow"/>
+  <StockSpace name="A7" price="40" type="orange"/>
+  <StockSpace name="A8" price="35" type="orange"/>
+  <StockSpace name="A9" price="30" type="orange"/>
   <StockSpace name="A10" price="0">
     <ClosesCompany/>
   </StockSpace>
@@ -32,24 +27,11 @@
   <StockSpace name="B3" price="65" />
   <StockSpace name="B4" price="60" />
   <StockSpace name="B5" price="55" />
-  <StockSpace name="B6" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B7" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="B8" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="B9" price="35">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="B10" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="B6" price="50" type="yellow"/>
+  <StockSpace name="B7" price="45" type="yellow"/>
+  <StockSpace name="B8" price="40" type="orange"/>
+  <StockSpace name="B9" price="35" type="orange"/>
+  <StockSpace name="B10" price="30" type="orange"/>
   <StockSpace name="B11" price="0">
     <closesCompany/>
   </StockSpace>
@@ -59,24 +41,11 @@
   <StockSpace name="C4" price="65" />
   <StockSpace name="C5" price="60" />
   <StockSpace name="C6" price="55" />
-  <StockSpace name="C7" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C8" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="C9" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="C10" price="35">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="C11" price="30">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="C7" price="50" type="yellow"/>
+  <StockSpace name="C8" price="45" type="yellow"/>
+  <StockSpace name="C9" price="40" type="orange"/>
+  <StockSpace name="C10" price="35" type="orange"/>
+  <StockSpace name="C11" price="30" type="orange"/>
   <StockSpace name="D1" price="90" />
   <StockSpace name="D2" price="80" />
   <StockSpace name="D3" price="75" />
@@ -84,20 +53,10 @@
   <StockSpace name="D5" price="65" />
   <StockSpace name="D6" price="60" />
   <StockSpace name="D7" price="55" />
-  <StockSpace name="D8" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D9" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="D10" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
-  <StockSpace name="D11" price="35">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="D8" price="50" type="yellow"/>
+  <StockSpace name="D9" price="45" type="yellow"/>
+  <StockSpace name="D10" price="40" type="orange"/>
+  <StockSpace name="D11" price="35" type="orange"/>
   <StockSpace name="E1" price="100" >
     <StartSpace/>
   </StockSpace>
@@ -118,16 +77,9 @@
   </StockSpace>
   <StockSpace name="E7" price="60" />
   <StockSpace name="E8" price="55" />
-  <StockSpace name="E9" price="50">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E10" price="45">
-    <NoCertLimit/>
-  </StockSpace>
-  <StockSpace name="E11" price="40">
-    <NoCertLimit/>
-    <NoHoldLimit/>
-  </StockSpace>
+  <StockSpace name="E9" price="50" type="yellow"/>
+  <StockSpace name="E10" price="45" type="yellow"/>
+  <StockSpace name="E11" price="40" type="orange"/>
   <StockSpace name="F1" price="110" />
   <StockSpace name="F2" price="100" />
   <StockSpace name="F3" price="90" />

@@ -151,6 +151,16 @@ public class StockChart extends JFrame
                foo.setBackground(Color.WHITE);
             }
             
+			try
+			{
+			    if (market[x][y].isStart()) {
+			   		foo.setBorder(BorderFactory.createLineBorder(Color.red));
+			   	} 
+			}
+			catch (NullPointerException e)
+			{
+			}
+            
             foo.setEditable(false);
             stockPanel.add(foo);
          }

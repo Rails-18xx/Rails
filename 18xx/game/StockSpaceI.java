@@ -12,38 +12,33 @@ public interface StockSpaceI {
 
 	/*--- Constants ---*/
 	/** The name of the XML tag used to configure a stock space. */
-	public static final String STOCK_SPACE_ELEMENT_ID = "StockSpace";
+	public static final String ELEMENT_ID = "StockSpace";
 
 	/** The name of the XML attribute for the stock price's name 
 	 * (like "A1" - naming is like spreadsheet cells. */
-	public static final String STOCK_SPACE_NAME_TAG = "name";
+	public static final String NAME_TAG = "name";
 
-	/** The name of the XML attribute for the stock price's colour. */
-	public static final String STOCK_SPACE_PRICE_TAG = "price";
+	/** The name of the XML attribute for the stock price. */
+	public static final String PRICE_TAG = "price";
 
-	/** The name of the XML attribute for the stock price's colour. */
-	public static final String STOCK_SPACE_COLOUR_TAG = "colour";
+	/** The name of the XML attribute for the stock price type (optional). */
+	public static final String TYPE_TAG = "type";
 
 	/** The name of the XML tag for the "startSpace" property. 
 	 * (indicating an allowed PAR price) */
-	public static final String STOCK_SPACE_START_SPACE_TAG = "StartSpace";
+	public static final String START_SPACE_TAG = "StartSpace";
 	
 	/** The name of the XML tag for the "below ledge" property. */
-	public static final String STOCK_SPACE_BELOW_LEDGE_TAG = "BelowLedge";
+	public static final String BELOW_LEDGE_TAG = "BelowLedge";
 
 	/** The name of the XML tag for the "left of ledge" property. */
-	public static final String STOCK_SPACE_LEFT_OF_LEDGE_TAG = "LeftOfLedge";
+	public static final String LEFT_OF_LEDGE_TAG = "LeftOfLedge";
 
 	/** The name of the XML tag for the "closes company" property. */
-	public static final String STOCK_SPACE_CLOSES_COMPANY_TAG = "ClosesCompany";
+	public static final String CLOSES_COMPANY_TAG = "ClosesCompany";
 
 	/** The name of the XML tag for the "gamn over" property. */
-	public static final String STOCK_SPACE_GAME_OVER_TAG = "GameOver";
-
-	public static final int WHITE = 0;
-	public static final int YELLOW = 1;
-	public static final int ORANGE = 2;
-	public static final int BROWN = 3;
+	public static final String GAME_OVER_TAG = "GameOver";
 
 	// No constructors (yet) for the booleans, which are rarely needed. Use the setters.
 	public abstract boolean isBelowLedge();
@@ -54,7 +49,7 @@ public interface StockSpaceI {
 	/**
 	 * @return The square's colour.
 	 */
-	public abstract int getColour();
+	public abstract String getColour();
 	/**
 	 * @return TRUE if the game ends if a company lands on this square.
 	 */
@@ -75,6 +70,16 @@ public interface StockSpaceI {
 	 * @return
 	 */
 	public abstract int getRow();
+	/**
+	 * @return
+	 */
+	public abstract StockSpaceTypeI getType();
+	
+	/**
+	 * @param b
+	 */
+	public abstract boolean isStart();
+	
 	/*--- Setters ---*/
 	public abstract void setBelowLedge(boolean b);
 	/**
@@ -87,10 +92,6 @@ public interface StockSpaceI {
 	public abstract void setEndsGame(boolean b);
 	/**
 	 * @return
-	 */
-	public abstract boolean isStart();
-	/**
-	 * @param b
 	 */
 	public abstract void setStart(boolean b);
 	/**
@@ -130,20 +131,5 @@ public interface StockSpaceI {
 	 * @return
 	 */
 	public boolean isNoHoldLimit();
-
-	/**
-	 * @param b
-	 */
-	public void setNoBuyLimit(boolean b);
-
-	/**
-	 * @param b
-	 */
-	public void setNoCertLimit(boolean b);
-	/**
-	 * @param b
-	 */
-	public void setNoHoldLimit(boolean b);
-
 
 }

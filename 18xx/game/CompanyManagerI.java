@@ -19,21 +19,54 @@ public interface CompanyManagerI {
     static final String COMPONENT_NAME = "CompanyManager";
 
     /**
-     * Returns the Company identified by the supplied name.
+     * Returns the Private Company identified by the supplied name.
      * @param name the name of the company sought
-     * @return the Company with the supplied name
+     * @return the Private Company with the supplied name
      */
-    CompanyI getCompany(String name);
+	PrivateCompanyI getPrivateCompany(String name);
+
+	/**
+	  * Returns the Public Company identified by the supplied name.
+	  * @param name the name of the company sought
+	  * @return the Public Company with the supplied name
+	  */
+	PublicCompanyI getPublicCompany(String name);
 
     /**
-     * Gives a list of Strings, the names of all registered Companies.
-     * @return a List of the all the Company names
+     * Gives a list of Strings, the names of all registered Private Companies.
+     * @return a List of the all the Private Company names
      */
-    List getAllNames();
+	List getAllPrivateNames();
 
-    /**
-     * Gives a list of all the registered Companies.
-     * @return a list of all the registered Companies
+	/**
+	 * Gives a list of Strings, the names of all registered Public Companies.
+	 * @return a List of the all the Public Company names
+	 */
+	List getAllPublicNames();
+
+	/**
+	 * Gives a list of all the registered Companies.
+	 * @return a list of all the registered Companies
+	 */
+	List getAllCompanies();
+	
+	/**
+     * Gives a list of all the registered Private Companies.
+     * @return a list of all the registered Private Companies
      */
-    List getAllCompanies();
+ 	List getAllPrivateCompanies();
+
+	/**
+	 * Gives a list of all the registered Private Companies.
+	 * @return a list of all the registered Private Companies
+	 */
+	List getAllPublicCompanies();
+	
+	/**
+	 * Gives a list of all the registered Companies of a given type.
+	 * @param The company type name.
+	 * @return a list of all the registered Companies of a goven type.
+	 */
+	List getCompaniesByType (String type);
+
 }

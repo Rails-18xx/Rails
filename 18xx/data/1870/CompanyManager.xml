@@ -1,4 +1,22 @@
+<?xml version="1.0"?>
 <CompanyManager>
+  <CompanyType name="Private" class="game.PrivateCompany">
+    <Auction type="1830"/>
+    <AllClose phase="5"/>
+  </CompanyType>
+  <CompanyType name="Public" class="game.PublicCompany">
+    <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+    <IPOPaysOut/>
+    <CanSplitDividend/>
+  </CompanyType>
+  
+  <Company name="GRSC" type="Private" basePrice="20" revenue="5"/>
+  <Company name="Brdg" type="Private" basePrice="40" revenue="10"/>
+  <Company name="Cattl" type="Private" basePrice="50" revenue="10"/>
+  <Company name="Gulf" type="Private" basePrice="80" revenue="15"/>
+  <Company name="SLSF" type="Private" basePrice="140" revenue="0"/>
+  <Company name="MKT" type="Private" basePrice="160" revenue="20"/>
+  
   <Company name="KATY" type="Public" fgcolour="white" bgcolour="green"/>
   <Company name="MP"   type="Public" fgcolour="white" bgcolour="red"/>
   <Company name="ATSF" type="Public" fgcolour="white" bgcolour="blue"/>

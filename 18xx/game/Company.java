@@ -5,145 +5,37 @@
  */
 package game;
 
-import java.util.ArrayList;
-
 /**
  * @author Erik Vos
  */
-public class Company implements CompanyI {
+public abstract class Company implements CompanyI, ConfigurableComponentI {
 	
 	protected static int numberOfCompanies = 0;
 	protected String name;
-	protected String type;
-	protected String fgcolour;
-	protected String bgcolour;
-	protected int number; // For internal use
+	protected CompanyTypeI type;
+	protected int companyNumber; // For internal use
+	/**
+	 * The value per certificate at the end of the game.
+	 * Default 0 (for privates).
+	 */
+	protected int value = 0;
+	/**
+	 * Twice the amount each certificate counts against the limit
+	 * (this way we take care for certs that count for 0.5)
+	 */
+	protected int certLimitCount = 2;
 	
-	protected StockSpaceI parPrice = null;
-	protected StockSpaceI currentPrice = null;
-	
-	protected int treasury;
-	protected boolean hasFloated = false;
 	protected boolean closed = false;
-	protected boolean canBuyStock;
-	protected ArrayList trainsOwned;
-	protected ArrayList portfolio;
-	protected ArrayList littleCoOwned;
 
-	public Company(String name, String type, String fgColour, String bgColour) {
+	public Company() {
+		this.companyNumber = numberOfCompanies++;
+	}
+	
+	public void init (String name, CompanyTypeI type) {
 		this.name = name;
 		this.type = type;
-		this.fgcolour = fgColour;
-		this.bgcolour = bgColour;
-		this.number = numberOfCompanies++;
 	}
-	
-	public void start (StockSpaceI startPrice) {
-		parPrice = currentPrice = startPrice;
-		hasFloated = true;
-		parPrice.addToken(this);
-	}
-	
-	
-
-	/**
-	 * @return
-	 */
-	public String getBgColour() {
-		return bgcolour;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean canBuyStock() {
-		return canBuyStock;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getFgColour() {
-		return fgcolour;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean hasFloated() {
-		return hasFloated;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getPortfolio() {
-		return portfolio;
-	}
-
-	/**
-	 * @return
-	 */
-	public StockSpaceI getParPrice() {
-		return parPrice;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getTrainsOwned() {
-		return trainsOwned;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getTreasury() {
-		return treasury;
-	}
-
-	/**
-	 * @param list
-	 */
-	public void setTrainsOwned(ArrayList list) {
-		trainsOwned = list;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setTreasury(int i) {
-		treasury = i;
-	}
-
-	/**
-	 * @return
-	 */
-	public StockSpaceI getCurrentPrice() {
-		return currentPrice;
-	}
-
-	/**
-	 * @param price
-	 */
-	public void setCurrentPrice(StockSpaceI price) {
-		currentPrice = price;
-	}
-
-	/**
-	 * @param b
-	 */
-	public void setFloated(boolean b) {
-		hasFloated = b;
-	}
-
+		
 	/**
 	 * @return
 	 */
@@ -155,14 +47,7 @@ public class Company implements CompanyI {
 	 * @return
 	 */
 	public int getNumber() {
-		return number;
-	}
-
-	/**
-	 * @param i
-	 */
-	public static void setNumberOfCompanies(int i) {
-		numberOfCompanies = i;
+		return companyNumber;
 	}
 
 	/**
@@ -177,29 +62,63 @@ public class Company implements CompanyI {
 	 */
 	public void setClosed(boolean b) {
 		closed = b;
-		if (closed) currentPrice = null;
 	}
 
 	/**
 	 * @return
 	 */
-	public String getType() {
+	public CompanyTypeI getType() {
 		return type;
 	}
 
 	/**
-	 * @param string
+	 * @return
 	 */
-	public void setBgColour(String string) {
-		bgcolour = string;
+	public String getTypeName() {
+		return type.getName();
 	}
 
 	/**
-	 * @param string
+	 * @return
 	 */
-	public void setFgColour(String string) {
-		fgcolour = string;
+	public String getName() {
+		return name;
 	}
 
+
+	/**
+	 * @return
+	 */
+	public int getCertLimitCount() {
+		return certLimitCount;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getCompanyNumber() {
+		return companyNumber;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getValue() {
+		return value;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setCertLimitCount(int i) {
+		certLimitCount = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setValue(int i) {
+		value = i;
+	}
 
 }
