@@ -1,4 +1,5 @@
 <stockmarket type="rectangular">
+  <upOrDownRight/>
   <square name="A1" price="64" colour="yellow" />
   <square name="A2" price="60" colour="yellow" />
   <square name="A3" price="55" colour="yellow" />
