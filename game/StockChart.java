@@ -1,5 +1,7 @@
 /*
  * Created on 25-Feb-2005
+ * Changes: 
+ * 04mar2005 EV: Implemented ledge.
  */
 package game;
 
@@ -17,16 +19,18 @@ import java.io.*;
  */
 public class StockChart extends DefaultHandler {
 	
-	private StockPrice stockChart[][];
-	private HashMap stockChartSquares = new HashMap(); 
-	private int numRows = 0;
-	private int numCols = 0;
+	protected StockPrice stockChart[][];
+	protected HashMap stockChartSquares = new HashMap(); 
+	protected int numRows = 0;
+	protected int numCols = 0;
 	
-	private String lastName; /* Probably for testing only */
-
-	/** Location on the Stock Chart per company */
-	/* For now we will use the company name as a key, but that will become the Company object later on.*/
-	HashMap stockPricePerCompany = new HashMap();
+	/* Used in parsing the XML file */
+	protected final String[] colourNames =  { "white", "yellow", "orange" , "brown"};
+	protected StockPrice currentSquare;
+	protected ArrayList startSpaces = new ArrayList();
+	
+	/* Game-specific flags */
+	protected boolean upOrDownRight = false; /* Sold out and at top: go down right (1870) */
 
 	private static ClassLoader classLoader =
 		StockChart.class.getClassLoader();
@@ -35,7 +39,7 @@ public class StockChart extends DefaultHandler {
 		System.setProperty(
 			"org.xml.sax.driver",
 			"org.apache.crimson.parser.XMLReaderImpl");
-		loadMarket("1830");
+		loadMarket(game);
 	}
 
 	/**
@@ -90,14 +94,21 @@ public class StockChart extends DefaultHandler {
 		String location = null;
 		int price = 0;
 		int colour = 0;
-		int index;
+		boolean belowLedge = false;
+		boolean closesCompany = false;
+		boolean endsGame = false;
+		
+		int index, i;
 		int length;
-		StockPrice square;
+		StockPrice square = null;
 		int row, column;
 		
 		if ("".equals (uri)) {
 			if (qName.equals("stockmarket")) {
+				// Ignore type for now, we only consider rectangular stockmarkets yet.
 				;
+			} else if (qName.equals("upOrDownRight")) {
+				upOrDownRight = true;
 			} else if (qName.equals("square")) {
 				length = atts.getLength();
 				for (index=0; index < length; index++) {
@@ -107,22 +118,37 @@ public class StockChart extends DefaultHandler {
 					} else if (qname.equals("price")) {
 						price = Integer.parseInt(atts.getValue(index));
 					} else if (qname.equals("colour")) {
-						colour = Integer.parseInt(atts.getValue(index));
+						for (i=0; i<colourNames.length; i++) {
+							if ((atts.getValue(index)).equals(colourNames[i])) colour = i;
+						}
 					} else {
 						System.err.println("Unknown attribute: {" + uri + "}" + qname);
 					}
 				}
 				if (stockChartSquares.containsKey(location)) {
-					System.err.println ("STOCKMARKET ERROR: Duplicate lcoation definition ignored: "
+					System.err.println ("STOCKMARKET ERROR: Duplicate location definition ignored: "
 						+ location);
 				} else {
-					square = new StockPrice (location, price, colour);
+					currentSquare = square = new StockPrice (location, price, colour);
 					row = Integer.parseInt(location.substring(1));
 					column = (int)(location.toUpperCase().charAt(0) - '@');
 					stockChartSquares.put(location, square);
 					if (row > numRows) numRows = row;
 					if (column > numCols) numCols = column;
 				}
+			} else if (qName.equals("belowLedge")) {
+				if (currentSquare != null) currentSquare.setBelowLedge(true);
+			} else if (qName.equals("leftOfLedge")) {
+				if (currentSquare != null) currentSquare.setLeftOfLedge(true);
+			} else if (qName.equals("closesCompany")) {
+				if (currentSquare != null) currentSquare.setClosesCompany(true);
+			} else if (qName.equals("endsGame")) {
+				if (currentSquare != null) currentSquare.setEndsGame(true);
+			} else if (qName.equals("start")) {
+				if (currentSquare != null) {
+					currentSquare.setStart(true);
+					startSpaces.add(currentSquare);
+				} 
 			} else {
 				System.err.println("Unknown start element: " + name);
 			}
@@ -148,8 +174,7 @@ public class StockChart extends DefaultHandler {
 					stockChart[square.getRow()][square.getColumn()] = square;
 				}
 			} else if (qName.equals("square")) {
-			} else {
-				System.err.println("Unknown end element: " + name);
+				currentSquare = null;
 			}
 		} else {
 			System.out.println("Unknown end element:   {" + uri + "}" + name);
@@ -161,7 +186,6 @@ public class StockChart extends DefaultHandler {
 	 */
 	public void characters (char ch[], int start, int length) {
 	}
-
 
 	/*--- Getters ---*/
 	/**
@@ -193,71 +217,105 @@ public class StockChart extends DefaultHandler {
 		}
 	}
 	
-	public StockPrice getStockPrice (String companyName) {
-		return (StockPrice) stockPricePerCompany.get(companyName);
-	}
 	/*--- Actions ---*/
 	
-	public void startCompany (String name, int row, int col) {
-		/* Name will probably be replaced by a Company object */
-		stockPricePerCompany.put(name, getStockPrice(row, col));
-	  	lastName = name; /* Just to fix the name for this test */
-	}
-	
-	public void moveUp()
+	public void moveUp(Company company)
 	 {
-	 	StockPrice oldsquare = (StockPrice) stockPricePerCompany.get(lastName);
+	 	StockPrice oldsquare = company.getCurrentPrice();
+	 	StockPrice newsquare = null;
 	 	int row = oldsquare.getRow();
 	 	int col = oldsquare.getColumn();
 	 	if (row > 0) {
-	 		StockPrice newsquare = getStockPrice(row-1, col);
-	 		if (newsquare != null) stockPricePerCompany.put(lastName, newsquare);
-	 		System.out.println (lastName+" moved from "+row+","+col+" to "+(row-1)+","+col);
+	 		newsquare = getStockPrice(row-1, col);
+	 	} else if (upOrDownRight && col < numCols - 1) {
+	 		newsquare = getStockPrice(row+1, col+1);
 	 	}
+		processMove (company, oldsquare, newsquare);
 	 }
-	 public void moveDown(int number)
+
+	 public void moveDown(Company company, int numberOfSpaces)
 	 {
-		StockPrice oldsquare = (StockPrice) stockPricePerCompany.get(lastName);
+		StockPrice oldsquare = company.getCurrentPrice();
+		StockPrice newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
-		int newrow = row + number;
+		
+		/* Drop the indicated number of rows */
+		int newrow = row + numberOfSpaces;
+		
+		/* Don't drop below the bottom of the chart */
 		while (newrow >= numRows || getStockPrice (newrow, col) == null) newrow--;
+		
+		/* If marker landed just below a ledge, and NOT because it was bounced by the 
+		 * bottom of the chart, it will stay just above the ledge.
+		 */ 
+		if (getStockPrice(newrow, col).isBelowLedge()
+			&& newrow == row + numberOfSpaces) newrow--;
+			
 		if (newrow > row) {
-			StockPrice newsquare = getStockPrice(newrow, col);
-			stockPricePerCompany.put(lastName, newsquare);
-			System.out.println (lastName+" moved from "+row+","+col+" to "+newrow+","+col);
+			newsquare = getStockPrice(newrow, col);
+		}
+		if (newsquare.closesCompany()) {
+			company.setClosed(true);
+			oldsquare.removeToken(company);
+			System.out.println (company.getName()+" closes at "+newsquare.getName());
+		} else {
+			processMove (company, oldsquare, newsquare);
 		}
 	 }
-	 public void moveRightOrUp(int amount)
+
+	 public void moveRightOrUp(Company company)
 	 {
 	 	/* Ignore the amount for now */
-		StockPrice oldsquare = (StockPrice) stockPricePerCompany.get(lastName);
-		StockPrice newsquare;
+		StockPrice oldsquare = company.getCurrentPrice();
+		StockPrice newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
-		if (col < numCols-1 && (newsquare = getStockPrice(row, col+1)) != null) {
-			stockPricePerCompany.put(lastName, newsquare);
-			System.out.println (lastName+" moved from "+row+","+col+" to "+row+","+(col+1));
+		if (col < numCols-1 && !oldsquare.isLeftOfLedge()
+			&& (newsquare = getStockPrice(row, col+1)) != null) {
 		} else if (row > 0 && (newsquare = getStockPrice(row-1, col)) != null) {
-			stockPricePerCompany.put(lastName, newsquare);
-			System.out.println (lastName+" moved from "+row+","+col+" to "+(row-1)+","+col);
 		}
-	 	
+		processMove (company, oldsquare, newsquare);
 	 }
-	 public void moveLeftOrDown()
+
+	 public void moveLeftOrDown(Company company)
 	 {
-		StockPrice oldsquare = (StockPrice) stockPricePerCompany.get("PRR");
-		StockPrice newsquare;
+		StockPrice oldsquare = company.getCurrentPrice();
+		StockPrice newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (col > 0 && (newsquare = getStockPrice(row, col-1)) != null) {
-			stockPricePerCompany.put(lastName, newsquare);
-			System.out.println (lastName+" moved from "+row+","+col+" to "+row+","+(col-1));
 		} else if (row < numRows - 1 && (newsquare = getStockPrice(row+1, col)) != null) {
-			stockPricePerCompany.put(lastName, newsquare);
-			System.out.println (lastName+" moved from "+row+","+col+" to "+(row+1)+","+col);
+		}
+		if (newsquare.closesCompany()) {
+			company.setClosed(true);
+			oldsquare.removeToken(company);
+			System.out.println (company.getName()+" closes at "+newsquare.getName());
+		} else {
+			processMove (company, oldsquare, newsquare);
 		}
 	 }
+	 
+	 protected void processMove (Company company, StockPrice from, StockPrice to)
+	 {
+	 	// To be written to a log file in the future.
+	 	if (to == null || from == to) {
+	 		System.out.println (company.getName()+" stays at "+from.getName());
+	 	} else {
+	 		from.removeToken(company);
+	 		to.addToken(company);
+	 		company.setCurrentPrice(to);
+			System.out.println (company.getName()+" moved from "+from.getName()+" to "+to.getName());
+			
+	 	}
+	 }
  
+
+	/**
+	 * @return
+	 */
+	public List getStartSpaces() {
+		return startSpaces;
+	}
 
 }
