@@ -3,6 +3,7 @@
  *
  */
 package game;
+import java.util.ArrayList;
 
 /**
  * @author Brett Lentz
@@ -11,7 +12,7 @@ public class Bank
 {
    private int money;
    private int gameType;
-   Stock[] forSalePile;
+   ArrayList forSalePile;
    
    public Bank()
    {
@@ -34,5 +35,7 @@ public class Bank
             money = 25000;
             break;
       }
+      
+      forSalePile = new ArrayList();
    }
 }

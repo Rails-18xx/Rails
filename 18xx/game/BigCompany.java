@@ -4,6 +4,8 @@
  */
 package game;
 
+import java.util.ArrayList;
+
 /**
  * @author a-blentz
  */
@@ -13,9 +15,9 @@ public class BigCompany
    int treasury;
    boolean hasFloated;
    boolean canBuyStock;
-   Train[] trainsOwned;
-   Stock[] portfolio;
-   LittleCompany[] littleCoOwned;
+   ArrayList trainsOwned;
+   ArrayList portfolio;
+   ArrayList littleCoOwned;
    
    public BigCompany(int s, boolean cbs)
    {
@@ -23,6 +25,6 @@ public class BigCompany
       treasury = 10 * strikePrice;
       hasFloated = false;
       canBuyStock = cbs;
-      trainsOwned = new Train[Game.getMaxNumTrains()];
+      trainsOwned = new ArrayList(Game.getMaxNumTrains());
    }
 }
