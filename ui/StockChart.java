@@ -67,7 +67,7 @@ public class StockChart extends JFrame
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
       
-      text = new JTextField("Foo");
+      text = new JTextField("This space reserved for game status info.");
       
       stockPanel = new JPanel();
       statusPanel = new JPanel();
@@ -86,6 +86,7 @@ public class StockChart extends JFrame
 
       gc = new GridBagConstraints();
       
+      //This needs to be changed to a getGameType() method
       modelChart = new game.StockChart("1830");
     }
    private void populateGridBag()
@@ -125,7 +126,7 @@ public class StockChart extends JFrame
       
       for(int x = 0; x < market.length; x++)
       {
-         for(int y = 0; y < market.length; y++)
+         for(int y = 0; y < market[0].length; y++)
          {
             JTextField foo;
             
