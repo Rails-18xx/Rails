@@ -18,6 +18,8 @@
 
 package ui;
 
+import game.Game;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -58,7 +60,7 @@ public class StockChart extends JFrame
    private GridLayout statusGrid;
    private FlowLayout flow;
    
-   private game.StockChart modelChart;
+   private game.StockMarketI modelChart;
    
    private void initialize()
    {
@@ -87,7 +89,7 @@ public class StockChart extends JFrame
       gc = new GridBagConstraints();
       
       //This needs to be changed to a getGameType() method
-      modelChart = new game.StockChart("1830");
+      modelChart = Game.getInstance("1830").getStockMarket();
     }
    private void populateGridBag()
    {
@@ -119,7 +121,7 @@ public class StockChart extends JFrame
    }
    private void populateStockPanel()
    {
-      game.StockPrice[][] market = modelChart.getStockChart();
+      game.StockSpace[][] market = modelChart.getStockChart();
 
       stockGrid.setColumns(market[0].length);
       stockGrid.setRows(market.length);
@@ -142,7 +144,7 @@ public class StockChart extends JFrame
             
             try
             {
-               setStockBGColor(market[x][y].getColour(), foo);
+               setStockBGColor(""+market[x][y].getColour(), foo);
             }
             catch (NullPointerException e)
             {
