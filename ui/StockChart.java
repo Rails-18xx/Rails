@@ -138,9 +138,42 @@ public class StockChart extends JFrame
                foo = new JTextField("Null");
             }
             
+            try
+            {
+               setStockBGColor(market[x][y].getColour(), foo);
+            }
+            catch (NullPointerException e)
+            {
+               foo.setBackground(Color.WHITE);
+            }
+            
             foo.setEditable(false);
             stockPanel.add(foo);
          }
+      }
+   }
+   private void setStockBGColor(String color, JTextField square)
+   {
+      if(color.equalsIgnoreCase("yellow"))
+      {
+         square.setBackground(Color.YELLOW);
+      }
+      else if (color.equalsIgnoreCase("orange"))
+      {
+         square.setBackground(Color.ORANGE);
+      }
+      else if (color.equalsIgnoreCase("brown"))
+      {
+         square.setBackground(Color.RED); 	//There is no Color.BROWN
+         									//Perhaps we'll define one later.
+      }
+      else if (color.equalsIgnoreCase("green"))
+      {
+         square.setBackground(Color.GREEN);
+      }
+      else
+      {
+         square.setBackground(Color.WHITE);
       }
    }
    public StockChart()
