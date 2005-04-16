@@ -7,6 +7,8 @@
   <CompanyType name="Public" class="game.PublicCompany">
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <PoolPaysOut/>
+    <Certificate type="President" share="20"/>
+    <Certificate share="10" number="8"/>
   </CompanyType>
   
   <Company name="SVNRR" type="Private" basePrice="20" revenue="5"/>
