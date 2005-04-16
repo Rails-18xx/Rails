@@ -35,6 +35,7 @@ public interface StockMarketI {
 	int getNumberOfRows();
 
 	List getStartSpaces();
+	public StockSpaceI getStartSpace (int price);
 	boolean isGameOver();
 
 }

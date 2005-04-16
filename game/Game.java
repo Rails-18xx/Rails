@@ -33,19 +33,30 @@ public class Game
 	 * @author Erik Vos
 	 */
 	protected static Game instance;
+	
 	/** The component Manager */
-	ComponentManager componentMan;
-	CompanyManagerI companyManager;
-	StockMarketI stockMarket;
+	protected ComponentManager componentMan;
+	protected CompanyManagerI companyManager;
+	protected StockMarketI stockMarket;
+	protected Bank bank;
+	
+	protected String name;
 	
 	/**
 	 * Protected constructor.
 	 * @param name Name of the game (e.g. "1830").
 	 */
-	protected Game (String name) {
+	public Game () {
+		
+	}
+	
+	public void initialise (String name) {
+		
+		this.name = name;
+		
+		bank = new Bank (); // The short way for now
 		
 		String file = "data/"+name+"/Game.xml";
-		
 		try{
 			Element elem = XmlUtils.findElementInFile(file, ComponentManager.ELEMENT_ID);
 			ComponentManager.configureInstance(name, elem);
@@ -57,7 +68,6 @@ public class Game
 			System.out.println ("Game setup from file " + file + " failed");
 			e.printStackTrace();
 		}
-		
 	}
 	
 	/**
@@ -65,16 +75,10 @@ public class Game
 	 * @param name Name of the game (e.g. "1830").
 	 * @return The instance.
 	 */
-	public static Game getInstance (String name) {
-		if (instance == null) instance = new Game (name);
-		return instance;
-	}
-	
-	/**
-	 * Public instancegetter.
-	 * @return The instance.
-	 */
 	public static Game getInstance () {
+		if (instance == null) {
+			instance = new Game ();
+		} 
 		return instance;
 	}
 	
@@ -99,6 +103,11 @@ public class Game
 	 */
 	public ComponentManager getComponentMan() {
 		return componentMan;
+	}
+	
+	/* Do the Bank properly later */
+	public Bank getBank() {
+		return bank;
 	}
 	
 	/* EV, 12mar2005:

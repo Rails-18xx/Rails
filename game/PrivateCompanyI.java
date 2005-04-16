@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PrivateCompanyI.java,v 1.1 2005/03/20 23:52:23 wakko666 Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PrivateCompanyI.java,v 1.2 2005/04/16 22:43:53 evos Exp $
  * 
  * Created on 19mar2005 by Erik Vos
  * Changes:
@@ -31,5 +31,15 @@ public interface PrivateCompanyI extends CompanyI {
 	 * @return
 	 */
 	public int getRevenue();
+
+	/**
+	 * @return
+	 */
+	public Portfolio getHolder();
+
+	public void setHolder(Portfolio portfolio);
+	
+	public void payOut ();
+
 
 }

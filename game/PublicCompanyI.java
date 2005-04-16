@@ -4,7 +4,7 @@
  */
 package game;
 
-import java.util.ArrayList;
+import java.util.*;
 
 
 
@@ -45,19 +45,9 @@ public interface PublicCompanyI extends CompanyI  {
 	public ArrayList getTrainsOwned();
 
 	/**
-	 * @return
-	 */
-	public int getTreasury();
-
-	/**
 	 * @param list
 	 */
 	public void setTrainsOwned(ArrayList list);
-
-	/**
-	 * @param i
-	 */
-	public void setTreasury (int i);
 
 	/**
 	 * @return
@@ -70,7 +60,7 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @param b
 	 */
-	public void setFloated(boolean b);
+	public void setFloated(int initialCash);
 
 
 	/**
@@ -86,5 +76,32 @@ public interface PublicCompanyI extends CompanyI  {
 	 */
 	public void setFgColour(String string);
 
+	/**
+	 * @return
+	 */
+	public List getCertificates();
+
+	/**
+	 * @param list
+	 */
+	public void setCertificates(List list);
+	
+	public void addCertificate (CertificateI certificate);
+	/**
+	 * @param spaceI
+	 */
+	public void setParPrice(StockSpaceI parPrice);
+	
+	public int getCash ();
+	
+	public int getLastRevenue();
+	
+	public Portfolio getPortfolio();
+	
+	public void payOut (int amount);
+	
+	public void withhold (int amount);
+
+	public boolean isSoldOut ();
 
 }

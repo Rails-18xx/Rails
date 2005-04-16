@@ -15,13 +15,14 @@ import util.XmlUtils;
 public class PrivateCompany extends Company implements PrivateCompanyI {
 	
 	protected static int numberOfPrivateCompanies = 0;
-	protected String name;
 	protected int privateNumber; // For internal use
 	
 	protected int basePrice = 0;
 	protected int revenue = 0;
 	protected String auctionType;
 	protected int closingPhase;
+	
+	protected Portfolio holder;
 	
 	protected boolean closed = false;
 
@@ -92,4 +93,50 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 		return revenue;
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isClosed() {
+		return closed;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getClosingPhase() {
+		return closingPhase;
+	}
+
+	/**
+	 * @return
+	 */
+	public Portfolio getHolder() {
+		return holder;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setClosed(boolean b) {
+		closed = b;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setClosingPhase(int i) {
+		closingPhase = i;
+	}
+
+	/**
+	 * @param portfolio
+	 */
+	public void setHolder(Portfolio portfolio) {
+		holder = portfolio;
+	}
+
+	public void payOut () {
+		Log.write(holder.getOwner().getName()+" receives "+revenue+" for "+name);
+		Bank.transferCash(null, holder.getOwner(), revenue);
+	}
 }

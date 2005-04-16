@@ -5,6 +5,8 @@
  */
 package game;
 
+import java.util.*;
+
 /**
  * @author Erik Vos
  */
@@ -14,6 +16,9 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 	protected String name;
 	protected CompanyTypeI type;
 	protected int companyNumber; // For internal use
+	
+	protected Portfolio portfolio = null;
+	
 	/**
 	 * The value per certificate at the end of the game.
 	 * Default 0 (for privates).
@@ -120,5 +125,13 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 	public void setValue(int i) {
 		value = i;
 	}
+
+	/**
+	 * @return
+	 */
+	public Portfolio getPortfolio() {
+		return portfolio;
+	}
+
 
 }

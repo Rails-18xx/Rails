@@ -18,36 +18,91 @@
 
 package game;
 
-public class Bank
-{
-   private int money;
+public class Bank implements CashHolder {
+	private int money;
 
-   private int gameType;
+	private int gameType;
 
-   Stock[] forSalePile;
+	private Portfolio ipo = null;
+	private Portfolio pool = null;
+	private static Bank instance = null;
+	
+	public static Bank getInstance () {
+		return instance;
+	}
+	
+	/**
+	 * Central method for transferring all cash.
+	 * @param from Who pays the money (null = Bank).
+	 * @param to Who received the money (null = Bank).
+	 * @param amount The amount of money.
+	 */
+	public static void transferCash (CashHolder from, CashHolder to, int amount) {
+		if (from == null) from = instance;
+		else if (to == null) to = instance;
+		from.addCash(-amount);
+		to.addCash(amount);
+	}
 
-   public Bank()
-   {
-      this(0, 0);
-   }
+	public Bank() {
+		this(0, 0);
+	}
 
-   public Bank(int numPlayers)
-   {
-      this(numPlayers, 0);
-   }
+	public Bank(int numPlayers) {
+		this(numPlayers, 0);
+	}
 
-   public Bank(int numPlayers, int gameType)
-   {
-      switch (numPlayers)
-      {
-         case 2:
-         case 3:
-         case 4:
-         case 5:
-         case 6:
-         default:
-            money = 25000;
-            break;
-      }
-   }
+	public Bank(int numPlayers, int gameType) {
+		
+		instance = this;
+		// Create the IPO and the Bank Pool. 
+		// Here the Pool pays out, but that should be made configurable.
+		ipo = new Portfolio ("IPO", this, false);
+		pool = new Portfolio ("Pool", this, true);
+
+		money = 12000; // To be made configurable
+	}
+	/**
+	 * @return
+	 */
+	public int getGameType() {
+		return gameType;
+	}
+
+	/**
+	 * @return
+	 */
+	public Portfolio getIpo() {
+		return ipo;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getCash() {
+		return money;
+	}
+	
+	public void addCash (int amount) {
+		this.money += amount;
+	}
+
+	/**
+	 * @return
+	 */
+	public Portfolio getPool() {
+		return pool;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setCash(int i) {
+		money = i;
+	}
+	
+	public String getName() {
+		return "Bank";
+	}
+
 }

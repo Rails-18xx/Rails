@@ -18,107 +18,108 @@
 
 package game;
 
-import java.util.ArrayList;
+import java.util.*;
 
-public class Player
-{
-   String name;
+public final class Player implements CashHolder {
+	
+	static ArrayList players = new ArrayList();
+	
+	String name;
 
-   int wallet;
+	int wallet = 0;
 
-   boolean hasPriority;
+	boolean hasPriority;
 
-   ArrayList portfolio;
+	/*ArrayList portfolio;*/
 
-   ArrayList littleCoOwned;
+	/*ArrayList littleCoOwned;*/
+	Portfolio portfolio = null;
 
-   ArrayList companiesSoldThisTurn;
+	ArrayList companiesSoldThisTurn;
+	
+	public static void addPlayer (String name) {
+		players.add(new Player(name));
+		Log.write ("Player "+players.size()+" is "+name);
+	}
+	
+	public static List getPlayers() {
+		return players;
+	}
+	
+	public static int numberOfPlayers() {
+		return players.size();
+	}
+	
+	public static Player getPlayer(int index) {
+		return (Player) players.get(index);
+	}
 
-   public void buyShare(Stock share)
-   {
-      //if we haven't already bought a share since our last turn
-      //if we haven't sold a share of this company's stock during this stock
-      // round
-      //then remove share from particular pile
-      //add share to player's portfolio
-      //deduct cost of share from wallet
-      //add cost of share to bank
-      //update player who will have priority
-      //set flag that we've bought a share and can't buy again until player's
-      // next turn
-   }
+	public Player(String name) {
+		this.name = name;
+		portfolio = new Portfolio(name, this);
 
-   public void sellShare(Stock share)
-   {
-      //remove share from player's portfolio
-      //add share to bank's pile
-      //get current value of share
-      //deduct current value of share from bank
-      //add current value of share to player's wallet
-      //if company's chit is not on a ledge
-      //move the company's chit down one square on the stock chart
-   }
+	}
 
-   /**
-    * @return Returns the hasPriority.
-    */
-   public boolean hasPriority()
-   {
-      return hasPriority;
-   }
+	public void buyShare(Stock share) {
+		//if we haven't already bought a share since our last turn
+		//if we haven't sold a share of this company's stock during this stock
+		// round
+		//then remove share from particular pile
+		//add share to player's portfolio
+		//deduct cost of share from wallet
+		//add cost of share to bank
+		//update player who will have priority
+		//set flag that we've bought a share and can't buy again until player's
+		// next turn
+	}
 
-   /**
-    * @param hasPriority
-    *           The hasPriority to set.
-    */
-   public void setHasPriority(boolean hasPriority)
-   {
-      this.hasPriority = hasPriority;
-   }
+	public void sellShare(Stock share) {
+		//remove share from player's portfolio
+		//add share to bank's pile
+		//get current value of share
+		//deduct current value of share from bank
+		//add current value of share to player's wallet
+		//if company's chit is not on a ledge
+		//move the company's chit down one square on the stock chart
+	}
 
-   /**
-    * @return Returns the portfolio.
-    */
-   public ArrayList getPortfolio()
-   {
-      return portfolio;
-   }
+	/**
+	 * @return Returns the hasPriority.
+	 */
+	public boolean hasPriority() {
+		return hasPriority;
+	}
 
-   /**
-    * @return Returns the name.
-    */
-   public String getName()
-   {
-      return name;
-   }
+	/**
+	 * @param hasPriority
+	 *           The hasPriority to set.
+	 */
+	public void setHasPriority(boolean hasPriority) {
+		this.hasPriority = hasPriority;
+	}
 
-   /**
-    * @return Returns the wallet.
-    */
-   public int getWallet()
-   {
-      return wallet;
-   }
+	/**
+	 * @return Returns the portfolio.
+	 */
+	public Portfolio getPortfolio() {
+		return portfolio;
+	}
 
-   public Player()
-   {
-      this("Default Player Name");
-   }
+	/**
+	 * @return Returns the name.
+	 */
+	public String getName() {
+		return name;
+	}
 
-   public Player(String n)
-   {
-      name = n;
+	/**
+	 * @return Returns the wallet.
+	 */
+	public int getCash() {
+		return wallet;
+	}
 
-      switch (Game.getNumPlayers())
-      {
-         case 3:
-         case 4:
-         case 5:
-         case 6:
-         default:
-            wallet = 0;
-      }
-
-      portfolio = new ArrayList(Game.getMaxNumShares());
-   }
+	public void addCash(int amount) {
+		wallet += amount;
+	}
 }
