@@ -1,10 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.1 2005/03/20 23:52:23 wakko666 Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.2 2005/04/16 22:43:53 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
  * 
  */
 package game;
+
+import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -63,4 +65,9 @@ public interface CompanyTypeI {
 
 	public void releaseDomElement ();
 	public Element getDomElement ();
+	
+	public void addCertificate (CertificateI certificate);
+	
+	public List getDefaultCertificates ();
+
 }

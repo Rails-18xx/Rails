@@ -1,9 +1,11 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.1 2005/03/20 23:52:23 wakko666 Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.2 2005/04/16 22:43:53 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
 package game;
+
+import java.util.*;
 
 import org.w3c.dom.Element;
 
@@ -24,6 +26,7 @@ public class CompanyType implements CompanyTypeI {
 	protected Element domElement;
 	protected String auctionType;
 	protected int allClosePhase;
+	protected ArrayList defaultCertificates;
 	
 	public CompanyType (String name, String className, Element element) {
 		this.name = name;
@@ -84,4 +87,12 @@ public class CompanyType implements CompanyTypeI {
 		return domElement;
 	}
 
+	public void addCertificate (CertificateI certificate) {
+		if (defaultCertificates == null) defaultCertificates = new ArrayList();
+		defaultCertificates.add (certificate);
+	}
+	
+	public List getDefaultCertificates () {
+		return defaultCertificates;
+	}
 }

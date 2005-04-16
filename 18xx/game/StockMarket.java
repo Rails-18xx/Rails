@@ -244,7 +244,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		if (newsquare != null && newsquare.closesCompany()) {
 			company.setClosed(true);
 			oldsquare.removeToken(company);
-			System.out.println(company.getName() + " closes at " + newsquare.getName());
+			Log.write(company.getName() + " closes at " + newsquare.getName());
 		} else {
 			processMove(company, oldsquare, newsquare);
 		}
@@ -275,7 +275,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		if (newsquare != null && newsquare.closesCompany()) {
 			company.setClosed(true);
 			oldsquare.removeToken(company);
-			System.out.println(company.getName() + " closes at " + newsquare.getName());
+			Log.write(company.getName() + " closes at " + newsquare.getName());
 		} else {
 			processMove(company, oldsquare, newsquare);
 		}
@@ -284,17 +284,17 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 	protected void processMove(PublicCompanyI company, StockSpaceI from, StockSpaceI to) {
 		// To be written to a log file in the future.
 		if (to == null || from == to) {
-			System.out.println(company.getName() + " stays at " + from.getName());
+			Log.write(company.getName() + " stays at " + from.getName());
 		} else {
 			from.removeToken(company);
 			to.addToken(company);
 			company.setCurrentPrice(to);
-			System.out.println(
+			Log.write(
 				company.getName() + " moved from " + from.getName() + " to " + to.getName());
 
 			/* Check for game closure */
 			if (to.endsGame()) {
-				System.out.println("Game over!");
+				Log.write("Game over!");
 				gameOver = true;
 			}
 
@@ -306,6 +306,16 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		*/
 	public List getStartSpaces() {
 		return startSpaces;
+	}
+	
+	public StockSpaceI getStartSpace (int price) {
+		Iterator it = startSpaces.iterator();
+		StockSpaceI square;
+		while (it.hasNext()) {
+			square = ((StockSpaceI)it.next());
+			if (square.getPrice() == price) return square; 
+		}
+		return null;
 	}
 
 	/**
