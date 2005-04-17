@@ -89,7 +89,9 @@ public class StockChart extends JFrame
       gc = new GridBagConstraints();
       
       //This needs to be changed to a getGameType() method
-      modelChart = Game.getInstance("1830").getStockMarket();
+	  Game game = Game.getInstance();
+	  game.initialise ("1830");
+		modelChart = game.getStockMarket();
     }
    private void populateGridBag()
    {
