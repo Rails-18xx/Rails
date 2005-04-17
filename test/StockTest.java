@@ -29,7 +29,8 @@ public class StockTest
    public static void StockChartTest()
    {
       int row, col, price;
-	  Game game = Game.getInstance("1830");
+	  Game game = Game.getInstance();
+	  game.initialise ("1830");
 	  StockMarketI chart = game.getStockMarket();
       StockSpaceI square;
 
