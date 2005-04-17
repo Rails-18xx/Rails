@@ -49,6 +49,20 @@ public final class XmlUtils {
         return nameAttr.getNodeValue();        
     }
 
+	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName) 
+		throws ConfigurationException {
+		Node nameAttr = nnp.getNamedItem(attrName);
+		if (nameAttr == null){
+				return -1;
+		}
+		String value = nameAttr.getNodeValue();
+		try {
+			return Integer.parseInt (value);
+		} catch (Exception e) {
+			throw new ConfigurationException ("Invalid share value: "+value, e);
+		}
+	}
+
     /**
      * Opens and parses an xml file. Searches the root level of the file for an element
      * with the supplied name.
