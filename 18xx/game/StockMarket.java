@@ -58,18 +58,18 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 	public void configureFromXML(Element topElement) throws ConfigurationException {
 
 		/* Read and configure the stock market space types */
-		NodeList types = topElement.getElementsByTagName(StockSpaceType.ELEMENT_ID);
+		NodeList types = topElement.getElementsByTagName(StockSpaceTypeI.ELEMENT_ID);
 		NodeList typeFlags;
 		for (int i = 0; i < types.getLength(); i++) {
 			Element typeElement = (Element) types.item(i);
 			NamedNodeMap nnp = typeElement.getAttributes();
 			
 			/* Extract the attributes of the Stock space type */
-			String name = XmlUtils.extractStringAttribute(nnp, StockSpaceType.NAME_TAG);
+			String name = XmlUtils.extractStringAttribute(nnp, StockSpaceTypeI.NAME_TAG);
 			if (name == null) {
 				throw new ConfigurationException("Unnamed stock space type found.");
 			}
-			String colour = XmlUtils.extractStringAttribute(nnp, StockSpaceType.COLOUR_TAG);
+			String colour = XmlUtils.extractStringAttribute(nnp, StockSpaceTypeI.COLOUR_TAG);
 			
 			/* Check for duplicates */
 			if (stockSpaceTypes.get(name) != null) {
@@ -89,20 +89,20 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 				if (flagName == null)
 					continue;
 
-				if (flagName.equalsIgnoreCase(StockSpaceType.NO_BUY_LIMIT_TAG)) {
+				if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_BUY_LIMIT_TAG)) {
 					type.setNoBuyLimit(true);
-				} else if (flagName.equalsIgnoreCase(StockSpaceType.NO_CERT_LIMIT_TAG)) {
+				} else if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_CERT_LIMIT_TAG)) {
 					type.setNoCertLimit(true);
-				} else if (flagName.equalsIgnoreCase(StockSpaceType.NO_HOLD_LIMIT_TAG)) {
+				} else if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_HOLD_LIMIT_TAG)) {
 					type.setNoHoldLimit(true);
 				}
 			}
 		}
 		
 		/* Read and configure the stock market spaces */
-		NodeList spaces = topElement.getElementsByTagName(StockSpace.ELEMENT_ID);
+		NodeList spaces = topElement.getElementsByTagName(StockSpaceI.ELEMENT_ID);
 		NodeList spaceFlags;
-		StockSpaceType type;
+		StockSpaceTypeI type;
 		int row, col;
 		for (int i = 0; i < spaces.getLength(); i++) {
 			Element spaceElement = (Element) spaces.item(i);
@@ -110,16 +110,16 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 			type = null;
 
 			//Extract the attributes of the Stock space
-			String name = XmlUtils.extractStringAttribute(nnp, StockSpace.NAME_TAG);
+			String name = XmlUtils.extractStringAttribute(nnp, StockSpaceI.NAME_TAG);
 			if (name == null) {
 				throw new ConfigurationException("Unnamed stock space found.");
 			}
-			String price = XmlUtils.extractStringAttribute(nnp, StockSpace.PRICE_TAG);
+			String price = XmlUtils.extractStringAttribute(nnp, StockSpaceI.PRICE_TAG);
 			if (price == null) {
 				throw new ConfigurationException("Stock space " + name + " has no price defined.");
 			}
-			String typeName = XmlUtils.extractStringAttribute(nnp, StockSpace.TYPE_TAG);
-			if (typeName != null && (type = (StockSpaceType) stockSpaceTypes.get(typeName)) == null) {
+			String typeName = XmlUtils.extractStringAttribute(nnp, StockSpaceI.TYPE_TAG);
+			if (typeName != null && (type = (StockSpaceTypeI)stockSpaceTypes.get(typeName)) == null) {
 				throw new ConfigurationException("Stock space type " + type + " is undefined.");
 			}
 
@@ -127,7 +127,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 				throw new ConfigurationException("Stock space " + name + " configured twice");
 			}
 
-			StockSpace space = new StockSpace(name, Integer.parseInt(price), type);
+			StockSpaceI space = new StockSpace(name, Integer.parseInt(price), type);
 			stockChartSpaces.put(name, space);
 
 			row = Integer.parseInt(name.substring(1));
@@ -193,22 +193,22 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
 	/*--- Actions ---*/
 
-	public void payOut(PublicCompany company) {
+	public void payOut(PublicCompanyI company) {
 		moveRightOrUp(company);
 	}
-	public void withhold(PublicCompany company) {
+	public void withhold(PublicCompanyI company) {
 		moveLeftOrDown(company);
 	}
-	public void sell(PublicCompany company, int numberOfSpaces) {
+	public void sell(PublicCompanyI company, int numberOfSpaces) {
 		moveDown(company, numberOfSpaces);
 	}
-	public void soldOut(PublicCompany company) {
+	public void soldOut(PublicCompanyI company) {
 		moveUp(company);
 	}
 
-	protected void moveUp(PublicCompany company) {
-		StockSpace oldsquare = company.getCurrentPrice();
-		StockSpace newsquare = null;
+	protected void moveUp(PublicCompanyI company) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (row > 0) {
@@ -219,9 +219,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		processMove(company, oldsquare, newsquare);
 	}
 
-	protected void moveDown(PublicCompany company, int numberOfSpaces) {
-		StockSpace oldsquare = company.getCurrentPrice();
-		StockSpace newsquare = null;
+	protected void moveDown(PublicCompanyI company, int numberOfSpaces) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 
@@ -250,10 +250,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		}
 	}
 
-	protected void moveRightOrUp(PublicCompany company) {
+	protected void moveRightOrUp(PublicCompanyI company) {
 		/* Ignore the amount for now */
-		StockSpace oldsquare = company.getCurrentPrice();
-		StockSpace newsquare = null;
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (col < numCols - 1
@@ -264,9 +264,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		processMove(company, oldsquare, newsquare);
 	}
 
-	protected void moveLeftOrDown(PublicCompany company) {
-		StockSpace oldsquare = company.getCurrentPrice();
-		StockSpace newsquare = null;
+	protected void moveLeftOrDown(PublicCompanyI company) {
+		StockSpaceI oldsquare = company.getCurrentPrice();
+		StockSpaceI newsquare = null;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {
@@ -281,7 +281,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 		}
 	}
 
-	protected void processMove(PublicCompany company, StockSpace from, StockSpace to) {
+	protected void processMove(PublicCompanyI company, StockSpaceI from, StockSpaceI to) {
 		// To be written to a log file in the future.
 		if (to == null || from == to) {
 			Log.write(company.getName() + " stays at " + from.getName());

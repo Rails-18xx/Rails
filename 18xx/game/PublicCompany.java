@@ -22,8 +22,8 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 	protected String bgColour;
 	protected int publicNumber; // For internal use
 
-	protected StockSpace parPrice = null;
-	protected StockSpace currentPrice = null;
+	protected StockSpaceI parPrice = null;
+	protected StockSpaceI currentPrice = null;
 
 	protected int treasury = 0;
 	protected int lastRevenue = 0;
@@ -45,7 +45,7 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 		this.publicNumber = numberOfPublicCompanies++;
 	}
 
-	public void init (String name, CompanyType type) {
+	public void init (String name, CompanyTypeI type) {
 		super.init (name, type);
 		this.portfolio = new Portfolio (name, this);
 	}
@@ -95,7 +95,7 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 		type.releaseDomElement();
 	}
 
-	public void start(StockSpace startPrice) {
+	public void start(StockSpaceI startPrice) {
 		parPrice = currentPrice = startPrice;
 		hasFloated = true;
 		parPrice.addToken(this);
@@ -139,7 +139,7 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 	/**
 	 * @return
 	 */
-	public StockSpace getParPrice() {
+	public StockSpaceI getParPrice() {
 		return parPrice;
 	}
 
@@ -171,14 +171,14 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 	/**
 	 * @return
 	 */
-	public StockSpace getCurrentPrice() {
+	public StockSpaceI getCurrentPrice() {
 		return currentPrice;
 	}
 
 	/**
 	 * @param price
 	 */
-	public void setCurrentPrice(StockSpace price) {
+	public void setCurrentPrice(StockSpaceI price) {
 		currentPrice = price;
 	}
 
@@ -247,7 +247,7 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 		}
 	}
 	
-	public void addCertificate (Certificate certificate) {
+	public void addCertificate (CertificateI certificate) {
 		if (certificates == null) certificates = new ArrayList();
 		certificates.add (certificate);
 		certificate.setCompany(this);
@@ -256,7 +256,7 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 	/**
 	 * @param spaceI
 	 */
-	public void setParPrice(StockSpace space) {
+	public void setParPrice(StockSpaceI space) {
 		parPrice = currentPrice = space;
 		space.addToken(this);
 	}
@@ -288,12 +288,12 @@ public class PublicCompany extends Company implements PublicCompanyI, CashHolder
 		setLastRevenue(amount);
 		
 		Iterator it = certificates.iterator();
-		Certificate cert;
+		CertificateI cert;
 		int part;
 		CashHolder recipient;
 		Map split = new HashMap();
 		while (it.hasNext()) {
-			cert = ((Certificate)it.next());
+			cert = ((CertificateI)it.next());
 			recipient = cert.getPortfolio().getBeneficiary(this);
 			part = amount * cert.getShare() / 100;
 			// For reporting, we want to add up the amounts per recipient

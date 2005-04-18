@@ -39,11 +39,6 @@ public interface StockSpaceI {
 
 	/** The name of the XML tag for the "gamn over" property. */
 	public static final String GAME_OVER_TAG = "GameOver";
-	
-	// For easy determining whether a space has tokens or not
-	// without needing to check the arraylist and risk null pointers.
-	public abstract boolean hasTokens();
-	public abstract void setHasTokens(boolean b);
 
 	// No constructors (yet) for the booleans, which are rarely needed. Use the setters.
 	public abstract boolean isBelowLedge();
@@ -78,7 +73,7 @@ public interface StockSpaceI {
 	/**
 	 * @return
 	 */
-	public abstract StockSpaceType getType();
+	public abstract StockSpaceTypeI getType();
 	
 	/**
 	 * @param b
@@ -103,13 +98,13 @@ public interface StockSpaceI {
 	 * Add a token at the end of the array (i.e. at the bottom of the pile)
 	 * @param company The company object to add.
 	 */
-	public abstract void addToken(Company company);
+	public abstract void addToken(CompanyI company);
 	/**
 	 * Remove a token from the pile.
 	 * @param company The company object to remove.
 	 * @return False if the token was not found.
 	 */
-	public abstract boolean removeToken(Company company);
+	public abstract boolean removeToken(CompanyI company);
 	/**
 	 * @return
 	 */

@@ -6,12 +6,14 @@ package game;
 
 import java.util.*;
 
+
+
 /**
  * @author Erik Vos
  */
 public interface PublicCompanyI extends CompanyI  {
 	
-	public void start (StockSpace startPrice);
+	public void start (StockSpaceI startPrice);
 
 	/**
 	 * @return
@@ -36,7 +38,7 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @return
 	 */
-	public StockSpace getParPrice();
+	public StockSpaceI getParPrice();
 	/**
 	 * @return
 	 */
@@ -50,11 +52,11 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @return
 	 */
-	public StockSpace getCurrentPrice();
+	public StockSpaceI getCurrentPrice();
 	/**
 	 * @param price
 	 */
-	public void setCurrentPrice(StockSpace price);
+	public void setCurrentPrice(StockSpaceI price);
 	/**
 	 * @param b
 	 */
@@ -84,11 +86,11 @@ public interface PublicCompanyI extends CompanyI  {
 	 */
 	public void setCertificates(List list);
 	
-	public void addCertificate (Certificate certificate);
+	public void addCertificate (CertificateI certificate);
 	/**
 	 * @param spaceI
 	 */
-	public void setParPrice(StockSpace parPrice);
+	public void setParPrice(StockSpaceI parPrice);
 	
 	public int getCash ();
 	
