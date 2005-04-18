@@ -5,6 +5,8 @@
  */
 package game;
 
+import java.util.*;
+
 /**
  * @author Erik Vos
  */
@@ -12,7 +14,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 	
 	protected static int numberOfCompanies = 0;
 	protected String name;
-	protected CompanyType type;
+	protected CompanyTypeI type;
 	protected int companyNumber; // For internal use
 	
 	protected Portfolio portfolio = null;
@@ -34,7 +36,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 		this.companyNumber = numberOfCompanies++;
 	}
 	
-	public void init (String name, CompanyType type) {
+	public void init (String name, CompanyTypeI type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -70,7 +72,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 	/**
 	 * @return
 	 */
-	public CompanyType getType() {
+	public CompanyTypeI getType() {
 		return type;
 	}
 

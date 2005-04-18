@@ -23,14 +23,14 @@ public interface CompanyManagerI {
      * @param name the name of the company sought
      * @return the Private Company with the supplied name
      */
-	PrivateCompany getPrivateCompany(String name);
+	PrivateCompanyI getPrivateCompany(String name);
 
 	/**
 	  * Returns the Public Company identified by the supplied name.
 	  * @param name the name of the company sought
 	  * @return the Public Company with the supplied name
 	  */
-	PublicCompany getPublicCompany(String name);
+	PublicCompanyI getPublicCompany(String name);
 
     /**
      * Gives a list of Strings, the names of all registered Private Companies.
