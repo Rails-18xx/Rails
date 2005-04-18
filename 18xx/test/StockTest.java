@@ -19,9 +19,8 @@
 package test;
 
 import java.util.List;
-import ui.StockChart;
+import ui.*;
 import game.*;
-//import util.XmlUtils;
 
 public class StockTest
 {
@@ -29,8 +28,7 @@ public class StockTest
    public static void StockChartTest()
    {
       int row, col, price;
-	  Game game = Game.getInstance();
-	  game.initialise ("1830");
+	  Game game = new Game("1830");
 	  StockMarketI chart = game.getStockMarket();
       StockSpaceI square;
 
@@ -88,7 +86,11 @@ public class StockTest
    
    public static void StockUITest()
    {
-      StockChart sc = new ui.StockChart();
+      Game game = Game.getInstance();
+      game.initialise("1830");
+      
+      StockMarket sm = (StockMarket) game.getStockMarket();
+      StockChart sc = new ui.StockChart(sm);
    }
 
    public static void main(String[] args)

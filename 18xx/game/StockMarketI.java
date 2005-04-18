@@ -26,10 +26,10 @@ public interface StockMarketI {
 	StockSpace[][] getStockChart();
 	StockSpace getStockSpace (int row, int col);
 	
-	void payOut (PublicCompanyI company);
-	void withhold (PublicCompanyI company);
-	void sell (PublicCompanyI company, int numberOfShares);
-	void soldOut (PublicCompanyI company);
+	void payOut (PublicCompany company);
+	void withhold (PublicCompany company);
+	void sell (PublicCompany company, int numberOfShares);
+	void soldOut (PublicCompany company);
 	
 	int getNumberOfColumns();
 	int getNumberOfRows();

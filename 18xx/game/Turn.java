@@ -43,6 +43,6 @@ public class Turn extends Game
    public Turn(int turnNo)
    {
       turnNumber = turnNo;
-      operatingRoundsPerStockRound = super.getFastestAvailableTrain();
+      //operatingRoundsPerStockRound = super.getFastestAvailableTrain();
    }
 }
