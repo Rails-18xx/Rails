@@ -18,67 +18,61 @@
 
 package ui;
 
-import game.Game;
+import game.*;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import java.util.*;
 
 /*
  * The layout idea is this:
  * 
  * JFrame (GridBag)
- *    |
- * 	  ---> StockMarket JPanel (Grid)
- * 		---> Shows the stockmarket chart
- * 		---> Shows chits for every company
- * 	  |
- *	  ---> Status JPanel (Grid)
- *		---> Shows at-a-glance information about each player's holdings.
- *		---> Shows at-a-glance information about each company's performance.
- *	  |
- *	  ---> Button JPanel (Flow)
- *		---> Buy Button
- *		---> Sell Button
- * 
+ *  | ---> StockMarket JPanel (Grid) 
+ * 			---> Shows the stockmarket chart 
+ * 			---> Shows chits for every company 
+ *  | ---> Status JPanel (Grid) 
+ * 			---> Shows at-a-glance information about each player's holdings. 
+ * 			---> Shows at-a-glance information about each company's performance. 
+ *  | ---> Button JPanel (Flow)
+ * 			 ---> Buy Button 
+ * 			 ---> Sell Button
+ *  
  */
 
 public class StockChart extends JFrame
 {
    private Border lineBorder;
    private JTextField text;
-   
    private JPanel stockPanel;
    private JPanel statusPanel;
    private JPanel buttonPanel;
-   
    private JButton buyButton;
    private JButton sellButton;
-   
    private GridBagConstraints gc;
    private GridLayout stockGrid;
    private GridLayout statusGrid;
    private FlowLayout flow;
-   
-   private game.StockMarketI modelChart;
-   
+   private StockMarket stockMarket;
+
    private void initialize()
    {
       this.setSize(10, 10);
       this.setTitle("Stock Chart");
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
-      
+
       text = new JTextField("This space reserved for game status info.");
-      
+
       stockPanel = new JPanel();
       statusPanel = new JPanel();
       buttonPanel = new JPanel();
-      
+
       stockGrid = new GridLayout();
       statusGrid = new GridLayout();
       flow = new FlowLayout();
-      
+
       stockPanel.setLayout(stockGrid);
       statusPanel.setLayout(statusGrid);
       buttonPanel.setLayout(flow);
@@ -87,12 +81,9 @@ public class StockChart extends JFrame
       sellButton = new JButton("sell");
 
       gc = new GridBagConstraints();
-      
-      //This needs to be changed to a getGameType() method
-	  Game game = Game.getInstance();
-	  game.initialise ("1830");
-		modelChart = game.getStockMarket();
-    }
+
+   }
+
    private void populateGridBag()
    {
       gc.gridx = 0;
@@ -121,18 +112,20 @@ public class StockChart extends JFrame
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPanel, gc);
    }
+
    private void populateStockPanel()
    {
-      game.StockSpace[][] market = modelChart.getStockChart();
+      StockSpace[][] market = stockMarket.getStockChart();
 
       stockGrid.setColumns(market[0].length);
       stockGrid.setRows(market.length);
-      
-      for(int x = 0; x < market.length; x++)
+
+      for (int x = 0; x < market.length; x++)
       {
-         for(int y = 0; y < market[0].length; y++)
+         for (int y = 0; y < market[0].length; y++)
          {
             JTextField foo;
+            StockChit token;
             
             try
             {
@@ -143,64 +136,101 @@ public class StockChart extends JFrame
                foo = new JTextField("");
                foo.setBorder(null);
             }
-            
+
             try
             {
-               setStockBGColor(""+market[x][y].getColour(), foo);
+               foo.setBackground(stringToColor(market[x][y].getColour()));
             }
             catch (NullPointerException e)
             {
                foo.setBackground(Color.WHITE);
             }
+
+            try
+            {
+               if (market[x][y].isStart())
+               {
+                  foo.setBorder(BorderFactory.createLineBorder(Color.red));
+               }
+            }
+            catch (NullPointerException e)
+            {
+            }
             
-			try
-			{
-			    if (market[x][y].isStart()) {
-			   		foo.setBorder(BorderFactory.createLineBorder(Color.red));
-			   	} 
-			}
-			catch (NullPointerException e)
-			{
-			}
-            
+            try
+            {
+               if (market[x][y].hasTokens())
+               {
+                  ArrayList tokenList = market[x][y].getTokens();
+                  
+                  for(int i=0;i<tokenList.size();i++)
+                  {
+                     PublicCompany co = (PublicCompany) tokenList.get(i);
+                     String bgColour = co.getBgColour();
+                     String fgColour = co.getFgColour();
+
+                     token = new StockChit(stringToColor(fgColour), stringToColor(bgColour));                     
+                  }
+               }
+            }
+            catch (NullPointerException e)
+            {
+            }
+
             foo.setEditable(false);
             stockPanel.add(foo);
          }
       }
    }
-   private void setStockBGColor(String color, JTextField square)
+
+   private Color stringToColor(String color)
    {
-      if(color.equalsIgnoreCase("yellow"))
+      if (color.equalsIgnoreCase("yellow"))
       {
-         square.setBackground(Color.YELLOW);
+         return Color.YELLOW;
       }
       else if (color.equalsIgnoreCase("orange"))
       {
-         square.setBackground(Color.ORANGE);
+         return Color.ORANGE;
       }
       else if (color.equalsIgnoreCase("brown"))
       {
-         square.setBackground(Color.RED); 	//There is no Color.BROWN
-         									//Perhaps we'll define one later.
+         return Color.RED;
+         //There is no Color.BROWN
+         //Perhaps we'll define one later.
       }
       else if (color.equalsIgnoreCase("green"))
       {
-         square.setBackground(Color.GREEN);
+         return Color.GREEN;
       }
-      
-      /* There is no final else because the condition 
-       * covered by the final else results in a    
-       * null pointer exception. 
-       */
+      else if (color.equalsIgnoreCase("blue"))
+      {
+         return Color.BLUE;
+      }
+      else if (color.equalsIgnoreCase("black"))
+      {
+         return Color.BLACK;
+      }
+      else if (color.equalsIgnoreCase("white"))
+      {
+         return Color.WHITE;
+      }
+      else
+      {
+         return Color.WHITE;
+      }
    }
-   public StockChart()
+
+   public StockChart(StockMarket sm)
    {
       super();
+
+      stockMarket = sm;
       initialize();
       populateGridBag();
       populateStockPanel();
-      
-      lineBorder = BorderFactory.createLineBorder(Color.black);     
+
+      lineBorder = BorderFactory.createLineBorder(Color.black);
       text.setBorder(lineBorder);
       text.setEditable(false);
       text.setBackground(Color.LIGHT_GRAY);
@@ -208,8 +238,8 @@ public class StockChart extends JFrame
       stockPanel.setBackground(Color.LIGHT_GRAY);
       statusPanel.setBackground(Color.BLACK);
       buttonPanel.setBackground(Color.LIGHT_GRAY);
-    
-      statusPanel.add(text);      
+
+      statusPanel.add(text);
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
 

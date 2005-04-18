@@ -24,11 +24,9 @@ import javax.swing.*;
 
 public class StockChit extends JPanel
 {
-   private int locValue;
-
-   private Color locColor;
-
-   private Rectangle2D.Double square = new Rectangle2D.Double(0, 0, 100, 100);
+   private Color fgColor, bgColor;
+   private double x, y, diameter;
+   private Ellipse2D.Double circle;
 
    private Font font;
 
@@ -37,12 +35,12 @@ public class StockChit extends JPanel
       clear(g);
       Graphics2D g2d = (Graphics2D) g;
 
-      this.setForeground(locColor);
+      this.setForeground(fgColor);
+      this.setBackground(bgColor);
 
-      g2d.fill(square);
-      g2d.draw(square);
-      g2d.setFont(font);
-      g2d.drawString(Integer.toString(locValue), 0, 0);
+      g2d.fill(circle);
+      g2d.draw(circle);
+      this.setVisible(true);
    }
 
    protected void clear(Graphics g)
@@ -52,23 +50,27 @@ public class StockChit extends JPanel
 
    public StockChit()
    {
-      this(0, Color.WHITE);
+      this(Color.BLACK, Color.WHITE, 1, 1, 15);
    }
 
-   public StockChit(int value)
+   public StockChit(Color fc, Color bc)
    {
-      this(value, Color.WHITE);
+      this(fc, bc, 1, 1, 15);
    }
-
-   public StockChit(Color color)
+   
+   public StockChit(double xx, double yy)
    {
-      this(0, color);
+      this(Color.BLACK, Color.WHITE, xx, yy, 15);
    }
-
-   public StockChit(int value, Color color)
+   
+   public StockChit(Color fc, Color bc, double xx, double yy, double dia)
    {
-      locValue = value;
-      locColor = color;
+      x = xx;
+      y = yy;
+      diameter = dia;
+      fgColor = fc;
+      bgColor = bc;
+      circle = new Ellipse2D.Double(x, y, diameter, diameter);
    }
-
+   
 }

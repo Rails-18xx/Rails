@@ -40,6 +40,6 @@ public class BigCompany
       treasury = 10 * strikePrice;
       hasFloated = false;
       canBuyStock = cbs;
-      trainsOwned = new Train[Game.getMaxNumTrains()];
+//      trainsOwned = new Train[Game.getMaxNumTrains()];
    }
 }

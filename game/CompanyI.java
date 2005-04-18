@@ -21,7 +21,7 @@ public interface CompanyI {
     /** The name of the XML attribute for the company's type. */
     public static final String COMPANY_TYPE_TAG = "type";
 
-	void init (String name, CompanyTypeI type);
+	void init (String name, CompanyType type);
 
     /**
      * Returns the name of the Company
@@ -33,7 +33,7 @@ public interface CompanyI {
      * Returns the CompanyType of the Company
      * @return the type of the Company
      */
-    CompanyTypeI getType();
+    CompanyType getType();
     
 
 	/**

@@ -30,10 +30,15 @@ public class SimpleCompany implements CompanyI {
         return mName;
     }
 
+    public CompanyType getType()
+    {
+       return coType;
+    }
+    
     /**
      * @see game.CompanyI#getType()
      */
-    public String getType() {
+    public String getTypeName() {
         return mType;
     }
 
@@ -43,7 +48,53 @@ public class SimpleCompany implements CompanyI {
     public String toString(){
         return "Company called " + mName + ", of type " + mType;
     }
+    
+    public int getValue()
+    {
+       return value;
+    }
+    
+    public void setValue(int v)
+    {
+       value = v;
+    }
+    
+    public void setCertLimitCount(int c)
+    {
+       certLimitCount = c;
+    }
+    
+    public int getCertLimitCount()
+    {
+       return certLimitCount;
+    }
+    
+    public boolean isClosed()
+    {
+       return isClosed;
+    }
+    
+    public void setClosed(boolean c)
+    {
+       isClosed = c;
+    }
+    
+    public int getCompanyNumber()
+    {
+       return companyNumber;
+    }
+    
+    public void init(String n, CompanyType t)
+    {
+       mName = n;
+       coType = t;
+    }
 
     private String mName;
     private String mType;
+    private CompanyType coType;
+    private int value;
+    private int certLimitCount;
+    private int companyNumber;
+    private boolean isClosed;
 }
