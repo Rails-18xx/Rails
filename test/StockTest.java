@@ -28,7 +28,8 @@ public class StockTest
    public static void StockChartTest()
    {
       int row, col, price;
-	  Game game = new Game("1830");
+	Game game = Game.getInstance();
+	game.initialise("1830");
 	  StockMarketI chart = game.getStockMarket();
       StockSpaceI square;
 
@@ -90,6 +91,14 @@ public class StockTest
       game.initialise("1830");
       
       StockMarket sm = (StockMarket) game.getStockMarket();
+      
+      // Fake some markers on the chart
+	CompanyManagerI companyManager = game.getCompanyManager();
+	companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(82));
+	companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(76));
+	
+	     
+      
       StockChart sc = new ui.StockChart(sm);
    }
 
