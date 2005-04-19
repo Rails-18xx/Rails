@@ -29,11 +29,11 @@ public class StockSpace implements StockSpaceI
    protected boolean endsGame = false; // For 1841 and other games
    protected boolean start = false; // Company may start here
    protected boolean hasTokens = false;
-   protected StockSpaceType type = null;
+   protected StockSpaceTypeI type = null;
    protected ArrayList tokens = new ArrayList();
 
    /*--- Contructors ---*/
-   public StockSpace(String name, int price, StockSpaceType type)
+   public StockSpace(String name, int price, StockSpaceTypeI type)
    {
       this.name = name;
       this.price = price;
@@ -57,7 +57,7 @@ public class StockSpace implements StockSpaceI
     * @param company
     *           The company object to add.
     */
-   public void addToken(Company company)
+   public void addToken(CompanyI company)
    {
       tokens.add(company);
       this.setHasTokens(true);
@@ -70,7 +70,7 @@ public class StockSpace implements StockSpaceI
     *           The company object to remove.
     * @return False if the token was not found.
     */
-   public boolean removeToken(Company company)
+   public boolean removeToken(CompanyI company)
    {
       int index = tokens.indexOf(company);
       if (index >= 0)
@@ -158,7 +158,7 @@ public class StockSpace implements StockSpaceI
    /**
     * @return
     */
-   public StockSpaceType getType()
+   public StockSpaceTypeI getType()
    {
       return type;
    }
