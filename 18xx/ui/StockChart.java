@@ -158,9 +158,11 @@ public class StockChart extends JFrame
             }
             
             try
-            {
+            { 
+System.out.print ("Square "+market[x][y].getName());
                if (market[x][y].hasTokens())
-               {
+               { 
+System.out.print (" has tokens:");
                   ArrayList tokenList = market[x][y].getTokens();
                   
                   for(int i=0;i<tokenList.size();i++)
@@ -169,9 +171,11 @@ public class StockChart extends JFrame
                      String bgColour = co.getBgColour();
                      String fgColour = co.getFgColour();
 
-                     token = new StockChit(stringToColor(fgColour), stringToColor(bgColour));                     
+                     token = new StockChit(stringToColor(fgColour), stringToColor(bgColour));
+System.out.print (" "+co.getName());                     
                   }
                }
+System.out.println();
             }
             catch (NullPointerException e)
             {
