@@ -5,8 +5,6 @@
  */
 package game;
 
-import java.util.*;
-
 /**
  * @author Erik Vos
  */
