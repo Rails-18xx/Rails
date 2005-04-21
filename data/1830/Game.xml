@@ -2,6 +2,11 @@
 <ComponentManager>
     <Component name="Bank" class="game.Bank">
       <Bank amount="12000"/>
+      <Players number="2" cash="1200" certLimit="28"/>
+      <Players number="3" cash="800" certLimit="20"/>
+      <Players number="4" cash="600" certLimit="16"/>
+      <Players number="5" cash="480" certLimit="13"/>
+      <Players number="6" cash="400" certLimit="11"/>
     </Component>
     <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
     <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
