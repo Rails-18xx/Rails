@@ -111,7 +111,8 @@ public class StockTest
       //FIXME: This is broken
       //companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(82));
 
-      StockChart sc = new ui.StockChart(sm);
+      CompanyStatus cs = new CompanyStatus(companyManager, game.getBank());
+      StockChart sc = new ui.StockChart(sm, cs);
    }
 
    public static void main(String[] args)

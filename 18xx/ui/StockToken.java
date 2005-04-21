@@ -22,7 +22,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
-public class StockChit extends JPanel
+public class StockToken extends JPanel
 {
    private Color fgColor, bgColor;
    private double x, y, diameter;
@@ -59,22 +59,22 @@ public class StockChit extends JPanel
       super.paintComponent(g);
    }
 
-   public StockChit()
+   public StockToken()
    {
       this(Color.BLACK, Color.WHITE, 4, 4, 15);
    }
 
-   public StockChit(Color fc, Color bc)
+   public StockToken(Color fc, Color bc)
    {
       this(fc, bc, 4, 4, 15);
    }
    
-   public StockChit(double xx, double yy)
+   public StockToken(double xx, double yy)
    {
       this(Color.BLACK, Color.WHITE, xx, yy, 15);
    }
    
-   public StockChit(Color fc, Color bc, double x, double y, double diameter)
+   public StockToken(Color fc, Color bc, double x, double y, double diameter)
    {
       fgColor = fc;
       bgColor = bc;
