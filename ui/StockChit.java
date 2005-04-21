@@ -26,7 +26,7 @@ public class StockChit extends JPanel
 {
    private Color fgColor, bgColor;
    private double x, y, diameter;
-   private Ellipse2D.Double circle;
+   private Ellipse2D.Double circle, circle2;
 
    public void paintComponent(Graphics g)
    {
@@ -38,17 +38,17 @@ public class StockChit extends JPanel
       //
       //This will probably be achieved by simply drawing two circles
       //of slightly differing sizes, one on top of another.
-      
-      if(fgColor.equals(Color.WHITE))
-      {
-         this.setForeground(bgColor);
-      }
-      else
-      {
-         this.setForeground(fgColor);
-      }
+
       this.setOpaque(false);
+
+      this.setForeground(bgColor);
+      g2d.setColor(bgColor);
+      g2d.fill(circle2);
+      g2d.draw(circle2);
+      this.setVisible(true);
       
+      this.setForeground(fgColor);
+      g2d.setColor(fgColor);
       g2d.fill(circle);
       g2d.draw(circle);
       this.setVisible(true);
@@ -74,14 +74,17 @@ public class StockChit extends JPanel
       this(Color.BLACK, Color.WHITE, xx, yy, 15);
    }
    
-   public StockChit(Color fc, Color bc, double xx, double yy, double dia)
+   public StockChit(Color fc, Color bc, double x, double y, double diameter)
    {
-      x = xx;
-      y = yy;
-      diameter = dia;
       fgColor = fc;
       bgColor = bc;
+      
+      x+=3;
+      y+=3;
+      
+      System.out.println("FG: " + fgColor + " BG: " + bgColor);
       circle = new Ellipse2D.Double(x, y, diameter, diameter);
+      circle2 = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
    }
    
 }

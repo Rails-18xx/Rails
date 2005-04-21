@@ -125,7 +125,7 @@ public class StockChart extends JFrame
       {
          for (int j = 0; j < market[0].length; j++)
          {
-            Point origin = new Point(20,0);
+            Point origin = new Point(20,5);
             Dimension size = new Dimension(40, 40);
             JLayeredPane layeredPane = new JLayeredPane();
             layeredPane.setPreferredSize(new Dimension (40, 30));
