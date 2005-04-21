@@ -18,7 +18,7 @@
 
 package game;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 import util.XmlUtils;
 
@@ -54,20 +54,25 @@ public class Game
 		
 		this.name = name;
 		
-		bank = new Bank (); // The short way for now
-		
 		String file = "data/"+name+"/Game.xml";
-		try{
-			Element elem = XmlUtils.findElementInFile(file, ComponentManager.ELEMENT_ID);
+		try {
+			// Have the ComponentManager work through the other game files 
+			Element elem = XmlUtils.findElementInFile (file, ComponentManager.ELEMENT_ID);
 			ComponentManager.configureInstance(name, elem);
 	
 			componentMan = ComponentManager.getInstance();
+			
+			bank = (Bank) componentMan.findComponent("Bank");
 			companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
 			stockMarket = (StockMarketI)componentMan.findComponent(StockMarketI.COMPONENT_NAME);
+
+			bank.initIpo ();
+			
 		} catch (Exception e) {
 			System.out.println ("Game setup from file " + file + " failed");
 			e.printStackTrace();
 		}
+		
 	}
 	
 	/**

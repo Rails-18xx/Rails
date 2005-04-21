@@ -18,7 +18,13 @@
 
 package game;
 
-public class Bank implements CashHolder {
+import java.util.*;
+
+import org.w3c.dom.*;
+
+import util.XmlUtils;
+
+public class Bank implements CashHolder, ConfigurableComponentI {
 	private int money;
 
 	private int gameType;
@@ -60,8 +66,40 @@ public class Bank implements CashHolder {
 		ipo = new Portfolio ("IPO", this, false);
 		pool = new Portfolio ("Pool", this, true);
 
-		money = 12000; // To be made configurable
 	}
+	
+	public void configureFromXML (Element element) throws ConfigurationException {
+		// Parse the Bank element
+		Element node = (Element) element.getElementsByTagName("Bank").item(0);
+		if (node != null) {
+			NamedNodeMap nnp = node.getAttributes();
+			money = XmlUtils.extractIntegerAttribute(nnp, "amount");
+		}
+		if (money == 0) money = 12000;
+		System.out.println("Bank size is "+money);
+	}
+	
+	/** Put all available certificates in the IPO
+	 */
+	public void initIpo () {
+		// Add privates
+		List privates = Game.getInstance().getCompanyManager().getAllPrivateCompanies();
+		Iterator it = privates.iterator();
+		while (it.hasNext()) {
+			ipo.addPrivate((PrivateCompanyI)it.next());
+		}
+		
+		// Add public companies
+		List companies = Game.getInstance().getCompanyManager().getAllPublicCompanies();
+		it = companies.iterator();
+		while (it.hasNext()) {
+			Iterator it2 = ((PublicCompanyI)it.next()).getCertificates().iterator();
+			while (it2.hasNext()) {
+				ipo.addCertificate((CertificateI)it2.next());
+			}
+		}
+	}
+	
 	/**
 	 * @return
 	 */
