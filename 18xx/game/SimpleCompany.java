@@ -46,4 +46,76 @@ public class SimpleCompany implements CompanyI {
 
     private String mName;
     private String mType;
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#isClosed()
+	 */
+	public boolean isClosed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#setClosed(boolean)
+	 */
+	public void setClosed(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#getCertLimitCount()
+	 */
+	public int getCertLimitCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#setCertLimitCount(int)
+	 */
+	public void setCertLimitCount(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#init(java.lang.String, game.CompanyTypeI)
+	 */
+	public void init(String name, CompanyTypeI type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#getTypeName()
+	 */
+	public String getTypeName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#getValue()
+	 */
+	public int getValue() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#setValue(int)
+	 */
+	public void setValue(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see game.CompanyI#getCompanyNumber()
+	 */
+	public int getCompanyNumber() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

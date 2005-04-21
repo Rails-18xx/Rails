@@ -28,16 +28,16 @@ import java.util.*;
 /*
  * The layout idea is this:
  * 
- * JFrame (GridBag)
- *  | ---> StockMarket JPanel (Grid) 
- * 			---> Shows the stockmarket chart 
- * 			---> Shows chits for every company 
- *  | ---> Status JPanel (Grid) 
- * 			---> Shows at-a-glance information about each player's holdings. 
- * 			---> Shows at-a-glance information about each company's performance. 
- *  | ---> Button JPanel (Flow)
- * 			 ---> Buy Button 
- * 			 ---> Sell Button
+ * JFrame (GridBag) 
+ * | ---> StockMarket JPanel (Grid) 
+ * 		---> Shows the stockmarket chart 
+ * 		---> Shows chits for every company 
+ * | ---> Status JPanel (Grid) 
+ * 		---> Shows at-a-glance information about each player's holdings. 
+ * 		---> Shows at-a-glance information about each company's performance. 
+ * | ---> Button JPanel (Flow)
+ * 		 ---> Buy Button 
+ * 		---> Sell Button
  *  
  */
 
@@ -55,7 +55,7 @@ public class StockChart extends JFrame
    private GridLayout statusGrid;
    private FlowLayout flow;
    private StockMarket stockMarket;
-
+   
    private void initialize()
    {
       this.setSize(10, 10);
@@ -66,6 +66,8 @@ public class StockChart extends JFrame
       text = new JTextField("This space reserved for game status info.");
 
       stockPanel = new JPanel();
+      stockPanel.setPreferredSize(new Dimension(300, 400));
+      
       statusPanel = new JPanel();
       buttonPanel = new JPanel();
 
@@ -83,7 +85,6 @@ public class StockChart extends JFrame
       gc = new GridBagConstraints();
 
    }
-
    private void populateGridBag()
    {
       gc.gridx = 0;
@@ -112,77 +113,87 @@ public class StockChart extends JFrame
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPanel, gc);
    }
-
    private void populateStockPanel()
    {
+      //http://www.redbrick.dcu.ie/help/reference/java/uiswing/components/layeredpane.html         
       StockSpace[][] market = stockMarket.getStockChart();
 
       stockGrid.setColumns(market[0].length);
       stockGrid.setRows(market.length);
 
-      for (int x = 0; x < market.length; x++)
+      for (int i = 0; i < market.length; i++)
       {
-         for (int y = 0; y < market[0].length; y++)
+         for (int j = 0; j < market[0].length; j++)
          {
-            JTextField foo;
+            Point origin = new Point(20,0);
+            Dimension size = new Dimension(40, 40);
+            JLayeredPane layeredPane = new JLayeredPane();
+            layeredPane.setPreferredSize(new Dimension (40, 30));
+            stockPanel.add(layeredPane);
+            
+            JTextField textField;
             StockChit token;
+            int depth = 0;
+
+            try
+            {
+               textField = new JTextField(Integer.toString(market[i][j].getPrice()));
+            }
+            catch (NullPointerException e)
+            {
+               textField = new JTextField("");
+            }
             
             try
             {
-               foo = new JTextField(Integer.toString(market[x][y].getPrice()));
+               textField.setBackground(stringToColor(market[i][j].getColour()));
             }
             catch (NullPointerException e)
             {
-               foo = new JTextField("");
-               foo.setBorder(null);
+               textField.setBackground(Color.WHITE);
             }
 
             try
             {
-               foo.setBackground(stringToColor(market[x][y].getColour()));
-            }
-            catch (NullPointerException e)
-            {
-               foo.setBackground(Color.WHITE);
-            }
-
-            try
-            {
-               if (market[x][y].isStart())
+               if (market[i][j].isStart())
                {
-                  foo.setBorder(BorderFactory.createLineBorder(Color.red));
+                  textField.setBorder(BorderFactory.createLineBorder(Color.red, 2));
                }
             }
             catch (NullPointerException e)
             {
             }
+
+            textField.setBounds(1, 1, size.width, size.height);
+            textField.setEditable(false);
+            layeredPane.add(textField, new Integer(0), depth);
+            layeredPane.moveToBack(textField);
             
             try
-            { 
-System.out.print ("Square "+market[x][y].getName());
-               if (market[x][y].hasTokens())
-               { 
-System.out.print (" has tokens:");
-                  ArrayList tokenList = market[x][y].getTokens();
-                  
-                  for(int i=0;i<tokenList.size();i++)
+            {
+               if (market[i][j].hasTokens())
+               {
+                  ArrayList tokenList = market[i][j].getTokens();
+
+                  for (int k = 0; k < tokenList.size(); k++)
                   {
-                     PublicCompany co = (PublicCompany) tokenList.get(i);
+                     PublicCompany co = (PublicCompany) tokenList.get(k);
                      String bgColour = co.getBgColour();
                      String fgColour = co.getFgColour();
 
                      token = new StockChit(stringToColor(fgColour), stringToColor(bgColour));
-System.out.print (" "+co.getName());                     
+                     token.setBounds(origin.x, origin.y, size.width, size.height);
+                     
+                     layeredPane.add(token, new Integer(0), depth);
+                     depth++;
+                     origin.x += 15;
+                     origin.y += 15;
                   }
                }
-System.out.println();
             }
             catch (NullPointerException e)
             {
             }
-
-            foo.setEditable(false);
-            stockPanel.add(foo);
          }
       }
    }
@@ -203,7 +214,7 @@ System.out.println();
          //There is no Color.BROWN
          //Perhaps we'll define one later.
       }
-      else if (color.equalsIgnoreCase("green"))
+      else if (color.equalsIgnoreCase("green") || color.equalsIgnoreCase("darkgreen"))
       {
          return Color.GREEN;
       }
@@ -221,6 +232,7 @@ System.out.println();
       }
       else
       {
+         System.out.println("Warning: Unknown color: " + color + ".");
          return Color.WHITE;
       }
    }

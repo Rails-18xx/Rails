@@ -28,9 +28,9 @@ public class StockTest
    public static void StockChartTest()
    {
       int row, col, price;
-	Game game = Game.getInstance();
-	game.initialise("1830");
-	  StockMarketI chart = game.getStockMarket();
+      Game game = Game.getInstance();
+      game.initialise("1830");
+      StockMarketI chart = game.getStockMarket();
       StockSpaceI square;
 
       System.out.print(" ");
@@ -58,47 +58,55 @@ public class StockTest
       }
    }
 
-   public void testIt(String[] args) throws Exception{
-      if (args.length<1){
-          throw new ConfigurationException("No config file specified.");
+   public void testIt(String[] args) throws Exception
+   {
+      if (args.length < 1)
+      {
+         throw new ConfigurationException("No config file specified.");
       }
-      //Element elem = XmlUtils.findElementInFile(args[0], ComponentManager.ELEMENT_ID);
+      //Element elem = XmlUtils.findElementInFile(args[0],
+      // ComponentManager.ELEMENT_ID);
       //ComponentManager.configureInstance(elem);
 
       ComponentManager componentMan = ComponentManager.getInstance();
-      CompanyManagerI companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
+      CompanyManagerI companyManager = (CompanyManagerI) componentMan
+            .findComponent(CompanyManagerI.COMPONENT_NAME);
 
       List companies = companyManager.getAllCompanies();
-      System.out.println(companies.size()+" companies are registered");
-      for (int i = 0; i< companies.size(); i++){
-          CompanyI company = (CompanyI) companies.get(i);
-          System.out.println("Company " + i + " is called " + company.getName() +
-                  ", and is of type " + company.getType());
-          if (company instanceof PrivateCompanyI) {
-          	System.out.println("  Base price: "+((PrivateCompanyI)company).getBasePrice()
-          		+ " revenue: " + ((PrivateCompanyI)company).getRevenue());
-          } else {
-			System.out.println("  Foreground colour: "+((PublicCompanyI)company).getFgColour()
-				+ " background colour: " + ((PublicCompanyI)company).getBgColour());
-         	
-          }
+      System.out.println(companies.size() + " companies are registered");
+      for (int i = 0; i < companies.size(); i++)
+      {
+         CompanyI company = (CompanyI) companies.get(i);
+         System.out.println("Company " + i + " is called " + company.getName()
+               + ", and is of type " + company.getType());
+         if (company instanceof PrivateCompanyI)
+         {
+            System.out.println("  Base price: "
+                  + ((PrivateCompanyI) company).getBasePrice() + " revenue: "
+                  + ((PrivateCompanyI) company).getRevenue());
+         } else
+         {
+            System.out.println("  Foreground colour: "
+                  + ((PublicCompanyI) company).getFgColour()
+                  + " background colour: "
+                  + ((PublicCompanyI) company).getBgColour());
+
+         }
       }
-  }
-   
+   }
+
    public static void StockUITest()
    {
       Game game = Game.getInstance();
       game.initialise("1830");
-      
+
       StockMarket sm = (StockMarket) game.getStockMarket();
-      
+
       // Fake some markers on the chart
-	CompanyManagerI companyManager = game.getCompanyManager();
-	companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(82));
-	companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(76));
-	
-	     
-      
+      CompanyManager companyManager = (CompanyManager) game.getCompanyManager();
+      companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(82));
+      companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(76));
+
       StockChart sc = new ui.StockChart(sm);
    }
 
