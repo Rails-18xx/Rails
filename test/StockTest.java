@@ -105,7 +105,11 @@ public class StockTest
       // Fake some markers on the chart
       CompanyManager companyManager = (CompanyManager) game.getCompanyManager();
       companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(82));
-      companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(76));
+      companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(82));
+      companyManager.getPublicCompany("CPR").setParPrice(sm.getStartSpace(82));
+      
+      //FIXME: This is broken
+      //companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(82));
 
       StockChart sc = new ui.StockChart(sm);
    }

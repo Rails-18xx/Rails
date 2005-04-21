@@ -61,12 +61,12 @@ public class StockChit extends JPanel
 
    public StockChit()
    {
-      this(Color.BLACK, Color.WHITE, 1, 1, 15);
+      this(Color.BLACK, Color.WHITE, 4, 4, 15);
    }
 
    public StockChit(Color fc, Color bc)
    {
-      this(fc, bc, 1, 1, 15);
+      this(fc, bc, 4, 4, 15);
    }
    
    public StockChit(double xx, double yy)
@@ -79,10 +79,6 @@ public class StockChit extends JPanel
       fgColor = fc;
       bgColor = bc;
       
-      x+=3;
-      y+=3;
-      
-      System.out.println("FG: " + fgColor + " BG: " + bgColor);
       circle = new Ellipse2D.Double(x, y, diameter, diameter);
       circle2 = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
    }

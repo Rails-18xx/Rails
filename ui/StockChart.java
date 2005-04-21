@@ -26,12 +26,13 @@ import javax.swing.border.*;
 import java.util.*;
 
 /*
- * The layout idea is this:
+ * The layout is roughly this:
  * 
  * JFrame (GridBag) 
  * | ---> StockMarket JPanel (Grid) 
- * 		---> Shows the stockmarket chart 
- * 		---> Shows chits for every company 
+ * 		---> JLayeredPane
+ * 			---> Shows the stockmarket chart 
+ * 			---> Shows chits for every company 
  * | ---> Status JPanel (Grid) 
  * 		---> Shows at-a-glance information about each player's holdings. 
  * 		---> Shows at-a-glance information about each company's performance. 
@@ -125,7 +126,7 @@ public class StockChart extends JFrame
       {
          for (int j = 0; j < market[0].length; j++)
          {
-            Point origin = new Point(20,5);
+            Point origin = new Point(20,0);
             Dimension size = new Dimension(40, 40);
             JLayeredPane layeredPane = new JLayeredPane();
             layeredPane.setPreferredSize(new Dimension (40, 30));
@@ -185,9 +186,8 @@ public class StockChart extends JFrame
                      token.setBounds(origin.x, origin.y, size.width, size.height);
                      
                      layeredPane.add(token, new Integer(0), depth);
-                     depth++;
-                     origin.x += 15;
-                     origin.y += 15;
+                     layeredPane.moveToFront(token);
+                     origin.y += 6;
                   }
                }
             }
@@ -214,7 +214,11 @@ public class StockChart extends JFrame
          //There is no Color.BROWN
          //Perhaps we'll define one later.
       }
-      else if (color.equalsIgnoreCase("green") || color.equalsIgnoreCase("darkgreen"))
+      else if (color.equalsIgnoreCase("red"))
+      {
+         return Color.RED;
+      }
+      else if (color.equalsIgnoreCase("green"))
       {
          return Color.GREEN;
       }
@@ -233,7 +237,7 @@ public class StockChart extends JFrame
       else
       {
          System.out.println("Warning: Unknown color: " + color + ".");
-         return Color.WHITE;
+         return Color.MAGENTA;
       }
    }
 
