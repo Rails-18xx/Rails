@@ -22,8 +22,13 @@ import java.util.*;
 
 public final class Player implements CashHolder {
 	
-	static ArrayList players = new ArrayList();
+	private static ArrayList players = new ArrayList();
 	
+	public static final int MAX_PLAYERS = 10;
+	private static int[] playerStartCash = new int[MAX_PLAYERS+1];
+	private static int[] playerCertificateLimits = new int[MAX_PLAYERS+1];
+	private static int playerCertificateLimit;
+
 	String name;
 
 	int wallet = 0;
@@ -52,6 +57,38 @@ public final class Player implements CashHolder {
 	
 	public static Player getPlayer(int index) {
 		return (Player) players.get(index);
+	}
+	
+	public static void setLimits (int number, int cash, int certLimit) {
+		if (number > 1 && number <= MAX_PLAYERS) {
+			playerStartCash[number] = cash;
+			playerCertificateLimits[number] = certLimit;
+		} 
+	}
+	
+	/**
+	 * Initialises each Player's parameters which depend on the number of players.
+	 * To be called when all Players have been added.
+	 *
+	 */
+	public static void initPlayers() {
+		Player player;
+		int numberOfPlayers = players.size();
+		int startCash = playerStartCash[numberOfPlayers];
+		
+		// Give each player the initial cash amount
+		for (int i=0; i<numberOfPlayers; i++) {
+			player = (Player) players.get(i);
+			Bank.transferCash (null, player, startCash);
+			Log.write ("Player "+player.getName()+" receives "+startCash);
+		}
+		
+		// Set the sertificate limit
+		playerCertificateLimit = playerCertificateLimits[numberOfPlayers];
+	}
+	
+	public static int getCertLimit () {
+		return playerCertificateLimit;
 	}
 
 	public Player(String name) {
