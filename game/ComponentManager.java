@@ -68,8 +68,8 @@ public class ComponentManager {
             String clazz = XmlUtils.extractStringAttribute(nnp, COMPONENT_CLASS_TAG);
             if (name == null) {  throw new ConfigurationException("Component " + name + " has no class defined."); }
             String file = XmlUtils.extractStringAttribute(nnp, COMPONENT_FILE_TAG);
-            String filePath = "./data/" + gameName + "/" + file;
-
+ 			String filePath = "./data/" + gameName + "/" + file;
+ 
             // Only one component per name.
             if( mComponentMap.get(name) != null) {
                 throw new ConfigurationException("Component " + name + " is configured twice."); 
@@ -99,6 +99,7 @@ public class ComponentManager {
 
             // Add it to the map of known components.
             mComponentMap.put(name, component);
+            System.out.println("Component "+name+" initialised as "+clazz);
         }
     }
 
