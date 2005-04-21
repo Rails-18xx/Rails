@@ -271,4 +271,9 @@ public class StockSpace implements StockSpaceI
    {
       hasTokens = b;
    }
+   
+   public String toString()
+   {
+     return Integer.toString(price); 
+   }
 }

@@ -21,8 +21,9 @@ package ui;
 import game.*;
 
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.swing.*;
-import javax.swing.border.*;
 import java.util.*;
 
 /*
@@ -32,7 +33,7 @@ import java.util.*;
  * | ---> StockMarket JPanel (Grid) 
  * 		---> JLayeredPane
  * 			---> Shows the stockmarket chart 
- * 			---> Shows chits for every company 
+ * 			---> Shows tokens for every company 
  * | ---> Status JPanel (Grid) 
  * 		---> Shows at-a-glance information about each player's holdings. 
  * 		---> Shows at-a-glance information about each company's performance. 
@@ -42,10 +43,8 @@ import java.util.*;
  *  
  */
 
-public class StockChart extends JFrame
+public class StockChart extends JFrame implements WindowStateListener
 {
-   private Border lineBorder;
-   private JTextField text;
    private JPanel stockPanel;
    private JPanel statusPanel;
    private JPanel buttonPanel;
@@ -56,6 +55,7 @@ public class StockChart extends JFrame
    private GridLayout statusGrid;
    private FlowLayout flow;
    private StockMarket stockMarket;
+   private CompanyStatus companyStatus;
    
    private void initialize()
    {
@@ -63,8 +63,6 @@ public class StockChart extends JFrame
       this.setTitle("Stock Chart");
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
-
-      text = new JTextField("This space reserved for game status info.");
 
       stockPanel = new JPanel();
       stockPanel.setPreferredSize(new Dimension(300, 400));
@@ -133,7 +131,7 @@ public class StockChart extends JFrame
             stockPanel.add(layeredPane);
             
             JTextField textField;
-            StockChit token;
+            StockToken token;
             int depth = 0;
 
             try
@@ -182,7 +180,7 @@ public class StockChart extends JFrame
                      String bgColour = co.getBgColour();
                      String fgColour = co.getFgColour();
 
-                     token = new StockChit(stringToColor(fgColour), stringToColor(bgColour));
+                     token = new StockToken(stringToColor(fgColour), stringToColor(bgColour));
                      token.setBounds(origin.x, origin.y, size.width, size.height);
                      
                      layeredPane.add(token, new Integer(0), depth);
@@ -197,7 +195,6 @@ public class StockChart extends JFrame
          }
       }
    }
-
    private Color stringToColor(String color)
    {
       if (color.equalsIgnoreCase("yellow"))
@@ -240,30 +237,36 @@ public class StockChart extends JFrame
          return Color.MAGENTA;
       }
    }
-
-   public StockChart(StockMarket sm)
+ 
+   
+   public StockChart(StockMarket sm, CompanyStatus cs)
    {
       super();
 
       stockMarket = sm;
+      companyStatus = cs;
+      
       initialize();
       populateGridBag();
       populateStockPanel();
-
-      lineBorder = BorderFactory.createLineBorder(Color.black);
-      text.setBorder(lineBorder);
-      text.setEditable(false);
-      text.setBackground(Color.LIGHT_GRAY);
 
       stockPanel.setBackground(Color.LIGHT_GRAY);
       statusPanel.setBackground(Color.BLACK);
       buttonPanel.setBackground(Color.LIGHT_GRAY);
 
-      statusPanel.add(text);
+      statusPanel.add(companyStatus);
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
 
       this.pack();
       this.setVisible(true);
+   }
+
+   /* (non-Javadoc)
+    * @see java.awt.event.WindowStateListener#windowStateChanged(java.awt.event.WindowEvent)
+    */
+   public void windowStateChanged(WindowEvent arg0)
+   {
+      populateStockPanel();
    }
 }
