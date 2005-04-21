@@ -28,16 +28,27 @@ public class StockChit extends JPanel
    private double x, y, diameter;
    private Ellipse2D.Double circle;
 
-   private Font font;
-
    public void paintComponent(Graphics g)
    {
       clear(g);
       Graphics2D g2d = (Graphics2D) g;
 
-      this.setForeground(fgColor);
-      this.setBackground(bgColor);
-
+      //Temporary kludge until we figure out
+      //How to draw a circle with a circular border around it.
+      //
+      //This will probably be achieved by simply drawing two circles
+      //of slightly differing sizes, one on top of another.
+      
+      if(fgColor.equals(Color.WHITE))
+      {
+         this.setForeground(bgColor);
+      }
+      else
+      {
+         this.setForeground(fgColor);
+      }
+      this.setOpaque(false);
+      
       g2d.fill(circle);
       g2d.draw(circle);
       this.setVisible(true);
