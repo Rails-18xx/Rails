@@ -4,6 +4,7 @@
  */
 package game;
 
+import java.awt.Color;
 import java.util.*;
 
 
@@ -18,7 +19,11 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @return
 	 */
-	public String getBgColour();
+	public Color getBgColour();
+	/**
+	 * @return
+	 */
+	public String getHexBgColour();
 	/**
 	 * @return
 	 */
@@ -30,7 +35,11 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @return
 	 */
-	public String getFgColour();
+	public Color getFgColour();
+	/**
+	 * @return
+	 */
+	public String getHexFgColour();
 	/**
 	 * @return
 	 */
@@ -67,14 +76,6 @@ public interface PublicCompanyI extends CompanyI  {
 	 * @return
 	 */
 	public int getPublicNumber();
-	/**
-	 * @param string
-	 */
-	public void setBgColour(String string);
-	/**
-	 * @param string
-	 */
-	public void setFgColour(String string);
 
 	/**
 	 * @return
