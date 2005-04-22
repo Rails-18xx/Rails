@@ -19,42 +19,38 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import game.*;
 
-public class CompanyStatus extends JPanel
+public class CompanyStatus extends JPanel implements MouseListener
 {
-   CompanyManager companyManager;
-   JLabel[] nameLabel;
-   JLabel[] parLabel;
-   JLabel[] cashLabel;
-   JLabel[] ipoLabel;
-   JLabel[] stockLabel;
+   private CompanyManager companyManager;
+   private JLabel[] nameLabel;
+   private JLabel[] parLabel;
+   private JLabel[] cashLabel;
+   private JLabel[] ipoLabel;
+   private JLabel[] stockLabel;
    
-   ArrayList publicCompanies;
+   private ArrayList publicCompanies;
+   private PublicCompany co;
+   private StockSpace sp;
    
-   public CompanyStatus(CompanyManagerI cm, Bank bank)
-   {   
-      companyManager = (CompanyManager) cm;      
-      ArrayList publicCompanies = (ArrayList) cm.getAllPublicCompanies();
-      
-      this.setBackground(Color.WHITE);
-      this.setBorder(BorderFactory.createEtchedBorder());
-      this.setPreferredSize(new Dimension(100,200));
-      this.setLayout(new GridLayout(0,publicCompanies.size()+1));
-      
-      nameLabel = new JLabel[publicCompanies.size()];
-      parLabel = new JLabel[publicCompanies.size()];    
-      cashLabel = new JLabel[publicCompanies.size()];
-      ipoLabel = new JLabel[publicCompanies.size()];
-      stockLabel = new JLabel[publicCompanies.size()];
-      
+   private String companySelected;
+   
+   public void UpdateStatus()
+   {
       this.add(new JLabel("Company:"));
       for(int i = 0; i < publicCompanies.size(); i++)
       {
-         nameLabel[i] = new JLabel();
-         PublicCompany co = (PublicCompany) publicCompanies.get(i);
+         co = (PublicCompany) publicCompanies.get(i);
+         
+         nameLabel[i] = new JLabel();         
          nameLabel[i].setText(co.getName());
+         nameLabel[i].setOpaque(true);
+         nameLabel[i].setBackground(Color.WHITE);
+         nameLabel[i].addMouseListener(this);
+         
          this.add(nameLabel[i]);
       }
       
@@ -62,8 +58,11 @@ public class CompanyStatus extends JPanel
       for(int i = 0; i < publicCompanies.size(); i++)
       {
          parLabel[i] = new JLabel();
-         PublicCompany co = (PublicCompany) publicCompanies.get(i);
-         StockSpace sp = (StockSpace) co.getParPrice();
+         parLabel[i].setOpaque(true);
+         parLabel[i].setBackground(Color.WHITE);
+         
+         co = (PublicCompany) publicCompanies.get(i);
+         sp = (StockSpace) co.getParPrice();
          try
          {
             parLabel[i].setText(Integer.toString(sp.getPrice()));   
@@ -80,7 +79,10 @@ public class CompanyStatus extends JPanel
       for(int i = 0; i < publicCompanies.size(); i++)
       {
          cashLabel[i] = new JLabel();
-         PublicCompany co = (PublicCompany) publicCompanies.get(i);
+         cashLabel[i].setOpaque(true);
+         cashLabel[i].setBackground(Color.WHITE);
+         
+         co = (PublicCompany) publicCompanies.get(i);
          try
          {
             cashLabel[i].setText(Integer.toString(co.getCash()));   
@@ -91,6 +93,82 @@ public class CompanyStatus extends JPanel
          }
          
          this.add(cashLabel[i]);
+      }     
+   }
+   
+   public CompanyStatus(CompanyManagerI cm, Bank bank)
+   {   
+      companyManager = (CompanyManager) cm;      
+      publicCompanies = (ArrayList) cm.getAllPublicCompanies();
+      
+      this.setBackground(Color.WHITE);
+      this.setBorder(BorderFactory.createEtchedBorder());
+      this.setPreferredSize(new Dimension(100,100));
+      this.setLayout(new GridLayout(0,publicCompanies.size()+1));
+      
+      nameLabel = new JLabel[publicCompanies.size()];
+      parLabel = new JLabel[publicCompanies.size()];    
+      cashLabel = new JLabel[publicCompanies.size()];
+      ipoLabel = new JLabel[publicCompanies.size()];
+      stockLabel = new JLabel[publicCompanies.size()];
+      
+      UpdateStatus();
+   }
+   
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+    */
+   public void mouseClicked(MouseEvent arg0)
+   {
+      JLabel label = (JLabel) arg0.getComponent();
+      if(!label.getBackground().equals(Color.YELLOW))
+      {
+         label.setBackground(Color.YELLOW);
+         companySelected = label.getText();
       }
+      else
+      {
+         label.setBackground(Color.WHITE);
+         companySelected = null;
+      }
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+    */
+   public void mouseEntered(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+    */
+   public void mouseExited(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+    */
+   public void mousePressed(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+    */
+   public void mouseReleased(MouseEvent arg0)
+   {
+   }
+   
+   /**
+    * @return Returns the companyManager.
+    */
+   public CompanyManager getCompanyManager()
+   {
+      return companyManager;
+   }
+   /**
+    * @return Returns the companySelected.
+    */
+   public String getCompanySelected()
+   {
+      return companySelected;
    }
 }

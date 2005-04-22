@@ -38,21 +38,17 @@ import java.util.*;
  * 		---> Shows at-a-glance information about each player's holdings. 
  * 		---> Shows at-a-glance information about each company's performance. 
  * | ---> Button JPanel (Flow)
- * 		 ---> Buy Button 
- * 		---> Sell Button
+ * 		---> Buy Button 
+ *		---> Sell Button
  *  
  */
 
-public class StockChart extends JFrame implements WindowStateListener
+public class StockChart extends JFrame implements ActionListener
 {
-   private JPanel stockPanel;
-   private JPanel statusPanel;
-   private JPanel buttonPanel;
-   private JButton buyButton;
-   private JButton sellButton;
+   private JPanel stockPanel, statusPanel, buttonPanel;
+   private JButton upButton, downButton, leftButton, rightButton;
+   private GridLayout stockGrid, statusGrid;
    private GridBagConstraints gc;
-   private GridLayout stockGrid;
-   private GridLayout statusGrid;
    private FlowLayout flow;
    private StockMarket stockMarket;
    private CompanyStatus companyStatus;
@@ -78,8 +74,10 @@ public class StockChart extends JFrame implements WindowStateListener
       statusPanel.setLayout(statusGrid);
       buttonPanel.setLayout(flow);
 
-      buyButton = new JButton("buy");
-      sellButton = new JButton("sell");
+      upButton = new JButton("up");
+      downButton = new JButton("down");
+      leftButton = new JButton("left");
+      rightButton = new JButton("right");
 
       gc = new GridBagConstraints();
 
@@ -114,8 +112,18 @@ public class StockChart extends JFrame implements WindowStateListener
    }
    private void populateStockPanel()
    {
-      //http://www.redbrick.dcu.ie/help/reference/java/uiswing/components/layeredpane.html         
+      int depth = 0;
+      Point origin = new Point(20,0);
+      Dimension size = new Dimension(40, 40);
       StockSpace[][] market = stockMarket.getStockChart();
+      
+      JLabel priceLabel;
+      JLayeredPane layeredPane; 
+      ArrayList tokenList;     
+      String bgColour;
+      String fgColour;
+      PublicCompany co;      
+      StockToken token;   
 
       stockGrid.setColumns(market[0].length);
       stockGrid.setRows(market.length);
@@ -124,61 +132,58 @@ public class StockChart extends JFrame implements WindowStateListener
       {
          for (int j = 0; j < market[0].length; j++)
          {
-            Point origin = new Point(20,0);
-            Dimension size = new Dimension(40, 40);
-            JLayeredPane layeredPane = new JLayeredPane();
+            layeredPane = new JLayeredPane();
+            priceLabel = new JLabel();            
+            
+            stockPanel.add(layeredPane);            
+                                   
+            priceLabel.setBounds(1, 1, size.width, size.height);
+            priceLabel.setOpaque(true);
+            
+            layeredPane.add(priceLabel, new Integer(0), depth);
+            layeredPane.moveToBack(priceLabel);            
             layeredPane.setPreferredSize(new Dimension (40, 30));
-            stockPanel.add(layeredPane);
-            
-            JTextField textField;
-            StockToken token;
-            int depth = 0;
-
-            try
-            {
-               textField = new JTextField(Integer.toString(market[i][j].getPrice()));
-            }
-            catch (NullPointerException e)
-            {
-               textField = new JTextField("");
-            }
             
             try
             {
-               textField.setBackground(stringToColor(market[i][j].getColour()));
+               priceLabel.setText(Integer.toString(market[i][j].getPrice()));
             }
             catch (NullPointerException e)
             {
-               textField.setBackground(Color.WHITE);
+               priceLabel.setText("");
+            }
+           
+            try
+            {
+               priceLabel.setBackground(stringToColor(market[i][j].getColour()));
+            }
+            catch (NullPointerException e)
+            {
+               priceLabel.setBackground(Color.WHITE);
             }
 
             try
             {
                if (market[i][j].isStart())
                {
-                  textField.setBorder(BorderFactory.createLineBorder(Color.red, 2));
+                  priceLabel.setBorder(BorderFactory.createLineBorder(Color.red, 2));
                }
             }
             catch (NullPointerException e)
             {
             }
-
-            textField.setBounds(1, 1, size.width, size.height);
-            textField.setEditable(false);
-            layeredPane.add(textField, new Integer(0), depth);
-            layeredPane.moveToBack(textField);
             
             try
             {
                if (market[i][j].hasTokens())
                {
-                  ArrayList tokenList = market[i][j].getTokens();
+                  tokenList = market[i][j].getTokens();
 
                   for (int k = 0; k < tokenList.size(); k++)
                   {
-                     PublicCompany co = (PublicCompany) tokenList.get(k);
-                     String bgColour = co.getBgColour();
-                     String fgColour = co.getFgColour();
+                     co = (PublicCompany) tokenList.get(k);
+                     bgColour = co.getBgColour();
+                     fgColour = co.getFgColour();
 
                      token = new StockToken(stringToColor(fgColour), stringToColor(bgColour));
                      token.setBounds(origin.x, origin.y, size.width, size.height);
@@ -238,11 +243,10 @@ public class StockChart extends JFrame implements WindowStateListener
       }
    }
  
-   
    public StockChart(StockMarket sm, CompanyStatus cs)
    {
       super();
-
+      
       stockMarket = sm;
       companyStatus = cs;
       
@@ -255,18 +259,51 @@ public class StockChart extends JFrame implements WindowStateListener
       buttonPanel.setBackground(Color.LIGHT_GRAY);
 
       statusPanel.add(companyStatus);
-      buttonPanel.add(buyButton);
-      buttonPanel.add(sellButton);
+      buttonPanel.add(upButton);
+      buttonPanel.add(downButton);
+      buttonPanel.add(leftButton);
+      buttonPanel.add(rightButton);
+      
+      upButton.setActionCommand("up");
+      downButton.setActionCommand("down");
+      leftButton.setActionCommand("left");
+      rightButton.setActionCommand("right");
+      
+      upButton.addActionListener(this);
+      downButton.addActionListener(this);
+      leftButton.addActionListener(this);
+      rightButton.addActionListener(this);
 
       this.pack();
       this.setVisible(true);
    }
-
    /* (non-Javadoc)
-    * @see java.awt.event.WindowStateListener#windowStateChanged(java.awt.event.WindowEvent)
+    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
-   public void windowStateChanged(WindowEvent arg0)
+   public void actionPerformed(ActionEvent arg0)
    {
-      populateStockPanel();
+      String companySelected = companyStatus.getCompanySelected();
+
+      if (companySelected.equals(null))
+      {
+         JDialog errorMsg = new JDialog(this, "Error: No Company Selected.", true);
+      }
+      else
+      {
+         CompanyManager cm = companyStatus.getCompanyManager();
+         PublicCompany co = (PublicCompany) cm.getCompanyByName(companySelected);
+         
+         if(arg0.getActionCommand().equalsIgnoreCase("down"))
+         {
+            stockMarket.sell((PublicCompanyI) co, 1);
+            //FIXME: Need to redraw stockmarket now
+         }
+         else if (arg0.getActionCommand().equalsIgnoreCase("left"))
+         {
+            stockMarket.withhold((PublicCompanyI) co);
+            //FIXME: Need to redraw stockmarket now
+         }
+         
+      }
    }
 }
