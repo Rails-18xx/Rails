@@ -12,21 +12,21 @@
     <Certificate share="10" number="8"/>
   </CompanyType>
   
-  <Company name="GRSC" type="Private" basePrice="20" revenue="5"/>
-  <Company name="Brdg" type="Private" basePrice="40" revenue="10"/>
+  <Company name="GRSC"  type="Private" basePrice="20" revenue="5"/>
+  <Company name="Brdg"  type="Private" basePrice="40" revenue="10"/>
   <Company name="Cattl" type="Private" basePrice="50" revenue="10"/>
-  <Company name="Gulf" type="Private" basePrice="80" revenue="15"/>
-  <Company name="SLSF" type="Private" basePrice="140" revenue="0"/>
-  <Company name="MKT" type="Private" basePrice="160" revenue="20"/>
+  <Company name="Gulf"  type="Private" basePrice="80" revenue="15"/>
+  <Company name="SLSF"  type="Private" basePrice="140" revenue="0"/>
+  <Company name="MKT"   type="Private" basePrice="160" revenue="20"/>
   
-  <Company name="KATY" type="Public" fgcolour="white" bgcolour="green"/>
-  <Company name="MP"   type="Public" fgcolour="white" bgcolour="red"/>
-  <Company name="ATSF" type="Public" fgcolour="white" bgcolour="blue"/>
-  <Company name="SP"   type="Public" fgcolour="orange" bgcolour="black"/>
-  <Company name="GMO"  type="Public" fgcolour="white" bgcolour="#ff0040"/>
-  <Company name="SLSF" type="Public" fgcolour="white" bgcolour="d04000"/>
-  <Company name="TP"   type="Public" fgcolour="white" bgcolour="black"/>
-  <Company name="FW"   type="Public" fgcolour="red" bgcolour="black"/>
-  <Company name="SSW"  type="Public" fgcolour="white" bgcolour="#6000ff"/>
-  <Company name="IC"   type="Public" fgcolour="black" bgcolour="#c0ff40"/>
+  <Company name="KATY" type="Public" fgcolour="FFFFFF" bgcolour="00FF00"/>
+  <Company name="MP"   type="Public" fgcolour="FFFFFF" bgcolour="FF0000"/>
+  <Company name="ATSF" type="Public" fgcolour="FFFFFF" bgcolour="0000FF"/>
+  <Company name="SP"   type="Public" fgcolour="FF8000" bgcolour="000000"/>
+  <Company name="GMO"  type="Public" fgcolour="FFFFFF" bgcolour="ff0040"/>
+  <Company name="SLSF" type="Public" fgcolour="FFFFFF" bgcolour="d04000"/>
+  <Company name="TP"   type="Public" fgcolour="FFFFFF" bgcolour="000000"/>
+  <Company name="FW"   type="Public" fgcolour="FF0000" bgcolour="000000"/>
+  <Company name="SSW"  type="Public" fgcolour="FFFFFF" bgcolour="6000ff"/>
+  <Company name="IC"   type="Public" fgcolour="000000" bgcolour="c0ff40"/>
 </CompanyManager>
