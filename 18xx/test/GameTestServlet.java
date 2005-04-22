@@ -16,17 +16,20 @@ import java.util.*;
  */
 public class GameTestServlet extends HttpServlet {
 
+	private static final int SELECTGAME = 0;
+	private static final int SELECTPLAYERS = 1;
+	private static final int BUYPRIVATES = 2;
+	private static final int SR = 3;
+	private static final int OR = 4;
+	
+	private static final String servletName = "test.GameTestServlet";
 	private StockMarketI stockMarket = null;
 	private Game game = null;
 	private Bank bank = null;
-	private int phase = 0;
+	private int phase = SELECTGAME;
 	private boolean orStarted = false;
 	private String error;
-	
-	private static final int SELECTPLAYERS = 0;
-	private static final int BUYPRIVATES = 1;
-	private static final int SR = 2;
-	private static final int OR = 3;
+
 
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -63,8 +66,8 @@ public class GameTestServlet extends HttpServlet {
 		int i;
 		List startSpaces;
 		int price;
-		
-		if (stockMarket == null) {
+
+		if (phase == SELECTGAME) {
 			/* Initialise */
 			String gameName = request.getParameter("Game");
 			if (gameName != null && !gameName.equals("")) {
@@ -72,34 +75,31 @@ public class GameTestServlet extends HttpServlet {
 				game.initialise (gameName);
 				stockMarket = game.getStockMarket();
 				bank = game.getBank();
+				
+				phase = SELECTPLAYERS;
 			}
 		} else if (phase == SELECTPLAYERS) {
-			
+
 			if (hasValue(request.getParameter ("AddPlayer"))) {
 				String newPlayer = request.getParameter ("Player");
 				if(hasValue(newPlayer)) {
 					Player.addPlayer (newPlayer);
 				}
 			} else if (hasValue (request.getParameter ("StartGame"))) {
-				List players = Player.getPlayers();
-				int startCash = 2400/players.size(); // To be made configurable
-				Iterator it = players.iterator();
-				Player player;
-				while (it.hasNext()) {
-					player = (Player)it.next();
-					Bank.transferCash (null, player, startCash);
-					Log.write ("Player "+player.getName()+" receives "+startCash);
-				}
+
+				// Give players their start cash
+				Player.initPlayers();
+
 				phase = BUYPRIVATES;
 			}
-			
+
 		} else if (phase == BUYPRIVATES) {
-			
+
 			if (hasValue (request.getParameter ("BuyPrivate"))) {
 				int player = Integer.parseInt(request.getParameter("Player"));
 				int priv = Integer.parseInt(request.getParameter("Private"));
 				price = Integer.parseInt(request.getParameter("Price"));
-				PrivateCompanyI privco = 
+				PrivateCompanyI privco =
 					(PrivateCompanyI)game.getCompanyManager().getAllPrivateCompanies().get(priv);
 				Player.getPlayer(player).getPortfolio().buyPrivate(
 					privco,
@@ -107,11 +107,11 @@ public class GameTestServlet extends HttpServlet {
 				if (Integer.parseInt(request.getParameter("Left")) == 1) {
 					phase = SR;
 					orStarted = false;
-				} 
+				}
 			}
-			
+
 		} else if (phase == SR) {
-			
+
 			if (hasValue(request.getParameter("GotoOR"))) {
 				// Check for sold-out companies
 				Iterator it = game.getCompanyManager().getAllPublicCompanies().iterator();
@@ -120,7 +120,7 @@ public class GameTestServlet extends HttpServlet {
 					company = (PublicCompanyI)it.next();
 					if (company.isSoldOut()) {
 						Log.write(company.getName()+" is sold out");
-						stockMarket.soldOut(company);} 
+						stockMarket.soldOut(company);}
 				}
 				phase = OR;
 			} else {
@@ -136,7 +136,7 @@ public class GameTestServlet extends HttpServlet {
 				int number = hasValue(snumber) ? Integer.parseInt(snumber) : 0;
 				price = 0;
 				boolean president = false;
-				
+
 				if (buyIpo) {
 					from = bank.getIpo();
 					to = player.getPortfolio();
@@ -170,9 +170,9 @@ public class GameTestServlet extends HttpServlet {
 					price *= cert.getShare() / 10;
 					// Get the certificate and pay the price
 					to.buyCertificate(cert, from, price);
-					
+
 				}
-				
+
 				if (buyIpo && !company.hasFloated() && from.countShares(company) <= 40) {
 					// Float company (limit and capitalisation to be made configurable)
 					company.setFloated(10*price);
@@ -181,16 +181,16 @@ public class GameTestServlet extends HttpServlet {
 				}
 
 			}
-			
-		} 
-		
+
+		}
+
 		if (phase == OR) {
-			
+
 			if (hasValue(request.getParameter("StartSR"))) {
 				phase = SR;
 			} else if (hasValue(request.getParameter("NextOR"))) {
 				orStarted = false;
-			} 
+			}
 			if (!orStarted) {
 				// Privates pay out
 				Iterator it = game.getCompanyManager().getAllPrivateCompanies().iterator();
@@ -205,7 +205,7 @@ public class GameTestServlet extends HttpServlet {
 
 			String samount = request.getParameter("Amount");
 			int amount = hasValue(samount) ? Integer.parseInt(samount) : 0;
-			
+
 			if (hasValue (request.getParameter("Spend"))) {
 				Bank.transferCash((CashHolder)company, null, amount);
 				Log.write (company.getName()+" spends "+amount);
@@ -228,7 +228,7 @@ public class GameTestServlet extends HttpServlet {
 		/* Read some properties */
 		Properties prop = new Properties();
 		prop.load(this.getClass().getClassLoader().getResourceAsStream("testservlet.properties"));
-		String styleSheetPrefix = prop.getProperty("StyleSheetPrefix");
+		//String styleSheetPrefix = prop.getProperty("StyleSheetPrefix");
 		String servletPrefix = prop.getProperty("ServletPrefix");
 
 		StringBuffer out = new StringBuffer();
@@ -252,8 +252,8 @@ public class GameTestServlet extends HttpServlet {
 
 		out.append("</head><body>\n");
 
-		if (stockMarket != null) {
-			
+		if (phase != SELECTGAME) {
+
 			// Left upper part: the stockmarket
 			out.append ("<table><tr><td rowspan=3 colspan=2 valign=\"top\" class=\"bigtable\">\n<h3>Stock Market</h3>\n");
 
@@ -278,7 +278,7 @@ public class GameTestServlet extends HttpServlet {
 						else if (square.isNoCertLimit()) out.append ("1");
 						else out.append ("0");
 						out.append ("\"");
-						
+
 						if (square.isBelowLedge())
 							out.append(" style=\"border-top: 3px solid red\"");
 						else if (square.isLeftOfLedge())
@@ -297,9 +297,9 @@ public class GameTestServlet extends HttpServlet {
 							company = (PublicCompany) iterator.next();
 							out.append(
 								"<br><span style=\"color:"
-									+ company.getFgColour()
+									+ company.getHexFgColour()
 									+ ";background-color:"
-									+ company.getBgColour()
+									+ company.getHexBgColour()
 									+ "\">"
 									+ company.getName()
 									+ "</span>");
@@ -313,12 +313,12 @@ public class GameTestServlet extends HttpServlet {
 
 			}
 			out.append("</table>");
-			
+
 			// Right upper part 1: actions
 			out.append ("</td><td valign=\"top\" class=\"bigtable\">\n<h3>Actions</h3>\n");
-			
+
 			if (phase == SELECTPLAYERS) {
-				
+
 				out.append ("<h4>Selecting players</h4>");
 				out.append("<table class=\"bordertable\" cellspacing=0>");
 				for (int j=0; j<Player.numberOfPlayers(); j++) {
@@ -329,24 +329,25 @@ public class GameTestServlet extends HttpServlet {
 				out.append(
 					"<form method=\"POST\" action=\""
 						+ servletPrefix
-						+ "game.test.GameTestServlet\">\n");
+						+ servletName + "\">\n");
 				out.append ("<input type=\"text\" name=\"Player\" size=\"16\">")
-					.append("&nbsp;&nbsp;") 					.append("<input type=\"submit\" name=\"AddPlayer\" value=\"Add Player\">");
+					.append("&nbsp;&nbsp;")
+					.append("<input type=\"submit\" name=\"AddPlayer\" value=\"Add Player\">");
 				out.append (" <input type=\"submit\" name=\"StartGame\" value=\"Start Game\">");
-				out.append("</form>");				
-				
+				out.append("</form>");
+
 			} else if (phase == BUYPRIVATES) {
-				
+
 				out.append ("<h4>Buying Privates</h4>");
 				out.append("<form method=\"POST\" action=\""
 					+ servletPrefix
-					+ "game.test.GameTestServlet\">\n");
+					+ servletName + "\">\n");
 				out.append("<table><tr><td>Select Player</td><td><select name=Player>\n");
 				for (int j=0; j<Player.numberOfPlayers(); j++) {
 					out.append("<option value=\""+j+"\">"+Player.getPlayer(j).getName()+"\n");
 				}
 				out.append("</select></td></tr>");
-				
+
 				out.append("<tr><td>Select Private</td><td><select name=Private>\n");
 				List privates = bank.getIpo().getPrivateCompanies();
 				int freePrivates = 0;
@@ -357,22 +358,22 @@ public class GameTestServlet extends HttpServlet {
 				}
 				out.append("</select></td></tr><tr><td>Price</td><td>")
 					.append("<input type=text name=Price size=8></td></tr></table>\n");
-				
+
 				out.append ("<input type=submit name=BuyPrivate value=\"Buy Private\">");
 				out.append("<input type=hidden name=Left value="+freePrivates+"></form>\n");
-			
+
 			} else if (phase == SR) {
-				
+
 				out.append ("<h4>Stock Round</h4>");
 				out.append("<form method=\"POST\" action=\""
 					+ servletPrefix
-					+ "game.test.GameTestServlet\">\n");
+					+ servletName + "\">\n");
 				out.append("<table><tr><td align=right>Select Player</td><td><select name=Player>\n");
 				for (int j=0; j<Player.numberOfPlayers(); j++) {
 					out.append("<option value=\""+j+"\">"+Player.getPlayer(j).getName()+"\n");
 				}
 				out.append("</select></td></tr>");
-				
+
 				out.append("<tr><td align=right>Select Company</td><td><select name=Company>\n");
 				List companies = game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
@@ -387,22 +388,22 @@ public class GameTestServlet extends HttpServlet {
 					out.append("<option value="+price+">"+price+"\n");
 				}
 				out.append("</select></td></tr>\n");
-				
+
 				out.append ("<tr><td align=right><input type=submit name=BuyIPO value=\"Buy from IPO\">");
 				out.append ("</td><td><input type=submit name=BuyPool value=\"Buy from Pool\"><br>");
 				out.append ("</td></tr><tr><td align=right><input type=submit name=Sell value=\"Sell\">");
 				out.append("</td><td><select name=Number>\n");
 				for (int k=1; k<=5; k++) out.append("<option value="+k+">"+k+"\n");
 				out.append("</select></td></tr>\n");
-				
+
 				out.append ("<tr><td align=right><input type=submit name=GotoOR value=\"Start OR\"></tr></table></form>");
 
 			} else if (phase == OR) {
-				
+
 				out.append ("<h4>Operating Round</h4>");
 				out.append("<form method=\"POST\" action=\""
 					+ servletPrefix
-					+ "game.test.GameTestServlet\">\n");
+					+ servletName + "\">\n");
 				out.append("<table><tr><td align=right>Select Company</td><td><select name=Company>\n");
 				List companies = game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
@@ -411,12 +412,12 @@ public class GameTestServlet extends HttpServlet {
 				}
 				out.append("</select>\n</td></tr><tr><td align=right>Amount</td><td>");
 				out.append("<input type=text size=6 name=Amount></td></tr>\n");
-				
+
 				out.append ("<tr><td></td><td><input type=submit name=Spend value=\"Spend from Treasury\">");
 				out.append ("</td></tr>\n<tr><td align=right><input type=submit name=PayOut value=\"Pay Out Revenue\"></td>\n");
 				out.append ("<td><input type=submit name=Withhold value=\"Withhold revenue\">");
 				out.append("</td></tr>\n");
-				
+
 				out.append("<tr><td align=right><select name=Private>\n");
 				Iterator it = game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
@@ -426,20 +427,20 @@ public class GameTestServlet extends HttpServlet {
 					}
 				}
 				out.append("</select></td><td><input type=submit name=BuyPrivate value=\"Buy Private\"></td></tr>\n");
-				
+
 				out.append ("<tr><td align=right><input type=submit name=NextOR value=\"Next OR\"></td>");
 				out.append ("<td><input type=submit name=StartSR value=\"Next SR\"></td></tr></table></form>");
-				
+
 			}
 			// Right upper part 2: log
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Log</h3>\n");
 			out.append ("<p>"+Log.getBuffer().replaceAll("\n", "<br>"));
-		
-			
+
+
 			// Right upper part 3: bank
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Bank</h3>\n");
 			out.append ("<p><b>Cash: "+bank.getCash()+"</b>");
-			
+
 			// Lower left part: company status
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Companies</h3>\n");
 
@@ -457,14 +458,14 @@ public class GameTestServlet extends HttpServlet {
 					companyName = company.getName();
 					companyNumber = company.getCompanyNumber();
 					out.append("<tr><td>" + companyName + "</td>");
-					
-					
+
+
 					if (company.isClosed()) {
 
 						out.append("<td colspan=5>is closed</td>");
 
 					} else {
-						
+
 						if (company.getParPrice() != null) {
 							out.append("<td>" + company.getParPrice().getPrice()
 								+"</td><td>" + company.getCurrentPrice().getPrice()
@@ -489,12 +490,12 @@ public class GameTestServlet extends HttpServlet {
 					out.append ("</tr>\n");
 				}
 				out.append("</table>");
-				
+
 				out.append("</form>\n");
 			}
 			// Lower right part: Player status
 			out.append ("</td><td colspan=2 valign=\"top\" class=\"bigtable\">\n<h3>Players</h3>\n");
-			
+
 			out.append ("<table border=0 cellspacing=0 class=bordertable><tr><th>Player</th><th>Cash</th><th>Privates</th>");
 			List allCompanies = game.getCompanyManager().getAllPublicCompanies();
 			Iterator it = allCompanies.iterator();
@@ -509,14 +510,14 @@ public class GameTestServlet extends HttpServlet {
 				out.append("<tr><td>" + player.getName())
 					.append("</td><td>" + player.getCash())
 					.append("</td><td>");
-					
+
 				// Private companies
 				it = player.getPortfolio().getPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					out.append(" "+((PrivateCompanyI)it.next()).getName());
 				}
 				out.append("&nbsp;</td>\n");
-				
+
 				// Public companies
 				it = allCompanies.iterator();
 				while (it.hasNext()) {
@@ -532,22 +533,22 @@ public class GameTestServlet extends HttpServlet {
 							if (cert.isPresident()) president = true;
 						}
 					}
-					out.append("<td>"+(president ? "P" : "")+ share+"</td>"); 
+					out.append("<td>"+(president ? "P" : "")+ share+"</td>");
 				}
 				out.append("</tr>");
-				
+
 			}
 			out.append ("</table>");
-				
-				
+
+
 			// End
 			out.append ("</td></tr></table>\n");
-				
+
 		} else {
 			out.append(
 				"<form method=\"POST\" action=\""
 					+ servletPrefix
-					+ "game.test.GameTestServlet\">\n");
+					+ servletName + "\">\n");
 			out.append("Select a game: ");
 			out.append("<select name=\"Game\" onChange=\"javascript:this.form.submit()\">\n");
 			out.append("<option value=\"\">");
@@ -556,7 +557,7 @@ public class GameTestServlet extends HttpServlet {
 			out.append("<option value=\"1870\">1870\n");
 			out.append("<option value=\"18AL\">18AL\n");
 			out.append("</select>\n");
-			
+
 			out.append("</form>\n");
 
 		}
