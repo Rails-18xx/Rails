@@ -120,8 +120,8 @@ public class StockChart extends JFrame implements ActionListener
       JLabel priceLabel;
       JLayeredPane layeredPane; 
       ArrayList tokenList;     
-      String bgColour;
-      String fgColour;
+      Color bgColour;
+      Color fgColour;
       PublicCompany co;      
       StockToken token;   
 
@@ -185,7 +185,7 @@ public class StockChart extends JFrame implements ActionListener
                      bgColour = co.getBgColour();
                      fgColour = co.getFgColour();
 
-                     token = new StockToken(stringToColor(fgColour), stringToColor(bgColour));
+                     token = new StockToken(fgColour, bgColour);
                      token.setBounds(origin.x, origin.y, size.width, size.height);
                      
                      layeredPane.add(token, new Integer(0), depth);
@@ -292,7 +292,8 @@ public class StockChart extends JFrame implements ActionListener
       {
          String companySelected = companyStatus.getCompanySelected();
          CompanyManager cm = companyStatus.getCompanyManager();
-         PublicCompany co = (PublicCompany) cm.getCompanyByName(companySelected);
+         //PublicCompany co = (PublicCompany) cm.getCompanyByName(companySelected);
+         PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
       
          if(arg0.getActionCommand().equalsIgnoreCase("down"))
          {
