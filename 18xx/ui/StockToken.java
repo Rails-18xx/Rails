@@ -33,12 +33,6 @@ public class StockToken extends JPanel
       clear(g);
       Graphics2D g2d = (Graphics2D) g;
 
-      //Temporary kludge until we figure out
-      //How to draw a circle with a circular border around it.
-      //
-      //This will probably be achieved by simply drawing two circles
-      //of slightly differing sizes, one on top of another.
-
       this.setOpaque(false);
 
       this.setForeground(bgColor);
