@@ -110,7 +110,8 @@ public class StockTest
       companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(100));
 
       CompanyStatus cs = new CompanyStatus(companyManager, game.getBank());
-      StockChart sc = new ui.StockChart(sm, cs);
+      PlayerStatus ps = new PlayerStatus(); //might need to be here for access to certain objects
+      StockChart sc = new ui.StockChart(sm, cs, ps);
    }
 
    public static void main(String[] args)

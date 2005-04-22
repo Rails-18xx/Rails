@@ -40,6 +40,7 @@ public class CompanyStatus extends JPanel implements MouseListener
    
    public void UpdateStatus()
    {
+      
       this.add(new JLabel("Company:"));
       for(int i = 0; i < publicCompanies.size(); i++)
       {
@@ -103,7 +104,7 @@ public class CompanyStatus extends JPanel implements MouseListener
       
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
-      this.setPreferredSize(new Dimension(100,100));
+      this.setPreferredSize(new Dimension(200,50));
       this.setLayout(new GridLayout(0,publicCompanies.size()+1));
       
       nameLabel = new JLabel[publicCompanies.size()];
