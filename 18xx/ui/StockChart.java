@@ -243,6 +243,11 @@ public class StockChart extends JFrame implements ActionListener
       }
    }
  
+   public void refreshStockPanel()
+   {
+      stockPanel.removeAll();
+      populateStockPanel();
+   }
    public StockChart(StockMarket sm, CompanyStatus cs)
    {
       super();
@@ -282,28 +287,37 @@ public class StockChart extends JFrame implements ActionListener
     */
    public void actionPerformed(ActionEvent arg0)
    {
-      String companySelected = companyStatus.getCompanySelected();
 
-      if (companySelected.equals(null))
+      try
       {
-         JDialog errorMsg = new JDialog(this, "Error: No Company Selected.", true);
-      }
-      else
-      {
+         String companySelected = companyStatus.getCompanySelected();
          CompanyManager cm = companyStatus.getCompanyManager();
          PublicCompany co = (PublicCompany) cm.getCompanyByName(companySelected);
-         
+      
          if(arg0.getActionCommand().equalsIgnoreCase("down"))
          {
             stockMarket.sell((PublicCompanyI) co, 1);
-            //FIXME: Need to redraw stockmarket now
+            refreshStockPanel();
          }
          else if (arg0.getActionCommand().equalsIgnoreCase("left"))
          {
             stockMarket.withhold((PublicCompanyI) co);
-            //FIXME: Need to redraw stockmarket now
+            refreshStockPanel();
          }
-         
+         else if (arg0.getActionCommand().equalsIgnoreCase("up"))
+         {
+            stockMarket.soldOut((PublicCompanyI) co);
+            refreshStockPanel();
+         }
+         else
+         {
+            stockMarket.payOut((PublicCompanyI) co);
+            refreshStockPanel();
+         }
       }
+      catch (NullPointerException e)
+      {   
+         JOptionPane.showMessageDialog(this, "No Company Selected.");
+      }        
    }
 }
