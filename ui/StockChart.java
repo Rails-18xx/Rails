@@ -116,17 +116,12 @@ public class StockChart extends JFrame implements ActionListener
    private void populateStockPanel()
    {
       int depth = 0;
-      Point origin = new Point(20,0);
       Dimension size = new Dimension(40, 40);
       StockSpace[][] market = stockMarket.getStockChart();
       
       JLabel priceLabel;
       JLayeredPane layeredPane; 
       ArrayList tokenList;     
-      Color bgColour;
-      Color fgColour;
-      PublicCompany co;      
-      StockToken token;   
 
       stockGrid.setColumns(market[0].length);
       stockGrid.setRows(market.length);
@@ -181,20 +176,8 @@ public class StockChart extends JFrame implements ActionListener
                if (market[i][j].hasTokens())
                {
                   tokenList = market[i][j].getTokens();
-
-                  for (int k = 0; k < tokenList.size(); k++)
-                  {
-                     co = (PublicCompany) tokenList.get(k);
-                     bgColour = co.getBgColour();
-                     fgColour = co.getFgColour();
-
-                     token = new StockToken(fgColour, bgColour);
-                     token.setBounds(origin.x, origin.y, size.width, size.height);
-                     
-                     layeredPane.add(token, new Integer(0), depth);
-                     layeredPane.moveToFront(token);
-                     origin.y += 6;
-                  }
+                  
+                  placeToken(tokenList, layeredPane);
                }
             }
             catch (NullPointerException e)
@@ -202,6 +185,29 @@ public class StockChart extends JFrame implements ActionListener
             }
          }
       }
+   }
+   private void placeToken(ArrayList tokenList, JLayeredPane layeredPane)
+   {
+      Point origin = new Point(20,0);
+      Dimension size = new Dimension(40, 40);
+      Color bgColour;
+      Color fgColour;
+      PublicCompany co;      
+      StockToken token;
+      
+      for (int k = 0; k < tokenList.size(); k++)
+      {
+         co = (PublicCompany) tokenList.get(k);
+         bgColour = co.getBgColour();
+         fgColour = co.getFgColour();
+
+         token = new StockToken(fgColour, bgColour);
+         token.setBounds(origin.x, origin.y, size.width, size.height);
+         
+         layeredPane.add(token, new Integer(0));
+         layeredPane.moveToFront(token);
+         origin.y += 6;
+      }      
    }
    private Color stringToColor(String color)
    {
