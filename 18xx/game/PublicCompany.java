@@ -4,6 +4,7 @@
  */
 package game;
 
+import java.awt.Color;
 import java.util.*;
 
 import org.w3c.dom.*;
@@ -14,389 +15,349 @@ import util.XmlUtils;
  * @author Erik Vos
  */
 public class PublicCompany extends Company implements PublicCompanyI,
-      CashHolder
-{
+		CashHolder {
 
-   protected static int numberOfPublicCompanies = 0;
+	protected static int numberOfPublicCompanies = 0;
 
-   protected String fgColour;
+	protected Color fgColour;
 
-   protected String bgColour;
+	protected String fgHexColour;
 
-   protected int publicNumber; // For internal use
+	protected Color bgColour;
 
-   protected StockSpaceI parPrice = null;
+	protected String bgHexColour;
 
-   protected StockSpaceI currentPrice = null;
+	protected int publicNumber; // For internal use
 
-   protected int treasury = 0;
+	protected StockSpaceI parPrice = null;
 
-   protected int lastRevenue = 0;
+	protected StockSpaceI currentPrice = null;
 
-   protected boolean hasFloated = false;
+	protected int treasury = 0;
 
-   protected boolean closed = false;
+	protected int lastRevenue = 0;
 
-   protected boolean canBuyStock = false;
+	protected boolean hasFloated = false;
 
-   protected boolean canBuyPrivates = false;
+	protected boolean closed = false;
 
-   protected float lowerPrivatePriceFactor;
+	protected boolean canBuyStock = false;
 
-   protected float upperPrivatePriceFactor;
+	protected boolean canBuyPrivates = false;
 
-   protected boolean ipoPaysOut = false;
+	protected float lowerPrivatePriceFactor;
 
-   protected boolean poolPaysOut = false;
+	protected float upperPrivatePriceFactor;
 
-   protected ArrayList trainsOwned;
+	protected boolean ipoPaysOut = false;
 
-   protected ArrayList certificates;
+	protected boolean poolPaysOut = false;
 
-   protected Portfolio portfolio;
+	protected ArrayList trainsOwned;
 
-   public PublicCompany()
-   {
-      super();
-      this.publicNumber = numberOfPublicCompanies++;
-   }
+	protected ArrayList certificates;
 
-   public void init(String name, CompanyTypeI type)
-   {
-      super.init(name, type);
-      this.portfolio = new Portfolio(name, this);
-   }
+	protected Portfolio portfolio;
 
-   public void configureFromXML(Element element) throws ConfigurationException
-   {
-      NamedNodeMap nnp = element.getAttributes();
-      NamedNodeMap nnp2;
+	public PublicCompany() {
+		super();
+		this.publicNumber = numberOfPublicCompanies++;
+	}
 
-      /* Configure public company features */
-      fgColour = XmlUtils.extractStringAttribute(nnp, "fgColour");
-      if (fgColour == null)
-         fgColour = "white";
-      bgColour = XmlUtils.extractStringAttribute(nnp, "bgColour");
-      if (bgColour == null)
-         bgColour = "black";
+	public void init(String name, CompanyTypeI type) {
+		super.init(name, type);
+		this.portfolio = new Portfolio(name, this);
+	}
 
-      /* Complete configuration by adding features from the Public CompanyType */
-      Element typeElement = type.getDomElement();
-      if (typeElement != null)
-      {
-         NodeList properties = typeElement.getChildNodes();
+	public void configureFromXML(Element element) throws ConfigurationException {
+		NamedNodeMap nnp = element.getAttributes();
+		NamedNodeMap nnp2;
 
-         for (int j = 0; j < properties.getLength(); j++)
-         {
+		/* Configure public company features */
+		fgHexColour = XmlUtils.extractStringAttribute(nnp, "fgColour");
+		if (fgHexColour == null)
+			fgHexColour = "FFFFFF";
+		fgColour = new Color(Integer.parseInt(fgHexColour, 16));
 
-            String propName = properties.item(j).getLocalName();
-            if (propName == null)
-               continue;
+		bgHexColour = XmlUtils.extractStringAttribute(nnp, "bgColour");
+		if (bgHexColour == null)
+			bgHexColour = "000000";
+		bgColour = new Color(Integer.parseInt(bgHexColour, 16));
 
-            if (propName.equalsIgnoreCase("CanBuyPrivates"))
-            {
-               canBuyPrivates = true;
-               nnp2 = properties.item(j).getAttributes();
-               String lower = XmlUtils.extractStringAttribute(nnp2,
-                     "lowerPriceFactor");
-               if (!XmlUtils.hasValue(lower))
-                  throw new ConfigurationException(
-                        "Lower private price factor missing");
-               lowerPrivatePriceFactor = Float.parseFloat(lower);
-               String upper = XmlUtils.extractStringAttribute(nnp2,
-                     "upperPriceFactor");
-               if (!XmlUtils.hasValue(upper))
-                  throw new ConfigurationException(
-                        "Upper private price factor missing");
-               upperPrivatePriceFactor = Float.parseFloat(upper);
+		/* Complete configuration by adding features from the Public CompanyType */
+		Element typeElement = type.getDomElement();
+		if (typeElement != null) {
+			NodeList properties = typeElement.getChildNodes();
 
-            }
-            else if (propName.equalsIgnoreCase("PoolPaysOut"))
-            {
-               poolPaysOut = true;
-            }
+			for (int j = 0; j < properties.getLength(); j++) {
 
-         }
-      }
+				String propName = properties.item(j).getLocalName();
+				if (propName == null)
+					continue;
 
-      type.releaseDomElement();
-   }
+				if (propName.equalsIgnoreCase("CanBuyPrivates")) {
+					canBuyPrivates = true;
+					nnp2 = properties.item(j).getAttributes();
+					String lower = XmlUtils.extractStringAttribute(nnp2,
+							"lowerPriceFactor");
+					if (!XmlUtils.hasValue(lower))
+						throw new ConfigurationException(
+								"Lower private price factor missing");
+					lowerPrivatePriceFactor = Float.parseFloat(lower);
+					String upper = XmlUtils.extractStringAttribute(nnp2,
+							"upperPriceFactor");
+					if (!XmlUtils.hasValue(upper))
+						throw new ConfigurationException(
+								"Upper private price factor missing");
+					upperPrivatePriceFactor = Float.parseFloat(upper);
 
-   public void start(StockSpaceI startPrice)
-   {
-      parPrice = currentPrice = startPrice;
-      hasFloated = true;
-      parPrice.addToken(this);
-   }
+				} else if (propName.equalsIgnoreCase("PoolPaysOut")) {
+					poolPaysOut = true;
+				}
 
-   /**
-    * @return
-    */
-   public String getBgColour()
-   {
-      return bgColour;
-   }
+			}
+		}
 
-   /**
-    * @return
-    */
-   public boolean canBuyStock()
-   {
-      return canBuyStock;
-   }
+		type.releaseDomElement();
+	}
 
-   /**
-    * @return
-    */
-   public boolean canBuyPrivates()
-   {
-      return canBuyPrivates;
-   }
+	public void start(StockSpaceI startPrice) {
+		parPrice = currentPrice = startPrice;
+		hasFloated = true;
+		parPrice.addToken(this);
+	}
 
-   /**
-    * @return
-    */
-   public String getFgColour()
-   {
-      return fgColour;
-   }
+	/**
+	 * @return
+	 */
+	public Color getBgColour() {
+		return bgColour;
+	}
 
-   /**
-    * @return
-    */
-   public boolean hasFloated()
-   {
-      return hasFloated;
-   }
+	public String getHexBgColour() {
+		return bgHexColour;
+	}
 
-   /**
-    * @return
-    */
-   public StockSpaceI getParPrice()
-   {
-      return parPrice;
-   }
+	/**
+	 * @return
+	 */
+	public boolean canBuyStock() {
+		return canBuyStock;
+	}
 
-   /**
-    * @return
-    */
-   public ArrayList getTrainsOwned()
-   {
-      return trainsOwned;
-   }
+	/**
+	 * @return
+	 */
+	public boolean canBuyPrivates() {
+		return canBuyPrivates;
+	}
 
-   /**
-    * @return
-    */
-   public int getCash()
-   {
-      return treasury;
-   }
+	/**
+	 * @return
+	 */
+	public Color getFgColour() {
+		return fgColour;
+	}
 
-   /**
-    * @param list
-    */
-   public void setTrainsOwned(ArrayList list)
-   {
-      trainsOwned = list;
-   }
+	/**
+	 * @return
+	 */
+	public String getHexFgColour() {
+		return fgHexColour;
+	}
 
-   public void addCash(int amount)
-   {
-      treasury += amount;
-   }
+	/**
+	 * @return
+	 */
+	public boolean hasFloated() {
+		return hasFloated;
+	}
 
-   /**
-    * @return
-    */
-   public StockSpaceI getCurrentPrice()
-   {
-      return currentPrice;
-   }
+	/**
+	 * @return
+	 */
+	public StockSpaceI getParPrice() {
+		return parPrice;
+	}
 
-   /**
-    * @param price
-    */
-   public void setCurrentPrice(StockSpaceI price)
-   {
-      currentPrice = price;
-   }
+	/**
+	 * @return
+	 */
+	public ArrayList getTrainsOwned() {
+		return trainsOwned;
+	}
 
-   /**
-    * @param b
-    */
-   public void setFloated(int cash)
-   {
-      this.hasFloated = true;
-      this.treasury = cash;
-      Log.write(name + " floats, treasury cash is " + cash);
-   }
+	/**
+	 * @return
+	 */
+	public int getCash() {
+		return treasury;
+	}
 
-   /**
-    * @return
-    */
-   public static int getNumberOfPublicCompanies()
-   {
-      return numberOfPublicCompanies;
-   }
+	/**
+	 * @param list
+	 */
+	public void setTrainsOwned(ArrayList list) {
+		trainsOwned = list;
+	}
 
-   /**
-    * @return
-    */
-   public int getPublicNumber()
-   {
-      return publicNumber;
-   }
+	public void addCash(int amount) {
+		treasury += amount;
+	}
 
-   /**
-    * @param i
-    */
-   public static void setNumberOfCompanies(int i)
-   {
-      numberOfCompanies = i;
-   }
+	/**
+	 * @return
+	 */
+	public StockSpaceI getCurrentPrice() {
+		return currentPrice;
+	}
 
-   /**
-    * @param string
-    */
-   public void setBgColour(String string)
-   {
-      bgColour = string;
-   }
+	/**
+	 * @param price
+	 */
+	public void setCurrentPrice(StockSpaceI price) {
+		currentPrice = price;
+	}
 
-   /**
-    * @param string
-    */
-   public void setFgColour(String string)
-   {
-      fgColour = string;
-   }
+	/**
+	 * @param b
+	 */
+	public void setFloated(int cash) {
+		this.hasFloated = true;
+		this.treasury = cash;
+		Log.write(name + " floats, treasury cash is " + cash);
+	}
 
-   /**
-    * @return
-    */
-   public List getCertificates()
-   {
-      return certificates;
-   }
+	/**
+	 * @return
+	 */
+	public static int getNumberOfPublicCompanies() {
+		return numberOfPublicCompanies;
+	}
 
-   /**
-    * @param list
-    */
-   public void setCertificates(List list)
-   {
-      certificates = new ArrayList();
-      Iterator it = list.iterator();
-      CertificateI cert;
-      while (it.hasNext())
-      {
-         cert = ((CertificateI) it.next()).copy();
-         certificates.add(cert);
-         cert.setCompany(this);
-      }
-   }
+	/**
+	 * @return
+	 */
+	public int getPublicNumber() {
+		return publicNumber;
+	}
 
-   public void addCertificate(CertificateI certificate)
-   {
-      if (certificates == null)
-         certificates = new ArrayList();
-      certificates.add(certificate);
-      certificate.setCompany(this);
-   }
+	/**
+	 * @param i
+	 */
+	public static void setNumberOfCompanies(int i) {
+		numberOfCompanies = i;
+	}
 
-   /**
-    * @param spaceI
-    */
-   public void setParPrice(StockSpaceI space)
-   {
-      parPrice = currentPrice = space;
-      space.addToken(this);
-   }
+	/**
+	 * @return
+	 */
+	public List getCertificates() {
+		return certificates;
+	}
 
-   /**
-    * @return
-    */
-   public Portfolio getPortfolio()
-   {
-      return portfolio;
-   }
+	/**
+	 * @param list
+	 */
+	public void setCertificates(List list) {
+		certificates = new ArrayList();
+		Iterator it = list.iterator();
+		CertificateI cert;
+		while (it.hasNext()) {
+			cert = ((CertificateI) it.next()).copy();
+			certificates.add(cert);
+			cert.setCompany(this);
+		}
+	}
 
-   /**
-    * @return
-    */
-   public int getLastRevenue()
-   {
-      return lastRevenue;
-   }
+	public void addCertificate(CertificateI certificate) {
+		if (certificates == null)
+			certificates = new ArrayList();
+		certificates.add(certificate);
+		certificate.setCompany(this);
+	}
 
-   /**
-    * @param i
-    */
-   protected void setLastRevenue(int i)
-   {
-      lastRevenue = i;
-   }
+	/**
+	 * @param spaceI
+	 */
+	public void setParPrice(StockSpaceI space) {
+		parPrice = currentPrice = space;
+		space.addToken(this);
+	}
 
-   public void payOut(int amount)
-   {
+	/**
+	 * @return
+	 */
+	public Portfolio getPortfolio() {
+		return portfolio;
+	}
 
-      Log.write(name + " earns " + amount);
-      setLastRevenue(amount);
+	/**
+	 * @return
+	 */
+	public int getLastRevenue() {
+		return lastRevenue;
+	}
 
-      Iterator it = certificates.iterator();
-      CertificateI cert;
-      int part;
-      CashHolder recipient;
-      Map split = new HashMap();
-      while (it.hasNext())
-      {
-         cert = ((CertificateI) it.next());
-         recipient = cert.getPortfolio().getBeneficiary(this);
-         part = amount * cert.getShare() / 100;
-         // For reporting, we want to add up the amounts per recipient
-         if (split.containsKey(recipient))
-         {
-            part += ((Integer) split.get(recipient)).intValue();
-         }
-         split.put(recipient, new Integer(part));
-      }
-      // Report and add the cash
-      it = split.keySet().iterator();
-      while (it.hasNext())
-      {
-         recipient = (CashHolder) it.next();
-         if (recipient instanceof Bank)
-            continue;
-         part = ((Integer) split.get(recipient)).intValue();
-         Log.write(recipient.getName() + " receives " + part);
-         Bank.transferCash(null, recipient, part);
-      }
+	/**
+	 * @param i
+	 */
+	protected void setLastRevenue(int i) {
+		lastRevenue = i;
+	}
 
-      // Move the token
-      Game.getInstance().getStockMarket().payOut(this);
-   }
+	public void payOut(int amount) {
 
-   public void withhold(int amount)
-   {
+		Log.write(name + " earns " + amount);
+		setLastRevenue(amount);
 
-      Log.write(name + " earns " + amount + " and withholds it");
-      setLastRevenue(amount);
-      Bank.transferCash(null, this, amount);
-      // Move the token
-      Game.getInstance().getStockMarket().withhold(this);
-   }
+		Iterator it = certificates.iterator();
+		CertificateI cert;
+		int part;
+		CashHolder recipient;
+		Map split = new HashMap();
+		while (it.hasNext()) {
+			cert = ((CertificateI) it.next());
+			recipient = cert.getPortfolio().getBeneficiary(this);
+			part = amount * cert.getShare() / 100;
+			// For reporting, we want to add up the amounts per recipient
+			if (split.containsKey(recipient)) {
+				part += ((Integer) split.get(recipient)).intValue();
+			}
+			split.put(recipient, new Integer(part));
+		}
+		// Report and add the cash
+		it = split.keySet().iterator();
+		while (it.hasNext()) {
+			recipient = (CashHolder) it.next();
+			if (recipient instanceof Bank)
+				continue;
+			part = ((Integer) split.get(recipient)).intValue();
+			Log.write(recipient.getName() + " receives " + part);
+			Bank.transferCash(null, recipient, part);
+		}
 
-   public boolean isSoldOut()
-   {
-      Iterator it = certificates.iterator();
-      CertificateI cert;
-      while (it.hasNext())
-      {
-         if (((CertificateI) it.next()).getPortfolio().getOwner() instanceof Bank)
-         {
-            return false;
-         }
-      }
-      return true;
-   }
+		// Move the token
+		Game.getInstance().getStockMarket().payOut(this);
+	}
+
+	public void withhold(int amount) {
+
+		Log.write(name + " earns " + amount + " and withholds it");
+		setLastRevenue(amount);
+		Bank.transferCash(null, this, amount);
+		// Move the token
+		Game.getInstance().getStockMarket().withhold(this);
+	}
+
+	public boolean isSoldOut() {
+		Iterator it = certificates.iterator();
+		CertificateI cert;
+		while (it.hasNext()) {
+			if (((CertificateI) it.next()).getPortfolio().getOwner() instanceof Bank) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
