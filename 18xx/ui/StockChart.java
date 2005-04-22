@@ -52,6 +52,7 @@ public class StockChart extends JFrame implements ActionListener
    private FlowLayout flow;
    private StockMarket stockMarket;
    private CompanyStatus companyStatus;
+   private PlayerStatus playerStatus;
    
    private void initialize()
    {
@@ -64,10 +65,12 @@ public class StockChart extends JFrame implements ActionListener
       stockPanel.setPreferredSize(new Dimension(300, 400));
       
       statusPanel = new JPanel();
+      statusPanel.setPreferredSize(new Dimension(50,75));
+      
       buttonPanel = new JPanel();
 
       stockGrid = new GridLayout();
-      statusGrid = new GridLayout();
+      statusGrid = new GridLayout(2,0);
       flow = new FlowLayout();
 
       stockPanel.setLayout(stockGrid);
@@ -248,12 +251,13 @@ public class StockChart extends JFrame implements ActionListener
       stockPanel.removeAll();
       populateStockPanel();
    }
-   public StockChart(StockMarket sm, CompanyStatus cs)
+   public StockChart(StockMarket sm, CompanyStatus cs, PlayerStatus ps)
    {
       super();
       
       stockMarket = sm;
       companyStatus = cs;
+      playerStatus = ps;
       
       initialize();
       populateGridBag();
@@ -264,6 +268,7 @@ public class StockChart extends JFrame implements ActionListener
       buttonPanel.setBackground(Color.LIGHT_GRAY);
 
       statusPanel.add(companyStatus);
+      statusPanel.add(playerStatus);
       buttonPanel.add(upButton);
       buttonPanel.add(downButton);
       buttonPanel.add(leftButton);

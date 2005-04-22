@@ -24,201 +24,125 @@ import util.XmlUtils;
 
 public class Game
 {
-	/* EV, 12mar2005:
-	 * Generic game startup code, mostly copied from Iain Adam's TestApp class. 
-	 */
-	
-	/**
-	 * Game is a singleton class.
-	 * @author Erik Vos
-	 */
-	protected static Game instance;
-	
-	/** The component Manager */
-	protected ComponentManager componentMan;
-	protected CompanyManagerI companyManager;
-	protected StockMarketI stockMarket;
-	protected Bank bank;
-	
-	protected String name;
-	
-	/**
-	 * Protected constructor.
-	 * @param name Name of the game (e.g. "1830").
-	 */
-	public Game () {
-		
-	}
-	
-	public void initialise (String name) {
-		
-		this.name = name;
-		
-		String file = "data/"+name+"/Game.xml";
-		try {
-			// Have the ComponentManager work through the other game files 
-			Element elem = XmlUtils.findElementInFile (file, ComponentManager.ELEMENT_ID);
-			ComponentManager.configureInstance(name, elem);
-	
-			componentMan = ComponentManager.getInstance();
-			
-			bank = (Bank) componentMan.findComponent("Bank");
-			companyManager = (CompanyManagerI)componentMan.findComponent(CompanyManagerI.COMPONENT_NAME);
-			stockMarket = (StockMarketI)componentMan.findComponent(StockMarketI.COMPONENT_NAME);
+   /*
+    * EV, 12mar2005: Generic game startup code, mostly copied from Iain Adam's
+    * TestApp class.
+    */
 
-			bank.initIpo ();
-			
-		} catch (Exception e) {
-			System.out.println ("Game setup from file " + file + " failed");
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * Public instance creator and getter.
-	 * @param name Name of the game (e.g. "1830").
-	 * @return The instance.
-	 */
-	public static Game getInstance () {
-		if (instance == null) {
-			instance = new Game ();
-		} 
-		return instance;
-	}
-	
-	/*----- Getters -----*/
-	
-	/**
-	 * @return The company manager
-	 */
-	public CompanyManagerI getCompanyManager() {
-		return companyManager;
-	}
+   /**
+    * Game is a singleton class.
+    * 
+    * @author Erik Vos
+    */
+   protected static Game instance;
 
-	/**
-	 * @return The company manager
-	 */
-	public StockMarketI getStockMarket() {
-		return stockMarket;
-	}
+   /** The component Manager */
+   protected ComponentManager componentMan;
 
-	/**
-	 * @return The compinent manager (maybe this getter is not needed)  
-	 */
-	public ComponentManager getComponentMan() {
-		return componentMan;
-	}
-	
-	/* Do the Bank properly later */
-	public Bank getBank() {
-		return bank;
-	}
-	
-	/* EV, 12mar2005:
-	 * The below was the original code by Brett Lentz.
-	 * I suppose these things will get moved elsewhere, 
-	 * but I'll leave all of it now as a reminder. 
-	 */
-	/*
-   private static int MAX_NUM_PLAYERS;
+   protected CompanyManagerI companyManager;
 
-   private static int MAX_NUM_SHARES;
+   protected StockMarketI stockMarket;
 
-   private static int numPlayers;
+   protected Bank bank;
 
-   private static int fastestAvailableTrain;
+   protected Player player;
 
-   private static int maxNumTrains;
+   protected String name;
 
-   private Player addPlayer()
-   {
-      Player player = new Player();
-      return player;
-   }
-
-   private Player[] getPlayers(int numPlayers)
-   {
-      int count = 0;
-      Player[] players;
-      players = new Player[numPlayers];
-
-      while (count < numPlayers)
-      {
-         players[count] = addPlayer();
-         count++;
-      }
-      return players;
-   }
-
-   private int getMaxNumShares(int numPlayers)
-   {
-      switch (numPlayers)
-      {
-         case 2:
-            return 24;
-         case 3:
-            return 21;
-         case 4:
-            return 18;
-         case 5:
-            return 15;
-         case 6:
-            return 13;
-         default:
-            return 0;
-      }
-   }
-
-   public static int getNumPlayers()
-   {
-      return numPlayers;
-   }
-
-   public static int getMaxNumShares()
-   {
-      return MAX_NUM_SHARES;
-   }
-
-   public static int getFastestAvailableTrain()
-   {
-      return fastestAvailableTrain;
-   }
-
-   public static int getMaxNumTrains()
-   {
-      return maxNumTrains;
-   }
-
+   /**
+    * Protected constructor.
+    * 
+    * @param name
+    *           Name of the game (e.g. "1830").
+    */
    public Game()
    {
-      MAX_NUM_PLAYERS = 0;
-      numPlayers = 0;
-      MAX_NUM_SHARES = 0;
-      fastestAvailableTrain = 0;
-      Bank bank = new Bank();
+
    }
 
-   public Game(String gameName)
+   public void initialise(String name)
    {
-      if (gameName.matches("1830"))
+
+      this.name = name;
+
+      String file = "data/" + name + "/Game.xml";
+      try
       {
-         MAX_NUM_PLAYERS = 6;
-         numPlayers = getNumPlayers();
-         MAX_NUM_SHARES = getMaxNumShares(numPlayers);
-         fastestAvailableTrain = 2;
-         Bank bank = new Bank(numPlayers);
-         maxNumTrains = 4;
-      } else
-      {
-         MAX_NUM_PLAYERS = 0;
-         numPlayers = 0;
-         MAX_NUM_SHARES = 0;
-         fastestAvailableTrain = 0;
-         Bank bank = new Bank();
-         maxNumTrains = 0;
+         // Have the ComponentManager work through the other game files
+         Element elem = XmlUtils.findElementInFile(file,
+               ComponentManager.ELEMENT_ID);
+         ComponentManager.configureInstance(name, elem);
+
+         componentMan = ComponentManager.getInstance();
+
+         bank = (Bank) componentMan.findComponent("Bank");
+         companyManager = (CompanyManagerI) componentMan
+               .findComponent(CompanyManagerI.COMPONENT_NAME);
+         stockMarket = (StockMarketI) componentMan
+               .findComponent(StockMarketI.COMPONENT_NAME);
+
+         bank.initIpo();
+
       }
+      catch (Exception e)
+      {
+         System.out.println("Game setup from file " + file + " failed");
+         e.printStackTrace();
+      }
+
    }
-   */
+
+   /**
+    * Public instance creator and getter.
+    * 
+    * @param name
+    *           Name of the game (e.g. "1830").
+    * @return The instance.
+    */
+   public static Game getInstance()
+   {
+      if (instance == null)
+      {
+         instance = new Game();
+      }
+      return instance;
+   }
+
+   /*----- Getters -----*/
+
+   /**
+    * @return The company manager
+    */
+   public CompanyManagerI getCompanyManager()
+   {
+      return companyManager;
+   }
+
+   /**
+    * @return The company manager
+    */
+   public StockMarketI getStockMarket()
+   {
+      return stockMarket;
+   }
+
+   /**
+    * @return The compinent manager (maybe this getter is not needed)
+    */
+   public ComponentManager getComponentMan()
+   {
+      return componentMan;
+   }
+
+   /* Do the Bank properly later */
+   public Bank getBank()
+   {
+      return bank;
+   }
+
+   public Player getPlayers()
+   {
+      return player;
+   }
 
 }
