@@ -123,6 +123,20 @@ public class CompanyStatus extends JPanel implements MouseListener
       JLabel label = (JLabel) arg0.getComponent();
       if(!label.getBackground().equals(Color.YELLOW))
       {
+         try
+         {
+            if(!companySelected.equalsIgnoreCase(label.getText()))
+            {
+               for(int i=0; i < nameLabel.length; i++)
+               {
+                  nameLabel[i].setBackground(Color.WHITE);
+               }
+            }
+         }
+         catch (NullPointerException e)
+         {
+         }
+         
          label.setBackground(Color.YELLOW);
          companySelected = label.getText();
       }
