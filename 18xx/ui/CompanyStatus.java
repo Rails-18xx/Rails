@@ -99,6 +99,8 @@ public class CompanyStatus extends JPanel implements MouseListener
    
    public CompanyStatus(CompanyManagerI cm, Bank bank)
    {   
+      super();
+      
       companyManager = (CompanyManager) cm;      
       publicCompanies = (ArrayList) cm.getAllPublicCompanies();
       

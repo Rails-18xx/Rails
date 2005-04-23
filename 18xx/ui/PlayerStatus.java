@@ -61,6 +61,8 @@ public class PlayerStatus extends JPanel
    }
    public PlayerStatus()
    {    
+      super();
+      
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
       this.setPreferredSize(new Dimension(50,100));
