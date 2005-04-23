@@ -70,6 +70,8 @@ public class StockToken extends JPanel
    
    public StockToken(Color fc, Color bc, double x, double y, double diameter)
    {
+      super();
+      
       fgColor = fc;
       bgColor = bc;
       

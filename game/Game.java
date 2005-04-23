@@ -38,15 +38,10 @@ public class Game
 
    /** The component Manager */
    protected ComponentManager componentMan;
-
    protected CompanyManagerI companyManager;
-
    protected StockMarketI stockMarket;
-
    protected Bank bank;
-
    protected Player player;
-
    protected String name;
 
    /**

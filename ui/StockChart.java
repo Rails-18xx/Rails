@@ -47,9 +47,8 @@ public class StockChart extends JFrame implements ActionListener
 {
    private JPanel stockPanel, statusPanel, buttonPanel;
    private JButton upButton, downButton, leftButton, rightButton;
-   private GridLayout stockGrid, statusGrid;
+   private GridLayout stockGrid;
    private GridBagConstraints gc;
-   private FlowLayout flow;
    private StockMarket stockMarket;
    private CompanyStatus companyStatus;
    private PlayerStatus playerStatus;
@@ -57,7 +56,7 @@ public class StockChart extends JFrame implements ActionListener
    private void initialize()
    {
       this.setSize(10, 10);
-      this.setTitle("Stock Chart");
+      this.setTitle("Rails: Stock Chart");
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
 
@@ -70,12 +69,10 @@ public class StockChart extends JFrame implements ActionListener
       buttonPanel = new JPanel();
 
       stockGrid = new GridLayout();
-      statusGrid = new GridLayout(2,0);
-      flow = new FlowLayout();
-
+      
       stockPanel.setLayout(stockGrid);
-      statusPanel.setLayout(statusGrid);
-      buttonPanel.setLayout(flow);
+      statusPanel.setLayout(new GridLayout(2,0));
+      buttonPanel.setLayout(new FlowLayout());
 
       upButton = new JButton("up");
       downButton = new JButton("down");
@@ -204,8 +201,8 @@ public class StockChart extends JFrame implements ActionListener
          token = new StockToken(fgColour, bgColour);
          token.setBounds(origin.x, origin.y, size.width, size.height);
          
-         layeredPane.add(token, new Integer(0));
-         layeredPane.moveToFront(token);
+         layeredPane.add(token, new Integer(0), 0);
+         //layeredPane.moveToFront(token);
          origin.y += 6;
       }      
    }
