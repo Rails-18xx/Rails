@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.2 2005/04/16 22:43:53 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.3 2005/04/24 21:40:57 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
@@ -10,10 +10,12 @@ import java.util.*;
 import org.w3c.dom.Element;
 
 /**
- * Objects of this class represent a type of square on the StockMarket
- * with special properties,usually represented by a non-white square colour.
- * The default type is "white", which has no special properties. 
- * 
+ * Objects of this class represent a particular type of company, of which
+ * typically multiple instances exist in a game. Examples: "Private",
+ * "Minor", "Major", "Mountain" etc.
+ * <p>This class contains common properties of the companies of one type,
+ * and aids in configuring the companies by reducing the need to repeatedly 
+ * specify common properties with different companies. 
  * @author Erik Vos
  */
 public class CompanyType implements CompanyTypeI {
@@ -28,6 +30,12 @@ public class CompanyType implements CompanyTypeI {
 	protected int allClosePhase;
 	protected ArrayList defaultCertificates;
 	
+	/**
+	 * The constructor.
+	 * @param name Company type name ("Private", "Public", "Minor" etc.).
+	 * @param className Name of the class that will instantiate this type of company.
+	 * @param element The &lt;CompanyType&gt; DOM element, used to define this company type.
+	 */
 	public CompanyType (String name, String className, Element element) {
 		this.name = name;
 		this.className = className;
@@ -50,7 +58,8 @@ public class CompanyType implements CompanyTypeI {
 	}
 
 	/**
-	 * @return
+	 * Get the company type name
+	 * @return The name of this company type.
 	 */
 	public String getName() {
 		return name;
@@ -71,27 +80,44 @@ public class CompanyType implements CompanyTypeI {
 	}
 
 	/**
-	 * @return
+	 * Get the name of the class that will implement this type of company.
+	 * @return The full class name.
 	 */
 	public String getClassName() {
 		return className;
 	}
 
+	/** Duuring initialisation (XML parsing), the &lt;CompanyType&gt; DOM element
+	 * will be retained to allow the various companies to reuse it.
+	 * To save memory space, this DOM element must be released when all companies have
+	 * been instantiated. 
+	 * <p><i>(Note: this feature may be replaced with the creation of a cloneable
+	 * "dummy company" inside this class; but that will eventually also need to be released)</i>.
+	 */
 	public void releaseDomElement () {
 		domElement = null;
 	}
 	/**
+	 * Get the saved &lt;CompanyType&gt; DOM element.
 	 * @return
 	 */
 	public Element getDomElement() {
 		return domElement;
 	}
 
+	/** 
+	 * Add a certificate to the dummy company represented by this type.
+	 * @param certificate The certificate to add.
+	 */
 	public void addCertificate (CertificateI certificate) {
 		if (defaultCertificates == null) defaultCertificates = new ArrayList();
 		defaultCertificates.add (certificate);
 	}
 	
+	/**
+	 * Get the dummy certificate array for cloning in a real company.
+	 * return The dummy certificate array.
+	 */
 	public List getDefaultCertificates () {
 		return defaultCertificates;
 	}
