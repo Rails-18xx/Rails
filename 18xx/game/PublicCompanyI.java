@@ -10,44 +10,85 @@ import java.util.*;
 
 
 /**
+ * Interface to be used to access PublicCompany instances.
  * @author Erik Vos
  */
 public interface PublicCompanyI extends CompanyI  {
 	
-	public void start (StockSpaceI startPrice);
+	/**
+	 * Return the company token background colour.
+	 * @return Color object
+	 */
+	public Color getBgColour();
+
+	/**
+	 * Return the company token background colour.
+	 * @return Hexadecimal string RRGGBB.
+	 */
+	public String getHexBgColour();
+
+	/**
+	 * Return the company token foreground colour.
+	 * @return Color object.
+	 */
+
+	public Color getFgColour();
+
+	/**
+	 * Return the company token foreground colour.
+	 * @return Hexadecimal string RRGGBB.
+	 */
+	public String getHexFgColour();
 
 	/**
 	 * @return
 	 */
-	public Color getBgColour();
-	/**
-	 * @return
-	 */
-	public String getHexBgColour();
-	/**
-	 * @return
-	 */
 	public boolean canBuyStock();
+
 	/**
 	 * @return
 	 */
 	public boolean canBuyPrivates();
+
 	/**
-	 * @return
+	 * Float the company, put its initial cash in the treasury.
+	 * <i>(perhaps the cash can better be calculated initially?)</i>.
+	 * @param cash The initial cash amount.
 	 */
-	public Color getFgColour();
+	public void setFloated(int initialCash);
+
 	/**
-	 * @return
-	 */
-	public String getHexFgColour();
-	/**
-	 * @return
+	 * Has the company already floated?
+	 * @return true if the company has floated.
 	 */
 	public boolean hasFloated();
+
 	/**
-	 * @return
+	 * Start the company and set its initial (par) price.
+	 * @param spaceI
+	 */
+	public void setParPrice(StockSpaceI parPrice);
+
+	/**
+	 * Get the company par (initial) price.
+	 * @return StockSpace object, which defines the company start position on the stock chart.
 	 */
 	public StockSpaceI getParPrice();
+
+	/**
+	 * Set a new company price.
+	 * @param price The StockSpace object that defines the new location on
+	 * the stock market.
+	 */
+	public void setCurrentPrice(StockSpaceI price);
+
+	/**
+	 * Get the current company share price.
+	 * @return The StockSpace object that defines the current location
+	 * on the stock market.
+	 */
+	public StockSpaceI getCurrentPrice();
+
 	/**
 	 * @return
 	 */
@@ -61,40 +102,37 @@ public interface PublicCompanyI extends CompanyI  {
 	/**
 	 * @return
 	 */
-	public StockSpaceI getCurrentPrice();
-	/**
-	 * @param price
-	 */
-	public void setCurrentPrice(StockSpaceI price);
-	/**
-	 * @param b
-	 */
-	public void setFloated(int initialCash);
-
-
-	/**
-	 * @return
-	 */
 	public int getPublicNumber();
 
 	/**
-	 * @return
+	 * Get a list of this company's certificates.
+	 * @return ArrayList containing the certificates (item 0 is the President's share).
 	 */
 	public List getCertificates();
 
 	/**
-	 * @param list
+	 * Assign a predefined array of certificates to this company.
+	 * @param list ArrayList containing the certificates.
 	 */
 	public void setCertificates(List list);
 	
-	public void addCertificate (CertificateI certificate);
 	/**
-	 * @param spaceI
+	 * Add a certificate to the end of this company's list of certificates.
+	 * @param certificate The certificate to add.
 	 */
-	public void setParPrice(StockSpaceI parPrice);
+	public void addCertificate (CertificateI certificate);
 	
+	/**
+	 * Get the current company treasury.
+	 * <p><i>Note: other cash-related methods are declared in interface CashHolder</i>
+	 * @return The current cash amount.
+	 */
 	public int getCash ();
 	
+	/**
+	 * Get the last revenue earned by this company.
+	 * @return The last revenue amount.
+	 */
 	public int getLastRevenue();
 	
 	public Portfolio getPortfolio();
@@ -104,5 +142,11 @@ public interface PublicCompanyI extends CompanyI  {
 	public void withhold (int amount);
 
 	public boolean isSoldOut ();
+
+	/** 
+	 * Get the unit of share.
+	 * @return The percentage of ownership that is called "one share".
+	 */
+	public int getShareUnit ();
 
 }
