@@ -18,16 +18,16 @@
   <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
   <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
   
-  <Company name="GT"  type="Public" fgcolour="000000" bgcolour="40B0A0"/>
-  <Company name="THB" type="Public" fgcolour="000000" bgcolour="B0B040"/>
-  <Company name="BBG" type="Public" fgcolour="000000" bgcolour="FF8080"/>
-  <Company name="LPS" type="Public" fgcolour="000000" bgcolour="A0A0F0"/>
-  <Company name="WGB" type="Public" fgcolour="FFFFFF" bgcolour="0000FF"/>
-  <Company name="WR"  type="Public" fgcolour="FFFFFF" bgcolour="808030"/>
-  <Company name="CV"  type="Public" fgcolour="FFFFFF" bgcolour="800080"/>
-  <Company name="CPR" type="Public" fgcolour="000000" bgcolour="ffa0ff"/>
-  <Company name="CA"  type="Public" fgcolour="FFFFFF" bgcolour="FF0000"/>
-  <Company name="CGR" type="Public" fgcolour="FFFFFF" bgcolour="000000"/>
-  <Company name="TGB" type="Public" fgcolour="FFFFFF" bgcolour="FF8000"/>
-  <Company name="GW"  type="Public" fgcolour="000000" bgcolour="b090b0"/>
+  <Company name="GT"  type="Public" fgColour="000000" bgColour="40B0A0"/>
+  <Company name="THB" type="Public" fgColour="000000" bgColour="B0B040"/>
+  <Company name="BBG" type="Public" fgColour="000000" bgColour="FF8080"/>
+  <Company name="LPS" type="Public" fgColour="000000" bgColour="A0A0F0"/>
+  <Company name="WGB" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
+  <Company name="WR"  type="Public" fgColour="FFFFFF" bgColour="808030"/>
+  <Company name="CV"  type="Public" fgColour="FFFFFF" bgColour="800080"/>
+  <Company name="CPR" type="Public" fgColour="000000" bgColour="ffa0ff"/>
+  <Company name="CA"  type="Public" fgColour="FFFFFF" bgColour="FF0000"/>
+  <Company name="CGR" type="Public" fgColour="FFFFFF" bgColour="000000"/>
+  <Company name="TGB" type="Public" fgColour="FFFFFF" bgColour="FF8000"/>
+  <Company name="GW"  type="Public" fgColour="000000" bgColour="b090b0"/>
 </CompanyManager>

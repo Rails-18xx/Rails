@@ -17,10 +17,10 @@
   <Company name="M&amp;C"   type="Private" basePrice="100" revenue="20"/>
   <Company name="NDY"       type="Private" basePrice="120" revenue="20"/>
   
-  <Company name="WRA"      type="Public" fgcolour="000000" bgcolour="FF8000"/>
-  <Company name="TAG"      type="Public" fgcolour="FFFFFF" bgcolour="800080"/>
-  <Company name="M&amp;O"  type="Public" fgcolour="000000" bgcolour="00FF00"/>
-  <Company name="ATN"      type="Public" fgcolour="000000" bgcolour="808080"/>
-  <Company name="AB&amp;C" type="Public" fgcolour="000000" bgcolour="FFFF00"/>
-  <Company name="L&amp;N"  type="Public" fgcolour="000000" bgcolour="FF0000"/>
+  <Company name="WRA"      type="Public" fgColour="000000" bgColour="FF8000"/>
+  <Company name="TAG"      type="Public" fgColour="FFFFFF" bgColour="800080"/>
+  <Company name="M&amp;O"  type="Public" fgColour="000000" bgColour="00FF00"/>
+  <Company name="ATN"      type="Public" fgColour="000000" bgColour="808080"/>
+  <Company name="AB&amp;C" type="Public" fgColour="000000" bgColour="FFFF00"/>
+  <Company name="L&amp;N"  type="Public" fgColour="000000" bgColour="FF0000"/>
 </CompanyManager>

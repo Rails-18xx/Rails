@@ -5,6 +5,7 @@
     <AllClose phase="5"/>
   </CompanyType>
   <CompanyType name="Public" class="game.PublicCompany">
+    <ShareUnit percentage="10"/>
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <PoolPaysOut/>
     <Certificate type="President" share="20"/>

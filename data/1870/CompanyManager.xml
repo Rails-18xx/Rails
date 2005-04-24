@@ -19,14 +19,14 @@
   <Company name="SLSF"  type="Private" basePrice="140" revenue="0"/>
   <Company name="MKT"   type="Private" basePrice="160" revenue="20"/>
   
-  <Company name="KATY" type="Public" fgcolour="FFFFFF" bgcolour="00FF00"/>
-  <Company name="MP"   type="Public" fgcolour="FFFFFF" bgcolour="FF0000"/>
-  <Company name="ATSF" type="Public" fgcolour="FFFFFF" bgcolour="0000FF"/>
-  <Company name="SP"   type="Public" fgcolour="FF8000" bgcolour="000000"/>
-  <Company name="GMO"  type="Public" fgcolour="FFFFFF" bgcolour="ff0040"/>
-  <Company name="SLSF" type="Public" fgcolour="FFFFFF" bgcolour="d04000"/>
-  <Company name="TP"   type="Public" fgcolour="FFFFFF" bgcolour="000000"/>
-  <Company name="FW"   type="Public" fgcolour="FF0000" bgcolour="000000"/>
-  <Company name="SSW"  type="Public" fgcolour="FFFFFF" bgcolour="6000ff"/>
-  <Company name="IC"   type="Public" fgcolour="000000" bgcolour="c0ff40"/>
+  <Company name="KATY" type="Public" fgColour="FFFFFF" bgColour="00FF00"/>
+  <Company name="MP"   type="Public" fgColour="FFFFFF" bgColour="FF0000"/>
+  <Company name="ATSF" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
+  <Company name="SP"   type="Public" fgColour="FF8000" bgColour="000000"/>
+  <Company name="GMO"  type="Public" fgColour="FFFFFF" bgColour="ff0040"/>
+  <Company name="SLSF" type="Public" fgColour="FFFFFF" bgColour="d04000"/>
+  <Company name="TP"   type="Public" fgColour="FFFFFF" bgColour="000000"/>
+  <Company name="FW"   type="Public" fgColour="FF0000" bgColour="000000"/>
+  <Company name="SSW"  type="Public" fgColour="FFFFFF" bgColour="6000ff"/>
+  <Company name="IC"   type="Public" fgColour="000000" bgColour="c0ff40"/>
 </CompanyManager>
