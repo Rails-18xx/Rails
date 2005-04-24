@@ -97,7 +97,7 @@ public class StockMarketTestServlet extends HttpServlet {
 					startSpaces = stockMarket.getStartSpaces();
 					for (i = 0; i < startSpaces.size(); i++) {
 						if ((square = (StockSpace) (startSpaces.get(i))).getPrice() == price) {
-							company.start(square);
+							company.setParPrice(square);
 						}
 					}
 
