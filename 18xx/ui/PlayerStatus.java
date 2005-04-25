@@ -65,7 +65,6 @@ public class PlayerStatus extends JPanel
       
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
-      this.setPreferredSize(new Dimension(50,100));
       this.setLayout(new GridLayout(0,Player.getPlayers().size()+1));
       
       playerLabel = new JLabel[Player.numberOfPlayers()+1];
