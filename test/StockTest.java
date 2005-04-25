@@ -116,8 +116,6 @@ public class StockTest
 
    public static void main(String[] args)
    {
-      //GameInit g = new GameInit();
-      
       StockUITest();
    }
 }

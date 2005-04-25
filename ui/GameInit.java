@@ -26,7 +26,7 @@ public class GameInit extends JFrame implements MouseListener
 {
    GridBagConstraints gc;
    JPanel optionsPane, playersPane, buttonPane;
-   JButton newButton;
+   JButton newButton, loadButton;
    
    private void initialize()
    {
@@ -35,6 +35,7 @@ public class GameInit extends JFrame implements MouseListener
       playersPane = new JPanel();
       buttonPane = new JPanel();
       newButton = new JButton("New Game");
+      loadButton = new JButton("Load Game");
       
       this.setLayout(new GridBagLayout());
       this.setTitle("Rails: New Game");
@@ -47,8 +48,10 @@ public class GameInit extends JFrame implements MouseListener
       optionsPane.add(new JLabel("Options:"));
       optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
       
+      newButton.addMouseListener(this);
+      
       buttonPane.add(newButton);
-      buttonPane.addMouseListener(this);
+      buttonPane.add(loadButton);
       buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
    }
   
@@ -96,6 +99,7 @@ public class GameInit extends JFrame implements MouseListener
     */
    public void mouseClicked(MouseEvent arg0)
    {
+      System.out.println("Warning: Loading from StockTest.");
       StockTest.StockUITest();
    }
    /* (non-Javadoc)

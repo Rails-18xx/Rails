@@ -23,7 +23,7 @@ import java.util.*;
 public final class Player implements CashHolder
 {
 
-   public static final int MAX_PLAYERS = 10;
+   public static final int MAX_PLAYERS = 10; //this ought to be read from XML.
    private static ArrayList players = new ArrayList();
    private static int[] playerStartCash = new int[MAX_PLAYERS + 1];
    private static int[] playerCertificateLimits = new int[MAX_PLAYERS + 1];
