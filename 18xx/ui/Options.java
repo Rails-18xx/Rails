@@ -21,10 +21,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
-import test.*;
+import java.util.*;
 import game.*;
 
-public class GameInit extends JFrame implements MouseListener
+public class Options extends JFrame implements MouseListener
 {
    GridBagConstraints gc;
    JPanel optionsPane, playersPane, buttonPane;
@@ -62,6 +62,7 @@ public class GameInit extends JFrame implements MouseListener
       playersPane.add(new JLabel(""));
       playersPane.setLayout(new GridLayout(11,0));
       playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
+      
       for(int i=0; i < playerBoxes.length; i++)
       {
          playerBoxes[i] = new JComboBox();
@@ -75,6 +76,8 @@ public class GameInit extends JFrame implements MouseListener
          playerNameFields[i].setPreferredSize(size);
          playersPane.add(playerNameFields[i]);
       }
+
+      gameName.setText("1830");
       
       optionsPane.add(new JLabel("Options"));
       optionsPane.add(new JLabel(""));
@@ -122,7 +125,7 @@ public class GameInit extends JFrame implements MouseListener
       this.add(buttonPane, gc);
    }
    
-   public GameInit()
+   public Options()
    {
       super();
       
@@ -139,15 +142,24 @@ public class GameInit extends JFrame implements MouseListener
    {
       if (arg0.getSource().equals(newButton))
       {
-         System.out.println("Warning: Loading from StockTest.");
+         ArrayList playerNames = new ArrayList();
+         
+         for(int i=0;i < playerBoxes.length; i++)
+         {
+            if(playerBoxes[i].getSelectedItem().toString().equalsIgnoreCase("Human"))
+            {
+               playerNames.add(playerNameFields[i].getText());
+            }
+         }
          
          try
          {
-            StockTest.StockUITest(gameName.getText());
+            GameLoader.NewGame(gameName.getText(), playerNames);
          }
          catch(NullPointerException e)
          {
-            JOptionPane.showMessageDialog(this, "Game not found.");
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Unable to load selected game.");            
          }
       }
       else

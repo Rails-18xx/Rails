@@ -3,13 +3,13 @@
  */
 package test;
 
-import ui.GameInit;
+import ui.Options;
 
 public class GameTest
 {
    public static void GameInitTest()
    {
-      GameInit g = new GameInit();
+      Options g = new Options();
    }
    
    public static void main(String[] args)

@@ -431,5 +431,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
 	public int getShareUnit () {
 		return shareUnit;
 	}
-
+	
+	public String toString()
+	{
+	   return "Public Company Number: " + publicNumber + " of " + PublicCompany.numberOfPublicCompanies; 
+	}
 }
