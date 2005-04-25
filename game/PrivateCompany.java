@@ -139,4 +139,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 		Log.write(holder.getOwner().getName()+" receives "+revenue+" for "+name);
 		Bank.transferCash(null, holder.getOwner(), revenue);
 	}
+	
+	public String toString()
+	{
+	   return "Private Company Number: " + privateNumber + " of " + PrivateCompany.numberOfPrivateCompanies;
+	}
 }

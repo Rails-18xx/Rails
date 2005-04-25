@@ -171,4 +171,9 @@ public final class Player implements CashHolder
    {
       wallet += amount;
    }
+   
+   public String toString()
+   {
+      return "Name: " + name + " Cash: " + wallet;
+   }
 }

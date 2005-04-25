@@ -57,7 +57,7 @@ public class StockChart extends JFrame implements ActionListener
    {
       this.setSize(10, 10);
       this.setTitle("Rails: Stock Chart");
-      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
 
       stockPanel = new JPanel();
@@ -65,7 +65,8 @@ public class StockChart extends JFrame implements ActionListener
       buttonPanel = new JPanel();
 
       stockGrid = new GridLayout();
-      
+      stockGrid.setHgap(0);
+      stockGrid.setVgap(0);
       stockPanel.setLayout(stockGrid);
       statusPanel.setLayout(new GridLayout(2,0));
       buttonPanel.setLayout(new FlowLayout());
@@ -249,6 +250,7 @@ public class StockChart extends JFrame implements ActionListener
    {
       stockPanel.removeAll();
       populateStockPanel();
+      playerStatus.RefreshStatus();
    }
    public StockChart(StockMarket sm, CompanyStatus cs, PlayerStatus ps)
    {
@@ -263,8 +265,8 @@ public class StockChart extends JFrame implements ActionListener
       populateStockPanel();
 
       stockPanel.setBackground(Color.LIGHT_GRAY);
-      statusPanel.setBackground(Color.BLACK);
-      buttonPanel.setBackground(Color.LIGHT_GRAY);
+      
+      statusPanel.setOpaque(false);
 
       statusPanel.add(companyStatus);
       statusPanel.add(playerStatus);
@@ -322,7 +324,7 @@ public class StockChart extends JFrame implements ActionListener
       }
       catch (NullPointerException e)
       {   
-         JOptionPane.showMessageDialog(this, "No Company Selected.");
+         JOptionPane.showMessageDialog(this, "Unable to move selected company's token.");
       }        
    }
 }

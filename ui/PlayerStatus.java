@@ -28,20 +28,17 @@ public class PlayerStatus extends JPanel
 {
    private JLabel[] playerLabel;
    private JLabel[] cashLabel;
-   
-   private Player players;
+   private Player[] players;
    
    public void UpdateStatus()
    {
       this.add(new JLabel("Player:"));
-      for(int i = 0; i < Player.numberOfPlayers(); i++)
+      for(int i = 0; i < players.length; i++)
       {
-         Player p = Player.getPlayer(i);
-         
-         playerLabel[i] = new JLabel();         
-         playerLabel[i].setText(p.getName());
+         playerLabel[i] = new JLabel(players[i].getName());         
          playerLabel[i].setOpaque(true);
          playerLabel[i].setBackground(Color.WHITE);
+         playerLabel[i].setForeground(Color.BLACK);
          
          this.add(playerLabel[i]);
       }
@@ -59,16 +56,26 @@ public class PlayerStatus extends JPanel
          this.add(playerLabel[i]);
       }
    }
-   public PlayerStatus()
+   
+   public void RefreshStatus()
+   {
+      this.removeAll();
+      this.UpdateStatus();
+   }
+   
+   public PlayerStatus(Player[] players)
    {    
       super();
       
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
-      this.setLayout(new GridLayout(0,Player.getPlayers().size()+1));
+      this.setLayout(new GridLayout(0,players.length+1));
+      this.setOpaque(false);
       
-      playerLabel = new JLabel[Player.numberOfPlayers()+1];
-      cashLabel = new JLabel[Player.numberOfPlayers()+1];
+      this.players = players;
+      
+      playerLabel = new JLabel[players.length];
+      cashLabel = new JLabel[players.length];
       
       UpdateStatus();
    }
