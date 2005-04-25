@@ -38,7 +38,7 @@ public class GameLoader
       for(int i=0; i < companyList.size(); i++)
       {
          //Put all the tokens on the stock market for testing.
-         companyManager.getPublicCompany(companyList.get(i).toString()).setParPrice(stockMarket.getStartSpace(67));
+         companyManager.getPublicCompany(companyList.get(i).toString()).setParPrice(((StockSpace) stockMarket.getStartSpaces().get(0)));
       }
       
       playerStatus = new PlayerStatus(players); //might need to be here for access to certain objects
