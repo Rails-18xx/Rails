@@ -95,19 +95,19 @@ public class StockTest
       }
    }
 
-   public static void StockUITest()
+   public static void StockUITest(String gameName)
    {
       Game game = Game.getInstance();
-      game.initialise("1830");
+      game.initialise(gameName);
 
       StockMarket sm = (StockMarket) game.getStockMarket();
 
       // Fake some markers on the chart
       CompanyManager companyManager = (CompanyManager) game.getCompanyManager();
       companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(67));
-      companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(82));
-      companyManager.getPublicCompany("C&O").setParPrice(sm.getStartSpace(82));
-      companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(100));
+      //companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(82));
+      //companyManager.getPublicCompany("C&O").setParPrice(sm.getStartSpace(82));
+      //companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(100));
 
       CompanyStatus cs = new CompanyStatus(companyManager, game.getBank());
       PlayerStatus ps = new PlayerStatus(); //might need to be here for access to certain objects
@@ -116,6 +116,6 @@ public class StockTest
 
    public static void main(String[] args)
    {
-      StockUITest();
+      StockUITest("1830");
    }
 }

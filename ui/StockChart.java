@@ -61,11 +61,7 @@ public class StockChart extends JFrame implements ActionListener
       this.getContentPane().setLayout(new GridBagLayout());
 
       stockPanel = new JPanel();
-      stockPanel.setPreferredSize(new Dimension(300, 400));
-      
       statusPanel = new JPanel();
-      statusPanel.setPreferredSize(new Dimension(50,75));
-      
       buttonPanel = new JPanel();
 
       stockGrid = new GridLayout();
@@ -89,8 +85,6 @@ public class StockChart extends JFrame implements ActionListener
       gc.weightx = 1.0;
       gc.weighty = 1.0;
       gc.gridwidth = 2;
-      gc.ipadx = 500;
-      gc.ipady = 50;
       gc.fill = GridBagConstraints.BOTH;
       this.getContentPane().add(stockPanel, gc);
 
@@ -99,6 +93,8 @@ public class StockChart extends JFrame implements ActionListener
       gc.fill = 0;
       gc.weightx = 0.5;
       gc.weighty = 0.5;
+      gc.ipadx = 500;
+      gc.ipady = 50;
       gc.gridwidth = 1;
       this.getContentPane().add(statusPanel, gc);
 
@@ -107,6 +103,7 @@ public class StockChart extends JFrame implements ActionListener
       gc.weightx = 0.0;
       gc.weighty = 0.0;
       gc.gridwidth = 2;
+      gc.ipady = 0;
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPanel, gc);
    }
@@ -137,7 +134,7 @@ public class StockChart extends JFrame implements ActionListener
             
             layeredPane.add(priceLabel, new Integer(0), depth);
             layeredPane.moveToBack(priceLabel);            
-            layeredPane.setPreferredSize(new Dimension (40, 30));
+            layeredPane.setPreferredSize(new Dimension (40, 40));
             
             try
             {
@@ -185,7 +182,7 @@ public class StockChart extends JFrame implements ActionListener
    }
    private void placeToken(ArrayList tokenList, JLayeredPane layeredPane)
    {
-      Point origin = new Point(20,0);
+      Point origin = new Point(16,0);
       Dimension size = new Dimension(40, 40);
       Color bgColour;
       Color fgColour;
@@ -202,7 +199,6 @@ public class StockChart extends JFrame implements ActionListener
          token.setBounds(origin.x, origin.y, size.width, size.height);
          
          layeredPane.add(token, new Integer(0), 0);
-         //layeredPane.moveToFront(token);
          origin.y += 6;
       }      
    }
