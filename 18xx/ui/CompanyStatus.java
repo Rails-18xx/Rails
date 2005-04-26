@@ -66,11 +66,11 @@ public class CompanyStatus extends JPanel implements MouseListener
          sp = (StockSpace) co.getParPrice();
          try
          {
-            parLabel[i].setText(Integer.toString(sp.getPrice()));   
+            parLabel[i].setText(Integer.toString(sp.getPrice()));            
          }
          catch (NullPointerException e)
          {
-            parLabel[i].setText("0");
+            parLabel[i].setText("00");
          }
          
          this.add(parLabel[i]);
@@ -95,6 +95,11 @@ public class CompanyStatus extends JPanel implements MouseListener
          
          this.add(cashLabel[i]);
       }     
+   }
+   public void RefreshStatus()
+   {
+      this.removeAll();
+      this.UpdateStatus();
    }
    
    public CompanyStatus(CompanyManagerI cm, Bank bank)

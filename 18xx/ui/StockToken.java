@@ -32,20 +32,16 @@ public class StockToken extends JPanel
    {
       clear(g);
       Graphics2D g2d = (Graphics2D) g;
-
-      this.setOpaque(false);
-
-      this.setForeground(bgColor);
-      g2d.setColor(bgColor);
-      g2d.fill(circle2);
-      g2d.draw(circle2);
-      this.setVisible(true);
       
-      this.setForeground(fgColor);
-      g2d.setColor(fgColor);
+      drawToken(g2d, bgColor, circle2);
+      drawToken(g2d, fgColor, circle);
+   }
+   
+   private void drawToken(Graphics2D g2d, Color c, Ellipse2D.Double circle)
+   {     
+      g2d.setColor(c);
       g2d.fill(circle);
       g2d.draw(circle);
-      this.setVisible(true);
    }
 
    protected void clear(Graphics g)
@@ -69,7 +65,7 @@ public class StockToken extends JPanel
    }
    
    public StockToken(Color fc, Color bc, double x, double y, double diameter)
-   {
+   {      
       super();
       
       fgColor = fc;
@@ -77,6 +73,10 @@ public class StockToken extends JPanel
       
       circle = new Ellipse2D.Double(x, y, diameter, diameter);
       circle2 = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
+      
+      this.setForeground(fgColor);
+      this.setOpaque(false);
+      this.setVisible(true);
    }
    
 }

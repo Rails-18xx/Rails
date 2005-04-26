@@ -48,7 +48,7 @@ public class Options extends JFrame implements MouseListener
       size = new Dimension(50,25);
       gameName = new JTextField();
       
-      playerBoxes = new JComboBox[Player.MAX_PLAYERS]; //These ought to be a dynamic allocation
+      playerBoxes = new JComboBox[Player.MAX_PLAYERS];
       playerNameFields = new JTextField[Player.MAX_PLAYERS];
       
       this.setLayout(new GridBagLayout());
@@ -60,7 +60,7 @@ public class Options extends JFrame implements MouseListener
       
       playersPane.add(new JLabel("Players:"));
       playersPane.add(new JLabel(""));
-      playersPane.setLayout(new GridLayout(11,0));
+      playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS+1,0));
       playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
       
       for(int i=0; i < playerBoxes.length; i++)
