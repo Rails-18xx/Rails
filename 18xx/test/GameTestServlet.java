@@ -29,6 +29,9 @@ public class GameTestServlet extends HttpServlet {
 	private int phase = SELECTGAME;
 	private boolean orStarted = false;
 	private String error;
+	
+	private ArrayList playerList = new ArrayList();
+	private Player[] players;
 
 
 	public void init(ServletConfig config) throws ServletException {
@@ -83,12 +86,14 @@ public class GameTestServlet extends HttpServlet {
 			if (hasValue(request.getParameter ("AddPlayer"))) {
 				String newPlayer = request.getParameter ("Player");
 				if(hasValue(newPlayer)) {
-					Player.addPlayer (newPlayer);
+					playerList.add (new Player(newPlayer));
 				}
 			} else if (hasValue (request.getParameter ("StartGame"))) {
 
 				// Give players their start cash
-				Player.initPlayers();
+				players = new Player[playerList.size()];
+				for (i=0; i<playerList.size(); i++) players[i] = (Player)playerList.get(i);
+				Player.initPlayers(players);
 
 				phase = BUYPRIVATES;
 			}
@@ -101,7 +106,7 @@ public class GameTestServlet extends HttpServlet {
 				price = Integer.parseInt(request.getParameter("Price"));
 				PrivateCompanyI privco =
 					(PrivateCompanyI)game.getCompanyManager().getAllPrivateCompanies().get(priv);
-				Player.getPlayer(player).getPortfolio().buyPrivate(
+				players[player].getPortfolio().buyPrivate(
 					privco,
 					game.getBank().getIpo(), price);
 				if (Integer.parseInt(request.getParameter("Left")) == 1) {
@@ -125,7 +130,7 @@ public class GameTestServlet extends HttpServlet {
 				phase = OR;
 			} else {
 				int pl = Integer.parseInt(request.getParameter("Player"));
-				Player player = Player.getPlayer(pl);
+				Player player = players[pl];
 				String cmpy = request.getParameter("Company");
 				company = game.getCompanyManager().getPublicCompany(cmpy);
 				Portfolio from = null, to = null;
@@ -321,8 +326,8 @@ public class GameTestServlet extends HttpServlet {
 
 				out.append ("<h4>Selecting players</h4>");
 				out.append("<table class=\"bordertable\" cellspacing=0>");
-				for (int j=0; j<Player.numberOfPlayers(); j++) {
-					out.append("<tr><td>"+(j+1)+"</td><td>"+Player.getPlayer(j).getName()
+				for (int j=0; j<playerList.size(); j++) {
+					out.append("<tr><td>"+(j+1)+"</td><td>"+((Player)playerList.get(j)).getName()
 						+"</td></tr>\n");
 				}
 				out.append("</table><p>");
@@ -343,8 +348,8 @@ public class GameTestServlet extends HttpServlet {
 					+ servletPrefix
 					+ servletName + "\">\n");
 				out.append("<table><tr><td>Select Player</td><td><select name=Player>\n");
-				for (int j=0; j<Player.numberOfPlayers(); j++) {
-					out.append("<option value=\""+j+"\">"+Player.getPlayer(j).getName()+"\n");
+				for (int j=0; j<playerList.size(); j++) {
+					out.append("<option value=\""+j+"\">"+players[j].getName()+"\n");
 				}
 				out.append("</select></td></tr>");
 
@@ -369,8 +374,8 @@ public class GameTestServlet extends HttpServlet {
 					+ servletPrefix
 					+ servletName + "\">\n");
 				out.append("<table><tr><td align=right>Select Player</td><td><select name=Player>\n");
-				for (int j=0; j<Player.numberOfPlayers(); j++) {
-					out.append("<option value=\""+j+"\">"+Player.getPlayer(j).getName()+"\n");
+				for (int j=0; j<players.length; j++) {
+					out.append("<option value=\""+j+"\">"+players[j].getName()+"\n");
 				}
 				out.append("</select></td></tr>");
 
@@ -505,8 +510,8 @@ public class GameTestServlet extends HttpServlet {
 				nComp++;
 			}
 			out.append ("</tr>\n");
-			for (int j=0; j<Player.numberOfPlayers(); j++) {
-				Player player = Player.getPlayer(j);
+			for (int j=0; j<playerList.size(); j++) {
+				Player player = (Player) playerList.get(j);
 				out.append("<tr><td>" + player.getName())
 					.append("</td><td>" + player.getCash())
 					.append("</td><td>");
@@ -573,5 +578,4 @@ public class GameTestServlet extends HttpServlet {
 	private boolean hasValue(String s) {
 		return s != null && !s.equals("");
 	}
-
 }
