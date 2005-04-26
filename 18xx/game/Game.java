@@ -41,7 +41,7 @@ public class Game
    protected CompanyManagerI companyManager;
    protected StockMarketI stockMarket;
    protected Bank bank;
-   protected Player player;
+   protected Player[] players;
    protected String name;
 
    /**
@@ -135,9 +135,8 @@ public class Game
       return bank;
    }
 
-   public Player getPlayers()
+   public Player[] getPlayers()
    {
-      return player;
+      return players;
    }
-
 }

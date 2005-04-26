@@ -19,19 +19,21 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import java.util.*;
+import java.io.*;
 import game.*;
 
-public class Options extends JFrame implements MouseListener
+public class Options extends JFrame implements ActionListener
 {
    GridBagConstraints gc;
    JPanel optionsPane, playersPane, buttonPane;
    JButton newButton, loadButton, quitButton;
    JComboBox[] playerBoxes;
+   JComboBox gameNameBox;
    JTextField[] playerNameFields;
-   JTextField gameName;
    BasicComboBoxRenderer renderer;
    Dimension size;
    
@@ -46,7 +48,7 @@ public class Options extends JFrame implements MouseListener
       quitButton = new JButton("Quit");
       renderer = new BasicComboBoxRenderer();
       size = new Dimension(50,25);
-      gameName = new JTextField();
+      gameNameBox = new JComboBox();
       
       playerBoxes = new JComboBox[Player.MAX_PLAYERS];
       playerNameFields = new JTextField[Player.MAX_PLAYERS];
@@ -77,17 +79,17 @@ public class Options extends JFrame implements MouseListener
          playersPane.add(playerNameFields[i]);
       }
 
-      gameName.setText("1830");
+      populateGameList(getGameList(), gameNameBox);
       
       optionsPane.add(new JLabel("Options"));
       optionsPane.add(new JLabel(""));
       optionsPane.add(new JLabel("Game:"));
-      optionsPane.add(gameName);
+      optionsPane.add(gameNameBox);
       optionsPane.setLayout(new GridLayout(5,2));
       optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
       
-      newButton.addMouseListener(this);
-      quitButton.addMouseListener(this);
+      newButton.addActionListener(this);
+      quitButton.addActionListener(this);
       
       buttonPane.add(newButton);
       buttonPane.add(loadButton);
@@ -124,7 +126,21 @@ public class Options extends JFrame implements MouseListener
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.add(buttonPane, gc);
    }
-   
+
+   //Ridiculously rudimentary method for populating a ComboBox
+   private String[] getGameList()
+   {
+      File dataDir = new File("./data/");
+      return dataDir.list();
+   }
+   private void populateGameList(String[] gameNames, JComboBox gameNameBox)
+   {
+      for(int i=0; i < gameNames.length; i++)
+      {
+         if(!gameNames[i].equalsIgnoreCase("CVS"))
+            gameNameBox.addItem(gameNames[i]);
+      }
+   }
    public Options()
    {
       super();
@@ -135,10 +151,7 @@ public class Options extends JFrame implements MouseListener
       this.pack();
       this.setVisible(true);
    }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-    */
-   public void mouseClicked(MouseEvent arg0)
+   public void actionPerformed(ActionEvent arg0)
    {
       if (arg0.getSource().equals(newButton))
       {
@@ -152,44 +165,29 @@ public class Options extends JFrame implements MouseListener
             }
          }
          
+         if(playerNames.size() < 2)
+         {
+            if(JOptionPane.showConfirmDialog(this, "Not enough players. Continue Anyway?", "Are you sure?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+            {
+               return;
+            }
+         }
+         
          try
          {
-            GameLoader.NewGame(gameName.getText(), playerNames);
+            GameLoader.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
          }
          catch(NullPointerException e)
          {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Unable to load selected game.");            
          }
+         
       }
       else
       {
          System.exit(0);
       }
       
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-    */
-   public void mouseEntered(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-    */
-   public void mouseExited(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-    */
-   public void mousePressed(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-    */
-   public void mouseReleased(MouseEvent arg0)
-   {
    }
 }
