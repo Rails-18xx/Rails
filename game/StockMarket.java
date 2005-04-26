@@ -31,17 +31,11 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 {
 
    protected HashMap stockSpaceTypes = new HashMap();
-
-   protected StockSpace stockChart[][];
-
    protected HashMap stockChartSpaces = new HashMap();
-
-   protected int numRows = 0;
-
-   protected int numCols = 0;
-
+   protected StockSpace stockChart[][];
    protected StockSpace currentSquare;
-
+   protected int numRows = 0;
+   protected int numCols = 0;
    protected ArrayList startSpaces = new ArrayList();
 
    /* Game-specific flags */
@@ -407,8 +401,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
       Iterator it = startSpaces.iterator();
       StockSpaceI square;
       while (it.hasNext())
-      {
-         square = ((StockSpaceI) it.next());
+      {         
+         square = ((StockSpaceI) it.next());         
          if (square.getPrice() == price)
             return square;
       }

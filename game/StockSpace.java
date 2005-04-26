@@ -274,6 +274,6 @@ public class StockSpace implements StockSpaceI
    
    public String toString()
    {
-     return Integer.toString(price); 
+     return "Location: " + row + "," + column + " Price: " + price; 
    }
 }

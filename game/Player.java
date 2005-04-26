@@ -23,10 +23,9 @@ import java.util.*;
 public final class Player implements CashHolder
 {
 
-   public static final int MAX_PLAYERS = 10; //this ought to be read from XML.
-   private static ArrayList players = new ArrayList();
-   private static int[] playerStartCash = new int[MAX_PLAYERS + 1];
-   private static int[] playerCertificateLimits = new int[MAX_PLAYERS + 1];
+   public static int MAX_PLAYERS = 8;
+   private static int[] playerStartCash = new int[MAX_PLAYERS];
+   private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
    private static int playerCertificateLimit;
    String name;
    int wallet = 0;
@@ -35,27 +34,6 @@ public final class Player implements CashHolder
    /* ArrayList littleCoOwned; */
    Portfolio portfolio = null;
    ArrayList companiesSoldThisTurn;
-
-   public static void addPlayer(String name)
-   {
-      players.add(new Player(name));
-      Log.write("Player " + players.size() + " is " + name);
-   }
-
-   public static List getPlayers()
-   {
-      return players;
-   }
-
-   public static int numberOfPlayers()
-   {
-      return players.size();
-   }
-
-   public static Player getPlayer(int index)
-   {
-      return (Player) players.get(index);
-   }
 
    public static void setLimits(int number, int cash, int certLimit)
    {
@@ -71,18 +49,18 @@ public final class Player implements CashHolder
     * players. To be called when all Players have been added.
     *  
     */
-   public static void initPlayers()
+   public static void initPlayers(Player[] players)
    {
       Player player;
-      int numberOfPlayers = players.size();
+      int numberOfPlayers = players.length;
       int startCash = playerStartCash[numberOfPlayers];
 
       // Give each player the initial cash amount
       for (int i = 0; i < numberOfPlayers; i++)
       {
-         player = (Player) players.get(i);
+         player = (Player) players[i];
          Bank.transferCash(null, player, startCash);
-         Log.write("Player " + player.getName() + " receives " + startCash);
+         Log.write("Player " + player.getName() + " receives " + startCash + ". Bank now has " + Bank.getInstance().getCash());
       }
 
       // Set the sertificate limit

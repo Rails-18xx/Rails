@@ -44,12 +44,10 @@ public class PlayerStatus extends JPanel
       }
       
       this.add(new JLabel("Cash:"));
-      for(int i = 0; i < Player.numberOfPlayers(); i++)
+      for(int i = 0; i < players.length; i++)
       {
-         Player p = Player.getPlayer(i);
-         
          playerLabel[i] = new JLabel();         
-         playerLabel[i].setText(Integer.toString(p.getCash()));
+         playerLabel[i].setText(Integer.toString(players[i].getCash()));
          playerLabel[i].setOpaque(true);
          playerLabel[i].setBackground(Color.WHITE);
          

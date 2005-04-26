@@ -251,6 +251,7 @@ public class StockChart extends JFrame implements ActionListener
       stockPanel.removeAll();
       populateStockPanel();
       playerStatus.RefreshStatus();
+      companyStatus.RefreshStatus();
    }
    public StockChart(StockMarket sm, CompanyStatus cs, PlayerStatus ps)
    {
