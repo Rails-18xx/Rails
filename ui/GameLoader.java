@@ -5,6 +5,8 @@ package ui;
 
 import game.*;
 import java.util.*;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * @author blentz
@@ -29,8 +31,6 @@ public class GameLoader
       companyList = (ArrayList) companyManager.getAllPublicCompanies();
       stockMarket = (StockMarket) game.getStockMarket();
       players = new Player[playerNames.size()];
-      bank = game.getBank();
-      
       
       for(int i=0; i < playerNames.size(); i++)
       {
@@ -39,15 +39,24 @@ public class GameLoader
       
       Player.initPlayers(players);
       
-      for(int i=0; i < companyList.size(); i++)
-      {
-         //Put all the tokens on the stock market for testing.
-         ((PublicCompany) companyList.get(i)).setParPrice((StockSpace) stockMarket.getStartSpaces().get(0));
-      }
-      
       playerStatus = new PlayerStatus(players); //might need to be here for access to certain objects
       											// We'll know more after the Player class is fleshed out
-      companyStatus = new CompanyStatus(companyManager, game.getBank());      
+      companyStatus = new CompanyStatus(companyManager, bank);      
       stockChart = new ui.StockChart(stockMarket, companyStatus, playerStatus);
+   }
+   
+   public static boolean StartCompany(Player player, String companyName, int parValue)
+   {
+      if(player.getCash() >= parValue*6)
+      {
+         PublicCompany co = (PublicCompany) companyManager.getPublicCompany(companyName);
+         co.setParPrice(stockMarket.getStartSpace(parValue));
+         co.setClosed(false);
+         Bank.transferCash(player, co, parValue*6);
+         
+         return true;
+      }
+      else
+         return false;
    }
 }

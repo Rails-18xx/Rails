@@ -46,7 +46,7 @@ import java.util.*;
 public class StockChart extends JFrame implements ActionListener
 {
    private JPanel stockPanel, statusPanel, buttonPanel;
-   private JButton upButton, downButton, leftButton, rightButton;
+   private JButton upButton, downButton, leftButton, rightButton, startCoButton;
    private GridLayout stockGrid;
    private GridBagConstraints gc;
    private StockMarket stockMarket;
@@ -75,6 +75,7 @@ public class StockChart extends JFrame implements ActionListener
       downButton = new JButton("down");
       leftButton = new JButton("left");
       rightButton = new JButton("right");
+      startCoButton = new JButton("Start Company");
 
       gc = new GridBagConstraints();
 
@@ -275,16 +276,19 @@ public class StockChart extends JFrame implements ActionListener
       buttonPanel.add(downButton);
       buttonPanel.add(leftButton);
       buttonPanel.add(rightButton);
+      buttonPanel.add(startCoButton);
       
       upButton.setActionCommand("up");
       downButton.setActionCommand("down");
       leftButton.setActionCommand("left");
       rightButton.setActionCommand("right");
+      startCoButton.setActionCommand("startCo");
       
       upButton.addActionListener(this);
       downButton.addActionListener(this);
       leftButton.addActionListener(this);
       rightButton.addActionListener(this);
+      startCoButton.addActionListener(this);
 
       this.pack();
       this.setVisible(true);
@@ -317,9 +321,17 @@ public class StockChart extends JFrame implements ActionListener
             stockMarket.soldOut((PublicCompanyI) co);
             refreshStockPanel();
          }
-         else
+         else if (arg0.getActionCommand().equalsIgnoreCase("right"))
          {
             stockMarket.payOut((PublicCompanyI) co);
+            refreshStockPanel();
+         }
+         else
+         {
+            if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
+            {
+               JOptionPane.showOptionDialog()
+            }
             refreshStockPanel();
          }
       }
