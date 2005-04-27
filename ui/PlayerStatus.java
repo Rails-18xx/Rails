@@ -142,4 +142,11 @@ public class PlayerStatus extends JPanel implements MouseListener
    {
       return playerSelected;
    }
+   /**
+    * @param playerSelected The playerSelected to set.
+    */
+   public void setPlayerSelected(String playerSelected)
+   {
+      this.playerSelected = playerSelected;
+   }
 }

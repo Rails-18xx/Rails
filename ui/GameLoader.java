@@ -5,8 +5,6 @@ package ui;
 
 import game.*;
 import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 
 /**
  * @author blentz
