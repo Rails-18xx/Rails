@@ -337,6 +337,16 @@ public class StockChart extends JFrame implements ActionListener
                      						stockMarket.getStartSpaces().toArray(),
                      						stockMarket.getStartSpaces().get(0)));
                
+               Player[] players = playerStatus.getPlayers();
+               
+               for (int i=0; i < players.length; i++)
+               {
+                  if(players[i].getName().equalsIgnoreCase(playerStatus.getPlayerSelected()));
+                  {
+                     //FIXME: Need to decide whether to use Stock or Certificate objects.
+                     //players[i].buyShare((Stock)co.getCertificates().get(0));
+                  }
+               }
                companyStatus.setCompanySelected(null);
                playerStatus.setPlayerSelected(null);
                refreshStockPanel();
