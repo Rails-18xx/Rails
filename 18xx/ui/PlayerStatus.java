@@ -149,4 +149,11 @@ public class PlayerStatus extends JPanel implements MouseListener
    {
       this.playerSelected = playerSelected;
    }
+   /**
+    * @return Returns the players.
+    */
+   public Player[] getPlayers()
+   {
+      return players;
+   }
 }
