@@ -465,7 +465,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       }
 
       // Move the token
-      Game.getInstance().getStockMarket().payOut(this);
+      Game.getStockMarket().payOut(this);
    }
 
    /**
@@ -481,7 +481,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       setLastRevenue(amount);
       Bank.transferCash(null, this, amount);
       // Move the token
-      Game.getInstance().getStockMarket().withhold(this);
+      Game.getStockMarket().withhold(this);
    }
 
    /**
@@ -526,5 +526,20 @@ public class PublicCompany extends Company implements PublicCompanyI,
    {
       return "Public Company Number: " + publicNumber + " of "
             + PublicCompany.numberOfPublicCompanies;
+   }
+   
+   public static boolean StartCompany(Player player, String companyName, int parValue)
+   {
+      if(player.getCash() >= parValue*6)
+      {
+         PublicCompany co = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
+         co.setParPrice(Game.getStockMarket().getStartSpace(parValue));
+         co.setClosed(false);
+         Bank.transferCash(player, co, parValue*6);
+         
+         return true;
+      }
+      else
+         return false;
    }
 }

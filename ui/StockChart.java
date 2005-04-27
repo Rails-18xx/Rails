@@ -302,8 +302,7 @@ public class StockChart extends JFrame implements ActionListener
       try
       {
          String companySelected = companyStatus.getCompanySelected();
-         CompanyManager cm = companyStatus.getCompanyManager();
-         //PublicCompany co = (PublicCompany) cm.getCompanyByName(companySelected);
+         CompanyManager cm = (CompanyManager) Game.getCompanyManager();
          PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
       
          if(arg0.getActionCommand().equalsIgnoreCase("down"))
@@ -337,7 +336,7 @@ public class StockChart extends JFrame implements ActionListener
                      						stockMarket.getStartSpaces().toArray(),
                      						stockMarket.getStartSpaces().get(0)));
                
-               Player[] players = playerStatus.getPlayers();
+               Player[] players = Game.getPlayers();
                
                for (int i=0; i < players.length; i++)
                {

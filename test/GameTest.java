@@ -7,13 +7,8 @@ import ui.Options;
 
 public class GameTest
 {
-   public static void GameInitTest()
-   {
-      Options g = new Options();
-   }
-   
    public static void main(String[] args)
    {
-      GameInitTest();
+      Options g = new Options();
    }
 }

@@ -19,8 +19,8 @@
 package game;
 
 import org.w3c.dom.*;
-
 import util.XmlUtils;
+import java.util.*;
 
 public class Game
 {
@@ -37,12 +37,29 @@ public class Game
    protected static Game instance;
 
    /** The component Manager */
-   protected ComponentManager componentMan;
-   protected CompanyManagerI companyManager;
-   protected StockMarketI stockMarket;
-   protected Bank bank;
-   protected Player[] players;
-   protected String name;
+   protected static ComponentManager componentManager;
+   protected static CompanyManagerI companyManager;
+   protected static StockMarketI stockMarket;
+   protected static Bank bank;
+   protected static Player[] players;
+   protected static ArrayList companyList;
+   protected static String name;
+   
+   public static void NewGame(String gameName, ArrayList playerNames)
+   {
+      initialise(gameName);
+      companyManager = (CompanyManagerI) getCompanyManager();
+      companyList = (ArrayList) companyManager.getAllPublicCompanies();
+      stockMarket = (StockMarket) getStockMarket();
+      players = new Player[playerNames.size()];
+      
+      for(int i=0; i < playerNames.size(); i++)
+      {
+         players[i] = new Player(playerNames.get(i).toString());
+      }
+      
+      Player.initPlayers(players);
+   }
 
    /**
     * Protected constructor.
@@ -55,11 +72,8 @@ public class Game
 
    }
 
-   public void initialise(String name)
+   public static void initialise(String name)
    {
-
-      this.name = name;
-
       String file = "data/" + name + "/Game.xml";
       try
       {
@@ -68,15 +82,15 @@ public class Game
                ComponentManager.ELEMENT_ID);
          ComponentManager.configureInstance(name, elem);
 
-         componentMan = ComponentManager.getInstance();
+         componentManager = ComponentManager.getInstance();
 
-         bank = (Bank) componentMan.findComponent("Bank");
-         companyManager = (CompanyManagerI) componentMan
+         bank = (Bank) componentManager.findComponent("Bank");
+         companyManager = (CompanyManagerI) componentManager
                .findComponent(CompanyManagerI.COMPONENT_NAME);
-         stockMarket = (StockMarketI) componentMan
+         stockMarket = (StockMarketI) componentManager
                .findComponent(StockMarketI.COMPONENT_NAME);
 
-         bank.initIpo();
+         Bank.initIpo();
 
       }
       catch (Exception e)
@@ -108,7 +122,7 @@ public class Game
    /**
     * @return The company manager
     */
-   public CompanyManagerI getCompanyManager()
+   public static CompanyManagerI getCompanyManager()
    {
       return companyManager;
    }
@@ -116,7 +130,7 @@ public class Game
    /**
     * @return The company manager
     */
-   public StockMarketI getStockMarket()
+   public static StockMarketI getStockMarket()
    {
       return stockMarket;
    }
@@ -124,18 +138,18 @@ public class Game
    /**
     * @return The compinent manager (maybe this getter is not needed)
     */
-   public ComponentManager getComponentMan()
+   public static ComponentManager getComponentManager()
    {
-      return componentMan;
+      return componentManager;
    }
 
    /* Do the Bank properly later */
-   public Bank getBank()
+   public static Bank getBank()
    {
       return bank;
    }
 
-   public Player[] getPlayers()
+   public static Player[] getPlayers()
    {
       return players;
    }
