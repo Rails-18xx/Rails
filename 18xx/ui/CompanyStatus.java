@@ -193,4 +193,11 @@ public class CompanyStatus extends JPanel implements MouseListener
    {
       return companySelected;
    }
+   /**
+    * @param companySelected The companySelected to set.
+    */
+   public void setCompanySelected(String companySelected)
+   {
+      this.companySelected = companySelected;
+   }
 }

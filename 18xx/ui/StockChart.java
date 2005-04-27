@@ -330,9 +330,20 @@ public class StockChart extends JFrame implements ActionListener
          {
             if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
             {
-               JOptionPane.showOptionDialog()
+               co.setParPrice((StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
+                     						"What Price?", 
+                     						JOptionPane.INFORMATION_MESSAGE,
+                     						null,
+                     						stockMarket.getStartSpaces().toArray(),
+                     						stockMarket.getStartSpaces().get(0)));
+               
+               companyStatus.setCompanySelected(null);
+               playerStatus.setPlayerSelected(null);
+               refreshStockPanel();
             }
-            refreshStockPanel();
+            else
+               JOptionPane.showMessageDialog(this,"Unable to start company.\r\nYou must select a player and a company first.", 
+                     						"Company not started.", JOptionPane.OK_OPTION);
          }
       }
       catch (NullPointerException e)
