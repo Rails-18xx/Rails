@@ -59,8 +59,8 @@ public class StockMarketTestServlet extends HttpServlet {
 			String gameName = request.getParameter("Game");
 			if (gameName != null && !gameName.equals("")) {
 				game = Game.getInstance();
-				game.initialise (gameName);
-				stockMarket = game.getStockMarket();
+				Game.initialise (gameName);
+				stockMarket = Game.getStockMarket();
 			}
 		} else if (hasValue(request.getParameter("ChangeGame"))) {
 			game = null;
@@ -68,7 +68,7 @@ public class StockMarketTestServlet extends HttpServlet {
 		} else {
 			/* Process the action performed. Note: companies not mentioned yet. */
 			//iterator = game.getCompanyManager().getAllCompanies().iterator();
-			CompanyManagerI compMgr = game.getCompanyManager();
+			CompanyManagerI compMgr = Game.getCompanyManager();
 			iterator = compMgr.getAllPublicNames().iterator();
 			while (iterator.hasNext()) {
 				//company = (CompanyI) iterator.next();
@@ -210,7 +210,7 @@ public class StockMarketTestServlet extends HttpServlet {
 						+ servletPrefix
 						+ "game.test.StockMarketTestServlet\">\n");
 				out.append("<table cellspacing=\"0\" cellpadding=\"0\">\n");
-				CompanyManagerI compMgr = game.getCompanyManager();
+				CompanyManagerI compMgr = Game.getCompanyManager();
 				iterator = compMgr.getAllPublicCompanies().iterator();
 				while (iterator.hasNext()) {
 					company = (PublicCompanyI) iterator.next();

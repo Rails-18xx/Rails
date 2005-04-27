@@ -180,13 +180,6 @@ public class CompanyStatus extends JPanel implements MouseListener
    }
    
    /**
-    * @return Returns the companyManager.
-    */
-   public CompanyManager getCompanyManager()
-   {
-      return companyManager;
-   }
-   /**
     * @return Returns the companySelected.
     */
    public String getCompanySelected()

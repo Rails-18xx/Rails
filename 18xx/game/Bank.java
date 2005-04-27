@@ -26,10 +26,10 @@ import util.XmlUtils;
 
 public class Bank implements CashHolder, ConfigurableComponentI
 {
-   private int money;
-   private int gameType;
-   private Portfolio ipo = null;
-   private Portfolio pool = null;
+   private static int money;
+   private static int gameType;
+   private static Portfolio ipo = null;
+   private static Portfolio pool = null;
    private static Bank instance = null;
 
    public static Bank getInstance()
@@ -95,9 +95,16 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
          Player.setLimits(number, startCash, certLimit);
          
+         if (i == 0)
+         {
+            Player.MIN_PLAYERS = number;
+            System.out.println("MIN_PLAYERS: " + Player.MIN_PLAYERS);
+         }
+         
          if(i == players.getLength() - 1)
          {
             Player.MAX_PLAYERS = number;
+            System.out.println("MAX_PLAYERS: " + Player.MAX_PLAYERS);
          }
       }
    }
@@ -105,10 +112,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
    /**
     * Put all available certificates in the IPO
     */
-   public void initIpo()
+   public static void initIpo()
    {
       // Add privates
-      List privates = Game.getInstance().getCompanyManager()
+      List privates = Game.getCompanyManager()
             .getAllPrivateCompanies();
       Iterator it = privates.iterator();
       while (it.hasNext())
@@ -117,7 +124,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
       }
 
       // Add public companies
-      List companies = Game.getInstance().getCompanyManager()
+      List companies = Game.getCompanyManager()
             .getAllPublicCompanies();
       it = companies.iterator();
       while (it.hasNext())
@@ -134,7 +141,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
    /**
     * @return
     */
-   public int getGameType()
+   public static int getGameType()
    {
       return gameType;
    }
@@ -142,7 +149,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
    /**
     * @return
     */
-   public Portfolio getIpo()
+   public static Portfolio getIpo()
    {
       return ipo;
    }
@@ -157,13 +164,13 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
    public void addCash(int amount)
    {
-      this.money += amount;
+      money += amount;
    }
 
    /**
     * @return
     */
-   public Portfolio getPool()
+   public static Portfolio getPool()
    {
       return pool;
    }

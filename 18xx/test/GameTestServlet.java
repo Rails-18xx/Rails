@@ -75,9 +75,9 @@ public class GameTestServlet extends HttpServlet {
 			String gameName = request.getParameter("Game");
 			if (gameName != null && !gameName.equals("")) {
 				game = Game.getInstance();
-				game.initialise (gameName);
-				stockMarket = game.getStockMarket();
-				bank = game.getBank();
+				Game.initialise (gameName);
+				stockMarket = Game.getStockMarket();
+				bank = Game.getBank();
 				
 				phase = SELECTPLAYERS;
 			}
@@ -105,10 +105,10 @@ public class GameTestServlet extends HttpServlet {
 				int priv = Integer.parseInt(request.getParameter("Private"));
 				price = Integer.parseInt(request.getParameter("Price"));
 				PrivateCompanyI privco =
-					(PrivateCompanyI)game.getCompanyManager().getAllPrivateCompanies().get(priv);
+					(PrivateCompanyI)Game.getCompanyManager().getAllPrivateCompanies().get(priv);
 				players[player].getPortfolio().buyPrivate(
 					privco,
-					game.getBank().getIpo(), price);
+					Bank.getIpo(), price);
 				if (Integer.parseInt(request.getParameter("Left")) == 1) {
 					phase = SR;
 					orStarted = false;
@@ -119,7 +119,7 @@ public class GameTestServlet extends HttpServlet {
 
 			if (hasValue(request.getParameter("GotoOR"))) {
 				// Check for sold-out companies
-				Iterator it = game.getCompanyManager().getAllPublicCompanies().iterator();
+				Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
 				boolean soldOut;
 				while (it.hasNext()) {
 					company = (PublicCompanyI)it.next();
@@ -132,7 +132,7 @@ public class GameTestServlet extends HttpServlet {
 				int pl = Integer.parseInt(request.getParameter("Player"));
 				Player player = players[pl];
 				String cmpy = request.getParameter("Company");
-				company = game.getCompanyManager().getPublicCompany(cmpy);
+				company = Game.getCompanyManager().getPublicCompany(cmpy);
 				Portfolio from = null, to = null;
 				boolean buyIpo = hasValue(request.getParameter("BuyIPO"));
 				boolean buyPool = hasValue(request.getParameter("BuyPool"));
@@ -143,7 +143,7 @@ public class GameTestServlet extends HttpServlet {
 				boolean president = false;
 
 				if (buyIpo) {
-					from = bank.getIpo();
+					from = Bank.getIpo();
 					to = player.getPortfolio();
 					number = 1;
 					if (company.getParPrice() != null) {
@@ -156,14 +156,14 @@ public class GameTestServlet extends HttpServlet {
 					}
 //System.out.println("Player "+player.getName()+" buys "+company.getName()+" from IPO for "+price);
 				} else if (buyPool) {
-					from = bank.getPool();
+					from = Bank.getPool();
 					to = player.getPortfolio();
 					number = 1;
 					price = company.getCurrentPrice().getPrice();
 //System.out.println("Player "+player.getName()+" buys "+company.getName()+" from Pool for "+price);
 				} else if (sell) {
 					from = player.getPortfolio();
-					to = bank.getPool();
+					to = Bank.getPool();
 					if (number < 1) number = 1;
 					else if (number > 5) number = 5;
 					price = company.getCurrentPrice().getPrice();
@@ -198,7 +198,7 @@ public class GameTestServlet extends HttpServlet {
 			}
 			if (!orStarted) {
 				// Privates pay out
-				Iterator it = game.getCompanyManager().getAllPrivateCompanies().iterator();
+				Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					((PrivateCompanyI)it.next()).payOut();
 				}
@@ -206,7 +206,7 @@ public class GameTestServlet extends HttpServlet {
 			}
 
 			String compName = request.getParameter("Company");
-			company = game.getCompanyManager().getPublicCompany(compName);
+			company = Game.getCompanyManager().getPublicCompany(compName);
 
 			String samount = request.getParameter("Amount");
 			int amount = hasValue(samount) ? Integer.parseInt(samount) : 0;
@@ -220,7 +220,7 @@ public class GameTestServlet extends HttpServlet {
 				company.withhold (amount);
 			} else if (hasValue (request.getParameter("BuyPrivate"))) {
 				String privName = request.getParameter("Private");
-				PrivateCompanyI priv = game.getCompanyManager().getPrivateCompany(privName);
+				PrivateCompanyI priv = Game.getCompanyManager().getPrivateCompany(privName);
 				if (hasValue(privName)) {
 					company.getPortfolio().buyPrivate(priv, priv.getHolder(), amount);
 				}
@@ -354,7 +354,7 @@ public class GameTestServlet extends HttpServlet {
 				out.append("</select></td></tr>");
 
 				out.append("<tr><td>Select Private</td><td><select name=Private>\n");
-				List privates = bank.getIpo().getPrivateCompanies();
+				List privates = Bank.getIpo().getPrivateCompanies();
 				int freePrivates = 0;
 				for (int j=0; j<privates.size(); j++) {
 					PrivateCompanyI priv = (PrivateCompanyI) privates.get(j);
@@ -380,14 +380,14 @@ public class GameTestServlet extends HttpServlet {
 				out.append("</select></td></tr>");
 
 				out.append("<tr><td align=right>Select Company</td><td><select name=Company>\n");
-				List companies = game.getCompanyManager().getAllPublicCompanies();
+				List companies = Game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
 					out.append("<option value=\""+company.getName()+"\">"+company.getName()+"\n");
 				}
 				out.append("</select>\n</td></tr><tr><td align=right>Start Price</td><td>");
 				out.append("<select name=StartPrice>\n");
-				Iterator it = game.getStockMarket().getStartSpaces().iterator();
+				Iterator it = Game.getStockMarket().getStartSpaces().iterator();
 				while (it.hasNext()) {
 					price = ((StockSpaceI)it.next()).getPrice();
 					out.append("<option value="+price+">"+price+"\n");
@@ -410,7 +410,7 @@ public class GameTestServlet extends HttpServlet {
 					+ servletPrefix
 					+ servletName + "\">\n");
 				out.append("<table><tr><td align=right>Select Company</td><td><select name=Company>\n");
-				List companies = game.getCompanyManager().getAllPublicCompanies();
+				List companies = Game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
 					out.append("<option value=\""+company.getName()+"\">"+company.getName()+"\n");
@@ -424,7 +424,7 @@ public class GameTestServlet extends HttpServlet {
 				out.append("</td></tr>\n");
 
 				out.append("<tr><td align=right><select name=Private>\n");
-				Iterator it = game.getCompanyManager().getAllPrivateCompanies().iterator();
+				Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					PrivateCompanyI priv = (PrivateCompanyI) it.next();
 					if (priv.getHolder().getOwner() instanceof Player) {
@@ -456,7 +456,7 @@ public class GameTestServlet extends HttpServlet {
 				out.append("<table class=bordertable cellspacing=0 cellpadding=0>\n");
 				out.append("<tr><th>Company</th><th>Par</th><th>Price</th><th>Cash</th><th>Revenue</th>")
 					.append ("<th>Privates</th><th>IPO</th><th>Pool</th></tr>\n");
-				CompanyManagerI compMgr = game.getCompanyManager();
+				CompanyManagerI compMgr = Game.getCompanyManager();
 				iterator = compMgr.getAllPublicCompanies().iterator();
 				while (iterator.hasNext()) {
 					company = (PublicCompanyI) iterator.next();
@@ -488,8 +488,8 @@ public class GameTestServlet extends HttpServlet {
 						} else {
 							out.append("<td colspan=3>Not floated");
 						}
-						out.append("</td><td>" + bank.getIpo().countShares(company));
-						out.append("</td><td>" + bank.getPool().countShares(company));
+						out.append("</td><td>" + Bank.getIpo().countShares(company));
+						out.append("</td><td>" + Bank.getPool().countShares(company));
 						out.append("</td>\n");
 					}
 					out.append ("</tr>\n");
@@ -502,7 +502,7 @@ public class GameTestServlet extends HttpServlet {
 			out.append ("</td><td colspan=2 valign=\"top\" class=\"bigtable\">\n<h3>Players</h3>\n");
 
 			out.append ("<table border=0 cellspacing=0 class=bordertable><tr><th>Player</th><th>Cash</th><th>Privates</th>");
-			List allCompanies = game.getCompanyManager().getAllPublicCompanies();
+			List allCompanies = Game.getCompanyManager().getAllPublicCompanies();
 			Iterator it = allCompanies.iterator();
 			int nComp = 0;
 			while (it.hasNext()) {

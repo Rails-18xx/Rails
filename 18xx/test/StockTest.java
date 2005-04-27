@@ -29,8 +29,8 @@ public class StockTest
    {
       int row, col, price;
       Game game = Game.getInstance();
-      game.initialise("1830");
-      StockMarketI chart = game.getStockMarket();
+      Game.initialise("1830");
+      StockMarketI chart = Game.getStockMarket();
       StockSpaceI square;
 
       System.out.print(" ");
@@ -98,20 +98,20 @@ public class StockTest
    public static void StockUITest(String gameName)
    {
       Game game = Game.getInstance();
-      game.initialise(gameName);
+      Game.initialise(gameName);
 
-      StockMarket sm = (StockMarket) game.getStockMarket();
+      StockMarket sm = (StockMarket) Game.getStockMarket();
 
       // Fake some markers on the chart
-      CompanyManager companyManager = (CompanyManager) game.getCompanyManager();
+      CompanyManager companyManager = (CompanyManager) Game.getCompanyManager();
       //companyManager.getPublicCompany("PRR").setParPrice(sm.getStartSpace(67));
       //companyManager.getPublicCompany("NYNH").setParPrice(sm.getStartSpace(82));
       //companyManager.getPublicCompany("C&O").setParPrice(sm.getStartSpace(82));
       //companyManager.getPublicCompany("B&O").setParPrice(sm.getStartSpace(100));
 
-      CompanyStatus cs = new CompanyStatus(companyManager, game.getBank());
-      PlayerStatus ps = new PlayerStatus(); //might need to be here for access to certain objects
-      StockChart sc = new ui.StockChart(sm, cs, ps);
+      CompanyStatus cs = new CompanyStatus(companyManager, Game.getBank());
+      //PlayerStatus ps = new PlayerStatus(); //might need to be here for access to certain objects
+      //StockChart sc = new ui.StockChart(sm, cs, ps);
    }
 
    public static void main(String[] args)

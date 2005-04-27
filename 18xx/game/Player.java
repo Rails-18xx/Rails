@@ -24,6 +24,7 @@ public final class Player implements CashHolder
 {
 
    public static int MAX_PLAYERS = 8;
+   public static int MIN_PLAYERS = 2;
    private static int[] playerStartCash = new int[MAX_PLAYERS];
    private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
    private static int playerCertificateLimit;

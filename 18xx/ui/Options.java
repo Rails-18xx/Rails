@@ -19,7 +19,6 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import java.util.*;
@@ -133,14 +132,17 @@ public class Options extends JFrame implements ActionListener
       File dataDir = new File("./data/");
       return dataDir.list();
    }
+   
    private void populateGameList(String[] gameNames, JComboBox gameNameBox)
    {
+      Arrays.sort(gameNames);
       for(int i=0; i < gameNames.length; i++)
       {
          if(!gameNames[i].equalsIgnoreCase("CVS"))
             gameNameBox.addItem(gameNames[i]);
       }
    }
+   
    public Options()
    {
       super();
@@ -165,7 +167,7 @@ public class Options extends JFrame implements ActionListener
             }
          }
          
-         if(playerNames.size() < 2)
+         if(playerNames.size() < Player.MIN_PLAYERS || playerNames.size() > Player.MAX_PLAYERS)
          {
             if(JOptionPane.showConfirmDialog(this, "Not enough players. Continue Anyway?", "Are you sure?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
             {
@@ -175,7 +177,8 @@ public class Options extends JFrame implements ActionListener
          
          try
          {
-            GameLoader.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
+            Game.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
+            GameUILoader.gameUIInit();
          }
          catch(NullPointerException e)
          {
