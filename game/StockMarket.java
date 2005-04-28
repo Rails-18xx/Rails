@@ -448,17 +448,17 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
     * @param ipoPile
     *           The ipoPile to set.
     */
-   public void addShareToPile(Stock stock)
+   public void addShareToPile(Certificate stock)
    {
       ipoPile.add(stock);
    }
 
-   public Stock removeShareFromPile(Stock stock)
+   public Certificate removeShareFromPile(Certificate stock)
    {
       if (ipoPile.contains(stock))
       {
          int index = ipoPile.lastIndexOf(stock);
-         stock = (Stock) ipoPile.get(index);
+         stock = (Certificate) ipoPile.get(index);
          ipoPile.remove(index);
          return stock;
       }
