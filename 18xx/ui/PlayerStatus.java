@@ -29,6 +29,7 @@ public class PlayerStatus extends JPanel implements MouseListener
 {
    private JLabel[] playerLabel;
    private JLabel[] cashLabel;
+   private JLabel[] stockCountLabel;
    private Player[] players;
    private String playerSelected;
    
@@ -60,20 +61,20 @@ public class PlayerStatus extends JPanel implements MouseListener
    
    public void RefreshStatus()
    {
-      this.removeAll();
-      this.UpdateStatus();
+      removeAll();
+      UpdateStatus();
    }
    
-   public PlayerStatus(Player[] players)
+   public PlayerStatus()
    {    
       super();
+      
+      players = Game.getPlayerManager().getPlayersArray();
       
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
       this.setLayout(new GridLayout(2,players.length+1));
       this.setOpaque(false);
-      
-      this.players = players;
       
       playerLabel = new JLabel[players.length];
       cashLabel = new JLabel[players.length];

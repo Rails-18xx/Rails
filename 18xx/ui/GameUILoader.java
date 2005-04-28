@@ -17,7 +17,7 @@ public class GameUILoader
    public static void gameUIInit()
    {
       companyStatus = new CompanyStatus(Game.getCompanyManager(), Game.getBank());
-      playerStatus = new PlayerStatus(Game.getPlayerManager().getPlayersArray());         
+      playerStatus = new PlayerStatus();         
       stockChart = new ui.StockChart((StockMarket) Game.getStockMarket(), companyStatus, playerStatus);
    }
 }
