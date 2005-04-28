@@ -39,26 +39,20 @@ public class Game
    /** The component Manager */
    protected static ComponentManager componentManager;
    protected static CompanyManagerI companyManager;
+   protected static PlayerManager playerManager;
    protected static StockMarketI stockMarket;
    protected static Bank bank;
-   protected static Player[] players;
    protected static ArrayList companyList;
    protected static String name;
    
+   
    public static void NewGame(String gameName, ArrayList playerNames)
-   {
+   {      
       initialise(gameName);
-      companyManager = (CompanyManagerI) getCompanyManager();
+      companyManager = getCompanyManager();
       companyList = (ArrayList) companyManager.getAllPublicCompanies();
-      stockMarket = (StockMarket) getStockMarket();
-      players = new Player[playerNames.size()];
-      
-      for(int i=0; i < playerNames.size(); i++)
-      {
-         players[i] = new Player(playerNames.get(i).toString());
-      }
-      
-      Player.initPlayers(players);
+      stockMarket = getStockMarket();
+      playerManager = getPlayerManager(playerNames);
    }
 
    /**
@@ -149,8 +143,17 @@ public class Game
       return bank;
    }
 
-   public static Player[] getPlayers()
+   /**
+    * @return Returns the playerManager.
+    */
+   public static PlayerManager getPlayerManager(ArrayList playerNames)
    {
-      return players;
+         playerManager = new PlayerManager(playerNames);
+         return playerManager;
+   }
+   
+   public static PlayerManager getPlayerManager()
+   {
+      return playerManager;
    }
 }

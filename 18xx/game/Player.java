@@ -20,21 +20,19 @@ package game;
 
 import java.util.*;
 
-public final class Player implements CashHolder
+public class Player implements CashHolder
 {
-
    public static int MAX_PLAYERS = 8;
    public static int MIN_PLAYERS = 2;
    private static int[] playerStartCash = new int[MAX_PLAYERS];
    private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
-   private static int playerCertificateLimit;
-   String name;
+   private static int playerCertificateLimit = 0;
+   String name = "";
    int wallet = 0;
-   boolean hasPriority;
-
-   /* ArrayList littleCoOwned; */
+   boolean hasPriority = false;
+   boolean hasBoughtStockThisTurn = false;
    Portfolio portfolio = null;
-   ArrayList companiesSoldThisTurn;
+   ArrayList companiesSoldThisTurn = new ArrayList();
 
    public static void setLimits(int number, int cash, int certLimit)
    {
@@ -77,32 +75,31 @@ public final class Player implements CashHolder
    {
       this.name = name;
       portfolio = new Portfolio(name, this);
-
    }
 
-   public void buyShare(Stock share)
+   public int buyShare(Certificate share)
    {
-      //if we haven't already bought a share since our last turn
-      //if we haven't sold a share of this company's stock during this stock
-      // round
-      //then remove share from particular pile
-      //add share to player's portfolio
-      //deduct cost of share from wallet
-      //add cost of share to bank
-      //update player who will have priority
-      //set flag that we've bought a share and can't buy again until player's
-      // next turn
-   }
-
-   public void sellShare(Stock share)
+      if(hasBoughtStockThisTurn)
+         return 0;
+      
+      for (int i=0; i < companiesSoldThisTurn.size(); i++)
+      {
+         if(share.company.getName().equalsIgnoreCase(companiesSoldThisTurn.get(i).toString()))
+            return 0;           
+      }
+         
+      if(portfolio.getCertificates().size() >= playerCertificateLimit)
+         return 0;
+      
+      share.getPortfolio().buyCertificate(share, this.portfolio, share.getCompany().getCurrentPrice().getPrice());
+      Game.getPlayerManager().setBoughtStockLast(this);
+      hasBoughtStockThisTurn = true;
+      return 1;
+   }	
+   public int sellShare(Certificate share)
    {
-      //remove share from player's portfolio
-      //add share to bank's pile
-      //get current value of share
-      //deduct current value of share from bank
-      //add current value of share to player's wallet
-      //if company's chit is not on a ledge
-      //move the company's chit down one square on the stock chart
+      Portfolio.sellCertificate(share, portfolio, share.getCompany().getCurrentPrice().getPrice());
+      return 1;
    }
 
    /**
