@@ -329,23 +329,20 @@ public class StockChart extends JFrame implements ActionListener
          {
             if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
             {
-               co.setParPrice((StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
+               StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
                      						"What Price?", 
                      						JOptionPane.INFORMATION_MESSAGE,
                      						null,
                      						stockMarket.getStartSpaces().toArray(),
-                     						stockMarket.getStartSpaces().get(0)));
+                     						stockMarket.getStartSpaces().get(0));
                
-               Player[] players = Game.getPlayers();
+               PublicCompany.startCompany(playerStatus.getPlayerSelected(), companyStatus.getCompanySelected(), sp);
                
-               for (int i=0; i < players.length; i++)
-               {
-                  if(players[i].getName().equalsIgnoreCase(playerStatus.getPlayerSelected()));
-                  {
-                     //FIXME: Need to decide whether to use Stock or Certificate objects.
-                     //players[i].buyShare((Stock)co.getCertificates().get(0));
-                  }
-               }
+               Player player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
+               
+               //Buy Share doesn't completely work yet...
+               player.buyShare((Certificate)co.getCertificates().get(0));
+               
                companyStatus.setCompanySelected(null);
                playerStatus.setPlayerSelected(null);
                refreshStockPanel();
@@ -358,6 +355,7 @@ public class StockChart extends JFrame implements ActionListener
       catch (NullPointerException e)
       {   
          JOptionPane.showMessageDialog(this, "Unable to move selected company's token.");
+         e.printStackTrace();
       }        
    }
 }

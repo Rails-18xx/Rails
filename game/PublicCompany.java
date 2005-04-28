@@ -528,14 +528,16 @@ public class PublicCompany extends Company implements PublicCompanyI,
             + PublicCompany.numberOfPublicCompanies;
    }
    
-   public static boolean StartCompany(Player player, String companyName, int parValue)
+   public static boolean startCompany(String playerName, String companyName, StockSpace startSpace)
    {
-      if(player.getCash() >= parValue*6)
+      Player player = Game.getPlayerManager().getPlayerByName(playerName);
+      PublicCompany company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
+      
+      if(player.getCash() >= startSpace.getPrice()*2)
       {
-         PublicCompany co = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
-         co.setParPrice(Game.getStockMarket().getStartSpace(parValue));
-         co.setClosed(false);
-         Bank.transferCash(player, co, parValue*6);
+         company.setParPrice(startSpace);
+         company.setClosed(false);
+         Bank.transferCash(player, company, startSpace.getPrice()*2);
          
          return true;
       }
