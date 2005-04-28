@@ -55,6 +55,7 @@ public class Options extends JFrame implements ActionListener
       playerBoxes = new JComboBox[Player.MAX_PLAYERS];
       playerNameFields = new JTextField[Player.MAX_PLAYERS];
       
+      this.getContentPane().setLayout(new GridBagLayout()); 
       this.getContentPane().setLayout(new GridBagLayout()); // Changed by EV
       this.setTitle("Rails: New Game");
       //this.setPreferredSize(new Dimension(400,500)); // Changed by EV
@@ -107,6 +108,7 @@ public class Options extends JFrame implements ActionListener
       gc.weighty = 1.0;
       gc.gridwidth = 2;
       gc.fill = GridBagConstraints.BOTH;
+      this.getContentPane().add(playersPane, gc); 
       this.getContentPane().add(playersPane, gc); // Changed by EV
 
       gc.gridx = 1;
@@ -117,6 +119,7 @@ public class Options extends JFrame implements ActionListener
       gc.gridwidth = 1;
       gc.ipadx = 400;
       gc.ipady = 50;
+      this.getContentPane().add(optionsPane, gc); 
       this.getContentPane().add(optionsPane, gc); // Changed by EV
 
       gc.gridx = 0;
@@ -126,6 +129,7 @@ public class Options extends JFrame implements ActionListener
       gc.gridwidth = 2;
       gc.ipady = 0;
       gc.fill = GridBagConstraints.HORIZONTAL;
+      this.getContentPane().add(buttonPane, gc); 
       this.getContentPane().add(buttonPane, gc); // Changed by EV
    }
 

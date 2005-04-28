@@ -98,8 +98,8 @@ public class CompanyStatus extends JPanel implements MouseListener
    }
    public void RefreshStatus()
    {
-      this.removeAll();
-      this.UpdateStatus();
+      removeAll();
+      UpdateStatus();
    }
    
    public CompanyStatus(CompanyManagerI cm, Bank bank)

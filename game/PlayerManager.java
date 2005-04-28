@@ -46,7 +46,17 @@ public class PlayerManager
    {
       return players;
    }
-   
+   public ArrayList getPlayersArrayList()
+   {
+      ArrayList playersList = new ArrayList();
+      
+      for(int i=0; i < players.length; i++)
+      {
+         playersList.add(players[i]);
+      }
+      
+      return playersList;
+   }
    public Player getPlayerByName(String name)
    {
       Player player;
