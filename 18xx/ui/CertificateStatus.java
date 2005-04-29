@@ -17,50 +17,46 @@ public class CertificateStatus extends JPanel
    ArrayList companies;
    ArrayList players;
 
-   public void UpdateStatus()
+   public void updateStatus()
    {
-      //FIXME: not done yet here
-      /*
-      for(int i=0; i < companies.size(); i++)
+      for(int i=0; i <= companies.size(); i++)
       {
-         if(i==0)
+         for(int j=0; j <= players.size(); j++)
          {
-            statusArray[i][0].add(new JLabel("Co"));
-         }
-         else
-         {
-            for(int j=0; j < players.size(); j++)
+            if(i==0 && j==0)
+               statusArray[i][j] = new JLabel("Stock Ownership");
+            else if(j==0)
+                  statusArray[i][j] = new JLabel(((PublicCompany)companies.get(i-1)).getName());
+            else if (i==0)
+                  statusArray[i][j] = new JLabel(((Player)players.get(j-1)).getName());
+            else
             {
-               if(j==0)
-               {
-                  if(i==0)
-                  {
-                  }
-                  else
-                  {
-                     
-                  }
-               }
-               statusArray[i][j].add(new JLabel(""));
+               statusArray[i][j] = new JLabel(Integer.toString(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1))));
+               System.out.println(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1)));
             }
+                        
+            statusArray[i][j].setOpaque(true);
+            statusArray[i][j].setBackground(Color.WHITE);
+            statusArray[i][j].setForeground(Color.BLACK);
+            this.add(statusArray[i][j]);
          }
       }
-      */
    }
-   public void RefreshStatus()
+   public void refreshStatus()
    {
       removeAll();
-      UpdateStatus();
+      updateStatus();
    }
    
    public CertificateStatus()
    {
       companies = new ArrayList((ArrayList)Game.getCompanyManager().getAllPublicCompanies());
       players = new ArrayList(Game.getPlayerManager().getPlayersArrayList());
-      statusArray = new JLabel[companies.size()][players.size()];
+      statusArray = new JLabel[companies.size()+1][players.size()+1];
       
       this.setLayout(new GridLayout(companies.size()+1, players.size()+1));
-      this.setBackground(Color.WHITE);
       this.setOpaque(true);
+      
+      updateStatus();
    }
 }

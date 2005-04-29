@@ -3,21 +3,17 @@
  */
 package ui;
 
-import game.*;
-
 /**
  * @author blentz
  */
 public class GameUILoader
 {
-   private static CompanyStatus companyStatus;
-   private static PlayerStatus playerStatus;
    private static StockChart stockChart;
+   private static StatusWindow statusWindow;
    
    public static void gameUIInit()
    {
-      companyStatus = new CompanyStatus(Game.getCompanyManager(), Game.getBank());
-      playerStatus = new PlayerStatus();         
-      stockChart = new ui.StockChart((StockMarket) Game.getStockMarket(), companyStatus, playerStatus);
+      stockChart = new StockChart();
+      statusWindow = new StatusWindow();
    }
 }
