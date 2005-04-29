@@ -4,18 +4,22 @@
 package ui;
 
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.swing.*;
+
 import java.util.*;
 import game.*;
 
 /**
  * @author blentz
  */
-public class CertificateStatus extends JPanel
+public class CertificateStatus extends JPanel implements MouseListener
 {
-   JLabel[][] statusArray;
-   ArrayList companies;
-   ArrayList players;
+   private JLabel[][] statusArray;
+   private ArrayList companies;
+   private ArrayList players;
+   private JLabel selectedLabel;
 
    public void updateStatus()
    {
@@ -32,10 +36,10 @@ public class CertificateStatus extends JPanel
             else
             {
                statusArray[i][j] = new JLabel(Integer.toString(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1))));
-               System.out.println(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1)));
+               statusArray[i][j].addMouseListener(this);
             }
                         
-            statusArray[i][j].setOpaque(true);
+            statusArray[i][j].setOpaque(true);            
             statusArray[i][j].setBackground(Color.WHITE);
             statusArray[i][j].setForeground(Color.BLACK);
             this.add(statusArray[i][j]);
@@ -58,5 +62,110 @@ public class CertificateStatus extends JPanel
       this.setOpaque(true);
       
       updateStatus();
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+    */
+   public void mouseClicked(MouseEvent arg0)
+   {
+      JLabel label = (JLabel) arg0.getComponent();
+      if(!label.getBackground().equals(Color.YELLOW))
+      {
+         try
+         {
+            if(!selectedLabel.equals(label))
+            {
+               for(int i=0; i < statusArray.length; i++)
+               {
+                  for(int j=0; j < statusArray[0].length; j++)
+                  {
+                     selectedLabel.setBackground(Color.WHITE);
+                  }
+               }
+            }
+         }
+         catch (NullPointerException e)
+         {
+         }
+         
+         label.setBackground(Color.YELLOW);
+         selectedLabel = label;
+      }
+      else
+      {
+         label.setBackground(Color.WHITE);
+         selectedLabel = null;
+      }
+   }
+   
+   public JLabel findLabel(JLabel label)
+   {
+      for(int i=0; i < statusArray.length; i++)
+      {
+         for(int j=0; j < statusArray[i].length; j++)
+         {
+            if(label.equals(statusArray[i][j]))
+            {
+               return statusArray[i][j];
+            }
+         }
+      }
+      
+      return null;
+   }
+   
+   public int[] findLabelPosition(JLabel label)
+   {
+      for(int i=0; i < statusArray.length; i++)
+      {
+         for(int j=0; j < statusArray[i].length; j++)
+         {
+            if(label.equals(statusArray[i][j]))
+            {
+               return new int[] {i, j};
+            }
+         }
+      }
+      
+      return null;
+   }
+   
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+    */
+   public void mouseEntered(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+    */
+   public void mouseExited(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+    */
+   public void mousePressed(MouseEvent arg0)
+   {
+   }
+   /* (non-Javadoc)
+    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+    */
+   public void mouseReleased(MouseEvent arg0)
+   {
+   }
+   /**
+    * @return Returns the selectedLabel.
+    */
+   public JLabel getSelectedLabel()
+   {
+      return selectedLabel;
+   }
+   /**
+    * @param selectedLabel The selectedLabel to set.
+    */
+   public void setSelectedLabel(JLabel selectedLabel)
+   {
+      this.selectedLabel = selectedLabel;
    }
 }
