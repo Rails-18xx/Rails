@@ -5,11 +5,11 @@
     <AllClose phase="5"/>
   </CompanyType>
   <CompanyType name="Public" class="game.PublicCompany">
-    <ShareUnit percentage="10"/>
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <PoolPaysOut/>
-    <Certificate type="President" share="20"/>
-    <Certificate share="10" number="8"/>
+    <ShareUnit percentage="10"/>
+    <Certificate type="President" shares="2"/>
+    <Certificate shares="1" number="8"/>
   </CompanyType>
   
   <Company name="SVNRR"     type="Private" basePrice="20" revenue="5"/>
@@ -18,6 +18,7 @@
   <Company name="M&amp;H"   type="Private" basePrice="110" revenue="20"/>
   <Company name="C&amp;A"   type="Private" basePrice="160" revenue="25"/>
   <Company name="B&amp;O"   type="Private" basePrice="220" revenue="30"	/>
+
   <Company name="B&amp;O" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
   <Company name="PRR"     type="Public" fgColour="FFFFFF" bgColour="008000"/>
   <Company name="NYNH"    type="Public" fgColour="000000" bgColour="FF8000"/>

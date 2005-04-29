@@ -61,13 +61,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 						throw new ConfigurationException("Auction type not defined");
 				} else if (propName.equalsIgnoreCase("AllClose")) {
 					nnp2 = properties.item(j).getAttributes();
-					closingPhase = Integer.parseInt(XmlUtils.extractStringAttribute(nnp2, "type"));
+					closingPhase = XmlUtils.extractIntegerAttribute(nnp2, "phase", 0);
 				}
 
 			}
 		}
-		
-		type.releaseDomElement();
 	}
 
 

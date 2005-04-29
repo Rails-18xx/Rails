@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CertificateI.java,v 1.1 2005/04/16 22:51:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CertificateI.java,v 1.2 2005/04/29 22:11:10 evos Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -27,10 +27,24 @@ public interface CertificateI {
 	public boolean isPresident();
 
 	/**
-	 * @return
+	 * Get the number of shares that this certificate represents.
+	 * @return The number of shares.
 	 */
+	public int getShares();
+
+	/** 
+	 * Get the percentage of ownership that this certificate represents.
+	 * This is equal to the number of shares * the share unit.
+	 * @return The share percentage.
+	 */ 
 	public int getShare();
 
+	/**
+	 * Get the current price of this certificate.
+	 * @return The current certificate price.
+	 */
+	public int getCertificatePrice();
+	
 	/**
 	 * @param b
 	 */
@@ -46,10 +60,6 @@ public interface CertificateI {
 	 */
 	public void setPresident(boolean b);
 
-	/**
-	 * @param i
-	 */
-	public void setShare(int i);
 	/**
 	 * @return
 	 */

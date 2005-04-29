@@ -76,10 +76,12 @@ public class GameTestServlet extends HttpServlet {
 			if (gameName != null && !gameName.equals("")) {
 				game = Game.getInstance();
 				Game.initialise (gameName);
-				stockMarket = Game.getStockMarket();
+				stockMarket = Game.getStockMarket(); 
 				bank = Game.getBank();
 				
 				phase = SELECTPLAYERS;
+			} else {
+				System.out.println("No game selected!");
 			}
 		} else if (phase == SELECTPLAYERS) {
 
@@ -154,25 +156,26 @@ public class GameTestServlet extends HttpServlet {
 						president = true;
 						Log.write(player.getName()+" starts "+company.getName()+" at "+price);
 					}
-//System.out.println("Player "+player.getName()+" buys "+company.getName()+" from IPO for "+price);
+
 				} else if (buyPool) {
 					from = Bank.getPool();
 					to = player.getPortfolio();
 					number = 1;
 					price = company.getCurrentPrice().getPrice();
-//System.out.println("Player "+player.getName()+" buys "+company.getName()+" from Pool for "+price);
+
 				} else if (sell) {
 					from = player.getPortfolio();
 					to = Bank.getPool();
 					if (number < 1) number = 1;
 					else if (number > 5) number = 5;
 					price = company.getCurrentPrice().getPrice();
-//System.out.println("Player "+player.getName()+" sells "+company.getName()+" to pool for "+price);
+
 				}
 				for (int k=0; k<number; k++) {
-					cert = from.findCertificate(company, president);
+					cert = from.findCertificate (company, president);
 					if (cert == null) break;
-					price *= cert.getShare() / 10;
+					price = cert.getCertificatePrice();
+
 					// Get the certificate and pay the price
 					to.buyCertificate(cert, from, price);
 
