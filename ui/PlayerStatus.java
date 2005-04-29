@@ -33,7 +33,7 @@ public class PlayerStatus extends JPanel implements MouseListener
    private Player[] players;
    private String playerSelected;
    
-   public void UpdateStatus()
+   public void updateStatus()
    {
       this.add(new JLabel("Player:"));
       for(int i = 0; i < players.length; i++)
@@ -59,10 +59,10 @@ public class PlayerStatus extends JPanel implements MouseListener
       }
    }
    
-   public void RefreshStatus()
+   public void refreshStatus()
    {
       removeAll();
-      UpdateStatus();
+      updateStatus();
    }
    
    public PlayerStatus()
@@ -79,7 +79,7 @@ public class PlayerStatus extends JPanel implements MouseListener
       playerLabel = new JLabel[players.length];
       cashLabel = new JLabel[players.length];
       
-      UpdateStatus();
+      updateStatus();
    }
    /* (non-Javadoc)
     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)

@@ -38,7 +38,7 @@ public class CompanyStatus extends JPanel implements MouseListener
    
    private String companySelected;
    
-   public void UpdateStatus()
+   public void updateStatus()
    {
       
       this.add(new JLabel("Company:"));
@@ -70,7 +70,7 @@ public class CompanyStatus extends JPanel implements MouseListener
          }
          catch (NullPointerException e)
          {
-            parLabel[i].setText("00");
+            parLabel[i].setText("");
          }
          
          this.add(parLabel[i]);
@@ -96,10 +96,10 @@ public class CompanyStatus extends JPanel implements MouseListener
          this.add(cashLabel[i]);
       }     
    }
-   public void RefreshStatus()
+   public void refreshStatus()
    {
       removeAll();
-      UpdateStatus();
+      updateStatus();
    }
    
    public CompanyStatus(CompanyManagerI cm, Bank bank)
@@ -120,7 +120,7 @@ public class CompanyStatus extends JPanel implements MouseListener
       ipoLabel = new JLabel[publicCompanies.size()];
       stockLabel = new JLabel[publicCompanies.size()];
       
-      UpdateStatus();
+      updateStatus();
    }
    
    /* (non-Javadoc)

@@ -19,10 +19,7 @@
 package ui;
 
 import game.*;
-
 import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
 import java.util.*;
 
@@ -43,15 +40,11 @@ import java.util.*;
  *  
  */
 
-public class StockChart extends JFrame implements ActionListener
+public class StockChart extends JFrame
 {
-   private JPanel stockPanel, statusPanel, buttonPanel;
-   private JButton upButton, downButton, leftButton, rightButton, startCoButton;
-   private GridLayout stockGrid;
+   private static JPanel stockPanel;
+   private static GridLayout stockGrid;
    private GridBagConstraints gc;
-   private StockMarket stockMarket;
-   private CompanyStatus companyStatus;
-   private PlayerStatus playerStatus;
    
    private void initialize()
    {
@@ -61,22 +54,12 @@ public class StockChart extends JFrame implements ActionListener
       this.getContentPane().setLayout(new GridBagLayout());
 
       stockPanel = new JPanel();
-      statusPanel = new JPanel();
-      buttonPanel = new JPanel();
 
       stockGrid = new GridLayout();
       stockGrid.setHgap(0);
       stockGrid.setVgap(0);
       stockPanel.setLayout(stockGrid);
-      statusPanel.setLayout(new GridLayout(2,0));
-      buttonPanel.setLayout(new FlowLayout());
-
-      upButton = new JButton("up");
-      downButton = new JButton("down");
-      leftButton = new JButton("left");
-      rightButton = new JButton("right");
-      startCoButton = new JButton("Start Company");
-
+      
       gc = new GridBagConstraints();
 
    }
@@ -89,31 +72,12 @@ public class StockChart extends JFrame implements ActionListener
       gc.gridwidth = 2;
       gc.fill = GridBagConstraints.BOTH;
       this.getContentPane().add(stockPanel, gc);
-
-      gc.gridx = 1;
-      gc.gridy = 1;
-      gc.fill = 0;
-      gc.weightx = 0.5;
-      gc.weighty = 0.5;
-      gc.ipadx = 500;
-      gc.ipady = 50;
-      gc.gridwidth = 1;
-      this.getContentPane().add(statusPanel, gc);
-
-      gc.gridx = 0;
-      gc.gridy = 2;
-      gc.weightx = 0.0;
-      gc.weighty = 0.0;
-      gc.gridwidth = 2;
-      gc.ipady = 0;
-      gc.fill = GridBagConstraints.HORIZONTAL;
-      this.getContentPane().add(buttonPanel, gc);
    }
-   private void populateStockPanel()
+   private static void populateStockPanel()
    {
       int depth = 0;
       Dimension size = new Dimension(40, 40);
-      StockSpace[][] market = stockMarket.getStockChart();
+      StockSpace[][] market = Game.getStockMarket().getStockChart();
       
       JLabel priceLabel;
       JLayeredPane layeredPane; 
@@ -182,7 +146,7 @@ public class StockChart extends JFrame implements ActionListener
          }
       }
    }
-   private void placeToken(ArrayList tokenList, JLayeredPane layeredPane)
+   private static void placeToken(ArrayList tokenList, JLayeredPane layeredPane)
    {
       Point origin = new Point(16,0);
       Dimension size = new Dimension(40, 40);
@@ -204,7 +168,7 @@ public class StockChart extends JFrame implements ActionListener
          origin.y += 6;
       }      
    }
-   private Color stringToColor(String color)
+   private static Color stringToColor(String color)
    {
       if (color.equalsIgnoreCase("yellow"))
       {
@@ -247,115 +211,22 @@ public class StockChart extends JFrame implements ActionListener
       }
    }
  
-   public void refreshStockPanel()
+   public static void refreshStockPanel()
    {
       stockPanel.removeAll();
       populateStockPanel();
-      playerStatus.RefreshStatus();
-      companyStatus.RefreshStatus();
    }
-   public StockChart(StockMarket sm, CompanyStatus cs, PlayerStatus ps)
+   public StockChart()
    {
       super();
-      
-      stockMarket = sm;
-      companyStatus = cs;
-      playerStatus = ps;
       
       initialize();
       populateGridBag();
       populateStockPanel();
 
-      stockPanel.setBackground(Color.LIGHT_GRAY);
-      
-      statusPanel.setOpaque(false);
-
-      statusPanel.add(companyStatus);
-      statusPanel.add(playerStatus);
-      buttonPanel.add(upButton);
-      buttonPanel.add(downButton);
-      buttonPanel.add(leftButton);
-      buttonPanel.add(rightButton);
-      buttonPanel.add(startCoButton);
-      
-      upButton.setActionCommand("up");
-      downButton.setActionCommand("down");
-      leftButton.setActionCommand("left");
-      rightButton.setActionCommand("right");
-      startCoButton.setActionCommand("startCo");
-      
-      upButton.addActionListener(this);
-      downButton.addActionListener(this);
-      leftButton.addActionListener(this);
-      rightButton.addActionListener(this);
-      startCoButton.addActionListener(this);
+      stockPanel.setBackground(Color.LIGHT_GRAY);     
 
       this.pack();
       this.setVisible(true);
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-    */
-   public void actionPerformed(ActionEvent arg0)
-   {
-
-      try
-      {
-         String companySelected = companyStatus.getCompanySelected();
-         CompanyManager cm = (CompanyManager) Game.getCompanyManager();
-         PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
-      
-         if(arg0.getActionCommand().equalsIgnoreCase("down"))
-         {
-            stockMarket.sell((PublicCompanyI) co, 1);
-            refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("left"))
-         {
-            stockMarket.withhold((PublicCompanyI) co);
-            refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("up"))
-         {
-            stockMarket.soldOut((PublicCompanyI) co);
-            refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("right"))
-         {
-            stockMarket.payOut((PublicCompanyI) co);
-            refreshStockPanel();
-         }
-         else
-         {
-            if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
-            {
-               StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
-                     						"What Price?", 
-                     						JOptionPane.INFORMATION_MESSAGE,
-                     						null,
-                     						stockMarket.getStartSpaces().toArray(),
-                     						stockMarket.getStartSpaces().get(0));
-               
-               PublicCompany.startCompany(playerStatus.getPlayerSelected(), companyStatus.getCompanySelected(), sp);
-               
-               Player player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
-               
-               //Buy Share doesn't completely work yet...
-               player.buyShare((Certificate)co.getCertificates().get(0));
-               
-               companyStatus.setCompanySelected(null);
-               playerStatus.setPlayerSelected(null);
-               refreshStockPanel();
-            }
-            else
-               JOptionPane.showMessageDialog(this,"Unable to start company.\r\nYou must select a player and a company first.", 
-                     						"Company not started.", JOptionPane.OK_OPTION);
-         }
-      }
-      catch (NullPointerException e)
-      {   
-         JOptionPane.showMessageDialog(this, "Unable to move selected company's token.");
-         e.printStackTrace();
-      }        
    }
 }

@@ -91,7 +91,7 @@ public class Player implements CashHolder
       if(portfolio.getCertificates().size() >= playerCertificateLimit)
          return 0;
       
-      share.getPortfolio().buyCertificate(share, this.portfolio, share.getCompany().getCurrentPrice().getPrice());
+      getPortfolio().buyCertificate(share, this.portfolio, share.getCompany().getCurrentPrice().getPrice());
       Game.getPlayerManager().setBoughtStockLast(this);
       hasBoughtStockThisTurn = true;
       return 1;
