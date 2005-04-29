@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Certificate.java,v 1.1 2005/04/16 22:51:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Certificate.java,v 1.2 2005/04/29 22:11:10 evos Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -13,25 +13,27 @@ public class Certificate implements CertificateI, Cloneable {
 	
 	/** From which public company is this a certificate */
 	protected PublicCompanyI company;
-	/** Share percentage represented by this certificate */
-	protected int share;
+	/** Share percentage represented by this certificate 
+	 * @deprecated
+	 * */
+	protected int shares;
 	/** President's certificate? */
 	protected boolean president;
 	/** Availability */
 	protected boolean available;
-	/** Holder of the certificate */
+	/** Current holder of the certificate */
 	protected Portfolio portfolio;
 	
-	public Certificate (int share) {
-		this (share, false, true); 
+	public Certificate (int shares) {
+		this (shares, false, true); 
 	}
 	
-	public Certificate (int share, boolean president) {
-		this (share, president, true);
+	public Certificate (int shares, boolean president) {
+		this (shares, president, true);
 	}
 	
-	public Certificate (int share, boolean president, boolean available) {
-		this.share = share;
+	public Certificate (int shares, boolean president, boolean available) {
+		this.shares = shares;
 		this.president = president;
 		this.available = available;
 	}
@@ -60,10 +62,28 @@ public class Certificate implements CertificateI, Cloneable {
 	}
 
 	/**
-	 * @return
+	 * Get the number of shares that this certificate represents.
+	 * @return The number of shares.
 	 */
+	public int getShares() {
+		return shares;
+	}
+	
+	/** 
+	 * Get the percentage of ownership that this certificate represents.
+	 * This is equal to the number of shares * the share unit.
+	 * @return The share percentage.
+	 */ 
 	public int getShare() {
-		return share;
+		return shares * company.getShareUnit();
+	}
+	
+	/**
+	 * Get the current price of this certificate.
+	 * @return The current certificate price.
+	 */
+	public int getCertificatePrice() {
+		return company.getCurrentPrice().getPrice() * shares;
 	}
 
 	/**
@@ -88,13 +108,6 @@ public class Certificate implements CertificateI, Cloneable {
 	}
 
 	/**
-	 * @param i
-	 */
-	public void setShare(int i) {
-		share = i;
-	}
-
-	/**
 	 * @return
 	 */
 	public PublicCompanyI getCompany() {
@@ -108,7 +121,7 @@ public class Certificate implements CertificateI, Cloneable {
 		company = companyI;
 	}
 
-	public Object clone() {
+	protected Object clone() {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {

@@ -89,7 +89,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    protected Portfolio portfolio;
 
    /** What percentage of ownership constitutes "one share" */
-   protected int shareUnit;
+   protected int shareUnit = 10;
 
    /**
     * The constructor. The way this class is instantiated does not allow
@@ -130,6 +130,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
       /* Complete configuration by adding features from the Public CompanyType */
       Element typeElement = type.getDomElement();
+
       if (typeElement != null)
       {
          NodeList properties = typeElement.getChildNodes();
@@ -137,14 +138,14 @@ public class PublicCompany extends Company implements PublicCompanyI,
          for (int j = 0; j < properties.getLength(); j++)
          {
 
-            String propName = properties.item(j).getLocalName();
+            String propName = properties.item(j).getNodeName();
             if (propName == null)
                continue;
 
             if (propName.equalsIgnoreCase("ShareUnit"))
             {
                shareUnit = XmlUtils.extractIntegerAttribute(properties.item(j)
-                     .getAttributes(), "percentage");
+                     .getAttributes(), "percentage", 10);
             }
             else if (propName.equalsIgnoreCase("CanBuyPrivates"))
             {
@@ -171,8 +172,6 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
          }
       }
-
-      type.releaseDomElement();
    }
 
    /**
@@ -444,7 +443,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       {
          cert = ((CertificateI) it.next());
          recipient = cert.getPortfolio().getBeneficiary(this);
-         part = amount * cert.getShare() / 100;
+         part = amount * cert.getShares() * shareUnit / 100;
          // For reporting, we want to add up the amounts per recipient
          if (split.containsKey(recipient))
          {

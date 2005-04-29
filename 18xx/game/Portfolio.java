@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.3 2005/04/28 19:52:17 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.4 2005/04/29 22:11:10 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -49,7 +49,7 @@ public class Portfolio
    {
 
       Log.write(getName() + " buys " + privateCompany.getName() + " from "
-            + from.getName() + " for " + price + " per share.");
+            + from.getName() + " for " + price+ ".");
 
       // Move the private certificate
       from.removePrivate(privateCompany);
@@ -63,9 +63,15 @@ public class Portfolio
    public void buyCertificate(CertificateI certificate, Portfolio from, int price)
    {
 
+   	if (owner instanceof Player) {
       Log.write(getName() + " buys " + certificate.getShare() + "% of "
             + certificate.getCompany().getName() + " from " + from.getName()
-            + " for " + price  + " per share.");
+            + " for " + price  + ".");
+   	} else {
+   		Log.write(from.getName()+ " sells " +certificate.getShare() + "% of "
+   				+ certificate.getCompany().getName() + " to " + getName()
+				+ " for "+price+".");
+   	}
 
       // Move the certificate
       from.removeCertificate(certificate);

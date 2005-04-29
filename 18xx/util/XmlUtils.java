@@ -34,32 +34,69 @@ public final class XmlUtils {
     private XmlUtils(){
     }
     /**
-     * Extracts the value of a given attribute from a NodeNameMap. 
+     * Extracts the String value of a given attribute from a NodeNameMap. 
      * Returns null if no such attribute can be found.
-     * 
+     * See extractStringAttribute(NamedNodeMap nnp, String attrName,
+    		String defaultValue)
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired
      * @return the named attribute's value or null if absent.
      */
     public static String extractStringAttribute(NamedNodeMap nnp, String attrName) {
+    	  return extractStringAttribute(nnp, attrName, null);
+    }
+
+    /**
+     * Extracts the String value of a given attribute from a NodeNameMap. 
+     * Returns a default value if no such attribute can be found.
+     * 
+     * @param nnp the NodeNameMap to search for the Attribute
+     * @param attrName the name of the attribute who's value is desired
+     * @param defaultValue the value to be returned if the attribute is absent.
+     * @return the named attribute's value, or the default value if absent.
+     */
+    public static String extractStringAttribute(NamedNodeMap nnp, String attrName,
+    		String defaultValue) {
         Node nameAttr = nnp.getNamedItem(attrName);
-        if (nameAttr == null){
-                return null;
+        if (nameAttr == null) {
+                return defaultValue;
         }
         return nameAttr.getNodeValue();        
     }
 
-	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName) 
+    /**
+     * Extracts the integer value of a given attribute from a NodeNameMap. 
+     * Returns zero if no such attribute can be found.
+     * @see 
+     * @param nnp the NodeNameMap to search for the Attribute
+     * @param attrName the name of the attribute who's value is desired
+     * @return the named attribute's value or null if absent.
+     */
+ 	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName) 
+		throws ConfigurationException {
+ 		return extractIntegerAttribute (nnp, attrName, 0);
+ 	}
+ 	
+    /**
+     * Extracts the integer value of a given attribute from a NodeNameMap. 
+     * Returns a default value if no such attribute can be found.
+     * @see 
+     * @param nnp the NodeNameMap to search for the Attribute
+     * @param attrName the name of the attribute who's value is desired
+     * @return the named attribute's value or null if absent.
+     */
+ 	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName,
+ 				int defaultValue) 
 		throws ConfigurationException {
 		Node nameAttr = nnp.getNamedItem(attrName);
-		if (nameAttr == null){
-				return -1;
+		if (nameAttr == null) {
+				return defaultValue;
 		}
 		String value = nameAttr.getNodeValue();
 		try {
 			return Integer.parseInt (value);
 		} catch (Exception e) {
-			throw new ConfigurationException ("Invalid share value: "+value, e);
+			throw new ConfigurationException ("Invalid integer value: "+value, e);
 		}
 	}
 
