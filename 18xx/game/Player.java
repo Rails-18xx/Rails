@@ -27,12 +27,12 @@ public class Player implements CashHolder
    private static int[] playerStartCash = new int[MAX_PLAYERS];
    private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
    private static int playerCertificateLimit = 0;
-   String name = "";
-   int wallet = 0;
-   boolean hasPriority = false;
-   boolean hasBoughtStockThisTurn = false;
-   Portfolio portfolio = null;
-   ArrayList companiesSoldThisTurn = new ArrayList();
+   private String name = "";
+   private int wallet = 0;
+   private boolean hasPriority = false;
+   private boolean hasBoughtStockThisTurn = false;
+   private Portfolio portfolio = null;
+   private ArrayList companiesSoldThisTurn = new ArrayList();
 
    public static void setLimits(int number, int cash, int certLimit)
    {
@@ -106,6 +106,29 @@ public class Player implements CashHolder
       hasBoughtStockThisTurn = true;
       return 1;
    }	
+   
+   /**
+    * Check if a player may buy the given number of certificates.
+    * @param number Number of certificates to buy (usually 1 but not always so).
+    * @return True if it is allowed.
+    */
+   public boolean mayBuyCertificates (int number) {
+       if (portfolio.getCertificates().size() + number > playerCertificateLimit) return false;
+       return true;
+   }
+   
+   /**
+    * Check if a player may buy the given number of shares from a given company.
+    * @param company The company from which to buy
+    * @param number The number of shares (usually 1 but not always so).
+    * @return True if it is allowed.
+    */
+   public boolean mayBuyCompanyShare (PublicCompanyI company, int number) {
+       if (portfolio.countShares(company) + number*company.getShareUnit() > 60) return false;
+       /** TODO The '60' above must of course be made configurable! */ 
+       return true;
+   }
+   
    public int sellShare(Certificate share)
    {
       Portfolio.sellCertificate(share, portfolio, share.getCompany().getCurrentPrice().getPrice());

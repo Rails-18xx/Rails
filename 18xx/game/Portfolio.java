@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.4 2005/04/29 22:11:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.5 2005/04/30 20:37:56 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -244,6 +244,11 @@ public class Portfolio
       return name;
    }
 
+   /**
+    * Returns percentage that a portfolio contains of one company.
+    * @param company
+    * @return
+    */
    public int countShares(PublicCompanyI company)
    {
       int share = 0;

@@ -37,6 +37,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
    protected int numRows = 0;
    protected int numCols = 0;
    protected ArrayList startSpaces = new ArrayList();
+   
+   protected static StockMarketI instance;
 
    /* Game-specific flags */
    protected boolean upOrDownRight = false; /*
@@ -56,6 +58,11 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 
    public StockMarket()
    {
+       instance = this;
+   }
+   
+   public static StockMarketI getInstance() {
+       return instance;
    }
 
    /**

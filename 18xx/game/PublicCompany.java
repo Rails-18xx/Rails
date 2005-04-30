@@ -56,6 +56,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
    /** Company treasury, holding cash */
    protected int treasury = 0;
+   
+   /** Has the company started? */
+   protected boolean hasStarted = false;
 
    /** Revenue earned in the company's previous operating turn. */
    protected int lastRevenue = 0;
@@ -222,7 +225,22 @@ public class PublicCompany extends Company implements PublicCompanyI,
       return canBuyStock;
    }
 
-   /**
+	/**
+	 * @param hasStarted The hasStarted to set.
+	 */
+	public void start (StockSpaceI startSpace) {
+	    this.hasStarted = true;
+	    setParPrice (startSpace);
+	}
+	
+	/**
+	 * @return Returns true is the company has started.
+	 */
+	public boolean hasStarted() {
+	    return hasStarted;
+	}
+
+	/**
     * Float the company, put its initial cash in the treasury. <i>(perhaps the
     * cash can better be calculated initially?) </i>.
     * 
