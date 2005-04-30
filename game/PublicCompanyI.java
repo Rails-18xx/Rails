@@ -51,6 +51,15 @@ public interface PublicCompanyI extends CompanyI  {
 	public boolean canBuyPrivates();
 
 	/**
+	 * Start the company.
+	 */
+	public void start (StockSpaceI startSpace);
+	
+	/**
+	 * @return Returns true is the company has started.
+	 */
+	public boolean hasStarted();
+	/**
 	 * Float the company, put its initial cash in the treasury.
 	 * <i>(perhaps the cash can better be calculated initially?)</i>.
 	 * @param cash The initial cash amount.
