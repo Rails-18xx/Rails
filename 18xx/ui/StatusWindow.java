@@ -26,7 +26,7 @@ public class StatusWindow extends JFrame implements ActionListener
       playerStatus  = new PlayerStatus();
       certStatus = new CertificateStatus();
       
-      this.setLayout(new GridLayout(2,2));
+      this.getContentPane().setLayout(new GridLayout(2,2));
       
       buttonPanel = new JPanel();
       buttonPanel.setLayout(new FlowLayout());
