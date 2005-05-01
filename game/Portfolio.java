@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.5 2005/04/30 20:37:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.6 2005/05/01 21:25:47 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -64,10 +64,7 @@ public class Portfolio
    {
 
    	if (owner instanceof Player) {
-      Log.write(getName() + " buys " + certificate.getShare() + "% of "
-            + certificate.getCompany().getName() + " from " + from.getName()
-            + " for " + price  + ".");
-   	} else {
+    	} else {
    		Log.write(from.getName()+ " sells " +certificate.getShare() + "% of "
    				+ certificate.getCompany().getName() + " to " + getName()
 				+ " for "+price+".");
