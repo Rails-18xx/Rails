@@ -250,8 +250,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public void setFloated(int cash)
    {
       this.hasFloated = true;
-      this.treasury = cash;
-      Log.write(name + " floats, treasury cash is " + cash);
+      Bank.transferCash (null, this, cash);
    }
 
    /**

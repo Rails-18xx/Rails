@@ -31,7 +31,12 @@ public class GameTestServlet extends HttpServlet {
 	private String error;
 	
 	private ArrayList playerList = new ArrayList();
-	private Player[] players;
+	private Player[] players = null;
+	private PlayerManager playerManager = null;
+	private CompanyManagerI companyManager = null;
+
+	private Round currentRound = null;
+	private StockRound stockRound = null;
 
 
 	public void init(ServletConfig config) throws ServletException {
@@ -69,6 +74,9 @@ public class GameTestServlet extends HttpServlet {
 		int i;
 		List startSpaces;
 		int price;
+		
+		Portfolio ipo = Bank.getIpo();
+		Portfolio pool = Bank.getPool();
 
 		if (phase == SELECTGAME) {
 			/* Initialise */
@@ -78,6 +86,7 @@ public class GameTestServlet extends HttpServlet {
 				Game.initialise (gameName);
 				stockMarket = Game.getStockMarket(); 
 				bank = Game.getBank();
+				companyManager = Game.getCompanyManager();
 				
 				phase = SELECTPLAYERS;
 			} else {
@@ -88,15 +97,14 @@ public class GameTestServlet extends HttpServlet {
 			if (hasValue(request.getParameter ("AddPlayer"))) {
 				String newPlayer = request.getParameter ("Player");
 				if(hasValue(newPlayer)) {
-					playerList.add (new Player(newPlayer));
+					playerList.add (newPlayer);
 				}
 			} else if (hasValue (request.getParameter ("StartGame"))) {
 
 				// Give players their start cash
-				players = new Player[playerList.size()];
-				for (i=0; i<playerList.size(); i++) players[i] = (Player)playerList.get(i);
-				Player.initPlayers(players);
-
+				playerManager = Game.getPlayerManager(playerList);
+				players = playerManager.getPlayersArray();
+				
 				phase = BUYPRIVATES;
 			}
 
@@ -113,6 +121,7 @@ public class GameTestServlet extends HttpServlet {
 					Bank.getIpo(), price);
 				if (Integer.parseInt(request.getParameter("Left")) == 1) {
 					phase = SR;
+					stockRound = new StockRound();
 					orStarted = false;
 				}
 			}
@@ -121,7 +130,7 @@ public class GameTestServlet extends HttpServlet {
 
 			if (hasValue(request.getParameter("GotoOR"))) {
 				// Check for sold-out companies
-				Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
+				Iterator it = companyManager.getAllPublicCompanies().iterator();
 				boolean soldOut;
 				while (it.hasNext()) {
 					company = (PublicCompanyI)it.next();
@@ -129,73 +138,78 @@ public class GameTestServlet extends HttpServlet {
 						Log.write(company.getName()+" is sold out");
 						stockMarket.soldOut(company);}
 				}
+				stockRound = null;
 				phase = OR;
 			} else {
 				int pl = Integer.parseInt(request.getParameter("Player"));
 				Player player = players[pl];
-				String cmpy = request.getParameter("Company");
-				company = Game.getCompanyManager().getPublicCompany(cmpy);
+				String cmpy;
 				Portfolio from = null, to = null;
-				boolean buyIpo = hasValue(request.getParameter("BuyIPO"));
-				boolean buyPool = hasValue(request.getParameter("BuyPool"));
-				boolean sell = hasValue(request.getParameter("Sell"));
-				String snumber = request.getParameter("Number");
-				int number = hasValue(snumber) ? Integer.parseInt(snumber) : 0;
-				price = 0;
-				boolean president = false;
-
-				if (buyIpo) {
-					from = Bank.getIpo();
-					to = player.getPortfolio();
-					number = 1;
-					if (company.getParPrice() != null) {
-						price = company.getParPrice().getPrice();
-					} else {
-						price = Integer.parseInt(request.getParameter("StartPrice"));
-						company.setParPrice(stockMarket.getStartSpace(price));
-						president = true;
-						Log.write(player.getName()+" starts "+company.getName()+" at "+price);
-					}
-
-				} else if (buyPool) {
-					from = Bank.getPool();
-					to = player.getPortfolio();
-					number = 1;
-					price = company.getCurrentPrice().getPrice();
-
-				} else if (sell) {
-					from = player.getPortfolio();
-					to = Bank.getPool();
-					if (number < 1) number = 1;
-					else if (number > 5) number = 5;
-					price = company.getCurrentPrice().getPrice();
-
+				String snumber = "";
+				int number = 0;
+				String msg;
+				
+				// Starting a company
+				if (hasValue(request.getParameter("Start"))) {
+				    cmpy = request.getParameter("StartCompany");
+					company = companyManager.getPublicCompany(cmpy);
+				    if (stockRound.isCompanyStartable(company)) {
+						if (company.getParPrice() != null) {
+							price = company.getParPrice().getPrice();
+						} else {
+							price = Integer.parseInt(request.getParameter("StartPrice"));
+						}
+				        stockRound.startCompany(player, company, price);
+				    } else {
+				        Log.error("Player "+player.getName()+" cannot start "+cmpy);
+				    }
+				    
+				/* Buying shares from the IPO
+				 * (shortcuts: (1) price is not always Par price,
+				 * (2) sometimes initial shares are bought from company treasury) 
+				 */ 
+				} else if (hasValue(request.getParameter("BuyIPO"))) {
+				    cmpy = request.getParameter("BuyIPOCompany");
+					company = companyManager.getPublicCompany(cmpy);
+				    if (company != null) {
+				        stockRound.buyShare(player, ipo, company, 1);
+				    } else {
+				        Log.error(player.getName()+" cannot buy "+cmpy+" from IPO");
+				    }
+				    
+				// Buying shares from the Pool
+				} else if (hasValue(request.getParameter("BuyPool"))) {
+				    cmpy = request.getParameter("BuyPoolCompany");
+					company = companyManager.getPublicCompany(cmpy);
+				    if (company != null) {
+				        stockRound.buyShare(player, pool, company, 1);
+				    } else {
+				        Log.error(player.getName()+" cannot buy "+cmpy+" from Pool");
+				    }
+				    
+				// Selling shares to the Pool
+				} else if (hasValue(request.getParameter("Sell"))) {
+				    cmpy = request.getParameter("SellCompany");
+					company = companyManager.getPublicCompany(cmpy);
+					snumber = request.getParameter("Number");
+					number = hasValue(snumber) ? Integer.parseInt(snumber) : 1;
+				    if (company != null) {
+				        stockRound.sellShares(player, company, number);
+				    } else {
+				        Log.error(player.getName()+" cannot sell "+cmpy);
+				    }
+				} else if (hasValue(request.getParameter("Done"))) {
+				    
+				    stockRound.done(player);
 				}
-				for (int k=0; k<number; k++) {
-					cert = from.findCertificate (company, president);
-					if (cert == null) break;
-					price = cert.getCertificatePrice();
-
-					// Get the certificate and pay the price
-					to.buyCertificate(cert, from, price);
-
-				}
-
-				if (buyIpo && !company.hasFloated() && from.countShares(company) <= 40) {
-					// Float company (limit and capitalisation to be made configurable)
-					company.setFloated(10*price);
-				} else if (sell) {
-					stockMarket.sell(company, number);
-				}
-
 			}
-
 		}
 
 		if (phase == OR) {
 
 			if (hasValue(request.getParameter("StartSR"))) {
 				phase = SR;
+				stockRound = new StockRound();
 			} else if (hasValue(request.getParameter("NextOR"))) {
 				orStarted = false;
 			}
@@ -330,7 +344,7 @@ public class GameTestServlet extends HttpServlet {
 				out.append ("<h4>Selecting players</h4>");
 				out.append("<table class=\"bordertable\" cellspacing=0>");
 				for (int j=0; j<playerList.size(); j++) {
-					out.append("<tr><td>"+(j+1)+"</td><td>"+((Player)playerList.get(j)).getName()
+					out.append("<tr><td>"+(j+1)+"</td><td>"+((String)playerList.get(j))
 						+"</td></tr>\n");
 				}
 				out.append("</table><p>");
@@ -351,7 +365,7 @@ public class GameTestServlet extends HttpServlet {
 					+ servletPrefix
 					+ servletName + "\">\n");
 				out.append("<table><tr><td>Select Player</td><td><select name=Player>\n");
-				for (int j=0; j<playerList.size(); j++) {
+				for (int j=0; j<players.length; j++) {
 					out.append("<option value=\""+j+"\">"+players[j].getName()+"\n");
 				}
 				out.append("</select></td></tr>");
@@ -372,21 +386,24 @@ public class GameTestServlet extends HttpServlet {
 
 			} else if (phase == SR) {
 
-				out.append ("<h4>Stock Round</h4>");
-				out.append("<form method=\"POST\" action=\""
-					+ servletPrefix
-					+ servletName + "\">\n");
-				out.append("<table><tr><td align=right>Select Player</td><td><select name=Player>\n");
-				for (int j=0; j<players.length; j++) {
-					out.append("<option value=\""+j+"\">"+players[j].getName()+"\n");
-				}
-				out.append("</select></td></tr>");
-
-				out.append("<tr><td align=right>Select Company</td><td><select name=Company>\n");
+				out.append ("<h4>Stock Round ").append(stockRound.getStockRoundNumber())
+				   .append(", ").append(stockRound.getCurrentPlayer().getName())
+					        .append("'s turn</h4><p>\n");
+				out.append("<form method=\"POST\" action=\"")
+					.append(servletPrefix).append(servletName).append("\">\n");
+				
+				out.append("<input type=hidden name=Player value=\"")
+					.append(stockRound.getCurrentPlayerIndex()).append("\">\n");
+				
+				out.append("<table><tr><td align=right><input type=submit name=Start value=\"Start Company\"></td>")
+					.append("<td><select name=StartCompany>\n");
 				List companies = Game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
-					out.append("<option value=\""+company.getName()+"\">"+company.getName()+"\n");
+					if (stockRound.isCompanyStartable(company)) {
+					    out.append("<option value=\"").append(company.getName())
+					    	.append("\">").append(company.getName()).append("\n");
+					}
 				}
 				out.append("</select>\n</td></tr><tr><td align=right>Start Price</td><td>");
 				out.append("<select name=StartPrice>\n");
@@ -397,14 +414,51 @@ public class GameTestServlet extends HttpServlet {
 				}
 				out.append("</select></td></tr>\n");
 
-				out.append ("<tr><td align=right><input type=submit name=BuyIPO value=\"Buy from IPO\">");
-				out.append ("</td><td><input type=submit name=BuyPool value=\"Buy from Pool\"><br>");
-				out.append ("</td></tr><tr><td align=right><input type=submit name=Sell value=\"Sell\">");
-				out.append("</td><td><select name=Number>\n");
-				for (int k=1; k<=5; k++) out.append("<option value="+k+">"+k+"\n");
+				out.append("<tr><td colspan=2><hr></td></tr>\n");
+
+				out.append ("<tr><td align=right><input type=submit name=BuyIPO value=\"Buy from IPO\"></td>")
+					.append("<td><select name=BuyIPOCompany>\n");
+				for (int j=0; j<companies.size(); j++) {
+					company = (PublicCompanyI) companies.get(j);
+					if (stockRound.isCompanyBuyable(company, ipo)) {
+					    out.append("<option value=\"").append(company.getName())
+					    	.append("\">").append(company.getName()).append("\n");
+					}
+				}
+				out.append("</select></td></tr>\n");
+				
+				out.append ("</td><td align=right><input type=submit name=BuyPool value=\"Buy from Pool\"></td>")
+					.append("<td><select name=BuyPoolCompany>\n");
+				for (int j=0; j<companies.size(); j++) {
+					company = (PublicCompanyI) companies.get(j);
+					if (stockRound.isCompanyBuyable(company, pool)) {
+					    out.append("<option value=\"").append(company.getName())
+					    	.append("\">").append(company.getName()).append("\n");
+					}
+				}
 				out.append("</select></td></tr>\n");
 
-				out.append ("<tr><td align=right><input type=submit name=GotoOR value=\"Start OR\"></tr></table></form>");
+				out.append("<tr><td colspan=2><hr></td></tr>\n");
+
+				out.append ("</td></tr><tr><td align=right><input type=submit name=Sell value=\"Sell\">");
+				out.append("<select name=Number>\n");
+				for (int k=1; k<=5; k++) out.append("<option value="+k+">"+k+"\n");
+				out.append("</select></td>\n")
+					.append("<td><select name=SellCompany>\n");
+				for (int j=0; j<companies.size(); j++) {
+					company = (PublicCompanyI) companies.get(j);
+					if (stockRound.isCompanySellable(company)) {
+					    out.append("<option value=\"").append(company.getName())
+					    	.append("\">").append(company.getName()).append("\n");
+					}
+				}
+				out.append("</select></td></tr>\n");
+
+				out.append("<tr><td colspan=2><hr></td></tr>\n");
+
+				out.append ("<tr><td align=right><input type=submit name=Done value=\"Pass/Done\">");
+
+				out.append ("<td align=left><input type=submit name=GotoOR value=\"Start OR\"></tr></table></form>");
 
 			} else if (phase == OR) {
 
@@ -442,7 +496,12 @@ public class GameTestServlet extends HttpServlet {
 			}
 			// Right upper part 2: log
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Log</h3>\n");
-			out.append ("<p>"+Log.getBuffer().replaceAll("\n", "<br>"));
+			String errMsg = Log.getErrorBuffer();
+			if (hasValue(errMsg)) {
+				out.append("<p><font color=red><b>").append(errMsg).append("</b></font>");
+			}
+		
+			out.append ("<p>"+Log.getMessageBuffer().replaceAll("\n", "<br>"));
 
 
 			// Right upper part 3: bank
@@ -513,8 +572,8 @@ public class GameTestServlet extends HttpServlet {
 				nComp++;
 			}
 			out.append ("</tr>\n");
-			for (int j=0; j<playerList.size(); j++) {
-				Player player = (Player) playerList.get(j);
+			for (int j=0; j<(players != null ? players.length : -1); j++) {
+				Player player = players[j];
 				out.append("<tr><td>" + player.getName())
 					.append("</td><td>" + player.getCash())
 					.append("</td><td>");
