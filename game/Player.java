@@ -77,25 +77,25 @@ public class Player implements CashHolder
       portfolio = new Portfolio(name, this);
    }
 
-   public int buyShare(Certificate share) throws NullPointerException
+   public void buyShare(Certificate share) throws NullPointerException
    {
       if(hasBoughtStockThisTurn)
-         return 0;
+         return;
       
       for (int i=0; i < companiesSoldThisTurn.size(); i++)
       {
          if(share.company.getName().equalsIgnoreCase(companiesSoldThisTurn.get(i).toString()))
-            return 0;           
+            return;           
       }
          
       if(portfolio.getCertificates().size() >= playerCertificateLimit)
-         return 0;
+         return;
       
       try
       {
          //throws nullpointer if company hasn't started yet.
          //it's up to the UI to catch this and gracefully start the company.
-         getPortfolio().buyCertificate(share, portfolio, share.getCompany().getCurrentPrice().getPrice());
+         getPortfolio().buyCertificate(share, portfolio, share.getCertificatePrice());
       }
       catch (NullPointerException e)
       {
@@ -104,7 +104,6 @@ public class Player implements CashHolder
       
       Game.getPlayerManager().setBoughtStockLast(this);
       hasBoughtStockThisTurn = true;
-      return 1;
    }	
    
    /**
@@ -184,5 +183,12 @@ public class Player implements CashHolder
    public String toString()
    {
       return "Name: " + name + " Cash: " + wallet;
+   }
+   /**
+    * @return Returns the hasBoughtStockThisTurn.
+    */
+   public boolean hasBoughtStockThisTurn()
+   {
+      return hasBoughtStockThisTurn;
    }
 }

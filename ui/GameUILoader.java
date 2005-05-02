@@ -10,6 +10,12 @@ public class GameUILoader
 {
    private static StockChart stockChart;
    private static StatusWindow statusWindow;
+   private static Options options;
+   
+   public GameUILoader()
+   {
+      options = new Options();
+   }
    
    public static void gameUIInit()
    {

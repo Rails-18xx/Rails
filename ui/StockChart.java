@@ -50,7 +50,7 @@ public class StockChart extends JFrame
    {
       this.setSize(10, 10);
       this.setTitle("Rails: Stock Chart");
-      //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       this.getContentPane().setLayout(new GridBagLayout());
 
       stockPanel = new JPanel();

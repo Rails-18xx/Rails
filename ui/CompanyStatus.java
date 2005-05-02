@@ -40,7 +40,6 @@ public class CompanyStatus extends JPanel implements MouseListener
    
    public void updateStatus()
    {
-      
       this.add(new JLabel("Company:"));
       for(int i = 0; i < publicCompanies.size(); i++)
       {
@@ -61,12 +60,10 @@ public class CompanyStatus extends JPanel implements MouseListener
          parLabel[i] = new JLabel();
          parLabel[i].setOpaque(true);
          parLabel[i].setBackground(Color.WHITE);
-         
-         co = (PublicCompany) publicCompanies.get(i);
-         sp = (StockSpace) co.getParPrice();
+
          try
          {
-            parLabel[i].setText(Integer.toString(sp.getPrice()));            
+            parLabel[i].setText(Integer.toString(((PublicCompany)publicCompanies.get(i)).getParPrice().getPrice()));
          }
          catch (NullPointerException e)
          {
@@ -83,10 +80,9 @@ public class CompanyStatus extends JPanel implements MouseListener
          cashLabel[i].setOpaque(true);
          cashLabel[i].setBackground(Color.WHITE);
          
-         co = (PublicCompany) publicCompanies.get(i);
          try
          {
-            cashLabel[i].setText(Integer.toString(co.getCash()));   
+            cashLabel[i].setText(Integer.toString(((PublicCompany)publicCompanies.get(i)).getCash()));   
          }
          catch (NullPointerException e)
          {
@@ -96,10 +92,12 @@ public class CompanyStatus extends JPanel implements MouseListener
          this.add(cashLabel[i]);
       }     
    }
-   public void refreshStatus()
+   
+   public void refreshPanel()
    {
       removeAll();
       updateStatus();
+      super.repaint();
    }
    
    public CompanyStatus(CompanyManagerI cm, Bank bank)

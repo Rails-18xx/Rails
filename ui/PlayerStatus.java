@@ -58,12 +58,12 @@ public class PlayerStatus extends JPanel implements MouseListener
          this.add(cashLabel[i]);
       }
    }
-   
-   public void refreshStatus()
+   public void refreshPanel()
    {
       removeAll();
       updateStatus();
-   }
+      super.repaint();
+   } 
    
    public PlayerStatus()
    {    

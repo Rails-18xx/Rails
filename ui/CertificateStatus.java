@@ -46,10 +46,11 @@ public class CertificateStatus extends JPanel implements MouseListener
          }
       }
    }
-   public void refreshStatus()
+   public void refreshPanel()
    {
       removeAll();
       updateStatus();
+      super.repaint();
    }
    
    public CertificateStatus()
@@ -59,6 +60,7 @@ public class CertificateStatus extends JPanel implements MouseListener
       statusArray = new JLabel[companies.size()+1][players.size()+1];
       
       this.setLayout(new GridLayout(companies.size()+1, players.size()+1));
+      this.setBorder(BorderFactory.createEtchedBorder());
       this.setOpaque(true);
       
       updateStatus();

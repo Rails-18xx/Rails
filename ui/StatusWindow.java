@@ -14,68 +14,60 @@ import javax.swing.*;
  */
 public class StatusWindow extends JFrame implements ActionListener
 {
-   private static CertificateStatus certStatus;
-   private static CompanyStatus companyStatus;
-   private static PlayerStatus playerStatus;
+   private CertificateStatus certStatus;
+   private CompanyStatus companyStatus;
+   private PlayerStatus playerStatus;
    private JPanel buttonPanel;
-   private JButton upButton, downButton, leftButton, rightButton, startCoButton, buyButton;
+   private JButton buyButton;
    
    public StatusWindow ()
    {
       companyStatus = new CompanyStatus(Game.getCompanyManager(), Game.getBank());
       playerStatus  = new PlayerStatus();
       certStatus = new CertificateStatus();
+      buttonPanel = new JPanel();      
       
-      this.getContentPane().setLayout(new GridLayout(2,2));
-      
-      buttonPanel = new JPanel();
-      buttonPanel.setLayout(new FlowLayout());
-
-      upButton = new JButton("up");
-      downButton = new JButton("down");
-      leftButton = new JButton("left");
-      rightButton = new JButton("right");
-      startCoButton = new JButton("Start Company");
       buyButton = new JButton("Buy");
-
-      buttonPanel.add(upButton);
-      buttonPanel.add(downButton);
-      buttonPanel.add(leftButton);
-      buttonPanel.add(rightButton);
-      buttonPanel.add(startCoButton);
+      
       buttonPanel.add(buyButton);
       
-      upButton.setActionCommand("up");
-      downButton.setActionCommand("down");
-      leftButton.setActionCommand("left");
-      rightButton.setActionCommand("right");
-      startCoButton.setActionCommand("startCo");
       buyButton.setActionCommand("buy");
       
-      upButton.addActionListener(this);
-      downButton.addActionListener(this);
-      leftButton.addActionListener(this);
-      rightButton.addActionListener(this);
-      startCoButton.addActionListener(this);
       buyButton.addActionListener(this);
 
-      this.getContentPane().add(companyStatus);
-      this.getContentPane().add(playerStatus);
-      this.getContentPane().add(certStatus);
-      this.getContentPane().add(buttonPanel);
-      
-      this.pack();
-      this.setLocation(0,300);
-      this.setVisible(true);
-   }
-   
-   public void refreshStatusWindow()
-   {
-      playerStatus.refreshStatus();
-      companyStatus.refreshStatus();
-      certStatus.refreshStatus();
+      updateStatus();
+      setSize(600,400);
+      setLocation(0,450);
+      getContentPane().setLayout(new GridLayout(2,0));
+      setTitle("Rails: Game Status");
+      setVisible(true);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
    }
 
+   public void updateStatus()
+   {
+      this.getContentPane().add(companyStatus);
+      this.getContentPane().add(playerStatus);	
+      this.getContentPane().add(certStatus);
+      this.getContentPane().add(buttonPanel);
+   }
+   public void refreshStatus()
+   {
+      companyStatus.refreshPanel();
+      playerStatus.refreshPanel();
+      certStatus.refreshPanel();
+      updateStatus();
+      //FIXME: Not an ideal fix for various repainting issues, but it works.
+      this.pack();
+      System.out.println(this.getWidth() + ", " + this.getHeight());
+   }
+   
+   public void repaint()
+   {
+      super.repaint();
+      refreshStatus();
+   }
+   
    /* (non-Javadoc)
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
@@ -88,55 +80,51 @@ public class StatusWindow extends JFrame implements ActionListener
          PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
          StockMarket stockMarket = (StockMarket) Game.getStockMarket();
       
-         if(arg0.getActionCommand().equalsIgnoreCase("down"))
+         if (arg0.getActionCommand().equalsIgnoreCase("buy"))
          {
-            stockMarket.sell((PublicCompanyI) co, 1);
-            StockChart.refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("left"))
-         {
-            stockMarket.withhold((PublicCompanyI) co);
-            StockChart.refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("up"))
-         {
-            stockMarket.soldOut((PublicCompanyI) co);
-            StockChart.refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("right"))
-         {
-            stockMarket.payOut((PublicCompanyI) co);
-            StockChart.refreshStockPanel();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("startCo"))
-         {
-            startCompany();
-         }
-         else if (arg0.getActionCommand().equalsIgnoreCase("buy"))
-         {
-            JOptionPane.showMessageDialog(this,"This button doesn't work yet.");
-            return;
-            /*
-            int[] x = certStatus.findLabelPosition(certStatus.getSelectedLabel());
-            Player p = (Player) Game.getPlayerManager().getPlayersArrayList().get(x[0]-1);
-            PublicCompany c = (PublicCompany) Game.getCompanyManager().getAllPublicCompanies().get(x[1]-1);
+            Player p;
+            PublicCompany c;
+            int[] x;
+            
+            if(playerStatus.getPlayerSelected() == null && companyStatus.getCompanySelected() == null)
+            {
+               x = certStatus.findLabelPosition(certStatus.getSelectedLabel());
+               p = (Player) Game.getPlayerManager().getPlayersArrayList().get(x[1]-1);
+               c = (PublicCompany) Game.getCompanyManager().getAllPublicCompanies().get(x[0]-1);
+            }
+            else
+            {
+               p = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
+               c = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyStatus.getCompanySelected());
+            }
 
+            if(p.hasBoughtStockThisTurn())
+            {
+               JOptionPane.showMessageDialog(this, "Player has already bought stock this turn.");
+               return;
+            }
+            
             try
             {
-               p.buyShare((Certificate)c.getCertificates().get(0));
+               p.buyShare((Certificate)c.getPortfolio().getNextAvailableCertificate(c));
             }
             catch(NullPointerException e)
             {
+               companyStatus.setCompanySelected(c.getName());
+               playerStatus.setPlayerSelected(p.getName());
                startCompany();
             }
-            */
+            
+            playerStatus.setPlayerSelected(null);
+            companyStatus.setCompanySelected(null);
+            repaint();
          }
       }
       catch (NullPointerException e)
       {   
          JOptionPane.showMessageDialog(this, "Unable to move selected company's token.");
          e.printStackTrace();
-      } 
+      }
    }
    
    private void startCompany()
@@ -159,15 +147,12 @@ public class StatusWindow extends JFrame implements ActionListener
          
          Player player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
          
-         //Buy Share doesn't completely work yet...
          player.buyShare((Certificate)co.getCertificates().get(0));
-         
-         companyStatus.setCompanySelected(null);
-         playerStatus.setPlayerSelected(null);
          StockChart.refreshStockPanel();
       }
       else
-         JOptionPane.showMessageDialog(this,"Unable to start company.\r\nYou must select a player and a company first.", 
+         JOptionPane.showMessageDialog(this,"Unable to start company.\r\n" +
+         							"You must select a player and a company first.", 
                						"Company not started.", JOptionPane.OK_OPTION);
    }
 }
