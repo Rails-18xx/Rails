@@ -28,7 +28,7 @@ import java.util.*;
 import java.io.*;
 import game.*;
 
-public class Options extends JFrame implements ActionListener
+public class Options extends JDialog implements ActionListener
 {
    GridBagConstraints gc;
    JPanel optionsPane, playersPane, buttonPane;
@@ -184,6 +184,7 @@ public class Options extends JFrame implements ActionListener
          
          try
          {
+            this.setVisible(false);
             Game.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
             GameUILoader.gameUIInit();
          }

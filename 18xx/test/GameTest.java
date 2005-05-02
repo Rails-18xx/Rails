@@ -3,12 +3,12 @@
  */
 package test;
 
-import ui.Options;
+import ui.*;
 
 public class GameTest
 {
    public static void main(String[] args)
    {
-      Options g = new Options();
+      GameUILoader g = new GameUILoader();
    }
 }

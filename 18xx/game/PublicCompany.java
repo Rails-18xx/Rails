@@ -540,8 +540,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
    public String toString()
    {
-      return "Public Company Number: " + publicNumber + " of "
-            + PublicCompany.numberOfPublicCompanies;
+      return name + ", " + publicNumber + " of " + numberOfPublicCompanies;
    }
    
    public static boolean startCompany(String playerName, String companyName, StockSpace startSpace)

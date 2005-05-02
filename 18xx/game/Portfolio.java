@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.6 2005/05/01 21:25:47 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.7 2005/05/02 22:59:19 wakko666 Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -74,6 +74,9 @@ public class Portfolio
       from.removeCertificate(certificate);
       this.addCertificate(certificate);
       certificate.setPortfolio(this);
+      
+      //Certificate is no longer for sale.
+      certificate.setAvailable(false);
 
       // Move the money
       Bank.transferCash(owner, from.owner, price);
@@ -93,6 +96,9 @@ public class Portfolio
       Bank.getPool().addCertificate(certificate);
       certificate.setPortfolio(Bank.getPool());
 
+      //Certificate is for sale again
+      certificate.setAvailable(true);
+      
       // Move the money
       Bank.transferCash(Bank.getInstance(), from.owner, price);
    }
@@ -175,6 +181,18 @@ public class Portfolio
       }
    }
 
+   public CertificateI getNextAvailableCertificate(PublicCompanyI company)
+   {
+      ArrayList certs = (ArrayList) company.getCertificates();
+      for(int i=0; i < certs.size(); i++)
+      {
+         if(((CertificateI)certs.get(i)).isAvailable())
+         {
+            return (CertificateI) certs.get(i);
+         }
+      }
+      return null; 
+   }
    /** Find any certificate */
    public CertificateI findCertificate(PublicCompanyI company, boolean president)
    {
