@@ -95,7 +95,7 @@ public class Player implements CashHolder
       {
          //throws nullpointer if company hasn't started yet.
          //it's up to the UI to catch this and gracefully start the company.
-         getPortfolio().buyCertificate(share, portfolio, share.getCertificatePrice());
+         getPortfolio().buyCertificate(share, share.getPortfolio(), share.getCompany().getCurrentPrice().getPrice());
       }
       catch (NullPointerException e)
       {

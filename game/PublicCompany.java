@@ -545,18 +545,36 @@ public class PublicCompany extends Company implements PublicCompanyI,
    
    public static boolean startCompany(String playerName, String companyName, StockSpace startSpace)
    {
+      //TODO: Should probably do error checking in case names aren't found.
       Player player = Game.getPlayerManager().getPlayerByName(playerName);
       PublicCompany company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
       
-      if(player.getCash() >= startSpace.getPrice()*2)
+      //We can safely do this because no company should start without 
+      //The president's share being somewhere other than the IPO pool.
+      Certificate cert = (Certificate) Bank.getIpo().getCertificates().get(0);
+      
+      if(player.getCash() >= (startSpace.getPrice()*2))
       {
          company.setParPrice(startSpace);
          company.setClosed(false);
-         Bank.transferCash(player, company, startSpace.getPrice()*2);
+         int price = startSpace.getPrice() * (cert.getShare() / company.getShareUnit());
+         Bank.transferCash(player, company, price);
          
          return true;
       }
       else
          return false;
+   }
+   
+   public CertificateI getNextAvailableCertificate()
+   {
+      for(int i=0; i < certificates.size(); i++)
+      {
+         if(((CertificateI)certificates.get(i)).isAvailable())
+         {
+            return (CertificateI) certificates.get(i);
+         }
+      }
+      return null; 
    }
 }
