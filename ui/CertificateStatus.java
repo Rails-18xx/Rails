@@ -28,20 +28,27 @@ public class CertificateStatus extends JPanel implements MouseListener
          for(int j=0; j <= players.size(); j++)
          {
             if(i==0 && j==0)
-               statusArray[i][j] = new JLabel("Stock Ownership");
+            {
+               statusArray[i][j] = new JLabel("Stock Ownership: ");
+               statusArray[i][j].setBackground(Color.LIGHT_GRAY);
+               statusArray[i][j].setSize(50,10);
+            }
             else if(j==0)
+            {
                   statusArray[i][j] = new JLabel(((PublicCompany)companies.get(i-1)).getName());
+            }
             else if (i==0)
+            {
                   statusArray[i][j] = new JLabel(((Player)players.get(j-1)).getName());
+            }
             else
             {
-               statusArray[i][j] = new JLabel(Integer.toString(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1))));
+               statusArray[i][j] = new JLabel(Integer.toString(((Player)players.get(j-1)).getPortfolio().countShares((PublicCompany)companies.get(i-1))));               
                statusArray[i][j].addMouseListener(this);
+               statusArray[i][j].setBackground(Color.WHITE);
             }
                         
-            statusArray[i][j].setOpaque(true);            
-            statusArray[i][j].setBackground(Color.WHITE);
-            statusArray[i][j].setForeground(Color.BLACK);
+            statusArray[i][j].setOpaque(true);                        
             this.add(statusArray[i][j]);
          }
       }

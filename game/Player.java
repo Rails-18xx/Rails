@@ -77,6 +77,10 @@ public class Player implements CashHolder
       portfolio = new Portfolio(name, this);
    }
 
+   /** 
+    * @param share
+    * @throws NullPointerException if company hasn't started yet. UI needs to handle this.
+    */
    public void buyShare(Certificate share) throws NullPointerException
    {
       if(hasBoughtStockThisTurn)

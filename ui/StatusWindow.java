@@ -8,6 +8,7 @@ import game.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;
 
 /**
  * @author blentz
@@ -18,7 +19,7 @@ public class StatusWindow extends JFrame implements ActionListener
    private CompanyStatus companyStatus;
    private PlayerStatus playerStatus;
    private JPanel buttonPanel;
-   private JButton buyButton;
+   private JButton buyButton, sellButton;
    private Player player;
    private PublicCompany company;
    
@@ -30,15 +31,19 @@ public class StatusWindow extends JFrame implements ActionListener
       buttonPanel = new JPanel();      
       
       buyButton = new JButton("Buy");
+      sellButton = new JButton("Sell");
       
       buttonPanel.add(buyButton);
+      buttonPanel.add(sellButton);
       
       buyButton.setActionCommand("buy");
+      sellButton.setActionCommand("sell");     
       
       buyButton.addActionListener(this);
+      sellButton.addActionListener(this);
 
       updateStatus();
-      setSize(600,400);
+      setSize(800,300);
       setLocation(0,450);
       getContentPane().setLayout(new GridLayout(2,0));
       setTitle("Rails: Game Status");
@@ -79,6 +84,10 @@ public class StatusWindow extends JFrame implements ActionListener
       {
          buyButtonClicked();
       }
+      else if (arg0.getActionCommand().equalsIgnoreCase("sell"))
+      {
+         sellButtonClicked();
+      }
    }
 
    private void setSelectedPlayerAndCompany()
@@ -103,11 +112,13 @@ public class StatusWindow extends JFrame implements ActionListener
    {
       setSelectedPlayerAndCompany();
 
+      /*
       if(player.hasBoughtStockThisTurn())
       {
          JOptionPane.showMessageDialog(this, "Player has already bought stock this turn.");
          return;
       }
+      */
       
       try //Misusing Try/Catch to provide an If/Else condition through the abuse of exceptions.
       {
@@ -122,6 +133,31 @@ public class StatusWindow extends JFrame implements ActionListener
       companyStatus.setCompanySelected(null);
       repaint();
    }
+   
+   private void sellButtonClicked()
+   {
+      setSelectedPlayerAndCompany();
+      
+      ArrayList certs = (ArrayList) player.getPortfolio().getCertificatesPerCompany(company.getName());
+      
+      try
+      {
+         //Just sell the last cert in the stack first.
+         if(!((Certificate)certs.get(certs.size()-1)).isPresident())
+            player.sellShare((Certificate)certs.get(certs.size()-1));
+         else
+            JOptionPane.showMessageDialog(this, "You can't sell the President's share.");
+      }
+      catch (ArrayIndexOutOfBoundsException e)
+      {
+         JOptionPane.showMessageDialog(this, "You have no shares of this company to sell");
+      }
+      
+      playerStatus.setPlayerSelected(null);
+      companyStatus.setCompanySelected(null);
+      repaint();
+   }
+      
    private void startCompany()
    {
       StockMarket stockMarket = (StockMarket) Game.getStockMarket();
