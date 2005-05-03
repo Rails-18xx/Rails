@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.7 2005/05/02 22:59:19 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.8 2005/05/03 20:37:56 wakko666 Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -45,11 +45,12 @@ public class Portfolio
       this.owner = holder;
    }
 
-   public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from, int price)
+   public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
+         int price)
    {
 
       Log.write(getName() + " buys " + privateCompany.getName() + " from "
-            + from.getName() + " for " + price+ ".");
+            + from.getName() + " for " + price + ".");
 
       // Move the private certificate
       from.removePrivate(privateCompany);
@@ -60,32 +61,44 @@ public class Portfolio
       Bank.transferCash(owner, from.owner, price);
    }
 
-   public void buyCertificate(CertificateI certificate, Portfolio from, int price)
+   public void buyCertificate(CertificateI certificate, Portfolio from,
+         int price)
    {
 
-   	if (owner instanceof Player) {
-    	} else {
-   		Log.write(from.getName()+ " sells " +certificate.getShare() + "% of "
-   				+ certificate.getCompany().getName() + " to " + getName()
-				+ " for "+price+".");
-   	}
+      if (owner instanceof Player)
+      {
+         Log.write(from.getName() + " sells " + certificate.getShare()
+               + "% of " + certificate.getCompany().getName() + " to "
+               + getName() + " for " + price + ".");
+      }
+      else
+      {
+         Log.write(from.getName() + " sells " + certificate.getShare()
+               + "% of " + certificate.getCompany().getName() + " to "
+               + getName() + " for " + price + ".");
+      }
 
       // Move the certificate
       from.removeCertificate(certificate);
       this.addCertificate(certificate);
       certificate.setPortfolio(this);
-      
+
       //Certificate is no longer for sale.
       certificate.setAvailable(false);
 
-      // Move the money
-      Bank.transferCash(owner, from.owner, price);
+      // Move the money. 
+      // IPO pile doesn't hold money, so that money ought to go into the Company Treasury.
+      if(from.name.equalsIgnoreCase("IPO"))
+         Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
+      else
+         Bank.transferCash(owner, from.owner, price);
    }
 
    //Sales of stock always go to the Bank pool
    //This method should be overridden for 1870 and other games
    //that allow price protection.
-   public static void sellCertificate(CertificateI certificate, Portfolio from, int price)
+   public static void sellCertificate(CertificateI certificate, Portfolio from,
+         int price)
    {
 
       Log.write(from.getName() + " sells " + certificate.getShare() + "% of "
@@ -98,7 +111,7 @@ public class Portfolio
 
       //Certificate is for sale again
       certificate.setAvailable(true);
-      
+
       // Move the money
       Bank.transferCash(Bank.getInstance(), from.owner, price);
    }
@@ -145,7 +158,7 @@ public class Portfolio
       }
       String companyName = certificate.getCompany().getName();
       ArrayList certs = (ArrayList) getCertificatesPerCompany(companyName);
-      
+
       for (int i = 0; i < certs.size(); i++)
       {
          if (certs.get(i) == certificate)
@@ -181,18 +194,18 @@ public class Portfolio
       }
    }
 
-   public CertificateI getNextAvailableCertificate(PublicCompanyI company)
+   public CertificateI getNextAvailableCertificate()
    {
-      ArrayList certs = (ArrayList) company.getCertificates();
-      for(int i=0; i < certs.size(); i++)
+      for (int i = 0; i < certificates.size(); i++)
       {
-         if(((CertificateI)certs.get(i)).isAvailable())
+         if (((CertificateI) certificates.get(i)).isAvailable())
          {
-            return (CertificateI) certs.get(i);
+            return (CertificateI) certificates.get(i);
          }
       }
-      return null; 
+      return null;
    }
+
    /** Find any certificate */
    public CertificateI findCertificate(PublicCompanyI company, boolean president)
    {
@@ -261,6 +274,7 @@ public class Portfolio
 
    /**
     * Returns percentage that a portfolio contains of one company.
+    * 
     * @param company
     * @return
     */

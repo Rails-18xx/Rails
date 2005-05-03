@@ -53,6 +53,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
          from = instance;
       else if (to == null)
          to = instance;
+      System.out.println("Amount: " + amount);
       from.addCash(-amount);
       to.addCash(amount);
    }
@@ -115,8 +116,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
    public static void initIpo()
    {
       // Add privates
-      List privates = Game.getCompanyManager()
-            .getAllPrivateCompanies();
+      List privates = Game.getCompanyManager().getAllPrivateCompanies();
       Iterator it = privates.iterator();
       while (it.hasNext())
       {
@@ -124,13 +124,11 @@ public class Bank implements CashHolder, ConfigurableComponentI
       }
 
       // Add public companies
-      List companies = Game.getCompanyManager()
-            .getAllPublicCompanies();
+      List companies = Game.getCompanyManager().getAllPublicCompanies();
       it = companies.iterator();
       while (it.hasNext())
       {
-         Iterator it2 = ((PublicCompanyI) it.next()).getCertificates()
-               .iterator();
+         Iterator it2 = ((PublicCompanyI) it.next()).getCertificates().iterator();
          while (it2.hasNext())
          {
             ipo.addCertificate((CertificateI) it2.next());

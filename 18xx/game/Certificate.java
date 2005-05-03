@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Certificate.java,v 1.2 2005/04/29 22:11:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Certificate.java,v 1.3 2005/05/03 20:37:56 wakko666 Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -132,5 +132,10 @@ public class Certificate implements CertificateI, Cloneable {
 	
 	public CertificateI copy() {
 		return (CertificateI) this.clone();
+	}
+
+	public String toString()
+	{
+	   return "Certificate: " + company.getName() + ", Shares: " + shares;
 	}
 }

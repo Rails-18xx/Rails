@@ -19,6 +19,8 @@ public class StatusWindow extends JFrame implements ActionListener
    private PlayerStatus playerStatus;
    private JPanel buttonPanel;
    private JButton buyButton;
+   private Player player;
+   private PublicCompany company;
    
    public StatusWindow ()
    {
@@ -57,9 +59,9 @@ public class StatusWindow extends JFrame implements ActionListener
       playerStatus.refreshPanel();
       certStatus.refreshPanel();
       updateStatus();
-      //FIXME: Not an ideal fix for various repainting issues, but it works.
+      //FIXME: Not an ideal fix for various repainting issues, but it works well enough for now.
       this.pack();
-      System.out.println(this.getWidth() + ", " + this.getHeight());
+      System.out.println("StatusWindow Dimensions: " + this.getWidth() + ", " + this.getHeight());
    }
    
    public void repaint()
@@ -73,66 +75,56 @@ public class StatusWindow extends JFrame implements ActionListener
     */
    public void actionPerformed(ActionEvent arg0)
    {
-      try
+      if (arg0.getActionCommand().equalsIgnoreCase("buy"))
       {
-         String companySelected = companyStatus.getCompanySelected();
-         CompanyManager cm = (CompanyManager) Game.getCompanyManager();
-         PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
-         StockMarket stockMarket = (StockMarket) Game.getStockMarket();
-      
-         if (arg0.getActionCommand().equalsIgnoreCase("buy"))
-         {
-            Player p;
-            PublicCompany c;
-            int[] x;
-            
-            if(playerStatus.getPlayerSelected() == null && companyStatus.getCompanySelected() == null)
-            {
-               x = certStatus.findLabelPosition(certStatus.getSelectedLabel());
-               p = (Player) Game.getPlayerManager().getPlayersArrayList().get(x[1]-1);
-               c = (PublicCompany) Game.getCompanyManager().getAllPublicCompanies().get(x[0]-1);
-            }
-            else
-            {
-               p = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
-               c = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyStatus.getCompanySelected());
-            }
-
-            if(p.hasBoughtStockThisTurn())
-            {
-               JOptionPane.showMessageDialog(this, "Player has already bought stock this turn.");
-               return;
-            }
-            
-            try
-            {
-               p.buyShare((Certificate)c.getPortfolio().getNextAvailableCertificate(c));
-            }
-            catch(NullPointerException e)
-            {
-               companyStatus.setCompanySelected(c.getName());
-               playerStatus.setPlayerSelected(p.getName());
-               startCompany();
-            }
-            
-            playerStatus.setPlayerSelected(null);
-            companyStatus.setCompanySelected(null);
-            repaint();
-         }
-      }
-      catch (NullPointerException e)
-      {   
-         JOptionPane.showMessageDialog(this, "Unable to move selected company's token.");
-         e.printStackTrace();
+         buyButtonClicked();
       }
    }
+
+   private void setSelectedPlayerAndCompany()
+   {
+      if(playerStatus.getPlayerSelected() == null && companyStatus.getCompanySelected() == null)
+      {
+         int[] x = certStatus.findLabelPosition(certStatus.getSelectedLabel());
+         player = (Player) Game.getPlayerManager().getPlayersArrayList().get(x[1]-1);
+         company = (PublicCompany) Game.getCompanyManager().getAllPublicCompanies().get(x[0]-1);
+      }
+      else
+      {
+         player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
+         company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyStatus.getCompanySelected());
+      }
+      
+      companyStatus.setCompanySelected(company.getName());
+      playerStatus.setPlayerSelected(player.getName());
+   }
    
+   private void buyButtonClicked()
+   {
+      setSelectedPlayerAndCompany();
+
+      if(player.hasBoughtStockThisTurn())
+      {
+         JOptionPane.showMessageDialog(this, "Player has already bought stock this turn.");
+         return;
+      }
+      
+      try //Misusing Try/Catch to provide an If/Else condition through the abuse of exceptions.
+      {
+         player.buyShare((Certificate)company.getNextAvailableCertificate());
+      }
+      catch(NullPointerException e)
+      {
+         startCompany();
+      }
+      
+      playerStatus.setPlayerSelected(null);
+      companyStatus.setCompanySelected(null);
+      repaint();
+   }
    private void startCompany()
    {
-      String companySelected = companyStatus.getCompanySelected();
-      CompanyManager cm = (CompanyManager) Game.getCompanyManager();
       StockMarket stockMarket = (StockMarket) Game.getStockMarket();
-      PublicCompany co = (PublicCompany) cm.getPublicCompany(companySelected);
       
       if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
       {
@@ -147,7 +139,7 @@ public class StatusWindow extends JFrame implements ActionListener
          
          Player player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
          
-         player.buyShare((Certificate)co.getCertificates().get(0));
+         player.buyShare((Certificate)company.getCertificates().get(0));
          StockChart.refreshStockPanel();
       }
       else
