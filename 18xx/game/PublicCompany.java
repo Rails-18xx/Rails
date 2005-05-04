@@ -559,12 +559,12 @@ public class PublicCompany extends Company implements PublicCompanyI,
       //The president's share being somewhere other than the IPO pool.
       Certificate cert = (Certificate) Bank.getIpo().getCertificates().get(0);
       
-      if(player.getCash() >= (startSpace.getPrice()*2))
+      if(player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit())))
       {
          company.setParPrice(startSpace);
          company.setClosed(false);
          int price = startSpace.getPrice() * (cert.getShare() / company.getShareUnit());
-         Bank.transferCash(player, company, price);
+         player.buyShare(cert, price);
          
          return true;
       }
@@ -572,6 +572,17 @@ public class PublicCompany extends Company implements PublicCompanyI,
          return false;
    }
    
+   public CertificateI getNextAvailableCertificate()
+   {
+      for(int i=0; i < certificates.size(); i++)
+      {
+         if(((CertificateI)certificates.get(i)).isAvailable())
+         {
+            return (CertificateI) certificates.get(i);
+         }
+      }
+      return null; 
+   }
    /**
     * @return Returns the lowerPrivatePriceFactor.
     */

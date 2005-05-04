@@ -171,11 +171,8 @@ public class StatusWindow extends JFrame implements ActionListener
                						stockMarket.getStartSpaces().toArray(),
                						stockMarket.getStartSpaces().get(0));
          
+         //FIXME: Probably should check the boolean startCompany() returns
          PublicCompany.startCompany(playerStatus.getPlayerSelected(), companyStatus.getCompanySelected(), sp);
-         
-         Player player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
-         
-         player.buyShare((Certificate)company.getCertificates().get(0));
          StockChart.refreshStockPanel();
       }
       else

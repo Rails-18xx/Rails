@@ -81,7 +81,7 @@ public class Player implements CashHolder
     * @param share
     * @throws NullPointerException if company hasn't started yet. UI needs to handle this.
     */
-   public void buyShare(Certificate share) throws NullPointerException
+   public void buyShare(Certificate share, int price) throws NullPointerException
    {
       if(hasBoughtStockThisTurn)
          return;
@@ -99,7 +99,7 @@ public class Player implements CashHolder
       {
          //throws nullpointer if company hasn't started yet.
          //it's up to the UI to catch this and gracefully start the company.
-         getPortfolio().buyCertificate(share, share.getPortfolio(), share.getCompany().getCurrentPrice().getPrice());
+         getPortfolio().buyCertificate(share, share.getPortfolio(), price);
       }
       catch (NullPointerException e)
       {
@@ -108,7 +108,19 @@ public class Player implements CashHolder
       
       Game.getPlayerManager().setBoughtStockLast(this);
       hasBoughtStockThisTurn = true;
-   }	
+   }
+   
+   public void buyShare(Certificate share) throws NullPointerException
+   {
+      try
+      {
+         buyShare(share, share.getCompany().getCurrentPrice().getPrice());
+      }
+      catch (NullPointerException e)
+      {
+         throw e;
+      }
+   }
    
    /**
     * Check if a player may buy the given number of certificates.
