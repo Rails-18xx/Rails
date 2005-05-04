@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.9 2005/05/04 14:36:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.10 2005/05/04 22:48:31 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -50,7 +50,7 @@ public class Portfolio
    {
 
       Log.write(getName() + " buys " + privateCompany.getName() + " from "
-            + from.getName() + " for " + price+ ".");
+            + from.getName() + " for " + Bank.format(price) + ".");
 
       // Move the private certificate
       from.removePrivate(privateCompany);
@@ -75,9 +75,11 @@ public class Portfolio
 
       // Move the money. 
       // IPO pile doesn't hold money, so that money ought to go into the Company Treasury.
-      if(from.name.equalsIgnoreCase("IPO"))
-         Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
-      else
+      // Erik: Sorry, but that money goes to the Bank. The Bank is the owner of the IPO.
+      // The Company is capitalised when it floats, not earlier!
+      //if(from.name.equalsIgnoreCase("IPO"))
+      //   Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
+      //else
       Bank.transferCash(owner, from.owner, price);
    }
 
@@ -89,7 +91,8 @@ public class Portfolio
    {
 
       Log.write(from.getName() + " sells " + certificate.getShare() + "% of "
-            + certificate.getCompany().getName() + " to the Bank for " + price);
+            + certificate.getCompany().getName() + " to the Bank for " 
+            + Bank.format(price));
 
       // Move the certificate
       from.removeCertificate(certificate);

@@ -138,6 +138,8 @@ public interface PublicCompanyI extends CompanyI  {
 	 */
 	public int getCash ();
 	
+	public String getFormattedCash ();
+	
 	/**
 	 * Get the last revenue earned by this company.
 	 * @return The last revenue amount.

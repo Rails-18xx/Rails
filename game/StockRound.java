@@ -83,7 +83,9 @@ public class StockRound implements Round
         if (companyMgr == null) companyMgr = Game.getCompanyManager();
         
         stockRoundNumber++;
-    }
+
+        Log.write("Start of Stock Round "+stockRoundNumber);
+}
     
     /*----- General methods -----*/
     
@@ -205,7 +207,8 @@ public class StockRound implements Round
             currentPlayer.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
         }
         Log.write(playerName + " starts "+companyName +" and buys " 
-                + shares+" share(s) ("+cert.getShare() + "%) for " + (shares*price)  + ".");
+                + shares+" share(s) ("+cert.getShare() + "%) for " 
+                + Bank.format(shares*price)  + ".");
        
         hasBoughtThisTurn = true;
         hasPassed = false;
@@ -318,7 +321,7 @@ public class StockRound implements Round
             currentPlayer.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
             Log.write(playerName + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
                     + companyName + " from " + from.getName()
-                    + " for " + (shares*price)  + ".");
+                    + " for " + Bank.format(shares*price)  + ".");
        }
 
         hasBoughtThisTurn = true;
@@ -330,7 +333,7 @@ public class StockRound implements Round
 		if (from == ipo && !company.hasFloated() && from.countShares(company) <= 40) {
 			// Float company (limit and capitalisation to be made configurable)
 			company.setFloated(10*price);
-			Log.write (companyName+ " floats and receives "+company.getCash());
+			Log.write (companyName+ " floats and receives "+Bank.format(company.getCash()));
 		}
 
         return true;
@@ -407,7 +410,7 @@ public class StockRound implements Round
 		Log.write(playerName+" sells "+number+" shares ("
 		        +(number*company.getShareUnit())
 		        +"%) of "+companyName
-		        +" for "+(number*price));
+		        +" for "+ Bank.format(number*price));
        
         for (int i=0; i<number; i++) {
             cert = portfolio.findCertificate(company, false);
@@ -449,11 +452,29 @@ public class StockRound implements Round
         } else {
             numPasses = 0;
         }
+        
         if (numPasses >= players.length) {
+            
             Log.write("All players have passed, end of SR "+stockRoundNumber);
-            // TODO: Inform GameManager
+            
+            // Check if any companies are sold out.
+			Iterator it = companyMgr.getAllPublicCompanies().iterator();
+			boolean soldOut;
+			PublicCompanyI company;
+			while (it.hasNext()) {
+				company = (PublicCompanyI)it.next();
+				if (company.isSoldOut()) {
+					Log.write(company.getName()+" is sold out");
+					stockMarket.soldOut(company);}
+			}
+
+            // Inform GameManager
+            GameManager.getInstance().nextRound(this);
+            
         } else {        
+            
             setNextPlayer();
+            
         }
 
         return true;

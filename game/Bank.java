@@ -31,6 +31,8 @@ public class Bank implements CashHolder, ConfigurableComponentI
    private static Portfolio ipo = null;
    private static Portfolio pool = null;
    private static Bank instance = null;
+   
+   private static String moneyFormat = "$@";
 
    public static Bank getInstance()
    {
@@ -53,7 +55,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
          from = instance;
       else if (to == null)
          to = instance;
-      System.out.println("Amount: " + amount);
+      //System.out.println("Amount: " + amount);
       from.addCash(-amount);
       to.addCash(amount);
    }
@@ -185,5 +187,14 @@ public class Bank implements CashHolder, ConfigurableComponentI
    {
       return "Bank";
    }
+   
+   public String getFormattedCash () {
+       return Bank.format (money);
+   }
+   
+   public static String format (int amount) {
+       return moneyFormat.replaceFirst ("@", ""+amount);
+   }
+   
 
 }
