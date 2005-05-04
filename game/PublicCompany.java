@@ -555,9 +555,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       Player player = Game.getPlayerManager().getPlayerByName(playerName);
       PublicCompany company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
       
-      //We can safely do this because no company should start without 
-      //The president's share being somewhere other than the IPO pool.
-      Certificate cert = (Certificate) Bank.getIpo().getCertificates().get(0);
+      Certificate cert = (Certificate) company.certificates.get(0);
       
       if(player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit())))
       {

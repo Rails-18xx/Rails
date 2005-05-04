@@ -155,6 +155,7 @@ public class StatusWindow extends JFrame implements ActionListener
       
       playerStatus.setPlayerSelected(null);
       companyStatus.setCompanySelected(null);
+      StockChart.refreshStockPanel();
       repaint();
    }
       
