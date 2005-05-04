@@ -91,6 +91,32 @@ public class CompanyStatus extends JPanel implements MouseListener
          
          this.add(cashLabel[i]);
       }     
+      
+      this.add(new JLabel("IPO:"));
+      for(int i = 0; i < publicCompanies.size(); i++)
+      {
+         ipoLabel[i] = new JLabel();
+         ipoLabel[i].setOpaque(true);
+         ipoLabel[i].setBackground(Color.WHITE);
+         
+         ArrayList certs = (ArrayList) Bank.getIpo().getCertificatesPerCompany(((PublicCompany)publicCompanies.get(i)).getName());
+         ipoLabel[i].setText(Integer.toString(certs.size()));
+         
+         this.add(ipoLabel[i]);
+      }
+      
+      this.add(new JLabel("Pool:"));
+      for(int i = 0; i < publicCompanies.size(); i++)
+      {
+         stockLabel[i] = new JLabel();
+         stockLabel[i].setOpaque(true);
+         stockLabel[i].setBackground(Color.WHITE);
+         
+         ArrayList certs = (ArrayList) Bank.getPool().getCertificatesPerCompany(((PublicCompany)publicCompanies.get(i)).getName());
+         stockLabel[i].setText(Integer.toString(certs.size()));
+         
+         this.add(stockLabel[i]);
+      }
    }
    
    public void refreshPanel()

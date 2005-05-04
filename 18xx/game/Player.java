@@ -147,6 +147,7 @@ public class Player implements CashHolder
    public int sellShare(Certificate share)
    {
       Portfolio.sellCertificate(share, portfolio, share.getCompany().getCurrentPrice().getPrice());
+      Game.getStockMarket().sell(share.getCompany(), 1);
       return 1;
    }
 
