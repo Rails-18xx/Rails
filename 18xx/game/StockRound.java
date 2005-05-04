@@ -88,6 +88,10 @@ public class StockRound implements Round
     public int getStockRoundNumber() {
         return stockRoundNumber;
     }
+    
+    public static int getLastStockRoundNumber() {
+        return stockRoundNumber;
+    }
    
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
     
@@ -192,7 +196,7 @@ public class StockRound implements Round
             player.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
         }
         Log.write(player.getName() + " starts "+company.getName() +" and buys " 
-                + shares+" share(s) ("+cert.getShare() + "%) for " + price  + ".");
+                + shares+" share(s) ("+cert.getShare() + "%) for " + (shares*price)  + ".");
        
         hasBoughtThisTurn = true;
         hasPassed = false;
@@ -297,7 +301,7 @@ public class StockRound implements Round
             player.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
             Log.write(player.getName() + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
                     + company.getName() + " from " + from.getName()
-                    + " for " + price  + ".");
+                    + " for " + (shares*price)  + ".");
        }
 
         hasBoughtThisTurn = true;
@@ -375,13 +379,17 @@ public class StockRound implements Round
         // All seems OK, now do the selling.
         CertificateI cert;
         int price = company.getCurrentPrice().getPrice();
+		Log.write(player.getName()+" sells "+number+" shares ("
+		        +(number*company.getShareUnit())
+		        +"%) of "+company.getName()
+		        +" for "+(number*price));
+       
         for (int i=0; i<number; i++) {
             cert = portfolio.findCertificate(company, false);
             pool.buyCertificate (cert, portfolio, cert.getShares()*price);
-			Log.write(player.getName()+" sells "+number+" shares of "+company.getName()
-			        +" at "+price);
         }
-        
+        stockMarket.sell(company, number);
+       
         // Remember that the player has sold this company this round.
         if (!playersThatSoldThisRound.containsKey(player)) {
             playersThatSoldThisRound.put(player, new HashMap());
@@ -402,7 +410,10 @@ public class StockRound implements Round
      * TODO: Inform GameManager about round change.
      */
     public boolean done (Player player) {
-        if (player != currentPlayer) return false;
+        if (player != currentPlayer) {
+            Log.error ("Wrong player");
+            return false;
+        }
 
         if (hasPassed) {
             numPasses++;

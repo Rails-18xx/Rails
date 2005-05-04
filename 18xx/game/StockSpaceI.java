@@ -109,6 +109,14 @@ public interface StockSpaceI {
 	 * @return
 	 */
 	public abstract ArrayList getTokens();
+	
+	  /**
+	    * Find the stack position of a company token
+	    * @return Stock position: 0 = top, increasing towards the bottom.
+	    * -1 if not found.
+	    */
+	   public int getStackPosition(PublicCompanyI company);
+	   
 	/**
 	 * @return
 	 */

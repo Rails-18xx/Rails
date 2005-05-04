@@ -144,6 +144,9 @@ public interface PublicCompanyI extends CompanyI  {
 	 */
 	public int getLastRevenue();
 	
+    public Player getPresident ();
+
+	
 	public Portfolio getPortfolio();
 	
 	public void payOut (int amount);
@@ -158,4 +161,12 @@ public interface PublicCompanyI extends CompanyI  {
 	 */
 	public int getShareUnit ();
 
+	/**
+	 * @return Returns the lowerPrivatePriceFactor.
+	 */
+	public float getLowerPrivatePriceFactor();
+	/**
+	 * @return Returns the upperPrivatePriceFactor.
+	 */
+	public float getUpperPrivatePriceFactor();
 }

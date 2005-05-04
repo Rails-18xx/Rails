@@ -37,6 +37,7 @@ public class GameTestServlet extends HttpServlet {
 
 	private Round currentRound = null;
 	private StockRound stockRound = null;
+	private OperatingRound operatingRound = null;
 
 
 	public void init(ServletConfig config) throws ServletException {
@@ -140,6 +141,8 @@ public class GameTestServlet extends HttpServlet {
 				}
 				stockRound = null;
 				phase = OR;
+				orStarted = false;
+				OperatingRound.resetRelativeORNumber();
 			} else {
 				int pl = Integer.parseInt(request.getParameter("Player"));
 				Player player = players[pl];
@@ -210,11 +213,14 @@ public class GameTestServlet extends HttpServlet {
 			if (hasValue(request.getParameter("StartSR"))) {
 				phase = SR;
 				stockRound = new StockRound();
+				operatingRound = null;
 			} else if (hasValue(request.getParameter("NextOR"))) {
 				orStarted = false;
+				operatingRound = null;
 			}
 			if (!orStarted) {
 				// Privates pay out
+			    operatingRound = new OperatingRound();
 				Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					((PrivateCompanyI)it.next()).payOut();
@@ -228,19 +234,26 @@ public class GameTestServlet extends HttpServlet {
 			String samount = request.getParameter("Amount");
 			int amount = hasValue(samount) ? Integer.parseInt(samount) : 0;
 
-			if (hasValue (request.getParameter("Spend"))) {
-				Bank.transferCash((CashHolder)company, null, amount);
-				Log.write (company.getName()+" spends "+amount);
-			} else if (hasValue (request.getParameter("PayOut"))) {
-				company.payOut (amount);
+			if (hasValue (request.getParameter("LayTrack"))) {
+					operatingRound.layTrack(compName, amount);
+			} else if (hasValue (request.getParameter("LayToken"))) {
+					operatingRound.layToken(compName, amount);
+			} else if (hasValue (request.getParameter("BuyTrain"))) {
+					operatingRound.buyTrain(compName, amount);
+			} else if (hasValue (request.getParameter("SetRevenue"))) {
+					operatingRound.setRevenue(compName, amount);
+			} else if (hasValue (request.getParameter("Payout"))) {
+				operatingRound.fullPayout (compName);
 			} else if (hasValue (request.getParameter("Withhold"))) {
-				company.withhold (amount);
+				operatingRound.withholdPayout (compName);
+			} else if (hasValue (request.getParameter("Split"))) {
+				operatingRound.splitPayout (compName);
+			} else if (hasValue (request.getParameter("Done"))) {
+				operatingRound.done (compName);
 			} else if (hasValue (request.getParameter("BuyPrivate"))) {
 				String privName = request.getParameter("Private");
-				PrivateCompanyI priv = Game.getCompanyManager().getPrivateCompany(privName);
-				if (hasValue(privName)) {
-					company.getPortfolio().buyPrivate(priv, priv.getHolder(), amount);
-				}
+				price = Integer.parseInt(request.getParameter("Price"));
+				operatingRound.buyPrivate(compName, privName, price);
 			}
 		}
 
@@ -462,25 +475,45 @@ public class GameTestServlet extends HttpServlet {
 
 			} else if (phase == OR) {
 
-				out.append ("<h4>Operating Round</h4>");
+			    PublicCompanyI currCo = operatingRound.getOperatingCompany();
+			    Player player = currCo.getPresident();
+				out.append ("<h4>Operating Round ").append(operatingRound.getCompositeORNumber())
+					.append(" - ").append(currCo.getName()).append(" turn, ")
+					.append(player.getName()).append(" is President</h4>");
 				out.append("<form method=\"POST\" action=\""
 					+ servletPrefix
 					+ servletName + "\">\n");
-				out.append("<table><tr><td align=right>Select Company</td><td><select name=Company>\n");
-				List companies = Game.getCompanyManager().getAllPublicCompanies();
-				for (int j=0; j<companies.size(); j++) {
-					company = (PublicCompanyI) companies.get(j);
-					out.append("<option value=\""+company.getName()+"\">"+company.getName()+"\n");
+				out.append("<input type=hidden name=Company value=\"")
+				   .append(operatingRound.getOperatingCompany().getName()).append("\"><table>\n");
+				
+				int step = operatingRound.getStep();
+				if (step == OperatingRound.STEP_LAY_TRACK) {
+					out.append("<tr><td align=right>Track Laying Cost</td>")
+					   .append("<td><input type=text size=6 name=Amount value=0>")
+					   .append(" <input type=submit name=LayTrack value=Go></td></tr>\n");
+				} else if (step == OperatingRound.STEP_LAY_TOKEN) {
+					out.append("<tr><td align=right>Token Laying Cost</td>")
+					   .append("<td><input type=text size=6 name=Amount value=0>")
+					   .append(" <input type=submit name=LayToken value=Go></td></tr>\n");
+				} else if (step == OperatingRound.STEP_CALC_REVENUE) {
+					out.append("<tr><td align=right>Revenue is</td>")
+					   .append("<td><input type=text size=6 name=Amount value=0>")
+					   .append(" <input type=submit name=SetRevenue value=Go></td></tr>\n");
+				} else if (step == OperatingRound.STEP_PAYOUT) {
+				    out.append("<tr><td>Revenue allocation <input type=submit name=Payout value=\"Pay Out\"></td><td align=left>");
+				    if (operatingRound.isSplitAllowed()) {
+				        out.append("<input type=submit name=Split value=\"Split\">");
+				    }
+				    out.append("<input type=submit name=Withhold value=\"Withhold\"></td></tr>");
+				} else if (step == OperatingRound.STEP_BUY_TRAIN) {
+					out.append("<tr><td align=right>Train Buying Cost</td>")
+					   .append("<td><input type=text size=6 name=Amount value=0>")
+					   .append(" <input type=submit name=BuyTrain value=Go></td></tr>\n");
 				}
-				out.append("</select>\n</td></tr><tr><td align=right>Amount</td><td>");
-				out.append("<input type=text size=6 name=Amount></td></tr>\n");
 
-				out.append ("<tr><td></td><td><input type=submit name=Spend value=\"Spend from Treasury\">");
-				out.append ("</td></tr>\n<tr><td align=right><input type=submit name=PayOut value=\"Pay Out Revenue\"></td>\n");
-				out.append ("<td><input type=submit name=Withhold value=\"Withhold revenue\">");
-				out.append("</td></tr>\n");
-
-				out.append("<tr><td align=right><select name=Private>\n");
+				out.append("<tr><td colspan=2><hr></td></tr>\n");
+				
+				out.append("<tr><td align=right>Private <select name=Private>\n");
 				Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					PrivateCompanyI priv = (PrivateCompanyI) it.next();
@@ -488,9 +521,14 @@ public class GameTestServlet extends HttpServlet {
 						out.append("<option value=\""+priv.getName()+"\">"+priv.getName()+"\n");
 					}
 				}
-				out.append("</select></td><td><input type=submit name=BuyPrivate value=\"Buy Private\"></td></tr>\n");
+				out.append("</select></td><td> for <input type=text size=6 name=Price>")
+				.append(" <input type=submit name=BuyPrivate value=\"Buy\"></td></tr>\n");
 
-				out.append ("<tr><td align=right><input type=submit name=NextOR value=\"Next OR\"></td>");
+				out.append ("<tr><td align=right>");
+				if (step >= OperatingRound.STEP_BUY_TRAIN) {
+				    out.append("<input type=submit name=Done value=\"Done\">");
+				}
+				out.append ("<input type=submit name=NextOR value=\"Next OR\"></td>");
 				out.append ("<td><input type=submit name=StartSR value=\"Next SR\"></td></tr></table></form>");
 
 			}
@@ -498,6 +536,7 @@ public class GameTestServlet extends HttpServlet {
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Log</h3>\n");
 			String errMsg = Log.getErrorBuffer();
 			if (hasValue(errMsg)) {
+			    errMsg.replaceAll(":", ":<br>&nbsp;&nbsp;");
 				out.append("<p><font color=red><b>").append(errMsg).append("</b></font>");
 			}
 		
@@ -571,7 +610,7 @@ public class GameTestServlet extends HttpServlet {
 				out.append("<th>"+((CompanyI)it.next()).getName()+"</th>");
 				nComp++;
 			}
-			out.append ("</tr>\n");
+			out.append ("<th>Worth</th></tr>\n");
 			for (int j=0; j<(players != null ? players.length : -1); j++) {
 				Player player = players[j];
 				out.append("<tr><td>" + player.getName())
@@ -602,7 +641,7 @@ public class GameTestServlet extends HttpServlet {
 					}
 					out.append("<td>"+(president ? "P" : "")+ share+"</td>");
 				}
-				out.append("</tr>");
+				out.append("<td>").append(player.getWorth()).append("</td></tr>");
 
 			}
 			out.append ("</table>");

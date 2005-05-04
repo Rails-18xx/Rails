@@ -5,7 +5,7 @@
  */
 package game;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Objects of this class represent a square on the StockMarket.
@@ -96,6 +96,21 @@ public class StockSpace implements StockSpaceI
    public ArrayList getTokens()
    {
       return tokens;
+   }
+   
+   /**
+    * Find the stack position of a company token
+    * @return Stock position: 0 = top, increasing towards the bottom.
+    * -1 if not found.
+    */
+   public int getStackPosition(PublicCompanyI company) {
+       int pos = -1;
+       Iterator it = tokens.iterator();
+       while (it.hasNext()) {
+           pos++;
+           if ((PublicCompanyI)it.next() == company) return pos;
+       }
+       return -1;
    }
 
    /*--- Getters ---*/
