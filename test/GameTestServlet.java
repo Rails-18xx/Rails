@@ -144,8 +144,8 @@ public class GameTestServlet extends HttpServlet {
 				orStarted = false;
 				OperatingRound.resetRelativeORNumber();
 			} else {
-				int pl = Integer.parseInt(request.getParameter("Player"));
-				Player player = players[pl];
+				String playerName = request.getParameter("Player");
+				Player player = playerManager.getPlayerByName(playerName);
 				String cmpy;
 				Portfolio from = null, to = null;
 				String snumber = "";
@@ -156,13 +156,13 @@ public class GameTestServlet extends HttpServlet {
 				if (hasValue(request.getParameter("Start"))) {
 				    cmpy = request.getParameter("StartCompany");
 					company = companyManager.getPublicCompany(cmpy);
-				    if (stockRound.isCompanyStartable(company)) {
+				    if (stockRound.isCompanyStartable(cmpy)) {
 						if (company.getParPrice() != null) {
 							price = company.getParPrice().getPrice();
 						} else {
 							price = Integer.parseInt(request.getParameter("StartPrice"));
 						}
-				        stockRound.startCompany(player, company, price);
+				        stockRound.startCompany(playerName, cmpy, price);
 				    } else {
 				        Log.error("Player "+player.getName()+" cannot start "+cmpy);
 				    }
@@ -175,7 +175,7 @@ public class GameTestServlet extends HttpServlet {
 				    cmpy = request.getParameter("BuyIPOCompany");
 					company = companyManager.getPublicCompany(cmpy);
 				    if (company != null) {
-				        stockRound.buyShare(player, ipo, company, 1);
+				        stockRound.buyShare(playerName, ipo, cmpy, 1);
 				    } else {
 				        Log.error(player.getName()+" cannot buy "+cmpy+" from IPO");
 				    }
@@ -183,27 +183,17 @@ public class GameTestServlet extends HttpServlet {
 				// Buying shares from the Pool
 				} else if (hasValue(request.getParameter("BuyPool"))) {
 				    cmpy = request.getParameter("BuyPoolCompany");
-					company = companyManager.getPublicCompany(cmpy);
-				    if (company != null) {
-				        stockRound.buyShare(player, pool, company, 1);
-				    } else {
-				        Log.error(player.getName()+" cannot buy "+cmpy+" from Pool");
-				    }
+			        stockRound.buyShare(playerName, pool, cmpy, 1);
 				    
 				// Selling shares to the Pool
 				} else if (hasValue(request.getParameter("Sell"))) {
 				    cmpy = request.getParameter("SellCompany");
-					company = companyManager.getPublicCompany(cmpy);
 					snumber = request.getParameter("Number");
 					number = hasValue(snumber) ? Integer.parseInt(snumber) : 1;
-				    if (company != null) {
-				        stockRound.sellShares(player, company, number);
-				    } else {
-				        Log.error(player.getName()+" cannot sell "+cmpy);
-				    }
+			        stockRound.sellShares(playerName, cmpy, number);
 				} else if (hasValue(request.getParameter("Done"))) {
 				    
-				    stockRound.done(player);
+				    stockRound.done(playerName);
 				}
 			}
 		}
@@ -406,7 +396,7 @@ public class GameTestServlet extends HttpServlet {
 					.append(servletPrefix).append(servletName).append("\">\n");
 				
 				out.append("<input type=hidden name=Player value=\"")
-					.append(stockRound.getCurrentPlayerIndex()).append("\">\n");
+					.append(stockRound.getCurrentPlayer().getName()).append("\">\n");
 				
 				out.append("<table><tr><td align=right><input type=submit name=Start value=\"Start Company\"></td>")
 					.append("<td><select name=StartCompany>\n");

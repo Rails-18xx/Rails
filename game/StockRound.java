@@ -57,6 +57,7 @@ public class StockRound implements Round
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
+    static protected CompanyManagerI companyMgr;
     
     /* Rules */
     static protected int sequenceRule = SELL_BUY_SELL; // Currently fixed
@@ -79,6 +80,7 @@ public class StockRound implements Round
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
+        if (companyMgr == null) companyMgr = Game.getCompanyManager();
         
         stockRoundNumber++;
     }
@@ -100,8 +102,8 @@ public class StockRound implements Round
      * @param company The company to start.
      * @return True if the company could be started.
      */
-    public boolean startCompany (Player player, PublicCompanyI company, int price) {
-        return startCompany(player, company, price, 1);
+    public boolean startCompany (String playerName, String companyName, int price) {
+        return startCompany(playerName, companyName, price, 1);
     }
     
     /**
@@ -113,29 +115,36 @@ public class StockRound implements Round
      * @return True if the company could be started. False indicates an error.
      * TODO Error messages.
      */
-    public boolean startCompany (Player player, PublicCompanyI company, int price, int shares) {
+    public boolean startCompany (String playerName, String companyName, int price, int shares) {
         
         String errMsg = null;
         StockSpaceI startSpace = null;
         int numberOfCertsToBuy = 0;
         CertificateI cert = null;
+        PublicCompanyI company = null;
         
         // Dummy loop to allow a quick jump out
         while (true) {
 
 	        // Check everything
 	        // Only the player that has the turn may buy
-	        if (player != currentPlayer) {
-	            errMsg = "Wrong player";
+	        if (!playerName.equals(currentPlayer.getName())) {
+	            errMsg = "Wrong player "+playerName;
 	            break;
 	        }
 	            
 	        // The player may not have bought this turn.
 	        if (hasBoughtThisTurn) { 
-	            errMsg = player.getName()+" already bought this turn";
+	            errMsg = "Already bought this turn";
 	            break;
 	        }
 	        
+	        // Check company
+	        company = companyMgr.getPublicCompany(companyName);
+	        if (company == null) {
+	            errMsg = "Company does not exist";
+	            break;
+	        }
 	        // The company may not have started yet.
 	        if (company.hasStarted()) {
 	            errMsg = company.getName()+" was started before";
@@ -151,8 +160,8 @@ public class StockRound implements Round
 	        // (shortcut: assume that any additional certs are one share each) 
 	        numberOfCertsToBuy = shares - (cert.getShares()-1);
 	        // Check if the player may buy that many certificates.
-	        if (!player.mayBuyCertificates(numberOfCertsToBuy)) {
-	            errMsg = "Player "+player.getName()+" cannot buy more certificates";
+	        if (!currentPlayer.mayBuyCertificates(numberOfCertsToBuy)) {
+	            errMsg = "Cannot buy more certificates";
 	            break;
 	        }
 	        
@@ -170,8 +179,8 @@ public class StockRound implements Round
 	        }
 	        
 	        // Check if the Player has the money.
-	        if (player.getCash() < shares * price) {
-	            errMsg = "Player "+player.getName()+" has not enough money";
+	        if (currentPlayer.getCash() < shares * price) {
+	            errMsg = "Not enough money";
 	            break;
 	        }
 	        
@@ -179,8 +188,8 @@ public class StockRound implements Round
 	    }
         
         if (errMsg != null) {
-            Log.error (player.getName()+" cannot start "
-                    + company.getName()+": "+errMsg);
+            Log.error (playerName+" cannot start "
+                    + companyName+": "+errMsg);
             return false;
         }
         
@@ -188,14 +197,14 @@ public class StockRound implements Round
         company.start(startSpace);
         
         // Transfer the President's certificate
-        player.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
+        currentPlayer.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
         
         // If more than one certificate is bought at the same time, transfer these too.
         for (int i=1; i<numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
-            player.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
+            currentPlayer.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
         }
-        Log.write(player.getName() + " starts "+company.getName() +" and buys " 
+        Log.write(playerName + " starts "+companyName +" and buys " 
                 + shares+" share(s) ("+cert.getShare() + "%) for " + (shares*price)  + ".");
        
         hasBoughtThisTurn = true;
@@ -216,42 +225,50 @@ public class StockRound implements Round
      * TODO Does not yet cater for double non-president shares as in 1835. 
      * TODO Error messages.
      */
-    public boolean buyShare (Player player, Portfolio from, PublicCompanyI company, int shares) {
+    public boolean buyShare (String playerName, Portfolio from, String companyName, int shares) {
 
         String errMsg = null;
         int price = 0;
+        PublicCompanyI company = null;
         
         // Dummy loop to allow a quick jump out
         while (true) {
 
             // Check everything
 	        // Only the player that has the turn may buy
-	        if (player != currentPlayer) {
-	            errMsg = "Wrong player"; break;
+	        if (!playerName.equals(currentPlayer.getName())) {
+	            errMsg = "Wrong player "+playerName;
+	            break;
 	        }
 	                	
 	        // The player may not have bought this turn (shortcut: shares in brown disregarded)
 	        if (hasBoughtThisTurn) {
-	            errMsg = player.getName()+" already bought this turn"; 
+	            errMsg = currentPlayer.getName()+" already bought this turn"; 
 	            break;
 	        }
 	        
 	        // The player may not have sold the company this round.
-	        if (playersThatSoldThisRound.containsKey(player) &&
-	                ((HashMap)playersThatSoldThisRound.get(player)).containsKey(company)) {
-	            errMsg =  player.getName()+" already sold "+company.getName()+" this turn";
+	        if (playersThatSoldThisRound.containsKey(currentPlayer) &&
+	                ((HashMap)playersThatSoldThisRound.get(currentPlayer)).containsKey(companyName)) {
+	            errMsg =  currentPlayer.getName()+" already sold "+companyName+" this turn";
 	            break;
 	        }
 	        
+	        // Check company
+	        company = companyMgr.getPublicCompany(companyName);
+	        if (company == null) {
+	            errMsg = "Company does not exist";
+	            break;
+	        }
 	        // The company must have started before
 	        if (!company.hasStarted()) { 
-	            errMsg = "Company "+company.getName()+" is not yet started";
+	            errMsg = "Company "+companyName+" is not yet started";
 	            break;
 	        }
 	        
 	        // Check if that many shares are available
 	        if (shares > from.countShares(company)) { 
-	            errMsg =  company.getName()+" share(s) not available";
+	            errMsg =  companyName+" share(s) not available";
 	            break;
 	        }
 	
@@ -259,28 +276,28 @@ public class StockRound implements Round
 	
 	        // Check if it is allowed to buy more than one certificate (if requested)
 	        if (shares > 1 && !currentSpace.isNoBuyLimit()) {
-	            errMsg = "Cannot buy more than 1 "+company.getName()+ " share";
+	            errMsg = "Cannot buy more than 1 "+companyName+ " share";
 	            break;
 	        }
 	        
 	        // Check if player would not exceed the certificate limit.
 	        // (shortcut: assume 1 cert == 1 certificate)
-	        if (!currentSpace.isNoCertLimit() && !player.mayBuyCertificates(shares)) {
-	            errMsg = player.getName()+" would exceed certificate limit";
+	        if (!currentSpace.isNoCertLimit() && !currentPlayer.mayBuyCertificates(shares)) {
+	            errMsg = currentPlayer.getName()+" would exceed certificate limit";
 	            break;
 	        }
 	        
 	        // Check if player would exceed the per-company share limit
-	        if (!currentSpace.isNoHoldLimit() && !player.mayBuyCompanyShare(company, shares)) { 
-	            errMsg = player.getName()+" would exceed holding limit";
+	        if (!currentSpace.isNoHoldLimit() && !currentPlayer.mayBuyCompanyShare(company, shares)) { 
+	            errMsg = currentPlayer.getName()+" would exceed holding limit";
 	            break;
 	        }
 	
 	        price = currentSpace.getPrice();
 	        
 	        // Check if the Player has the money.
-	        if (player.getCash() < shares * price) { 
-	            errMsg = player.getName()+" does not have enough money";
+	        if (currentPlayer.getCash() < shares * price) { 
+	            errMsg = currentPlayer.getName()+" does not have enough money";
 	            break;
 	        }
 	        
@@ -288,8 +305,8 @@ public class StockRound implements Round
         }
         
         if (errMsg != null) {
-            Log.error (player.getName()+" cannot buy "+shares+" share(s) of "
-                    + company.getName()+" from "
+            Log.error (playerName+" cannot buy "+shares+" share(s) of "
+                    + companyName+" from "
                     +from.getName()+": "+errMsg);
             return false;
         }
@@ -298,9 +315,9 @@ public class StockRound implements Round
         CertificateI cert;
         for (int i=0; i<shares; i++) {
             cert = from.findCertificate(company, false);
-            player.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
-            Log.write(player.getName() + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
-                    + company.getName() + " from " + from.getName()
+            currentPlayer.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
+            Log.write(playerName + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
+                    + companyName + " from " + from.getName()
                     + " for " + (shares*price)  + ".");
        }
 
@@ -313,37 +330,38 @@ public class StockRound implements Round
 		if (from == ipo && !company.hasFloated() && from.countShares(company) <= 40) {
 			// Float company (limit and capitalisation to be made configurable)
 			company.setFloated(10*price);
-			Log.write (company.getName()+ " floats and receives "+company.getCash());
+			Log.write (companyName+ " floats and receives "+company.getCash());
 		}
 
         return true;
     }
     
-    public boolean sellShare (Player player, PublicCompanyI company) {
-        return sellShares (player, company, 1);
+    public boolean sellShare (String playerName, String companyName) {
+        return sellShares (playerName, companyName, 1);
         
     }
     
     /**
      * Sell one or more shares.
-     * @param player The selling player.
+     * @param player The selling currentPlayer.
      * @param company The company of which shares to sell.
      * @param number The number of shares to sell.
      * TODO Does not yet cater for double shares (incl. president).
      * TODO Bank pool limit to be made configurable.
      * @return
      */
-    public boolean sellShares (Player player, PublicCompanyI company, int number) {
+    public boolean sellShares (String playerName, String companyName, int number) {
         
-        Portfolio portfolio = player.getPortfolio();
+        Portfolio portfolio = currentPlayer.getPortfolio();
         String errMsg = null;
+        PublicCompanyI company = null;
         
         // Dummy loop to allow a quick jump out
         while (true) {
 
            // Check everything
-           if (player != currentPlayer) {
-                errMsg = "Wrong player";
+	        if (!playerName.equals(currentPlayer.getName())) {
+	            errMsg = "Wrong player "+playerName;
                 break;
             }
 
@@ -352,6 +370,13 @@ public class StockRound implements Round
 	                && hasSoldThisTurnBeforeBuying
 	        	|| sequenceRule == SELL_BUY && hasBoughtThisTurn) {
 	            errMsg = "May not sell anymore in this turn";
+	            break;
+	        }
+	        
+	        // Check company
+	        company = companyMgr.getPublicCompany(companyName);
+	        if (company == null) {
+	            errMsg = "Company does not exist";
 	            break;
 	        }
 	        
@@ -371,17 +396,17 @@ public class StockRound implements Round
         }
         
         if (errMsg != null) {
-            Log.error (player.getName()+" cannot sell "+number+" share(s) of "
-                    + company.getName()+": "+errMsg);
+            Log.error (playerName+" cannot sell "+number+" share(s) of "
+                    + companyName+": "+errMsg);
             return false;
         }
         
         // All seems OK, now do the selling.
         CertificateI cert;
         int price = company.getCurrentPrice().getPrice();
-		Log.write(player.getName()+" sells "+number+" shares ("
+		Log.write(playerName+" sells "+number+" shares ("
 		        +(number*company.getShareUnit())
-		        +"%) of "+company.getName()
+		        +"%) of "+companyName
 		        +" for "+(number*price));
        
         for (int i=0; i<number; i++) {
@@ -391,10 +416,10 @@ public class StockRound implements Round
         stockMarket.sell(company, number);
        
         // Remember that the player has sold this company this round.
-        if (!playersThatSoldThisRound.containsKey(player)) {
-            playersThatSoldThisRound.put(player, new HashMap());
+        if (!playersThatSoldThisRound.containsKey(currentPlayer)) {
+            playersThatSoldThisRound.put(currentPlayer, new HashMap());
         }
-        ((HashMap)playersThatSoldThisRound.get(player)).put(company, null);
+        ((HashMap)playersThatSoldThisRound.get(currentPlayer)).put(company, null);
         
         if (!hasBoughtThisTurn) hasSoldThisTurnBeforeBuying = true;
         hasPassed = false;
@@ -409,9 +434,12 @@ public class StockRound implements Round
      * @return
      * TODO: Inform GameManager about round change.
      */
-    public boolean done (Player player) {
-        if (player != currentPlayer) {
-            Log.error ("Wrong player");
+    public boolean done (String playerName) {
+        
+        String errMsg = null;
+        
+        if (!playerName.equals(currentPlayer.getName())) {
+            errMsg = "Wrong player "+playerName;
             return false;
         }
 
@@ -432,7 +460,7 @@ public class StockRound implements Round
     }
     
     /**
-     * Internal method: pass the turn to another player.
+     * Internal method: pass the turn to another currentPlayer.
      */
     protected void setNextPlayer() {
         
@@ -455,13 +483,13 @@ public class StockRound implements Round
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
     
     /**
-     * @return Returns the priorityPlayer.
+     * @return Returns the prioritycurrentPlayer.
      */
     public static Player getPriorityPlayer() {
         return priorityPlayer;
     }
     /**
-     * @return Returns the priorityPlayer.
+     * @return Returns the prioritycurrentPlayer.
      */
     public static int getPriorityPlayerIndex() {
         return priorityPlayerIndex;
@@ -480,7 +508,19 @@ public class StockRound implements Round
     }
     
     /**
-     * Check if a public company can be started by the current player.
+     * Check if a public company can be started by the current currentPlayer.
+     * @param companyName Name of the company to be checked. 
+     * @return True of false.
+     * TODO Check for unstarted companies that may not yet be started.
+     * TODO Check if current player has enough money to start at the lowest price.
+     */
+    public boolean isCompanyStartable(String companyName) {
+        
+        return !companyMgr.getPublicCompany(companyName).hasStarted();
+    }
+    
+    /**
+     * Check if a public company can be started by the current currentPlayer.
      * @param company The company to be checked. 
      * @return True of false.
      * TODO Check for unstarted companies that may not yet be started.
@@ -489,6 +529,22 @@ public class StockRound implements Round
     public boolean isCompanyStartable(PublicCompanyI company) {
         
         return !company.hasStarted();
+    }
+    
+    /**
+     * Check if a company can be bought by the current player from a given Portfolio.
+     * @param companyName Name of the company to be checked. 
+     * @param source The portfolio that is checked for presence of company shares. 
+     * TODO Buying from company treasuries if just IPO is specified.
+     * TODO Add checks that the current player may buy and has the money.
+     * TODO Presidencies in the Pool (rare!) 
+     */
+    public boolean isCompanyBuyable (String companyName, Portfolio source) {
+
+        PublicCompanyI company = companyMgr.getPublicCompany(companyName);
+        if (!company.hasStarted()) return false;
+        if (source.findCertificate(company, false) == null) return false;
+        return true;
     }
     
     /**
@@ -507,8 +563,23 @@ public class StockRound implements Round
     }
     
     /**
-     * Return a list of all companies that the current player can sell shares of.
-     * @return List sellable companies.
+     * Check if the current player can sell shares of a company.
+     * @param companyName Name of the company to be checked
+     * @return True if the company can be sold.
+     * TODO Make Bank Pool share limit configurable.
+     */
+    public boolean isCompanySellable (String companyName) {
+ 
+        PublicCompanyI company = companyMgr.getPublicCompany(companyName);
+        if (currentPlayer.getPortfolio().findCertificate(company, false) == null) return false;
+        if (pool.countShares(company)*company.getShareUnit() >= 50) return false;
+        return true;
+    }
+    
+    /**
+     * Check if the current player can sell shares of a company.
+     * @param company The company to be checked
+     * @return True if the company can be sold.
      * TODO Make Bank Pool share limit configurable.
      */
     public boolean isCompanySellable (PublicCompanyI company) {
