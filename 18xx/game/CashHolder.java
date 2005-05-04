@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.1 2005/04/16 22:51:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.2 2005/05/04 22:48:31 evos Exp $
  * 
  * Created on 10-Apr-2005 by Erik Vos
  * 
@@ -16,6 +16,13 @@ public interface CashHolder {
 	 * @return current amount. 
 	 */
 	public abstract int getCash();
+	
+	/**
+	 * Returns the amount of cash, formatted
+	 * @return
+	 */
+	public abstract String getFormattedCash();
+	
 	/**
 	 * Add (or subtract) cash.
 	 */

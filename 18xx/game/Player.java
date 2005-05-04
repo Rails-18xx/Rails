@@ -59,7 +59,8 @@ public class Player implements CashHolder
       {
          player = (Player) players[i];
          Bank.transferCash(null, player, startCash);
-         Log.write("Player " + player.getName() + " receives " + startCash + ". Bank now has " + Bank.getInstance().getCash());
+         Log.write("Player " + player.getName() + " receives " + Bank.format(startCash)
+                 + ". Bank now has " + Bank.getInstance().getFormattedCash());
       }
 
       // Set the sertificate limit
@@ -191,6 +192,11 @@ public class Player implements CashHolder
    {
       return wallet;
    }
+   
+   public String getFormattedCash () {
+       return Bank.format (wallet);
+   }
+
 
    public void addCash(int amount)
    {
@@ -212,6 +218,10 @@ public class Player implements CashHolder
            worth += ((PrivateCompanyI)it.next()).getBasePrice();
        }
        return worth;
+   }
+   
+   public String getFormattedWorth () {
+       return Bank.format(getWorth());
    }
    
    public String toString()

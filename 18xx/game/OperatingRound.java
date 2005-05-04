@@ -76,7 +76,7 @@ public class OperatingRound implements Round
             companies = (PublicCompanyI[]) Game.getCompanyManager().getAllPublicCompanies()
             		.toArray(new PublicCompanyI[0]);
         }
-        
+
         // Determine operating sequence for this OR.
         // Shortcut: order considered fixed at the OR start. This is not always true.
         operatingCompanies = new TreeMap();
@@ -101,6 +101,16 @@ public class OperatingRound implements Round
         
         relativeORNumber++;
         cumulativeORNumber++;
+        
+        Log.write("Start of Operating Round "+getCompositeORNumber());
+
+        // Private companies pay out
+		Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
+		PrivateCompanyI priv;
+		while (it.hasNext()) {
+			priv = (PrivateCompanyI) it.next();
+			if (!priv.isClosed()) priv.payOut();
+		}
     }
     
     /*----- General methods -----*/
@@ -182,7 +192,8 @@ public class OperatingRound implements Round
         }
         
         Bank.transferCash ((CashHolder)operatingCompany, null, amountSpent);
-		if (amountSpent > 0) Log.write (companyName+" spends "+amountSpent+" while laying track");
+		if (amountSpent > 0) Log.write (companyName+" spends " 
+		        + Bank.format(amountSpent) + " while laying track");
     
         nextStep (operatingCompany);
         
@@ -230,7 +241,8 @@ public class OperatingRound implements Round
         }
         
         Bank.transferCash ((CashHolder)operatingCompany, null, amountSpent);
-        if (amountSpent > 0) Log.write (companyName+" spends "+amountSpent+" while laying token");
+        if (amountSpent > 0) Log.write (companyName+" spends " 
+                + Bank.format(amountSpent) + " while laying token");
        
         nextStep (operatingCompany);
         
@@ -279,7 +291,7 @@ public class OperatingRound implements Round
         }
         
         currentRevenue = amount;
-		Log.write (companyName+" earns "+amount);
+		Log.write (companyName+" earns " + Bank.format(amount));
        
         nextStep(operatingCompany);
         
@@ -319,7 +331,7 @@ public class OperatingRound implements Round
             return false;
         }
 
-        Log.write(companyName + " pays out full dividend of "+currentRevenue);
+        Log.write(companyName + " pays out full dividend of " + Bank.format(currentRevenue));
         operatingCompany.payOut(currentRevenue);
 
         nextStep(operatingCompany);
@@ -359,7 +371,7 @@ public class OperatingRound implements Round
            break;
        }
        if (errMsg != null) {
-           Log.error ("Cannot split revenue of "+currentRevenue+": "+errMsg);
+           Log.error ("Cannot split revenue of " + Bank.format(currentRevenue) +": "+errMsg);
            return false;
        }
        
@@ -399,7 +411,7 @@ public class OperatingRound implements Round
            Log.error ("Cannot withhold revenue of "+currentRevenue+": "+errMsg);
            return false;
        }
-       Log.write(companyName + " withholds dividend of "+currentRevenue);
+       Log.write(companyName + " withholds dividend of " + Bank.format(currentRevenue));
       
        operatingCompany.withhold (currentRevenue);
        
@@ -428,7 +440,8 @@ public class OperatingRound implements Round
         }
         
         if (++operatingCompanyIndex >= operatingCompanyArray.length) {
-            // OR done.
+            // OR done. Inform GameManager.
+            GameManager.getInstance().nextRound(this);
             return true;
         }
         
@@ -479,7 +492,7 @@ public class OperatingRound implements Round
         }
         
         Bank.transferCash ((CashHolder)operatingCompany, null, amountSpent);
-		Log.write (companyName+" spends "+amountSpent+" while buying train(s)");
+		Log.write (companyName+" spends "+ Bank.format(amountSpent) +" while buying train(s)");
        
         nextStep (operatingCompany);
         

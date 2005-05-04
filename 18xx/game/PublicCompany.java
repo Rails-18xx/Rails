@@ -336,6 +336,11 @@ public class PublicCompany extends Company implements PublicCompanyI,
    {
       return treasury;
    }
+   
+   public String getFormattedCash () {
+       return Bank.format (treasury);
+   }
+
 
    /**
     * @param list
