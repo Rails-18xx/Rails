@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.8 2005/05/03 20:37:56 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.9 2005/05/04 14:36:10 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -50,7 +50,7 @@ public class Portfolio
    {
 
       Log.write(getName() + " buys " + privateCompany.getName() + " from "
-            + from.getName() + " for " + price + ".");
+            + from.getName() + " for " + price+ ".");
 
       // Move the private certificate
       from.removePrivate(privateCompany);
@@ -65,19 +65,6 @@ public class Portfolio
          int price)
    {
 
-      if (owner instanceof Player)
-      {
-         Log.write(from.getName() + " sells " + certificate.getShare()
-               + "% of " + certificate.getCompany().getName() + " to "
-               + getName() + " for " + price + ".");
-      }
-      else
-      {
-         Log.write(from.getName() + " sells " + certificate.getShare()
-               + "% of " + certificate.getCompany().getName() + " to "
-               + getName() + " for " + price + ".");
-      }
-
       // Move the certificate
       from.removeCertificate(certificate);
       this.addCertificate(certificate);
@@ -91,7 +78,7 @@ public class Portfolio
       if(from.name.equalsIgnoreCase("IPO"))
          Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
       else
-         Bank.transferCash(owner, from.owner, price);
+      Bank.transferCash(owner, from.owner, price);
    }
 
    //Sales of stock always go to the Bank pool
@@ -158,7 +145,7 @@ public class Portfolio
       }
       String companyName = certificate.getCompany().getName();
       ArrayList certs = (ArrayList) getCertificatesPerCompany(companyName);
-
+      
       for (int i = 0; i < certs.size(); i++)
       {
          if (certs.get(i) == certificate)

@@ -9,8 +9,8 @@
     <IPOPaysOut/>
     <CanSplitDividend/>
     <ShareUnit percentage="10"/>
-    <Certificate type="President" share="2"/>
-    <Certificate share="1" number="8"/>
+    <Certificate type="President" shares="2"/>
+    <Certificate shares="1" number="8"/>
   </CompanyType>
   
   <Company name="GRSC"  type="Private" basePrice="20" revenue="5"/>

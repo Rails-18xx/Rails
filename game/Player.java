@@ -184,6 +184,23 @@ public class Player implements CashHolder
       wallet += amount;
    }
    
+   /**
+    * Get the player's total worth.
+    * @return Total worth
+    */
+   public int getWorth () {
+       int worth = wallet;
+       Iterator it = portfolio.getCertificates().iterator();
+       while (it.hasNext()) {
+           worth += ((CertificateI)it.next()).getCertificatePrice();
+       }
+       it = portfolio.getPrivateCompanies().iterator();
+       while (it.hasNext()) {
+           worth += ((PrivateCompanyI)it.next()).getBasePrice();
+       }
+       return worth;
+   }
+   
    public String toString()
    {
       return "Name: " + name + " Cash: " + wallet;

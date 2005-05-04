@@ -415,6 +415,14 @@ public class PublicCompany extends Company implements PublicCompanyI,
    {
       return portfolio;
    }
+   
+   /**
+    * Get the company President.
+    * 
+    */
+   public Player getPresident () {
+       return (Player) ((CertificateI)certificates.get(0)).getPortfolio().getOwner();
+   }
 
    /**
     * Store the last revenue earned by this company.
@@ -448,8 +456,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public void payOut(int amount)
    {
 
-      Log.write(name + " earns " + amount);
-      setLastRevenue(amount);
+       setLastRevenue(amount);
 
       Iterator it = certificates.iterator();
       CertificateI cert;
@@ -493,8 +500,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public void withhold(int amount)
    {
 
-      Log.write(name + " earns " + amount + " and withholds it");
-      setLastRevenue(amount);
+       setLastRevenue(amount);
       Bank.transferCash(null, this, amount);
       // Move the token
       Game.getStockMarket().withhold(this);
@@ -566,15 +572,16 @@ public class PublicCompany extends Company implements PublicCompanyI,
          return false;
    }
    
-   public CertificateI getNextAvailableCertificate()
-   {
-      for(int i=0; i < certificates.size(); i++)
-      {
-         if(((CertificateI)certificates.get(i)).isAvailable())
-         {
-            return (CertificateI) certificates.get(i);
-         }
-      }
-      return null; 
+   /**
+    * @return Returns the lowerPrivatePriceFactor.
+    */
+   public float getLowerPrivatePriceFactor() {
+       return lowerPrivatePriceFactor;
+   }
+   /**
+    * @return Returns the upperPrivatePriceFactor.
+    */
+   public float getUpperPrivatePriceFactor() {
+       return upperPrivatePriceFactor;
    }
 }

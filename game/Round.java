@@ -11,7 +11,7 @@ package game;
 public interface Round {
 	
 	/**
-	 * Get the player tha thas the next turn.
+	 * Get the player that has the next turn.
 	 * @return Player object.
 	 */
 	public Player getCurrentPlayer ();
