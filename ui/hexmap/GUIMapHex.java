@@ -10,20 +10,16 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import net.sf.colossus.server.VariantSupport;
-import net.sf.colossus.util.HTMLColor;
-import net.sf.colossus.util.Log;
-import net.sf.colossus.util.ResourceLoader;
-
+import game.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one battle hex.
- * @version $Id: GUIBattleHex.java,v 1.1 2005/05/04 17:53:02 wakko666 Exp $
+ * @version $Id: GUIMapHex.java,v 1.1 2005/05/05 15:46:51 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class GUIBattleHex extends GUIHex
+public class GUIMapHex extends GUIHex
 {
     private GeneralPath innerHexagon;
     private Component map;
@@ -36,7 +32,7 @@ public class GUIBattleHex extends GUIHex
      * 
      * @todo check if we can avoid this
      */
-    private GUIBattleHex[] neighbors = new GUIBattleHex[6];
+    private GUIMapHex[] neighbors = new GUIMapHex[6];
 
     // Hex terrain types are:
     // p, r, s, t, o, v, d, w
@@ -55,7 +51,7 @@ public class GUIBattleHex extends GUIHex
     // Letters increase left to right; numbers increase bottom to top.
 
 
-    public GUIBattleHex(int cx, int cy, int scale, Component map,
+    public GUIMapHex(int cx, int cy, int scale, Component map,
         int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -96,7 +92,7 @@ public class GUIBattleHex extends GUIHex
         innerHexagon.transform(at);
     }
 
-    public GUIBattleHex(int xCoord, int yCoord)
+    public GUIMapHex(int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
     }
@@ -120,7 +116,7 @@ public class GUIBattleHex extends GUIHex
         {
             if (terrainColor.equals(highlightColor))
             {
-                g2.setColor(HTMLColor.invertRGBColor(highlightColor));
+                //g2.setColor(HTMLColor.invertRGBColor(highlightColor));
             }
             else
             {
@@ -346,7 +342,7 @@ public class GUIBattleHex extends GUIHex
                 break;
 
             case 'r':     // river -- single blue line
-                g2.setColor(HTMLColor.skyBlue);
+                //g2.setColor(HTMLColor.skyBlue);
                 Stroke oldStroke = g2.getStroke();
                 g2.setStroke(new BasicStroke((float)5.));
                 g2.draw((Shape)new Line2D.Double(vx1, vy1, vx2, vy2));
@@ -369,9 +365,9 @@ public class GUIBattleHex extends GUIHex
     private static Image loadOneOverlay(String name, int width, int height)
     {
         Image overlay = null;
-        List directories = VariantSupport.getImagesDirectoriesList();
-        overlay = ResourceLoader.getImage(name + imagePostfix, directories,
-            width, height);
+        //List directories = VariantSupport.getImagesDirectoriesList();
+        //overlay = ResourceLoader.getImage(name + imagePostfix, directories,
+        //    width, height);
         return overlay;
     }
 
@@ -399,7 +395,7 @@ public class GUIBattleHex extends GUIHex
             char op = getBattleHexModel().getOppositeHexside(i);
             if (op != ' ')
             {
-                GUIBattleHex neighbor = getNeighbor(i);
+                GUIMapHex neighbor = getNeighbor(i);
 
                 int dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
 
@@ -444,7 +440,7 @@ public class GUIBattleHex extends GUIHex
         return didAllHexside;
     }
 
-    public GUIBattleHex getNeighbor(int i)
+    public GUIMapHex getNeighbor(int i)
     {
         if (i < 0 || i > 6)
         {
@@ -456,7 +452,7 @@ public class GUIBattleHex extends GUIHex
         }
     }
 
-    public void setNeighbor(int i, GUIBattleHex hex)
+    public void setNeighbor(int i, GUIMapHex hex)
     {
         if (i >= 0 && i < 6)
         {
