@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.10 2005/05/04 22:48:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.11 2005/05/06 15:55:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -61,7 +61,7 @@ public class Portfolio
       Bank.transferCash(owner, from.owner, price);
    }
 
-   public void buyCertificate(CertificateI certificate, Portfolio from,
+   public void buyCertificate(PublicCertificateI certificate, Portfolio from,
          int price)
    {
 
@@ -70,7 +70,7 @@ public class Portfolio
       this.addCertificate(certificate);
       certificate.setPortfolio(this);
 
-      //Certificate is no longer for sale.
+      //PublicCertificate is no longer for sale.
       certificate.setAvailable(false);
 
       // Move the money. 
@@ -86,7 +86,7 @@ public class Portfolio
    //Sales of stock always go to the Bank pool
    //This method should be overridden for 1870 and other games
    //that allow price protection.
-   public static void sellCertificate(CertificateI certificate, Portfolio from,
+   public static void sellCertificate(PublicCertificateI certificate, Portfolio from,
          int price)
    {
 
@@ -99,7 +99,7 @@ public class Portfolio
       Bank.getPool().addCertificate(certificate);
       certificate.setPortfolio(Bank.getPool());
 
-      //Certificate is for sale again
+      //PublicCertificate is for sale again
       certificate.setAvailable(true);
 
       // Move the money
@@ -112,7 +112,7 @@ public class Portfolio
       privateCompany.setHolder(this);
    }
 
-   public void addCertificate(CertificateI certificate)
+   public void addCertificate(PublicCertificateI certificate)
    {
       certificates.add(certificate);
       String companyName = certificate.getCompany().getName();
@@ -137,7 +137,7 @@ public class Portfolio
       return false;
    }
 
-   public void removeCertificate(CertificateI certificate)
+   public void removeCertificate(PublicCertificateI certificate)
    {
       for (int i = 0; i < certificates.size(); i++)
       {
@@ -184,29 +184,29 @@ public class Portfolio
       }
    }
 
-   public CertificateI getNextAvailableCertificate()
+   public PublicCertificateI getNextAvailableCertificate()
    {
       for (int i = 0; i < certificates.size(); i++)
       {
-         if (((CertificateI) certificates.get(i)).isAvailable())
+         if (((PublicCertificateI) certificates.get(i)).isAvailable())
          {
-            return (CertificateI) certificates.get(i);
+            return (PublicCertificateI) certificates.get(i);
          }
       }
       return null;
    }
 
    /** Find any certificate */
-   public CertificateI findCertificate(PublicCompanyI company, boolean president)
+   public PublicCertificateI findCertificate(PublicCompanyI company, boolean president)
    {
       String companyName = company.getName();
       if (!certPerCompany.containsKey(companyName))
          return null;
       Iterator it = ((List) certPerCompany.get(companyName)).iterator();
-      CertificateI cert;
+      PublicCertificateI cert;
       while (it.hasNext())
       {
-         cert = (CertificateI) it.next();
+         cert = (PublicCertificateI) it.next();
          if (cert.getCompany() == company && president == cert.isPresident())
          {
             return cert;
@@ -277,7 +277,7 @@ public class Portfolio
          Iterator it = ((List) certPerCompany.get(name)).iterator();
          while (it.hasNext())
          {
-            share += ((CertificateI) it.next()).getShare();
+            share += ((PublicCertificateI) it.next()).getShare();
          }
       }
       return share;

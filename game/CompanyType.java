@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.3 2005/04/24 21:40:57 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.4 2005/05/06 15:55:29 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
@@ -109,7 +109,7 @@ public class CompanyType implements CompanyTypeI {
 	 * Add a certificate to the dummy company represented by this type.
 	 * @param certificate The certificate to add.
 	 */
-	public void addCertificate (CertificateI certificate) {
+	public void addCertificate (PublicCertificateI certificate) {
 		if (defaultCertificates == null) defaultCertificates = new ArrayList();
 		defaultCertificates.add (certificate);
 	}

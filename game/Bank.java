@@ -133,7 +133,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
          Iterator it2 = ((PublicCompanyI) it.next()).getCertificates().iterator();
          while (it2.hasNext())
          {
-            ipo.addCertificate((CertificateI) it2.next());
+            ipo.addCertificate((PublicCertificateI) it2.next());
          }
       }
    }

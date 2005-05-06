@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.2 2005/04/16 22:43:53 evos Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.3 2005/05/06 15:55:29 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
@@ -66,7 +66,7 @@ public interface CompanyTypeI {
 	public void releaseDomElement ();
 	public Element getDomElement ();
 	
-	public void addCertificate (CertificateI certificate);
+	public void addCertificate (PublicCertificateI certificate);
 	
 	public List getDefaultCertificates ();
 
