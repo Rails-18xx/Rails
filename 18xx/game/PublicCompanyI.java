@@ -129,7 +129,7 @@ public interface PublicCompanyI extends CompanyI  {
 	 * Add a certificate to the end of this company's list of certificates.
 	 * @param certificate The certificate to add.
 	 */
-	public void addCertificate (CertificateI certificate);
+	public void addCertificate (PublicCertificateI certificate);
 	
 	/**
 	 * Get the current company treasury.

@@ -387,10 +387,10 @@ public class PublicCompany extends Company implements PublicCompanyI,
    {
       certificates = new ArrayList();
       Iterator it = list.iterator();
-      CertificateI cert;
+      PublicCertificateI cert;
       while (it.hasNext())
       {
-         cert = ((CertificateI) it.next()).copy();
+         cert = ((PublicCertificateI) it.next()).copy();
          certificates.add(cert);
          cert.setCompany(this);
       }
@@ -402,7 +402,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
     * @param certificate
     *           The certificate to add.
     */
-   public void addCertificate(CertificateI certificate)
+   public void addCertificate(PublicCertificateI certificate)
    {
       if (certificates == null)
          certificates = new ArrayList();
@@ -426,7 +426,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
     * 
     */
    public Player getPresident () {
-       return (Player) ((CertificateI)certificates.get(0)).getPortfolio().getOwner();
+       return (Player) ((PublicCertificateI)certificates.get(0)).getPortfolio().getOwner();
    }
 
    /**
@@ -464,13 +464,13 @@ public class PublicCompany extends Company implements PublicCompanyI,
        setLastRevenue(amount);
 
       Iterator it = certificates.iterator();
-      CertificateI cert;
+      PublicCertificateI cert;
       int part;
       CashHolder recipient;
       Map split = new HashMap();
       while (it.hasNext())
       {
-         cert = ((CertificateI) it.next());
+         cert = ((PublicCertificateI) it.next());
          recipient = cert.getPortfolio().getBeneficiary(this);
          part = amount * cert.getShares() * shareUnit / 100;
          // For reporting, we want to add up the amounts per recipient
@@ -520,10 +520,10 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public boolean isSoldOut()
    {
       Iterator it = certificates.iterator();
-      CertificateI cert;
+      PublicCertificateI cert;
       while (it.hasNext())
       {
-         if (((CertificateI) it.next()).getPortfolio().getOwner() instanceof Bank)
+         if (((PublicCertificateI) it.next()).getPortfolio().getOwner() instanceof Bank)
          {
             return false;
          }
@@ -560,7 +560,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       Player player = Game.getPlayerManager().getPlayerByName(playerName);
       PublicCompany company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyName);
       
-      Certificate cert = (Certificate) company.certificates.get(0);
+      PublicCertificate cert = (PublicCertificate) company.certificates.get(0);
       
       if(player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit())))
       {
@@ -575,13 +575,13 @@ public class PublicCompany extends Company implements PublicCompanyI,
          return false;
    }
    
-   public CertificateI getNextAvailableCertificate()
+   public PublicCertificateI getNextAvailableCertificate()
    {
       for(int i=0; i < certificates.size(); i++)
       {
-         if(((CertificateI)certificates.get(i)).isAvailable())
+         if(((PublicCertificateI)certificates.get(i)).isAvailable())
          {
-            return (CertificateI) certificates.get(i);
+            return (PublicCertificateI) certificates.get(i);
          }
       }
       return null; 

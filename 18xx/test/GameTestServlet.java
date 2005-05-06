@@ -70,7 +70,7 @@ public class GameTestServlet extends HttpServlet {
 		CompanyI comp;
 		PublicCompanyI company;
 		String companyName;
-		CertificateI cert;
+		PublicCertificateI cert;
 		int companyNumber;
 		Iterator iterator, iterator2;
 		int i;
@@ -613,7 +613,7 @@ public class GameTestServlet extends HttpServlet {
 					if ((certs = player.getPortfolio().getCertificatesPerCompany(compName)) != null) {
 						Iterator it2 = certs.iterator();
 						while (it2.hasNext()) {
-							cert = (CertificateI)it2.next();
+							cert = (PublicCertificateI)it2.next();
 							share += cert.getShare();
 							if (cert.isPresident()) president = true;
 						}

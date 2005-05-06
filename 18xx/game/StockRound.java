@@ -122,7 +122,7 @@ public class StockRound implements Round
         String errMsg = null;
         StockSpaceI startSpace = null;
         int numberOfCertsToBuy = 0;
-        CertificateI cert = null;
+        PublicCertificateI cert = null;
         PublicCompanyI company = null;
         
         // Dummy loop to allow a quick jump out
@@ -315,7 +315,7 @@ public class StockRound implements Round
         }
         
         // All seems OK, now buy the shares.
-        CertificateI cert;
+        PublicCertificateI cert;
         for (int i=0; i<shares; i++) {
             cert = from.findCertificate(company, false);
             currentPlayer.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
@@ -405,7 +405,7 @@ public class StockRound implements Round
         }
         
         // All seems OK, now do the selling.
-        CertificateI cert;
+        PublicCertificateI cert;
         int price = company.getCurrentPrice().getPrice();
 		Log.write(playerName+" sells "+number+" shares ("
 		        +(number*company.getShareUnit())

@@ -122,7 +122,7 @@ public class StatusWindow extends JFrame implements ActionListener
       
       try //Misusing Try/Catch to provide an If/Else condition through the abuse of exceptions.
       {
-         player.buyShare((Certificate)company.getNextAvailableCertificate());
+         player.buyShare((PublicCertificate)company.getNextAvailableCertificate());
       }
       catch(NullPointerException e)
       {
@@ -143,8 +143,8 @@ public class StatusWindow extends JFrame implements ActionListener
       try
       {
          //Just sell the last cert in the stack first.
-         if(!((Certificate)certs.get(certs.size()-1)).isPresident())
-            player.sellShare((Certificate)certs.get(certs.size()-1));
+         if(!((PublicCertificate)certs.get(certs.size()-1)).isPresident())
+            player.sellShare((PublicCertificate)certs.get(certs.size()-1));
          else
             JOptionPane.showMessageDialog(this, "You can't sell the President's share.");
       }

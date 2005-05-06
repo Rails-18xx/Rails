@@ -82,7 +82,7 @@ public class Player implements CashHolder
     * @param share
     * @throws NullPointerException if company hasn't started yet. UI needs to handle this.
     */
-   public void buyShare(Certificate share, int price) throws NullPointerException
+   public void buyShare(PublicCertificate share, int price) throws NullPointerException
    {
       if(hasBoughtStockThisTurn)
          return;
@@ -111,7 +111,7 @@ public class Player implements CashHolder
       hasBoughtStockThisTurn = true;
    }
    
-   public void buyShare(Certificate share) throws NullPointerException
+   public void buyShare(PublicCertificate share) throws NullPointerException
    {
       try
       {
@@ -145,7 +145,7 @@ public class Player implements CashHolder
        return true;
    }
    
-   public int sellShare(Certificate share)
+   public int sellShare(PublicCertificate share)
    {
       Portfolio.sellCertificate(share, portfolio, share.getCompany().getCurrentPrice().getPrice());
       Game.getStockMarket().sell(share.getCompany(), 1);
@@ -211,7 +211,7 @@ public class Player implements CashHolder
        int worth = wallet;
        Iterator it = portfolio.getCertificates().iterator();
        while (it.hasNext()) {
-           worth += ((CertificateI)it.next()).getCertificatePrice();
+           worth += ((PublicCertificateI)it.next()).getCertificatePrice();
        }
        it = portfolio.getPrivateCompanies().iterator();
        while (it.hasNext()) {
