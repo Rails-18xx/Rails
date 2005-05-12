@@ -31,12 +31,14 @@ import java.util.*;
 public class StockRound implements Round
 {
     /* Transient memory (per round only) */
+    protected static int numberOfPlayers;
     protected Player currentPlayer;
-    protected int currentPlayerIndex;
+
     protected boolean hasBoughtThisTurn = false;
     protected boolean hasSoldThisTurnBeforeBuying = false;
     protected boolean hasPassed = true; // Is set false on any player action
-    int numPasses = 0;
+    protected int numPasses = 0;
+    protected StartRoundI startRound = null;
     
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
@@ -50,14 +52,12 @@ public class StockRound implements Round
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
     
     /* Permanent memory */
-    static protected Player[] players;
-    static protected Player priorityPlayer;
-    static protected int priorityPlayerIndex;
     static protected int stockRoundNumber = 0;
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
     static protected CompanyManagerI companyMgr;
+    static protected GameManager gameMgr;
     
     /* Rules */
     static protected int sequenceRule = SELL_BUY_SELL; // Currently fixed
@@ -69,23 +69,24 @@ public class StockRound implements Round
      */
     public StockRound() {
         
-        if (players == null) {
-            players = Game.getPlayerManager().getPlayersArray();
-            priorityPlayerIndex = 0;
-            priorityPlayer = players[priorityPlayerIndex];
-        }
-        currentPlayerIndex = priorityPlayerIndex;
-        currentPlayer = players[priorityPlayerIndex];
-        
+        if (numberOfPlayers == 0) numberOfPlayers = GameManager.getPlayers().length;
+        if (gameMgr == null) gameMgr = GameManager.getInstance();
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
         if (companyMgr == null) companyMgr = Game.getCompanyManager();
+        GameManager.getInstance().setRound(this);
+    }
+    
+    public void start() {
         
         stockRoundNumber++;
 
         Log.write("Start of Stock Round "+stockRoundNumber);
-}
+        
+        GameManager.setCurrentPlayerIndex (GameManager.priorityPlayerIndex);
+        currentPlayer = GameManager.getCurrentPlayer();	
+    }
     
     /*----- General methods -----*/
     
@@ -124,6 +125,8 @@ public class StockRound implements Round
         int numberOfCertsToBuy = 0;
         PublicCertificateI cert = null;
         PublicCompanyI company = null;
+        
+        currentPlayer = GameManager.getCurrentPlayer();
         
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -206,7 +209,7 @@ public class StockRound implements Round
             cert = ipo.findCertificate(company, false);
             currentPlayer.getPortfolio().buyCertificate (cert, ipo, cert.getCertificatePrice());
         }
-        Log.write(playerName + " starts "+companyName +" and buys " 
+        Log.write(playerName + " starts "+companyName +" at "+price+" and buys " 
                 + shares+" share(s) ("+cert.getShare() + "%) for " 
                 + Bank.format(shares*price)  + ".");
        
@@ -234,7 +237,9 @@ public class StockRound implements Round
         int price = 0;
         PublicCompanyI company = null;
         
-        // Dummy loop to allow a quick jump out
+        currentPlayer = GameManager.getCurrentPlayer();
+        
+       // Dummy loop to allow a quick jump out
         while (true) {
 
             // Check everything
@@ -359,6 +364,8 @@ public class StockRound implements Round
         String errMsg = null;
         PublicCompanyI company = null;
         
+        currentPlayer = GameManager.getCurrentPlayer();
+        
         // Dummy loop to allow a quick jump out
         while (true) {
 
@@ -441,7 +448,9 @@ public class StockRound implements Round
         
         String errMsg = null;
         
-        if (!playerName.equals(currentPlayer.getName())) {
+        currentPlayer = GameManager.getCurrentPlayer();
+        
+       if (!playerName.equals(currentPlayer.getName())) {
             errMsg = "Wrong player "+playerName;
             return false;
         }
@@ -453,7 +462,7 @@ public class StockRound implements Round
             numPasses = 0;
         }
         
-        if (numPasses >= players.length) {
+        if (numPasses >= numberOfPlayers) {
             
             Log.write("All players have passed, end of SR "+stockRoundNumber);
             
@@ -485,8 +494,8 @@ public class StockRound implements Round
      */
     protected void setNextPlayer() {
         
-        if (++currentPlayerIndex >= players.length) currentPlayerIndex = 0;
-        currentPlayer = players[currentPlayerIndex];
+        GameManager.setNextPlayer();
+        currentPlayer = GameManager.getCurrentPlayer();
         hasBoughtThisTurn = false;
         hasSoldThisTurnBeforeBuying = false;
         hasPassed = true;
@@ -497,9 +506,9 @@ public class StockRound implements Round
      * <b>Must be called BEFORE setNextPlayer()!</b>
      */
     protected void setPriority() {
-        priorityPlayerIndex = (currentPlayerIndex < players.length-1 ? currentPlayerIndex+1 : 0);
-        priorityPlayer = players[priorityPlayerIndex];
+        GameManager.setPriorityPlayer();
     }
+    
     
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
     
@@ -507,25 +516,25 @@ public class StockRound implements Round
      * @return Returns the prioritycurrentPlayer.
      */
     public static Player getPriorityPlayer() {
-        return priorityPlayer;
+        return GameManager.priorityPlayer;
     }
     /**
      * @return Returns the prioritycurrentPlayer.
      */
     public static int getPriorityPlayerIndex() {
-        return priorityPlayerIndex;
+        return GameManager.priorityPlayerIndex;
     }
    /**
      * @return Returns the currentPlayer.
      */
     public Player getCurrentPlayer() {
-        return currentPlayer;
+        return GameManager.currentPlayer;
     }
     /**
      * @return Returns the currentPlayer.
      */
     public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
+        return GameManager.currentPlayerIndex;
     }
     
     /**

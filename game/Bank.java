@@ -26,10 +26,18 @@ import util.XmlUtils;
 
 public class Bank implements CashHolder, ConfigurableComponentI
 {
+    /** The Bank's amont of cash */
    private static int money;
+   
    private static int gameType;
+   
+   /** The IPO */
    private static Portfolio ipo = null;
+   /** The Bank Pool */
    private static Portfolio pool = null;
+   /** Collection of unavailable (currently untradable) certificates */
+   private static Portfolio unavailable = null;
+   
    private static Bank instance = null;
    
    private static String moneyFormat = "$@";
@@ -68,6 +76,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
       // Here the Pool pays out, but that should be made configurable.
       ipo = new Portfolio("IPO", this, false);
       pool = new Portfolio("Pool", this, true);
+      unavailable = new Portfolio("Unavailable", this, false);
 
    }
 
@@ -120,9 +129,11 @@ public class Bank implements CashHolder, ConfigurableComponentI
       // Add privates
       List privates = Game.getCompanyManager().getAllPrivateCompanies();
       Iterator it = privates.iterator();
+      PrivateCompanyI priv;
       while (it.hasNext())
       {
-         ipo.addPrivate((PrivateCompanyI) it.next());
+         ipo.addPrivate(priv = (PrivateCompanyI) it.next());
+System.out.println(priv.getName()+" added to IPO");
       }
 
       // Add public companies
@@ -175,6 +186,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
       return pool;
    }
 
+   public static Portfolio getUnavailable() {
+       return unavailable;
+   }
    /**
     * @param i
     */

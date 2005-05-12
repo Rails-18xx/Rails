@@ -37,6 +37,7 @@ public class GameTestServlet extends HttpServlet {
 
 	private Round currentRound = null;
 	private StockRound stockRound = null;
+	private StartRoundI startRound = null;
 	private OperatingRound operatingRound = null;
 	private GameManager gameMgr = null;
 
@@ -107,34 +108,52 @@ public class GameTestServlet extends HttpServlet {
 				playerManager = Game.getPlayerManager(playerList);
 				players = playerManager.getPlayersArray();
 				
-				process = BUYPRIVATES;
-			}
-
-		} else if (process == BUYPRIVATES) {
-
-			if (hasValue (request.getParameter ("BuyPrivate"))) {
-				int player = Integer.parseInt(request.getParameter("Player"));
-				int priv = Integer.parseInt(request.getParameter("Private"));
-				price = Integer.parseInt(request.getParameter("Price"));
-				PrivateCompanyI privco =
-					(PrivateCompanyI)Game.getCompanyManager().getAllPrivateCompanies().get(priv);
-				players[player].getPortfolio().buyPrivate(
-					privco,
-					Bank.getIpo(), price);
-				if (Integer.parseInt(request.getParameter("Left")) == 1) {
-					process = SR; // From here on we will not use process anymore.
-					orStarted = false;
-					gameMgr = GameManager.getInstance();
-				    currentRound = gameMgr.getCurrentRound();
-				    stockRound = (StockRound) currentRound;
-				}
+				process = BUYPRIVATES; // From here on we will not use process anymore.
+				gameMgr = GameManager.getInstance();
+			    currentRound = gameMgr.getCurrentRound();
+System.out.println("First round is "+currentRound.getClass().getName());
+				
 			}
 
 		} else {
 		    
 		    currentRound = gameMgr.getCurrentRound();
 		    
-		    if (currentRound instanceof StockRound) {
+		    if (currentRound instanceof StartRoundI) {
+		        
+		        startRound = (StartRoundI) currentRound;
+		        
+		        String playerName =request.getParameter("Player");
+		        
+				if (hasValue (request.getParameter ("Buy"))) {
+				    
+				    String itemName = request.getParameter ("BuyItem");
+				    startRound.buy(playerName, itemName);
+				    
+				} else if (hasValue (request.getParameter ("Bid5")) 
+				        || hasValue (request.getParameter ("Bid"))) {
+				    
+				    String itemName = request.getParameter ("BidItem");
+				    int bidAmount;
+				    if (hasValue (request.getParameter ("Bid5"))) {
+				        startRound.bid5 (playerName, itemName);
+				    } else if (hasValue(request.getParameter ("Bid"))) {
+				        int amount = Integer.parseInt (request.getParameter("Price"));
+				        startRound.bid(playerName, itemName, amount);
+				    }
+				} else if (hasValue(request.getParameter("Pass"))) {
+				    
+				    startRound.pass(playerName);
+				    
+				} else if (hasValue(request.getParameter("SetPrice"))) {
+				    
+			        String compName = request.getParameter ("Company");
+			        price = Integer.parseInt(request.getParameter("StartPrice"));
+			        
+			        startRound.setPrice(playerName, compName, price);
+				}
+
+		    } else if (currentRound instanceof StockRound) {
 
 			    stockRound = (StockRound) currentRound;
 		        
@@ -243,7 +262,6 @@ public class GameTestServlet extends HttpServlet {
 
 		out.append("</head><body>\n");
 
-	    if (process > BUYPRIVATES) currentRound = gameMgr.getCurrentRound();
 
 	    if (process == SELECTGAME) {
 		    
@@ -326,6 +344,11 @@ public class GameTestServlet extends HttpServlet {
 
 			// Right upper part 1: actions
 			out.append ("</td><td valign=\"top\" class=\"bigtable\">\n<h3>Actions</h3>\n");
+			
+			if (gameMgr != null) {
+			    currentRound = gameMgr.getCurrentRound();
+			    process = -1;
+			}
 
 			if (process == SELECTPLAYERS) {
 
@@ -346,31 +369,69 @@ public class GameTestServlet extends HttpServlet {
 				out.append (" <input type=\"submit\" name=\"StartGame\" value=\"Start Game\">");
 				out.append("</form>");
 
-			} else if (process == BUYPRIVATES) {
+			} else if (currentRound instanceof StartRoundI) {
+			    
+			    startRound = (StartRoundI) currentRound;
+			    
+			    if (startRound.nextStep() == StartRoundI.BID_OR_BUY) {
 
-				out.append ("<h4>Buying Privates</h4>");
-				out.append("<form method=\"POST\" action=\""
-					+ servletPrefix
-					+ servletName + "\">\n");
-				out.append("<table><tr><td>Select Player</td><td><select name=Player>\n");
-				for (int j=0; j<players.length; j++) {
-					out.append("<option value=\""+j+"\">"+players[j].getName()+"\n");
-				}
-				out.append("</select></td></tr>");
-
-				out.append("<tr><td>Select Private</td><td><select name=Private>\n");
-				List privates = Bank.getIpo().getPrivateCompanies();
-				int freePrivates = 0;
-				for (int j=0; j<privates.size(); j++) {
-					PrivateCompanyI priv = (PrivateCompanyI) privates.get(j);
-					out.append("<option value=\""+priv.getPrivateNumber()+"\">"+priv.getName()+"\n");
-					freePrivates++;
-				}
-				out.append("</select></td></tr><tr><td>Price</td><td>")
-					.append("<input type=text name=Price size=8></td></tr></table>\n");
-
-				out.append ("<input type=submit name=BuyPrivate value=\"Buy Private\">");
-				out.append("<input type=hidden name=Left value="+freePrivates+"></form>\n");
+					out.append ("<h4>Buying Privates - ")
+						.append(startRound.getCurrentPlayer().getName())
+						.append("'s turn</h4>");
+					out.append("<form method=\"POST\" action=\""
+						+ servletPrefix
+						+ servletName + "\">\n");
+					out.append("<input type=hidden name=Player value=\"")
+						.append(startRound.getCurrentPlayer().getName()).append("\">\n");
+					out.append("<input type=hidden name=BuyItem value=\"")
+						.append(startRound.getBuyableItems()[0].getName()).append("\">\n");
+				
+					out.append("<table><tr><td align=right><input type=submit name=Buy value=Buy>")
+						.append("</td><td>").append(startRound.getBuyableItems()[0].getName())
+						.append("</td></tr>\n");
+					
+					out.append("<tr><td colspan=2><hr></td></tr>\n");
+	
+					out.append("<tr><td align=right>Select for bid</td><td><select name=BidItem>\n");
+					StartItem[] items = startRound.getBiddableItems();
+					for (int j=0; j<items.length; j++) {
+						StartItem item = items[j];
+						out.append("<option value=\""+item.getName()+"\">"
+						        +item.getName()+" (min. "+(item.getMinimumBid())+")\n");
+					}
+					out.append("</select></td></tr><tr><td align=right>\n")
+						.append("<input type=submit name=Bid5 value=\"Bid +5\"></td><td>")
+						.append("<input type=submit name=Bid value=Bid>")
+						.append("<input type=text name=Price size=6>")
+						.append("</td></tr>\n");
+	
+					out.append("<tr><td colspan=2><hr></td></tr>\n");
+	
+					out.append("<tr><td align=right>")
+						.append("<input type=submit name=Pass value=\"Pass\"></td></tr></table>\n");
+					
+			    } else if (startRound.nextStep() == StartRoundI.SET_PRICE) {
+			    
+				    PublicCompanyI currCo = startRound.getCompanyNeedingPrice();
+				    Player player = startRound.getCurrentPlayer();
+					out.append ("<h4>").append(player.getName())
+						.append(": set par price for company ").append(currCo.getName())
+						.append("</h4><p>");
+					out.append("<form method=\"POST\" action=\""
+						+ servletPrefix
+						+ servletName + "\">\n");
+					out.append("<input type=hidden name=Player value=\"")
+					   .append(startRound.getCurrentPlayer().getName()).append("\">\n");
+					out.append("<input type=hidden name=Company value=\"")
+					   .append(currCo.getName()).append("\">\n");
+					out.append("<select name=StartPrice>\n");
+					Iterator it = Game.getStockMarket().getStartSpaces().iterator();
+					while (it.hasNext()) {
+						price = ((StockSpaceI)it.next()).getPrice();
+						out.append("<option value="+price+">"+price+"\n");
+					}
+					out.append("</select> <input type=submit name=SetPrice value=Set></form>\n");
+			    }
 
 			} else if (currentRound instanceof StockRound) {
 			    
@@ -496,7 +557,7 @@ public class GameTestServlet extends HttpServlet {
 				Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					PrivateCompanyI priv = (PrivateCompanyI) it.next();
-					if (priv.getHolder().getOwner() instanceof Player) {
+					if (priv.getPortfolio().getOwner() instanceof Player) {
 						out.append("<option value=\""+priv.getName()+"\">"+priv.getName()+"\n");
 					}
 				}
@@ -592,14 +653,29 @@ public class GameTestServlet extends HttpServlet {
 			out.append ("<th>Worth</th></tr>\n");
 			for (int j=0; j<(players != null ? players.length : -1); j++) {
 				Player player = players[j];
-				out.append("<tr><td>" + player.getName())
-					.append("</td><td>" + player.getFormattedCash())
+				out.append("<tr><td>" + player.getName());
+				if (player == GameManager.getPriorityPlayer()) out.append(" *P*");
+				out.append("</td><td>" + player.getFormattedCash())
 					.append("</td><td>");
 
 				// Private companies
 				it = player.getPortfolio().getPrivateCompanies().iterator();
 				while (it.hasNext()) {
 					out.append(" "+((PrivateCompanyI)it.next()).getName());
+				}
+				// Bids
+				if (currentRound instanceof StartRoundI) {
+				    StartItem[] items = startRound.getBiddableItems();
+				    StartItem item;
+				    StartItem.Bid bid;
+				    for (i=0; i<items.length; i++) {
+				        item = items[i];
+				        if ((bid = item.getBidForPlayer(player.getName())) != null) {
+				            out.append(" (").append(item.getName()).append(":&nbsp;")
+				               .append(bid.getAmount()).append(")");
+				               
+				        }
+				    }
 				}
 				out.append("&nbsp;</td>\n");
 
@@ -615,7 +691,7 @@ public class GameTestServlet extends HttpServlet {
 						while (it2.hasNext()) {
 							cert = (PublicCertificateI)it2.next();
 							share += cert.getShare();
-							if (cert.isPresident()) president = true;
+							if (cert.isPresidentShare()) president = true;
 						}
 					}
 					out.append("<td>"+(president ? "P" : "")+ share+"%</td>");
@@ -627,7 +703,7 @@ public class GameTestServlet extends HttpServlet {
 
 
 			// End
-			out.append ("</td></tr></table>\n");
+			out.append ("</td></tr><tr><td></td><td width=\"10%\"></td><td></td></tr></table>\n");
 
 		}
 

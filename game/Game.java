@@ -85,6 +85,7 @@ public class Game
                .findComponent(StockMarketI.COMPONENT_NAME);
 
          Bank.initIpo();
+         StartPacket.init();
 
       }
       catch (Exception e)

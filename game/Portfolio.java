@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.11 2005/05/06 15:55:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.12 2005/05/12 22:22:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -48,8 +48,12 @@ public class Portfolio
    public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
          int price)
    {
+System.out.println("Name="+name);
+System.out.println("Private="+privateCompany.getName());
+System.out.println("From="+(from!=null?from.getName():"null??"));
 
-      Log.write(getName() + " buys " + privateCompany.getName() + " from "
+
+      Log.write(name + " buys " + privateCompany.getName() + " from "
             + from.getName() + " for " + Bank.format(price) + ".");
 
       // Move the private certificate
@@ -71,6 +75,7 @@ public class Portfolio
       certificate.setPortfolio(this);
 
       //PublicCertificate is no longer for sale.
+      // Erik: this is not the intended use of available (which is now redundant).
       certificate.setAvailable(false);
 
       // Move the money. 
@@ -80,7 +85,7 @@ public class Portfolio
       //if(from.name.equalsIgnoreCase("IPO"))
       //   Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
       //else
-      Bank.transferCash(owner, from.owner, price);
+      if (price != 0) Bank.transferCash(owner, from.owner, price);
    }
 
    //Sales of stock always go to the Bank pool
@@ -110,6 +115,7 @@ public class Portfolio
    {
       privateCompanies.add(privateCompany);
       privateCompany.setHolder(this);
+System.out.println(privateCompany.getName()+" added to "+name);
    }
 
    public void addCertificate(PublicCertificateI certificate)
@@ -207,7 +213,7 @@ public class Portfolio
       while (it.hasNext())
       {
          cert = (PublicCertificateI) it.next();
-         if (cert.getCompany() == company && president == cert.isPresident())
+         if (cert.getCompany() == company && president == cert.isPresidentShare())
          {
             return cert;
          }

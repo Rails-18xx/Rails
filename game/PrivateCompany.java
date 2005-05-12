@@ -108,7 +108,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	/**
 	 * @return
 	 */
-	public Portfolio getHolder() {
+	public Portfolio getPortfolio() {
 		return holder;
 	}
 
@@ -131,6 +131,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	 */
 	public void setHolder(Portfolio portfolio) {
 		holder = portfolio;
+System.out.println("Holder of "+name+" set to "+(holder!=null?holder.getName():"null??"));
 	}
 
 	public void payOut () {

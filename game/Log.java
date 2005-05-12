@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Log.java,v 1.2 2005/05/01 21:25:47 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Log.java,v 1.3 2005/05/12 22:22:28 evos Exp $
  * 
  * Created on 16-Apr-2005 by Erik Vos
  * 
@@ -35,6 +35,7 @@ public final class Log {
 	/** Add it to the error buffer */
 	public static void error (String message) {
 	    if (XmlUtils.hasValue(message)) {
+		    System.out.println(message);
 	        errorBuffer.append(message);
 	    }
 	}

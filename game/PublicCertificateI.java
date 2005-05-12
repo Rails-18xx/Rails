@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificateI.java,v 1.1 2005/05/06 15:55:58 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificateI.java,v 1.2 2005/05/12 22:22:28 evos Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -19,12 +19,7 @@ public interface PublicCertificateI extends Certificate {
 	/**
 	 * @return
 	 */
-	public Portfolio getPortfolio();
-
-	/**
-	 * @return
-	 */
-	public boolean isPresident();
+	public boolean isPresidentShare();
 
 	/**
 	 * Get the number of shares that this certificate represents.

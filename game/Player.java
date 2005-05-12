@@ -71,7 +71,7 @@ public class Player implements CashHolder
    {
       return playerCertificateLimit;
    }
-
+   
    public Player(String name)
    {
       this.name = name;
@@ -143,6 +143,20 @@ public class Player implements CashHolder
        if (portfolio.countShares(company) + number*company.getShareUnit() > 60) return false;
        /** TODO The '60' above must of course be made configurable! */ 
        return true;
+   }
+   
+   /**
+    * Front-end method for buying any kind of certificate from anyone.
+    * @param cert PrivateCompany or PublicCertificate.
+    * @param from Portfolio of seller. 
+    * @param price Price.
+    */
+   public void buy (Certificate cert, int price) {
+       if (cert instanceof PrivateCompanyI) {
+           portfolio.buyPrivate((PrivateCompanyI)cert, cert.getPortfolio(), price);
+       } else if (cert instanceof PublicCertificateI) {
+           portfolio.buyCertificate((PublicCertificateI)cert, cert.getPortfolio(), price);
+       }
    }
    
    public int sellShare(PublicCertificate share)

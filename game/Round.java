@@ -15,5 +15,5 @@ public interface Round {
 	 * @return Player object.
 	 */
 	public Player getCurrentPlayer ();
-
+	
 }

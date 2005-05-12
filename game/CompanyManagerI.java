@@ -69,4 +69,12 @@ public interface CompanyManagerI {
 	 */
 	List getCompaniesByType (String type);
 
+	/**
+	 * Find a company by type and name 
+	 * @param type The name of the CompanyType 
+	 * @param name The name of the Company
+	 * @return The company object, or null if not found.
+	 */
+	CompanyI getCompany (String type, String name);
+
 }
