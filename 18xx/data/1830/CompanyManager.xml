@@ -27,4 +27,17 @@
   <Company name="B&amp;M" type="Public" fgColour="000000" bgColour="60E060"/>
   <Company name="C&amp;O" type="Public" fgColour="000000" bgColour="A0E0FF"/>
   <Company name="CPR"     type="Public" fgColour="FFFFFF" bgColour="FF0000"/>
+  
+  <StartPacket roundClass="game.StartRound_1830">
+    <Item name="SVNRR"     type="Private" basePrice="20"/>
+    <Item name="C&amp;StL" type="Private" basePrice="40"/>
+    <Item name="D&amp;H"   type="Private" basePrice="70"/>
+    <Item name="M&amp;H"   type="Private" basePrice="110"/>
+    <Item name="C&amp;A"   type="Private" basePrice="160">
+      <SubItem name="PRR" type="Public" />
+    </Item>
+    <Item name="B&amp;O"   type="Private" basePrice="220">
+      <SubItem name="B&amp;O" type="Public" president="yes"/>
+    </Item>
+  </StartPacket>
 </CompanyManager>

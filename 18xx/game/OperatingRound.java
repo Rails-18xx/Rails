@@ -96,7 +96,6 @@ public class OperatingRound implements Round
         
         operatingCompanyArray = (PublicCompanyI[])operatingCompanies.values()
         		.toArray(new PublicCompanyI[0]);
-        operatingCompany = operatingCompanyArray[operatingCompanyIndex];
         step = steps[0];
         
         relativeORNumber++;
@@ -111,7 +110,18 @@ public class OperatingRound implements Round
 			priv = (PrivateCompanyI) it.next();
 			if (!priv.isClosed()) priv.payOut();
 		}
-    }
+		
+        if (operatingCompanyArray.length > 0) {
+            operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+            GameManager.getInstance().setRound(this);
+        } else {
+            // No operating companies yet: close the round.
+            Log.write("End of Operating Round" + +getCompositeORNumber());
+            GameManager.getInstance().nextRound(this);
+        }
+     }
+
+    public void resume() {}
     
     /*----- General methods -----*/
     
@@ -441,6 +451,7 @@ public class OperatingRound implements Round
         
         if (++operatingCompanyIndex >= operatingCompanyArray.length) {
             // OR done. Inform GameManager.
+            Log.write("End of Operating Round" + +getCompositeORNumber());
             GameManager.getInstance().nextRound(this);
             return true;
         }
@@ -532,7 +543,7 @@ public class OperatingRound implements Round
                 break;
             }
             // Is private owned by a player?
-            owner = privCo.getHolder().getOwner();
+            owner = privCo.getPortfolio().getOwner();
             if (!(owner instanceof Player)) {
                 errMsg = "Private "+privateName+" is not owned by a player";
                 break;
@@ -599,7 +610,7 @@ public class OperatingRound implements Round
         PrivateCompanyI privCo;
         Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
         while (it.hasNext()) {
-            if ((privCo = (PrivateCompanyI)it.next()).getHolder().getOwner() instanceof Player)
+            if ((privCo = (PrivateCompanyI)it.next()).getPortfolio().getOwner() instanceof Player)
                 buyablePrivates.add(privCo);
         }
         return (PrivateCompanyI[]) buyablePrivates.toArray(new PrivateCompanyI[0]);

@@ -13,6 +13,10 @@ public class PlayerManager
    private static Player[] players;
    private ArrayList playerNames;
    private Player boughtStockLast;
+   
+   public static int getNumberOfPlayers () {
+       return players.length;
+   }
 
    private void initPlayers()
    {      

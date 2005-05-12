@@ -17,7 +17,6 @@
   <Company name="Brdg"  type="Private" basePrice="40" revenue="10"/>
   <Company name="Cattl" type="Private" basePrice="50" revenue="10"/>
   <Company name="Gulf"  type="Private" basePrice="80" revenue="15"/>
-  <Company name="SLSF"  type="Private" basePrice="140" revenue="0"/>
   <Company name="MKT"   type="Private" basePrice="160" revenue="20"/>
   
   <Company name="KATY" type="Public" fgColour="FFFFFF" bgColour="00FF00"/>
@@ -30,4 +29,13 @@
   <Company name="FW"   type="Public" fgColour="FF0000" bgColour="000000"/>
   <Company name="SSW"  type="Public" fgColour="FFFFFF" bgColour="6000ff"/>
   <Company name="IC"   type="Public" fgColour="000000" bgColour="c0ff40"/>
+
+  <StartPacket roundClass="game.StartRound_1830">
+    <Item name="GRSC"  type="Private" basePrice="20"/>
+    <Item name="Brdg"  type="Private" basePrice="40"/>
+    <Item name="Cattl" type="Private" basePrice="50"/>
+    <Item name="Gulf"  type="Private" basePrice="80"/>
+    <Item name="SLSF"  type="Public"  president="yes" basePrice="140"/>
+    <Item name="MKT"   type="Private" basePrice="160"/>
+  </StartPacket>
 </CompanyManager>

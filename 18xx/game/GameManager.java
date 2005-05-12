@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.1 2005/05/04 22:48:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.2 2005/05/12 22:22:28 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -12,25 +12,59 @@ package game;
  */
 public class GameManager {
     
-    protected Round currentRound = null;
+    protected static Player[] players;
+    protected static int numberOfPlayers;
+    protected static int currentPlayerIndex = 0;
+    protected static Player currentPlayer = null;
+    protected static int priorityPlayerIndex = 0;
+    protected static Player priorityPlayer = null;
+    
+    /**
+     * Current round should not be set here but from within the Round classes.
+     * This is because in some cases the round has already changed to another
+     * one when the constructor terminates. Example: if the privates have not 
+     * been sold, it finishes by starting an Operating Round, which handles the
+     * privates payout and then immediately starts a new Start Round.
+     */
+    protected static Round currentRound = null;
+    
+    protected Round insertingRound = null;
+    protected Round insertedRound = null;
     protected int orNumber;
     protected int numOfORs;
     protected int[] orsPerPhase = new int[] {1, 2, 2, 3, 3};
     protected int phase = 0;
     
     protected static GameManager instance;
+    protected StartPacket startPacket;
     
     /**
      * Private constructor.
-     *
+     *	
      */
     private GameManager () {
-        currentRound = new StockRound();
+        instance = this;
+        
+        players = Game.getPlayerManager().getPlayersArray();
+        numberOfPlayers = players.length;
+
+        if (startPacket == null) startPacket = StartPacket.getStartPacket("Initial");
+        if (startPacket != null && !startPacket.getItems().isEmpty()) {
+            // If we have a non-exhausted start packet 
+            startStartRound ();
+        } else {
+            startStockRound();
+        }
     }
     
     public static GameManager getInstance() {
         if (instance == null) instance = new GameManager();
         return instance;
+    }
+    
+    public void setRound (Round round) {
+        
+        currentRound = round;
     }
     
     /**
@@ -39,11 +73,24 @@ public class GameManager {
      */
     public void nextRound (Round round) {
         
-        if (round instanceof StockRound) {
+        if (round instanceof StartRound) {
+            
+            if (startPacket != null && !startPacket.getItems().isEmpty()) {
+
+                startOperatingRound();
+                
+            } else {
+                
+                startStockRound();
+                
+            }                
+            
+        } else if (round instanceof StockRound) {
             
             // Create a new OperatingRound (never more than one Stock Round)
 			OperatingRound.resetRelativeORNumber();
-            currentRound = new OperatingRound();
+            startOperatingRound();
+            
             numOfORs = orsPerPhase[phase];
             orNumber = 1;
             
@@ -52,18 +99,39 @@ public class GameManager {
             if (++orNumber < numOfORs) {
                 
                 // There will be another OR
-                currentRound = new OperatingRound();
+                startOperatingRound();
+                
+            } else if (startPacket != null && !startPacket.getItems().isEmpty()) {
+                
+                startStartRound();
                 
             } else {
-                
-                // Time for a new SR
-                currentRound = new StockRound();
+
+                startStockRound();
             }
         }
         
      }
     
-    /**
+    private void startStartRound () {
+        
+        String startRoundClassName = startPacket.getRoundClassName();
+        ((StartRound)instantiate (startRoundClassName)).start(startPacket);
+
+    }
+    
+    private void startStockRound () {
+        
+        new StockRound().start();
+    }
+    
+    private void startOperatingRound() {
+
+        new OperatingRound();
+       
+    }
+    
+   /**
      * Should be called whenever a Phase changes.
      * The effect on the number of ORs is delayed until a StockRound finishes.
      *
@@ -78,6 +146,86 @@ public class GameManager {
     
     public Round getCurrentRound() {
         return currentRound;
+    }
+    /**
+     * @return Returns the currentPlayerIndex.
+     */
+    public static int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+    /**
+     * @param currentPlayerIndex The currentPlayerIndex to set.
+     */
+    public static void setCurrentPlayerIndex(int currentPlayerIndex) {
+        GameManager.currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
+        GameManager.currentPlayer = players[GameManager.currentPlayerIndex];
+    }
+    public static void setCurrentPlayer (Player player) {
+        currentPlayer = player;
+        for (int i=0; i<numberOfPlayers; i++) {
+            if (player == players[i]) {
+                currentPlayerIndex = i;
+                break;
+            }
+        }
+    }
+    /**
+     * @return Returns the priorityPlayerIndex.
+     */
+    public static int getPriorityPlayerIndex() {
+        return priorityPlayerIndex;
+    }
+    /**
+     * @param priorityPlayerIndex The priorityPlayerIndex to set.
+     * The value may exceed the number of players; if so, the modulus is taken.
+     * This allows giving the next player the priority bu adding +1. 
+     */
+    public static void setPriorityPlayerIndex(int priorityPlayerIndex) {
+        GameManager.priorityPlayerIndex = priorityPlayerIndex % numberOfPlayers;
+        GameManager.priorityPlayer = players[GameManager.priorityPlayerIndex];
+    }
+    /**
+     * Set priority deal to the player after the current player.
+     *
+     */
+    public static void setPriorityPlayer () {
+        priorityPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers;
+        priorityPlayer = players[priorityPlayerIndex];
+       
+    }
+    /**
+     * @return Returns the currentPlayer.
+     */
+    public static Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+    /**
+     * @return Returns the players.
+     */
+    public static Player[] getPlayers() {
+        return players;
+    }
+    /**
+     * @return Returns the priorityPlayer.
+     */
+    public static Player getPriorityPlayer() {
+        return priorityPlayer;
+    }
+    
+    public static void setNextPlayer () {
+        currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
+        currentPlayer = players[currentPlayerIndex];
+    }
+    
+    
+    private Object instantiate (String className) {
+        try {
+            return Class.forName(className).newInstance();
+        } catch (Exception e) {
+            Log.error ("Cannot instantiate class "+className);
+            System.out.println(e.getStackTrace());
+            return null;
+        }
     }
 
 }

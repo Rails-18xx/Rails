@@ -143,7 +143,7 @@ public class StatusWindow extends JFrame implements ActionListener
       try
       {
          //Just sell the last cert in the stack first.
-         if(!((PublicCertificate)certs.get(certs.size()-1)).isPresident())
+         if(!((PublicCertificate)certs.get(certs.size()-1)).isPresidentShare())
             player.sellShare((PublicCertificate)certs.get(certs.size()-1));
          else
             JOptionPane.showMessageDialog(this, "You can't sell the President's share.");

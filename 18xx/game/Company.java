@@ -124,12 +124,5 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 		value = i;
 	}
 
-	/**
-	 * @return
-	 */
-	public Portfolio getPortfolio() {
-		return portfolio;
-	}
-
 
 }

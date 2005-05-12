@@ -264,7 +264,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
 
    /**
-    * Start the company and set its initial (par) price.
+    * Set the company par price.
+    * <p><i>Note: this method should <b>not</b> be used to start a company!</i>
+    * Use <code><b>start()</b></code> in stead.
     * 
     * @param spaceI
     */

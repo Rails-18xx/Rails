@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificate.java,v 1.1 2005/05/06 15:55:58 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificate.java,v 1.2 2005/05/12 22:22:28 evos Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -57,7 +57,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 	/**
 	 * @return
 	 */
-	public boolean isPresident() {
+	public boolean isPresidentShare() {
 		return president;
 	}
 
@@ -83,7 +83,16 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 	 * @return The current certificate price.
 	 */
 	public int getCertificatePrice() {
-		return company.getCurrentPrice().getPrice() * shares;
+	    if (company.getCurrentPrice() != null) {
+	        return company.getCurrentPrice().getPrice() * shares;
+	    } else {
+	        return 0;
+	    }
+	}
+	
+	public String getName () {
+	    return company.getName() + " " + getShare() + "% "
+	    	+ (president ? "president " : "") + "share";
 	}
 
 	/**
