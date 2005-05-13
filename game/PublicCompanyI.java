@@ -148,7 +148,8 @@ public interface PublicCompanyI extends CompanyI  {
 	
     public Player getPresident ();
 
-	
+    public int getFloatPercentage ();
+        	
 	public Portfolio getPortfolio();
 	
 	public void payOut (int amount);
