@@ -507,9 +507,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 
 				out.append("<tr><td colspan=2><hr></td></tr>\n");
 
-				out.append ("<tr><td align=right><input type=submit name=Done value=\"Pass/Done\">");
-
-				out.append ("<td align=left><input type=submit name=GotoOR value=\"Start OR\"></tr></table></form>");
+				out.append ("<tr><td align=right><input type=submit name=Done value=\"Pass/Done\"></td></tr></table></form>");
 
 			} else if (currentRound instanceof OperatingRound) {
 			    
@@ -568,8 +566,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 				if (step >= OperatingRound.STEP_BUY_TRAIN) {
 				    out.append("<input type=submit name=Done value=\"Done\">");
 				}
-				out.append ("<input type=submit name=NextOR value=\"Next OR\"></td>");
-				out.append ("<td><input type=submit name=StartSR value=\"Next SR\"></td></tr></table></form>");
+				out.append ("</td></tr></table></form>");
 
 			}
 			// Right upper part 2: log

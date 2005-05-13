@@ -93,6 +93,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
    /** What percentage of ownership constitutes "one share" */
    protected int shareUnit = 10;
+   
+   /** At what percetage sold does the company float */
+   protected int floatPerc = 0;
 
    /**
     * The constructor. The way this class is instantiated does not allow
@@ -130,6 +133,8 @@ public class PublicCompany extends Company implements PublicCompanyI,
       if (bgHexColour == null)
          bgHexColour = "000000";
       bgColour = new Color(Integer.parseInt(bgHexColour, 16));
+
+      floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc", 0);
 
       /* Complete configuration by adding features from the Public CompanyType */
       Element typeElement = type.getDomElement();
@@ -171,6 +176,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
             else if (propName.equalsIgnoreCase("PoolPaysOut"))
             {
                poolPaysOut = true;
+            } else if (propName.equalsIgnoreCase("Float") && floatPerc == 0) {
+                nnp2 = properties.item(j).getAttributes();
+                floatPerc = XmlUtils.extractIntegerAttribute(nnp2, "percentage", 60); 
             }
 
          }
@@ -424,6 +432,14 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
    
    /**
+    * Get the percentage pf shares that must be sold to float the company. 
+    * @return The float percentage.
+    */
+   public int getFloatPercentage () {
+       return floatPerc;
+   }
+   
+   /**
     * Get the company President.
     * 
     */
@@ -490,7 +506,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
          if (recipient instanceof Bank)
             continue;
          part = ((Integer) split.get(recipient)).intValue();
-         Log.write(recipient.getName() + " receives " + part);
+         Log.write(recipient.getName() + " receives " + Bank.format(part));
          Bank.transferCash(null, recipient, part);
       }
 

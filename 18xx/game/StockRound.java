@@ -335,7 +335,8 @@ public class StockRound implements Round
 
         // Check if the company has floated
         /* Shortcut: float level and capitalisation hardcoded */
-		if (from == ipo && !company.hasFloated() && from.countShares(company) <= 40) {
+		if (from == ipo && !company.hasFloated() 
+		        && from.countShares(company) <= (100 - company.getFloatPercentage())) {
 			// Float company (limit and capitalisation to be made configurable)
 			company.setFloated(10*price);
 			Log.write (companyName+ " floats and receives "+Bank.format(company.getCash()));

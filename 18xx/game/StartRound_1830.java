@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.1 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.2 2005/05/13 22:13:28 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -188,8 +188,14 @@ public class StartRound_1830 extends StartRound {
     private void assignItem (Player player, StartItem item, int price) {
         
         Log.write (player.getName()+" buys "+item.getName()+" for "+Bank.format(price));
-        player.buy(item.getPrimary(), price);
-        if (item.hasSecondary()) {
+        Certificate primary = item.getPrimary();
+        player.buy(primary, price);
+        if (primary instanceof PublicCertificateI 
+                && ((PublicCertificateI)primary).isPresidentShare()) {
+            // We must set the start price!
+            companyNeedingPrice = ((PublicCertificateI)primary).getCompany();
+        }
+       if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
             player.buy (extra, 0);
             Log.write (player.getName()+" also gets "+extra.getName());
@@ -271,6 +277,19 @@ public class StartRound_1830 extends StartRound {
         
         Log.write (playerName+" starts "+companyName+" at "+Bank.format(parPrice));
         companyNeedingPrice.start(startSpace);
+        
+        // Check if company already floats
+        // Check if the company has floated
+        /* Shortcut: float level and capitalisation hardcoded */
+		if (!companyNeedingPrice.hasFloated() 
+		        && Bank.getIpo().countShares(companyNeedingPrice) 
+		        	<= (100 - companyNeedingPrice.getFloatPercentage())) {
+			// Float company (limit and capitalisation to be made configurable)
+			companyNeedingPrice.setFloated(10*parPrice);
+			Log.write (companyName+ " floats and receives "
+			        +Bank.format(companyNeedingPrice.getCash()));
+		}
+        
         companyNeedingPrice = null;
         
         setNextAction();
