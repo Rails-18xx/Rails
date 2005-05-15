@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.12 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.13 2005/05/15 20:47:14 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -48,13 +48,14 @@ public class Portfolio
    public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
          int price)
    {
-System.out.println("Name="+name);
-System.out.println("Private="+privateCompany.getName());
-System.out.println("From="+(from!=null?from.getName():"null??"));
 
-
-      Log.write(name + " buys " + privateCompany.getName() + " from "
-            + from.getName() + " for " + Bank.format(price) + ".");
+      if (from == Bank.getIpo()) {
+	      Log.write(name + " buys " + privateCompany.getName() 
+	              + " for " + Bank.format(price) + ".");
+      } else {
+	      Log.write(name + " buys " + privateCompany.getName() + " from "
+	              + from.getName() + " for " + Bank.format(price) + ".");
+      }
 
       // Move the private certificate
       from.removePrivate(privateCompany);
@@ -115,7 +116,6 @@ System.out.println("From="+(from!=null?from.getName():"null??"));
    {
       privateCompanies.add(privateCompany);
       privateCompany.setHolder(this);
-System.out.println(privateCompany.getName()+" added to "+name);
    }
 
    public void addCertificate(PublicCertificateI certificate)

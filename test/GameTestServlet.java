@@ -388,6 +388,8 @@ System.out.println("First round is "+currentRound.getClass().getName());
 				
 					out.append("<table><tr><td align=right><input type=submit name=Buy value=Buy>")
 						.append("</td><td>").append(startRound.getBuyableItems()[0].getName())
+						.append(" for ")
+						.append(Bank.format(startRound.getBuyableItems()[0].getBasePrice()))
 						.append("</td></tr>\n");
 					
 					out.append("<tr><td colspan=2><hr></td></tr>\n");

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.1 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.2 2005/05/15 20:47:14 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -31,6 +31,7 @@ public class StartItem {
     protected int bids = 0;
     protected Player bidder = null;
     protected Map bidders = new HashMap();
+    protected boolean sold;
     
     // For initialisation purposes only
     protected String type = null;
@@ -183,6 +184,20 @@ public class StartItem {
         return (Bid) bidders.get(playerName); 
     }
     
+    
+    
+    /**
+     * @return Returns the sold.
+     */
+    public boolean isSold() {
+        return sold;
+    }
+    /**
+     * @param sold The sold to set.
+     */
+    public void setSold(boolean sold) {
+        this.sold = sold;
+    }
     /**
      * This method indicates if there is a company for which a par price
      * must be set when this start item is bought. The UI can use this
