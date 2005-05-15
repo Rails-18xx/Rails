@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.2 2005/05/13 22:13:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.3 2005/05/15 20:47:14 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -51,19 +51,22 @@ public class StartRound_1830 extends StartRound {
 
     public StartItem[] getBuyableItems () {
         if (startPacket.getItems().size() > 0) {
-            return (StartItem[]) startPacket.getItems().subList(0, 1).toArray(new StartItem[0]);
+            return new StartItem[] {startPacket.getFirstUnsoldItem()};
         } else {
             return new StartItem[0];
         }
     }
     
     public StartItem[] getBiddableItems () {
-        int length;
-        if ((length = startPacket.getItems().size()) > 1) {
-            return (StartItem[]) startPacket.getItems().subList(1, length).toArray(new StartItem[0]);
-        } else {
-            return new StartItem[0];
+        List bidItems = new ArrayList();
+        Iterator it = startPacket.getItems().iterator();
+        StartItem b;
+        while (it.hasNext()) {
+            if (!(b = (StartItem)it.next()).isSold() && b != startPacket.getFirstUnsoldItem()) {
+                bidItems.add(b);
+            }
         }
+        return (StartItem[]) bidItems.toArray(new StartItem[0]);
     }
     
     public Player getCurrentPlayer() {
@@ -107,7 +110,7 @@ public class StartRound_1830 extends StartRound {
             }
             item = (StartItem) itemMap.get(itemName);
             // Must not be the first item
-            if (item == startPacket.getItems().get(0)) {
+            if (item == startPacket.getFirstUnsoldItem()) {
                 errMsg = "Cannot bid on this item";
                 break;
             }
@@ -126,7 +129,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
         
-        Log.write (playerName+" bids "+amount+" on "+itemName);
+        Log.write (playerName+" bids "+Bank.format(amount)+" on "+itemName);
         item.setBid (amount, player);
         GameManager.setNextPlayer();
         numPasses = 0;
@@ -160,7 +163,7 @@ public class StartRound_1830 extends StartRound {
             }
             item = (StartItem) itemMap.get(itemName);
             // Must  be the first item
-            if (item != startPacket.getItems().get(0)) {
+            if (item != startPacket.getFirstUnsoldItem()) {
                 errMsg = "Cannot buy this item";
                 break;
             }
@@ -187,7 +190,7 @@ public class StartRound_1830 extends StartRound {
     
     private void assignItem (Player player, StartItem item, int price) {
         
-        Log.write (player.getName()+" buys "+item.getName()+" for "+Bank.format(price));
+        //Log.write (player.getName()+" buys "+item.getName()+" for "+Bank.format(price));
         Certificate primary = item.getPrimary();
         player.buy(primary, price);
         if (primary instanceof PublicCertificateI 
@@ -205,7 +208,7 @@ public class StartRound_1830 extends StartRound {
                 companyNeedingPrice = ((PublicCertificateI)extra).getCompany();
             }
         }
-        startPacket.getItems().remove(0);
+        item.setSold(true);
     }
     
     /**
@@ -220,14 +223,14 @@ public class StartRound_1830 extends StartRound {
             return;
         }
         
-        if (startPacket.getItems().isEmpty()) {
+        if (startPacket.areAllSold()) {
             // No more start items: start a stock round
             GameManager.getInstance().nextRound(this);
             return;
         }
         
         StartItem nextItem;
-        while ((nextItem = startPacket.getFirstItem()) != null) {
+        while ((nextItem = startPacket.getFirstUnsoldItem()) != null) {
 	        if (nextItem.getBids() == 1) {
 	            // Assign next item to the only bidder
 	            assignItem (nextItem.getBidder(), nextItem, nextItem.getBid());
@@ -321,9 +324,23 @@ public class StartRound_1830 extends StartRound {
         GameManager.setNextPlayer();
         
         if (++numPasses >= numPlayers) {
-            // End of start round
+            // All players have passed. 
             Log.write("All players passed");
-            GameManager.getInstance().nextRound(this);
+            // It the first item has not been sold yet, reduce its price by 5.
+            if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem()) {
+                startPacket.getFirstItem().basePrice -= 5;
+                Log.write("Price of "+startPacket.getFirstItem().getName()+" now reduced to "
+                        +Bank.format(startPacket.getFirstItem().basePrice));
+                numPasses = 0;
+                if (startPacket.getFirstItem().basePrice == 0) {
+                    // If price drops to zero, the first player must buy the first private.
+                    buy (getCurrentPlayer().getName(),
+                            startPacket.getFirstItem().getName());
+                }
+            } else {
+                // Otherwise, end of start round
+                 GameManager.getInstance().nextRound(this);
+            }
         }
         
         return true;

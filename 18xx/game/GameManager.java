@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.2 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.3 2005/05/15 20:47:14 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -49,7 +49,7 @@ public class GameManager {
         numberOfPlayers = players.length;
 
         if (startPacket == null) startPacket = StartPacket.getStartPacket("Initial");
-        if (startPacket != null && !startPacket.getItems().isEmpty()) {
+        if (startPacket != null && !startPacket.areAllSold()) {
             // If we have a non-exhausted start packet 
             startStartRound ();
         } else {
@@ -75,7 +75,7 @@ public class GameManager {
         
         if (round instanceof StartRound) {
             
-            if (startPacket != null && !startPacket.getItems().isEmpty()) {
+            if (startPacket != null && !startPacket.areAllSold()) {
 
                 startOperatingRound();
                 
@@ -101,7 +101,7 @@ public class GameManager {
                 // There will be another OR
                 startOperatingRound();
                 
-            } else if (startPacket != null && !startPacket.getItems().isEmpty()) {
+            } else if (startPacket != null && !startPacket.areAllSold()) {
                 
                 startStartRound();
                 
@@ -217,6 +217,9 @@ public class GameManager {
         currentPlayer = players[currentPlayerIndex];
     }
     
+    public StartPacket getStartPacket() {
+        return startPacket;
+    }
     
     private Object instantiate (String className) {
         try {

@@ -133,7 +133,6 @@ public class Bank implements CashHolder, ConfigurableComponentI
       while (it.hasNext())
       {
          ipo.addPrivate(priv = (PrivateCompanyI) it.next());
-System.out.println(priv.getName()+" added to IPO");
       }
 
       // Add public companies

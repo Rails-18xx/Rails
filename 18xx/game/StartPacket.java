@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.1 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.2 2005/05/15 20:47:14 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -100,6 +100,35 @@ public class StartPacket {
         } else {
             return null;
         }
+    }
+    
+    public StartItem getFirstUnsoldItem () {
+        StartItem result = null;
+        Iterator it = items.iterator();
+        while (it.hasNext()) {
+            if (!(result = (StartItem)it.next()).isSold()) break;
+        }
+        return result;
+    }
+    
+    public List getUnsoldItems () {
+        List unsoldItems = new ArrayList();
+        Iterator it = items.iterator();
+        StartItem u;
+        while (it.hasNext()) {
+            if (!(u = (StartItem)it.next()).isSold()) {
+                unsoldItems.add(u);
+            }
+        }
+        return unsoldItems;
+    }
+    
+    public boolean areAllSold () {
+        Iterator it = items.iterator();
+        while (it.hasNext()) {
+            if (!((StartItem)it.next()).isSold()) return false;
+        }
+        return true;
     }
     
     public String getRoundClassName () {
