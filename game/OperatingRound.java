@@ -116,7 +116,7 @@ public class OperatingRound implements Round
             GameManager.getInstance().setRound(this);
         } else {
             // No operating companies yet: close the round.
-            Log.write("End of Operating Round" + +getCompositeORNumber());
+            Log.write("End of Operating Round" + getCompositeORNumber());
             GameManager.getInstance().nextRound(this);
         }
      }
@@ -131,8 +131,8 @@ public class OperatingRound implements Round
      * OR number.  
      * @return Composite SR/OR number.
      */
-    public double getCompositeORNumber() {
-        return StockRound.getLastStockRoundNumber() + 0.1 * relativeORNumber;
+    public String getCompositeORNumber() {
+        return StockRound.getLastStockRoundNumber() + "." + relativeORNumber;
     }
     
     /**
@@ -451,7 +451,7 @@ public class OperatingRound implements Round
         
         if (++operatingCompanyIndex >= operatingCompanyArray.length) {
             // OR done. Inform GameManager.
-            Log.write("End of Operating Round" + +getCompositeORNumber());
+            Log.write("End of Operating Round" + getCompositeORNumber());
             GameManager.getInstance().nextRound(this);
             return true;
         }
