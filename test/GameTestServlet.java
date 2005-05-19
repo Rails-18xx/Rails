@@ -501,7 +501,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					.append("<td><select name=SellCompany>\n");
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
-					if (stockRound.isCompanySellable(company)) {
+					if (stockRound.isCompanySellable(company.getName())) {
 					    out.append("<option value=\"").append(company.getName())
 					    	.append("\">").append(company.getName()).append("\n");
 					}
@@ -629,8 +629,8 @@ System.out.println("First round is "+currentRound.getClass().getName());
 						} else {
 							out.append("<td colspan=3>Not floated");
 						}
-						out.append("</td><td>" + Bank.getIpo().countShares(company));
-						out.append("%</td><td>" + Bank.getPool().countShares(company));
+						out.append("</td><td>" + Bank.getIpo().ownsShare(company));
+						out.append("%</td><td>" + Bank.getPool().ownsShare(company));
 						out.append("%</td>\n");
 					}
 					out.append ("</tr>\n");
