@@ -29,6 +29,7 @@ public class Player implements CashHolder
    private static int playerCertificateLimit = 0;
    private String name = "";
    private int wallet = 0;
+   private int blockedCash = 0;
    private boolean hasPriority = false;
    private boolean hasBoughtStockThisTurn = false;
    private Portfolio portfolio = null;
@@ -248,5 +249,53 @@ public class Player implements CashHolder
    public boolean hasBoughtStockThisTurn()
    {
       return hasBoughtStockThisTurn;
+   }
+   
+   /**
+    * Block cash allocated by a bid.
+    * @author Erik Vos
+    * @param amount Amount of cash to be blocked.
+    * @return false if the amount was not available.
+    */
+   public boolean blockCash (int amount) {
+   		if (amount > wallet - blockedCash) {
+   			return false;
+   		} else {
+   			blockedCash += amount;
+   			return true;
+   		}
+   }
+   
+   /**
+    * Unblock cash.
+    * @author Erik Vos
+    * @param amount Amount to be unblocked.
+    * @return false if the given amount was not blocked.
+    */
+   public boolean unblockCash (int amount) {
+   		if (amount < blockedCash) {
+   			return false;
+   		} else {
+   			blockedCash -= amount;
+   			return true;
+   		}
+   }
+   
+   /**
+    * Unblock all blocked cash.
+    * @author Erik Vos
+    * @return Always true.
+    */
+   public boolean unblockCash () {
+   		blockedCash = 0;
+   		return true;
+   }
+   
+   /**
+    * Return the unblocked cash (available for bidding)
+    * @return
+    */
+   public int getUnblockedCash () {
+   		return wallet - blockedCash;
    }
 }
