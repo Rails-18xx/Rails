@@ -26,6 +26,7 @@ import util.XmlUtils;
 
 public class Bank implements CashHolder, ConfigurableComponentI
 {
+    private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
     /** The Bank's amont of cash */
    private static int money;
    
@@ -40,7 +41,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
    
    private static Bank instance = null;
    
+   /** The money format template. '@' is replsced by the amount, the rest is copied. */
    private static String moneyFormat = "$@";
+   
+   private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
    public static Bank getInstance()
    {
@@ -118,6 +122,13 @@ public class Bank implements CashHolder, ConfigurableComponentI
             Player.MAX_PLAYERS = number;
             System.out.println("MAX_PLAYERS: " + Player.MAX_PLAYERS);
          }
+      }
+      
+      node = (Element) element.getElementsByTagName("PoolLimit").item(0);
+      if (node != null) {
+          nnp = node.getAttributes();
+          poolShareLimit = XmlUtils.extractIntegerAttribute(nnp, "percentage", DEFAULT_POOL_SHARE_LIMIT);
+         
       }
    }
 
@@ -203,6 +214,14 @@ public class Bank implements CashHolder, ConfigurableComponentI
    
    public String getFormattedCash () {
        return Bank.format (money);
+   }
+   
+   /**
+    * Get the maximum share percentage that may be sold to the Bank Pool.
+    * @return The maximum percentage.
+    */
+   public static int getPoolShareLimit () {
+       return poolShareLimit;
    }
    
    public static String format (int amount) {
