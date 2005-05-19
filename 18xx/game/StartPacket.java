@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.2 2005/05/15 20:47:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.3 2005/05/19 19:55:52 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -12,23 +12,48 @@ import org.w3c.dom.*;
 import util.XmlUtils;
 
 /**
+ * A Start Packet comprises a number of Start Items. 
+ * The typical start packet must be completely sold out before
+ * normal share buying can start (but there are exceptions to this rule). 
  * @author Erik Vos
  */
 public class StartPacket {
 
+	/**
+	 * A Map holding all start packets of a game
+	 * (yes, there can be more than one, e.g. 18US).
+	 */
     private static Map packets = new HashMap();
 
-    /**/
-    String name; // For identification if there is more than one.
-    String roundClassName;
-    List items = new ArrayList();
+    /** The start packet name. 
+     * Usually the default name "Ïnitial" is used. */
+    private String name; // For identification if there is more than one.
+    /** The name of the class that implements the Start Round for this packet. */
+    private String roundClassName;
+    /** The start items in this packet. */
+    private List items = new ArrayList();
     
+    /** Default name */
+    public static final String DEFAULT_NAME = "Initial"; 
+    
+    /**
+     * Constructor. Only takes the packet and class named.
+     * Actual initialisation is done in <b>configureFromXML()</b>.
+     * @param name The start packet name.
+     * @param roundClassName The StartRound class name.
+     */
     StartPacket (String name, String roundClassName) {
-        this.name = name;
+        this.name = XmlUtils.hasValue(name) ? name : DEFAULT_NAME;
         this.roundClassName = roundClassName;
         packets.put (name, this);
     }
     
+    /**
+     * Configure the start packet from the contents of a
+     * &lt;StartPacket&gt; XML element.
+     * @param element The &lt;StartPacket&gt; Element object.
+     * @throws ConfigurationException if anything goes wrong.
+     */
     public void configureFromXML(Element element) throws ConfigurationException
     {
         NodeList children = element.getElementsByTagName("Item");
@@ -71,7 +96,11 @@ public class StartPacket {
            }
         }
      }
-    
+    /**
+     * This method must be called after all XML parsing has completed.
+     * It will set the relationships between all start packets
+     * and the start items that each one contains.
+     */
     protected static void init() {
         Iterator it = packets.values().iterator();
         StartPacket sp;
@@ -85,15 +114,36 @@ public class StartPacket {
         }
     }
     
-   
+    /**
+     * Get the start packet with as given name.
+     * @param name The start packet name.
+     * @return The start packet (or null if it does not exist).
+     */
     public static StartPacket getStartPacket (String name) {
         return (StartPacket) packets.get(name);
     }
     
+    /**
+     * Get the start packet with the default name.
+     * @return The default start packet (or null if it does not exist).
+     */
+    public static StartPacket getStartPacket() {
+    	return getStartPacket (DEFAULT_NAME);
+    }
+    
+    /**
+     * Get the items of this start packet.
+     * @return The List of start items.
+     */
     public List getItems() {
         return items;
     }
     
+    /**
+     * Get the first start item.
+     * This one often gets a special treatment (price reduction).
+     * @return
+     */
     public StartItem getFirstItem () {
         if (!items.isEmpty()) {
             return (StartItem) items.get(0);
@@ -102,6 +152,11 @@ public class StartPacket {
         }
     }
     
+    /**
+     * Get the first start item that has not yet been sold.
+     * In many cases this is the only item that can be bought immediately.
+     * @return
+     */
     public StartItem getFirstUnsoldItem () {
         StartItem result = null;
         Iterator it = items.iterator();
@@ -111,6 +166,10 @@ public class StartPacket {
         return result;
     }
     
+    /**
+     * Get all not yet sold start items.
+     * @return A List of all unsold items.	
+     */
     public List getUnsoldItems () {
         List unsoldItems = new ArrayList();
         Iterator it = items.iterator();
@@ -123,6 +182,10 @@ public class StartPacket {
         return unsoldItems;
     }
     
+    /**
+     * Check if all items have bene sold.
+     * @return True if all items have been sold.
+     */
     public boolean areAllSold () {
         Iterator it = items.iterator();
         while (it.hasNext()) {
@@ -131,6 +194,10 @@ public class StartPacket {
         return true;
     }
     
+    /**
+     * Get the name of the StartRound class that will sell out this packet.
+     * @return StartRound subclass name.
+     */
     public String getRoundClassName () {
         return roundClassName;
     }

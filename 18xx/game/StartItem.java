@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.2 2005/05/15 20:47:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.3 2005/05/19 19:55:52 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -9,9 +9,8 @@ import java.util.*;
 
 /**
  * Each object of this class represents a "start packet item", 
- * which consist of one or two (in practice never more than two)
- * certificates. The whole start packet must be bought before the 
- * open stock rounds can start.
+ * which consist of one or two certificates. 
+ * The whole start packet must be bought before the stock rounds can start.
  * <p>During XML parsing, only the certificate name and other attributes are saved.
  * The certificate objects are linked to in the later initialisation step. 
  * @author Erik Vos
@@ -45,6 +44,18 @@ public class StartItem {
     protected static Portfolio unavailable;
     protected static CompanyManagerI compMgr;
     
+    /**
+     * The constructor, taking the properties of the "primary" 
+     * (often teh only) certificate.
+     * The parameters are only stored, real initialisation 
+     * is done by the init() method.  
+     * @param name The Company name of the primary certificate.
+     * This name will also become the name of the start item itself.
+     * @param type The CompanyType name of the primary certificate.
+     * @param basePrice The start item base selling price,
+     * i.e. the price for which the item can be bought or where bidding starts. 
+     * @param president True if the primary certificate is the president's share. 
+     */
     public StartItem (String name, String type, int basePrice, boolean president) {
         this.name = name;
         this.type = type;        
@@ -52,6 +63,12 @@ public class StartItem {
         this.president = president;
     }
     
+    /**
+     * Add a secondary certificate, that "comes with" the primary certificate.
+     * @param name2 The Company name of the secondary certificate.
+     * @param type2 The CompanyType name of the secondary certificate.
+     * @param president2 True if the secondary certificate is the president's share.
+     */
     public void setSecondary (String name2, String type2, boolean president2) {
         this.name2 = name2;
         this.type2 = type2;
@@ -59,7 +76,7 @@ public class StartItem {
     }
     
     /**
-     * Initialisation to be done after all XML parsing has completed.
+     * Initialisation, to be called after all XML parsing has completed.
      */
     public void init() {
 
@@ -70,15 +87,12 @@ public class StartItem {
         CompanyI company = compMgr.getCompany (type, name);
         if (company instanceof PrivateCompanyI) {
             primary = (Certificate) company;
-//System.out.println("private "+company.getName()+" price "+basePrice);
-//System.out.println(" - in "+primary.getPortfolio().getName());
         } else {
             primary = ipo.findCertificate((PublicCompanyI) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificateI pubcert = (PublicCertificateI) primary;
             if (!pubcert.getPortfolio().getName().equals("Unavailable"))
                 unavailable.buyCertificate(pubcert, pubcert.getPortfolio(), 0);
-//System.out.println("public "+company.getName()+" price "+basePrice);
         }
         
         // Check if there is another certificate
@@ -87,55 +101,102 @@ public class StartItem {
            CompanyI company2 = compMgr.getCompany(type2, name2);
            if (company2 instanceof PrivateCompanyI) {
                secondary = (Certificate) company2;
-//System.out.println("extra private "+company2.getName());
            } else {
                secondary = ipo.findCertificate((PublicCompanyI)company2, president2);
                // Move the certificate to the "unavailable" pool.
                PublicCertificateI pubcert2 = (PublicCertificateI) secondary;
                if (!pubcert2.getPortfolio().getName().equals("Unavailable"))
                    unavailable.buyCertificate(pubcert2, pubcert2.getPortfolio(), 0);
-//System.out.println("extra public "+company2.getName()+" "+pubcert2.getShare()+"%");
            }
         }
-
     }
     
+    /**
+     * Set the start packet row.
+     * <p>Applies to games like 1835 where start items are
+     * organised and become available in rows. 
+     * @param row
+     */
     protected void setRow (int row) {
         this.row = row;
     }
     
+    /**
+     * Set the start packet row.
+     * <p>Applies to games like 1837 where start items are
+     * organised and become available in columns. 
+     * @param row
+     */
     protected void setColumn (int column) {
         this.column = column;
     }
     
+    /**
+     * Get the row number.
+     * @see setRow()
+     * @return The row number. Default 0.
+     */
     public int getRow () {
         return row;
     }
     
+    /**
+     * Get the column number.
+     * @see setColumn()
+     * @return The column number. Default 0.
+     */
     public int getColumn () {
         return column;
     }
     
+    /**
+     * Get the primary (or only) certificate.
+     * @return The primary certificate object.
+     */
     public Certificate getPrimary () {
         return primary;
     }
     
+    /**
+     * Check if there is a secondary certificate. 
+     * @return True if there is a secondary certificate.
+     */
     public boolean hasSecondary () {
         return secondary != null;
     }
         
+    /**
+     * Get the secondary certificate.
+     * @return The secondary certificate object, or null if it does not exist.
+     */
     public Certificate getSecondary () {
         return secondary;
     }
     
+    /**
+     * Get the start item base price.
+     * @return The base price.
+     */
     public int getBasePrice() {
         return basePrice;
     }
     
+    /**
+     * Get the start item name (which is the company name of the 
+     * primary certificate).
+     * @return The start item name.
+     */
     public String getName () {
         return name;
     }
     
+    /**
+     * Register a bid.<p>
+     * This method does <b>not</b> check off the amount of money
+     * that a player has available for bidding.
+     * @param amount The bid amount.
+     * @param bidder The bidding player.
+     */
     public void setBid (int amount, Player bidder) {
         bid = amount;
         bids++;
@@ -143,25 +204,55 @@ public class StartItem {
         if (bidder != null) bidders.put (bidder.getName(), new Bid(bidder.getName(), amount));
     }
     
+    /**
+     * Get the currently highest bid amount.
+     * @return The bid amount (0 if there have been no bids yet).
+     */
     public int getBid () {
         return bid;
     }
     
+    /**
+     * Get the highest bid done so far by a particular player.
+     * @param player The name of the player.
+     * @return The bid amount for this player (default 0).
+     */
+    public int getBid (Player player) {
+    	String playerName = player.getName();
+    	if (bidders.containsKey(playerName)) {
+    		return ((Bid)bidders.get(playerName)).getAmount();
+    	} else {
+    		return 0;
+    	}
+    }
+    
+    /**
+     * Return the total number of bids done do far on this item.
+     * @return The number of bids.
+     */
     public int getBids () {
         return bids;
     }
     
+    /**
+     * Get the highest bidder so far. 
+     * @return The player object that did the highest bid.
+     */
     public Player getBidder () {
         return bidder;
     }
     
+    /**
+     * Check if any bids have bene done so far.
+     * @return True if there is any bid.
+     */
     public boolean hasBid() {
         return bidder != null;
     }
     
     /**
      * Get the minimum allowed next bid.
-     * TODO 5 should be sonfigurable.
+     * TODO 5 should be configurable.
      * @return Minimum bid
      */
     public int getMinimumBid () {
@@ -172,28 +263,42 @@ public class StartItem {
         }
     }
     
+    /**
+     * Get the highest bids per player done so far.
+     * @return A Bid array with the currently highest bids per player.
+     */
     public Bid[] getBidders() {
         return (Bid[]) bidders.entrySet().toArray(new Bid[0]);
     }
     
+    /**
+     * Check if a player has done any bids on this start item.
+     * @param playerName The name of the player.
+     * @return True if this player has done any bids.
+     */
     public boolean hasBid (String playerName) {
         return bidders.containsKey(playerName);
     }
     
+    /**
+     * Get the last Bid done by a given player. 
+     * @param playerName The name of the player.
+     * @return His latest Bid object.
+     */
     public Bid getBidForPlayer (String playerName) {
         return (Bid) bidders.get(playerName); 
     }
     
-    
-    
     /**
-     * @return Returns the sold.
+     * Check if the start item has been sold.
+     * @return True if this item has been sold.
      */
     public boolean isSold() {
         return sold;
     }
     /**
-     * @param sold The sold to set.
+     * Set the start item sold status.
+     * @param sold The new sold status (usually true).
      */
     public void setSold(boolean sold) {
         this.sold = sold;
@@ -217,20 +322,38 @@ public class StartItem {
         }
     }
     
+    /**
+     * Class Bid holds the details of a particular bid on this item:
+     * the bidder and the amount.  
+     * @author Erik Vos
+     */
     public class Bid {
         
         String bidderName;
         int amount;
         
+        /**
+         * Create a new Bid.
+         * @param playerName The bidding player.
+         * @param amount The bid amount.
+         */
         protected Bid (String playerName, int amount) {
             bidderName = playerName;
             this.amount = amount;
         }
         
+        /**
+         * Get the bidding player. 
+         * @return Player name.
+         */
         public String getBidderName () {
             return bidderName;
         }
         
+        /**
+         * Get the bid amount.
+         * @return The bid amount.
+         */
         public int getAmount () {
             return amount;
         }
