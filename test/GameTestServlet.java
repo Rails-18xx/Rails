@@ -253,7 +253,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 		out.append(
 			".stockmarket2 { background-color: orange; border: 1px solid black; text-align:center; vertical-align:top;}\n");
 		out.append(
-			".stockmarket3 { background-color: brown; border: 1px solid black; text-align:center; vertical-align:top;}\n");
+			".stockmarket3 { color:white; background-color: brown; border: 1px solid black; text-align:center; vertical-align:top;}\n");
 		out.append(
 			".stockmarket_start { background-color: white; border: 2px solid red; text-align:center; vertical-align:top;}\n");
 		out.append(".bordertable td,th { background-color: white; border: 1px solid black; text-align:center; vertical-align:top;}\n");
@@ -270,12 +270,13 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					+ servletPrefix
 					+ servletName + "\">\n");
 			out.append("Select a game: ");
+			String[] games = Game.getGames(); 
 			out.append("<select name=\"Game\" onChange=\"javascript:this.form.submit()\">\n");
-			out.append("<option value=\"\">");
-			out.append("<option value=\"1830\">1830\n");
-			out.append("<option value=\"1856\">1856\n");
-			out.append("<option value=\"1870\">1870\n");
-			out.append("<option value=\"18AL\">18AL\n");
+			out.append("<option value=\"\">-- select a game --");
+			for (i=0; i<games.length; i++) {
+				out.append("<option value=\"").append(games[i])
+				   .append("\">").append(games[i]).append("\n");
+			}
 			out.append("</select>\n");
 
 			out.append("</form>\n");
@@ -453,7 +454,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 				List companies = Game.getCompanyManager().getAllPublicCompanies();
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
-					if (stockRound.isCompanyStartable(company)) {
+					if (stockRound.isCompanyStartable(company.getName())) {
 					    out.append("<option value=\"").append(company.getName())
 					    	.append("\">").append(company.getName()).append("\n");
 					}
@@ -473,7 +474,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					.append("<td><select name=BuyIPOCompany>\n");
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
-					if (stockRound.isCompanyBuyable(company, ipo)) {
+					if (stockRound.isCompanyBuyable(company.getName(), ipo)) {
 					    out.append("<option value=\"").append(company.getName())
 					    	.append("\">").append(company.getName()).append("\n");
 					}
@@ -484,7 +485,7 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					.append("<td><select name=BuyPoolCompany>\n");
 				for (int j=0; j<companies.size(); j++) {
 					company = (PublicCompanyI) companies.get(j);
-					if (stockRound.isCompanyBuyable(company, pool)) {
+					if (stockRound.isCompanyBuyable(company.getName(), pool)) {
 					    out.append("<option value=\"").append(company.getName())
 					    	.append("\">").append(company.getName()).append("\n");
 					}
@@ -654,8 +655,13 @@ System.out.println("First round is "+currentRound.getClass().getName());
 				Player player = players[j];
 				out.append("<tr><td>" + player.getName());
 				if (player == GameManager.getPriorityPlayer()) out.append(" *P*");
-				out.append("</td><td>" + player.getFormattedCash())
-					.append("</td><td>");
+				out.append("</td><td>" + player.getFormattedCash());
+				if (currentRound instanceof StartRoundI 
+						&& player.getCash() > player.getUnblockedCash()) {
+					out.append(" (").append(Bank.format(player.getUnblockedCash()))
+					.append(")");
+				}
+				out.append("</td><td>");
 
 				// Private companies
 				it = player.getPortfolio().getPrivateCompanies().iterator();
