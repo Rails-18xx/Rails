@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.3 2005/05/15 20:47:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.4 2005/05/19 19:55:18 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -8,23 +8,31 @@ package game;
 import java.util.*;
 
 /**
+ * Implements an 1830-style initial auction.
  * @author Erik Vos
  */
 public class StartRound_1830 extends StartRound {
     
+	/*----- Start Round states -----*/
+	/** The current player must buy, bid or pass */
     public static final int BID_OR_BUY = 0;
+    /** The current player must set a par price */
     public static final int SET_PRICE = 1;
     
+    /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;   
     
     /**
-     * Will be created dynamically.
-     *
+     * Constructor, only to be used in dynamic instantiation.
      */
     public StartRound_1830 () {
         super();
     }
     
+    /**
+     * Start the 1830-style start round.
+     * @param startPacket The startpacket to be sold in this start round.
+     */
     public void start (StartPacket startPacket) {
         
         this.startPacket = startPacket;
@@ -41,6 +49,10 @@ public class StartRound_1830 extends StartRound {
         Log.write (getCurrentPlayer().getName() + " has the Priority Deal");
     }
     
+    /**
+     * Return the start round state (i.e. the next step to be executed).
+     * @return A number prescribing the next player action. 
+     */
     public int nextStep () {
         if (companyNeedingPrice != null) {
             return SET_PRICE;
@@ -49,6 +61,12 @@ public class StartRound_1830 extends StartRound {
         }
     }
 
+    /**
+     * Get a list of items that may be bought immediately.<p>
+     * In an 1830-style auction this method will always return
+     * only one item: the topmost unsold item.
+     * @return An array of start items that can be bought.
+     */
     public StartItem[] getBuyableItems () {
         if (startPacket.getItems().size() > 0) {
             return new StartItem[] {startPacket.getFirstUnsoldItem()};
@@ -57,6 +75,12 @@ public class StartRound_1830 extends StartRound {
         }
     }
     
+    /**
+     * Get a list of items that mat be bid upon.<p>
+     * In an 1830-style auction this method will return an array
+     * containing all unsold items except the topmost one. 
+     * @return An array of start items that may be bid upon.
+     */
     public StartItem[] getBiddableItems () {
         List bidItems = new ArrayList();
         Iterator it = startPacket.getItems().iterator();
@@ -69,16 +93,34 @@ public class StartRound_1830 extends StartRound {
         return (StartItem[]) bidItems.toArray(new StartItem[0]);
     }
     
+    /**
+     * Get the currentPlayer.
+     * @return The current Player object.
+     * @see GameManager.getCurrentPlayer().
+     */
     public Player getCurrentPlayer() {
         return GameManager.getCurrentPlayer();
     }
     
+    /**
+     * Get the company for which a par price must be set in 
+     * the SET_PRICE state. In other states, null is returned.
+     * @return The PublicCompany object for which a par price is needed.
+     */
     public PublicCompanyI getCompanyNeedingPrice () {
         return companyNeedingPrice;
     }
     
     /*----- Action methods -----*/
     
+    /**
+     * The current player bids 5 more than the previous bid
+     * on a given start item.<p>
+     * A separate method is provided for this action because 5
+     * is the usual amount with which bids are raised.
+     * @param playerName The name of the current player (for checking purposes).
+     * @param itemName The name of the start item on which the bid is placed.
+     */
     public boolean bid5 (String playerName, String itemName) {
         
         // Only partial validation here
@@ -90,11 +132,18 @@ public class StartRound_1830 extends StartRound {
 
     }
     
+    /**
+     * The current player bids on a given start item. 
+     * @param playerName The name of the current player (for checking purposes).
+     * @param itemName The name of the start item on which the bid is placed.
+     * @param amount The bid amount.
+     */
     public boolean bid (String playerName, String itemName, int amount) {
         
         StartItem item = null;
         String errMsg = null;
         Player player = GameManager.getCurrentPlayer();
+        int previousBid = 0;
         
         while (true) {
             
@@ -119,7 +168,13 @@ public class StartRound_1830 extends StartRound {
                 errMsg = "Bid too low, minimum is "+(item.getMinimumBid());
                 break;
             }
-            /** TODO Player must have enough uncommitted money. */
+            previousBid = item.getBid(player);
+            int available = player.getUnblockedCash() + previousBid;
+            if (amount > available) {
+            	errMsg = "Bid too high, player has "+Bank.format(available)
+					+" free for bidding";
+            	break;
+            }
             
             break;
         }
@@ -129,8 +184,11 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
         
-        Log.write (playerName+" bids "+Bank.format(amount)+" on "+itemName);
         item.setBid (amount, player);
+        if (previousBid > 0) player.unblockCash(previousBid);
+        player.blockCash(amount);
+        Log.write (playerName+" bids "+Bank.format(amount)+" on "+itemName
+        		+". Remains "+Bank.format(player.getUnblockedCash())+"");
         GameManager.setNextPlayer();
         numPasses = 0;
         
@@ -188,6 +246,12 @@ public class StartRound_1830 extends StartRound {
             
     }
     
+    /**
+     * This method executes the start item buy action.
+     * @param player Buying player.
+     * @param item Start item being bought.
+     * @param price Buy price.
+     */
     private void assignItem (Player player, StartItem item, int price) {
         
         //Log.write (player.getName()+" buys "+item.getName()+" for "+Bank.format(price));
@@ -246,6 +310,12 @@ public class StartRound_1830 extends StartRound {
         }
     }
     
+    /**
+     * Set a par price.
+     * @param playerName The name of the par price setting player.
+     * @param companyName The name of teh company for which a par price is set.
+     * @param parPrice The par price.
+     */
     public boolean setPrice (String playerName, String companyName, int parPrice) {
         
         String errMsg = null;
@@ -300,6 +370,10 @@ public class StartRound_1830 extends StartRound {
         return true;
     }
     
+    /**
+     * Process a player's pass.
+     * @param playerName The name of the current player (for checking purposes).
+     */
     public boolean pass (String playerName) {
 
         String errMsg = null;
