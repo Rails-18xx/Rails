@@ -6,6 +6,7 @@
       <Players number="4" cash="375" certLimit="22"/>
       <Players number="5" cash="300" certLimit="18"/>
       <Players number="6" cash="250" certLimit="15"/>
+      <PoolLimit percentage="50"/>
     </Component>
     <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
     <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
