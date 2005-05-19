@@ -7,6 +7,7 @@
   <CompanyType name="Public" class="game.PublicCompany">
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <IPOPaysOut/>
+    <Float percentage="60"/>
     <CanSplitDividend/>
     <ShareUnit percentage="10"/>
     <Certificate type="President" shares="2"/>
@@ -24,7 +25,7 @@
   <Company name="ATSF" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
   <Company name="SP"   type="Public" fgColour="FF8000" bgColour="000000"/>
   <Company name="GMO"  type="Public" fgColour="FFFFFF" bgColour="ff0040"/>
-  <Company name="SLSF" type="Public" fgColour="FFFFFF" bgColour="d04000"/>
+  <Company name="SLSF" type="Public" fgColour="FFFFFF" bgColour="d04000" floatPerc="20"/>
   <Company name="TP"   type="Public" fgColour="FFFFFF" bgColour="000000"/>
   <Company name="FW"   type="Public" fgColour="FF0000" bgColour="000000"/>
   <Company name="SSW"  type="Public" fgColour="FFFFFF" bgColour="6000ff"/>
