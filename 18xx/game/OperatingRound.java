@@ -481,7 +481,7 @@ public class OperatingRound implements Round
         
         if (++operatingCompanyIndex >= operatingCompanyArray.length) {
             // OR done. Inform GameManager.
-            Log.write("End of Operating Round" + getCompositeORNumber());
+            Log.write("End of Operating Round " + getCompositeORNumber());
             GameManager.getInstance().nextRound(this);
             return true;
         }

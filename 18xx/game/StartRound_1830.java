@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.4 2005/05/19 19:55:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.5 2005/05/19 22:19:21 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -355,7 +355,7 @@ public class StartRound_1830 extends StartRound {
         // Check if the company has floated
         /* Shortcut: float level and capitalisation hardcoded */
 		if (!companyNeedingPrice.hasFloated() 
-		        && Bank.getIpo().countShares(companyNeedingPrice) 
+		        && Bank.getIpo().ownsShare(companyNeedingPrice) 
 		        	<= (100 - companyNeedingPrice.getFloatPercentage())) {
 			// Float company (limit and capitalisation to be made configurable)
 			companyNeedingPrice.setFloated(10*parPrice);
