@@ -121,8 +121,6 @@ public class OperatingRound implements Round
         }
      }
 
-    public void resume() {}
-    
     /*----- General methods -----*/
     
     /**
@@ -161,6 +159,13 @@ public class OperatingRound implements Round
    
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
     
+    /**
+     * A (perhaps temporary) method via which the cost of track laying
+     * can be accounted for.
+     * @param companyName The name of the company that lays the track.
+     * @param amountSpent The cost of laying the track, which is
+     * subtracted from the company treasury.
+     */
     public boolean layTrack (String companyName, int amountSpent) {
         
         String errMsg = null;
@@ -210,6 +215,14 @@ public class OperatingRound implements Round
         return true;
      }
     
+    /**
+     * A (perhaps temporary) method via which the cost of station token
+     * laying can be accounted for.
+     * @param companyName The name of the company that lays the token.
+     * @param amountSpent The cost of laying the token, which is
+     * subtracted from the company treasury.
+     * @return
+     */
     public boolean layToken (String companyName, int amountSpent) {
         
         String errMsg = null;
@@ -260,10 +273,12 @@ public class OperatingRound implements Round
      }
     
     /**
-     * Save a given revenue.
-     * This is a temporarily needed method, needed as long as the program 
-     * cannot yet calculate revenues.
+     * Set a given revenue.
+     * This may be a temporary method. We will have to enter
+     * revenues manually as long as the program 
+     * cannot yet do the calculations.
      * @param amount The revenue.
+     * @return False if an error is found.
      */
     public boolean setRevenue (String companyName, int amount) {
         
@@ -316,6 +331,12 @@ public class OperatingRound implements Round
         return true;
     }
     
+    /**
+     * A previously entered revenue is fully paid out as dividend.
+     * <p>Note: <b>setRevenue()</b> must have been called before this method.
+     * @param companyName Name of the company paying dividend.
+     * @return False if an error is found.
+     */
     public boolean fullPayout (String companyName) {
  
         String errMsg = null;
@@ -350,10 +371,14 @@ public class OperatingRound implements Round
     }
     
     /**
-     * Split the revenue
-     * @param company The company paying out.
-     * @return false in case of an error.
-     * TODO Check if split is allowed
+     * A previously entered revenue is split, i.e. half of it
+     * is paid out as dividend, the other half is retained.
+     * <p>Note: <b>setRevenue()</b> must have been called before this method.
+     * @param companyName Name of the company splitting the dividend.
+     * @return False if an error is found.
+     * TODO Check if split is allowed.
+     * TODO The actual payout.
+     * TODO Rounding up or down an odd revenue per share.
      */
     public boolean splitPayout (String companyName) {
         
@@ -393,11 +418,12 @@ public class OperatingRound implements Round
    }
 
     /**
-     * Withhold the revenue
-     * @param company The company paying out.
-     * @return false in case of an error.
+     * A previously entered revenue is fully withheld.
+     * <p>Note: <b>setRevenue()</b> must have been called before this method.
+     * @param companyName Name of the company withholding the dividend.
+     * @return False if an error is found.
      */
-    public boolean withholdPayout (String companyName) {
+     public boolean withholdPayout (String companyName) {
         
        String errMsg = null;
        
@@ -430,15 +456,19 @@ public class OperatingRound implements Round
        return true;
     }
     
+    /**
+     * Internal method: change the OR state to the next step.
+     * If the currently Operating Company is done, notify this.  
+     * @param company The current company.
+     */
     protected void nextStep(PublicCompanyI company) {
         if (++step >= steps.length) done(company.getName());
     }
     
     /**
-     * Company is done operating.
-     * @param company
-     * @return
-     * TODO: inform GameManager about end of OR.
+     * The current Company is done operating.
+     * @param company Name of the company that finished operating.
+     * @return False if an error is found.
      */
     public boolean done (String companyName) {
 
@@ -462,7 +492,14 @@ public class OperatingRound implements Round
         return true;
     }
 
-    public boolean buyTrain (String companyName, int amountSpent) {
+    /**
+     * A (perhaps temporary) method via which the cost of train buying
+     * can be accounted for.
+     * @param companyName The name of the company that buys a train.
+     * @param amountSpent The cost the train, which is
+     * subtracted from the company treasury.
+     */
+     public boolean buyTrain (String companyName, int amountSpent) {
         
         String errMsg = null;
         
@@ -511,11 +548,11 @@ public class OperatingRound implements Round
      }
     
     /**
-     * Let a company buy a private company.
-     * @param company
-     * @param privateName
-     * @param price
-     * @return
+     * Let a public company buy a private company.
+     * @param company Name of the company buying a private company.
+     * @param privateName Name of teh private company.
+     * @param price Price to be paid.
+     * @return False if an error is found.
      * TODO: Is private buying allowed at all?
      * TODO: Is the game phase correct?
      */
@@ -585,26 +622,41 @@ public class OperatingRound implements Round
     
 
     /**
-     * @return Returns the currentPlayer.
+     * @return The player that has the turn (in this case:
+     * the President of the currently operating company).
      */
     public Player getCurrentPlayer() {
         return operatingCompany.getPresident();
     }
     /**
-     * @return Returns the currentPlayer.
+     * @return The index of the player that has the turn.
      */
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
     
+    /**
+     * Get the public company that has the turn to operate.
+     * @return The currently operating company object.
+     */
     public PublicCompanyI getOperatingCompany () {
         return operatingCompany;
     }
     
+    /**
+     * Get the current operating round step (i.e. the next action).
+     * @return The number that defines the next action.
+     */
     public int getStep () {
         return step;
     }
     
+    /**
+     * Get a list of private companies that are available for buying,
+     * i.e. which are in the hands of players.
+     * @return An array of the buyable privates.
+     * TODO Check if privates can be bought at all. 
+     */
     public PrivateCompanyI[] getBuyablePrivates () {
         ArrayList buyablePrivates = new ArrayList();
         PrivateCompanyI privCo;
@@ -616,6 +668,10 @@ public class OperatingRound implements Round
         return (PrivateCompanyI[]) buyablePrivates.toArray(new PrivateCompanyI[0]);
     }
     
+    /**
+     * Chech if revenue may be split.
+     * @return True if revenue can be split.
+     */
     public boolean isSplitAllowed() {
         return (splitRule != SPLIT_NOT_ALLOWED);
     }

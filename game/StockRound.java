@@ -26,7 +26,6 @@ import java.util.*;
  * At the end of a round, the current instance should be discarded.
  * <p>Permanent memory is formed by static attributes (like who has the Priority Deal). 
  * @author Erik Vos
- * TODO Implement end of the stock round if all player pass.
  */
 public class StockRound implements Round
 {
@@ -116,7 +115,6 @@ public class StockRound implements Round
      * @param price The start (par) price (ignored if the price is fixed).
      * @param shares The number of shares to buy (can be more than 1 in e.g. 1841).
      * @return True if the company could be started. False indicates an error.
-     * TODO Error messages.
      */
     public boolean startCompany (String playerName, String companyName, int price, int shares) {
         
@@ -227,9 +225,8 @@ public class StockRound implements Round
      * @param company The company of which to buy shares.
      * @param shares The number of shares to buy.
      * @return True if the company could be started. False indicates an error.
-     * TODO FLoat level is hardcoded.
      * TODO Does not yet cater for double non-president shares as in 1835. 
-     * TODO Error messages.
+     * @return False if an error is found.
      */
     public boolean buyShare (String playerName, Portfolio from, String companyName, int shares) {
 
@@ -345,19 +342,26 @@ public class StockRound implements Round
         return true;
     }
     
+    /**
+     * Sell one share (i.e. one share unit, normally 10%).
+     * @see sellShare (String playerName, String companyName)
+     * @param playerName Name of the selling player.
+     * @param companyName Name of the company of which one share is sold.
+     * @return False if an error is found.
+     */
     public boolean sellShare (String playerName, String companyName) {
         return sellShares (playerName, companyName, 1);
         
     }
     
     /**
-     * Sell one or more shares.
-     * @param player The selling currentPlayer.
-     * @param company The company of which shares to sell.
+     * Sell one or more shares (one or multiple share units, normally 10% each).
+     * @param player Name of the selling player.
+     * @param company Name of the company of which shares are sold.
      * @param number The number of shares to sell.
      * TODO Does not yet cater for double shares (incl. president).
      * TODO Bank pool limit to be made configurable.
-     * @return
+     * @return False if an error is found.
      */
     public boolean sellShares (String playerName, String companyName, int number) {
         
@@ -441,9 +445,8 @@ public class StockRound implements Round
     
     /**
      * The current Player passes or is done.
-     * @param player 
-     * @return
-     * TODO: Inform GameManager about round change.
+     * @param player Name of the passing player.
+     * @return False if an error is found.
      */
     public boolean done (String playerName) {
         
@@ -491,7 +494,7 @@ public class StockRound implements Round
     }
     
     /**
-     * Internal method: pass the turn to another currentPlayer.
+     * Internal method: pass the turn to the next player.
      */
     protected void setNextPlayer() {
         
@@ -514,32 +517,32 @@ public class StockRound implements Round
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
     
     /**
-     * @return Returns the prioritycurrentPlayer.
+     * @return The player that has the Priority Deal.
      */
     public static Player getPriorityPlayer() {
         return GameManager.priorityPlayer;
     }
     /**
-     * @return Returns the prioritycurrentPlayer.
+     * @return The index of the player that has the Priority Deal.
      */
     public static int getPriorityPlayerIndex() {
         return GameManager.priorityPlayerIndex;
     }
    /**
-     * @return Returns the currentPlayer.
+     * @return The player that has the turn.
      */
     public Player getCurrentPlayer() {
         return GameManager.currentPlayer;
     }
     /**
-     * @return Returns the currentPlayer.
+     * @return The index of the player that has the turn.
      */
     public int getCurrentPlayerIndex() {
         return GameManager.currentPlayerIndex;
     }
     
     /**
-     * Check if a public company can be started by the current currentPlayer.
+     * Check if a public company can be started by the player that has the turn.
      * @param companyName Name of the company to be checked. 
      * @return True of false.
      * TODO Check for unstarted companies that may not yet be started.
@@ -548,18 +551,6 @@ public class StockRound implements Round
     public boolean isCompanyStartable(String companyName) {
         
         return !companyMgr.getPublicCompany(companyName).hasStarted();
-    }
-    
-    /**
-     * Check if a public company can be started by the current currentPlayer.
-     * @param company The company to be checked. 
-     * @return True of false.
-     * TODO Check for unstarted companies that may not yet be started.
-     * TODO Check if current player has enough money to start at the lowest price.
-     */
-    public boolean isCompanyStartable(PublicCompanyI company) {
-        
-        return !company.hasStarted();
     }
     
     /**
@@ -573,21 +564,6 @@ public class StockRound implements Round
     public boolean isCompanyBuyable (String companyName, Portfolio source) {
 
         PublicCompanyI company = companyMgr.getPublicCompany(companyName);
-        if (!company.hasStarted()) return false;
-        if (source.findCertificate(company, false) == null) return false;
-        return true;
-    }
-    
-    /**
-     * Check if a company can be bought by the current player from a given Portfolio.
-     * @param company The company to be checked. 
-     * @param source The portfolio that is checked for presence of company shares. 
-     * TODO Buying from company treasuries if just IPO is specified.
-     * TODO Add checks that the current player may buy and has the money.
-     * TODO Presidencies in the Pool (rare!) 
-     */
-    public boolean isCompanyBuyable (PublicCompanyI company, Portfolio source) {
-
         if (!company.hasStarted()) return false;
         if (source.findCertificate(company, false) == null) return false;
         return true;
@@ -608,9 +584,9 @@ public class StockRound implements Round
     }
     
     /**
-     * Check if the current player can sell shares of a company.
+     * Check if the current player can sell shares of a given company.
      * @param company The company to be checked
-     * @return True if the company can be sold.
+     * @return True if shares of the company can be sold.
      * TODO Make Bank Pool share limit configurable.
      */
     public boolean isCompanySellable (PublicCompanyI company) {
@@ -622,7 +598,7 @@ public class StockRound implements Round
     
     /**
      * Can the current player do any selling?
-     * @return
+     * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAtAll () {
         if (sequenceRule == SELL_BUY_OR_BUY_SELL && hasBoughtThisTurn 
@@ -633,7 +609,7 @@ public class StockRound implements Round
     
     /**
      * Can the current player do any buying?
-     * @return
+     * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAtAll () {
         return !hasBoughtThisTurn;
