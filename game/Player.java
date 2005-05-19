@@ -141,7 +141,7 @@ public class Player implements CashHolder
     * @return True if it is allowed.
     */
    public boolean mayBuyCompanyShare (PublicCompanyI company, int number) {
-       if (portfolio.countShares(company) + number*company.getShareUnit() > 60) return false;
+       if (portfolio.ownsShare(company) + number*company.getShareUnit() > 60) return false;
        /** TODO The '60' above must of course be made configurable! */ 
        return true;
    }

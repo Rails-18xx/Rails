@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.13 2005/05/15 20:47:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.14 2005/05/19 22:19:21 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -201,13 +201,15 @@ public class Portfolio
       }
       return null;
    }
-
+   
    /** Find any certificate */
    public PublicCertificateI findCertificate(PublicCompanyI company, boolean president)
    {
       String companyName = company.getName();
-      if (!certPerCompany.containsKey(companyName))
+      if (!certPerCompany.containsKey(companyName)) {
+System.out.println("*** "+name+" does not have "+company.getName());
          return null;
+      }
       Iterator it = ((List) certPerCompany.get(companyName)).iterator();
       PublicCertificateI cert;
       while (it.hasNext())
@@ -274,7 +276,7 @@ public class Portfolio
     * @param company
     * @return
     */
-   public int countShares(PublicCompanyI company)
+   public int ownsShare(PublicCompanyI company)
    {
       int share = 0;
       String name = company.getName();
@@ -284,6 +286,27 @@ public class Portfolio
          while (it.hasNext())
          {
             share += ((PublicCertificateI) it.next()).getShare();
+         }
+      }
+      return share;
+   }
+
+   /**
+    * Returns percentage that a portfolio contains of one company.
+    * 
+    * @param company
+    * @return
+    */
+   public int ownsShares(PublicCompanyI company)
+   {
+      int share = 0;
+      String name = company.getName();
+      if (certPerCompany.containsKey(name))
+      {
+         Iterator it = ((List) certPerCompany.get(name)).iterator();
+         while (it.hasNext())
+         {
+            share += ((PublicCertificateI) it.next()).getShares();
          }
       }
       return share;

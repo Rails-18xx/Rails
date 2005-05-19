@@ -272,7 +272,7 @@ public class StockRound implements Round
 	        }
 	        
 	        // Check if that many shares are available
-	        if (shares > from.countShares(company)) { 
+	        if (shares > from.ownsShare(company)) { 
 	            errMsg =  companyName+" share(s) not available";
 	            break;
 	        }
@@ -333,7 +333,7 @@ public class StockRound implements Round
         // Check if the company has floated
         /* Shortcut: float level and capitalisation hardcoded */
 		if (from == ipo && !company.hasFloated() 
-		        && from.countShares(company) <= (100 - company.getFloatPercentage())) {
+		        && from.ownsShare(company) <= (100 - company.getFloatPercentage())) {
 			// Float company (limit and capitalisation to be made configurable)
 			company.setFloated(10*price);
 			Log.write (companyName+ " floats and receives "+Bank.format(company.getCash()));
@@ -360,7 +360,6 @@ public class StockRound implements Round
      * @param company Name of the company of which shares are sold.
      * @param number The number of shares to sell.
      * TODO Does not yet cater for double shares (incl. president).
-     * TODO Bank pool limit to be made configurable.
      * @return False if an error is found.
      */
     public boolean sellShares (String playerName, String companyName, int number) {
@@ -396,13 +395,13 @@ public class StockRound implements Round
 	        }
 	        
 	        // The player must have the share(s)
-	        if (portfolio.countShares(company) < number) {
+	        if (portfolio.ownsShare(company) < number) {
 	            errMsg = "Does not have the share(s)";
 	            break;
 	        }
 	        
-	        // The pool may not get over its limit (to be made configurable).
-	        if (pool.countShares(company) + number*company.getShareUnit() > 50) {
+	        // The pool may not get over its limit.
+	        if (pool.ownsShare(company) + number*company.getShareUnit() > Bank.getPoolShareLimit()) {
 	            errMsg = "Pool would get over its share holding limit";
 	            break;
 	        }
@@ -578,21 +577,8 @@ public class StockRound implements Round
     public boolean isCompanySellable (String companyName) {
  
         PublicCompanyI company = companyMgr.getPublicCompany(companyName);
-        if (currentPlayer.getPortfolio().findCertificate(company, false) == null) return false;
-        if (pool.countShares(company)*company.getShareUnit() >= 50) return false;
-        return true;
-    }
-    
-    /**
-     * Check if the current player can sell shares of a given company.
-     * @param company The company to be checked
-     * @return True if shares of the company can be sold.
-     * TODO Make Bank Pool share limit configurable.
-     */
-    public boolean isCompanySellable (PublicCompanyI company) {
- 
-        if (currentPlayer.getPortfolio().findCertificate(company, false) == null) return false;
-        if (pool.countShares(company)*company.getShareUnit() >= 50) return false;
+        if (currentPlayer.getPortfolio().ownsShare(company) == 0) return false;
+        if (pool.ownsShare(company) >= Bank.getPoolShareLimit()) return false;
         return true;
     }
     
