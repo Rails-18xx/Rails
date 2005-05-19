@@ -20,6 +20,8 @@ package game;
 
 import org.w3c.dom.*;
 import util.XmlUtils;
+
+import java.io.File;
 import java.util.*;
 
 public class Game
@@ -45,6 +47,10 @@ public class Game
    protected static ArrayList companyList;
    protected static String name;
    
+   public static String[] getGames() {
+   		File dataDir = new File("./data/");
+   		return dataDir.list();
+   }
    
    public static void NewGame(String gameName, ArrayList playerNames)
    {      
