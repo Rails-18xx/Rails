@@ -579,6 +579,11 @@ public class OperatingRound implements Round
                 errMsg = "Private "+privateName+" does not exist";
                 break;
             }
+            // Is private still open?
+            if (privCo.isClosed()) {
+                errMsg = "Private "+privateName+" is already closed";
+                break;
+            }
             // Is private owned by a player?
             owner = privCo.getPortfolio().getOwner();
             if (!(owner instanceof Player)) {
@@ -616,6 +621,49 @@ public class OperatingRound implements Round
         
         return true;
 
+    }
+    
+    /**
+     * Close a private. For now, this is an action to be initiated separately
+     * from the UI, but it will soon be coupled to the actual actions that 
+     * initiate private closing. By then, this method will probably no longer
+     * be accessible from the UI, which why it is deprecated from its creation.
+     * @param privateName name of the private to be closed.
+     * @return False if an error occurs.
+     * @deprecated Will probably move elsewhere and become not accessible to the UI.
+     */
+    public boolean closePrivate (String privateName) {
+        String errMsg = null;
+        PrivateCompanyI privCo = null;
+        
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+            
+            // Checks
+            // Does private exist?
+            if ((privCo = Game.getCompanyManager().getPrivateCompany(privateName)) == null) {
+                errMsg = "Private "+privateName+" does not exist";
+                break;
+            }
+            // Is private still open?
+            if (privCo.isClosed()) {
+                errMsg = "Private "+privateName+" is already closed";
+                break;
+            }
+            
+            break;
+        }
+        if (errMsg != null) {
+            Log.error ("Cannot close private "+privateName+": "+errMsg);
+            return false;
+        }
+        
+        privCo.setClosed();
+        Log.write("Private "+privateName+" is closed");
+        
+        return true;
+
+        
     }
 
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/

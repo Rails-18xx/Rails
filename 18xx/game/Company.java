@@ -63,8 +63,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 	/**
 	 * @param b
 	 */
-	public void setClosed(boolean b) {
-		closed = b;
+	public void setClosed() {
+		closed = true;
 	}
 
 	/**

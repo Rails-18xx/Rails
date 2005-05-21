@@ -64,7 +64,7 @@ public interface CompanyI {
 	/**
 	 * @param b
 	 */
-	void setClosed(boolean b);
+	void setClosed();
 
 	/**
 	 * @return

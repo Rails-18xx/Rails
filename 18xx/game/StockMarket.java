@@ -317,7 +317,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
       }
       if (newsquare != null && newsquare.closesCompany())
       {
-         company.setClosed(true);
+         company.setClosed();
          oldsquare.removeToken(company);
          Log.write(company.getName() + " closes at " + newsquare.getName());
       }
@@ -359,7 +359,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
       }
       if (newsquare != null && newsquare.closesCompany())
       {
-         company.setClosed(true);
+         company.setClosed();
          oldsquare.removeToken(company);
          Log.write(company.getName() + " closes at " + newsquare.getName());
       }

@@ -22,8 +22,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	protected String auctionType;
 	protected int closingPhase;
 	
-	protected Portfolio holder;
-	
 	protected boolean closed = false;
 
 	public PrivateCompany() {
@@ -109,14 +107,16 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	 * @return
 	 */
 	public Portfolio getPortfolio() {
-		return holder;
+		return portfolio;
 	}
 
 	/**
 	 * @param b
 	 */
-	public void setClosed(boolean b) {
-		closed = b;
+	public void setClosed () {
+		closed = true;
+	    portfolio.transferCertificate(this, Bank.getUnavailable());
+	    Log.write ("Private "+name+" closes");
 	}
 
 	/**
@@ -130,12 +130,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	 * @param portfolio
 	 */
 	public void setHolder(Portfolio portfolio) {
-		holder = portfolio;
+		this.portfolio = portfolio;
 	}
 
 	public void payOut () {
-		Log.write(holder.getOwner().getName()+" receives "+revenue+" for "+name);
-		Bank.transferCash(null, holder.getOwner(), revenue);
+		Log.write(portfolio.getOwner().getName()+" receives "+revenue+" for "+name);
+		Bank.transferCash(null, portfolio.getOwner(), revenue);
 	}
 	
 	public String toString()

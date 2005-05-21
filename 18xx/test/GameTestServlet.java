@@ -228,6 +228,9 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					String privName = request.getParameter("Private");
 					price = Integer.parseInt(request.getParameter("Price"));
 					operatingRound.buyPrivate(compName, privName, price);
+				} else if (hasValue (request.getParameter("ClosePrivate"))) {
+					String privName = request.getParameter("Private");
+					operatingRound.closePrivate(privName);
 				}
 		    }
 		}
@@ -563,7 +566,8 @@ System.out.println("First round is "+currentRound.getClass().getName());
 					}
 				}
 				out.append("</select></td><td> for <input type=text size=6 name=Price>")
-				.append(" <input type=submit name=BuyPrivate value=\"Buy\"></td></tr>\n");
+				.append(" <input type=submit name=BuyPrivate value=\"Buy\">")
+				.append(" <input type=submit name=ClosePrivate value=\"Close\"></td></tr>\n");
 
 				out.append ("<tr><td align=right>");
 				if (step >= OperatingRound.STEP_BUY_TRAIN) {
