@@ -583,7 +583,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
       if(player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit())))
       {
          company.setParPrice(startSpace);
-         company.setClosed(false);
+         //company.setClosed(false);
          int price = startSpace.getPrice() * (cert.getShare() / company.getShareUnit());
          player.buyShare(cert, price);
          

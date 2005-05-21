@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.15 2005/05/21 13:37:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.16 2005/05/21 14:15:21 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -112,9 +112,14 @@ public class Portfolio
       Bank.transferCash(Bank.getInstance(), from.owner, price);
    }
    
-   public void transferCertificate (PublicCertificateI certificate, Portfolio to) {
-       this.removeCertificate(certificate);
-       to.addCertificate(certificate);
+   public void transferCertificate (Certificate certificate, Portfolio to) {
+       if (certificate instanceof PublicCertificateI) {
+	       this.removeCertificate((PublicCertificateI)certificate);
+	       to.addCertificate((PublicCertificateI)certificate);
+       } else if (certificate instanceof PrivateCompanyI) {
+           this.removePrivate((PrivateCompanyI)certificate);
+           to.addPrivate((PrivateCompanyI)certificate);
+       }
    }
 
    public void addPrivate(PrivateCompanyI privateCompany)
