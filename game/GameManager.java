@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.3 2005/05/15 20:47:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.4 2005/05/21 13:37:55 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -204,6 +204,15 @@ public class GameManager {
      */
     public static Player[] getPlayers() {
         return players;
+    }
+    
+    /**
+     * Return a player by its index in the list, modulo the number of players.
+     * @param index The player index.
+     * @return A player object.
+     */
+    public static Player getPlayer (int index) {
+        return players[index % players.length];
     }
     /**
      * @return Returns the priorityPlayer.
