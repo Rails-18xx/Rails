@@ -576,11 +576,12 @@ System.out.println("First round is "+currentRound.getClass().getName());
 			out.append ("</td></tr><tr><td valign=\"top\" class=\"bigtable\">\n<h3>Log</h3>\n");
 			String errMsg = Log.getErrorBuffer();
 			if (hasValue(errMsg)) {
-			    errMsg.replaceAll(":", ":<br>&nbsp;&nbsp;");
-				out.append("<p><font color=red><b>").append(errMsg).append("</b></font>");
+				out.append("<p><font color=red><b>")
+					.append(errMsg.replaceAll(":", ":<br>&nbsp;&nbsp;"))
+					.append("</b></font>");
 			}
 		
-			out.append ("<p>"+Log.getMessageBuffer().replaceAll("\n", "<br>"));
+			out.append ("<p>").append(Log.getMessageBuffer().replaceAll("\n", "<br>"));
 
 
 			// Right upper part 3: bank

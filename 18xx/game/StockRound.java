@@ -33,11 +33,12 @@ public class StockRound implements Round
     protected static int numberOfPlayers;
     protected Player currentPlayer;
 
-    protected boolean hasBoughtThisTurn = false;
+    protected PublicCompanyI companyBoughtThisTurn = null;
     protected boolean hasSoldThisTurnBeforeBuying = false;
     protected boolean hasPassed = true; // Is set false on any player action
     protected int numPasses = 0;
-    protected StartRoundI startRound = null;
+    
+    protected Map sellPrices = new HashMap();
     
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
@@ -137,7 +138,7 @@ public class StockRound implements Round
 	        }
 	            
 	        // The player may not have bought this turn.
-	        if (hasBoughtThisTurn) { 
+	        if (companyBoughtThisTurn != null) { 
 	            errMsg = "Already bought this turn";
 	            break;
 	        }
@@ -211,7 +212,7 @@ public class StockRound implements Round
                 + shares+" share(s) ("+cert.getShare() + "%) for " 
                 + Bank.format(shares*price)  + ".");
        
-        hasBoughtThisTurn = true;
+        companyBoughtThisTurn = company;
         hasPassed = false;
         setPriority();
         
@@ -219,17 +220,31 @@ public class StockRound implements Round
     }
     
     /**
-     * Buying one or more shares (more is sometimes possible)
+     * Buy one or more single-share certificates (more is sometimes possible)
+     * @param player The player buying shares.
+     * @param portfolio The portfolio from which to buy shares. 
+     * @param company The company of which to buy shares.
+     * @param shares The number of shares to buy.
+     * @return True if the certificates bould be bought. False indicates an error.
+     */
+    public boolean buyShare (String playerName, Portfolio from, String companyName, int shares) {
+        return buyShare (playerName, from, companyName, shares, 1);
+    }
+
+    /**
+     * Buying one or more single or double-share certificates (more is sometimes possible)
      * @param player The player that wants to buy shares.
      * @param portfolio The portfolio from which to buy shares. 
      * @param company The company of which to buy shares.
      * @param shares The number of shares to buy.
-     * @return True if the company could be started. False indicates an error.
-     * TODO Does not yet cater for double non-president shares as in 1835. 
-     * @return False if an error is found.
+     * @param unit The number of share units in each certificate to buy 
+     * (e.g. value is 2 for 20% Badische or 10% Preussische non-president certificates in 1835).
+     * @return True if the certificates could be bought. False indicates an error.
+     * TODO Usage of 'unit' argument.
      */
-    public boolean buyShare (String playerName, Portfolio from, String companyName, int shares) {
-
+    public boolean buyShare (String playerName, Portfolio from, String companyName,
+            int shares, int unit) {
+        
         String errMsg = null;
         int price = 0;
         PublicCompanyI company = null;
@@ -246,12 +261,6 @@ public class StockRound implements Round
 	            break;
 	        }
 	                	
-	        // The player may not have bought this turn (shortcut: shares in brown disregarded)
-	        if (hasBoughtThisTurn) {
-	            errMsg = currentPlayer.getName()+" already bought this turn"; 
-	            break;
-	        }
-	        
 	        // The player may not have sold the company this round.
 	        if (playersThatSoldThisRound.containsKey(currentPlayer) &&
 	                ((HashMap)playersThatSoldThisRound.get(currentPlayer)).containsKey(companyName)) {
@@ -268,6 +277,14 @@ public class StockRound implements Round
 	        // The company must have started before
 	        if (!company.hasStarted()) { 
 	            errMsg = "Company "+companyName+" is not yet started";
+	            break;
+	        }
+	        
+	        // The player may not have bought this turn (shortcut: shares in brown disregarded)
+	        if (companyBoughtThisTurn != null && 
+	                (companyBoughtThisTurn != company || !company.getCurrentPrice().isNoBuyLimit())) {
+	            errMsg = currentPlayer.getName()+" already bought "
+	            		+companyBoughtThisTurn.getName()+" this turn"; 
 	            break;
 	        }
 	        
@@ -324,9 +341,22 @@ public class StockRound implements Round
             Log.write(playerName + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
                     + companyName + " from " + from.getName()
                     + " for " + Bank.format(shares*price)  + ".");
-       }
+        }
+        
+        // Check if the presidency has changed
+        if (currentPlayer != company.getPresident()) {
+            Player currentPresident = company.getPresident();
+            Portfolio thisPortfolio = currentPlayer.getPortfolio();
+            Portfolio otherPortfolio = currentPresident.getPortfolio();
+            if (thisPortfolio.ownsShare(company) > 
+                    otherPortfolio.ownsShare(company)) {
+                // Yes, swap certificates
+                otherPortfolio.swapPresidentCertificate(company, thisPortfolio);
+    		    Log.write ("Presidency of "+companyName+" is transferred to "+playerName);
+            }
+        }
 
-        hasBoughtThisTurn = true;
+        companyBoughtThisTurn = company;
         hasPassed = false;
         setPriority();
 
@@ -343,46 +373,86 @@ public class StockRound implements Round
     }
     
     /**
-     * Sell one share (i.e. one share unit, normally 10%).
+     * Sell a one-share certificate (i.e. one share unit, normally 10%).
+     * This could involve partial sale of a President's certificate.
      * @see sellShare (String playerName, String companyName)
      * @param playerName Name of the selling player.
      * @param companyName Name of the company of which one share is sold.
      * @return False if an error is found.
      */
     public boolean sellShare (String playerName, String companyName) {
-        return sellShares (playerName, companyName, 1);
+        return sellShares (playerName, companyName, 1, 1, true);
         
     }
     
     /**
+     * Sell a two-share certificate, NOT being a President's share (normally 20%).
+     * Such certificates exist in 1835 and other games.
+     * @see sellShare (String playerName, String companyName)
+     * @param playerName Name of the selling player.
+     * @param companyName Name of the company of which a double share is sold.
+     * @return False if an error is found.
+     */
+    public boolean sellDoubleShare (String playerName, String companyName) {
+        return sellShares (playerName, companyName, 1, 2, false);
+        
+    }
+    /**
      * Sell one or more shares (one or multiple share units, normally 10% each).
+     * This could involve selling part of a President's share, but not a 
+     * non-president double share.
      * @param player Name of the selling player.
      * @param company Name of the company of which shares are sold.
-     * @param number The number of shares to sell.
+     * @param number The number of shares (in fact: share units) to sell.
      * TODO Does not yet cater for double shares (incl. president).
      * @return False if an error is found.
      */
     public boolean sellShares (String playerName, String companyName, int number) {
+        return sellShares (playerName, companyName, number, 1, true);
+    }
         
+    /**
+     * Sell one or more shares or certificates, to be specified in detail.
+     * @param player Name of the selling player.
+     * @param company Name of the company of which shares are sold.
+     * @param number The number of shares (if unit=1) or certificates (if unit>1) to sell.
+     * @param unit The share unit size of the certificates to sell.
+     * @param president Indicates if the sale may include (part of) a president's
+     * certificate, subject to the rules that allow that.
+     * TODO Does not yet cater for double shares (incl. president).
+     * @return False if an error is found.
+     */
+    public boolean sellShares (String playerName, String companyName, 
+            int number, int unit, boolean president) {
+        
+        currentPlayer = GameManager.getCurrentPlayer();
         Portfolio portfolio = currentPlayer.getPortfolio();
         String errMsg = null;
         PublicCompanyI company = null;
-        
-        currentPlayer = GameManager.getCurrentPlayer();
-        
+        PublicCertificateI cert = null;
+        PublicCertificateI presCert = null;
+        List certsToSell = new ArrayList();
+        List certsToSwap = new ArrayList();
+        Player dumpedPlayer = null;
+        int presSharesToSell = 0;
+        int numberToSell = number;
+        int currentIndex = GameManager.getCurrentPlayerIndex();
+       
         // Dummy loop to allow a quick jump out
         while (true) {
 
            // Check everything
+            if (number <= 0) {
+                errMsg = "Cannot sell less that one share";
+                break;
+            }
 	        if (!playerName.equals(currentPlayer.getName())) {
 	            errMsg = "Wrong player "+playerName;
                 break;
             }
 
 	        // May not sell in certain cases
-	        if (sequenceRule == SELL_BUY_OR_BUY_SELL && hasBoughtThisTurn 
-	                && hasSoldThisTurnBeforeBuying
-	        	|| sequenceRule == SELL_BUY && hasBoughtThisTurn) {
+	        if (!mayCurrentPlayerSellAtAll()) {
 	            errMsg = "May not sell anymore in this turn";
 	            break;
 	        }
@@ -406,6 +476,52 @@ public class StockRound implements Round
 	            break;
 	        }
 	        
+	        // Find the certificates to sell
+	        Iterator it = portfolio.getCertificatesPerCompany(companyName).iterator();
+	        while (numberToSell > 0 && it.hasNext()) {
+	            cert = (PublicCertificateI) it.next();
+	            if (cert.isPresidentShare()) {
+                    // Remember the president's certificate in case we need it
+	                if (cert.isPresidentShare()) presCert = cert;
+	                continue;
+	            } else if (unit != cert.getShares()) {
+	                // Wrong number of share units
+	                continue;
+	            } 
+	            // OK, we will sell this one
+	            certsToSell.add(cert);
+	            numberToSell--;
+	        }
+	        if (numberToSell == 0) presCert = null;
+	        
+	        if (numberToSell > 0 && presCert != null && numberToSell <= presCert.getShares()) {
+	            // More to sell and we are President: see if we can dump it.
+	            Player otherPlayer;
+	            for (int i=currentIndex+1; i<currentIndex+numberOfPlayers; i++) {
+	                otherPlayer = GameManager.getPlayer(i);
+	                if (otherPlayer.getPortfolio().ownsShares(company) >= presCert.getShares()) {
+	                    // Check if he has the right kind of share
+	                    if (numberToSell > 1 || otherPlayer.getPortfolio()
+	                            .ownsCertificates(company, 1, false) >= 1) {
+	                        // The poor sod.
+	                        dumpedPlayer = otherPlayer;
+	                        presSharesToSell = numberToSell;
+	                        numberToSell = 0;
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	        // Check if we could sell them all
+	        if (numberToSell > 0) {
+	            if (presCert != null) {
+	                errMsg = "Cannot dump presidency";
+	            } else {
+	                errMsg = "Does not have that many shares";
+	            }
+	            break;
+	        }
+	        
 	        break;
         }
         
@@ -416,18 +532,55 @@ public class StockRound implements Round
         }
         
         // All seems OK, now do the selling.
-        PublicCertificateI cert;
-        int price = company.getCurrentPrice().getPrice();
+        StockSpaceI sellPrice;
+        int price;
+        
+        // Get the sell price (does not change within a turn)
+        if (sellPrices.containsKey(companyName)) {
+            price = ((StockSpaceI)sellPrices.get(companyName)).getPrice();
+        } else {
+            sellPrice = company.getCurrentPrice();
+            price = sellPrice.getPrice();
+            sellPrices.put(companyName, sellPrice);
+        }
+
 		Log.write(playerName+" sells "+number+" shares ("
 		        +(number*company.getShareUnit())
 		        +"%) of "+companyName
 		        +" for "+ Bank.format(number*price));
-       
-        for (int i=0; i<number; i++) {
-            cert = portfolio.findCertificate(company, false);
-            pool.buyCertificate (cert, portfolio, cert.getShares()*price);
+		
+		// Check if the presidency has changed
+		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
+		    Log.write ("Presidency of "+companyName+" is transferred to "+dumpedPlayer.getName());
+		    // First swap the certificates
+		    Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
+		    List swapped = portfolio.swapPresidentCertificate(company, dumpedPortfolio);
+		    for (int i=0; i<presSharesToSell; i++) {
+		        certsToSell.add(swapped.get(i));
+		    }
+		}
+      
+		// Transfer the sold certificates
+        Iterator it = certsToSell.iterator();
+        while (it.hasNext()) {
+            cert = (PublicCertificateI) it.next();
+            if (cert != null) pool.buyCertificate (cert, portfolio, cert.getShares()*price);
         }
         stockMarket.sell(company, number);
+        
+        // Check if we still have the presidency
+        if (currentPlayer == company.getPresident()) {
+            Player otherPlayer;
+            for (int i=currentIndex+1; i<currentIndex+numberOfPlayers; i++) {
+                otherPlayer = GameManager.getPlayer(i);
+                if (otherPlayer.getPortfolio().ownsShares(company) 
+                        > portfolio.ownsShares(company)) {
+                    portfolio.swapPresidentCertificate(company, otherPlayer.getPortfolio());
+        		    Log.write ("Presidency of "+companyName+" is transferred to "+otherPlayer.getName());
+        		    break;
+               }
+            }
+        }
        
         // Remember that the player has sold this company this round.
         if (!playersThatSoldThisRound.containsKey(currentPlayer)) {
@@ -435,7 +588,7 @@ public class StockRound implements Round
         }
         ((HashMap)playersThatSoldThisRound.get(currentPlayer)).put(company, null);
         
-        if (!hasBoughtThisTurn) hasSoldThisTurnBeforeBuying = true;
+        if (companyBoughtThisTurn == null) hasSoldThisTurnBeforeBuying = true;
         hasPassed = false;
         setPriority();
 
@@ -486,6 +639,7 @@ public class StockRound implements Round
         } else {        
             
             setNextPlayer();
+            sellPrices = new HashMap();
             
         }
 
@@ -499,7 +653,7 @@ public class StockRound implements Round
         
         GameManager.setNextPlayer();
         currentPlayer = GameManager.getCurrentPlayer();
-        hasBoughtThisTurn = false;
+        companyBoughtThisTurn = null;
         hasSoldThisTurnBeforeBuying = false;
         hasPassed = true;
     }
@@ -587,9 +741,9 @@ public class StockRound implements Round
      * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAtAll () {
-        if (sequenceRule == SELL_BUY_OR_BUY_SELL && hasBoughtThisTurn 
+        if (sequenceRule == SELL_BUY_OR_BUY_SELL && companyBoughtThisTurn != null 
                 && hasSoldThisTurnBeforeBuying
-            || sequenceRule == SELL_BUY && hasBoughtThisTurn) return false;
+            || sequenceRule == SELL_BUY && companyBoughtThisTurn != null) return false;
         return true;
     }
     
@@ -598,6 +752,6 @@ public class StockRound implements Round
      * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAtAll () {
-        return !hasBoughtThisTurn;
+        return companyBoughtThisTurn == null;
    }
  }

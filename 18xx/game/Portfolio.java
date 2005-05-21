@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.14 2005/05/19 22:19:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.15 2005/05/21 13:37:54 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -111,6 +111,11 @@ public class Portfolio
       // Move the money
       Bank.transferCash(Bank.getInstance(), from.owner, price);
    }
+   
+   public void transferCertificate (PublicCertificateI certificate, Portfolio to) {
+       this.removeCertificate(certificate);
+       to.addCertificate(certificate);
+   }
 
    public void addPrivate(PrivateCompanyI privateCompany)
    {
@@ -202,12 +207,15 @@ public class Portfolio
       return null;
    }
    
+   public PublicCertificateI findCertificate(PublicCompanyI company, boolean president) {
+       return findCertificate(company, 1, president);
+   }
+   
    /** Find any certificate */
-   public PublicCertificateI findCertificate(PublicCompanyI company, boolean president)
+   public PublicCertificateI findCertificate(PublicCompanyI company, int unit, boolean president)
    {
       String companyName = company.getName();
       if (!certPerCompany.containsKey(companyName)) {
-System.out.println("*** "+name+" does not have "+company.getName());
          return null;
       }
       Iterator it = ((List) certPerCompany.get(companyName)).iterator();
@@ -215,9 +223,11 @@ System.out.println("*** "+name+" does not have "+company.getName());
       while (it.hasNext())
       {
          cert = (PublicCertificateI) it.next();
-         if (cert.getCompany() == company && president == cert.isPresidentShare())
-         {
-            return cert;
+         if (cert.getCompany() == company) {
+             if (president && cert.isPresidentShare()
+                     || !president && !cert.isPresidentShare() && cert.getShares() == unit) {
+                 return cert;
+             }
          }
       }
       return null;
@@ -299,17 +309,70 @@ System.out.println("*** "+name+" does not have "+company.getName());
     */
    public int ownsShares(PublicCompanyI company)
    {
-      int share = 0;
+      int shares = 0;
       String name = company.getName();
       if (certPerCompany.containsKey(name))
       {
          Iterator it = ((List) certPerCompany.get(name)).iterator();
          while (it.hasNext())
          {
-            share += ((PublicCertificateI) it.next()).getShares();
+            shares += ((PublicCertificateI) it.next()).getShares();
          }
       }
-      return share;
+      return shares;
+   }
+   
+   public int ownsCertificates (PublicCompanyI company, int unit, boolean president) {
+       int certs = 0;
+       String name = company.getName();
+       PublicCertificateI cert;
+       if (certPerCompany.containsKey(name)) {
+           Iterator it = ((List) certPerCompany.get(name)).iterator();
+           while (it.hasNext()) {
+               cert = (PublicCertificateI)it.next();
+               if (president) {
+                   if (cert.isPresidentShare()) return 1;
+               } else if (cert.getShares() == unit) {
+                   certs++;
+               }
+           }
+       }
+       return certs;
+   }
+   
+   /**
+    * Swap this Portfolio's President certificate for common shares in another Portfolio.
+    * @param company The company whose Presidency is handed over.
+    * @param other The new President's portfolio.
+    * @return The common certificates returned.
+    */
+   public List swapPresidentCertificate (PublicCompanyI company, Portfolio other) {
+
+       List swapped = new ArrayList();
+       PublicCertificateI swapCert;
+       
+       // Find the President's certificate
+       PublicCertificateI cert = this.findCertificate(company, true);
+       if (cert == null) return null;
+       int shares = cert.getShares();
+       
+       // Check if counterparty has enough single certificates
+       if (other.ownsCertificates(company, 1, false) >= shares) {
+           for (int i=0; i<shares; i++) {
+               swapCert = other.findCertificate(company, 1, false);
+               other.transferCertificate (swapCert, this);
+               swapped.add (swapCert);
+               
+           }
+       } else if (other.ownsCertificates(company, shares, false) >= 1) {
+           swapCert = other.findCertificate(company, 2, false);
+           other.transferCertificate(swapCert, this);
+           swapped.add (swapCert);
+       } else {
+           return null;
+       }
+       transferCertificate (cert, other);
+       return swapped;
    }
 
 }
