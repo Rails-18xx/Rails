@@ -40,6 +40,7 @@ public class Game
 
    /** The component Manager */
    protected static ComponentManager componentManager;
+   protected static GameManager gameManager;
    protected static CompanyManagerI companyManager;
    protected static PlayerManager playerManager;
    protected static StockMarketI stockMarket;
@@ -74,6 +75,7 @@ public class Game
 
    public static void initialise(String name)
    {
+      Log.write ("Game is "+name);
       String file = "data/" + name + "/Game.xml";
       try
       {
@@ -89,10 +91,16 @@ public class Game
                .findComponent(CompanyManagerI.COMPONENT_NAME);
          stockMarket = (StockMarketI) componentManager
                .findComponent(StockMarketI.COMPONENT_NAME);
+         gameManager = (GameManager) componentManager.findComponent("GameManager");
 
+         /* Initialisations that involve relations between
+          * components can only be done after all XML has been processed.
+          */
          Bank.initIpo();
          StartPacket.init();
-
+         companyManager.initCompanies();
+         stockMarket.init();
+ 
       }
       catch (Exception e)
       {
@@ -162,5 +170,9 @@ public class Game
    public static PlayerManager getPlayerManager()
    {
       return playerManager;
+   }
+   
+   public static String getName () {
+       return name;
    }
 }

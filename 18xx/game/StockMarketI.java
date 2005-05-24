@@ -22,20 +22,23 @@ public interface StockMarketI {
 	 * @throws ConfigurationException
 	 */
 	void configureFromXML(Element el) throws ConfigurationException;
-	
-	StockSpace[][] getStockChart();
-	StockSpace getStockSpace (int row, int col);
-	
-	void payOut (PublicCompanyI company);
-	void withhold (PublicCompanyI company);
-	void sell (PublicCompanyI company, int numberOfShares);
-	void soldOut (PublicCompanyI company);
-	
-	int getNumberOfColumns();
-	int getNumberOfRows();
 
-	List getStartSpaces();
+    public void init ();
+
+	public StockSpace[][] getStockChart();
+	public StockSpace getStockSpace (int row, int col);
+	public StockSpace getStockSpace (String name);
+	
+	public void payOut (PublicCompanyI company);
+	public void withhold (PublicCompanyI company);
+	public void sell (PublicCompanyI company, int numberOfShares);
+	public void soldOut (PublicCompanyI company);
+	
+	public int getNumberOfColumns();
+	public int getNumberOfRows();
+
+	public List getStartSpaces();
 	public StockSpaceI getStartSpace (int price);
-	boolean isGameOver();
+	public boolean isGameOver();
 
 }

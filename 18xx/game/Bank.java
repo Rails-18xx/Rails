@@ -128,8 +128,14 @@ public class Bank implements CashHolder, ConfigurableComponentI
       if (node != null) {
           nnp = node.getAttributes();
           poolShareLimit = XmlUtils.extractIntegerAttribute(nnp, "percentage", DEFAULT_POOL_SHARE_LIMIT);
-         
       }
+
+      node = (Element) element.getElementsByTagName("Money").item(0);
+      if (node != null) {
+          nnp = node.getAttributes();
+          moneyFormat = XmlUtils.extractStringAttribute(nnp, "format", "$@");
+      }
+
    }
 
    /**
@@ -149,12 +155,17 @@ public class Bank implements CashHolder, ConfigurableComponentI
       // Add public companies
       List companies = Game.getCompanyManager().getAllPublicCompanies();
       it = companies.iterator();
+      PublicCompanyI comp;
+      PublicCertificateI cert;
       while (it.hasNext())
       {
-         Iterator it2 = ((PublicCompanyI) it.next()).getCertificates().iterator();
+      	comp = (PublicCompanyI) it.next();
+         Iterator it2 = (comp).getCertificates().iterator();
          while (it2.hasNext())
          {
-            ipo.addCertificate((PublicCertificateI) it2.next());
+         	cert = (PublicCertificateI) it2.next();
+            ipo.addCertificate(cert);
+//Log.write("*** Cert"+cert+"added to IPO");
          }
       }
    }

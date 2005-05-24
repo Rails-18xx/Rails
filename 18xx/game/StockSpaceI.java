@@ -4,6 +4,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Erik
@@ -116,6 +117,10 @@ public interface StockSpaceI {
 	    * -1 if not found.
 	    */
 	   public int getStackPosition(PublicCompanyI company);
+	   
+	   public void addFixedStartPrice (PublicCompanyI company);
+	   
+	   public List getFixedStartPrices ();
 	   
 	/**
 	 * @return

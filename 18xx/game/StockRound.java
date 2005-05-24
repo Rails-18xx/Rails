@@ -62,6 +62,8 @@ public class StockRound implements Round
     /* Rules */
     static protected int sequenceRule = SELL_BUY_SELL; // Currently fixed
     static protected boolean buySellInSameRound = true;
+    static protected boolean noSaleInFirstSR = false;
+    static protected boolean noSaleIfNotOperated = false;
     
    
     /**
@@ -211,6 +213,8 @@ public class StockRound implements Round
         Log.write(playerName + " starts "+companyName +" at "+price+" and buys " 
                 + shares+" share(s) ("+cert.getShare() + "%) for " 
                 + Bank.format(shares*price)  + ".");
+        
+        company.checkFlotation();
        
         companyBoughtThisTurn = company;
         hasPassed = false;
@@ -337,37 +341,18 @@ public class StockRound implements Round
         PublicCertificateI cert;
         for (int i=0; i<shares; i++) {
             cert = from.findCertificate(company, false);
-            currentPlayer.getPortfolio().buyCertificate (cert, from, price * cert.getShares());
             Log.write(playerName + " buys " + shares+" share(s) ("+cert.getShare() + "%) of "
                     + companyName + " from " + from.getName()
                     + " for " + Bank.format(shares*price)  + ".");
+            currentPlayer.buy (cert, price * cert.getShares());
         }
         
-        // Check if the presidency has changed
-        if (currentPlayer != company.getPresident()) {
-            Player currentPresident = company.getPresident();
-            Portfolio thisPortfolio = currentPlayer.getPortfolio();
-            Portfolio otherPortfolio = currentPresident.getPortfolio();
-            if (thisPortfolio.ownsShare(company) > 
-                    otherPortfolio.ownsShare(company)) {
-                // Yes, swap certificates
-                otherPortfolio.swapPresidentCertificate(company, thisPortfolio);
-    		    Log.write ("Presidency of "+companyName+" is transferred to "+playerName);
-            }
-        }
-
         companyBoughtThisTurn = company;
         hasPassed = false;
         setPriority();
 
         // Check if the company has floated
-        /* Shortcut: float level and capitalisation hardcoded */
-		if (from == ipo && !company.hasFloated() 
-		        && from.ownsShare(company) <= (100 - company.getFloatPercentage())) {
-			// Float company (limit and capitalisation to be made configurable)
-			company.setFloated(10*price);
-			Log.write (companyName+ " floats and receives "+Bank.format(company.getCash()));
-		}
+		if (from == ipo) company.checkFlotation();
 
         return true;
     }
@@ -442,6 +427,10 @@ public class StockRound implements Round
         while (true) {
 
            // Check everything
+            if (stockRoundNumber == 1 && noSaleInFirstSR) {
+                errMsg = "Cannot sell in first Stock Round";
+                break;
+            }
             if (number <= 0) {
                 errMsg = "Cannot sell less that one share";
                 break;
@@ -628,7 +617,7 @@ public class StockRound implements Round
 			PublicCompanyI company;
 			while (it.hasNext()) {
 				company = (PublicCompanyI)it.next();
-				if (company.isSoldOut()) {
+				if (company.hasStockPrice() && company.isSoldOut()) {
 					Log.write(company.getName()+" is sold out");
 					stockMarket.soldOut(company);}
 			}
@@ -730,7 +719,10 @@ public class StockRound implements Round
      */
     public boolean isCompanySellable (String companyName) {
  
+        if (stockRoundNumber == 1 && noSaleInFirstSR) return false;
         PublicCompanyI company = companyMgr.getPublicCompany(companyName);
+        if (!company.hasStockPrice()) return false;
+        if (noSaleIfNotOperated && !company.hasOperated()) return false;
         if (currentPlayer.getPortfolio().ownsShare(company) == 0) return false;
         if (pool.ownsShare(company) >= Bank.getPoolShareLimit()) return false;
         return true;
@@ -741,6 +733,7 @@ public class StockRound implements Round
      * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAtAll () {
+        if (stockRoundNumber == 1 && noSaleInFirstSR) return false;
         if (sequenceRule == SELL_BUY_OR_BUY_SELL && companyBoughtThisTurn != null 
                 && hasSoldThisTurnBeforeBuying
             || sequenceRule == SELL_BUY && companyBoughtThisTurn != null) return false;
@@ -754,4 +747,12 @@ public class StockRound implements Round
     public boolean mayCurrentPlayerBuyAtAll () {
         return companyBoughtThisTurn == null;
    }
+    
+    public static void setNoSaleInFirstSR () {
+        noSaleInFirstSR = true;
+    }
+    
+    public static void setNoSaleIfNotOperated () {
+    	noSaleIfNotOperated = true;
+    }
  }

@@ -77,4 +77,7 @@ public interface CompanyManagerI {
 	 */
 	CompanyI getCompany (String type, String name);
 
+	 /** Post XML parsing initialisations */
+	public void initCompanies () throws ConfigurationException;
+
 }

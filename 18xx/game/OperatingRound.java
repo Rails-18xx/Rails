@@ -83,13 +83,18 @@ public class OperatingRound implements Round
         PublicCompanyI company;
         StockSpaceI space;
         int key, stackPos;
+        int minorNo = 0;
         for (int i=0; i<companies.length; i++) {
             company = companies[i];
             if (!company.hasFloated()) continue;
             space = company.getCurrentPrice();
             // Key must put companies in reverse operating order, because sort is ascending.
-            key = 1000000 * (999-space.getPrice()) + 10000 * (99-space.getColumn())
-            		+ 100 * space.getRow() + space.getStackPosition(company);
+            if (company.hasStockPrice()) {
+	            key = 1000000 * (999-space.getPrice()) + 10000 * (99-space.getColumn())
+	            		+ 100 * space.getRow() + space.getStackPosition(company);
+            } else {
+                key = ++minorNo;
+            }
             //System.out.println("OR key of "+company.getName()+" is "+key);
             operatingCompanies.put(new Integer(key), company);
         }
@@ -320,13 +325,14 @@ public class OperatingRound implements Round
        
         nextStep(operatingCompany);
         
-        /* If the revenue is 0, the effect is the same as withholding,
-         * so do that (shortcut: this is not always true).
-         */
+        // If we already know what to do: do it.
         if (amount == 0) {
             operatingCompany.withhold(0);
             nextStep (operatingCompany);
-        }
+        } else if (operatingCompany.isSplitAlways()) {
+            operatingCompany.splitRevenue (amount);
+            nextStep (operatingCompany);
+       }
         
         return true;
     }
@@ -411,7 +417,7 @@ public class OperatingRound implements Round
        }
        
        Log.write (companyName+" pays out half dividend");
-       //company.splitRevenue (currentRevenue);
+       operatingCompany.splitRevenue (currentRevenue);
        nextStep(operatingCompany);
        
        return true;

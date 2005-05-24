@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.5 2005/05/19 22:19:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.6 2005/05/24 21:38:04 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -13,14 +13,6 @@ import java.util.*;
  */
 public class StartRound_1830 extends StartRound {
     
-	/*----- Start Round states -----*/
-	/** The current player must buy, bid or pass */
-    public static final int BID_OR_BUY = 0;
-    /** The current player must set a par price */
-    public static final int SET_PRICE = 1;
-    
-    /** A company in need for a par price. */
-    PublicCompanyI companyNeedingPrice = null;   
     
     /**
      * Constructor, only to be used in dynamic instantiation.
@@ -34,19 +26,7 @@ public class StartRound_1830 extends StartRound {
      * @param startPacket The startpacket to be sold in this start round.
      */
     public void start (StartPacket startPacket) {
-        
-        this.startPacket = startPacket;
-        itemMap = new HashMap ();
-        Iterator it = startPacket.getItems().iterator();
-        StartItem item;
-        while (it.hasNext()) {
-            item = (StartItem) it.next();
-            itemMap.put(item.getName(), item);
-        }
-        
-        GameManager.getInstance().setRound(this);
-        GameManager.setCurrentPlayerIndex (GameManager.getPriorityPlayerIndex());
-        Log.write (getCurrentPlayer().getName() + " has the Priority Deal");
+    	super.start (startPacket);
     }
     
     /**
@@ -196,90 +176,11 @@ public class StartRound_1830 extends StartRound {
         
     }
     
-    /** 
-     * Buy a start item against the base price.
-     * @param playerName Name of the buying player.
-     * @param itemName Name of the bought start item.
-     * @return False in case of any errors.
-     */
-    public boolean buy (String playerName, String itemName) {
-        StartItem item = null;
-        String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
-        
-        while (true) {
-            
-            // Check player
-             if (!playerName.equals(player.getName())) {
-                errMsg = "Wrong player";
-                break;
-            }
-            // Check name of item
-            if (!itemMap.containsKey(itemName)) {
-                errMsg = "Not found";
-                break;
-            }
-            item = (StartItem) itemMap.get(itemName);
-            // Must  be the first item
-            if (item != startPacket.getFirstUnsoldItem()) {
-                errMsg = "Cannot buy this item";
-                break;
-            }
-            
-            break;
-        }
-        
-        if (errMsg != null) {
-            Log.error ("Invalid buy by "+playerName+" of "+itemName+": " + errMsg);
-            return false;
-        }
-        
-        assignItem (player, item, item.getBasePrice());
-        
-        // Set priority
-        GameManager.setPriorityPlayerIndex(GameManager.getCurrentPlayerIndex() + 1);
-        numPasses = 0;
-        
-        // Next action
-        setNextAction();        
-        return true;
-            
-    }
-    
-    /**
-     * This method executes the start item buy action.
-     * @param player Buying player.
-     * @param item Start item being bought.
-     * @param price Buy price.
-     */
-    private void assignItem (Player player, StartItem item, int price) {
-        
-        //Log.write (player.getName()+" buys "+item.getName()+" for "+Bank.format(price));
-        Certificate primary = item.getPrimary();
-        player.buy(primary, price);
-        if (primary instanceof PublicCertificateI 
-                && ((PublicCertificateI)primary).isPresidentShare()) {
-            // We must set the start price!
-            companyNeedingPrice = ((PublicCertificateI)primary).getCompany();
-        }
-       if (item.hasSecondary()) {
-            Certificate extra = item.getSecondary();
-            player.buy (extra, 0);
-            Log.write (player.getName()+" also gets "+extra.getName());
-            if (extra instanceof PublicCertificateI 
-                    && ((PublicCertificateI)extra).isPresidentShare()) {
-                // We must set the start price!
-                companyNeedingPrice = ((PublicCertificateI)extra).getCompany();
-            }
-        }
-        item.setSold(true);
-    }
-    
     /**
      * Define the next action to take after a start item is bought.
      *
      */
-    private void setNextAction() {
+    protected void setNextAction() {
         
         if (companyNeedingPrice != null) {
             // Ask for the start price of a just obtained President's share
@@ -357,8 +258,8 @@ public class StartRound_1830 extends StartRound {
 		if (!companyNeedingPrice.hasFloated() 
 		        && Bank.getIpo().ownsShare(companyNeedingPrice) 
 		        	<= (100 - companyNeedingPrice.getFloatPercentage())) {
-			// Float company (limit and capitalisation to be made configurable)
-			companyNeedingPrice.setFloated(10*parPrice);
+			// Float company 
+			companyNeedingPrice.setFloated();
 			Log.write (companyName+ " floats and receives "
 			        +Bank.format(companyNeedingPrice.getCash()));
 		}
@@ -420,5 +321,15 @@ public class StartRound_1830 extends StartRound {
         return true;
     }
     
+    /*----- Internal functions -----*/
+    protected boolean isBuyable (StartItem item) {
+    	return !item.isSold() 
+				&& item == startPacket.getFirstUnsoldItem();
+    }
+    
+    protected boolean isBiddable (StartItem item) {
+    	return !item.isSold()
+				&& item != startPacket.getFirstUnsoldItem();
+    }
 
 }

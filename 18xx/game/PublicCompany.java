@@ -65,6 +65,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
 
    /** Is the company operational ("has it floated")? */
    protected boolean hasFloated = false;
+   
+   /** Has teh company already operated? */
+   protected boolean hasOperated = false;
 
    /** Is the company closed (or bankrupt)? */
    protected boolean closed = false;
@@ -94,9 +97,28 @@ public class PublicCompany extends Company implements PublicCompanyI,
    /** What percentage of ownership constitutes "one share" */
    protected int shareUnit = 10;
    
-   /** At what percetage sold does the company float */
+   /** At what percentage sold does the company float */
    protected int floatPerc = 0;
-
+   
+   /** Does the company have a stock price (minors often don't) */
+   protected boolean hasStockPrice = true;
+   
+   /** Does the company have a fixed par price? */
+   protected boolean hasParPrice = true;
+   
+   protected boolean splitAllowed = false;
+   
+   /** Is the revenue always split (typical for non-share minors) */
+   protected boolean splitAlways = false;
+   
+   /*---- variables needed during initialisation -----*/
+   protected String startSpace = null;
+   
+   protected int capitalisation = 0;
+   
+   /** Fixed price (for a 1835-style minor) */
+   protected int fixedPrice = 0;
+   
    /**
     * The constructor. The way this class is instantiated does not allow
     * arguments.
@@ -112,6 +134,19 @@ public class PublicCompany extends Company implements PublicCompanyI,
    {
       super.init(name, type);
       this.portfolio = new Portfolio(name, this);
+      this.capitalisation = type.getCapitalisation();
+   }
+   
+   /**
+    * Final initialisation, after all XML has been processed.
+    */
+   public void init2() throws ConfigurationException {
+   	if (hasStockPrice && XmlUtils.hasValue(startSpace)) {
+   		parPrice = currentPrice = 
+   				StockMarket.getInstance().getStockSpace(startSpace);
+   		if (parPrice == null) throw new ConfigurationException 
+			("Invalid start space "+startSpace + "for company "+name);
+   	}
    }
 
    /**
@@ -124,17 +159,18 @@ public class PublicCompany extends Company implements PublicCompanyI,
       NamedNodeMap nnp2;
 
       /* Configure public company features */
-      fgHexColour = XmlUtils.extractStringAttribute(nnp, "fgColour");
-      if (fgHexColour == null)
-         fgHexColour = "FFFFFF";
+      fgHexColour = XmlUtils.extractStringAttribute(nnp, "fgColour", "FFFFFF");
       fgColour = new Color(Integer.parseInt(fgHexColour, 16));
 
-      bgHexColour = XmlUtils.extractStringAttribute(nnp, "bgColour");
-      if (bgHexColour == null)
-         bgHexColour = "000000";
+      bgHexColour = XmlUtils.extractStringAttribute(nnp, "bgColour", "000000");
       bgColour = new Color(Integer.parseInt(bgHexColour, 16));
 
       floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc", 0);
+      
+      startSpace = XmlUtils.extractStringAttribute(nnp, "startspace");
+//Log.write("*** Start space for "+name+"is "+startSpace);     
+      
+      fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
       /* Complete configuration by adding features from the Public CompanyType */
       Element typeElement = type.getDomElement();
@@ -178,13 +214,27 @@ public class PublicCompany extends Company implements PublicCompanyI,
                poolPaysOut = true;
             } else if (propName.equalsIgnoreCase("Float") && floatPerc == 0) {
                 nnp2 = properties.item(j).getAttributes();
-                floatPerc = XmlUtils.extractIntegerAttribute(nnp2, "percentage", 60); 
+                floatPerc = XmlUtils.extractIntegerAttribute(nnp2, 
+                		"percentage", 60); 
+            }
+            else if (propName.equalsIgnoreCase ("StockPrice")) {
+                nnp2 = properties.item(j).getAttributes();
+                hasStockPrice = XmlUtils.extractBooleanAttribute(nnp2,
+                		"market", true);
+                hasParPrice = XmlUtils.extractBooleanAttribute(nnp2,
+                		"par", true);
+            } else if (propName.equalsIgnoreCase("Payout")) {
+            	nnp2 = properties.item(j).getAttributes();
+            	String split = XmlUtils.extractStringAttribute(nnp2,
+            			"split", "no");
+            	splitAlways = split.equalsIgnoreCase("always");
+            	splitAllowed = split.equalsIgnoreCase("allowed");
             }
 
          }
       }
    }
-
+   
    /**
     * Return the company token background colour.
     * 
@@ -242,6 +292,14 @@ public class PublicCompany extends Company implements PublicCompanyI,
 	}
 	
 	/**
+	 * Start a company with a fixed par price.
+	 */
+	public void start () {
+		this.hasStarted = true;
+		if (hasStockPrice && parPrice != null) parPrice.addToken(this);
+	}
+	
+	/**
 	 * @return Returns true is the company has started.
 	 */
 	public boolean hasStarted() {
@@ -249,16 +307,25 @@ public class PublicCompany extends Company implements PublicCompanyI,
 	}
 
 	/**
-    * Float the company, put its initial cash in the treasury. <i>(perhaps the
-    * cash can better be calculated initially?) </i>.
-    * 
-    * @param cash
-    *           The initial cash amount.
+    * Float the company, put its initial cash in the treasury.
     */
-   public void setFloated(int cash)
-   {
-      this.hasFloated = true;
-      Bank.transferCash (null, this, cash);
+   public void setFloated () {
+
+   		int cash = 0;
+   		this.hasFloated = true;
+   		if (hasStockPrice) {
+   	   		int capFactor = 0;
+	   		if (capitalisation == CAPITALISE_FULL) {
+	   			capFactor = 100 / shareUnit;
+	   		} else if (capitalisation == CAPITALISE_INCREMENTAL) {
+	   			capFactor = percentageOwnedByPlayers() / shareUnit;
+	   		}
+			cash = capFactor * getCurrentPrice().getPrice();
+		} else {
+			cash = fixedPrice;
+		}
+   		Bank.transferCash(null, this, cash);
+   		Log.write(name+" floats and receives "+Bank.format(cash));
    }
 
    /**
@@ -272,6 +339,16 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
 
    /**
+    * Has the company already operated?
+    * 
+    * @return true if the company has operated.
+    */
+   public boolean hasOperated()
+   {
+      return hasOperated;
+   }
+
+   /**
     * Set the company par price.
     * <p><i>Note: this method should <b>not</b> be used to start a company!</i>
     * Use <code><b>start()</b></code> in stead.
@@ -280,8 +357,10 @@ public class PublicCompany extends Company implements PublicCompanyI,
     */
    public void setParPrice(StockSpaceI space)
    {
+   	if (hasStockPrice) {
       parPrice = currentPrice = space;
       space.addToken(this);
+   	}
    }
 
    /**
@@ -292,7 +371,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
     */
    public StockSpaceI getParPrice()
    {
-      return parPrice;
+      return hasParPrice ? parPrice : currentPrice;
    }
 
    /**
@@ -403,6 +482,8 @@ public class PublicCompany extends Company implements PublicCompanyI,
          cert = ((PublicCertificateI) it.next()).copy();
          certificates.add(cert);
          cert.setCompany(this);
+         // TODO Questionable if it should be put in IPO or in Unavailable.
+         //Bank.getIpo().addCertificate(cert);
       }
    }
 
@@ -432,7 +513,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
    
    /**
-    * Get the percentage pf shares that must be sold to float the company. 
+    * Get the percentage of shares that must be sold to float the company. 
     * @return The float percentage.
     */
    public int getFloatPercentage () {
@@ -473,60 +554,91 @@ public class PublicCompany extends Company implements PublicCompanyI,
     * distributed to all the certificate holders, or the "beneficiary" if
     * defined (e.g.: BankPool shares may pay to the company).
     * 
-    * @param The
-    *           revenue amount.
+    * @param The revenue amount.
     */
    public void payOut(int amount)
    {
 
-       setLastRevenue(amount);
+      setLastRevenue(amount);
 
-      Iterator it = certificates.iterator();
-      PublicCertificateI cert;
-      int part;
-      CashHolder recipient;
-      Map split = new HashMap();
-      while (it.hasNext())
-      {
-         cert = ((PublicCertificateI) it.next());
-         recipient = cert.getPortfolio().getBeneficiary(this);
-         part = amount * cert.getShares() * shareUnit / 100;
-         // For reporting, we want to add up the amounts per recipient
-         if (split.containsKey(recipient))
-         {
-            part += ((Integer) split.get(recipient)).intValue();
-         }
-         split.put(recipient, new Integer(part));
-      }
-      // Report and add the cash
-      it = split.keySet().iterator();
-      while (it.hasNext())
-      {
-         recipient = (CashHolder) it.next();
-         if (recipient instanceof Bank)
-            continue;
-         part = ((Integer) split.get(recipient)).intValue();
-         Log.write(recipient.getName() + " receives " + Bank.format(part));
-         Bank.transferCash(null, recipient, part);
-      }
+      distributePayout (amount);
 
       // Move the token
-      Game.getStockMarket().payOut(this);
+      if (hasStockPrice) Game.getStockMarket().payOut(this);
+   }
+   
+   /**
+    * Split a dividend.
+    * TODO Optional rounding down the payout
+    * @param amount
+    */
+   public void splitRevenue (int amount) {
+   		
+   	setLastRevenue (amount);
+   	
+   	// Withhold half of it
+   	// For now, hardcode the rule that payout is rounded up.
+   	int withheld = ((int)amount / (2 * getNumberOfShares())) * getNumberOfShares();
+    Bank.transferCash(null, this, withheld);
+    Log.write(name + " receives " + Bank.format(withheld));
+
+    // Payout the remainder
+    int payed = amount - withheld;
+    distributePayout (payed);
+   	
+    // Move the token
+    if (hasStockPrice) Game.getStockMarket().payOut(this);
+   }
+   
+   /**
+    * Distribute the dividend amongst the shareholders.
+    * @param amount
+    */
+   protected void distributePayout (int amount) {
+   	
+    Iterator it = certificates.iterator();
+    PublicCertificateI cert;
+    int part;
+    CashHolder recipient;
+    Map split = new HashMap();
+    while (it.hasNext())
+    {
+       cert = ((PublicCertificateI) it.next());
+       recipient = cert.getPortfolio().getBeneficiary(this);
+       part = amount * cert.getShares() * shareUnit / 100;
+       // For reporting, we want to add up the amounts per recipient
+       if (split.containsKey(recipient))
+       {
+          part += ((Integer) split.get(recipient)).intValue();
+       }
+       split.put(recipient, new Integer(part));
+    }
+    // Report and add the cash
+    it = split.keySet().iterator();
+    while (it.hasNext())
+    {
+       recipient = (CashHolder) it.next();
+       if (recipient instanceof Bank)
+          continue;
+       part = ((Integer) split.get(recipient)).intValue();
+       Log.write(recipient.getName() + " receives " + Bank.format(part));
+       Bank.transferCash(null, recipient, part);
+    }
+  	
    }
 
    /**
     * Withhold a given amount of revenue (and store it).
     * 
-    * @param The
-    *           revenue amount.
+    * @param The revenue amount.
     */
    public void withhold(int amount)
    {
 
-       setLastRevenue(amount);
+      setLastRevenue(amount);
       Bank.transferCash(null, this, amount);
       // Move the token
-      Game.getStockMarket().withhold(this);
+      if (hasStockPrice) Game.getStockMarket().withhold(this);
    }
 
    /**
@@ -616,4 +728,111 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public float getUpperPrivatePriceFactor() {
        return upperPrivatePriceFactor;
    }
+   
+   public boolean hasStockPrice () {
+   	return hasStockPrice;
+   }
+   
+   public boolean hasParPrice () {
+   	return hasParPrice;
+   }
+   
+   public int getFixedPrice () {
+   	return fixedPrice;
+   }
+   
+   public int percentageOwnedByPlayers () {
+   	
+   	int share = 0;
+   	Iterator it = certificates.iterator();
+   	PublicCertificateI cert;
+   	while (it.hasNext()) {
+   		cert = (PublicCertificateI) it.next();
+   		if (cert.getPortfolio().getOwner() instanceof Player) {
+   			share += cert.getShare();
+   		}
+   	}
+   	return share;
+   }
+   
+	/**
+	 * @return Returns the splitAllowed.
+	 */
+	public boolean isSplitAllowed() {
+	    return splitAllowed;
+	}
+	/**
+	 * @return Returns the splitAlways.
+	 */
+	public boolean isSplitAlways() {
+	    return splitAlways;
+	}
+ 
+	/**
+	 * Check if the presidency has changed for a <b>buying</b> player.
+	 * @param buyer Player who has just bought a certificate. 
+	 */
+	public void checkPresidencyOnBuy (Player buyer) {
+		
+		if (!hasStarted || buyer == getPresident() 
+				|| certificates.size() < 2) return;
+		Player pres = getPresident();
+		int presShare = pres.getPortfolio().ownsShare(this);
+		int buyerShare = buyer.getPortfolio().ownsShare(this);
+		if (buyerShare > presShare) {
+            pres.getPortfolio().swapPresidentCertificate
+				(this, buyer.getPortfolio());
+		    Log.write ("Presidency of "+name+" is transferred to "
+		    		+buyer.getName());
+		}
+	}
+	
+	/**
+	 * Check if the presidency has changed for a <b>selling</b> player.
+	 */
+	public void checkPresidencyOnSale (Player seller) {
+
+		if (seller != getPresident()) return;
+		
+		int presShare = seller.getPortfolio().ownsShare(this);
+		int presIndex = seller.getIndex();
+		Player player;
+		int share;
+		
+		for (int i=presIndex+1; i<presIndex+GameManager.getNumberOfPlayers(); i++) {
+			player = GameManager.getPlayer(i);
+			share = player.getPortfolio().ownsShare(this);
+			if (share > presShare) {
+				// Presidency must be transferred
+                seller.getPortfolio().swapPresidentCertificate
+					(this, player.getPortfolio());
+    		    Log.write ("Presidency of "+name+" is transferred to "+player.getName());
+			}
+		}
+	}
+	
+	public void checkFlotation () {
+		if (hasStarted && !hasFloated 
+		        && percentageOwnedByPlayers() >= floatPerc) {
+			// Float company (limit and capitalisation to be made configurable)
+			setFloated();
+		}
+	}
+	
+	/**
+	 * @return Returns the capitalisation.
+	 */
+	public int getCapitalisation() {
+		return capitalisation;
+	}
+	/**
+	 * @param capitalisation The capitalisation to set.
+	 */
+	public void setCapitalisation(int capitalisation) {
+		this.capitalisation = capitalisation;
+	}
+	
+	public int getNumberOfShares() {
+		return 100 / shareUnit;
+	}
 }

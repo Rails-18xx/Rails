@@ -31,6 +31,7 @@ public class StockSpace implements StockSpaceI
    protected boolean hasTokens = false;
    protected StockSpaceTypeI type = null;
    protected ArrayList tokens = new ArrayList();
+   protected ArrayList fixedStartPrices = new ArrayList();
 
    /*--- Contructors ---*/
    public StockSpace(String name, int price, StockSpaceTypeI type)
@@ -112,6 +113,16 @@ public class StockSpace implements StockSpaceI
        }
        return -1;
    }
+   
+   /*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
+   public void addFixedStartPrice (PublicCompanyI company) {
+   	fixedStartPrices.add(company);
+   }
+   
+   public List getFixedStartPrices () {
+   	return fixedStartPrices;
+   }
+   
 
    /*--- Getters ---*/
    /**

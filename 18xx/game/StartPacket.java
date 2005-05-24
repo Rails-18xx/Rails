@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.3 2005/05/19 19:55:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.4 2005/05/24 21:38:04 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -30,6 +30,8 @@ public class StartPacket {
     private String name; // For identification if there is more than one.
     /** The name of the class that implements the Start Round for this packet. */
     private String roundClassName;
+    /** The start round variant name */
+    private String variant;
     /** The start items in this packet. */
     private List items = new ArrayList();
     
@@ -45,6 +47,7 @@ public class StartPacket {
     StartPacket (String name, String roundClassName) {
         this.name = XmlUtils.hasValue(name) ? name : DEFAULT_NAME;
         this.roundClassName = roundClassName;
+        this.variant = GameManager.getVariant();
         packets.put (name, this);
     }
     
@@ -158,12 +161,12 @@ public class StartPacket {
      * @return
      */
     public StartItem getFirstUnsoldItem () {
-        StartItem result = null;
+        StartItem result;
         Iterator it = items.iterator();
         while (it.hasNext()) {
-            if (!(result = (StartItem)it.next()).isSold()) break;
+            if (!(result = (StartItem)it.next()).isSold()) return result;
         }
-        return result;
+        return null;
     }
     
     /**
@@ -200,6 +203,10 @@ public class StartPacket {
      */
     public String getRoundClassName () {
         return roundClassName;
+    }
+    
+    public String getVariant() {
+        return variant;
     }
     
  }

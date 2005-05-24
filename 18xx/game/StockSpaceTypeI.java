@@ -2,7 +2,7 @@
  * Created on 12-Mar-2005
  */
 package game;
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StockSpaceTypeI.java,v 1.2 2005/04/16 22:43:53 evos Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StockSpaceTypeI.java,v 1.3 2005/05/24 21:38:04 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.16 2005/05/21 14:15:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.17 2005/05/24 21:38:04 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -58,9 +58,7 @@ public class Portfolio
       }
 
       // Move the private certificate
-      from.removePrivate(privateCompany);
-      this.addPrivate(privateCompany);
-      privateCompany.setHolder(this);
+      transferCertificate (privateCompany, from, this);
 
       // Move the money
       Bank.transferCash(owner, from.owner, price);
@@ -71,22 +69,29 @@ public class Portfolio
    {
 
       // Move the certificate
-      from.removeCertificate(certificate);
-      this.addCertificate(certificate);
-      certificate.setPortfolio(this);
+   	transferCertificate (certificate, from, this);
 
       //PublicCertificate is no longer for sale.
       // Erik: this is not the intended use of available (which is now redundant).
       certificate.setAvailable(false);
 
       // Move the money. 
-      // IPO pile doesn't hold money, so that money ought to go into the Company Treasury.
-      // Erik: Sorry, but that money goes to the Bank. The Bank is the owner of the IPO.
-      // The Company is capitalised when it floats, not earlier!
-      //if(from.name.equalsIgnoreCase("IPO"))
-      //   Bank.transferCash(owner, (PublicCompany) certificate.getCompany(), price);
-      //else
-      if (price != 0) Bank.transferCash(owner, from.owner, price);
+      if (price != 0) {
+      	/* If the company has floated and capitalisation is incremental,
+      	 * the money goes to the company, even if the certificates
+      	 * are still in the IPO (as in 1835)
+      	 */
+      	PublicCompanyI comp = certificate.getCompany();
+      	CashHolder recipient;
+      	if (comp.hasFloated() 
+      			&& from.owner == Bank.getIpo()
+      			&& comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
+      		recipient = (CashHolder) comp;
+      	} else {
+      		recipient = from.owner;
+      	}
+      	Bank.transferCash(owner, recipient, price);
+      }
    }
 
    //Sales of stock always go to the Bank pool
@@ -112,12 +117,13 @@ public class Portfolio
       Bank.transferCash(Bank.getInstance(), from.owner, price);
    }
    
-   public void transferCertificate (Certificate certificate, Portfolio to) {
+   public static void transferCertificate (Certificate certificate, 
+   			Portfolio from,Portfolio to) {
        if (certificate instanceof PublicCertificateI) {
-	       this.removeCertificate((PublicCertificateI)certificate);
+	       if (from != null) from.removeCertificate((PublicCertificateI)certificate);
 	       to.addCertificate((PublicCertificateI)certificate);
        } else if (certificate instanceof PrivateCompanyI) {
-           this.removePrivate((PrivateCompanyI)certificate);
+           if (from != null) from.removePrivate((PrivateCompanyI)certificate);
            to.addPrivate((PrivateCompanyI)certificate);
        }
    }
@@ -211,12 +217,18 @@ public class Portfolio
       }
       return null;
    }
-   
+   /**
+    * Find a certificate for a given company.
+    * @param company The public company for which a certificate is found.
+    * @param president Whether we look for a president or non-president certificate.
+    * If there is only one certificate, this parameter has no meaning.
+    * @return The certificate, or null if not found./
+    */
    public PublicCertificateI findCertificate(PublicCompanyI company, boolean president) {
        return findCertificate(company, 1, president);
    }
    
-   /** Find any certificate */
+   /** Find a certificate for a given company. */
    public PublicCertificateI findCertificate(PublicCompanyI company, int unit, boolean president)
    {
       String companyName = company.getName();
@@ -229,8 +241,9 @@ public class Portfolio
       {
          cert = (PublicCertificateI) it.next();
          if (cert.getCompany() == company) {
-             if (president && cert.isPresidentShare()
-                     || !president && !cert.isPresidentShare() && cert.getShares() == unit) {
+             if (company.getShareUnit() == 100
+             		|| president && cert.isPresidentShare()
+                    || !president && !cert.isPresidentShare() && cert.getShares() == unit) {
                  return cert;
              }
          }
@@ -365,18 +378,18 @@ public class Portfolio
        if (other.ownsCertificates(company, 1, false) >= shares) {
            for (int i=0; i<shares; i++) {
                swapCert = other.findCertificate(company, 1, false);
-               other.transferCertificate (swapCert, this);
+               Portfolio.transferCertificate (swapCert, other, this);
                swapped.add (swapCert);
                
            }
        } else if (other.ownsCertificates(company, shares, false) >= 1) {
            swapCert = other.findCertificate(company, 2, false);
-           other.transferCertificate(swapCert, this);
+           Portfolio.transferCertificate(swapCert, other, this);
            swapped.add (swapCert);
        } else {
            return null;
        }
-       transferCertificate (cert, other);
+       Portfolio.transferCertificate (cert, this, other);
        return swapped;
    }
 

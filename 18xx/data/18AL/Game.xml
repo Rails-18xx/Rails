@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <ComponentManager>
+	<Component name="GameManager" class="game.GameManager">
+		<Game name="18AL"/>
+	</Component>
     <Component name="Bank" class="game.Bank">
       <Bank amount="8000"/>
       <Players number="3" cash="600" certLimit="15"/>
