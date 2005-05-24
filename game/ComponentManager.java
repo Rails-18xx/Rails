@@ -75,7 +75,7 @@ public class ComponentManager {
                 throw new ConfigurationException("Component " + name + " is configured twice."); 
             }
 
-            // Now constrcut the component
+            // Now construct the component
             ConfigurableComponentI component;
             try {
                 Class compClass;

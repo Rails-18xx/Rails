@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.4 2005/05/06 15:55:29 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.5 2005/05/24 21:38:04 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
@@ -29,6 +29,7 @@ public class CompanyType implements CompanyTypeI {
 	protected String auctionType;
 	protected int allClosePhase;
 	protected ArrayList defaultCertificates;
+	protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
 	
 	/**
 	 * The constructor.
@@ -120,5 +121,19 @@ public class CompanyType implements CompanyTypeI {
 	 */
 	public List getDefaultCertificates () {
 		return defaultCertificates;
+	}
+	
+	public void setCapitalisation (int mode) {
+		this.capitalisation = mode;
+	}
+	public void setCapitalisation (String mode) {
+		if (mode.equalsIgnoreCase("full")) {
+			this.capitalisation = PublicCompanyI.CAPITALISE_FULL;
+		} else if (mode.equalsIgnoreCase("incremental")) {
+			this.capitalisation = PublicCompanyI.CAPITALISE_INCREMENTAL;
+		}
+	}
+	public int getCapitalisation () {
+		return capitalisation;
 	}
 }

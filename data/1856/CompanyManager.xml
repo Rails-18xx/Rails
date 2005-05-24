@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
   <CompanyType name="Private" class="game.PrivateCompany">
-    <Auction type="1830"/>
     <AllClose phase="5"/>
   </CompanyType>
   <CompanyType name="Public" class="game.PublicCompany">
@@ -41,4 +40,8 @@
     <Item name="Brdg"   type="Private" basePrice="100"/>
     <Item name="Tunn"   type="Private" basePrice="100"/>
   </StartPacket>
+	<StockRoundRules>
+		<!-- Will probably move later to a GameManager XML-->
+		<NoSaleInFirstSR/>
+	</StockRoundRules>
 </CompanyManager>

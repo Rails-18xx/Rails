@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.3 2005/05/06 15:55:29 evos Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.4 2005/05/24 21:38:03 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
@@ -69,5 +69,9 @@ public interface CompanyTypeI {
 	public void addCertificate (PublicCertificateI certificate);
 	
 	public List getDefaultCertificates ();
+	
+	public void setCapitalisation (int mode);
+	public void setCapitalisation (String mode);
+	public int getCapitalisation ();
 
 }

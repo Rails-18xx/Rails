@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StockSpaceType.java,v 1.2 2005/04/16 22:43:53 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StockSpaceType.java,v 1.3 2005/05/24 21:38:04 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */

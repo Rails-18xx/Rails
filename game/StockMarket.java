@@ -229,6 +229,24 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
       }
 
    }
+   
+   /**
+    * Final initialisations, to be called after all XML processing is complete.
+    * The purpose is to register fixed company start prices.
+    */
+   public void init () {
+   	
+   	Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
+   	PublicCompanyI comp;
+   	StockSpaceI space;
+   	while (it.hasNext()) {
+   		comp = (PublicCompanyI) it.next();
+   		if (!comp.hasStarted() && comp.getParPrice() != null) {
+   			comp.getParPrice().addFixedStartPrice(comp);
+   		}
+   	}
+   	
+   }
 
    /**
     * @return
@@ -248,6 +266,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
       {
          return null;
       }
+   }
+   
+   public StockSpace getStockSpace (String name) {
+   	return (StockSpace) stockChartSpaces.get(name);
    }
 
    /*--- Actions ---*/

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.3 2005/05/19 19:55:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.4 2005/05/24 21:38:04 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -76,7 +76,8 @@ public class StartItem {
     }
     
     /**
-     * Initialisation, to be called after all XML parsing has completed.
+     * Initialisation, to be called after all XML parsing has completed,
+     * and after IPO initialisation.
      */
     public void init() {
 
@@ -91,7 +92,9 @@ public class StartItem {
             primary = ipo.findCertificate((PublicCompanyI) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificateI pubcert = (PublicCertificateI) primary;
-            if (!pubcert.getPortfolio().getName().equals("Unavailable"))
+//Log.write("*** Company"+name+" certificate "+primary+"/"+pubcert);
+            if (pubcert.getPortfolio() == null ||
+            		!pubcert.getPortfolio().getName().equals("Unavailable"))
                 unavailable.buyCertificate(pubcert, pubcert.getPortfolio(), 0);
         }
         

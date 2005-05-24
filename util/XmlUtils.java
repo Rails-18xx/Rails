@@ -70,7 +70,7 @@ public final class XmlUtils {
      * @see 
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired
-     * @return the named attribute's value or null if absent.
+     * @return the named attribute's value, or zero if absent.
      */
  	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName) 
 		throws ConfigurationException {
@@ -82,8 +82,9 @@ public final class XmlUtils {
      * Returns a default value if no such attribute can be found.
      * @see 
      * @param nnp the NodeNameMap to search for the Attribute
-     * @param attrName the name of the attribute who's value is desired
-     * @return the named attribute's value or null if absent.
+     * @param attrName the name of the attribute who's value is desired.
+     * @param defaultValue The value returned if the attribute is absent.
+     * @return the named attribute's value or the dedault value.
      */
  	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName,
  				int defaultValue) 
@@ -98,6 +99,40 @@ public final class XmlUtils {
 		} catch (Exception e) {
 			throw new ConfigurationException ("Invalid integer value: "+value, e);
 		}
+	}
+
+    /**
+     * Extracts the boolean value of a given attribute from a NodeNameMap. 
+     * Any string that starts with T or t (for "true") or Y or y (for "yes")
+     * is considered to represent true, all other values will produce false.
+     * @param nnp The NodeNameMap to search for the Attribute
+     * @param attrName The name of the attribute who's value is desired
+     * @return The named attribute's value, or false if absent.
+     */
+ 	public static boolean extractBooleanAttribute(NamedNodeMap nnp, String attrName) 
+		throws ConfigurationException {
+ 		return extractBooleanAttribute (nnp, attrName, false);
+ 	}
+ 	
+    /**
+     * Extracts the boolean value of a given attribute from a NodeNameMap. 
+     * Returns a default value if no such attribute can be found.
+     * Any string that starts with T or t (for "true") or Y or y (for "yes")
+     * is considered to represent true, all other values will produce false.
+     * @param nnp The NodeNameMap to search for the Attribute
+     * @param attrName The name of the attribute who's value is desired
+     * @param defaultValue The value returned if the attribute is absent.
+     * @return The named attribute's value or the default value.
+     */
+ 	public static boolean extractBooleanAttribute(NamedNodeMap nnp, String attrName,
+ 				boolean defaultValue) 
+		throws ConfigurationException {
+		Node nameAttr = nnp.getNamedItem(attrName);
+		if (nameAttr == null) {
+				return defaultValue;
+		}
+		String value = nameAttr.getNodeValue();
+		return value.matches("^[TtYy]");
 	}
 
     /**

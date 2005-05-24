@@ -52,12 +52,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 				if (propName == null)
 					continue;
 
-				if (propName.equalsIgnoreCase("Auction")) {
-					nnp2 = properties.item(j).getAttributes();
-					auctionType = XmlUtils.extractStringAttribute(nnp2, "type");
-					if (!XmlUtils.hasValue(auctionType))
-						throw new ConfigurationException("Auction type not defined");
-				} else if (propName.equalsIgnoreCase("AllClose")) {
+				if (propName.equalsIgnoreCase("AllClose")) {
 					nnp2 = properties.item(j).getAttributes();
 					closingPhase = XmlUtils.extractIntegerAttribute(nnp2, "phase", 0);
 				}
@@ -115,7 +110,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	 */
 	public void setClosed () {
 		closed = true;
-	    portfolio.transferCertificate(this, Bank.getUnavailable());
+	    Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
 	    Log.write ("Private "+name+" closes");
 	}
 
@@ -134,7 +129,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	}
 
 	public void payOut () {
-		Log.write(portfolio.getOwner().getName()+" receives "+revenue+" for "+name);
+		Log.write(portfolio.getOwner().getName()+" receives "
+		        +Bank.format(revenue)+" for "+name);
 		Bank.transferCash(null, portfolio.getOwner(), revenue);
 	}
 	

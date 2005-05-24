@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.1 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.2 2005/05/24 21:38:04 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -40,4 +40,5 @@ public interface StartRoundI extends Round {
     public boolean pass (String playerName);
 
     public boolean setPrice (String playerName, String companyName, int parPrice);
+
 }
