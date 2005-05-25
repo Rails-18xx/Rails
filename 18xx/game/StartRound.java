@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.2 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.3 2005/05/25 19:08:17 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -17,6 +17,8 @@ public abstract class StartRound implements StartRoundI {
     protected int numPasses = 0;
     protected int numPlayers;
     protected String variant;
+    protected int nextStep;
+    protected int defaultStep;
     
 	/*----- Start Round states -----*/
 	/** The current player must buy, bid or pass */
@@ -27,6 +29,8 @@ public abstract class StartRound implements StartRoundI {
     public static final int BUY_OR_PASS = 2;
     /** The current player must buy (pass not allowed) */
     public static final int BUY = 3;
+    /** The current player must bid or pass */
+    public static final int BID_OR_PASS = 4;
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;   
@@ -148,14 +152,86 @@ public abstract class StartRound implements StartRoundI {
         			&& pubCert.isPresidentShare()) {
         		// We must set the start price!
         		companyNeedingPrice = comp;
+        		nextStep = SET_PRICE;
         	} 
         	// Check if the company has floated (also applies to minors)
         	comp.checkFlotation ();
         }
     }
     
-    public abstract int nextStep();
- 
+    /**
+     * Set a par price.
+     * @param playerName The name of the par price setting player.
+     * @param companyName The name of teh company for which a par price is set.
+     * @param parPrice The par price.
+     */
+    public boolean setPrice (String playerName, String companyName, int parPrice) {
+        
+        String errMsg = null;
+        Player player = GameManager.getCurrentPlayer();
+        StockSpaceI startSpace = null;
+        
+        while (true) {
+            
+            // Check player
+            if (!playerName.equals(player.getName())) {
+                errMsg = "Wrong player";
+                break;
+            }
+            // Check state
+            if (nextStep != SET_PRICE) {
+            	errMsg = "No price to be set";
+            	break;
+            }
+            // Check company
+            if (!companyName.equals(companyNeedingPrice.getName())) {
+                errMsg = "Wrong company";
+                break;
+            }
+            // Check par price
+            if ((startSpace = StockMarket.getInstance().getStartSpace(parPrice)) == null) {
+                errMsg = "Invalid par price";
+                break;
+            }
+            break;
+        }
+        
+        if (errMsg != null) {
+            Log.error ("Invalid par price "+Bank.format(parPrice)+" set by "+playerName
+                    +" for" + companyName+": " + errMsg);
+            return false;
+        }
+        
+        Log.write (playerName+" starts "+companyName+" at "+Bank.format(parPrice));
+        companyNeedingPrice.start(startSpace);
+        
+        // Check if company already floats
+		if (!companyNeedingPrice.hasFloated() 
+		        && Bank.getIpo().ownsShare(companyNeedingPrice) 
+		        	<= (100 - companyNeedingPrice.getFloatPercentage())) {
+			// Float company 
+			companyNeedingPrice.setFloated();
+			Log.write (companyName+ " floats and receives "
+			        +Bank.format(companyNeedingPrice.getCash()));
+		}
+        
+        companyNeedingPrice = null;
+        nextStep = defaultStep;
+        
+        setNextAction();
+        
+        return true;
+    }
+    
+
+    /**
+     * Return the StartRound state, i.e. which action is next?
+     * @return The next step number.
+     */
+    public int nextStep() {
+    	return nextStep;
+    }
+    
     /*----- Internal functions -----*/
     protected abstract void setNextAction();
     

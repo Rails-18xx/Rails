@@ -482,52 +482,65 @@ public class GameTestServlet extends HttpServlet {
 					
 					StartItem[] items = startRound.getBuyableItems();
 					
-					out.append("<tr><td align=right><input type=submit name=Buy value=Buy>")
-					   .append("</td><td>");
-					
-					if (items.length == 1) {
-						out.append("<input type=hidden name=BuyItem value=\"")
-							.append(startRound.getBuyableItems()[0].getName())
-							.append("\">\n")
-							.append(startRound.getBuyableItems()[0].getName())
-							.append(" for ") 
-							.append(Bank.format(startRound.getBuyableItems()[0]
-										.getBasePrice()));
-					} else {
-						out.append("<select name=BuyItem>");
-						for (i=0; i<items.length; i++) {
-							out.append("<option value=\"")
-							   .append(items[i].getName()) 
-							   .append("\">")
-							   .append(items[i].getName()) 
-							   .append(" for ") 
-							   .append(items[i].getBasePrice());
-						}
-
-					}
-					out.append("</td></tr>\n");
-
-					out.append("<tr><td colspan=2><hr></td></tr>\n");
-
-					if (step == StartRound.BID_BUY_OR_PASS) {
+					if (items.length > 0) {
+						out.append("<tr><td align=right><input type=submit name=Buy value=Buy>")
+						   .append("</td><td>");
 						
-						out.append("<tr><td align=right>Select for bid</td><td><select name=BidItem>\n");
-						
-						items = startRound.getBiddableItems();
-						for (int j = 0; j < items.length; j++) {
-							StartItem item = items[j];
-							out.append("<option value=\"" + item.getName() + "\">"
-									+ item.getName() + " (min. "
-									+ (item.getMinimumBid()) + ")\n");
+						if (items.length == 1) {
+							out.append("<input type=hidden name=BuyItem value=\"")
+								.append(startRound.getBuyableItems()[0].getName())
+								.append("\">\n")
+								.append(startRound.getBuyableItems()[0].getName())
+								.append(" for ") 
+								.append(Bank.format(startRound.getBuyableItems()[0]
+											.getBasePrice()));
+						} else {
+							out.append("<select name=BuyItem>");
+							for (i=0; i<items.length; i++) {
+								out.append("<option value=\"")
+								   .append(items[i].getName()) 
+								   .append("\">")
+								   .append(items[i].getName()) 
+								   .append(" for ") 
+								   .append(items[i].getBasePrice());
+							}
+	
 						}
-						out.append("</select></td></tr><tr><td align=right>\n")
-							.append("<input type=submit name=Bid5 value=\"Bid +5\"></td><td>")
-							.append("<input type=submit name=Bid value=Bid>")
-							.append("<input type=text name=Price size=6>")
-							.append("</td></tr>\n");
+						out.append("</td></tr>\n");
 	
 						out.append("<tr><td colspan=2><hr></td></tr>\n");
+					}
 
+					items = startRound.getBiddableItems();
+					if (items.length > 0) {
+						if (items.length > 1) {
+							
+							out.append("<tr><td align=right>Select for bid</td><td><select name=BidItem>\n");
+							
+							for (int j = 0; j < items.length; j++) {
+								StartItem item = items[j];
+								out.append("<option value=\"" + item.getName() + "\">"
+										+ item.getName() + " (min. "
+										+ (item.getMinimumBid()) + ")\n");
+							}
+							out.append("</select></td></tr>\n");
+		
+	
+						} else if (items.length == 1) {
+							out.append("<input type=hidden name=BidItem value=")
+							   .append(items[0].getName())
+							   .append("><tr><td align=right>Bid on ")
+							   .append(items[0].getName())
+							   .append("</td></tr>\n");
+							   
+						}
+						out.append("<tr><td align=right>\n")
+						.append("<input type=submit name=Bid5 value=\"Bid +5\"></td><td>")
+						.append("<input type=submit name=Bid value=Bid>")
+						.append("<input type=text name=Price size=6>")
+						.append("</td></tr>\n");
+
+						out.append("<tr><td colspan=2><hr></td></tr>\n");
 					}
 					
 					if (step != StartRound.BUY) {

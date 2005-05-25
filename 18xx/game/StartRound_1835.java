@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.1 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.2 2005/05/25 19:08:17 evos Exp $
  * 
  * Created on 23-May-2005
  * Change Log:
@@ -12,8 +12,6 @@ import java.util.*;
  * @author Erik Vos
  */
 public class StartRound_1835 extends StartRound {
-    
-    private int nextStep = BUY_OR_PASS;
     
     /* To control the player sequence in the Clemens and Snake variants */  
     private static int cycle = 0;
@@ -46,13 +44,7 @@ public class StartRound_1835 extends StartRound {
         } else {
             GameManager.setCurrentPlayerIndex(0);
         }
-    }
-    /**
-     * Return the start round state (i.e. the next step to be executed).
-     * @return A number prescribing the next player action. 
-     */
-    public int nextStep () {
-        return nextStep;
+        defaultStep = nextStep = BUY_OR_PASS;
     }
 
     /**
