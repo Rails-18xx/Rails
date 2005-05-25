@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.4 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.5 2005/05/25 19:08:17 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -208,6 +208,18 @@ public class StartItem {
     }
     
     /**
+     * Remove a player from the list of bidders.
+     * @param player The player to be removed.
+     * @return The remaining number of bidders.
+     */
+    public int removeBid (Player player) {
+    	if (player != null && bidders.containsKey(player.getName())) {
+    		bidders.remove(player.getName());
+    	}
+    	return bidders.size();
+    }
+    
+    /**
      * Get the currently highest bid amount.
      * @return The bid amount (0 if there have been no bids yet).
      */
@@ -230,11 +242,11 @@ public class StartItem {
     }
     
     /**
-     * Return the total number of bids done do far on this item.
-     * @return The number of bids.
+     * Return the total number of players that has done bids so far on this item.
+     * @return The number of bidders.
      */
-    public int getBids () {
-        return bids;
+    public int getBidders () {
+        return bidders.size();
     }
     
     /**
@@ -266,15 +278,7 @@ public class StartItem {
         }
     }
     
-    /**
-     * Get the highest bids per player done so far.
-     * @return A Bid array with the currently highest bids per player.
-     */
-    public Bid[] getBidders() {
-        return (Bid[]) bidders.entrySet().toArray(new Bid[0]);
-    }
-    
-    /**
+     /**
      * Check if a player has done any bids on this start item.
      * @param playerName The name of the player.
      * @return True if this player has done any bids.
