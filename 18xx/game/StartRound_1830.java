@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.7 2005/05/25 19:08:17 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.8 2005/05/26 22:03:22 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -248,7 +248,18 @@ public class StartRound_1830 extends StartRound {
         	
             if (++numPasses == numBidders - 1) {
         		// All but the highest bidder have passed.
- 	            assignItem (auctionItem.getBidder(), auctionItem, auctionItem.getBid());
+                int price = auctionItem.getBid();
+                Player p;
+                int bid;
+ 	            // Unblock the bid cash (must be done before assignItem())
+ 	            for (int i=0; i<numPlayers; i++) {
+ 	                p = GameManager.getPlayer(i);
+ 	                if ((bid = auctionItem.getBidForPlayer(p.getName()).getAmount()) > 0) {
+ 	                    p.unblockCash(bid);
+ 	                }
+ 	            }
+ 	            
+ 	            assignItem (auctionItem.getBidder(), auctionItem, price);
  	       		auctionItem = null;
  	       		numPasses = 0;
         		setNextAction();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.2 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.3 2005/05/26 22:03:22 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -22,6 +22,8 @@ public interface StartRoundI extends Round {
     public StartItem[] getBiddableItems ();
     
     public PublicCompanyI getCompanyNeedingPrice ();
+    
+    public StartPacket getStartPacket ();
     
     /*----- Action methods -----*/
     

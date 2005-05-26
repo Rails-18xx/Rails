@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.2 2005/05/25 19:08:17 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.3 2005/05/26 22:03:22 evos Exp $
  * 
  * Created on 23-May-2005
  * Change Log:
@@ -19,6 +19,7 @@ public class StartRound_1835 extends StartRound {
     private int turns = 0;
     private int numberOfPlayers = GameManager.getNumberOfPlayers();
     private String variant;
+    private StartItem[] buyableItems;
     
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -39,11 +40,16 @@ public class StartRound_1835 extends StartRound {
     	super.start(startPacket);
         startRoundNumber++;
         variant = GameManager.getVariant();
+        
+        // Select first player
         if (variant.equalsIgnoreCase("Clemens")) {
             GameManager.setCurrentPlayerIndex(numberOfPlayers-1);
         } else {
             GameManager.setCurrentPlayerIndex(0);
         }
+        
+        // Select initially buyable items
+        setBuyableItems();	
         defaultStep = nextStep = BUY_OR_PASS;
     }
 
@@ -51,65 +57,26 @@ public class StartRound_1835 extends StartRound {
      * Get a list of items that may be bought immediately.<p>
      * In an 1835-style auction this method will usually return
      * several items.
-     * TODO: The start packet layout.
      * @return An array of start items that can be bought.
      */
     public StartItem[] getBuyableItems () {
-        List buyItems = new ArrayList();
-        Iterator it = startPacket.getItems().iterator();
-        StartItem b;
-        int row;
-        int minRow = 0;
-        int items = 0;
-        while (it.hasNext()) {
-            if (!(b = (StartItem)it.next()).isSold()) {
-            	if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-            		buyItems.add(b);
-            	} else {
-            		row = b.getRow();
-            		if (minRow == 0) minRow = row;
-            		if (row == minRow) {
-            			// Allow all items in the top row.
-            			buyItems.add(b);
-            			items++;
-            		} else if (row == minRow + 1 && items == 1) {
-            			// Allow the first item in the next row if the
-            			// top row has only one item.
-            			buyItems.add(b);
-            			break;
-            		} else if (row > minRow + 1) break;
-            	}
-            }
-        }
-        if (buyItems.size() > 0) {
-            return (StartItem[]) buyItems.toArray(new StartItem[0]);
-        } else {
-            return new StartItem[0];
-        }
+        return buyableItems;
     }
     
     /**
-     * Get a list of items that mat be bid upon.<p>
-     * In an 1835-style auction this method will always return null.
-     * @return An array of start items that may be bid upon.
+     * Get a list of items that teh current player may bid upon.<p>
+     * In an 1835-style auction this method will always return an empty list.
+     * @return An empty array of start items.
      */
     public StartItem[] getBiddableItems () {
-        return null;
+        return new StartItem[0];
     }
     
-    /**
-     * Get the currentPlayer.
-     * @return The current Player object.
-     * @see GameManager.getCurrentPlayer().
-     */
-    public Player getCurrentPlayer() {
-        return GameManager.getCurrentPlayer();
-    }
-    
+   
     /**
      * Get the company for which a par price must be set in 
-     * the SET_PRICE state. In other states, null is returned.
-     * @return The PublicCompany object for which a par price is needed.
+     * the SET_PRICE state. Not used in 1835. 
+     * @return Always null.
      */
     public PublicCompanyI getCompanyNeedingPrice () {
         return null;
@@ -153,6 +120,8 @@ public class StartRound_1835 extends StartRound {
             // No more start items: start a stock round
             GameManager.getInstance().nextRound(this);
         } else {
+            
+            // Select the player that has the turn
         	int currentIndex = GameManager.getCurrentPlayerIndex();
         	int newIndex = 0;
         	if (++turns == numberOfPlayers) {
@@ -169,6 +138,10 @@ public class StartRound_1835 extends StartRound {
         		newIndex = turns;
         	}
         	GameManager.setCurrentPlayerIndex(newIndex);
+        	
+        	// Select the items that may be bought
+        	setBuyableItems();
+        	
          	nextStep = BUY_OR_PASS;
         }
         return;
@@ -215,16 +188,54 @@ public class StartRound_1835 extends StartRound {
         
         if (++numPasses >= numPlayers) {
             // All players have passed. 
-            Log.write("All players passed.");
+            Log.write("All players have passed.");
             GameManager.getInstance().nextRound(this);
         }
         
         return true;
     }
     
-    /*----- Interbnal functions -----*/
+    /*----- Internal functions -----*/
+    private void setBuyableItems () {
+        List buyItems = new ArrayList();
+        Iterator it = startPacket.getItems().iterator();
+        StartItem b;
+        int row;
+        int minRow = 0;
+        int items = 0;
+        while (it.hasNext()) {
+            if (!(b = (StartItem)it.next()).isSold()) {
+            	if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
+            		buyItems.add(b);
+            	} else {
+            		row = b.getRow();
+            		if (minRow == 0) minRow = row;
+            		if (row == minRow) {
+            			// Allow all items in the top row.
+            			buyItems.add(b);
+            			items++;
+            		} else if (row == minRow + 1 && items == 1) {
+            			// Allow the first item in the next row if the
+            			// top row has only one item.
+            			buyItems.add(b);
+            			break;
+            		} else if (row > minRow + 1) break;
+            	}
+            }
+        }
+        if (buyItems.size() > 0) {
+            buyableItems = (StartItem[]) buyItems.toArray(new StartItem[0]);
+        } else {
+            buyableItems = new StartItem[0];
+        }
+    }
+    
     protected boolean isBuyable (StartItem item) {
-    	return !item.isSold();
+        
+        for (int i=0; i<buyableItems.length; i++) {
+            if (item == buyableItems[i]) return true;
+        }
+    	return false;
     }
     
     protected boolean isBiddable (StartItem item) {

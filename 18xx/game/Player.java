@@ -289,7 +289,7 @@ public class Player implements CashHolder {
 	 * @return false if the given amount was not blocked.
 	 */
 	public boolean unblockCash(int amount) {
-		if (amount < blockedCash) {
+		if (amount > blockedCash) {
 			return false;
 		} else {
 			blockedCash -= amount;
