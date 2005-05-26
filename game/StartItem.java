@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.5 2005/05/25 19:08:17 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.6 2005/05/26 22:03:22 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -309,6 +309,8 @@ public class StartItem {
      */
     public void setSold(boolean sold) {
         this.sold = sold;
+        bidders = null;
+        bid = bids = 0;
     }
     /**
      * This method indicates if there is a company for which a par price

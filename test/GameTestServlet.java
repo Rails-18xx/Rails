@@ -851,18 +851,18 @@ public class GameTestServlet extends HttpServlet {
 				}
 				// Bids
 				if (currentRound instanceof StartRoundI) {
-					StartItem[] items = startRound.getBiddableItems();
-					if (items != null) {
-						StartItem item;
-						StartItem.Bid bid;
-						for (i = 0; i < items.length; i++) {
-							item = items[i];
-							if ((bid = item.getBidForPlayer(player.getName())) != null) {
-								out.append(" (").append(item.getName()).append(
-										":&nbsp;").append(bid.getAmount()).append(
-										")");
+				    startRound = (StartRoundI) currentRound;
+					it = startRound.getStartPacket().getItems().iterator();
+					StartItem item;
+					StartItem.Bid bid;
+					while (it.hasNext()) {
+					    item = (StartItem) it.next();
+					    if (!item.isSold()
+					            && (bid = item.getBidForPlayer(player.getName())) != null) {
+							out.append(" (").append(item.getName()) 
+							   .append(":&nbsp;").append(bid.getAmount()) 
+							   .append(")");
 	
-							}
 						}
 					}
 				}
