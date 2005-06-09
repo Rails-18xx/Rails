@@ -525,7 +525,11 @@ public class PublicCompany extends Company implements PublicCompanyI,
     * 
     */
    public Player getPresident () {
-       return (Player) ((PublicCertificateI)certificates.get(0)).getPortfolio().getOwner();
+       if (hasStarted()) {
+           return (Player) ((PublicCertificateI)certificates.get(0)).getPortfolio().getOwner();
+       } else {
+           return null;
+       }
    }
 
    /**

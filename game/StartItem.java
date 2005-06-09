@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.6 2005/05/26 22:03:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.7 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -24,6 +24,7 @@ public class StartItem {
     protected int basePrice;
     protected int row = 0;
     protected int column = 0;
+    protected int index = nextIndex++;
     
     // Bids
     protected int bid = 0;
@@ -31,6 +32,7 @@ public class StartItem {
     protected Player bidder = null;
     protected Map bidders = new HashMap();
     protected boolean sold;
+    protected int buyPrice = 0;
     
     // For initialisation purposes only
     protected String type = null;
@@ -43,6 +45,7 @@ public class StartItem {
     protected static Portfolio ipo;
     protected static Portfolio unavailable;
     protected static CompanyManagerI compMgr;
+    protected static int nextIndex = 0;
     
     /**
      * The constructor, taking the properties of the "primary" 
@@ -112,6 +115,10 @@ public class StartItem {
                    unavailable.buyCertificate(pubcert2, pubcert2.getPortfolio(), 0);
            }
         }
+    }
+    
+    public int getIndex() {
+        return index;
     }
     
     /**
@@ -307,10 +314,15 @@ public class StartItem {
      * Set the start item sold status.
      * @param sold The new sold status (usually true).
      */
-    public void setSold(boolean sold) {
-        this.sold = sold;
+    public void setSold(int buyPrice) {
+        this.sold = true;
         bidders = null;
         bid = bids = 0;
+        this.buyPrice = buyPrice; 
+    }
+    
+    public int getBuyPrice() {
+        return buyPrice;
     }
     /**
      * This method indicates if there is a company for which a par price

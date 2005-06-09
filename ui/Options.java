@@ -74,7 +74,8 @@ public class Options extends JDialog implements ActionListener
          playerBoxes[i].setRenderer(renderer);
          playerBoxes[i].addItem("None");
          playerBoxes[i].addItem("Human");
-         playerBoxes[i].addItem("AI Not Yet Developed.");                 
+         playerBoxes[i].addItem("AI Not Yet Developed.");  
+         playerBoxes[i].setSelectedIndex(1);
          playersPane.add(playerBoxes[i]);
          
          playerNameFields[i] = new JTextField();
@@ -168,7 +169,8 @@ public class Options extends JDialog implements ActionListener
          
          for(int i=0;i < playerBoxes.length; i++)
          {
-            if(playerBoxes[i].getSelectedItem().toString().equalsIgnoreCase("Human"))
+            if(playerBoxes[i].getSelectedItem().toString().equalsIgnoreCase("Human")
+                    && !playerNameFields[i].getText().equals(""))	
             {
                playerNames.add(playerNameFields[i].getText());
             }
@@ -185,7 +187,13 @@ public class Options extends JDialog implements ActionListener
          try
          {
             this.setVisible(false);
+            /*
             Game.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
+            */
+            Game.initialise(gameNameBox.getSelectedItem().toString());
+            Game.getPlayerManager(playerNames);
+            GameManager.getInstance().startGame();
+            
             GameUILoader.gameUIInit();
          }
          catch(NullPointerException e)

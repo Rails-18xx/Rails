@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.8 2005/05/26 22:03:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.9 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -191,6 +191,7 @@ public class StartRound_1830 extends StartRound {
         
         if (startPacket.areAllSold()) {
             // No more start items: start a stock round
+        	nextStep = CLOSED;
             GameManager.getInstance().nextRound(this);
             return;
         }
@@ -254,7 +255,8 @@ public class StartRound_1830 extends StartRound {
  	            // Unblock the bid cash (must be done before assignItem())
  	            for (int i=0; i<numPlayers; i++) {
  	                p = GameManager.getPlayer(i);
- 	                if ((bid = auctionItem.getBidForPlayer(p.getName()).getAmount()) > 0) {
+ 	                if (auctionItem.hasBid(p.getName())
+ 	                        && (bid = auctionItem.getBidForPlayer(p.getName()).getAmount()) > 0) {
  	                    p.unblockCash(bid);
  	                }
  	            }
@@ -288,6 +290,7 @@ public class StartRound_1830 extends StartRound {
 	                }
 	            } else {
 	                // Otherwise, end of start round
+	            	nextStep = CLOSED;
 	                 GameManager.getInstance().nextRound(this);
 	            }
 	        }
@@ -296,14 +299,13 @@ public class StartRound_1830 extends StartRound {
         return true;
     }
     
-    /*----- Internal functions -----*/
-    protected boolean isBuyable (StartItem item) {
+    public boolean isBuyable (StartItem item) {
     	if (auctionItem != null) return false;
     	return !item.isSold() 
 				&& item == startPacket.getFirstUnsoldItem();
     }
     
-    protected boolean isBiddable (StartItem item) {
+    public boolean isBiddable (StartItem item) {
     	if (auctionItem != null) return item == auctionItem;
     	return !item.isSold()
 				&& item != startPacket.getFirstUnsoldItem();

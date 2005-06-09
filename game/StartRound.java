@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.4 2005/05/26 22:03:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.5 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -31,6 +31,8 @@ public abstract class StartRound implements StartRoundI {
     public static final int BUY = 3;
     /** The current player must bid or pass */
     public static final int BID_OR_PASS = 4;
+    /** The start round is closed */
+    public static final int CLOSED = 9;
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;   
@@ -63,6 +65,7 @@ public abstract class StartRound implements StartRoundI {
         
         GameManager.getInstance().setRound(this);
         GameManager.setCurrentPlayerIndex (GameManager.getPriorityPlayerIndex());
+        Log.write ("\nStart of initial round");
         Log.write (getCurrentPlayer().getName() + " has the Priority Deal");
     }
     
@@ -155,7 +158,7 @@ public abstract class StartRound implements StartRoundI {
             player.buy (extra, 0);
             checksOnBuying (extra);
         }
-        item.setSold(true);
+        item.setSold(price);
     }
     
     protected void checksOnBuying (Certificate cert) {
@@ -310,13 +313,13 @@ public abstract class StartRound implements StartRoundI {
      * @param item The start item to check.
      * @return True or false.
      */
-    protected abstract boolean isBuyable (StartItem item);
+    public abstract boolean isBuyable (StartItem item);
     
     /**
      * Check if a given item may be be bis upon by the current player.
      * @param item The start item to check.
      * @return True or false.
      */
-    protected abstract boolean isBiddable (StartItem item);
+    public abstract boolean isBiddable (StartItem item);
     
  }

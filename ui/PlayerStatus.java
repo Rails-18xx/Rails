@@ -20,43 +20,52 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 import javax.swing.*;
 
 import game.*;
 
-public class PlayerStatus extends JPanel implements MouseListener
+public class PlayerStatus extends JPanel
 {
    private JLabel[] playerLabel;
    private JLabel[] cashLabel;
    private JLabel[] stockCountLabel;
    private Player[] players;
    private String playerSelected;
+   private Map labelPerPlayer = new HashMap();
    
    public void updateStatus()
    {
+       // Player names
       this.add(new JLabel("Player:"));
       for(int i = 0; i < players.length; i++)
       {
-         playerLabel[i] = new JLabel(players[i].getName());         
-         playerLabel[i].setOpaque(true);
-         playerLabel[i].setBackground(Color.WHITE);
+         playerLabel[i] = new MyLabel(players[i].getName());         
+         if (players[i].getName().equals(playerSelected)) {
+            playerLabel[i].setBackground(Color.YELLOW);
+         } else {
+         	 playerLabel[i].setBackground(Color.WHITE);
+         }
          playerLabel[i].setForeground(Color.BLACK);
-         playerLabel[i].addMouseListener(this);
-         
+          
          this.add(playerLabel[i]);
+         labelPerPlayer.put(players[i].getName(), playerLabel[i]);
       }
       
+      // Player cash
       this.add(new JLabel("Cash:"));
       for(int i = 0; i < players.length; i++)
       {
-         cashLabel[i] = new JLabel();         
-         cashLabel[i].setText(Integer.toString(players[i].getCash()));
-         cashLabel[i].setOpaque(true);
-         cashLabel[i].setBackground(Color.WHITE);
+         cashLabel[i] = new MyLabel(Integer.toString(players[i].getCash()));         
+     	 cashLabel[i].setBackground(Color.WHITE);
          
          this.add(cashLabel[i]);
       }
+      
+      // Privates owned by player
+      
+      
    }
    public void refreshPanel()
    {
@@ -73,7 +82,7 @@ public class PlayerStatus extends JPanel implements MouseListener
       
       this.setBackground(Color.WHITE);
       this.setBorder(BorderFactory.createEtchedBorder());
-      this.setLayout(new GridLayout(2,players.length+1));
+      this.setLayout(new GridLayout(0, players.length+1, 1, 1));
       this.setOpaque(false);
       
       playerLabel = new JLabel[players.length];
@@ -81,64 +90,6 @@ public class PlayerStatus extends JPanel implements MouseListener
       
       updateStatus();
    }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-    */
-   public void mouseClicked(MouseEvent arg0)
-   {
-      JLabel label = (JLabel) arg0.getComponent();
-      if(!label.getBackground().equals(Color.YELLOW))
-      {
-         try
-         {
-            if(!playerSelected.equalsIgnoreCase(label.getText()))
-            {
-               for(int i=0; i < playerLabel.length; i++)
-               {
-                  playerLabel[i].setBackground(Color.WHITE);
-               }
-            }
-         }
-         catch (NullPointerException e)
-         {
-         }
-         
-         label.setBackground(Color.YELLOW);
-         playerSelected = label.getText();
-      }
-      else
-      {
-         label.setBackground(Color.WHITE);
-         playerSelected = null;
-      }
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-    */
-   public void mouseEntered(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-    */
-   public void mouseExited(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-    */
-   public void mousePressed(MouseEvent arg0)
-   {
-   }
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-    */
-   public void mouseReleased(MouseEvent arg0)
-   {
-   }
-   /**
-    * @return Returns the playerSelected.
-    */
    public String getPlayerSelected()
    {
       return playerSelected;
@@ -149,5 +100,11 @@ public class PlayerStatus extends JPanel implements MouseListener
    public void setPlayerSelected(String playerSelected)
    {
       this.playerSelected = playerSelected;
+      JLabel label;
+      if ((label = (JLabel)labelPerPlayer.get(playerSelected)) != null) {
+      	label.setBackground(Color.YELLOW);
+      } else {
+        	label.setBackground(Color.WHITE);
+      }
    }
 }

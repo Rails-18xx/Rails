@@ -23,7 +23,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	protected int closingPhase;
 	
 	protected boolean closed = false;
-
+	
 	public PrivateCompany() {
 		super ();
 		this.privateNumber = numberOfPrivateCompanies++;

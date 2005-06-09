@@ -27,14 +27,20 @@ public class StockToken extends JPanel
    private Color fgColor, bgColor;
    private double x, y, diameter;
    private Ellipse2D.Double circle, circle2;
+   private String name;
 
    public void paintComponent(Graphics g)
    {
       clear(g);
       Graphics2D g2d = (Graphics2D) g;
+      Font f = new Font ("Helvetica", Font.BOLD, 8);
       
       drawToken(g2d, bgColor, circle2);
-      drawToken(g2d, fgColor, circle);
+      g2d.setFont(f);
+      g2d.setColor(fgColor);
+      g2d.drawString(name, 3, 14);
+      
+      //drawToken(g2d, fgColor, circle);
    }
    
    private void drawToken(Graphics2D g2d, Color c, Ellipse2D.Double circle)
@@ -49,34 +55,36 @@ public class StockToken extends JPanel
       super.paintComponent(g);
    }
 
-   public StockToken()
+   public StockToken(String name)
    {
-      this(Color.BLACK, Color.WHITE, 4, 4, 15);
+      this(Color.BLACK, Color.WHITE, name, 4, 4, 15);
    }
 
-   public StockToken(Color fc, Color bc)
+   public StockToken(Color fc, Color bc, String name)
    {
-      this(fc, bc, 4, 4, 15);
+      this(fc, bc, name, 4, 4, 15);
    }
    
-   public StockToken(double xx, double yy)
+   public StockToken(double xx, double yy, String name)
    {
-      this(Color.BLACK, Color.WHITE, xx, yy, 15);
+      this(Color.BLACK, Color.WHITE, name, xx, yy, 15);
    }
    
-   public StockToken(Color fc, Color bc, double x, double y, double diameter)
+   public StockToken(Color fc, Color bc, String name, double x, double y, double diameter)
    {      
       super();
       
       fgColor = fc;
       bgColor = bc;
       
-      circle = new Ellipse2D.Double(x, y, diameter, diameter);
+      
+      //circle = new Ellipse2D.Double(x, y, diameter, diameter);
       circle2 = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
       
       this.setForeground(fgColor);
       this.setOpaque(false);
       this.setVisible(true);
+      this.name = name;
    }
    
 }

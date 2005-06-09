@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.3 2005/05/26 22:03:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.4 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 23-May-2005
  * Change Log:
@@ -230,7 +230,7 @@ public class StartRound_1835 extends StartRound {
         }
     }
     
-    protected boolean isBuyable (StartItem item) {
+    public boolean isBuyable (StartItem item) {
         
         for (int i=0; i<buyableItems.length; i++) {
             if (item == buyableItems[i]) return true;
@@ -238,7 +238,7 @@ public class StartRound_1835 extends StartRound {
     	return false;
     }
     
-    protected boolean isBiddable (StartItem item) {
+    public boolean isBiddable (StartItem item) {
     	return false;
     }
     

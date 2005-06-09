@@ -19,12 +19,19 @@ public class StatusWindow extends JFrame implements ActionListener
    private CompanyStatus companyStatus;
    private PlayerStatus playerStatus;
    private JPanel buttonPanel;
-   private JButton buyButton, sellButton;
+   private JButton buyButton, sellButton, doneButton;
    private Player player;
-   private PublicCompany company;
+   private PublicCompanyI company;
+   private CompanyManagerI cm;
+   String companyName;
+   
+   /*----*/
+   public static StockRound round;
+   
    
    public StatusWindow ()
    {
+       cm = Game.getCompanyManager();
       companyStatus = new CompanyStatus(Game.getCompanyManager(), Game.getBank());
       playerStatus  = new PlayerStatus();
       certStatus = new CertificateStatus();
@@ -32,15 +39,19 @@ public class StatusWindow extends JFrame implements ActionListener
       
       buyButton = new JButton("Buy");
       sellButton = new JButton("Sell");
+      doneButton = new JButton("Pass");
       
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
+      buttonPanel.add(doneButton);
       
       buyButton.setActionCommand("buy");
-      sellButton.setActionCommand("sell");     
+      sellButton.setActionCommand("sell");
+      doneButton.setActionCommand("done");
       
       buyButton.addActionListener(this);
       sellButton.addActionListener(this);
+      doneButton.addActionListener(this);
 
       updateStatus();
       setSize(800,300);
@@ -49,6 +60,13 @@ public class StatusWindow extends JFrame implements ActionListener
       setTitle("Rails: Game Status");
       setVisible(true);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+      /*----*/
+      round = new StockRound();
+      playerStatus.setPlayerSelected(GameManager.getCurrentPlayer().getName());
+      refreshStatus();
+
+   
    }
 
    public void updateStatus()
@@ -80,91 +98,75 @@ public class StatusWindow extends JFrame implements ActionListener
     */
    public void actionPerformed(ActionEvent arg0)
    {
+       player = GameManager.getCurrentPlayer();
+       
       if (arg0.getActionCommand().equalsIgnoreCase("buy"))
       {
          buyButtonClicked();
+         doneButton.setText("Done");
       }
       else if (arg0.getActionCommand().equalsIgnoreCase("sell"))
       {
          sellButtonClicked();
+         doneButton.setText("Done");
+         
+      } else if (arg0.getActionCommand().equalsIgnoreCase("done")) {
+      	
+      	round.done(playerStatus.getPlayerSelected());
+      	playerStatus.setPlayerSelected(GameManager.getCurrentPlayer().getName());
+      	doneButton.setText("Pass");
       }
-   }
-
-   private void setSelectedPlayerAndCompany()
-   {
-      if(playerStatus.getPlayerSelected() == null && companyStatus.getCompanySelected() == null)
-      {
-         int[] x = certStatus.findLabelPosition(certStatus.getSelectedLabel());
-         player = (Player) Game.getPlayerManager().getPlayersArrayList().get(x[1]-1);
-         company = (PublicCompany) Game.getCompanyManager().getAllPublicCompanies().get(x[0]-1);
-      }
-      else
-      {
-         player = Game.getPlayerManager().getPlayerByName(playerStatus.getPlayerSelected());
-         company = (PublicCompany) Game.getCompanyManager().getPublicCompany(companyStatus.getCompanySelected());
-      }
+      repaint();
       
-      companyStatus.setCompanySelected(company.getName());
-      playerStatus.setPlayerSelected(player.getName());
-   }
-   
+  }
+
    private void buyButtonClicked()
    {
-      setSelectedPlayerAndCompany();
+      companyName = companyStatus.getCompanySelected();
+      if(companyName != null)
+      {
+      company = cm.getPublicCompany(companyName);
 
-      /*
-      if(player.hasBoughtStockThisTurn())
-      {
-         JOptionPane.showMessageDialog(this, "Player has already bought stock this turn.");
-         return;
+      if (company.hasStarted()) {
+          if (!round.buyShare(player.getName(), companyStatus.getFromPortfolio(), companyName, 1)) {
+              JOptionPane.showMessageDialog(this,Log.getErrorBuffer(), "", JOptionPane.OK_OPTION);
+          }
+      } else {
+      	startCompany();
       }
-      */
-      
-      try //Misusing Try/Catch to provide an If/Else condition through the abuse of exceptions.
-      {
-         player.buyShare((PublicCertificate)company.getNextAvailableCertificate());
+      } else {
+          JOptionPane.showMessageDialog(this,"Unable to buy share.\r\n" +
+					"You must select a company first.", 
+						"No share bought.", JOptionPane.OK_OPTION);
+         
       }
-      catch(NullPointerException e)
-      {
-         startCompany();
-      }
-      
-      playerStatus.setPlayerSelected(null);
-      companyStatus.setCompanySelected(null);
-      repaint();
    }
    
    private void sellButtonClicked()
    {
-      setSelectedPlayerAndCompany();
-      
-      ArrayList certs = (ArrayList) player.getPortfolio().getCertificatesPerCompany(company.getName());
-      
-      try
-      {
-         //Just sell the last cert in the stack first.
-         if(!((PublicCertificate)certs.get(certs.size()-1)).isPresidentShare())
-            player.sellShare((PublicCertificate)certs.get(certs.size()-1));
-         else
-            JOptionPane.showMessageDialog(this, "You can't sell the President's share.");
-      }
-      catch (ArrayIndexOutOfBoundsException e)
-      {
-         JOptionPane.showMessageDialog(this, "You have no shares of this company to sell");
-      }
-      
-      playerStatus.setPlayerSelected(null);
-      companyStatus.setCompanySelected(null);
-      StockChart.refreshStockPanel();
-      repaint();
-   }
+       String companyName = certStatus.getSelectedCompany();
+     
+       if(companyName != null)
+       {
+         if(!round.sellShare(player.getName(), companyName)) {
+            JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+         }
+      	StockChart.refreshStockPanel();
+       } else {
+           JOptionPane.showMessageDialog(this,"Unable to sell share.\r\n" +
+					"You must select a company first.", 
+						"Share not sold.", JOptionPane.OK_OPTION);
+           
+       }
+    }
       
    private void startCompany()
    {
       StockMarket stockMarket = (StockMarket) Game.getStockMarket();
       
-      if(companyStatus.getCompanySelected() != null && playerStatus.getPlayerSelected() != null)
+      if(companyName != null)
       {
+          company = cm.getPublicCompany(companyName);
          StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
                						"What Price?", 
                						JOptionPane.INFORMATION_MESSAGE,
@@ -173,12 +175,17 @@ public class StatusWindow extends JFrame implements ActionListener
                						stockMarket.getStartSpaces().get(0));
          
          //FIXME: Probably should check the boolean startCompany() returns
+         /*
          PublicCompany.startCompany(playerStatus.getPlayerSelected(), companyStatus.getCompanySelected(), sp);
-         StockChart.refreshStockPanel();
+         */
+         if (!round.startCompany(player.getName(), company.getName(), sp.getPrice())) {
+          JOptionPane.showMessageDialog(this,Log.getErrorBuffer(), "", JOptionPane.OK_OPTION);
+         }
+        StockChart.refreshStockPanel();
       }
       else
          JOptionPane.showMessageDialog(this,"Unable to start company.\r\n" +
-         							"You must select a player and a company first.", 
+         							"You must select a company first.", 
                						"Company not started.", JOptionPane.OK_OPTION);
    }
 }
