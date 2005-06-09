@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.3 2005/05/26 22:03:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.4 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -25,6 +25,8 @@ public interface StartRoundI extends Round {
     
     public StartPacket getStartPacket ();
     
+    public int getCurrentPlayerIndex();
+    
     /*----- Action methods -----*/
     
     public boolean bid (String playerName, String itemName, int amount);
@@ -42,5 +44,9 @@ public interface StartRoundI extends Round {
     public boolean pass (String playerName);
 
     public boolean setPrice (String playerName, String companyName, int parPrice);
+
+    public boolean isBuyable (StartItem item);
+    
+    public boolean isBiddable (StartItem item);
 
 }

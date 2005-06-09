@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.4 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.5 2005/06/09 15:13:26 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -140,6 +140,10 @@ public class StartPacket {
      */
     public List getItems() {
         return items;
+    }
+    
+    public StartItem getItem(int index) {
+        return (StartItem) items.get(index);
     }
     
     /**

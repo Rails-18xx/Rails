@@ -106,7 +106,7 @@ public class OperatingRound implements Round
         relativeORNumber++;
         cumulativeORNumber++;
         
-        Log.write("Start of Operating Round "+getCompositeORNumber());
+        Log.write("\nStart of Operating Round "+getCompositeORNumber());
 
         // Private companies pay out
 		Iterator it = Game.getCompanyManager().getAllPrivateCompanies().iterator();
@@ -697,12 +697,20 @@ public class OperatingRound implements Round
         return operatingCompany;
     }
     
+    public PublicCompanyI[] getOperatingCompanies () {
+        return operatingCompanyArray;
+    }
+    
     /**
      * Get the current operating round step (i.e. the next action).
      * @return The number that defines the next action.
      */
     public int getStep () {
         return step;
+    }
+    
+    public int getOperatingCompanyIndex () {
+        return operatingCompanyIndex;
     }
     
     /**
@@ -729,4 +737,33 @@ public class OperatingRound implements Round
     public boolean isSplitAllowed() {
         return (splitRule != SPLIT_NOT_ALLOWED);
     }
+    
+    /** Get all possible tile build costs in a game.
+     * This is a (perhaps temporary) method to play without a map.
+     * @author Erik Vos
+     */
+    public int[] getTileBuildCosts () {
+       // Result is currently hardcoded, but can be made configurable. 
+        return new int[] {0,80,120};
+    }
+    
+    /** Get all possible token laying costs in a game.
+     * This is a (perhaps temporary) method to play without a map.
+     * @author Erik Vos
+     */
+    public int[] getTokenLayCosts () {
+       // Result is currently hardcoded, but can be made configurable. 
+        return new int[] {0,40,100};
+    }
+    
+    /** Get all train costs in a game.
+     * This is a (temporary) method to play without trains.
+     * @author Erik Vos
+     */
+    public int[] getTrainCosts () {
+        // Result is currently hardcoded, but can be made configurable. 
+        return new int[] {0,80,180,300,450,630,1100};
+        
+    }
+
 }

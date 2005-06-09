@@ -161,7 +161,7 @@ public class StockChart extends JFrame
          bgColour = co.getBgColour();
          fgColour = co.getFgColour();
 
-         token = new StockToken(fgColour, bgColour);
+         token = new StockToken(fgColour, bgColour, co.getName());
          token.setBounds(origin.x, origin.y, size.width, size.height);
          
          layeredPane.add(token, new Integer(0), 0);

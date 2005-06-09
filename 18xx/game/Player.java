@@ -317,6 +317,10 @@ public class Player implements CashHolder {
 		return wallet - blockedCash;
 	}
 	
+	public int getBlockedCash() {
+	    return blockedCash;
+	}
+	
 	public int getIndex() {
 		return index;
 	}
