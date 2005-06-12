@@ -27,8 +27,6 @@ public class GameStatus extends JPanel implements ActionListener
    private static GameStatus gameStatus;
    private JFrame parent;
 
-    //public static StockRound round;
-   
    private GridBagLayout gb;
    private GridBagConstraints gbc;
    private Color buttonColour = new Color (255, 220, 150);
@@ -378,6 +376,7 @@ public class GameStatus extends JPanel implements ActionListener
     */
    public void actionPerformed(ActionEvent actor)
    {
+      System.out.println("Click.");
        JComponent source = (JComponent)actor.getSource();
        String command = actor.getActionCommand();
        if (source instanceof ClickField) {

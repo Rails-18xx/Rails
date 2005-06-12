@@ -10,8 +10,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import java.util.*;
-
 /**
  * @author blentz
  */
@@ -27,7 +25,7 @@ public class StatusWindow2 extends JFrame implements ActionListener
    private Portfolio ipo, pool;
    private String companyName;
    private int compIndex, playerIndex;
-   
+
    /*----*/
    private GameManager gmgr;
    private Round currentRound;
@@ -36,26 +34,26 @@ public class StatusWindow2 extends JFrame implements ActionListener
    private StartRoundWindow startRoundWindow;
    private OperatingRound operatingRound;
    private ORWindow orWindow;
-   
    private int np = GameManager.getNumberOfPlayers();
    private int nc;
-   Color buttonColour = new Color (224, 224, 255);
-   Insets buttonInsets = new Insets (0, 1, 0, 1);
 
+   Color buttonColour = new Color(224, 224, 255);
+   Insets buttonInsets = new Insets(0, 1, 0, 1);
    JPanel pane = new JPanel(new BorderLayout());
+
    Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-   
-   
-   public StatusWindow2 ()
+
+   public StatusWindow2()
    {
       cm = Game.getCompanyManager();
-      companies = (PublicCompanyI[]) cm.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
+      companies = (PublicCompanyI[]) cm.getAllPublicCompanies().toArray(
+            new PublicCompanyI[0]);
       ipo = Bank.getIpo();
       pool = Bank.getPool();
 
       gameStatus = new GameStatus(this);
       buttonPanel = new JPanel();
-       
+
       buyButton = new JButton("Buy");
       sellButton = new JButton("Sell");
       doneButton = new JButton("Pass");
@@ -63,31 +61,28 @@ public class StatusWindow2 extends JFrame implements ActionListener
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
       buttonPanel.add(doneButton);
-      
+
       buyButton.setActionCommand("buy");
       sellButton.setActionCommand("sell");
       doneButton.setActionCommand("done");
-      
+
       buyButton.addActionListener(this);
       sellButton.addActionListener(this);
       doneButton.addActionListener(this);
-      
-      
+
       //updateStatus();
-      setSize(800,300);
-      setLocation(25,450);
+      setSize(800, 300);
+      setLocation(25, 450);
 
       buttonPanel.setBorder(BorderFactory.createEtchedBorder());
       buttonPanel.setOpaque(false);
-      
-      
 
       setTitle("Rails: Game Status");
       pane.setLayout(new BorderLayout());
       //pane.setPreferredSize(new Dimension (800, 300));
       init();
-      pane.add (gameStatus, BorderLayout.NORTH);
-      pane.add (buttonPanel, BorderLayout.CENTER);
+      pane.add(gameStatus, BorderLayout.NORTH);
+      pane.add(buttonPanel, BorderLayout.CENTER);
       pane.setOpaque(true);
       setContentPane(pane);
       refreshStatus();
@@ -101,76 +96,82 @@ public class StatusWindow2 extends JFrame implements ActionListener
       updateStatus();
       pack();
    }
-   
-   private void init () {
-   	
-	    PublicCompanyI[] companies = (PublicCompanyI[]) 
-		Game.getCompanyManager().getAllPublicCompanies().toArray(new PublicCompanyI[0]);
-	    nc = companies.length;
-	    
-        
-    }
 
-   
+   private void init()
+   {
+
+      PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
+            .getAllPublicCompanies().toArray(new PublicCompanyI[0]);
+      nc = companies.length;
+
+   }
+
    public void updateStatus()
    {
-       if (currentRound instanceof StartRound) {
-           
-           doneButton.setEnabled(false);
-           startRound = (StartRound) currentRound;
-           startRoundWindow = new StartRoundWindow(startRound, this);
-          
-           startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
-           
-       } else if (currentRound instanceof StockRound) {
-           
-           doneButton.setEnabled(true);
-           stockRound = (StockRound) currentRound;
-           gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-           refreshStatus();
-           
-       } else if (currentRound instanceof OperatingRound) {
-           
-           doneButton.setEnabled(false);
-           operatingRound = (OperatingRound) currentRound;
-           orWindow = new ORWindow (operatingRound, this);
-           
-       }
+      if (currentRound instanceof StartRound)
+      {
+
+         doneButton.setEnabled(false);
+         startRound = (StartRound) currentRound;
+         startRoundWindow = new StartRoundWindow(startRound, this);
+
+         startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
+
+      }
+      else if (currentRound instanceof StockRound)
+      {
+
+         doneButton.setEnabled(true);
+         stockRound = (StockRound) currentRound;
+         gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+         refreshStatus();
+
+      }
+      else if (currentRound instanceof OperatingRound)
+      {
+
+         doneButton.setEnabled(false);
+         operatingRound = (OperatingRound) currentRound;
+         orWindow = new ORWindow(operatingRound, this);
+
+      }
 
    }
-   
-   public void resume (JFrame previous) {
-   	this.requestFocus();
-   	if (previous instanceof StartRoundWindow) startRoundWindow = null;
-   	else if (previous instanceof ORWindow) orWindow = null;
-   	currentRound = GameManager.getInstance().getCurrentRound();
-   	updateStatus();
+
+   public void resume(JFrame previous)
+   {
+      this.requestFocus();
+      if (previous instanceof StartRoundWindow)
+         startRoundWindow = null;
+      else if (previous instanceof ORWindow)
+         orWindow = null;
+      currentRound = GameManager.getInstance().getCurrentRound();
+      updateStatus();
    }
+
    public void refreshStatus()
    {
-   	  gameStatus.repaint();
-      //companyStatus.refreshPanel();
-      //playerStatus.refreshPanel();
-      //certStatus.refreshPanel();
-      //updateStatus();
-      //FIXME: Not an ideal fix for various repainting issues, but it works well enough for now.
+      gameStatus.repaint();
+      //FIXME: Not an ideal fix for various repainting issues, but it works
+      // well enough for now.
       this.pack();
-      //System.out.println("StatusWindow Dimensions: " + this.getWidth() + ", " + this.getHeight());
    }
-   
+
    public void repaint()
    {
       super.repaint();
       refreshStatus();
    }
-   
-   /* (non-Javadoc)
+
+   /*
+    * (non-Javadoc)
+    * 
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
    public void actionPerformed(ActionEvent actor)
    {
-       player = GameManager.getCurrentPlayer();
-       
+      player = GameManager.getCurrentPlayer();
+
       if (actor.getActionCommand().equalsIgnoreCase("buy"))
       {
          buyButtonClicked();
@@ -180,127 +181,173 @@ public class StatusWindow2 extends JFrame implements ActionListener
       {
          sellButtonClicked();
          doneButton.setText("Done");
-         
-      } else if (actor.getActionCommand().equalsIgnoreCase("done")) {
-      	
-      	stockRound.done(gameStatus.getSRPlayer());
-      	doneButton.setText("Pass");
+
       }
-      LogWindow.addLog ();
+      else if (actor.getActionCommand().equalsIgnoreCase("done"))
+      {
+
+         stockRound.done(gameStatus.getSRPlayer());
+         doneButton.setText("Pass");
+      }
+      LogWindow.addLog();
       pack();
-      
+
       currentRound = GameManager.getInstance().getCurrentRound();
-      if (currentRound instanceof StockRound) {
-          
-    	gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-    	
-      } else if (currentRound instanceof OperatingRound) {
-          
-      	gameStatus.setSRPlayerTurn(-1);
-          updateStatus();
-          
+      if (currentRound instanceof StockRound)
+      {
+
+         gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+
       }
-      
-  }
+      else if (currentRound instanceof OperatingRound)
+      {
+
+         gameStatus.setSRPlayerTurn(-1);
+         updateStatus();
+
+      }
+
+   }
+
    private void buyButtonClicked()
    {
-       playerIndex = GameManager.getCurrentPlayerIndex();
-       
-       if ((compIndex = gameStatus.getCompIndexToBuyFromIPO()) >= 0) {
-           company = companies[compIndex];
-           if (company.hasStarted()) {
-               if (!stockRound.buyShare(player.getName(), ipo, company.getName(), 1)) {
-                   JOptionPane.showMessageDialog(this,Log.getErrorBuffer(), "", JOptionPane.OK_OPTION);
-               } else {
-                   gameStatus.updatePlayer (compIndex, playerIndex);
-                   gameStatus.updateIPO (compIndex);
-               }
-           } else {
-           	   startCompany();
-           }
-           if (company.hasFloated()) gameStatus.updateCompany(compIndex);
-                 
-       } else if ((compIndex = gameStatus.getCompIndexToBuyFromPool()) >= 0) {
-           company = companies[compIndex];
-           if (company.hasStarted()) {
-               if (!stockRound.buyShare(player.getName(), pool, company.getName(), 1)) {
-                   JOptionPane.showMessageDialog(this,Log.getErrorBuffer(), "", JOptionPane.OK_OPTION);
-               } else {
-                   gameStatus.updatePlayer (compIndex, playerIndex);
-                   gameStatus.updatePool (compIndex);
-                   gameStatus.updateBank();
-               }
-           }
-          
-       } else {
-          JOptionPane.showMessageDialog(this,"Unable to buy share.\r\n" +
-					"You must select a company first.", 
-						"No share bought.", JOptionPane.OK_OPTION);
-         
+      playerIndex = GameManager.getCurrentPlayerIndex();
+
+      if ((compIndex = gameStatus.getCompIndexToBuyFromIPO()) >= 0)
+      {
+         company = companies[compIndex];
+         if (company.hasStarted())
+         {
+            if (!stockRound.buyShare(player.getName(), ipo, company.getName(),
+                  1))
+            {
+               JOptionPane.showMessageDialog(this, Log.getErrorBuffer(), "",
+                     JOptionPane.OK_OPTION);
+            }
+            else
+            {
+               gameStatus.updatePlayer(compIndex, playerIndex);
+               gameStatus.updateIPO(compIndex);
+            }
+         }
+         else
+         {
+            startCompany();
+         }
+         if (company.hasFloated())
+            gameStatus.updateCompany(compIndex);
+
       }
-  }
+      else if ((compIndex = gameStatus.getCompIndexToBuyFromPool()) >= 0)
+      {
+         company = companies[compIndex];
+         if (company.hasStarted())
+         {
+            if (!stockRound.buyShare(player.getName(), pool, company.getName(),
+                  1))
+            {
+               JOptionPane.showMessageDialog(this, Log.getErrorBuffer(), "",
+                     JOptionPane.OK_OPTION);
+            }
+            else
+            {
+               gameStatus.updatePlayer(compIndex, playerIndex);
+               gameStatus.updatePool(compIndex);
+               gameStatus.updateBank();
+            }
+         }
+
+      }
+      else
+      {
+         JOptionPane.showMessageDialog(this, "Unable to buy share.\r\n"
+               + "You must select a company first.", "No share bought.",
+               JOptionPane.OK_OPTION);
+
+      }
+   }
+
    private void sellButtonClicked()
    {
-       int compIndex;
-       int playerIndex = GameManager.getCurrentPlayerIndex();
-       if ((compIndex = gameStatus.getCompIndexToSell()) >= 0) {
-           company = companies[compIndex];
-           if(!stockRound.sellShare(player.getName(), company.getName())) {
-               JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
-           } else {
-               gameStatus.updatePlayer (compIndex, playerIndex);
-               gameStatus.updatePool (compIndex);
-               gameStatus.updateBank();
-          	   StockChart.refreshStockPanel();
-           }
-       } else {
-           JOptionPane.showMessageDialog(this,"Unable to sell share.\r\n" +
-					"You must select a company first.", 
-						"Share not sold.", JOptionPane.OK_OPTION);
-           
-       }
-   }
-    private void startCompany()
-   {
-      StockMarket stockMarket = (StockMarket) Game.getStockMarket();
-      
-      if(company != null) {
-          StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this, "Start company at what price?", 
-               						"What Price?", 
-               						JOptionPane.INFORMATION_MESSAGE,
-               						null,
-               						stockMarket.getStartSpaces().toArray(),
-               						stockMarket.getStartSpaces().get(0));
-         //repaint();
-         //FIXME: Probably should check the boolean startCompany() returns
-         //PublicCompany.startCompany(playerStatus.getPlayerSelected(), companyStatus.getCompanySelected(), sp);
-         if (!stockRound.startCompany(player.getName(), company.getName(), sp.getPrice())) {
-          JOptionPane.showMessageDialog(this,Log.getErrorBuffer(), "", JOptionPane.OK_OPTION);
-         } else {
-             
-             gameStatus.updatePlayer (compIndex, playerIndex);
-             gameStatus.updateIPO (compIndex);
-             gameStatus.updateBank();
+      int compIndex;
+      int playerIndex = GameManager.getCurrentPlayerIndex();
+      if ((compIndex = gameStatus.getCompIndexToSell()) >= 0)
+      {
+         company = companies[compIndex];
+         if (!stockRound.sellShare(player.getName(), company.getName()))
+         {
+            JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+         }
+         else
+         {
+            gameStatus.updatePlayer(compIndex, playerIndex);
+            gameStatus.updatePool(compIndex);
+            gameStatus.updateBank();
             StockChart.refreshStockPanel();
          }
       }
       else
-         JOptionPane.showMessageDialog(this,"Unable to start company.\r\n" +
-         							"You must select a company first.", 
-               						"Company not started.", JOptionPane.OK_OPTION);
- 
+      {
+         JOptionPane.showMessageDialog(this, "Unable to sell share.\r\n"
+               + "You must select a company first.", "Share not sold.",
+               JOptionPane.OK_OPTION);
+
+      }
    }
-    
-    public void enableBuyButton (boolean enable) {
-    	buyButton.setEnabled(enable);
-    	if (enable) sellButton.setEnabled(!enable);
-    }
-    public void enableSellButton (boolean enable) {
-    	sellButton.setEnabled(enable);
-    	if (enable) buyButton.setEnabled(!enable);
-    }
-    
-    public GameStatus getGameStatus () {
-        return gameStatus;
-    }
+
+   private void startCompany()
+   {
+      StockMarket stockMarket = (StockMarket) Game.getStockMarket();
+
+      if (company != null)
+      {
+         StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this,
+               "Start company at what price?", "What Price?",
+               JOptionPane.INFORMATION_MESSAGE, null, stockMarket
+                     .getStartSpaces().toArray(), stockMarket.getStartSpaces()
+                     .get(0));
+         //repaint();
+         //FIXME: Probably should check the boolean startCompany() returns
+         //PublicCompany.startCompany(playerStatus.getPlayerSelected(),
+         // companyStatus.getCompanySelected(), sp);
+         if (!stockRound.startCompany(player.getName(), company.getName(), sp
+               .getPrice()))
+         {
+            JOptionPane.showMessageDialog(this, Log.getErrorBuffer(), "",
+                  JOptionPane.OK_OPTION);
+         }
+         else
+         {
+
+            gameStatus.updatePlayer(compIndex, playerIndex);
+            gameStatus.updateIPO(compIndex);
+            gameStatus.updateBank();
+            StockChart.refreshStockPanel();
+         }
+      }
+      else
+         JOptionPane.showMessageDialog(this, "Unable to start company.\r\n"
+               + "You must select a company first.", "Company not started.",
+               JOptionPane.OK_OPTION);
+
+   }
+
+   public void enableBuyButton(boolean enable)
+   {
+      buyButton.setEnabled(enable);
+      if (enable)
+         sellButton.setEnabled(!enable);
+   }
+
+   public void enableSellButton(boolean enable)
+   {
+      sellButton.setEnabled(enable);
+      if (enable)
+         buyButton.setEnabled(!enable);
+   }
+
+   public GameStatus getGameStatus()
+   {
+      return gameStatus;
+   }
 }
