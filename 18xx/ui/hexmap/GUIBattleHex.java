@@ -8,18 +8,17 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import game.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one battle hex.
- * @version $Id: GUIMapHex.java,v 1.1 2005/05/05 15:46:51 wakko666 Exp $
+ * @version $Id: GUIBattleHex.java,v 1.3 2005/06/12 13:27:44 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class GUIMapHex extends GUIHex
+public class GUIBattleHex extends GUIHex
 {
     private GeneralPath innerHexagon;
     private Component map;
@@ -32,7 +31,7 @@ public class GUIMapHex extends GUIHex
      * 
      * @todo check if we can avoid this
      */
-    private GUIMapHex[] neighbors = new GUIMapHex[6];
+    private GUIBattleHex[] neighbors = new GUIBattleHex[6];
 
     // Hex terrain types are:
     // p, r, s, t, o, v, d, w
@@ -51,7 +50,7 @@ public class GUIMapHex extends GUIHex
     // Letters increase left to right; numbers increase bottom to top.
 
 
-    public GUIMapHex(int cx, int cy, int scale, Component map,
+    public GUIBattleHex(int cx, int cy, int scale, Component map,
         int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -92,7 +91,7 @@ public class GUIMapHex extends GUIHex
         innerHexagon.transform(at);
     }
 
-    public GUIMapHex(int xCoord, int yCoord)
+    public GUIBattleHex(int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
     }
@@ -395,7 +394,7 @@ public class GUIMapHex extends GUIHex
             char op = getBattleHexModel().getOppositeHexside(i);
             if (op != ' ')
             {
-                GUIMapHex neighbor = getNeighbor(i);
+                GUIBattleHex neighbor = getNeighbor(i);
 
                 int dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
 
@@ -440,7 +439,7 @@ public class GUIMapHex extends GUIHex
         return didAllHexside;
     }
 
-    public GUIMapHex getNeighbor(int i)
+    public GUIBattleHex getNeighbor(int i)
     {
         if (i < 0 || i > 6)
         {
@@ -452,7 +451,7 @@ public class GUIMapHex extends GUIHex
         }
     }
 
-    public void setNeighbor(int i, GUIMapHex hex)
+    public void setNeighbor(int i, GUIBattleHex hex)
     {
         if (i >= 0 && i < 6)
         {
