@@ -10,8 +10,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import java.util.*;
-
 /**
  * @author blentz
  */
@@ -387,12 +385,12 @@ public class StartRoundWindow extends JFrame implements ActionListener
            buyButton.setEnabled(false);
            bidButton.setEnabled(false);
            bidAmount.setEnabled(false);
-           setSRPlayerTurn(round.getCurrentPlayerIndex());
+           setSRPlayerTurn(((StartRound)round).getCurrentPlayerIndex());
        }
        LogWindow.addLog ();
        if (round.nextStep() == StartRound.SET_PRICE) {
        	PublicCompanyI company = round.getCompanyNeedingPrice();
-       	StockMarketI stockMarket = Game.getInstance().getStockMarket();
+       	StockMarketI stockMarket = Game.getStockMarket();
         StockSpace sp = (StockSpace) 
 			JOptionPane.showInputDialog(this, "Start "+company.getName()+" at what price?", 
 					"What Price?", 
