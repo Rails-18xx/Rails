@@ -7,7 +7,7 @@ import java.awt.Color;
 
 /**
  * Class BattleHex holds game state for battle hex.
- * @version $Id: BattleHex.java,v 1.1 2005/05/05 15:46:51 wakko666 Exp $
+ * @version $Id: BattleHex.java,v 1.2 2005/06/12 13:27:44 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -187,73 +187,6 @@ public class BattleHex
         */
     }
 
-    public static boolean isNativeBonusHazard(String name)
-    {
-       /*
-        if (name.equals(H_BRAMBLES) ||
-                name.equals(H_VOLCANO))
-        {
-            return true;
-        }
-        */
-        return false;
-    }
-
-    public static boolean isNativeBonusHexside(char h)
-    {
-        if (h == 'w' || h == 's' || h == 'd')
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isNativeBonusTerrain()
-    {
-        boolean result;
-        result = isNativeBonusHazard(getTerrain());
-
-        for (int i = 0; i < 6; i++)
-        {
-            char h = getHexside(i);
-            result = result || isNativeBonusHexside(h);
-        }
-        return result;
-    }
-
-    public static boolean isNonNativePenaltyHazard(String name)
-    {
-       /*
-        if (name.equals(H_BRAMBLES) ||
-                name.equals(H_DRIFT))
-        {
-            return true;
-        }
-        */
-        return false;
-    }
-
-    public static boolean isNonNativePenaltyHexside(char h)
-    {
-        if (h == 'w' || h == 's' || h == 'd')
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isNonNativePenaltyTerrain()
-    {
-        boolean result;
-        result = isNonNativePenaltyHazard(getTerrain());
-        for (int i = 0; i < 6; i++)
-        {
-            char h = getOppositeHexside(i);
-            result = result || isNonNativePenaltyHexside(h);
-        }
-        return result;
-    }
-
     private void assignLabel()
     {
         String label;
@@ -385,161 +318,16 @@ public class BattleHex
         return (xCoord == -1);
     }
 
-    public boolean hasWall()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            if (hexsides[i] == 'w')
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean blocksLineOfSight()
-    {
-        //return (getTerrain().equals(H_TREE) || getTerrain().equals(H_STONE));
-       return false;
-    }
-
-    /**
-     * Return the number of movement points it costs to enter this hex.
-     * For fliers, this is the cost to land in this hex, not fly over it.
-     * If entry is illegal, just return a cost greater than the maximum
-     * possible number of movement points. This caller is responsible
-     * for checking to see if this hex is already occupied.
-     * @param creature The Creature that is trying to move into the BattleHex.
-     * @param cameFrom The HexSide through which the Creature try to enter.
-     * @return Cost to enter the BattleHex.
-     */
-    public int getEntryCost(/*Creature creature,*/ int cameFrom, boolean cumul)
-    {
-        int cost = NORMAL_COST;
-
-        /* Check to see if the hex is occupied or totally impassable.
-        if ((getTerrain().equals(H_LAKE) && (!creature.isWaterDwelling())) ||
-                (getTerrain().equals(H_TREE) && (!creature.isNativeTree())) ||
-                (getTerrain().equals(H_STONE) && (!creature.isNativeStone())) ||
-                (getTerrain().equals(H_VOLCANO) &&
-                (!creature.isNativeVolcano())) ||
-                (getTerrain().equals(H_BOG) && (!creature.isNativeBog())))
-        {
-            cost += IMPASSIBLE_COST;
-        }
-        */
-
-        char hexside = getHexside(cameFrom);
-
-        // Non-fliers may not cross cliffs.
-        if ((hexside == 'c' || getOppositeHexside(cameFrom) == 'c')) //&& !creature.isFlier())
-        {
-            cost += IMPASSIBLE_COST;
-        }
-
-        // river slows both way, except native & water dwellers
-        if ((hexside == 'r' || getOppositeHexside(cameFrom) == 'r')) // && !creature.isFlier() && !creature.isWaterDwelling() && !creature.isNativeRiver())
-        {
-            cost += SLOW_INCREMENT_COST;
-        }
-
-        // Check for a slowing hexside.
-        if (hexside == 'w' || (hexside == 's'))
-              // && !creature.isNativeSlope())) 
-              // && !creature.isFlier() 
-              // && elevation > getNeighbor(cameFrom).getElevation())
-        {
-            cost += SLOW_INCREMENT_COST;
-        }
-
-        // Bramble, drift, and sand slow non-natives, except that sand
-        /*     doesn't slow fliers.
-        if ((getTerrain().equals(H_BRAMBLES) && !creature.isNativeBramble()) ||
-                (getTerrain().equals(H_DRIFT) && !creature.isNativeDrift()) ||
-                (getTerrain().equals(H_SAND) && !creature.isNativeSandDune() &&
-                !creature.isFlier()))
-        {
-            cost += SLOW_INCREMENT_COST;
-        }
-        */
-
-        if (cost > IMPASSIBLE_COST)
-        { // max out impassible at IMPASSIBLE_COST
-            cost = IMPASSIBLE_COST;
-        }
-
-        if ((cost < IMPASSIBLE_COST) && (cost > SLOW_COST) && (!cumul))
-        { // don't cumul Slow
-            cost = SLOW_COST;
-        }
-
-        return cost;
-    }
-
-    /**
-     * Check if the Creature given in parameter can fly over
-     * the BattleHex, or not.
-     * @param creature The Creature that want to fly over this BattleHex
-     * @return If the Creature can fly over here or not.
-     */
-    public boolean canBeFlownOverBy()//Creature creature)
-    {
-       /*
-        if (!creature.isFlier())
-        { // non-flyer can't fly, obviously...
-            return false;
-        }
-        if (getTerrain().equals(H_STONE))
-        { // no one can fly through stone
-            return false;
-        }
-        if (getTerrain().equals(H_VOLCANO))
-        { // only volcano-native can fly over volcano
-            return creature.isNativeVolcano();
-        }
-        */
-        return(true);
-    }
-
-    /**
-     * Return how much damage the Creature should take from this Hex.
-     * @param creature The Creature that may suffer damage.
-     * @return How much damage the Creature should take from being there.
-     */
-    public int damageToCreature()//Creature creature)
-    {
-       /*
-        if (getTerrain().equals(H_DRIFT) && (!creature.isNativeDrift()))
-        { // Non-native take damage in Drift
-            return 1;
-        }
-        if (getTerrain().equals(H_SAND) && (creature.isWaterDwelling()))
-        { // Water Dweller (amphibious) take damage in Sand
-            return 1;
-        }
-        // default : no damage !
-         * 
-         */
-        return 0;
-    }
 
     public boolean isCliff(int hexside)
     {
         return getHexside(hexside) == 'c' ||
                 getOppositeHexside(hexside) == 'c';
     }
-/*
-    public static String[] getTerrains()
-    {
-        // towi: uncloned. cant see why this was needed -- was slow.
-        return ALL_HAZARD_TERRAINS;  
-    }
 
     public static char[] getHexsides()
     {
-        // towi: uncloned. cant see why this was needed -- was slow.
         return allHexsides;
     }
-    */
 }
 
