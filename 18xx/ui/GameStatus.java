@@ -376,7 +376,6 @@ public class GameStatus extends JPanel implements ActionListener
     */
    public void actionPerformed(ActionEvent actor)
    {
-      System.out.println("Click.");
        JComponent source = (JComponent)actor.getSource();
        String command = actor.getActionCommand();
        if (source instanceof ClickField) {
