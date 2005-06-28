@@ -1,41 +1,15 @@
 package ui.hexmap;
 
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
 import game.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.1 2005/06/28 05:23:29 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.2 2005/06/28 05:25:40 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -250,7 +224,7 @@ public final class BattleMap extends HexMap implements MouseListener,
 
     private void setupIcon()
     {
-        List directories = new java.util.ArrayList();
+        ArrayList directories = new java.util.ArrayList();
 
             Log.error("ERROR: Couldn't find Colossus icon");
             dispose();
@@ -277,19 +251,6 @@ public final class BattleMap extends HexMap implements MouseListener,
     void setWaitCursor()
     {
         battleFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    }
-
-    private boolean confirmLeavingCreaturesOffboard()
-    {
-        String[] options = new String[2];
-        options[0] = "Yes";
-        options[1] = "No";
-        int answer = JOptionPane.showOptionDialog(battleFrame,
-            "Are you sure you want to leave creatures offboard?",
-            "Confirm Leaving Creatures Offboard?",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, options, options[1]);
-        return (answer == JOptionPane.YES_OPTION);
     }
 
     public void mousePressed(MouseEvent e)
