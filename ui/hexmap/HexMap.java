@@ -28,7 +28,7 @@ import game.*;
 
 /**
  * Class HexMap displays a basic battle map.
- * @version $Id: HexMap.java,v 1.3 2005/06/28 05:23:29 wakko666 Exp $
+ * @version $Id: HexMap.java,v 1.4 2005/06/30 03:41:58 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -58,7 +58,7 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             true, true, true, true, true}, {false, true, true, true, true,
             false} };
 
-    int scale = 2; // * Scale.get();
+    int scale = 2 * 13; // * Scale.get();
     int cx = 6 * scale;
     int cy = 2 * scale;
 

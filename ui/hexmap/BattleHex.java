@@ -7,7 +7,7 @@ import java.awt.Color;
 
 /**
  * Class BattleHex holds game state for battle hex.
- * @version $Id: BattleHex.java,v 1.2 2005/06/12 13:27:44 wakko666 Exp $
+ * @version $Id: BattleHex.java,v 1.3 2005/06/30 03:41:58 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -181,7 +181,7 @@ public class BattleHex
         else
         {
         */
-            return Color.black;
+            return Color.white;
        /*
         }
         */
