@@ -7,7 +7,7 @@ import java.awt.Color;
 
 /**
  * Class BattleHex holds game state for battle hex.
- * @version $Id: BattleHex.java,v 1.3 2005/06/30 03:41:58 wakko666 Exp $
+ * @version $Id: BattleHex.java,v 1.4 2005/07/14 06:32:00 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -52,12 +52,6 @@ public class BattleHex
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
-
-    /** Movement costs */
-    public static final int IMPASSIBLE_COST = 99;
-    private static final int SLOW_COST = 2;
-    private static final int NORMAL_COST = 1;
-    private static final int SLOW_INCREMENT_COST = SLOW_COST - NORMAL_COST;
 
     public BattleHex(int xCoord, int yCoord)
     {
