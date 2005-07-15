@@ -1,0 +1,179 @@
+<Map>
+	<Row Number="1" Hexes="12">
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="red" Name="Western Canada" Exit="SE" Mod="False" Value="30,50" />
+		<Hex Type="red" Name="Western Canada" Exit="SW,SE" Mod="False" Value="30,50" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="curve" Exit="SW,SE" Mod="False" />
+		<Hex Type="town" Exit="SW,SE" Mod="False" Value="40">
+			<Company Name="CanPac" Start="True" />
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+	</Row>
+	<Row Number="2" Hexes="12">
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="town" Value="20" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" />
+		<Hex Type="river" Cost="80" />
+		<Hex Type="plains" Whistlestop="1">
+			<Company Name="C&STL"/>
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="red" Name="Maritime Provinces" Exit="W,SW" Mod="False" Value="20,30" />
+	</Row>
+	<Row Number="3" Hexes="12">
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="curve" Mod="False" Exit="W,NE" Whistlestop="1" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="river" Cost="80" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="plains" />
+	</Row>
+	<Row Number="4" Hexes="12">
+		<Hex Type="town" Value="20" Mod="False" Exit="SE,E" />
+		<Hex Type="plains" Whistlestop="1" />
+		<Hex Type="river" Cost="80" />
+		<Hex Type="plains" />
+		<Hex Type="ootown" Value="40" Cost="80" />
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" Mod="False" Exit="W,E,SW" />
+		<Hex Type="plains" />
+		<Hex Type="plains">
+			<Company Name="M&H" />
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="curve" Exit="SW,W" Mod="False" />
+	</Row>
+	<Row Number="5" Hexes="12">
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="ootown" Value="40" Cost="80" />
+		<Hex Type="plains" Whistlestop="1" />
+		<Hex Type="curve" Exit="NW,NE" Mod="False" />
+		<Hex Type="ootown" Value="40">
+			<Company Name="Erie" Start="True" />
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="town" Value="20">
+			<Company Name="NYC" Start="True" />
+		</Hex>
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="town" Value="30" Exit="NE,SE">
+			<Company Name="B&M" Start="True" />
+		</Hex>
+	</Row>
+	<Row Number="6" Hexes="12">
+		<Hex Type="red" Name="Chicago" Exit="SE,E,NE" Mod="False" Value="40,70" />
+		<Hex Type="town" Value="20" Cost="80" />
+		<Hex Type="town" Value="30" Mod="False" Exit="SW,SE">
+			<Company Name="C&O" Start="True" />
+		</Hex>
+		<Hex Type="plains" />[453399][7-15-05][1139].txt
+		<Hex Type="plains" Whistlestop="1" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" Cost="120">
+			<Company Name="D&H" />
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="plains" Whistlestop="2" />
+		<Hex Type="town" Value="20" Cost="80" />
+		<Hex Type="curve" Exit="W,NW" Mod="False" Whistlestop="1" />
+	</Row>
+	<Row Number="7" Hexes="12">
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" Whistlestop="2" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="mountain" Cost="120">
+			<Company Name="SVR" />
+		</Hex>
+		<Hex Type="plains" Whistlestop="2" />
+		<Hex Type="ootown" Value="40" Cost="80" Exit="NE,SW">
+			<Company Name="NYHH" Start="True" Dot="2" />
+		</Hex>
+		<Hex Type="water" />
+		<Hex Type="water" />
+	</Row>
+	<Row Number="8" Hexes="12">
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" />
+		<Hex Type="town" Value="10" Exit="W,E">
+			<Company Name="PRR" Start="True" />
+		</Hex>
+		<Hex Type="plains" />
+		<Hex Type="town" Value="20" />
+		<Hex Type="ootown" Value="40" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+	</Row>
+	<Row Number="9" Hexes="12">
+		<Hex Type="red" Name="Gulf" Exit="E" Mod="False" Value="30,60" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="plains" />
+		<Hex Type="town" Value="30" Exit="SW,E">
+			<Company Name="B&O" Start="True" />
+		</Hex>
+		<Hex Type="river" Cost="80" />
+		<Hex Type="curve" Mod="False" Exit="W,NW" Whistlestop="1" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+	</Row>
+	<Row Number="10" Hexes="12">
+		<Hex Type="red" Name="Gulf" Exit="E,NE" Mod="False" Value="30,60" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="mountain" Cost="120" />
+		<Hex Type="town" Value="20" Cost="80" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+	</Row>
+	<Row Number="11" Hexes="12">
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="plains" />
+		<Hex Type="red" Name="Deep South" Exit="NW,NE" Mod="False" Value="30,40" />
+		<Hex Type="town" Value="20" Mod="False" Exit="NW" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+		<Hex Type="water" />
+	</Row>
