@@ -50,7 +50,7 @@
 		<Hex Type="plains" Whistlestop="1" />
 		<Hex Type="river" Cost="80" />
 		<Hex Type="plains" />
-		<Hex Type="ootown" Value="40" Cost="80" />
+		<Hex Type="ootown" Value="40" Cost="80" Tile="yellow" />
 		<Hex Type="plains" />
 		<Hex Type="town" Value="20" Mod="False" Exit="W,E,SW" />
 		<Hex Type="plains" />
@@ -64,10 +64,10 @@
 	<Row Number="5" Hexes="12">
 		<Hex Type="plains" />
 		<Hex Type="plains" />
-		<Hex Type="ootown" Value="40" Cost="80" />
+		<Hex Type="ootown" Value="40" Cost="80" Tile="yellow" />
 		<Hex Type="plains" Whistlestop="1" />
 		<Hex Type="curve" Exit="NW,NE" Mod="False" />
-		<Hex Type="ootown" Value="40">
+		<Hex Type="ootown" Value="40" Tile="yellow">
 			<Company Name="Erie" Start="True" />
 		</Hex>
 		<Hex Type="plains" />
@@ -77,7 +77,7 @@
 			<Company Name="NYC" Start="True" />
 		</Hex>
 		<Hex Type="mountain" Cost="120" />
-		<Hex Type="town" Value="30" Exit="NE,SE">
+		<Hex Type="town" Value="30" Exit="NE,SE" Tile="yellow">
 			<Company Name="B&M" Start="True" />
 		</Hex>
 	</Row>
@@ -111,7 +111,7 @@
 			<Company Name="SVR" />
 		</Hex>
 		<Hex Type="plains" Whistlestop="2" />
-		<Hex Type="ootown" Value="40" Cost="80" Exit="NE,SW">
+		<Hex Type="ootown" Value="40" Cost="80" Exit="NE,SW" Tile="yellow">
 			<Company Name="NYHH" Start="True" Dot="2" />
 		</Hex>
 		<Hex Type="water" />
@@ -128,7 +128,9 @@
 		</Hex>
 		<Hex Type="plains" />
 		<Hex Type="town" Value="20" />
-		<Hex Type="ootown" Value="40" />
+		<Hex Type="ootown" Value="40" Tile="yellow">
+			<Company Name="C&A" />
+		</Hex>
 		<Hex Type="water" />
 		<Hex Type="water" />
 		<Hex Type="water" />
@@ -141,7 +143,7 @@
 		<Hex Type="plains" />
 		<Hex Type="mountain" Cost="120" />
 		<Hex Type="plains" />
-		<Hex Type="town" Value="30" Exit="SW,E">
+		<Hex Type="town" Value="30" Exit="SW,E" Tile="yellow">
 			<Company Name="B&O" Start="True" />
 		</Hex>
 		<Hex Type="river" Cost="80" />
