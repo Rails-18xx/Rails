@@ -28,7 +28,7 @@ import game.*;
 
 /**
  * Class HexMap displays a basic battle map.
- * @version $Id: HexMap.java,v 1.5 2005/07/20 12:44:51 wakko666 Exp $
+ * @version $Id: HexMap.java,v 1.6 2005/07/20 13:12:58 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -146,10 +146,12 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             {
                 if (show[i][j])
                 {
+                   //TODO: Find exact values for this
+                   //WAS 3*i and 2*j
                     GUIEWHex hex = new GUIEWHex
-                        ((int)Math.round(cx + 3 * i * scale),
-                        (int)Math.round(cy + (2 * j + (i & 1)) *
-                        GUIHex.SQRT3 * scale), scale, this, i, j);
+                        ((int)Math.round(cx + 0.866 * i * scale),
+                        (int)Math.round(cy + (1.8361  * j + (i & 1)) * GUIHex.SQRT3 * scale),
+                        scale, this, i, j);
 
                     h[i][j] = hex;
                     hexes.add(hex);
@@ -431,6 +433,7 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
         hexes.add(entrances[5]);
     }
 
+    //TODO: This needs to be changed
     private static void setupEntrancesGameState(GUIEWHex[] entrances,
         GUIEWHex[][] h)
     {
@@ -634,11 +637,6 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             set.add(hex.getLabel());
         }
         return set;
-    }
-
-    public static java.util.List getTowerStartList(String terrain)
-    {
-        return (java.util.List)startlistMap.get(terrain);
     }
 
     public void mousePressed(MouseEvent e)
