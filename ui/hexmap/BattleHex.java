@@ -7,14 +7,12 @@ import java.awt.Color;
 
 /**
  * Class BattleHex holds game state for battle hex.
- * @version $Id: BattleHex.java,v 1.4 2005/07/14 06:32:00 wakko666 Exp $
+ * @version $Id: BattleHex.java,v 1.5 2005/07/20 12:44:51 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class BattleHex 
-    extends Hex
-    //implements net.sf.colossus.util.Terrains  // B_xxx constants
+public class BattleHex extends Hex 
 {
 
     /** Valid elevations are 0, 1, and 2.  Also 3 for JDG Badlands. */
