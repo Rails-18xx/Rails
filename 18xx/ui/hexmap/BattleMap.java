@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.3 2005/06/30 03:41:58 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.4 2005/07/20 12:44:51 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -80,7 +80,7 @@ public final class BattleMap extends HexMap implements MouseListener,
     {
         Point point = e.getPoint();
 
-        GUIBattleHex hex = getHexContainingPoint(point);
+        GUIEWHex hex = getHexContainingPoint(point);
         String hexLabel = "";
         if (hex != null)
         {

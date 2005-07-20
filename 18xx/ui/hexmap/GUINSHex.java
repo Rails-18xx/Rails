@@ -12,13 +12,13 @@ import java.awt.geom.Rectangle2D;
 import game.*;
 
 /**
- * Class GUIBattleHex holds GUI info for one battle hex.
- * @version $Id: GUIBattleHex.java,v 1.3 2005/06/12 13:27:44 wakko666 Exp $
+ * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
+ * @version $Id: GUINSHex.java,v 1.1 2005/07/20 12:44:50 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class GUIBattleHex extends GUIHex
+public class GUINSHex extends GUIHex
 {
     private GeneralPath innerHexagon;
     private Component map;
@@ -26,31 +26,16 @@ public class GUIBattleHex extends GUIHex
 
     /**
      * Stores the neighbouring views.
-     *
      * This parallels the neighors field in BattleHex, just on the view side. 
-     * 
      * @todo check if we can avoid this
      */
-    private GUIBattleHex[] neighbors = new GUIBattleHex[6];
-
-    // Hex terrain types are:
-    // p, r, s, t, o, v, d, w
-    // plain, bramble, sand, tree, bog, volcano, drift, tower
-    // also
-    // l
-    // lake
-
-    // Hexside terrain types are:
-    // d, c, s, w, space
-    // dune, cliff, slope, wall, no obstacle
-    // The hexside is marked only in the higher hex.
+    private GUINSHex[] neighbors = new GUINSHex[6];
 
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
-
-    public GUIBattleHex(int cx, int cy, int scale, Component map,
+    public GUINSHex(int cx, int cy, int scale, Component map,
         int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -91,7 +76,7 @@ public class GUIBattleHex extends GUIHex
         innerHexagon.transform(at);
     }
 
-    public GUIBattleHex(int xCoord, int yCoord)
+    public GUINSHex(int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
     }
@@ -394,7 +379,7 @@ public class GUIBattleHex extends GUIHex
             char op = getBattleHexModel().getOppositeHexside(i);
             if (op != ' ')
             {
-                GUIBattleHex neighbor = getNeighbor(i);
+                GUINSHex neighbor = getNeighbor(i);
 
                 int dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
 
@@ -439,7 +424,7 @@ public class GUIBattleHex extends GUIHex
         return didAllHexside;
     }
 
-    public GUIBattleHex getNeighbor(int i)
+    public GUINSHex getNeighbor(int i)
     {
         if (i < 0 || i > 6)
         {
@@ -451,7 +436,7 @@ public class GUIBattleHex extends GUIHex
         }
     }
 
-    public void setNeighbor(int i, GUIBattleHex hex)
+    public void setNeighbor(int i, GUINSHex hex)
     {
         if (i >= 0 && i < 6)
         {

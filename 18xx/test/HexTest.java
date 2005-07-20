@@ -13,5 +13,6 @@ public class HexTest
    public static void main(String[] args)
    {
       BattleMap b = new BattleMap();
+      b.repaint();
    }
 }
