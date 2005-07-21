@@ -2,7 +2,7 @@
  * package net.sf.colossus.client;
  * 
  * Class Hex describes one general hex.
- * @version $Id: Hex.java,v 1.1 2005/05/04 17:53:02 wakko666 Exp $
+ * @version $Id: Hex.java,v 1.2 2005/07/21 11:15:23 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -27,8 +27,8 @@ public abstract class Hex
     // Game state variables
     private String baseName = "";
     private String label = "";  // Avoid null pointer in stringWidth()
-    private int xCoord = -1;
-    private int yCoord = -1;
+    private double xCoord = -1;
+    private double yCoord = -1;
 
     public String getTerrain()
     {
@@ -62,22 +62,22 @@ public abstract class Hex
         return getDescription();
     }
 
-    public int getXCoord()
+    public double getXCoord()
     {
         return xCoord;
     }
 
-    public void setXCoord(int xCoord)
+    public void setXCoord(double xCoord)
     {
         this.xCoord = xCoord;
     }
 
-    public int getYCoord()
+    public double getYCoord()
     {
         return yCoord;
     }
 
-    public void setYCoord(int yCoord)
+    public void setYCoord(double yCoord)
     {
         this.yCoord = yCoord;
     }

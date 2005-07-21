@@ -28,7 +28,7 @@ import game.*;
 
 /**
  * Class HexMap displays a basic battle map.
- * @version $Id: HexMap.java,v 1.6 2005/07/20 13:12:58 wakko666 Exp $
+ * @version $Id: HexMap.java,v 1.7 2005/07/21 11:15:23 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -62,7 +62,7 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
           {false, true, true, true, true, true}, 
           {true, true, true, true, true, true} };
 
-    int scale = 2 * 13; // * Scale.get();
+    int scale = 2 * 20; // * Scale.get();
     int cx = 6 * scale;
     int cy = 2 * scale;
 
@@ -146,12 +146,18 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             {
                 if (show[i][j])
                 {
-                   //TODO: Find exact values for this
-                   //WAS 3*i and 2*j
+                   //TODO: Need to shift every other row (cx + SQRT3/2)                   
                     GUIEWHex hex = new GUIEWHex
-                        ((int)Math.round(cx + 0.866 * i * scale),
-                        (int)Math.round(cy + (1.8361  * j + (i & 1)) * GUIHex.SQRT3 * scale),
+                        ((cx + GUIHex.SQRT3 * i * scale),
+                        (cy + j * 2 * scale),
                         scale, this, i, j);
+                    
+                    /* Original: 
+                     *  GUIBattleHex hex = new GUIBattleHex
+                        ((int)Math.round(cx + 3 * i * scale),
+                        (int)Math.round(cy + (2 * j + (i & 1)) *
+                        GUIHex.SQRT3 * scale), scale, this, i, j);
+                     */
 
                     h[i][j] = hex;
                     hexes.add(hex);
@@ -201,85 +207,6 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             }
             else
             {// random Battlelands
-
-                /*  Commented out until ported to XML
-                 Log.debug("Randomizing " + terrain + " with " + rndSourceName);
-                 InputStream brlIS =
-                 ResourceLoader.getInputStream(rndSourceName,
-                 directories);
-                 BattlelandRandomizerLoader brl =
-                 new BattlelandRandomizerLoader(brlIS);
-                 while (brl.oneArea(h) >= 0)
-                 {
-                 }
-                 brl.resolveAllHexsides(h);
-                 List tempTowerStartList = brl.getStartList();
-                 if (tempTowerStartList != null)
-                 {
-                 startlistMap.put(terrain, tempTowerStartList);
-                 }
-                 towerStatusMap.put(terrain, new Boolean(brl.isTower()));
-                 subtitleMap.put(terrain, null);
-                 StringBuffer buf = new StringBuffer();
-                 for (int i = 0; i < 6; i++)
-                 {
-                 for (int j = 0; j < 6; j++)
-                 {
-                 if (show[i][j])
-                 {
-                 boolean doDumpSides = false;
-                 String haz = h[i][j].getTerrain();
-                 int e = h[i][j].getElevation();
-                 for (int k = 0; k < 6; k++)
-                 {
-                 char s = h[i][j].getHexside(k);
-                 if (s != ' ')
-                 {
-                 doDumpSides = true;
-                 }
-                 }
-                 if (doDumpSides ||
-                 (!haz.equals("Plains")) ||
-                 (e != 0))
-                 {
-                 buf.append(i + " " + j + " ");
-                 buf.append(h[i][j].getTerrain());
-                 buf.append(" ");
-                 buf.append(h[i][j].getElevation());
-                 if (doDumpSides)
-                 {
-                 for (int k = 0; k < 6; k++)
-                 {
-                 if (h[i][j].getHexside(k) != ' ')
-                 {
-                 buf.append(" " + k + " ");
-                 buf.append(h[i][j].getHexside(k));
-                 }
-                 }
-                 }
-                 buf.append("\n");
-                 }
-                 }
-                 }
-                 }
-                 if (brl.isTower())
-                 {
-                 buf.append("TOWER\n");
-                 }
-                 if (tempTowerStartList != null)
-                 {
-                 buf.append("STARTLIST");
-                 Iterator it = tempTowerStartList.iterator();
-                 while (it.hasNext())
-                 {
-                 String label = (String)it.next();
-                 buf.append(" " + label);
-                 }
-                 buf.append("\n");
-                 }
-                 ResourceLoader.putIntoFileCache(terrain, directories,
-                 (new String(buf)).getBytes());
-                 */
             }
 
             /* count all hazards & hazard sides */

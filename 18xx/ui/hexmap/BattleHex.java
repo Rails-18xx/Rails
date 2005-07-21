@@ -7,7 +7,7 @@ import java.awt.Color;
 
 /**
  * Class BattleHex holds game state for battle hex.
- * @version $Id: BattleHex.java,v 1.5 2005/07/20 12:44:51 wakko666 Exp $
+ * @version $Id: BattleHex.java,v 1.6 2005/07/21 11:15:23 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -44,14 +44,14 @@ public class BattleHex extends Hex
      */
     private BattleHex[] neighbors = new BattleHex[6];
 
-    private int xCoord;
-    private int yCoord;
+    private double xCoord;
+    private double yCoord;
 
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
-    public BattleHex(int xCoord, int yCoord)
+    public BattleHex(double xCoord, double yCoord)
     {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
@@ -79,104 +79,7 @@ public class BattleHex extends Hex
 
     public Color getTerrainColor()
     {
-       /*
-        if (getTerrain().equals(H_PLAINS))
-        {
-            switch (elevation)
-            {
-                case 0:
-                    return HTMLColor.lightOlive;
-
-                case 1:
-                    return HTMLColor.darkYellow;
-
-                case 2:
-                    return Color.yellow;
-
-                default:
-                case 3:
-                    return HTMLColor.lightYellow;
-            }
-        }
-        else if (getTerrain().equals(H_TOWER))
-        {
-            switch (elevation)
-            {
-                case 0:
-                    return HTMLColor.dimGray;
-
-                case 1:
-                    return HTMLColor.darkGray;
-
-                case 2:
-                    return Color.gray;
-
-                default:
-                case 3:
-                    return HTMLColor.lightGray;
-            }
-        }
-        else if (getTerrain().equals(H_BRAMBLES))
-        {
-            switch (elevation)
-            {
-                case 0:
-                    return Color.green;
-
-                case 1:
-                    return HTMLColor.brambleGreen1;
-
-                case 2:
-                    return HTMLColor.brambleGreen2;
-
-                default:
-                case 3:
-                    return HTMLColor.darkGreen;
-            }
-        }
-        else if (getTerrain().equals(H_SAND))
-        {
-            return Color.orange;
-        }
-        else if (getTerrain().equals(H_TREE))
-        {
-            return HTMLColor.brown;
-        }
-        else if (getTerrain().equals(H_BOG))
-        {
-            return Color.gray;
-        }
-        else if (getTerrain().equals(H_VOLCANO))
-        {
-            switch (elevation)
-            {
-                case 3:
-                    return Color.red;
-
-                default:
-                case 2:
-                    return HTMLColor.darkRed;
-            }
-        }
-        else if (getTerrain().equals(H_DRIFT))
-        {
-            return Color.blue;
-        }
-        else if (getTerrain().equals(H_LAKE))
-        {
-            return HTMLColor.skyBlue;
-        }
-        else if (getTerrain().equals(H_STONE))
-        {
-            return HTMLColor.dimGray;
-        }
-        else
-        {
-        */
             return Color.white;
-       /*
-        }
-        */
     }
 
     private void assignLabel()
@@ -188,7 +91,7 @@ public class BattleHex extends Hex
         }
         else
         {                
-            final int yLabel = 6 - yCoord - (int)Math.abs(((xCoord - 3) / 2));
+            final double yLabel = 6 - yCoord - (int)Math.abs(((xCoord - 3) / 2));
             label = "" + _intXCoordToXLabel(xCoord) + yLabel;
         }
         setLabel(label);
@@ -197,7 +100,7 @@ public class BattleHex extends Hex
     /** a char for an int: 0:'A'=0, 1:'B', ... int(w):'W', else:'?', <0:undef.
      * towi: support from 'A'..'W'; old "switch" was 'A'..'F'. 
      * */ 
-    private final static char _intXCoordToXLabel(final int x) 
+    private final static char _intXCoordToXLabel(final double x) 
     {
         return (x < (int)'X')    // 'X' is used for -1 
             ? (char)((int)'A' + x)
@@ -295,12 +198,12 @@ public class BattleHex extends Hex
         }
     }
 
-    public int getXCoord()
+    public double getXCoord()
     {
         return xCoord;
     }
 
-    public int getYCoord()
+    public double getYCoord()
     {
         return yCoord;
     }

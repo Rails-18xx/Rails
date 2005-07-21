@@ -8,8 +8,6 @@ import java.awt.geom.Point2D;
 public abstract class GUIHex
 {
    public static final double SQRT3 = Math.sqrt(3.0);
-   public static final double SQRT6 = Math.sqrt(6.0);
-
    private Hex model;
 
    // GUI variables
