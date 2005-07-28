@@ -2,19 +2,20 @@ package ui.hexmap;
 
 
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.4 2005/07/20 12:44:51 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.5 2005/07/28 12:40:18 wakko666 Exp $
  * @author David Ripton
  */
 
-public final class BattleMap extends HexMap implements MouseListener,
+public final class BattleMap extends EWHexMap implements MouseListener,
         WindowListener
 {
-    private Point location;
+    private Point2D.Double location;
     private JFrame battleFrame;
     private JLabel playerLabel;
     private Cursor defaultCursor;
@@ -35,9 +36,9 @@ public final class BattleMap extends HexMap implements MouseListener,
 
         if (location == null)
         {
-            location = new Point(0, 4 * scale);
+            location = new Point2D.Double(0, 4 * scale);
         }
-        battleFrame.setLocation(location);
+        battleFrame.setLocation((int)location.getX(), (int)location.getY());
 
         contentPane.add(new JScrollPane(this), BorderLayout.CENTER);
 
@@ -63,7 +64,7 @@ public final class BattleMap extends HexMap implements MouseListener,
         String masterHexLabel,
         int entrySide)
     {
-        return HexMap.getHexByLabel(terrain, "X" + entrySide);
+        return EWHexMap.getHexByLabel(terrain, "X" + entrySide);
     }
 
     void setDefaultCursor()
@@ -80,7 +81,7 @@ public final class BattleMap extends HexMap implements MouseListener,
     {
         Point point = e.getPoint();
 
-        GUIEWHex hex = getHexContainingPoint(point);
+        GUIHex hex = getHexContainingPoint(point);
         String hexLabel = "";
         if (hex != null)
         {
@@ -120,7 +121,7 @@ public final class BattleMap extends HexMap implements MouseListener,
 
     void dispose()
     {
-        location = battleFrame.getLocation();
+        Point p = battleFrame.getLocation();
 
         if (battleFrame != null)
         {

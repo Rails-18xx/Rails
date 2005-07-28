@@ -1,9 +1,9 @@
 package ui.hexmap;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.awt.Point;
 
 public abstract class GUIHex
 {
@@ -44,11 +44,16 @@ public abstract class GUIHex
       return rectBound;
    }
 
+   public boolean contains(Point2D.Double point)
+   {
+      return (hexagon.contains(point));
+   }
+   
    public boolean contains(Point point)
    {
       return (hexagon.contains(point));
    }
-
+   
    public void select()
    {
       selected = true;
@@ -112,10 +117,10 @@ public abstract class GUIHex
    }
 
    /** Return the Point closest to the center of the polygon. */
-   public Point findCenter()
+   public Point2D.Double findCenter()
    {
-      return new Point((int) Math.round((xVertex[2] + xVertex[5]) / 2),
-            (int) Math.round((yVertex[0] + yVertex[3]) / 2));
+      return new Point2D.Double((xVertex[2] + xVertex[5]) / 2,
+            ((yVertex[0] + yVertex[3]) / 2));
    }
 
    /** Return the Point2D.Double at the center of the polygon. */
