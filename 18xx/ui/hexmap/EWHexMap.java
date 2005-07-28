@@ -8,6 +8,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -28,12 +29,12 @@ import game.*;
 
 /**
  * Class HexMap displays a basic battle map.
- * @version $Id: HexMap.java,v 1.7 2005/07/21 11:15:23 wakko666 Exp $
+ * @version $Id: EWHexMap.java,v 1.1 2005/07/28 12:40:18 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class HexMap extends JPanel implements MouseListener, WindowListener
+public class EWHexMap extends JPanel implements MouseListener, WindowListener
 {
     // GUI hexes need to be recreated for each object, since scale varies.
     private GUIEWHex[][] h = new GUIEWHex[6][6];
@@ -66,7 +67,7 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
     int cx = 6 * scale;
     int cy = 2 * scale;
 
-    public HexMap()
+    public EWHexMap()
     {
         setOpaque(true);
         setBackground(Color.white);
@@ -146,10 +147,9 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
             {
                 if (show[i][j])
                 {
-                   //TODO: Need to shift every other row (cx + SQRT3/2)                   
-                    GUIEWHex hex = new GUIEWHex
-                        ((cx + GUIHex.SQRT3 * i * scale),
-                        (cy + j * 2 * scale),
+                    GUIEWHex hex = new GUIEWHex(
+                        (cx + (GUIHex.SQRT3 * i * scale) + (GUIHex.SQRT3/2 * scale * (j & 1))),
+                        (cy + j * 1.5 * scale),
                         scale, this, i, j);
                     
                     /* Original: 
@@ -539,6 +539,21 @@ public class HexMap extends JPanel implements MouseListener, WindowListener
 
     /** Return the GUIBattleHex that contains the given point, or
      *  null if none does. */
+    GUIEWHex getHexContainingPoint(Point2D.Double point)
+    {
+        Iterator it = hexes.iterator();
+        while (it.hasNext())
+        {
+            GUIEWHex hex = (GUIEWHex)it.next();
+            if (hex.contains(point))
+            {
+                return hex;
+            }
+        }
+
+        return null;
+    }
+    
     GUIEWHex getHexContainingPoint(Point point)
     {
         Iterator it = hexes.iterator();
