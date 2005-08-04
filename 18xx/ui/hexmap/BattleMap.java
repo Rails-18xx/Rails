@@ -8,7 +8,7 @@ import javax.swing.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.5 2005/07/28 12:40:18 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.6 2005/08/04 07:59:47 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -19,7 +19,7 @@ public final class BattleMap extends EWHexMap implements MouseListener,
     private JFrame battleFrame;
     private JLabel playerLabel;
     private Cursor defaultCursor;
-    private int scale = 13;
+    private int scale = 10;
 
     public BattleMap()
     {
@@ -36,7 +36,7 @@ public final class BattleMap extends EWHexMap implements MouseListener,
 
         if (location == null)
         {
-            location = new Point2D.Double(0, 4 * scale);
+            location = new Point2D.Double(0, 2 * scale);
         }
         battleFrame.setLocation((int)location.getX(), (int)location.getY());
 
@@ -51,8 +51,8 @@ public final class BattleMap extends EWHexMap implements MouseListener,
         // BattleDice is added to frame.
         
         battleFrame.setVisible(true);
+        battleFrame.pack();
         battleFrame.setSize(600, 600);
-        battleFrame.repaint();
     }
 
     JFrame getFrame()
