@@ -28,7 +28,7 @@ public class EWHexMap extends HexMap
                 if (show[i][j])
                 {
                     GUIEWHex hex = new GUIEWHex(
-                        (cx + (GUIHex.SQRT3 * i * scale) + (GUIHex.SQRT3/2 * scale * (j & 1))),
+                        (cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3/2 * (j & 1)))),
                         (cy + j * 1.5 * scale),
                         scale, this, i, j);
                     

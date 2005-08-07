@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.3 2005/08/04 07:59:47 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.4 2005/08/07 09:47:01 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -61,11 +61,12 @@ public class GUIEWHex extends GUIHex
 
         // Translate innerHexagon to make it concentric.
         Rectangle2D innerBounds = innerHexagon.getBounds2D();
-        Point2D.Double innerCenter = new Point2D.Double(innerBounds.getX() +
-            innerBounds.getWidth() / 2.0, innerBounds.getY() +
-            innerBounds.getHeight() / 2.0);
-        at = AffineTransform.getTranslateInstance(center.getX() -
-            innerCenter.getX(), center.getY() - innerCenter.getY());
+        Point2D.Double innerCenter = new Point2D.Double(
+              innerBounds.getX() + innerBounds.getWidth() / 2.0, 
+              innerBounds.getY() + innerBounds.getHeight() / 2.0);
+        at = AffineTransform.getTranslateInstance(
+              center.getX() - innerCenter.getX(), 
+              center.getY() - innerCenter.getY());
         innerHexagon.transform(at);
     }
 
