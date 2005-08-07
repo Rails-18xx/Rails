@@ -8,7 +8,7 @@ import javax.swing.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.6 2005/08/04 07:59:47 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.7 2005/08/07 09:47:01 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -51,8 +51,7 @@ public final class BattleMap extends EWHexMap implements MouseListener,
         // BattleDice is added to frame.
         
         battleFrame.setVisible(true);
-        battleFrame.pack();
-        battleFrame.setSize(600, 600);
+        rescale();
     }
 
     JFrame getFrame()
@@ -109,13 +108,14 @@ public final class BattleMap extends EWHexMap implements MouseListener,
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+        /*
         Rectangle rectClip = g.getClipBounds();
 
         // Abort if called too early.
         if (rectClip == null)
         {
             return;
-        }
+        }*/
 
     }
 

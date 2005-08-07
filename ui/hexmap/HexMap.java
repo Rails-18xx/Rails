@@ -61,7 +61,7 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
          {false, true, true, true, true, true}, 
          {true, true, true, true, true, true} };
    
-   protected int scale = 2 * 20; // * Scale.get();
+   protected int scale = 2 * 15; // * Scale.get();
    protected int cx = 6 * scale;
    protected int cy = 2 * scale;
 
@@ -71,60 +71,6 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
    abstract void setupHexesGUI();
    protected abstract void setupEntrancesGUI();
    
-   /** Set up a static non-GUI hex map for each terrain type. */
-   public static void staticBattlelandsInit(boolean serverSideFirstLoad)
-   {
-       terrainH.clear();
-       terrainHexes.clear();
-       entranceHexes.clear();
-       startlistMap.clear();
-       subtitleMap.clear();
-       towerStatusMap.clear();
-       hazardNumberMap.clear();
-       hazardSideNumberMap.clear();
-
-       /*
-       String[] terrains = TerrainRecruitLoader.getTerrains();
-       for (int t = 0; t < terrains.length; t++)
-       {
-           String terrain = terrains[t];
-
-           GUIBattleHex[][] gameH = new GUIBattleHex[6][6];
-           List gameHexes = new ArrayList();
-
-           // Initialize game state hex array.
-           for (int i = 0; i < gameH.length; i++)
-           {
-               for (int j = 0; j < gameH[0].length; j++)
-               {
-                   if (show[i][j])
-                   {
-                       GUIBattleHex hex = new GUIBattleHex(i, j);
-
-                       gameH[i][j] = hex;
-                       gameHexes.add(hex);
-                   }
-               }
-           }
-           setupHexesGameState(terrain, gameH, serverSideFirstLoad);
-           setupNeighbors(gameH);
-
-           // Initialize non-GUI entrances
-           GUIBattleHex[] gameEntrances = new GUIBattleHex[6];
-           for (int k = 0; k < 6; k++)
-           {
-               gameEntrances[k] = new GUIBattleHex(-1, k);
-               gameHexes.add(gameEntrances[k]);
-           }
-           setupEntrancesGameState(gameEntrances, gameH);
-           entranceHexes.put(terrain, gameEntrances);
-           // Add hexes to both the [][] and ArrayList maps.
-           terrainH.put(terrain, gameH);
-           terrainHexes.put(terrain, gameHexes);
-       }
-       */
-   }
-   
    /** Add terrain, hexsides, elevation, and exits to hexes.
     *  Cliffs are bidirectional; other hexside obstacles are noted
     *  only on the high side, since they only interfere with
@@ -132,9 +78,8 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
    private static synchronized void setupHexesGameState(String terrain,
        GUIHex[][] h, boolean serverSideFirstLoad)
    {
-       List directories = null; // VariantSupport.getBattlelandsDirectoriesList();
+       List directories = null; 
        String rndSourceName = null;
-       //    TerrainRecruitLoader.getTerrainRandomName(terrain);
        BattleHex[][] hexModel = new BattleHex[h.length][h[0].length];
        for (int i = 0; i < h.length; i++)
        {
@@ -163,9 +108,6 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
                towerStatusMap.put(terrain, new Boolean(bl.isTower()));
                subtitleMap.put(terrain, bl.getSubtitle());
                */
-           }
-           else
-           {// random Battlelands
            }
 
            /* count all hazards & hazard sides */
@@ -423,7 +365,7 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
            }
        }
 
-       Log.error("Could not find GUIBattleHex " + label);
+       Log.error("Could not find GUIHex " + label);
        return null;
    }
 
@@ -645,7 +587,7 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
 
    public Dimension getPreferredSize()
    {
-       return new Dimension(60, 55); // * Scale.get(), 55 * Scale.get());
+       return new Dimension(550, 350); // * Scale.get(), 55 * Scale.get());
    }
 
 }
