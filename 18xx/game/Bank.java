@@ -137,6 +137,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
       }
 
    }
+   
+   public static void setShareLimit (int percentage) {
+       poolShareLimit = percentage;
+   }
 
    /**
     * Put all available certificates in the IPO

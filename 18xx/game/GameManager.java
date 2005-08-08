@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.5 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.6 2005/08/08 20:08:27 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -24,6 +24,8 @@ public class GameManager implements ConfigurableComponentI {
     protected static Player currentPlayer = null;
     protected static int priorityPlayerIndex = 0;
     protected static Player priorityPlayer = null;
+    
+    protected static int playerShareLimit = 60;
     
     /**
      * Current round should not be set here but from within the Round classes.
@@ -86,6 +88,21 @@ public class GameManager implements ConfigurableComponentI {
             varName = XmlUtils.extractStringAttribute(nnp, "name");
             if (varName != null) addVariant (varName);
         }
+        
+        /* Max. % of shares of one company that a player may hold */ 
+        element = (Element) el.getElementsByTagName("PlayerShareLimit").item(0);
+        if (element != null) {
+            nnp = element.getAttributes();
+            Player.setShareLimit(XmlUtils.extractIntegerAttribute (nnp, "percentage"));
+        }
+
+        /* Max. % of shares of one company that the bank pool may hold */ 
+        element = (Element) el.getElementsByTagName("BankPoolShareLimit").item(0);
+        if (element != null) {
+            nnp = element.getAttributes();
+            Bank.setShareLimit(XmlUtils.extractIntegerAttribute (nnp, "percentage"));
+        }
+
     }
     
     public void startGame() {

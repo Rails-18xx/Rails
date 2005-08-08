@@ -6,11 +6,7 @@ package ui;
 import game.*;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
-
-import java.util.*;
 
 /**
  * @author blentz

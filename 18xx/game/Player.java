@@ -22,6 +22,8 @@ import java.util.*;
 
 public class Player implements CashHolder {
 	
+    private static final int DEFAULT_PLAYER_SHARE_LIMIT = 60;
+    
 	public static int MAX_PLAYERS = 8;
 
 	public static int MIN_PLAYERS = 2;
@@ -31,6 +33,9 @@ public class Player implements CashHolder {
 	private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
 
 	private static int playerCertificateLimit = 0;
+	
+	private static int playerShareLimit = DEFAULT_PLAYER_SHARE_LIMIT; 
+	// May need to become an array
 
 	private String name = "";
 	
@@ -81,6 +86,10 @@ public class Player implements CashHolder {
 
 	public static int getCertLimit() {
 		return playerCertificateLimit;
+	}
+	
+	public static void setShareLimit (int percentage) {
+	    playerShareLimit = percentage;
 	}
 
 	public Player(String name) {
@@ -151,7 +160,7 @@ public class Player implements CashHolder {
 	 * @return True if it is allowed.
 	 */
 	public boolean mayBuyCompanyShare(PublicCompanyI company, int number) {
-		if (portfolio.ownsShare(company) + number * company.getShareUnit() > 60)
+		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit)
 			return false;
 		/** TODO The '60' above must of course be made configurable! */
 		return true;

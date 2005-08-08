@@ -5,6 +5,8 @@
  */
 package game;
 
+import org.w3c.dom.Element;
+
 /**
  * @author iadams
  *
@@ -22,6 +24,8 @@ public interface CompanyI {
     public static final String COMPANY_TYPE_TAG = "type";
 
 	void init (String name, CompanyTypeI type);
+	
+	void configureFromXML (Element element) throws ConfigurationException;
 
     /**
      * Returns the name of the Company
@@ -74,6 +78,7 @@ public interface CompanyI {
 	 * @param i
 	 */
 	public void setCertLimitCount(int i);
-
+	
+	public abstract Object clone() throws CloneNotSupportedException;
 
 }

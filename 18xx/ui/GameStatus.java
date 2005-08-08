@@ -8,7 +8,9 @@ import game.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
+
+import ui.StatusWindow;
+import ui.elements.*;
 
 import java.util.*;
 
@@ -29,13 +31,7 @@ public class GameStatus extends JPanel implements ActionListener
 
    private GridBagLayout gb;
    private GridBagConstraints gbc;
-   private Color buttonColour = new Color (255, 220, 150);
    private Color buttonHighlight = new Color (255, 160, 80);
-   private Insets buttonInsets = new Insets (0, 1, 0, 1);
-   private Color captionColour = new Color (240, 240, 240);
-   private Color highlightColour = new Color (255, 255, 80);
-   private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-   
    
    // Grid elements per function
    private Field certPerPlayer[][];
@@ -203,20 +199,21 @@ public class GameStatus extends JPanel implements ActionListener
              for (int j=0; j<np; j++) {
              	f = certPerPlayer[i][j] = new Field(""); 
                 addField (f, certPerPlayerXOffset+j, certPerPlayerYOffset+i, 1, 1, 0);
-            	f = certPerPlayerButton[i][j] = new ClickField("", 
-            			"Sell",	"Click to select for selling");
+            	f = certPerPlayerButton[i][j] = new ClickField("", "Sell",
+            	        "Click to select for selling", this, buySellGroup);
                 addField (f, certPerPlayerXOffset+j, certPerPlayerYOffset+i, 1, 1, 0);
             }
             f = certInIPO[i] = new Field(Bank.getIpo().ownsShare(c)+"%");
             addField (f, certInIPOXOffset, certInIPOYOffset+i, 1, 1, WIDE_LEFT);
             f = certInIPOButton[i] = new ClickField(Bank.getIpo().ownsShare(c)+"%",
-                    "BuyIPO", "Click to select for buying");
+                    "BuyIPO", "Click to select for buying", this, buySellGroup);
             f.setVisible(false);
             addField (f, certInIPOXOffset, certInIPOYOffset+i, 1, 1, WIDE_LEFT);
             
             f = certInPool[i] = new Field("");
             addField (f, certInPoolXOffset, certInPoolYOffset+i, 1, 1, WIDE_RIGHT);
-            f = certInPoolButton[i] = new ClickField("", "BuyPool", "Click to buy");
+            f = certInPoolButton[i] = new ClickField("", "BuyPool", "Click to buy",
+                    this, buySellGroup);
             f.setVisible(false);
             addField (f, certInPoolXOffset, certInPoolYOffset+i, 1, 1, WIDE_RIGHT);
             
@@ -279,7 +276,7 @@ public class GameStatus extends JPanel implements ActionListener
         newTrains = new Field("");
         addField (newTrains, newTrainsXOffset, newTrainsYOffset, 4, 1, 0);
         
-        dummyButton = new ClickField ("", "", "");
+        dummyButton = new ClickField ("", "", "", this, buySellGroup);
         
     }
 
@@ -304,45 +301,6 @@ public class GameStatus extends JPanel implements ActionListener
        
    }
    
-   private class Caption extends JLabel {
-   	
-       Caption (String text) {
-           super (text);
-           this.setBackground(captionColour);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class Field extends JLabel {
-   	
-      Field (String text) {
-           super(text.equals("0%")?"":text);
-           this.setBackground(Color.WHITE);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class ClickField extends JToggleButton {
-       
-      ClickField (String text, String actionCommand, String toolTip) {
-           super(text);
-           this.setBackground(buttonColour);
-           this.setMargin(buttonInsets);
-           this.setOpaque(true);
-           this.setVisible(false);
-           this.addActionListener(gameStatus);
-           this.setActionCommand (actionCommand);
-           this.setToolTipText(toolTip);
-           
-           buySellGroup.add(this);
-       }
-      
-   }
-
    public static GameStatus getInstance() {
        return gameStatus;
    }
@@ -383,15 +341,15 @@ public class GameStatus extends JPanel implements ActionListener
            if (command.equals("Sell")) {
                compSellIndex = gbc.gridy - certPerPlayerYOffset;
                compBuyIPOIndex = compBuyPoolIndex = -1;
-               ((StatusWindow2)parent).enableSellButton(true);
+               ((StatusWindow)parent).enableSellButton(true);
            } else if (command.equals("BuyIPO")) {
                compBuyIPOIndex = gbc.gridy - certInIPOYOffset;
                compSellIndex = compBuyPoolIndex = -1;
-               ((StatusWindow2)parent).enableBuyButton(true);
+               ((StatusWindow)parent).enableBuyButton(true);
            } else if (command.equals("BuyPool")) {
                compBuyPoolIndex = gbc.gridy - certInPoolYOffset;
                compSellIndex = compBuyIPOIndex = -1;
-               ((StatusWindow2)parent).enableBuyButton(true);
+               ((StatusWindow)parent).enableBuyButton(true);
            }
        }	
       repaint();
@@ -456,8 +414,8 @@ public class GameStatus extends JPanel implements ActionListener
    		dummyButton.setSelected(true);
    		
    		if ((j = this.srPlayerIndex) >= 0) {
-   			upperPlayerCaption[j].setBackground(captionColour);
-   			lowerPlayerCaption[j].setBackground(captionColour);
+   			upperPlayerCaption[j].setHighlight (false);
+   			lowerPlayerCaption[j].setHighlight (false);
    			for (i=0; i<nc; i++) {
    			    setPlayerCertButton (i, j, false);
    			}
@@ -469,8 +427,8 @@ public class GameStatus extends JPanel implements ActionListener
 
    		    StockRound stockRound = (StockRound) GameManager.getInstance().getCurrentRound();
 
-   	   		upperPlayerCaption[j].setBackground(highlightColour);
-   			lowerPlayerCaption[j].setBackground(highlightColour);
+   	   		upperPlayerCaption[j].setHighlight (true);
+   			lowerPlayerCaption[j].setHighlight (true);
    			for (i=0; i<nc; i++) {
    				share = players[j].getPortfolio().ownsShare(companies[i]);
    				if (share > 0 && stockRound.isCompanySellable(companies[i].getName())) { 
@@ -493,8 +451,8 @@ public class GameStatus extends JPanel implements ActionListener
 	   			}
 	   		}
 	  	}
-   	   	((StatusWindow2)parent).enableBuyButton(false);
-   		((StatusWindow2)parent).enableSellButton(false);
+   	   	((StatusWindow)parent).enableBuyButton(false);
+   		((StatusWindow)parent).enableSellButton(false);
   		repaint();
    }
    
