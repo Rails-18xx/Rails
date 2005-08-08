@@ -589,5 +589,9 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
    {
        return new Dimension(550, 350); // * Scale.get(), 55 * Scale.get());
    }
+   
+   /* THE BELOW WAS MOVED HEREIN FROM BATTLEHEX BY ERIK VOS, 08 AUG 2005 */
+   
+   
 
 }

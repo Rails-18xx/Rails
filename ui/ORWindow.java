@@ -4,11 +4,11 @@
 package ui;
 
 import game.*;
+import ui.elements.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import java.util.*;
 
@@ -28,17 +28,8 @@ public class ORWindow extends JFrame implements ActionListener
    private JPanel statusPanel;
    private JPanel buttonPanel;
 
-    //public static StockRound round;
-   
    private GridBagLayout gb;
    private GridBagConstraints gbc;
-   private Color buttonColour = new Color (255, 220, 150);
-   private Color buttonHighlight = new Color (255, 160, 80);
-   private Insets buttonInsets = new Insets (0, 1, 0, 1);
-   private Color captionColour = new Color (240, 240, 240);
-   private Color highlightColour = new Color (255, 255, 80);
-   private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-   
    
    // Grid elements per function
    private Caption leftCompName[];
@@ -82,8 +73,8 @@ public class ORWindow extends JFrame implements ActionListener
    private int nc; // Number of companies
    private Player[] players;
    private PublicCompanyI[] companies;
-    private OperatingRound round;
-   private StatusWindow2 statusWindow;
+   private OperatingRound round;
+   private StatusWindow statusWindow;
    private GameStatus gameStatus;
     
    private Player p;
@@ -99,7 +90,7 @@ public class ORWindow extends JFrame implements ActionListener
    //private ButtonGroup itemGroup = new ButtonGroup();
    //private ClickField dummyButton; // To be selected if none else is.
    
-   public ORWindow (OperatingRound round, StatusWindow2 parent)
+   public ORWindow (OperatingRound round, StatusWindow parent)
    {
    	  super ();
    	  this.round = round;
@@ -320,65 +311,6 @@ public class ORWindow extends JFrame implements ActionListener
        
    }
    
-   private class Caption extends JLabel {
-   	
-       Caption (String text) {
-           super (text);
-           this.setBackground(captionColour);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class Field extends JLabel {
-   	
-      Field (String text) {
-           super(text.equals("0%")?"":text);
-           this.setBackground(Color.WHITE);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class Select extends JComboBox {
-       
-       Select (int[] values) {
-           super();
-           for (int i=0; i<values.length; i++) {
-               this.addItem (""+values[i]);
-           }
-           this.setBackground(buttonColour);
-           this.setOpaque(true);
-           this.setVisible(false);
-       }
-       Select (Object[] values) {
-           super(values);
-           this.setBackground(buttonColour);
-           this.setOpaque(true);
-           this.setVisible(false);
-       }
-  }
-   
-   private class Spinner extends JSpinner {
-       
-      Spinner (int value, int from, int to, int step) {
-           super(new SpinnerNumberModel (new Integer(value), new Integer(from),
-                   to > 0 ? new Integer(to) : null, new Integer (step)));
-           this.setBackground(buttonColour);
-           //this.setMargin(buttonInsets);
-           this.setOpaque(true);
-           this.setVisible(false);
-           //this.addActionListener(orPanel);
-           //this.setActionCommand (actionCommand);
-           //this.setToolTipText(toolTip);
-           
-           //itemGroup.add(this);
-       }
-      
-   }
-
    public void updateStatus() {
 
        if (GameManager.getInstance().getCurrentRound() instanceof OperatingRound) {
@@ -676,7 +608,7 @@ public class ORWindow extends JFrame implements ActionListener
    		
    		if ((j = this.orCompIndex) >= 0) {
    	   		this.playerIndex = companies[orCompIndex].getPresident().getIndex();
-   			president[j].setBackground(highlightColour);
+   			president[j].setHighlight(true);
    			setSelect (tileCost[j], tileCostSelect[j], true);
   		}
  		pack();

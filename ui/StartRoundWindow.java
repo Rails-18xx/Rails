@@ -4,11 +4,11 @@
 package ui;
 
 import game.*;
+import ui.elements.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 /**
  * @author blentz
@@ -30,12 +30,12 @@ public class StartRoundWindow extends JFrame implements ActionListener
    
    private GridBagLayout gb;
    private GridBagConstraints gbc;
-   private Color buttonColour = new Color (255, 220, 150);
-   private Color buttonHighlight = new Color (255, 160, 80);
-   private Insets buttonInsets = new Insets (0, 1, 0, 1);
-   private Color captionColour = new Color (240, 240, 240);
-   private Color highlightColour = new Color (255, 255, 80);
-   private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
+   //private Color buttonColour = new Color (255, 220, 150);
+   //private Color buttonHighlight = new Color (255, 160, 80);
+   //private Insets buttonInsets = new Insets (0, 1, 0, 1);
+   //private Color captionColour = new Color (240, 240, 240);
+   //private Color highlightColour = new Color (255, 255, 80);
+   //private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
    
    
    // Grid elements per function
@@ -69,7 +69,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    private StartItem[] items;
    private StartPacket packet;
    private StartRoundI round;
-   private StatusWindow2 statusWindow;
+   private StatusWindow statusWindow;
     
    private Player p;
    private StartItem si;
@@ -82,7 +82,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    private ButtonGroup itemGroup = new ButtonGroup();
    private ClickField dummyButton; // To be selected if none else is.
    
-   public StartRoundWindow (StartRound round, StatusWindow2 parent)
+   public StartRoundWindow (StartRound round, StatusWindow parent)
    {
    	  super ();
    	  this.round = round;
@@ -90,7 +90,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    	  startRoundPanel = this;
  	  setTitle("Start Round");
  	  getContentPane().setLayout(new BorderLayout());
- 	  UIManager.put("ToggleButton.select", buttonHighlight);
+ 	  //UIManager.put("ToggleButton.select", buttonHighlight);
  	  
  	  statusPanel = new JPanel();
  	  gb = new GridBagLayout();
@@ -187,7 +187,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
             si = items[i];
             f = itemName[i] = new Caption(si.getName());
             addField (f, itemNameXOffset, itemNameYOffset+i, 1, 1, WIDE_RIGHT);
-            f = itemNameButton[i] = new ClickField(si.getName(), "", "");
+            f = itemNameButton[i] = new ClickField(si.getName(), "", "", this, itemGroup);
             addField (f, itemNameXOffset, itemNameYOffset+i, 1, 1, WIDE_RIGHT);
             
             f = basePrice[i] = new Field(Bank.format(si.getBasePrice()));
@@ -220,7 +220,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
             addField (f, playerFreeXOffset+i, playerFreeYOffset+1, 1, 1, WIDE_TOP);
         }
         
-        dummyButton = new ClickField ("", "", "");
+        dummyButton = new ClickField ("", "", "", this, itemGroup);
         
     }
 
@@ -245,45 +245,6 @@ public class StartRoundWindow extends JFrame implements ActionListener
        
    }
    
-   private class Caption extends JLabel {
-   	
-       Caption (String text) {
-           super (text);
-           this.setBackground(captionColour);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class Field extends JLabel {
-   	
-      Field (String text) {
-           super(text.equals("0%")?"":text);
-           this.setBackground(Color.WHITE);
-           this.setHorizontalAlignment(SwingConstants.CENTER);
-           this.setBorder (labelBorder);
-           this.setOpaque(true);
-       }
-   }
-   
-   private class ClickField extends JToggleButton {
-       
-      ClickField (String text, String actionCommand, String toolTip) {
-           super(text);
-           this.setBackground(buttonColour);
-           this.setMargin(buttonInsets);
-           this.setOpaque(true);
-           this.setVisible(false);
-           this.addActionListener(startRoundPanel);
-           this.setActionCommand (actionCommand);
-           this.setToolTipText(toolTip);
-           
-           itemGroup.add(this);
-       }
-      
-   }
-
    public void updateStatus()
    {
        StartItem item;
@@ -461,13 +422,13 @@ public class StartRoundWindow extends JFrame implements ActionListener
    		dummyButton.setSelected(true);
    		
    		if ((j = this.playerIndex) >= 0) {
-   			upperPlayerCaption[j].setBackground(captionColour);
-   			lowerPlayerCaption[j].setBackground(captionColour);
+   			upperPlayerCaption[j].setHighlight(false);
+   			lowerPlayerCaption[j].setHighlight(false);
    		}
    		this.playerIndex = selectedPlayerIndex;
    		if ((j = this.playerIndex) >= 0) {
-   			upperPlayerCaption[j].setBackground(highlightColour);
-   			lowerPlayerCaption[j].setBackground(highlightColour);
+   			upperPlayerCaption[j].setHighlight(true);
+   			lowerPlayerCaption[j].setHighlight(true);
    		}
    		updateStatus();
  		repaint();

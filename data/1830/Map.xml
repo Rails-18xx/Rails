@@ -1,4 +1,4 @@
-<Map>
+<Map mapClass="ui.hexmap.EWHexMap">
 	<Row Number="1" Hexes="12">
 		<Hex Type="water" />
 		<Hex Type="water" />
@@ -26,7 +26,7 @@
 		<Hex Type="town" Value="20" />
 		<Hex Type="river" Cost="80" />
 		<Hex Type="plains" Whistlestop="1">
-			<Company Name="C&STL"/>
+			<Company Name="C&amp;STL"/>
 		</Hex>
 		<Hex Type="plains" />
 		<Hex Type="red" Name="Maritime Provinces" Exit="W,SW" Mod="False" Value="20,30" />
@@ -55,7 +55,7 @@
 		<Hex Type="town" Value="20" Mod="False" Exit="W,E,SW" />
 		<Hex Type="plains" />
 		<Hex Type="plains">
-			<Company Name="M&H" />
+			<Company Name="M&amp;H" />
 		</Hex>
 		<Hex Type="plains" />
 		<Hex Type="mountain" Cost="120" />
@@ -78,21 +78,21 @@
 		</Hex>
 		<Hex Type="mountain" Cost="120" />
 		<Hex Type="town" Value="30" Exit="NE,SE" Tile="yellow">
-			<Company Name="B&M" Start="True" />
+			<Company Name="B&amp;M" Start="True" />
 		</Hex>
 	</Row>
 	<Row Number="6" Hexes="12">
 		<Hex Type="red" Name="Chicago" Exit="SE,E,NE" Mod="False" Value="40,70" />
 		<Hex Type="town" Value="20" Cost="80" />
 		<Hex Type="town" Value="30" Mod="False" Exit="SW,SE">
-			<Company Name="C&O" Start="True" />
+			<Company Name="C&amp;O" Start="True" />
 		</Hex>
 		<Hex Type="plains" />[453399][7-15-05][1139].txt
 		<Hex Type="plains" Whistlestop="1" />
 		<Hex Type="plains" />
 		<Hex Type="plains" />
 		<Hex Type="town" Value="20" Cost="120">
-			<Company Name="D&H" />
+			<Company Name="D&amp;H" />
 		</Hex>
 		<Hex Type="plains" />
 		<Hex Type="plains" Whistlestop="2" />
@@ -129,7 +129,7 @@
 		<Hex Type="plains" />
 		<Hex Type="town" Value="20" />
 		<Hex Type="ootown" Value="40" Tile="yellow">
-			<Company Name="C&A" />
+			<Company Name="C&amp;A" />
 		</Hex>
 		<Hex Type="water" />
 		<Hex Type="water" />
@@ -144,7 +144,7 @@
 		<Hex Type="mountain" Cost="120" />
 		<Hex Type="plains" />
 		<Hex Type="town" Value="30" Exit="SW,E" Tile="yellow">
-			<Company Name="B&O" Start="True" />
+			<Company Name="B&amp;O" Start="True" />
 		</Hex>
 		<Hex Type="river" Cost="80" />
 		<Hex Type="curve" Mod="False" Exit="W,NW" Whistlestop="1" />

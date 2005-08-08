@@ -9,8 +9,9 @@ package ui;
 public class GameUILoader
 {
    private static StockChart stockChart;
-   private static StatusWindow2 statusWindow;
+   private static StatusWindow statusWindow;
    private static LogWindow messageWindow;
+   private static MapWindow mapWindow;
    private static Options options;
    
    public GameUILoader()
@@ -22,6 +23,7 @@ public class GameUILoader
    {
       stockChart = new StockChart();
       messageWindow = new LogWindow();
-      statusWindow = new StatusWindow2();
+      statusWindow = new StatusWindow();
+      mapWindow = new MapWindow();
    }
 }

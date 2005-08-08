@@ -4,6 +4,8 @@
 		<Game name="1835"/>
 		<Variant name="Clemens"/>
 		<Variant name="Snake"/>
+		<PlayerShareLimit percentage="60"/>
+		<BankPoolLimit percentage="50"/>
 	</Component>
     <Component name="Bank" class="game.Bank">
       <Bank amount="12000"/>
@@ -12,10 +14,10 @@
       <Players number="5" cash="390" certLimit="12"/>
       <Players number="6" cash="340" certLimit="11"/>
       <Players number="7" cash="310" certLimit="9"/>
-      <PoolLimit percentage="50"/>
       <Money format="DM @"/>
     </Component>
     <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
     <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
+	<Component name="Map" class="game.MapManager" file="Map.xml"/>
 </ComponentManager>
 

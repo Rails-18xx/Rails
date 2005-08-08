@@ -35,14 +35,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
 		/* Configure private company features */
 		try {
-			basePrice = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "basePrice"));
-			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "revenue"));
+			basePrice = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "basePrice", "0"));
+			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "revenue", "0"));
 		} catch (Exception e) {
 			throw new ConfigurationException ("Configuration error for Private "+name, e);
 		}
 
 		/* Complete configuration by adding features from the Private CompanyType */
-		Element typeElement = type.getDomElement();
+		Element typeElement = element;
 		if (typeElement != null) {
 			NodeList properties = typeElement.getChildNodes();
 
@@ -138,4 +138,17 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 	{
 	   return "Private Company Number: " + privateNumber + " of " + PrivateCompany.numberOfPrivateCompanies;
 	}
+	
+	public Object clone () {
+	    
+	    Object clone = null;
+	    try {
+	        clone = super.clone();
+	    } catch (CloneNotSupportedException e) {
+	        Log.error("Cannot clone company "+name);
+            System.out.println(e.getStackTrace());
+	    }
+	    return clone;
+	}
+
 }

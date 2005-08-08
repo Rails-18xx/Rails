@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.4 2005/05/24 21:38:03 evos Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.5 2005/08/08 20:08:27 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
  * 
  */
 package game;
-
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -33,6 +31,12 @@ public interface CompanyTypeI {
 	/** The name of the XML tag for the "AllClose" tag. */
 	public static final String ALL_CLOSE_TAG = "AllClose";
 
+	public void configureFromXML(Element el) throws ConfigurationException;
+	
+	public CompanyI createCompany (String name, Element element) 
+	throws ConfigurationException; 
+
+	
 	/**
 	 * @return
 	 */
@@ -63,12 +67,15 @@ public interface CompanyTypeI {
 	 */
 	public String getClassName();
 
+	/*
 	public void releaseDomElement ();
 	public Element getDomElement ();
-	
+	*/
+	/*
 	public void addCertificate (PublicCertificateI certificate);
 	
 	public List getDefaultCertificates ();
+	*/
 	
 	public void setCapitalisation (int mode);
 	public void setCapitalisation (String mode);

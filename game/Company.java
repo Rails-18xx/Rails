@@ -8,7 +8,7 @@ package game;
 /**
  * @author Erik Vos
  */
-public abstract class Company implements CompanyI, ConfigurableComponentI {
+public abstract class Company implements CompanyI, ConfigurableComponentI, Cloneable {
 	
 	protected static int numberOfCompanies = 0;
 	protected String name;
@@ -124,5 +124,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI {
 		value = i;
 	}
 
+	public Object clone() throws CloneNotSupportedException {
+	    return super.clone();
+	}
 
 }

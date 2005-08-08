@@ -27,6 +27,7 @@ import util.XmlUtils;
 public class PublicCompany extends Company implements PublicCompanyI,
       CashHolder
 {
+    protected static final int DEFAULT_SHARE_UNIT = 10;
 
    protected static int numberOfPublicCompanies = 0;
 
@@ -46,7 +47,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    protected String bgHexColour;
 
    /** Sequence number in the array of public companies - may not be useful */
-   protected int publicNumber; // For internal use
+   protected int publicNumber = -1; // For internal use
 
    /** Initial (par) share price, represented by a stock market location object */
    protected StockSpaceI parPrice = null;
@@ -95,7 +96,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    protected Portfolio portfolio;
 
    /** What percentage of ownership constitutes "one share" */
-   protected int shareUnit = 10;
+   protected int shareUnit = DEFAULT_SHARE_UNIT;
    
    /** At what percentage sold does the company float */
    protected int floatPerc = 0;
@@ -126,13 +127,15 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public PublicCompany()
    {
       super();
-      this.publicNumber = numberOfPublicCompanies++;
    }
+   
 
    /** Initialisation, to be called directly after instantiation */
    public void init(String name, CompanyTypeI type)
    {
       super.init(name, type);
+      if (!name.equals("")) this.publicNumber = numberOfPublicCompanies++;
+
       this.portfolio = new Portfolio(name, this);
       this.capitalisation = type.getCapitalisation();
    }
@@ -165,19 +168,16 @@ public class PublicCompany extends Company implements PublicCompanyI,
       bgHexColour = XmlUtils.extractStringAttribute(nnp, "bgColour", "000000");
       bgColour = new Color(Integer.parseInt(bgHexColour, 16));
 
-      floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc", 0);
+      floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc", floatPerc);
       
       startSpace = XmlUtils.extractStringAttribute(nnp, "startspace");
 //Log.write("*** Start space for "+name+"is "+startSpace);     
       
       fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
-      /* Complete configuration by adding features from the Public CompanyType */
-      Element typeElement = type.getDomElement();
-
-      if (typeElement != null)
+      if (element != null)
       {
-         NodeList properties = typeElement.getChildNodes();
+         NodeList properties = element.getChildNodes();
 
          for (int j = 0; j < properties.getLength(); j++)
          {
@@ -189,8 +189,9 @@ public class PublicCompany extends Company implements PublicCompanyI,
             if (propName.equalsIgnoreCase("ShareUnit"))
             {
                shareUnit = XmlUtils.extractIntegerAttribute(properties.item(j)
-                     .getAttributes(), "percentage", 10);
+                     .getAttributes(), "percentage", shareUnit);
             }
+            
             else if (propName.equalsIgnoreCase("CanBuyPrivates"))
             {
                canBuyPrivates = true;
@@ -215,7 +216,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
             } else if (propName.equalsIgnoreCase("Float") && floatPerc == 0) {
                 nnp2 = properties.item(j).getAttributes();
                 floatPerc = XmlUtils.extractIntegerAttribute(nnp2, 
-                		"percentage", 60); 
+                		"percentage", floatPerc); 
             }
             else if (propName.equalsIgnoreCase ("StockPrice")) {
                 nnp2 = properties.item(j).getAttributes();
@@ -232,6 +233,46 @@ public class PublicCompany extends Company implements PublicCompanyI,
             }
 
          }
+         
+         NodeList typeElements = element
+               .getElementsByTagName("Certificate");
+         if (typeElements.getLength() > 0)
+         {
+            int shareTotal = 0;
+            boolean gotPresident = false;
+            PublicCertificateI certificate;
+
+            for (int j = 0; j < typeElements.getLength(); j++)
+            {
+               Element certElement = (Element) typeElements.item(j);
+               nnp2 = certElement.getAttributes();
+
+               int shares = XmlUtils.extractIntegerAttribute(nnp2, "shares", 1);
+
+               boolean president = "President".equals(XmlUtils
+                     .extractStringAttribute(nnp2, "type", ""));
+               int number = XmlUtils.extractIntegerAttribute(nnp2, "number", 1);
+
+               if (president)
+               {
+                  if (number > 1 || gotPresident)
+                     throw new ConfigurationException("Company type " + name
+                           + " cannot have multiple President shares");
+                  gotPresident = true;
+               }
+
+               for (int k = 0; k < number; k++)
+               {
+                  certificate = new PublicCertificate(shares, president);
+                  addCertificate(certificate);
+                  shareTotal += shares * shareUnit;
+              }
+            }
+            if (shareTotal != 100)
+               throw new ConfigurationException("Company type " + name
+                     + " total shares is not 100%");
+         }
+
       }
    }
    
@@ -467,7 +508,8 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
 
    /**
-    * Assign a predefined array of certificates to this company.
+    * Assign a predefined list of certificates to this company.
+    * The list is deep cloned.
     * 
     * @param list
     *           ArrayList containing the certificates.
@@ -838,5 +880,25 @@ public class PublicCompany extends Company implements PublicCompanyI,
 	
 	public int getNumberOfShares() {
 		return 100 / shareUnit;
+	}
+	
+	public Object clone () {
+	    
+	    Object clone = null;
+	    try {
+	        clone = super.clone();
+	    } catch (CloneNotSupportedException e) {
+	        Log.error("Cannot clone company "+name);
+            System.out.println(e.getStackTrace());
+	    }
+	    
+        /*
+         * Add the certificates, if defined with the CompanyType and
+         * absent in the Company specification
+         */
+        if (certificates != null) {
+              ((PublicCompanyI) clone).setCertificates(certificates);
+        }
+	    return clone;
 	}
 }

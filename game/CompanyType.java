@@ -1,11 +1,9 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.5 2005/05/24 21:38:04 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.6 2005/08/08 20:08:27 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
 package game;
-
-import java.util.*;
 
 import org.w3c.dom.Element;
 
@@ -25,11 +23,12 @@ public class CompanyType implements CompanyTypeI {
 	/*--- Instance attributes ---*/
 	protected String name;
 	protected String className;
-	protected Element domElement;
 	protected String auctionType;
 	protected int allClosePhase;
-	protected ArrayList defaultCertificates;
+	//protected ArrayList defaultCertificates;
 	protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
+	
+	private CompanyI dummyCompany;
 	
 	/**
 	 * The constructor.
@@ -37,10 +36,48 @@ public class CompanyType implements CompanyTypeI {
 	 * @param className Name of the class that will instantiate this type of company.
 	 * @param element The &lt;CompanyType&gt; DOM element, used to define this company type.
 	 */
-	public CompanyType (String name, String className, Element element) {
+	public CompanyType (String name, String className) {
 		this.name = name;
 		this.className = className;
-		this.domElement = element;
+	}
+	
+	public void configureFromXML(Element element) throws ConfigurationException {
+	    
+	    /* Create a dummy company implementing this company type */
+        try
+        {
+        dummyCompany = (Company) Class.forName(className).newInstance();
+        }
+        catch (Exception e)
+        {
+           throw new ConfigurationException("Class " + className
+                 + " cannot be instantiated", e);
+        }
+        dummyCompany.init("", this);
+        dummyCompany.configureFromXML(element);
+
+	    
+	    /* Must be rewritten to a new tag 
+        String capitalMode = XmlUtils.extractStringAttribute(nnp,
+         		"capitalisation", "full");
+         setCapitalisation(capitalMode);
+         */
+
+	    
+	}
+	
+	public CompanyI createCompany (String name, Element element) 
+			throws ConfigurationException 
+		 {
+	    CompanyI newCompany = null;
+	    try { 
+		    newCompany = (CompanyI) dummyCompany.clone();
+		    newCompany.init (name, this);
+		    newCompany.configureFromXML(element);
+	    } catch (CloneNotSupportedException e) {
+	        Log.error ("Cannot create company "+name+" by cloning");
+	    }
+        return newCompany;
 	}
 	
 	/*--- Getters and setters ---*/
@@ -95,33 +132,41 @@ public class CompanyType implements CompanyTypeI {
 	 * <p><i>(Note: this feature may be replaced with the creation of a cloneable
 	 * "dummy company" inside this class; but that will eventually also need to be released)</i>.
 	 */
+	/*
 	public void releaseDomElement () {
 		domElement = null;
 	}
+	*/
 	/**
 	 * Get the saved &lt;CompanyType&gt; DOM element.
 	 * @return
 	 */
+	/*
 	public Element getDomElement() {
 		return domElement;
 	}
+	*/
 
 	/** 
 	 * Add a certificate to the dummy company represented by this type.
 	 * @param certificate The certificate to add.
 	 */
+	/*
 	public void addCertificate (PublicCertificateI certificate) {
 		if (defaultCertificates == null) defaultCertificates = new ArrayList();
 		defaultCertificates.add (certificate);
 	}
+	*/
 	
 	/**
 	 * Get the dummy certificate array for cloning in a real company.
 	 * return The dummy certificate array.
 	 */
+	/*
 	public List getDefaultCertificates () {
 		return defaultCertificates;
 	}
+	*/
 	
 	public void setCapitalisation (int mode) {
 		this.capitalisation = mode;

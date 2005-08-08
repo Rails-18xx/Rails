@@ -3,10 +3,10 @@
 	<Tile number="2" amount="1" />
 	<Tile number="3" amount="2" />
 	<Tile number="4" amount="3" />
-	<Tile number="5" amount="3" />
+	<Tile number="5" amount="3" >
 		<Upgrade number="12,13,14,15,205,206" />
 	</Tile>
-	<Tile number="6" amount="3" />
+	<Tile number="6" amount="3" >
 		<Upgrade number="12,13,14,15,205" />
 	</Tile>
 	<Tile number="7" amount="8">
