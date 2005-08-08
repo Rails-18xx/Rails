@@ -1,0 +1,99 @@
+<TileSet color="yellow">
+	<Tile number="3" amount="3" />
+	<Tile number="4" amount="3" />
+	<Tile number="5" amount="3">
+		<Upgrade number="14,15" />
+	</Tile>
+	<Tile number="6" amount="3">
+		<Upgrade number="14,15" />
+	</Tile>
+	<Tile number="7" amount="5">
+		<Upgrade number="18,26,27,28,29" />
+	</Tile>
+	<Tile number="8" amount="11">
+		<Upgrade number="16,19,23,24,25,28,29" />
+	</Tile>
+	<Tile number="9" amount="10">
+		<Upgrade number="18,19,20,23,24,26,27" />
+	</Tile>
+	<Tile number="57" amount="4">
+		<Upgrade number="14,15" />
+	</Tile>
+	<Tile number="58" amount="3" />
+	<Tile number="1441" amount="1">
+		<Upgrade number="1442" />
+	</Tile>
+	<Tile number="1445" amount="1" />
+</TileSet>
+
+<TileSet color="green">
+	<Tile number="14" amount="4">
+		<Upgrade number="63" />
+	</Tile>
+	<Tile number="15" amount="4">
+		<Upgrade number="63" />
+	</Tile>
+	<Tile number="16" amount="1">
+		<Upgrade number="43,70" />
+	</Tile>
+	<Tile number="17" amount="1">
+		<Upgrade number="43" />
+	</Tile>
+	<Tile number="19" amount="1">
+		<Upgrade number="45,46" />
+	</Tile>
+	<Tile number="20" amount="1">
+		<Upgrade number="44,47" />
+	</Tile>
+	<Tile number="23" amount="4">
+		<Upgrade number="41,43,45,47" />
+	</Tile>
+	<Tile number="24" amount="4">
+		<Upgrade number="42,43,46,47" />
+	</Tile>
+	<Tile number="25" amount="1">
+		<Upgrade number="40" />
+	</Tile>
+	<Tile number="26" amount="1">
+		<Upgrade number="42,44,45" />
+	</Tile>
+	<Tile number="27" amount="1">
+		<Upgrade number="41,44,46" />
+	</Tile>
+	<Tile number="28" amount="1">
+		<Upgrade number="39,43,46,70" />
+	</Tile>
+	<Tile number="29" amount="1">
+		<Upgrade number="39,43,45,70" />
+	</Tile>
+	<Tile number="142" amount="2" />
+	<Tile number="143" amount="2" />
+	<Tile number="144" amount="2" />
+	<Tile number="1442" amount="1">
+		<Upgrade number="1444" />
+	</Tile>
+	<Tile number="1443" amount="1">
+		<Upgrade number="1444" />
+	</Tile>
+</TileSet>
+
+<TileSet color="brown">
+	<Tile number="39" amount="1" />
+	<Tile number="40" amount="1" />
+	<Tile number="41" amount="3" />
+	<Tile number="42" amount="3" />
+	<Tile number="43" amount="2" />
+	<Tile number="44" amount="1" />
+	<Tile number="45" amount="2" />
+	<Tile number="46" amount="2" />
+	<Tile number="47" amount="2" />
+	<Tile number="63" amount="7" />
+	<Tile number="70" amount="1" />
+	<Tile number="444" amount="2">
+		<Upgrade number="446" />
+	</Tile>
+</TileSet>
+
+<TileSet color="grey">
+	<Tile number="446" amount="1" />
+</TileSet>
