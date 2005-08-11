@@ -1,6 +1,9 @@
 package ui.hexmap;
 
 
+import game.MapHex;
+import game.MapManager;
+
 import java.awt.Color;
 
 /**
@@ -19,7 +22,7 @@ public class NSHexMap extends HexMap
     protected void setupHexesGUI()
     {
         hexes.clear();
-
+        
         // Initialize hex array.
         for (int i = 0; i < h.length; i++)
         {
@@ -32,6 +35,46 @@ public class NSHexMap extends HexMap
                         (int)Math.round(cy + (2 * j + (i & 1)) *
                         GUIHex.SQRT3 * scale), scale, this, i, j);
 
+                    h[i][j] = hex;
+                    hexes.add(hex);
+                }
+            }
+        }
+    }
+
+    protected void setupHexesGUI_EV()
+    {
+        hexes.clear();
+        
+        scale /= 2;
+        cx /= 2;
+        cy /= 2;
+
+        // Initialize hex array.
+        /*
+        for (int i = 0; i < h.length; i++)
+        {
+            for (int j = 0; j < h[0].length; j++)
+            {
+                if (show[i][j])
+                {
+                */
+        MapManager mmgr = MapManager.getInstance();
+        MapHex[][] hexArray = mmgr.getHexes();
+        MapHex mh; 
+        h = new GUIHex[hexArray.length][hexArray[0].length];
+        for (int i = 0; i < hexArray.length; i++)
+        {
+            for (int j = 0; j < hexArray[0].length; j++)
+            {
+                mh = hexArray[i][j];
+                if (mh != null) {
+                     GUINSHex hex = new GUINSHex
+                        ((int)Math.round(cx + 3 * i * scale),
+                        (int)Math.round(cy + (2 * j + (i & 1)) *
+                        GUIHex.SQRT3 * scale), scale, this, i, j);
+
+                    hex.setName(hexArray[i][j].getName());
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

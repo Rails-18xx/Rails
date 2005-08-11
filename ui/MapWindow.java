@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.1 2005/08/08 20:08:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.2 2005/08/11 20:46:28 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -23,9 +23,9 @@ public class MapWindow extends JFrame implements ActionListener {
     
     public MapWindow () {
         
-        mmgr = MapManager.get();
+        mmgr = MapManager.getInstance();
         try {
-            map = (HexMap) Class.forName(mmgr.getMapClassName()).newInstance();
+            map = (HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
         } catch (Exception e) {
             System.out.println("Map class instantiation error:\n");
             e.printStackTrace();
@@ -33,8 +33,8 @@ public class MapWindow extends JFrame implements ActionListener {
         }
         
         setTitle ("Game Map");
-        setSize(800, 300);
-        setLocation(25, 450);
+        setSize(1000, 500);
+        setLocation(25, 25);
         setContentPane (map);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

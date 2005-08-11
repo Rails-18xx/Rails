@@ -1,6 +1,8 @@
 package ui.hexmap;
 
 
+import game.*;
+
 import java.awt.Color;
 
 /**
@@ -31,14 +33,48 @@ public class EWHexMap extends HexMap
                         (cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3/2 * (j & 1)))),
                         (cy + j * 1.5 * scale),
                         scale, this, i, j);
-                    
+                     h[i][j] = hex;
+                     hexes.add(hex);
+                }
+            }
+        }
+    }
+
+    protected void setupHexesGUI_EV()
+    {
+        hexes.clear();
+
+        /*
+        // Initialize hex array.
+        for (int i = 0; i < h.length; i++)
+        {
+            for (int j = 0; j < h[0].length; j++)
+            {
+                if (show[i][j])
+                {
+                */
+        MapManager mmgr = MapManager.getInstance();
+        MapHex[][] hexArray = mmgr.getHexes();
+        MapHex mh; 
+        h = new GUIHex[hexArray.length][hexArray[0].length];
+        for (int i = 0; i < hexArray.length; i++)
+        {
+            for (int j = 0; j < hexArray[0].length; j++)
+            {
+                mh = hexArray[i][j];
+                if (mh != null) {
+                    GUIEWHex hex = new GUIEWHex(
+                        (cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3/2 * (j & 1)))),
+                        (cy + j * 1.5 * scale),
+                        scale, this, i, j);
+                    hex.setName(hexArray[i][j].getName());
                     h[i][j] = hex;
                     hexes.add(hex);
                 }
             }
         }
     }
-
+    
     protected void setupEntrancesGUI()
     {
         // Initialize entrances.

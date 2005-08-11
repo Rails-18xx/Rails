@@ -27,6 +27,9 @@ public abstract class GUIHex
    protected Component map;
    protected GeneralPath innerHexagon;
    protected static final Color highlightColor = Color.red;
+   
+   // Added by Erik Vos
+   protected String hexName;
 
    /**
     * Stores the neighbouring views.
@@ -273,6 +276,13 @@ public abstract class GUIHex
            fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 3,
            rectBound.y +
            ((fontMetrics.getHeight() + rectBound.height) / 4));
+       
+       // Added by Erik Vos: show hex name
+       g2.drawString (hexName, 
+               rectBound.x + (rectBound.width -
+               fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
+               rectBound.y +
+               ((fontMetrics.getHeight() + rectBound.height) * 3 / 5));
    }
    
    public void repaint()
@@ -511,5 +521,18 @@ public abstract class GUIHex
                  Log.error("Bogus hexside type");
          }
      }
-
+   
+   // Added by Erik Vos
+   /**
+ * @return Returns the name.
+ */
+public String getName() {
+    return hexName;
+}
+/**
+ * @param name The name to set.
+ */
+public void setName(String name) {
+    this.hexName = name;
+}
 }
