@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.1 2005/08/14 22:37:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.2 2005/08/15 20:00:12 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -64,21 +64,23 @@ public class ConvertTilesXML {
         stationMap.put("jtDoubleCity", new String[] {"City", "2"});
         stationMap.put("jtTripleCity", new String[] {"City", "3"});
         stationMap.put("jtQuadrupleCity", new String[] {"City", "4"});
+        // Note: an additional station type is "Pass".
         
         gaugeMap = new HashMap();
         gaugeMap.put ("ctNormal", "normal");
         gaugeMap.put ("ctSmall", "narrow");
-        gaugeMap.put ("ctUniversal", "double");
+        gaugeMap.put ("ctUniversal", "dual");
         gaugeMap.put ("ctTunnel", "normal");
-        gaugeMap.put ("ctMountain", "normal"); // 1841 Passes!! Must change station type.
+        gaugeMap.put ("ctMountain", "normal");
+        // 1841 Pass: Station type is changed to Pass.
         
         sidesMap = new HashMap();
-        sidesMap.put("tp4SideA", "0");
-        sidesMap.put("tp4SideB", "1");
-        sidesMap.put("tp4SideC", "2");
-        sidesMap.put("tp4SideD", "3");
-        sidesMap.put("tp4SideE", "4");
-        sidesMap.put("tp4SideF", "5");
+        sidesMap.put("tp4SideA", "side0");
+        sidesMap.put("tp4SideB", "side1");
+        sidesMap.put("tp4SideC", "side2");
+        sidesMap.put("tp4SideD", "side3");
+        sidesMap.put("tp4SideE", "side4");
+        sidesMap.put("tp4SideF", "side5");
             
     }
 
@@ -215,6 +217,8 @@ public class ConvertTilesXML {
                     }
                     Element outputConnection = outputDoc.createElement("Track");
                     outputConnection.setAttribute("gauge", ends[i].getAttribute("gauge"));
+                    outputConnection.setAttribute("from", end1);
+                    outputConnection.setAttribute("to", end2);
                     outputTile.appendChild(outputConnection);
                     
                 }
@@ -225,7 +229,7 @@ public class ConvertTilesXML {
     private void convertJunction (int i, Element inputJunction, Element outputJunction)
     throws ConfigurationException {
         
-        String cityId = "city"+i;
+        String cityId = "city"+(i+1);
         outputJunction.setAttribute("id", cityId);
         
         String type = inputJunction.getElementsByTagName("junType").item(0).getFirstChild().getNodeValue();
