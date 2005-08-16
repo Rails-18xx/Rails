@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.1 2005/08/11 20:46:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.2 2005/08/16 20:24:19 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -53,13 +53,18 @@ public class MapHex implements ConfigurableComponentI {
             // Cannot occur!
         }
         
+        /* Translate hex names (as on the board) to coordinates used for drawing. */
         if (lettersGoHorizontal) {
             row = number;
             column = letter - '@';
             if (tileOrientation == MapHex.EW) {
+                // Tiles with flat EW sides, letters go horizontally.
+                // Example: 1841 (NOT TESTED, PROBABLY WRONG).
                 x = column;
                 y = row / 2;
             } else {
+                // Tiles with flat NS sides, letters go horizontally.
+                // Tested for 1856.
                 x = column;
                 y = (row+1) / 2;
              }
@@ -67,9 +72,14 @@ public class MapHex implements ConfigurableComponentI {
             row = letter - '@';
             column = number;
             if (tileOrientation == MapHex.EW) {
+                // Tiles with flat EW sides, letters go vertically.
+                // Most common case.
+                // Tested for 1830.
                 x = column / 2;
                 y = row;
             } else {
+                // Tiles with flat NS sides, letters go vertically.
+                // No known examples (NOT TESTED, PROBABLY WRONG).
                 x = row;
                 y = column / 2;
            }
