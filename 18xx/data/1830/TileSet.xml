@@ -1,4 +1,39 @@
-<TileSet color="yellow">
+<TileSet>
+	<!-- Preprinted tiles -->
+	<Tile number="0">
+		<Upgrade number="7,8,9"/>
+	</Tile>
+	<Tile number="-1"><!-- 1 town -->
+		<Upgrade number="3,4,58"/>
+	</Tile>
+	<Tile number="-2"><!-- 2 towns -->
+		<Upgrade number="1,2,55,56,69"/>
+	</Tile>
+	<Tile number="-3"/>
+	<Tile number="-5"/>
+	<Tile number="-7"/>
+	<Tile number="-10"><!-- 1 city -->
+		<Upgrade number="57"/>
+	</Tile>
+	<Tile number="-11"><!-- B yellow -->
+		<Upgrade number="53"/>
+	</Tile>
+	<Tile number="-20"><!-- 2 OO cities -->
+		<Upgrade number="59"/>
+	</Tile>
+	<Tile number="-21"><!-- New York -->
+		<Upgrade number="54"/>
+	</Tile>
+	<Tile number="-58"/>
+	<Tile number="-101"/>
+	<Tile number="-102"/>
+	<Tile number="-103"/>
+	<Tile number="-104"/>
+	<Tile number="-901"/>
+	<Tile number="-902"/>
+	<Tile number="-903"/>
+	
+	<!-- Yellow tiles -->
 	<Tile number="1" amount="1" />
 	<Tile number="2" amount="1" />
 	<Tile number="3" amount="2" />
@@ -19,9 +54,8 @@
 	</Tile>
 	<Tile number="58" amount="2" />
 	<Tile number="69" amount="1" />
-</TileSet>
-
-<TileSet color="green">
+	
+	<!-- Green tiles -->
 	<Tile number="14" amount="3">
 		<Upgrade number="63" />
 	</Tile>
@@ -70,9 +104,7 @@
 	<Tile number="59" amount="2">
 		<Upgrade number="64,65,66,67,68" />
 	</Tile>
-</TileSet>
-
-<TileSet color="brown">
+	<!-- Brown tiles -->
 	<Tile number="39" amount="1" />
 	<Tile number="40" amount="1" />
 	<Tile number="41" amount="2" />

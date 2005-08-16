@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.2 2005/08/15 20:00:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.3 2005/08/16 20:24:18 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -54,9 +54,9 @@ public class ConvertTilesXML {
         colourMap.put("tlGray", "gray");
         colourMap.put("tlOffMap", "red");
         colourMap.put("tlMapFixed", "fixed");
-        colourMap.put("tlMapUpgradableToYellow", "fixed");
-        colourMap.put("tlMapUpgradableToGreen", "fixed");
-        colourMap.put("tlMapUpgradableToBrown", "fixed");
+        colourMap.put("tlMapUpgradableToYellow", "white");
+        colourMap.put("tlMapUpgradableToGreen", "yellow");
+        colourMap.put("tlMapUpgradableToBrown", "green");
         
         stationMap = new HashMap();
         stationMap.put("jtWhistlestop", new String[] {"Town", "0"});
