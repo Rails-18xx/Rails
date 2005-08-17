@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.2 2005/08/16 20:24:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.3 2005/08/17 21:58:00 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -32,6 +32,8 @@ public class MapHex implements ConfigurableComponentI {
     protected int column;
     protected int letter;
     protected int number;
+    
+    protected int preprintedTileId;
     
     public MapHex () {
     }
@@ -83,6 +85,17 @@ public class MapHex implements ConfigurableComponentI {
                 x = row;
                 y = column / 2;
            }
+        }
+        
+        String sTileId = XmlUtils.extractStringAttribute(nnp, "tile");
+        if (sTileId != null) {
+	        try {
+	            preprintedTileId = Integer.parseInt(sTileId);
+	        } catch (NumberFormatException e) {
+	            throw new ConfigurationException ("Invalid tile ID: "+sTileId);
+	        }
+        } else {
+        	preprintedTileId=-999;
         }
         
    }    
@@ -140,4 +153,12 @@ public class MapHex implements ConfigurableComponentI {
     public int getY () {
         return y;
     }
+    
+    
+	/**
+	 * @return Returns the preprintedTileId.
+	 */
+	public int getPreprintedTileId() {
+		return preprintedTileId;
+	}
 }

@@ -16,5 +16,28 @@
     <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
     <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
 	<Component name="Map" class="game.MapManager" file="Map.xml"/>
+	<Component name="TrainManager" class="game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="major"/>
+			<!-- Alternative values: 
+				base="hexes" for H-trains as in 1826, 1849 etc.
+				countTowns="minor" for n+m trains as in 1835, 1837 etc..
+				countTowns="no" for all trains in 1841, 18EU, etc.
+			-->
+			<Score towns="yes"/>
+			<!-- Alternative values:
+				towns="no" for trains that ignore towns (e.g. 1826 TGV).
+				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
+			-->
+		</Defaults>
+		<Train name="2" majorStops="2" cost="80" number="6"/>
+		<Train name="3" majorStops="3" cost="180" number="5" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" number="4" startPhase="4" rust="2"/>
+		<Train name="5" majorStops="5" cost="450" number="3" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="630" number="2" startPhase="6" rust="3" release="D"/>
+		<Train name="D" majorStops="99" cost="1100" number="6" startPhase="D" rust="4">
+			<ExchangeFirst cost="800"/>
+		</Train>
+	</Component>
 </ComponentManager>
 

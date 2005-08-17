@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.1 2005/08/16 20:24:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.2 2005/08/17 21:58:00 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -21,8 +21,7 @@ import org.w3c.dom.*;
 /**
  * Convert an XML tile dictionary, as created by Marco Rocci's Tile Designer, to
  * an XML file for use in Rails 18xx.
- * <p>
- * The default names are:
+ *
  * 
  * @author Erik Vos
  */
@@ -85,7 +84,7 @@ public class MakeGameTileSets {
         
         for (int i=0; i<games.length; i++) {
             
-            makeTileSet (games[0], tileMap);
+            makeTileSet (games[i], tileMap);
             
         }
         
@@ -94,13 +93,21 @@ public class MakeGameTileSets {
     private void makeTileSet (String gameName, Map tileMap) 
     		throws ConfigurationException {
         
+     	// Open and read the tile set for this game
         String tileSetPath = "data/" + gameName + "/TileSet.xml";
-        String tilesPath = "data/" + gameName + "/Tiles.xml";
         Element tileSet = XmlUtils.findElementInFile(tileSetPath,
         		"TileSet");
         if (tileSet == null) return;
         NodeList tiles = tileSet.getElementsByTagName("Tile");
-        
+        Map tilesInSet = new HashMap();
+
+        // Also open and read the map tiles.
+       	String mapPath = "data/" + gameName + "/Map.xml";
+       	Element mapHexes = XmlUtils.findElementInFile(mapPath,
+		"Map");
+       	NodeList hexes = mapHexes.getElementsByTagName("Hex");
+
+       	String tilesPath = "data/" + gameName + "/Tiles.xml";
         Document outputDoc;
         String tileName;
 
@@ -111,11 +118,41 @@ public class MakeGameTileSets {
             DOMImplementation impl = builder.getDOMImplementation();
             outputDoc = impl.createDocument(null, "Tiles", null);
             
+            // Scan the TileSet
             for (int i=0; i<tiles.getLength(); i++) {
-                tileName = ((Element)tiles.item(i)).getAttribute("number");
+            	
+                tileName = ((Element)tiles.item(i)).getAttribute("id");
+                // Save the tile in a Map so that we can check completeness later.
+                tilesInSet.put(tileName, null);
+                
+                // Get the Tile specification
                 Element tileSpec = (Element)tileMap.get(tileName);
+                if (tileSpec != null) {
+                    // Copy it to the subset document
+                    Element copy = (Element) outputDoc.importNode(((Element)tileMap.get(tileName)), true);
+                    outputDoc.getDocumentElement().appendChild(copy);
+                } else {
+                    System.out.println("ERROR: "+gameName+" tile "+tileName+" not found.");
+                }
+            }
+            
+            // Scan the map, and add any missing tiles, with a warning.
+            for (int i=0; i<hexes.getLength(); i++) {
+            	
+                tileName = ((Element)hexes.item(i)).getAttribute("tile");
+                // Does the preprinted tile occur in TileSet? 
+                if (tilesInSet.containsKey(tileName)) continue;
+                
+                // No, warn and add it to the tiles document.
+                System.out.println("WARNING: " + gameName 
+                		+ " preprinted tile "+tileName+" does not occur in TileSet!");
+                
+                // Get the Tile specification
+                Element tileSpec = (Element)tileMap.get(tileName);
+                // Copy it to the subset document
                 Element copy = (Element) outputDoc.importNode(((Element)tileMap.get(tileName)), true);
                 outputDoc.getDocumentElement().appendChild(copy);
+                
             }
             
             TransformerFactory.newInstance().newTransformer().transform (
