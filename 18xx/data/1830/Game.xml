@@ -21,8 +21,11 @@
 			<Reach base="stops" countTowns="major"/>
 			<!-- Alternative values: 
 				base="hexes" for H-trains as in 1826, 1849 etc.
-				countTowns="minor" for n+m trains as in 1835, 1837 etc..
-				countTowns="no" for all trains in 1841, 18EU, etc.
+				countTowns="minor" for n+m trains as in 1835, 1837 etc.
+				  (here the n is the number of major stops (cities) and
+				  m is the number of minor stops (towns)).
+				countTowns="no" for all trains in 1841, 18EU, etc.,
+				  where towns score but do not count against the train length.
 			-->
 			<Score towns="yes"/>
 			<!-- Alternative values:
