@@ -75,6 +75,7 @@ public class NSHexMap extends HexMap
                         GUIHex.SQRT3 * scale), scale, this, i, j);
 
                     hex.setName(hexArray[i][j].getName());
+                    hex.setTileId(hexArray[i][j].getPreprintedTileId());
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

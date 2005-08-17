@@ -1,112 +1,153 @@
-<TileSet color="yellow">
-	<Tile number="1" amount="1" />
-	<Tile number="2" amount="1" />
-	<Tile number="3" amount="3" />
-	<Tile number="4" amount="3" />
-	<Tile number="5" amount="2">
-		<Upgrade number="14,15" />
+<TileSet>
+	<!-- Preprinted tiles -->
+	<Tile id="0"><!-- Empty space -->
+		<Upgrade id="7,8,9"/>
 	</Tile>
-	<Tile number="6" amount="2">
-		<Upgrade number="14,15" />
+	<Tile id="-1"><!-- 1 town -->
+		<Upgrade id="3,4,58"/>
 	</Tile>
-	<Tile number="7" amount="7">
-		<Upgrade number="18,26,27,28,29" />
+	<Tile id="-2"><!-- 2 towns -->
+		<Upgrade id="1,2,55,56,69"/>
 	</Tile>
-	<Tile number="8" amount="13">
-		<Upgrade number="16,17,19,23,24,25,28,29" />
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57"/>
 	</Tile>
-	<Tile number="9" amount="13">
-		<Upgrade number="18,19,20,23,24,26,27" />
+	<Tile id="-11"><!-- Barrie/London yellow -->
+		<Upgrade id="121"/>
 	</Tile>
-	<Tile number="55" amount="1" />
-	<Tile number="56" amount="1" />
-	<Tile number="57" amount="4">
-		<Upgrade number="14,15" />
+	<Tile id="-20"><!-- 2 OO cities -->
+		<Upgrade id="59"/>
 	</Tile>
-	<Tile number="58" amount="3" />
-	<Tile number="69" amount="1" />
-</TileSet>
-
-<TileSet color="green">
-	<Tile number="14" amount="4">
-		<Upgrade number="63" />
+	<Tile id="-21"><!-- Toronto -->
+		<Upgrade id="120"/>
 	</Tile>
-	<Tile number="15" amount="4">
-		<Upgrade number="63" />
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-903"/>
+	<Tile id="-939"/>
+		
+	<!-- Yellow tiles -->
+	<Tile id="1" amount="1">
+		<Upgrade id="14" phase="5"/>
 	</Tile>
-	<Tile number="16" amount="1">
-		<Upgrade number="43,70" />
+	<Tile id="2" amount="1">
+		<Upgrade id="15" phase="5"/>
 	</Tile>
-	<Tile number="17" amount="1">
-		<Upgrade number="47" />
+	<Tile id="3" amount="3">
+		<Upgrade id="5,7" phase="5"/>
 	</Tile>
-	<Tile number="18" amount="1">
-		<Upgrade number="43" />
+	<Tile id="4" amount="3">
+		<Upgrade id="57,9" phase="5"/>
 	</Tile>
-	<Tile number="19" amount="1">
-		<Upgrade number="45,46" />
+	<Tile id="5" amount="2">
+		<Upgrade id="14,15" />
 	</Tile>
-	<Tile number="20" amount="1">
-		<Upgrade number="44,47" />
+	<Tile id="6" amount="2">
+		<Upgrade id="14,15" />
 	</Tile>
-	<Tile number="23" amount="4">
-		<Upgrade number="41,43,45,47" />
+	<Tile id="7" amount="7">
+		<Upgrade id="18,26,27,28,29" />
 	</Tile>
-	<Tile number="24" amount="4">
-		<Upgrade number="42,43,46,47" />
+	<Tile id="8" amount="13">
+		<Upgrade id="16,17,19,23,24,25,28,29" />
 	</Tile>
-	<Tile number="25" amount="1">
-		<Upgrade number="40" />
+	<Tile id="9" amount="13">
+		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
-	<Tile number="26" amount="1">
-		<Upgrade number="42,44,45" />
+	<Tile id="55" amount="1">
+		<Upgrade id="14" phase="5"/>
 	</Tile>
-	<Tile number="27" amount="1">
-		<Upgrade number="41,44,46" />
+	<Tile id="56" amount="1">
+		<Upgrade id="15" phase="5"/>
 	</Tile>
-	<Tile number="28" amount="1">
-		<Upgrade number="39,43,46,70" />
+	<Tile id="57" amount="4">
+		<Upgrade id="14,15" />
 	</Tile>
-	<Tile number="29" amount="1">
-		<Upgrade number="39,43,45,70" />
+	<Tile id="58" amount="3">
+		<Upgrade id="6,8" phase="5"/>
 	</Tile>
-	<Tile number="59" amount="2">
-		<Upgrade number="63,64,65,66,67,68" />
-	</Tile>
-	<Tile number="120" amount="1">
-		<Upgrade number="122" />
-	</Tile>
-	<Tile number="121" amount="2">
-		<Upgrade number="126,127" />
-	</Tile>
-</TileSet>
-
-<TileSet color="brown">
-	<Tile number="39" amount="1" />
-	<Tile number="40" amount="1" />
-	<Tile number="41" amount="3" />
-	<Tile number="42" amount="3" />
-	<Tile number="43" amount="2" />
-	<Tile number="44" amount="1" />
-	<Tile number="45" amount="2" />
-	<Tile number="46" amount="2" />
-	<Tile number="47" amount="2" />
-	<Tile number="63" amount="4" />
-	<Tile number="64" amount="1" />
-	<Tile number="65" amount="1" />
-	<Tile number="66" amount="1" />
-	<Tile number="67" amount="1" />
-	<Tile number="68" amount="1" />
-	<Tile number="70" amount="1" />
-	<Tile number="122" amount="1">
-		<Upgrade number="124" />
-	</Tile>
-	<Tile number="125" amount="4" />
-	<Tile number="126" amount="1" />
-	<Tile number="127" amount="1" />
-</TileSet>
+	<Tile id="69" amount="1" />
 	
-<TileSet color="grey">
-	<Tile number="123" amount="1" />
-	<Tile number="124" amount="1" />
+	<!-- Green tiles -->
+	<Tile id="14" amount="4">
+		<Upgrade id="63" />
+		<Upgrade id="125" hexLabel="L"/>
+	</Tile>
+	<Tile id="15" amount="4">
+		<Upgrade id="63" />
+		<Upgrade id="125" hexLabel="L"/>
+	</Tile>
+	<Tile id="16" amount="1">
+		<Upgrade id="43,70" />
+	</Tile>
+	<Tile id="17" amount="1">
+		<Upgrade id="47" />
+	</Tile>
+	<Tile id="18" amount="1">
+		<Upgrade id="43" />
+	</Tile>
+	<Tile id="19" amount="1">
+		<Upgrade id="45,46" />
+	</Tile>
+	<Tile id="20" amount="1">
+		<Upgrade id="44,47" />
+	</Tile>
+	<Tile id="23" amount="4">
+		<Upgrade id="41,43,45,47" />
+	</Tile>
+	<Tile id="24" amount="4">
+		<Upgrade id="42,43,46,47" />
+	</Tile>
+	<Tile id="25" amount="1">
+		<Upgrade id="40" />
+	</Tile>
+	<Tile id="26" amount="1">
+		<Upgrade id="42,44,45" />
+	</Tile>
+	<Tile id="27" amount="1">
+		<Upgrade id="41,44,46" />
+	</Tile>
+	<Tile id="28" amount="1">
+		<Upgrade id="39,43,46,70" />
+	</Tile>
+	<Tile id="29" amount="1">
+		<Upgrade id="39,43,45,70" />
+	</Tile>
+	<Tile id="59" amount="2">
+		<Upgrade id="63,64,65,66,67,68" />
+	</Tile>
+	<Tile id="120" amount="1">
+		<Upgrade id="122" />
+	</Tile>
+	<Tile id="121" amount="2">
+		<Upgrade id="126,127" />
+	</Tile>
+
+	<!-- Brown tiles -->
+	<Tile id="39" amount="1" />
+	<Tile id="40" amount="1" />
+	<Tile id="41" amount="3" />
+	<Tile id="42" amount="3" />
+	<Tile id="43" amount="2" />
+	<Tile id="44" amount="1" />
+	<Tile id="45" amount="2" />
+	<Tile id="46" amount="2" />
+	<Tile id="47" amount="2" />
+	<Tile id="63" amount="4" />
+	<Tile id="64" amount="1" />
+	<Tile id="65" amount="1" />
+	<Tile id="66" amount="1" />
+	<Tile id="67" amount="1" />
+	<Tile id="68" amount="1" />
+	<Tile id="70" amount="1" />
+	<Tile id="122" amount="1">
+		<Upgrade id="124" />
+	</Tile>
+	<Tile id="125" amount="4" />
+	<Tile id="126" amount="1" />
+	<Tile id="127" amount="1" />
+
+	<!-- Grey tiles -->
+	<Tile id="123" amount="1" />
+	<Tile id="124" amount="1" />
 </TileSet>

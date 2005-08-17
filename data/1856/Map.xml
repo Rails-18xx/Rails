@@ -1,102 +1,101 @@
 <Map mapClass="ui.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="horizontal" even="A">
 	<!-- To be added: tiles, orientation, impassable hex sides, etc.-->
-	<Hex name="A14"/>
-	<Hex name="A20"/>
-	<Hex name="B13"/>
-	<Hex name="B15"/>
-	<Hex name="B17"/>
-	<Hex name="B19"/>
-	<Hex name="B21"/>
-	<Hex name="C14"/>
-	<Hex name="C16"/>
-	<Hex name="C18"/>
-	<Hex name="C20"/>
-	<Hex name="D13"/>
-	<Hex name="D15"/>
-	<Hex name="D17"/>
-	<Hex name="D19"/>
-	<Hex name="E12"/>
-	<Hex name="E14"/>
-	<Hex name="E16"/>
-	<Hex name="E18"/>
-	<Hex name="F9"/>
-	<Hex name="F11"/>
-	<Hex name="F13"/>
-	<Hex name="F15"/>
-	<Hex name="F17"/>
-	<Hex name="G8"/>
-	<Hex name="G10"/>
-	<Hex name="G12"/>
-	<Hex name="G14"/>
-	<Hex name="G16"/>
-	<Hex name="G18"/>
-	<Hex name="H5"/>
-	<Hex name="H7"/>
-	<Hex name="H9"/>
-	<Hex name="H11"/>
-	<Hex name="H13"/>
-	<Hex name="H15"/>
-	<Hex name="H17"/>
-	<Hex name="I6"/>
-	<Hex name="I8"/>
-	<Hex name="I10"/>
-	<Hex name="I12"/>
-	<Hex name="I14"/>
-	<Hex name="I16"/>
-	<Hex name="I18"/>
-	<Hex name="J5"/>
-	<Hex name="J7"/>
-	<Hex name="J9"/>
-	<Hex name="J11"/>
-	<Hex name="J13"/>
-	<Hex name="J15"/>
-	<Hex name="J17"/>
-	<Hex name="K2"/>
-	<Hex name="K4"/>
-	<Hex name="K6"/>
-	<Hex name="K8"/>
-	<Hex name="K10"/>
-	<Hex name="K12"/>
-	<Hex name="K14"/>
-	<Hex name="K16"/>
-	<Hex name="K18"/>
-	<Hex name="L3"/>
-	<Hex name="L5"/>
-	<Hex name="L7"/>
-	<Hex name="L9"/>
-	<Hex name="L11"/>
-	<Hex name="L13"/>
-	<Hex name="L15"/>
-	<Hex name="L17"/>
-	<Hex name="M2"/>
-	<Hex name="M4"/>
-	<Hex name="M6"/>
-	<Hex name="M8"/>
-	<Hex name="M10"/>
-	<Hex name="M12"/>
-	<Hex name="M16"/>
-	<Hex name="M18"/>
-	<Hex name="N1"/>
-	<Hex name="N3"/>
-	<Hex name="N7"/>
-	<Hex name="N9"/>
-	<Hex name="N11"/>
-	<Hex name="N15"/>
-	<Hex name="N17"/>
-	<Hex name="N19"/>
-	<Hex name="O2"/>
-	<Hex name="O4"/>
-	<Hex name="O6"/>
-	<Hex name="O8"/>
-	<Hex name="O10"/>
-	<Hex name="O16"/>
-	<Hex name="O18"/>
-	<Hex name="P3"/>
-	<Hex name="P5"/>
-	<Hex name="P7"/>
-	<Hex name="P9"/>
-	<Hex name="P17"/>
-	<Hex name="P19"/>
-	<Hex name="Q8"/>
-	<Hex name="Q10"/>
+	<Hex name="A20" tile="-902" destination="GW" revenue="30,50,60"/>
+	<Hex name="B13" tile="-902" revenue="30,50,50"/>
+	<Hex name="B15" tile="0"/>
+	<Hex name="B17" tile="0"/>
+	<Hex name="B19" tile="-10" label="L"/>
+	<Hex name="B21" tile="0"/>
+	<Hex name="C14" tile="-10" home="LPS" label="L" port="yes"/>
+	<Hex name="C16" tile="0"/>
+	<Hex name="C18" tile="0"/>
+	<Hex name="C20" tile="0"/>
+	<Hex name="D13" tile="0"/>
+	<Hex name="D15" tile="0"/>
+	<Hex name="D17" tile="-10" home="CA"/>
+	<Hex name="D19" tile="-1" port="yes"/>
+	<Hex name="E12" tile="0"/>
+	<Hex name="E14" tile="0"/>
+	<Hex name="E16" tile="0"/>
+	<Hex name="E18" tile="-2" port="yes"/>
+	<Hex name="F9" tile="-939" port="yes" destination="WGB" revenue="30,50,40"/>
+	<Hex name="F11" tile="0"/>
+	<Hex name="F13" tile="-2"/>
+	<Hex name="F15" tile="-11" home="GW"/>
+	<Hex name="F17" tile="-10" label="L" port="yes" destination="LPS"/>
+	<Hex name="G8" tile="0"/>
+	<Hex name="G10" tile="0"/>
+	<Hex name="G12" tile="-10"/>
+	<Hex name="G14" tile="0"/>
+	<Hex name="G16" tile="0"/>
+	<Hex name="G18" tile="0"/>
+	<Hex name="H5" tile="-902" port="yes" destination="TGB" revenue="30,50,40"/>
+	<Hex name="H7" tile="-2" port="yes"/>
+	<Hex name="H9" tile="0"/>
+	<Hex name="H11" tile="-1" blocking="TCC"/>
+	<Hex name="H13" tile="0"/>
+	<Hex name="H15" tile="-10" destination="CA"/>
+	<Hex name="H17" tile="-1" port="yes"/>
+	<Hex name="I6" tile="0"/>
+	<Hex name="I8" tile="-10"/>
+	<Hex name="I10" tile="0"/>
+	<Hex name="I12" tile="-20" blocking="W&amp;SR"/>
+	<Hex name="I14" tile="-2" destination="CV"/>
+	<Hex name="I16" tile="0"/>
+	<Hex name="I18" tile="0"/>
+	<Hex name="J5" tile="-1" port="yes"/>
+	<Hex name="J7" tile="0"/>
+	<Hex name="J9" tile="-1"/>
+	<Hex name="J11" tile="-10" home="WGB" destination="THB"/>
+	<Hex name="J13" tile="-10"/>
+	<Hex name="J15" tile="0" home="BBG"/>
+	<Hex name="J17" tile="-2" port="yes"/>
+	<Hex name="K2" tile="-902" port="yes" revenue="20,30,30"/>
+	<Hex name="K4" tile="0"/>
+	<Hex name="K6" tile="0"/>
+	<Hex name="K8" tile="-10" home="TGB" destination="GT"/>
+	<Hex name="K10" tile="0" cost="40"/>
+	<Hex name="K12" tile="0" cost="40"/>
+	<Hex name="K14" tile="0" cost="40"/>
+	<Hex name="K16" tile="-1"/>
+	<Hex name="K18" tile="0"/>
+	<Hex name="L3" tile="0" blocking="Flos"/>
+	<Hex name="L5" tile="0"/>
+	<Hex name="L7" tile="0"/>
+	<Hex name="L9" tile="-1"/>
+	<Hex name="L11" tile="0"/>
+	<Hex name="L13" tile="-10" label="L"/>
+	<Hex name="L15" tile="-20" cost="40" home="THB" destination="WR"/>
+	<Hex name="L17" tile="0"/>
+	<Hex name="M2" tile="0"/>
+	<Hex name="M4" tile="-11" home="CPR"/>
+	<Hex name="M6" tile="-1"/>
+	<Hex name="M8" tile="0"/>
+	<Hex name="M10" tile="-2"/>
+	<Hex name="M12" tile="0"/>
+	<Hex name="M16" tile="0" cost="40"/>
+	<Hex name="M18" tile="-1" port="yes"/>
+	<Hex name="N1" tile="-902" revenue="20,30,50"/>
+	<Hex name="N3" tile="-10" label="L" cost="40"/>
+	<Hex name="N7" tile="0"/>
+	<Hex name="N9" tile="-1"/>
+	<Hex name="N11" tile="-21" home="CV" destination="CPR"/><!-- home city to be defined -->
+	<Hex name="N15" tile="0" cost="40"/>
+	<Hex name="N17" tile="-20" destination="BBG"/>
+	<Hex name="N19" tile="0" cost="40"/>
+	<Hex name="O2" tile="-903" revenue="20,30,50"/>
+	<Hex name="O4" tile="0"/>
+	<Hex name="O6" tile="0"/>
+	<Hex name="O8" tile="0"/>
+	<Hex name="O10" tile="0"/>
+	<Hex name="O16" tile="-10" home="WR"/>
+	<Hex name="O18" tile="-10" label="L" port="yes"/>
+	<Hex name="P3" tile="0"/>
+	<Hex name="P5" tile="0"/>
+	<Hex name="P7" tile="0" cost="40"/>
+	<Hex name="P9" tile="-10" label="L" home="GT"/>
+	<Hex name="P17" tile="-902" revenue="30,40,40"/>
+	<Hex name="P19" tile="-901" revenue="30,40,40"/>
+	<Hex name="Q8" tile="-902" revenue="20,30,50"/>
+	<Hex name="Q10" tile="-901" revenue="20,30,50"/>
 </Map>

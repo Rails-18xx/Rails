@@ -30,6 +30,7 @@ public abstract class GUIHex
    
    // Added by Erik Vos
    protected String hexName;
+   protected int tileId;
 
    /**
     * Stores the neighbouring views.
@@ -282,7 +283,14 @@ public abstract class GUIHex
                rectBound.x + (rectBound.width -
                fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
                rectBound.y +
-               ((fontMetrics.getHeight() + rectBound.height) * 3 / 5));
+               ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
+       
+       // Added by Erik Vos: show the preprinted tile id
+       g2.drawString (tileId == -999 ? "?" : "#"+tileId,
+            rectBound.x + (rectBound.width -
+                    fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
+                    rectBound.y +
+                    ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
    }
    
    public void repaint()
@@ -534,5 +542,19 @@ public String getName() {
  */
 public void setName(String name) {
     this.hexName = name;
+}
+
+
+/**
+ * @return Returns the tileId.
+ */
+public int getTileId() {
+	return tileId;
+}
+/**
+ * @param tileId The tileId to set.
+ */
+public void setTileId(int tileId) {
+	this.tileId = tileId;
 }
 }

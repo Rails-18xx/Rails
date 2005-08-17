@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.3 2005/08/16 20:24:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.4 2005/08/17 21:58:00 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -40,11 +40,12 @@ public class ConvertTilesXML {
     /** Maps tracks to edge/station junctions*/
     private static Map resolvedTrack;
     
-    private static Pattern namePattern = Pattern.compile("^(\\d+).*");
+    private static Pattern namePattern = Pattern.compile("^(\\d+)(/.*)?");
     
     Document outputDoc;
     Element outputJunction;
     String tileNo;
+    String colour;
 
     static {
         colourMap = new HashMap();
@@ -152,7 +153,7 @@ public class ConvertTilesXML {
         }
         
         String level = inputTile.getElementsByTagName("level").item(0).getFirstChild().getNodeValue();
-        String colour = (String) colourMap.get(level);
+        colour = (String) colourMap.get(level);
         if (colour == null) {
             throw new ConfigurationException ("Unknown level: "+level);
         } else {
@@ -172,6 +173,7 @@ public class ConvertTilesXML {
          * referred to in the track definitions.
          */
         junctionPosition = new HashMap();
+        outputJunction = null;
         
         Element junctions = (Element) inputTile.getElementsByTagName("junctions").item(0);
         NodeList children = junctions.getElementsByTagName("junction");
@@ -233,7 +235,18 @@ public class ConvertTilesXML {
         outputJunction.setAttribute("id", cityId);
         
         String type = inputJunction.getElementsByTagName("junType").item(0).getFirstChild().getNodeValue();
+        
         String[] station = (String[]) stationMap.get(type);
+        
+        /* Off-map cities have the special type "OffMapCity"
+         * which does not allow driving through.
+         * Original type "town" indicates that no token can be placed.
+         */ 
+        if (colour.equals("red")) {
+        	if (station[0].equals ("Town")) station[1] = "0";
+        	station[0] = "OffMapCity"; 
+        }
+        
         if (station == null) {
             throw new ConfigurationException ("Unknown junction type: "+type);
         } else {

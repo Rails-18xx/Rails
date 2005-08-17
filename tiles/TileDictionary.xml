@@ -17092,4 +17092,28 @@
 		<junctions/>
 		<connections/>
 	</tile>
+	<tile>
+		<ID>-939</ID>
+		<shape>tsHexagon</shape>
+		<level>tlOffMap</level>
+		<name>Goderich</name>
+		<junctions/>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp4SideB</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp4SideC</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideC</position1>
+				<position2>tp4SideB</position2>
+			</connection>
+		</connections>
+	</tile>
 </tiles>
