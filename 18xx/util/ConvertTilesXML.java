@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.4 2005/08/17 21:58:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.5 2005/08/18 22:07:36 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -236,7 +236,10 @@ public class ConvertTilesXML {
         
         String type = inputJunction.getElementsByTagName("junType").item(0).getFirstChild().getNodeValue();
         
-        String[] station = (String[]) stationMap.get(type);
+        String[] station = (String[])((String[]) stationMap.get(type)).clone();
+        if (station == null) {
+            throw new ConfigurationException ("Unknown junction type: "+type);
+        }
         
         /* Off-map cities have the special type "OffMapCity"
          * which does not allow driving through.
@@ -247,13 +250,9 @@ public class ConvertTilesXML {
         	station[0] = "OffMapCity"; 
         }
         
-        if (station == null) {
-            throw new ConfigurationException ("Unknown junction type: "+type);
-        } else {
-            outputJunction.setAttribute("type", station[0]);
-            if (station[0].equals("City")) {
-                outputJunction.setAttribute("slots", station[1]);
-            }
+        outputJunction.setAttribute("type", station[0]);
+        if (!station[1].equals("0")) {
+            outputJunction.setAttribute("slots", station[1]);
         }
         
         Element revenue = (Element) inputJunction.getElementsByTagName("revenue").item(0);
