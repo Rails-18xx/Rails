@@ -18,14 +18,13 @@
 	<Component name="Map" class="game.MapManager" file="Map.xml"/>
 	<Component name="TrainManager" class="game.TrainManager">
 		<Defaults>
-			<Reach base="stops" countTowns="major"/>
+			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
 				base="hexes" for H-trains as in 1826, 1849 etc.
-				countTowns="minor" for n+m trains as in 1835, 1837 etc.
-				  (here the n is the number of major stops (cities) and
-				  m is the number of minor stops (towns)).
 				countTowns="no" for all trains in 1841, 18EU, etc.,
 				  where towns score but do not count against the train length.
+				  Otherwise, towns are counted as minor or major stops,
+				  depending on the presence or absence of a "minorStops" value.
 			-->
 			<Score towns="yes"/>
 			<!-- Alternative values:
@@ -33,12 +32,15 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" number="6"/>
-		<Train name="3" majorStops="3" cost="180" number="5" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" number="4" startPhase="4" rust="2"/>
-		<Train name="5" majorStops="5" cost="450" number="3" startPhase="5"/>
-		<Train name="6" majorStops="6" cost="630" number="2" startPhase="6" rust="3" release="D"/>
-		<Train name="D" majorStops="99" cost="1100" number="6" startPhase="D" rust="4">
+		<Train name="2" majorStops="2" cost="80" amount="6"/>
+		<Train name="3" majorStops="3" cost="180" amount="5" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
+			rustedTrain="2"/>
+		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="630" amount="2" startPhase="6" 
+			rustedTrain="3" releasedTrain="D"/>
+		<Train name="D" majorStops="99" cost="1100" amount="6" startPhase="D" 
+			rustedTrain="4">
 			<ExchangeFirst cost="800"/>
 		</Train>
 	</Component>

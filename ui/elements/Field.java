@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.1 2005/08/08 20:08:25 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.2 2005/09/18 21:36:25 evos Exp $
  * 
  * Created on 06-Aug-2005
  * Change Log:
@@ -6,6 +6,7 @@
 package ui.elements;
 
 import java.awt.Color;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -32,4 +33,5 @@ public class Field extends JLabel {
           setBackground (highlight ? highlightColour : normalColour);
           
       }
+      
    }

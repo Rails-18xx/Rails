@@ -24,8 +24,7 @@ import util.XmlUtils;
  * 
  * @author Erik Vos
  */
-public class PublicCompany extends Company implements PublicCompanyI,
-      CashHolder
+public class PublicCompany extends Company implements PublicCompanyI
 {
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -86,8 +85,6 @@ public class PublicCompany extends Company implements PublicCompanyI,
    protected boolean ipoPaysOut = false;
 
    protected boolean poolPaysOut = false;
-
-   protected ArrayList trainsOwned;
 
    /** The certificates of this company (minimum 1) */
    protected ArrayList certificates;
@@ -439,14 +436,6 @@ public class PublicCompany extends Company implements PublicCompanyI,
    }
 
    /**
-    * @return
-    */
-   public ArrayList getTrainsOwned()
-   {
-      return trainsOwned;
-   }
-
-   /**
     * Add a given amount to the company treasury.
     * 
     * @param amount
@@ -455,6 +444,7 @@ public class PublicCompany extends Company implements PublicCompanyI,
    public void addCash(int amount)
    {
       treasury += amount;
+      
    }
 
    /**
@@ -471,14 +461,6 @@ public class PublicCompany extends Company implements PublicCompanyI,
        return Bank.format (treasury);
    }
 
-
-   /**
-    * @param list
-    */
-   public void setTrainsOwned(ArrayList list)
-   {
-      trainsOwned = list;
-   }
 
    /**
     * @return

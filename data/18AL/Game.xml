@@ -15,5 +15,23 @@
     <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
 	<Component name="Map" class="game.MapManager" file="Map.xml"/>
 	<Component name="TrainManager" class="game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<Train name="2" majorStops="2" cost="100" amount="5"/>
+		<Train name="3" majorStops="3" cost="180" amount="4" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" amount="3" startPhase="4" 
+			rustedTrain="2"/>
+		<Train name="5" majorStops="5" cost="450" amount="2" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="630" amount="1" startPhase="6" 
+			rustedTrain="3"/>
+		<Train name="7" majorStops="7" cost="700" amount="1" startPhase="7" 
+			rustedTrain="4"/>
+		<Train name="4D" majorStops="4" cost="800" amount="5" startPhase="4D">
+			<Reach countTowns="no"/>
+			<Score cities="double"/>
+			<ExchangeFirst cost="800"/>
+		</Train>
 	</Component>
 </ComponentManager>

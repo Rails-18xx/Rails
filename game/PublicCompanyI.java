@@ -12,7 +12,7 @@ import java.util.*;
  * 
  * @author Erik Vos
  */
-public interface PublicCompanyI extends CompanyI {
+public interface PublicCompanyI extends CompanyI, CashHolder {
 
 	public static final int CAPITALISE_FULL = 0;
 
@@ -122,16 +122,6 @@ public interface PublicCompanyI extends CompanyI {
 	 *         stock market.
 	 */
 	public StockSpaceI getCurrentPrice();
-
-	/**
-	 * @return
-	 */
-	public ArrayList getTrainsOwned();
-
-	/**
-	 * @param list
-	 */
-	public void setTrainsOwned(ArrayList list);
 
 	/**
 	 * @return

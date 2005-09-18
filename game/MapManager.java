@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.2 2005/08/11 20:46:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.3 2005/09/18 21:36:24 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -43,6 +43,7 @@ public class MapManager implements ConfigurableComponentI {
         }
         
         String attr = XmlUtils.extractStringAttribute(nnp, "tileOrientation");
+        if (attr == null) throw new ConfigurationException ("Map orientation undefined");
         if (attr.equals("EW")) {
             tileOrientation = MapHex.EW;
             MapHex.setTileOrientation (MapHex.EW);

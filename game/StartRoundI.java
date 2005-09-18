@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.4 2005/06/09 15:13:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRoundI.java,v 1.5 2005/09/18 21:36:24 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -48,5 +48,8 @@ public interface StartRoundI extends Round {
     public boolean isBuyable (StartItem item);
     
     public boolean isBiddable (StartItem item);
+    
+    public boolean hasCompanyJustStarted ();
+    public void resetCompanyJustStarted ();
 
 }

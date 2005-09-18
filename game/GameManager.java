@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.6 2005/08/08 20:08:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.7 2005/09/18 21:36:24 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -42,6 +42,8 @@ public class GameManager implements ConfigurableComponentI {
     protected int numOfORs;
     protected int[] orsPerPhase = new int[] {1, 2, 2, 3, 3};
     protected int phase = 0;
+    
+    protected static PhaseI currentPhase = null;
     
     protected static GameManager instance;
     
@@ -301,6 +303,10 @@ public class GameManager implements ConfigurableComponentI {
     
     public static String getName() {
         return name;
+    }
+    
+    public static PhaseI getCurrentPhase() {
+    	return currentPhase;
     }
     
     protected static void addVariant (String name) {

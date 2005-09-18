@@ -36,8 +36,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
    private static Portfolio ipo = null;
    /** The Bank Pool */
    private static Portfolio pool = null;
-   /** Collection of unavailable (currently untradable) certificates */
+   /** Collection of items that will (may) become available in the future */
    private static Portfolio unavailable = null;
+   /** Collection of items that have bene discarded (but are kept to allow Undo) */
+   private static Portfolio scrapHeap = null;
    
    private static Bank instance = null;
    
@@ -81,6 +83,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
       ipo = new Portfolio("IPO", this, false);
       pool = new Portfolio("Pool", this, true);
       unavailable = new Portfolio("Unavailable", this, false);
+      scrapHeap = new Portfolio ("ScrapHeap", this, false);
 
    }
 
@@ -188,6 +191,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
    public static Portfolio getIpo()
    {
       return ipo;
+   }
+   
+   public static Portfolio getScrapHeap() {
+       return scrapHeap;
    }
 
    /**
