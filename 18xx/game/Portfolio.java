@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.17 2005/05/24 21:38:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.18 2005/09/18 21:36:24 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -15,13 +15,17 @@ public class Portfolio
 {
 
    /** Owned private companies */
-   protected ArrayList privateCompanies = new ArrayList();
+   protected List privateCompanies = new ArrayList();
 
    /** Owned public company certificates */
-   protected ArrayList certificates = new ArrayList();
+   protected List certificates = new ArrayList();
 
    /** Owned public company certificates, organised in a HashMap per company */
-   protected HashMap certPerCompany = new HashMap();
+   protected Map certPerCompany = new HashMap();
+   
+   /** Owned trains */
+   protected List trains = new ArrayList();
+   protected Map trainsPerType = new HashMap();
 
    /** Who owns the portfolio */
    protected CashHolder owner;
@@ -287,7 +291,7 @@ public class Portfolio
     */
    public HashMap getCertPerCompany()
    {
-      return certPerCompany;
+      return (HashMap) certPerCompany;
    }
 
    /**
@@ -391,6 +395,86 @@ public class Portfolio
        }
        Portfolio.transferCertificate (cert, this, other);
        return swapped;
+   }
+   
+   public void addTrain (TrainI train) {
+       
+       trains.add(train);
+       TrainTypeI type = train.getType();
+       if (trainsPerType.get(type) == null) trainsPerType.put (type, new ArrayList());
+       ((List)trainsPerType.get(train.getType())).add(train);
+       train.setHolder(this);
+   }
+   
+   public void removeTrain (TrainI train) {
+       trains.remove(train);
+       TrainTypeI type = train.getType();
+       ((List)trainsPerType.get(train.getType())).remove(train);
+       train.setHolder(null);
+       
+       /*
+       List list = (List)trainsPerType.get(train.getType());
+       Iterator it = list.iterator();
+       while (it.hasNext()) {
+       	if ((TrainI)it.next() == train) {
+       		list.remove(train);
+       		break;
+       	}
+       }
+       */
+   }
+   
+   public void buyTrain (TrainI train, int price) {
+       System.out.println("Train from "+train.getOwner().getName()+" to "+owner.getName()+" for "+price);
+   	CashHolder oldOwner = train.getOwner();
+   	transferTrain (train, train.getHolder(), this);
+  	Bank.transferCash(owner, oldOwner, price);
+   }
+   
+   public static void transferTrain (TrainI train, Portfolio from, Portfolio to) {
+       //System.out.println("Transferring train from "+from.getName()+" to "+to.getName());
+   	from.removeTrain(train);
+   	to.addTrain(train);
+   }
+   
+   public TrainI[] getTrains () {
+       
+       return (TrainI[]) trains.toArray(new TrainI[0]);
+   }
+   
+   public TrainI[] getTrainsPerType (TrainTypeI type) {
+       
+       List trainsFound = new ArrayList();
+       for (Iterator it = trains.iterator(); it.hasNext(); ) {
+           TrainI train = (TrainI)it.next();
+           if (train.getType() == type) trainsFound.add(train);
+       }
+       
+       return (TrainI[]) trainsFound.toArray(new TrainI[0]);
+   }
+   
+   /** Returns one train of any type held */
+   public TrainI[] getUniqueTrains () {
+       
+       List trainsFound = new ArrayList();
+       Map trainTypesFound = new HashMap();
+       for (Iterator it = trains.iterator(); it.hasNext(); ) {
+           TrainI train = (TrainI)it.next();
+           if (!trainTypesFound.containsKey(train.getType())) {
+               trainsFound.add(train);
+               trainTypesFound.put(train.getType(), null);
+           }
+       }
+       return (TrainI[]) trainsFound.toArray(new TrainI[0]);
+      
+   }
+   
+   public TrainI getTrainOfType (TrainTypeI type) {
+       for (Iterator it = trains.iterator(); it.hasNext(); ) {
+           TrainI train = (TrainI)it.next();
+           if (train.getType() == type) return train;
+       }
+       return null;
    }
 
 }

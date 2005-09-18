@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.5 2005/06/09 15:13:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.6 2005/09/18 21:36:24 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -36,6 +36,9 @@ public abstract class StartRound implements StartRoundI {
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;   
+    
+    /** Enables UI to check if stock chart needs to be updated */
+    boolean companyJustStarted = false;
     
     /*----- Initialisation -----*/
      /**
@@ -169,6 +172,7 @@ public abstract class StartRound implements StartRoundI {
         	if (!comp.hasStarted() && 
         			(!comp.hasStockPrice() || pubCert.isPresidentShare())) {
         		comp.start();
+        		companyJustStarted = true;
         	}
         	// If there is no start price, we need to get one
         	if (comp.hasStockPrice() && comp.getParPrice() == null
@@ -321,5 +325,13 @@ public abstract class StartRound implements StartRoundI {
      * @return True or false.
      */
     public abstract boolean isBiddable (StartItem item);
+    
+    public boolean hasCompanyJustStarted () {
+        return companyJustStarted;
+    }
+    
+    public void resetCompanyJustStarted () {
+        companyJustStarted = false;
+    }
     
  }

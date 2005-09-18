@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.4 2005/06/09 15:13:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.5 2005/09/18 21:36:24 evos Exp $
  * 
  * Created on 23-May-2005
  * Change Log:
@@ -118,6 +118,7 @@ public class StartRound_1835 extends StartRound {
         
         if (startPacket.areAllSold()) {
             // No more start items: start a stock round
+            nextStep = CLOSED;
             GameManager.getInstance().nextRound(this);
         } else {
             

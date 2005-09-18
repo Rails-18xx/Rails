@@ -11,6 +11,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author blentz
@@ -89,6 +92,11 @@ public class ORWindow extends JFrame implements ActionListener
    
    //private ButtonGroup itemGroup = new ButtonGroup();
    //private ClickField dummyButton; // To be selected if none else is.
+   
+   private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+).*");
+   private int[] newTrainTotalCost;
+   List trainsBought;
+   
    
    public ORWindow (OperatingRound round, StatusWindow parent)
    {
@@ -181,7 +189,7 @@ public class ORWindow extends JFrame implements ActionListener
 	    decision = new Field[nc];
 	    newTrains = new Field[nc];
 	    newTrainCost = new Field[nc];
-	    newTrainCostSelect = new Select[nc];
+	    newTrainTotalCost = new int[nc];
 
 	    leftCompNameXOffset = 0;
 	    leftCompNameYOffset = 2;
@@ -233,8 +241,9 @@ public class ORWindow extends JFrame implements ActionListener
             
             f = president[i] = new Field(c.hasStarted() ? c.getPresident().getName() : "");
             addField (f, presidentXOffset, presidentYOffset+i, 1, 1, 0);
-            
-            f = sharePrice[i] = new Field(c.hasStarted() ? Bank.format (c.getCurrentPrice().getPrice()) : "");
+   
+            f = sharePrice[i] = new Field(c.hasStockPrice() && c.hasStarted()  
+                    ? Bank.format (c.getCurrentPrice().getPrice()) : "");
             addField (f, sharePriceXOffset, sharePriceYOffset+i, 1, 1, 0);
             
             f = cash[i] = new Field(Bank.format(c.getCash()));
@@ -275,11 +284,8 @@ public class ORWindow extends JFrame implements ActionListener
             
             f = newTrainCost[i] = new Field("");
             addField (f, newTrainsXOffset+1, newTrainsYOffset+i, 1, 1, WIDE_RIGHT);
-            f = newTrainCostSelect[i] = new Select(round.getTrainCosts());
-            newTrainCostSelect[i].setEditable(true);
-            newTrainCostSelect[i].setPreferredSize(new Dimension(50,10));
-            addField (f, newTrainsXOffset+1, newTrainsYOffset+i, 1, 1, WIDE_RIGHT);
-
+            
+ 
            
             f = rightCompName[i] = new Caption(c.getName());
   			f.setBackground(companies[i].getBgColour());
@@ -332,7 +338,7 @@ public class ORWindow extends JFrame implements ActionListener
                
                middleButton.setText("Buy Private");
                middleButton.setActionCommand("BuyPrivate");
-               middleButton.setEnabled(true);
+               middleButton.setEnabled(orComp.canBuyPrivates());
            
                rightButton.setText("Done");
           	   rightButton.setActionCommand("Done");
@@ -372,16 +378,13 @@ public class ORWindow extends JFrame implements ActionListener
               
           } else if (step == OperatingRound.STEP_BUY_TRAIN) {
               
-              newTrainCostSelect[orCompIndex].setSelectedIndex(0);
-              setSelect (newTrainCost[orCompIndex], newTrainCostSelect[orCompIndex], true);
-
-              leftButton.setText("Buy train(s)");
+              leftButton.setText("Buy train");
               leftButton.setActionCommand("BuyTrain");
               leftButton.setEnabled(true);
               
               middleButton.setText("Buy Private");
               middleButton.setActionCommand("BuyPrivate");
-              middleButton.setEnabled(true);
+              middleButton.setEnabled(orComp.canBuyPrivates());
           
               rightButton.setText("Done");
          	   rightButton.setActionCommand("Done");
@@ -434,7 +437,7 @@ public class ORWindow extends JFrame implements ActionListener
            tileCost[orCompIndex].setText (amount > 0 ? Bank.format(amount) : "");
            round.layTrack(orCompName, amount);
            setSelect (tileCost[orCompIndex], tileCostSelect[orCompIndex], false);
-           updateCash();
+           updateCash(orCompIndex);
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
            
@@ -443,7 +446,7 @@ public class ORWindow extends JFrame implements ActionListener
            tokenCost[orCompIndex].setText (amount > 0 ? Bank.format(amount) : "");
            round.layToken(orCompName, amount);
            setSelect (tokenCost[orCompIndex], tokenCostSelect[orCompIndex], false);
-           updateCash();
+           updateCash(orCompIndex);
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
            
@@ -453,10 +456,11 @@ public class ORWindow extends JFrame implements ActionListener
            round.setRevenue(orCompName, amount);
            setSelect (revenue[orCompIndex], revenueSelect[orCompIndex], false);
            gameStatus.updateRevenue(orComp.getPublicNumber());
-           if (amount == 0) {
+           if (round.getStep() != OperatingRound.STEP_PAYOUT) {
                // The next step is skipped, so update all cash and the share price
                StockChart.refreshStockPanel();
-               updateCompany();
+               updatePrice(orCompIndex);
+               updateCash(orCompIndex);
                gameStatus.updatePlayerCash();
                gameStatus.updateCompany(orComp.getPublicNumber());
                gameStatus.updateBank();
@@ -466,7 +470,8 @@ public class ORWindow extends JFrame implements ActionListener
            decision[orCompIndex].setText("payout");
            round.fullPayout(orCompName);
            StockChart.refreshStockPanel();
-           updateCompany();
+           updatePrice(orCompIndex);
+           updateCash(orCompIndex);
            gameStatus.updatePlayerCash();
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
@@ -475,7 +480,8 @@ public class ORWindow extends JFrame implements ActionListener
            decision[orCompIndex].setText("split");
            round.splitPayout(orCompName);
            StockChart.refreshStockPanel();
-           updateCompany();
+           updatePrice(orCompIndex);
+           updateCash(orCompIndex);
            gameStatus.updatePlayerCash();
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
@@ -484,11 +490,13 @@ public class ORWindow extends JFrame implements ActionListener
            decision[orCompIndex].setText("withheld");
            round.withholdPayout(orCompName);
            StockChart.refreshStockPanel();
-           updateCompany();
+           updatePrice(orCompIndex);
+           updateCash(orCompIndex);
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
            
-       } else if (command.equals("BuyTrain") || done && step == OperatingRound.STEP_BUY_TRAIN) {
+       } else if (command.equals("BuyTrain") /*|| done && step == OperatingRound.STEP_BUY_TRAIN*/) {
+           /*
            amount = done ? 0 : Integer.parseInt((String)newTrainCostSelect[orCompIndex].getSelectedItem());
            newTrainCost[orCompIndex].setText (amount > 0 ? Bank.format(amount) : "");
            round.buyTrain(companies[orCompIndex].getName(), amount);
@@ -496,6 +504,114 @@ public class ORWindow extends JFrame implements ActionListener
            updateCash();
            gameStatus.updateCompany(orComp.getPublicNumber());
            gameStatus.updateBank();
+           */
+           ArrayList trainsForSale = new ArrayList();
+           trainsForSale.add("None");
+           TrainI train;
+           int i;
+
+           TrainI[] trains = (TrainI[])TrainManager.get().getAvailableNewTrains().toArray(new TrainI[0]);
+           for (i=0; i<trains.length; i++) {
+               trainsForSale.add(trains[i].getName()+"-train from IPO at "
+                       +Bank.format(trains[i].getCost()));
+           }
+           trains = Bank.getPool().getUniqueTrains();
+           for (i=0; i<trains.length; i++) {
+               trainsForSale.add(trains[i].getName()+"-train from Pool at "
+                       +Bank.format(trains[i].getCost()));
+           }
+           for (int j=0; j<nc; j++) {
+               c = companies[j];
+               if (c == orComp) continue;
+               trains = c.getPortfolio().getUniqueTrains();
+               for (i=0; i<trains.length; i++) {
+                   trainsForSale.add(trains[i].getName()+"-train from "
+                           +c.getName());
+               }
+           }
+           
+           String boughtTrain = (String)
+           		JOptionPane.showInputDialog(this, "Buy which train?", 
+           		        "Which train",
+           		        JOptionPane.QUESTION_MESSAGE, null,
+           		        trainsForSale.toArray(),
+           		        trainsForSale.get(1));
+           Matcher m = buyTrainPattern.matcher(boughtTrain);
+           if (m.matches()) {
+               String trainType = m.group(1);
+               String sellerName = m.group(2);
+               TrainTypeI type = TrainManager.get().getTypeByName(trainType);
+               train = null;
+               Portfolio seller = null;
+               int price = 0;
+               if (type != null) {
+	               if (sellerName.equals("IPO")) {
+	                   seller = Bank.getIpo();
+	               } else if (sellerName.equals("Pool")) {
+	                   seller = Bank.getPool();
+	               } else if (sellerName != null) {
+	                   PublicCompanyI sellingComp = 
+	                       Game.getCompanyManager().getPublicCompany(sellerName);
+	                   if (sellingComp != null) {
+	                       seller = sellingComp.getPortfolio();
+	                       
+	                       String sPrice = JOptionPane.showInputDialog(
+	                               this, 
+	                               orComp.getName()+" buys "+boughtTrain+" for which price?",
+	                               "Which price?", JOptionPane.QUESTION_MESSAGE);
+	                       try {
+	                           price = Integer.parseInt(sPrice);
+	                       } catch (NumberFormatException e) {
+	                           price = 0; // Need better error handling!
+	                       }
+	                   }
+	               }
+	               
+	               if (seller != null) {
+	                   train = seller.getTrainOfType(type);
+	               }
+	               if (train != null) {
+	                   if (!round.buyTrain(orComp.getName(), train, price))
+	                   {
+	                      JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+	                   }
+	                   else
+	                   {
+		                   gameStatus.updateTrains(orComp.getPortfolio());
+		                   gameStatus.updateTrains(seller);
+		                   gameStatus.updateCash(orComp);
+		                   gameStatus.updateCash(Bank.getInstance());
+		                   updateCash(orCompIndex);
+	
+		                   if (seller.getOwner() instanceof PublicCompanyI) {
+		                       for (int k=0; k<companies.length; k++) {
+		                           if (companies[i] == seller.getOwner()) {
+		                               updateCash(k);
+		                               gameStatus.updateCash(companies[k]);
+		                               break;
+		                           }
+		                       }
+		                   } else if (seller == Bank.getIpo()) {
+		                       gameStatus.updateTrains(Bank.getIpo());
+		                       gameStatus.updateTrains(Bank.getUnavailable());
+		                       
+		                       if (TrainManager.get().hasAvailabilityChanged()) {
+		                           gameStatus.updateTrains();
+		                           TrainManager.get().resetAvailabilityChanged();
+		                       }
+		                   }
+		                   newTrainTotalCost[orCompIndex] += price;
+		                   newTrainCost[orCompIndex].setText(""+newTrainTotalCost[orCompIndex]);
+		                   
+		                   trainsBought.add(train);
+		                   newTrains[orCompIndex].setText(TrainManager.get().makeFullList((TrainI[])trainsBought.toArray(new TrainI[0])));
+	                   }
+	                   
+	               }
+               }
+           }
+           
+           	
           
        } else if (command.equals("BuyPrivate")) {
            
@@ -532,7 +648,10 @@ public class ORWindow extends JFrame implements ActionListener
            amount = Integer.parseInt (price);
            Player prevOwner = (Player) priv.getPortfolio().getOwner();
            round.buyPrivate(orComp.getName(), priv.getName(), amount);
-           updateCash();
+           updateCash(orCompIndex);
+           gameStatus.updateCash(orComp);
+           gameStatus.updateCash(prevOwner);
+           
            gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
            gameStatus.updatePlayerPrivates(prevOwner.getIndex());	
            
@@ -566,14 +685,14 @@ public class ORWindow extends JFrame implements ActionListener
                gameStatus.updatePlayerPrivates(((Player)prevOwner).getIndex());
            }
            
-       } else if (done && step == OperatingRound.STEP_FINAL) {
+       } else if (done /*&& step == OperatingRound.STEP_FINAL*/) {
            round.done(orComp.getName());
           
        }
           
-       gameStatus.updateCompany(orCompIndex);
-       gameStatus.updatePlayers();
-       gameStatus.updateBank();
+       //gameStatus.updateCompany(orCompIndex);
+       //gameStatus.updatePlayers();
+       //gameStatus.updateBank();
        
   
        LogWindow.addLog ();
@@ -599,7 +718,6 @@ public class ORWindow extends JFrame implements ActionListener
    			setSelect (tileCost[j], tileCostSelect[j], false);
    			setSelect (tokenCost[j], tokenCostSelect[j], false);
    			setSelect (revenue[j], revenueSelect[j], false);
-   			setSelect (newTrainCost[j], newTrainCostSelect[j], false);
    		}
    		
    		this.orCompIndex = orCompIndex;
@@ -612,6 +730,8 @@ public class ORWindow extends JFrame implements ActionListener
    			setSelect (tileCost[j], tileCostSelect[j], true);
   		}
  		pack();
+ 		
+ 		trainsBought = new ArrayList();
    }
    
    public String getSRPlayer () {
@@ -626,13 +746,15 @@ public class ORWindow extends JFrame implements ActionListener
        s.setVisible(active);
    }
    
-   private void updateCash () {
-       cash[orCompIndex].setText(Bank.format(orComp.getCash()));
+   private void updateCash (int index) {
+       cash[index].setText(Bank.format(companies[index].getCash()));
    }
    
-   private void updateCompany () {
-       updateCash();
-       sharePrice[orCompIndex].setText(Bank.format(orComp.getCurrentPrice().getPrice()));
+   private void updatePrice (int index) {
+       if (companies[index].hasStockPrice()) {
+           sharePrice[index].setText(Bank.format(companies[index].getCurrentPrice().getPrice()));
+       }
    }
+   
    
 }

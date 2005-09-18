@@ -95,7 +95,14 @@ public class ComponentManager {
             if (file !=null){
                 configElement = XmlUtils.findElementInFile(filePath, name);
             }
-            component.configureFromXML(configElement);
+            
+            try {
+                component.configureFromXML(configElement);
+            } catch (ConfigurationException e) {
+                // Temporarily allow components to be incompletely configured.
+                System.out.println ("Temporarily accepting configuration failure");
+                e.printStackTrace();
+            }
 
             // Add it to the map of known components.
             mComponentMap.put(name, component);

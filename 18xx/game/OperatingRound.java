@@ -505,7 +505,7 @@ public class OperatingRound implements Round
      * @param amountSpent The cost the train, which is
      * subtracted from the company treasury.
      */
-     public boolean buyTrain (String companyName, int amountSpent) {
+     public boolean buyTrain (String companyName, TrainI train, int price) {
         
         String errMsg = null;
         
@@ -523,33 +523,46 @@ public class OperatingRound implements Round
                 errMsg = "Wrong action, expected Train buying cost";
                 break;
             }
-            
+
+            if (train == null) {
+                errMsg = "No train specified";
+                break;
+            }
+            // Assume for now that buying this train is allowed.
+            // Actually we should check this here.
+
+            if (price == 0) price = train.getCost();
+
             // Amount must be non-negative multiple of 10
-            if (amountSpent < 0) {
+            if (price < 0) {
                 errMsg = "Negative amount not allowed";
                 break;
             }
-            if (amountSpent%10 != 0) {
+            if (price%10 != 0) {
                 errMsg = "Must be a multiple of 10";
                 break;
             }
             // Does the company have the money?
-            if (amountSpent > operatingCompany.getCash()) {
+            if (price > operatingCompany.getCash()) {
                 errMsg = "Not enough money";
                 break;
             }
             break;
         }
         if (errMsg != null) {
-            Log.error ("Cannot process train buying cost of "+amountSpent+": "+errMsg);
+            Log.error (companyName+ " cannot buy "+train.getName()+"-train for "+price+": "+errMsg);
             return false;
         }
         
-        Bank.transferCash ((CashHolder)operatingCompany, null, amountSpent);
-		Log.write (companyName+" spends "+ Bank.format(amountSpent) +" while buying train(s)");
-       
-        nextStep (operatingCompany);
+        Portfolio oldHolder = train.getHolder();
+        CashHolder oldOwner = oldHolder.getOwner();
+        Log.write(operatingCompany.getName()+" buys "+train.getName()
+                +"-train from "+oldOwner+" for "
+                +Bank.format(price));
+        operatingCompany.getPortfolio().buyTrain(train, price);
         
+        TrainManager.get().checkTrainAvailability(train, oldHolder);
+       
         return true;
      }
     

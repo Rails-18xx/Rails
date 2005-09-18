@@ -336,6 +336,10 @@ public class StartRoundWindow extends JFrame implements ActionListener
            if (command.equals("Buy")) {
                round.buy(players[playerIndex].getName(), items[itemIndex].getName());
                GameStatus.getInstance().updatePlayers();
+               if (round.hasCompanyJustStarted()) {
+                   StockChart.refreshStockPanel();
+                   round.resetCompanyJustStarted();
+               }
            } else if (command.equals("Bid")) {
                round.bid(players[playerIndex].getName(), items[itemIndex].getName(), 
                        ((Integer)bidAmount.getValue()).intValue());

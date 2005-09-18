@@ -77,7 +77,7 @@ public class StockChart extends JFrame
    {
       int depth = 0;
       Dimension size = new Dimension(40, 40);
-      StockSpace[][] market = Game.getStockMarket().getStockChart();
+      StockSpace[][] market = Game.getStockMarket().getStockChart();	
       
       JLabel priceLabel;
       JLayeredPane layeredPane; 
