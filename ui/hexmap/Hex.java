@@ -2,7 +2,7 @@
  * package net.sf.colossus.client;
  * 
  * Class Hex describes one general hex.
- * @version $Id: Hex.java,v 1.2 2005/07/21 11:15:23 wakko666 Exp $
+ * @version $Id: Hex.java,v 1.3 2005/09/19 22:45:12 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -10,20 +10,33 @@ package ui.hexmap;
 
 public abstract class Hex
 {
-    // The hex vertexes are numbered like this:
-    //
-    //              0---------1
-    //             /           \
-    //            /             \
-    //           /               \
-    //          /                 \
-    //         5                   2
-    //          \                 /
-    //           \               /
-    //            \             /
-    //             \           /
-    //              4---------3
-
+    /* The hex vertexes are numbered like this:
+    
+                  0---------1
+                 /           \
+                /             \
+               /               \
+              /                 \
+             5                   2
+              \                 /
+               \               /
+                \             /
+                 \           /
+                  4---------3
+    
+	   Some basic hexagon math as a reminder:
+	
+	   Length of each side of the hexagon: 1	   
+	   Distance to center: 1
+	   Size of each interior angle: 120 degrees
+	   Vertical distance from 1 to 2: COS(30), SIN(60), SQRT(3)/2
+	   Horizontal distance from 1 to 2: SIN(30), COS(60), 1/2
+	   Vertical distance from 1 to 3: SQRT(3)
+	   Horizontal distance from 5 to 2: 2
+	   
+	*/   
+	
+	
     // Game state variables
     private String baseName = "";
     private String label = "";  // Avoid null pointer in stringWidth()
