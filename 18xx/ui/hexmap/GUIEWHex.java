@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.4 2005/08/07 09:47:01 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.5 2005/09/20 00:41:25 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -82,8 +82,5 @@ public class GUIEWHex extends GUIHex
 
     private static String imagePostfix = "_Hazard";
 
-
-
- 
 }
 

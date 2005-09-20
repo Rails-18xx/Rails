@@ -76,6 +76,7 @@ public class NSHexMap extends HexMap
 
                     hex.setName(hexArray[i][j].getName());
                     hex.setTileId(hexArray[i][j].getPreprintedTileId());
+                    hex.setTileFilename(hexArray[i][j].getTileFileName());
                     h[i][j] = hex;
                     hexes.add(hex);
                 }
