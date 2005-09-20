@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.6 2005/09/20 21:25:52 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.7 2005/09/20 22:54:44 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -79,6 +79,8 @@ public class GUIEWHex extends GUIHex
         return (innerHexagon.contains(point));
     }
 
+    /** NOT DONE YET 
+
     public void paint (Graphics g)
     {
     	super.paint(g);
@@ -88,18 +90,19 @@ public class GUIEWHex extends GUIHex
         
         try
         {
+        	//FIXME: Need to figure out how to use transparencies for the rectangle bounding box that surrounds the hex.
      	   File f = new File("/Documents and Settings/lentz/workspace/18xx/tiles/images/tile0009.png");
      	   BufferedImage img = ImageIO.read(f);
      	   AffineTransform af = new AffineTransform();
-     	   af.scale(.3,.3);
+     	   af.scale(0.33,0.33);
      	   af.rotate(.5);
      	   AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
      	   
      	   Point center = this.findCenter();
      	   
      	   if(f.exists())
-     		   //drawImage NEEDS to accept double precision coordinates for this to work properly.
-     		   g2.drawImage(img, aop, (int)(center.x-.5), (int)(center.y+(SQRT3/2)));
+     		   //FIXME: This needs to be non-static. Ought to use (center.x - n * Scale)
+     		   g2.drawImage(img, aop, (center.x-14), (center.y-38));
      	   else
      		  System.out.println("File not found: " + f.getAbsolutePath());
         }
@@ -110,6 +113,8 @@ public class GUIEWHex extends GUIHex
         }
         
     }
+    
+     */
     
 }
 
