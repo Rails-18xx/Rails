@@ -6,23 +6,22 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.5 2005/09/20 00:41:25 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.6 2005/09/20 21:25:52 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
 public class GUIEWHex extends GUIHex
 {
-
-    /**
-     * Stores the neighbouring views.
-     * This parallels the neighors field in BattleHex, just on the view side. 
-     * @todo check if we can avoid this
-     */
-    private GUIEWHex[] neighbors = new GUIEWHex[6];
 
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
@@ -80,7 +79,37 @@ public class GUIEWHex extends GUIHex
         return (innerHexagon.contains(point));
     }
 
-    private static String imagePostfix = "_Hazard";
-
+    public void paint (Graphics g)
+    {
+    	super.paint(g);
+    	Graphics2D g2 = (Graphics2D)g;
+    	
+        // FIXME: This is very kludgy.
+        
+        try
+        {
+     	   File f = new File("/Documents and Settings/lentz/workspace/18xx/tiles/images/tile0009.png");
+     	   BufferedImage img = ImageIO.read(f);
+     	   AffineTransform af = new AffineTransform();
+     	   af.scale(.3,.3);
+     	   af.rotate(.5);
+     	   AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
+     	   
+     	   Point center = this.findCenter();
+     	   
+     	   if(f.exists())
+     		   //drawImage NEEDS to accept double precision coordinates for this to work properly.
+     		   g2.drawImage(img, aop, (int)(center.x-.5), (int)(center.y+(SQRT3/2)));
+     	   else
+     		  System.out.println("File not found: " + f.getAbsolutePath());
+        }
+        catch(IOException e)
+        {
+     	   System.out.println("Unable to load tile file: ");
+     	   //e.printStackTrace();
+        }
+        
+    }
+    
 }
 
