@@ -82,7 +82,11 @@ public class Options extends JDialog implements ActionListener
          playerNameFields[i].setPreferredSize(size);
          playersPane.add(playerNameFields[i]);
       }
-
+      
+      playerNameFields[0].setText("0");
+      playerNameFields[1].setText("1");
+      playerNameFields[2].setText("2");
+      
       populateGameList(getGameList(), gameNameBox);
       
       optionsPane.add(new JLabel("Options"));
