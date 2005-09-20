@@ -69,7 +69,6 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
    // Abstract Methods
    ///////////   
    abstract void setupHexesGUI();
-   abstract void setupHexesGUI_EV();
    protected abstract void setupEntrancesGUI();
    
    /** Add terrain, hexsides, elevation, and exits to hexes.
@@ -186,7 +185,7 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
 
    void setupHexes()
    {
-       setupHexesGUI_EV();
+       setupHexesGUI();
        //setupHexesGUI();
        //setupHexesGameState(terrain, h, false);
        //setupNeighbors(h);
