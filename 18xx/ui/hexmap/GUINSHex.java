@@ -9,23 +9,13 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.2 2005/08/04 07:59:47 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.3 2005/09/20 21:25:51 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
 public class GUINSHex extends GUIHex
 {
-    private GeneralPath innerHexagon;
-    private static final Color highlightColor = Color.red;
-
-    /**
-     * Stores the neighbouring views.
-     * This parallels the neighors field in BattleHex, just on the view side. 
-     * @todo check if we can avoid this
-     */
-    private GUINSHex[] neighbors = new GUINSHex[6];
-
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
@@ -80,8 +70,5 @@ public class GUINSHex extends GUIHex
     {
         return (innerHexagon.contains(point));
     }
-
-    private static String imagePostfix = "_Hazard";
-
 }
 

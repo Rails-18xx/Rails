@@ -4,6 +4,7 @@ import game.Log;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 import javax.imageio.*;
@@ -135,10 +136,10 @@ public abstract class GUIHex extends JPanel
    }
 
    /** Return the Point closest to the center of the polygon. */
-   public Point2D.Double findCenter()
+   public Point findCenter()
    {
-      return new Point2D.Double((xVertex[2] + xVertex[5]) / 2,
-            ((yVertex[0] + yVertex[3]) / 2));
+      return new Point((int)((xVertex[2] + xVertex[5]) / 2),
+            (int)((yVertex[0] + yVertex[3]) / 2));
    }
 
    /** Return the Point2D.Double at the center of the polygon. */
@@ -281,18 +282,6 @@ public abstract class GUIHex extends JPanel
                     rectBound.y +
                     ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
        
-       // FIXME: This is very broken.
-       /*
-       try
-       {
-    	   g.drawImage(ImageIO.read(new File("/tiles/tile0009.gif")),0,0,this);
-       }
-       catch(IOException e)
-       {
-    	   System.out.println("Unable to load tile file: ");
-    	   e.printStackTrace();
-       }
-       */
    }
    
    public void repaint()
