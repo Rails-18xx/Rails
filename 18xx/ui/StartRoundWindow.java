@@ -88,7 +88,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    	  this.round = round;
    	  statusWindow = parent;
    	  startRoundPanel = this;
- 	  setTitle("Start Round");
+ 	  setTitle("Rails: Start Round");
  	  getContentPane().setLayout(new BorderLayout());
  	  //UIManager.put("ToggleButton.select", buttonHighlight);
  	  

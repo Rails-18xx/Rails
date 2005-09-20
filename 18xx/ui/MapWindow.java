@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.2 2005/08/11 20:46:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.3 2005/09/20 22:55:02 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -32,8 +32,8 @@ public class MapWindow extends JFrame implements ActionListener {
             return;
         }
         
-        setTitle ("Game Map");
-        setSize(1000, 500);
+        setTitle ("Rails: Game Map");
+        setSize(1000, 600);
         setLocation(25, 25);
         setContentPane (map);
         setVisible(true);
