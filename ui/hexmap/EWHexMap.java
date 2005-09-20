@@ -22,37 +22,6 @@ public class EWHexMap extends HexMap
     {
         hexes.clear();
 
-        // Initialize hex array.
-        for (int i = 0; i < h.length; i++)
-        {
-            for (int j = 0; j < h[0].length; j++)
-            {
-                if (show[i][j])
-                {
-                    GUIEWHex hex = new GUIEWHex(
-                        (cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3/2 * (j & 1)))),
-                        (cy + j * 1.5 * scale),
-                        scale, this, i, j);
-                     h[i][j] = hex;
-                     hexes.add(hex);
-                }
-            }
-        }
-    }
-
-    protected void setupHexesGUI_EV()
-    {
-        hexes.clear();
-
-        /*
-        // Initialize hex array.
-        for (int i = 0; i < h.length; i++)
-        {
-            for (int j = 0; j < h[0].length; j++)
-            {
-                if (show[i][j])
-                {
-                */
         MapManager mmgr = MapManager.getInstance();
         MapHex[][] hexArray = mmgr.getHexes();
         MapHex mh; 
