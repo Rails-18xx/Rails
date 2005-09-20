@@ -69,6 +69,7 @@ public class EWHexMap extends HexMap
                         scale, this, i, j);
                     hex.setName(hexArray[i][j].getName());
                     hex.setTileId(hexArray[i][j].getPreprintedTileId());
+                    hex.setTileFilename(hexArray[i][j].getTileFileName());
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

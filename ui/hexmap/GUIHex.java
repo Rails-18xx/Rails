@@ -2,25 +2,13 @@ package ui.hexmap;
 
 import game.Log;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.Arc2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.Point;
+import java.awt.*;
+import java.awt.geom.*;
+import java.io.*;
+import javax.swing.*;
+import javax.imageio.*;
 
-public abstract class GUIHex
+public abstract class GUIHex extends JPanel
 {
    public static final double SQRT3 = Math.sqrt(3.0);
    protected Hex model;
@@ -31,6 +19,7 @@ public abstract class GUIHex
    // Added by Erik Vos
    protected String hexName;
    protected int tileId;
+   protected String tileFilename;
 
    /**
     * Stores the neighbouring views.
@@ -291,11 +280,35 @@ public abstract class GUIHex
                     fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
                     rectBound.y +
                     ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
+       
+       // FIXME: This is very broken.
+       /*
+       try
+       {
+    	   g.drawImage(ImageIO.read(new File("/tiles/tile0009.gif")),0,0,this);
+       }
+       catch(IOException e)
+       {
+    	   System.out.println("Unable to load tile file: ");
+    	   e.printStackTrace();
+       }
+       */
    }
    
    public void repaint()
    {
+	   //FIXME: Temporary Kludge
+	   try
+	   {
+		   map.repaint();
+	   }
+	   catch (NullPointerException e)
+	   {
+		   System.out.println("Map Window repaint error.");
+	   }
+	   
        // If an entrance needs repainting, paint the whole map.
+       /* 
        if (getBattleHexModel().isEntrance())
        {
            map.repaint();
@@ -305,6 +318,7 @@ public abstract class GUIHex
            map.repaint(getBounds().x, getBounds().y, getBounds().width,
                getBounds().height);
        }
+               */
    }
    
    public boolean paintOverlay(Graphics2D g)
@@ -556,5 +570,20 @@ public int getTileId() {
  */
 public void setTileId(int tileId) {
 	this.tileId = tileId;
+}
+
+/**
+ * 
+ * @return Filename of the tile image
+ */
+public String getTileFilename()
+{
+	return tileFilename;
+}
+
+
+public void setTileFilename(String tileFilename)
+{
+	this.tileFilename = tileFilename;
 }
 }
