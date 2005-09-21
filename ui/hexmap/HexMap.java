@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import game.*;
+import ui.*;
 
 /**
  * @author blentz
@@ -65,6 +66,8 @@ public abstract class HexMap extends JPanel implements MouseListener, WindowList
    protected int cx = 6 * scale;
    protected int cy = 2 * scale;
 
+   protected ImageLoader imageLoader = new ImageLoader();
+   
    ////////////
    // Abstract Methods
    ///////////   
