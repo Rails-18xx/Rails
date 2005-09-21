@@ -2,20 +2,15 @@ package ui.hexmap;
 
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.io.*;
 
 import javax.imageio.ImageIO;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.7 2005/09/20 22:54:44 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.8 2005/09/21 20:57:00 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -79,8 +74,6 @@ public class GUIEWHex extends GUIHex
         return (innerHexagon.contains(point));
     }
 
-    /** NOT DONE YET 
-
     public void paint (Graphics g)
     {
     	super.paint(g);
@@ -88,10 +81,13 @@ public class GUIEWHex extends GUIHex
     	
         // FIXME: This is very kludgy.
         
+        String cwd = "./tiles/images/";
+        String fn = "tile" + Integer.toString(getTileId()) + ".png";
+    	
         try
         {
         	//FIXME: Need to figure out how to use transparencies for the rectangle bounding box that surrounds the hex.
-     	   File f = new File("/Documents and Settings/lentz/workspace/18xx/tiles/images/tile0009.png");
+     	   File f = new File(cwd + fn);
      	   BufferedImage img = ImageIO.read(f);
      	   AffineTransform af = new AffineTransform();
      	   af.scale(0.33,0.33);
@@ -108,13 +104,12 @@ public class GUIEWHex extends GUIHex
         }
         catch(IOException e)
         {
-     	   System.out.println("Unable to load tile file: ");
+     	   System.out.println("Unable to load tile file: " + cwd + fn);
      	   //e.printStackTrace();
         }
         
     }
     
-     */
     
 }
 
