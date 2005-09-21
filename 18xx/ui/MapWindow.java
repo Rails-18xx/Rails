@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.3 2005/09/20 22:55:02 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.4 2005/09/21 23:31:00 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -6,11 +6,8 @@
 package ui;
 
 import game.*;
-
 import java.awt.event.*;
-
 import javax.swing.*;
-
 import ui.hexmap.*;
 
 /**

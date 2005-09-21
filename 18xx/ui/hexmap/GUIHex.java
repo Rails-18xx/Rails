@@ -21,6 +21,9 @@ public abstract class GUIHex extends JPanel
    protected String hexName;
    protected int tileId;
    protected String tileFilename;
+   
+   protected BufferedImage tileImage;
+   protected AffineTransform af = new AffineTransform();
 
    /**
     * Stores the neighbouring views.
@@ -574,5 +577,11 @@ public String getTileFilename()
 public void setTileFilename(String tileFilename)
 {
 	this.tileFilename = tileFilename;
+}
+
+
+public void setTileImage(BufferedImage tileImage)
+{
+	this.tileImage = tileImage;
 }
 }

@@ -6,11 +6,11 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 
-import javax.imageio.ImageIO;
+import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.9 2005/09/21 21:45:29 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.10 2005/09/21 23:31:01 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -79,38 +79,14 @@ public class GUIEWHex extends GUIHex
     	super.paint(g);
     	Graphics2D g2 = (Graphics2D)g;
     	
-    	// Get and install an AlphaComposite to do transparent drawing
-    	//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-    	
-        // FIXME: This is very kludgy.
-        
-        String cwd = "./tiles/images/";
-        String fn = "tile" + Integer.toString(getTileId()) + ".gif";
-    	
-        try
-        {
-        	//FIXME: Need to figure out how to use transparencies for the rectangle bounding box that surrounds the hex.
-     	   File f = new File(cwd + fn);
-     	   BufferedImage img = ImageIO.read(f);
+    	af.scale(0.33,0.33);
+    	af.rotate(0.5);
      	   
-     	   AffineTransform af = new AffineTransform();
-     	   af.scale(0.33,0.33);
-     	   af.rotate(.5);
+    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
+    	Point center = this.findCenter();
      	   
-     	   AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
-     	   Point center = this.findCenter();
-     	   
-     	   if(f.exists())
-     		   //FIXME: This needs to be non-static. Ought to use (center.x - n * Scale)
-     		   g2.drawImage(img, aop, (center.x-14), (center.y-38));
-     	   else
-     		  System.out.println("File not found: " + f.getAbsolutePath());
-        }
-        catch(IOException e)
-        {
-     	   System.out.println("Unable to load tile file: " + cwd + fn);
-        }
-        
+    	//FIXME: This needs to be non-static. Ought to use (center.x - n * Scale)
+    	g2.drawImage(tileImage, aop, (center.x-14), (center.y-38));
     }
     
     
