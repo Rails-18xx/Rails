@@ -11,7 +11,7 @@ import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.11 2005/09/22 21:35:07 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.12 2005/09/22 21:48:51 evos Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -99,7 +99,8 @@ public class GUIEWHex extends GUIHex implements MouseListener
     	af.rotate(rotation);
      	   
     	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
-    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
+    	//AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
+    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
     	    	
      	g2.setClip(hexagon);
      	     	    	
