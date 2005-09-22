@@ -8,12 +8,11 @@ import javax.swing.*;
 
 /**
  * Class BattleMap implements the GUI for a Titan battlemap.
- * @version $Id: BattleMap.java,v 1.7 2005/08/07 09:47:01 wakko666 Exp $
+ * @version $Id: BattleMap.java,v 1.8 2005/09/22 21:35:07 wakko666 Exp $
  * @author David Ripton
  */
 
-public final class BattleMap extends EWHexMap implements MouseListener,
-        WindowListener
+public final class BattleMap extends EWHexMap
 {
     private Point2D.Double location;
     private JFrame battleFrame;
@@ -30,9 +29,6 @@ public final class BattleMap extends EWHexMap implements MouseListener,
 
         Container contentPane = battleFrame.getContentPane();
         contentPane.setLayout(new BorderLayout());
-
-        battleFrame.addWindowListener(this);
-        addMouseListener(this);
 
         if (location == null)
         {
@@ -74,35 +70,6 @@ public final class BattleMap extends EWHexMap implements MouseListener,
     void setWaitCursor()
     {
         battleFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    }
-
-    public void mousePressed(MouseEvent e)
-    {
-        Point point = e.getPoint();
-
-        GUIHex hex = getHexContainingPoint(point);
-        String hexLabel = "";
-        if (hex != null)
-        {
-            hexLabel = hex.getHexModel().getLabel();
-        }
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-        String[] options = new String[2];
-        options[0] = "Yes";
-        options[1] = "No";
-        int answer = JOptionPane.showOptionDialog(battleFrame,
-            "Are you sure you wish to quit?",
-            "Quit Game?",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, options, options[1]);
-
-        if (answer == JOptionPane.YES_OPTION)
-        {
-            System.exit(0);
-        }
     }
 
     public void paintComponent(Graphics g)

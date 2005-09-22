@@ -24,7 +24,7 @@ public abstract class GUIHex extends JPanel
    
    protected BufferedImage tileImage;
    protected AffineTransform af = new AffineTransform();
-
+   
    /**
     * Stores the neighbouring views.
     * This parallels the neighors field in BattleHex, just on the view side. 
@@ -292,25 +292,12 @@ public abstract class GUIHex extends JPanel
 	   //FIXME: Temporary Kludge
 	   try
 	   {
-		   map.repaint();
+           map.repaint(getBounds().x, getBounds().y, getBounds().width, getBounds().height);
 	   }
 	   catch (NullPointerException e)
 	   {
-		   System.out.println("Map Window repaint error.");
+		   
 	   }
-	   
-       // If an entrance needs repainting, paint the whole map.
-       /* 
-       if (getBattleHexModel().isEntrance())
-       {
-           map.repaint();
-       }
-       else
-       {
-           map.repaint(getBounds().x, getBounds().y, getBounds().width,
-               getBounds().height);
-       }
-               */
    }
    
    public boolean paintOverlay(Graphics2D g)
