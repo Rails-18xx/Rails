@@ -27,7 +27,7 @@ public abstract class GUIHex extends JPanel
 	// EWHex-specific
 	//This is only here for scope visibility
 	public double tileScale = 0.33;
-	public double[] rotation_arr = { 0.5, 1.05, 1.05, 1.05, 1.05, 1.05 , 1.05};
+	public double[] rotation_arr = { 0.5, 1.55, 2.60, 3.65, 4.70, 5.75 , 6.80};
 	public int[] x_adjust_arr = { -12, 26, 40, 12, -26, -40, -12 };
 	public int[] y_adjust_arr = { -38, -30, 8, 38, 30, -8, -38 };
 	public int x_adjust = x_adjust_arr[0];

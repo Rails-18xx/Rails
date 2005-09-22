@@ -555,14 +555,14 @@ public abstract class HexMap extends JPanel implements MouseListener
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
+		System.out.println(point);
+		
         GUIHex hex = getHexContainingPoint(point);
         
     	hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
     	hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
     	hex.rotation = hex.rotation_arr[hex.arr_index];
         
-    	System.out.println(hex.findCenter() + " " + hex.x_adjust + "," + hex.y_adjust);
-    	
         hex.repaint();
 	}
 

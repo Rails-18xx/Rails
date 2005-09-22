@@ -11,7 +11,7 @@ import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.14 2005/09/22 22:25:46 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.15 2005/09/22 23:19:38 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -81,19 +81,14 @@ public class GUIEWHex extends GUIHex
     	Graphics2D g2 = (Graphics2D)g;
     	
     	Point center = findCenter();    
-    	
-    	//rescale the image only once.
-    	if (arr_index == 0)
-    	{
-    		af.scale(tileScale,tileScale);
-    	}
-    	
+
     	x_adjust = x_adjust_arr[tileOrientation];
     	y_adjust = y_adjust_arr[tileOrientation];
     	rotation = rotation_arr[tileOrientation];
     	
-    	af.rotate(rotation);
-     	   
+    	af = AffineTransform.getRotateInstance(rotation);
+    	af.scale(tileScale,tileScale);
+    	
     	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
     	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
     	    	
