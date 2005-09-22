@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.5 2005/09/22 21:35:21 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.6 2005/09/22 21:48:51 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -28,7 +28,7 @@ public class MapWindow extends JFrame {
             return;
         }
         
-        add(map);
+        getContentPane().add(map);
         addMouseListener(map);
         
         setTitle ("Rails: Game Map");
