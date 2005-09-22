@@ -20,6 +20,7 @@ public abstract class GUIHex extends JPanel
    // Added by Erik Vos
    protected String hexName;
    protected int tileId;
+   protected int tileOrientation;
    protected String tileFilename;
    
    protected BufferedImage tileImage;
@@ -551,6 +552,12 @@ public void setTileId(int tileId) {
 	this.tileId = tileId;
 }
 
+/**
+ * @param tileOrientation The tileOrientation to set.
+ */
+public void setTileOrientation(int tileOrientation) {
+    this.tileOrientation = tileOrientation;
+}
 /**
  * 
  * @return Filename of the tile image

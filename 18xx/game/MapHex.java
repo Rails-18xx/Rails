@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.4 2005/09/20 00:41:00 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.5 2005/09/22 21:46:12 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -35,6 +35,7 @@ public class MapHex implements ConfigurableComponentI
 	protected int number;
 	protected String tileFileName;
 	protected int preprintedTileId;
+	protected int preprintedTileOrientation;
 
 	public MapHex()
 	{
@@ -121,6 +122,10 @@ public class MapHex implements ConfigurableComponentI
 		{
 			preprintedTileId = -999;
 		}
+		
+		preprintedTileOrientation = 
+		    XmlUtils.extractIntegerAttribute(nnp, "orientation", 0);
+
 	}
 
 	public static void setTileOrientation(int orientation)
@@ -209,4 +214,11 @@ public class MapHex implements ConfigurableComponentI
 	{
 		return tileFileName;
 	}
+	
+    /**
+     * @return Returns the preprintedTileOrientation.
+     */
+    public int getPreprintedTileOrientation() {
+        return preprintedTileOrientation;
+    }
 }
