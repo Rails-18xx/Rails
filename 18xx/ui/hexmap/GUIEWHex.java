@@ -4,25 +4,35 @@ package ui.hexmap;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.io.*;
+import java.awt.event.*;
+import java.util.*;
 
 import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.10 2005/09/21 23:31:01 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.11 2005/09/22 21:35:07 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
 
-public class GUIEWHex extends GUIHex
+public class GUIEWHex extends GUIHex implements MouseListener
 {
 
+	protected double tileScale = 0.33;
+	protected double[] rotation_arr = { 0.5, 1.05, 1.05, 1.05, 1.05, 1.05 };
+	protected int[] x_adjust_arr = { -14, 26, 40, 14, -26, -40 };
+	protected int[] y_adjust_arr = { -38, -30, 8, 38, 30, -8 };
+	protected int x_adjust = x_adjust_arr[0];
+	protected int y_adjust = y_adjust_arr[0];
+	protected double rotation = rotation_arr[0];
+	protected int arr_index = 0;	
+	
     // Hex labels are:
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
-    public GUIEWHex(double cx, double cy, int scale, Component map,
+	public GUIEWHex(double cx, double cy, int scale, Component map,
         double xCoord, double yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -79,16 +89,53 @@ public class GUIEWHex extends GUIHex
     	super.paint(g);
     	Graphics2D g2 = (Graphics2D)g;
     	
-    	af.scale(0.33,0.33);
-    	af.rotate(0.5);
+    	Point center = findCenter();
+    	
+    	//rescale the image only once.
+    	if (arr_index == 0)
+    	{
+    		af.scale(tileScale,tileScale);
+    	}
+    	af.rotate(rotation);
      	   
+    	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
     	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);    	  
-    	Point center = this.findCenter();
-     	   
+    	    	
+     	g2.setClip(hexagon);
+     	     	    	
     	//FIXME: This needs to be non-static. Ought to use (center.x - n * Scale)
-    	g2.drawImage(tileImage, aop, (center.x-14), (center.y-38));
+    	g2.drawImage(tileImage, aop, (center.x + x_adjust), (center.y + y_adjust));
+    	
+    	if(arr_index == 5)
+    		arr_index = 1;
+    	else
+    		arr_index++;
+    	
+    	x_adjust = x_adjust_arr[arr_index];
+    	y_adjust = y_adjust_arr[arr_index];
+    	rotation = rotation_arr[arr_index];
     }
-    
-    
+       
+    public void mouseClicked(MouseEvent arg0)
+	{
+    	System.out.println("Click.");
+	}
+
+	public void mouseEntered(MouseEvent arg0)
+	{
+	}
+
+	public void mouseExited(MouseEvent arg0)
+	{
+	}
+
+	public void mousePressed(MouseEvent arg0)
+	{
+	}
+
+	public void mouseReleased(MouseEvent arg0)
+	{
+	}
+
 }
 

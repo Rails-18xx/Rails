@@ -32,570 +32,557 @@ import ui.*;
 /**
  * @author blentz
  */
-public abstract class HexMap extends JPanel implements MouseListener, WindowListener
+public abstract class HexMap extends JPanel implements MouseListener
 {
-   // GUI hexes need to be recreated for each object, since scale varies.
-   protected GUIHex[][] h = new GUIHex[6][6];
 
-   /** ne, e, se, sw, w, nw */
-   protected GUIHex[] entrances = new GUIHex[6];
-   
-   protected List hexes = new ArrayList(33);
-   
-   // The game state hexes can be set up once for each terrain type.
-   protected static Map terrainH = new HashMap();
-   protected static Map terrainHexes = new HashMap();
-   protected static Map entranceHexes = new HashMap();
-   protected static Map startlistMap = new HashMap();
-   protected static Map subtitleMap = new HashMap();
-   protected static Map towerStatusMap = new HashMap();
-   protected static Map hazardNumberMap = new HashMap();
-   protected static Map hazardSideNumberMap = new HashMap();
-   
-   //BUG: There's bugs with how this map is populated by setupNeighbors().
-   //This will need significant reworking.
-   protected static final boolean[][] show = { 
-         {false, true, true, true, true, true}, 
-         {true, true, true, true, true, true}, 
-         {false, true, true, true, true, true}, 
-         {true, true, true, true, true, true}, 
-         {false, true, true, true, true, true}, 
-         {true, true, true, true, true, true} };
-   
-   protected int scale = 2 * 15; // * Scale.get();
-   protected int cx = 6 * scale;
-   protected int cy = 2 * scale;
+	// GUI hexes need to be recreated for each object, since scale varies.
+	protected GUIHex[][] h = new GUIHex[6][6];
 
-   protected ImageLoader imageLoader = new ImageLoader();
-   
-   ////////////
-   // Abstract Methods
-   ///////////   
-   abstract void setupHexesGUI();
-   protected abstract void setupEntrancesGUI();
-   
-   /** Add terrain, hexsides, elevation, and exits to hexes.
-    *  Cliffs are bidirectional; other hexside obstacles are noted
-    *  only on the high side, since they only interfere with
-    *  uphill movement. */
-   private static synchronized void setupHexesGameState(String terrain,
-       GUIHex[][] h, boolean serverSideFirstLoad)
-   {
-       List directories = null; 
-       String rndSourceName = null;
-       BattleHex[][] hexModel = new BattleHex[h.length][h[0].length];
-       for (int i = 0; i < h.length; i++)
-       {
-           for (int j = 0; j < h[0].length; j++)
-           {
-               if (show[i][j])
-               {
-                   hexModel[i][j] = new BattleHex(i,j);
-               }
-           }
-       }
-       try
-       {
-           if ((rndSourceName == null) || (!serverSideFirstLoad))
-           { // static Battlelands
-               //InputStream batIS = ResourceLoader.getInputStream(
-               //   terrain + ".xml", directories);
+	/** ne, e, se, sw, w, nw */
+	protected GUIHex[] entrances = new GUIHex[6];
 
-              /*
-               BattlelandLoader bl = new BattlelandLoader(batIS, hexModel);
-               List tempTowerStartList = bl.getStartList();
-               if (tempTowerStartList != null)
-               {
-                   startlistMap.put(terrain, tempTowerStartList);
-               }
-               towerStatusMap.put(terrain, new Boolean(bl.isTower()));
-               subtitleMap.put(terrain, bl.getSubtitle());
-               */
-           }
+	protected List hexes = new ArrayList(33);
 
-           /* count all hazards & hazard sides */
+	// The game state hexes can be set up once for each terrain type.
+	protected static Map terrainH = new HashMap();
+	protected static Map terrainHexes = new HashMap();
+	protected static Map entranceHexes = new HashMap();
+	protected static Map startlistMap = new HashMap();
+	protected static Map subtitleMap = new HashMap();
+	protected static Map towerStatusMap = new HashMap();
+	protected static Map hazardNumberMap = new HashMap();
+	protected static Map hazardSideNumberMap = new HashMap();
 
-           /* slow & inefficient... */
-           final String[] hazards = null; // BattleHex.getTerrains();
-           HashMap t2n = new HashMap();
-           for (int i = 0; i < hazards.length; i++)
-           {
-               int count = 0;
-               for (int x = 0; x < 6; x++)
-               {
-                   for (int y = 0; y < 6; y++)
-                   {
-                       if (show[x][y])
-                       {
-                           if (hexModel[x][y].getTerrain().equals(hazards[i]))
-                           {
-                               count++;
-                           }
-                       }
-                   }
-               }
-               if (count > 0)
-               {
-                   t2n.put(hazards[i], new Integer(count));
-               }
-           }
-           hazardNumberMap.put(terrain, t2n);
-           char[] hazardSides = BattleHex.getHexsides();
-           HashMap s2n = new HashMap();
-           for (int i = 0; i < hazardSides.length; i++)
-           {
-               int count = 0;
-               for (int x = 0; x < 6; x++)
-               {
-                   for (int y = 0; y < 6; y++)
-                   {
-                       if (show[x][y])
-                       {
-                           for (int k = 0; k < 6; k++)
-                           {
-                               if (hexModel[x][y].getHexside(k) ==
-                                   hazardSides[i])
-                               {
-                                   count++;
-                               }
-                           }
-                       }
-                   }
-               }
-               if (count > 0)
-               {
-                   s2n.put(new Character(hazardSides[i]), new Integer(count));
-               }
-           }
-           hazardSideNumberMap.put(terrain, s2n);
-           // map model into GUI
-           for (int i = 0; i < hexModel.length; i++) {
-               BattleHex[] row = hexModel[i];
-               for (int j = 0; j < row.length; j++) {
-                   BattleHex hex = row[j];
-                   if (show[i][j]) {
-                       h[i][j].setHexModel(hex);
-                   }
-               }
-           }
-       }
-       catch (Exception e)
-       {
-           Log.error("Battleland " + terrain + " loading failed : " + e);
-           e.printStackTrace();
-       }
-   }
+	// BUG: There's bugs with how this map is populated by setupNeighbors().
+	// This will need significant reworking.
+	protected static final boolean[][] show = {
+			{ false, true, true, true, true, true },
+			{ true, true, true, true, true, true },
+			{ false, true, true, true, true, true },
+			{ true, true, true, true, true, true },
+			{ false, true, true, true, true, true },
+			{ true, true, true, true, true, true } };
 
-   void setupHexes()
-   {
-       setupHexesGUI();
-       //setupHexesGUI();
-       //setupHexesGameState(terrain, h, false);
-       //setupNeighbors(h);
-       //setupEntrances();
-   }
-   
-   /** Add references to neighbor hexes. 
-    * 
-    * TODO: This assumes only a 6x6 hex grid. 
-    * 		We'll need to modify this to apply to an arbitrarily sized grid.
-    * 
-    * */
-   protected static void setupNeighbors(GUIHex[][] h)
-   {
-       for (int i = 0; i < h.length; i++)
-       {
-           for (int j = 0; j < h[0].length; j++)
-           {
-               if (show[i][j])
-               {
-                   if (j > 0 && show[i][j - 1])
-                   {
-                       h[i][j].setNeighbor(0, h[i][j - 1]);
-                   }
+	protected int scale = 2 * 15; // * Scale.get();
+	protected int cx = 6 * scale;
+	protected int cy = 2 * scale;
 
-                   if (i < 5 && show[i + 1][j - ((i + 1) & 1)])
-                   {
-                       h[i][j].setNeighbor(1, h[i + 1][j - ((i + 1) & 1)]);
-                   }
+	protected ImageLoader imageLoader = new ImageLoader();
 
-                   if (i < 5 && j + (i & 1) < 6 && show[i + 1][j + (i & 1)])
-                   {
-                       h[i][j].setNeighbor(2, h[i + 1][j + (i & 1)]);
-                   }
+	// //////////
+	// Abstract Methods
+	// /////////
+	abstract void setupHexesGUI();
 
-                   if (j < 5 && show[i][j + 1])
-                   {
-                       h[i][j].setNeighbor(3, h[i][j + 1]);
-                   }
+	protected abstract void setupEntrancesGUI();
 
-                   if (i > 0 && j + (i & 1) < 6 && show[i - 1][j + (i & 1)])
-                   {
-                       h[i][j].setNeighbor(4, h[i - 1][j + (i & 1)]);
-                   }
+	/**
+	 * Add terrain, hexsides, elevation, and exits to hexes. Cliffs are
+	 * bidirectional; other hexside obstacles are noted only on the high side,
+	 * since they only interfere with uphill movement.
+	 */
+	private static synchronized void setupHexesGameState(String terrain,
+			GUIHex[][] h, boolean serverSideFirstLoad)
+	{
+		List directories = null;
+		String rndSourceName = null;
+		BattleHex[][] hexModel = new BattleHex[h.length][h[0].length];
+		for (int i = 0; i < h.length; i++)
+		{
+			for (int j = 0; j < h[0].length; j++)
+			{
+				if (show[i][j])
+				{
+					hexModel[i][j] = new BattleHex(i, j);
+				}
+			}
+		}
+		try
+		{
+			if ((rndSourceName == null) || (!serverSideFirstLoad))
+			{ // static Battlelands
+				// InputStream batIS = ResourceLoader.getInputStream(
+				// terrain + ".xml", directories);
 
-                   if (i > 0 && show[i - 1][j - ((i + 1) & 1)])
-                   {
-                       h[i][j].setNeighbor(5, h[i - 1][j - ((i + 1) & 1)]);
-                   }
-               }
-           }
-       }
-   }
-   
-   //TODO: This needs to be changed
-   protected static void setupEntrancesGameState(GUIHex[] entrances,
-       GUIHex[][] h)
-   {
-       entrances[0].setNeighbor(3, h[3][0]);
-       entrances[0].setNeighbor(4, h[4][1]);
-       entrances[0].setNeighbor(5, h[5][1]);
+				/*
+				 * BattlelandLoader bl = new BattlelandLoader(batIS, hexModel);
+				 * List tempTowerStartList = bl.getStartList(); if
+				 * (tempTowerStartList != null) { startlistMap.put(terrain,
+				 * tempTowerStartList); } towerStatusMap.put(terrain, new
+				 * Boolean(bl.isTower())); subtitleMap.put(terrain,
+				 * bl.getSubtitle());
+				 */
+			}
 
-       entrances[1].setNeighbor(3, h[5][1]);
-       entrances[1].setNeighbor(4, h[5][2]);
-       entrances[1].setNeighbor(5, h[5][3]);
-       entrances[1].setNeighbor(0, h[5][4]);
+			/* count all hazards & hazard sides */
 
-       entrances[2].setNeighbor(4, h[5][4]);
-       entrances[2].setNeighbor(5, h[4][5]);
-       entrances[2].setNeighbor(0, h[3][5]);
+			/* slow & inefficient... */
+			final String[] hazards = null; // BattleHex.getTerrains();
+			HashMap t2n = new HashMap();
+			for (int i = 0; i < hazards.length; i++)
+			{
+				int count = 0;
+				for (int x = 0; x < 6; x++)
+				{
+					for (int y = 0; y < 6; y++)
+					{
+						if (show[x][y])
+						{
+							if (hexModel[x][y].getTerrain().equals(hazards[i]))
+							{
+								count++;
+							}
+						}
+					}
+				}
+				if (count > 0)
+				{
+					t2n.put(hazards[i], new Integer(count));
+				}
+			}
+			hazardNumberMap.put(terrain, t2n);
+			char[] hazardSides = BattleHex.getHexsides();
+			HashMap s2n = new HashMap();
+			for (int i = 0; i < hazardSides.length; i++)
+			{
+				int count = 0;
+				for (int x = 0; x < 6; x++)
+				{
+					for (int y = 0; y < 6; y++)
+					{
+						if (show[x][y])
+						{
+							for (int k = 0; k < 6; k++)
+							{
+								if (hexModel[x][y].getHexside(k) == hazardSides[i])
+								{
+									count++;
+								}
+							}
+						}
+					}
+				}
+				if (count > 0)
+				{
+					s2n.put(new Character(hazardSides[i]), new Integer(count));
+				}
+			}
+			hazardSideNumberMap.put(terrain, s2n);
+			// map model into GUI
+			for (int i = 0; i < hexModel.length; i++)
+			{
+				BattleHex[] row = hexModel[i];
+				for (int j = 0; j < row.length; j++)
+				{
+					BattleHex hex = row[j];
+					if (show[i][j])
+					{
+						h[i][j].setHexModel(hex);
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Log.error("Battleland " + terrain + " loading failed : " + e);
+			e.printStackTrace();
+		}
+	}
 
-       entrances[3].setNeighbor(5, h[3][5]);
-       entrances[3].setNeighbor(0, h[2][5]);
-       entrances[3].setNeighbor(1, h[1][4]);
-       entrances[3].setNeighbor(2, h[0][4]);
+	void setupHexes()
+	{
+		setupHexesGUI();
+		// setupHexesGUI();
+		// setupHexesGameState(terrain, h, false);
+		// setupNeighbors(h);
+		// setupEntrances();
+	}
 
-       entrances[4].setNeighbor(0, h[0][4]);
-       entrances[4].setNeighbor(1, h[0][3]);
-       entrances[4].setNeighbor(2, h[0][2]);
+	/**
+	 * Add references to neighbor hexes.
+	 * 
+	 * TODO: This assumes only a 6x6 hex grid. We'll need to modify this to
+	 * apply to an arbitrarily sized grid.
+	 * 
+	 */
+	protected static void setupNeighbors(GUIHex[][] h)
+	{
+		for (int i = 0; i < h.length; i++)
+		{
+			for (int j = 0; j < h[0].length; j++)
+			{
+				if (show[i][j])
+				{
+					if (j > 0 && show[i][j - 1])
+					{
+						h[i][j].setNeighbor(0, h[i][j - 1]);
+					}
 
-       entrances[5].setNeighbor(1, h[0][2]);
-       entrances[5].setNeighbor(2, h[1][1]);
-       entrances[5].setNeighbor(3, h[2][1]);
-       entrances[5].setNeighbor(4, h[3][0]);
-   }
+					if (i < 5 && show[i + 1][j - ((i + 1) & 1)])
+					{
+						h[i][j].setNeighbor(1, h[i + 1][j - ((i + 1) & 1)]);
+					}
 
-   protected void setupEntrances()
-   {
-       setupEntrancesGUI();
-       setupEntrancesGameState(entrances, h);
-   }
+					if (i < 5 && j + (i & 1) < 6 && show[i + 1][j + (i & 1)])
+					{
+						h[i][j].setNeighbor(2, h[i + 1][j + (i & 1)]);
+					}
 
-   void unselectAllHexes()
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.isSelected())
-           {
-               hex.unselect();
-               hex.repaint();
-           }
-       }
-   }
+					if (j < 5 && show[i][j + 1])
+					{
+						h[i][j].setNeighbor(3, h[i][j + 1]);
+					}
 
-   void unselectHexByLabel(String label)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
-           {
-               hex.unselect();
-               hex.repaint();
-               return;
-           }
-       }
-   }
+					if (i > 0 && j + (i & 1) < 6 && show[i - 1][j + (i & 1)])
+					{
+						h[i][j].setNeighbor(4, h[i - 1][j + (i & 1)]);
+					}
 
-   void unselectHexesByLabels(Set labels)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.isSelected() &&
-               labels.contains(hex.getHexModel().getLabel()))
-           {
-               hex.unselect();
-               hex.repaint();
-           }
-       }
-   }
+					if (i > 0 && show[i - 1][j - ((i + 1) & 1)])
+					{
+						h[i][j].setNeighbor(5, h[i - 1][j - ((i + 1) & 1)]);
+					}
+				}
+			}
+		}
+	}
 
-   void selectHexByLabel(String label)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (!hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
-           {
-               hex.select();
-               hex.repaint();
-               return;
-           }
-       }
-   }
+	// TODO: This needs to be changed
+	protected static void setupEntrancesGameState(GUIHex[] entrances,
+			GUIHex[][] h)
+	{
+		entrances[0].setNeighbor(3, h[3][0]);
+		entrances[0].setNeighbor(4, h[4][1]);
+		entrances[0].setNeighbor(5, h[5][1]);
 
-   void selectHexesByLabels(Set labels)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (!hex.isSelected() &&
-               labels.contains(hex.getHexModel().getLabel()))
-           {
-               hex.select();
-               hex.repaint();
-           }
-       }
-   }
+		entrances[1].setNeighbor(3, h[5][1]);
+		entrances[1].setNeighbor(4, h[5][2]);
+		entrances[1].setNeighbor(5, h[5][3]);
+		entrances[1].setNeighbor(0, h[5][4]);
 
-   /** Do a brute-force search through the hex array, looking for
-    *  a match.  Return the hex, or null. */
-   GUIHex getGUIHexByLabel(String label)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.getHexModel().getLabel().equals(label))
-           {
-               return hex;
-           }
-       }
+		entrances[2].setNeighbor(4, h[5][4]);
+		entrances[2].setNeighbor(5, h[4][5]);
+		entrances[2].setNeighbor(0, h[3][5]);
 
-       Log.error("Could not find GUIHex " + label);
-       return null;
-   }
+		entrances[3].setNeighbor(5, h[3][5]);
+		entrances[3].setNeighbor(0, h[2][5]);
+		entrances[3].setNeighbor(1, h[1][4]);
+		entrances[3].setNeighbor(2, h[0][4]);
 
-   /** Look for the Hex matching the Label in the terrain static map */
-   public static BattleHex getHexByLabel(String terrain, String label)
-   {
-       int x = 0;
-       int y = Integer.parseInt(new String(label.substring(1)));
-       switch (label.charAt(0))
-       {
-           case 'A':
-           case 'a':
-               x = 0;
-               break;
+		entrances[4].setNeighbor(0, h[0][4]);
+		entrances[4].setNeighbor(1, h[0][3]);
+		entrances[4].setNeighbor(2, h[0][2]);
 
-           case 'B':
-           case 'b':
-               x = 1;
-               break;
+		entrances[5].setNeighbor(1, h[0][2]);
+		entrances[5].setNeighbor(2, h[1][1]);
+		entrances[5].setNeighbor(3, h[2][1]);
+		entrances[5].setNeighbor(4, h[3][0]);
+	}
 
-           case 'C':
-           case 'c':
-               x = 2;
-               break;
+	protected void setupEntrances()
+	{
+		setupEntrancesGUI();
+		setupEntrancesGameState(entrances, h);
+	}
 
-           case 'D':
-           case 'd':
-               x = 3;
-               break;
+	void unselectAllHexes()
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.isSelected())
+			{
+				hex.unselect();
+				hex.repaint();
+			}
+		}
+	}
 
-           case 'E':
-           case 'e':
-               x = 4;
-               break;
+	void unselectHexByLabel(String label)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
+			{
+				hex.unselect();
+				hex.repaint();
+				return;
+			}
+		}
+	}
 
-           case 'F':
-           case 'f':
-               x = 5;
-               break;
+	void unselectHexesByLabels(Set labels)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.isSelected()
+					&& labels.contains(hex.getHexModel().getLabel()))
+			{
+				hex.unselect();
+				hex.repaint();
+			}
+		}
+	}
 
-           case 'X':
-           case 'x':
+	void selectHexByLabel(String label)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (!hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
+			{
+				hex.select();
+				hex.repaint();
+				return;
+			}
+		}
+	}
 
-               /* entrances */
-               GUIHex[] gameEntrances =
-                   (GUIHex[])entranceHexes.get(terrain);
-               return gameEntrances[y].getBattleHexModel();
+	void selectHexesByLabels(Set labels)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (!hex.isSelected()
+					&& labels.contains(hex.getHexModel().getLabel()))
+			{
+				hex.select();
+				hex.repaint();
+			}
+		}
+	}
 
-           default:
-               Log.error("Label " + label + " is invalid");
-       }
-       y = 6 - y - (int)Math.abs(((x - 3) / 2));
-       GUIHex[][] correctHexes = (GUIHex[][])terrainH.get(terrain);
-       return correctHexes[x][y].getBattleHexModel();
-   }
+	/**
+	 * Do a brute-force search through the hex array, looking for a match.
+	 * Return the hex, or null.
+	 */
+	GUIHex getGUIHexByLabel(String label)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.getHexModel().getLabel().equals(label))
+			{
+				return hex;
+			}
+		}
 
-   /** Return the GUIBattleHex that contains the given point, or
-    *  null if none does. */
-   GUIHex getHexContainingPoint(Point2D.Double point)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.contains(point))
-           {
-               return hex;
-           }
-       }
+		Log.error("Could not find GUIHex " + label);
+		return null;
+	}
 
-       return null;
-   }
-   
-   GUIHex getHexContainingPoint(Point point)
-   {
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           GUIHex hex = (GUIHex)it.next();
-           if (hex.contains(point))
-           {
-               return hex;
-           }
-       }
+	/** Look for the Hex matching the Label in the terrain static map */
+	public static BattleHex getHexByLabel(String terrain, String label)
+	{
+		int x = 0;
+		int y = Integer.parseInt(new String(label.substring(1)));
+		switch (label.charAt(0))
+		{
+			case 'A':
+			case 'a':
+				x = 0;
+				break;
 
-       return null;
-   }
+			case 'B':
+			case 'b':
+				x = 1;
+				break;
 
-   Set getAllHexLabels()
-   {
-       Set set = new HashSet();
-       Iterator it = hexes.iterator();
-       while (it.hasNext())
-       {
-           BattleHex hex = (BattleHex)it.next();
-           set.add(hex.getLabel());
-       }
-       return set;
-   }
+			case 'C':
+			case 'c':
+				x = 2;
+				break;
 
-   public void mousePressed(MouseEvent e)
-   {
-   }
+			case 'D':
+			case 'd':
+				x = 3;
+				break;
 
-   public void mouseReleased(MouseEvent e)
-   {
-   }
+			case 'E':
+			case 'e':
+				x = 4;
+				break;
 
-   public void mouseClicked(MouseEvent e)
-   {
-   }
+			case 'F':
+			case 'f':
+				x = 5;
+				break;
 
-   public void mouseEntered(MouseEvent e)
-   {
-   }
+			case 'X':
+			case 'x':
 
-   public void mouseExited(MouseEvent e)
-   {
-   }
+				/* entrances */
+				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
+				return gameEntrances[y].getBattleHexModel();
 
-   public void windowActivated(WindowEvent e)
-   {
-   }
+			default:
+				Log.error("Label " + label + " is invalid");
+		}
+		y = 6 - y - (int) Math.abs(((x - 3) / 2));
+		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
+		return correctHexes[x][y].getBattleHexModel();
+	}
 
-   public void windowClosed(WindowEvent e)
-   {
-   }
+	/**
+	 * Return the GUIBattleHex that contains the given point, or null if none
+	 * does.
+	 */
+	GUIHex getHexContainingPoint(Point2D.Double point)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.contains(point))
+			{
+				return hex;
+			}
+		}
 
-   public void windowClosing(WindowEvent e)
-   {
-   }
+		return null;
+	}
 
-   public void windowDeactivated(WindowEvent e)
-   {
-   }
+	GUIHex getHexContainingPoint(Point point)
+	{
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			GUIHex hex = (GUIHex) it.next();
+			if (hex.contains(point))
+			{
+				return hex;
+			}
+		}
 
-   public void windowDeiconified(WindowEvent e)
-   {
-   }
+		return null;
+	}
 
-   public void windowIconified(WindowEvent e)
-   {
-   }
+	Set getAllHexLabels()
+	{
+		Set set = new HashSet();
+		Iterator it = hexes.iterator();
+		while (it.hasNext())
+		{
+			BattleHex hex = (BattleHex) it.next();
+			set.add(hex.getLabel());
+		}
+		return set;
+	}
 
-   public void windowOpened(WindowEvent e)
-   {
-   }
+	public void paintComponent(Graphics g)
+	{
+		try
+		{
+			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D) g;
 
-   public void paintComponent(Graphics g)
-   {
-       try
-       {
-           super.paintComponent(g);
-           Graphics2D g2 = (Graphics2D)g;
+			// Abort if called too early.
+			Rectangle rectClip = g.getClipBounds();
+			if (rectClip == null)
+			{
+				return;
+			}
 
-           // Abort if called too early.
-           Rectangle rectClip = g.getClipBounds();
-           if (rectClip == null)
-           {
-               return;
-           }
+			Iterator it = hexes.iterator();
+			while (it.hasNext())
+			{
+				GUIHex hex = (GUIHex) it.next();
+				if (!hex.getBattleHexModel().isEntrance()
+						&& rectClip.intersects(hex.getBounds()))
+				{
+					hex.paint(g);
+				}
+			}
 
-           Iterator it = hexes.iterator();
-           while (it.hasNext())
-           {
-               GUIHex hex = (GUIHex)it.next();
-               if (!hex.getBattleHexModel().isEntrance() &&
-                   rectClip.intersects(hex.getBounds()))
-               {
-                   hex.paint(g);
-               }
-           }
+			/* always antialias this, the font is huge */
+			Object oldantialias = g2
+					.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
-           /* always antialias this, the font is huge */
-           Object oldantialias = g2.getRenderingHint(
-               RenderingHints.KEY_ANTIALIASING);
-           g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-               RenderingHints.VALUE_ANTIALIAS_ON);
+			Font oldFont = g.getFont();
+			FontMetrics fm;
+			String dn = null; // getMasterHex().getTerrainDisplayName();
+			String bn = null; // getMasterHex().getTerrainName();
+			String sub = null; // (String)subtitleMap.get(terrain);
 
-           Font oldFont = g.getFont();
-           FontMetrics fm;
-           String dn = null; // getMasterHex().getTerrainDisplayName();
-           String bn = null; // getMasterHex().getTerrainName();
-           String sub = null; // (String)subtitleMap.get(terrain);
+			if (sub == null)
+			{
+				sub = (dn.equals(bn) ? null : bn);
+			}
 
-           if (sub == null)
-           {
-               sub = (dn.equals(bn) ? null : bn);
-           }
+			// g.setFont(ResourceLoader.defaultFont.deriveFont((float)48));
+			fm = g.getFontMetrics();
+			int tma = fm.getMaxAscent();
+			g.drawString(dn, 80, 4 + tma);
 
-           //g.setFont(ResourceLoader.defaultFont.deriveFont((float)48));
-           fm = g.getFontMetrics();
-           int tma = fm.getMaxAscent();
-           g.drawString(dn, 80, 4 + tma);
+			if (sub != null)
+			{
+				// g.setFont(ResourceLoader.defaultFont.deriveFont((float)24));
+				fm = g.getFontMetrics();
+				int tma2 = fm.getMaxAscent();
+				g.drawString(sub, 80, 4 + tma + 8 + tma2);
+			}
 
-           if (sub != null)
-           {
-               //g.setFont(ResourceLoader.defaultFont.deriveFont((float)24));
-               fm = g.getFontMetrics();
-               int tma2 = fm.getMaxAscent();
-               g.drawString(sub, 80, 4 + tma + 8 + tma2);
-           }
+			/* reset antialiasing */
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldantialias);
+			g.setFont(oldFont);
+		}
+		catch (NullPointerException ex)
+		{
+			// If we try to paint before something is loaded, just retry later.
+		}
+	}
 
-           /* reset antialiasing */
-           g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-               oldantialias);
-           g.setFont(oldFont);
-       }
-       catch (NullPointerException ex)
-       {
-           // If we try to paint before something is loaded, just retry later.
-       }
-   }
+	public Dimension getMinimumSize()
+	{
+		return getPreferredSize();
+	}
 
-   public Dimension getMinimumSize()
-   {
-       return getPreferredSize();
-   }
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(550, 350); // * Scale.get(), 55 * Scale.get());
+	}
 
-   public Dimension getPreferredSize()
-   {
-       return new Dimension(550, 350); // * Scale.get(), 55 * Scale.get());
-   }
-   
-   /* THE BELOW WAS MOVED HEREIN FROM BATTLEHEX BY ERIK VOS, 08 AUG 2005 */
-   
-   
+	public void mouseClicked(MouseEvent arg0)
+	{
+		Point point = arg0.getPoint();
+        GUIHex hex = getHexContainingPoint(point);
+        hex.repaint();
+	}
+
+	public void mouseEntered(MouseEvent arg0)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseExited(MouseEvent arg0)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mousePressed(MouseEvent arg0)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseReleased(MouseEvent arg0)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	/* THE BELOW WAS MOVED HEREIN FROM BATTLEHEX BY ERIK VOS, 08 AUG 2005 */
 
 }
