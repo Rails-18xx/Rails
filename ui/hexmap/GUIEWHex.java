@@ -11,7 +11,7 @@ import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.12 2005/09/22 21:48:51 evos Exp $
+ * @version $Id: GUIEWHex.java,v 1.13 2005/09/22 22:03:08 evos Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -96,6 +96,9 @@ public class GUIEWHex extends GUIHex implements MouseListener
     	{
     		af.scale(tileScale,tileScale);
     	}
+    	x_adjust = x_adjust_arr[tileOrientation];
+    	y_adjust = y_adjust_arr[tileOrientation];
+    	rotation = rotation_arr[tileOrientation];
     	af.rotate(rotation);
      	   
     	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
