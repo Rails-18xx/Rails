@@ -38,6 +38,7 @@ public class EWHexMap extends HexMap
                         scale, this, i, j);
                     hex.setName(hexArray[i][j].getName());
                     hex.setTileId(hexArray[i][j].getPreprintedTileId());
+                    hex.setTileOrientation(hexArray[i][j].getPreprintedTileOrientation());
                     hex.setTileFilename(hexArray[i][j].getTileFileName());
                     
                     imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());

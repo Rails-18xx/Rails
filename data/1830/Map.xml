@@ -1,9 +1,9 @@
 <Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="A">
 	<!-- To be added: orientation, impassable hex sides, etc.-->
-	<Hex name="A9" tile="-901"/>
-	<Hex name="A11" tile="-902"/>
-	<Hex name="A17" tile="-7"/>
-	<Hex name="A19" tile="-103" home="CPR"/>
+	<Hex name="A9" tile="-901" orientation="0"/>
+	<Hex name="A11" tile="-902" orientation="1"/>
+	<Hex name="A17" tile="-7" orientation="1"/>
+	<Hex name="A19" tile="-103"  orientation="0" home="CPR"/>
 	<Hex name="B10" tile="-10"/>
 	<Hex name="B12" tile="0"/>
 	<Hex name="B14" tile="0"/>
@@ -11,12 +11,12 @@
 	<Hex name="B18" tile="0" cost="80"/>
 	<Hex name="B20" tile="-1" blocking="C&amp;StL"/>
 	<Hex name="B22" tile="0"/>
-	<Hex name="B24" tile="-902"/>
+	<Hex name="B24" tile="-902" orientation="2"/>
 	<Hex name="C7" tile="0"/>
 	<Hex name="C9" tile="0"/>
 	<Hex name="C11" tile="0"/>
 	<Hex name="C13" tile="0"/>
-	<Hex name="C15" tile="-58"/>
+	<Hex name="C15" tile="-58" orientation="2"/>
 	<Hex name="C17" tile="0" cost="120"/>
 	<Hex name="C19" tile="0" cost="80"/>
 	<Hex name="C21" tile="0" cost="120"/>
@@ -32,19 +32,19 @@
 	<Hex name="D18" tile="0" blocking="M&amp;H"/>
 	<Hex name="D20" tile="0"/>
 	<Hex name="D22" tile="0" cost="120"/>
-	<Hex name="D24" tile="-7"/>
+	<Hex name="D24" tile="-7" orientation="2"/>
 	<Hex name="E3" tile="0"/>
 	<Hex name="E5" tile="-20" label="OO" cost="80"/>
 	<Hex name="E7" tile="-1"/>
-	<Hex name="E9" tile="-7"/>
+	<Hex name="E9" tile="-7" orientation="4"/>
 	<Hex name="E11" tile="-20" label="OO" home="Erie"/>
 	<Hex name="E13" tile="0"/>
 	<Hex name="E15" tile="0"/>
 	<Hex name="E17" tile="0" cost="120"/>
 	<Hex name="E19" tile="-10" home="NYC"/>
 	<Hex name="E21" tile="0" cost="120"/>
-	<Hex name="E23" tile="-11" label="B" home="B&amp;M"/>
-	<Hex name="F2" tile="-903"/>
+	<Hex name="E23" tile="-11"  orientation="5" label="B" home="B&amp;M"/>
+	<Hex name="F2" tile="-903" orientation="5"/>
 	<Hex name="F4" tile="-10" cost="80"/>
 	<Hex name="F6" tile="-105" home="C&amp;O"/>
 	<Hex name="F8" tile="0"/>
@@ -55,7 +55,7 @@
 	<Hex name="F18" tile="0"/>
 	<Hex name="F20" tile="-2"/>
 	<Hex name="F22" tile="-10" cost="80"/>
-	<Hex name="F24" tile="-3"/>
+	<Hex name="F24" tile="-3" orientation="2"/>
 	<Hex name="G3" tile="0"/>
 	<Hex name="G5" tile="0"/>
 	<Hex name="G7" tile="-2"/>
@@ -64,7 +64,7 @@
 	<Hex name="G13" tile="0" cost="120"/>
 	<Hex name="G15" tile="0" cost="120" blocking="SVNRR"/>
 	<Hex name="G17" tile="-2"/>
-	<Hex name="G19" tile="-21" cost="80"/>
+	<Hex name="G19" tile="-21"  orientation="1" cost="80"/>
 	<Hex name="H2" tile="0"/>
 	<Hex name="H4" tile="-10"/>
 	<Hex name="H6" tile="0"/>
@@ -74,7 +74,7 @@
 	<Hex name="H14" tile="0"/>
 	<Hex name="H16" tile="-10"/>
 	<Hex name="H18" tile="-20" label="OO" blocking="C&amp;A"/>
-	<Hex name="I1" tile="-901"/>
+	<Hex name="I1" tile="-901" orientation="5"/>
 	<Hex name="I3" tile="0"/>
 	<Hex name="I5" tile="0"/>
 	<Hex name="I7" tile="0"/>
@@ -83,16 +83,16 @@
 	<Hex name="I13" tile="0"/>
 	<Hex name="I15" tile="-11" label="B" home="B&amp;O" blocking="B&amp;O"/>
 	<Hex name="I17" tile="0" cost="80"/>
-	<Hex name="I19" tile="-3"/>
-	<Hex name="J2" tile="-902"/>
+	<Hex name="I19" tile="-3" orientation="2"/>
+	<Hex name="J2" tile="-902" orientation="5"/>
 	<Hex name="J4" tile="0"/>
 	<Hex name="J6" tile="0"/>
 	<Hex name="J8" tile="0"/>
 	<Hex name="J10" tile="0" cost="120"/>
 	<Hex name="J12" tile="0" cost="120"/>
 	<Hex name="J14" tile="-10" cost="80"/>
-	<Hex name="K13" tile="-902"/>
-	<Hex name="K15" tile="-104"/>
+	<Hex name="K13" tile="-902" orientation="4"/>
+	<Hex name="K15" tile="-104" orientation="3"/>
 		
 	<!-- The remainder is kept as we may need parts of it
 		<Hex Type="water" />
