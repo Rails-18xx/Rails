@@ -11,7 +11,7 @@ import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.15 2005/09/22 23:19:38 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.16 2005/09/22 23:22:47 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -81,10 +81,6 @@ public class GUIEWHex extends GUIHex
     	Graphics2D g2 = (Graphics2D)g;
     	
     	Point center = findCenter();    
-
-    	x_adjust = x_adjust_arr[tileOrientation];
-    	y_adjust = y_adjust_arr[tileOrientation];
-    	rotation = rotation_arr[tileOrientation];
     	
     	af = AffineTransform.getRotateInstance(rotation);
     	af.scale(tileScale,tileScale);
@@ -101,8 +97,6 @@ public class GUIEWHex extends GUIHex
     	}
     	else
     		arr_index++;
-    	
-
     }
        
 }
