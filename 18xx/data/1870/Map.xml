@@ -9,7 +9,7 @@
 	<Hex name="A16" tile="-2" cost="40"/>
 	<Hex name="A18" tile="0"/>
 	<Hex name="A20" tile="0"/>
-	<Hex name="A22" tile="-902" revenue="40,50,60" destination="IC"/><!--Chicago-->
+	<Hex name="A22" tile="-902" orientation="2" revenue="40,50,60" destination="IC"/><!--Chicago-->
 	<Hex name="B3" tile="0"/>
 	<Hex name="B5" tile="0"/>
 	<Hex name="B7" tile="-1"/>
@@ -135,8 +135,8 @@
 	<Hex name="M16" tile="0"/>
 	<Hex name="M18" tile="0"/>
 	<Hex name="M20" tile="-10" home="GMO"/><!--Mobile-->
-	<Hex name="M22" tile="-903" revenue="20,30,50" destination="SLSF"/>
-	<Hex name="N1" tile="-903" revenue="20,40,50" home="SP" destination="ATSF,KATY"/>
+	<Hex name="M22" tile="-903" orientation="2" revenue="20,30,50" destination="SLSF"/>
+	<Hex name="N1" tile="-903" orientation="5" revenue="20,40,50" home="SP" destination="ATSF,KATY"/>
 	<Hex name="N3" tile="0"/>
 	<Hex name="N5" tile="0"/>
 	<Hex name="N7" tile="-10" cost="80"/><!--Galveston-->

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.5 2005/09/22 21:46:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.6 2005/09/23 21:40:21 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -85,7 +85,7 @@ public class MapHex implements ConfigurableComponentI
 				y = (row + 1) / 2;
 			}
 		}
-		else
+		else // letters go vertical (normal case)
 		{
 			row = letter - '@';
 			column = number;
@@ -94,7 +94,7 @@ public class MapHex implements ConfigurableComponentI
 				// Tiles with flat EW sides, letters go vertically.
 				// Most common case.
 				// Tested for 1830.
-				x = column / 2;
+				x = (column + (letterAHasEvenNumbers ? 1 : 0)) / 2;
 				y = row;
 			}
 			else
