@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.6 2005/09/22 21:48:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.7 2005/09/23 19:56:54 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -7,6 +7,7 @@ package ui;
 
 import game.*;
 import javax.swing.*;
+import java.awt.*;
 import ui.hexmap.*;
 
 /**
@@ -26,16 +27,14 @@ public class MapWindow extends JFrame {
             System.out.println("Map class instantiation error:\n");
             e.printStackTrace();
             return;
-        }
-        
-        getContentPane().add(map);
+        }       
+                     
         addMouseListener(map);
-        
-        setTitle ("Rails: Game Map");
-        setSize(1000, 600);
+        getContentPane().add(map);
+        setSize(900, 600);
         setLocation(25, 25);
-        setContentPane (map);
         setVisible(true);
+        setTitle ("Rails: Game Map");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

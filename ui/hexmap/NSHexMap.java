@@ -45,6 +45,13 @@ public class NSHexMap extends HexMap
                     hex.setName(hexArray[i][j].getName());
                     hex.setTileId(hexArray[i][j].getPreprintedTileId());
                     hex.setTileFilename(hexArray[i][j].getTileFileName());
+                    
+                    imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
+                    hex.setTileImage(imageLoader.getTile(hexArray[i][j].getPreprintedTileId()));
+                	hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
+                	hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];
+                	hex.rotation = hex.rotation_arr[hex.tileOrientation];
+                	
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

@@ -138,10 +138,10 @@ public class StartRoundWindow extends JFrame implements ActionListener
 
    	  getContentPane().add(statusPanel, BorderLayout.NORTH);
    	  getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-   	  setTitle ("Start Round");
+   	  setTitle ("Rails: Start Round");
       setLocation(600, 150);
-      setSize(400, 500);
-      pack();
+      setSize(275, 325);
+      //pack();
       setVisible(true);
       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       

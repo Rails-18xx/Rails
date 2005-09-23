@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author blentz
+ * @author Erik Vos
  */
 public class ORWindow extends JFrame implements ActionListener
 {

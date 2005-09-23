@@ -3,28 +3,11 @@
  */
 package ui.hexmap;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
 
 import game.*;
 import ui.*;
@@ -41,7 +24,7 @@ public abstract class HexMap extends JPanel implements MouseListener
 	/** ne, e, se, sw, w, nw */
 	protected GUIHex[] entrances = new GUIHex[6];
 
-	protected List hexes = new ArrayList(33);
+	protected ArrayList hexes = new ArrayList(33);
 
 	// The game state hexes can be set up once for each terrain type.
 	protected static Map terrainH = new HashMap();
@@ -63,17 +46,19 @@ public abstract class HexMap extends JPanel implements MouseListener
 			{ false, true, true, true, true, true },
 			{ true, true, true, true, true, true } };
 
-	protected int scale = 2 * 15; // * Scale.get();
+	protected int scale = 2 * Scale.get();
 	protected int cx = 6 * scale;
 	protected int cy = 2 * scale;
 
 	protected ImageLoader imageLoader = new ImageLoader();
+	
+	//For scrollable implementation.
+	private int maxUnitIncrement = 1;
 
 	// //////////
 	// Abstract Methods
 	// /////////
-	abstract void setupHexesGUI();
-
+	protected abstract void setupHexesGUI();
 	protected abstract void setupEntrancesGUI();
 
 	/**
@@ -84,7 +69,7 @@ public abstract class HexMap extends JPanel implements MouseListener
 	private static synchronized void setupHexesGameState(String terrain,
 			GUIHex[][] h, boolean serverSideFirstLoad)
 	{
-		List directories = null;
+		ArrayList directories = null;
 		String rndSourceName = null;
 		BattleHex[][] hexModel = new BattleHex[h.length][h[0].length];
 		for (int i = 0; i < h.length; i++)
@@ -555,15 +540,21 @@ public abstract class HexMap extends JPanel implements MouseListener
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
-		System.out.println(point);
 		
-        GUIHex hex = getHexContainingPoint(point);
-        
-    	hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
-    	hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
-    	hex.rotation = hex.rotation_arr[hex.arr_index];
-        
-        hex.repaint();
+		try
+		{
+		GUIHex hex = getHexContainingPoint(point);
+
+		hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
+		hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
+		hex.rotation = hex.rotation_arr[hex.arr_index];
+
+		hex.repaint();
+		}
+		catch (NullPointerException e)
+		{
+			//No hex clicked, no rotation needed.
+		}
 	}
 
 	public void mouseEntered(MouseEvent arg0)
@@ -589,7 +580,4 @@ public abstract class HexMap extends JPanel implements MouseListener
 		// TODO Auto-generated method stub
 
 	}
-
-	/* THE BELOW WAS MOVED HEREIN FROM BATTLEHEX BY ERIK VOS, 08 AUG 2005 */
-
 }
