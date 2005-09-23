@@ -4,14 +4,10 @@ package ui.hexmap;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.awt.event.*;
-import java.util.*;
-
-import ui.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.17 2005/09/22 23:27:57 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.18 2005/09/23 19:56:54 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -62,6 +58,13 @@ public class GUIEWHex extends GUIHex
               center.getX() - innerCenter.getX(), 
               center.getY() - innerCenter.getY());
         innerHexagon.transform(at);
+        
+        initRotationArrays();
+    	tileScale = 0.33;
+    	x_adjust = x_adjust_arr[0];
+    	y_adjust = y_adjust_arr[0];
+    	rotation = rotation_arr[0];
+    	arr_index = 0;
     }
 
     public GUIEWHex(int xCoord, int yCoord)
@@ -74,6 +77,20 @@ public class GUIEWHex extends GUIHex
         return (innerHexagon.contains(point));
     }
 
+    private void initRotationArrays()
+    {
+    	double[] rotArr = { 0.5, 1.55, 2.60, 3.65, 4.70, 5.75 , 6.75};
+    	int[] xadjustArr = { -14, 26, 40, 12, -26, -40, -14 };
+    	int[] yadjustArr = { -38, -30, 8, 38, 30, -8, -38 };
+    	
+    	for(int x=0; x<7; x++)
+    	{
+    		rotation_arr[x] = rotArr[x];
+    		x_adjust_arr[x] = xadjustArr[x];
+    		y_adjust_arr[x] = yadjustArr[x];
+    	}
+    }
+    
     //FIXME:  Horribly Kludgy
     public void paint (Graphics g)
     {

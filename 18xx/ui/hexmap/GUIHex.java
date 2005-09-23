@@ -5,9 +5,7 @@ import game.Log;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.io.*;
 import javax.swing.*;
-import javax.imageio.*;
 
 public abstract class GUIHex extends JPanel
 {
@@ -24,16 +22,15 @@ public abstract class GUIHex extends JPanel
 	protected int tileOrientation;
 	protected String tileFilename;
 
-	// EWHex-specific
-	//This is only here for scope visibility
-	public double tileScale = 0.33;
-	public double[] rotation_arr = { 0.5, 1.55, 2.60, 3.65, 4.70, 5.75 , 6.80};
-	public int[] x_adjust_arr = { -12, 26, 40, 12, -26, -40, -12 };
-	public int[] y_adjust_arr = { -38, -30, 8, 38, 30, -8, -38 };
-	public int x_adjust = x_adjust_arr[0];
-	public int y_adjust = y_adjust_arr[0];
-	public double rotation = rotation_arr[0];
-	public int arr_index = 0;
+	//These are only here for scope visibility
+	protected double tileScale;
+	protected int x_adjust;
+	protected int y_adjust;
+	protected double rotation;
+	protected int arr_index;
+	protected double[] rotation_arr = new double[7];
+	protected int[] x_adjust_arr = new int[7];
+	protected int[] y_adjust_arr = new int[7];
 
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();

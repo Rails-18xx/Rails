@@ -25,8 +25,7 @@ import javax.swing.*;
 public class StockToken extends JPanel
 {
    private Color fgColor, bgColor;
-   private double x, y, diameter;
-   private Ellipse2D.Double circle, circle2;
+   private Ellipse2D.Double circle;
    private String name;
 
    public void paintComponent(Graphics g)
@@ -35,7 +34,7 @@ public class StockToken extends JPanel
       Graphics2D g2d = (Graphics2D) g;
       Font f = new Font ("Helvetica", Font.BOLD, 8);
       
-      drawToken(g2d, bgColor, circle2);
+      drawToken(g2d, bgColor, circle);
       g2d.setFont(f);
       g2d.setColor(fgColor);
       g2d.drawString(name, 3, 14);
@@ -65,9 +64,9 @@ public class StockToken extends JPanel
       this(fc, bc, name, 4, 4, 15);
    }
    
-   public StockToken(double xx, double yy, String name)
+   public StockToken(double x, double y, String name)
    {
-      this(Color.BLACK, Color.WHITE, name, xx, yy, 15);
+      this(Color.BLACK, Color.WHITE, name, x, y, 15);
    }
    
    public StockToken(Color fc, Color bc, String name, double x, double y, double diameter)
@@ -79,7 +78,7 @@ public class StockToken extends JPanel
       
       
       //circle = new Ellipse2D.Double(x, y, diameter, diameter);
-      circle2 = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
+      circle = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
       
       this.setForeground(fgColor);
       this.setOpaque(false);

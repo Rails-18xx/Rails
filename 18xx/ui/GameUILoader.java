@@ -22,8 +22,8 @@ public class GameUILoader
    public static void gameUIInit()
    {
       stockChart = new StockChart();
+      mapWindow = new MapWindow();
       messageWindow = new LogWindow();
       statusWindow = new StatusWindow();
-      mapWindow = new MapWindow();
    }
 }

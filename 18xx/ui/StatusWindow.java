@@ -22,7 +22,6 @@ public class StatusWindow extends JFrame implements ActionListener
    private PublicCompanyI company;
    private CompanyManagerI cm;
    private Portfolio ipo, pool;
-   private String companyName;
    private int compIndex, playerIndex;
 
    /*----*/
@@ -94,11 +93,9 @@ public class StatusWindow extends JFrame implements ActionListener
 
    private void init()
    {
-
       PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
             .getAllPublicCompanies().toArray(new PublicCompanyI[0]);
       nc = companies.length;
-
    }
 
    public void updateStatus()

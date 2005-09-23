@@ -6,10 +6,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.3 2005/09/20 21:25:51 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.4 2005/09/23 19:56:54 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -20,6 +21,7 @@ public class GUINSHex extends GUIHex
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
+	
     public GUINSHex(int cx, int cy, int scale, Component map,
         int xCoord, int yCoord)
     {
@@ -59,6 +61,13 @@ public class GUINSHex extends GUIHex
         at = AffineTransform.getTranslateInstance(center.getX() -
             innerCenter.getX(), center.getY() - innerCenter.getY());
         innerHexagon.transform(at);
+        
+        initRotationArrays();
+    	tileScale = 0.33;
+    	x_adjust = x_adjust_arr[0];
+    	y_adjust = y_adjust_arr[0];
+    	rotation = rotation_arr[0];
+    	arr_index = 0;
     }
 
     public GUINSHex(int xCoord, int yCoord)
@@ -70,5 +79,46 @@ public class GUINSHex extends GUIHex
     {
         return (innerHexagon.contains(point));
     }
+ 
+    private void initRotationArrays()
+    {
+    	double[] rotArr = { 0, 1.05, 2.10, 3.15, 4.20, 5.25 , 6.25};
+    	int[] xadjustArr = { -30, 8, 38, 30, -8, -38, -30 };
+    	int[] yadjustArr = { -24, -40, -12, 28, 40, 12, -24 };
+    	
+    	for(int x=0; x<7; x++)
+    	{
+    		rotation_arr[x] = rotArr[x];
+    		x_adjust_arr[x] = xadjustArr[x];
+    		y_adjust_arr[x] = yadjustArr[x];
+    	}
+    }
+    
+    
+    //FIXME:  Horribly Kludgy
+    public void paint (Graphics g)
+    {
+    	super.paint(g);
+    	Graphics2D g2 = (Graphics2D)g;
+    	
+    	Point center = findCenter();    
+    	
+    	af = AffineTransform.getRotateInstance(rotation);
+    	af.scale(tileScale,tileScale);
+    	
+    	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
+    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
+    	    	
+     	g2.setClip(hexagon);
+    	g2.drawImage(tileImage, aop, (center.x + x_adjust), (center.y + y_adjust));
+    	
+    	if(arr_index == 6)
+    	{
+    		arr_index = 1;
+    	}
+    	else
+    		arr_index++;
+    }
+      
 }
 
