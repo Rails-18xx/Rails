@@ -1,7 +1,7 @@
 <Map mapClass="ui.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="horizontal" even="A">
 	<!-- To be added: tiles, orientation, impassable hex sides, etc.-->
 	<Hex name="A20" tile="-902" destination="GW" revenue="30,50,60"/>
-	<Hex name="B13" tile="-902" revenue="30,50,50"/>
+	<Hex name="B13" tile="-902" orientation="1" revenue="30,50,50"/>
 	<Hex name="B15" tile="0"/>
 	<Hex name="B17" tile="0"/>
 	<Hex name="B19" tile="-10" label="L"/>
@@ -29,7 +29,7 @@
 	<Hex name="G14" tile="0"/>
 	<Hex name="G16" tile="0"/>
 	<Hex name="G18" tile="0"/>
-	<Hex name="H5" tile="-902" port="yes" destination="TGB" revenue="30,50,40"/>
+	<Hex name="H5" tile="-902" orientation="1" port="yes" destination="TGB" revenue="30,50,40"/>
 	<Hex name="H7" tile="-2" port="yes"/>
 	<Hex name="H9" tile="0"/>
 	<Hex name="H11" tile="-1" blocking="TCC"/>
@@ -50,7 +50,7 @@
 	<Hex name="J13" tile="-10"/>
 	<Hex name="J15" tile="0" home="BBG"/>
 	<Hex name="J17" tile="-2" port="yes"/>
-	<Hex name="K2" tile="-902" port="yes" revenue="20,30,30"/>
+	<Hex name="K2" tile="-902" orientation="1" port="yes" revenue="20,30,30"/>
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="-10" home="TGB" destination="GT"/>
@@ -75,15 +75,15 @@
 	<Hex name="M12" tile="0"/>
 	<Hex name="M16" tile="0" cost="40"/>
 	<Hex name="M18" tile="-1" port="yes"/>
-	<Hex name="N1" tile="-902" revenue="20,30,50"/>
+	<Hex name="N1" tile="-902" orientation="2" revenue="20,30,50"/>
 	<Hex name="N3" tile="-10" label="L" cost="40"/>
 	<Hex name="N7" tile="0"/>
 	<Hex name="N9" tile="-1"/>
-	<Hex name="N11" tile="-21" home="CV" destination="CPR"/><!-- home city to be defined -->
+	<Hex name="N11" tile="-21" orientation="2" home="CV" destination="CPR"/><!-- home city to be defined -->
 	<Hex name="N15" tile="0" cost="40"/>
 	<Hex name="N17" tile="-20" destination="BBG"/>
 	<Hex name="N19" tile="0" cost="40"/>
-	<Hex name="O2" tile="-903" revenue="20,30,50"/>
+	<Hex name="O2" tile="-903" orientation="1" revenue="20,30,50"/>
 	<Hex name="O4" tile="0"/>
 	<Hex name="O6" tile="0"/>
 	<Hex name="O8" tile="0"/>
@@ -94,8 +94,8 @@
 	<Hex name="P5" tile="0"/>
 	<Hex name="P7" tile="0" cost="40"/>
 	<Hex name="P9" tile="-10" label="L" home="GT"/>
-	<Hex name="P17" tile="-902" revenue="30,40,40"/>
-	<Hex name="P19" tile="-901" revenue="30,40,40"/>
-	<Hex name="Q8" tile="-902" revenue="20,30,50"/>
-	<Hex name="Q10" tile="-901" revenue="20,30,50"/>
+	<Hex name="P17" tile="-902" orientation="3" revenue="30,40,40"/>
+	<Hex name="P19" tile="-901" orientation="3" revenue="30,40,40"/>
+	<Hex name="Q8" tile="-902" orientation="3" revenue="20,30,50"/>
+	<Hex name="Q10" tile="-901" orientation="3" revenue="20,30,50"/>
 </Map>
