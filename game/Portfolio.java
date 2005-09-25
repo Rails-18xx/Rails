@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.18 2005/09/18 21:36:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.19 2005/09/25 20:06:23 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -475,6 +475,11 @@ public class Portfolio
            if (train.getType() == type) return train;
        }
        return null;
+   }
+   
+   public TrainI getTrainOfType (String name) {
+       
+       return getTrainOfType (TrainManager.get().getTypeByName(name));
    }
 
 }

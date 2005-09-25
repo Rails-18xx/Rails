@@ -499,18 +499,22 @@ public class OperatingRound implements Round
     }
 
     /**
-     * A (perhaps temporary) method via which the cost of train buying
-     * can be accounted for.
-     * @param companyName The name of the company that buys a train.
-     * @param amountSpent The cost the train, which is
-     * subtracted from the company treasury.
      */
      public boolean buyTrain (String companyName, TrainI train, int price) {
-        
+         
+         return buyTrain (companyName, train, price, null);
+     }
+     
+     public boolean buyTrain (String companyName, TrainI train, int price,
+             TrainI exchangedTrain) {
+   
         String errMsg = null;
         
         // Dummy loop to enable a quick jump out.
         while (true) {
+            
+            Portfolio oldHolder = train.getHolder();
+            CashHolder oldOwner = oldHolder.getOwner();
             
             // Checks
             // Must be correct company.
@@ -531,17 +535,15 @@ public class OperatingRound implements Round
             // Assume for now that buying this train is allowed.
             // Actually we should check this here.
 
+            // Zero price means face value.
             if (price == 0) price = train.getCost();
 
-            // Amount must be non-negative multiple of 10
+            // Amount must be non-negative
             if (price < 0) {
                 errMsg = "Negative amount not allowed";
                 break;
             }
-            if (price%10 != 0) {
-                errMsg = "Must be a multiple of 10";
-                break;
-            }
+
             // Does the company have the money?
             if (price > operatingCompany.getCash()) {
                 errMsg = "Not enough money";
@@ -556,11 +558,22 @@ public class OperatingRound implements Round
         
         Portfolio oldHolder = train.getHolder();
         CashHolder oldOwner = oldHolder.getOwner();
-        Log.write(operatingCompany.getName()+" buys "+train.getName()
-                +"-train from "+oldOwner+" for "
-                +Bank.format(price));
-        operatingCompany.getPortfolio().buyTrain(train, price);
         
+        if (exchangedTrain != null) {
+            TrainI oldTrain = operatingCompany.getPortfolio().getTrainOfType(exchangedTrain.getType());
+            Bank.getPool().buyTrain(oldTrain, 0);
+            Log.write(operatingCompany.getName()+" exchanges "+exchangedTrain
+                    +"-train for a "+train.getName()
+                    +"-train from "+oldHolder.getName()+" for "
+                    +Bank.format(price));
+        } else {
+            Log.write(operatingCompany.getName()+" buys "+train.getName()
+                    +"-train from "+oldHolder.getName()+" for "
+                    +Bank.format(price));
+        }
+
+        operatingCompany.getPortfolio().buyTrain(train, price);
+
         TrainManager.get().checkTrainAvailability(train, oldHolder);
        
         return true;

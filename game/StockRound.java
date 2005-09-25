@@ -85,10 +85,10 @@ public class StockRound implements Round
         stockRoundNumber++;
 
         Log.write("\nStart of Stock Round "+stockRoundNumber);
-        Log.write (getCurrentPlayer().getName() + " has the Priority Deal");
         
         GameManager.setCurrentPlayerIndex (GameManager.priorityPlayerIndex);
         currentPlayer = GameManager.getCurrentPlayer();	
+        Log.write (currentPlayer.getName() + " has the Priority Deal");
     }
     
     /*----- General methods -----*/
