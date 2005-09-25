@@ -550,6 +550,10 @@ public abstract class HexMap extends JPanel implements MouseListener
 		hex.rotation = hex.rotation_arr[hex.arr_index];
 
 		hex.repaint();
+		
+		/* Remove this statement to enable subsequent clicks again */
+		setToolTipText (hex.getToolTip());
+
 		}
 		catch (NullPointerException e)
 		{
@@ -580,4 +584,5 @@ public abstract class HexMap extends JPanel implements MouseListener
 		// TODO Auto-generated method stub
 
 	}
+	
 }

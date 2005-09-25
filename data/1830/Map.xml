@@ -1,4 +1,4 @@
-<Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="A">
+<Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
 	<!-- To be added: orientation, impassable hex sides, etc.-->
 	<Hex name="A9" tile="-901" orientation="0"/>
 	<Hex name="A11" tile="-902" orientation="1"/>

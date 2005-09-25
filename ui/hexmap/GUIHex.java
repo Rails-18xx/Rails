@@ -3,11 +3,13 @@ package ui.hexmap;
 import game.Log;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public abstract class GUIHex extends JPanel
+public abstract class GUIHex extends JPanel	
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
@@ -34,6 +36,8 @@ public abstract class GUIHex extends JPanel
 
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();
+	
+	protected String toolTip = "";
 
 	/**
 	 * Stores the neighbouring views. This parallels the neighors field in
@@ -593,4 +597,10 @@ public void setTileOrientation(int tileOrientation) {
 	{
 		this.tileImage = tileImage;
 	}
+	
+	protected String getToolTip () {
+	    return "<html><b>Hex</b>: "+hexName +"<br><b>Tile</b>: "+tileId;
+	}
+	
+
 }
