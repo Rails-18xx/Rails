@@ -78,6 +78,6 @@
 		<Swamp/>
 	</Hex>
 	<Hex name="P7" tile="-902" orientation="4" revenue="30,40"/><!--Gulf-->
-	<Hex name="Q2" tile="-913" orientation="4" revenue="40,50"/><!--Mobile-->
+	<Hex name="Q2" tile="-913" orientation="4" revenue="40,50" home="M&amp;O"/><!--Mobile-->
 	
 </Map>
