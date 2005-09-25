@@ -93,7 +93,7 @@ public class ORWindow extends JFrame implements ActionListener
    //private ButtonGroup itemGroup = new ButtonGroup();
    //private ClickField dummyButton; // To be selected if none else is.
    
-   private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+).*");
+   private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
    private int[] newTrainTotalCost;
    List trainsBought;
    
@@ -514,6 +514,10 @@ public class ORWindow extends JFrame implements ActionListener
            for (i=0; i<trains.length; i++) {
                trainsForSale.add(trains[i].getName()+"-train from IPO at "
                        +Bank.format(trains[i].getCost()));
+               if (trains[i].canBeExchanged() && orComp.getPortfolio().getTrains().length > 0) {
+                   trainsForSale.add(trains[i].getName()+"-train from IPO (exchanged) at "
+                           +Bank.format(trains[i].getType().getFirstExchangeCost()));
+               }
            }
            trains = Bank.getPool().getUniqueTrains();
            for (i=0; i<trains.length; i++) {
@@ -540,10 +544,13 @@ public class ORWindow extends JFrame implements ActionListener
            if (m.matches()) {
                String trainType = m.group(1);
                String sellerName = m.group(2);
+               boolean exchanging = (m.group(3) != null);
                TrainTypeI type = TrainManager.get().getTypeByName(trainType);
                train = null;
+               TrainI exchangedTrain = null;
                Portfolio seller = null;
                int price = 0;
+               System.out.println("Selling a train: "+sellerName);
                if (type != null) {
 	               if (sellerName.equals("IPO")) {
 	                   seller = Bank.getIpo();
@@ -557,7 +564,7 @@ public class ORWindow extends JFrame implements ActionListener
 	                       
 	                       String sPrice = JOptionPane.showInputDialog(
 	                               this, 
-	                               orComp.getName()+" buys "+boughtTrain+" for which price?",
+	                               orComp.getName()+" buys "+boughtTrain+" for which price from "+sellerName+"?",
 	                               "Which price?", JOptionPane.QUESTION_MESSAGE);
 	                       try {
 	                           price = Integer.parseInt(sPrice);
@@ -566,48 +573,72 @@ public class ORWindow extends JFrame implements ActionListener
 	                       }
 	                   }
 	               }
+               }
 	               
-	               if (seller != null) {
-	                   train = seller.getTrainOfType(type);
-	               }
-	               if (train != null) {
-	                   if (!round.buyTrain(orComp.getName(), train, price))
-	                   {
-	                      JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+               if (seller != null) {
+                   train = seller.getTrainOfType(type);
+               }
+
+               if (train != null && exchanging) {
+                   
+                   TrainI[] oldTrains = orComp.getPortfolio().getUniqueTrains();
+                   String[] options = new String[oldTrains.length + 1];
+                   options[0] = "None";
+                   for (int j=0; j<oldTrains.length; j++) {
+                       options [j+1] = oldTrains[j].getName();
+                   }
+                   String exchangedTrainName = (String)
+                   		JOptionPane.showInputDialog(this, "Which train to exchange for "
+              		        	+Bank.format(type.getFirstExchangeCost()), 
+              		        "Which train to exchange",
+              		        JOptionPane.QUESTION_MESSAGE, null,
+              		        options,
+              		        options[1]);
+                   if (exchangedTrainName != null && !exchangedTrainName.equalsIgnoreCase("None")) {
+                       price = type.getFirstExchangeCost();
+                       exchangedTrain = orComp.getPortfolio().getTrainOfType(exchangedTrainName);
+                   }
+
+               }
+
+               if (train != null) {
+                   if (!round.buyTrain(orComp.getName(), train, price, exchangedTrain))
+                   {
+                      JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+                   }
+                   else
+                   {
+	                   gameStatus.updateTrains(orComp.getPortfolio());
+	                   gameStatus.updateTrains(seller);
+	                   gameStatus.updateCash(orComp);
+	                   gameStatus.updateCash(Bank.getInstance());
+	                   if (exchanging) gameStatus.updateTrains(Bank.getPool());
+	                   updateCash(orCompIndex);
+
+	                   if (seller.getOwner() instanceof PublicCompanyI) {
+	                       for (int k=0; k<companies.length; k++) {
+	                           if (companies[i] == seller.getOwner()) {
+	                               updateCash(k);
+	                               gameStatus.updateCash(companies[k]);
+	                               break;
+	                           }
+	                       }
+	                   } else if (seller == Bank.getIpo()) {
+	                       gameStatus.updateTrains(Bank.getIpo());
+	                       gameStatus.updateTrains(Bank.getUnavailable());
+	                       
+	                       if (TrainManager.get().hasAvailabilityChanged()) {
+	                           gameStatus.updateTrains();
+	                           TrainManager.get().resetAvailabilityChanged();
+	                       }
 	                   }
-	                   else
-	                   {
-		                   gameStatus.updateTrains(orComp.getPortfolio());
-		                   gameStatus.updateTrains(seller);
-		                   gameStatus.updateCash(orComp);
-		                   gameStatus.updateCash(Bank.getInstance());
-		                   updateCash(orCompIndex);
-	
-		                   if (seller.getOwner() instanceof PublicCompanyI) {
-		                       for (int k=0; k<companies.length; k++) {
-		                           if (companies[i] == seller.getOwner()) {
-		                               updateCash(k);
-		                               gameStatus.updateCash(companies[k]);
-		                               break;
-		                           }
-		                       }
-		                   } else if (seller == Bank.getIpo()) {
-		                       gameStatus.updateTrains(Bank.getIpo());
-		                       gameStatus.updateTrains(Bank.getUnavailable());
-		                       
-		                       if (TrainManager.get().hasAvailabilityChanged()) {
-		                           gameStatus.updateTrains();
-		                           TrainManager.get().resetAvailabilityChanged();
-		                       }
-		                   }
-		                   newTrainTotalCost[orCompIndex] += price;
-		                   newTrainCost[orCompIndex].setText(""+newTrainTotalCost[orCompIndex]);
-		                   
-		                   trainsBought.add(train);
-		                   newTrains[orCompIndex].setText(TrainManager.get().makeFullList((TrainI[])trainsBought.toArray(new TrainI[0])));
-	                   }
+	                   newTrainTotalCost[orCompIndex] += price;
+	                   newTrainCost[orCompIndex].setText(""+newTrainTotalCost[orCompIndex]);
 	                   
-	               }
+	                   trainsBought.add(train);
+	                   newTrains[orCompIndex].setText(TrainManager.get().makeFullList((TrainI[])trainsBought.toArray(new TrainI[0])));
+                   }
+	                   
                }
            }
            

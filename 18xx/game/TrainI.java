@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainI.java,v 1.1 2005/09/18 21:36:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainI.java,v 1.2 2005/09/25 20:06:23 evos Exp $
  * 
  * Created on 21-Aug-2005
  * Change Log:
@@ -54,5 +54,8 @@ public interface TrainI {
     public void setHolder (Portfolio newHolder);
 
     public void setRusted ();
+    
+    public boolean canBeExchanged();
 
+    public void setCanBeExchanged (boolean value);
 }

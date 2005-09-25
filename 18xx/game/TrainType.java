@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.1 2005/09/18 21:36:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.2 2005/09/25 20:06:23 evos Exp $
  * 
  * Created on 19-Aug-2005
  * Change Log:
@@ -149,7 +149,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI,
                     "scoreCities", scoreCities); 
         }
         
-        if (real) {
+        // Exchangeable
+        nl = el.getElementsByTagName("ExchangeFirst");
+        if (nl != null && nl.getLength() > 0) {
+            NamedNodeMap exch = nl.item(0).getAttributes();
+            firstExchangeCost = XmlUtils.extractIntegerAttribute(exch, "cost", 0);
+            firstExchange = (firstExchangeCost > 0);
+        }
+        
+         if (real) {
             
             // Check the reach and score values
             countHexes = reachBasis.equals("hexes");

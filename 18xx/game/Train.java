@@ -31,6 +31,7 @@ public class Train implements TrainI
     
     protected Portfolio holder;
     protected boolean rusted = false;
+    protected boolean canBeExchanged = false;
     
     protected static final Portfolio unavailable = Bank.getUnavailable();
     protected static final Portfolio ipo = Bank.getIpo();
@@ -118,4 +119,13 @@ public class Train implements TrainI
         rusted = true;
         Portfolio.transferTrain(this, holder, Bank.getScrapHeap());
     }
+    
+    public boolean canBeExchanged() {
+        return canBeExchanged;
+    }
+    
+    public void setCanBeExchanged (boolean value) {
+        canBeExchanged = value;
+    }
+
 }
