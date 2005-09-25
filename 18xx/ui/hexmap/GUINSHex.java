@@ -10,7 +10,7 @@ import java.awt.image.AffineTransformOp;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.4 2005/09/23 19:56:54 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.5 2005/09/25 17:59:10 evos Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -88,7 +88,8 @@ public class GUINSHex extends GUIHex
     	
     	for(int x=0; x<7; x++)
     	{
-    		rotation_arr[x] = rotArr[x];
+    		//rotation_arr[x] = rotArr[x];
+    	    rotation_arr[x] = x * DEG60;
     		x_adjust_arr[x] = xadjustArr[x];
     		y_adjust_arr[x] = yadjustArr[x];
     	}

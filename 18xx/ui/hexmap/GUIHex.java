@@ -13,6 +13,7 @@ public abstract class GUIHex extends JPanel
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
+	public static final double DEG60 = Math.PI / 3;
 	protected Hex model;
 	protected Component map;
 	protected GeneralPath innerHexagon;
