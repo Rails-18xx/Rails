@@ -11,7 +11,7 @@
 	<Hex name="D1" tile="0"/>
 	<Hex name="D3" tile="0" cost="20"/>
 	<Hex name="D5" tile="0" cost="60"/>
-	<Hex name="D7" tile="-3"/><!--Rome-->
+	<Hex name="D7" tile="-3" orientation="1"/><!--Rome-->
 	<Hex name="E2" tile="0"/>
 	<Hex name="E4" tile="0"/>
 	<Hex name="E6" tile="5" orientation="5" home="TAG">
@@ -51,7 +51,7 @@
 	<Hex name="K4" tile="6" orientation="2"/><!--Selma-->
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="0"/>
-	<Hex name="L1" tile="-111" orientation="4" revenue="30,40"/><!--Meridian-->
+	<Hex name="L1" tile="-111" revenue="30,40"/><!--Meridian-->
 	<Hex name="L3" tile="0" cost="20"/>
 	<Hex name="L5" tile="-10" home="WRA"/><!--Montgomery-->
 	<Hex name="L7" tile="0"/>
