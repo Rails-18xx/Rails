@@ -56,7 +56,7 @@ public class Options extends JDialog implements ActionListener
       quitButton.setMnemonic(KeyEvent.VK_Q);
       
       renderer = new BasicComboBoxRenderer();
-      size = new Dimension(50,25);
+      size = new Dimension(50,30);
       gameNameBox = new JComboBox();
       
       playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -80,15 +80,17 @@ public class Options extends JDialog implements ActionListener
          playerBoxes[i].setRenderer(renderer);
          playerBoxes[i].addItem("None");
          playerBoxes[i].addItem("Human");
-         playerBoxes[i].addItem("AI Not Yet Developed.");  
+         playerBoxes[i].addItem("AI eventually goes here.");  
          playerBoxes[i].setSelectedIndex(1);
          playersPane.add(playerBoxes[i]);
+         playerBoxes[i].setPreferredSize(size);
          
          playerNameFields[i] = new JTextField();
          playerNameFields[i].setPreferredSize(size);
          playersPane.add(playerNameFields[i]);
       }
       
+      //FIXME: Not intended for Production 
       playerNameFields[0].setText("0");
       playerNameFields[1].setText("1");
       playerNameFields[2].setText("2");
@@ -101,6 +103,7 @@ public class Options extends JDialog implements ActionListener
       optionsPane.add(gameNameBox);
       optionsPane.setLayout(new GridLayout(5,2));
       optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
+      optionsPane.setPreferredSize(size);
       
       newButton.addActionListener(this);
       loadButton.addActionListener(this);
@@ -118,31 +121,28 @@ public class Options extends JDialog implements ActionListener
       gc.gridy = 0;
       gc.weightx = 1.0;
       gc.weighty = 1.0;
-      gc.gridwidth = 2;
+      gc.gridwidth = 1;
       gc.fill = GridBagConstraints.BOTH;
       this.getContentPane().add(playersPane, gc); 
-      this.getContentPane().add(playersPane, gc); // Changed by EV
 
-      gc.gridx = 1;
+      gc.gridx = 0;
       gc.gridy = 1;
-      gc.fill = 0;
+      gc.fill = 1;
       gc.weightx = 0.5;
       gc.weighty = 0.5;
       gc.gridwidth = 1;
-      gc.ipadx = 400;
+      //gc.ipadx = 50;
       gc.ipady = 50;
       this.getContentPane().add(optionsPane, gc); 
-      this.getContentPane().add(optionsPane, gc); // Changed by EV
 
       gc.gridx = 0;
       gc.gridy = 2;
       gc.weightx = 0.0;
       gc.weighty = 0.0;
-      gc.gridwidth = 2;
+      gc.gridwidth = 1;
       gc.ipady = 0;
       gc.fill = GridBagConstraints.HORIZONTAL;
       this.getContentPane().add(buttonPane, gc); 
-      this.getContentPane().add(buttonPane, gc); // Changed by EV
    }
 
    //Ridiculously rudimentary method for populating a ComboBox
