@@ -16,7 +16,7 @@ public class StatusWindow extends JFrame implements ActionListener
 {
    private JPanel buttonPanel;
    private GameStatus gameStatus;
-   private JButton buyButton, sellButton, doneButton;
+   private JButton buyButton, sellButton, passButton;
    private Player player;
    private PublicCompanyI[] companies;
    private PublicCompanyI company;
@@ -50,19 +50,23 @@ public class StatusWindow extends JFrame implements ActionListener
 
       buyButton = new JButton("Buy");
       sellButton = new JButton("Sell");
-      doneButton = new JButton("Pass");
+      passButton = new JButton("Pass");
 
+      buyButton.setMnemonic(KeyEvent.VK_B);
+      sellButton.setMnemonic(KeyEvent.VK_S);
+      passButton.setMnemonic(KeyEvent.VK_P);
+      
       buttonPanel.add(buyButton);
       buttonPanel.add(sellButton);
-      buttonPanel.add(doneButton);
+      buttonPanel.add(passButton);
 
       buyButton.setActionCommand("buy");
       sellButton.setActionCommand("sell");
-      doneButton.setActionCommand("done");
+      passButton.setActionCommand("done");
 
       buyButton.addActionListener(this);
       sellButton.addActionListener(this);
-      doneButton.addActionListener(this);
+      passButton.addActionListener(this);
 
       //updateStatus();
       setSize(800, 300);
@@ -103,7 +107,7 @@ public class StatusWindow extends JFrame implements ActionListener
       if (currentRound instanceof StartRound)
       {
 
-         doneButton.setEnabled(false);
+         passButton.setEnabled(false);
          startRound = (StartRound) currentRound;
          startRoundWindow = new StartRoundWindow(startRound, this);
 
@@ -113,7 +117,7 @@ public class StatusWindow extends JFrame implements ActionListener
       else if (currentRound instanceof StockRound)
       {
 
-         doneButton.setEnabled(true);
+         passButton.setEnabled(true);
          stockRound = (StockRound) currentRound;
          gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
          refreshStatus();
@@ -122,7 +126,7 @@ public class StatusWindow extends JFrame implements ActionListener
       else if (currentRound instanceof OperatingRound)
       {
 
-         doneButton.setEnabled(false);
+         passButton.setEnabled(false);
          operatingRound = (OperatingRound) currentRound;
          orWindow = new ORWindow(operatingRound, this);
 
@@ -167,19 +171,19 @@ public class StatusWindow extends JFrame implements ActionListener
       if (actor.getActionCommand().equalsIgnoreCase("buy"))
       {
          buyButtonClicked();
-         doneButton.setText("Done");
+         passButton.setText("Done");
       }
       else if (actor.getActionCommand().equalsIgnoreCase("sell"))
       {
          sellButtonClicked();
-         doneButton.setText("Done");
+         passButton.setText("Done");
 
       }
       else if (actor.getActionCommand().equalsIgnoreCase("done"))
       {
 
          stockRound.done(gameStatus.getSRPlayer());
-         doneButton.setText("Pass");
+         passButton.setText("Pass");
       }
       LogWindow.addLog();
       pack();

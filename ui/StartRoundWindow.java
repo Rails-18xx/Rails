@@ -102,12 +102,14 @@ public class StartRoundWindow extends JFrame implements ActionListener
    	  
    	  buyButton = new JButton("Buy");
    	  buyButton.setActionCommand("Buy");
+   	  buyButton.setMnemonic(KeyEvent.VK_B);
    	  buyButton.addActionListener(this);
    	  buyButton.setEnabled(false);
    	  buttonPanel.add(buyButton);
 
    	  bidButton = new JButton("Bid:");
    	  bidButton.setActionCommand("Bid");
+   	  bidButton.setMnemonic(KeyEvent.VK_D);
    	  bidButton.addActionListener(this);
    	  bidButton.setEnabled(false);
    	  buttonPanel.add(bidButton);
@@ -120,6 +122,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    	  
   	  passButton = new JButton("Pass");
    	  passButton.setActionCommand("Pass");
+   	  passButton.setMnemonic(KeyEvent.VK_P);
    	  passButton.addActionListener(this);
    	  passButton.setEnabled(true);
    	  buttonPanel.add(passButton);

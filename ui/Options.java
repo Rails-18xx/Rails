@@ -42,12 +42,19 @@ public class Options extends JDialog implements ActionListener
    private void initialize()
    {
       gc = new GridBagConstraints();
+      
       optionsPane = new JPanel();
       playersPane = new JPanel();
       buttonPane = new JPanel();
-      newButton = new JButton("New Game");
-      loadButton = new JButton("Load Game");
+      
+      newButton = new JButton("New Game");      
+      loadButton = new JButton("Load Game");     
       quitButton = new JButton("Quit");
+      
+      newButton.setMnemonic(KeyEvent.VK_N);
+      loadButton.setMnemonic(KeyEvent.VK_L);
+      quitButton.setMnemonic(KeyEvent.VK_Q);
+      
       renderer = new BasicComboBoxRenderer();
       size = new Dimension(50,25);
       gameNameBox = new JComboBox();
@@ -56,9 +63,8 @@ public class Options extends JDialog implements ActionListener
       playerNameFields = new JTextField[Player.MAX_PLAYERS];
       
       this.getContentPane().setLayout(new GridBagLayout()); 
-      this.getContentPane().setLayout(new GridBagLayout()); // Changed by EV
+      this.getContentPane().setLayout(new GridBagLayout()); 
       this.setTitle("Rails: New Game");
-      //this.setPreferredSize(new Dimension(400,500)); // Changed by EV
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       
       renderer.setPreferredSize(size);
