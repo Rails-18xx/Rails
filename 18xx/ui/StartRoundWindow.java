@@ -30,13 +30,6 @@ public class StartRoundWindow extends JFrame implements ActionListener
    
    private GridBagLayout gb;
    private GridBagConstraints gbc;
-   //private Color buttonColour = new Color (255, 220, 150);
-   //private Color buttonHighlight = new Color (255, 160, 80);
-   //private Insets buttonInsets = new Insets (0, 1, 0, 1);
-   //private Color captionColour = new Color (240, 240, 240);
-   //private Color highlightColour = new Color (255, 255, 80);
-   //private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-   
    
    // Grid elements per function
    private Caption itemName[];
@@ -296,21 +289,9 @@ public class StartRoundWindow extends JFrame implements ActionListener
            playerFree[j].setText(Bank.format(p.getUnblockedCash()));
        }
 }
-   public void refreshStatus()
-   {
-      //companyStatus.refreshPanel();
-      //playerStatus.refreshPanel();
-      //certStatus.refreshPanel();
-      //updateStatus();
-      //FIXME: Not an ideal fix for various repainting issues, but it works well enough for now.
-      //this.pack();
-      //System.out.println("StatusWindow Dimensions: " + this.getWidth() + ", " + this.getHeight());
-   }
-   
    public void repaint()
    {
       super.repaint();
-      //refreshStatus();
    }
    
    /* (non-Javadoc)
@@ -388,40 +369,7 @@ public class StartRoundWindow extends JFrame implements ActionListener
    public int getItemIndex () {
        return itemIndex;
    }
-   /*
-   public void updatePlayer (int compIndex, int playerIndex) {
-       int share = players[playerIndex].getPortfolio().ownsShare(companies[compIndex]);
-       String text = share > 0 ? share+"%" : "";
-       bidPerPlayer[compIndex][playerIndex].setText(text);
-       bidPerPlayerButton[compIndex][playerIndex].setText(text);
-       if (share == 0) setPlayerBidButton(compIndex, playerIndex, false);
-       playerBids[playerIndex].setText(Bank.format(players[playerIndex].getCash()));
-       playerWorth[playerIndex].setText(Bank.format(players[playerIndex].getWorth()));
-   }
-   
-   public void updateIPO (int compIndex) {
-       int share = Bank.getIpo().ownsShare(companies[compIndex]);
-       String text = share > 0 ? share+"%" : "";
-       certInIPO[compIndex].setText(text);
-       certInIPOButton[compIndex].setText(text);
-       if (share == 0) setIPOCertButton(compIndex, false);
-       parPrice[compIndex].setText(Bank.format(companies[compIndex].getParPrice().getPrice()));
-       currPrice[compIndex].setText(Bank.format(companies[compIndex].getCurrentPrice().getPrice()));
-   }
-   
-   public void updatePool (int compIndex) {
-       int share = Bank.getPool().ownsShare(companies[compIndex]);
-       String text = share > 0 ? share+"%" : "";
-       certInPool[compIndex].setText(text);
-       certInPoolButton[compIndex].setText(text);
-       if (share == 0) setPoolCertButton(compIndex, false);
-       currPrice[compIndex].setText(Bank.format(companies[compIndex].getCurrentPrice().getPrice()));
-   }
-   
-   public void updateBank () {
-       bankCash.setText(Bank.format(Bank.getInstance().getCash()));
-   }
-   */
+
     public void setSRPlayerTurn (int selectedPlayerIndex) {
    	
    		int i, j, share;
