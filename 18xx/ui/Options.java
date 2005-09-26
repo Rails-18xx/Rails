@@ -213,6 +213,13 @@ public class Options extends JDialog implements ActionListener
          }
          
       }
+      else if (arg0.getSource().equals(loadButton))
+      {
+  		//We're not going to actually DO anything with the selected file
+  		//until the infrastructure for saved games is built
+    	  JFileChooser fc = new JFileChooser();
+    	  int result = fc.showOpenDialog(this);
+      }
       else
       {
          System.exit(0);

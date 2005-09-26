@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.8 2005/09/26 19:12:03 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.9 2005/09/26 19:30:28 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -24,6 +24,7 @@ public class MapWindow extends JFrame implements ActionListener
 	private JMenuBar menuBar;
 	private JMenu fileMenu, optMenu;
 	private JMenuItem menuItem;
+	private JFileChooser fileChooser;
 
 	public void initMenu()
 	{
@@ -31,12 +32,9 @@ public class MapWindow extends JFrame implements ActionListener
 		fileMenu = new JMenu("File");
 		optMenu = new JMenu("Options");
 		
-		menuItem = new JMenuItem("Open");
-		menuItem.setMnemonic(KeyEvent.VK_O);
-		menuItem.addActionListener(this);
-		fileMenu.add(menuItem);
 		menuItem = new JMenuItem("Save");
 		menuItem.setMnemonic(KeyEvent.VK_S);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		menuItem.addActionListener(this);
 		fileMenu.add(menuItem);
 		
@@ -91,9 +89,16 @@ public class MapWindow extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent arg0)
 	{
 		JMenuItem source = (JMenuItem)(arg0.getSource());
+		int returnVal = 0;
+		fileChooser = new JFileChooser();
 		
 		if (source.getText().equalsIgnoreCase("Quit"))
 			System.exit(0);
+				
+		//We're not going to actually DO anything with the selected file
+		//until the infrastructure for saved games is built
+		if (source.getText().equalsIgnoreCase("Save"))
+			returnVal = fileChooser.showSaveDialog(this);
 	}
 	
 }
