@@ -103,6 +103,7 @@ public class Options extends JDialog implements ActionListener
       optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
       
       newButton.addActionListener(this);
+      loadButton.addActionListener(this);
       quitButton.addActionListener(this);
       
       buttonPane.add(newButton);
@@ -213,14 +214,16 @@ public class Options extends JDialog implements ActionListener
          }
          
       }
-      else if (arg0.getSource().equals(loadButton))
+      
+      if (arg0.getSource().equals(loadButton))
       {
   		//We're not going to actually DO anything with the selected file
   		//until the infrastructure for saved games is built
     	  JFileChooser fc = new JFileChooser();
-    	  int result = fc.showOpenDialog(this);
+    	  int result = fc.showOpenDialog(this.getContentPane());
       }
-      else
+      
+      if (arg0.getSource().equals(quitButton))
       {
          System.exit(0);
       }
