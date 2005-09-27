@@ -8,11 +8,11 @@ package ui;
  */
 public class GameUILoader
 {
-   private static StockChart stockChart;
-   private static StatusWindow statusWindow;
-   private static LogWindow messageWindow;
-   private static MapWindow mapWindow;
-   private static Options options;
+   public static StockChart stockChart;
+   public static StatusWindow statusWindow;
+   public static LogWindow messageWindow;
+   public static MapWindow mapWindow;
+   public static Options options;
    
    public GameUILoader()
    {

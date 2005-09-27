@@ -145,7 +145,7 @@ public class Options extends JDialog implements ActionListener
       this.getContentPane().add(buttonPane, gc); 
    }
 
-   //Ridiculously rudimentary method for populating a ComboBox
+   //FIXME: Ridiculously rudimentary method for populating a ComboBox
    private String[] getGameList()
    {
       File dataDir = new File("./data/");
