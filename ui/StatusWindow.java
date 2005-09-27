@@ -50,6 +50,9 @@ public class StatusWindow extends JFrame implements ActionListener
 		fileMenu = new JMenu("File");
 		optMenu = new JMenu("Options");
 		
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		optMenu.setMnemonic(KeyEvent.VK_O);
+		
 		menuItem = new JMenuItem("Save");
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
@@ -124,7 +127,6 @@ public class StatusWindow extends JFrame implements ActionListener
       sellButton.addActionListener(this);
       passButton.addActionListener(this);
 
-      //updateStatus();
       setSize(800, 300);
       setLocation(25, 450);
 
