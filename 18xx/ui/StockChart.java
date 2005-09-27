@@ -227,6 +227,5 @@ public class StockChart extends JFrame
       stockPanel.setBackground(Color.LIGHT_GRAY);     
 
       this.pack();
-      this.setVisible(true);
    }
 }

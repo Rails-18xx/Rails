@@ -47,14 +47,9 @@ public class LogWindow extends JFrame
       setLocation(600,400);
 
       messagePanel.setBorder(BorderFactory.createEtchedBorder());
-      
-      
 
       setTitle("Rails: Game log");
-      setVisible(true);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-      //pack();
    }
    
    

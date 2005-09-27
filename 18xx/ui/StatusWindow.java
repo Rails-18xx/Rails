@@ -7,6 +7,7 @@ import game.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 /**
@@ -37,6 +38,61 @@ public class StatusWindow extends JFrame implements ActionListener
 
    JPanel pane = new JPanel(new BorderLayout());
 
+	private JMenuBar menuBar;
+	private JMenu fileMenu, optMenu;
+	private JMenuItem menuItem;
+	private JCheckBoxMenuItem cbMenuItem;
+	private JFileChooser fileChooser;
+
+	public void initMenu()
+	{
+		menuBar =  new JMenuBar();
+		fileMenu = new JMenu("File");
+		optMenu = new JMenu("Options");
+		
+		menuItem = new JMenuItem("Save");
+		menuItem.setMnemonic(KeyEvent.VK_S);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
+		menuItem.addActionListener(this);
+		fileMenu.add(menuItem);
+		
+		fileMenu.addSeparator();
+		
+		menuItem = new JMenuItem("Quit");
+		menuItem.setMnemonic(KeyEvent.VK_Q);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
+		menuItem.addActionListener(this);
+		fileMenu.add(menuItem);		
+		
+		menuBar.add(fileMenu);
+		
+		menuItem = new JMenuItem("Set Scale");
+		menuItem.setMnemonic(KeyEvent.VK_S);
+		menuItem.addActionListener(this);
+		optMenu.add(menuItem);
+
+		optMenu.addSeparator();
+		
+		menuItem = new JCheckBoxMenuItem("Stock Market");
+		menuItem.setMnemonic(KeyEvent.VK_K);
+		menuItem.addActionListener(this);
+		optMenu.add(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem("Map");
+		menuItem.setMnemonic(KeyEvent.VK_M);
+		menuItem.addActionListener(this);
+		optMenu.add(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem("Log Window");
+		menuItem.setMnemonic(KeyEvent.VK_L);
+		menuItem.addActionListener(this);
+		optMenu.add(menuItem);
+		
+		menuBar.add(optMenu);
+		
+		setJMenuBar(menuBar);
+	}
+   
    public StatusWindow()
    {
       cm = Game.getCompanyManager();
@@ -77,14 +133,13 @@ public class StatusWindow extends JFrame implements ActionListener
 
       setTitle("Rails: Game Status");
       pane.setLayout(new BorderLayout());
-      //pane.setPreferredSize(new Dimension (800, 300));
       init();
+      initMenu();
       pane.add(gameStatus, BorderLayout.NORTH);
       pane.add(buttonPanel, BorderLayout.CENTER);
       pane.setOpaque(true);
       setContentPane(pane);
       refreshStatus();
-      //messagePanel.setMinimumSize(new Dimension(0, 80));
       setVisible(true);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -113,6 +168,8 @@ public class StatusWindow extends JFrame implements ActionListener
 
          startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
+         GameUILoader.stockChart.setVisible(false);
+         GameUILoader.mapWindow.setVisible(false);
       }
       else if (currentRound instanceof StockRound)
       {
@@ -120,16 +177,20 @@ public class StatusWindow extends JFrame implements ActionListener
          passButton.setEnabled(true);
          stockRound = (StockRound) currentRound;
          gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-         refreshStatus();
 
+         GameUILoader.stockChart.setVisible(true);
+         GameUILoader.mapWindow.setVisible(false);
+         
+         refreshStatus();
       }
       else if (currentRound instanceof OperatingRound)
       {
-
          passButton.setEnabled(false);
          operatingRound = (OperatingRound) currentRound;
          orWindow = new ORWindow(operatingRound, this);
-
+         
+         GameUILoader.stockChart.setVisible(false);
+         GameUILoader.mapWindow.setVisible(true);
       }
 
    }
@@ -166,7 +227,8 @@ public class StatusWindow extends JFrame implements ActionListener
     */
    public void actionPerformed(ActionEvent actor)
    {
-      player = GameManager.getCurrentPlayer();
+	  int returnVal = 0;
+	  player = GameManager.getCurrentPlayer();
 
       if (actor.getActionCommand().equalsIgnoreCase("buy"))
       {
@@ -177,32 +239,52 @@ public class StatusWindow extends JFrame implements ActionListener
       {
          sellButtonClicked();
          passButton.setText("Done");
-
       }
       else if (actor.getActionCommand().equalsIgnoreCase("done"))
       {
-
          stockRound.done(gameStatus.getSRPlayer());
          passButton.setText("Pass");
       }
+      
+      if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Quit"))
+			System.exit(0);
+		//We're not going to actually DO anything with the selected file
+		//until the infrastructure for saved games is built
+      if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Save"))
+			returnVal = new JFileChooser().showSaveDialog(this);
+      
+      if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Log Window") 
+    		  && ((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.messageWindow.setVisible(true);
+      else if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Log Window") 
+    		  && !((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.messageWindow.setVisible(false);
+      
+      if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Stock Market") 
+    		  && ((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.stockChart.setVisible(true);
+      else if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Stock Market") 
+    		  && !((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.stockChart.setVisible(false);
+      
+      if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Map") 
+    		  && ((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.mapWindow.setVisible(true);
+      else if (((JMenuItem)actor.getSource()).getText().equalsIgnoreCase("Map") 
+    		  && !((JMenuItem)actor.getSource()).isSelected())
+    	  GameUILoader.mapWindow.setVisible(false);
+      
       LogWindow.addLog();
       pack();
 
       currentRound = GameManager.getInstance().getCurrentRound();
       if (currentRound instanceof StockRound)
-      {
-
          gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-
-      }
       else if (currentRound instanceof OperatingRound)
       {
-
          gameStatus.setSRPlayerTurn(-1);
          updateStatus();
-
       }
-
    }
 
    private void buyButtonClicked()
