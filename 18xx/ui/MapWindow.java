@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.10 2005/09/27 21:28:21 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.11 2005/09/27 23:44:44 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -20,7 +20,7 @@ public class MapWindow extends JFrame
 
 	private MapManager mmgr;
 	private HexMap map;
-	
+	private ScrollPane scrollPane;
 
 	public MapWindow()
 	{
@@ -39,11 +39,16 @@ public class MapWindow extends JFrame
 		}
 
 		addMouseListener(map);
-		getContentPane().add(map);
 		
-
+		scrollPane = new ScrollPane();
+		scrollPane.add(map);
+        scrollPane.setPreferredSize(map.getMinimumSize());
+        scrollPane.setSize(map.getMinimumSize());
 		
-		setSize(900, 600);
+		getContentPane().add(scrollPane);
+		
+		setPreferredSize(scrollPane.getPreferredSize());
+		setSize(scrollPane.getPreferredSize());
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

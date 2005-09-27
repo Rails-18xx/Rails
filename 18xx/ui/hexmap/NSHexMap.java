@@ -1,9 +1,8 @@
 package ui.hexmap;
 
 
-import game.MapHex;
-import game.MapManager;
-
+import game.*;
+import ui.*;
 import java.awt.Color;
 
 /**
@@ -14,8 +13,8 @@ public class NSHexMap extends HexMap
 {
     public NSHexMap()
     {
-        setOpaque(true);
         setBackground(Color.white);
+        setOpaque(true);
         setupHexes();
     }
 
@@ -23,9 +22,7 @@ public class NSHexMap extends HexMap
     {
         hexes.clear();
         
-        scale /= 2;
-        cx /= 2;
-        cy /= 2;
+        scale = Scale.get();
 
         MapManager mmgr = MapManager.getInstance();
         MapHex[][] hexArray = mmgr.getHexes();

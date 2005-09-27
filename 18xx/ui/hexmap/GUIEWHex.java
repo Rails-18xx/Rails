@@ -7,7 +7,7 @@ import java.awt.image.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.19 2005/09/25 17:59:10 evos Exp $
+ * @version $Id: GUIEWHex.java,v 1.20 2005/09/27 23:44:44 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -79,13 +79,11 @@ public class GUIEWHex extends GUIHex
 
     private void initRotationArrays()
     {
-    	double[] rotArr = { 0.5, 1.55, 2.60, 3.65, 4.70, 5.75 , 6.75};
     	int[] xadjustArr = { -14, 26, 40, 12, -26, -40, -14 };
     	int[] yadjustArr = { -38, -30, 8, 38, 30, -8, -38 };
     	
     	for(int x=0; x<7; x++)
     	{
-    		//rotation_arr[x] = rotArr[x];
     		rotation_arr[x] = (0.5+x) * DEG60;
     		x_adjust_arr[x] = xadjustArr[x];
     		y_adjust_arr[x] = yadjustArr[x];

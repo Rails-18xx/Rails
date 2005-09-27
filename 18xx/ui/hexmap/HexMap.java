@@ -15,7 +15,8 @@ import ui.*;
 /**
  * @author blentz
  */
-public abstract class HexMap extends JPanel implements MouseListener
+public abstract class HexMap extends JPanel implements MouseListener,
+		Scrollable
 {
 
 	// GUI hexes need to be recreated for each object, since scale varies.
@@ -51,14 +52,15 @@ public abstract class HexMap extends JPanel implements MouseListener
 	protected int cy = 2 * scale;
 
 	protected ImageLoader imageLoader = new ImageLoader();
-	
-	//For scrollable implementation.
+
+	// For scrollable implementation.
 	private int maxUnitIncrement = 1;
 
 	// //////////
 	// Abstract Methods
 	// /////////
 	protected abstract void setupHexesGUI();
+
 	protected abstract void setupEntrancesGUI();
 
 	/**
@@ -529,35 +531,37 @@ public abstract class HexMap extends JPanel implements MouseListener
 
 	public Dimension getMinimumSize()
 	{
-		return getPreferredSize();
+		Dimension dim = getPreferredSize();
+		dim.height /= 2;
+		dim.width /= 2;
+		return dim;
 	}
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(550, 350); // * Scale.get(), 55 * Scale.get());
+		return new Dimension(50 * Scale.get(), 50 * Scale.get());
 	}
 
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
-		
+
 		try
 		{
-		GUIHex hex = getHexContainingPoint(point);
+			GUIHex hex = getHexContainingPoint(point);
 
-		hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
-		hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
-		hex.rotation = hex.rotation_arr[hex.arr_index];
+			hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
+			hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
+			hex.rotation = hex.rotation_arr[hex.arr_index];
 
-		hex.repaint();
-		
-		/* Remove this statement to enable subsequent clicks again */
-		setToolTipText (hex.getToolTip());
+			hex.repaint();
 
+			/* Remove this statement to enable subsequent clicks again */
+			// setToolTipText (hex.getToolTip());
 		}
 		catch (NullPointerException e)
 		{
-			//No hex clicked, no rotation needed.
+			// No hex clicked, no rotation needed.
 		}
 	}
 
@@ -584,5 +588,60 @@ public abstract class HexMap extends JPanel implements MouseListener
 		// TODO Auto-generated method stub
 
 	}
-	
+
+	public Dimension getPreferredScrollableViewportSize()
+	{
+		return getMinimumSize();
+	}
+
+	public int getScrollableBlockIncrement(Rectangle visibleRect,
+			int orientation, int direction)
+	{
+		if (orientation == SwingConstants.HORIZONTAL)
+		{
+			return visibleRect.width - maxUnitIncrement;
+		}
+		else
+		{
+			return visibleRect.height - maxUnitIncrement;
+		}
+	}
+
+	public boolean getScrollableTracksViewportHeight()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean getScrollableTracksViewportWidth()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public int getScrollableUnitIncrement(Rectangle visibleRect,
+			int orientation, int direction)
+	{
+		// Get the current position.
+		int currentPosition = 0;
+		if (orientation == SwingConstants.HORIZONTAL)
+			currentPosition = visibleRect.x;
+		else
+			currentPosition = visibleRect.y;
+
+		// Return the number of pixels between currentPosition
+		// and the nearest tick mark in the indicated direction.
+		if (direction < 0)
+		{
+			int newPosition = currentPosition
+					- (currentPosition / maxUnitIncrement) * maxUnitIncrement;
+			return (newPosition == 0) ? maxUnitIncrement : newPosition;
+		}
+		else
+		{
+			return ((currentPosition / maxUnitIncrement) + 1)
+					* maxUnitIncrement - currentPosition;
+		}
+	}
+
 }
