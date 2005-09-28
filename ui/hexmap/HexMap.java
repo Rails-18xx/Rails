@@ -466,11 +466,11 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	public void paintComponent(Graphics g)
 	{
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		
 		try
 		{
-			super.paintComponent(g);
-			Graphics2D g2 = (Graphics2D) g;
-
 			// Abort if called too early.
 			Rectangle rectClip = g.getClipBounds();
 			if (rectClip == null)
@@ -544,6 +544,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	public void mouseClicked(MouseEvent arg0)
 	{
+		System.out.println("CLICK.");
 		Point point = arg0.getPoint();
 
 		try

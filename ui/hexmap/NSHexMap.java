@@ -13,8 +13,6 @@ public class NSHexMap extends HexMap
 {
     public NSHexMap()
     {
-        setBackground(Color.white);
-        setOpaque(true);
         setupHexes();
     }
 
