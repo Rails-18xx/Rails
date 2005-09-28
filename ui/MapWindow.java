@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.12 2005/09/28 16:43:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.13 2005/09/28 21:09:03 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -43,11 +43,12 @@ public class MapWindow extends JFrame
 		scrollPane.addMouseListener(map);
 		addMouseListener(map);
 
-        scrollPane.setPreferredSize(map.getMinimumSize());
+		/* setPreferredSize does not compile in Java 1.4.2. */
+        //scrollPane.setPreferredSize(map.getMinimumSize());
         scrollPane.setSize(map.getMinimumSize());
+ 
 
-
-		setPreferredSize(scrollPane.getPreferredSize());
+		//setPreferredSize(scrollPane.getPreferredSize());
 		setSize(scrollPane.getPreferredSize());
 
 		getContentPane().add(scrollPane);
