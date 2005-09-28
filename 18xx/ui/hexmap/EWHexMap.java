@@ -13,8 +13,6 @@ public class EWHexMap extends HexMap
 
 	public EWHexMap()
 	{
-		setBackground(Color.white);
-		setOpaque(true);
 		setupHexes();
 	}
 
