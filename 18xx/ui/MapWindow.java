@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.14 2005/09/29 00:41:45 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.15 2005/09/29 19:49:22 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -43,14 +43,13 @@ public class MapWindow extends JFrame
 		scrollPane.addMouseListener(map);
 		addMouseListener(map);
 
-        //scrollPane.setPreferredSize(map.getMinimumSize());
 		/* setPreferredSize does not compile in Java 1.4.2. */
         //scrollPane.setPreferredSize(map.getMinimumSize());
         scrollPane.setSize(map.getMinimumSize());
 
 		//setPreferredSize(scrollPane.getPreferredSize());
 		setSize(scrollPane.getPreferredSize());
-
+		
 		getContentPane().add(scrollPane);
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
