@@ -539,12 +539,11 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(50 * Scale.get(), 50 * Scale.get());
+		return new Dimension(75 * Scale.get(), 50 * Scale.get());
 	}
 
 	public void mouseClicked(MouseEvent arg0)
 	{
-		System.out.println("CLICK.");
 		Point point = arg0.getPoint();
 
 		try

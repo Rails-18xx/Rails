@@ -37,7 +37,7 @@ public class Options extends JDialog implements ActionListener
    JComboBox gameNameBox;
    JTextField[] playerNameFields;
    BasicComboBoxRenderer renderer;
-   Dimension size;
+   Dimension size, optSize;
    
    private void initialize()
    {
@@ -57,6 +57,7 @@ public class Options extends JDialog implements ActionListener
       
       renderer = new BasicComboBoxRenderer();
       size = new Dimension(50,30);
+      optSize = new Dimension(50,50);
       gameNameBox = new JComboBox();
       
       playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -103,7 +104,7 @@ public class Options extends JDialog implements ActionListener
       optionsPane.add(gameNameBox);
       optionsPane.setLayout(new GridLayout(5,2));
       optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
-      optionsPane.setPreferredSize(size);
+      optionsPane.setPreferredSize(optSize);
       
       newButton.addActionListener(this);
       loadButton.addActionListener(this);
