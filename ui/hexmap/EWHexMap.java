@@ -47,7 +47,7 @@ public class EWHexMap extends HexMap
 					hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
 					hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];
 					hex.rotation = hex.rotation_arr[hex.tileOrientation];
-
+					
 					h[i][j] = hex;
 					hexes.add(hex);
 				}

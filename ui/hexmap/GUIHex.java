@@ -310,26 +310,44 @@ public abstract class GUIHex extends JPanel
 
 	public void repaint()
 	{
-		// FIXME: Temporary Kludge
 		try
 		{
-			map.repaint(getBounds().x, getBounds().y, getBounds().width,
-					getBounds().height);
+	       // If an entrance needs repainting, paint the whole map.
+	       if (getBattleHexModel().isEntrance())
+	       {
+	           map.repaint();
+	       }
+	       else
+	       {
+	           map.repaint(getBounds().x, getBounds().y, getBounds().width,
+	               getBounds().height);
+	       }
 		}
 		catch (NullPointerException e)
 		{
-
+			//FIXME: Find the null pointer and fix it.
 		}
 	}
 
 	public boolean paintOverlay(Graphics2D g)
 	{
-		Image overlay = loadOneOverlay(getBattleHexModel().getTerrain(),
-				rectBound.width, rectBound.height);
+		BufferedImage overlay = tileImage;
+			//loadOneOverlay(getBattleHexModel().getTerrain(),rectBound.width, rectBound.height);
+		
 		if (overlay != null)
 		{ // first, draw the Hex itself
-			g.drawImage(overlay, rectBound.x, rectBound.y, rectBound.width,
-					rectBound.height, map);
+			
+			Point center = findCenter();
+			af = AffineTransform.getRotateInstance(rotation);
+	    	af.scale(tileScale,tileScale);
+	    	
+	    	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
+	    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
+	    	    	
+	    	g.drawImage(tileImage, aop, (center.x + x_adjust), (center.y + y_adjust));
+			//g.drawImage(overlay, rectBound.x, rectBound.y, rectBound.width,	rectBound.height, map);
+			g.setTransform(AffineTransform.getRotateInstance(0));
+			
 		}
 		boolean didAllHexside = true;
 		Shape oldClip = g.getClip();
@@ -367,8 +385,8 @@ public abstract class GUIHex extends JPanel
 				dx2 = (int) xi;
 				dy2 = (int) yi;
 
-				Image sideOverlay = loadOneOverlay(neighbor.getBattleHexModel()
-						.getHexsideName((i + 3) % 6), dx2 - dx1, dy2 - dy1);
+				BufferedImage sideOverlay = tileImage; 
+					//loadOneOverlay(neighbor.getBattleHexModel().getHexsideName((i + 3) % 6), dx2 - dx1, dy2 - dy1);
 
 				if (sideOverlay != null)
 				{
@@ -383,15 +401,6 @@ public abstract class GUIHex extends JPanel
 		}
 		g.setClip(oldClip);
 		return didAllHexside;
-	}
-
-	private static Image loadOneOverlay(String name, int width, int height)
-	{
-		Image overlay = null;
-		// List directories = VariantSupport.getImagesDirectoriesList();
-		// overlay = ResourceLoader.getImage(name + imagePostfix, directories,
-		// width, height);
-		return overlay;
 	}
 
 	void drawHexside(Graphics2D g2, double vx1, double vy1, double vx2,
@@ -603,5 +612,25 @@ public void setTileOrientation(int tileOrientation) {
 	    return "<html><b>Hex</b>: "+hexName +"<br><b>Tile</b>: "+tileId;
 	}
 	
+    protected void rotateHexCW()
+    {
+    	if(arr_index >= 6)
+    	{
+    		arr_index = 1;
+    	}
+    	else
+    		arr_index++;
+    }
 
+    protected void rotateHexCCW()
+    {
+    	if(arr_index <= 1)
+    	{
+    		arr_index = 6;
+    	}
+    	else
+    		arr_index--;
+    }
+
+	
 }
