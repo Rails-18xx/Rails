@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.15 2005/09/29 19:49:22 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.16 2005/09/30 16:39:43 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -23,6 +23,8 @@ public class MapWindow extends JFrame
 
 	public MapWindow()
 	{
+		GUIHex.setOverlay(true);
+		
 		mmgr = MapManager.getInstance();
 		try
 		{

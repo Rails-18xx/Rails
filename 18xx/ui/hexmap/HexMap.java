@@ -56,6 +56,8 @@ public abstract class HexMap extends JPanel implements MouseListener,
 	// For scrollable implementation.
 	private int maxUnitIncrement = 1;
 
+	private boolean hexSelected = false;
+	
 	// //////////
 	// Abstract Methods
 	// /////////
@@ -549,11 +551,25 @@ public abstract class HexMap extends JPanel implements MouseListener,
 		try
 		{
 			GUIHex hex = getHexContainingPoint(point);
-
-			hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
-			hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
-			hex.rotation = hex.rotation_arr[hex.arr_index];
-
+			
+			if(hex.isSelected() && hexSelected == true)
+			{
+				hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
+				hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
+				hex.rotation = hex.rotation_arr[hex.arr_index];
+			}
+			else if (!hex.isSelected() && hexSelected == false)
+			{
+				hex.setSelected(true);
+				hexSelected = true;
+			}
+			else
+			{
+				unselectAllHexes();
+				hex.setSelected(true);
+				hexSelected = true;
+			}
+			
 			hex.repaint();
 
 			/* Remove this statement to enable subsequent clicks again */

@@ -10,7 +10,7 @@ import java.awt.image.AffineTransformOp;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.6 2005/09/27 23:44:44 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.7 2005/09/30 16:39:43 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -93,30 +93,12 @@ public class GUINSHex extends GUIHex
     	}
     }
     
-    
-    //FIXME:  Horribly Kludgy
     public void paint (Graphics g)
     {
     	super.paint(g);
-    	Graphics2D g2 = (Graphics2D)g;
     	
-    	Point center = findCenter();    
-    	
-    	af = AffineTransform.getRotateInstance(rotation);
-    	af.scale(tileScale,tileScale);
-    	
-    	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
-    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
-    	    	
-     	g2.setClip(hexagon);
-    	g2.drawImage(tileImage, aop, (center.x + x_adjust), (center.y + y_adjust));
-    	
-    	if(arr_index == 6)
-    	{
-    		arr_index = 1;
-    	}
-    	else
-    		arr_index++;
+    	if(isSelected())
+    		rotateHexCCW();
     }
       
 }

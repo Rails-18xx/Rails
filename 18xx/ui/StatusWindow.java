@@ -206,7 +206,7 @@ public class StatusWindow extends JFrame implements ActionListener
 
 			GameUILoader.stockChart.setVisible(false);
 			GameUILoader.mapWindow.setVisible(true);
-
+			
 			enableCheckBoxMenuItem("Map");
 			disableCheckBoxMenuItem("Stock Market");
 		}
