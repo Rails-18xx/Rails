@@ -290,16 +290,19 @@ public class StatusWindow extends JFrame implements ActionListener
 		{
 			buyButtonClicked();
 			passButton.setText("Done");
+			passButton.setMnemonic(KeyEvent.VK_D);
 		}
 		else if (actor.getActionCommand().equalsIgnoreCase("sell"))
 		{
 			sellButtonClicked();
 			passButton.setText("Done");
+			passButton.setMnemonic(KeyEvent.VK_D);
 		}
 		else if (actor.getActionCommand().equalsIgnoreCase("done"))
 		{
 			stockRound.done(gameStatus.getSRPlayer());
 			passButton.setText("Pass");
+			passButton.setMnemonic(KeyEvent.VK_P);
 		}
 
 		try
