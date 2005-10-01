@@ -3,11 +3,11 @@ package ui.hexmap;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
+import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.21 2005/09/30 16:39:43 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.22 2005/10/01 00:00:14 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -18,7 +18,7 @@ public class GUIEWHex extends GUIHex
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
-	public GUIEWHex(double cx, double cy, int scale, Component map,
+	public GUIEWHex(double cx, double cy, int scale, JComponent map,
         double xCoord, double yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -89,14 +89,5 @@ public class GUIEWHex extends GUIHex
     		y_adjust_arr[x] = yadjustArr[x];
     	}
     }
-    
-    public void paint (Graphics g)
-    {
-    	super.paint(g);
-    	
-    	if(isSelected())
-    		rotateHexCW();
-    }
-
 }
 

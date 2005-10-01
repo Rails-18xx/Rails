@@ -2,15 +2,12 @@ package ui.hexmap;
 
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
+import java.awt.geom.*;
+import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.7 2005/09/30 16:39:43 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.8 2005/10/01 00:00:14 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -22,7 +19,7 @@ public class GUINSHex extends GUIHex
     // Letters increase left to right; numbers increase bottom to top.
 
 	
-    public GUINSHex(int cx, int cy, int scale, Component map,
+    public GUINSHex(int cx, int cy, int scale, JComponent map,
         int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
@@ -92,14 +89,5 @@ public class GUINSHex extends GUIHex
     		y_adjust_arr[x] = yadjustArr[x];
     	}
     }
-    
-    public void paint (Graphics g)
-    {
-    	super.paint(g);
-    	
-    	if(isSelected())
-    		rotateHexCCW();
-    }
-      
 }
 

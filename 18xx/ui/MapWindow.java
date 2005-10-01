@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.16 2005/09/30 16:39:43 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.17 2005/10/01 00:00:15 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -56,11 +56,7 @@ public class MapWindow extends JFrame
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		System.out.println("HexMap.isLightWeight? " + map.isLightweight());
 	}
-
-	public void actionPerformed(ActionEvent arg0)
-	{
-
-	}
-	
 }

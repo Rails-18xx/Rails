@@ -3,8 +3,6 @@ package ui.hexmap;
 import game.Log;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.*;
@@ -15,7 +13,7 @@ public abstract class GUIHex extends JPanel
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
 	protected Hex model;
-	protected Component map;
+	protected JComponent map;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
 
@@ -196,6 +194,8 @@ public abstract class GUIHex extends JPanel
 
 	public void paint(Graphics g)
 	{
+		super.paint(g);
+		
 		Graphics2D g2 = (Graphics2D) g;
 		if (getAntialias())
 		{
@@ -246,7 +246,7 @@ public abstract class GUIHex extends JPanel
 			for (int i = 0; i < 6; i++)
 			{
 				char hexside = getBattleHexModel().getHexside(i);
-				int n;
+				int n; 
 				if (hexside != ' ')
 				{
 					n = (i + 1) % 6;
@@ -285,42 +285,38 @@ public abstract class GUIHex extends JPanel
 						+ ((fontMetrics.getHeight() + rectBound.height) / 4));
 
 		// Added by Erik Vos: show hex name
-		g2
-				.drawString(
-						hexName,
-						rectBound.x
-								+ (rectBound.width - fontMetrics
-										.stringWidth(getBattleHexModel()
-												.getLabel())) / 2,
-						rectBound.y
-								+ ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
+		g2.drawString(hexName, 
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
+						rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
 
 		// Added by Erik Vos: show the preprinted tile id
-		g2
-				.drawString(
-						tileId == -999 ? "?" : "#" + tileId,
-						rectBound.x
-								+ (rectBound.width - fontMetrics
-										.stringWidth(getBattleHexModel()
-												.getLabel())) / 2,
-						rectBound.y
-								+ ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
+		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
+						rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
+						rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
 
 	}
 
 	public void repaint()
 	{
+		super.repaint();
+		
+		
 		try
 		{
 	       // If an entrance needs repainting, paint the whole map.
 	       if (getBattleHexModel().isEntrance())
 	       {
-	           map.repaint();
+	           map.repaint();	    	   
 	       }
 	       else
 	       {
-	           map.repaint(getBounds().x, getBounds().y, getBounds().width,
-	               getBounds().height);
+	    	   //FIXME: getBounds() isn't returning the proper values here.
+	    	   
+	           //map.repaint(getBounds().x, getBounds().y, getBounds().width,
+	           //   getBounds().height);
+	    	   System.out.println(getBounds());
+	    	   
+	    	   map.repaint();
 	       }
 		}
 		catch (NullPointerException e)

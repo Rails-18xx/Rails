@@ -499,7 +499,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 			Font oldFont = g.getFont();
 			FontMetrics fm;
-			String dn = null; // getMasterHex().getTerrainDisplayName();
+			String dn = "FOO"; // getMasterHex().getTerrainDisplayName();
 			String bn = null; // getMasterHex().getTerrainName();
 			String sub = null; // (String)subtitleMap.get(terrain);
 
@@ -557,6 +557,8 @@ public abstract class HexMap extends JPanel implements MouseListener,
 				hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
 				hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
 				hex.rotation = hex.rotation_arr[hex.arr_index];
+				
+				hex.rotateHexCW();
 			}
 			else if (!hex.isSelected() && hexSelected == false)
 			{
@@ -570,8 +572,9 @@ public abstract class HexMap extends JPanel implements MouseListener,
 				hexSelected = true;
 			}
 			
+			//FIXME: THIS REPAINT IS BROKEN
 			hex.repaint();
-
+			
 			/* Remove this statement to enable subsequent clicks again */
 			// setToolTipText (hex.getToolTip());
 		}
