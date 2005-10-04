@@ -1,6 +1,7 @@
 package ui.hexmap;
 
 import game.Log;
+import game.MapHex;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -12,7 +13,8 @@ public abstract class GUIHex extends JPanel
 
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
-	protected Hex model;
+	protected Hex dummyModel; // Redundant, we use game.MapHex as a model
+	protected MapHex model;
 	protected JComponent map;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
@@ -62,15 +64,15 @@ public abstract class GUIHex extends JPanel
 
 	public GUIHex(Hex model)
 	{
-		this.model = model;
+		this.dummyModel = model;
 	}
 
-	public Hex getHexModel()
+	public MapHex getHexModel()
 	{
 		return this.model;
 	}
 
-	public void setHexModel(Hex model)
+	public void setHexModel(MapHex model)
 	{
 		this.model = model;
 	}
@@ -189,7 +191,7 @@ public abstract class GUIHex extends JPanel
 
 	public BattleHex getBattleHexModel()
 	{
-		return (BattleHex) getHexModel();
+		return (BattleHex) dummyModel;
 	}
 
 	public void paint(Graphics g)
@@ -272,6 +274,7 @@ public abstract class GUIHex extends JPanel
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
+		/*
 		g2.drawString(name, 
 				rectBound.x	+ ((rectBound.width - fontMetrics.stringWidth(name)) / 2),
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 2));
@@ -280,16 +283,21 @@ public abstract class GUIHex extends JPanel
 		g2.drawString(getBattleHexModel().getLabel(), 
 				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 3,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 4));
-
+				
+		*/
 		// Added by Erik Vos: show hex name
 		g2.drawString(hexName, 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 2/5,
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
+
+		g2.drawString("("+model.getX()+","+model.getY()+")", 
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 1/3,
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 1/2));
 
 		// Added by Erik Vos: show the preprinted tile id
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
-				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
+				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 2/5,
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
 
 	}
 

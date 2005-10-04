@@ -37,10 +37,11 @@ public class NSHexMap extends HexMap
                     		 (int)Math.round(cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale), 
                     		 scale, this, i, j);
 
-                    hex.setName(hexArray[i][j].getName());
-                    hex.setTileId(hexArray[i][j].getPreprintedTileId());
-                    hex.setTileOrientation(hexArray[i][j].getPreprintedTileOrientation());
-                    hex.setTileFilename(hexArray[i][j].getTileFileName());
+                    hex.setName(mh.getName());
+                    hex.setTileId(mh.getPreprintedTileId());
+                    hex.setTileOrientation(mh.getPreprintedTileOrientation());
+                    hex.setTileFilename(mh.getTileFileName());
+                    hex.setHexModel(mh);
                     
                     imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
                     hex.setTileImage(imageLoader.getTile(hexArray[i][j].getPreprintedTileId()));
