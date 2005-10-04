@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.17 2005/10/01 00:00:15 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.18 2005/10/04 18:23:08 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -24,6 +24,7 @@ public class MapWindow extends JFrame
 	public MapWindow()
 	{
 		GUIHex.setOverlay(true);
+		Scale.set(15);
 		
 		mmgr = MapManager.getInstance();
 		try

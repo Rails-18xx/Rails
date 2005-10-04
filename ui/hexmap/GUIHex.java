@@ -272,27 +272,24 @@ public abstract class GUIHex extends JPanel
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
-		g2.drawString(name, rectBound.x
-				+ ((rectBound.width - fontMetrics.stringWidth(name)) / 2),
-				rectBound.y
-						+ ((fontMetrics.getHeight() + rectBound.height) / 2));
+		g2.drawString(name, 
+				rectBound.x	+ ((rectBound.width - fontMetrics.stringWidth(name)) / 2),
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 2));
 
 		// Show hex label in upper left corner.
-		g2.drawString(getBattleHexModel().getLabel(), rectBound.x
-				+ (rectBound.width - fontMetrics
-						.stringWidth(getBattleHexModel().getLabel())) / 3,
-				rectBound.y
-						+ ((fontMetrics.getHeight() + rectBound.height) / 4));
+		g2.drawString(getBattleHexModel().getLabel(), 
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 3,
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 4));
 
 		// Added by Erik Vos: show hex name
 		g2.drawString(hexName, 
 				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
-						rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 2 / 3));
 
 		// Added by Erik Vos: show the preprinted tile id
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
-						rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
-						rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
+				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 2,
+				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 4 / 9));
 
 	}
 
