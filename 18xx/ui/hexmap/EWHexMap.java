@@ -36,14 +36,15 @@ public class EWHexMap extends HexMap
 							(cy + j * 1.5 * scale), 
 							scale, this, i, j);
 					
-					hex.setName(hexArray[i][j].getName());
-					hex.setTileId(hexArray[i][j].getPreprintedTileId());
-					hex.setTileOrientation(hexArray[i][j]
+					hex.setName(mh.getName());
+					hex.setTileId(mh.getPreprintedTileId());
+					hex.setTileOrientation(mh
 							.getPreprintedTileOrientation());
-					hex.setTileFilename(hexArray[i][j].getTileFileName());
+					hex.setTileFilename(mh.getTileFileName());
+					hex.setHexModel(mh);
 
-					imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
-					hex.setTileImage(imageLoader.getTile(hexArray[i][j]
+					imageLoader.loadTile(mh.getPreprintedTileId());
+					hex.setTileImage(imageLoader.getTile(mh
 							.getPreprintedTileId()));
 					hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
 					hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];

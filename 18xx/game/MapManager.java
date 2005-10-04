@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.4 2005/09/29 00:41:48 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.5 2005/10/04 21:38:18 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -28,6 +28,13 @@ public class MapManager implements ConfigurableComponentI
 
 	protected MapHex[][] hexes;
 	protected Map mHexes = new HashMap();
+	
+	protected static final int[] xDeltaNS = new int[] {0, -1, -1, 0, +1, +1};
+	protected static final int[] yXEvenDeltaNS = new int[] {+1, 0, -1, -1, -1, 0};
+	protected static final int[] yXOddDeltaNS = new int[] {+1, +1, 0, -1, 0, +1};
+	protected static final int[] xYEvenDeltaEW = new int[] {-1, -1, -1, 0, +1, 0};
+	protected static final int[] xYOddDeltaEW = new int[] {0, -1, 0, +1, +1, +1};
+	protected static final int[] yDeltaEW = new int[] {+1, 0, -1, -1, 0, +1};
 
 	public MapManager()
 	{
@@ -108,6 +115,37 @@ public class MapManager implements ConfigurableComponentI
 			hexes[hex.getX()][hex.getY()] = hex;
 		}
 
+		// Initialise the neighbours
+		/** 
+		 * TODO: impassable hexsides.
+		 * TODO: blank sides of fixed and offboard preprinted tiles. 
+		 */ 
+		int i, j, k, dx, dy;
+		MapHex nb;
+		for (i=0; i<=maxX; i++) {
+		    for (j=0; j<=maxY; j++) {
+		        if ((hex = hexes[i][j]) == null) continue;
+		        for (k=0; k<6; k++) {
+		            if (tileOrientation == MapHex.EW) {
+		                dx = (j%2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
+		                dy = yDeltaEW[k];
+		            } else {
+		                dx = xDeltaNS[k];
+		                dy = (i%2 == 0 ? yXEvenDeltaNS[k] : yXOddDeltaNS[k]);
+		            }
+			        if (i+dx>=0 && i+dx<=maxX && j+dy>=0 && j+dy<=maxY
+			                && (nb = hexes[i+dx][j+dy]) != null) {
+			            hex.setNeighbour(k, nb);
+			            nb.setNeighbour(k+3, hex);
+			            /*
+			            System.out.println("Setting neighbours["+k+"]: "+hex.getName()
+			                    +"("+i+","+j+") and "+nb.getName()+"("+(i+dx)+","+(j+dy)+")");
+			            */
+			        }
+		            
+		        }
+		    }
+		}
 	}
 
 	public static MapManager getInstance()

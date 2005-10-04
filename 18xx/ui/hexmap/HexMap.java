@@ -157,7 +157,8 @@ public abstract class HexMap extends JPanel implements MouseListener,
 				}
 			}
 			hazardSideNumberMap.put(terrain, s2n);
-			// map model into GUI
+			// map dummyModel into GUI
+			/*
 			for (int i = 0; i < hexModel.length; i++)
 			{
 				BattleHex[] row = hexModel[i];
@@ -170,6 +171,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 					}
 				}
 			}
+			*/
 		}
 		catch (Exception e)
 		{
@@ -287,7 +289,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 			}
 		}
 	}
-
+/*
 	void unselectHexByLabel(String label)
 	{
 		Iterator it = hexes.iterator();
@@ -347,12 +349,12 @@ public abstract class HexMap extends JPanel implements MouseListener,
 			}
 		}
 	}
-
+*/
 	/**
 	 * Do a brute-force search through the hex array, looking for a match.
 	 * Return the hex, or null.
 	 */
-	GUIHex getGUIHexByLabel(String label)
+/*	GUIHex getGUIHexByLabel(String label)
 	{
 		Iterator it = hexes.iterator();
 		while (it.hasNext())
@@ -367,7 +369,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 		Log.error("Could not find GUIHex " + label);
 		return null;
 	}
-
+*/
 	/** Look for the Hex matching the Label in the terrain static map */
 	public static BattleHex getHexByLabel(String terrain, String label)
 	{
@@ -551,6 +553,15 @@ public abstract class HexMap extends JPanel implements MouseListener,
 		try
 		{
 			GUIHex hex = getHexContainingPoint(point);
+			
+			// Temporary, to check for correct neighbour setting
+			StringBuffer b = new StringBuffer();
+			b.append("Clicked hex ").append(hex.getName()).append(" Neighbours:");
+			MapHex[] nb = hex.getHexModel().getNeighbours();
+			for (int i=0; i<6; i++) {
+			    if (nb[i] != null) b.append(" ").append(i).append(":").append(nb[i].getName());
+			}
+			System.out.println(b.toString());
 			
 			if(hex.isSelected() && hexSelected == true)
 			{
