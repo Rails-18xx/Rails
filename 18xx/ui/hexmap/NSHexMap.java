@@ -32,10 +32,10 @@ public class NSHexMap extends HexMap
             {
                 mh = hexArray[i][j];
                 if (mh != null) {
-                     GUINSHex hex = new GUINSHex
-                        ((int)Math.round(cx + 3 * i * scale),
-                        (int)Math.round(cy + (2 * j + (i & 1)) *
-                        GUIHex.SQRT3 * scale), scale, this, i, j);
+                     GUINSHex hex = new GUINSHex(
+                    		 (int)Math.round(cx + 3 * i * scale),
+                    		 (int)Math.round(cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale), 
+                    		 scale, this, i, j);
 
                     hex.setName(hexArray[i][j].getName());
                     hex.setTileId(hexArray[i][j].getPreprintedTileId());

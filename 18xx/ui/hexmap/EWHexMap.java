@@ -32,9 +32,10 @@ public class EWHexMap extends HexMap
 				if (mh != null)
 				{
 					GUIEWHex hex = new GUIEWHex(
-							(cx + scale
-									* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
-							(cy + j * 1.5 * scale), scale, this, i, j);
+							(cx + scale	* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
+							(cy + j * 1.5 * scale), 
+							scale, this, i, j);
+					
 					hex.setName(hexArray[i][j].getName());
 					hex.setTileId(hexArray[i][j].getPreprintedTileId());
 					hex.setTileOrientation(hexArray[i][j]
