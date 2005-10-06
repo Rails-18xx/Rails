@@ -16,9 +16,8 @@ import ui.*;
  * @author blentz
  */
 public abstract class HexMap extends JPanel implements MouseListener,
-		Scrollable
+		WindowListener
 {
-
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h = new GUIHex[6][6];
 
@@ -57,7 +56,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 	private int maxUnitIncrement = 1;
 
 	private boolean hexSelected = false;
-	
+
 	// //////////
 	// Abstract Methods
 	// /////////
@@ -65,215 +64,9 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	protected abstract void setupEntrancesGUI();
 
-	/**
-	 * Add terrain, hexsides, elevation, and exits to hexes. Cliffs are
-	 * bidirectional; other hexside obstacles are noted only on the high side,
-	 * since they only interfere with uphill movement.
-	 */
-	private static synchronized void setupHexesGameState(String terrain,
-			GUIHex[][] h, boolean serverSideFirstLoad)
-	{
-		ArrayList directories = null;
-		String rndSourceName = null;
-		BattleHex[][] hexModel = new BattleHex[h.length][h[0].length];
-		for (int i = 0; i < h.length; i++)
-		{
-			for (int j = 0; j < h[0].length; j++)
-			{
-				if (show[i][j])
-				{
-					hexModel[i][j] = new BattleHex(i, j);
-				}
-			}
-		}
-		try
-		{
-			if ((rndSourceName == null) || (!serverSideFirstLoad))
-			{ // static Battlelands
-				// InputStream batIS = ResourceLoader.getInputStream(
-				// terrain + ".xml", directories);
-
-				/*
-				 * BattlelandLoader bl = new BattlelandLoader(batIS, hexModel);
-				 * List tempTowerStartList = bl.getStartList(); if
-				 * (tempTowerStartList != null) { startlistMap.put(terrain,
-				 * tempTowerStartList); } towerStatusMap.put(terrain, new
-				 * Boolean(bl.isTower())); subtitleMap.put(terrain,
-				 * bl.getSubtitle());
-				 */
-			}
-
-			/* count all hazards & hazard sides */
-
-			/* slow & inefficient... */
-			final String[] hazards = null; // BattleHex.getTerrains();
-			HashMap t2n = new HashMap();
-			for (int i = 0; i < hazards.length; i++)
-			{
-				int count = 0;
-				for (int x = 0; x < 6; x++)
-				{
-					for (int y = 0; y < 6; y++)
-					{
-						if (show[x][y])
-						{
-							if (hexModel[x][y].getTerrain().equals(hazards[i]))
-							{
-								count++;
-							}
-						}
-					}
-				}
-				if (count > 0)
-				{
-					t2n.put(hazards[i], new Integer(count));
-				}
-			}
-			hazardNumberMap.put(terrain, t2n);
-			char[] hazardSides = BattleHex.getHexsides();
-			HashMap s2n = new HashMap();
-			for (int i = 0; i < hazardSides.length; i++)
-			{
-				int count = 0;
-				for (int x = 0; x < 6; x++)
-				{
-					for (int y = 0; y < 6; y++)
-					{
-						if (show[x][y])
-						{
-							for (int k = 0; k < 6; k++)
-							{
-								if (hexModel[x][y].getHexside(k) == hazardSides[i])
-								{
-									count++;
-								}
-							}
-						}
-					}
-				}
-				if (count > 0)
-				{
-					s2n.put(new Character(hazardSides[i]), new Integer(count));
-				}
-			}
-			hazardSideNumberMap.put(terrain, s2n);
-			// map dummyModel into GUI
-			/*
-			for (int i = 0; i < hexModel.length; i++)
-			{
-				BattleHex[] row = hexModel[i];
-				for (int j = 0; j < row.length; j++)
-				{
-					BattleHex hex = row[j];
-					if (show[i][j])
-					{
-						h[i][j].setHexModel(hex);
-					}
-				}
-			}
-			*/
-		}
-		catch (Exception e)
-		{
-			Log.error("Battleland " + terrain + " loading failed : " + e);
-			e.printStackTrace();
-		}
-	}
-
 	void setupHexes()
 	{
 		setupHexesGUI();
-		// setupHexesGUI();
-		// setupHexesGameState(terrain, h, false);
-		// setupNeighbors(h);
-		// setupEntrances();
-	}
-
-	/**
-	 * Add references to neighbor hexes.
-	 * 
-	 * TODO: This assumes only a 6x6 hex grid. We'll need to modify this to
-	 * apply to an arbitrarily sized grid.
-	 * 
-	 */
-	protected static void setupNeighbors(GUIHex[][] h)
-	{
-		for (int i = 0; i < h.length; i++)
-		{
-			for (int j = 0; j < h[0].length; j++)
-			{
-				if (show[i][j])
-				{
-					if (j > 0 && show[i][j - 1])
-					{
-						h[i][j].setNeighbor(0, h[i][j - 1]);
-					}
-
-					if (i < 5 && show[i + 1][j - ((i + 1) & 1)])
-					{
-						h[i][j].setNeighbor(1, h[i + 1][j - ((i + 1) & 1)]);
-					}
-
-					if (i < 5 && j + (i & 1) < 6 && show[i + 1][j + (i & 1)])
-					{
-						h[i][j].setNeighbor(2, h[i + 1][j + (i & 1)]);
-					}
-
-					if (j < 5 && show[i][j + 1])
-					{
-						h[i][j].setNeighbor(3, h[i][j + 1]);
-					}
-
-					if (i > 0 && j + (i & 1) < 6 && show[i - 1][j + (i & 1)])
-					{
-						h[i][j].setNeighbor(4, h[i - 1][j + (i & 1)]);
-					}
-
-					if (i > 0 && show[i - 1][j - ((i + 1) & 1)])
-					{
-						h[i][j].setNeighbor(5, h[i - 1][j - ((i + 1) & 1)]);
-					}
-				}
-			}
-		}
-	}
-
-	// TODO: This needs to be changed
-	protected static void setupEntrancesGameState(GUIHex[] entrances,
-			GUIHex[][] h)
-	{
-		entrances[0].setNeighbor(3, h[3][0]);
-		entrances[0].setNeighbor(4, h[4][1]);
-		entrances[0].setNeighbor(5, h[5][1]);
-
-		entrances[1].setNeighbor(3, h[5][1]);
-		entrances[1].setNeighbor(4, h[5][2]);
-		entrances[1].setNeighbor(5, h[5][3]);
-		entrances[1].setNeighbor(0, h[5][4]);
-
-		entrances[2].setNeighbor(4, h[5][4]);
-		entrances[2].setNeighbor(5, h[4][5]);
-		entrances[2].setNeighbor(0, h[3][5]);
-
-		entrances[3].setNeighbor(5, h[3][5]);
-		entrances[3].setNeighbor(0, h[2][5]);
-		entrances[3].setNeighbor(1, h[1][4]);
-		entrances[3].setNeighbor(2, h[0][4]);
-
-		entrances[4].setNeighbor(0, h[0][4]);
-		entrances[4].setNeighbor(1, h[0][3]);
-		entrances[4].setNeighbor(2, h[0][2]);
-
-		entrances[5].setNeighbor(1, h[0][2]);
-		entrances[5].setNeighbor(2, h[1][1]);
-		entrances[5].setNeighbor(3, h[2][1]);
-		entrances[5].setNeighbor(4, h[3][0]);
-	}
-
-	protected void setupEntrances()
-	{
-		setupEntrancesGUI();
-		setupEntrancesGameState(entrances, h);
 	}
 
 	void unselectAllHexes()
@@ -285,93 +78,13 @@ public abstract class HexMap extends JPanel implements MouseListener,
 			if (hex.isSelected())
 			{
 				hex.unselect();
-				hex.repaint();
-			}
-		}
-	}
-/*
-	void unselectHexByLabel(String label)
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
-			{
-				hex.unselect();
-				hex.repaint();
-				return;
+				this.repaint();
 			}
 		}
 	}
 
-	void unselectHexesByLabels(Set labels)
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (hex.isSelected()
-					&& labels.contains(hex.getHexModel().getLabel()))
-			{
-				hex.unselect();
-				hex.repaint();
-			}
-		}
-	}
-
-	void selectHexByLabel(String label)
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (!hex.isSelected() && label.equals(hex.getHexModel().getLabel()))
-			{
-				hex.select();
-				hex.repaint();
-				return;
-			}
-		}
-	}
-
-	void selectHexesByLabels(Set labels)
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (!hex.isSelected()
-					&& labels.contains(hex.getHexModel().getLabel()))
-			{
-				hex.select();
-				hex.repaint();
-			}
-		}
-	}
-*/
-	/**
-	 * Do a brute-force search through the hex array, looking for a match.
-	 * Return the hex, or null.
-	 */
-/*	GUIHex getGUIHexByLabel(String label)
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (hex.getHexModel().getLabel().equals(label))
-			{
-				return hex;
-			}
-		}
-
-		Log.error("Could not find GUIHex " + label);
-		return null;
-	}
-*/
 	/** Look for the Hex matching the Label in the terrain static map */
-	public static BattleHex getHexByLabel(String terrain, String label)
+	public static MapHex getHexByLabel(String terrain, String label)
 	{
 		int x = 0;
 		int y = Integer.parseInt(new String(label.substring(1)));
@@ -412,14 +125,14 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 				/* entrances */
 				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
-				return gameEntrances[y].getBattleHexModel();
+				return gameEntrances[y].getMapHexModel();
 
 			default:
 				Log.error("Label " + label + " is invalid");
 		}
 		y = 6 - y - (int) Math.abs(((x - 3) / 2));
 		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
-		return correctHexes[x][y].getBattleHexModel();
+		return correctHexes[x][y].getMapHexModel();
 	}
 
 	/**
@@ -470,11 +183,10 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	public void paintComponent(Graphics g)
 	{
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
-		
 		try
 		{
+			super.paintComponent(g);
+			
 			// Abort if called too early.
 			Rectangle rectClip = g.getClipBounds();
 			if (rectClip == null)
@@ -482,50 +194,30 @@ public abstract class HexMap extends JPanel implements MouseListener,
 				return;
 			}
 
-			Iterator it = hexes.iterator();
-			while (it.hasNext())
+			/*
+			 * FIXME: The repaint bugs are caused by something near here.
+			 * Changing this from an iterator to a for loop affects the bug.
+			 * Only the first element in the arraylist is always being repainted
+			 * correctly. All others aren't. It seems like the clipping area's
+			 * coordinates are not being translated into the whole window's
+			 * coordinates. The paint draws from 0,0 even if the clipped area is
+			 * located elsewhere.
+			 */
+			System.out.println(rectClip);
+
+			for (int x = (hexes.size() - 1); x > 0; x--)
 			{
-				GUIHex hex = (GUIHex) it.next();
-				if (!hex.getBattleHexModel().isEntrance()
-						&& rectClip.intersects(hex.getBounds()))
+				GUIHex hex = (GUIHex) hexes.get(x);
+				Rectangle hexrect = hex.getBounds();
+
+				if (g.hitClip(hexrect.x,
+						hexrect.y,
+						hexrect.width,
+						hexrect.height))
 				{
-					hex.paint(g);
+						hex.paint(g);
 				}
 			}
-
-			/* always antialias this, the font is huge */
-			Object oldantialias = g2
-					.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-
-			Font oldFont = g.getFont();
-			FontMetrics fm;
-			String dn = "FOO"; // getMasterHex().getTerrainDisplayName();
-			String bn = null; // getMasterHex().getTerrainName();
-			String sub = null; // (String)subtitleMap.get(terrain);
-
-			if (sub == null)
-			{
-				sub = (dn.equals(bn) ? null : bn);
-			}
-
-			// g.setFont(ResourceLoader.defaultFont.deriveFont((float)48));
-			fm = g.getFontMetrics();
-			int tma = fm.getMaxAscent();
-			g.drawString(dn, 80, 4 + tma);
-
-			if (sub != null)
-			{
-				// g.setFont(ResourceLoader.defaultFont.deriveFont((float)24));
-				fm = g.getFontMetrics();
-				int tma2 = fm.getMaxAscent();
-				g.drawString(sub, 80, 4 + tma + 8 + tma2);
-			}
-
-			/* reset antialiasing */
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldantialias);
-			g.setFont(oldFont);
 		}
 		catch (NullPointerException ex)
 		{
@@ -543,7 +235,7 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(75 * Scale.get(), 50 * Scale.get());
+		return new Dimension(60 * Scale.get(), 45 * Scale.get());
 	}
 
 	public void mouseClicked(MouseEvent arg0)
@@ -553,22 +245,26 @@ public abstract class HexMap extends JPanel implements MouseListener,
 		try
 		{
 			GUIHex hex = getHexContainingPoint(point);
-			
+
 			// Temporary, to check for correct neighbour setting
 			StringBuffer b = new StringBuffer();
-			b.append("Clicked hex ").append(hex.getName()).append(" Neighbours:");
-			MapHex[] nb = hex.getHexModel().getNeighbours();
-			for (int i=0; i<6; i++) {
-			    if (nb[i] != null) b.append(" ").append(i).append(":").append(nb[i].getName());
+			b.append("Clicked hex ")
+					.append(hex.getName())
+					.append(" Neighbors:");
+			MapHex[] nb = hex.getHexModel().getNeighbors();
+			for (int i = 0; i < 6; i++)
+			{
+				if (nb[i] != null)
+					b.append(" ").append(i).append(":").append(nb[i].getName());
 			}
 			System.out.println(b.toString());
-			
-			if(hex.isSelected() && hexSelected == true)
+
+			if (hex.isSelected() && hexSelected == true)
 			{
 				hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
 				hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
 				hex.rotation = hex.rotation_arr[hex.arr_index];
-				
+
 				hex.rotateHexCW();
 			}
 			else if (!hex.isSelected() && hexSelected == false)
@@ -582,10 +278,9 @@ public abstract class HexMap extends JPanel implements MouseListener,
 				hex.setSelected(true);
 				hexSelected = true;
 			}
-			
-			//FIXME: THIS REPAINT IS BROKEN
-			hex.repaint();
-			
+
+			this.repaint();
+
 			/* Remove this statement to enable subsequent clicks again */
 			// setToolTipText (hex.getToolTip());
 		}
@@ -619,59 +314,45 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	}
 
-	public Dimension getPreferredScrollableViewportSize()
-	{
-		return getMinimumSize();
-	}
-
-	public int getScrollableBlockIncrement(Rectangle visibleRect,
-			int orientation, int direction)
-	{
-		if (orientation == SwingConstants.HORIZONTAL)
-		{
-			return visibleRect.width - maxUnitIncrement;
-		}
-		else
-		{
-			return visibleRect.height - maxUnitIncrement;
-		}
-	}
-
-	public boolean getScrollableTracksViewportHeight()
+	public void windowActivated(WindowEvent e)
 	{
 		// TODO Auto-generated method stub
-		return false;
 	}
 
-	public boolean getScrollableTracksViewportWidth()
+	public void windowClosed(WindowEvent e)
 	{
 		// TODO Auto-generated method stub
-		return false;
+
 	}
 
-	public int getScrollableUnitIncrement(Rectangle visibleRect,
-			int orientation, int direction)
+	public void windowClosing(WindowEvent e)
 	{
-		// Get the current position.
-		int currentPosition = 0;
-		if (orientation == SwingConstants.HORIZONTAL)
-			currentPosition = visibleRect.x;
-		else
-			currentPosition = visibleRect.y;
+		// TODO Auto-generated method stub
 
-		// Return the number of pixels between currentPosition
-		// and the nearest tick mark in the indicated direction.
-		if (direction < 0)
-		{
-			int newPosition = currentPosition
-					- (currentPosition / maxUnitIncrement) * maxUnitIncrement;
-			return (newPosition == 0) ? maxUnitIncrement : newPosition;
-		}
-		else
-		{
-			return ((currentPosition / maxUnitIncrement) + 1)
-					* maxUnitIncrement - currentPosition;
-		}
+	}
+
+	public void windowDeactivated(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeiconified(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowIconified(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowOpened(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.18 2005/10/04 18:23:08 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.19 2005/10/06 21:41:16 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -8,7 +8,6 @@ package ui;
 import game.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 import ui.hexmap.*;
 
@@ -19,13 +18,16 @@ public class MapWindow extends JFrame
 {
 	private MapManager mmgr;
 	private HexMap map;
-	private ScrollPane scrollPane;
+	private JScrollPane scrollpane;
 
 	public MapWindow()
 	{
 		GUIHex.setOverlay(true);
 		Scale.set(15);
 		
+		Container contentPane = this.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+
 		mmgr = MapManager.getInstance();
 		try
 		{
@@ -39,21 +41,21 @@ public class MapWindow extends JFrame
 			return;
 		}
 		
-		scrollPane = new ScrollPane();
-		scrollPane.add(map);	
-		
 		map.addMouseListener(map);
-		scrollPane.addMouseListener(map);
 		addMouseListener(map);
+		addWindowListener(map);
 
-		/* setPreferredSize does not compile in Java 1.4.2. */
-        //scrollPane.setPreferredSize(map.getMinimumSize());
-        scrollPane.setSize(map.getMinimumSize());
-
-		//setPreferredSize(scrollPane.getPreferredSize());
-		setSize(scrollPane.getPreferredSize());
+		scrollpane = new JScrollPane(map);
+		scrollpane.setSize(map.getPreferredSize());
 		
-		getContentPane().add(scrollPane);
+		//XXX: I'm using this to smoke out bugs elsewhere in the drawing code.		
+		//This mode uses the very simple method of redrawing 
+		//the entire contents of the scrollpane each time it is scrolled.
+		scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+		
+		contentPane.add(scrollpane, BorderLayout.CENTER);
+		
+		setSize(map.getPreferredSize());
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
