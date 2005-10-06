@@ -1,21 +1,20 @@
 package ui.hexmap;
 
-import game.Log;
-import game.MapHex;
+import game.*;
 
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public abstract class GUIHex extends JPanel	
+public abstract class GUIHex
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
 	protected Hex dummyModel; // Redundant, we use game.MapHex as a model
 	protected MapHex model;
-	protected JComponent map;
+	protected BattleHex dummymodel;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
 
@@ -25,19 +24,19 @@ public abstract class GUIHex extends JPanel
 	protected int tileOrientation;
 	protected String tileFilename;
 
-	//These are only here for scope visibility
-	protected double tileScale;
+	// These are only here for scope visibility
+	protected double tileScale = 0.33;
 	protected int x_adjust;
 	protected int y_adjust;
 	protected double rotation;
-	protected int arr_index;
+	protected int arr_index = 0;
 	protected double[] rotation_arr = new double[7];
 	protected int[] x_adjust_arr = new int[7];
 	protected int[] y_adjust_arr = new int[7];
 
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();
-	
+
 	protected String toolTip = "";
 
 	/**
@@ -62,9 +61,9 @@ public abstract class GUIHex extends JPanel
 	// Selection is in-between GUI and game state.
 	private boolean selected;
 
-	public GUIHex(Hex model)
+	public GUIHex(BattleHex model)
 	{
-		this.dummyModel = model;
+		this.dummymodel = model;
 	}
 
 	public MapHex getHexModel()
@@ -90,6 +89,11 @@ public abstract class GUIHex extends JPanel
 	public boolean contains(Point point)
 	{
 		return (hexagon.contains(point));
+	}
+	
+	public boolean intersects(Rectangle2D r)
+	{
+		return (hexagon.intersects(r));
 	}
 
 	public void select()
@@ -173,7 +177,7 @@ public abstract class GUIHex extends JPanel
 		if (i >= 0 && i < 6)
 		{
 			neighbors[i] = hex;
-			getBattleHexModel().setNeighbor(i, hex.getBattleHexModel());
+			getMapHexModel().setNeighbor(i, hex.getMapHexModel());
 		}
 	}
 
@@ -189,16 +193,15 @@ public abstract class GUIHex extends JPanel
 		}
 	}
 
-	public BattleHex getBattleHexModel()
+	public MapHex getMapHexModel()
 	{
-		return (BattleHex) dummyModel;
+		return (MapHex) getHexModel();
 	}
 
 	public void paint(Graphics g)
 	{
-		super.paint(g);
-		
 		Graphics2D g2 = (Graphics2D) g;
+
 		if (getAntialias())
 		{
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -210,9 +213,13 @@ public abstract class GUIHex extends JPanel
 					RenderingHints.VALUE_ANTIALIAS_OFF);
 		}
 
-		Color terrainColor = getBattleHexModel().getTerrainColor();
+		Color terrainColor = Color.WHITE; //getMapHexModel().getTerrainColor();
 		if (isSelected())
 		{
+			// Slightly adjust the hex overlay size to allow the
+			// highlighting to peek through.
+			tileScale = 0.3;
+
 			if (terrainColor.equals(highlightColor))
 			{
 				// g2.setColor(HTMLColor.invertRGBColor(highlightColor));
@@ -231,6 +238,10 @@ public abstract class GUIHex extends JPanel
 		}
 		else
 		{
+			// restore hex size to it's original scale.
+			if (tileScale != 0.33)
+				tileScale = 0.33;
+
 			g2.setColor(terrainColor);
 			g2.fill(hexagon);
 		}
@@ -238,117 +249,51 @@ public abstract class GUIHex extends JPanel
 		g2.setColor(Color.black);
 		g2.draw(hexagon);
 
-		if ((useOverlay) && (paintOverlay(g2)))
-		{
-			// well, ok...
-		}
-		else
-		{
-			// Draw hexside features.
-			for (int i = 0; i < 6; i++)
-			{
-				char hexside = getBattleHexModel().getHexside(i);
-				int n; 
-				if (hexside != ' ')
-				{
-					n = (i + 1) % 6;
-					drawHexside(g2, xVertex[i], yVertex[i], xVertex[n],
-							yVertex[n], hexside);
-				}
-
-				// Draw them again from the other side.
-				hexside = getBattleHexModel().getOppositeHexside(i);
-				if (hexside != ' ')
-				{
-					n = (i + 1) % 6;
-					drawHexside(g2, xVertex[n], yVertex[n], xVertex[i],
-							yVertex[i], hexside);
-				}
-			}
-		}
-
-		// Do not anti-alias text.
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_OFF);
-		String name = getBattleHexModel().getTerrainName().toUpperCase();
+		paintOverlay(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
-		/*
-		g2.drawString(name, 
-				rectBound.x	+ ((rectBound.width - fontMetrics.stringWidth(name)) / 2),
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 2));
-
-		// Show hex label in upper left corner.
-		g2.drawString(getBattleHexModel().getLabel(), 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) / 3,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) / 4));
-				
-		*/
 		// Added by Erik Vos: show hex name
-		g2.drawString(hexName, 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 2/5,
+		g2.drawString(hexName,
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getMapHexModel().getName())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
 
 		g2.drawString("("+model.getX()+","+model.getY()+")", 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 1/3,
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth("("+getMapHexModel().getX()+","+getMapHexModel().getY()+")")) * 1/3,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 1/2));
 
 		// Added by Erik Vos: show the preprinted tile id
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
-				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth(getBattleHexModel().getLabel())) * 2/5,
+				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getMapHexModel().getPreprintedTileId())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
-
-	}
-
-	public void repaint()
-	{
-		super.repaint();
-		
-		
-		try
-		{
-	       // If an entrance needs repainting, paint the whole map.
-	       if (getBattleHexModel().isEntrance())
-	       {
-	           map.repaint();	    	   
-	       }
-	       else
-	       {
-	    	   //FIXME: getBounds() isn't returning the proper values here.
-	    	   
-	           //map.repaint(getBounds().x, getBounds().y, getBounds().width,
-	           //   getBounds().height);
-	    	   System.out.println(getBounds());
-	    	   
-	    	   map.repaint();
-	       }
-		}
-		catch (NullPointerException e)
-		{
-			//FIXME: Find the null pointer and fix it.
-		}
 	}
 
 	public boolean paintOverlay(Graphics2D g)
 	{
 		BufferedImage overlay = tileImage;
-			//loadOneOverlay(getBattleHexModel().getTerrain(),rectBound.width, rectBound.height);
-		
+		// loadOneOverlay(getBattleHexModel().getTerrain(),rectBound.width,
+		// rectBound.height);
+
 		if (overlay != null)
 		{ // first, draw the Hex itself
-			
+
 			Point center = findCenter();
 			af = AffineTransform.getRotateInstance(rotation);
-	    	af.scale(tileScale,tileScale);
-	    	
-	    	//All adjustments to AffineTransform must be done before being assigned to the ATOp here.
-	    	AffineTransformOp aop = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);    	  
-	    	    	
-	    	g.drawImage(tileImage, aop, (center.x + x_adjust), (center.y + y_adjust));
-			//g.drawImage(overlay, rectBound.x, rectBound.y, rectBound.width,	rectBound.height, map);
+			af.scale(tileScale, tileScale);
+
+			// All adjustments to AffineTransform must be done before being
+			// assigned to the ATOp here.
+			AffineTransformOp aop = new AffineTransformOp(af,
+					AffineTransformOp.TYPE_BILINEAR);
+
+			g.drawImage(tileImage,
+					aop,
+					(center.x + x_adjust),
+					(center.y + y_adjust));
+			// g.drawImage(overlay, rectBound.x, rectBound.y, rectBound.width,
+			// rectBound.height, map);
 			g.setTransform(AffineTransform.getRotateInstance(0));
-			
+
 		}
 		boolean didAllHexside = true;
 		Shape oldClip = g.getClip();
@@ -356,9 +301,10 @@ public abstract class GUIHex extends JPanel
 		g.setClip(null);
 		g.clip(hexagon);
 		// second, draw the opposite Hex HexSide
+		/*
 		for (int i = 0; i < 6; i++)
 		{
-			char op = getBattleHexModel().getOppositeHexside(i);
+			char op = getMapHexModel().getOppositeHexside(i);
 			if (op != ' ')
 			{
 				GUIHex neighbor = getNeighbor(i);
@@ -386,12 +332,17 @@ public abstract class GUIHex extends JPanel
 				dx2 = (int) xi;
 				dy2 = (int) yi;
 
-				BufferedImage sideOverlay = tileImage; 
-					//loadOneOverlay(neighbor.getBattleHexModel().getHexsideName((i + 3) % 6), dx2 - dx1, dy2 - dy1);
+				BufferedImage sideOverlay = tileImage;
+				// loadOneOverlay(neighbor.getBattleHexModel().getHexsideName((i
+				// + 3) % 6), dx2 - dx1, dy2 - dy1);
 
 				if (sideOverlay != null)
 				{
-					g.drawImage(sideOverlay, dx1, dy1, dx2 - dx1, dy2 - dy1,
+					g.drawImage(sideOverlay,
+							dx1,
+							dy1,
+							dx2 - dx1,
+							dy2 - dy1,
 							map);
 				}
 				else
@@ -399,7 +350,7 @@ public abstract class GUIHex extends JPanel
 					didAllHexside = false;
 				}
 			}
-		}
+		}*/
 		g.setClip(oldClip);
 		return didAllHexside;
 	}
@@ -476,9 +427,13 @@ public abstract class GUIHex extends JPanel
 					rect.height = 2 * len;
 
 					g2.setColor(Color.white);
-					Arc2D.Double arc = new Arc2D.Double(rect.x, rect.y,
-							rect.width, rect.height, Math.toDegrees(2 * Math.PI
-									- theta), 180, Arc2D.OPEN);
+					Arc2D.Double arc = new Arc2D.Double(rect.x,
+							rect.y,
+							rect.width,
+							rect.height,
+							Math.toDegrees(2 * Math.PI - theta),
+							180,
+							Arc2D.OPEN);
 					g2.fill(arc);
 					g2.setColor(Color.black);
 					g2.draw(arc);
@@ -583,12 +538,14 @@ public abstract class GUIHex extends JPanel
 		this.tileId = tileId;
 	}
 
-/**
- * @param tileOrientation The tileOrientation to set.
- */
-public void setTileOrientation(int tileOrientation) {
-    this.tileOrientation = tileOrientation;
-}
+	/**
+	 * @param tileOrientation
+	 *            The tileOrientation to set.
+	 */
+	public void setTileOrientation(int tileOrientation)
+	{
+		this.tileOrientation = tileOrientation;
+	}
 
 	/**
 	 * 
@@ -608,30 +565,30 @@ public void setTileOrientation(int tileOrientation) {
 	{
 		this.tileImage = tileImage;
 	}
-	
-	protected String getToolTip () {
-	    return "<html><b>Hex</b>: "+hexName +"<br><b>Tile</b>: "+tileId;
+
+	protected String getToolTip()
+	{
+		return "<html><b>Hex</b>: " + hexName + "<br><b>Tile</b>: " + tileId;
 	}
-	
-    protected void rotateHexCW()
-    {
-    	if(arr_index >= 6)
-    	{
-    		arr_index = 1;
-    	}
-    	else
-    		arr_index++;
-    }
 
-    protected void rotateHexCCW()
-    {
-    	if(arr_index <= 1)
-    	{
-    		arr_index = 6;
-    	}
-    	else
-    		arr_index--;
-    }
+	protected void rotateHexCW()
+	{
+		if (arr_index >= 6)
+		{
+			arr_index = 1;
+		}
+		else
+			arr_index++;
+	}
 
-	
+	protected void rotateHexCCW()
+	{
+		if (arr_index <= 1)
+		{
+			arr_index = 6;
+		}
+		else
+			arr_index--;
+	}
+
 }

@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.8 2005/10/01 00:00:14 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.9 2005/10/06 21:41:16 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -23,7 +23,6 @@ public class GUINSHex extends GUIHex
         int xCoord, int yCoord)
     {
         super(new BattleHex(xCoord, yCoord));
-        this.map = map;
 
         len = scale / 3.0;
 
@@ -60,11 +59,9 @@ public class GUINSHex extends GUIHex
         innerHexagon.transform(at);
         
         initRotationArrays();
-    	tileScale = 0.33;
     	x_adjust = x_adjust_arr[0];
     	y_adjust = y_adjust_arr[0];
     	rotation = rotation_arr[0];
-    	arr_index = 0;
     }
 
     public GUINSHex(int xCoord, int yCoord)

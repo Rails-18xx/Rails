@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.9 2005/10/04 21:38:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.10 2005/10/06 21:41:16 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -223,16 +223,16 @@ public class MapHex implements ConfigurableComponentI
         return preprintedTileOrientation;
     }
     
-    public void setNeighbour (int orientation, MapHex neighbour) {
+    public void setNeighbor (int orientation, MapHex neighbour) {
         orientation %= 6;
         neighbours[orientation] = neighbour;
     }
     
-    public MapHex getNeighbour (int orientation) {
+    public MapHex getNeighbor (int orientation) {
         return neighbours[orientation%6];
     }
     
-    public MapHex[] getNeighbours () {
+    public MapHex[] getNeighbors () {
         return neighbours;
     }
     
