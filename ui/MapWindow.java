@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.19 2005/10/06 21:41:16 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.20 2005/10/07 23:32:18 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -18,7 +18,7 @@ public class MapWindow extends JFrame
 {
 	private MapManager mmgr;
 	private HexMap map;
-	private JScrollPane scrollpane;
+	private JScrollPane scrollPane;
 
 	public MapWindow()
 	{
@@ -45,15 +45,15 @@ public class MapWindow extends JFrame
 		addMouseListener(map);
 		addWindowListener(map);
 
-		scrollpane = new JScrollPane(map);
-		scrollpane.setSize(map.getPreferredSize());
+		scrollPane = new JScrollPane(map);
+		scrollPane.setSize(map.getPreferredSize());
 		
 		//XXX: I'm using this to smoke out bugs elsewhere in the drawing code.		
 		//This mode uses the very simple method of redrawing 
 		//the entire contents of the scrollpane each time it is scrolled.
-		scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+		scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 		
-		contentPane.add(scrollpane, BorderLayout.CENTER);
+		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		setSize(map.getPreferredSize());
 		setLocation(25, 25);

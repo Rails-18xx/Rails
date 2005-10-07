@@ -286,7 +286,12 @@ public abstract class HexMap extends JPanel implements MouseListener,
 		}
 		catch (NullPointerException e)
 		{
-			// No hex clicked, no rotation needed.
+			// No hex clicked
+			if (hexSelected)
+			{
+				unselectAllHexes();
+				hexSelected = false;
+			}
 		}
 	}
 
