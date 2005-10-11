@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.6 2005/10/06 21:41:16 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.7 2005/10/11 17:35:29 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -12,6 +12,8 @@ import org.w3c.dom.*;
 import util.XmlUtils;
 
 /**
+ * MapManager configures the map layout from XML
+ * 
  * @author Erik Vos
  */
 public class MapManager implements ConfigurableComponentI
@@ -148,6 +150,9 @@ public class MapManager implements ConfigurableComponentI
 		}
 	}
 
+	/**
+	 * @return an instance of the MapManager
+	 */
 	public static MapManager getInstance()
 	{
 		return instance;

@@ -27,6 +27,7 @@ import util.XmlUtils;
 public class PublicCompany extends Company implements PublicCompanyI
 {
 
+	/** Default percentage that each share represents */
 	protected static final int DEFAULT_SHARE_UNIT = 10;
 
 	protected static int numberOfPublicCompanies = 0;
@@ -153,10 +154,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 	}
 
-	/**
-	 * To configure all public companies from the &lt;PublicCompany&gt; XML
-	 * element
-	 */
+	   /**
+	    * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+	    */
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
 		NamedNodeMap nnp = element.getAttributes();

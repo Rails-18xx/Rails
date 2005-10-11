@@ -20,10 +20,16 @@ package game;
 
 import java.util.*;
 
-public class Player implements CashHolder {
-	
-    private static final int DEFAULT_PLAYER_SHARE_LIMIT = 60;
-    
+/**
+ *	Player class holds all player-specific data
+ */
+
+public class Player implements CashHolder
+{
+
+	/** Default limit to percentage of a company a player may hold */
+	private static final int DEFAULT_PLAYER_SHARE_LIMIT = 60;
+
 	public static int MAX_PLAYERS = 8;
 
 	public static int MIN_PLAYERS = 2;
@@ -33,12 +39,12 @@ public class Player implements CashHolder {
 	private static int[] playerCertificateLimits = new int[MAX_PLAYERS];
 
 	private static int playerCertificateLimit = 0;
-	
-	private static int playerShareLimit = DEFAULT_PLAYER_SHARE_LIMIT; 
+
+	private static int playerShareLimit = DEFAULT_PLAYER_SHARE_LIMIT;
 	// May need to become an array
 
 	private String name = "";
-	
+
 	private int index = 0;
 
 	private int wallet = 0;
@@ -53,8 +59,10 @@ public class Player implements CashHolder {
 
 	private ArrayList companiesSoldThisTurn = new ArrayList();
 
-	public static void setLimits(int number, int cash, int certLimit) {
-		if (number > 1 && number <= MAX_PLAYERS) {
+	public static void setLimits(int number, int cash, int certLimit)
+	{
+		if (number > 1 && number <= MAX_PLAYERS)
+		{
 			playerStartCash[number] = cash;
 			playerCertificateLimits[number] = certLimit;
 		}
@@ -63,15 +71,17 @@ public class Player implements CashHolder {
 	/**
 	 * Initialises each Player's parameters which depend on the number of
 	 * players. To be called when all Players have been added.
-	 *  
+	 * 
 	 */
-	public static void initPlayers(Player[] players) {
+	public static void initPlayers(Player[] players)
+	{
 		Player player;
 		int numberOfPlayers = players.length;
 		int startCash = playerStartCash[numberOfPlayers];
 
 		// Give each player the initial cash amount
-		for (int i = 0; i < numberOfPlayers; i++) {
+		for (int i = 0; i < numberOfPlayers; i++)
+		{
 			player = (Player) players[i];
 			player.index = i;
 			Bank.transferCash(null, player, startCash);
@@ -83,16 +93,22 @@ public class Player implements CashHolder {
 		// Set the sertificate limit
 		playerCertificateLimit = playerCertificateLimits[numberOfPlayers];
 	}
-
-	public static int getCertLimit() {
+	
+	/**
+	 * @return Certificate Limit for Players
+	 */
+	public static int getCertLimit()
+	{
 		return playerCertificateLimit;
 	}
-	
-	public static void setShareLimit (int percentage) {
-	    playerShareLimit = percentage;
+
+	public static void setShareLimit(int percentage)
+	{
+		playerShareLimit = percentage;
 	}
 
-	public Player(String name) {
+	public Player(String name)
+	{
 		this.name = name;
 		portfolio = new Portfolio(name, this);
 	}
@@ -103,24 +119,29 @@ public class Player implements CashHolder {
 	 *             if company hasn't started yet. UI needs to handle this.
 	 */
 	public void buyShare(PublicCertificate share, int price)
-			throws NullPointerException {
+			throws NullPointerException
+	{
 		if (hasBoughtStockThisTurn)
 			return;
 
-		for (int i = 0; i < companiesSoldThisTurn.size(); i++) {
-			if (share.company.getName().equalsIgnoreCase(
-					companiesSoldThisTurn.get(i).toString()))
+		for (int i = 0; i < companiesSoldThisTurn.size(); i++)
+		{
+			if (share.company.getName()
+					.equalsIgnoreCase(companiesSoldThisTurn.get(i).toString()))
 				return;
 		}
 
 		if (portfolio.getCertificates().size() >= playerCertificateLimit)
 			return;
 
-		try {
-			//throws nullpointer if company hasn't started yet.
-			//it's up to the UI to catch this and gracefully start the company.
+		try
+		{
+			// throws nullpointer if company hasn't started yet.
+			// it's up to the UI to catch this and gracefully start the company.
 			getPortfolio().buyCertificate(share, share.getPortfolio(), price);
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e)
+		{
 			throw e;
 		}
 
@@ -128,10 +149,14 @@ public class Player implements CashHolder {
 		hasBoughtStockThisTurn = true;
 	}
 
-	public void buyShare(PublicCertificate share) throws NullPointerException {
-		try {
+	public void buyShare(PublicCertificate share) throws NullPointerException
+	{
+		try
+		{
 			buyShare(share, share.getCompany().getCurrentPrice().getPrice());
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e)
+		{
 			throw e;
 		}
 	}
@@ -143,7 +168,8 @@ public class Player implements CashHolder {
 	 *            Number of certificates to buy (usually 1 but not always so).
 	 * @return True if it is allowed.
 	 */
-	public boolean mayBuyCertificates(int number) {
+	public boolean mayBuyCertificates(int number)
+	{
 		if (portfolio.getCertificates().size() + number > playerCertificateLimit)
 			return false;
 		return true;
@@ -159,7 +185,8 @@ public class Player implements CashHolder {
 	 *            The number of shares (usually 1 but not always so).
 	 * @return True if it is allowed.
 	 */
-	public boolean mayBuyCompanyShare(PublicCompanyI company, int number) {
+	public boolean mayBuyCompanyShare(PublicCompanyI company, int number)
+	{
 		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit)
 			return false;
 		/** TODO The '60' above must of course be made configurable! */
@@ -176,29 +203,37 @@ public class Player implements CashHolder {
 	 * @param price
 	 *            Price.
 	 */
-	public void buy(Certificate cert, int price) {
+	public void buy(Certificate cert, int price)
+	{
 
-		if (cert instanceof PrivateCompanyI) {
-			portfolio.buyPrivate((PrivateCompanyI) cert, cert.getPortfolio(),
+		if (cert instanceof PrivateCompanyI)
+		{
+			portfolio.buyPrivate((PrivateCompanyI) cert,
+					cert.getPortfolio(),
 					price);
-		} else if (cert instanceof PublicCertificateI) {
+		}
+		else if (cert instanceof PublicCertificateI)
+		{
 			Portfolio from = cert.getPortfolio();
 			portfolio.buyCertificate((PublicCertificateI) cert, from, price);
 			((PublicCertificateI) cert).getCompany().checkPresidencyOnBuy(this);
 		}
 	}
 
-	public int sellShare(PublicCertificate share) {
+	public int sellShare(PublicCertificate share)
+	{
 		Portfolio.sellCertificate(share, portfolio, share.getCompany()
-				.getCurrentPrice().getPrice());
+				.getCurrentPrice()
+				.getPrice());
 		Game.getStockMarket().sell(share.getCompany(), 1);
 		return 1;
 	}
 
 	/**
-	 * @return Returns the hasPriority.
+	 * @return Returns if the Player hasPriority.
 	 */
-	public boolean hasPriority() {
+	public boolean hasPriority()
+	{
 		return hasPriority;
 	}
 
@@ -206,36 +241,42 @@ public class Player implements CashHolder {
 	 * @param hasPriority
 	 *            The hasPriority to set.
 	 */
-	public void setHasPriority(boolean hasPriority) {
+	public void setHasPriority(boolean hasPriority)
+	{
 		this.hasPriority = hasPriority;
 	}
 
 	/**
-	 * @return Returns the portfolio.
+	 * @return Returns the player's portfolio.
 	 */
-	public Portfolio getPortfolio() {
+	public Portfolio getPortfolio()
+	{
 		return portfolio;
 	}
 
 	/**
-	 * @return Returns the name.
+	 * @return Returns the player's name.
 	 */
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
 	/**
-	 * @return Returns the wallet.
+	 * @return Returns the player's wallet.
 	 */
-	public int getCash() {
+	public int getCash()
+	{
 		return wallet;
 	}
 
-	public String getFormattedCash() {
+	public String getFormattedCash()
+	{
 		return Bank.format(wallet);
 	}
 
-	public void addCash(int amount) {
+	public void addCash(int amount)
+	{
 		wallet += amount;
 	}
 
@@ -244,46 +285,55 @@ public class Player implements CashHolder {
 	 * 
 	 * @return Total worth
 	 */
-	public int getWorth() {
+	public int getWorth()
+	{
 		int worth = wallet;
 		Iterator it = portfolio.getCertificates().iterator();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			worth += ((PublicCertificateI) it.next()).getCertificatePrice();
 		}
 		it = portfolio.getPrivateCompanies().iterator();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			worth += ((PrivateCompanyI) it.next()).getBasePrice();
 		}
 		return worth;
 	}
 
-	public String getFormattedWorth() {
+	public String getFormattedWorth()
+	{
 		return Bank.format(getWorth());
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return "Name: " + name + " Cash: " + wallet;
 	}
 
 	/**
 	 * @return Returns the hasBoughtStockThisTurn.
 	 */
-	public boolean hasBoughtStockThisTurn() {
+	public boolean hasBoughtStockThisTurn()
+	{
 		return hasBoughtStockThisTurn;
 	}
 
 	/**
 	 * Block cash allocated by a bid.
 	 * 
-	 * @author Erik Vos
 	 * @param amount
 	 *            Amount of cash to be blocked.
 	 * @return false if the amount was not available.
 	 */
-	public boolean blockCash(int amount) {
-		if (amount > wallet - blockedCash) {
+	public boolean blockCash(int amount)
+	{
+		if (amount > wallet - blockedCash)
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			blockedCash += amount;
 			return true;
 		}
@@ -292,15 +342,18 @@ public class Player implements CashHolder {
 	/**
 	 * Unblock cash.
 	 * 
-	 * @author Erik Vos
 	 * @param amount
 	 *            Amount to be unblocked.
 	 * @return false if the given amount was not blocked.
 	 */
-	public boolean unblockCash(int amount) {
-		if (amount > blockedCash) {
+	public boolean unblockCash(int amount)
+	{
+		if (amount > blockedCash)
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			blockedCash -= amount;
 			return true;
 		}
@@ -309,10 +362,10 @@ public class Player implements CashHolder {
 	/**
 	 * Unblock all blocked cash.
 	 * 
-	 * @author Erik Vos
 	 * @return Always true.
 	 */
-	public boolean unblockCash() {
+	public boolean unblockCash()
+	{
 		blockedCash = 0;
 		return true;
 	}
@@ -322,15 +375,18 @@ public class Player implements CashHolder {
 	 * 
 	 * @return
 	 */
-	public int getUnblockedCash() {
+	public int getUnblockedCash()
+	{
 		return wallet - blockedCash;
 	}
-	
-	public int getBlockedCash() {
-	    return blockedCash;
+
+	public int getBlockedCash()
+	{
+		return blockedCash;
 	}
-	
-	public int getIndex() {
+
+	public int getIndex()
+	{
 		return index;
 	}
 }

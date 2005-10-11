@@ -9,12 +9,16 @@ import java.util.List;
 /**
  * @author Erik Vos
  */
-public class Phase implements PhaseI {
+public class Phase implements PhaseI
+{
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see game.PhaseI#getAvailableTrainTypes()
 	 */
-	public List getAvailableTrainTypes() {
+	public List getAvailableTrainTypes()
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

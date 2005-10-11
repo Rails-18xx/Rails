@@ -18,6 +18,7 @@ import ui.*;
 public abstract class HexMap extends JPanel implements MouseListener,
 		WindowListener
 {
+	
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h = new GUIHex[6][6];
 
@@ -52,16 +53,12 @@ public abstract class HexMap extends JPanel implements MouseListener,
 
 	protected ImageLoader imageLoader = new ImageLoader();
 
-	// For scrollable implementation.
-	private int maxUnitIncrement = 1;
-
 	private boolean hexSelected = false;
 
 	// //////////
 	// Abstract Methods
 	// /////////
 	protected abstract void setupHexesGUI();
-
 	protected abstract void setupEntrancesGUI();
 
 	void setupHexes()
