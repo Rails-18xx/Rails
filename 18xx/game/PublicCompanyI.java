@@ -12,14 +12,15 @@ import java.util.*;
  * 
  * @author Erik Vos
  */
-public interface PublicCompanyI extends CompanyI, CashHolder {
+public interface PublicCompanyI extends CompanyI, CashHolder
+{
 
 	public static final int CAPITALISE_FULL = 0;
 
 	public static final int CAPITALISE_INCREMENTAL = 1;
 
 	public void init2() throws ConfigurationException;
-	
+
 	/**
 	 * Return the company token background colour.
 	 * 
@@ -84,13 +85,13 @@ public interface PublicCompanyI extends CompanyI, CashHolder {
 
 	public boolean hasFloated();
 
-	   /**
-	    * Has the company already operated?
-	    * 
-	    * @return true if the company has operated.
-	    */
-	   public boolean hasOperated();
-	   
+	/**
+	 * Has the company already operated?
+	 * 
+	 * @return true if the company has operated.
+	 */
+	public boolean hasOperated();
+
 	/**
 	 * Start the company and set its initial (par) price.
 	 * 
@@ -178,9 +179,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder {
 	public Portfolio getPortfolio();
 
 	public void payOut(int amount);
-	
-    public void splitRevenue (int amount);
 
+	public void splitRevenue(int amount);
 
 	public void withhold(int amount);
 

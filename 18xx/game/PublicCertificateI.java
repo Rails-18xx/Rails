@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificateI.java,v 1.2 2005/05/12 22:22:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificateI.java,v 1.3 2005/10/11 17:35:29 wakko666 Exp $
  * 
  * Created on 09-Apr-2005 by Erik Vos
  * 
@@ -12,12 +12,12 @@ package game;
 public interface PublicCertificateI extends Certificate {
 
 	/**
-	 * @return
+	 * @return if company is available
 	 */
 	public boolean isAvailable();
 
 	/**
-	 * @return
+	 * @return if this certificate is a president's share
 	 */
 	public boolean isPresidentShare();
 

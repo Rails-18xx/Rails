@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.5 2005/08/08 20:08:27 evos Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.6 2005/10/11 17:35:29 wakko666 Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
@@ -38,17 +38,17 @@ public interface CompanyTypeI {
 
 	
 	/**
-	 * @return
+	 * @return phase all privates close
 	 */
 	public int getAllClosePhase();
 
 	/**
-	 * @return
+	 * @return auction type
 	 */
 	public String getAuctionType();
 
 	/**
-	 * @return
+	 * @return name
 	 */
 	public String getName();
 
@@ -63,20 +63,10 @@ public interface CompanyTypeI {
 	public void setAuctionType(String string);
 
 	/**
-	 * @return
+	 * @return class name
 	 */
 	public String getClassName();
 
-	/*
-	public void releaseDomElement ();
-	public Element getDomElement ();
-	*/
-	/*
-	public void addCertificate (PublicCertificateI certificate);
-	
-	public List getDefaultCertificates ();
-	*/
-	
 	public void setCapitalisation (int mode);
 	public void setCapitalisation (String mode);
 	public int getCapitalisation ();

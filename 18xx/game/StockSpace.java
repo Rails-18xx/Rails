@@ -15,291 +15,295 @@ import java.util.*;
 public class StockSpace implements StockSpaceI
 {
 
-   /*--- Class attributes ---*/
+	/*--- Class attributes ---*/
 
-   /*--- Instance attributes ---*/
-   protected String name;
-   protected int row;
-   protected int column;
-   protected int price;
-   protected String colour;
-   protected boolean belowLedge = false; // For 1870
-   protected boolean leftOfLedge = false; // For 1870
-   protected boolean closesCompany = false;// For 1856 and other games
-   protected boolean endsGame = false; // For 1841 and other games
-   protected boolean start = false; // Company may start here
-   protected boolean hasTokens = false;
-   protected StockSpaceTypeI type = null;
-   protected ArrayList tokens = new ArrayList();
-   protected ArrayList fixedStartPrices = new ArrayList();
+	/*--- Instance attributes ---*/
+	protected String name;
+	protected int row;
+	protected int column;
+	protected int price;
+	protected String colour;
+	protected boolean belowLedge = false; // For 1870
+	protected boolean leftOfLedge = false; // For 1870
+	protected boolean closesCompany = false;// For 1856 and other games
+	protected boolean endsGame = false; // For 1841 and other games
+	protected boolean start = false; // Company may start here
+	protected boolean hasTokens = false;
+	protected StockSpaceTypeI type = null;
+	protected ArrayList tokens = new ArrayList();
+	protected ArrayList fixedStartPrices = new ArrayList();
 
-   /*--- Contructors ---*/
-   public StockSpace(String name, int price, StockSpaceTypeI type)
-   {
-      this.name = name;
-      this.price = price;
-      this.type = type;
-      this.row = Integer.parseInt(name.substring(1)) - 1;
-      this.column = (int) (name.toUpperCase().charAt(0) - '@') - 1;
-      this.hasTokens = false;
-   }
+	/*--- Contructors ---*/
+	public StockSpace(String name, int price, StockSpaceTypeI type)
+	{
+		this.name = name;
+		this.price = price;
+		this.type = type;
+		this.row = Integer.parseInt(name.substring(1)) - 1;
+		this.column = (int) (name.toUpperCase().charAt(0) - '@') - 1;
+		this.hasTokens = false;
+	}
 
-   public StockSpace(String name, int price)
-   {
-      this(name, price, null);
-   }
+	public StockSpace(String name, int price)
+	{
+		this(name, price, null);
+	}
 
-   // No constructors for the booleans. Use the setters.
+	// No constructors for the booleans. Use the setters.
 
-   /*--- Token handling methods ---*/
-   /**
-    * Add a token at the end of the array (i.e. at the bottom of the pile)
-    * 
-    * @param company
-    *           The company object to add.
-    */
-   public void addToken(CompanyI company)
-   {
-      tokens.add(company);
-      this.setHasTokens(true);
-   }
+	/*--- Token handling methods ---*/
+	/**
+	 * Add a token at the end of the array (i.e. at the bottom of the pile)
+	 * 
+	 * @param company
+	 *            The company object to add.
+	 */
+	public void addToken(CompanyI company)
+	{
+		tokens.add(company);
+		this.setHasTokens(true);
+	}
 
-   /**
-    * Remove a token from the pile.
-    * 
-    * @param company
-    *           The company object to remove.
-    * @return False if the token was not found.
-    */
-   public boolean removeToken(CompanyI company)
-   {
-      int index = tokens.indexOf(company);
-      if (index >= 0)
-      {
-         tokens.remove(index);
-         
-         if(tokens.size() < 1)
-         {
-            this.setHasTokens(false);
-         }
-         
-         return true;
-      }
-      else
-      {
-         return false;
-      }
-   }
+	/**
+	 * Remove a token from the pile.
+	 * 
+	 * @param company
+	 *            The company object to remove.
+	 * @return False if the token was not found.
+	 */
+	public boolean removeToken(CompanyI company)
+	{
+		int index = tokens.indexOf(company);
+		if (index >= 0)
+		{
+			tokens.remove(index);
 
-   /**
-    * @return
-    */
-   public ArrayList getTokens()
-   {
-      return tokens;
-   }
-   
-   /**
-    * Find the stack position of a company token
-    * @return Stock position: 0 = top, increasing towards the bottom.
-    * -1 if not found.
-    */
-   public int getStackPosition(PublicCompanyI company) {
-       int pos = -1;
-       Iterator it = tokens.iterator();
-       while (it.hasNext()) {
-           pos++;
-           if ((PublicCompanyI)it.next() == company) return pos;
-       }
-       return -1;
-   }
-   
-   /*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
-   public void addFixedStartPrice (PublicCompanyI company) {
-   	fixedStartPrices.add(company);
-   }
-   
-   public List getFixedStartPrices () {
-   	return fixedStartPrices;
-   }
-   
+			if (tokens.size() < 1)
+			{
+				this.setHasTokens(false);
+			}
 
-   /*--- Getters ---*/
-   /**
-    * @return TRUE is the square is just above a ledge.
-    */
-   public boolean isBelowLedge()
-   {
-      return belowLedge;
-   }
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-   /**
-    * @return TRUE if the square closes companies landing on it.
-    */
-   public boolean closesCompany()
-   {
-      return closesCompany;
-   }
+	/**
+	 * @return
+	 */
+	public ArrayList getTokens()
+	{
+		return tokens;
+	}
 
-   /**
-    * @return The square's colour.
-    */
-   public String getColour()
-   {
-      return type.getColour();
-   }
+	/**
+	 * Find the stack position of a company token
+	 * 
+	 * @return Stock position: 0 = top, increasing towards the bottom. -1 if not
+	 *         found.
+	 */
+	public int getStackPosition(PublicCompanyI company)
+	{
+		int pos = -1;
+		Iterator it = tokens.iterator();
+		while (it.hasNext())
+		{
+			pos++;
+			if ((PublicCompanyI) it.next() == company)
+				return pos;
+		}
+		return -1;
+	}
 
-   /**
-    * @return TRUE if the game ends if a company lands on this square.
-    */
-   public boolean endsGame()
-   {
-      return endsGame;
-   }
+	/*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
+	public void addFixedStartPrice(PublicCompanyI company)
+	{
+		fixedStartPrices.add(company);
+	}
 
-   /**
-    * @return The stock price associated with the square.
-    */
-   public int getPrice()
-   {
-      return price;
-   }
+	public List getFixedStartPrices()
+	{
+		return fixedStartPrices;
+	}
 
-   /**
-    * @return
-    */
-   public int getColumn()
-   {
-      return column;
-   }
+	/*--- Getters ---*/
+	/**
+	 * @return TRUE is the square is just above a ledge.
+	 */
+	public boolean isBelowLedge()
+	{
+		return belowLedge;
+	}
 
-   /**
-    * @return
-    */
-   public String getName()
-   {
-      return name;
-   }
+	/**
+	 * @return TRUE if the square closes companies landing on it.
+	 */
+	public boolean closesCompany()
+	{
+		return closesCompany;
+	}
 
-   /**
-    * @return
-    */
-   public StockSpaceTypeI getType()
-   {
-      return type;
-   }
+	/**
+	 * @return The square's colour.
+	 */
+	public String getColour()
+	{
+		return type.getColour();
+	}
 
-   /**
-    * @return
-    */
-   public int getRow()
-   {
-      return row;
-   }
+	/**
+	 * @return TRUE if the game ends if a company lands on this square.
+	 */
+	public boolean endsGame()
+	{
+		return endsGame;
+	}
 
-   /**
-    * @return
-    */
-   public boolean isStart()
-   {
-      return start;
-   }
+	/**
+	 * @return The stock price associated with the square.
+	 */
+	public int getPrice()
+	{
+		return price;
+	}
 
-   /**
-    * @return
-    */
-   public boolean isLeftOfLedge()
-   {
-      return leftOfLedge;
-   }
+	/**
+	 * @return
+	 */
+	public int getColumn()
+	{
+		return column;
+	}
 
-   /**
-    * @return
-    */
-   public boolean isNoBuyLimit()
-   {
-      return type != null && type.isNoBuyLimit();
-   }
+	/**
+	 * @return
+	 */
+	public String getName()
+	{
+		return name;
+	}
 
-   /**
-    * @return
-    */
-   public boolean isNoCertLimit()
-   {
-      return type != null && type.isNoCertLimit();
-   }
+	/**
+	 * @return
+	 */
+	public StockSpaceTypeI getType()
+	{
+		return type;
+	}
 
-   /**
-    * @return
-    */
-   public boolean isNoHoldLimit()
-   {
-      return type != null && type.isNoHoldLimit();
-   }
+	/**
+	 * @return
+	 */
+	public int getRow()
+	{
+		return row;
+	}
 
-   /*--- Setters ---*/
-   /**
-    * @param b
-    *           See isAboveLedge.
-    */
-   public void setBelowLedge(boolean b)
-   {
-      belowLedge = b;
-   }
+	/**
+	 * @return
+	 */
+	public boolean isStart()
+	{
+		return start;
+	}
 
-   /**
-    * @param b
-    *           See isClosesCompany.
-    */
-   public void setClosesCompany(boolean b)
-   {
-      closesCompany = b;
-   }
+	/**
+	 * @return
+	 */
+	public boolean isLeftOfLedge()
+	{
+		return leftOfLedge;
+	}
 
-   /**
-    * @param b
-    *           See isEndsGame.
-    */
-   public void setEndsGame(boolean b)
-   {
-      endsGame = b;
-   }
+	/**
+	 * @return
+	 */
+	public boolean isNoBuyLimit()
+	{
+		return type != null && type.isNoBuyLimit();
+	}
 
-   /**
-    * @param b
-    */
-   public void setStart(boolean b)
-   {
-      start = b;
-   }
+	/**
+	 * @return
+	 */
+	public boolean isNoCertLimit()
+	{
+		return type != null && type.isNoCertLimit();
+	}
 
-   /**
-    * @param b
-    */
-   public void setLeftOfLedge(boolean b)
-   {
-      leftOfLedge = b;
-   }
+	/**
+	 * @return
+	 */
+	public boolean isNoHoldLimit()
+	{
+		return type != null && type.isNoHoldLimit();
+	}
 
-   /**
-    * @return Returns the hasTokens.
-    */
-   public boolean hasTokens()
-   {
-      return hasTokens;
-   }
+	/*--- Setters ---*/
+	/**
+	 * @param b
+	 *            See isAboveLedge.
+	 */
+	public void setBelowLedge(boolean b)
+	{
+		belowLedge = b;
+	}
 
-   /**
-    * @param hasTokens
-    *           The hasTokens to set.
-    */
-   public void setHasTokens(boolean b)
-   {
-      hasTokens = b;
-   }
-   
-   public String toString()
-   {
-     return "Location: " + row + "," + column + " Price: " + price; 
-   }
+	/**
+	 * @param b
+	 *            See isClosesCompany.
+	 */
+	public void setClosesCompany(boolean b)
+	{
+		closesCompany = b;
+	}
+
+	/**
+	 * @param b
+	 *            See isEndsGame.
+	 */
+	public void setEndsGame(boolean b)
+	{
+		endsGame = b;
+	}
+
+	/**
+	 * @param set space as a starting space
+	 */
+	public void setStart(boolean b)
+	{
+		start = b;
+	}
+
+	/**
+	 * @param set if token is left of ledge 
+	 */
+	public void setLeftOfLedge(boolean b)
+	{
+		leftOfLedge = b;
+	}
+
+	/**
+	 * @return Returns if the space hasTokens.
+	 */
+	public boolean hasTokens()
+	{
+		return hasTokens;
+	}
+
+	/**
+	 * @param hasTokens
+	 */
+	public void setHasTokens(boolean b)
+	{
+		hasTokens = b;
+	}
+
+	public String toString()
+	{
+		return "Location: " + row + "," + column + " Price: " + price;
+	}
 }

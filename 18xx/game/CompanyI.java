@@ -42,36 +42,37 @@ public interface CompanyI {
 
 	/**
      * Returns the type name of the Company
-	 * @return
+	 * @return type name
 	 */
 	public String getTypeName();
+	
 	/**
-	 * @return
+	 * @return Company Value
 	 */
 	int getValue();
 
 
 	/**
-	 * @param i
+	 * @param Company Value
 	 */
 	void setValue(int i);
 
 	/**
-	 * @return
+	 * @return Company number
 	 */
 	int getCompanyNumber();
 	
 	/**
-	 * @return
+	 * @return true if Company is closed.
 	 */
 	boolean isClosed();
 	/**
-	 * @param b
+	 * Set company to closed
 	 */
 	void setClosed();
 
 	/**
-	 * @return
+	 * @return 
 	 */
 	public int getCertLimitCount();
 	/**

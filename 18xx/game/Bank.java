@@ -19,236 +19,266 @@
 package game;
 
 import java.util.*;
-
 import org.w3c.dom.*;
-
 import util.XmlUtils;
 
 public class Bank implements CashHolder, ConfigurableComponentI
 {
-    private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
-    /** The Bank's amont of cash */
-   private static int money;
-   
-   private static int gameType;
-   
-   /** The IPO */
-   private static Portfolio ipo = null;
-   /** The Bank Pool */
-   private static Portfolio pool = null;
-   /** Collection of items that will (may) become available in the future */
-   private static Portfolio unavailable = null;
-   /** Collection of items that have bene discarded (but are kept to allow Undo) */
-   private static Portfolio scrapHeap = null;
-   
-   private static Bank instance = null;
-   
-   /** The money format template. '@' is replsced by the amount, the rest is copied. */
-   private static String moneyFormat = "$@";
-   
-   private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
-   public static Bank getInstance()
-   {
-      return instance;
-   }
+	/** Default limit of shares in the bank pool */
+	private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
+	
+	/** The Bank's amont of cash */
+	private static int money;
 
-   /**
-    * Central method for transferring all cash.
-    * 
-    * @param from
-    *           Who pays the money (null = Bank).
-    * @param to
-    *           Who received the money (null = Bank).
-    * @param amount
-    *           The amount of money.
-    */
-   public static void transferCash(CashHolder from, CashHolder to, int amount)
-   {
-      if (from == null)
-         from = instance;
-      else if (to == null)
-         to = instance;
-      //System.out.println("Amount: " + amount);
-      from.addCash(-amount);
-      to.addCash(amount);
-   }
+	private static int gameType;
 
-   public Bank()
-   {
+	/** The IPO */
+	private static Portfolio ipo = null;
+	/** The Bank Pool */
+	private static Portfolio pool = null;
+	/** Collection of items that will (may) become available in the future */
+	private static Portfolio unavailable = null;
+	/** Collection of items that have bene discarded (but are kept to allow Undo) */
+	private static Portfolio scrapHeap = null;
 
-      instance = this;
-      // Create the IPO and the Bank Pool.
-      // Here the Pool pays out, but that should be made configurable.
-      ipo = new Portfolio("IPO", this, false);
-      pool = new Portfolio("Pool", this, true);
-      unavailable = new Portfolio("Unavailable", this, false);
-      scrapHeap = new Portfolio ("ScrapHeap", this, false);
+	private static Bank instance = null;
 
-   }
+	/**
+	 * The money format template. '@' is replsced by the amount, the rest is
+	 * copied.
+	 */
+	private static String moneyFormat = "$@";
 
-   public void configureFromXML(Element element) throws ConfigurationException
-   {
-      NamedNodeMap nnp;
-      int number, startCash, certLimit;
-      int maxNumber = 0;
+	private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
-      // Parse the Bank element
-      Element node = (Element) element.getElementsByTagName("Bank").item(0);
-      if (node != null)
-      {
-         nnp = node.getAttributes();
-         money = XmlUtils.extractIntegerAttribute(nnp, "amount");
-      }
-      if (money == 0)
-         money = 12000;
-      Log.write("Bank size is " + money);
+	/**
+	 * @return an instance of the Bank object
+	 */
+	public static Bank getInstance()
+	{
+		return instance;
+	}
 
-      NodeList players = element.getElementsByTagName("Players");
-      for (int i = 0; i < players.getLength(); i++)
-      {
-         nnp = ((Element) players.item(i)).getAttributes();
-         number = XmlUtils.extractIntegerAttribute(nnp, "number");
-         startCash = XmlUtils.extractIntegerAttribute(nnp, "cash");
-         certLimit = XmlUtils.extractIntegerAttribute(nnp, "certLimit");
+	/**
+	 * Central method for transferring all cash.
+	 * 
+	 * @param from
+	 *            Who pays the money (null = Bank).
+	 * @param to
+	 *            Who received the money (null = Bank).
+	 * @param amount
+	 *            The amount of money.
+	 */
+	public static void transferCash(CashHolder from, CashHolder to, int amount)
+	{
+		if (from == null)
+			from = instance;
+		else if (to == null)
+			to = instance;
+		// System.out.println("Amount: " + amount);
+		from.addCash(-amount);
+		to.addCash(amount);
+	}
 
-         Player.setLimits(number, startCash, certLimit);
-         
-         if (i == 0)
-         {
-            Player.MIN_PLAYERS = number;
-            System.out.println("MIN_PLAYERS: " + Player.MIN_PLAYERS);
-         }
-         
-         if(i == players.getLength() - 1)
-         {
-            Player.MAX_PLAYERS = number;
-            System.out.println("MAX_PLAYERS: " + Player.MAX_PLAYERS);
-         }
-      }
-      
-      node = (Element) element.getElementsByTagName("PoolLimit").item(0);
-      if (node != null) {
-          nnp = node.getAttributes();
-          poolShareLimit = XmlUtils.extractIntegerAttribute(nnp, "percentage", DEFAULT_POOL_SHARE_LIMIT);
-      }
+	public Bank()
+	{
 
-      node = (Element) element.getElementsByTagName("Money").item(0);
-      if (node != null) {
-          nnp = node.getAttributes();
-          moneyFormat = XmlUtils.extractStringAttribute(nnp, "format", "$@");
-      }
+		instance = this;
+		// Create the IPO and the Bank Pool.
+		// Here the Pool pays out, but that should be made configurable.
+		ipo = new Portfolio("IPO", this, false);
+		pool = new Portfolio("Pool", this, true);
+		unavailable = new Portfolio("Unavailable", this, false);
+		scrapHeap = new Portfolio("ScrapHeap", this, false);
 
-   }
-   
-   public static void setShareLimit (int percentage) {
-       poolShareLimit = percentage;
-   }
+	}
 
-   /**
-    * Put all available certificates in the IPO
-    */
-   public static void initIpo()
-   {
-      // Add privates
-      List privates = Game.getCompanyManager().getAllPrivateCompanies();
-      Iterator it = privates.iterator();
-      PrivateCompanyI priv;
-      while (it.hasNext())
-      {
-         ipo.addPrivate(priv = (PrivateCompanyI) it.next());
-      }
+	   /**
+	    * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+	    */
+	public void configureFromXML(Element element) throws ConfigurationException
+	{
+		NamedNodeMap nnp;
+		int number, startCash, certLimit;
+		int maxNumber = 0;
 
-      // Add public companies
-      List companies = Game.getCompanyManager().getAllPublicCompanies();
-      it = companies.iterator();
-      PublicCompanyI comp;
-      PublicCertificateI cert;
-      while (it.hasNext())
-      {
-      	comp = (PublicCompanyI) it.next();
-         Iterator it2 = (comp).getCertificates().iterator();
-         while (it2.hasNext())
-         {
-         	cert = (PublicCertificateI) it2.next();
-            ipo.addCertificate(cert);
-//Log.write("*** Cert"+cert+"added to IPO");
-         }
-      }
-   }
+		// Parse the Bank element
+		Element node = (Element) element.getElementsByTagName("Bank").item(0);
+		if (node != null)
+		{
+			nnp = node.getAttributes();
+			money = XmlUtils.extractIntegerAttribute(nnp, "amount");
+		}
+		if (money == 0)
+			money = 12000;
+		Log.write("Bank size is " + money);
 
-   /**
-    * @return
-    */
-   public static int getGameType()
-   {
-      return gameType;
-   }
+		NodeList players = element.getElementsByTagName("Players");
+		for (int i = 0; i < players.getLength(); i++)
+		{
+			nnp = ((Element) players.item(i)).getAttributes();
+			number = XmlUtils.extractIntegerAttribute(nnp, "number");
+			startCash = XmlUtils.extractIntegerAttribute(nnp, "cash");
+			certLimit = XmlUtils.extractIntegerAttribute(nnp, "certLimit");
 
-   /**
-    * @return
-    */
-   public static Portfolio getIpo()
-   {
-      return ipo;
-   }
-   
-   public static Portfolio getScrapHeap() {
-       return scrapHeap;
-   }
+			Player.setLimits(number, startCash, certLimit);
 
-   /**
-    * @return
-    */
-   public int getCash()
-   {
-      return money;
-   }
+			if (i == 0)
+			{
+				Player.MIN_PLAYERS = number;
+				System.out.println("MIN_PLAYERS: " + Player.MIN_PLAYERS);
+			}
 
-   public void addCash(int amount)
-   {
-      money += amount;
-   }
+			if (i == players.getLength() - 1)
+			{
+				Player.MAX_PLAYERS = number;
+				System.out.println("MAX_PLAYERS: " + Player.MAX_PLAYERS);
+			}
+		}
 
-   /**
-    * @return
-    */
-   public static Portfolio getPool()
-   {
-      return pool;
-   }
+		node = (Element) element.getElementsByTagName("PoolLimit").item(0);
+		if (node != null)
+		{
+			nnp = node.getAttributes();
+			poolShareLimit = XmlUtils.extractIntegerAttribute(nnp,
+					"percentage",
+					DEFAULT_POOL_SHARE_LIMIT);
+		}
 
-   public static Portfolio getUnavailable() {
-       return unavailable;
-   }
-   /**
-    * @param i
-    */
-   public void setCash(int i)
-   {
-      money = i;
-   }
+		node = (Element) element.getElementsByTagName("Money").item(0);
+		if (node != null)
+		{
+			nnp = node.getAttributes();
+			moneyFormat = XmlUtils.extractStringAttribute(nnp, "format", "$@");
+		}
 
-   public String getName()
-   {
-      return "Bank";
-   }
-   
-   public String getFormattedCash () {
-       return Bank.format (money);
-   }
-   
-   /**
-    * Get the maximum share percentage that may be sold to the Bank Pool.
-    * @return The maximum percentage.
-    */
-   public static int getPoolShareLimit () {
-       return poolShareLimit;
-   }
-   
-   public static String format (int amount) {
-       return moneyFormat.replaceFirst ("@", ""+amount);
-   }
-   
+	}
+
+	/**
+	 * @param percentage of a company allowed to be in the Bank pool.
+	 */
+	public static void setShareLimit(int percentage)
+	{
+		poolShareLimit = percentage;
+	}
+
+	/**
+	 * Put all available certificates in the IPO
+	 */
+	public static void initIpo()
+	{
+		// Add privates
+		List privates = Game.getCompanyManager().getAllPrivateCompanies();
+		Iterator it = privates.iterator();
+		PrivateCompanyI priv;
+		while (it.hasNext())
+		{
+			ipo.addPrivate(priv = (PrivateCompanyI) it.next());
+		}
+
+		// Add public companies
+		List companies = Game.getCompanyManager().getAllPublicCompanies();
+		it = companies.iterator();
+		PublicCompanyI comp;
+		PublicCertificateI cert;
+		while (it.hasNext())
+		{
+			comp = (PublicCompanyI) it.next();
+			Iterator it2 = (comp).getCertificates().iterator();
+			while (it2.hasNext())
+			{
+				cert = (PublicCertificateI) it2.next();
+				ipo.addCertificate(cert);
+				// Log.write("*** Cert"+cert+"added to IPO");
+			}
+		}
+	}
+
+	/**
+	 * @return Which type of game we're playing (1830, 1856, 1870, etc.)
+	 */
+	public static int getGameType()
+	{
+		return gameType;
+	}
+
+	/**
+	 * @return IPO Portfolio
+	 */
+	public static Portfolio getIpo()
+	{
+		return ipo;
+	}
+
+	public static Portfolio getScrapHeap()
+	{
+		return scrapHeap;
+	}
+
+	/**
+	 * @return Bank's current cash level
+	 */
+	public int getCash()
+	{
+		return money;
+	}
+
+	/**
+	 * Adds cash back to the bank
+	 */
+	public void addCash(int amount)
+	{
+		money += amount;
+	}
+
+	/**
+	 * @return Portfolio of stock in Bank Pool
+	 */
+	public static Portfolio getPool()
+	{
+		return pool;
+	}
+
+	/**
+	 * @return Portfolio of unavailable shares
+	 */
+	public static Portfolio getUnavailable()
+	{
+		return unavailable;
+	}
+
+	/**
+	 * @param Set Bank's cash.
+	 */
+	public void setCash(int i)
+	{
+		money = i;
+	}
+
+	public String getName()
+	{
+		return "Bank";
+	}
+
+	public String getFormattedCash()
+	{
+		return Bank.format(money);
+	}
+
+	/**
+	 * Get the maximum share percentage that may be sold to the Bank Pool.
+	 * 
+	 * @return The maximum percentage.
+	 */
+	public static int getPoolShareLimit()
+	{
+		return poolShareLimit;
+	}
+
+	public static String format(int amount)
+	{
+		return moneyFormat.replaceFirst("@", "" + amount);
+	}
 
 }

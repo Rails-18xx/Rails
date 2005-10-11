@@ -33,7 +33,7 @@ import java.util.*;
 public class OperatingRound implements Round
 {
 
-	/* Transient memory (per round only) */
+	/** Transient memory (per round only) */
 	protected Player currentPlayer;
 	protected int currentPlayerIndex;
 	protected int step;
@@ -47,13 +47,13 @@ public class OperatingRound implements Round
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
 
-	/* Permanent memory */
+	/** Permanent memory */
 	static protected Player[] players;
 	static protected PublicCompanyI[] companies;
 	static protected int relativeORNumber = 0;
 	static protected int cumulativeORNumber = 0;
 
-	/* Constants */
+	/** Constants */
 	public static final int SPLIT_NOT_ALLOWED = 0;
 	public static final int SPLIT_ROUND_UP = 1; // More money to the
 												// shareholders
@@ -603,12 +603,16 @@ public class OperatingRound implements Round
 	}
 
 	/**
+	 * Buy a Train, no train exchanged
 	 */
 	public boolean buyTrain(String companyName, TrainI train, int price)
 	{
 		return buyTrain(companyName, train, price, null);
 	}
 
+	/**
+	 * Buy a Train, exchanging a train
+	 */
 	public boolean buyTrain(String companyName, TrainI train, int price,
 			TrainI exchangedTrain)
 	{
@@ -928,8 +932,6 @@ public class OperatingRound implements Round
 	/**
 	 * Get all possible tile build costs in a game. This is a (perhaps
 	 * temporary) method to play without a map.
-	 * 
-	 * @author Erik Vos
 	 */
 	public int[] getTileBuildCosts()
 	{
@@ -940,8 +942,6 @@ public class OperatingRound implements Round
 	/**
 	 * Get all possible token laying costs in a game. This is a (perhaps
 	 * temporary) method to play without a map.
-	 * 
-	 * @author Erik Vos
 	 */
 	public int[] getTokenLayCosts()
 	{
@@ -952,8 +952,6 @@ public class OperatingRound implements Round
 	/**
 	 * Get all train costs in a game. This is a (temporary) method to play
 	 * without trains.
-	 * 
-	 * @author Erik Vos
 	 */
 	public int[] getTrainCosts()
 	{

@@ -9,8 +9,9 @@ import java.util.List;
 /**
  * @author Erik Vos
  */
-public interface PhaseI {
-	
+public interface PhaseI
+{
+
 	public List getAvailableTrainTypes();
 
 }

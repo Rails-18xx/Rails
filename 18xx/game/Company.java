@@ -1,4 +1,3 @@
-
 /*
  * Created on 05mar2005
  *
@@ -8,124 +7,140 @@ package game;
 /**
  * @author Erik Vos
  */
-public abstract class Company implements CompanyI, ConfigurableComponentI, Cloneable {
-	
+public abstract class Company implements CompanyI, ConfigurableComponentI,
+		Cloneable
+{
+
 	protected static int numberOfCompanies = 0;
 	protected String name;
 	protected CompanyTypeI type;
 	protected int companyNumber; // For internal use
-	
+
 	protected Portfolio portfolio = null;
-	
+
 	/**
-	 * The value per certificate at the end of the game.
-	 * Default 0 (for privates).
+	 * The value per certificate at the end of the game. Default 0 (for
+	 * privates).
 	 */
 	protected int value = 0;
 	/**
-	 * Twice the amount each certificate counts against the limit
-	 * (this way we take care for certs that count for 0.5)
+	 * Twice the amount each certificate counts against the limit (this way we
+	 * take care for certs that count for 0.5)
 	 */
 	protected int certLimitCount = 2;
-	
+
 	protected boolean closed = false;
 
-	public Company() {
+	public Company()
+	{
 		this.companyNumber = numberOfCompanies++;
 	}
-	
-	public void init (String name, CompanyTypeI type) {
+
+	public void init(String name, CompanyTypeI type)
+	{
 		this.name = name;
 		this.type = type;
 	}
-		
+
 	/**
-	 * @return
+	 * @return Number of Companies
 	 */
-	public static int getNumberOfCompanies() {
+	public static int getNumberOfCompanies()
+	{
 		return numberOfCompanies;
 	}
 
 	/**
-	 * @return
+	 * @return This company's number
 	 */
-	public int getNumber() {
+	public int getNumber()
+	{
 		return companyNumber;
 	}
 
 	/**
-	 * @return
+	 * @return whether this company is closed
 	 */
-	public boolean isClosed() {
+	public boolean isClosed()
+	{
 		return closed;
 	}
 
 	/**
-	 * @param b
+	 * Close this company.
 	 */
-	public void setClosed() {
+	public void setClosed()
+	{
 		closed = true;
 	}
 
 	/**
-	 * @return
+	 * @return Type of company (Public/Private)
 	 */
-	public CompanyTypeI getType() {
+	public CompanyTypeI getType()
+	{
 		return type;
 	}
 
 	/**
-	 * @return
+	 * @return String for type of company (Public/Private)
 	 */
-	public String getTypeName() {
+	public String getTypeName()
+	{
 		return type.getName();
 	}
 
 	/**
-	 * @return
+	 * @return Name of company
 	 */
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
-
 
 	/**
 	 * @return
 	 */
-	public int getCertLimitCount() {
+	public int getCertLimitCount()
+	{
 		return certLimitCount;
 	}
 
 	/**
-	 * @return
+	 * @return This company's number
 	 */
-	public int getCompanyNumber() {
+	public int getCompanyNumber()
+	{
 		return companyNumber;
 	}
 
 	/**
-	 * @return
+	 * @return Value of this company
 	 */
-	public int getValue() {
+	public int getValue()
+	{
 		return value;
 	}
 
 	/**
 	 * @param i
 	 */
-	public void setCertLimitCount(int i) {
+	public void setCertLimitCount(int i)
+	{
 		certLimitCount = i;
 	}
 
 	/**
 	 * @param i
 	 */
-	public void setValue(int i) {
+	public void setValue(int i)
+	{
 		value = i;
 	}
 
-	public Object clone() throws CloneNotSupportedException {
-	    return super.clone();
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
 	}
 
 }

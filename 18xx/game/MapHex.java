@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.10 2005/10/06 21:41:16 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.11 2005/10/11 17:35:29 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -12,6 +12,8 @@ import org.w3c.dom.*;
 import util.XmlUtils;
 
 /**
+ * Represents a Hex on the Map from the Model side.
+ * 
  * @author Erik Vos
  */
 public class MapHex implements ConfigurableComponentI
@@ -42,6 +44,9 @@ public class MapHex implements ConfigurableComponentI
 	{
 	}
 
+	/**
+	 * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+	 */
 	public void configureFromXML(Element el) throws ConfigurationException
 	{
 		NamedNodeMap nnp = el.getAttributes();
@@ -62,7 +67,7 @@ public class MapHex implements ConfigurableComponentI
 		{
 			// Cannot occur!
 		}
-		
+
 		/*
 		 * Translate hex names (as on the board) to coordinates used for
 		 * drawing.
@@ -86,7 +91,8 @@ public class MapHex implements ConfigurableComponentI
 				y = (row + 1) / 2;
 			}
 		}
-		else // letters go vertical (normal case)
+		else
+		// letters go vertical (normal case)
 		{
 			row = letter - '@';
 			column = number;
@@ -103,7 +109,7 @@ public class MapHex implements ConfigurableComponentI
 				// Tiles with flat NS sides, letters go vertically.
 				// Tested for 18AL.
 				x = column;
-				y = (row+1) / 2;
+				y = (row + 1) / 2;
 			}
 		}
 
@@ -123,9 +129,10 @@ public class MapHex implements ConfigurableComponentI
 		{
 			preprintedTileId = -999;
 		}
-		
-		preprintedTileOrientation = 
-		    XmlUtils.extractIntegerAttribute(nnp, "orientation", 0);
+
+		preprintedTileOrientation = XmlUtils.extractIntegerAttribute(nnp,
+				"orientation",
+				0);
 
 	}
 
@@ -215,25 +222,29 @@ public class MapHex implements ConfigurableComponentI
 	{
 		return tileFileName;
 	}
-	
-    /**
-     * @return Returns the preprintedTileOrientation.
-     */
-    public int getPreprintedTileOrientation() {
-        return preprintedTileOrientation;
-    }
-    
-    public void setNeighbor (int orientation, MapHex neighbour) {
-        orientation %= 6;
-        neighbours[orientation] = neighbour;
-    }
-    
-    public MapHex getNeighbor (int orientation) {
-        return neighbours[orientation%6];
-    }
-    
-    public MapHex[] getNeighbors () {
-        return neighbours;
-    }
-    
+
+	/**
+	 * @return Returns the preprintedTileOrientation.
+	 */
+	public int getPreprintedTileOrientation()
+	{
+		return preprintedTileOrientation;
+	}
+
+	public void setNeighbor(int orientation, MapHex neighbour)
+	{
+		orientation %= 6;
+		neighbours[orientation] = neighbour;
+	}
+
+	public MapHex getNeighbor(int orientation)
+	{
+		return neighbours[orientation % 6];
+	}
+
+	public MapHex[] getNeighbors()
+	{
+		return neighbours;
+	}
+
 }

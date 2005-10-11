@@ -1,4 +1,3 @@
-
 /*
  * Created on 05mar2005
  *
@@ -12,143 +11,178 @@ import util.XmlUtils;
 /**
  * @author Erik Vos
  */
-public class PrivateCompany extends Company implements PrivateCompanyI {
-	
+public class PrivateCompany extends Company implements PrivateCompanyI
+{
+
 	protected static int numberOfPrivateCompanies = 0;
 	protected int privateNumber; // For internal use
-	
+
 	protected int basePrice = 0;
 	protected int revenue = 0;
 	protected String auctionType;
 	protected int closingPhase;
-	
+
 	protected boolean closed = false;
-	
-	public PrivateCompany() {
-		super ();
+
+	public PrivateCompany()
+	{
+		super();
 		this.privateNumber = numberOfPrivateCompanies++;
 	}
-	
-	public void configureFromXML(Element element) throws ConfigurationException {
+
+	/**
+	 * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+	 */
+	public void configureFromXML(Element element) throws ConfigurationException
+	{
 		NamedNodeMap nnp = element.getAttributes();
 		NamedNodeMap nnp2;
 
 		/* Configure private company features */
-		try {
-			basePrice = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "basePrice", "0"));
-			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp, "revenue", "0"));
-		} catch (Exception e) {
-			throw new ConfigurationException ("Configuration error for Private "+name, e);
+		try
+		{
+			basePrice = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
+					"basePrice",
+					"0"));
+			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
+					"revenue",
+					"0"));
+		}
+		catch (Exception e)
+		{
+			throw new ConfigurationException("Configuration error for Private "
+					+ name, e);
 		}
 
-		/* Complete configuration by adding features from the Private CompanyType */
+		/*
+		 * Complete configuration by adding features from the Private
+		 * CompanyType
+		 */
 		Element typeElement = element;
-		if (typeElement != null) {
+		if (typeElement != null)
+		{
 			NodeList properties = typeElement.getChildNodes();
 
-			for (int j = 0; j < properties.getLength(); j++) {
+			for (int j = 0; j < properties.getLength(); j++)
+			{
 
 				String propName = properties.item(j).getLocalName();
 				if (propName == null)
 					continue;
 
-				if (propName.equalsIgnoreCase("AllClose")) {
+				if (propName.equalsIgnoreCase("AllClose"))
+				{
 					nnp2 = properties.item(j).getAttributes();
-					closingPhase = XmlUtils.extractIntegerAttribute(nnp2, "phase", 0);
+					closingPhase = XmlUtils.extractIntegerAttribute(nnp2,
+							"phase",
+							0);
 				}
 
 			}
 		}
 	}
 
-
 	/**
-	 * @return
+	 * @return Private Company Number
 	 */
-	public int getPrivateNumber() {
+	public int getPrivateNumber()
+	{
 		return privateNumber;
 	}
 
-
 	/**
-	 * @return
+	 * @return Base Price
 	 */
-	public int getBasePrice() {
+	public int getBasePrice()
+	{
 		return basePrice;
 	}
 
 	/**
-	 * @return
+	 * @return Revenue
 	 */
-	public int getRevenue() {
+	public int getRevenue()
+	{
 		return revenue;
 	}
 
 	/**
-	 * @return
+	 * @return if Private is Closed
 	 */
-	public boolean isClosed() {
+	public boolean isClosed()
+	{
 		return closed;
 	}
 
 	/**
-	 * @return
+	 * @return Phase this Private closes
 	 */
-	public int getClosingPhase() {
+	public int getClosingPhase()
+	{
 		return closingPhase;
 	}
 
 	/**
-	 * @return
+	 * @return Portfolio of this Private
 	 */
-	public Portfolio getPortfolio() {
+	public Portfolio getPortfolio()
+	{
 		return portfolio;
 	}
 
 	/**
 	 * @param b
 	 */
-	public void setClosed () {
+	public void setClosed()
+	{
 		closed = true;
-	    Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
-	    Log.write ("Private "+name+" closes");
+		Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
+		Log.write("Private " + name + " closes");
 	}
 
 	/**
 	 * @param i
 	 */
-	public void setClosingPhase(int i) {
+	public void setClosingPhase(int i)
+	{
 		closingPhase = i;
 	}
 
 	/**
 	 * @param portfolio
 	 */
-	public void setHolder(Portfolio portfolio) {
+	public void setHolder(Portfolio portfolio)
+	{
 		this.portfolio = portfolio;
 	}
 
-	public void payOut () {
-		Log.write(portfolio.getOwner().getName()+" receives "
-		        +Bank.format(revenue)+" for "+name);
+	public void payOut()
+	{
+		Log.write(portfolio.getOwner().getName() + " receives "
+				+ Bank.format(revenue) + " for " + name);
 		Bank.transferCash(null, portfolio.getOwner(), revenue);
 	}
-	
+
 	public String toString()
 	{
-	   return "Private Company Number: " + privateNumber + " of " + PrivateCompany.numberOfPrivateCompanies;
+		return "Private Company Number: " + privateNumber + " of "
+				+ PrivateCompany.numberOfPrivateCompanies;
 	}
-	
-	public Object clone () {
-	    
-	    Object clone = null;
-	    try {
-	        clone = super.clone();
-	    } catch (CloneNotSupportedException e) {
-	        Log.error("Cannot clone company "+name);
-            System.out.println(e.getStackTrace());
-	    }
-	    return clone;
+
+	public Object clone()
+	{
+
+		Object clone = null;
+		try
+		{
+			clone = super.clone();
+		}
+		catch (CloneNotSupportedException e)
+		{
+			Log.error("Cannot clone company " + name);
+			System.out.println(e.getStackTrace());
+		}
+		return clone;
 	}
 
 }
