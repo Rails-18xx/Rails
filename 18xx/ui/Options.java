@@ -28,6 +28,13 @@ import java.util.*;
 import java.io.*;
 import game.*;
 
+/**
+ * The Options dialog window displays the first window presented to the user.
+ * This window contains all of the options available for starting a new game.
+ * 
+ * @author Brett
+ *
+ */
 public class Options extends JDialog implements ActionListener
 {
    GridBagConstraints gc;
@@ -146,7 +153,7 @@ public class Options extends JDialog implements ActionListener
       this.getContentPane().add(buttonPane, gc); 
    }
 
-   //FIXME: Ridiculously rudimentary method for populating a ComboBox
+   //FIXME: Ridiculously rudimentary and fragile method for populating a ComboBox
    private String[] getGameList()
    {
       File dataDir = new File("./data/");
@@ -199,9 +206,7 @@ public class Options extends JDialog implements ActionListener
          try
          {
             this.setVisible(false);
-            /*
-            Game.NewGame(gameNameBox.getSelectedItem().toString(), playerNames);
-            */
+
             Game.initialise(gameNameBox.getSelectedItem().toString());
             Game.getPlayerManager(playerNames);
             GameManager.getInstance().startGame();

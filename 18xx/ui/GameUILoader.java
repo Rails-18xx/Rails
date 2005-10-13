@@ -4,6 +4,8 @@
 package ui;
 
 /**
+ * This class is called by main() and loads all of the UI components
+ * 
  * @author blentz
  */
 public class GameUILoader

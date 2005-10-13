@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.20 2005/10/07 23:32:18 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.21 2005/10/13 18:57:03 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -12,7 +12,10 @@ import java.awt.*;
 import ui.hexmap.*;
 
 /**
+ * MapWindow class displays Map Window. It's shocking, I know.
+ * 
  * @author Erik Vos
+ * @author Brett
  */
 public class MapWindow extends JFrame
 {

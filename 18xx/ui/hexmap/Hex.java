@@ -2,7 +2,7 @@
  * package net.sf.colossus.client;
  * 
  * Class Hex describes one general hex.
- * @version $Id: Hex.java,v 1.3 2005/09/19 22:45:12 wakko666 Exp $
+ * @version $Id: Hex.java,v 1.4 2005/10/13 18:57:03 wakko666 Exp $
  * @author David Ripton
  */
 
@@ -10,7 +10,7 @@ package ui.hexmap;
 
 public abstract class Hex
 {
-    /* The hex vertexes are numbered like this:
+    /** The hex vertexes are numbered like this:
     
                   0---------1
                  /           \

@@ -6,6 +6,13 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 
+/**
+ * This class handles loading our tile images.
+ * It provides BufferedImages to be associated with the Hex.
+ *  
+ * @author Brett
+ *
+ */
 public class ImageLoader
 {
     private static final String tileDir = "./tiles/images/";
