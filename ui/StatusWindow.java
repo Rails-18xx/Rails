@@ -11,7 +11,11 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- * @author blentz
+ * This is the Window used for displaying nearly all of the game status.
+ * This is also from where the ORWindow and StartRoundWindow are triggered. 
+ * 
+ * @Author Erik Vos
+ * @author Brett
  */
 public class StatusWindow extends JFrame implements ActionListener
 {

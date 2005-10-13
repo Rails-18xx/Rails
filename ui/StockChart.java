@@ -23,7 +23,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 
-/*
+/**
+ * This class displays the StockMarket Window.
+ * 
  * The layout is roughly this:
  * 
  * JFrame (GridBag) 
@@ -38,6 +40,7 @@ import java.util.*;
  * 		---> Buy Button 
  *		---> Sell Button
  *  
+ *  @author Brett
  */
 
 public class StockChart extends JFrame
@@ -168,6 +171,13 @@ public class StockChart extends JFrame
          origin.y += 6;
       }      
    }
+   
+   /**
+    *   Quick n' dirty method of converting strings to color objects.
+    *   This has been replaced by using hex colors in the XML definitions.
+    *   
+    *   @deprecated
+    */
    private static Color stringToColor(String color)
    {
       if (color.equalsIgnoreCase("yellow"))

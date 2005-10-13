@@ -16,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * This Window displays the available operations that may be performed during an Operating Round.
+ * Eventually this should be added to the Map Window rather than being a separate Window.
+ * 
  * @author Erik Vos
  */
 public class ORWindow extends JFrame implements ActionListener
@@ -28,7 +31,7 @@ public class ORWindow extends JFrame implements ActionListener
 	private static final int WIDE_TOP = 4;
 	private static final int WIDE_BOTTOM = 8;
 
-	private static ORWindow orPanel;
+	private static ORWindow orWindow;
 	private JPanel statusPanel;
 	private JPanel buttonPanel;
 
@@ -91,9 +94,6 @@ public class ORWindow extends JFrame implements ActionListener
 	private PublicCompanyI orComp = null;
 	private String orCompName = "";
 
-	// private ButtonGroup itemGroup = new ButtonGroup();
-	// private ClickField dummyButton; // To be selected if none else is.
-
 	private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
 	private int[] newTrainTotalCost;
 	List trainsBought;
@@ -104,7 +104,7 @@ public class ORWindow extends JFrame implements ActionListener
 		this.round = round;
 		statusWindow = parent;
 		gameStatus = parent.getGameStatus();
-		orPanel = this;
+		orWindow = this;
 		getContentPane().setLayout(new BorderLayout());
 
 		statusPanel = new JPanel();
@@ -484,7 +484,6 @@ public class ORWindow extends JFrame implements ActionListener
 	 */
 	public void actionPerformed(ActionEvent actor)
 	{
-		JComponent source = (JComponent) actor.getSource();
 		String command = actor.getActionCommand();
 		int step = round.getStep();
 		boolean done = command.equals("Done");

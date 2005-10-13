@@ -22,6 +22,13 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
+/**
+ * This class draws a company's token on the StockChart.
+ * 
+ * @author Brett
+ *
+ */
+
 public class StockToken extends JPanel
 {
    private Color fgColor, bgColor;
@@ -38,8 +45,6 @@ public class StockToken extends JPanel
       g2d.setFont(f);
       g2d.setColor(fgColor);
       g2d.drawString(name, 3, 14);
-      
-      //drawToken(g2d, fgColor, circle);
    }
    
    private void drawToken(Graphics2D g2d, Color c, Ellipse2D.Double circle)
@@ -76,8 +81,6 @@ public class StockToken extends JPanel
       fgColor = fc;
       bgColor = bc;
       
-      
-      //circle = new Ellipse2D.Double(x, y, diameter, diameter);
       circle = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
       
       this.setForeground(fgColor);

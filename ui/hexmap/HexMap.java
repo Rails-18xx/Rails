@@ -13,9 +13,9 @@ import game.*;
 import ui.*;
 
 /**
- * @author blentz
+ * Base class that stores common info for HexMap independant of Hex orientations. 
  */
-public abstract class HexMap extends JPanel implements MouseListener,
+public abstract class HexMap extends JComponent implements MouseListener,
 		WindowListener
 {
 	
