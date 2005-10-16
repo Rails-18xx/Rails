@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.9 2005/10/06 21:41:16 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.10 2005/10/16 18:36:51 evos Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -22,7 +22,7 @@ public class GUINSHex extends GUIHex
     public GUINSHex(int cx, int cy, int scale, JComponent map,
         int xCoord, int yCoord)
     {
-        super(new BattleHex(xCoord, yCoord));
+        super(/*new BattleHex(xCoord, yCoord)*/);
 
         len = scale / 3.0;
 
@@ -66,7 +66,7 @@ public class GUINSHex extends GUIHex
 
     public GUINSHex(int xCoord, int yCoord)
     {
-        super(new BattleHex(xCoord, yCoord));
+        super(/*new BattleHex(xCoord, yCoord)*/);
     }
 
     public boolean innerContains(Point point)

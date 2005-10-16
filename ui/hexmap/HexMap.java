@@ -20,14 +20,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
 {
 	
 	// GUI hexes need to be recreated for each object, since scale varies.
-	protected GUIHex[][] h = new GUIHex[6][6];
+	protected GUIHex[][] h;// = new GUIHex[6][6];
 
 	/** ne, e, se, sw, w, nw */
-	protected GUIHex[] entrances = new GUIHex[6];
+	//protected GUIHex[] entrances = new GUIHex[6];
 
-	protected ArrayList hexes = new ArrayList(33);
+	protected ArrayList hexes;// = new ArrayList(33);
 
 	// The game state hexes can be set up once for each terrain type.
+	/*
 	protected static Map terrainH = new HashMap();
 	protected static Map terrainHexes = new HashMap();
 	protected static Map entranceHexes = new HashMap();
@@ -36,9 +37,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected static Map towerStatusMap = new HashMap();
 	protected static Map hazardNumberMap = new HashMap();
 	protected static Map hazardSideNumberMap = new HashMap();
+	*/
 
 	// BUG: There's bugs with how this map is populated by setupNeighbors().
 	// This will need significant reworking.
+	/*
 	protected static final boolean[][] show = {
 			{ false, true, true, true, true, true },
 			{ true, true, true, true, true, true },
@@ -46,6 +49,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{ true, true, true, true, true, true },
 			{ false, true, true, true, true, true },
 			{ true, true, true, true, true, true } };
+	*/
 
 	protected int scale = 2 * Scale.get();
 	protected int cx = 6 * scale;
@@ -59,7 +63,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	// Abstract Methods
 	// /////////
 	protected abstract void setupHexesGUI();
-	protected abstract void setupEntrancesGUI();
+	//protected abstract void setupEntrancesGUI();
 
 	void setupHexes()
 	{
@@ -81,8 +85,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	}
 
 	/** Look for the Hex matching the Label in the terrain static map */
+	/* EV: useful, but needs to be rewritten and moved to MapHex */
 	public static MapHex getHexByLabel(String terrain, String label)
 	{
+	    /*
 		int x = 0;
 		int y = Integer.parseInt(new String(label.substring(1)));
 		switch (label.charAt(0))
@@ -120,7 +126,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			case 'X':
 			case 'x':
 
-				/* entrances */
+				// entrances
 				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
 				return gameEntrances[y].getMapHexModel();
 
@@ -130,6 +136,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		y = 6 - y - (int) Math.abs(((x - 3) / 2));
 		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
 		return correctHexes[x][y].getMapHexModel();
+		*/
+		return null;
 	}
 
 	/**
@@ -166,6 +174,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return null;
 	}
 
+	/*
 	Set getAllHexLabels()
 	{
 		Set set = new HashSet();
@@ -177,6 +186,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 		return set;
 	}
+	*/
 
 	public void paintComponent(Graphics g)
 	{
