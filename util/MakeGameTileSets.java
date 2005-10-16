@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.2 2005/08/17 21:58:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.3 2005/10/16 15:06:08 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -7,7 +7,6 @@ package util;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.*;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
