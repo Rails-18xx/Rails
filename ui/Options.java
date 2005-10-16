@@ -165,7 +165,7 @@ public class Options extends JDialog implements ActionListener
       Arrays.sort(gameNames);
       for(int i=0; i < gameNames.length; i++)
       {
-         if(!gameNames[i].equalsIgnoreCase("CVS"))
+         if(!gameNames[i].equalsIgnoreCase("CVS") && !gameNames[i].startsWith("."))
             gameNameBox.addItem(gameNames[i]);
       }
    }

@@ -34,4 +34,27 @@
 			<ExchangeFirst cost="800"/>
 		</Train>
 	</Component>
+	<Component name="PhaseManager" class="game.PhaseManager">
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="6">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="7">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="4D">
+			<Tiles colour="yellow,green,brown,grey"/>
+		</Phase>
+	</Component>
 </ComponentManager>

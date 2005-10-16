@@ -228,4 +228,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 
 	public void setCapitalisation(int capitalisation);
 
+	public int getTrainLimit (int phaseIndex);
+
 }
