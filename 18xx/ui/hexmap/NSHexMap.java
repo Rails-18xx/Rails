@@ -3,7 +3,6 @@ package ui.hexmap;
 
 import game.*;
 import ui.*;
-import java.awt.Color;
 
 /**
  * Class NSHexMap displays a basic hex map with NS exit orientation.

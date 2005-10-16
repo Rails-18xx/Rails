@@ -5,7 +5,6 @@ import game.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import javax.swing.*;
 
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  

@@ -2,8 +2,6 @@ package ui.hexmap;
 
 import game.*;
 
-import java.awt.Color;
-
 /**
  * Class EWHexMap displays a basic hex map with EW exit orientation.
  */
