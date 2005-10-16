@@ -18,7 +18,9 @@
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"/>
 	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"/>
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30" />
-	<Company name="B&amp;O" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
+	<Company name="B&amp;O" type="Public" fgColour="FFFFFF" bgColour="0000FF">
+		<FirstTrainCloses type="Private" name="B&amp;O"/>
+	</Company>
 	<Company name="PRR" type="Public" fgColour="FFFFFF" bgColour="008000"/>
 	<Company name="NYNH" type="Public" fgColour="000000" bgColour="FF8000"/>
 	<Company name="NYC" type="Public" fgColour="FFFFFF" bgColour="000000"/>
