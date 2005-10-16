@@ -10,6 +10,7 @@
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
+	<TrainLimit number="4,4,3,2"/>
 	</CompanyType>
 	<Company name="Tusc" type="Private" basePrice="20" revenue="5"/>
 	<Company name="S&amp;NA" type="Private" basePrice="40" revenue="10"/>

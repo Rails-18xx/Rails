@@ -44,5 +44,27 @@
 			<ExchangeFirst cost="800"/>
 		</Train>
 	</Component>
+	<Component name="PhaseManager" class="game.PhaseManager">
+		<!-- Note: released and rusted trains are now specified per Train
+			but could as well be moved here. To be sorted out when we do 18US. -->
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="6">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="D">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+	</Component>
 </ComponentManager>
 

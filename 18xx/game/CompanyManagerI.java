@@ -98,4 +98,5 @@ public interface CompanyManagerI
 	/** Post XML parsing initialisations */
 	public void initCompanies() throws ConfigurationException;
 
+	   public List getCompaniesWithExcessTrains ();
 }

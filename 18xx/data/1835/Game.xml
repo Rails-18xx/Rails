@@ -39,5 +39,22 @@
 		<Train name="6+6" majorStops="6" minorStops="6" cost="720" amount="4"
 			rustedTrain="3+3"/>
 	</Component>
+	<Component name="PhaseManager" class="game.PhaseManager">
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="6">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+	</Component>
 </ComponentManager>
 

@@ -757,6 +757,31 @@ public class ORWindow extends JFrame implements ActionListener
 						trainsBought.add(train);
 						newTrains[orCompIndex].setText(TrainManager.get()
 								.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
+						
+	                   // Check if any trains must be discarded
+	                   if (TrainManager.get().hasPhaseChanged()) {
+	                       Iterator it = Game.getCompanyManager().getCompaniesWithExcessTrains().iterator();
+	                       while (it.hasNext()) {
+	                           PublicCompanyI c = (PublicCompanyI) it.next();
+	                           TrainI[] oldTrains = c.getPortfolio().getUniqueTrains();
+	                           String[] options = new String[oldTrains.length];
+	                           for (int j=0; j<oldTrains.length; j++) {
+	                               options [j] = oldTrains[j].getName();
+	                           }
+	                           String discardedTrainName = (String)
+	                           		JOptionPane.showInputDialog (this, "Company "+c.getName()+
+	                           		        " has too many trains. Which train to discard?", 
+	                      		        "Which train to exchange",
+	                      		        JOptionPane.QUESTION_MESSAGE, null,
+	                      		        options,
+	                      		        options[0]);
+	                           if (discardedTrainName != null) {
+	                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
+	                               c.getPortfolio().discardTrain (discardedTrain);
+	                               gameStatus.updateTrains(c.getPortfolio());
+	                           }
+	                       }
+	                   }
 					}
 
 				}
