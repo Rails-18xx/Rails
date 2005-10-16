@@ -15,9 +15,9 @@ public abstract class GUIHex
 
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
-	protected Hex dummyModel; // Redundant, we use game.MapHex as a model
+	//protected Hex dummyModel; // Redundant, we use game.MapHex as a model
 	protected MapHex model;
-	protected BattleHex dummymodel;
+	//protected BattleHex dummymodel;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
 
@@ -64,9 +64,9 @@ public abstract class GUIHex
 	// Selection is in-between GUI and game state.
 	private boolean selected;
 
-	public GUIHex(BattleHex model)
+	public GUIHex(/*BattleHex model*/)
 	{
-		this.dummymodel = model;
+		//this.dummymodel = model;
 	}
 
 	public MapHex getHexModel()

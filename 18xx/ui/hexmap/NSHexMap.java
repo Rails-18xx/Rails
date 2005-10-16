@@ -55,6 +55,7 @@ public class NSHexMap extends HexMap
         }
     }
 
+    /*
     protected void setupEntrancesGUI()
     {
         // Initialize entrances.
@@ -78,5 +79,6 @@ public class NSHexMap extends HexMap
         hexes.add(entrances[4]);
         hexes.add(entrances[5]);
     }
+    */
 
 }

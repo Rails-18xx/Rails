@@ -55,6 +55,7 @@ public class EWHexMap extends HexMap
 		}
 	}
 
+	/*
 	protected void setupEntrancesGUI()
 	{
 		// Initialize entrances.
@@ -78,4 +79,5 @@ public class EWHexMap extends HexMap
 		hexes.add(entrances[4]);
 		hexes.add(entrances[5]);
 	}
+	*/
 }
