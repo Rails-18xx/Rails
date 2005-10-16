@@ -758,6 +758,14 @@ public class ORWindow extends JFrame implements ActionListener
 						newTrains[orCompIndex].setText(TrainManager.get()
 								.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
 						
+						// In case a private has closed
+						/* BIG SHORTCUT: It is assumed here that the President 
+						 * always owns the closing Private, which is of course 
+						 * not guaranteed!
+						 * We really need an event mechanism to handle this!
+						 */
+						gameStatus.updatePlayerPrivates(orComp.getPresident().getIndex());
+						
 	                   // Check if any trains must be discarded
 	                   if (TrainManager.get().hasPhaseChanged()) {
 	                       Iterator it = Game.getCompanyManager().getCompaniesWithExcessTrains().iterator();

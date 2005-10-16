@@ -34,7 +34,9 @@
   <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80"/>
 
   <Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" fgColour="FFFFFF" bgColour="0000FF"/>
-  <Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" fgColour="FFFFFF" bgColour="FF0000"/>
+  <Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" fgColour="FFFFFF" bgColour="FF0000">
+	<FirstTrainCloses type="Private" name="LD"/>
+  </Company>
   <Company name="Bad" longname="Badische Eisenbahn" type="Major" startspace="B4" fgColour="FFFFFF" bgColour="808000">
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="6"/>

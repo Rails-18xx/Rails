@@ -581,7 +581,7 @@ public class OperatingRound implements Round
                     +Bank.format(price));
         }
 
-        operatingCompany.getPortfolio().buyTrain(train, price);
+        operatingCompany.buyTrain(train, price);
 
         TrainManager.get().checkTrainAvailability(train, oldHolder);
         

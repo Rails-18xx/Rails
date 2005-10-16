@@ -120,6 +120,9 @@ public class PublicCompany extends Company implements PublicCompanyI
    /** Train limit per phase (index) */
    protected int[] trainLimit = new int[0];
    
+   /** Private to close if first train is bought */
+   protected String privateToCloseOnFirstTrain = null;
+   
    /**
     * The constructor. The way this class is instantiated does not allow
     * arguments.
@@ -171,7 +174,6 @@ public class PublicCompany extends Company implements PublicCompanyI
       floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc", floatPerc);
       
       startSpace = XmlUtils.extractStringAttribute(nnp, "startspace");
-//Log.write("*** Start space for "+name+"is "+startSpace);     
       
       fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
@@ -243,6 +245,15 @@ public class PublicCompany extends Company implements PublicCompanyI
                         throw new ConfigurationException ("Invalid train limit "+numberArray[i], e);
                     }
                 }
+            } else if (propName.equalsIgnoreCase("FirstTrainCloses")) {
+            	nnp2 = properties.item(j).getAttributes();
+            	String typeName = XmlUtils.extractStringAttribute(nnp2,
+            			"type", "Private");
+            	if (typeName.equalsIgnoreCase("Private")) {
+            	    privateToCloseOnFirstTrain = XmlUtils.extractStringAttribute(nnp2, "name");
+            	} else {
+            	    throw new ConfigurationException ("Only Privates can be closed on first train buy");
+            	}
             }
 
          }
@@ -887,6 +898,17 @@ public class PublicCompany extends Company implements PublicCompanyI
 	        return trainLimit[phaseIndex];
 	    }
 	}
+
+	/** Must be called in stead of Portfolio.buyTrain if side-effects can occur. */
+	public void buyTrain (TrainI train, int price) {
+	    portfolio.buyTrain(train, price);
+	    if (this.privateToCloseOnFirstTrain != null) {
+	        PrivateCompanyI priv = Game.getCompanyManager().getPrivateCompany(privateToCloseOnFirstTrain);
+	        priv.setClosed();
+	        privateToCloseOnFirstTrain = null;
+	    }
+	}
+
 	
 	public Object clone () {
 	    
