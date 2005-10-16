@@ -1,5 +1,7 @@
 package ui.hexmap;
 
+import java.util.ArrayList;
+
 import game.*;
 
 /**
@@ -16,7 +18,7 @@ public class EWHexMap extends HexMap
 
 	protected void setupHexesGUI()
 	{
-		hexes.clear();
+		hexes = new ArrayList();
 
 		MapManager mmgr = MapManager.getInstance();
 		MapHex[][] hexArray = mmgr.getHexes();

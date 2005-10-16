@@ -1,6 +1,8 @@
 package ui.hexmap;
 
 
+import java.util.ArrayList;
+
 import game.*;
 import ui.*;
 
@@ -17,7 +19,7 @@ public class NSHexMap extends HexMap
 
     protected void setupHexesGUI()
     {
-        hexes.clear();
+        hexes = new ArrayList();
         
         scale = Scale.get();
 
