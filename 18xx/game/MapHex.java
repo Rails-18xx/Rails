@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.11 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.12 2005/10/17 18:02:49 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -13,6 +13,23 @@ import util.XmlUtils;
 
 /**
  * Represents a Hex on the Map from the Model side.
+ * 
+ * <p><b>Tile orientations</b>. Tiles can be oriented NS or EW;
+ * the directions refer to the "flat" hex sides.
+ * <p>The term "orientation" is also used to indicate the amount
+ * of rotation (in 60 degree units) from the standard orientation
+ * of the tile. The orientation numbers are indicated in the below
+ * picture for an NS-oriented tile:<p><code>
+ * 
+ *       ____3____            
+ *      /         \
+ *     2           4
+ *    /     NS      \
+ *    \             /
+ *     1           5
+ *      \____0____/
+ * </code><p>
+ * For EW-oriented tiles the above picture should be rotated 30 degrees clockwise.
  * 
  * @author Erik Vos
  */
