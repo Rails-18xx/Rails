@@ -98,9 +98,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				return;
 			}
 
-			for (int x = (hexes.size() - 1); x > 0; x--)
+			Iterator it = hexes.iterator();
+			while(it.hasNext())
 			{
-				GUIHex hex = (GUIHex) hexes.get(x);
+				GUIHex hex = (GUIHex) it.next();
 				Rectangle hexrect = hex.getBounds();
 
 				if (g.hitClip(hexrect.x,
@@ -172,8 +173,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				hexSelected = true;
 			}
 
-			this.repaint();
-
+			//FIXME: Performance of this repaint could be improved.
+			this.repaint(hex.getBounds());
+			
 			// setToolTipText (hex.getToolTip());
 		}
 		catch (NullPointerException e)
