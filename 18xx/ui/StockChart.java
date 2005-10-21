@@ -51,10 +51,9 @@ public class StockChart extends JFrame
    
    private void initialize()
    {
-      this.setSize(10, 10);
-      this.setTitle("Rails: Stock Chart");
-      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      this.getContentPane().setLayout(new GridBagLayout());
+      setTitle("Rails: Stock Chart");
+      setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      getContentPane().setLayout(new GridBagLayout());
 
       stockPanel = new JPanel();
 
@@ -64,8 +63,8 @@ public class StockChart extends JFrame
       stockPanel.setLayout(stockGrid);
       
       gc = new GridBagConstraints();
-
    }
+   
    private void populateGridBag()
    {
       gc.gridx = 0;
@@ -74,7 +73,7 @@ public class StockChart extends JFrame
       gc.weighty = 1.0;
       gc.gridwidth = 2;
       gc.fill = GridBagConstraints.BOTH;
-      this.getContentPane().add(stockPanel, gc);
+      getContentPane().add(stockPanel, gc);
    }
    private static void populateStockPanel()
    {
@@ -226,6 +225,7 @@ public class StockChart extends JFrame
       stockPanel.removeAll();
       populateStockPanel();
    }
+   
    public StockChart()
    {
       super();

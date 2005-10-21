@@ -779,7 +779,7 @@ public class OperatingRound implements Round
      */
     public int[] getTileBuildCosts () {
        // Result is currently hardcoded, but can be made configurable. 
-        return new int[] {0,80,120};
+        return new int[] {0,40,60,80,120};
     }
     
     /** Get all possible token laying costs in a game.
