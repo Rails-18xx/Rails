@@ -51,62 +51,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 	}
 
-	/** Look for the Hex matching the Label in the terrain static map */
-	/* EV: useful, but needs to be rewritten and moved to MapHex */
-	public static MapHex getHexByLabel(String terrain, String label)
-	{
-	    /*
-		int x = 0;
-		int y = Integer.parseInt(new String(label.substring(1)));
-		switch (label.charAt(0))
-		{
-			case 'A':
-			case 'a':
-				x = 0;
-				break;
-
-			case 'B':
-			case 'b':
-				x = 1;
-				break;
-
-			case 'C':
-			case 'c':
-				x = 2;
-				break;
-
-			case 'D':
-			case 'd':
-				x = 3;
-				break;
-
-			case 'E':
-			case 'e':
-				x = 4;
-				break;
-
-			case 'F':
-			case 'f':
-				x = 5;
-				break;
-
-			case 'X':
-			case 'x':
-
-				// entrances
-				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
-				return gameEntrances[y].getMapHexModel();
-
-			default:
-				Log.error("Label " + label + " is invalid");
-		}
-		y = 6 - y - (int) Math.abs(((x - 3) / 2));
-		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
-		return correctHexes[x][y].getMapHexModel();
-		*/
-		return null;
-	}
-
 	/**
 	 * Return the GUIBattleHex that contains the given point, or null if none
 	 * does.
@@ -241,7 +185,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 			this.repaint();
 
-			/* Remove this statement to enable subsequent clicks again */
 			// setToolTipText (hex.getToolTip());
 		}
 		catch (NullPointerException e)
