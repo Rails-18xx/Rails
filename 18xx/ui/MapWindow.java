@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.23 2005/10/21 01:00:31 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.24 2005/10/21 20:47:46 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -12,7 +12,7 @@ import java.awt.*;
 import ui.hexmap.*;
 
 /**
- * MapWindow class displays Map Window. It's shocking, I know.
+ * MapWindow class displays the Map Window. It's shocking, I know.
  * 
  * @author Erik Vos
  * @author Brett
@@ -21,7 +21,7 @@ public class MapWindow extends JFrame
 {
 	private MapManager mmgr;
 	private HexMap map;
-	private JScrollPane scrollPane;
+	private ScrollPane scrollPane;
 
 	public MapWindow()
 	{
@@ -48,13 +48,10 @@ public class MapWindow extends JFrame
 		addMouseListener(map);
 		addWindowListener(map);
 
-		scrollPane = new JScrollPane(map);
+		scrollPane = new ScrollPane();
+		scrollPane.add(map);
 		scrollPane.setSize(map.getPreferredSize());
-		
-		//XXX: I'm using this to smoke out bugs elsewhere in the drawing code.		
-		//This mode uses the very simple method of redrawing 
-		//the entire contents of the scrollpane each time it is scrolled.
-		scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+		//scrollPane.setLocation(100,100);
 		
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
@@ -62,19 +59,5 @@ public class MapWindow extends JFrame
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}
-	
-	//XXX: Overriding the paint methods improves repainting quite a bit.
-	//     There are still bugs, but it's a step in the right direction.
-	//     It looks like the problem may reside in calling super.paint(),
-	//     or in the scrollpane.
-	public void paint(Graphics g)
-	{
-		map.paint(g);
-	}
-	
-	public void repaint()
-	{
-		map.repaint();
 	}
 }

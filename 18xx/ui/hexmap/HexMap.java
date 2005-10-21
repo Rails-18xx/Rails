@@ -98,17 +98,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				return;
 			}
 
-			/*
-			 * FIXME: The repaint bugs are caused by something near here.
-			 * Changing this from an iterator to a for loop affects the bug.
-			 * Only the first element in the arraylist is always being repainted
-			 * correctly. All others aren't. It seems like the clipping area's
-			 * coordinates are not being translated into the whole window's
-			 * coordinates. The paint draws from 0,0 even if the clipped area is
-			 * located elsewhere.
-			 */
-			System.out.println(rectClip);
-
 			for (int x = (hexes.size() - 1); x > 0; x--)
 			{
 				GUIHex hex = (GUIHex) hexes.get(x);
