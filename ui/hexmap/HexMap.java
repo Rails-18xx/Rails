@@ -18,52 +18,19 @@ import ui.*;
 public abstract class HexMap extends JComponent implements MouseListener,
 		WindowListener
 {
+	// Abstract Methods
+	protected abstract void setupHexesGUI();
 	
 	// GUI hexes need to be recreated for each object, since scale varies.
-	protected GUIHex[][] h;// = new GUIHex[6][6];
-
-	/** ne, e, se, sw, w, nw */
-	//protected GUIHex[] entrances = new GUIHex[6];
-
-	protected ArrayList hexes;// = new ArrayList(33);
-
-	// The game state hexes can be set up once for each terrain type.
-	/*
-	protected static Map terrainH = new HashMap();
-	protected static Map terrainHexes = new HashMap();
-	protected static Map entranceHexes = new HashMap();
-	protected static Map startlistMap = new HashMap();
-	protected static Map subtitleMap = new HashMap();
-	protected static Map towerStatusMap = new HashMap();
-	protected static Map hazardNumberMap = new HashMap();
-	protected static Map hazardSideNumberMap = new HashMap();
-	*/
-
-	// BUG: There's bugs with how this map is populated by setupNeighbors().
-	// This will need significant reworking.
-	/*
-	protected static final boolean[][] show = {
-			{ false, true, true, true, true, true },
-			{ true, true, true, true, true, true },
-			{ false, true, true, true, true, true },
-			{ true, true, true, true, true, true },
-			{ false, true, true, true, true, true },
-			{ true, true, true, true, true, true } };
-	*/
-
+	protected GUIHex[][] h;
+	protected ArrayList hexes;
+	
 	protected int scale = 2 * Scale.get();
 	protected int cx = 6 * scale;
 	protected int cy = 2 * scale;
 
 	protected ImageLoader imageLoader = new ImageLoader();
-
 	private boolean hexSelected = false;
-
-	// //////////
-	// Abstract Methods
-	// /////////
-	protected abstract void setupHexesGUI();
-	//protected abstract void setupEntrancesGUI();
 
 	void setupHexes()
 	{
@@ -173,20 +140,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 		return null;
 	}
-
-	/*
-	Set getAllHexLabels()
-	{
-		Set set = new HashSet();
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			BattleHex hex = (BattleHex) it.next();
-			set.add(hex.getLabel());
-		}
-		return set;
-	}
-	*/
 
 	public void paintComponent(Graphics g)
 	{

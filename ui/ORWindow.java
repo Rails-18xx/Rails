@@ -157,11 +157,11 @@ public class ORWindow extends JFrame implements ActionListener
 		getContentPane().add(statusPanel, BorderLayout.NORTH);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		setTitle("Operating Round");
-		setLocation(300, 150);
+		setLocation(300, 650);
 		setSize(800, 400);
 		pack();
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		updateStatus();
 

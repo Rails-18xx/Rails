@@ -85,7 +85,6 @@ public class StartRoundWindow extends JFrame implements ActionListener
 		startRoundPanel = this;
 		setTitle("Rails: Start Round");
 		getContentPane().setLayout(new BorderLayout());
-		// UIManager.put("ToggleButton.select", buttonHighlight);
 
 		statusPanel = new JPanel();
 		gb = new GridBagLayout();
@@ -140,10 +139,11 @@ public class StartRoundWindow extends JFrame implements ActionListener
 		getContentPane().add(statusPanel, BorderLayout.NORTH);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		setTitle("Rails: Start Round");
-		setLocation(600, 150);
+		setLocation(300, 150);
 		setSize(275, 325);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		requestFocus();
 
 		LogWindow.addLog();
 
