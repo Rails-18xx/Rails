@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.22 2005/10/21 00:17:32 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.23 2005/10/21 01:00:31 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -62,7 +62,19 @@ public class MapWindow extends JFrame
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		System.out.println("HexMap.isLightWeight? " + map.isLightweight());
+	}
+	
+	//XXX: Overriding the paint methods improves repainting quite a bit.
+	//     There are still bugs, but it's a step in the right direction.
+	//     It looks like the problem may reside in calling super.paint(),
+	//     or in the scrollpane.
+	public void paint(Graphics g)
+	{
+		map.paint(g);
+	}
+	
+	public void repaint()
+	{
+		map.repaint();
 	}
 }

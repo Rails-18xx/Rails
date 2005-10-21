@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.12 2005/10/17 18:02:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.13 2005/10/21 01:00:32 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -262,6 +262,62 @@ public class MapHex implements ConfigurableComponentI
 	public MapHex[] getNeighbors()
 	{
 		return neighbours;
+	}
+	
+	/** Look for the Hex matching the Label in the terrain static map */
+	/* EV: useful, but needs to be rewritten */
+	public static MapHex getHexByLabel(String terrain, String label)
+	{
+	    /*
+		int x = 0;
+		int y = Integer.parseInt(new String(label.substring(1)));
+		switch (label.charAt(0))
+		{
+			case 'A':
+			case 'a':
+				x = 0;
+				break;
+
+			case 'B':
+			case 'b':
+				x = 1;
+				break;
+
+			case 'C':
+			case 'c':
+				x = 2;
+				break;
+
+			case 'D':
+			case 'd':
+				x = 3;
+				break;
+
+			case 'E':
+			case 'e':
+				x = 4;
+				break;
+
+			case 'F':
+			case 'f':
+				x = 5;
+				break;
+
+			case 'X':
+			case 'x':
+
+				// entrances
+				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
+				return gameEntrances[y].getMapHexModel();
+
+			default:
+				Log.error("Label " + label + " is invalid");
+		}
+		y = 6 - y - (int) Math.abs(((x - 3) / 2));
+		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
+		return correctHexes[x][y].getMapHexModel();
+		*/
+		return null;
 	}
 
 }
