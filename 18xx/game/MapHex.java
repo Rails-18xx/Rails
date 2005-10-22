@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.13 2005/10/21 01:00:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.14 2005/10/22 14:26:46 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -55,7 +55,18 @@ public class MapHex implements ConfigurableComponentI
 	protected String tileFileName;
 	protected int preprintedTileId;
 	protected int preprintedTileOrientation;
+	
+	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
+	
+	/* Temporary storage for impassable hexsides. 
+	 * Once neighbours has been set up, this attribute is no longer used.
+	 * Only the black or blue bars on the map need be specified,
+	 * and each one only once. Impassable non-track sides of "offboard"
+	 * (red) and "fixed" (grey or brown) preprinted tiles will be derived
+	 * and need not be specified.
+	 */
+	protected String impassable = null;
 
 	public MapHex()
 	{
@@ -150,7 +161,22 @@ public class MapHex implements ConfigurableComponentI
 		preprintedTileOrientation = XmlUtils.extractIntegerAttribute(nnp,
 				"orientation",
 				0);
+		
+		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 
+	}
+	
+	public boolean isNeighbour (MapHex neighbour) {
+	    
+	    /* Various reasons why a bordering hex may not be a neighbour
+	     * in the sense that track may be laid to that border:
+	     */
+	    /* 1. The hex side is marked "impassable" */
+	    if (impassable != null && impassable.indexOf(neighbour.getName()) > -1) return false;
+	    /* 2. The preprinted tile on this hex is offmap or fixed and has no track to this side. */
+	    // We can't handle this as we don't yet read Tiles.xml.
+	    
+	    return true;
 	}
 
 	public static void setTileOrientation(int orientation)

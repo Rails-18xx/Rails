@@ -144,7 +144,7 @@
 	<Hex name="N11" tile="0" cost="80"/>
 	<Hex name="N13" tile="0" cost="80"/>
 	<Hex name="N15" tile="0" cost="80"/>
-	<Hex name="N17" tile="-10" label="P" cost="80" destination="SP,TP"/><!--New Orleans-->
+	<Hex name="N17" tile="-10" impassable="N19" label="P" cost="80" destination="SP,TP"/><!--New Orleans-->
 	<Hex name="N19" tile="0" cost="80"/>
 	<Hex name="N21" tile="0" cost="80"/>
 	<Hex name="O2" tile="0" cost="60"/>
@@ -152,5 +152,5 @@
 	<Hex name="O6" tile="0" cost="80"/>
 	<Hex name="O14" tile="0" cost="100"/>
 	<Hex name="O16" tile="0" cost="100"/>
-	<Hex name="O18" tile="0" cost="100"/>
+	<Hex name="O18" tile="0" cost="100" impassable="N19"/>
 </Map>
