@@ -7,15 +7,15 @@
 	<Hex name="B10" tile="-10"/>
 	<Hex name="B12" tile="0"/>
 	<Hex name="B14" tile="0"/>
-	<Hex name="B16" tile="-10"/>
+	<Hex name="B16" tile="-10" impassable="C17"/>
 	<Hex name="B18" tile="0" cost="80"/>
 	<Hex name="B20" tile="-1" blocking="C&amp;StL"/>
 	<Hex name="B22" tile="0"/>
 	<Hex name="B24" tile="-902" orientation="2"/>
 	<Hex name="C7" tile="0"/>
 	<Hex name="C9" tile="0"/>
-	<Hex name="C11" tile="0"/>
-	<Hex name="C13" tile="0"/>
+	<Hex name="C11" tile="0" impassable="D12"/>
+	<Hex name="C13" tile="0" impassable="D12"/>
 	<Hex name="C15" tile="-58" orientation="2"/>
 	<Hex name="C17" tile="0" cost="120"/>
 	<Hex name="C19" tile="0" cost="80"/>
@@ -35,7 +35,7 @@
 	<Hex name="D24" tile="-7" orientation="2"/>
 	<Hex name="E3" tile="0"/>
 	<Hex name="E5" tile="-20" label="OO" cost="80"/>
-	<Hex name="E7" tile="-1"/>
+	<Hex name="E7" tile="-1" impassable="F8"/>
 	<Hex name="E9" tile="-7" orientation="4"/>
 	<Hex name="E11" tile="-20" label="OO" home="Erie"/>
 	<Hex name="E13" tile="0"/>
