@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.14 2005/10/22 14:26:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.15 2005/10/23 18:02:00 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -55,6 +55,8 @@ public class MapHex implements ConfigurableComponentI
 	protected String tileFileName;
 	protected int preprintedTileId;
 	protected int preprintedTileOrientation;
+	protected TileI currentTile;
+	protected int currentTileRotation;
 	
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
@@ -162,19 +164,26 @@ public class MapHex implements ConfigurableComponentI
 				"orientation",
 				0);
 		
+		currentTile = TileManager.get().getTile(preprintedTileId);
+		currentTileRotation = preprintedTileOrientation;
+		
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 
 	}
 	
-	public boolean isNeighbour (MapHex neighbour) {
+	public boolean isNeighbour (MapHex neighbour, int direction) {
 	    
 	    /* Various reasons why a bordering hex may not be a neighbour
 	     * in the sense that track may be laid to that border:
 	     */
 	    /* 1. The hex side is marked "impassable" */
-	    if (impassable != null && impassable.indexOf(neighbour.getName()) > -1) return false;
+	    if (impassable != null && impassable.indexOf(neighbour.getName()) > -1) 
+	        return false;
 	    /* 2. The preprinted tile on this hex is offmap or fixed and has no track to this side. */
-	    // We can't handle this as we don't yet read Tiles.xml.
+	    TileI tile = neighbour.getCurrentTile();
+	    if (!tile.isUpgradeable() 
+	            && !tile.hasTracks(6+direction-neighbour.getCurrentTileRotation()))
+	        return false;
 	    
 	    return true;
 	}
@@ -288,6 +297,14 @@ public class MapHex implements ConfigurableComponentI
 	public MapHex[] getNeighbors()
 	{
 		return neighbours;
+	}
+	
+	public TileI getCurrentTile() {
+	    return currentTile;
+	}
+	
+	public int getCurrentTileRotation () {
+	    return currentTileRotation;
 	}
 	
 	/** Look for the Hex matching the Label in the terrain static map */

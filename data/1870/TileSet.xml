@@ -1,4 +1,4 @@
-<TileSet>
+<TileManager tiles="Tiles.xml">
 	<!-- Preprinted tiles -->
 	<Tile id="0"><!-- Empty space -->
 		<Upgrade id="7,8,9"/>
@@ -132,4 +132,4 @@
 	<!-- Grey -->
 	<Tile id="171" amount="1" />
 	<Tile id="172" amount="1" />
-</TileSet>
+</TileManager>

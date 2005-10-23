@@ -25,7 +25,7 @@ import util.XmlUtils;
 public class ComponentManager
 {
 
-	private String gameName;
+	private static String gameName;
 
 	/** The name of the XML tag used to configure the ComponentManager. */
 	public static final String ELEMENT_ID = "ComponentManager";
@@ -159,4 +159,8 @@ public class ComponentManager
 
 	/** Remember our singleton instance. */
 	private static ComponentManager sTheOne;
+	
+	public static String getGameName () {
+	    return gameName;
+	}
 }
