@@ -1,4 +1,5 @@
-<TileSet color="yellow">
+<TileManager  tiles="Tiles.xml">
+	<!-- yellow tiles -->
 	<Tile number="1" amount="1" />
 	<Tile number="2" amount="1" />
 	<Tile number="3" amount="2" />
@@ -31,9 +32,8 @@
 	<Tile number="202" amount="2">
 		<Upgrade number="207,208" />
 	</Tile>
-</TileSet>
 
-<TileSet color="green">
+	<!-- green tiles -->
 	<Tile number="12" amount="2">
 		<Upgrade number="63" />
 	</Tile>
@@ -104,9 +104,8 @@
 	<Tile number="213" amount="1" />
 	<Tile number="214" amount="1" />
 	<Tile number="215" amount="1" />
-</TileSet>
 
-<TileSet color="brown">
+	<!-- Brown tiles -->
 	<Tile number="39" amount="1" />
 	<Tile number="40" amount="1" />
 	<Tile number="41" amount="2" />
@@ -124,4 +123,4 @@
 	<Tile number="219" amount="2" />
 	<Tile number="220" amount="1" />
 	<Tile number="221" amount="1" />
-</TileSet>
+</TileManager>

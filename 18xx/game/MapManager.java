@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.8 2005/10/22 14:26:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.9 2005/10/23 18:02:00 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -137,7 +137,7 @@ public class MapManager implements ConfigurableComponentI
 		            }
 			        if (i+dx>=0 && i+dx<=maxX && j+dy>=0 && j+dy<=maxY
 			                && (nb = hexes[i+dx][j+dy]) != null) {
-			            if (hex.isNeighbour(nb) && nb.isNeighbour (hex)) {
+			            if (hex.isNeighbour(nb, k) && nb.isNeighbour (hex, k+3)) {
 				            hex.setNeighbor(k, nb);
 				            nb.setNeighbor(k+3, hex);
 			            }

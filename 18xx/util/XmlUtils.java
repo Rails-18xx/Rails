@@ -153,11 +153,14 @@ public final class XmlUtils {
             // Step 3: parse the input file to get a Document object
             doc = db.parse(theFile);
         } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName, e);
+            throw new ConfigurationException("Could not read/parse " + fileName
+                    + " to find element " + elementName, e);
         } catch (SAXException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName, e);
+            throw new ConfigurationException("Could not read/parse " + fileName
+                    + " to find element " + elementName, e);
         } catch (IOException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName, e);
+            throw new ConfigurationException("Could not read/parse " + fileName
+                    + " to find element " + elementName, e);
         }
     
         // Now find the named Element
