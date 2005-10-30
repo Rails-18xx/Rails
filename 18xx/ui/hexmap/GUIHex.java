@@ -5,6 +5,7 @@ import game.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.util.Iterator;
 
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  
@@ -24,6 +25,7 @@ public abstract class GUIHex
 	protected int tileId;
 	protected int tileOrientation;
 	protected String tileFilename;
+	protected TileI currentTile;
 
 	// These are only here for scope visibility
 	protected double tileScale = 0.33;
@@ -74,6 +76,7 @@ public abstract class GUIHex
 	public void setHexModel(MapHex model)
 	{
 		this.model = model;
+		currentTile = model.getCurrentTile();
 	}
 
 	public Rectangle getBounds()
@@ -253,6 +256,7 @@ public abstract class GUIHex
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
+		/*
 		// Added by Erik Vos: show hex name
 		g2.drawString(hexName,
 				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getMapHexModel().getName())) * 2/5,
@@ -266,6 +270,7 @@ public abstract class GUIHex
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
 				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getMapHexModel().getPreprintedTileId())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
+		*/
 	}
 
 	public boolean paintOverlay(Graphics2D g)
@@ -365,7 +370,30 @@ public abstract class GUIHex
 
 	protected String getToolTip()
 	{
-		return "<html><b>Hex</b>: " + hexName + "<br><b>Tile</b>: " + tileId;
+	    StringBuffer toolTip = new StringBuffer ("<html>");
+	    toolTip.append ("<b>Hex</b>: ").append(hexName);
+	    // The next line is a temporary development aid, that can be removed later.
+	    toolTip.append ("  <small>(").append(model.getX()).append(",").append(model.getY()).append(")</small>");
+	    toolTip.append ("<br><b>Tile</b>: ").append(currentTile.getId());
+	    if (currentTile.hasStations()) {
+	        Iterator it = currentTile.getStations().iterator();
+	        Station st;
+	        while (it.hasNext()) {
+	            st = (Station)it.next();
+	            toolTip.append("<br>  ").append(st.getType());
+	            toolTip.append(": value ").append(st.getValue());
+	            if (st.getValue() > 0 && st.getBaseSlots() > 0) {
+	                toolTip.append(", ").append(st.getBaseSlots()).append(" slots");
+	            }
+	        }
+	    }
+	    String upgrades = currentTile.getUpgradesString(model);
+		if (upgrades.equals("")) {
+		    toolTip.append ("<br>No upgrades");
+		} else {
+		    toolTip.append("<br><b>Upgrades</b>: ").append(upgrades);
+		}
+		return toolTip.toString();
 	}
 
 	protected void rotateHexCW()
