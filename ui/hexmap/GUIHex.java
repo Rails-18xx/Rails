@@ -180,7 +180,7 @@ public abstract class GUIHex
 		if (i >= 0 && i < 6)
 		{
 			neighbors[i] = hex;
-			getMapHexModel().setNeighbor(i, hex.getMapHexModel());
+			getHexModel().setNeighbor(i, hex.getHexModel());
 		}
 	}
 
@@ -196,10 +196,12 @@ public abstract class GUIHex
 		}
 	}
 
+	/*
 	public MapHex getMapHexModel()
 	{
 		return (MapHex) getHexModel();
 	}
+	*/
 
 	public void paint(Graphics g)
 	{
