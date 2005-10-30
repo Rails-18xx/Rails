@@ -322,7 +322,15 @@ public abstract class GUIHex
 	{
 		this.hexName = name;
 	}
+	
+	
 
+    /**
+     * @return Returns the currentTile.
+     */
+    public TileI getCurrentTile() {
+        return currentTile;
+    }
 	/**
 	 * @return Returns the tileId.
 	 */

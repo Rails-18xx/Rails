@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	protected ImageLoader imageLoader = new ImageLoader();
 	private boolean hexSelected = false;
+	protected UpgradesPanel upgradesPanel = null;
 
 	void setupHexes()
 	{
@@ -168,12 +170,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				hex.setSelected(true);
 				hexSelected = true;
+				showUpgrades (hex);
 			}
 			else
 			{
 				unselectAllHexes();
 				hex.setSelected(true);
 				hexSelected = true;
+				showUpgrades (hex);
 			}
 
 			//FIXME: Performance of this repaint could be improved.
@@ -187,6 +191,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				unselectAllHexes();
 				hexSelected = false;
+				showUpgrades (null);
 			}
 		}
 	}
@@ -275,5 +280,23 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		if (hex != null) setToolTipText (hex.getToolTip());
         //System.out.println("Mouse moved to "+point.getX()+","+point.getX()+" tooltip="+this.getToolTipText());
 
+    }
+    
+    public void setUpgradesPanel (UpgradesPanel upgradesPanel) {
+        this.upgradesPanel = upgradesPanel;
+    }
+    
+    public void showUpgrades (GUIHex hex) {
+        
+        if (hex == null) {
+            upgradesPanel.display(null);
+        } else {
+            List upgrades = hex.getCurrentTile().getUpgrades(hex.getHexModel());
+            if (upgrades == null) {
+                upgradesPanel.display(null);
+            } else {
+                upgradesPanel.display((TileI[])upgrades.toArray(new TileI[0]));
+            }
+        }
     }
 }
