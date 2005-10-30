@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.Timer;
+
 import javax.swing.*;
 
 import game.*;
@@ -16,7 +18,7 @@ import ui.*;
  * Base class that stores common info for HexMap independant of Hex orientations. 
  */
 public abstract class HexMap extends JComponent implements MouseListener,
-		WindowListener
+		MouseMotionListener, WindowListener
 {
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
@@ -139,6 +141,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			GUIHex hex = getHexContainingPoint(point);
+			setToolTipText (hex.getToolTip());
 
 			// Temporary, to check for correct neighbour setting
 			StringBuffer b = new StringBuffer();
@@ -176,7 +179,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			//FIXME: Performance of this repaint could be improved.
 			this.repaint(hex.getBounds());
 			
-			// setToolTipText (hex.getToolTip());
 		}
 		catch (NullPointerException e)
 		{
@@ -253,5 +255,25 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+     */
+    public void mouseDragged(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+     */
+    public void mouseMoved(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+		Point point = arg0.getPoint();
+		GUIHex hex = getHexContainingPoint(point);
+		if (hex != null) setToolTipText (hex.getToolTip());
+        //System.out.println("Mouse moved to "+point.getX()+","+point.getX()+" tooltip="+this.getToolTipText());
+
+    }
 }
