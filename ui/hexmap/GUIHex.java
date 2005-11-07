@@ -5,7 +5,7 @@ import game.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  
@@ -58,9 +58,9 @@ public abstract class GUIHex
 	Rectangle rectBound;
 
 	/** Globally turns antialiasing on or off for all hexes. */
-	static boolean antialias;
+	static boolean antialias = true;
 	/** Globally turns overlay on or off for all hexes */
-	static boolean useOverlay;
+	static boolean useOverlay = true;
 	// Selection is in-between GUI and game state.
 	private boolean selected;
 
@@ -324,8 +324,6 @@ public abstract class GUIHex
 	{
 		this.hexName = name;
 	}
-	
-	
 
     /**
      * @return Returns the currentTile.
