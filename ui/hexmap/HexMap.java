@@ -7,27 +7,26 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
-import java.util.Timer;
-
 import javax.swing.*;
 
 import game.*;
 import ui.*;
 
 /**
- * Base class that stores common info for HexMap independant of Hex orientations. 
+ * Base class that stores common info for HexMap independant of Hex
+ * orientations.
  */
 public abstract class HexMap extends JComponent implements MouseListener,
-		MouseMotionListener, WindowListener
+		MouseMotionListener
 {
+
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
-	
+
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h;
 	protected ArrayList hexes;
-	
+
 	protected int scale = 2 * Scale.get();
 	protected int cx = 6 * scale;
 	protected int cy = 2 * scale;
@@ -94,7 +93,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			super.paintComponent(g);
-			
+
 			// Abort if called too early.
 			Rectangle rectClip = g.getClipBounds();
 			if (rectClip == null)
@@ -103,7 +102,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			}
 
 			Iterator it = hexes.iterator();
-			while(it.hasNext())
+			while (it.hasNext())
 			{
 				GUIHex hex = (GUIHex) it.next();
 				Rectangle hexrect = hex.getBounds();
@@ -113,7 +112,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 						hexrect.width,
 						hexrect.height))
 				{
-						hex.paint(g);
+					hex.paint(g);
 				}
 			}
 		}
@@ -143,7 +142,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			GUIHex hex = getHexContainingPoint(point);
-			setToolTipText (hex.getToolTip());
+			setToolTipText(hex.getToolTip());
 
 			// Temporary, to check for correct neighbour setting
 			StringBuffer b = new StringBuffer();
@@ -170,19 +169,18 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				hex.setSelected(true);
 				hexSelected = true;
-				showUpgrades (hex);
+				showUpgrades(hex);
 			}
 			else
 			{
 				unselectAllHexes();
 				hex.setSelected(true);
 				hexSelected = true;
-				showUpgrades (hex);
+				showUpgrades(hex);
 			}
 
-			//FIXME: Performance of this repaint could be improved.
-			this.repaint(hex.getBounds());
-			
+			// FIXME: Performance of this repaint could be improved.
+			repaint(hex.getBounds());
 		}
 		catch (NullPointerException e)
 		{
@@ -191,7 +189,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				unselectAllHexes();
 				hexSelected = false;
-				showUpgrades (null);
+				showUpgrades(null);
 			}
 		}
 	}
@@ -220,83 +218,61 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	}
 
-	public void windowActivated(WindowEvent e)
+	public boolean isHexSelected()
 	{
-		// TODO Auto-generated method stub
+		return hexSelected;
 	}
 
-	public void windowClosed(WindowEvent e)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowClosing(WindowEvent e)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowDeactivated(WindowEvent e)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 */
+	public void mouseDragged(MouseEvent arg0)
 	{
 		// TODO Auto-generated method stub
 
 	}
 
-	public void windowDeiconified(WindowEvent e)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
+	public void mouseMoved(MouseEvent arg0)
 	{
 		// TODO Auto-generated method stub
-
-	}
-
-	public void windowIconified(WindowEvent e)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowOpened(WindowEvent e)
-	{
-		// TODO Auto-generated method stub
-
-	}
-	
-	
-
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
-    public void mouseDragged(MouseEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    public void mouseMoved(MouseEvent arg0) {
-        // TODO Auto-generated method stub
 		Point point = arg0.getPoint();
 		GUIHex hex = getHexContainingPoint(point);
-		if (hex != null) setToolTipText (hex.getToolTip());
-        //System.out.println("Mouse moved to "+point.getX()+","+point.getX()+" tooltip="+this.getToolTipText());
+		if (hex != null)
+			setToolTipText(hex.getToolTip());
+		// System.out.println("Mouse moved to "+point.getX()+","+point.getX()+"
+		// tooltip="+this.getToolTipText());
+	}
 
-    }
-    
-    public void setUpgradesPanel (UpgradesPanel upgradesPanel) {
-        this.upgradesPanel = upgradesPanel;
-    }
-    
-    public void showUpgrades (GUIHex hex) {
-        
-        if (hex == null) {
-            upgradesPanel.display(null);
-        } else {
-            List upgrades = hex.getCurrentTile().getUpgrades(hex.getHexModel());
-            if (upgrades == null) {
-                upgradesPanel.display(null);
-            } else {
-                upgradesPanel.display((TileI[])upgrades.toArray(new TileI[0]));
-            }
-        }
-    }
+	public void setUpgradesPanel(UpgradesPanel upgradesPanel)
+	{
+		this.upgradesPanel = upgradesPanel;
+	}
+
+	public void showUpgrades(GUIHex hex)
+	{
+		if (hex == null)
+		{
+			upgradesPanel.setUpgrades(null);
+		}
+		else
+		{
+			ArrayList upgrades = (ArrayList) hex.getCurrentTile()
+					.getUpgrades(hex.getHexModel());
+			if (upgrades == null)
+			{
+				upgradesPanel.setUpgrades(null);
+			}
+			else
+			{
+				upgradesPanel.setUpgrades(upgrades);
+			}
+		}
+	}
 }

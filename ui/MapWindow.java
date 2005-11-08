@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.26 2005/10/30 19:55:06 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.27 2005/11/08 01:21:10 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -22,11 +22,11 @@ public class MapWindow extends JFrame
 	private MapManager mmgr;
 	private HexMap map;
 	private ScrollPane scrollPane;
-	private UpgradesPanel upgradePanel;
+	protected UpgradesPanel upgradePanel;
 
 	public MapWindow()
 	{
-		GUIHex.setOverlay(true);
+		super();
 		Scale.set(15);
 		
 		Container contentPane = this.getContentPane();
@@ -47,25 +47,21 @@ public class MapWindow extends JFrame
 		
 		map.addMouseListener(map);
 		addMouseListener(map);
-		addWindowListener(map);
-
 		map.addMouseMotionListener(map);
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 		
 		scrollPane = new ScrollPane();
 		scrollPane.add(map);
 		scrollPane.setSize(map.getPreferredSize());
-		//scrollPane.setLocation(100,100);
 		
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		// Add area to show upgrade tiles
 		upgradePanel = new UpgradesPanel();
-		upgradePanel.setSize(50,300);
 		contentPane.add (upgradePanel, BorderLayout.WEST);
 		map.setUpgradesPanel(upgradePanel);
 		
-		setSize(map.getPreferredSize());
+		setSize(800,600);
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
