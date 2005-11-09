@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.28 2005/11/09 01:18:17 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.29 2005/11/09 22:23:13 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -61,7 +61,8 @@ public class MapWindow extends JFrame
 		contentPane.add (upgradePanel, BorderLayout.WEST);
 		map.setUpgradesPanel(upgradePanel);
 		
-		setSize(600,400);
+		setSize(map.getPreferredSize().width+100,
+		        map.getPreferredSize().height+40);
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
