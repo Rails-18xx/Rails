@@ -1,6 +1,9 @@
 package ui.hexmap;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
+
+import ui.Scale;
 
 import game.*;
 
@@ -14,6 +17,9 @@ public class EWHexMap extends HexMap
 	public EWHexMap()
 	{
 		setupHexes();
+		cx = scale / 2;
+		cy = 0;
+		
 	}
 
 	protected void setupHexesGUI()
@@ -21,7 +27,7 @@ public class EWHexMap extends HexMap
 		hexes = new ArrayList();
 
 		MapManager mmgr = MapManager.getInstance();
-		MapHex[][] hexArray = mmgr.getHexes();
+		hexArray = mmgr.getHexes();
 		MapHex mh;
 		h = new GUIHex[hexArray.length][hexArray[0].length];
 		for (int i = 0; i < hexArray.length; i++)
@@ -55,5 +61,8 @@ public class EWHexMap extends HexMap
 				}
 			}
 		}
+        preferredSize = new Dimension(
+                (int)Math.round((hexArray.length +1 ) * GUIHex.SQRT3 * scale),
+                (int)Math.round((hexArray[0].length + 1) * 1.5 * scale));
 	}
 }

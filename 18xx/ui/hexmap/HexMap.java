@@ -25,16 +25,17 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h;
+	MapHex[][] hexArray;
 	protected ArrayList hexes;
 
 	protected int scale = 2 * Scale.get();
-	protected int cx = 6 * scale;
-	protected int cy = 2 * scale;
+	protected int cx;
+	protected int cy;
 
 	protected ImageLoader imageLoader = new ImageLoader();
 	private boolean hexSelected = false;
 	protected UpgradesPanel upgradesPanel = null;
-	protected Dimension preferredSize = new Dimension(60 * Scale.get(), 45 * Scale.get());
+	protected Dimension preferredSize;
 
 	public void setupHexes()
 	{
