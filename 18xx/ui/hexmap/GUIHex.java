@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.util.*;
+import javax.swing.*;
 
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  
@@ -44,7 +45,7 @@ public abstract class GUIHex
 
 	/**
 	 * Stores the neighbouring views. This parallels the neighors field in
-	 * BattleHex, just on the view side.
+	 * MapHex, just on the view side.
 	 * 
 	 * @todo check if we can avoid this
 	 */
@@ -82,6 +83,11 @@ public abstract class GUIHex
 	public Rectangle getBounds()
 	{
 		return rectBound;
+	}
+	
+	public void setBounds(Rectangle rectBound)
+	{
+		this.rectBound = rectBound;
 	}
 
 	public boolean contains(Point2D.Double point)
@@ -196,13 +202,6 @@ public abstract class GUIHex
 		}
 	}
 
-	/*
-	public MapHex getMapHexModel()
-	{
-		return (MapHex) getHexModel();
-	}
-	*/
-
 	public void paint(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
@@ -225,14 +224,7 @@ public abstract class GUIHex
 			// highlighting to peek through.
 			tileScale = 0.3;
 
-			if (terrainColor.equals(highlightColor))
-			{
-				// g2.setColor(HTMLColor.invertRGBColor(highlightColor));
-			}
-			else
-			{
-				g2.setColor(highlightColor);
-			}
+			g2.setColor(highlightColor);
 			g2.fill(hexagon);
 
 			g2.setColor(terrainColor);
@@ -254,34 +246,32 @@ public abstract class GUIHex
 		g2.setColor(Color.black);
 		g2.draw(hexagon);
 
-		paintOverlay(g2);
-
+		//FIXME: Disabled until we can properly update the overlay drawing to work with the scrollpane
+		//paintOverlay(g2);
+		
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
-		/*
 		// Added by Erik Vos: show hex name
 		g2.drawString(hexName,
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getMapHexModel().getName())) * 2/5,
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getHexModel().getName())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
 
 		g2.drawString("("+model.getX()+","+model.getY()+")", 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth("("+getMapHexModel().getX()+","+getMapHexModel().getY()+")")) * 1/3,
+				rectBound.x + (rectBound.width - fontMetrics.stringWidth("("+getHexModel().getX()+","+getHexModel().getY()+")")) * 1/3,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 1/2));
 
 		// Added by Erik Vos: show the preprinted tile id
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
-				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getMapHexModel().getPreprintedTileId())) * 2/5,
+				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
-		*/
 	}
 
-	public boolean paintOverlay(Graphics2D g)
+	public void paintOverlay(Graphics2D g)
 	{
 		BufferedImage overlay = tileImage;
 
 		if (overlay != null)
 		{ // first, draw the Hex itself
-
 			Point center = findCenter();
 			af = AffineTransform.getRotateInstance(rotation);
 			af.scale(tileScale, tileScale);
@@ -296,15 +286,7 @@ public abstract class GUIHex
 					(center.x + x_adjust),
 					(center.y + y_adjust));
 			g.setTransform(AffineTransform.getRotateInstance(0));
-
 		}
-		boolean didAllHexside = true;
-		Shape oldClip = g.getClip();
-		// make sure we draw only inside our hex
-		g.setClip(null);
-		g.clip(hexagon);
-		g.setClip(oldClip);
-		return didAllHexside;
 	}
 
 	// Added by Erik Vos

@@ -34,8 +34,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected ImageLoader imageLoader = new ImageLoader();
 	private boolean hexSelected = false;
 	protected UpgradesPanel upgradesPanel = null;
+	protected Dimension preferredSize = new Dimension(60 * Scale.get(), 45 * Scale.get());
 
-	void setupHexes()
+	public void setupHexes()
 	{
 		setupHexesGUI();
 	}
@@ -90,10 +91,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void paintComponent(Graphics g)
 	{
+		super.paintComponent(g);
+		
 		try
 		{
-			super.paintComponent(g);
-
 			// Abort if called too early.
 			Rectangle rectClip = g.getClipBounds();
 			if (rectClip == null)
@@ -132,7 +133,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(60 * Scale.get(), 45 * Scale.get());
+		return preferredSize;
 	}
 
 	public void mouseClicked(MouseEvent arg0)
@@ -274,5 +275,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				upgradesPanel.setUpgrades(upgrades);
 			}
 		}
+		
+		invalidate();
+		upgradesPanel.showUpgrades();
 	}
 }

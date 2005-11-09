@@ -34,37 +34,33 @@ public class UpgradesPanel extends Box
 		upgradePanel.setBackground(Color.DARK_GRAY);
 		upgradePanel.setBorder(border);
 		add(upgradePanel);
+		
+		showUpgrades();
 	}
 
-	private void showUpgrades()
+	public void showUpgrades()
 	{
 		upgradePanel.removeAll();
 
 		if (upgrades != null)
 		{
 			Iterator it = upgrades.iterator();
-			TileI tile;
-			JLabel hex;
 
 			while (it.hasNext())
 			{
-				tile = (TileI) it.next();
-				hex = new JLabel("Tile #" + tile.getId());
+				TileI tile = (TileI) it.next();
+				JLabel hex = new JLabel("Tile #" + tile.getId());
 				hex.setOpaque(true);
+				hex.setVisible(true);
 				hex.setBorder(border);
 
 				upgradePanel.add(hex);
-
 				System.out.println("Upgrade tile: " + tile.getId());
 			}
 		}
-	}
-	
-	public void paint(Graphics g)
-	{
-		super.paint(g);
-
-		showUpgrades();
+		
+		invalidate();
+		repaint();
 	}
 	
 	public Dimension getPreferredSize()
