@@ -12,9 +12,6 @@
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="57"/>
 	</Tile>
-	<Tile id="-20"><!-- 2 OO cities -->
-		<Upgrade id="59"/>
-	</Tile>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
 	
