@@ -11,10 +11,6 @@
 	<Tile id="-10" colour="white">
 		<Station id="city1" type="City" slots="1"/>
 	</Tile>
-	<Tile id="-20" colour="yellow">
-		<Station id="city1" type="City" slots="1"/>
-		<Station id="city2" type="City" slots="1"/>
-	</Tile>
 	<Tile id="-902" colour="red">
 		<Station id="city1" type="OffMapCity" value="-1"/>
 		<Track gauge="normal" from="city1" to="side2"/>
