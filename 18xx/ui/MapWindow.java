@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.31 2005/11/10 21:30:33 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.32 2005/11/10 21:39:15 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -45,7 +45,6 @@ public class MapWindow extends JFrame
 		}
 		
 		map.addMouseListener(map);
-		addMouseListener(map);
 		map.addMouseMotionListener(map);
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 		
