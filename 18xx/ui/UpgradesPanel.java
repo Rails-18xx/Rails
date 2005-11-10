@@ -1,19 +1,20 @@
 package ui;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 import game.*;
 
-public class UpgradesPanel extends Box
+public class UpgradesPanel extends Box implements MouseListener
 {
 
 	private ArrayList upgrades;
 	private JPanel upgradePanel;
 
-	private Dimension preferredSize = new Dimension(75, 800);
+	private Dimension preferredSize = new Dimension(75, 200);
 	private Border border = new EtchedBorder();
 
 	public UpgradesPanel()
@@ -53,6 +54,7 @@ public class UpgradesPanel extends Box
 				hex.setOpaque(true);
 				hex.setVisible(true);
 				hex.setBorder(border);
+				hex.addMouseListener(this);
 
 				upgradePanel.add(hex);
 				System.out.println("Upgrade tile: " + tile.getId());
@@ -81,5 +83,35 @@ public class UpgradesPanel extends Box
 	public void setUpgrades(ArrayList upgrades)
 	{
 		this.upgrades = upgrades;
+	}
+
+	public void mouseClicked(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		System.out.println("Click.");
+	}
+
+	public void mouseEntered(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseReleased(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }
