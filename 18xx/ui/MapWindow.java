@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.30 2005/11/10 02:03:46 wakko666 Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.31 2005/11/10 21:30:33 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -55,7 +55,7 @@ public class MapWindow extends JFrame
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		// Add area to show upgrade tiles
-		upgradePanel = new UpgradesPanel();
+		upgradePanel = new UpgradesPanel(map);
 		contentPane.add (upgradePanel, BorderLayout.WEST);
 		map.setUpgradesPanel(upgradePanel);
 		
