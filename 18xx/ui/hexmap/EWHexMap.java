@@ -40,7 +40,7 @@ public class EWHexMap extends HexMap
 					GUIEWHex hex = new GUIEWHex(
 							(cx + scale	* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
 							(cy + j * 1.5 * scale), 
-							scale, this, i, j);
+							scale, i, j);
 					
 					hex.setName(mh.getName());
 					hex.setTileId(mh.getPreprintedTileId());

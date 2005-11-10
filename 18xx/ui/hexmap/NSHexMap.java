@@ -39,7 +39,7 @@ public class NSHexMap extends HexMap
                      GUINSHex hex = new GUINSHex(
                     		 (int)Math.round(cx + 3 * i * scale),
                     		 (int)Math.round(cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale), 
-                    		 scale, this, i, j);
+                    		 scale, i, j);
 
                     hex.setName(mh.getName());
                     hex.setTileId(mh.getPreprintedTileId());

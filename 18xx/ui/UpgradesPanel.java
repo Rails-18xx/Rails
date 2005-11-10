@@ -2,11 +2,13 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 import game.*;
+import ui.hexmap.*;
 
 public class UpgradesPanel extends Box implements MouseListener
 {
@@ -50,19 +52,39 @@ public class UpgradesPanel extends Box implements MouseListener
 			while (it.hasNext())
 			{
 				TileI tile = (TileI) it.next();
-				JLabel hex = new JLabel("Tile #" + tile.getId());
-				hex.setOpaque(true);
-				hex.setVisible(true);
-				hex.setBorder(border);
-				hex.addMouseListener(this);
-
-				upgradePanel.add(hex);
+				BufferedImage hexImage = getHexImage(tile);
+				ImageIcon hexIcon = new ImageIcon(hexImage);
+				
+				//Cheap n' Easy rescaling.
+				hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+						(int)(hexIcon.getIconHeight() * 0.3),
+						(int)(hexIcon.getIconWidth() * 0.3), 
+						Image.SCALE_FAST));
+				
+				JLabel hexLabel = new JLabel(hexIcon);
+				hexLabel.setText("" + tile.getId());
+				hexLabel.setName(tile.getName());
+				
+				JPanel hexPanel = new JPanel();				
+				hexPanel.setOpaque(true);
+				hexPanel.setVisible(true);
+				hexPanel.setBorder(border);
+				hexPanel.addMouseListener(this);
+				hexPanel.add(hexLabel);
+				
+				upgradePanel.add(hexPanel);
 				System.out.println("Upgrade tile: " + tile.getId());
 			}
 		}
 		
 		invalidate();
 		repaint();
+	}
+	
+	private BufferedImage getHexImage(TileI tile)
+	{
+		ImageLoader il = new ImageLoader();		
+		return il.getTile(tile.getId());
 	}
 	
 	public Dimension getPreferredSize()
@@ -87,7 +109,6 @@ public class UpgradesPanel extends Box implements MouseListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
 		System.out.println("Click.");
 	}
 
