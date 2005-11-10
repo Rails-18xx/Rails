@@ -15,13 +15,16 @@ public class UpgradesPanel extends Box implements MouseListener
 
 	private ArrayList upgrades;
 	private JPanel upgradePanel;
-
+	private HexMap map;
 	private Dimension preferredSize = new Dimension(75, 200);
 	private Border border = new EtchedBorder();
 
-	public UpgradesPanel()
+	public UpgradesPanel(HexMap map)
 	{
 		super(BoxLayout.Y_AXIS);
+		
+		this.map = map;
+		
 		setSize(preferredSize);
 		setVisible(true);
 
@@ -52,7 +55,7 @@ public class UpgradesPanel extends Box implements MouseListener
 			while (it.hasNext())
 			{
 				TileI tile = (TileI) it.next();
-				BufferedImage hexImage = getHexImage(tile);
+				BufferedImage hexImage = getHexImage(tile.getId());
 				ImageIcon hexIcon = new ImageIcon(hexImage);
 				
 				//Cheap n' Easy rescaling.
@@ -62,18 +65,14 @@ public class UpgradesPanel extends Box implements MouseListener
 						Image.SCALE_FAST));
 				
 				JLabel hexLabel = new JLabel(hexIcon);
-				hexLabel.setText("" + tile.getId());
 				hexLabel.setName(tile.getName());
+				hexLabel.setText("" + tile.getId());
+				hexLabel.setOpaque(true);
+				hexLabel.setVisible(true);
+				hexLabel.setBorder(border);
+				hexLabel.addMouseListener(this);
 				
-				JPanel hexPanel = new JPanel();				
-				hexPanel.setOpaque(true);
-				hexPanel.setVisible(true);
-				hexPanel.setBorder(border);
-				hexPanel.addMouseListener(this);
-				hexPanel.add(hexLabel);
-				
-				upgradePanel.add(hexPanel);
-				System.out.println("Upgrade tile: " + tile.getId());
+				upgradePanel.add(hexLabel);
 			}
 		}
 		
@@ -81,10 +80,10 @@ public class UpgradesPanel extends Box implements MouseListener
 		repaint();
 	}
 	
-	private BufferedImage getHexImage(TileI tile)
+	private BufferedImage getHexImage(int tileId)
 	{
 		ImageLoader il = new ImageLoader();		
-		return il.getTile(tile.getId());
+		return il.getTile(tileId);
 	}
 	
 	public Dimension getPreferredSize()
@@ -109,7 +108,11 @@ public class UpgradesPanel extends Box implements MouseListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-		System.out.println("Click.");
+		HexMap.selectedHex.setTileImage(getHexImage(Integer.parseInt(((JLabel)e.getSource()).getText())));
+		HexMap.selectedHex.setTileId(Integer.parseInt(((JLabel)e.getSource()).getText()));
+		HexMap.selectedHex.getHexModel().getCurrentTile().setId(Integer.parseInt(((JLabel)e.getSource()).getText()));
+
+		map.repaint();
 	}
 
 	public void mouseEntered(MouseEvent e)

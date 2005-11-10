@@ -34,6 +34,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	protected ImageLoader imageLoader = new ImageLoader();
 	private boolean hexSelected = false;
+	public static GUIHex selectedHex;
 	protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
 
@@ -143,15 +144,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 		try
 		{
-			GUIHex hex = getHexContainingPoint(point);
-			setToolTipText(hex.getToolTip());
+			selectedHex = getHexContainingPoint(point);
+			setToolTipText(selectedHex.getToolTip());
 
 			// Temporary, to check for correct neighbour setting
 			StringBuffer b = new StringBuffer();
 			b.append("Clicked hex ")
-					.append(hex.getName())
+					.append(selectedHex.getName())
 					.append(" Neighbors:");
-			MapHex[] nb = hex.getHexModel().getNeighbors();
+			MapHex[] nb = selectedHex.getHexModel().getNeighbors();
 			for (int i = 0; i < 6; i++)
 			{
 				if (nb[i] != null)
@@ -159,30 +160,30 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			}
 			System.out.println(b.toString());
 
-			if (hex.isSelected() && hexSelected == true)
+			if (selectedHex.isSelected() && hexSelected == true)
 			{
-				hex.x_adjust = hex.x_adjust_arr[hex.arr_index];
-				hex.y_adjust = hex.y_adjust_arr[hex.arr_index];
-				hex.rotation = hex.rotation_arr[hex.arr_index];
+				selectedHex.x_adjust = selectedHex.x_adjust_arr[selectedHex.arr_index];
+				selectedHex.y_adjust = selectedHex.y_adjust_arr[selectedHex.arr_index];
+				selectedHex.rotation = selectedHex.rotation_arr[selectedHex.arr_index];
 
-				hex.rotateHexCW();
+				selectedHex.rotateHexCW();
 			}
-			else if (!hex.isSelected() && hexSelected == false)
+			else if (!selectedHex.isSelected() && hexSelected == false)
 			{
-				hex.setSelected(true);
+				selectedHex.setSelected(true);
 				hexSelected = true;
-				showUpgrades(hex);
+				showUpgrades();
 			}
 			else
 			{
 				unselectAllHexes();
-				hex.setSelected(true);
+				selectedHex.setSelected(true);
 				hexSelected = true;
-				showUpgrades(hex);
+				showUpgrades();
 			}
 
 			// FIXME: Performance of this repaint could be improved.
-			repaint(hex.getBounds());
+			repaint(selectedHex.getBounds());
 			// FIXME: Kludgy, but it forces the upgrades panel to be drawn correctly.
 			upgradesPanel.setVisible(false);
 			upgradesPanel.setVisible(true);
@@ -194,7 +195,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				unselectAllHexes();
 				hexSelected = false;
-				showUpgrades(null);
+				showUpgrades();
 			}
 		}
 	}
@@ -260,16 +261,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		this.upgradesPanel = upgradesPanel;
 	}
 
-	public void showUpgrades(GUIHex hex)
+	public void showUpgrades()
 	{
-		if (hex == null)
+		if (selectedHex == null)
 		{
 			upgradesPanel.setUpgrades(null);
 		}
 		else
 		{
-			ArrayList upgrades = (ArrayList) hex.getCurrentTile()
-					.getUpgrades(hex.getHexModel());
+			ArrayList upgrades = (ArrayList) selectedHex.getCurrentTile()
+					.getUpgrades(selectedHex.getHexModel());
 			if (upgrades == null)
 			{
 				upgradesPanel.setUpgrades(null);

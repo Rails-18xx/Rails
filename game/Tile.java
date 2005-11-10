@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.2 2005/10/30 16:29:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.3 2005/11/10 21:30:32 wakko666 Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -202,5 +202,17 @@ public class Tile implements TileI {
     public List getStations() {
         return stations;
     }
+
+	
+	public void setId(int id)
+	{
+		this.id = id;
+	}
+
+	
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.2 2005/10/30 16:29:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.3 2005/11/10 21:30:32 wakko666 Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -24,10 +24,12 @@ public interface TileI {
      * @return Returns the id.
      */
     public int getId();
+    public void setId(int id);
     /**
      * @return Returns the name.
      */
     public String getName();
+    public void setName(String name);
 
     public boolean hasTracks(int sideNumber);
     
