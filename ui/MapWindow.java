@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.29 2005/11/09 22:23:13 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.30 2005/11/10 02:03:46 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -50,11 +50,9 @@ public class MapWindow extends JFrame
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 		
 		scrollPane = new JScrollPane(map);
-		//scrollPane.add(map);
 		scrollPane.setSize(map.getPreferredSize());
 		
 		contentPane.add(scrollPane, BorderLayout.CENTER);
-		//contentPane.add(map, BorderLayout.CENTER);
 		
 		// Add area to show upgrade tiles
 		upgradePanel = new UpgradesPanel();
@@ -66,5 +64,7 @@ public class MapWindow extends JFrame
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		pack();
 	}
 }

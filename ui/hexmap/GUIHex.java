@@ -40,6 +40,7 @@ public abstract class GUIHex
 
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();
+	protected JComponent map;
 
 	protected String toolTip = "";
 
@@ -205,7 +206,7 @@ public abstract class GUIHex
 	public void paint(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-
+		
 		if (getAntialias())
 		{
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -239,16 +240,17 @@ public abstract class GUIHex
 			if (tileScale != 0.33)
 				tileScale = 0.33;
 
-			g2.setColor(terrainColor);
-			g2.fill(hexagon);
+			//g2.setColor(terrainColor);
+			//g2.fill(hexagon);
 		}
 
-		g2.setColor(Color.black);
-		g2.draw(hexagon);
+		//g2.setColor(Color.black);
+		//g2.draw(hexagon);
 
 		//FIXME: Disabled until we can properly update the overlay drawing to work with the scrollpane
-		//paintOverlay(g2);
-		
+		paintOverlay(g2);
+
+		/*
 		FontMetrics fontMetrics = g2.getFontMetrics();
 
 		// Added by Erik Vos: show hex name
@@ -264,13 +266,12 @@ public abstract class GUIHex
 		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
 				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
+		*/
 	}
 
-	public void paintOverlay(Graphics2D g)
+	public void paintOverlay(Graphics2D g2)
 	{
-		BufferedImage overlay = tileImage;
-
-		if (overlay != null)
+		if (tileImage != null)
 		{ // first, draw the Hex itself
 			Point center = findCenter();
 			af = AffineTransform.getRotateInstance(rotation);
@@ -281,11 +282,10 @@ public abstract class GUIHex
 			AffineTransformOp aop = new AffineTransformOp(af,
 					AffineTransformOp.TYPE_BILINEAR);
 
-			g.drawImage(tileImage,
+			g2.drawImage(tileImage,
 					aop,
-					(center.x + x_adjust),
-					(center.y + y_adjust));
-			g.setTransform(AffineTransform.getRotateInstance(0));
+					center.x + x_adjust,
+					center.y + y_adjust);
 		}
 	}
 
@@ -404,6 +404,18 @@ public abstract class GUIHex
 		}
 		else
 			arr_index--;
+	}
+
+	
+	public JComponent getMap()
+	{
+		return map;
+	}
+
+	
+	public void setMap(JComponent map)
+	{
+		this.map = map;
 	}
 
 }
