@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with E-W orientation.
- * @version $Id: GUIEWHex.java,v 1.26 2005/10/21 00:17:32 wakko666 Exp $
+ * @version $Id: GUIEWHex.java,v 1.27 2005/11/10 20:45:52 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -18,8 +18,7 @@ public class GUIEWHex extends GUIHex
     // A1-A3, B1-B4, C1-C5, D1-D6, E1-E5, F1-F4.
     // Letters increase left to right; numbers increase bottom to top.
 
-	public GUIEWHex(double cx, double cy, int scale, JComponent map,
-        double xCoord, double yCoord)
+	public GUIEWHex(double cx, double cy, int scale, double xCoord, double yCoord)
     {
         super();
 

@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.11 2005/10/21 00:17:31 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.12 2005/11/10 20:45:51 wakko666 Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -19,8 +19,7 @@ public class GUINSHex extends GUIHex
     // Letters increase left to right; numbers increase bottom to top.
 
 	
-    public GUINSHex(int cx, int cy, int scale, JComponent map,
-        int xCoord, int yCoord)
+    public GUINSHex(int cx, int cy, int scale, int xCoord, int yCoord)
     {
         super();
 

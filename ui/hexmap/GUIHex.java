@@ -12,7 +12,7 @@ import javax.swing.*;
  * Base abstract class that holds common components for GUIHexes of all orientations.  
  */
 
-public abstract class GUIHex
+public abstract class GUIHex extends JComponent
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
