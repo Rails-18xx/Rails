@@ -8,6 +8,8 @@ import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
 
+import ui.ImageLoader;
+
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  
  */
@@ -27,6 +29,10 @@ public abstract class GUIHex extends JComponent
 	protected int tileOrientation;
 	protected String tileFilename;
 	protected TileI currentTile;
+	// Tile laid but not yet confirmed
+	protected int provisionalTileId;
+	protected TileI provisionalTile = null; 
+
 
 	// These are only here for scope visibility
 	protected double tileScale = 0.33;
@@ -41,6 +47,7 @@ public abstract class GUIHex extends JComponent
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();
 	protected JComponent map;
+	protected ImageLoader imageLoader = new ImageLoader();
 
 	protected String toolTip = "";
 
@@ -79,6 +86,11 @@ public abstract class GUIHex extends JComponent
 	{
 		this.model = model;
 		currentTile = model.getCurrentTile();
+		hexName = model.getName();
+		tileId = model.getPreprintedTileId();
+		tileOrientation = model.getPreprintedTileOrientation();
+		tileFilename = model.getTileFileName();
+		tileImage = imageLoader.getTile(tileId);
 	}
 
 	public Rectangle getBounds()
@@ -416,6 +428,20 @@ public abstract class GUIHex extends JComponent
 	public void setMap(JComponent map)
 	{
 		this.map = map;
+	}
+	
+	public void dropTile (int tileId) {
+	    provisionalTileId = tileId;
+	    provisionalTile = TileManager.get().getTile(tileId);
+	}
+	
+	public void removeTile () {
+	    provisionalTile = null;
+	}
+	
+	public void fixFile () {
+	    currentTile = provisionalTile;
+	    tileId = provisionalTileId;
 	}
 
 }

@@ -41,14 +41,14 @@ public class NSHexMap extends HexMap
                     		 (int)Math.round(cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale), 
                     		 scale, i, j);
 
-                    hex.setName(mh.getName());
-                    hex.setTileId(mh.getPreprintedTileId());
-                    hex.setTileOrientation(mh.getPreprintedTileOrientation());
-                    hex.setTileFilename(mh.getTileFileName());
+                    //hex.setName(mh.getName());
+                    //hex.setTileId(mh.getPreprintedTileId());
+                    //hex.setTileOrientation(mh.getPreprintedTileOrientation());
+                    //hex.setTileFilename(mh.getTileFileName());
                     hex.setHexModel(mh);
                     
-                    imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
-                    hex.setTileImage(imageLoader.getTile(hexArray[i][j].getPreprintedTileId()));
+                    //imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
+                    //hex.setTileImage(imageLoader.getTile(hexArray[i][j].getPreprintedTileId()));
                 	hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
                 	hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];
                 	hex.rotation = hex.rotation_arr[hex.tileOrientation];

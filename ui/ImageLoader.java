@@ -20,21 +20,23 @@ public class ImageLoader
     
     //String fn = "tile" + Integer.toString(getTileId()) + ".gif";
 
-    public boolean loadTile(int tileID)
+    private boolean loadTile(int tileID)
     {
         String fn = "tile" + Integer.toString(tileID) + ".gif";
+        String id = Integer.toString(tileID);
 
         try
         {
      	   File f = new File(tileDir + fn);
      	   BufferedImage img = ImageIO.read(f);
-     	   tileMap.put(((Object)Integer.toString(tileID)), ((Object)img));
+     	   tileMap.put(id, img);
      	   
      	   return true;
         }
         catch(IOException e)
         {
         	System.out.println("Unable to load tile file: " + tileDir + fn);
+      	    tileMap.put(id, null);
         	
         	return false;
         }
@@ -42,19 +44,10 @@ public class ImageLoader
     
     public BufferedImage getTile(int tileID)
     {
-    	if(tileMap.containsKey((Object)Integer.toString(tileID)))
-    	{
-    		return (BufferedImage) tileMap.get((Object)Integer.toString(tileID));
-    	}
-    	//If we haven't loaded it yet, we'll try once to load the image.
-    	else if (loadTile(tileID))
-    	{
-    		return (BufferedImage) tileMap.get((Object)Integer.toString(tileID));
-    	}
-    	else
-    	{
-    		return null;
-    	}
+        String id = Integer.toString(tileID);
+    	if(!tileMap.containsKey(id)) loadTile(tileID);
+
+   		return (BufferedImage) tileMap.get(id);
     }
     
     public ImageLoader()

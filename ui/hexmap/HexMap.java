@@ -32,7 +32,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected int cx;
 	protected int cy;
 
-	protected ImageLoader imageLoader = new ImageLoader();
+	//protected ImageLoader imageLoader = new ImageLoader();
 	private boolean hexSelected = false;
 	public static GUIHex selectedHex;
 	protected UpgradesPanel upgradesPanel = null;
