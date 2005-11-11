@@ -42,16 +42,16 @@ public class EWHexMap extends HexMap
 							(cy + j * 1.5 * scale), 
 							scale, i, j);
 					
-					hex.setName(mh.getName());
-					hex.setTileId(mh.getPreprintedTileId());
-					hex.setTileOrientation(mh
-							.getPreprintedTileOrientation());
-					hex.setTileFilename(mh.getTileFileName());
+					//hex.setName(mh.getName());
+					//hex.setTileId(mh.getPreprintedTileId());
+					//hex.setTileOrientation(mh
+					//		.getPreprintedTileOrientation());
+					//hex.setTileFilename(mh.getTileFileName());
 					hex.setHexModel(mh);
 
-					imageLoader.loadTile(mh.getPreprintedTileId());
-					hex.setTileImage(imageLoader.getTile(mh
-							.getPreprintedTileId()));
+					//imageLoader.loadTile(mh.getPreprintedTileId());
+					//hex.setTileImage(imageLoader.getTile(mh
+					//		.getPreprintedTileId()));
 					hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
 					hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];
 					hex.rotation = hex.rotation_arr[hex.tileOrientation];
