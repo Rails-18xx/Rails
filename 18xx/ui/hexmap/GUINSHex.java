@@ -7,7 +7,7 @@ import javax.swing.*;
 
 /**
  * Class GUIBattleHex holds GUI info for one hex with N-S orientation.
- * @version $Id: GUINSHex.java,v 1.12 2005/11/10 20:45:51 wakko666 Exp $
+ * @version $Id: GUINSHex.java,v 1.13 2005/11/12 15:12:28 evos Exp $
  * @author David Ripton
  * @author Romain Dolbeau
  */
@@ -56,11 +56,12 @@ public class GUINSHex extends GUIHex
         at = AffineTransform.getTranslateInstance(center.getX() -
             innerCenter.getX(), center.getY() - innerCenter.getY());
         innerHexagon.transform(at);
-        
+        /*
         initRotationArrays();
     	x_adjust = x_adjust_arr[0];
     	y_adjust = y_adjust_arr[0];
     	rotation = rotation_arr[0];
+    	*/
     }
 
     public GUINSHex(int xCoord, int yCoord)
@@ -73,6 +74,7 @@ public class GUINSHex extends GUIHex
         return (innerHexagon.contains(point));
     }
  
+    /*
     private void initRotationArrays()
     {
     	int[] xadjustArr = { -30, 8, 38, 30, -8, -38, -30 };
@@ -85,5 +87,6 @@ public class GUINSHex extends GUIHex
     		y_adjust_arr[x] = yadjustArr[x];
     	}
     }
+    */
 }
 

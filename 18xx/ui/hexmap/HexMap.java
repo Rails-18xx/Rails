@@ -43,20 +43,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		setupHexesGUI();
 	}
 
-	void unselectAllHexes()
-	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
-		{
-			GUIHex hex = (GUIHex) it.next();
-			if (hex.isSelected())
-			{
-				hex.unselect();
-				this.repaint();
-			}
-		}
-	}
-
 	/**
 	 * Return the GUIBattleHex that contains the given point, or null if none
 	 * does.
@@ -164,11 +150,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 			if (clickedHex == selectedHex)
 			{
+			    /*
 				selectedHex.x_adjust = selectedHex.x_adjust_arr[selectedHex.arr_index];
 				selectedHex.y_adjust = selectedHex.y_adjust_arr[selectedHex.arr_index];
 				selectedHex.rotation = selectedHex.rotation_arr[selectedHex.arr_index];
 
 				selectedHex.rotateHexCW();
+				*/
+				
+				selectedHex.rotateTile();
+			    repaint (selectedHex.getBounds());
 			}
 			else 
 			{
