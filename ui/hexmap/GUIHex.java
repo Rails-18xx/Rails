@@ -32,6 +32,9 @@ public abstract class GUIHex extends JComponent
 	// Tile laid but not yet confirmed
 	protected int provisionalTileId;
 	protected TileI provisionalTile = null; 
+	
+	protected GUITile currentGUITile = null;
+	protected GUITile provisionalGUITile = null;
 
 
 	// These are only here for scope visibility
@@ -47,7 +50,7 @@ public abstract class GUIHex extends JComponent
 	protected BufferedImage tileImage;
 	protected AffineTransform af = new AffineTransform();
 	protected JComponent map;
-	protected ImageLoader imageLoader = new ImageLoader();
+	//protected ImageLoader imageLoader = new ImageLoader();
 
 	protected String toolTip = "";
 
@@ -89,8 +92,11 @@ public abstract class GUIHex extends JComponent
 		hexName = model.getName();
 		tileId = model.getPreprintedTileId();
 		tileOrientation = model.getPreprintedTileOrientation();
-		tileFilename = model.getTileFileName();
-		tileImage = imageLoader.getTile(tileId);
+		//tileFilename = model.getTileFileName();
+		//tileImage = imageLoader.getTile(tileId);
+		currentGUITile = new GUITile (tileId);
+		currentGUITile.setRotation(tileOrientation);
+		
 	}
 
 	public Rectangle getBounds()
@@ -120,17 +126,18 @@ public abstract class GUIHex extends JComponent
 
 	public void select()
 	{
-		selected = true;
+		setSelected (true);
 	}
 
 	public void unselect()
 	{
-		selected = false;
+		setSelected (false);
 	}
 
 	public void setSelected(boolean selected)
 	{
 		this.selected = selected;
+		currentGUITile.setScale (selected ? 0.31 : 0.33);
 	}
 
 	public boolean isSelected()
@@ -283,6 +290,7 @@ public abstract class GUIHex extends JComponent
 
 	public void paintOverlay(Graphics2D g2)
 	{
+	    /*
 		if (tileImage != null)
 		{ // first, draw the Hex itself
 			Point center = findCenter();
@@ -299,6 +307,14 @@ public abstract class GUIHex extends JComponent
 					center.x + x_adjust,
 					center.y + y_adjust);
 		}
+		*/
+		Point center = findCenter();
+		if (provisionalTile != null) {
+		    provisionalGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		} else {
+		    currentGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		}
+	    
 	}
 
 	// Added by Erik Vos
@@ -433,6 +449,8 @@ public abstract class GUIHex extends JComponent
 	public void dropTile (int tileId) {
 	    provisionalTileId = tileId;
 	    provisionalTile = TileManager.get().getTile(tileId);
+		provisionalGUITile = new GUITile (provisionalTileId);
+
 	}
 	
 	public void removeTile () {
