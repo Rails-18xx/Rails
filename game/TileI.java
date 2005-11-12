@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.3 2005/11/10 21:30:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.4 2005/11/12 13:44:08 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -24,16 +24,15 @@ public interface TileI {
      * @return Returns the id.
      */
     public int getId();
-    public void setId(int id);
     /**
      * @return Returns the name.
      */
     public String getName();
-    public void setName(String name);
 
     public boolean hasTracks(int sideNumber);
     
     public boolean isUpgradeable ();
+    public boolean isUpgradeableNow ();
 
     public List getUpgrades (MapHex hex);
     
