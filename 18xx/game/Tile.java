@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.3 2005/11/10 21:30:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.4 2005/11/12 13:44:08 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -168,8 +168,20 @@ public class Tile implements TileI {
         return (tracksPerSide[sideNumber%6].size() > 0);
     }
     
+    /**
+     * Is a tile upgradeable at any time (regardles the phase)?
+     */
     public boolean isUpgradeable () {
         return upgradeable;
+    }
+    
+    /**
+     * Is the tile upgradeable now (in the current phase)?
+     * @return
+     */
+    public boolean isUpgradeableNow () {
+        /* TODO: take phase into account */
+        return upgradeable; 
     }
     
     /**
@@ -203,16 +215,5 @@ public class Tile implements TileI {
         return stations;
     }
 
-	
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
 
 }
