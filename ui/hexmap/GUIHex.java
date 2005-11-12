@@ -18,30 +18,31 @@ public abstract class GUIHex extends JComponent
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
-	public static final double DEG60 = Math.PI / 3;
+	//public static final double DEG60 = Math.PI / 3;
 	protected MapHex model;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
 
 	// Added by Erik Vos
 	protected String hexName;
-	protected int tileId;
-	protected int tileOrientation;
+	protected int currentTileId;
+	protected int currentTileOrientation;
 	protected String tileFilename;
 	protected TileI currentTile;
 	// Tile laid but not yet confirmed
-	protected int provisionalTileId;
-	protected TileI provisionalTile = null; 
+	//protected int provisionalTileId;
+	//protected TileI provisionalTile = null; 
 	
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
+	protected int provisionalTileOrientation;
 
 
 	// These are only here for scope visibility
 	protected double tileScale = 0.33;
-	protected int x_adjust;
-	protected int y_adjust;
-	protected double rotation;
+	//protected int x_adjust;
+	//protected int y_adjust;
+	//protected double rotation;
 	protected int arr_index = 0;
 	protected double[] rotation_arr = new double[7];
 	protected int[] x_adjust_arr = new int[7];
@@ -90,12 +91,12 @@ public abstract class GUIHex extends JComponent
 		this.model = model;
 		currentTile = model.getCurrentTile();
 		hexName = model.getName();
-		tileId = model.getPreprintedTileId();
-		tileOrientation = model.getPreprintedTileOrientation();
+		currentTileId = model.getPreprintedTileId();
+		currentTileOrientation = model.getPreprintedTileOrientation();
 		//tileFilename = model.getTileFileName();
-		//tileImage = imageLoader.getTile(tileId);
-		currentGUITile = new GUITile (tileId);
-		currentGUITile.setRotation(tileOrientation);
+		//tileImage = imageLoader.getTile(currentTileId);
+		currentGUITile = new GUITile (currentTileId);
+		currentGUITile.setRotation(currentTileOrientation);
 		
 	}
 
@@ -124,20 +125,15 @@ public abstract class GUIHex extends JComponent
 		return (hexagon.intersects(r));
 	}
 
-	public void select()
-	{
-		setSelected (true);
-	}
-
-	public void unselect()
-	{
-		setSelected (false);
-	}
-
 	public void setSelected(boolean selected)
 	{
 		this.selected = selected;
-		currentGUITile.setScale (selected ? 0.31 : 0.33);
+		if (selected) {
+		    currentGUITile.setScale (0.31);
+		} else {
+		    currentGUITile.setScale (0.33);
+		    provisionalGUITile = null;
+		}
 	}
 
 	public boolean isSelected()
@@ -240,10 +236,6 @@ public abstract class GUIHex extends JComponent
 		Color terrainColor = Color.WHITE; //getMapHexModel().getTerrainColor();
 		if (isSelected())
 		{
-			// Slightly adjust the hex overlay size to allow the
-			// highlighting to peek through.
-			tileScale = 0.3;
-
 			g2.setColor(highlightColor);
 			g2.fill(hexagon);
 
@@ -253,18 +245,6 @@ public abstract class GUIHex extends JComponent
 			g2.setColor(Color.black);
 			g2.draw(innerHexagon);
 		}
-		else
-		{
-			// restore hex size to it's original scale.
-			if (tileScale != 0.33)
-				tileScale = 0.33;
-
-			//g2.setColor(terrainColor);
-			//g2.fill(hexagon);
-		}
-
-		//g2.setColor(Color.black);
-		//g2.draw(hexagon);
 
 		//FIXME: Disabled until we can properly update the overlay drawing to work with the scrollpane
 		paintOverlay(g2);
@@ -282,7 +262,7 @@ public abstract class GUIHex extends JComponent
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 1/2));
 
 		// Added by Erik Vos: show the preprinted tile id
-		g2.drawString(tileId == -999 ? "?" : "#" + tileId,
+		g2.drawString(currentTileId == -999 ? "?" : "#" + currentTileId,
 				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) * 2/5,
 				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
 		*/
@@ -309,11 +289,22 @@ public abstract class GUIHex extends JComponent
 		}
 		*/
 		Point center = findCenter();
-		if (provisionalTile != null) {
-		    provisionalGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		if (provisionalGUITile != null) {
+		    //provisionalGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		    provisionalGUITile.paintTile(g2, center.x, center.y);
 		} else {
-		    currentGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		    //currentGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
+		    currentGUITile.paintTile(g2, center.x, center.y);
 		}
+	    
+	}
+	
+	public void rotateTile () {
+	    
+		if (provisionalGUITile != null) {
+		    provisionalGUITile.setRotation(provisionalGUITile.getRotation() + 1);
+		}
+	    
 	    
 	}
 
@@ -341,30 +332,14 @@ public abstract class GUIHex extends JComponent
     public TileI getCurrentTile() {
         return currentTile;
     }
-	/**
-	 * @return Returns the tileId.
-	 */
-	public int getTileId()
-	{
-		return tileId;
-	}
 
 	/**
-	 * @param tileId
-	 *            The tileId to set.
-	 */
-	public void setTileId(int tileId)
-	{
-		this.tileId = tileId;
-	}
-
-	/**
-	 * @param tileOrientation
-	 *            The tileOrientation to set.
+	 * @param currentTileOrientation
+	 *            The currentTileOrientation to set.
 	 */
 	public void setTileOrientation(int tileOrientation)
 	{
-		this.tileOrientation = tileOrientation;
+		this.currentTileOrientation = tileOrientation;
 	}
 
 	/**
@@ -414,6 +389,7 @@ public abstract class GUIHex extends JComponent
 		return toolTip.toString();
 	}
 
+	/*
 	protected void rotateHexCW()
 	{
 		if (arr_index >= 6)
@@ -433,6 +409,7 @@ public abstract class GUIHex extends JComponent
 		else
 			arr_index--;
 	}
+	*/
 
 	
 	public JComponent getMap()
@@ -447,19 +424,20 @@ public abstract class GUIHex extends JComponent
 	}
 	
 	public void dropTile (int tileId) {
-	    provisionalTileId = tileId;
-	    provisionalTile = TileManager.get().getTile(tileId);
-		provisionalGUITile = new GUITile (provisionalTileId);
+		provisionalGUITile = new GUITile (tileId);
 
 	}
 	
 	public void removeTile () {
-	    provisionalTile = null;
+	    provisionalGUITile = null;
 	}
 	
-	public void fixFile () {
-	    currentTile = provisionalTile;
-	    tileId = provisionalTileId;
+	public void fixTile () {
+	    currentGUITile = provisionalGUITile;
+	    currentTile = currentGUITile.getTile();
+	    currentTileId = currentTile.getId();
+	    provisionalGUITile = null;
+	    
 	}
 
 }

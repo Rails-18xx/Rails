@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.9 2005/10/23 18:02:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.10 2005/11/12 15:12:28 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -177,7 +177,7 @@ public class MapManager implements ConfigurableComponentI
 	}
 
 	/**
-	 * @return Returns the tileOrientation.
+	 * @return Returns the currentTileOrientation.
 	 */
 	public static int getTileOrientation()
 	{

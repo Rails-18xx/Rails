@@ -52,9 +52,11 @@ public class EWHexMap extends HexMap
 					//imageLoader.loadTile(mh.getPreprintedTileId());
 					//hex.setTileImage(imageLoader.getTile(mh
 					//		.getPreprintedTileId()));
-					hex.x_adjust = hex.x_adjust_arr[hex.tileOrientation];
-					hex.y_adjust = hex.y_adjust_arr[hex.tileOrientation];
-					hex.rotation = hex.rotation_arr[hex.tileOrientation];
+					/*
+					hex.x_adjust = hex.x_adjust_arr[hex.currentTileOrientation];
+					hex.y_adjust = hex.y_adjust_arr[hex.currentTileOrientation];
+					hex.rotation = hex.rotation_arr[hex.currentTileOrientation];
+					*/
 					
 					h[i][j] = hex;
 					hexes.add(hex);
