@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.15 2005/10/23 18:02:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.16 2005/11/12 16:13:40 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -182,7 +182,7 @@ public class MapHex implements ConfigurableComponentI
 	    /* 2. The preprinted tile on this hex is offmap or fixed and has no track to this side. */
 	    TileI tile = neighbour.getCurrentTile();
 	    if (!tile.isUpgradeable() 
-	            && !tile.hasTracks(6+direction-neighbour.getCurrentTileRotation()))
+	            && !tile.hasTracks(3+direction-neighbour.getCurrentTileRotation()))
 	        return false;
 	    
 	    return true;
@@ -297,6 +297,12 @@ public class MapHex implements ConfigurableComponentI
 	public MapHex[] getNeighbors()
 	{
 		return neighbours;
+	}
+	
+	public boolean hasNeighbour (int orientation) {
+	    
+	    while (orientation < 0) orientation += 6;
+	    return neighbours[orientation%6] != null; 
 	}
 	
 	public TileI getCurrentTile() {

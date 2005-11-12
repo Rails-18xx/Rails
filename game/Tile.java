@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.4 2005/11/12 13:44:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.5 2005/11/12 16:13:40 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -156,7 +156,7 @@ public class Tile implements TileI {
         
         Matcher m;
         if ((m = sidePattern.matcher(trackEnd)).matches()) {
-            return Integer.parseInt(m.group(1))%6;
+            return (Integer.parseInt(m.group(1)) + 3) % 6;
         } else if ((m = cityPattern.matcher(trackEnd)).matches()) {
             return -Integer.parseInt(m.group(1));
         }
@@ -165,6 +165,7 @@ public class Tile implements TileI {
     }
     
     public boolean hasTracks(int sideNumber) {
+        while (sideNumber < 0) sideNumber += 6; 
         return (tracksPerSide[sideNumber%6].size() > 0);
     }
     

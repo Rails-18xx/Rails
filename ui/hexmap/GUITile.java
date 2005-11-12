@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.2 2005/11/12 15:12:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.3 2005/11/12 16:13:40 evos Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -6,7 +6,6 @@
 package ui.hexmap;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -30,6 +29,8 @@ public class GUITile {
     protected static double baseRotation;
     protected static boolean initialised = false;
     
+    protected MapHex hex = null;
+    
 	protected static ImageLoader imageLoader = new ImageLoader();
 	protected AffineTransform af = new AffineTransform();
 
@@ -40,13 +41,17 @@ public class GUITile {
 	//public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
    
-    public GUITile (int tileId) {
+    public GUITile (int tileId, MapHex hex) {
         
         this.tileId = tileId;
+        this.hex = hex;
         tile = TileManager.get().getTile(tileId);
 		tileImage = imageLoader.getTile(tileId);
 		
 		if (!initialised) initialise();
+		
+		// Find a correct initial orientation. 
+		rotate(0);
 		
     }
     
@@ -68,6 +73,33 @@ public class GUITile {
     
     public void setRotation (int rotation) {
         this.rotation = rotation % 6;
+    }
+    
+    /**
+     * Rotate right (clockwise) until a valid orientation is found.
+     * TODO: Currently only impassable hex sides are taken into account.
+     * @param initial: First rotation to try. Should be 0 for the initial tile drop,
+     * and 1 at subsequent rotation attempts.  
+     */
+    public void rotate (int initial) {
+        
+        int i,j, tempRot;
+        for (i=initial; i<=5; i++) {
+            tempRot = (rotation + i) % 6;
+            //System.out.println("Trying rotation "+i+" ("+tempRot+")");
+            for (j=0; j<6; j++) {
+                //System.out.println("  side="+j+": tracks="+tile.hasTracks(j - tempRot)
+                //	+" neighbour="+hex.hasNeighbour(j));
+                if (tile.hasTracks(j - tempRot) && !hex.hasNeighbour(j)) break;
+            }
+            if (j == 6) {
+                // Found a valid rotation
+                setRotation (tempRot);
+                return;
+            }
+            
+        }
+        
     }
     
     public int getRotation() {
