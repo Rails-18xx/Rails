@@ -95,7 +95,7 @@ public abstract class GUIHex extends JComponent
 		currentTileOrientation = model.getPreprintedTileOrientation();
 		//tileFilename = model.getTileFileName();
 		//tileImage = imageLoader.getTile(currentTileId);
-		currentGUITile = new GUITile (currentTileId);
+		currentGUITile = new GUITile (currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		
 	}
@@ -302,7 +302,7 @@ public abstract class GUIHex extends JComponent
 	public void rotateTile () {
 	    
 		if (provisionalGUITile != null) {
-		    provisionalGUITile.setRotation(provisionalGUITile.getRotation() + 1);
+		    provisionalGUITile.rotate(1);
 		}
 	    
 	    
@@ -424,7 +424,7 @@ public abstract class GUIHex extends JComponent
 	}
 	
 	public void dropTile (int tileId) {
-		provisionalGUITile = new GUITile (tileId);
+		provisionalGUITile = new GUITile (tileId, model);
 
 	}
 	

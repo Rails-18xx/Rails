@@ -134,7 +134,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			//setToolTipText(clickedHex.getToolTip());
 
 			// Temporary, to check for correct neighbour setting
-			/*
 			StringBuffer b = new StringBuffer();
 			b.append("Clicked hex ")
 					.append(clickedHex.getName())
@@ -146,7 +145,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 					b.append(" ").append(i).append(":").append(nb[i].getName());
 			}
 			System.out.println(b.toString());
-			*/
 
 			if (clickedHex == selectedHex)
 			{
