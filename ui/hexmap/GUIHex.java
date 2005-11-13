@@ -18,6 +18,8 @@ public abstract class GUIHex extends JComponent
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
+	public static final double NORMAL_SCALE = 0.33;
+	public static final double SELECTED_SCALE = 0.27;
 	//public static final double DEG60 = Math.PI / 3;
 	protected MapHex model;
 	protected GeneralPath innerHexagon;
@@ -39,17 +41,17 @@ public abstract class GUIHex extends JComponent
 
 
 	// These are only here for scope visibility
-	protected double tileScale = 0.33;
+	protected double tileScale = NORMAL_SCALE;
 	//protected int x_adjust;
 	//protected int y_adjust;
 	//protected double rotation;
-	protected int arr_index = 0;
-	protected double[] rotation_arr = new double[7];
-	protected int[] x_adjust_arr = new int[7];
-	protected int[] y_adjust_arr = new int[7];
+	//protected int arr_index = 0;
+	//protected double[] rotation_arr = new double[7];
+	//protected int[] x_adjust_arr = new int[7];
+	//protected int[] y_adjust_arr = new int[7];
 
-	protected BufferedImage tileImage;
-	protected AffineTransform af = new AffineTransform();
+	//protected BufferedImage tileImage;
+	//protected AffineTransform af = new AffineTransform();
 	protected JComponent map;
 	//protected ImageLoader imageLoader = new ImageLoader();
 
@@ -129,9 +131,9 @@ public abstract class GUIHex extends JComponent
 	{
 		this.selected = selected;
 		if (selected) {
-		    currentGUITile.setScale (0.31);
+		    currentGUITile.setScale (SELECTED_SCALE);
 		} else {
-		    currentGUITile.setScale (0.33);
+		    currentGUITile.setScale (NORMAL_SCALE);
 		    provisionalGUITile = null;
 		}
 	}
@@ -346,6 +348,7 @@ public abstract class GUIHex extends JComponent
 	 * 
 	 * @return Filename of the tile image
 	 */
+	/*
 	public String getTileFilename()
 	{
 		return tileFilename;
@@ -360,6 +363,7 @@ public abstract class GUIHex extends JComponent
 	{
 		this.tileImage = tileImage;
 	}
+	*/
 
 	protected String getToolTip()
 	{
@@ -425,18 +429,23 @@ public abstract class GUIHex extends JComponent
 	
 	public void dropTile (int tileId) {
 		provisionalGUITile = new GUITile (tileId, model);
+		provisionalGUITile.setScale(SELECTED_SCALE);
 
 	}
 	
 	public void removeTile () {
 	    provisionalGUITile = null;
+	    setSelected (false);
 	}
 	
 	public void fixTile () {
 	    currentGUITile = provisionalGUITile;
-	    currentTile = currentGUITile.getTile();
-	    currentTileId = currentTile.getId();
-	    provisionalGUITile = null;
+	    if (currentGUITile != null) {
+	        currentTile = currentGUITile.getTile();
+	        currentTileId = currentTile.getId();
+	    }
+	    
+	    setSelected (false);
 	    
 	}
 
