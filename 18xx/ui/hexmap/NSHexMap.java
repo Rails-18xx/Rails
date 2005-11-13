@@ -36,25 +36,13 @@ public class NSHexMap extends HexMap
             {
                 mh = hexArray[i][j];
                 if (mh != null) {
-                     GUINSHex hex = new GUINSHex(
+                     GUIHex hex = new GUIHex(
                     		 (int)Math.round(cx + 3 * i * scale),
                     		 (int)Math.round(cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale), 
                     		 scale, i, j);
 
-                    //hex.setName(mh.getName());
-                    //hex.setTileId(mh.getPreprintedTileId());
-                    //hex.setTileOrientation(mh.getPreprintedTileOrientation());
-                    //hex.setTileFilename(mh.getTileFileName());
                     hex.setHexModel(mh);
                     
-                    //imageLoader.loadTile(hexArray[i][j].getPreprintedTileId());
-                    //hex.setTileImage(imageLoader.getTile(hexArray[i][j].getPreprintedTileId()));
-                    /*
-                	hex.x_adjust = hex.x_adjust_arr[hex.currentTileOrientation];
-                	hex.y_adjust = hex.y_adjust_arr[hex.currentTileOrientation];
-                	hex.rotation = hex.rotation_arr[hex.currentTileOrientation];
-                	*/
-                	
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

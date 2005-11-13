@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.4 2005/11/13 13:29:11 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.5 2005/11/13 20:00:41 evos Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -24,10 +24,7 @@ public class GUITile {
     protected BufferedImage tileImage = null;
     protected int rotation = 0;
     protected double tileScale = GUIHex.NORMAL_SCALE;
-    /*
-    protected static int[] xAdjust;
-    protected static int[] yAdjust;
-    */
+
     protected static double baseRotation;
     protected static boolean initialised = false;
     
@@ -36,13 +33,6 @@ public class GUITile {
 	protected static ImageLoader imageLoader = new ImageLoader();
 	protected AffineTransform af = new AffineTransform();
 
-	/*
-	protected final static int[] xEWadjustArr = { -14, 26, 40, 12, -26, -40 };
-	protected final static int[] yEWadjustArr = { -38, -30, 8, 38, 30, -8 };
-	protected final static int[] xNSadjustArr = { -30, 8, 38, 30, -8, -38 };
-	protected final static int[] yNSadjustArr = { -24, -40, -12, 28, 40, 12 };
-	*/
-	//public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
    
     public GUITile (int tileId, MapHex hex) {
@@ -62,16 +52,8 @@ public class GUITile {
     private void initialise () {
 		
 		if (MapManager.getTileOrientation() == MapHex.EW) {
-		    /*
-		    xAdjust = xEWadjustArr;
-		    yAdjust = yEWadjustArr;
-		    */
 		    baseRotation = 0.5 * DEG60;
 		} else {
-		    /*
-		    xAdjust = xNSadjustArr;
-		    yAdjust = yNSadjustArr;
-		    */
 		    baseRotation = 0.0;
 		}
 		initialised = true;
@@ -136,7 +118,7 @@ public class GUITile {
 			AffineTransformOp aop = new AffineTransformOp(af,
 					AffineTransformOp.TYPE_BILINEAR);
 
-			g2.drawImage(tileImage, aop, x-xCenter /*+ xAdjust[rotation]*/, y-yCenter /*+ yAdjust[rotation]*/);
+			g2.drawImage(tileImage, aop, x-xCenter, y-yCenter);
 		}
        
     }
