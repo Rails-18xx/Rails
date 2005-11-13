@@ -14,46 +14,29 @@ import ui.ImageLoader;
  * Base abstract class that holds common components for GUIHexes of all orientations.  
  */
 
-public abstract class GUIHex extends JComponent
+public class GUIHex extends JComponent
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double NORMAL_SCALE = 0.33;
 	public static final double SELECTED_SCALE = 0.27;
-	//public static final double DEG60 = Math.PI / 3;
+
 	protected MapHex model;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
 
-	// Added by Erik Vos
 	protected String hexName;
 	protected int currentTileId;
 	protected int currentTileOrientation;
 	protected String tileFilename;
 	protected TileI currentTile;
-	// Tile laid but not yet confirmed
-	//protected int provisionalTileId;
-	//protected TileI provisionalTile = null; 
 	
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
 	protected int provisionalTileOrientation;
 
-
-	// These are only here for scope visibility
 	protected double tileScale = NORMAL_SCALE;
-	//protected int x_adjust;
-	//protected int y_adjust;
-	//protected double rotation;
-	//protected int arr_index = 0;
-	//protected double[] rotation_arr = new double[7];
-	//protected int[] x_adjust_arr = new int[7];
-	//protected int[] y_adjust_arr = new int[7];
-
-	//protected BufferedImage tileImage;
-	//protected AffineTransform af = new AffineTransform();
 	protected JComponent map;
-	//protected ImageLoader imageLoader = new ImageLoader();
 
 	protected String toolTip = "";
 
@@ -79,8 +62,58 @@ public abstract class GUIHex extends JComponent
 	// Selection is in-between GUI and game state.
 	private boolean selected;
 
-	public GUIHex()
+	public GUIHex(double cx, double cy, int scale, double xCoord, double yCoord)
 	{
+		if (MapManager.getTileOrientation() == MapHex.EW) {
+	        len = scale;
+	        xVertex[0] = cx + SQRT3/2 * scale;
+	        yVertex[0] = cy + 0.5 * scale;
+	        xVertex[1] = cx + SQRT3 * scale;
+	        yVertex[1] = cy;
+	        xVertex[2] = cx + SQRT3 * scale;
+	        yVertex[2] = cy - 1 * scale;
+	        xVertex[3] = cx + SQRT3/2 * scale;
+	        yVertex[3] = cy - 1.5 * scale;
+	        xVertex[4] = cx;
+	        yVertex[4] = cy - 1 * scale;
+	        xVertex[5] = cx;
+	        yVertex[5] = cy;
+		} else {
+	        len = scale / 3.0;
+	        xVertex[0] = cx;
+	        yVertex[0] = cy;
+	        xVertex[1] = cx + 2 * scale;
+	        yVertex[1] = cy;
+	        xVertex[2] = cx + 3 * scale;
+	        yVertex[2] = cy + SQRT3 * scale;
+	        xVertex[3] = cx + 2 * scale;
+	        yVertex[3] = cy + 2 * SQRT3 * scale;
+	        xVertex[4] = cx;
+	        yVertex[4] = cy + 2 * SQRT3 * scale;
+	        xVertex[5] = cx - 1 * scale;
+	        yVertex[5] = cy + SQRT3 * scale;
+		}
+
+        hexagon = makePolygon(6, xVertex, yVertex, true);
+        rectBound = hexagon.getBounds();
+
+        Point2D.Double center = findCenter2D();
+
+        final double innerScale = 0.8;
+        AffineTransform at = AffineTransform.getScaleInstance(innerScale,
+            innerScale);
+        innerHexagon = (GeneralPath)hexagon.createTransformedShape(at);
+
+        // Translate innerHexagon to make it concentric.
+        Rectangle2D innerBounds = innerHexagon.getBounds2D();
+        Point2D.Double innerCenter = new Point2D.Double(
+              innerBounds.getX() + innerBounds.getWidth() / 2.0, 
+              innerBounds.getY() + innerBounds.getHeight() / 2.0);
+        at = AffineTransform.getTranslateInstance(
+              center.getX() - innerCenter.getX(), 
+              center.getY() - innerCenter.getY());
+        innerHexagon.transform(at);
+        
 	}
 
 	public MapHex getHexModel()
@@ -95,8 +128,6 @@ public abstract class GUIHex extends JComponent
 		hexName = model.getName();
 		currentTileId = model.getPreprintedTileId();
 		currentTileOrientation = model.getPreprintedTileOrientation();
-		//tileFilename = model.getTileFileName();
-		//tileImage = imageLoader.getTile(currentTileId);
 		currentGUITile = new GUITile (currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		
@@ -272,30 +303,10 @@ public abstract class GUIHex extends JComponent
 
 	public void paintOverlay(Graphics2D g2)
 	{
-	    /*
-		if (tileImage != null)
-		{ // first, draw the Hex itself
-			Point center = findCenter();
-			af = AffineTransform.getRotateInstance(rotation);
-			af.scale(tileScale, tileScale);
-
-			// All adjustments to AffineTransform must be done before being
-			// assigned to the ATOp here.
-			AffineTransformOp aop = new AffineTransformOp(af,
-					AffineTransformOp.TYPE_BILINEAR);
-
-			g2.drawImage(tileImage,
-					aop,
-					center.x + x_adjust,
-					center.y + y_adjust);
-		}
-		*/
 		Point center = findCenter();
 		if (provisionalGUITile != null) {
-		    //provisionalGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
 		    provisionalGUITile.paintTile(g2, center.x, center.y);
 		} else {
-		    //currentGUITile.paintTile(g2, center.x + x_adjust, center.y + y_adjust, rotation);
 		    currentGUITile.paintTile(g2, center.x, center.y);
 		}
 	    
@@ -344,27 +355,6 @@ public abstract class GUIHex extends JComponent
 		this.currentTileOrientation = tileOrientation;
 	}
 
-	/**
-	 * 
-	 * @return Filename of the tile image
-	 */
-	/*
-	public String getTileFilename()
-	{
-		return tileFilename;
-	}
-
-	public void setTileFilename(String tileFilename)
-	{
-		this.tileFilename = tileFilename;
-	}
-
-	public void setTileImage(BufferedImage tileImage)
-	{
-		this.tileImage = tileImage;
-	}
-	*/
-
 	protected String getToolTip()
 	{
 	    StringBuffer toolTip = new StringBuffer ("<html>");
@@ -393,29 +383,6 @@ public abstract class GUIHex extends JComponent
 		return toolTip.toString();
 	}
 
-	/*
-	protected void rotateHexCW()
-	{
-		if (arr_index >= 6)
-		{
-			arr_index = 1;
-		}
-		else
-			arr_index++;
-	}
-
-	protected void rotateHexCCW()
-	{
-		if (arr_index <= 1)
-		{
-			arr_index = 6;
-		}
-		else
-			arr_index--;
-	}
-	*/
-
-	
 	public JComponent getMap()
 	{
 		return map;

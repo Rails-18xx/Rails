@@ -37,27 +37,14 @@ public class EWHexMap extends HexMap
 				mh = hexArray[i][j];
 				if (mh != null)
 				{
-					GUIEWHex hex = new GUIEWHex(
+					GUIHex hex = new GUIHex(
 							(cx + scale	* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
 							(cy + j * 1.5 * scale), 
 							scale, i, j);
 					
-					//hex.setName(mh.getName());
-					//hex.setTileId(mh.getPreprintedTileId());
-					//hex.setTileOrientation(mh
-					//		.getPreprintedTileOrientation());
-					//hex.setTileFilename(mh.getTileFileName());
+
 					hex.setHexModel(mh);
 
-					//imageLoader.loadTile(mh.getPreprintedTileId());
-					//hex.setTileImage(imageLoader.getTile(mh
-					//		.getPreprintedTileId()));
-					/*
-					hex.x_adjust = hex.x_adjust_arr[hex.currentTileOrientation];
-					hex.y_adjust = hex.y_adjust_arr[hex.currentTileOrientation];
-					hex.rotation = hex.rotation_arr[hex.currentTileOrientation];
-					*/
-					
 					h[i][j] = hex;
 					hexes.add(hex);
 				}

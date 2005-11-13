@@ -32,8 +32,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected int cx;
 	protected int cy;
 
-	//protected ImageLoader imageLoader = new ImageLoader();
-	//private boolean hexSelected = false;
 	protected static GUIHex selectedHex = null;
 	protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
@@ -148,14 +146,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 			if (clickedHex == selectedHex)
 			{
-			    /*
-				selectedHex.x_adjust = selectedHex.x_adjust_arr[selectedHex.arr_index];
-				selectedHex.y_adjust = selectedHex.y_adjust_arr[selectedHex.arr_index];
-				selectedHex.rotation = selectedHex.rotation_arr[selectedHex.arr_index];
-
-				selectedHex.rotateHexCW();
-				*/
-				
 				selectedHex.rotateTile();
 			    repaint (selectedHex.getBounds());
 			}
