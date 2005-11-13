@@ -238,10 +238,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		// TODO Auto-generated method stub
 		Point point = arg0.getPoint();
 		GUIHex hex = getHexContainingPoint(point);
-		if (hex != null)
-			setToolTipText(hex.getToolTip());
-		// System.out.println("Mouse moved to "+point.getX()+","+point.getX()+"
-		// tooltip="+this.getToolTipText());
+		setToolTipText(hex != null ? hex.getToolTip() : "");
 	}
 
 	public void setUpgradesPanel(UpgradesPanel upgradesPanel)

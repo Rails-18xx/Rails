@@ -130,6 +130,7 @@ public class GUIHex extends JComponent
 		currentTileOrientation = model.getPreprintedTileOrientation();
 		currentGUITile = new GUITile (currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
+		setToolTip();
 		
 	}
 
@@ -355,32 +356,36 @@ public class GUIHex extends JComponent
 		this.currentTileOrientation = tileOrientation;
 	}
 
-	protected String getToolTip()
+	public String getToolTip()
 	{
-	    StringBuffer toolTip = new StringBuffer ("<html>");
-	    toolTip.append ("<b>Hex</b>: ").append(hexName);
+	    return toolTip;
+	}
+	
+	protected void setToolTip() {
+	    StringBuffer tt = new StringBuffer ("<html>");
+	    tt.append ("<b>Hex</b>: ").append(hexName);
 	    // The next line is a temporary development aid, that can be removed later.
-	    toolTip.append ("  <small>(").append(model.getX()).append(",").append(model.getY()).append(")</small>");
-	    toolTip.append ("<br><b>Tile</b>: ").append(currentTile.getId());
+	    tt.append ("  <small>(").append(model.getX()).append(",").append(model.getY()).append(")</small>");
+	    tt.append ("<br><b>Tile</b>: ").append(currentTile.getId());
 	    if (currentTile.hasStations()) {
 	        Iterator it = currentTile.getStations().iterator();
 	        Station st;
 	        while (it.hasNext()) {
 	            st = (Station)it.next();
-	            toolTip.append("<br>  ").append(st.getType());
-	            toolTip.append(": value ").append(st.getValue());
+	            tt.append("<br>  ").append(st.getType());
+	            tt.append(": value ").append(st.getValue());
 	            if (st.getValue() > 0 && st.getBaseSlots() > 0) {
-	                toolTip.append(", ").append(st.getBaseSlots()).append(" slots");
+	                tt.append(", ").append(st.getBaseSlots()).append(" slots");
 	            }
 	        }
 	    }
 	    String upgrades = currentTile.getUpgradesString(model);
 		if (upgrades.equals("")) {
-		    toolTip.append ("<br>No upgrades");
+		    tt.append ("<br>No upgrades");
 		} else {
-		    toolTip.append("<br><b>Upgrades</b>: ").append(upgrades);
+		    tt.append("<br><b>Upgrades</b>: ").append(upgrades);
 		}
-		return toolTip.toString();
+		toolTip = tt.toString();
 	}
 
 	public JComponent getMap()
@@ -413,7 +418,7 @@ public class GUIHex extends JComponent
 	    }
 	    
 	    setSelected (false);
-	    
+	    setToolTip();
 	}
 
 }
