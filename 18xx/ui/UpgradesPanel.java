@@ -10,7 +10,7 @@ import javax.swing.border.*;
 import game.*;
 import ui.hexmap.*;
 
-public class UpgradesPanel extends Box implements MouseListener
+public class UpgradesPanel extends Box implements MouseListener, ActionListener
 {
 
 	private ArrayList upgrades;
@@ -18,6 +18,8 @@ public class UpgradesPanel extends Box implements MouseListener
 	private HexMap map;
 	private Dimension preferredSize = new Dimension(75, 200);
 	private Border border = new EtchedBorder();
+	private JButton cancel;
+	private JButton done;
 
 	public UpgradesPanel(HexMap map)
 	{
@@ -74,9 +76,24 @@ public class UpgradesPanel extends Box implements MouseListener
 				
 				upgradePanel.add(hexLabel);
 			}
+			
+			cancel = new JButton("Cancel");
+			cancel.setActionCommand("Cancel");
+			cancel.setMnemonic(KeyEvent.VK_C);
+			cancel.addActionListener(this);
+			cancel.setEnabled(true);
+			upgradePanel.add(cancel);
+
+			done = new JButton("Done");
+			done.setActionCommand("Done");
+			done.setMnemonic(KeyEvent.VK_D);
+			done.addActionListener(this);
+			done.setEnabled(true);
+			upgradePanel.add(done);
+
 		}
 		
-		invalidate();
+		revalidate();
 		repaint();
 	}
 	
@@ -105,6 +122,21 @@ public class UpgradesPanel extends Box implements MouseListener
 	{
 		this.upgrades = upgrades;
 	}
+	
+	public void actionPerformed (ActionEvent e) {
+
+		String command = e.getActionCommand();
+
+		if (command.equals("Cancel")) {
+		    map.getSelectedHex().removeTile();
+		} else if (command.equals ("Done")) {
+		    map.getSelectedHex().fixTile();
+		}
+		map.repaint();
+
+		upgrades = null;
+		showUpgrades();
+	}
 
 	public void mouseClicked(MouseEvent e)
 	{
@@ -113,7 +145,7 @@ public class UpgradesPanel extends Box implements MouseListener
 		HexMap.selectedHex.setTileIdInteger.parseInt(((JLabel)e.getSource()).getText())
 		HexMap.selectedHex.getHexModel().getCurrentTile().setId(Integer.parseInt(((JLabel)e.getSource()).getText()));
 		*/
-	    HexMap.selectedHex.dropTile(Integer.parseInt(((JLabel)e.getSource()).getText()));
+	    map.getSelectedHex().dropTile(Integer.parseInt(((JLabel)e.getSource()).getText()));
 
 		map.repaint();
 	}

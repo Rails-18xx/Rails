@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.3 2005/11/12 16:13:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.4 2005/11/13 13:29:11 evos Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -23,9 +23,11 @@ public class GUITile {
     protected TileI tile = null;
     protected BufferedImage tileImage = null;
     protected int rotation = 0;
-    protected double tileScale = 0.33;
+    protected double tileScale = GUIHex.NORMAL_SCALE;
+    /*
     protected static int[] xAdjust;
     protected static int[] yAdjust;
+    */
     protected static double baseRotation;
     protected static boolean initialised = false;
     
@@ -34,10 +36,12 @@ public class GUITile {
 	protected static ImageLoader imageLoader = new ImageLoader();
 	protected AffineTransform af = new AffineTransform();
 
+	/*
 	protected final static int[] xEWadjustArr = { -14, 26, 40, 12, -26, -40 };
 	protected final static int[] yEWadjustArr = { -38, -30, 8, 38, 30, -8 };
 	protected final static int[] xNSadjustArr = { -30, 8, 38, 30, -8, -38 };
 	protected final static int[] yNSadjustArr = { -24, -40, -12, 28, 40, 12 };
+	*/
 	//public static final double SQRT3 = Math.sqrt(3.0);
 	public static final double DEG60 = Math.PI / 3;
    
@@ -58,12 +62,16 @@ public class GUITile {
     private void initialise () {
 		
 		if (MapManager.getTileOrientation() == MapHex.EW) {
+		    /*
 		    xAdjust = xEWadjustArr;
 		    yAdjust = yEWadjustArr;
+		    */
 		    baseRotation = 0.5 * DEG60;
 		} else {
+		    /*
 		    xAdjust = xNSadjustArr;
 		    yAdjust = yNSadjustArr;
+		    */
 		    baseRotation = 0.0;
 		}
 		initialised = true;
@@ -78,28 +86,32 @@ public class GUITile {
     /**
      * Rotate right (clockwise) until a valid orientation is found.
      * TODO: Currently only impassable hex sides are taken into account.
-     * @param initial: First rotation to try. Should be 0 for the initial tile drop,
+     * @param initial: First rotation to try. 
+     * Should be 0 for the initial tile drop,
      * and 1 at subsequent rotation attempts.  
      */
     public void rotate (int initial) {
         
-        int i,j, tempRot;
+        int i, j, tempRot;
+        
+        /* Loop through all possible rotations */
         for (i=initial; i<=5; i++) {
             tempRot = (rotation + i) % 6;
-            //System.out.println("Trying rotation "+i+" ("+tempRot+")");
+            /* Loop through all hex sides */
             for (j=0; j<6; j++) {
-                //System.out.println("  side="+j+": tracks="+tile.hasTracks(j - tempRot)
-                //	+" neighbour="+hex.hasNeighbour(j));
+                /* If the tile has tracks against that side, but there is no
+                 * neighbour, forbid this rotation.
+                 */ 
                 if (tile.hasTracks(j - tempRot) && !hex.hasNeighbour(j)) break;
             }
             if (j == 6) {
-                // Found a valid rotation
+                /* If we have successfully checked all hex sides, 
+                 * we have found a valid rotation, so stop here.
+                 */
                 setRotation (tempRot);
                 return;
             }
-            
         }
-        
     }
     
     public int getRotation() {
@@ -114,7 +126,9 @@ public class GUITile {
         
 		if (tileImage != null) {
 		    double radians = baseRotation + rotation * DEG60;
-			af = AffineTransform.getRotateInstance(radians);
+		    int xCenter = (int)Math.round(tileImage.getWidth() * 0.5 * tileScale);
+		    int yCenter = (int)Math.round(tileImage.getHeight() * 0.5 * tileScale);
+			af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
 			af.scale(tileScale, tileScale);
 
 			// All adjustments to AffineTransform must be done before being
@@ -122,7 +136,7 @@ public class GUITile {
 			AffineTransformOp aop = new AffineTransformOp(af,
 					AffineTransformOp.TYPE_BILINEAR);
 
-			g2.drawImage(tileImage, aop, x + xAdjust[rotation], y + yAdjust[rotation]);
+			g2.drawImage(tileImage, aop, x-xCenter /*+ xAdjust[rotation]*/, y-yCenter /*+ yAdjust[rotation]*/);
 		}
        
     }

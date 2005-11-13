@@ -34,7 +34,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	//protected ImageLoader imageLoader = new ImageLoader();
 	//private boolean hexSelected = false;
-	public static GUIHex selectedHex = null;
+	protected static GUIHex selectedHex = null;
 	protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
 
@@ -216,6 +216,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	{
 		// TODO Auto-generated method stub
 
+	}
+	
+	public GUIHex getSelectedHex () {
+	    return selectedHex;
 	}
 
 	public boolean isHexSelected()
