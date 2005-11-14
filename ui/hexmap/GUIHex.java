@@ -4,17 +4,14 @@ import game.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
-
-import ui.ImageLoader;
 
 /**
  * Base abstract class that holds common components for GUIHexes of all orientations.  
  */
 
-public class GUIHex extends JComponent
+public class GUIHex 
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
@@ -413,6 +410,7 @@ public class GUIHex extends JComponent
 		else 
 		{
 		    tt.append("<br><b>Upgrades</b>: ").append(upgrades);
+		    if (model.getTileCost() > 0) tt.append("<br>Upgrade cost: "+Bank.format(model.getTileCost()));
 		}
 		
 		if(this.getHexModel().getCompanyDestination() != null)
@@ -420,7 +418,7 @@ public class GUIHex extends JComponent
 		
 		toolTip = tt.toString();
 	}
-
+	
 	public JComponent getMap()
 	{
 		return map;
@@ -436,6 +434,7 @@ public class GUIHex extends JComponent
 	{
 		provisionalGUITile = new GUITile (tileId, model);
 		provisionalGUITile.setScale(SELECTED_SCALE);
+		toolTip =  "Click to rotate";
 
 	}
 	
@@ -443,6 +442,7 @@ public class GUIHex extends JComponent
 	{
 	    provisionalGUITile = null;
 	    setSelected (false);
+	    setToolTip();
 	}
 	
 	public void fixTile () 

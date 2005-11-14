@@ -33,9 +33,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgrades = new ArrayList();
 		upgradePanel = new JPanel();
 
-		JLabel label = new JLabel("<html>Select<br>an<br>upgrade:</html>");
+		JLabel label = new JLabel("<html><center>Select an<br>upgrade:</center></html>");
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
+		label.setAlignmentX((float)0.5);
+		label.setAlignmentY((float)0.5);
+		label.setHorizontalAlignment(SwingConstants.CENTER);
 		add(label);
 
 		upgradePanel.setOpaque(true);
@@ -50,7 +53,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	{
 		upgradePanel.removeAll();
 
-		if (upgrades != null)
+		if (upgrades != null && upgrades.size() > 0)
 		{
 			Iterator it = upgrades.iterator();
 

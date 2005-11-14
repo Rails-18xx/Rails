@@ -152,6 +152,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			else 
 			{
 			    if (selectedHex != null) {
+				    selectedHex.removeTile();
 			        selectedHex.setSelected(false);
 				    repaint (selectedHex.getBounds());
 			        selectedHex = null;
@@ -174,7 +175,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			// No hex clicked
 			if (selectedHex != null) 
 			{
-			    selectedHex.setSelected(false);
+			    selectedHex.removeTile();
+		        selectedHex.setSelected(false);
 			    repaint (selectedHex.getBounds());
 				selectedHex = null;
 			}
