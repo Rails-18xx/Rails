@@ -27,6 +27,7 @@ public class GUIHex extends JComponent
 
 	protected String hexName;
 	protected int currentTileId;
+	protected int originalTileId;
 	protected int currentTileOrientation;
 	protected String tileFilename;
 	protected TileI currentTile;
@@ -283,9 +284,31 @@ public class GUIHex extends JComponent
 		//FIXME: Disabled until we can properly update the overlay drawing to work with the scrollpane
 		paintOverlay(g2);
 
-		/*
 		FontMetrics fontMetrics = g2.getFontMetrics();
-
+		if(getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
+		{
+			g2.drawString("$" + getHexModel().getTileCost(),
+					rectBound.x + (rectBound.width - fontMetrics.stringWidth(
+								Integer.toString(getHexModel().getTileCost()))) * 3/5,
+					rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 6/10));
+		}
+		
+		if(getHexModel().getCompanyHome() != null)
+		{
+			PublicCompany co = (PublicCompany) Game.getCompanyManager().getPublicCompany(getHexModel().getCompanyHome());
+			
+			if(co != null)
+			{
+				if(!co.hasStarted() && !co.hasFloated())
+				{
+					g2.drawString(getHexModel().getCompanyHome(),
+									rectBound.x + (rectBound.width - fontMetrics.stringWidth(
+									getHexModel().getCompanyHome())) * 1/2,
+									rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
+				}
+			}
+		}
+		/*
 		// Added by Erik Vos: show hex name
 		g2.drawString(hexName,
 				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getHexModel().getName())) * 2/5,
@@ -313,13 +336,11 @@ public class GUIHex extends JComponent
 	    
 	}
 	
-	public void rotateTile () {
-	    
+	public void rotateTile () 
+	{
 		if (provisionalGUITile != null) {
 		    provisionalGUITile.rotate(1);
 		}
-	    
-	    
 	}
 
 	// Added by Erik Vos
@@ -343,7 +364,8 @@ public class GUIHex extends JComponent
     /**
      * @return Returns the currentTile.
      */
-    public TileI getCurrentTile() {
+    public TileI getCurrentTile() 
+    {
         return currentTile;
     }
 
@@ -361,30 +383,41 @@ public class GUIHex extends JComponent
 	    return toolTip;
 	}
 	
-	protected void setToolTip() {
+	protected void setToolTip() 
+	{
 	    StringBuffer tt = new StringBuffer ("<html>");
 	    tt.append ("<b>Hex</b>: ").append(hexName);
 	    // The next line is a temporary development aid, that can be removed later.
 	    tt.append ("  <small>(").append(model.getX()).append(",").append(model.getY()).append(")</small>");
 	    tt.append ("<br><b>Tile</b>: ").append(currentTile.getId());
-	    if (currentTile.hasStations()) {
+	    if (currentTile.hasStations()) 
+	    {
 	        Iterator it = currentTile.getStations().iterator();
 	        Station st;
-	        while (it.hasNext()) {
+	        while (it.hasNext()) 
+	        {
 	            st = (Station)it.next();
 	            tt.append("<br>  ").append(st.getType());
 	            tt.append(": value ").append(st.getValue());
-	            if (st.getValue() > 0 && st.getBaseSlots() > 0) {
+	            if (st.getValue() > 0 && st.getBaseSlots() > 0) 
+	            {
 	                tt.append(", ").append(st.getBaseSlots()).append(" slots");
 	            }
 	        }
 	    }
 	    String upgrades = currentTile.getUpgradesString(model);
-		if (upgrades.equals("")) {
+		if (upgrades.equals("")) 
+		{
 		    tt.append ("<br>No upgrades");
-		} else {
+		} 
+		else 
+		{
 		    tt.append("<br><b>Upgrades</b>: ").append(upgrades);
 		}
+		
+		if(this.getHexModel().getTileCost() > 0)
+			tt.append("<br><b>Upgrade Cost</b>: " + this.getHexModel().getTileCost());
+		
 		toolTip = tt.toString();
 	}
 
@@ -399,18 +432,21 @@ public class GUIHex extends JComponent
 		this.map = map;
 	}
 	
-	public void dropTile (int tileId) {
+	public void dropTile (int tileId) 
+	{
 		provisionalGUITile = new GUITile (tileId, model);
 		provisionalGUITile.setScale(SELECTED_SCALE);
 
 	}
 	
-	public void removeTile () {
+	public void removeTile () 
+	{
 	    provisionalGUITile = null;
 	    setSelected (false);
 	}
 	
-	public void fixTile () {
+	public void fixTile () 
+	{
 	    currentGUITile = provisionalGUITile;
 	    if (currentGUITile != null) {
 	        currentTile = currentGUITile.getTile();

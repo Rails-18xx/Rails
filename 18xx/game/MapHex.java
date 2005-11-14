@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.16 2005/11/12 16:13:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.17 2005/11/14 02:03:32 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -14,12 +14,15 @@ import util.XmlUtils;
 /**
  * Represents a Hex on the Map from the Model side.
  * 
- * <p><b>Tile orientations</b>. Tiles can be oriented NS or EW;
- * the directions refer to the "flat" hex sides.
- * <p>The term "orientation" is also used to indicate the amount
- * of rotation (in 60 degree units) from the standard orientation
- * of the tile. The orientation numbers are indicated in the below
- * picture for an NS-oriented tile:<p><code>
+ * <p>
+ * <b>Tile orientations</b>. Tiles can be oriented NS or EW; the directions
+ * refer to the "flat" hex sides.
+ * <p>
+ * The term "orientation" is also used to indicate the amount of rotation (in 60
+ * degree units) from the standard orientation of the tile. The orientation
+ * numbers are indicated in the below picture for an NS-oriented tile:
+ * <p>
+ * <code>
  * 
  *       ____3____            
  *      /         \
@@ -28,8 +31,10 @@ import util.XmlUtils;
  *    \             /
  *     1           5
  *      \____0____/
- * </code><p>
- * For EW-oriented tiles the above picture should be rotated 30 degrees clockwise.
+ * </code>
+ * <p>
+ * For EW-oriented tiles the above picture should be rotated 30 degrees
+ * clockwise.
  * 
  * @author Erik Vos
  */
@@ -57,16 +62,19 @@ public class MapHex implements ConfigurableComponentI
 	protected int preprintedTileOrientation;
 	protected TileI currentTile;
 	protected int currentTileRotation;
-	
+	protected int tileCost;
+	protected String companyHome;
+	protected String companyDestination;
+
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
-	
-	/* Temporary storage for impassable hexsides. 
-	 * Once neighbours has been set up, this attribute is no longer used.
-	 * Only the black or blue bars on the map need be specified,
-	 * and each one only once. Impassable non-track sides of "offboard"
-	 * (red) and "fixed" (grey or brown) preprinted tiles will be derived
-	 * and need not be specified.
+
+	/*
+	 * Temporary storage for impassable hexsides. Once neighbours has been set
+	 * up, this attribute is no longer used. Only the black or blue bars on the
+	 * map need be specified, and each one only once. Impassable non-track sides
+	 * of "offboard" (red) and "fixed" (grey or brown) preprinted tiles will be
+	 * derived and need not be specified.
 	 */
 	protected String impassable = null;
 
@@ -161,31 +169,36 @@ public class MapHex implements ConfigurableComponentI
 		}
 
 		preprintedTileOrientation = XmlUtils.extractIntegerAttribute(nnp,
-				"orientation",
-				0);
-		
+				"orientation", 0);
+
 		currentTile = TileManager.get().getTile(preprintedTileId);
 		currentTileRotation = preprintedTileOrientation;
-		
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
-
+		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
+		companyHome = XmlUtils.extractStringAttribute(nnp, "home");
+		companyDestination = XmlUtils.extractStringAttribute(nnp, "destination");
 	}
-	
-	public boolean isNeighbour (MapHex neighbour, int direction) {
-	    
-	    /* Various reasons why a bordering hex may not be a neighbour
-	     * in the sense that track may be laid to that border:
-	     */
-	    /* 1. The hex side is marked "impassable" */
-	    if (impassable != null && impassable.indexOf(neighbour.getName()) > -1) 
-	        return false;
-	    /* 2. The preprinted tile on this hex is offmap or fixed and has no track to this side. */
-	    TileI tile = neighbour.getCurrentTile();
-	    if (!tile.isUpgradeable() 
-	            && !tile.hasTracks(3+direction-neighbour.getCurrentTileRotation()))
-	        return false;
-	    
-	    return true;
+
+	public boolean isNeighbour(MapHex neighbour, int direction)
+	{
+		/*
+		 * Various reasons why a bordering hex may not be a neighbour in the
+		 * sense that track may be laid to that border:
+		 */
+		/* 1. The hex side is marked "impassable" */
+		if (impassable != null && impassable.indexOf(neighbour.getName()) > -1)
+			return false;
+		/*
+		 * 2. The preprinted tile on this hex is offmap or fixed and has no
+		 * track to this side.
+		 */
+		TileI tile = neighbour.getCurrentTile();
+		if (!tile.isUpgradeable()
+				&& !tile.hasTracks(3 + direction
+						- neighbour.getCurrentTileRotation()))
+			return false;
+
+		return true;
 	}
 
 	public static void setTileOrientation(int orientation)
@@ -298,75 +311,67 @@ public class MapHex implements ConfigurableComponentI
 	{
 		return neighbours;
 	}
-	
-	public boolean hasNeighbour (int orientation) {
-	    
-	    while (orientation < 0) orientation += 6;
-	    return neighbours[orientation%6] != null; 
+
+	public boolean hasNeighbour(int orientation)
+	{
+
+		while (orientation < 0)
+			orientation += 6;
+		return neighbours[orientation % 6] != null;
 	}
-	
-	public TileI getCurrentTile() {
-	    return currentTile;
+
+	public TileI getCurrentTile()
+	{
+		return currentTile;
 	}
-	
-	public int getCurrentTileRotation () {
-	    return currentTileRotation;
+
+	public int getCurrentTileRotation()
+	{
+		return currentTileRotation;
 	}
-	
+
 	/** Look for the Hex matching the Label in the terrain static map */
 	/* EV: useful, but needs to be rewritten */
 	public static MapHex getHexByLabel(String terrain, String label)
 	{
-	    /*
-		int x = 0;
-		int y = Integer.parseInt(new String(label.substring(1)));
-		switch (label.charAt(0))
-		{
-			case 'A':
-			case 'a':
-				x = 0;
-				break;
-
-			case 'B':
-			case 'b':
-				x = 1;
-				break;
-
-			case 'C':
-			case 'c':
-				x = 2;
-				break;
-
-			case 'D':
-			case 'd':
-				x = 3;
-				break;
-
-			case 'E':
-			case 'e':
-				x = 4;
-				break;
-
-			case 'F':
-			case 'f':
-				x = 5;
-				break;
-
-			case 'X':
-			case 'x':
-
-				// entrances
-				GUIHex[] gameEntrances = (GUIHex[]) entranceHexes.get(terrain);
-				return gameEntrances[y].getMapHexModel();
-
-			default:
-				Log.error("Label " + label + " is invalid");
-		}
-		y = 6 - y - (int) Math.abs(((x - 3) / 2));
-		GUIHex[][] correctHexes = (GUIHex[][]) terrainH.get(terrain);
-		return correctHexes[x][y].getMapHexModel();
-		*/
+		/*
+		 * int x = 0; int y = Integer.parseInt(new String(label.substring(1)));
+		 * switch (label.charAt(0)) { case 'A': case 'a': x = 0; break;
+		 * 
+		 * case 'B': case 'b': x = 1; break;
+		 * 
+		 * case 'C': case 'c': x = 2; break;
+		 * 
+		 * case 'D': case 'd': x = 3; break;
+		 * 
+		 * case 'E': case 'e': x = 4; break;
+		 * 
+		 * case 'F': case 'f': x = 5; break;
+		 * 
+		 * case 'X': case 'x':
+		 *  // entrances GUIHex[] gameEntrances = (GUIHex[])
+		 * entranceHexes.get(terrain); return gameEntrances[y].getMapHexModel();
+		 * 
+		 * default: Log.error("Label " + label + " is invalid"); } y = 6 - y -
+		 * (int) Math.abs(((x - 3) / 2)); GUIHex[][] correctHexes = (GUIHex[][])
+		 * terrainH.get(terrain); return correctHexes[x][y].getMapHexModel();
+		 */
 		return null;
+	}
+
+	public int getTileCost()
+	{
+		return tileCost;
+	}
+
+	public String getCompanyHome()
+	{
+		return companyHome;
+	}
+
+	public String getCompanyDestination()
+	{
+		return companyDestination;
 	}
 
 }

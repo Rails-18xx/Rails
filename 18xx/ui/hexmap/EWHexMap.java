@@ -44,6 +44,7 @@ public class EWHexMap extends HexMap
 					
 
 					hex.setHexModel(mh);
+					hex.originalTileId = hex.currentTileId;
 
 					h[i][j] = hex;
 					hexes.add(hex);

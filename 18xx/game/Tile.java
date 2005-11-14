@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.5 2005/11/12 16:13:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.6 2005/11/14 02:03:32 wakko666 Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -14,8 +14,8 @@ import util.XmlUtils;
 /**
  * @author Erik Vos
  */
-public class Tile implements TileI {
-    
+public class Tile implements TileI 
+{
     int id;
     String name;
     String colour; // May become a separate class TileType
@@ -26,11 +26,11 @@ public class Tile implements TileI {
     List tracks = new ArrayList();
     List stations = new ArrayList();
     
-    public Tile (Integer id) {
+    public Tile (Integer id)
+    {
         this.id = id.intValue();
         
         for (int i=0; i<6; i++) tracksPerSide[i] = new ArrayList();
-            
     }
 
     /**

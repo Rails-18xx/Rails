@@ -42,6 +42,7 @@ public class NSHexMap extends HexMap
                     		 scale, i, j);
 
                     hex.setHexModel(mh);
+                    hex.originalTileId = hex.currentTileId;
                     
                     h[i][j] = hex;
                     hexes.add(hex);
