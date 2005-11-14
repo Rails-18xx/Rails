@@ -415,8 +415,8 @@ public class GUIHex extends JComponent
 		    tt.append("<br><b>Upgrades</b>: ").append(upgrades);
 		}
 		
-		if(this.getHexModel().getTileCost() > 0)
-			tt.append("<br><b>Upgrade Cost</b>: " + this.getHexModel().getTileCost());
+		if(this.getHexModel().getCompanyDestination() != null)
+			tt.append("<br><b>Destination</b>: " + this.getHexModel().getCompanyDestination());
 		
 		toolTip = tt.toString();
 	}
