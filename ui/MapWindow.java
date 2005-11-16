@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.34 2005/11/13 20:10:12 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.35 2005/11/16 22:26:03 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -8,6 +8,7 @@ package ui;
 import game.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 import ui.hexmap.*;
 
@@ -17,7 +18,7 @@ import ui.hexmap.*;
  * @author Erik Vos
  * @author Brett
  */
-public class MapWindow extends JFrame
+public class MapWindow extends JFrame implements WindowListener
 {
 	private MapManager mmgr;
 	private HexMap map;
@@ -62,8 +63,39 @@ public class MapWindow extends JFrame
 		        map.getPreferredSize().height+40);
 		setLocation(25, 25);
 		setTitle("Rails: Game Map");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
+		addWindowListener(this);		
 		pack();
+	}
+	
+
+	public void windowActivated(WindowEvent e)
+	{
+	}
+
+	public void windowClosed(WindowEvent e)
+	{
+	}
+
+	public void windowClosing(WindowEvent e)
+	{
+		StatusWindow.uncheckMenuItemBox(StatusWindow.mapString);
+		dispose();		
+	}
+
+	public void windowDeactivated(WindowEvent e)
+	{
+	}
+
+	public void windowDeiconified(WindowEvent e)
+	{
+	}
+
+	public void windowIconified(WindowEvent e)
+	{
+	}
+
+	public void windowOpened(WindowEvent e)
+	{
 	}
 }

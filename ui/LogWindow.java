@@ -7,6 +7,7 @@ import game.*;
 
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 /**
  * This is the UI for the LogWindow.
@@ -15,8 +16,9 @@ import javax.swing.*;
  *  My head is a wheel.
  * 
  * @author Erik Vos
+ * @author Brett
  */
-public class LogWindow extends JFrame
+public class LogWindow extends JFrame implements WindowListener
 {
 
 	private JLabel message;
@@ -53,7 +55,7 @@ public class LogWindow extends JFrame
 		messagePanel.setBorder(BorderFactory.createEtchedBorder());
 
 		setTitle("Rails: Game log");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(this);
 	}
 
 	public static void addLog()
@@ -66,5 +68,35 @@ public class LogWindow extends JFrame
 			messageWindow.message.setText(buffer.toString());
 			messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
 		}
+	}
+	
+	public void windowActivated(WindowEvent e)
+	{
+	}
+
+	public void windowClosed(WindowEvent e)
+	{
+	}
+
+	public void windowClosing(WindowEvent e)
+	{
+		StatusWindow.uncheckMenuItemBox(StatusWindow.logString);
+		dispose();		
+	}
+
+	public void windowDeactivated(WindowEvent e)
+	{
+	}
+
+	public void windowDeiconified(WindowEvent e)
+	{
+	}
+
+	public void windowIconified(WindowEvent e)
+	{
+	}
+
+	public void windowOpened(WindowEvent e)
+	{
 	}
 }

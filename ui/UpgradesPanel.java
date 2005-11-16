@@ -143,11 +143,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-	    /*
-		HexMap.selectedHex.setTileImage(getHexImage(Integer.parseInt(((JLabel)e.getSource()).getText())));
-		HexMap.selectedHex.setTileIdInteger.parseInt(((JLabel)e.getSource()).getText())
-		HexMap.selectedHex.getHexModel().getCurrentTile().setId(Integer.parseInt(((JLabel)e.getSource()).getText()));
-		*/
 	    map.getSelectedHex().dropTile(Integer.parseInt(((JLabel)e.getSource()).getText()));
 
 		map.repaint();

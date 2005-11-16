@@ -20,6 +20,8 @@ package ui;
 
 import game.*;
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.swing.*;
 import java.util.*;
 
@@ -43,7 +45,7 @@ import java.util.*;
  *  @author Brett
  */
 
-public class StockChart extends JFrame
+public class StockChart extends JFrame implements WindowListener
 {
    private static JPanel stockPanel;
    private static GridLayout stockGrid;
@@ -236,6 +238,37 @@ public class StockChart extends JFrame
 
       stockPanel.setBackground(Color.LIGHT_GRAY);     
 
-      this.pack();
+      addWindowListener(this);
+      pack();
    }
+   
+	public void windowActivated(WindowEvent e)
+	{
+	}
+
+	public void windowClosed(WindowEvent e)
+	{
+	}
+
+	public void windowClosing(WindowEvent e)
+	{
+		StatusWindow.uncheckMenuItemBox(StatusWindow.marketString);
+		dispose();		
+	}
+
+	public void windowDeactivated(WindowEvent e)
+	{
+	}
+
+	public void windowDeiconified(WindowEvent e)
+	{
+	}
+
+	public void windowIconified(WindowEvent e)
+	{
+	}
+
+	public void windowOpened(WindowEvent e)
+	{
+	}
 }
