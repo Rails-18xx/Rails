@@ -11,8 +11,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- * This is the Window used for displaying nearly all of the game status.
- * This is also from where the ORWindow and StartRoundWindow are triggered. 
+ * This is the Window used for displaying nearly all of the game status. This is
+ * also from where the ORWindow and StartRoundWindow are triggered.
  * 
  * @Author Erik Vos
  * @author Brett
@@ -44,11 +44,14 @@ public class StatusWindow extends JFrame implements ActionListener
 	JPanel pane = new JPanel(new BorderLayout());
 
 	private JMenuBar menuBar;
-	private JMenu fileMenu, optMenu;
+	private static JMenu fileMenu, optMenu;
 	private JMenuItem menuItem;
-	private JCheckBoxMenuItem cbMenuItem;
-	private JFileChooser fileChooser;
-
+	
+	/* Menu Item Static Strings */
+	public static String mapString = "Map";
+	public static String marketString = "Stock Market";
+	public static String logString = "Log Window";
+	
 	public void initMenu()
 	{
 		menuBar = new JMenuBar();
@@ -86,19 +89,19 @@ public class StatusWindow extends JFrame implements ActionListener
 
 		optMenu.addSeparator();
 
-		menuItem = new JCheckBoxMenuItem("Stock Market");
+		menuItem = new JCheckBoxMenuItem(marketString);
 		menuItem.setName("Stock Market");
 		menuItem.setMnemonic(KeyEvent.VK_K);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem("Map");
+		menuItem = new JCheckBoxMenuItem(mapString);
 		menuItem.setName("Map");
 		menuItem.setMnemonic(KeyEvent.VK_M);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem("Log Window");
+		menuItem = new JCheckBoxMenuItem(logString);
 		menuItem.setName("Log Window");
 		menuItem.setMnemonic(KeyEvent.VK_L);
 		menuItem.addActionListener(this);
@@ -112,8 +115,8 @@ public class StatusWindow extends JFrame implements ActionListener
 	public StatusWindow()
 	{
 		cm = Game.getCompanyManager();
-		companies = (PublicCompanyI[]) cm.getAllPublicCompanies().toArray(
-				new PublicCompanyI[0]);
+		companies = (PublicCompanyI[]) cm.getAllPublicCompanies()
+				.toArray(new PublicCompanyI[0]);
 		ipo = Bank.getIpo();
 		pool = Bank.getPool();
 
@@ -167,9 +170,9 @@ public class StatusWindow extends JFrame implements ActionListener
 
 	private void init()
 	{
-		PublicCompanyI[] companies = (PublicCompanyI[]) Game
-				.getCompanyManager().getAllPublicCompanies().toArray(
-						new PublicCompanyI[0]);
+		PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
+				.getAllPublicCompanies()
+				.toArray(new PublicCompanyI[0]);
 		nc = companies.length;
 	}
 
@@ -181,8 +184,7 @@ public class StatusWindow extends JFrame implements ActionListener
 			passButton.setEnabled(false);
 			startRound = (StartRound) currentRound;
 			startRoundWindow = new StartRoundWindow(startRound, this);
-			startRoundWindow
-					.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
+			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(false);
 			GameUILoader.mapWindow.setVisible(false);
@@ -210,9 +212,9 @@ public class StatusWindow extends JFrame implements ActionListener
 
 			GameUILoader.stockChart.setVisible(false);
 			GameUILoader.mapWindow.setVisible(true);
-			
+
 			orWindow.requestFocus();
-			
+
 			enableCheckBoxMenuItem("Map");
 			disableCheckBoxMenuItem("Stock Market");
 		}
@@ -227,8 +229,7 @@ public class StatusWindow extends JFrame implements ActionListener
 			{
 				if (optMenu.getMenuComponent(x).getName().equals(name))
 				{
-						((JCheckBoxMenuItem) optMenu.getMenuComponent(x))
-								.setSelected(true);
+					((JCheckBoxMenuItem) optMenu.getMenuComponent(x)).setSelected(true);
 				}
 			}
 			catch (NullPointerException e)
@@ -246,8 +247,7 @@ public class StatusWindow extends JFrame implements ActionListener
 			{
 				if (optMenu.getMenuComponent(x).getName().equals(name))
 				{
-						((JCheckBoxMenuItem) optMenu.getMenuComponent(x))
-								.setSelected(false);
+					((JCheckBoxMenuItem) optMenu.getMenuComponent(x)).setSelected(false);
 				}
 			}
 			catch (NullPointerException e)
@@ -256,7 +256,7 @@ public class StatusWindow extends JFrame implements ActionListener
 			}
 		}
 	}
-	
+
 	public void resume(JFrame previous)
 	{
 		this.requestFocus();
@@ -370,11 +370,15 @@ public class StatusWindow extends JFrame implements ActionListener
 			company = companies[compIndex];
 			if (company.hasStarted())
 			{
-				if (!stockRound.buyShare(player.getName(), ipo, company
-						.getName(), 1))
+				if (!stockRound.buyShare(player.getName(),
+						ipo,
+						company.getName(),
+						1))
 				{
-					JOptionPane.showMessageDialog(this, Log.getErrorBuffer(),
-							"", JOptionPane.OK_OPTION);
+					JOptionPane.showMessageDialog(this,
+							Log.getErrorBuffer(),
+							"",
+							JOptionPane.OK_OPTION);
 				}
 				else
 				{
@@ -395,11 +399,15 @@ public class StatusWindow extends JFrame implements ActionListener
 			company = companies[compIndex];
 			if (company.hasStarted())
 			{
-				if (!stockRound.buyShare(player.getName(), pool, company
-						.getName(), 1))
+				if (!stockRound.buyShare(player.getName(),
+						pool,
+						company.getName(),
+						1))
 				{
-					JOptionPane.showMessageDialog(this, Log.getErrorBuffer(),
-							"", JOptionPane.OK_OPTION);
+					JOptionPane.showMessageDialog(this,
+							Log.getErrorBuffer(),
+							"",
+							JOptionPane.OK_OPTION);
 				}
 				else
 				{
@@ -412,8 +420,10 @@ public class StatusWindow extends JFrame implements ActionListener
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(this, "Unable to buy share.\r\n"
-					+ "You must select a company first.", "No share bought.",
+			JOptionPane.showMessageDialog(this,
+					"Unable to buy share.\r\n"
+							+ "You must select a company first.",
+					"No share bought.",
 					JOptionPane.OK_OPTION);
 
 		}
@@ -440,8 +450,10 @@ public class StatusWindow extends JFrame implements ActionListener
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(this, "Unable to sell share.\r\n"
-					+ "You must select a company first.", "Share not sold.",
+			JOptionPane.showMessageDialog(this,
+					"Unable to sell share.\r\n"
+							+ "You must select a company first.",
+					"Share not sold.",
 					JOptionPane.OK_OPTION);
 
 		}
@@ -454,18 +466,23 @@ public class StatusWindow extends JFrame implements ActionListener
 		if (company != null)
 		{
 			StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this,
-					"Start company at what price?", "What Price?",
-					JOptionPane.INFORMATION_MESSAGE, null, stockMarket
-							.getStartSpaces().toArray(), stockMarket
-							.getStartSpaces().get(0));
+					"Start company at what price?",
+					"What Price?",
+					JOptionPane.INFORMATION_MESSAGE,
+					null,
+					stockMarket.getStartSpaces().toArray(),
+					stockMarket.getStartSpaces().get(0));
 			// repaint();
 			// FIXME: Probably should check the boolean startCompany() returns
 			// PublicCompany.startCompany(playerStatus.getPlayerSelected(),
 			// companyStatus.getCompanySelected(), sp);
-			if (!stockRound.startCompany(player.getName(), company.getName(),
+			if (!stockRound.startCompany(player.getName(),
+					company.getName(),
 					sp.getPrice()))
 			{
-				JOptionPane.showMessageDialog(this, Log.getErrorBuffer(), "",
+				JOptionPane.showMessageDialog(this,
+						Log.getErrorBuffer(),
+						"",
 						JOptionPane.OK_OPTION);
 			}
 			else
@@ -478,9 +495,11 @@ public class StatusWindow extends JFrame implements ActionListener
 			}
 		}
 		else
-			JOptionPane.showMessageDialog(this, "Unable to start company.\r\n"
-					+ "You must select a company first.",
-					"Company not started.", JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog(this,
+					"Unable to start company.\r\n"
+							+ "You must select a company first.",
+					"Company not started.",
+					JOptionPane.OK_OPTION);
 
 	}
 
@@ -501,5 +520,30 @@ public class StatusWindow extends JFrame implements ActionListener
 	public GameStatus getGameStatus()
 	{
 		return gameStatus;
+	}
+
+	public static void uncheckMenuItemBox(String itemName)
+	{
+		int count = optMenu.getMenuComponentCount();
+
+		for (int i = 0; i < count; i++)
+		{
+			try
+			{
+				if (optMenu.getMenuComponent(i)
+						.getName()
+						.equalsIgnoreCase(itemName))
+				{
+					((JCheckBoxMenuItem) optMenu.getMenuComponent(i)).setSelected(false);
+					optMenu.invalidate();
+					return; // Each checkbox should be unique, so once we've
+							// found it we can stop processing menu items.
+				}
+			}
+			catch (NullPointerException e)
+			{
+				// Seperators are null
+			}
+		}
 	}
 }
