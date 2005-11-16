@@ -35,6 +35,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected static GUIHex selectedHex = null;
 	protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
+	
+	/** 
+	 * Is tile laying enabled? If not, one can play with tiles,
+	 * but the "Done" button is disabled.
+	 */
+	protected boolean tileLayingEnabled = false;
 
 	public void setupHexes()
 	{
@@ -78,7 +84,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-
+		
 		try
 		{
 			// Abort if called too early.
@@ -129,7 +135,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			GUIHex clickedHex = getHexContainingPoint(point);
-			// setToolTipText(clickedHex.getToolTip());
+			//setToolTipText(clickedHex.getToolTip());
 
 			// Temporary, to check for correct neighbour setting
 			StringBuffer b = new StringBuffer();
@@ -147,44 +153,41 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			if (clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
-				repaint(selectedHex.getBounds());
+			    repaint (selectedHex.getBounds());
 			}
-			else
+			else 
 			{
-				if (selectedHex != null)
-				{
-					selectedHex.removeTile();
-					selectedHex.setSelected(false);
-					repaint(selectedHex.getBounds());
-					selectedHex = null;
-				}
-				if (clickedHex.getCurrentTile().isUpgradeableNow())
-				{
-					clickedHex.setSelected(true);
-					selectedHex = clickedHex;
-					repaint(selectedHex.getBounds());
-				}
+			    if (selectedHex != null) {
+				    selectedHex.removeTile();
+			        selectedHex.setSelected(false);
+				    repaint (selectedHex.getBounds());
+			        selectedHex = null;
+			    }
+			    if (clickedHex.getCurrentTile().isUpgradeableNow()) {
+			        clickedHex.setSelected(true);
+			        selectedHex = clickedHex;
+				    repaint (selectedHex.getBounds());
+			    }
 			}
 
 			// FIXME: Performance of this repaint could be improved.
-			// repaint(selectedHex.getBounds());
-			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
-			// correctly.
+			//repaint(selectedHex.getBounds());
+			// FIXME: Kludgy, but it forces the upgrades panel to be drawn correctly.
 			upgradesPanel.setVisible(false);
 			upgradesPanel.setVisible(true);
 		}
 		catch (NullPointerException e)
 		{
 			// No hex clicked
-			if (selectedHex != null)
+			if (selectedHex != null) 
 			{
-				selectedHex.removeTile();
-				selectedHex.setSelected(false);
-				repaint(selectedHex.getBounds());
+			    selectedHex.removeTile();
+		        selectedHex.setSelected(false);
+			    repaint (selectedHex.getBounds());
 				selectedHex = null;
 			}
 		}
-
+		
 		showUpgrades();
 
 	}
@@ -212,10 +215,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		// TODO Auto-generated method stub
 
 	}
-
-	public GUIHex getSelectedHex()
-	{
-		return selectedHex;
+	
+	public GUIHex getSelectedHex () {
+	    return selectedHex;
 	}
 
 	public boolean isHexSelected()
@@ -241,6 +243,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	 */
 	public void mouseMoved(MouseEvent arg0)
 	{
+		// TODO Auto-generated method stub
 		Point point = arg0.getPoint();
 		GUIHex hex = getHexContainingPoint(point);
 		setToolTipText(hex != null ? hex.getToolTip() : "");
@@ -270,8 +273,19 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				upgradesPanel.setUpgrades(upgrades);
 			}
 		}
-
+		
 		invalidate();
-		upgradesPanel.showUpgrades();
+		upgradesPanel.showUpgrades(tileLayingEnabled);
+	}
+	
+	public void enableTileLaying (boolean enabled) {
+	    tileLayingEnabled = enabled;
+		if (enabled == false && selectedHex != null) 
+		{
+		    selectedHex.removeTile();
+	        selectedHex.setSelected(false);
+		    repaint (selectedHex.getBounds());
+			selectedHex = null;
+		}
 	}
 }

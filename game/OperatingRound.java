@@ -41,6 +41,7 @@ public class OperatingRound implements Round
     protected PublicCompanyI operatingCompany;
     
     protected int currentRevenue;
+    protected int lastTileLayCost = 0;
     
     protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
     
@@ -163,6 +164,20 @@ public class OperatingRound implements Round
     }
    
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
+    
+    public void layTile (MapHex hex, TileI tile, int orientation) {
+        
+        // Sort out cost
+        lastTileLayCost = hex.getTileCost(); // Usually only the first time!!
+		Log.write (operatingCompany.getName()+" lays tile "+tile.getName()+"/"
+		        + hex.getName()+"/"+orientation 
+		        + (lastTileLayCost > 0 ? " for "+Bank.format(lastTileLayCost) : ""));
+        
+    }
+    
+    public int getLastTileLayCost() {
+        return lastTileLayCost;
+    }
     
     /**
      * A (perhaps temporary) method via which the cost of track laying
