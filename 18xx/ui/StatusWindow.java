@@ -37,7 +37,7 @@ public class StatusWindow extends JFrame implements ActionListener
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
 	private OperatingRound operatingRound;
-	private ORWindow orWindow;
+	public ORWindow orWindow;
 	private int np = GameManager.getNumberOfPlayers();
 	private int nc;
 

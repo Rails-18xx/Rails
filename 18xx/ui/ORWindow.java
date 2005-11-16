@@ -351,6 +351,13 @@ public class ORWindow extends JFrame implements ActionListener
 		statusPanel.add(comp, gbc);
 
 	}
+	
+	public void layTile (MapHex hex, TileI tile, int orientation) {
+	    
+	    round.layTile(hex, tile, orientation);
+	    int cost = round.getLastTileLayCost();
+	    // Process cost
+	}
 
 	public void updateStatus()
 	{
@@ -369,6 +376,7 @@ public class ORWindow extends JFrame implements ActionListener
 			if (step == OperatingRound.STEP_LAY_TRACK)
 			{
 
+			    /*
 				tileCostSelect[orCompIndex].setSelectedIndex(0);
 				setSelect(tileCost[orCompIndex],
 						tileCostSelect[orCompIndex],
@@ -378,6 +386,11 @@ public class ORWindow extends JFrame implements ActionListener
 				leftButton.setMnemonic(KeyEvent.VK_T);
 				leftButton.setActionCommand("LayTrack");
 				leftButton.setEnabled(true);
+			    */
+			    leftButton.setVisible(false);
+			    
+			    GameUILoader.mapWindow.requestFocus();
+			    GameUILoader.mapWindow.enableTileLaying(true);
 
 				middleButton.setText("Buy Private");
 				middleButton.setActionCommand("BuyPrivate");
@@ -388,6 +401,7 @@ public class ORWindow extends JFrame implements ActionListener
 				rightButton.setActionCommand("Done");
 				rightButton.setMnemonic(KeyEvent.VK_D);
 				rightButton.setEnabled(true);
+				
 
 			}
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
@@ -402,6 +416,7 @@ public class ORWindow extends JFrame implements ActionListener
 				leftButton.setActionCommand("LayToken");
 				leftButton.setMnemonic(KeyEvent.VK_T);
 				leftButton.setEnabled(true);
+			    leftButton.setVisible(true);
 
 			}
 			else if (step == OperatingRound.STEP_CALC_REVENUE)
@@ -946,7 +961,7 @@ public class ORWindow extends JFrame implements ActionListener
 		trainsBought = new ArrayList();
 	}
 
-	public String getSRPlayer()
+	public String getORPlayer()
 	{
 		if (playerIndex >= 0)
 			return players[playerIndex].getName();
