@@ -54,7 +54,6 @@ public class ORWindow extends JFrame implements ActionListener
 	private Field tiles[];
 	private int tilesXOffset, tilesYOffset;
 	private Field tileCost[];
-	private Select tileCostSelect[];
 	private Field tokens[];
 	private Field tokenCost[];
 	private Select tokenCostSelect[];
@@ -180,7 +179,6 @@ public class ORWindow extends JFrame implements ActionListener
 		trains = new Field[nc];
 		tiles = new Field[nc];
 		tileCost = new Field[nc];
-		tileCostSelect = new Select[nc];
 		tokens = new Field[nc];
 		tokenCost = new Field[nc];
 		tokenCostSelect = new Select[nc];
@@ -288,10 +286,6 @@ public class ORWindow extends JFrame implements ActionListener
 
 			f = tileCost[i] = new Field("");
 			addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT);
-			f = tileCostSelect[i] = new Select(round.getTileBuildCosts());
-			tileCostSelect[i].setEditable(true);
-			tileCostSelect[i].setPreferredSize(new Dimension(50, 10));
-			addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT);
 
 			f = tokens[i] = new Field("");
 			addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0);
@@ -352,13 +346,6 @@ public class ORWindow extends JFrame implements ActionListener
 
 	}
 	
-	public void layTile (MapHex hex, TileI tile, int orientation) {
-	    
-	    round.layTile(hex, tile, orientation);
-	    int cost = round.getLastTileLayCost();
-	    // Process cost
-	}
-
 	public void updateStatus()
 	{
 
@@ -387,6 +374,7 @@ public class ORWindow extends JFrame implements ActionListener
 				leftButton.setActionCommand("LayTrack");
 				leftButton.setEnabled(true);
 			    */
+				tileCost[orCompIndex].setText("");
 			    leftButton.setVisible(false);
 			    
 			    GameUILoader.mapWindow.requestFocus();
@@ -412,6 +400,7 @@ public class ORWindow extends JFrame implements ActionListener
 						tokenCostSelect[orCompIndex],
 						true);
 
+			    leftButton.setVisible(true);
 				leftButton.setText("Lay token");
 				leftButton.setActionCommand("LayToken");
 				leftButton.setMnemonic(KeyEvent.VK_T);
@@ -492,6 +481,27 @@ public class ORWindow extends JFrame implements ActionListener
 		super.repaint();
 	}
 
+	public void layTile (MapHex hex, TileI tile, int orientation) {
+	    
+	    if (tile != null) {
+	        round.layTile(orCompName, hex, tile, orientation);
+
+		    // Process cost
+		    int cost = round.getLastTileLayCost();
+			tileCost[orCompIndex].setText(Bank.format(cost));
+			updateCash(orCompIndex);
+			gameStatus.updateCompany(orComp.getPublicNumber());
+			gameStatus.updateBank();
+	    }
+
+		LogWindow.addLog();
+
+		GameUILoader.mapWindow.enableTileLaying(false);
+		updateStatus();
+		pack();
+		this.requestFocus();
+}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -507,15 +517,7 @@ public class ORWindow extends JFrame implements ActionListener
 		if (command.equals("LayTrack") || done
 				&& step == OperatingRound.STEP_LAY_TRACK)
 		{
-			amount = done ? 0
-					: Integer.parseInt((String) tileCostSelect[orCompIndex].getSelectedItem());
-			tileCost[orCompIndex].setText(amount > 0 ? Bank.format(amount) : "");
-			round.layTrack(orCompName, amount);
-			setSelect(tileCost[orCompIndex], tileCostSelect[orCompIndex], false);
-			updateCash(orCompIndex);
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
-
+		    // This is just a No-op. Tile handling is now all done in layTrack().
 		}
 		else if (command.equals("LayToken") || done
 				&& step == OperatingRound.STEP_LAY_TOKEN)
@@ -941,7 +943,6 @@ public class ORWindow extends JFrame implements ActionListener
 		if ((j = this.orCompIndex) >= 0)
 		{
 			president[j].setBackground(Color.WHITE);
-			setSelect(tileCost[j], tileCostSelect[j], false);
 			setSelect(tokenCost[j], tokenCostSelect[j], false);
 			setSelect(revenue[j], revenueSelect[j], false);
 		}
@@ -952,9 +953,9 @@ public class ORWindow extends JFrame implements ActionListener
 
 		if ((j = this.orCompIndex) >= 0)
 		{
+		    // Give a new company the turn.
 			this.playerIndex = companies[orCompIndex].getPresident().getIndex();
 			president[j].setHighlight(true);
-			setSelect(tileCost[j], tileCostSelect[j], true);
 		}
 		pack();
 

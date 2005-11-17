@@ -449,18 +449,15 @@ public class GUIHex
 	
 	public void fixTile () 
 	{
-	    boolean firstLay = currentTileId == model.getPreprintedTileId();
 	    currentGUITile = provisionalGUITile;
 	    if (currentGUITile != null) {
 	        currentTile = currentGUITile.getTile();
 	        currentTileId = currentTile.getId();
 	        currentTileOrientation = provisionalTileOrientation;
 	    }
-	    
-	    GameUILoader.statusWindow.orWindow.layTile(model, currentTile,
+	    System.out.println("GUI:"+currentGUITile+" tile:"+currentTile);	
+        GameUILoader.statusWindow.orWindow.layTile(model, currentTile,
 	            currentTileOrientation);
-
-	    
 	    setSelected (false);
 	    setToolTip();
 	}

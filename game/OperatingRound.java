@@ -165,20 +165,6 @@ public class OperatingRound implements Round
    
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
     
-    public void layTile (MapHex hex, TileI tile, int orientation) {
-        
-        // Sort out cost
-        lastTileLayCost = hex.getTileCost(); // Usually only the first time!!
-		Log.write (operatingCompany.getName()+" lays tile "+tile.getName()+"/"
-		        + hex.getName()+"/"+orientation 
-		        + (lastTileLayCost > 0 ? " for "+Bank.format(lastTileLayCost) : ""));
-        
-    }
-    
-    public int getLastTileLayCost() {
-        return lastTileLayCost;
-    }
-    
     /**
      * A (perhaps temporary) method via which the cost of track laying
      * can be accounted for.
@@ -186,9 +172,11 @@ public class OperatingRound implements Round
      * @param amountSpent The cost of laying the track, which is
      * subtracted from the company treasury.
      */
-    public boolean layTrack (String companyName, int amountSpent) {
+    public boolean layTile (String companyName, MapHex hex, TileI tile, 
+            int orientation) {
         
         String errMsg = null;
+        int cost = 0;
         
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -201,34 +189,51 @@ public class OperatingRound implements Round
             }
             // Must be correct step
             if (step != STEP_LAY_TRACK) {
-                errMsg = "Wrong action, expected Track laying cost";
+                errMsg = "Wrong action, expected Tile laying cost";
                 break;
             }
             
-            // Amount must be non-negative multiple of 10
-            if (amountSpent < 0) {
-                errMsg = "Negative amount not allowed";
-                break;
-            }
-            if (amountSpent%10 != 0) {
-                errMsg = "Amount must be a multiple of 10";
-                break;
-            }
-            // Does the company have the money?
-            if (amountSpent > operatingCompany.getCash()) {
-                errMsg = "Not enough money";
-                break;
-            }
+            if (tile != null) {
+
+                // Sort out cost
+                if (hex.getCurrentTile().getId() == hex.getPreprintedTileId()) {
+                    cost = hex.getTileCost();
+                } else {
+                    cost = 0;
+                }
+                lastTileLayCost = cost;
+	            
+	           // Amount must be non-negative multiple of 10
+	            if (cost < 0) {
+	                errMsg = "Negative amount not allowed";
+	                break;
+	            }
+	            if (cost%10 != 0) {
+	                errMsg = "Amount must be a multiple of 10";
+	                break;
+	            }
+	            // Does the company have the money?
+	            if (cost > operatingCompany.getCash()) {
+	                errMsg = "Not enough money";
+	                break;
+	            }
+	        }
             break;
         }
         if (errMsg != null) {
-            Log.error ("Cannot process track laying cost of "+amountSpent+": "+errMsg);
+            Log.error ("Cannot process tile laying: "+errMsg);
             return false;
         }
         
-        Bank.transferCash ((CashHolder)operatingCompany, null, amountSpent);
-		if (amountSpent > 0) Log.write (companyName+" spends " 
-		        + Bank.format(amountSpent) + " while laying track");
+        if (tile != null) {
+	        hex.upgrade (tile, orientation);
+	        
+	        Bank.transferCash ((CashHolder)operatingCompany, null, cost);
+			Log.write (operatingCompany.getName()+" lays tile "+tile.getName()+"/"
+			        + hex.getName()+"/"+MapHex.getOrientationName(orientation) 
+			        + (cost > 0 ? " for "+Bank.format(cost) : ""));
+        }
+        
     
         nextStep (operatingCompany);
         
@@ -815,5 +820,11 @@ public class OperatingRound implements Round
         return new int[] {0,80,180,300,450,630,1100};
         
     }
+    
+    public int getLastTileLayCost() {
+        return lastTileLayCost;
+    }
+    
+
 
 }
