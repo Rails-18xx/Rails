@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.17 2005/11/14 02:03:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.18 2005/11/17 22:15:35 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -46,6 +46,9 @@ public class MapHex implements ConfigurableComponentI
 	protected static int tileOrientation;
 	protected static boolean lettersGoHorizontal;
 	protected static boolean letterAHasEvenNumbers;
+
+	private static final String[] ewOrNames = {"SW","W","NW","NE","E","SE"};
+	private static final String[] nsOrNames = {"S","SW","NW","N","NE","SE"};
 
 	// Coordinates as used in the ui.hexmap package
 	protected int x;
@@ -241,6 +244,17 @@ public class MapHex implements ConfigurableComponentI
 		return lettersGoHorizontal;
 	}
 
+	public static String getOrientationName (int orientation) {
+	    
+	    if (tileOrientation == EW) {
+	        return ewOrNames[orientation % 6];
+	    } else {
+	        return nsOrNames[orientation % 6];
+	    }
+	}
+	
+	/* ----- Instance methods -----*/
+	
 	/**
 	 * @return Returns the column.
 	 */
@@ -372,6 +386,14 @@ public class MapHex implements ConfigurableComponentI
 	public String getCompanyDestination()
 	{
 		return companyDestination;
+	}
+	
+	public void upgrade (TileI newTile, int newOrientation) {
+	    
+	    currentTile = newTile;
+	    currentTileRotation = newOrientation;
+	    
+	    // Further consequences to be processed here, e.g. new routes etc.
 	}
 
 }

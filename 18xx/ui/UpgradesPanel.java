@@ -80,13 +80,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 				upgradePanel.add(hexLabel);
 			}
 			
-			cancel = new JButton("Cancel");
-			cancel.setActionCommand("Cancel");
-			cancel.setMnemonic(KeyEvent.VK_C);
-			cancel.addActionListener(this);
-			cancel.setEnabled(true);
-			upgradePanel.add(cancel);
-
 			done = new JButton("Done");
 			done.setActionCommand("Done");
 			done.setMnemonic(KeyEvent.VK_D);
@@ -96,6 +89,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		}
 		
+		cancel = new JButton("Cancel");
+		cancel.setActionCommand("Cancel");
+		cancel.setMnemonic(KeyEvent.VK_C);
+		cancel.addActionListener(this);
+		cancel.setEnabled(true);
+		upgradePanel.add(cancel);
+
 		revalidate();
 		repaint();
 	}
@@ -131,9 +131,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		String command = e.getActionCommand();
 
 		if (command.equals("Cancel")) {
-		    map.getSelectedHex().removeTile();
+		    if (map.getSelectedHex() != null) map.getSelectedHex().removeTile();
+	        GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
 		} else if (command.equals ("Done")) {
-		    map.getSelectedHex().fixTile();
+		    if (map.getSelectedHex() != null) {
+		        map.getSelectedHex().fixTile();
+		        // OR window is updated from GUITile in this case.
+		    } else {
+		        GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+		    }
+
+		    
 		}
 		map.repaint();
 
@@ -143,11 +151,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-	    /*
-		HexMap.selectedHex.setTileImage(getHexImage(Integer.parseInt(((JLabel)e.getSource()).getText())));
-		HexMap.selectedHex.setTileIdInteger.parseInt(((JLabel)e.getSource()).getText())
-		HexMap.selectedHex.getHexModel().getCurrentTile().setId(Integer.parseInt(((JLabel)e.getSource()).getText()));
-		*/
 	    map.getSelectedHex().dropTile(Integer.parseInt(((JLabel)e.getSource()).getText()));
 
 		map.repaint();
