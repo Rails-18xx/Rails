@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.6 2005/11/14 02:03:32 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.7 2005/11/18 23:24:56 wakko666 Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -115,7 +115,6 @@ public class GUITile
 
 	public void paintTile(Graphics2D g2, int x, int y)
 	{
-
 		if (tileImage != null)
 		{
 			double radians = baseRotation + rotation * DEG60;
