@@ -29,7 +29,7 @@ import javax.swing.*;
  *
  */
 
-public class StockToken extends JPanel
+public class Token extends JPanel
 {
    private Color fgColor, bgColor;
    private Ellipse2D.Double circle;
@@ -59,29 +59,29 @@ public class StockToken extends JPanel
       super.paintComponent(g);
    }
 
-   public StockToken(String name)
+   public Token(String name)
    {
-      this(Color.BLACK, Color.WHITE, name, 4, 4, 15);
+      this(Color.BLACK, Color.WHITE, name, 1, 1, 21);
    }
 
-   public StockToken(Color fc, Color bc, String name)
+   public Token(Color fc, Color bc, String name)
    {
-      this(fc, bc, name, 4, 4, 15);
+      this(fc, bc, name, 1, 1, 21);
    }
    
-   public StockToken(double x, double y, String name)
+   public Token(double x, double y, String name)
    {
-      this(Color.BLACK, Color.WHITE, name, x, y, 15);
+      this(Color.BLACK, Color.WHITE, name, x, y, 21);
    }
    
-   public StockToken(Color fc, Color bc, String name, double x, double y, double diameter)
+   public Token(Color fc, Color bc, String name, double x, double y, double diameter)
    {      
       super();
       
       fgColor = fc;
       bgColor = bc;
       
-      circle = new Ellipse2D.Double(x-3, y-3, diameter+6, diameter+6);
+      circle = new Ellipse2D.Double(x, y, diameter, diameter);
       
       this.setForeground(fgColor);
       this.setOpaque(false);

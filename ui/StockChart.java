@@ -28,20 +28,6 @@ import java.util.*;
 /**
  * This class displays the StockMarket Window.
  * 
- * The layout is roughly this:
- * 
- * JFrame (GridBag) 
- * | ---> StockMarket JPanel (Grid) 
- * 		---> JLayeredPane
- * 			---> Shows the stockmarket chart 
- * 			---> Shows tokens for every company 
- * | ---> Status JPanel (Grid) 
- * 		---> Shows at-a-glance information about each player's holdings. 
- * 		---> Shows at-a-glance information about each company's performance. 
- * | ---> Button JPanel (Flow)
- * 		---> Buy Button 
- *		---> Sell Button
- *  
  *  @author Brett
  */
 
@@ -139,7 +125,7 @@ public class StockChart extends JFrame implements WindowListener
             {
                if (market[i][j].hasTokens())
                {
-                  tokenList = market[i][j].getTokens();
+                  tokenList = (ArrayList) market[i][j].getTokens();
                   
                   placeToken(tokenList, layeredPane);
                }
@@ -157,7 +143,7 @@ public class StockChart extends JFrame implements WindowListener
       Color bgColour;
       Color fgColour;
       PublicCompany co;      
-      StockToken token;
+      Token token;
       
       for (int k = 0; k < tokenList.size(); k++)
       {
@@ -165,7 +151,7 @@ public class StockChart extends JFrame implements WindowListener
          bgColour = co.getBgColour();
          fgColour = co.getFgColour();
 
-         token = new StockToken(fgColour, bgColour, co.getName());
+         token = new Token(fgColour, bgColour, co.getName());
          token.setBounds(origin.x, origin.y, size.width, size.height);
          
          layeredPane.add(token, new Integer(0), 0);

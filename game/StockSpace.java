@@ -80,7 +80,7 @@ public class StockSpace implements StockSpaceI
 
 			if (tokens.size() < 1)
 			{
-				this.setHasTokens(false);
+				hasTokens = false;
 			}
 
 			return true;
@@ -94,7 +94,7 @@ public class StockSpace implements StockSpaceI
 	/**
 	 * @return
 	 */
-	public ArrayList getTokens()
+	public List getTokens()
 	{
 		return tokens;
 	}

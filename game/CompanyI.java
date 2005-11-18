@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
  *
  * To be implemented by any Company object.
  */
-public interface CompanyI {
+public interface CompanyI extends TokenHolderI {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";

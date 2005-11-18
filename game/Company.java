@@ -4,6 +4,8 @@
  */
 package game;
 
+import java.util.*;
+
 /**
  * @author Erik Vos
  */
@@ -15,9 +17,11 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	protected String name;
 	protected CompanyTypeI type;
 	protected int companyNumber; // For internal use
-
 	protected Portfolio portfolio = null;
 
+	private ArrayList tokens = new ArrayList();
+	private boolean hasTokens = false;
+	
 	/**
 	 * The value per certificate at the end of the game. Default 0 (for
 	 * privates).
@@ -141,6 +145,42 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	public Object clone() throws CloneNotSupportedException
 	{
 		return super.clone();
+	}
+
+	public void addToken(CompanyI company)
+	{
+		tokens.add(company);
+		hasTokens = true;
+	}
+	
+	public List getTokens()
+	{
+		return tokens;
+	}
+
+	public boolean hasTokens()
+	{
+		return hasTokens;
+	}
+
+	public boolean removeToken(CompanyI company)
+	{
+		int index = tokens.indexOf(company);
+		if (index >= 0)
+		{
+			tokens.remove(index);
+
+			if (tokens.size() < 1)
+			{
+				hasTokens = false;
+			}
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 }

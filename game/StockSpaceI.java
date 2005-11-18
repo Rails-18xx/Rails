@@ -3,13 +3,12 @@
  */
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Erik
  */
-public interface StockSpaceI
+public interface StockSpaceI extends TokenHolderI
 {
 
 	/*--- Constants ---*/
@@ -114,28 +113,6 @@ public interface StockSpaceI
 	 * @return
 	 */
 	public abstract void setStart(boolean b);
-
-	/**
-	 * Add a token at the end of the array (i.e. at the bottom of the pile)
-	 * 
-	 * @param company
-	 *            The company object to add.
-	 */
-	public abstract void addToken(CompanyI company);
-
-	/**
-	 * Remove a token from the pile.
-	 * 
-	 * @param company
-	 *            The company object to remove.
-	 * @return False if the token was not found.
-	 */
-	public abstract boolean removeToken(CompanyI company);
-
-	/**
-	 * @return
-	 */
-	public abstract ArrayList getTokens();
 
 	/**
 	 * Find the stack position of a company token

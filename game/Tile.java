@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.7 2005/11/17 22:15:35 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.8 2005/11/18 23:24:55 wakko666 Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -16,15 +16,19 @@ import util.XmlUtils;
  */
 public class Tile implements TileI 
 {
-    int id;
-    String name;
-    String colour; // May become a separate class TileType
-    boolean upgradeable;
-    List upgrades = new ArrayList();
-    String upgradesString = "";
-    List[] tracksPerSide = new ArrayList[6];
-    List tracks = new ArrayList();
-    List stations = new ArrayList();
+    private int id;
+    private String name;
+    private String colour; // May become a separate class TileType
+    private boolean upgradeable;
+    private List upgrades = new ArrayList();
+    private String upgradesString = "";
+    private List[] tracksPerSide = new ArrayList[6];
+    private List tracks = new ArrayList();
+    private List stations = new ArrayList();
+	private ArrayList tokens = new ArrayList();
+	private boolean hasTokens = false;
+    private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
+    private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
     
     public Tile (Integer id)
     {
@@ -153,8 +157,6 @@ public class Tile implements TileI
     public String getName() {
         return name;
     }
-    private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
-    private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
     
     private int getPointNumber (String trackEnd) throws ConfigurationException {
         
@@ -220,5 +222,39 @@ public class Tile implements TileI
         return stations;
     }
 
+	public void addToken(CompanyI company)
+	{
+		tokens.add(company);
+		hasTokens = true;
+	}
+	
+	public List getTokens()
+	{
+		return tokens;
+	}
 
+	public boolean hasTokens()
+	{
+		return hasTokens;
+	}
+
+	public boolean removeToken(CompanyI company)
+	{
+		int index = tokens.indexOf(company);
+		if (index >= 0)
+		{
+			tokens.remove(index);
+
+			if (tokens.size() < 1)
+			{
+				hasTokens = false;
+			}
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
