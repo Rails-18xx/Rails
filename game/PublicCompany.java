@@ -177,6 +177,9 @@ public class PublicCompany extends Company implements PublicCompanyI
       
       fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
+      maxCityTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
+      numCityTokens = maxCityTokens;
+      
       if (element != null)
       {
          NodeList properties = element.getChildNodes();

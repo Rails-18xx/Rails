@@ -64,7 +64,7 @@
 	<Hex name="G13" tile="0" cost="120"/>
 	<Hex name="G15" tile="0" cost="120" blocking="SVNRR"/>
 	<Hex name="G17" tile="-2"/>
-	<Hex name="G19" tile="-21"  orientation="1" cost="80"/>
+	<Hex name="G19" tile="-21"  orientation="1" home="NYNH" preferredCity="2" cost="80"/>
 	<Hex name="H2" tile="0"/>
 	<Hex name="H4" tile="-10"/>
 	<Hex name="H6" tile="0"/>

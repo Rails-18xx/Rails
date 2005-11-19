@@ -16,22 +16,22 @@
   <Company name="Flos" type="Private" basePrice="20" revenue="5"/>
   <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10"/>
   <Company name="TCC" type="Private" basePrice="50" revenue="10"/>
-  <Company name="Ship" type="Private" basePrice="70" revenue="15"/>
+  <Company name="Ship" type="Private" tokens="1" tokenValue="20" basePrice="70" revenue="15"/>
   <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
   <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
   
-  <Company name="GT"  type="Public" fgColour="000000" bgColour="40B0A0"/>
-  <Company name="THB" type="Public" fgColour="000000" bgColour="B0B040"/>
-  <Company name="BBG" type="Public" fgColour="000000" bgColour="FF8080"/>
-  <Company name="LPS" type="Public" fgColour="000000" bgColour="A0A0F0"/>
-  <Company name="WGB" type="Public" fgColour="FFFFFF" bgColour="0000FF"/>
-  <Company name="WR"  type="Public" fgColour="FFFFFF" bgColour="808030"/>
-  <Company name="CV"  type="Public" fgColour="FFFFFF" bgColour="800080"/>
-  <Company name="CPR" type="Public" fgColour="000000" bgColour="ffa0ff"/>
-  <Company name="CA"  type="Public" fgColour="FFFFFF" bgColour="FF0000"/>
-  <Company name="CGR" type="Public" fgColour="FFFFFF" bgColour="000000"/>
-  <Company name="TGB" type="Public" fgColour="FFFFFF" bgColour="FF8000"/>
-  <Company name="GW"  type="Public" fgColour="000000" bgColour="b090b0"/>
+  <Company name="GT"  type="Public" tokens="4" fgColour="000000" bgColour="40B0A0"/>
+  <Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040"/>
+  <Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080"/>
+  <Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0"/>
+  <Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF"/>
+  <Company name="WR"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030"/>
+  <Company name="CV"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080"/>
+  <Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff"/>
+  <Company name="CA"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000"/>
+  <Company name="CGR" type="Public" tokens="10" fgColour="FFFFFF" bgColour="000000"/>
+  <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000"/>
+  <Company name="GW"  type="Public" tokens="4" fgColour="000000" bgColour="b090b0"/>
 
   <StartPacket roundClass="game.StartRound_1830">
     <Item name="Flos"      type="Private" basePrice="20"/>

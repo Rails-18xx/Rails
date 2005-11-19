@@ -555,6 +555,38 @@ public class GameStatus extends JPanel implements ActionListener
 			currPrice[compIndex].setText(Bank.format(companies[compIndex].getCurrentPrice()
 					.getPrice()));
 		}
+
+		if (companies[compIndex].hasFloated()
+				&& companies[compIndex].hasStarted())
+		{
+			MapHex[][] map = MapManager.getInstance().getHexes();
+
+			for (int i = 0; i < map.length; i++)
+			{
+				for (int j = 0; j < map[i].length; j++)
+				{
+					try
+					{
+						if (map[i][j].getCompanyHome()
+								.equalsIgnoreCase(companies[compIndex].getName()))
+						{
+							companies[compIndex].addToken(map[i][j].getCurrentTile());
+							ArrayList stations = (ArrayList) map[i][j].getCurrentTile()
+									.getStations();
+
+							if (map[i][j].getPreferredCity() > 0)
+								((Station) stations.get(map[i][j].getPreferredCity() - 1)).addToken(companies[compIndex]);
+							else
+								((Station) stations.get(0)).addToken(companies[compIndex]);
+						}
+					}
+					catch (NullPointerException e)
+					{
+						// Homeless. So sad.
+					}
+				}
+			}
+		}
 	}
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
