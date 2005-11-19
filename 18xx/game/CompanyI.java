@@ -82,9 +82,5 @@ public interface CompanyI extends TokenHolderI {
 	
 	public abstract Object clone() throws CloneNotSupportedException;
 
-	/**
-	 * Overriding the addToken method from TokenHolderI
-	 * @param tile
-	 */
-	public void addToken(TileI tile);
+	public void playToken(TileI tile);
 }

@@ -570,14 +570,17 @@ public class GameStatus extends JPanel implements ActionListener
 						if (map[i][j].getCompanyHome()
 								.equalsIgnoreCase(companies[compIndex].getName()))
 						{
-							companies[compIndex].addToken(map[i][j].getCurrentTile());
+							companies[compIndex].playToken(map[i][j].getCurrentTile());
 							ArrayList stations = (ArrayList) map[i][j].getCurrentTile()
 									.getStations();
 
 							if (map[i][j].getPreferredCity() > 0)
 								((Station) stations.get(map[i][j].getPreferredCity() - 1)).addToken(companies[compIndex]);
 							else
+								//FIXME: This needs a more generic call to something like Station.placeToken
+								// Because 1830's Erie President is allowed to choose the city to place the token in.
 								((Station) stations.get(0)).addToken(companies[compIndex]);
+							
 						}
 					}
 					catch (NullPointerException e)
