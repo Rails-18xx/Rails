@@ -155,10 +155,11 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		hasTokens = true;
 	}
 	
-	public void addToken(TileI tile)
+	public void playToken(TileI tile)
 	{
 		tokens.add(tile);
 		hasTokens = true;
+		numCityTokens--;
 	}
 	
 	public List getTokens()
@@ -174,7 +175,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	public boolean removeToken(CompanyI company)
 	{
 		int index = tokens.indexOf(company);
-		if (index >= 0)
+		if (index >= 0 && tokens.get(index) instanceof Company)
 		{
 			tokens.remove(index);
 
