@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.8 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.9 2005/11/19 01:28:45 wakko666 Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -232,9 +232,8 @@ public class GameManager implements ConfigurableComponentI
 
 	private void startOperatingRound()
 	{
-
+		playHomeTokens();
 		new OperatingRound();
-
 	}
 
 	/**
@@ -435,6 +434,48 @@ public class GameManager implements ConfigurableComponentI
 			Log.error("Cannot instantiate class " + className);
 			System.out.println(e.getStackTrace());
 			return null;
+		}
+	}
+	
+	private void playHomeTokens()
+	{
+		PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager().getAllPublicCompanies().toArray(new PublicCompanyI[0]);
+		int compIndex = 0;
+		
+		if (companies[compIndex].hasFloated()
+				&& companies[compIndex].hasStarted())
+		{
+			MapHex[][] map = MapManager.getInstance().getHexes();
+
+			for (int i = 0; i < map.length; i++)
+			{
+				for (int j = 0; j < map[i].length; j++)
+				{
+					try
+					{
+						if (map[i][j].getCompanyHome()
+								.equalsIgnoreCase(companies[compIndex].getName()))
+						{
+							companies[compIndex].playToken(map[i][j].getCurrentTile());
+							ArrayList stations = (ArrayList) map[i][j].getCurrentTile()
+									.getStations();
+
+							//FIXME: CHECK if we've already played a home token.
+							if (map[i][j].getPreferredCity() > 0)
+								((Station) stations.get(map[i][j].getPreferredCity() - 1)).addToken(companies[compIndex]);
+							else
+								//FIXME: This needs a more generic call to something like Station.placeToken
+								// Because 1830's Erie President is allowed to choose the city to place the token in.
+								((Station) stations.get(0)).addToken(companies[compIndex]);
+							
+						}
+					}
+					catch (NullPointerException e)
+					{
+						// Homeless. So sad.
+					}
+				}
+			}
 		}
 	}
 
