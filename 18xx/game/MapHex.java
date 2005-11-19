@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.18 2005/11/17 22:15:35 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.19 2005/11/19 00:56:39 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -66,6 +66,7 @@ public class MapHex implements ConfigurableComponentI
 	protected TileI currentTile;
 	protected int currentTileRotation;
 	protected int tileCost;
+	protected int preferredCity;
 	protected String companyHome;
 	protected String companyDestination;
 
@@ -178,6 +179,7 @@ public class MapHex implements ConfigurableComponentI
 		currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
+		preferredCity = XmlUtils.extractIntegerAttribute(nnp, "preferredCity", 0);
 		companyHome = XmlUtils.extractStringAttribute(nnp, "home");
 		companyDestination = XmlUtils.extractStringAttribute(nnp, "destination");
 	}
@@ -394,6 +396,12 @@ public class MapHex implements ConfigurableComponentI
 	    currentTileRotation = newOrientation;
 	    
 	    // Further consequences to be processed here, e.g. new routes etc.
+	}
+
+	
+	public int getPreferredCity()
+	{
+		return preferredCity;
 	}
 
 }

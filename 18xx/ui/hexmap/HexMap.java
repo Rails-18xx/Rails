@@ -175,6 +175,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			// FIXME: Kludgy, but it forces the upgrades panel to be drawn correctly.
 			upgradesPanel.setVisible(false);
 			upgradesPanel.setVisible(true);
+			
+			ArrayList stations = (ArrayList) selectedHex.getCurrentTile().getStations();
+			Iterator it = stations.iterator();
+			
+			while(it.hasNext())
+			{
+				System.out.println("Tokens: " + ((Station)it.next()).getTokens());
+			}
 		}
 		catch (NullPointerException e)
 		{

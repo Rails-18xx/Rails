@@ -21,6 +21,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 
 	private ArrayList tokens = new ArrayList();
 	private boolean hasTokens = false;
+	protected int numCityTokens = 0;
+	protected int maxCityTokens = 0;
 	
 	/**
 	 * The value per certificate at the end of the game. Default 0 (for
@@ -153,6 +155,12 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		hasTokens = true;
 	}
 	
+	public void addToken(TileI tile)
+	{
+		tokens.add(tile);
+		hasTokens = true;
+	}
+	
 	public List getTokens()
 	{
 		return tokens;
@@ -181,6 +189,23 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		{
 			return false;
 		}
+	}
+
+	
+	public int getNumCityTokens()
+	{
+		return numCityTokens;
+	}
+
+	
+	public void setNumCityTokens(int numCityTokens)
+	{
+		this.numCityTokens = numCityTokens;
+	}
+	
+	public int getMaxCityTokens()
+	{
+		return maxCityTokens;
 	}
 
 }
