@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.9 2005/11/19 01:28:45 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.10 2005/11/20 15:26:24 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -477,6 +477,10 @@ public class GameManager implements ConfigurableComponentI
 				}
 			}
 		}
+	}
+	
+	public String getHelp () {
+	    return currentRound.getHelp();
 	}
 
 }

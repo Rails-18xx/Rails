@@ -8,6 +8,7 @@ import ui.elements.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 /**
@@ -16,7 +17,7 @@ import javax.swing.*;
  * @author Erik Vos
  * @author Brett
  */
-public class StartRoundWindow extends JFrame implements ActionListener
+public class StartRoundWindow extends JFrame implements ActionListener, KeyListener
 {
 
 	private static final int NARROW_GAP = 1;
@@ -146,6 +147,9 @@ public class StartRoundWindow extends JFrame implements ActionListener
 		requestFocus();
 
 		LogWindow.addLog();
+		
+		addKeyListener(this);
+
 
 	}
 
@@ -498,5 +502,15 @@ public class StartRoundWindow extends JFrame implements ActionListener
 		itemName[i].setVisible(!clickable);
 		itemNameButton[i].setVisible(clickable);
 	}
+	
+	public void keyPressed(KeyEvent e) {
+	    if (e.getKeyCode() == KeyEvent.VK_F1) {
+	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+	        e.consume();
+	    }
+	}
+	
+	public void keyReleased(KeyEvent e) {}
 
+	public void keyTyped (KeyEvent e) {}
 }

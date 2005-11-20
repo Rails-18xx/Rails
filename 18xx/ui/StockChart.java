@@ -19,6 +19,7 @@
 package ui;
 
 import game.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -31,7 +32,7 @@ import java.util.*;
  *  @author Brett
  */
 
-public class StockChart extends JFrame implements WindowListener
+public class StockChart extends JFrame implements WindowListener, KeyListener
 {
    private static JPanel stockPanel;
    private static GridLayout stockGrid;
@@ -51,6 +52,9 @@ public class StockChart extends JFrame implements WindowListener
       stockPanel.setLayout(stockGrid);
       
       gc = new GridBagConstraints();
+      
+	  addKeyListener(this);
+
    }
    
    private void populateGridBag()
@@ -257,4 +261,15 @@ public class StockChart extends JFrame implements WindowListener
 	public void windowOpened(WindowEvent e)
 	{
 	}
+	public void keyPressed(KeyEvent e) {
+	    if (e.getKeyCode() == KeyEvent.VK_F1) {
+	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+	        e.consume();
+	    }
+	}
+	
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped (KeyEvent e) {}
+
+
 }

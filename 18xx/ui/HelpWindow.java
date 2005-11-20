@@ -18,23 +18,29 @@ import java.awt.event.*;
  * @author Erik Vos
  * @author Brett
  */
-public class LogWindow extends JFrame implements WindowListener, KeyListener
+public class HelpWindow extends JFrame implements WindowListener
 {
 
 	private JLabel message;
 	private JScrollPane messageScroller;
 	private JScrollBar vbar;
 	private JPanel messagePanel;
-	private static LogWindow messageWindow;
+	private static HelpWindow helpWindow;
 
 	private static StringBuffer buffer = new StringBuffer("<html></html>");
+	
+	public static void displayHelp (String text) { 
+	    
+	    if (helpWindow == null) helpWindow = new HelpWindow();
+	    helpWindow.display (text);
+	}
 
-	public LogWindow()
+	public HelpWindow()
 	{
-		messageWindow = this;
+		helpWindow = this;
 
 		message = new JLabel("");
-		message.setBackground(Color.WHITE);
+		message.setBackground(new Color(255, 255, 210));
 		message.setOpaque(true);
 		message.setVerticalAlignment(SwingConstants.TOP);
 		messagePanel = new JPanel(new GridBagLayout());
@@ -50,25 +56,25 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 		setContentPane(messagePanel);
 
 		setSize(400, 400);
-		setLocation(600, 400);
+		setLocation(600, 000);
 
 		messagePanel.setBorder(BorderFactory.createEtchedBorder());
 
-		setTitle("Rails: Game log");
+		setTitle("Help");
 		addWindowListener(this);
-		addKeyListener(this);
-
 	}
 
-	public static void addLog()
+	private void display (String text)
 	{
-		String newText = Log.getMessageBuffer();
-		if (newText.length() > 0)
-		{
-			buffer.insert(buffer.length() - 7, newText.replaceAll("\n", "<br>"));
-
-			messageWindow.message.setText(buffer.toString());
-			messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+		if (text == null) text = "";
+		helpWindow.message.setText("<html>"+text+"</html>");
+		if (text.equals("")) {
+			setVisible(false);
+		} else {
+			helpWindow.vbar.setValue(helpWindow.vbar.getMaximum());
+			setState(Frame.NORMAL);
+			setVisible(true);
+			toFront();
 		}
 	}
 	
@@ -82,7 +88,6 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.logString);
 		dispose();		
 	}
 
@@ -101,15 +106,4 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 	public void windowOpened(WindowEvent e)
 	{
 	}
-	public void keyPressed(KeyEvent e) {
-	    if (e.getKeyCode() == KeyEvent.VK_F1) {
-	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
-	        e.consume();
-	    }
-	}
-	
-	public void keyReleased(KeyEvent e) {}
-	public void keyTyped (KeyEvent e) {}
-
-
 }

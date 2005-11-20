@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.6 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.7 2005/11/20 15:26:24 evos Exp $
  * 
  * Created on 23-May-2005
  * Change Log:
@@ -310,5 +310,10 @@ public class StartRound_1835 extends StartRound
 	{
 		return false;
 	}
+
+	public String getHelp() {
+	    return "1835 Start Round help text";
+	}
+
 
 }
