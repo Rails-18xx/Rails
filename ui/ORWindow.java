@@ -8,6 +8,7 @@ import ui.elements.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import java.util.*;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
  * 
  * @author Erik Vos
  */
-public class ORWindow extends JFrame implements ActionListener
+public class ORWindow extends JFrame implements ActionListener, KeyListener
 {
 
 	private static final int NARROW_GAP = 1;
@@ -165,6 +166,8 @@ public class ORWindow extends JFrame implements ActionListener
 		updateStatus();
 
 		LogWindow.addLog();
+
+		addKeyListener(this);
 
 	}
 
@@ -989,5 +992,16 @@ public class ORWindow extends JFrame implements ActionListener
 					.getPrice()));
 		}
 	}
+
+	
+	public void keyPressed(KeyEvent e) {
+	    if (e.getKeyCode() == KeyEvent.VK_F1) {
+	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+	        e.consume();
+	    }
+	}
+	
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped (KeyEvent e) {}
 
 }

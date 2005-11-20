@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.36 2005/11/16 23:07:56 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.37 2005/11/20 15:26:24 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -102,4 +102,14 @@ public class MapWindow extends JFrame implements WindowListener
 	public void windowOpened(WindowEvent e)
 	{
 	}
+	
+	public void keyPressed(KeyEvent e) {
+	    if (e.getKeyCode() == KeyEvent.VK_F1) {
+	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+	        e.consume();
+	    }
+	}
+	
+	public void keyReleased(KeyEvent e) {}
+
 }

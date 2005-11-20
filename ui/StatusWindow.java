@@ -17,7 +17,7 @@ import javax.swing.*;
  * @Author Erik Vos
  * @author Brett
  */
-public class StatusWindow extends JFrame implements ActionListener
+public class StatusWindow extends JFrame implements ActionListener, KeyListener
 {
 
 	private JPanel buttonPanel;
@@ -166,6 +166,10 @@ public class StatusWindow extends JFrame implements ActionListener
 		currentRound = gmgr.getCurrentRound();
 		updateStatus();
 		pack();
+		
+		gameStatus.addKeyListener(this);
+		buttonPanel.addKeyListener(this);
+		addKeyListener(this);
 	}
 
 	private void init()
@@ -546,4 +550,15 @@ public class StatusWindow extends JFrame implements ActionListener
 			}
 		}
 	}
+	
+	public void keyPressed(KeyEvent e) {
+	    System.out.println("Key pressed in status window");
+	    if (e.getKeyCode() == KeyEvent.VK_F1) {
+	        HelpWindow.displayHelp(gmgr.getHelp());
+	        e.consume();
+	    }
+	}
+	
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped (KeyEvent e) {}
 }

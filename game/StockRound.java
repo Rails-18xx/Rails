@@ -20,6 +20,8 @@ package game;
 
 import java.util.*;
 
+import ui.HelpWindow;
+
 /**
  * Implements a basic Stock Round.
  * <p>
@@ -949,5 +951,9 @@ public class StockRound implements Round
 	public static void setNoSaleIfNotOperated()
 	{
 		noSaleIfNotOperated = true;
+	}
+	
+	public String getHelp() {
+	     return "Stock round help text";
 	}
 }
