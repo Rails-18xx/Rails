@@ -1038,9 +1038,9 @@ public class OperatingRound implements Round
 	        b.append("<br><br>Before 'Done' has been pressed, you can change your mind<br>as often as you want");
 	        b.append(" (presuming that the other players don't get angry).");
 	        b.append("<br> - If you want to select another hex: repeat step 1");
-	        b.append("<br> - If you want to lay another tile on the currently selected hex:<br> repeat step 2.");
-	        b.append("<br> - If you want to undo hex selection:<br> click outside of the map hexes.");
-	        b.append("<br> - If you don't want to lay a tile after all:<br> press 'Cancel'");
+	        b.append("<br> - If you want to lay another tile on the currently selected hex: repeat step 2.");
+	        b.append("<br> - If you want to undo hex selection: click outside of the map hexes.");
+	        b.append("<br> - If you don't want to lay a tile after all: press 'Cancel'");
 	    }
 	
 	    return b.toString();
