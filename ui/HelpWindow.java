@@ -21,7 +21,7 @@ import java.awt.event.*;
 public class HelpWindow extends JFrame implements WindowListener
 {
 
-	private JLabel message;
+	private JEditorPane message;
 	private JScrollPane messageScroller;
 	private JScrollBar vbar;
 	private JPanel messagePanel;
@@ -39,10 +39,11 @@ public class HelpWindow extends JFrame implements WindowListener
 	{
 		helpWindow = this;
 
-		message = new JLabel("");
+		message = new JEditorPane("text/html", "");
 		message.setBackground(new Color(255, 255, 210));
 		message.setOpaque(true);
-		message.setVerticalAlignment(SwingConstants.TOP);
+		message.setEditable(false);
+		//message.setVerticalAlignment(SwingConstants.TOP);
 		messagePanel = new JPanel(new GridBagLayout());
 		messageScroller = new JScrollPane(message,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -67,12 +68,13 @@ public class HelpWindow extends JFrame implements WindowListener
 	private void display (String text)
 	{
 		if (text == null) text = "";
-		helpWindow.message.setText("<html>"+text+"</html>");
+		helpWindow.message.setText(text);
 		if (text.equals("")) {
 			setVisible(false);
 		} else {
 			helpWindow.vbar.setValue(helpWindow.vbar.getMaximum());
 			setState(Frame.NORMAL);
+			pack();
 			setVisible(true);
 			toFront();
 		}
