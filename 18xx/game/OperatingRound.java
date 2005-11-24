@@ -28,7 +28,7 @@ import java.util.*;
  * <p>
  * Permanent memory is formed by static attributes.
  * 
- * @author Erik Vos TODO Configure split rule
+ * @author Erik Vos
  */
 public class OperatingRound implements Round
 {

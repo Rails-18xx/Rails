@@ -4,6 +4,10 @@
  */
 package game;
 
+import game.special.SpecialPropertyI;
+
+import java.util.*;
+
 import org.w3c.dom.*;
 
 import util.XmlUtils;
@@ -19,6 +23,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 
 	protected int basePrice = 0;
 	protected int revenue = 0;
+	protected List specialProperties = null;
 	protected String auctionType;
 	protected int closingPhase;
 
@@ -47,6 +52,33 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
 					"revenue",
 					"0"));
+			
+			// Special properties
+			Element spsEl = (Element) element.getElementsByTagName("SpecialProperties").item(0);
+			if (spsEl != null) {
+			    specialProperties = new ArrayList();
+			    NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
+			    Element spEl;
+			    String condition, className;
+			    for (int i=0; i<spsNl.getLength(); i++) {
+			        spEl = (Element) spsNl.item(i);
+			        nnp2 = spEl.getAttributes();
+			        condition = XmlUtils.extractStringAttribute(nnp2, "condition");
+			        if (!XmlUtils.hasValue(condition))
+			            throw new ConfigurationException ("Missing condition in private special property");
+			        className = XmlUtils.extractStringAttribute(nnp2, "class");
+			        if (!XmlUtils.hasValue(className))
+			            throw new ConfigurationException ("Missing class in private special property");
+			        
+			        SpecialPropertyI sp =(SpecialPropertyI) Class.forName(className).newInstance();
+			        sp.setCompany (this);
+			        sp.setCondition (condition);
+			        specialProperties.add(sp);
+			        sp.configureFromXML(spEl);
+
+			    }
+			}
+			
 		}
 		catch (Exception e)
 		{
