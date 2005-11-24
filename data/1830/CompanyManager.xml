@@ -13,9 +13,30 @@
 		<TrainLimit number="4,4,3,2"/>
 	</CompanyType>
 	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"/>
-	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"/>
-	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"/>
-	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"/>
+	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="B20" extra="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="F16" extra="no" costApplies="yes"/>
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTokenLay">
+				<SpecialTokenLay location="F16" extra="no" costApplies="no"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="NYC" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
 	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"/>
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30" />
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000FF">

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.10 2005/11/12 15:12:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.11 2005/11/24 22:42:40 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -198,5 +198,9 @@ public class MapManager implements ConfigurableComponentI
 	public String getMapUIClassName()
 	{
 		return mapUIClassName;
+	}
+	
+	public MapHex getHex (String locationCode) {
+	    return (MapHex) mHexes.get(locationCode);
 	}
 }
