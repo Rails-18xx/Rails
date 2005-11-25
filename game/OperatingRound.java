@@ -45,6 +45,8 @@ public class OperatingRound implements Round
 
 	protected int currentRevenue;
 	protected int lastTileLayCost = 0;
+	
+	protected List currentSpecialProperties = null;
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
 
@@ -145,6 +147,9 @@ public class OperatingRound implements Round
 		{
 			operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 			GameManager.getInstance().setRound(this);
+			
+			// prepare any specials
+			prepareStep(step);
 		}
 		else
 		{
@@ -593,8 +598,27 @@ public class OperatingRound implements Round
 	 */
 	protected void nextStep(PublicCompanyI company)
 	{
-		if (++step >= steps.length)
-			done(company.getName());
+		if (++step >= steps.length) done(company.getName());
+		
+		if (operatingCompany != null) prepareStep (step);
+		
+	}
+	
+	protected void prepareStep (int step) {
+	    
+	    if (step == STEP_LAY_TRACK) {
+	        
+	        // Check for extra or special tile lays
+	        currentSpecialProperties = 
+	            operatingCompany.getPortfolio().getSpecialProperties(game.special.SpecialTileLay.class);
+	    } else {
+	        
+	        currentSpecialProperties = null;
+	    }
+	}
+	
+	public List getSpecialProperties () {
+	    return currentSpecialProperties;
 	}
 
 	/**
@@ -619,6 +643,7 @@ public class OperatingRound implements Round
 		{
 			// OR done. Inform GameManager.
 			Log.write("End of Operating Round " + getCompositeORNumber());
+			operatingCompany = null;
 			GameManager.getInstance().nextRound(this);
 			return true;
 		}

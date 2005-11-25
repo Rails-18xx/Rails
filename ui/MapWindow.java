@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.37 2005/11/20 15:26:24 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.38 2005/11/25 22:38:25 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -70,6 +70,10 @@ public class MapWindow extends JFrame implements WindowListener
 	
 	public void enableTileLaying (boolean enabled) {
 	    map.enableTileLaying(enabled);
+	}
+	
+	public void setSpecialTileLays (java.util.List specials) {
+	    //specialTileLays = specials;
 	}
 	
 

@@ -365,23 +365,13 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 			if (step == OperatingRound.STEP_LAY_TRACK)
 			{
-
-			    /*
-				tileCostSelect[orCompIndex].setSelectedIndex(0);
-				setSelect(tileCost[orCompIndex],
-						tileCostSelect[orCompIndex],
-						true);
-
-				leftButton.setText("Lay track");
-				leftButton.setMnemonic(KeyEvent.VK_T);
-				leftButton.setActionCommand("LayTrack");
-				leftButton.setEnabled(true);
-			    */
 				tileCost[orCompIndex].setText("");
 			    leftButton.setVisible(false);
 			    
 			    GameUILoader.mapWindow.requestFocus();
 			    GameUILoader.mapWindow.enableTileLaying(true);
+			    
+			    GameUILoader.mapWindow.setSpecialTileLays(round.getSpecialProperties());
 
 				middleButton.setText("Buy Private");
 				middleButton.setActionCommand("BuyPrivate");

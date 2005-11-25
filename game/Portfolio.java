@@ -1,10 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.21 2005/10/16 15:02:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.22 2005/11/25 22:38:25 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
  * Change Log:
  */
 package game;
+
+import game.special.SpecialPropertyI;
 
 import java.util.*;
 
@@ -26,6 +28,10 @@ public class Portfolio
    /** Owned trains */
    protected List trains = new ArrayList();
    protected Map trainsPerType = new HashMap();
+   
+   /** Special properties. It is easier to maintain a map of these
+    * that to have to search through the privates on each and every action. */
+   protected Map specialProperties = new HashMap();
 
    /** Who owns the portfolio */
    protected CashHolder owner;
@@ -136,6 +142,7 @@ public class Portfolio
    {
       privateCompanies.add(privateCompany);
       privateCompany.setHolder(this);
+      updateSpecialProperties();
    }
 
    public void addCertificate(PublicCertificateI certificate)
@@ -157,6 +164,7 @@ public class Portfolio
          if (privateCompanies.get(i) == privateCompany)
          {
             privateCompanies.remove(i);
+            updateSpecialProperties();
             return true;
          }
       }
@@ -483,6 +491,32 @@ public class Portfolio
    public TrainI getTrainOfType (String name) {
        
        return getTrainOfType (TrainManager.get().getTypeByName(name));
+   }
+   
+   protected void updateSpecialProperties () {
+       
+       specialProperties = new HashMap();
+       Iterator it = privateCompanies.iterator();
+       Iterator it2;
+       SpecialPropertyI sp;
+       Class clazz;
+       List list;
+       while (it.hasNext()) {
+           PrivateCompanyI priv = (PrivateCompanyI) it.next();
+           it2 = priv.getSpecialProperties().iterator();
+           while (it2.hasNext()) {
+               sp = (SpecialPropertyI) it.next();
+               clazz = sp.getClass();
+               if (!specialProperties.containsKey(clazz)) {
+                   specialProperties.put(clazz, new ArrayList());
+               }
+               ((List)specialProperties.get(clazz)).add(sp);
+           }
+       }
+   }
+   
+   public List getSpecialProperties (Class clazz) {
+       return (List) specialProperties.get(clazz);
    }
 
 }

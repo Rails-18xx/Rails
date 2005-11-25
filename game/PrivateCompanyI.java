@@ -1,11 +1,13 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PrivateCompanyI.java,v 1.6 2005/11/24 22:42:40 evos Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PrivateCompanyI.java,v 1.7 2005/11/25 22:38:25 evos Exp $
  * 
  * Created on 19mar2005 by Erik Vos
  * Changes:
  *
  */
 package game;
+
+import java.util.List;
 
 /**
  * @author Erik Vos
@@ -36,4 +38,5 @@ public interface PrivateCompanyI extends CompanyI, Certificate
 
 	public void payOut();
 
+	public List getSpecialProperties();
 }

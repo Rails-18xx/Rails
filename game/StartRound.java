@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.7 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.8 2005/11/25 22:38:25 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -398,6 +398,10 @@ public abstract class StartRound implements StartRoundI
 	public void resetCompanyJustStarted()
 	{
 		companyJustStarted = false;
+	}
+	
+	public List getSpecialProperties () {
+	    return null;
 	}
 
 }

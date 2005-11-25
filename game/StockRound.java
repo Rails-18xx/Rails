@@ -46,6 +46,8 @@ public class StockRound implements Round
 	protected int numPasses = 0;
 
 	protected Map sellPrices = new HashMap();
+	
+	protected List currentSpecialProperties = null;
 
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
@@ -852,6 +854,10 @@ public class StockRound implements Round
 	public int getCurrentPlayerIndex()
 	{
 		return GameManager.currentPlayerIndex;
+	}
+	
+	public List getSpecialProperties() {
+	    return currentSpecialProperties;
 	}
 
 	/**
