@@ -216,5 +216,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		}
 		return clone;
 	}
+	
+	public List getSpecialProperties() {
+	    return specialProperties;
+	}
 
 }
