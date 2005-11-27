@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.38 2005/11/25 22:38:25 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.39 2005/11/27 20:59:23 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -6,6 +6,8 @@
 package ui;
 
 import game.*;
+import game.special.SpecialTileLay;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +26,7 @@ public class MapWindow extends JFrame implements WindowListener
 	private HexMap map;
 	private JScrollPane scrollPane;
 	protected UpgradesPanel upgradePanel;
-
+	
 	public MapWindow()
 	{
 		Scale.set(15);
@@ -73,7 +75,7 @@ public class MapWindow extends JFrame implements WindowListener
 	}
 	
 	public void setSpecialTileLays (java.util.List specials) {
-	    //specialTileLays = specials;
+	    map.setSpecials (specials);
 	}
 	
 

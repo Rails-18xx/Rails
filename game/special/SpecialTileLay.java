@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.1 2005/11/24 22:42:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.2 2005/11/27 20:59:24 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -36,6 +36,18 @@ public class SpecialTileLay extends SpecialORProperty {
         extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
         costApplies = XmlUtils.extractBooleanAttribute(nnp, "costApplies", costApplies);
         closingValue = XmlUtils.extractIntegerAttribute(nnp, "closingValue", closingValue);
+     }
+    
+    public boolean isExtra() {
+        return extra;
+    }
+    
+    public boolean costApplies() {
+        return costApplies;
+    }
+    
+    public MapHex getLocation() {
+        return location;
     }
 
 }

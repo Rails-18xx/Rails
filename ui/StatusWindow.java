@@ -207,6 +207,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			disableCheckBoxMenuItem("Map");
 
 			refreshStatus();
+			toFront();
 		}
 		else if (currentRound instanceof OperatingRound)
 		{
@@ -552,7 +553,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	}
 	
 	public void keyPressed(KeyEvent e) {
-	    System.out.println("Key pressed in status window");
 	    if (e.getKeyCode() == KeyEvent.VK_F1) {
 	        HelpWindow.displayHelp(gmgr.getHelp());
 	        e.consume();

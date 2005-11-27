@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.5 2005/08/18 22:07:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.6 2005/11/27 20:59:23 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -199,20 +199,17 @@ public class ConvertTilesXML {
         String end1, end2;
         while (it.hasNext()) {
             String key = (String) it.next();
-            //System.out.println("Resolving "+key);
             List list = (List)unresolvedTrack.get(key);
             Element[] ends = (Element[]) list.toArray(new Element[0]);
             if (ends.length <= 1) {
                 throw new ConfigurationException("Loose end "+ends[0]+" in tile "+tileNo);
             }
             for (int i=1; i<ends.length; i++) {
-                //System.out.println("From "+ends[i]);
                 end1 = (String) resolvedTrack.get(ends[i]);
                 if (end1 == null) {
                     throw new ConfigurationException("Loose end "+ends[i]+" in tile "+tileNo);
                 }
                 for (int j=0; j<i; j++) {
-                    //System.out.println("To "+ends[j]);
                     end2 = (String) resolvedTrack.get(ends[j]);
                     if (end2 == null) {
                         throw new ConfigurationException("Loose end "+ends[j]+" in tile "+tileNo);
@@ -305,7 +302,6 @@ public class ConvertTilesXML {
             resolvedTrack.put(outputConnection, end);
             return true;
         } else {
-            //System.out.println("Tile "+tileNo+" unresolved: "+position);
             if (!unresolvedTrack.containsKey(position)) {
                 unresolvedTrack.put(position, new ArrayList());
             }
