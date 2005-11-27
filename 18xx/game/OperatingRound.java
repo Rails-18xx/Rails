@@ -18,6 +18,8 @@
 
 package game;
 
+import game.special.*;
+
 import java.util.*;
 
 /**
@@ -47,6 +49,14 @@ public class OperatingRound implements Round
 	protected int lastTileLayCost = 0;
 	
 	protected List currentSpecialProperties = null;
+	
+	/** Number of tiles that may be laid. 
+	 * TODO: This does not cover cases like "2 yellow or 1 upgrade allowed".
+	 */
+	protected int normalTileLaysAllowed = 1;
+	protected int normalTileLaysDone = 0;
+	protected int extraTileLaysAllowed = 0;
+	protected int extraTileLaysDone = 0;
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
 
@@ -118,7 +128,6 @@ public class OperatingRound implements Round
 			{
 				key = ++minorNo;
 			}
-			// System.out.println("OR key of "+company.getName()+" is "+key);
 			operatingCompanies.put(new Integer(key), company);
 		}
 
@@ -283,15 +292,47 @@ public class OperatingRound implements Round
 			hex.upgrade(tile, orientation);
 
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			Log.write(operatingCompany.getName() + " lays tile "
+			Log.write(operatingCompany.getName() + " lays tile #"
 					+ tile.getName() + "/" + hex.getName() + "/"
-					+ MapHex.getOrientationName(orientation)
+					+ MapHex.getOrientationName(orientation) // FIXME: Wrong!
 					+ (cost > 0 ? " for " + Bank.format(cost) : ""));
+			
+			// Was a special property used?
+			SpecialTileLay stl = (SpecialTileLay) checkForUseOfSpecialProperty (hex);
+			if (stl != null) {
+			    System.out.println("A special property of "+stl.getCompany().getName()+" is used");
+			    stl.setExercised();
+			    if (stl.isExtra()) extraTileLaysDone++;
+			    else normalTileLaysDone++;
+		        currentSpecialProperties = 
+		            operatingCompany.getPortfolio().getSpecialProperties(game.special.SpecialTileLay.class);
+			} else {
+			    normalTileLaysDone++;
+			}
 		}
 
-		nextStep(operatingCompany);
+		if (tile == null || 
+		        normalTileLaysDone >= normalTileLaysAllowed 
+		        && extraTileLaysDone >= extraTileLaysAllowed) {
+		    nextStep(operatingCompany);
+		}
 
 		return true;
+	}
+	
+	private SpecialORProperty checkForUseOfSpecialProperty (MapHex hex) {
+	    if (currentSpecialProperties == null) return null;
+
+	    Iterator it = currentSpecialProperties.iterator();
+	    SpecialProperty sp;
+	    while (it.hasNext()) {
+	        sp = (SpecialProperty) it.next();
+	        if (sp instanceof SpecialTileLay
+	                && ((SpecialTileLay)sp).getLocation() == hex) {
+	            return (SpecialORProperty) sp;
+	        }
+	    }
+	    return null;
 	}
 
 	/**
@@ -600,17 +641,25 @@ public class OperatingRound implements Round
 	{
 		if (++step >= steps.length) done(company.getName());
 		
-		if (operatingCompany != null) prepareStep (step);
-		
 	}
 	
 	protected void prepareStep (int step) {
 	    
 	    if (step == STEP_LAY_TRACK) {
+
+	        normalTileLaysDone = 0;
+	        extraTileLaysAllowed = 0;
+	        extraTileLaysDone = 0;
 	        
 	        // Check for extra or special tile lays
 	        currentSpecialProperties = 
 	            operatingCompany.getPortfolio().getSpecialProperties(game.special.SpecialTileLay.class);
+	        if (currentSpecialProperties != null) {
+	            Iterator it = currentSpecialProperties.iterator();
+	            while (it.hasNext()) {
+	                if (((SpecialTileLay)it.next()).isExtra()) extraTileLaysAllowed++;
+	            }
+	        }
 	    } else {
 	        
 	        currentSpecialProperties = null;
@@ -650,6 +699,7 @@ public class OperatingRound implements Round
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 		step = steps[0];
+		prepareStep (step);
 
 		return true;
 	}

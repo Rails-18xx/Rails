@@ -128,7 +128,7 @@ public final class XmlUtils {
 				return defaultValue;
 		}
 		String value = nameAttr.getNodeValue();
-		return value.matches("^[TtYy]");
+		return value.matches("^[TtYy].*");
 	}
 
     /**

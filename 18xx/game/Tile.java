@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.8 2005/11/18 23:24:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.9 2005/11/27 20:59:20 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -99,7 +99,6 @@ public class Tile implements TileI
             slots = XmlUtils.extractIntegerAttribute(nnp, "slots", 0);
             station = new Station (sid, type, value, slots);
             stations.add(station);
-            //System.out.println("Tile "+this.id+" station "+type);
         }
         
         /* Upgrades */
@@ -113,7 +112,6 @@ public class Tile implements TileI
             nnp = ((Element)upgnl.item(i)).getAttributes();
             ids = XmlUtils.extractStringAttribute(nnp, "id");
             upgradesString = ids; // TEMPORARY
-            //System.out.println("Tile "+name+" upgrades "+ids);
             if (ids != null) {
                 idArray = ids.split(",");
                 for (int j=0; j<idArray.length; j++) {

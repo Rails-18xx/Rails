@@ -76,7 +76,6 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			from = instance;
 		else if (to == null)
 			to = instance;
-		// System.out.println("Amount: " + amount);
 		from.addCash(-amount);
 		to.addCash(amount);
 	}

@@ -5,6 +5,7 @@ package ui;
 
 import game.*;
 import ui.elements.*;
+import util.XmlUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -489,10 +490,13 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		LogWindow.addLog();
 
-		GameUILoader.mapWindow.enableTileLaying(false);
 		updateStatus();
 		pack();
-		this.requestFocus();
+		
+		if (round.getStep() != OperatingRound.STEP_LAY_TRACK) {
+			GameUILoader.mapWindow.enableTileLaying(false);
+			this.requestFocus();
+		}
 }
 
 	/*
@@ -634,174 +638,176 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					trainsForSale.toArray(),
 					trainsForSale.get(1));
-			Matcher m = buyTrainPattern.matcher(boughtTrain);
-			if (m.matches())
-			{
-				String trainType = m.group(1);
-				String sellerName = m.group(2);
-				boolean exchanging = (m.group(3) != null);
-				TrainTypeI type = TrainManager.get().getTypeByName(trainType);
-				train = null;
-				TrainI exchangedTrain = null;
-				Portfolio seller = null;
-				int price = 0;
-				System.out.println("Selling a train: " + sellerName);
-				if (type != null)
+			if (XmlUtils.hasValue(boughtTrain)) {
+				Matcher m = buyTrainPattern.matcher(boughtTrain);
+				if (m.matches()) // Why does this sometimes give a NullPointerException?
 				{
-					if (sellerName.equals("IPO"))
+					String trainType = m.group(1);
+					String sellerName = m.group(2);
+					boolean exchanging = (m.group(3) != null);
+					TrainTypeI type = TrainManager.get().getTypeByName(trainType);
+					train = null;
+					TrainI exchangedTrain = null;
+					Portfolio seller = null;
+					int price = 0;
+					System.out.println("Selling a train: " + sellerName);
+					if (type != null)
 					{
-						seller = Bank.getIpo();
-					}
-					else if (sellerName.equals("Pool"))
-					{
-						seller = Bank.getPool();
-					}
-					else if (sellerName != null)
-					{
-						PublicCompanyI sellingComp = Game.getCompanyManager()
-								.getPublicCompany(sellerName);
-						if (sellingComp != null)
+						if (sellerName.equals("IPO"))
 						{
-							seller = sellingComp.getPortfolio();
-
-							String sPrice = JOptionPane.showInputDialog(this,
-									orComp.getName() + " buys " + boughtTrain
-											+ " for which price from "
-											+ sellerName + "?",
-									"Which price?",
-									JOptionPane.QUESTION_MESSAGE);
-							try
-							{
-								price = Integer.parseInt(sPrice);
-							}
-							catch (NumberFormatException e)
-							{
-								price = 0; // FIXME: Need better error
-											// handling!
-							}
+							seller = Bank.getIpo();
 						}
-					}
-				}
-
-				if (seller != null)
-				{
-					train = seller.getTrainOfType(type);
-				}
-
-				if (train != null && exchanging)
-				{
-
-					TrainI[] oldTrains = orComp.getPortfolio()
-							.getUniqueTrains();
-					String[] options = new String[oldTrains.length + 1];
-					options[0] = "None";
-					for (int j = 0; j < oldTrains.length; j++)
-					{
-						options[j + 1] = oldTrains[j].getName();
-					}
-					String exchangedTrainName = (String) JOptionPane.showInputDialog(this,
-							"Which train to exchange for "
-									+ Bank.format(type.getFirstExchangeCost()),
-							"Which train to exchange",
-							JOptionPane.QUESTION_MESSAGE,
-							null,
-							options,
-							options[1]);
-					if (exchangedTrainName != null
-							&& !exchangedTrainName.equalsIgnoreCase("None"))
-					{
-						price = type.getFirstExchangeCost();
-						exchangedTrain = orComp.getPortfolio()
-								.getTrainOfType(exchangedTrainName);
-					}
-
-				}
-
-				if (train != null)
-				{
-					if (!round.buyTrain(orComp.getName(),
-							train,
-							price,
-							exchangedTrain))
-					{
-						JOptionPane.showMessageDialog(this,
-								Log.getErrorBuffer());
-					}
-					else
-					{
-						gameStatus.updateTrains(orComp.getPortfolio());
-						gameStatus.updateTrains(seller);
-						gameStatus.updateCash(orComp);
-						gameStatus.updateCash(Bank.getInstance());
-						if (exchanging)
-							gameStatus.updateTrains(Bank.getPool());
-						updateCash(orCompIndex);
-
-						if (seller.getOwner() instanceof PublicCompanyI)
+						else if (sellerName.equals("Pool"))
 						{
-							for (int k = 0; k < companies.length; k++)
+							seller = Bank.getPool();
+						}
+						else if (sellerName != null)
+						{
+							PublicCompanyI sellingComp = Game.getCompanyManager()
+									.getPublicCompany(sellerName);
+							if (sellingComp != null)
 							{
-								if (companies[i] == seller.getOwner())
+								seller = sellingComp.getPortfolio();
+	
+								String sPrice = JOptionPane.showInputDialog(this,
+										orComp.getName() + " buys " + boughtTrain
+												+ " for which price from "
+												+ sellerName + "?",
+										"Which price?",
+										JOptionPane.QUESTION_MESSAGE);
+								try
 								{
-									updateCash(k);
-									gameStatus.updateCash(companies[k]);
-									break;
+									price = Integer.parseInt(sPrice);
+								}
+								catch (NumberFormatException e)
+								{
+									price = 0; // FIXME: Need better error
+												// handling!
 								}
 							}
 						}
-						else if (seller == Bank.getIpo())
-						{
-							gameStatus.updateTrains(Bank.getIpo());
-							gameStatus.updateTrains(Bank.getUnavailable());
-
-							if (TrainManager.get().hasAvailabilityChanged())
-							{
-								gameStatus.updateTrains();
-								TrainManager.get().resetAvailabilityChanged();
-							}
-						}
-						newTrainTotalCost[orCompIndex] += price;
-						newTrainCost[orCompIndex].setText(""
-								+ newTrainTotalCost[orCompIndex]);
-
-						trainsBought.add(train);
-						newTrains[orCompIndex].setText(TrainManager.get()
-								.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
-						
-						// In case a private has closed
-						/* BIG SHORTCUT: It is assumed here that the President 
-						 * always owns the closing Private, which is of course 
-						 * not guaranteed!
-						 * We really need an event mechanism to handle this!
-						 */
-						gameStatus.updatePlayerPrivates(orComp.getPresident().getIndex());
-						
-	                   // Check if any trains must be discarded
-	                   if (TrainManager.get().hasPhaseChanged()) {
-	                       Iterator it = Game.getCompanyManager().getCompaniesWithExcessTrains().iterator();
-	                       while (it.hasNext()) {
-	                           PublicCompanyI c = (PublicCompanyI) it.next();
-	                           TrainI[] oldTrains = c.getPortfolio().getUniqueTrains();
-	                           String[] options = new String[oldTrains.length];
-	                           for (int j=0; j<oldTrains.length; j++) {
-	                               options [j] = oldTrains[j].getName();
-	                           }
-	                           String discardedTrainName = (String)
-	                           		JOptionPane.showInputDialog (this, "Company "+c.getName()+
-	                           		        " has too many trains. Which train to discard?", 
-	                      		        "Which train to exchange",
-	                      		        JOptionPane.QUESTION_MESSAGE, null,
-	                      		        options,
-	                      		        options[0]);
-	                           if (discardedTrainName != null) {
-	                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
-	                               c.getPortfolio().discardTrain (discardedTrain);
-	                               gameStatus.updateTrains(c.getPortfolio());
-	                           }
-	                       }
-	                   }
 					}
-
+	
+					if (seller != null)
+					{
+						train = seller.getTrainOfType(type);
+					}
+	
+					if (train != null && exchanging)
+					{
+	
+						TrainI[] oldTrains = orComp.getPortfolio()
+								.getUniqueTrains();
+						String[] options = new String[oldTrains.length + 1];
+						options[0] = "None";
+						for (int j = 0; j < oldTrains.length; j++)
+						{
+							options[j + 1] = oldTrains[j].getName();
+						}
+						String exchangedTrainName = (String) JOptionPane.showInputDialog(this,
+								"Which train to exchange for "
+										+ Bank.format(type.getFirstExchangeCost()),
+								"Which train to exchange",
+								JOptionPane.QUESTION_MESSAGE,
+								null,
+								options,
+								options[1]);
+						if (exchangedTrainName != null
+								&& !exchangedTrainName.equalsIgnoreCase("None"))
+						{
+							price = type.getFirstExchangeCost();
+							exchangedTrain = orComp.getPortfolio()
+									.getTrainOfType(exchangedTrainName);
+						}
+	
+					}
+	
+					if (train != null)
+					{
+						if (!round.buyTrain(orComp.getName(),
+								train,
+								price,
+								exchangedTrain))
+						{
+							JOptionPane.showMessageDialog(this,
+									Log.getErrorBuffer());
+						}
+						else
+						{
+							gameStatus.updateTrains(orComp.getPortfolio());
+							gameStatus.updateTrains(seller);
+							gameStatus.updateCash(orComp);
+							gameStatus.updateCash(Bank.getInstance());
+							if (exchanging)
+								gameStatus.updateTrains(Bank.getPool());
+							updateCash(orCompIndex);
+	
+							if (seller.getOwner() instanceof PublicCompanyI)
+							{
+								for (int k = 0; k < companies.length; k++)
+								{
+									if (companies[i] == seller.getOwner())
+									{
+										updateCash(k);
+										gameStatus.updateCash(companies[k]);
+										break;
+									}
+								}
+							}
+							else if (seller == Bank.getIpo())
+							{
+								gameStatus.updateTrains(Bank.getIpo());
+								gameStatus.updateTrains(Bank.getUnavailable());
+	
+								if (TrainManager.get().hasAvailabilityChanged())
+								{
+									gameStatus.updateTrains();
+									TrainManager.get().resetAvailabilityChanged();
+								}
+							}
+							newTrainTotalCost[orCompIndex] += price;
+							newTrainCost[orCompIndex].setText(""
+									+ newTrainTotalCost[orCompIndex]);
+	
+							trainsBought.add(train);
+							newTrains[orCompIndex].setText(TrainManager.get()
+									.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
+							
+							// In case a private has closed
+							/* BIG SHORTCUT: It is assumed here that the President 
+							 * always owns the closing Private, which is of course 
+							 * not guaranteed!
+							 * We really need an event mechanism to handle this!
+							 */
+							gameStatus.updatePlayerPrivates(orComp.getPresident().getIndex());
+							
+		                   // Check if any trains must be discarded
+		                   if (TrainManager.get().hasPhaseChanged()) {
+		                       Iterator it = Game.getCompanyManager().getCompaniesWithExcessTrains().iterator();
+		                       while (it.hasNext()) {
+		                           PublicCompanyI c = (PublicCompanyI) it.next();
+		                           TrainI[] oldTrains = c.getPortfolio().getUniqueTrains();
+		                           String[] options = new String[oldTrains.length];
+		                           for (int j=0; j<oldTrains.length; j++) {
+		                               options [j] = oldTrains[j].getName();
+		                           }
+		                           String discardedTrainName = (String)
+		                           		JOptionPane.showInputDialog (this, "Company "+c.getName()+
+		                           		        " has too many trains. Which train to discard?", 
+		                      		        "Which train to exchange",
+		                      		        JOptionPane.QUESTION_MESSAGE, null,
+		                      		        options,
+		                      		        options[0]);
+		                           if (discardedTrainName != null) {
+		                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
+		                               c.getPortfolio().discardTrain (discardedTrain);
+		                               gameStatus.updateTrains(c.getPortfolio());
+		                           }
+		                       }
+		                   }
+						}
+	
+					}
 				}
 			}
 

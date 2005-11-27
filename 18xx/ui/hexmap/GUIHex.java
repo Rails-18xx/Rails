@@ -447,17 +447,18 @@ public class GUIHex
 	    setToolTip();
 	}
 	
-	public void fixTile () 
+	public void fixTile (boolean tileLayingEnabled) 
 	{
-	    currentGUITile = provisionalGUITile;
-	    if (currentGUITile != null) {
-	        currentTile = currentGUITile.getTile();
-	        currentTileId = currentTile.getId();
-	        currentTileOrientation = provisionalTileOrientation;
+	    if (tileLayingEnabled) {
+		    currentGUITile = provisionalGUITile;
+		    if (currentGUITile != null) {
+		        currentTile = currentGUITile.getTile();
+		        currentTileId = currentTile.getId();
+		        currentTileOrientation = provisionalTileOrientation;
+		    }
+	        GameUILoader.statusWindow.orWindow.layTile(model, currentTile,
+		            currentTileOrientation);
 	    }
-	    System.out.println("GUI:"+currentGUITile+" tile:"+currentTile);	
-        GameUILoader.statusWindow.orWindow.layTile(model, currentTile,
-	            currentTileOrientation);
 	    setSelected (false);
 	    setToolTip();
 	}

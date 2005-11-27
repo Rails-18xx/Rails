@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.22 2005/11/25 22:38:25 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.23 2005/11/27 20:59:19 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -142,7 +142,9 @@ public class Portfolio
    {
       privateCompanies.add(privateCompany);
       privateCompany.setHolder(this);
-      updateSpecialProperties();
+      if (privateCompany.getSpecialProperties() != null) {
+          updateSpecialProperties();
+      }
    }
 
    public void addCertificate(PublicCertificateI certificate)
@@ -164,7 +166,9 @@ public class Portfolio
          if (privateCompanies.get(i) == privateCompany)
          {
             privateCompanies.remove(i);
-            updateSpecialProperties();
+            if (privateCompany.getSpecialProperties() != null) {
+                updateSpecialProperties();
+            }
             return true;
          }
       }
@@ -493,25 +497,33 @@ public class Portfolio
        return getTrainOfType (TrainManager.get().getTypeByName(name));
    }
    
-   protected void updateSpecialProperties () {
+   public void updateSpecialProperties () {
        
-       specialProperties = new HashMap();
-       Iterator it = privateCompanies.iterator();
-       Iterator it2;
-       SpecialPropertyI sp;
-       Class clazz;
-       List list;
-       while (it.hasNext()) {
-           PrivateCompanyI priv = (PrivateCompanyI) it.next();
-           it2 = priv.getSpecialProperties().iterator();
-           while (it2.hasNext()) {
-               sp = (SpecialPropertyI) it.next();
-               clazz = sp.getClass();
-               if (!specialProperties.containsKey(clazz)) {
-                   specialProperties.put(clazz, new ArrayList());
-               }
-               ((List)specialProperties.get(clazz)).add(sp);
-           }
+       if (owner instanceof Player || owner instanceof CompanyI) {
+	       specialProperties.clear();
+	       Iterator it = privateCompanies.iterator();
+	       Iterator it2;
+	       PrivateCompanyI priv;
+	       List sps;
+	       SpecialPropertyI sp;
+	       Class clazz;
+	       List list;
+	       while (it.hasNext()) {
+	           priv = (PrivateCompanyI) it.next();
+	           sps = priv.getSpecialProperties();
+	           if (sps == null) continue;
+	           it2 = sps.iterator();
+	           while (it2.hasNext()) {
+	               sp = (SpecialPropertyI) it2.next();
+	               if (sp.isExercised()) continue; 
+	               clazz = sp.getClass();
+	               
+		           if (!specialProperties.containsKey(clazz)) {
+	                   specialProperties.put(clazz, new ArrayList());
+	               }
+	               ((List)specialProperties.get(clazz)).add(sp);
+	           }
+	       }
        }
    }
    

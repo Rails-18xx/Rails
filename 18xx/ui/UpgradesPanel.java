@@ -131,14 +131,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		String command = e.getActionCommand();
 
 		if (command.equals("Cancel")) {
-		    if (map.getSelectedHex() != null) map.getSelectedHex().removeTile();
-	        GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+		    map.cancelTile();
 		} else if (command.equals ("Done")) {
 		    if (map.getSelectedHex() != null) {
-		        map.getSelectedHex().fixTile();
-		        // OR window is updated from GUITile in this case.
+		        map.fixTile();
 		    } else {
-		        GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+		        map.cancelTile();
 		    }
 
 		    

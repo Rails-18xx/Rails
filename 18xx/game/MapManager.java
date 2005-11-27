@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.11 2005/11/24 22:42:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.12 2005/11/27 20:59:20 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -141,10 +141,6 @@ public class MapManager implements ConfigurableComponentI
 				            hex.setNeighbor(k, nb);
 				            nb.setNeighbor(k+3, hex);
 			            }
-			            /*
-			            System.out.println("Setting neighbours["+k+"]: "+hex.getName()
-			                    +"("+i+","+j+") and "+nb.getName()+"("+(i+dx)+","+(j+dy)+")");
-			            */
 			        }
 		            
 		        }

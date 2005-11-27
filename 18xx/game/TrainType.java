@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.3 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.4 2005/11/27 20:59:19 evos Exp $
  * 
  * Created on 19-Aug-2005
  * Change Log:
@@ -378,13 +378,11 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		this.available = available;
 		if (available)
 		{
-			// System.out.println("Train type "+name+ " set to available");
 			for (Iterator it = trains.iterator(); it.hasNext();)
 			{
 				Portfolio.transferTrain(((TrainI) it.next()),
 						Bank.getUnavailable(),
 						Bank.getIpo());
-				// Bank.getIpo().addTrain((TrainI)it.next());
 			}
 		}
 	}
