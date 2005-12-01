@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.10 2005/11/20 15:26:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.11 2005/12/01 00:57:04 wakko666 Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -436,51 +436,54 @@ public class GameManager implements ConfigurableComponentI
 			return null;
 		}
 	}
-	
+
 	private void playHomeTokens()
 	{
-		PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager().getAllPublicCompanies().toArray(new PublicCompanyI[0]);
-		int compIndex = 0;
-		
-		if (companies[compIndex].hasFloated()
-				&& companies[compIndex].hasStarted())
+		// TODO: Need to check whether player gets to choose placement of token
+		// where OO tiles are concerned.
+
+		PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
+				.getAllPublicCompanies()
+				.toArray(new PublicCompanyI[0]);
+
+		for (int compIndex = 0; compIndex < companies.length; compIndex++)
 		{
-			MapHex[][] map = MapManager.getInstance().getHexes();
-
-			for (int i = 0; i < map.length; i++)
+			if (companies[compIndex].hasFloated()
+					&& companies[compIndex].hasStarted())
 			{
-				for (int j = 0; j < map[i].length; j++)
-				{
-					try
-					{
-						if (map[i][j].getCompanyHome()
-								.equalsIgnoreCase(companies[compIndex].getName()))
-						{
-							companies[compIndex].playToken(map[i][j].getCurrentTile());
-							ArrayList stations = (ArrayList) map[i][j].getCurrentTile()
-									.getStations();
+				MapHex[][] map = MapManager.getInstance().getHexes();
 
-							//FIXME: CHECK if we've already played a home token.
-							if (map[i][j].getPreferredCity() > 0)
-								((Station) stations.get(map[i][j].getPreferredCity() - 1)).addToken(companies[compIndex]);
-							else
-								//FIXME: This needs a more generic call to something like Station.placeToken
-								// Because 1830's Erie President is allowed to choose the city to place the token in.
-								((Station) stations.get(0)).addToken(companies[compIndex]);
-							
-						}
-					}
-					catch (NullPointerException e)
+				for (int i = 0; i < map.length; i++)
+				{
+					for (int j = 0; j < map[i].length; j++)
 					{
-						// Homeless. So sad.
+						// if these are the same number, we haven't yet played
+						// the city token.
+						if (((PublicCompany) companies[compIndex]).getMaxCityTokens() == 
+							((PublicCompany) companies[compIndex]).getNumCityTokens())
+						{
+							try
+							{
+								if (map[i][j].getCompanyHome()
+										.equalsIgnoreCase(companies[compIndex].getName()))
+								{
+									map[i][j].addToken(companies[compIndex]);
+								}
+							}
+							catch (NullPointerException e)
+							{
+								// Not our home. So sad.
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-	
-	public String getHelp () {
-	    return currentRound.getHelp();
+
+	public String getHelp()
+	{
+		return currentRound.getHelp();
 	}
 
 }

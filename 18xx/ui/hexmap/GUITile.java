@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.7 2005/11/18 23:24:56 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.8 2005/12/01 00:57:04 wakko666 Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -20,7 +20,6 @@ import game.*;
  */
 public class GUITile
 {
-
 	protected int tileId;
 	protected TileI tile = null;
 	protected BufferedImage tileImage = null;

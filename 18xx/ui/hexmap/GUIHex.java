@@ -8,12 +8,13 @@ import java.util.*;
 import javax.swing.*;
 
 import ui.GameUILoader;
+import ui.Token;
 
 /**
- * Base abstract class that holds common components for GUIHexes of all orientations.  
+ * Base class that holds common components for GUIHexes of all orientations.
  */
 
-public class GUIHex 
+public class GUIHex
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
@@ -30,7 +31,7 @@ public class GUIHex
 	protected int currentTileOrientation;
 	protected String tileFilename;
 	protected TileI currentTile;
-	
+
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
 	protected int provisionalTileOrientation;
@@ -64,56 +65,58 @@ public class GUIHex
 
 	public GUIHex(double cx, double cy, int scale, double xCoord, double yCoord)
 	{
-		if (MapManager.getTileOrientation() == MapHex.EW) {
-	        len = scale;
-	        xVertex[0] = cx + SQRT3/2 * scale;
-	        yVertex[0] = cy + 0.5 * scale;
-	        xVertex[1] = cx + SQRT3 * scale;
-	        yVertex[1] = cy;
-	        xVertex[2] = cx + SQRT3 * scale;
-	        yVertex[2] = cy - 1 * scale;
-	        xVertex[3] = cx + SQRT3/2 * scale;
-	        yVertex[3] = cy - 1.5 * scale;
-	        xVertex[4] = cx;
-	        yVertex[4] = cy - 1 * scale;
-	        xVertex[5] = cx;
-	        yVertex[5] = cy;
-		} else {
-	        len = scale / 3.0;
-	        xVertex[0] = cx;
-	        yVertex[0] = cy;
-	        xVertex[1] = cx + 2 * scale;
-	        yVertex[1] = cy;
-	        xVertex[2] = cx + 3 * scale;
-	        yVertex[2] = cy + SQRT3 * scale;
-	        xVertex[3] = cx + 2 * scale;
-	        yVertex[3] = cy + 2 * SQRT3 * scale;
-	        xVertex[4] = cx;
-	        yVertex[4] = cy + 2 * SQRT3 * scale;
-	        xVertex[5] = cx - 1 * scale;
-	        yVertex[5] = cy + SQRT3 * scale;
+		if (MapManager.getTileOrientation() == MapHex.EW)
+		{
+			len = scale;
+			xVertex[0] = cx + SQRT3 / 2 * scale;
+			yVertex[0] = cy + 0.5 * scale;
+			xVertex[1] = cx + SQRT3 * scale;
+			yVertex[1] = cy;
+			xVertex[2] = cx + SQRT3 * scale;
+			yVertex[2] = cy - 1 * scale;
+			xVertex[3] = cx + SQRT3 / 2 * scale;
+			yVertex[3] = cy - 1.5 * scale;
+			xVertex[4] = cx;
+			yVertex[4] = cy - 1 * scale;
+			xVertex[5] = cx;
+			yVertex[5] = cy;
+		}
+		else
+		{
+			len = scale / 3.0;
+			xVertex[0] = cx;
+			yVertex[0] = cy;
+			xVertex[1] = cx + 2 * scale;
+			yVertex[1] = cy;
+			xVertex[2] = cx + 3 * scale;
+			yVertex[2] = cy + SQRT3 * scale;
+			xVertex[3] = cx + 2 * scale;
+			yVertex[3] = cy + 2 * SQRT3 * scale;
+			xVertex[4] = cx;
+			yVertex[4] = cy + 2 * SQRT3 * scale;
+			xVertex[5] = cx - 1 * scale;
+			yVertex[5] = cy + SQRT3 * scale;
 		}
 
-        hexagon = makePolygon(6, xVertex, yVertex, true);
-        rectBound = hexagon.getBounds();
+		hexagon = makePolygon(6, xVertex, yVertex, true);
+		rectBound = hexagon.getBounds();
 
-        Point2D.Double center = findCenter2D();
+		Point2D.Double center = findCenter2D();
 
-        final double innerScale = 0.8;
-        AffineTransform at = AffineTransform.getScaleInstance(innerScale,
-            innerScale);
-        innerHexagon = (GeneralPath)hexagon.createTransformedShape(at);
+		final double innerScale = 0.8;
+		AffineTransform at = AffineTransform.getScaleInstance(innerScale,
+				innerScale);
+		innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
 
-        // Translate innerHexagon to make it concentric.
-        Rectangle2D innerBounds = innerHexagon.getBounds2D();
-        Point2D.Double innerCenter = new Point2D.Double(
-              innerBounds.getX() + innerBounds.getWidth() / 2.0, 
-              innerBounds.getY() + innerBounds.getHeight() / 2.0);
-        at = AffineTransform.getTranslateInstance(
-              center.getX() - innerCenter.getX(), 
-              center.getY() - innerCenter.getY());
-        innerHexagon.transform(at);
-        
+		// Translate innerHexagon to make it concentric.
+		Rectangle2D innerBounds = innerHexagon.getBounds2D();
+		Point2D.Double innerCenter = new Point2D.Double(innerBounds.getX()
+				+ innerBounds.getWidth() / 2.0, innerBounds.getY()
+				+ innerBounds.getHeight() / 2.0);
+		at = AffineTransform.getTranslateInstance(center.getX()
+				- innerCenter.getX(), center.getY() - innerCenter.getY());
+		innerHexagon.transform(at);
+
 	}
 
 	public MapHex getHexModel()
@@ -128,17 +131,17 @@ public class GUIHex
 		hexName = model.getName();
 		currentTileId = model.getPreprintedTileId();
 		currentTileOrientation = model.getPreprintedTileOrientation();
-		currentGUITile = new GUITile (currentTileId, model);
+		currentGUITile = new GUITile(currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		setToolTip();
-		
+
 	}
 
 	public Rectangle getBounds()
 	{
 		return rectBound;
 	}
-	
+
 	public void setBounds(Rectangle rectBound)
 	{
 		this.rectBound = rectBound;
@@ -153,7 +156,7 @@ public class GUIHex
 	{
 		return (hexagon.contains(point));
 	}
-	
+
 	public boolean intersects(Rectangle2D r)
 	{
 		return (hexagon.intersects(r));
@@ -162,11 +165,14 @@ public class GUIHex
 	public void setSelected(boolean selected)
 	{
 		this.selected = selected;
-		if (selected) {
-		    currentGUITile.setScale (SELECTED_SCALE);
-		} else {
-		    currentGUITile.setScale (NORMAL_SCALE);
-		    provisionalGUITile = null;
+		if (selected)
+		{
+			currentGUITile.setScale(SELECTED_SCALE);
+		}
+		else
+		{
+			currentGUITile.setScale(NORMAL_SCALE);
+			provisionalGUITile = null;
 		}
 	}
 
@@ -255,7 +261,7 @@ public class GUIHex
 	public void paint(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-		
+
 		if (getAntialias())
 		{
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -267,7 +273,7 @@ public class GUIHex
 					RenderingHints.VALUE_ANTIALIAS_OFF);
 		}
 
-		Color terrainColor = Color.WHITE; //getMapHexModel().getTerrainColor();
+		Color terrainColor = Color.WHITE; // getMapHexModel().getTerrainColor();
 		if (isSelected())
 		{
 			g2.setColor(highlightColor);
@@ -280,65 +286,102 @@ public class GUIHex
 			g2.draw(innerHexagon);
 		}
 
-		//FIXME: Disabled until we can properly update the overlay drawing to work with the scrollpane
 		paintOverlay(g2);
 
+		if (getHexModel().hasTokens())
+		{
+			ArrayList tokens = (ArrayList) getHexModel().getTokens();
+
+			for (int i = 0; i < tokens.size(); i++)
+			{			
+				paintToken(g2, (PublicCompany) tokens.get(i));
+			}
+		}
+
 		FontMetrics fontMetrics = g2.getFontMetrics();
-		if(getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
+		if (getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
 		{
 			g2.drawString("$" + getHexModel().getTileCost(),
-					rectBound.x + (rectBound.width - fontMetrics.stringWidth(
-								Integer.toString(getHexModel().getTileCost()))) * 3/5,
-					rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 6/10));
+					rectBound.x
+							+ (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
+							* 3 / 5,
+					rectBound.y
+							+ ((fontMetrics.getHeight() + rectBound.height) * 6 / 10));
 		}
-		
-		if(getHexModel().getCompanyHome() != null)
+
+		if (getHexModel().getCompanyHome() != null)
 		{
-			PublicCompany co = (PublicCompany) Game.getCompanyManager().getPublicCompany(getHexModel().getCompanyHome());
-			
-			if(co != null)
+			PublicCompany co = (PublicCompany) Game.getCompanyManager()
+					.getPublicCompany(getHexModel().getCompanyHome());
+
+			if (co != null)
 			{
-				if(!co.hasStarted() && !co.hasFloated())
+				if (!co.hasStarted() && !co.hasFloated())
 				{
 					g2.drawString(getHexModel().getCompanyHome(),
-									rectBound.x + (rectBound.width - fontMetrics.stringWidth(
-									getHexModel().getCompanyHome())) * 1/2,
-									rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
+							rectBound.x
+									+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome()))
+									* 1 / 2,
+							rectBound.y
+									+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
 				}
 			}
 		}
 		/*
-		// Added by Erik Vos: show hex name
-		g2.drawString(hexName,
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth(getHexModel().getName())) * 2/5,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 3/10));
-
-		g2.drawString("("+model.getX()+","+model.getY()+")", 
-				rectBound.x + (rectBound.width - fontMetrics.stringWidth("("+getHexModel().getX()+","+getHexModel().getY()+")")) * 1/3,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 1/2));
-
-		// Added by Erik Vos: show the preprinted tile id
-		g2.drawString(currentTileId == -999 ? "?" : "#" + currentTileId,
-				rectBound.x	+ (rectBound.width - fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) * 2/5,
-				rectBound.y	+ ((fontMetrics.getHeight() + rectBound.height) * 7/10));
-		*/
+		 * // Added by Erik Vos: show hex name g2.drawString(hexName,
+		 * rectBound.x + (rectBound.width -
+		 * fontMetrics.stringWidth(getHexModel().getName())) * 2/5, rectBound.y +
+		 * ((fontMetrics.getHeight() + rectBound.height) * 3/10));
+		 * 
+		 * g2.drawString("("+model.getX()+","+model.getY()+")", rectBound.x +
+		 * (rectBound.width -
+		 * fontMetrics.stringWidth("("+getHexModel().getX()+","+getHexModel().getY()+")")) *
+		 * 1/3, rectBound.y + ((fontMetrics.getHeight() + rectBound.height) *
+		 * 1/2)); // Added by Erik Vos: show the preprinted tile id
+		 * g2.drawString(currentTileId == -999 ? "?" : "#" + currentTileId,
+		 * rectBound.x + (rectBound.width -
+		 * fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) *
+		 * 2/5, rectBound.y + ((fontMetrics.getHeight() + rectBound.height) *
+		 * 7/10));
+		 */
+		
+			System.out.println("Hex: "+ getHexModel().getName() + " Tokens: " + getHexModel().getTokens());
 	}
 
 	public void paintOverlay(Graphics2D g2)
 	{
 		Point center = findCenter();
-		if (provisionalGUITile != null) {
-		    provisionalGUITile.paintTile(g2, center.x, center.y);
-		} else {
-		    currentGUITile.paintTile(g2, center.x, center.y);
+		if (provisionalGUITile != null)
+		{
+			provisionalGUITile.paintTile(g2, center.x, center.y);
 		}
-	    
+		else
+		{
+			currentGUITile.paintTile(g2, center.x, center.y);
+		}
 	}
-	
-	public void rotateTile () 
+
+	public void paintToken(Graphics2D g2, PublicCompanyI co)
 	{
-		if (provisionalGUITile != null) {
-		    provisionalGUITile.rotate(1);
+		Point origin = findCenter();
+		Dimension size = new Dimension(40, 40);
+
+			Token token = new Token(co.getFgColour(),
+					co.getBgColour(),
+					co.getName(),
+					origin.x - 9,
+					origin.y - 9,
+					15);
+			token.setBounds(origin.x, origin.y, size.width, size.height);
+
+			token.drawToken(g2);
+	}
+
+	public void rotateTile()
+	{
+		if (provisionalGUITile != null)
+		{
+			provisionalGUITile.rotate(1);
 		}
 	}
 
@@ -360,13 +403,13 @@ public class GUIHex
 		this.hexName = name;
 	}
 
-    /**
-     * @return Returns the currentTile.
-     */
-    public TileI getCurrentTile() 
-    {
-        return currentTile;
-    }
+	/**
+	 * @return Returns the currentTile.
+	 */
+	public TileI getCurrentTile()
+	{
+		return currentTile;
+	}
 
 	/**
 	 * @param currentTileOrientation
@@ -379,88 +422,98 @@ public class GUIHex
 
 	public String getToolTip()
 	{
-	    return toolTip;
+		return toolTip;
 	}
-	
-	protected void setToolTip() 
+
+	protected void setToolTip()
 	{
-	    StringBuffer tt = new StringBuffer ("<html>");
-	    tt.append ("<b>Hex</b>: ").append(hexName);
-	    // The next line is a temporary development aid, that can be removed later.
-	    tt.append ("  <small>(").append(model.getX()).append(",").append(model.getY()).append(")</small>");
-	    tt.append ("<br><b>Tile</b>: ").append(currentTile.getId());
-	    if (currentTile.hasStations()) 
-	    {
-	        Iterator it = currentTile.getStations().iterator();
-	        Station st;
-	        while (it.hasNext()) 
-	        {
-	            st = (Station)it.next();
-	            tt.append("<br>  ").append(st.getType());
-	            tt.append(": value ").append(st.getValue());
-	            if (st.getValue() > 0 && st.getBaseSlots() > 0) 
-	            {
-	                tt.append(", ").append(st.getBaseSlots()).append(" slots");
-	            }
-	        }
-	    }
-	    String upgrades = currentTile.getUpgradesString(model);
-		if (upgrades.equals("")) 
+		StringBuffer tt = new StringBuffer("<html>");
+		tt.append("<b>Hex</b>: ").append(hexName);
+		// The next line is a temporary development aid, that can be removed
+		// later.
+		tt.append("  <small>(")
+				.append(model.getX())
+				.append(",")
+				.append(model.getY())
+				.append(")</small>");
+		tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
+		if (currentTile.hasStations())
 		{
-		    tt.append ("<br>No upgrades");
-		} 
-		else 
-		{
-		    tt.append("<br><b>Upgrades</b>: ").append(upgrades);
-		    if (model.getTileCost() > 0) tt.append("<br>Upgrade cost: "+Bank.format(model.getTileCost()));
+			Iterator it = currentTile.getStations().iterator();
+			Station st;
+			while (it.hasNext())
+			{
+				st = (Station) it.next();
+				tt.append("<br>  ").append(st.getType());
+				tt.append(": value ").append(st.getValue());
+				if (st.getValue() > 0 && st.getBaseSlots() > 0)
+				{
+					tt.append(", ").append(st.getBaseSlots()).append(" slots");
+				}
+			}
 		}
-		
-		if(this.getHexModel().getCompanyDestination() != null)
-			tt.append("<br><b>Destination</b>: " + this.getHexModel().getCompanyDestination());
-		
+		String upgrades = currentTile.getUpgradesString(model);
+		if (upgrades.equals(""))
+		{
+			tt.append("<br>No upgrades");
+		}
+		else
+		{
+			tt.append("<br><b>Upgrades</b>: ").append(upgrades);
+			if (model.getTileCost() > 0)
+				tt.append("<br>Upgrade cost: "
+						+ Bank.format(model.getTileCost()));
+		}
+
+		if (this.getHexModel().getCompanyDestination() != null)
+			tt.append("<br><b>Destination</b>: "
+					+ this.getHexModel().getCompanyDestination());
+
 		toolTip = tt.toString();
 	}
-	
+
 	public JComponent getMap()
 	{
 		return map;
 	}
 
-	
 	public void setMap(JComponent map)
 	{
 		this.map = map;
 	}
-	
-	public void dropTile (int tileId) 
+
+	public void dropTile(int tileId)
 	{
-		provisionalGUITile = new GUITile (tileId, model);
+		provisionalGUITile = new GUITile(tileId, model);
 		provisionalGUITile.setScale(SELECTED_SCALE);
-		toolTip =  "Click to rotate";
+		toolTip = "Click to rotate";
 
 	}
-	
-	public void removeTile () 
+
+	public void removeTile()
 	{
-	    provisionalGUITile = null;
-	    setSelected (false);
-	    setToolTip();
+		provisionalGUITile = null;
+		setSelected(false);
+		setToolTip();
 	}
-	
-	public void fixTile (boolean tileLayingEnabled) 
+
+	public void fixTile(boolean tileLayingEnabled)
 	{
-	    if (tileLayingEnabled) {
-		    currentGUITile = provisionalGUITile;
-		    if (currentGUITile != null) {
-		        currentTile = currentGUITile.getTile();
-		        currentTileId = currentTile.getId();
-		        currentTileOrientation = provisionalTileOrientation;
-		    }
-	        GameUILoader.statusWindow.orWindow.layTile(model, currentTile,
-		            currentTileOrientation);
-	    }
-	    setSelected (false);
-	    setToolTip();
+		if (tileLayingEnabled)
+		{
+			currentGUITile = provisionalGUITile;
+			if (currentGUITile != null)
+			{
+				currentTile = currentGUITile.getTile();
+				currentTileId = currentTile.getId();
+				currentTileOrientation = provisionalTileOrientation;
+			}
+			GameUILoader.statusWindow.orWindow.layTile(model,
+					currentTile,
+					currentTileOrientation);
+		}
+		setSelected(false);
+		setToolTip();
 	}
 
 }

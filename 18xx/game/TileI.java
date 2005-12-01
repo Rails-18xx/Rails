@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.5 2005/11/18 23:24:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.6 2005/12/01 00:57:04 wakko666 Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
 /**
  * @author Erik Vos
  */
-public interface TileI extends TokenHolderI
+public interface TileI
 {
 
 	public void configureFromXML(Element se, Element te)
@@ -43,4 +43,6 @@ public interface TileI extends TokenHolderI
 	public boolean hasStations();
 
 	public List getStations();
+	
+	public int getNumStations();
 }
