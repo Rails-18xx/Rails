@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.19 2005/11/19 00:56:39 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.20 2005/12/01 00:57:04 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
  */
 package game;
 
+import java.util.*;
 import java.util.regex.*;
 
 import org.w3c.dom.*;
@@ -38,7 +39,7 @@ import util.XmlUtils;
  * 
  * @author Erik Vos
  */
-public class MapHex implements ConfigurableComponentI
+public class MapHex implements ConfigurableComponentI, TokenHolderI
 {
 
 	public static final int EW = 0;
@@ -47,8 +48,10 @@ public class MapHex implements ConfigurableComponentI
 	protected static boolean lettersGoHorizontal;
 	protected static boolean letterAHasEvenNumbers;
 
-	private static final String[] ewOrNames = {"SW","W","NW","NE","E","SE"};
-	private static final String[] nsOrNames = {"S","SW","NW","N","NE","SE"};
+	private static final String[] ewOrNames = { "SW", "W", "NW", "NE", "E",
+			"SE" };
+	private static final String[] nsOrNames = { "S", "SW", "NW", "N", "NE",
+			"SE" };
 
 	// Coordinates as used in the ui.hexmap package
 	protected int x;
@@ -81,6 +84,10 @@ public class MapHex implements ConfigurableComponentI
 	 * derived and need not be specified.
 	 */
 	protected String impassable = null;
+
+	protected ArrayList tokens = new ArrayList();
+	protected ArrayList stations;
+	protected boolean hasTokens;
 
 	public MapHex()
 	{
@@ -173,13 +180,17 @@ public class MapHex implements ConfigurableComponentI
 		}
 
 		preprintedTileOrientation = XmlUtils.extractIntegerAttribute(nnp,
-				"orientation", 0);
+				"orientation",
+				0);
 
 		currentTile = TileManager.get().getTile(preprintedTileId);
 		currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
-		preferredCity = XmlUtils.extractIntegerAttribute(nnp, "preferredCity", 0);
+		stations = (ArrayList) currentTile.getStations();
+		preferredCity = XmlUtils.extractIntegerAttribute(nnp,
+				"preferredCity",
+				0);
 		companyHome = XmlUtils.extractStringAttribute(nnp, "home");
 		companyDestination = XmlUtils.extractStringAttribute(nnp, "destination");
 	}
@@ -246,17 +257,21 @@ public class MapHex implements ConfigurableComponentI
 		return lettersGoHorizontal;
 	}
 
-	public static String getOrientationName (int orientation) {
-	    
-	    if (tileOrientation == EW) {
-	        return ewOrNames[orientation % 6];
-	    } else {
-	        return nsOrNames[orientation % 6];
-	    }
+	public static String getOrientationName(int orientation)
+	{
+
+		if (tileOrientation == EW)
+		{
+			return ewOrNames[orientation % 6];
+		}
+		else
+		{
+			return nsOrNames[orientation % 6];
+		}
 	}
-	
-	/* ----- Instance methods -----*/
-	
+
+	/* ----- Instance methods ----- */
+
 	/**
 	 * @return Returns the column.
 	 */
@@ -364,8 +379,7 @@ public class MapHex implements ConfigurableComponentI
 		 * 
 		 * case 'F': case 'f': x = 5; break;
 		 * 
-		 * case 'X': case 'x':
-		 *  // entrances GUIHex[] gameEntrances = (GUIHex[])
+		 * case 'X': case 'x': // entrances GUIHex[] gameEntrances = (GUIHex[])
 		 * entranceHexes.get(terrain); return gameEntrances[y].getMapHexModel();
 		 * 
 		 * default: Log.error("Label " + label + " is invalid"); } y = 6 - y -
@@ -389,19 +403,87 @@ public class MapHex implements ConfigurableComponentI
 	{
 		return companyDestination;
 	}
-	
-	public void upgrade (TileI newTile, int newOrientation) {
-	    
-	    currentTile = newTile;
-	    currentTileRotation = newOrientation;
-	    
-	    // Further consequences to be processed here, e.g. new routes etc.
+
+	public void upgrade(TileI newTile, int newOrientation)
+	{
+		ArrayList newStations = (ArrayList) newTile.getStations();
+
+		if (newStations.size() < stations.size())
+		{
+			System.out.println("MERGING TWO STATIONS INTO ONE");
+			// TODO: merge lists
+		}
+
+		currentTile = newTile;
+		currentTileRotation = newOrientation;
+
+		// Further consequences to be processed here, e.g. new routes etc.
 	}
 
-	
-	public int getPreferredCity()
+	public int getPreferredHomeCity()
 	{
 		return preferredCity;
+	}
+
+	public void addToken(CompanyI company)
+	{
+		addToken(company, new Integer(0));
+	}
+
+	public void addToken(CompanyI company, Integer station)
+			throws NullPointerException
+	{
+		try
+		{
+			Station s = (Station) stations.get(getPreferredHomeCity());
+
+			s.addToken(company);
+			tokens.add(company);
+			company.playToken(this);
+			hasTokens = true;
+		}
+		catch (NullPointerException e)
+		{
+			throw e;
+		}
+	}
+
+	public void playToken(TileI tile)
+	{
+		tokens.add(tile);
+		hasTokens = true;
+	}
+
+	public List getTokens()
+	{
+		return tokens;
+	}
+
+	public boolean hasTokens()
+	{
+		return hasTokens;
+	}
+
+	public boolean removeToken(CompanyI company)
+	{
+		// TODO: Remove token from station list as well.
+
+		int index = tokens.indexOf(company);
+		if (index >= 0 && tokens.get(index) instanceof Company)
+		{
+			tokens.remove(index);
+
+			if (tokens.size() < 1)
+			{
+				hasTokens = false;
+			}
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 }

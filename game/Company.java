@@ -155,9 +155,9 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		hasTokens = true;
 	}
 	
-	public void playToken(TileI tile)
+	public void playToken(MapHex hex)
 	{
-		tokens.add(tile);
+		tokens.add(hex);
 		hasTokens = true;
 		numCityTokens--;
 	}
