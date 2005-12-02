@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.11 2005/12/01 00:57:04 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.12 2005/12/02 23:33:28 wakko666 Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -118,12 +118,10 @@ public class GameManager implements ConfigurableComponentI
 			Bank.setShareLimit(XmlUtils.extractIntegerAttribute(nnp,
 					"percentage"));
 		}
-
 	}
 
 	public void startGame()
 	{
-
 		players = Game.getPlayerManager().getPlayersArray();
 		numberOfPlayers = players.length;
 
@@ -448,6 +446,7 @@ public class GameManager implements ConfigurableComponentI
 
 		for (int compIndex = 0; compIndex < companies.length; compIndex++)
 		{
+			System.out.println(companies[compIndex]);
 			if (companies[compIndex].hasFloated()
 					&& companies[compIndex].hasStarted())
 			{
@@ -464,15 +463,18 @@ public class GameManager implements ConfigurableComponentI
 						{
 							try
 							{
-								if (map[i][j].getCompanyHome()
-										.equalsIgnoreCase(companies[compIndex].getName()))
+								if (map[i][j].getCompanyHome().equals(companies[compIndex]))
 								{
-									map[i][j].addToken(companies[compIndex]);
+									if(map[i][j].getPreferredHomeCity() > 0)
+										map[i][j].addToken(companies[compIndex], map[i][j].getPreferredHomeCity());
+									else
+										map[i][j].addToken(companies[compIndex]);
+									
 								}
 							}
 							catch (NullPointerException e)
 							{
-								// Not our home. So sad.
+								// Not our home or no home here. So sad.
 							}
 						}
 					}

@@ -101,14 +101,15 @@ public class Game
 			StartPacket.init();
 			companyManager.initCompanies();
 			stockMarket.init();
-
 		}
 		catch (Exception e)
 		{
 			System.out.println("Game setup from file " + file + " failed");
 			e.printStackTrace();
 		}
-
+		
+		//We need to do this assignment after we've loaded all the XML data. 
+		MapManager.assignHomesAndDestinations();
 	}
 
 	/**
