@@ -273,7 +273,7 @@ public class GUIHex
 					RenderingHints.VALUE_ANTIALIAS_OFF);
 		}
 
-		Color terrainColor = Color.WHITE; // getMapHexModel().getTerrainColor();
+		Color terrainColor = Color.WHITE;
 		if (isSelected())
 		{
 			g2.setColor(highlightColor);
@@ -289,14 +289,7 @@ public class GUIHex
 		paintOverlay(g2);
 
 		if (getHexModel().hasTokens())
-		{
-			ArrayList tokens = (ArrayList) getHexModel().getTokens();
-
-			for (int i = 0; i < tokens.size(); i++)
-			{			
-				paintToken(g2, (PublicCompany) tokens.get(i));
-			}
-		}
+			paintToken(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 		if (getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
@@ -311,22 +304,19 @@ public class GUIHex
 
 		if (getHexModel().getCompanyHome() != null)
 		{
-			PublicCompany co = (PublicCompany) Game.getCompanyManager()
-					.getPublicCompany(getHexModel().getCompanyHome());
+			PublicCompany co = (PublicCompany) getHexModel().getCompanyHome();
 
-			if (co != null)
-			{
 				if (!co.hasStarted() && !co.hasFloated())
 				{
-					g2.drawString(getHexModel().getCompanyHome(),
+					g2.drawString(getHexModel().getCompanyHome().getName(),
 							rectBound.x
-									+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome()))
+									+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome().getName()))
 									* 1 / 2,
 							rectBound.y
 									+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
 				}
-			}
 		}
+		
 		/*
 		 * // Added by Erik Vos: show hex name g2.drawString(hexName,
 		 * rectBound.x + (rectBound.width -
@@ -344,8 +334,9 @@ public class GUIHex
 		 * 2/5, rectBound.y + ((fontMetrics.getHeight() + rectBound.height) *
 		 * 7/10));
 		 */
-		
-			System.out.println("Hex: "+ getHexModel().getName() + " Tokens: " + getHexModel().getTokens());
+
+		//System.out.println("Hex: " + getHexModel().getName() + " Co: " + getHexModel().getCompanyHome());
+		//" Tokens: " + getHexModel().getTokens());
 	}
 
 	public void paintOverlay(Graphics2D g2)
@@ -361,20 +352,123 @@ public class GUIHex
 		}
 	}
 
-	public void paintToken(Graphics2D g2, PublicCompanyI co)
+	public void paintToken(Graphics2D g2)
 	{
-		Point origin = findCenter();
+		if (getHexModel().getStations().size() > 1)
+		{
+			paintSplitStations(g2);
+			return;
+		}
+
+		int numTokens = getHexModel().getTokens(0).size();
+		ArrayList tokens = (ArrayList) getHexModel().getTokens(0);
+
+		for (int i = 0; i < tokens.size(); i++)
+		{
+			PublicCompany co = (PublicCompany) tokens.get(i);
+			Point origin = getTokenOrigin(numTokens, i);
+			
+			drawToken(g2, co, origin);
+		}
+	}
+	
+	private void paintSplitStations(Graphics2D g2)
+	{
+		int numStations = getHexModel().getStations().size();
+		for(int i=0; i < numStations; i++)
+		{
+			int numTokens = getHexModel().getTokens(i).size();
+			ArrayList tokens = (ArrayList) getHexModel().getTokens(i);
+			Point origin = getTokenOrigin(numTokens, i);
+			
+			for (int j=0; j < tokens.size(); j++)
+			{
+				PublicCompany co = (PublicCompany) tokens.get(j);
+				
+				switch (numStations)
+				{
+					case 2:
+						switch(i)
+						{
+							//1st station group
+							case 0:
+								origin.y += -5;
+							//2nd station group
+							case 1:
+								origin.y += 5;
+							default:
+								break;
+						}
+					//TODO: Fill in offsets
+					case 3:
+						switch(i)
+						{
+							//1st station group
+							case 0:
+							//2nd station group
+							case 1:
+							//3rd station group
+							case 2:
+							default: 
+								break;
+						}
+					default:
+						break;
+				}
+				
+				drawToken(g2, co, origin);
+			}
+		}
+	}
+	
+	private void drawToken(Graphics2D g2, PublicCompany co, Point origin)
+	{
 		Dimension size = new Dimension(40, 40);
 
-			Token token = new Token(co.getFgColour(),
-					co.getBgColour(),
-					co.getName(),
-					origin.x - 9,
-					origin.y - 9,
-					15);
-			token.setBounds(origin.x, origin.y, size.width, size.height);
+		Token token = new Token(co.getFgColour(),
+				co.getBgColour(),
+				co.getName(),
+				origin.x,
+				origin.y,
+				15);
+		token.setBounds(origin.x, origin.y, size.width, size.height);
 
-			token.drawToken(g2);
+		token.drawToken(g2);
+	}
+	
+	private Point getTokenOrigin(int numTokens, int currentToken)
+	{
+		Point p;
+		
+		switch(numTokens)
+		{
+			case 1:
+				p = findCenter();
+				p.x += -9;
+				p.y += -9;
+				return p;
+			case 2:
+				if(currentToken == 0)
+				{
+					p = findCenter();
+					p.x += -14;
+					p.y += -9;
+					return p;
+				}
+				else
+				{
+					p = findCenter();
+					p.x += -4;
+					p.y += -9;
+					return p;
+				}
+			case 3:
+			case 4:
+			case 5:
+			case 6: 
+			default:
+				return findCenter();
+		}
 	}
 
 	public void rotateTile()

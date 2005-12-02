@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.20 2005/12/01 00:57:04 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.21 2005/12/02 23:33:28 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -70,8 +70,10 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	protected int currentTileRotation;
 	protected int tileCost;
 	protected int preferredCity;
-	protected String companyHome;
-	protected String companyDestination;
+	protected PublicCompany companyHome = new PublicCompany();
+	protected PublicCompany companyDestination = new PublicCompany();
+	protected String companyHomeName;
+	protected String companyDestinationName;
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
@@ -85,7 +87,6 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	 */
 	protected String impassable = null;
 
-	protected ArrayList tokens = new ArrayList();
 	protected ArrayList stations;
 	protected boolean hasTokens;
 
@@ -191,8 +192,9 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		preferredCity = XmlUtils.extractIntegerAttribute(nnp,
 				"preferredCity",
 				0);
-		companyHome = XmlUtils.extractStringAttribute(nnp, "home");
-		companyDestination = XmlUtils.extractStringAttribute(nnp, "destination");
+		companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
+		companyDestinationName = XmlUtils.extractStringAttribute(nnp,
+				"destination");
 	}
 
 	public boolean isNeighbour(MapHex neighbour, int direction)
@@ -394,25 +396,21 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return tileCost;
 	}
 
-	public String getCompanyHome()
+	public CompanyI getCompanyHome()
 	{
 		return companyHome;
 	}
 
-	public String getCompanyDestination()
+	public CompanyI getCompanyDestination()
 	{
 		return companyDestination;
 	}
 
 	public void upgrade(TileI newTile, int newOrientation)
 	{
-		ArrayList newStations = (ArrayList) newTile.getStations();
-
-		if (newStations.size() < stations.size())
-		{
-			System.out.println("MERGING TWO STATIONS INTO ONE");
-			// TODO: merge lists
-		}
+		// Move tokens from old station list to new station list.
+		// Merge lists if necessary.
+		moveTokens(newTile);
 
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
@@ -427,36 +425,39 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public void addToken(CompanyI company)
 	{
-		addToken(company, new Integer(0));
+		addToken(company, 0);
 	}
 
-	public void addToken(CompanyI company, Integer station)
-			throws NullPointerException
+	public void addToken(CompanyI company, int stationNumber)
 	{
-		try
-		{
-			Station s = (Station) stations.get(getPreferredHomeCity());
-
-			s.addToken(company);
-			tokens.add(company);
-			company.playToken(this);
-			hasTokens = true;
-		}
-		catch (NullPointerException e)
-		{
-			throw e;
-		}
-	}
-
-	public void playToken(TileI tile)
-	{
-		tokens.add(tile);
+		((Station) stations.get(stationNumber)).addToken(company);
+		company.playToken(this);
 		hasTokens = true;
 	}
 
+	/**
+	 * @return ArrayList of all tokens in all stations merged into a single list.
+	 * 
+	 * To get ArrayList of tokens from stations, use explicit station number
+	 */
 	public List getTokens()
 	{
-		return tokens;
+		if(stations.size() > 1)
+		{
+			ArrayList tokens = new ArrayList();
+			for(int i=0; i < stations.size(); i++)
+			{
+				tokens.addAll(getTokens(i));
+			}
+			return tokens;
+		}
+		else
+			return getTokens(0);
+	}
+
+	public List getTokens(int stationNumber)
+	{
+		return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
 	}
 
 	public boolean hasTokens()
@@ -466,24 +467,107 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public boolean removeToken(CompanyI company)
 	{
-		// TODO: Remove token from station list as well.
-
-		int index = tokens.indexOf(company);
-		if (index >= 0 && tokens.get(index) instanceof Company)
+		for (int i = 0; i < stations.size(); i++)
 		{
-			tokens.remove(index);
-
-			if (tokens.size() < 1)
+			if (((Station) stations.get(i)).removeToken(company))
 			{
-				hasTokens = false;
+				// XXX: Could be buggy if loop exits before hitting all stations
+				// in the tile.
+				if (!((Station) stations.get(i)).hasTokens())
+					hasTokens = false;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void moveTokens(TileI newTile)
+	{
+		// Merging Token Lists if needed.
+		// Only handling merging down to a single station at the moment.
+		// May need to add additional merge code later if other types of merging
+		// becomes necessary.
+		ArrayList newStations = (ArrayList) newTile.getStations();
+		if (newStations.size() < stations.size() && newStations.size() <= 1)
+		{
+			System.out.println("MERGING TWO STATIONS INTO ONE");
+			for (int i = 0; i < stations.size(); i++)
+			{
+				ArrayList tokens = (ArrayList) ((Station) stations.get(i)).getTokens();
+				for (int j = 0; j < tokens.size(); j++)
+				{
+					((Station) newStations.get(0)).addToken((PublicCompany) tokens.get(j));
+				}
 			}
 
-			return true;
+			stations = newStations;
 		}
+		// If not merging, just move the tokens to the new station list.
 		else
 		{
-			return false;
+			for (int i = 0; i < stations.size(); i++)
+			{
+				ArrayList tokens = (ArrayList) ((Station) stations.get(i)).getTokens();
+				for (int j = 0; j < tokens.size(); j++)
+				{
+					((Station) newStations.get(i)).addToken((PublicCompany) tokens.get(j));
+				}
+			}
+
+			stations = newStations;
 		}
 	}
 
+	public List getStations()
+	{
+		return stations;
+	}
+
+	public String getCompanyDestinationName()
+	{
+		return companyDestinationName;
+	}
+
+	public String getCompanyHomeName()
+	{
+		return companyHomeName;
+	}
+
+	/**
+	 * Necessary mechanism for delaying assignment of companyHome until after
+	 * all of the proper elements of the XML have been loaded.
+	 * 
+	 * Called by MapManager.assignHomesAndDestinations()
+	 */
+	protected void assignHome() throws NullPointerException
+	{
+		try
+		{
+			companyHome = (PublicCompany) Game.getCompanyManager()
+					.getPublicCompany(companyHomeName);
+		}
+		catch (NullPointerException e)
+		{
+			throw e;
+		}
+	}
+
+	/**
+	 * Necessary mechanism for delaying assignment of companyDestination until
+	 * after all of the proper elements of the XML have been loaded.
+	 * 
+	 * Called by MapManager.assignHomesAndDestinations()
+	 */
+	protected void assignDestination() throws NullPointerException
+	{
+		try
+		{
+			companyDestination = (PublicCompany) Game.getCompanyManager()
+					.getPublicCompany(companyDestinationName);
+		}
+		catch (NullPointerException e)
+		{
+			throw e;
+		}
+	}
 }

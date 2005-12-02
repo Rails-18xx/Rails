@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.12 2005/11/27 20:59:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.13 2005/12/02 23:33:28 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -28,15 +28,19 @@ public class MapManager implements ConfigurableComponentI
 	protected static boolean lettersGoHorizontal;
 	protected static boolean letterAHasEvenNumbers;
 
-	protected MapHex[][] hexes;
+	protected static MapHex[][] hexes;
 	protected Map mHexes = new HashMap();
-	
-	protected static final int[] xDeltaNS = new int[] {0, -1, -1, 0, +1, +1};
-	protected static final int[] yXEvenDeltaNS = new int[] {+1, 0, -1, -1, -1, 0};
-	protected static final int[] yXOddDeltaNS = new int[] {+1, +1, 0, -1, 0, +1};
-	protected static final int[] xYEvenDeltaEW = new int[] {-1, -1, -1, 0, +1, 0};
-	protected static final int[] xYOddDeltaEW = new int[] {0, -1, 0, +1, +1, +1};
-	protected static final int[] yDeltaEW = new int[] {+1, 0, -1, -1, 0, +1};
+
+	protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
+	protected static final int[] yXEvenDeltaNS = new int[] { +1, 0, -1, -1, -1,
+			0 };
+	protected static final int[] yXOddDeltaNS = new int[] { +1, +1, 0, -1, 0,
+			+1 };
+	protected static final int[] xYEvenDeltaEW = new int[] { -1, -1, -1, 0, +1,
+			0 };
+	protected static final int[] xYOddDeltaEW = new int[] { 0, -1, 0, +1, +1,
+			+1 };
+	protected static final int[] yDeltaEW = new int[] { +1, 0, -1, -1, 0, +1 };
 
 	public MapManager()
 	{
@@ -118,36 +122,47 @@ public class MapManager implements ConfigurableComponentI
 		}
 
 		// Initialise the neighbours
-		/** 
-		 * TODO: impassable hexsides.
-		 * TODO: blank sides of fixed and offboard preprinted tiles. 
-		 */ 
+		/**
+		 * TODO: impassable hexsides. TODO: blank sides of fixed and offboard
+		 * preprinted tiles.
+		 */
 		int i, j, k, dx, dy;
 		MapHex nb;
-		for (i=0; i<=maxX; i++) {
-		    for (j=0; j<=maxY; j++) {
-		        if ((hex = hexes[i][j]) == null) continue;
-		        for (k=0; k<6; k++) {
-		            if (tileOrientation == MapHex.EW) {
-		                dx = (j%2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
-		                dy = yDeltaEW[k];
-		            } else {
-		                dx = xDeltaNS[k];
-		                dy = (i%2 == 0 ? yXEvenDeltaNS[k] : yXOddDeltaNS[k]);
-		            }
-			        if (i+dx>=0 && i+dx<=maxX && j+dy>=0 && j+dy<=maxY
-			                && (nb = hexes[i+dx][j+dy]) != null) {
-			            if (hex.isNeighbour(nb, k) && nb.isNeighbour (hex, k+3)) {
-				            hex.setNeighbor(k, nb);
-				            nb.setNeighbor(k+3, hex);
-			            }
-			        }
-		            
-		        }
-		    }
+		for (i = 0; i <= maxX; i++)
+		{
+			for (j = 0; j <= maxY; j++)
+			{
+				if ((hex = hexes[i][j]) == null)
+					continue;
+				for (k = 0; k < 6; k++)
+				{
+					if (tileOrientation == MapHex.EW)
+					{
+						dx = (j % 2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
+						dy = yDeltaEW[k];
+					}
+					else
+					{
+						dx = xDeltaNS[k];
+						dy = (i % 2 == 0 ? yXEvenDeltaNS[k] : yXOddDeltaNS[k]);
+					}
+					if (i + dx >= 0 && i + dx <= maxX && j + dy >= 0
+							&& j + dy <= maxY
+							&& (nb = hexes[i + dx][j + dy]) != null)
+					{
+						if (hex.isNeighbour(nb, k)
+								&& nb.isNeighbour(hex, k + 3))
+						{
+							hex.setNeighbor(k, nb);
+							nb.setNeighbor(k + 3, hex);
+						}
+					}
+
+				}
+			}
 		}
 	}
-	
+
 	/**
 	 * @return an instance of the MapManager
 	 */
@@ -195,8 +210,42 @@ public class MapManager implements ConfigurableComponentI
 	{
 		return mapUIClassName;
 	}
-	
-	public MapHex getHex (String locationCode) {
-	    return (MapHex) mHexes.get(locationCode);
+
+	public MapHex getHex(String locationCode)
+	{
+		return (MapHex) mHexes.get(locationCode);
+	}
+
+	/**
+	 * Necessary mechanism for delaying assignment of companyDestination until
+	 * after all of the proper elements of the XML have been loaded.
+	 * 
+	 * Called by Game.initialise()
+	 */
+	protected static void assignHomesAndDestinations()
+	{
+		for (int i = 0; i < hexes.length; i++)
+		{
+			for (int j = 0; j < hexes[i].length; j++)
+			{
+				try
+				{
+					hexes[i][j].assignHome();
+				}
+				catch (NullPointerException e)
+				{
+					//No home in this hex
+				}
+				
+				try
+				{
+					hexes[i][j].assignDestination();
+				}
+				catch (NullPointerException e)
+				{
+					//No Destination in this hex.
+				}
+			}
+		}
 	}
 }

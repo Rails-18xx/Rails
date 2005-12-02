@@ -23,7 +23,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	private boolean hasTokens = false;
 	protected int numCityTokens = 0;
 	protected int maxCityTokens = 0;
-	
+
 	/**
 	 * The value per certificate at the end of the game. Default 0 (for
 	 * privates).
@@ -154,14 +154,14 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		tokens.add(company);
 		hasTokens = true;
 	}
-	
+
 	public void playToken(MapHex hex)
 	{
 		tokens.add(hex);
 		hasTokens = true;
 		numCityTokens--;
 	}
-	
+
 	public List getTokens()
 	{
 		return tokens;
@@ -192,21 +192,34 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		}
 	}
 
-	
 	public int getNumCityTokens()
 	{
 		return numCityTokens;
 	}
 
-	
 	public void setNumCityTokens(int numCityTokens)
 	{
 		this.numCityTokens = numCityTokens;
 	}
-	
+
 	public int getMaxCityTokens()
 	{
 		return maxCityTokens;
 	}
 
+	public String toString()
+	{
+		return getTypeName() + ": " + getCompanyNumber() + ". " + getName()
+				+ " $" + this.getValue();
+	}
+
+	public boolean equals(CompanyI company)
+	{
+		if (this.companyNumber == company.getCompanyNumber()
+				&& this.name.equals(company.getName())
+				&& this.type.equals(company.getType()))
+			return true;
+		
+		return false;
+	}
 }
