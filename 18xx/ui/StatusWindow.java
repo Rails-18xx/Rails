@@ -187,7 +187,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 			passButton.setEnabled(false);
 			startRound = (StartRound) currentRound;
-			startRoundWindow = new StartRoundWindow(startRound, this);
+			if (startRoundWindow == null)
+			    startRoundWindow = new StartRoundWindow(startRound, this);
 			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(false);
@@ -213,7 +214,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
-			orWindow = new ORWindow(operatingRound, this);
+			if (orWindow == null)
+			    orWindow = new ORWindow(operatingRound, this);
 
 			GameUILoader.stockChart.setVisible(false);
 			GameUILoader.mapWindow.setVisible(true);
@@ -265,10 +267,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void resume(JFrame previous)
 	{
 		this.requestFocus();
-		if (previous instanceof StartRoundWindow)
+		if (previous instanceof StartRoundWindow) {
+		    startRoundWindow.close();
 			startRoundWindow = null;
-		else if (previous instanceof ORWindow)
+		} else if (previous instanceof ORWindow) {
+		    orWindow.close();
 			orWindow = null;
+		}
 		currentRound = GameManager.getInstance().getCurrentRound();
 		updateStatus();
 	}

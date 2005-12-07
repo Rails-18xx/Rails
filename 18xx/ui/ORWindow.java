@@ -69,8 +69,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private Select newTrainCostSelect[];
 	private int newTrainsXOffset, newTrainsYOffset;
 
-	private Caption[] upperPlayerCaption;
-	private Caption[] lowerPlayerCaption;
+	private Caption tileCaption, tokenCaption, revenueCaption, trainCaption;
 
 	private JButton leftButton;
 	private JButton middleButton;
@@ -230,19 +229,19 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		addField(new Caption("Treasury"), cashXOffset, 0, 1, 2, WIDE_BOTTOM);
 		addField(new Caption("Trains"), trainsXOffset, 0, 1, 2, WIDE_RIGHT
 				+ WIDE_BOTTOM);
-		addField(new Caption("Tiles"), tilesXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(tileCaption = new Caption("Tiles"), tilesXOffset, 0, 2, 1, WIDE_RIGHT);
 		addField(new Caption("laid"), tilesXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tilesXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(new Caption("Tokens"), tokensXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(tokenCaption = new Caption("Tokens"), tokensXOffset, 0, 2, 1, WIDE_RIGHT);
 		addField(new Caption("laid"), tokensXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tokensXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(new Caption("Revenue"), revXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, 2, 1, WIDE_RIGHT);
 		addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(new Caption("Trains"), newTrainsXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(trainCaption = new Caption("Trains"), newTrainsXOffset, 0, 2, 1, WIDE_RIGHT);
 		addField(new Caption("bought"), newTrainsXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"),
 				newTrainsXOffset + 1,
@@ -364,8 +363,11 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				setORCompanyTurn(round.getOperatingCompanyIndex());
 			}
 
+			setHighlightsOff();
+			
 			if (step == OperatingRound.STEP_LAY_TRACK)
 			{
+			    tileCaption.setHighlight(true);
 				tileCost[orCompIndex].setText("");
 			    leftButton.setVisible(false);
 			    
@@ -389,6 +391,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
 			{
 
+			    tokenCaption.setHighlight(true);
 				tokenCostSelect[orCompIndex].setSelectedIndex(0);
 				setSelect(tokenCost[orCompIndex],
 						tokenCostSelect[orCompIndex],
@@ -405,6 +408,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			else if (step == OperatingRound.STEP_CALC_REVENUE)
 			{
 
+			    revenueCaption.setHighlight(true);
 				revenueSelect[orCompIndex].setValue(new Integer(companies[orCompIndex].getLastRevenue()));
 				setSelect(revenue[orCompIndex],
 						revenueSelect[orCompIndex],
@@ -419,6 +423,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			else if (step == OperatingRound.STEP_PAYOUT)
 			{
 
+			    revenueCaption.setHighlight(true);
 				leftButton.setText("Withhold");
 				leftButton.setActionCommand("Withhold");
 				leftButton.setMnemonic(KeyEvent.VK_W);
@@ -437,6 +442,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else if (step == OperatingRound.STEP_BUY_TRAIN)
 			{
+
+			    trainCaption.setHighlight(true);
 
 				leftButton.setText("Buy train");
 				leftButton.setActionCommand("BuyTrain");
@@ -928,6 +935,17 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		updateStatus();
 		pack();
 
+	}
+	
+	private void setHighlightsOff() {
+	    tileCaption.setHighlight(false);
+	    tokenCaption.setHighlight(false);
+	    revenueCaption.setHighlight(false);
+	    trainCaption.setHighlight(false);
+	}
+	
+	public void close() {
+	    
 	}
 
 	public int getOrCompIndex()

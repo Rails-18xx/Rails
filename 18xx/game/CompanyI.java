@@ -84,6 +84,10 @@ public interface CompanyI extends TokenHolderI {
 
 	public void playToken(MapHex hex);
 	
+	public int getNumCityTokens();
+
+
+	
 	// Overriding some standard methods with something more useful.
 	public String toString();
 	public boolean equals(CompanyI company);

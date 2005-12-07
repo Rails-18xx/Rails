@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.12 2005/12/02 23:33:28 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.13 2005/12/07 22:34:24 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -466,7 +466,7 @@ public class GameManager implements ConfigurableComponentI
 								if (map[i][j].getCompanyHome().equals(companies[compIndex]))
 								{
 									if(map[i][j].getPreferredHomeCity() > 0)
-										map[i][j].addToken(companies[compIndex], map[i][j].getPreferredHomeCity());
+										map[i][j].addToken(companies[compIndex], map[i][j].getPreferredHomeCity()-1);
 									else
 										map[i][j].addToken(companies[compIndex]);
 									
