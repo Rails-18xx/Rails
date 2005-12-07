@@ -461,6 +461,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 
 	}
+	
+	public void close() {
+	    
+	}
 
 	public int getItemIndex()
 	{

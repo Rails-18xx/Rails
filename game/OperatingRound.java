@@ -639,7 +639,26 @@ public class OperatingRound implements Round
 	 */
 	protected void nextStep(PublicCompanyI company)
 	{
-		if (++step >= steps.length) done(company.getName());
+	    // Cycle through the steps until we reach one where action is allowed. 
+		while (++step < steps.length) {
+		    
+		    if (step == STEP_LAY_TOKEN 
+		            && operatingCompany.getNumCityTokens() == 0) continue;
+		    
+		    if (step == STEP_CALC_REVENUE
+		            && operatingCompany.getPortfolio().getTrains().length == 0) {
+		        // No trains, then the revenue is zero.
+		        setRevenue (operatingCompany.getName(), 0);
+		        // which will call this method again twice,
+		        // so by now the step will be increased to STEP_BUY_TRAIN.
+		    }
+		    
+	    
+		    // No reason found to skip this step
+		    return;
+		}
+		
+	    if (step >= steps.length) done(company.getName());
 		
 	}
 	
@@ -1032,18 +1051,6 @@ public class OperatingRound implements Round
 	}
 
 	/**
-	 * Get all possible tile build costs in a game. This is a (perhaps
-	 * temporary) method to play without a map.
-	 * 
-	 * @author Erik Vos
-	 */
-	public int[] getTileBuildCosts()
-	{
-		// Result is currently hardcoded, but can be made configurable.
-		return new int[] { 0, 40, 60, 80, 120 };
-	}
-
-	/**
 	 * Get all possible token laying costs in a game. This is a (perhaps
 	 * temporary) method to play without a map.
 	 * 
@@ -1053,19 +1060,6 @@ public class OperatingRound implements Round
 	{
 		// Result is currently hardcoded, but can be made configurable.
 		return new int[] { 0, 40, 100 };
-	}
-
-	/**
-	 * Get all train costs in a game. This is a (temporary) method to play
-	 * without trains.
-	 * 
-	 * @author Erik Vos
-	 */
-	public int[] getTrainCosts()
-	{
-		// Result is currently hardcoded, but can be made configurable.
-		return new int[] { 0, 80, 180, 300, 450, 630, 1100 };
-
 	}
 
 	public int getLastTileLayCost()
