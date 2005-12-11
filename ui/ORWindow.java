@@ -83,6 +83,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private OperatingRound round;
 	private StatusWindow statusWindow;
 	private GameStatus gameStatus;
+	
+	private List observers = new ArrayList();
 
 	private Player p;
 	private PublicCompanyI c;
@@ -273,12 +275,10 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					.getName() : "");
 			addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0);
 
-			f = sharePrice[i] = new Field(c.hasStockPrice() && c.hasStarted() ? Bank.format(c.getCurrentPrice()
-					.getPrice())
-					: "");
+			f = sharePrice[i] = new Field(c.getCurrentPriceObject());
 			addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0);
 
-			f = cash[i] = new Field(Bank.format(c.getCash()));
+			f = cash[i] = new Field(c.getCashModel());
 			addField(f, cashXOffset, cashYOffset + i, 1, 1, 0);
 
 			f = trains[i] = new Field("");
@@ -346,6 +346,10 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
 		statusPanel.add(comp, gbc);
+		
+		if (comp instanceof ViewObject && ((ViewObject)comp).getModel() != null) {
+			// observers.add (comp);
+		}
 
 	}
 	
@@ -467,6 +471,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				leftButton.setEnabled(false);
 
 			}
+			
+			pack();
 
 		}
 		else
@@ -485,12 +491,14 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	public void layTile (MapHex hex, TileI tile, int orientation) {
 	    
 	    if (tile != null) {
+	        // Let model process this first
 	        round.layTile(orCompName, hex, tile, orientation);
 
-		    // Process cost
+		    // Display the results
 		    int cost = round.getLastTileLayCost();
-			tileCost[orCompIndex].setText(Bank.format(cost));
-			updateCash(orCompIndex);
+			tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+			tiles[orCompIndex].setText(round.getLastTileLaid());
+			//updateCash(orCompIndex);
 			gameStatus.updateCompany(orComp.getPublicNumber());
 			gameStatus.updateBank();
 	    }
@@ -498,7 +506,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		LogWindow.addLog();
 
 		updateStatus();
-		pack();
 		
 		if (round.getStep() != OperatingRound.STEP_LAY_TRACK) {
 			GameUILoader.mapWindow.enableTileLaying(false);
@@ -603,37 +610,37 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			TrainI train;
 			int i;
 
-			TrainI[] trains = (TrainI[]) TrainManager.get()
+			TrainI[] trainsList = (TrainI[]) TrainManager.get()
 					.getAvailableNewTrains()
 					.toArray(new TrainI[0]);
-			for (i = 0; i < trains.length; i++)
+			for (i = 0; i < trainsList.length; i++)
 			{
-				trainsForSale.add(trains[i].getName() + "-train from IPO at "
-						+ Bank.format(trains[i].getCost()));
-				if (trains[i].canBeExchanged()
+				trainsForSale.add(trainsList[i].getName() + "-train from IPO at "
+						+ Bank.format(trainsList[i].getCost()));
+				if (trainsList[i].canBeExchanged()
 						&& orComp.getPortfolio().getTrains().length > 0)
 				{
-					trainsForSale.add(trains[i].getName()
+					trainsForSale.add(trainsList[i].getName()
 							+ "-train from IPO (exchanged) at "
-							+ Bank.format(trains[i].getType()
+							+ Bank.format(trainsList[i].getType()
 									.getFirstExchangeCost()));
 				}
 			}
-			trains = Bank.getPool().getUniqueTrains();
-			for (i = 0; i < trains.length; i++)
+			trainsList = Bank.getPool().getUniqueTrains();
+			for (i = 0; i < trainsList.length; i++)
 			{
-				trainsForSale.add(trains[i].getName() + "-train from Pool at "
-						+ Bank.format(trains[i].getCost()));
+				trainsForSale.add(trainsList[i].getName() + "-train from Pool at "
+						+ Bank.format(trainsList[i].getCost()));
 			}
 			for (int j = 0; j < nc; j++)
 			{
 				c = companies[j];
 				if (c == orComp)
 					continue;
-				trains = c.getPortfolio().getUniqueTrains();
-				for (i = 0; i < trains.length; i++)
+				trainsList = c.getPortfolio().getUniqueTrains();
+				for (i = 0; i < trainsList.length; i++)
 				{
-					trainsForSale.add(trains[i].getName() + "-train from "
+					trainsForSale.add(trainsList[i].getName() + "-train from "
 							+ c.getName());
 				}
 			}
@@ -777,8 +784,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 									+ newTrainTotalCost[orCompIndex]);
 	
 							trainsBought.add(train);
-							newTrains[orCompIndex].setText(TrainManager.get()
+							newTrains[orCompIndex].setText(TrainManager
 									.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
+                            trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
 							
 							// In case a private has closed
 							/* BIG SHORTCUT: It is assumed here that the President 
@@ -809,6 +817,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
 		                               c.getPortfolio().discardTrain (discardedTrain);
 		                               gameStatus.updateTrains(c.getPortfolio());
+		                               trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
 		                           }
 		                       }
 		                   }
@@ -933,7 +942,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		LogWindow.addLog();
 
 		updateStatus();
-		pack();
 
 	}
 	
@@ -945,6 +953,11 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	}
 	
 	public void close() {
+	    
+	    Iterator it = observers.iterator();
+	    while (it.hasNext()) {
+	        ((ViewObject)it.next()).deRegister();
+	    }
 	    
 	}
 

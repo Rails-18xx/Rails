@@ -18,6 +18,9 @@
 
 package game;
 
+import game.model.MoneyModel;
+import game.model.ModelObject;
+
 import java.util.*;
 
 /**
@@ -47,7 +50,7 @@ public class Player implements CashHolder
 
 	private int index = 0;
 
-	private int wallet = 0;
+	private MoneyModel wallet = new MoneyModel(0);
 
 	private int blockedCash = 0;
 
@@ -267,17 +270,21 @@ public class Player implements CashHolder
 	 */
 	public int getCash()
 	{
-		return wallet;
+		return wallet.getCash();
 	}
 
 	public String getFormattedCash()
 	{
-		return Bank.format(wallet);
+		return wallet.toString();
+	}
+	
+	public ModelObject getCashModel() {
+	    return wallet;
 	}
 
 	public void addCash(int amount)
 	{
-		wallet += amount;
+		wallet.addCash(amount);
 	}
 
 	/**
@@ -287,7 +294,7 @@ public class Player implements CashHolder
 	 */
 	public int getWorth()
 	{
-		int worth = wallet;
+		int worth = wallet.getCash();
 		Iterator it = portfolio.getCertificates().iterator();
 		while (it.hasNext())
 		{
@@ -328,7 +335,7 @@ public class Player implements CashHolder
 	 */
 	public boolean blockCash(int amount)
 	{
-		if (amount > wallet - blockedCash)
+		if (amount > wallet.getCash() - blockedCash)
 		{
 			return false;
 		}
@@ -377,7 +384,7 @@ public class Player implements CashHolder
 	 */
 	public int getUnblockedCash()
 	{
-		return wallet - blockedCash;
+		return wallet.getCash() - blockedCash;
 	}
 
 	public int getBlockedCash()

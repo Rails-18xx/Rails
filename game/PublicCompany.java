@@ -4,6 +4,10 @@
  */
 package game;
 
+import game.model.MoneyModel;
+import game.model.ModelObject;
+import game.model.PriceModel;
+
 import java.awt.Color;
 import java.util.*;
 
@@ -52,10 +56,11 @@ public class PublicCompany extends Company implements PublicCompanyI
    protected StockSpaceI parPrice = null;
 
    /** Current share price, represented by a stock market location object */
-   protected StockSpaceI currentPrice = null;
+   //protected StockSpaceI currentPrice = null;
+   protected PriceModel currentPrice = null;
 
    /** Company treasury, holding cash */
-   protected int treasury = 0;
+   protected MoneyModel treasury = null;
    
    /** Has the company started? */
    protected boolean hasStarted = false;
@@ -141,6 +146,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
       this.portfolio = new Portfolio(name, this);
       this.capitalisation = type.getCapitalisation();
+      treasury = new MoneyModel (0);
    }
    
    /**
@@ -148,8 +154,9 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public void init2() throws ConfigurationException {
    	if (hasStockPrice && XmlUtils.hasValue(startSpace)) {
-   		parPrice = currentPrice = 
+   		parPrice = /*currentPrice =*/ 
    				StockMarket.getInstance().getStockSpace(startSpace);
+   		currentPrice.setPrice (parPrice);
    		if (parPrice == null) throw new ConfigurationException 
 			("Invalid start space "+startSpace + "for company "+name);
    	}
@@ -426,7 +433,8 @@ public class PublicCompany extends Company implements PublicCompanyI
    public void setParPrice(StockSpaceI space)
    {
    	if (hasStockPrice) {
-      parPrice = currentPrice = space;
+      parPrice = /*currentPrice = */ space;
+      currentPrice = new PriceModel (space);
       space.addToken(this);
    	}
    }
@@ -439,7 +447,7 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public StockSpaceI getParPrice()
    {
-      return hasParPrice ? parPrice : currentPrice;
+      return hasParPrice ? parPrice : currentPrice.getPrice();
    }
 
    /**
@@ -451,9 +459,14 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public void setCurrentPrice(StockSpaceI price)
    {
-      currentPrice = price;
+      //currentPrice = price;
+       currentPrice.setPrice(price);
    }
 
+   public PriceModel getCurrentPriceObject () {
+       return currentPrice;
+   }
+   
    /**
     * Get the current company share price.
     * 
@@ -462,7 +475,7 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public StockSpaceI getCurrentPrice()
    {
-      return currentPrice;
+      return currentPrice != null ? currentPrice.getPrice() : null;
    }
 
    /**
@@ -473,7 +486,7 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public void addCash(int amount)
    {
-      treasury += amount;
+      treasury.addCash(amount);
       
    }
 
@@ -484,11 +497,15 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public int getCash()
    {
-      return treasury;
+      return treasury.getCash();
    }
    
    public String getFormattedCash () {
-       return Bank.format (treasury);
+       return treasury.toString();
+   }
+   
+   public ModelObject getCashModel () {
+       return treasury;
    }
 
 
