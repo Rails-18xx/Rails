@@ -18,15 +18,16 @@ public interface TrainManagerI {
     /** This is the name by which the TrainManager should be registered with the ComponentManager. */
     static final String COMPONENT_NAME = "TrainManager";
 
-    public String makeAbbreviatedList (Portfolio holder);
+    //public static String makeAbbreviatedList (Portfolio holder);
     
-	public String makeFullList (TrainI[] trains);
+	//public String makeFullList (TrainI[] trains);
 
-    public String makeFullList (Portfolio holder);
+    //public String makeFullList (Portfolio holder);
 
     public List getAvailableNewTrains ();
     
     public TrainTypeI getTypeByName (String name);
+    public List getTrainTypes();
     
 	public void checkTrainAvailability (TrainI train, Portfolio from);
 

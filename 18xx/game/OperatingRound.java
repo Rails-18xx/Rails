@@ -47,6 +47,7 @@ public class OperatingRound implements Round
 
 	protected int currentRevenue;
 	protected int lastTileLayCost = 0;
+	protected String lastTileLaid = "";
 	
 	protected List currentSpecialProperties = null;
 	
@@ -259,7 +260,6 @@ public class OperatingRound implements Round
 				{
 					cost = 0;
 				}
-				lastTileLayCost = cost;
 
 				// Amount must be non-negative multiple of 10
 				if (cost < 0)
@@ -292,9 +292,11 @@ public class OperatingRound implements Round
 			hex.upgrade(tile, orientation);
 
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			Log.write(operatingCompany.getName() + " lays tile #"
-					+ tile.getName() + "/" + hex.getName() + "/"
-					+ MapHex.getOrientationName(orientation) // FIXME: Wrong!
+			lastTileLayCost = cost;
+			lastTileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
+				+ MapHex.getOrientationName(orientation); // FIXME: Wrong!
+			Log.write(operatingCompany.getName() + " lays tile "
+			        + lastTileLaid
 					+ (cost > 0 ? " for " + Bank.format(cost) : ""));
 			
 			// Was a special property used?
@@ -318,6 +320,14 @@ public class OperatingRound implements Round
 		}
 
 		return true;
+	}
+	
+	public String getLastTileLaid () {
+	    return lastTileLaid;
+	}
+	public int getLastTileLayCost()
+	{
+		return lastTileLayCost;
 	}
 	
 	private SpecialORProperty checkForUseOfSpecialProperty (MapHex hex) {
@@ -669,6 +679,8 @@ public class OperatingRound implements Round
 	        normalTileLaysDone = 0;
 	        extraTileLaysAllowed = 0;
 	        extraTileLaysDone = 0;
+	        lastTileLayCost = 0;
+	        lastTileLaid = "";
 	        
 	        // Check for extra or special tile lays
 	        currentSpecialProperties = 
@@ -1062,11 +1074,6 @@ public class OperatingRound implements Round
 		return new int[] { 0, 40, 100 };
 	}
 
-	public int getLastTileLayCost()
-	{
-		return lastTileLayCost;
-	}
-	
 	public String getHelp () {
 	    StringBuffer b = new StringBuffer();
 	    b.append("<big>Operating round: ").append(getCompositeORNumber()).append("</big><br>");

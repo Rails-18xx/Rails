@@ -4,6 +4,8 @@
  */
 package game;
 
+import game.model.PriceModel;
+
 import java.awt.Color;
 import java.util.*;
 
@@ -123,7 +125,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	 *         stock market.
 	 */
 	public StockSpaceI getCurrentPrice();
-
+	
+	public PriceModel getCurrentPriceObject ();
 	/**
 	 * @return
 	 */

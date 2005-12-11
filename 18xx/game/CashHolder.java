@@ -1,10 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.2 2005/05/04 22:48:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.3 2005/12/11 00:03:36 evos Exp $
  * 
  * Created on 10-Apr-2005 by Erik Vos
  * 
  * Change Log:
  */
 package game;
+
+import game.model.ModelObject;
 
 /**
  * @author Erik
@@ -22,7 +24,9 @@ public interface CashHolder {
 	 * @return
 	 */
 	public abstract String getFormattedCash();
-	
+
+	public ModelObject getCashModel ();
+
 	/**
 	 * Add (or subtract) cash.
 	 */

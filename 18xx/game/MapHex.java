@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.21 2005/12/02 23:33:28 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.22 2005/12/11 00:03:36 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -457,7 +457,11 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public List getTokens(int stationNumber)
 	{
-		return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
+	    if (stations.size() > 0) {
+	        return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
+	    } else {
+	        return new ArrayList();
+	    }
 	}
 
 	public boolean hasTokens()

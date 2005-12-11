@@ -179,7 +179,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		
 		showUpgrades();
 		
-		System.out.println("Tokens: " + selectedHex.getHexModel().getTokens());
+		//System.out.println("Tokens: " + selectedHex.getHexModel().getTokens());
 	}
 	
 	public void fixTile () {

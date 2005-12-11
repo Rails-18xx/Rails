@@ -18,6 +18,9 @@
 
 package game;
 
+import game.model.MoneyModel;
+import game.model.ModelObject;
+
 import java.util.*;
 import org.w3c.dom.*;
 import util.XmlUtils;
@@ -29,7 +32,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
 	
 	/** The Bank's amont of cash */
-	private static int money;
+	private static MoneyModel money = new MoneyModel(0);
 
 	private static int gameType;
 
@@ -107,11 +110,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		if (node != null)
 		{
 			nnp = node.getAttributes();
-			money = XmlUtils.extractIntegerAttribute(nnp, "amount");
+			money.setCash(XmlUtils.extractIntegerAttribute(nnp, "amount", 12000));
 		}
-		if (money == 0)
-			money = 12000;
-		Log.write("Bank size is " + money);
+		Log.write("Bank size is " + money.getCash());
 
 		NodeList players = element.getElementsByTagName("Players");
 		for (int i = 0; i < players.getLength(); i++)
@@ -220,7 +221,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 */
 	public int getCash()
 	{
-		return money;
+		return money.getCash();
 	}
 
 	/**
@@ -228,7 +229,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 */
 	public void addCash(int amount)
 	{
-		money += amount;
+		money.addCash(amount);
 	}
 
 	/**
@@ -252,7 +253,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 */
 	public void setCash(int i)
 	{
-		money = i;
+		money.setCash(i);
 	}
 
 	public String getName()
@@ -262,7 +263,11 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
 	public String getFormattedCash()
 	{
-		return Bank.format(money);
+		return money.toString();
+	}
+	
+	public ModelObject getCashModel() {
+	    return money;
 	}
 
 	/**
