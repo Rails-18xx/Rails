@@ -52,6 +52,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public static String marketString = "Stock Market";
 	public static String logString = "Log Window";
 	
+	/** Selector for the pattern to be used in keeping the 
+	 * individual UI fields up-to-date:
+	 * <br> - true: push changes (Observer/Observable pattern),
+	 * <br> - false: pull everything on repaint.
+	 */
+	public static boolean useObserver = false;
+	
 	public void initMenu()
 	{
 		menuBar = new JMenuBar();

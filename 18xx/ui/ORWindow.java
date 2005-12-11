@@ -4,6 +4,7 @@
 package ui;
 
 import game.*;
+import game.model.TrainsModel;
 import ui.elements.*;
 import util.XmlUtils;
 
@@ -275,13 +276,13 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					.getName() : "");
 			addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0);
 
-			f = sharePrice[i] = new Field(c.getCurrentPriceObject());
+			f = sharePrice[i] = new Field(c.getCurrentPriceModel());
 			addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0);
 
 			f = cash[i] = new Field(c.getCashModel());
 			addField(f, cashXOffset, cashYOffset + i, 1, 1, 0);
 
-			f = trains[i] = new Field("");
+			f = trains[i] = new Field(c.getPortfolio().getTrainsModel().option(TrainsModel.FULL_LIST));
 			addField(f, trainsXOffset, trainsYOffset + i, 1, 1, WIDE_RIGHT);
 
 			f = tiles[i] = new Field("");
@@ -347,8 +348,10 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		statusPanel.add(comp, gbc);
 		
-		if (comp instanceof ViewObject && ((ViewObject)comp).getModel() != null) {
-			// observers.add (comp);
+		if (StatusWindow.useObserver
+		        && comp instanceof ViewObject 
+		        && ((ViewObject)comp).getModel() != null) {
+			observers.add (comp);
 		}
 
 	}
@@ -786,7 +789,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							trainsBought.add(train);
 							newTrains[orCompIndex].setText(TrainManager
 									.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
-                            trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
+                            //trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
 							
 							// In case a private has closed
 							/* BIG SHORTCUT: It is assumed here that the President 
@@ -817,7 +820,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
 		                               c.getPortfolio().discardTrain (discardedTrain);
 		                               gameStatus.updateTrains(c.getPortfolio());
-		                               trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
+		                               //trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
 		                           }
 		                       }
 		                   }

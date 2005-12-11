@@ -18,7 +18,7 @@
 
 package game;
 
-import game.model.MoneyModel;
+import game.model.CashModel;
 import game.model.ModelObject;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
 	
 	/** The Bank's amont of cash */
-	private static MoneyModel money = new MoneyModel(0);
+	private static CashModel money;
 
 	private static int gameType;
 
@@ -87,6 +87,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	{
 
 		instance = this;
+		money = new CashModel();
 		// Create the IPO and the Bank Pool.
 		// Here the Pool pays out, but that should be made configurable.
 		ipo = new Portfolio("IPO", this, false);

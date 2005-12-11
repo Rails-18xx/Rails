@@ -4,7 +4,7 @@
  */
 package game;
 
-import game.model.MoneyModel;
+import game.model.CashModel;
 import game.model.ModelObject;
 import game.model.PriceModel;
 
@@ -60,7 +60,7 @@ public class PublicCompany extends Company implements PublicCompanyI
    protected PriceModel currentPrice = null;
 
    /** Company treasury, holding cash */
-   protected MoneyModel treasury = null;
+   protected CashModel treasury = null;
    
    /** Has the company started? */
    protected boolean hasStarted = false;
@@ -146,7 +146,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
       this.portfolio = new Portfolio(name, this);
       this.capitalisation = type.getCapitalisation();
-      treasury = new MoneyModel (0);
+      treasury = new CashModel ();
    }
    
    /**
@@ -156,7 +156,8 @@ public class PublicCompany extends Company implements PublicCompanyI
    	if (hasStockPrice && XmlUtils.hasValue(startSpace)) {
    		parPrice = /*currentPrice =*/ 
    				StockMarket.getInstance().getStockSpace(startSpace);
-   		currentPrice.setPrice (parPrice);
+   		//currentPrice.setPrice (parPrice);
+   		//currentPrice = new PriceModel (parPrice);
    		if (parPrice == null) throw new ConfigurationException 
 			("Invalid start space "+startSpace + "for company "+name);
    	}
@@ -434,7 +435,7 @@ public class PublicCompany extends Company implements PublicCompanyI
    {
    	if (hasStockPrice) {
       parPrice = /*currentPrice = */ space;
-      currentPrice = new PriceModel (space);
+      currentPrice.setPrice(space);
       space.addToken(this);
    	}
    }
@@ -459,12 +460,12 @@ public class PublicCompany extends Company implements PublicCompanyI
     */
    public void setCurrentPrice(StockSpaceI price)
    {
-      //currentPrice = price;
+       if (currentPrice == null) currentPrice = new PriceModel (null);
        currentPrice.setPrice(price);
    }
 
-   public PriceModel getCurrentPriceObject () {
-       return currentPrice;
+   public PriceModel getCurrentPriceModel () {
+        return currentPrice;
    }
    
    /**
@@ -947,6 +948,7 @@ public class PublicCompany extends Company implements PublicCompanyI
         if (certificates != null) {
               ((PublicCompanyI) clone).setCertificates(certificates);
         }
+        ((PublicCompanyI) clone).setCurrentPrice(null);
 	    return clone;
 	}
 }

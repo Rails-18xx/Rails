@@ -18,8 +18,9 @@
 
 package game;
 
-import game.model.MoneyModel;
+import game.model.CashModel;
 import game.model.ModelObject;
+import game.model.WorthModel;
 
 import java.util.*;
 
@@ -50,7 +51,9 @@ public class Player implements CashHolder
 
 	private int index = 0;
 
-	private MoneyModel wallet = new MoneyModel(0);
+	private CashModel wallet = new CashModel();
+	
+	private WorthModel worth = new WorthModel(this);
 
 	private int blockedCash = 0;
 
@@ -311,6 +314,10 @@ public class Player implements CashHolder
 	public String getFormattedWorth()
 	{
 		return Bank.format(getWorth());
+	}
+	
+	public WorthModel getWorthModel () {
+	    return worth;
 	}
 
 	public String toString()
