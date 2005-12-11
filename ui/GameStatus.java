@@ -4,6 +4,7 @@
 package ui;
 
 import game.*;
+import game.model.TrainsModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -13,6 +14,7 @@ import ui.StatusWindow;
 import ui.elements.*;
 
 import java.util.*;
+import java.util.List;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of game
@@ -285,9 +287,7 @@ public class GameStatus extends JPanel implements ActionListener
 					.getPrice())
 					: "");
 			addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0);
-			f = currPrice[i] = new Field(c.getCurrentPrice() != null ? Bank.format(c.getCurrentPrice()
-					.getPrice())
-					: "");
+			f = currPrice[i] = new Field(c.getCurrentPriceModel());
 			addField(f,
 					currPriceXOffset,
 					currPriceYOffset + i,
@@ -295,11 +295,12 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					WIDE_RIGHT);
 
-			f = compCash[i] = new Field(Bank.format(c.getCash()));
+			f = compCash[i] = new Field(c.getCashModel());
 			addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0);
 			f = compRevenue[i] = new Field(Bank.format(c.getLastRevenue()));
 			addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0);
-			f = compTrains[i] = new Field(TrainManager.makeFullList(c.getPortfolio()));
+			//f = compTrains[i] = new Field(TrainManager.makeFullList(c.getPortfolio()));
+			f = compTrains[i] = new Field(c.getPortfolio().getTrainsModel().option(TrainsModel.FULL_LIST));
 			addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0);
 			f = compPrivates[i] = new Field("");
 			addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
@@ -319,7 +320,8 @@ public class GameStatus extends JPanel implements ActionListener
 				+ WIDE_RIGHT);
 		for (int i = 0; i < np; i++)
 		{
-			f = playerCash[i] = new Field(Bank.format(players[i].getCash()));
+			//f = playerCash[i] = new Field(Bank.format(players[i].getCash()));
+			f = playerCash[i] = new Field(players[i].getCashModel());
 			addField(f,
 					playerCashXOffset + i,
 					playerCashYOffset,
@@ -348,7 +350,8 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(new Caption("Worth"), 0, playerWorthYOffset, 1, 1, WIDE_RIGHT);
 		for (int i = 0; i < np; i++)
 		{
-			f = playerWorth[i] = new Field(Bank.format(players[i].getWorth()));
+			//f = playerWorth[i] = new Field(Bank.format(players[i].getWorth()));
+			f = playerWorth[i] = new Field(players[i].getWorthModel(), true);
 			addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, 0);
 		}
 
@@ -371,15 +374,18 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_TOP);
-		bankCash = new Field(Bank.format(Bank.getInstance().getCash()));
+		//bankCash = new Field(Bank.format(Bank.getInstance().getCash()));
+		bankCash = new Field(Bank.getInstance().getCashModel());
 		addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0);
+		
 		addField(new Caption("Used trains"),
 				poolTrainsXOffset,
 				poolTrainsYOffset - 1,
 				2,
 				1,
 				WIDE_TOP + WIDE_RIGHT);
-		poolTrains = new Field(TrainManager.makeFullList(Bank.getPool()));
+		//poolTrains = new Field(TrainManager.makeFullList(Bank.getPool()));
+		poolTrains = new Field(Bank.getPool().getTrainsModel().option(TrainsModel.FULL_LIST));
 		addField(poolTrains,
 				poolTrainsXOffset,
 				poolTrainsYOffset,
@@ -394,7 +400,8 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_TOP);
-		newTrains = new Field(TrainManager.makeAbbreviatedList(Bank.getIpo()));
+		//newTrains = new Field(TrainManager.makeAbbreviatedList(Bank.getIpo()));
+		newTrains = new Field(Bank.getIpo().getTrainsModel().option(TrainsModel.ABBR_LIST));
 		addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0);
 
 		dummyButton = new ClickField("", "", "", this, buySellGroup);
@@ -406,7 +413,8 @@ public class GameStatus extends JPanel implements ActionListener
 				3,
 				1,
 				WIDE_LEFT + WIDE_TOP);
-		futureTrains = new Field(TrainManager.makeAbbreviatedList(Bank.getUnavailable()));
+		//futureTrains = new Field(TrainManager.makeAbbreviatedList(Bank.getUnavailable()));
+		futureTrains = new Field(Bank.getUnavailable().getTrainsModel().option(TrainsModel.ABBR_LIST));
 		addField(futureTrains,
 				futureTrainsXOffset,
 				futureTrainsYOffset,
@@ -701,17 +709,17 @@ public class GameStatus extends JPanel implements ActionListener
 		if (c instanceof Player)
 		{
 			int i = ((Integer) playerIndex.get(c)).intValue();
-			setCash(playerCash[i], c);
+			//setCash(playerCash[i], c);
 			playerWorth[i].setText(Bank.format(((Player) c).getWorth()));
 		}
 		else if (c instanceof PublicCompanyI)
 		{
-			int i = ((Integer) companyIndex.get(c)).intValue();
-			setCash(compCash[i], c);
+			//int i = ((Integer) companyIndex.get(c)).intValue();
+			//setCash(compCash[i], c);
 		}
 		else if (c instanceof Bank)
 		{
-			setCash(bankCash, c);
+			//setCash(bankCash, c);
 		}
 		else
 		{
@@ -767,20 +775,20 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		if (p == Bank.getIpo())
 		{
-			newTrains.setText(TrainManager.makeAbbreviatedList(p));
+			//newTrains.setText(TrainManager.makeAbbreviatedList(p));
 		}
 		else if (p == Bank.getPool())
 		{
-			poolTrains.setText(TrainManager.makeFullList(p));
+			//poolTrains.setText(TrainManager.makeFullList(p));
 		}
 		else if (p == Bank.getUnavailable())
 		{
-			futureTrains.setText(TrainManager.makeAbbreviatedList(p));
+			//futureTrains.setText(TrainManager.makeAbbreviatedList(p));
 		}
 		else if (p.getOwner() instanceof PublicCompanyI)
 		{
-			compTrains[((PublicCompanyI) p.getOwner()).getPublicNumber()].setText(TrainManager
-					.makeFullList(p));
+			//compTrains[((PublicCompanyI) p.getOwner()).getPublicNumber()].setText(TrainManager
+			//		.makeFullList(p));
 		}
 		else
 		{
@@ -793,11 +801,11 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		for (int i = 0; i < nc; i++)
 		{
-			updateTrains(companies[i].getPortfolio());
+			//updateTrains(companies[i].getPortfolio());
 		}
-		newTrains.setText(TrainManager.makeAbbreviatedList(Bank.getIpo()));
-		poolTrains.setText(TrainManager.makeFullList(Bank.getPool()));
-		futureTrains.setText(TrainManager.makeAbbreviatedList(Bank.getUnavailable()));
+		//newTrains.setText(TrainManager.makeAbbreviatedList(Bank.getIpo()));
+		//poolTrains.setText(TrainManager.makeFullList(Bank.getPool()));
+		//futureTrains.setText(TrainManager.makeAbbreviatedList(Bank.getUnavailable()));
 	}
 
 	public void updatePlayerCash()
@@ -805,7 +813,7 @@ public class GameStatus extends JPanel implements ActionListener
 		for (int i = 0; i < np; i++)
 		{
 			p = players[i];
-			playerCash[i].setText(Bank.format(p.getCash()));
+			//playerCash[i].setText(Bank.format(p.getCash()));
 			playerWorth[i].setText(Bank.format(p.getWorth()));
 		}
 

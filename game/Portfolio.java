@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.23 2005/11/27 20:59:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.24 2005/12/11 21:06:45 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -6,6 +6,8 @@
  */
 package game;
 
+import game.model.ModelObject;
+import game.model.TrainsModel;
 import game.special.SpecialPropertyI;
 
 import java.util.*;
@@ -28,6 +30,7 @@ public class Portfolio
    /** Owned trains */
    protected List trains = new ArrayList();
    protected Map trainsPerType = new HashMap();
+   protected TrainsModel trainsModel = new TrainsModel(this);
    
    /** Special properties. It is easier to maintain a map of these
     * that to have to search through the privates on each and every action. */
@@ -416,6 +419,7 @@ public class Portfolio
        if (trainsPerType.get(type) == null) trainsPerType.put (type, new ArrayList());
        ((List)trainsPerType.get(train.getType())).add(train);
        train.setHolder(this);
+       trainsModel.update();
    }
    
    public void removeTrain (TrainI train) {
@@ -423,6 +427,7 @@ public class Portfolio
        TrainTypeI type = train.getType();
        ((List)trainsPerType.get(train.getType())).remove(train);
        train.setHolder(null);
+       trainsModel.update();
        
        /*
        List list = (List)trainsPerType.get(train.getType());
@@ -466,6 +471,10 @@ public class Portfolio
        }
        
        return (TrainI[]) trainsFound.toArray(new TrainI[0]);
+   }
+   
+   public ModelObject getTrainsModel() {
+       return trainsModel;
    }
    
    /** Returns one train of any type held */
