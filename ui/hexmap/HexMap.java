@@ -37,15 +37,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected static GUIHex selectedHex = null;
 	protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
-	
-	/** 
-	 * Is tile laying enabled? If not, one can play with tiles,
-	 * but the "Done" button is disabled.
+
+	/**
+	 * Is tile laying enabled? If not, one can play with tiles, but the "Done"
+	 * button is disabled.
 	 */
 	protected boolean tileLayingEnabled = false;
 	protected java.util.List extraTileLays = new ArrayList();
 	protected java.util.List unconnectedTileLays = new ArrayList();
-
 
 	public void setupHexes()
 	{
@@ -89,7 +88,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		
+
 		try
 		{
 			// Abort if called too early.
@@ -144,79 +143,81 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			if (clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
-			    repaint (selectedHex.getBounds());
+				repaint(selectedHex.getBounds());
 			}
-			else 
+			else
 			{
-			    if (selectedHex != null) {
-				    selectedHex.removeTile();
-			        selectedHex.setSelected(false);
-				    repaint (selectedHex.getBounds());
-			        selectedHex = null;
-			    }
-			    if (clickedHex.getCurrentTile().isUpgradeableNow()) {
-			        clickedHex.setSelected(true);
-			        selectedHex = clickedHex;
-				    repaint (selectedHex.getBounds());
-			    }
+				if (selectedHex != null)
+				{
+					selectedHex.removeTile();
+					selectedHex.setSelected(false);
+					repaint(selectedHex.getBounds());
+					selectedHex = null;
+				}
+				if (clickedHex.getCurrentTile().isUpgradeableNow())
+				{
+					clickedHex.setSelected(true);
+					selectedHex = clickedHex;
+					repaint(selectedHex.getBounds());
+				}
 			}
 
-			// FIXME: Kludgy, but it forces the upgrades panel to be drawn correctly.
+			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
+			// correctly.
 			upgradesPanel.setVisible(false);
 			upgradesPanel.setVisible(true);
 		}
 		catch (NullPointerException e)
 		{
 			// No hex clicked
-			if (selectedHex != null) 
+			if (selectedHex != null)
 			{
-			    selectedHex.removeTile();
-		        selectedHex.setSelected(false);
-			    repaint (selectedHex.getBounds());
+				selectedHex.removeTile();
+				selectedHex.setSelected(false);
+				repaint(selectedHex.getBounds());
 				selectedHex = null;
 			}
 		}
-		
+
 		showUpgrades();
-		
-		//System.out.println("Tokens: " + selectedHex.getHexModel().getTokens());
+
+		// System.out.println("Tokens: " +
+		// selectedHex.getHexModel().getTokens());
 	}
-	
-	public void fixTile () {
-	    if (selectedHex != null) selectedHex.fixTile(tileLayingEnabled);
+
+	public void fixTile()
+	{
+		if (selectedHex != null)
+			selectedHex.fixTile(tileLayingEnabled);
 	}
-	
-	public void cancelTile () {
-	    if (selectedHex != null) selectedHex.removeTile();
-        if (tileLayingEnabled) GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+
+	public void cancelTile()
+	{
+		if (selectedHex != null)
+			selectedHex.removeTile();
+		if (tileLayingEnabled)
+			GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
 	}
 
 	public void mouseEntered(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseExited(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mousePressed(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseReleased(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
-	
-	public GUIHex getSelectedHex () {
-	    return selectedHex;
+
+	public GUIHex getSelectedHex()
+	{
+		return selectedHex;
 	}
 
 	public boolean isHexSelected()
@@ -231,8 +232,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	 */
 	public void mouseDragged(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -242,7 +241,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	 */
 	public void mouseMoved(MouseEvent arg0)
 	{
-		// TODO Auto-generated method stub
 		Point point = arg0.getPoint();
 		GUIHex hex = getHexContainingPoint(point);
 		setToolTipText(hex != null ? hex.getToolTip() : "");
@@ -272,39 +270,45 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				upgradesPanel.setUpgrades(upgrades);
 			}
 		}
-		
+
 		invalidate();
 		upgradesPanel.showUpgrades(tileLayingEnabled);
 	}
-	
-	public void enableTileLaying (boolean enabled) {
-	    tileLayingEnabled = enabled;
-		if (enabled == false && selectedHex != null) 
+
+	public void enableTileLaying(boolean enabled)
+	{
+		tileLayingEnabled = enabled;
+		if (enabled == false && selectedHex != null)
 		{
-		    selectedHex.removeTile();
-	        selectedHex.setSelected(false);
-		    repaint (selectedHex.getBounds());
+			selectedHex.removeTile();
+			selectedHex.setSelected(false);
+			repaint(selectedHex.getBounds());
 			selectedHex = null;
 		}
 	}
-	
-	public void setSpecials (java.util.List specials) {
-	    extraTileLays.clear();
-	    unconnectedTileLays.clear();
-	    if (specials != null) {
-		    Iterator it = specials.iterator();
-		    SpecialTileLay stl;
-		    while (it.hasNext()) {
-		        stl = (SpecialTileLay) it.next();
-		        if (stl.isExercised()) continue;
-		        unconnectedTileLays.add(stl);
-		        if (stl.isExtra()) extraTileLays.add(stl);
-		        
-		        System.out.println("Special tile lay allowed on hex "+stl.getLocation().getName()
-		                +", extra="+stl.isExtra());
-		    }
-	    }
+
+	public void setSpecials(java.util.List specials)
+	{
+		extraTileLays.clear();
+		unconnectedTileLays.clear();
+		if (specials != null)
+		{
+			Iterator it = specials.iterator();
+			SpecialTileLay stl;
+			while (it.hasNext())
+			{
+				stl = (SpecialTileLay) it.next();
+				if (stl.isExercised())
+					continue;
+				unconnectedTileLays.add(stl);
+				if (stl.isExtra())
+					extraTileLays.add(stl);
+
+				System.out.println("Special tile lay allowed on hex "
+						+ stl.getLocation().getName() + ", extra="
+						+ stl.isExtra());
+			}
+		}
 	}
-	
 
 }
