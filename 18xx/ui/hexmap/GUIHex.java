@@ -339,7 +339,7 @@ public class GUIHex
 		//" Tokens: " + getHexModel().getTokens());
 	}
 
-	public void paintOverlay(Graphics2D g2)
+	private void paintOverlay(Graphics2D g2)
 	{
 		Point center = findCenter();
 		if (provisionalGUITile != null)
@@ -352,7 +352,7 @@ public class GUIHex
 		}
 	}
 
-	public void paintToken(Graphics2D g2)
+	private void paintToken(Graphics2D g2)
 	{
 		if (getHexModel().getStations().size() > 1)
 		{
