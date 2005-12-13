@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.13 2005/12/07 22:34:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.14 2005/12/13 02:06:33 wakko666 Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -446,7 +446,6 @@ public class GameManager implements ConfigurableComponentI
 
 		for (int compIndex = 0; compIndex < companies.length; compIndex++)
 		{
-			System.out.println(companies[compIndex]);
 			if (companies[compIndex].hasFloated()
 					&& companies[compIndex].hasStarted())
 			{
