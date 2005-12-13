@@ -366,8 +366,7 @@ public class GUIHex
 		for (int i = 0; i < tokens.size(); i++)
 		{
 			PublicCompany co = (PublicCompany) tokens.get(i);
-			Point origin = getTokenOrigin(numTokens, i);
-			
+			Point origin = getTokenOrigin(numTokens, i, 1, 0);
 			drawToken(g2, co, origin);
 		}
 	}
@@ -375,47 +374,19 @@ public class GUIHex
 	private void paintSplitStations(Graphics2D g2)
 	{
 		int numStations = getHexModel().getStations().size();
+		int numTokens;
+		ArrayList tokens;
+		Point origin;
+		PublicCompany co;
+		
 		for(int i=0; i < numStations; i++)
 		{
-			int numTokens = getHexModel().getTokens(i).size();
-			ArrayList tokens = (ArrayList) getHexModel().getTokens(i);
-			Point origin = getTokenOrigin(numTokens, i);
-			
+			numTokens = getHexModel().getTokens(i).size();
+			tokens = (ArrayList) getHexModel().getTokens(i);
 			for (int j=0; j < tokens.size(); j++)
 			{
-				PublicCompany co = (PublicCompany) tokens.get(j);
-				
-				switch (numStations)
-				{
-					case 2:
-						switch(i)
-						{
-							//1st station group
-							case 0:
-								origin.y += -5;
-							//2nd station group
-							case 1:
-								origin.y += 5;
-							default:
-								break;
-						}
-					//TODO: Fill in offsets
-					case 3:
-						switch(i)
-						{
-							//1st station group
-							case 0:
-							//2nd station group
-							case 1:
-							//3rd station group
-							case 2:
-							default: 
-								break;
-						}
-					default:
-						break;
-				}
-				
+				origin = getTokenOrigin(numTokens, j, numStations, i);
+				co = (PublicCompany) tokens.get(j);
 				drawToken(g2, co, origin);
 			}
 		}
@@ -436,36 +407,56 @@ public class GUIHex
 		token.drawToken(g2);
 	}
 	
-	private Point getTokenOrigin(int numTokens, int currentToken)
+	//Beware!  Here be dragons!
+	//And nested switch/case statements!
+	//The horror!
+	private Point getTokenOrigin(int numTokens, int currentToken, int numStations, int currentStation)
 	{
-		Point p;
+		Point c = findCenter();
+		Point p = new Point();
 		
-		switch(numTokens)
+		switch(numStations)
 		{
 			case 1:
-				p = findCenter();
-				p.x += -9;
-				p.y += -9;
-				return p;
-			case 2:
-				if(currentToken == 0)
+				switch(numTokens)
 				{
-					p = findCenter();
-					p.x += -14;
-					p.y += -9;
-					return p;
+					case 1:
+						p.x = (c.x-9);
+						p.y = (c.y-9);
+						return p;
+					default:
+						return findCenter();
+				}
+			case 2:
+				if(currentStation == 0)
+				{
+					switch(numTokens)
+					{
+						case 1:
+							p.x = (c.x-14);
+							p.y = (c.y+3);
+							return p;
+						default:
+							return findCenter();
+					}
 				}
 				else
 				{
-					p = findCenter();
-					p.x += -4;
-					p.y += -9;
-					return p;
+					switch(numTokens)
+					{
+						case 1:
+							p.x = (c.x-1);
+							p.y = (c.y-20);
+							return p;
+						default:
+							return findCenter();
+					}
 				}
 			case 3:
-			case 4:
-			case 5:
-			case 6: 
+				//TODO: We'll deal with the 3 station scenario later...  much later.
+				
+				//Known cases: 3 single token stations,
+				//				2 double token station and a single token station
 			default:
 				return findCenter();
 		}
