@@ -397,14 +397,18 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
 			{
+			    GameUILoader.mapWindow.requestFocus();
+			    GameUILoader.mapWindow.enableBaseTokenLaying(true);
 
 			    tokenCaption.setHighlight(true);
+			    tokenCost[orCompIndex].setText("");
+			    
 				tokenCostSelect[orCompIndex].setSelectedIndex(0);
 				setSelect(tokenCost[orCompIndex],
 						tokenCostSelect[orCompIndex],
 						true);
+				
 
-			    leftButton.setVisible(true);
 				leftButton.setText("Lay token");
 				leftButton.setActionCommand("LayToken");
 				leftButton.setMnemonic(KeyEvent.VK_T);
