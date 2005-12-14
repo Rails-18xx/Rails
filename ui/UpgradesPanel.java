@@ -20,6 +20,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private Border border = new EtchedBorder();
 	private JButton cancel;
 	private JButton done;
+	private JLabel label;
+	
+	private static final String tileText = "<html><center>Select an<br>upgrade:</center></html>";
+	private static final String tokenText = "<html><center>Click city hex to lay a token</center></html>";
+	private boolean tokenMode = false;
 
 	public UpgradesPanel(HexMap map)
 	{
@@ -33,7 +38,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgrades = new ArrayList();
 		upgradePanel = new JPanel();
 
-		JLabel label = new JLabel("<html><center>Select an<br>upgrade:</center></html>");
+		label = new JLabel(tileText);
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
 		label.setAlignmentX((float)0.5);
@@ -53,7 +58,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	{
 		upgradePanel.removeAll();
 
-		if (upgrades != null && upgrades.size() > 0)
+		if (upgrades != null && upgrades.size() > 0 && !tokenMode)
 		{
 			Iterator it = upgrades.iterator();
 
@@ -80,15 +85,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 				upgradePanel.add(hexLabel);
 			}
 			
-			done = new JButton("Done");
-			done.setActionCommand("Done");
-			done.setMnemonic(KeyEvent.VK_D);
-			done.addActionListener(this);
-			done.setEnabled(enabled);
-			upgradePanel.add(done);
-
 		}
 		
+		done = new JButton("Done");
+		done.setActionCommand("Done");
+		done.setMnemonic(KeyEvent.VK_D);
+		done.addActionListener(this);
+		done.setEnabled(enabled);
+		upgradePanel.add(done);
+
 		cancel = new JButton("Cancel");
 		cancel.setActionCommand("Cancel");
 		cancel.setMnemonic(KeyEvent.VK_C);
@@ -124,6 +129,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void setUpgrades(ArrayList upgrades)
 	{
 		this.upgrades = upgrades;
+	}
+	
+	public void setForTokenLaying (boolean tokenMode) {
+	    this.tokenMode = tokenMode;
+	    label.setText(tokenMode ? tokenText : tileText);
+	    upgrades = null;
+	    showUpgrades (false);
 	}
 	
 	public void actionPerformed (ActionEvent e) {

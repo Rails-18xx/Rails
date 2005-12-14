@@ -45,6 +45,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected boolean tileLayingEnabled = false;
 	protected java.util.List extraTileLays = new ArrayList();
 	protected java.util.List unconnectedTileLays = new ArrayList();
+	
+	protected boolean baseTokenLayingEnabled = false;
 
 	public void setupHexes()
 	{
@@ -140,7 +142,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			GUIHex clickedHex = getHexContainingPoint(point);
 
-			if (clickedHex == selectedHex)
+			if (baseTokenLayingEnabled) {
+			    
+			    if (selectedHex != null) {
+			        // REMOVE TOKEN FROM PREVIOUSLY SELECTED HEX
+			    }
+			    selectedHex = clickedHex;
+			    // DROP A TOKEN - HOW?
+			    
+			} else if (clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
 				repaint(selectedHex.getBounds());
@@ -253,7 +263,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void showUpgrades()
 	{
-		if (selectedHex == null)
+		if (selectedHex == null || baseTokenLayingEnabled)
 		{
 			upgradesPanel.setUpgrades(null);
 		}
@@ -272,7 +282,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 
 		invalidate();
-		upgradesPanel.showUpgrades(tileLayingEnabled);
+		upgradesPanel.showUpgrades(tileLayingEnabled || baseTokenLayingEnabled);
 	}
 
 	public void enableTileLaying(boolean enabled)
@@ -285,6 +295,18 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			repaint(selectedHex.getBounds());
 			selectedHex = null;
 		}
+	}
+	
+	public void enableBaseTokenLaying (boolean enabled) {
+	    
+	    baseTokenLayingEnabled = enabled;
+	    
+	    if (enabled == false && selectedHex != null) {
+	        selectedHex.removeToken();
+	        selectedHex.setSelected(false);
+	        repaint(selectedHex.getBounds());
+	        selectedHex = null;
+	    }
 	}
 
 	public void setSpecials(java.util.List specials)

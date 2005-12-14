@@ -1,4 +1,4 @@
- /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.39 2005/11/27 20:59:23 evos Exp $
+ /* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapWindow.java,v 1.40 2005/12/14 22:25:22 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -78,6 +78,10 @@ public class MapWindow extends JFrame implements WindowListener
 	    map.setSpecials (specials);
 	}
 	
+	public void enableBaseTokenLaying (boolean enabled) {
+	    map.enableBaseTokenLaying (enabled);
+	    upgradePanel.setForTokenLaying (enabled);
+	}
 
 	public void windowActivated(WindowEvent e)
 	{

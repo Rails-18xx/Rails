@@ -35,6 +35,8 @@ public class GUIHex
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
 	protected int provisionalTileOrientation;
+	
+	protected Token provisionalGUIToken = null;
 
 	protected double tileScale = NORMAL_SCALE;
 	protected JComponent map;
@@ -599,6 +601,12 @@ public class GUIHex
 		}
 		setSelected(false);
 		setToolTip();
+	}
+	
+	public void removeToken() {
+	    provisionalGUIToken = null;
+	    setSelected(false);
+	    setToolTip();
 	}
 
 }
