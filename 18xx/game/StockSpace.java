@@ -55,13 +55,16 @@ public class StockSpace implements StockSpaceI
 	/**
 	 * Add a token at the end of the array (i.e. at the bottom of the pile)
 	 * 
+	 * Always returns true;
+	 * 
 	 * @param company
 	 *            The company object to add.
 	 */
-	public void addToken(CompanyI company)
+	public boolean addToken(CompanyI company)
 	{
 		tokens.add(company);
 		this.setHasTokens(true);
+		return true;
 	}
 
 	/**

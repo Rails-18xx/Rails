@@ -149,17 +149,30 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return super.clone();
 	}
 
-	public void addToken(CompanyI company)
+	/** 
+	 * Stub method implemented to comply with TokenHolderI interface.
+	 * Always returns false.
+	 * 
+	 * Use addToken(MapHex hex) method instead.
+	 */
+	public boolean addToken(CompanyI company)
 	{
-		tokens.add(company);
-		hasTokens = true;
+		return false;
 	}
 
-	public void playToken(MapHex hex)
+	/**
+	 * Preferred method for adding tokens to company.
+	 * 
+	 * Assumes checking for available space has already done by Station.addToken().
+	 * This method should never be called before Station.addToken().
+	 */
+	public boolean addToken(MapHex hex)
 	{
 		tokens.add(hex);
 		hasTokens = true;
 		numCityTokens--;
+		
+		return true;
 	}
 
 	public List getTokens()
