@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.22 2005/12/11 00:03:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.23 2005/12/15 22:44:55 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -423,16 +423,21 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return preferredCity;
 	}
 
-	public void addToken(CompanyI company)
+	public boolean addToken(CompanyI company)
 	{
-		addToken(company, 0);
+		return addToken(company, 0);
 	}
 
-	public void addToken(CompanyI company, int stationNumber)
+	public boolean addToken(CompanyI company, int stationNumber)
 	{
-		((Station) stations.get(stationNumber)).addToken(company);
-		company.playToken(this);
-		hasTokens = true;
+		if (((Station) stations.get(stationNumber)).addToken(company))
+		{
+			company.addToken(this);
+			hasTokens = true;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/**

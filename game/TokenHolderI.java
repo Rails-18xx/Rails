@@ -16,7 +16,7 @@ public interface TokenHolderI
 	 * Add a token to our pile.
 	 * @param company
 	 */
-	public void addToken(CompanyI company);
+	public boolean addToken(CompanyI company);
 	
 	/**
 	 * Remove a token from the pile.

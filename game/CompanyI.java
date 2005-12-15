@@ -82,7 +82,7 @@ public interface CompanyI extends TokenHolderI {
 	
 	public abstract Object clone() throws CloneNotSupportedException;
 
-	public void playToken(MapHex hex);
+	public boolean addToken(MapHex hex);
 	
 	public int getNumCityTokens();
 

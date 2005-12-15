@@ -21,7 +21,6 @@ import ui.*;
 public abstract class HexMap extends JComponent implements MouseListener,
 		MouseMotionListener
 {
-
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.2 2005/11/18 23:24:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.3 2005/12/15 22:44:55 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -74,10 +74,16 @@ public class Station implements TokenHolderI
 		return value;
 	}
 
-	public void addToken(CompanyI company)
+	public boolean addToken(CompanyI company)
 	{
-		tokens.add(company);
-		hasTokens = true;
+		if(tokens.size() < baseSlots)
+		{
+			tokens.add(company);
+			hasTokens = true;
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	public List getTokens()
