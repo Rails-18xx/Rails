@@ -194,18 +194,25 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		// selectedHex.getHexModel().getTokens());
 	}
 
-	public void fixTile()
+	public void processDone()
 	{
-		if (selectedHex != null)
-			selectedHex.fixTile(tileLayingEnabled);
+	    if (baseTokenLayingEnabled) {
+	        if (selectedHex != null) selectedHex.fixToken();
+	    } else {
+	        if (selectedHex != null) selectedHex.fixTile(tileLayingEnabled);
+		}
 	}
 
-	public void cancelTile()
+	public void processCancel()
 	{
-		if (selectedHex != null)
-			selectedHex.removeTile();
-		if (tileLayingEnabled)
-			GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+	    if (baseTokenLayingEnabled) {
+	        if (selectedHex != null) selectedHex.removeToken();
+	        GameUILoader.statusWindow.orWindow.layBaseToken(null);
+	    } else {
+	        if (selectedHex != null) selectedHex.removeTile();
+	        if (tileLayingEnabled)
+	            GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+	    }
 	}
 
 	public void mouseEntered(MouseEvent arg0)

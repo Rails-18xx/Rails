@@ -234,5 +234,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	public int getTrainLimit (int phaseIndex);
 
 	public void buyTrain (TrainI train, int price);
+	
+	public int getNextBaseTokenIndex ();
+	public void layBaseToken (MapHex hex);
 
 }

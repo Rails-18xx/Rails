@@ -131,6 +131,24 @@ public final class XmlUtils {
 		return value.matches("^[TtYy].*");
 	}
 
+ 	public static int[] extractIntegerArrayAttribute (NamedNodeMap nnp,
+ 	        String attrName) throws ConfigurationException {
+ 	    Node nameAttr = nnp.getNamedItem(attrName);
+ 	    if (nameAttr == null) return new int[0];
+ 	    String[] values = nameAttr.getNodeValue().split(",");
+ 	    int[] result = new int[values.length];
+ 	    int i = 0;
+ 	    try {
+	 	    for (i=0; i<values.length; i++) {
+	 	        result[i] = Integer.parseInt(values[i]);
+	 	    }
+ 	    } catch (NumberFormatException e) {
+ 	        throw new ConfigurationException ("Invalid integer '"+values[i]
+ 	                  +"' in attribute '"+attrName+"'");
+ 	    }
+ 	    return result;
+ 	    
+ 	}
     /**
      * Opens and parses an xml file. Searches the root level of the file for an element
      * with the supplied name.

@@ -48,6 +48,8 @@ public class OperatingRound implements Round
 	protected int currentRevenue;
 	protected int lastTileLayCost = 0;
 	protected String lastTileLaid = "";
+	protected int lastBaseTokenLayCost = 0;
+	protected String lastBaseTokenLaid = "";
 	
 	protected List currentSpecialProperties = null;
 	
@@ -330,7 +332,7 @@ public class OperatingRound implements Round
 		return lastTileLayCost;
 	}
 	
-	private SpecialORProperty checkForUseOfSpecialProperty (MapHex hex) {
+ 	private SpecialORProperty checkForUseOfSpecialProperty (MapHex hex) {
 	    if (currentSpecialProperties == null) return null;
 
 	    Iterator it = currentSpecialProperties.iterator();
@@ -356,10 +358,11 @@ public class OperatingRound implements Round
 	 *            company treasury.
 	 * @return
 	 */
-	public boolean layToken(String companyName, int amountSpent)
+	public boolean layBaseToken(String companyName, MapHex hex)
 	{
 
 		String errMsg = null;
+		int cost = 0;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -375,23 +378,18 @@ public class OperatingRound implements Round
 			// Must be correct step
 			if (step != STEP_LAY_TOKEN)
 			{
-				errMsg = "Wrong action, expected Token laying cost";
+				errMsg = "Wrong action, not expecting Token lay";
 				break;
 			}
 
-			// Amount must be non-negative multiple of 10
-			if (amountSpent < 0)
-			{
-				errMsg = "Negative amount not allowed";
-				break;
+			if (!operatingCompany.hasTokens()) {
+			    errMsg = "Company has no more tokens";
+			    break;
 			}
-			if (amountSpent % 10 != 0)
-			{
-				errMsg = "Must be a multiple of 10";
-				break;
-			}
+			cost = Game.getCompanyManager().getBaseTokenLayCostBySequence(operatingCompany.getNextBaseTokenIndex());
+
 			// Does the company have the money?
-			if (amountSpent > operatingCompany.getCash())
+			if (cost > operatingCompany.getCash())
 			{
 				errMsg = "Not enough money";
 				break;
@@ -400,20 +398,41 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot process token laying cost of " + amountSpent
+			Log.error("Cannot process token laying on "+hex.getName()
+			        + " for " + Bank.format(cost) 
 					+ ": " + errMsg);
 			return false;
 		}
 
-		Bank.transferCash((CashHolder) operatingCompany, null, amountSpent);
-		if (amountSpent > 0)
-			Log.write(companyName + " spends " + Bank.format(amountSpent)
-					+ " while laying token");
+		operatingCompany.layBaseToken(hex);
+		lastBaseTokenLaid = hex.getName(); // Need to specify station!
+		lastBaseTokenLayCost = cost;
+		
+		if (cost > 0) {
+		    Bank.transferCash((CashHolder) operatingCompany, null, cost);
+			Log.write(companyName + " lays a token on " + hex.getName()
+			        + " for " + Bank.format(cost));
+		} else {
+		    Log.write (companyName +" lays a free token on "+hex.getName());
+		}
 
 		nextStep(operatingCompany);
 
 		return true;
 	}
+
+	   /**
+     * @return The name of the hex where the last Base Token was laid.
+     */
+    public String getLastBaseTokenLaid() {
+        return lastBaseTokenLaid;
+    }
+    /**
+     * @return The cost of the last Base token laid.
+     */
+    public int getLastBaseTokenLayCost() {
+        return lastBaseTokenLayCost;
+    }
 
 	/**
 	 * Set a given revenue. This may be a temporary method. We will have to
