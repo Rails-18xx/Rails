@@ -929,7 +929,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 	        privateToCloseOnFirstTrain = null;
 	    }
 	}
+	
+	public int getNextBaseTokenIndex () {
+	    return maxCityTokens - numCityTokens;
+	}
 
+	public void layBaseToken (MapHex hex) {
+	    /* Note: most token code is currently included in Company. */
+	    addToken (hex);
+	}
 	
 	public Object clone () {
 	    

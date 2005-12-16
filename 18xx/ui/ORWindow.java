@@ -59,7 +59,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private Field tileCost[];
 	private Field tokens[];
 	private Field tokenCost[];
-	private Select tokenCostSelect[];
 	private int tokensXOffset, tokensYOffset;
 	private Field revenue[];
 	private Spinner revenueSelect[];
@@ -187,7 +186,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		tileCost = new Field[nc];
 		tokens = new Field[nc];
 		tokenCost = new Field[nc];
-		tokenCostSelect = new Select[nc];
 		revenue = new Field[nc];
 		revenueSelect = new Spinner[nc];
 		decision = new Field[nc];
@@ -296,9 +294,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 			f = tokenCost[i] = new Field("");
 			addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, WIDE_RIGHT);
-			f = tokenCostSelect[i] = new Select(round.getTokenLayCosts());
-			tokenCostSelect[i].setPreferredSize(new Dimension(50, 10));
-			addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, WIDE_RIGHT);
 
 			f = revenue[i] = new Field("");
 			addField(f, revXOffset, revYOffset + i, 1, 1, 0);
@@ -403,17 +398,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			    tokenCaption.setHighlight(true);
 			    tokenCost[orCompIndex].setText("");
 			    
-				tokenCostSelect[orCompIndex].setSelectedIndex(0);
-				setSelect(tokenCost[orCompIndex],
-						tokenCostSelect[orCompIndex],
-						true);
-				
-
-				leftButton.setText("Lay token");
-				leftButton.setActionCommand("LayToken");
-				leftButton.setMnemonic(KeyEvent.VK_T);
-				leftButton.setEnabled(true);
-			    leftButton.setVisible(true);
+				leftButton.setEnabled(false);
+			    leftButton.setVisible(false);
 
 			}
 			else if (step == OperatingRound.STEP_CALC_REVENUE)
@@ -429,6 +415,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				leftButton.setActionCommand("SetRevenue");
 				leftButton.setMnemonic(KeyEvent.VK_R);
 				leftButton.setEnabled(true);
+				leftButton.setVisible(true);
 
 			}
 			else if (step == OperatingRound.STEP_PAYOUT)
@@ -439,7 +426,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				leftButton.setActionCommand("Withhold");
 				leftButton.setMnemonic(KeyEvent.VK_W);
 				leftButton.setEnabled(true);
-
+				leftButton.setVisible(true);
+				
 				middleButton.setText("Split");
 				middleButton.setActionCommand("Split");
 				middleButton.setMnemonic(KeyEvent.VK_S);
@@ -449,6 +437,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				rightButton.setActionCommand("Payout");
 				rightButton.setMnemonic(KeyEvent.VK_P);
 				rightButton.setEnabled(true);
+			    
 
 			}
 			else if (step == OperatingRound.STEP_BUY_TRAIN)
@@ -460,6 +449,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				leftButton.setActionCommand("BuyTrain");
 				leftButton.setMnemonic(KeyEvent.VK_T);
 				leftButton.setEnabled(true);
+				leftButton.setVisible(true);
 
 				middleButton.setText("Buy Private");
 				middleButton.setActionCommand("BuyPrivate");
@@ -518,7 +508,27 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			GameUILoader.mapWindow.enableTileLaying(false);
 			this.requestFocus();
 		}
-}
+	}
+	
+	public void layBaseToken (MapHex hex) {
+	    
+	    if (hex != null) {
+		    // Let model process this first
+		    round.layBaseToken (orCompName, hex);
+		    int cost = round.getLastBaseTokenLayCost();
+		    tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+		    tokens[orCompIndex].setText(round.getLastBaseTokenLaid());
+	    }
+	    
+		LogWindow.addLog();
+
+		updateStatus();
+		
+		if (round.getStep() != OperatingRound.STEP_LAY_TOKEN) {
+			GameUILoader.mapWindow.enableBaseTokenLaying(false);
+			this.requestFocus();
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -540,18 +550,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		else if (command.equals("LayToken") || done
 				&& step == OperatingRound.STEP_LAY_TOKEN)
 		{
-			amount = done ? 0
-					: Integer.parseInt((String) tokenCostSelect[orCompIndex].getSelectedItem());
-			tokenCost[orCompIndex].setText(amount > 0 ? Bank.format(amount)
-					: "");
-			round.layToken(orCompName, amount);
-			setSelect(tokenCost[orCompIndex],
-					tokenCostSelect[orCompIndex],
-					false);
-			updateCash(orCompIndex);
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
-
+		    // This is just a No-op. Tile handling is now all done in layBaseToken().
 		}
 		else if (command.equals("SetRevenue") || done
 				&& step == OperatingRound.STEP_CALC_REVENUE)
@@ -980,7 +979,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		if ((j = this.orCompIndex) >= 0)
 		{
 			president[j].setBackground(Color.WHITE);
-			setSelect(tokenCost[j], tokenCostSelect[j], false);
 			setSelect(revenue[j], revenueSelect[j], false);
 		}
 

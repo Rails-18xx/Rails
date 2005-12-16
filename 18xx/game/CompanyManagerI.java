@@ -99,4 +99,7 @@ public interface CompanyManagerI
 	public void initCompanies() throws ConfigurationException;
 
 	   public List getCompaniesWithExcessTrains ();
+	   
+	   public int getBaseTokenLayCostBySequence (int index);
+
 }

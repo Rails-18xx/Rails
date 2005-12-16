@@ -608,5 +608,11 @@ public class GUIHex
 	    setSelected(false);
 	    setToolTip();
 	}
+	
+	public void fixToken () {
+	    GameUILoader.statusWindow.orWindow.layBaseToken (model);
+	    setSelected (false);
+	    
+	}
 
 }

@@ -142,13 +142,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		String command = e.getActionCommand();
 
+
 		if (command.equals("Cancel")) {
-		    map.cancelTile();
+		    map.processCancel();
 		} else if (command.equals ("Done")) {
 		    if (map.getSelectedHex() != null) {
-		        map.fixTile();
+		        map.processDone();
 		    } else {
-		        map.cancelTile();
+		        map.processCancel();
 		    }
 
 		    
