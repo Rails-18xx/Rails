@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.10 2005/12/01 00:57:04 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.11 2005/12/17 23:49:02 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -229,7 +229,7 @@ public class Tile implements TileI
 
 	/**
 	 * Get the valid upgrades if this tile on a certain hex (restrictions per
-	 * hex have noit yer been implemented).
+	 * hex have not yet been implemented).
 	 * 
 	 * @param hex
 	 *            The MapHex to be upgraded.
@@ -249,6 +249,19 @@ public class Tile implements TileI
 		 * b.toString();
 		 */
 		return upgradesString;
+	}
+	
+	public List getValidUpgrades (MapHex hex, PhaseI phase) {
+	    List valid = new ArrayList();
+	    Iterator it = upgrades.iterator();
+	    Tile upgrade;
+	    while (it.hasNext()) {
+	        upgrade = (Tile)it.next();
+	        if (phase.isTileColourAllowed(upgrade.getColour())) {
+	            valid.add(upgrade);
+	        }
+	    }
+	    return valid;
 	}
 
 	public boolean hasStations()

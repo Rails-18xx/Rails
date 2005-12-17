@@ -277,7 +277,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		else
 		{
 			ArrayList upgrades = (ArrayList) selectedHex.getCurrentTile()
-					.getUpgrades(selectedHex.getHexModel());
+					.getValidUpgrades(selectedHex.getHexModel(),
+					        GameManager.getCurrentPhase());
 			if (upgrades == null)
 			{
 				upgradesPanel.setUpgrades(null);

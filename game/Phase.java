@@ -6,6 +6,8 @@ package game;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import util.XmlUtils;
 
 import org.w3c.dom.Element;
@@ -17,9 +19,13 @@ import org.w3c.dom.NodeList;
  */
 public class Phase implements PhaseI {
     
-    int index;
-    String name;
-    HashMap tileColours;
+    protected int index;
+    protected String name;
+    protected HashMap tileColours;
+    protected boolean privateSellingAllowed = false;
+    protected boolean privatesClose = false;
+    
+    protected static boolean previousPrivateSellingAllowed = false;
     
     public Phase (int index, String name) {
         this.index = index;
@@ -28,24 +34,39 @@ public class Phase implements PhaseI {
     
 	public void configureFromXML(Element el) throws ConfigurationException {
 	    
-	    NamedNodeMap tileAttr;
+	    NamedNodeMap attributes;
 	    String colourList;
 	    String[] colourArray = new String[0];
 	    tileColours = new HashMap();
 	    
+	    // Allowed tile colours
         NodeList nl = el.getElementsByTagName("Tiles");
         if (nl != null && nl.getLength() > 0) {
-            tileAttr = nl.item(0).getAttributes();
-            colourList = XmlUtils.extractStringAttribute(tileAttr, "colour");
+            attributes = nl.item(0).getAttributes();
+            colourList = XmlUtils.extractStringAttribute(attributes, "colour");
             if (colourList != null) colourArray = colourList.split(",");
             for (int i=0; i<colourArray.length; i++) {
                 tileColours.put(colourArray[i], null);
             }
         }
+
+        // Private-related properties
+        nl = el.getElementsByTagName("Privates");
+        if (nl != null && nl.getLength() > 0) {
+            attributes = nl.item(0).getAttributes();
+            privateSellingAllowed = XmlUtils.extractBooleanAttribute
+            	(attributes, "sellingAllowed", previousPrivateSellingAllowed);
+            privatesClose = XmlUtils.extractBooleanAttribute
+        		(attributes, "close", false);
+        }
 	}
 	
 	public boolean isTileColourAllowed (String tileColour) {
 	    return tileColours.containsKey(tileColour);
+	}
+	
+	public Map getTileColours () {
+	    return tileColours;
 	}
 	
 	public int getIndex () {
@@ -56,13 +77,16 @@ public class Phase implements PhaseI {
 	    return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see game.PhaseI#getAvailableTrainTypes()
-	 */
-    /* NOT USED, IS NOW HANDLED BY TRAINMANAGER */
-	public List getAvailableTrainTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+    /**
+     * @return Returns the privatesClose.
+     */
+    public boolean doPrivatesClose() {
+        return privatesClose;
+    }
+    /**
+     * @return Returns the privateSellingAllowed.
+     */
+    public boolean isPrivateSellingAllowed() {
+        return privateSellingAllowed;
+    }
 }

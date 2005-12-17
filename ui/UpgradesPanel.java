@@ -23,6 +23,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private JLabel label;
 	
 	private static final String tileText = "<html><center>Select an<br>upgrade:</center></html>";
+	private static final String noUpgrades = "<html><center>No valid upgrades!</center></html>";
 	private static final String tokenText = "<html><center>Click city hex to lay a token</center></html>";
 	private boolean tokenMode = false;
 
@@ -84,7 +85,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 				
 				upgradePanel.add(hexLabel);
 			}
-			
+			label.setText (tileText);
+		} else if (!tokenMode) {
+		    label.setText(noUpgrades);
 		}
 		
 		done = new JButton("Done");

@@ -50,15 +50,18 @@
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
+			<Privates sellingAllowed="no"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
+			<Privates sellingAllowed="yes"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Privates close="yes"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>
