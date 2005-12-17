@@ -213,6 +213,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	        if (tileLayingEnabled)
 	            GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
 	    }
+	    
 	}
 
 	public void mouseEntered(MouseEvent arg0)

@@ -39,6 +39,8 @@ public class OperatingRound implements Round
 	protected Player currentPlayer;
 	protected int currentPlayerIndex;
 	protected int step;
+	protected boolean actionPossible = true;
+	protected String actionNotPossibleMessage = "";
 
 	protected TreeMap operatingCompanies;
 	protected PublicCompanyI[] operatingCompanyArray;
@@ -668,6 +670,9 @@ public class OperatingRound implements Round
 	 */
 	protected void nextStep(PublicCompanyI company)
 	{
+	    actionPossible = true;
+	    actionNotPossibleMessage = "";
+	    
 	    // Cycle through the steps until we reach one where action is allowed. 
 		while (++step < steps.length) {
 		    
@@ -677,7 +682,9 @@ public class OperatingRound implements Round
 		    if (step == STEP_CALC_REVENUE
 		            && operatingCompany.getPortfolio().getTrains().length == 0) {
 		        // No trains, then the revenue is zero.
-		        setRevenue (operatingCompany.getName(), 0);
+		        //setRevenue (operatingCompany.getName(), 0);
+		        actionPossible = false;
+		        actionNotPossibleMessage = "No trains owned, so Revenue is "+Bank.format(0);
 		        // which will call this method again twice,
 		        // so by now the step will be increased to STEP_BUY_TRAIN.
 		    }
@@ -689,6 +696,14 @@ public class OperatingRound implements Round
 		
 	    if (step >= steps.length) done(company.getName());
 		
+	}
+	
+	public boolean isActionAllowed() {
+	    return actionPossible;
+	}
+	
+	public String getActionNotAllowedMessage () {
+	    return actionNotPossibleMessage;
 	}
 	
 	protected void prepareStep (int step) {
@@ -720,6 +735,11 @@ public class OperatingRound implements Round
 	    return currentSpecialProperties;
 	}
 
+	public void skip(String compName) {
+	    
+	    nextStep (operatingCompany);
+	    
+	}
 	/**
 	 * The current Company is done operating.
 	 * 
