@@ -51,7 +51,7 @@ public class Player implements CashHolder
 
 	private int index = 0;
 
-	private CashModel wallet = new CashModel();
+	private CashModel wallet = new CashModel(this);
 	
 	private WorthModel worth = new WorthModel(this);
 

@@ -146,7 +146,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
       this.portfolio = new Portfolio(name, this);
       this.capitalisation = type.getCapitalisation();
-      treasury = new CashModel ();
+      treasury = new CashModel (this);
    }
    
    /**

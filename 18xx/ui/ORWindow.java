@@ -71,10 +71,10 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 	private Caption tileCaption, tokenCaption, revenueCaption, trainCaption;
 
-	private JButton leftButton;
-	private JButton middleButton;
-	private JButton rightButton;
-	private JButton closeButton;
+	private JButton button1;
+	private JButton button2;
+	private JButton button3;
+	private JButton button4;
 
 	private int np; // Number of players
 	private int nc; // Number of companies
@@ -117,33 +117,33 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		buttonPanel = new JPanel();
 
-		leftButton = new JButton("Lay tiles");
-		leftButton.setActionCommand("LayTile");
-		leftButton.setMnemonic(KeyEvent.VK_T);
-		leftButton.addActionListener(this);
-		leftButton.setEnabled(true);
-		buttonPanel.add(leftButton);
+		button1 = new JButton("Lay tiles");
+		button1.setActionCommand("LayTile");
+		button1.setMnemonic(KeyEvent.VK_T);
+		button1.addActionListener(this);
+		button1.setEnabled(true);
+		buttonPanel.add(button1);
 
-		middleButton = new JButton("Buy private");
-		middleButton.setActionCommand("BuyPrivate");
-		middleButton.setMnemonic(KeyEvent.VK_V);
-		middleButton.addActionListener(this);
-		middleButton.setEnabled(false);
-		buttonPanel.add(middleButton);
+		button2 = new JButton("Buy private");
+		button2.setActionCommand("BuyPrivate");
+		button2.setMnemonic(KeyEvent.VK_V);
+		button2.addActionListener(this);
+		button2.setEnabled(false);
+		buttonPanel.add(button2);
 
-		closeButton = new JButton("Close private");
-		closeButton.setActionCommand("ClosePrivate");
-		closeButton.setMnemonic(KeyEvent.VK_C);
-		closeButton.addActionListener(this);
-		closeButton.setEnabled(true);
-		buttonPanel.add(closeButton);
+		button3 = new JButton("Close private");
+		button3.setActionCommand("ClosePrivate");
+		button3.setMnemonic(KeyEvent.VK_C);
+		button3.addActionListener(this);
+		button3.setEnabled(true);
+		buttonPanel.add(button3);
 
-		rightButton = new JButton("Done");
-		rightButton.setActionCommand("Done");
-		rightButton.setMnemonic(KeyEvent.VK_D);
-		rightButton.addActionListener(this);
-		rightButton.setEnabled(true);
-		buttonPanel.add(rightButton);
+		button4 = new JButton("Done");
+		button4.setActionCommand("Done");
+		button4.setMnemonic(KeyEvent.VK_D);
+		button4.addActionListener(this);
+		button4.setEnabled(true);
+		buttonPanel.add(button4);
 
 		buttonPanel.setOpaque(true);
 
@@ -371,22 +371,22 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			{
 			    tileCaption.setHighlight(true);
 				tileCost[orCompIndex].setText("");
-			    leftButton.setVisible(false);
+			    button1.setVisible(false);
 			    
 			    GameUILoader.mapWindow.requestFocus();
 			    GameUILoader.mapWindow.enableTileLaying(true);
 			    
 			    GameUILoader.mapWindow.setSpecialTileLays(round.getSpecialProperties());
 
-				middleButton.setText("Buy Private");
-				middleButton.setActionCommand("BuyPrivate");
-				middleButton.setMnemonic(KeyEvent.VK_V);
-				middleButton.setEnabled(orComp.canBuyPrivates());
+				button2.setText("Buy Private");
+				button2.setActionCommand("BuyPrivate");
+				button2.setMnemonic(KeyEvent.VK_V);
+				button2.setEnabled(orComp.canBuyPrivates());
 
-				rightButton.setText("Done");
-				rightButton.setActionCommand("Done");
-				rightButton.setMnemonic(KeyEvent.VK_D);
-				rightButton.setEnabled(true);
+				button4.setText("Done");
+				button4.setActionCommand("Done");
+				button4.setMnemonic(KeyEvent.VK_D);
+				button4.setEnabled(false);
 				
 
 			}
@@ -398,45 +398,53 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			    tokenCaption.setHighlight(true);
 			    tokenCost[orCompIndex].setText("");
 			    
-				leftButton.setEnabled(false);
-			    leftButton.setVisible(false);
+				button1.setEnabled(false);
+			    button1.setVisible(false);
+				button4.setEnabled(false);
 
 			}
 			else if (step == OperatingRound.STEP_CALC_REVENUE)
 			{
 
-			    revenueCaption.setHighlight(true);
-				revenueSelect[orCompIndex].setValue(new Integer(companies[orCompIndex].getLastRevenue()));
-				setSelect(revenue[orCompIndex],
-						revenueSelect[orCompIndex],
-						true);
-
-				leftButton.setText("Set revenue");
-				leftButton.setActionCommand("SetRevenue");
-				leftButton.setMnemonic(KeyEvent.VK_R);
-				leftButton.setEnabled(true);
-				leftButton.setVisible(true);
+			    if (round.isActionAllowed()) {
+				    revenueCaption.setHighlight(true);
+					revenueSelect[orCompIndex].setValue(new Integer(companies[orCompIndex].getLastRevenue()));
+					setSelect(revenue[orCompIndex],
+							revenueSelect[orCompIndex],
+							true);
+	
+					button1.setText("Set revenue");
+					button1.setActionCommand("SetRevenue");
+					button1.setMnemonic(KeyEvent.VK_R);
+					button1.setEnabled(true);
+					button1.setVisible(true);
+			    } else {
+					displayMessage (round.getActionNotAllowedMessage());
+			        setRevenue(0);
+			        updateStatus();
+			        return;
+			    }
 
 			}
 			else if (step == OperatingRound.STEP_PAYOUT)
 			{
 
 			    revenueCaption.setHighlight(true);
-				leftButton.setText("Withhold");
-				leftButton.setActionCommand("Withhold");
-				leftButton.setMnemonic(KeyEvent.VK_W);
-				leftButton.setEnabled(true);
-				leftButton.setVisible(true);
+				button1.setText("Withhold");
+				button1.setActionCommand("Withhold");
+				button1.setMnemonic(KeyEvent.VK_W);
+				button1.setEnabled(true);
+				button1.setVisible(true);
 				
-				middleButton.setText("Split");
-				middleButton.setActionCommand("Split");
-				middleButton.setMnemonic(KeyEvent.VK_S);
-				middleButton.setEnabled(companies[orCompIndex].isSplitAllowed());
+				button2.setText("Split");
+				button2.setActionCommand("Split");
+				button2.setMnemonic(KeyEvent.VK_S);
+				button2.setEnabled(companies[orCompIndex].isSplitAllowed());
 
-				rightButton.setText("Pay out");
-				rightButton.setActionCommand("Payout");
-				rightButton.setMnemonic(KeyEvent.VK_P);
-				rightButton.setEnabled(true);
+				button4.setText("Pay out");
+				button4.setActionCommand("Payout");
+				button4.setMnemonic(KeyEvent.VK_P);
+				button4.setEnabled(true);
 			    
 
 			}
@@ -445,27 +453,27 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 			    trainCaption.setHighlight(true);
 
-				leftButton.setText("Buy train");
-				leftButton.setActionCommand("BuyTrain");
-				leftButton.setMnemonic(KeyEvent.VK_T);
-				leftButton.setEnabled(true);
-				leftButton.setVisible(true);
+				button1.setText("Buy train");
+				button1.setActionCommand("BuyTrain");
+				button1.setMnemonic(KeyEvent.VK_T);
+				button1.setEnabled(true);
+				button1.setVisible(true);
 
-				middleButton.setText("Buy Private");
-				middleButton.setActionCommand("BuyPrivate");
-				middleButton.setMnemonic(KeyEvent.VK_V);
-				middleButton.setEnabled(orComp.canBuyPrivates());
+				button2.setText("Buy Private");
+				button2.setActionCommand("BuyPrivate");
+				button2.setMnemonic(KeyEvent.VK_V);
+				button2.setEnabled(orComp.canBuyPrivates());
 
-				rightButton.setText("Done");
-				rightButton.setActionCommand("Done");
-				rightButton.setMnemonic(KeyEvent.VK_D);
-				rightButton.setEnabled(true);
+				button4.setText("Done");
+				button4.setActionCommand("Done");
+				button4.setMnemonic(KeyEvent.VK_D);
+				button4.setEnabled(true);
 
 			}
 			else if (step == OperatingRound.STEP_FINAL)
 			{
 
-				leftButton.setEnabled(false);
+				button1.setEnabled(false);
 
 			}
 			
@@ -487,17 +495,23 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 	public void layTile (MapHex hex, TileI tile, int orientation) {
 	    
-	    if (tile != null) {
+	    if (tile == null) {
+	        round.skip(orCompName);
+	    } else {
 	        // Let model process this first
-	        round.layTile(orCompName, hex, tile, orientation);
+	        if (round.layTile(orCompName, hex, tile, orientation)) {
+			    // Display the results
+			    int cost = round.getLastTileLayCost();
+				tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+				tiles[orCompIndex].setText(round.getLastTileLaid());
+				//updateCash(orCompIndex);
+				gameStatus.updateCompany(orComp.getPublicNumber());
+				gameStatus.updateBank();
+	        } else {
+	            displayError();
+	        }
+			button4.setEnabled(true);
 
-		    // Display the results
-		    int cost = round.getLastTileLayCost();
-			tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-			tiles[orCompIndex].setText(round.getLastTileLaid());
-			//updateCash(orCompIndex);
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
 	    }
 
 		LogWindow.addLog();
@@ -512,13 +526,17 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	
 	public void layBaseToken (MapHex hex) {
 	    
-	    if (hex != null) {
+	    if (hex == null) {
+	        round.skip(orCompName);
+	    } else if (round.layBaseToken (orCompName, hex)) {
 		    // Let model process this first
-		    round.layBaseToken (orCompName, hex);
 		    int cost = round.getLastBaseTokenLayCost();
 		    tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
 		    tokens[orCompIndex].setText(round.getLastBaseTokenLaid());
+	    } else {
+	        displayError();
 	    }
+		button4.setEnabled(true);
 	    
 		LogWindow.addLog();
 
@@ -529,7 +547,27 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			this.requestFocus();
 		}
 	}
-
+	
+	private void setRevenue (int amount) {
+	    
+		revenue[orCompIndex].setText(Bank.format(amount));
+		round.setRevenue(orCompName, amount);
+		setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
+		gameStatus.updateRevenue(orComp.getPublicNumber());
+		if (round.getStep() != OperatingRound.STEP_PAYOUT)
+		{
+			// The next step is skipped, so update all cash and the share
+			// price
+			StockChart.refreshStockPanel();
+			updatePrice(orCompIndex);
+			updateCash(orCompIndex);
+			gameStatus.updatePlayerCash();
+			gameStatus.updateCompany(orComp.getPublicNumber());
+			gameStatus.updateBank();
+		}
+	    
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -557,21 +595,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		{
 			amount = done ? 0
 					: ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
-			revenue[orCompIndex].setText(Bank.format(amount));
-			round.setRevenue(orCompName, amount);
-			setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-			gameStatus.updateRevenue(orComp.getPublicNumber());
-			if (round.getStep() != OperatingRound.STEP_PAYOUT)
-			{
-				// The next step is skipped, so update all cash and the share
-				// price
-				StockChart.refreshStockPanel();
-				updatePrice(orCompIndex);
-				updateCash(orCompIndex);
-				gameStatus.updatePlayerCash();
-				gameStatus.updateCompany(orComp.getPublicNumber());
-				gameStatus.updateBank();
-			}
+			setRevenue (amount);
 
 		}
 		else if (command.equals("Payout"))
@@ -670,7 +694,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					TrainI exchangedTrain = null;
 					Portfolio seller = null;
 					int price = 0;
-					System.out.println("Selling a train: " + sellerName);
 					if (type != null)
 					{
 						if (sellerName.equals("IPO"))
@@ -879,13 +902,16 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 						JOptionPane.QUESTION_MESSAGE);
 				amount = Integer.parseInt(price);
 				Player prevOwner = (Player) priv.getPortfolio().getOwner();
-				round.buyPrivate(orComp.getName(), priv.getName(), amount);
-				updateCash(orCompIndex);
-				gameStatus.updateCash(orComp);
-				gameStatus.updateCash(prevOwner);
-
-				gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
-				gameStatus.updatePlayerPrivates(prevOwner.getIndex());
+				if (!round.buyPrivate(orComp.getName(), priv.getName(), amount)) {
+				    displayError ();
+				} else {
+					updateCash(orCompIndex);
+					gameStatus.updateCash(orComp);
+					gameStatus.updateCash(prevOwner);
+	
+					gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
+					gameStatus.updatePlayerPrivates(prevOwner.getIndex());
+				}
 			}
 			catch (NullPointerException e)
 			{
@@ -1025,6 +1051,13 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
+	private void displayMessage (String text) {
+		JOptionPane.showMessageDialog (this, text);
+	}
+	
+	private void displayError () {
+	    JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+	}
 	
 	public void keyPressed(KeyEvent e) {
 	    if (e.getKeyCode() == KeyEvent.VK_F1) {
