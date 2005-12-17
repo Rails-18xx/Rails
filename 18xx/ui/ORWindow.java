@@ -381,7 +381,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(orComp.canBuyPrivates());
+				button2.setEnabled(GameManager.getCurrentPhase().isPrivateSellingAllowed());
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");
@@ -462,7 +462,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(orComp.canBuyPrivates());
+				button2.setEnabled(GameManager.getCurrentPhase().isPrivateSellingAllowed());
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");

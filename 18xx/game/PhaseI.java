@@ -4,23 +4,24 @@
  */
 package game;
 
-import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 
 /**
  * @author Erik Vos
  */
-public interface PhaseI {
-	
-    /* Probably redundant */
-	public List getAvailableTrainTypes();
-
-	public void configureFromXML(Element el) throws ConfigurationException;
+public interface PhaseI extends ConfigurableComponentI {
 	
 	public boolean isTileColourAllowed (String tileColour);
+	public Map getTileColours ();
 
 	public int getIndex ();
 	
 	public String getName ();
+	
+    public boolean doPrivatesClose();
+
+    public boolean isPrivateSellingAllowed();
+
 }

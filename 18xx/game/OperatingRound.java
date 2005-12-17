@@ -55,6 +55,8 @@ public class OperatingRound implements Round
 	
 	protected List currentSpecialProperties = null;
 	
+	protected PhaseI currentPhase;
+	
 	/** Number of tiles that may be laid. 
 	 * TODO: This does not cover cases like "2 yellow or 1 upgrade allowed".
 	 */
@@ -708,6 +710,8 @@ public class OperatingRound implements Round
 	
 	protected void prepareStep (int step) {
 	    
+	    currentPhase = PhaseManager.getInstance().getCurrentPhase();
+	    
 	    if (step == STEP_LAY_TRACK) {
 
 	        normalTileLaysDone = 0;
@@ -734,7 +738,7 @@ public class OperatingRound implements Round
 	public List getSpecialProperties () {
 	    return currentSpecialProperties;
 	}
-
+	
 	public void skip(String compName) {
 	    
 	    nextStep (operatingCompany);

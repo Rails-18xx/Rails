@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PhaseManager.java,v 1.1 2005/10/16 15:02:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PhaseManager.java,v 1.2 2005/12/17 23:49:02 evos Exp $
  * 
  * Created on 16-Oct-2005
  * Change Log:
@@ -55,6 +55,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI {
 		    phaseMap.put(name, phase);
 		    phase.configureFromXML(pe);
 		}
+	    GameManager.setCurrentPhase((PhaseI)phaseList.get(0));
 
 	}
 	
@@ -74,6 +75,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI {
 	    PhaseI nextPhase = (PhaseI) phaseMap.get(name);
 	    if (nextPhase != null) {
 	        currentIndex = nextPhase.getIndex();
+		    GameManager.setCurrentPhase(nextPhase);
 	    }
 	}
 

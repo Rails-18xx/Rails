@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.14 2005/12/13 02:06:33 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.15 2005/12/17 23:49:02 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -391,6 +391,10 @@ public class GameManager implements ConfigurableComponentI
 	public static PhaseI getCurrentPhase()
 	{
 		return currentPhase;
+	}
+	
+	public static void setCurrentPhase (PhaseI phase) {
+	    currentPhase = phase;
 	}
 
 	protected static void addVariant(String name)
