@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.3 2005/10/16 15:06:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/MakeGameTileSets.java,v 1.4 2005/12/18 16:20:22 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -45,14 +45,15 @@ public class MakeGameTileSets {
 	            if (gamesDir.exists() && gamesDir.isDirectory()) {
 	                File[] files =  gamesDir.listFiles();
 	                for (int i=0; i<files.length; i++) {
-	                    if (files[i].isDirectory()) {
+	                    if (files[i].isDirectory()
+	    	                    && !files[i].getName().equalsIgnoreCase("CVS")) {
 	                        games.add(files[i].getName());
 	                    }
 	                }
 	            }
 	            
 	            
-	            new MakeGameTileSets((String[])games.toArray());
+	            new MakeGameTileSets((String[])games.toArray(new String[0]));
 	            
 	        } else {
 	            
@@ -95,7 +96,7 @@ public class MakeGameTileSets {
      	// Open and read the tile set for this game
         String tileSetPath = "data/" + gameName + "/TileSet.xml";
         Element tileSet = XmlUtils.findElementInFile(tileSetPath,
-        		"TileSet");
+        		"TileManager");
         if (tileSet == null) return;
         NodeList tiles = tileSet.getElementsByTagName("Tile");
         Map tilesInSet = new HashMap();
@@ -131,7 +132,7 @@ public class MakeGameTileSets {
                     Element copy = (Element) outputDoc.importNode(((Element)tileMap.get(tileName)), true);
                     outputDoc.getDocumentElement().appendChild(copy);
                 } else {
-                    System.out.println("ERROR: "+gameName+" tile "+tileName+" not found.");
+                    System.out.println("ERROR: specified "+gameName+" tile "+tileName+" not found in Tiles.xml.");
                 }
             }
             
@@ -144,7 +145,7 @@ public class MakeGameTileSets {
                 
                 // No, warn and add it to the tiles document.
                 System.out.println("WARNING: " + gameName 
-                		+ " preprinted tile "+tileName+" does not occur in TileSet!");
+                		+ " preprinted map tile "+tileName+" does not occur in TileSet!");
                 
                 // Get the Tile specification
                 Element tileSpec = (Element)tileMap.get(tileName);
