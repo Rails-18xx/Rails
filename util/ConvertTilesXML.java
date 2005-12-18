@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.6 2005/11/27 20:59:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.7 2005/12/18 16:20:22 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -32,7 +32,7 @@ public class ConvertTilesXML {
 
     private static String outputFilePath = "tiles/Tiles.xml";
     
-    private static Map colourMap, stationMap, gaugeMap, sidesMap;
+    private static Map colourMap, stationMap, gaugeMap, sidesMap, cityMap;
     private static Map junctionPosition;
     
     /** Maps non-edge non-station junctions to tracks ending there.*/
@@ -82,6 +82,69 @@ public class ConvertTilesXML {
         sidesMap.put("tp4SideD", "side3");
         sidesMap.put("tp4SideE", "side4");
         sidesMap.put("tp4SideF", "side5");
+        
+        cityMap = new HashMap();
+        cityMap.put("tpCenter", "0");
+        cityMap.put("tp1SideA", "001");
+        cityMap.put("tp1CornerA", "051");
+        cityMap.put("tp1SideB", "101");
+        cityMap.put("tp1CornerB", "151");
+        cityMap.put("tp1SideC", "201");
+        cityMap.put("tp1CornerC", "251");
+        cityMap.put("tp1SideD", "301");
+        cityMap.put("tp1CornerD", "351");
+        cityMap.put("tp1SideE", "401");
+        cityMap.put("tp1CornerE", "451");
+        cityMap.put("tp1SideF", "501");
+        cityMap.put("tp1CornerF", "551");
+        cityMap.put("tp2SideA", "002");
+        cityMap.put("tp2CornerA", "052");
+        cityMap.put("tp2SideB", "102");
+        cityMap.put("tp2CornerB", "152");
+        cityMap.put("tp2SideC", "202");
+        cityMap.put("tp2CornerC", "252");
+        cityMap.put("tp2SideD", "302");
+        cityMap.put("tp2CornerD", "352");
+        cityMap.put("tp2SideE", "402");
+        cityMap.put("tp2CornerE", "452");
+        cityMap.put("tp2SideF", "502");
+        cityMap.put("tp2CornerF", "552");
+        cityMap.put("tp3SideA", "003");
+        cityMap.put("tp3CornerA", "053");
+        cityMap.put("tp3SideB", "103");
+        cityMap.put("tp3CornerB", "153");
+        cityMap.put("tp3SideC", "203");
+        cityMap.put("tp3CornerC", "253");
+        cityMap.put("tp3SideD", "303");
+        cityMap.put("tp3CornerD", "353");
+        cityMap.put("tp3SideE", "403");
+        cityMap.put("tp3CornerE", "453");
+        cityMap.put("tp3SideF", "503");
+        cityMap.put("tp3CornerF", "553");
+        cityMap.put("tpCurve1RightA", "006");
+        cityMap.put("tpCurve2RightA", "007");
+        cityMap.put("tpCurve2LeftA", "008");
+        cityMap.put("tpCurve1LeftA", "009");
+        cityMap.put("tpCurve1RightB", "106");
+        cityMap.put("tpCurve2RightB", "107");
+        cityMap.put("tpCurve2LeftB", "108");
+        cityMap.put("tpCurve1LeftB", "109");
+        cityMap.put("tpCurve1RightC", "206");
+        cityMap.put("tpCurve2RightC", "207");
+        cityMap.put("tpCurve2LeftC", "208");
+        cityMap.put("tpCurve1LeftC", "209");
+        cityMap.put("tpCurve1RightD", "306");
+        cityMap.put("tpCurve2RightD", "307");
+        cityMap.put("tpCurve2LeftD", "308");
+        cityMap.put("tpCurve1LeftD", "309");
+        cityMap.put("tpCurve1RightE", "406");
+        cityMap.put("tpCurve2RightE", "407");
+        cityMap.put("tpCurve2LeftE", "408");
+        cityMap.put("tpCurve1LeftE", "409");
+        cityMap.put("tpCurve1RightF", "506");
+        cityMap.put("tpCurve2RightF", "507");
+        cityMap.put("tpCurve2LeftF", "508");
+        cityMap.put("tpCurve1LeftF", "509");
             
     }
 
@@ -252,14 +315,28 @@ public class ConvertTilesXML {
             outputJunction.setAttribute("slots", station[1]);
         }
         
+        String[] p = (String[])((String[]) stationMap.get(type)).clone();
+        if (station == null) {
+            throw new ConfigurationException ("Unknown junction type: "+type);
+        }
+        
+
+        // Junction revenue
         Element revenue = (Element) inputJunction.getElementsByTagName("revenue").item(0);
         if (revenue != null) {
             String value = revenue.getElementsByTagName("value").item(0).getFirstChild().getNodeValue();
             outputJunction.setAttribute("value", value);
         }
         
+        // Junction position
         String junctionPos = inputJunction.getElementsByTagName("position").item(0).getFirstChild().getNodeValue();
         junctionPosition.put(junctionPos, cityId);
+        String jName = (String)cityMap.get(junctionPos);
+        if (XmlUtils.hasValue(jName)) {
+            outputJunction.setAttribute("position", jName);
+        } else {
+            throw new ConfigurationException ("Unknown position: "+junctionPos);
+        }
     }
     
     private void convertConnection (Element inputConnection, Element outputTile) 
