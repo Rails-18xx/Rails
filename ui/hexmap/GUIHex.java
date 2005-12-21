@@ -24,6 +24,7 @@ public class GUIHex
 	protected MapHex model;
 	protected GeneralPath innerHexagon;
 	protected static final Color highlightColor = Color.red;
+	protected Point center;
 
 	protected String hexName;
 	protected int currentTileId;
@@ -103,7 +104,11 @@ public class GUIHex
 		hexagon = makePolygon(6, xVertex, yVertex, true);
 		rectBound = hexagon.getBounds();
 
-		Point2D.Double center = findCenter2D();
+		center = new Point((int) ((xVertex[2] + xVertex[5]) / 2),
+				(int) ((yVertex[0] + yVertex[3]) / 2));
+		Point2D.Double center2D = 	
+		    new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
+				(yVertex[0] + yVertex[3]) / 2.0);
 
 		final double innerScale = 0.8;
 		AffineTransform at = AffineTransform.getScaleInstance(innerScale,
@@ -115,8 +120,8 @@ public class GUIHex
 		Point2D.Double innerCenter = new Point2D.Double(innerBounds.getX()
 				+ innerBounds.getWidth() / 2.0, innerBounds.getY()
 				+ innerBounds.getHeight() / 2.0);
-		at = AffineTransform.getTranslateInstance(center.getX()
-				- innerCenter.getX(), center.getY() - innerCenter.getY());
+		at = AffineTransform.getTranslateInstance(center2D.getX()
+				- innerCenter.getX(), center2D.getY() - innerCenter.getY());
 		innerHexagon.transform(at);
 
 	}
@@ -225,20 +230,6 @@ public class GUIHex
 		return polygon;
 	}
 
-	/** Return the Point closest to the center of the polygon. */
-	public Point findCenter()
-	{
-		return new Point((int) ((xVertex[2] + xVertex[5]) / 2),
-				(int) ((yVertex[0] + yVertex[3]) / 2));
-	}
-
-	/** Return the Point2D.Double at the center of the polygon. */
-	Point2D.Double findCenter2D()
-	{
-		return new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
-				(yVertex[0] + yVertex[3]) / 2.0);
-	}
-
 	public void setNeighbor(int i, GUIHex hex)
 	{
 		if (i >= 0 && i < 6)
@@ -343,7 +334,6 @@ public class GUIHex
 
 	private void paintOverlay(Graphics2D g2)
 	{
-		Point center = findCenter();
 		if (provisionalGUITile != null)
 		{
 			provisionalGUITile.paintTile(g2, center.x, center.y);
@@ -414,7 +404,6 @@ public class GUIHex
 	//The horror!
 	private Point getTokenOrigin(int numTokens, int currentToken, int numStations, int currentStation)
 	{
-		Point c = findCenter();
 		Point p = new Point();
 		
 		switch(numStations)
@@ -423,11 +412,11 @@ public class GUIHex
 				switch(numTokens)
 				{
 					case 1:
-						p.x = (c.x-9);
-						p.y = (c.y-9);
+						p.x = (center.x-9);
+						p.y = (center.y-9);
 						return p;
 					default:
-						return findCenter();
+						return center;
 				}
 			case 2:
 				if(currentStation == 0)
@@ -435,11 +424,11 @@ public class GUIHex
 					switch(numTokens)
 					{
 						case 1:
-							p.x = (c.x-14);
-							p.y = (c.y+3);
+							p.x = (center.x-14);
+							p.y = (center.y+3);
 							return p;
 						default:
-							return findCenter();
+							return center;
 					}
 				}
 				else
@@ -447,11 +436,11 @@ public class GUIHex
 					switch(numTokens)
 					{
 						case 1:
-							p.x = (c.x-1);
-							p.y = (c.y-20);
+							p.x = (center.x-1);
+							p.y = (center.y-20);
 							return p;
 						default:
-							return findCenter();
+							return center;
 					}
 				}
 			case 3:
@@ -460,7 +449,7 @@ public class GUIHex
 				//Known cases: 3 single token stations,
 				//				2 double token station and a single token station
 			default:
-				return findCenter();
+				return center;
 		}
 	}
 
@@ -601,6 +590,10 @@ public class GUIHex
 		}
 		setSelected(false);
 		setToolTip();
+	}
+	
+	public void dropToken () {
+	    // TO BE CREATED
 	}
 	
 	public void removeToken() {

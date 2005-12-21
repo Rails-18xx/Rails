@@ -146,12 +146,12 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
       Dimension size = new Dimension(40, 40);
       Color bgColour;
       Color fgColour;
-      PublicCompany co;      
+      PublicCompanyI co;      
       Token token;
       
       for (int k = 0; k < tokenList.size(); k++)
       {
-         co = (PublicCompany) tokenList.get(k);
+         co = (PublicCompanyI) tokenList.get(k);
          bgColour = co.getBgColour();
          fgColour = co.getFgColour();
 
