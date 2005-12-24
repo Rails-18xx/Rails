@@ -254,36 +254,39 @@ public class OperatingRound implements Round
 				break;
 			}
 
-			if (tile != null)
+			if (tile == null) break;
+
+		    if (tile.countFreeTiles() == 0) {
+		        errMsg = "Tile "+tile.getName()+" not available";
+		        break;
+		    }
+
+			// Sort out cost
+			if (hex.getCurrentTile().getId() == hex.getPreprintedTileId())
 			{
+				cost = hex.getTileCost();
+			}
+			else
+			{
+				cost = 0;
+			}
 
-				// Sort out cost
-				if (hex.getCurrentTile().getId() == hex.getPreprintedTileId())
-				{
-					cost = hex.getTileCost();
-				}
-				else
-				{
-					cost = 0;
-				}
-
-				// Amount must be non-negative multiple of 10
-				if (cost < 0)
-				{
-					errMsg = "Negative amount not allowed";
-					break;
-				}
-				if (cost % 10 != 0)
-				{
-					errMsg = "Amount must be a multiple of 10";
-					break;
-				}
-				// Does the company have the money?
-				if (cost > operatingCompany.getCash())
-				{
-					errMsg = "Not enough money";
-					break;
-				}
+			// Amount must be non-negative multiple of 10
+			if (cost < 0)
+			{
+				errMsg = "Negative amount not allowed";
+				break;
+			}
+			if (cost % 10 != 0)
+			{
+				errMsg = "Amount must be a multiple of 10";
+				break;
+			}
+			// Does the company have the money?
+			if (cost > operatingCompany.getCash())
+			{
+				errMsg = "Not enough money";
+				break;
 			}
 			break;
 		}

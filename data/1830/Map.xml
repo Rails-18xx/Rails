@@ -9,7 +9,7 @@
 	<Hex name="B14" tile="0"/>
 	<Hex name="B16" tile="-10" impassable="C17"/>
 	<Hex name="B18" tile="0" cost="80"/>
-	<Hex name="B20" tile="-1" blocking="C&amp;StL"/>
+	<Hex name="B20" tile="-1"/>
 	<Hex name="B22" tile="0"/>
 	<Hex name="B24" tile="-902" orientation="2"/>
 	<Hex name="C7" tile="0"/>
@@ -29,7 +29,7 @@
 	<Hex name="D12" tile="0"/>
 	<Hex name="D14" tile="-102" value="20"/>
 	<Hex name="D16" tile="0"/>
-	<Hex name="D18" tile="0" blocking="M&amp;H"/>
+	<Hex name="D18" tile="0"/>
 	<Hex name="D20" tile="0"/>
 	<Hex name="D22" tile="0" cost="120"/>
 	<Hex name="D24" tile="-7" orientation="2"/>
@@ -51,7 +51,7 @@
 	<Hex name="F10" tile="-1"/>
 	<Hex name="F12" tile="0"/>
 	<Hex name="F14" tile="0"/>
-	<Hex name="F16" tile="-10" cost="120" blocking="D&amp;H"/>
+	<Hex name="F16" tile="-10" cost="120"/>
 	<Hex name="F18" tile="0"/>
 	<Hex name="F20" tile="-2"/>
 	<Hex name="F22" tile="-10" cost="80"/>
@@ -62,7 +62,7 @@
 	<Hex name="G9" tile="0"/>
 	<Hex name="G11" tile="0"/>
 	<Hex name="G13" tile="0" cost="120"/>
-	<Hex name="G15" tile="0" cost="120" blocking="SVNRR"/>
+	<Hex name="G15" tile="0" cost="120"/>
 	<Hex name="G17" tile="-2"/>
 	<Hex name="G19" tile="-21"  orientation="1" home="NYNH" preferredCity="2" cost="80"/>
 	<Hex name="H2" tile="0"/>
@@ -73,7 +73,7 @@
 	<Hex name="H12" tile="-101" home="PRR"/>
 	<Hex name="H14" tile="0"/>
 	<Hex name="H16" tile="-10"/>
-	<Hex name="H18" tile="-20" label="OO" blocking="C&amp;A"/>
+	<Hex name="H18" tile="-20" label="OO"/>
 	<Hex name="I1" tile="-901" orientation="5"/>
 	<Hex name="I3" tile="0"/>
 	<Hex name="I5" tile="0"/>
@@ -81,7 +81,7 @@
 	<Hex name="I9" tile="0"/>
 	<Hex name="I11" tile="0" cost="120"/>
 	<Hex name="I13" tile="0"/>
-	<Hex name="I15" tile="-11" label="B" home="B&amp;O" blocking="B&amp;O"/>
+	<Hex name="I15" tile="-11" label="B" home="B&amp;O"/>
 	<Hex name="I17" tile="0" cost="80"/>
 	<Hex name="I19" tile="-3" orientation="2"/>
 	<Hex name="J2" tile="-902" orientation="5"/>

@@ -39,7 +39,7 @@ public final class XmlUtils {
      * @return the named attribute's value or null if absent.
      */
     public static String extractStringAttribute(NamedNodeMap nnp, String attrName) {
-    	  return extractStringAttribute(nnp, attrName, null);
+    	return extractStringAttribute(nnp, attrName, null);
     }
 
     /**
@@ -53,10 +53,10 @@ public final class XmlUtils {
      */
     public static String extractStringAttribute(NamedNodeMap nnp, String attrName,
     		String defaultValue) {
+        
+        if (nnp == null) return defaultValue;
         Node nameAttr = nnp.getNamedItem(attrName);
-        if (nameAttr == null) {
-                return defaultValue;
-        }
+        if (nameAttr == null) return defaultValue;
         return nameAttr.getNodeValue();        
     }
 
@@ -85,6 +85,8 @@ public final class XmlUtils {
  	public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName,
  				int defaultValue) 
 		throws ConfigurationException {
+ 	    
+        if (nnp == null) return defaultValue;
 		Node nameAttr = nnp.getNamedItem(attrName);
 		if (nameAttr == null) {
 				return defaultValue;
@@ -123,6 +125,8 @@ public final class XmlUtils {
  	public static boolean extractBooleanAttribute(NamedNodeMap nnp, String attrName,
  				boolean defaultValue) 
 		throws ConfigurationException {
+ 	    
+        if (nnp == null) return defaultValue;
 		Node nameAttr = nnp.getNamedItem(attrName);
 		if (nameAttr == null) {
 				return defaultValue;
@@ -133,6 +137,8 @@ public final class XmlUtils {
 
  	public static int[] extractIntegerArrayAttribute (NamedNodeMap nnp,
  	        String attrName) throws ConfigurationException {
+ 	    
+        if (nnp == null) return null;
  	    Node nameAttr = nnp.getNamedItem(attrName);
  	    if (nameAttr == null) return new int[0];
  	    String[] values = nameAttr.getNodeValue().split(",");

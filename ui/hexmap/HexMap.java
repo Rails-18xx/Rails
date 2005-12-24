@@ -163,11 +163,13 @@ public abstract class HexMap extends JComponent implements MouseListener,
 					repaint(selectedHex.getBounds());
 					selectedHex = null;
 				}
-				if (clickedHex.getCurrentTile().isUpgradeableNow())
+				if (clickedHex.getHexModel().isUpgradeableNow())
 				{
 					clickedHex.setSelected(true);
 					selectedHex = clickedHex;
 					repaint(selectedHex.getBounds());
+				} else {
+					JOptionPane.showMessageDialog (this, "This hex cannot be upgraded now");
 				}
 			}
 

@@ -13,9 +13,15 @@
 	<TrainLimit number="4,4,3,2"/>
   </CompanyType>
   
-  <Company name="Flos" type="Private" basePrice="20" revenue="5"/>
-  <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10"/>
-  <Company name="TCC" type="Private" basePrice="50" revenue="10"/>
+  <Company name="Flos" type="Private" basePrice="20" revenue="5">
+    <Blocking hex="L3"/>
+  </Company>
+  <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
+    <Blocking hex="I12"/>
+  </Company>
+  <Company name="TCC" type="Private" basePrice="50" revenue="10">
+    <Blocking hex="H11"/>
+  </Company>
   <Company name="Ship" type="Private" tokens="1" tokenValue="20" basePrice="70" revenue="15"/>
   <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
   <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>

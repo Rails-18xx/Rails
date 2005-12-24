@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.11 2005/12/17 23:49:02 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.12 2005/12/24 13:56:36 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -28,6 +28,15 @@ public class Tile implements TileI
 	private List stations = new ArrayList();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
+	
+	/** Array that will have as many elements as there are tiles available.
+	 * The value is the MapHex on which a tile is laid, or null if it is free.
+	 * If the array size is 0, the tiles are not counted (this covers both
+	 * preprinted tiles, and tiles that are available in an unlimited quantity.   
+	 * (Hopefully this array will do as a replacement for separate objects per physical tile).
+	 */
+	private int quantity;
+	private MapHex[] tiles;
 
 	public Tile(Integer id)
 	{
@@ -116,6 +125,12 @@ public class Tile implements TileI
 			station = new Station(sid, type, value, slots);
 			stations.add(station);
 		}
+		
+		/* Amount */
+		NamedNodeMap seAttr = se.getAttributes();
+		quantity = XmlUtils.extractIntegerAttribute(seAttr, "quantity", 0);
+		/* The value '99' means 'unlimited' */
+		if (quantity > 0 && quantity < 99) tiles = new MapHex[quantity];
 
 		/* Upgrades */
 		NodeList upgnl = se.getElementsByTagName("Upgrade");
@@ -257,7 +272,8 @@ public class Tile implements TileI
 	    Tile upgrade;
 	    while (it.hasNext()) {
 	        upgrade = (Tile)it.next();
-	        if (phase.isTileColourAllowed(upgrade.getColour())) {
+	        if (phase.isTileColourAllowed(upgrade.getColour())
+	                && upgrade.countFreeTiles() != 0 /* -1 means unlimited */) {
 	            valid.add(upgrade);
 	        }
 	    }
@@ -277,5 +293,55 @@ public class Tile implements TileI
 	public int getNumStations()
 	{
 		return stations.size();
+	}
+	
+	public boolean lay (MapHex hex) {
+	    if (tiles == null || tiles.length == 0) return true;
+	    int index = findTile (null);
+	    if (index >= 0) {
+	        tiles[index] = hex;
+	        //System.out.println("+++ Tile #"+name+" nr. "+(index+1)+" laid on hex "+hex.getName());
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+	
+	public boolean remove (MapHex hex) {
+	    if (tiles == null || tiles.length == 0) return true;
+	    int index = findTile (hex);
+	    if (index >= 0) {
+	        tiles[index] = null;
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+	
+	/** Find the index of the tile laid on a certain hex.
+	 * If the argument is null, the first free tile index is returned. 
+	 * @param hex 
+	 * @return
+	 */
+	private int findTile(MapHex hex) {
+	    if (tiles == null || tiles.length == 0) return -1;
+	    for (int i=0; i<tiles.length; i++) {
+	        if (tiles[i] == hex) return i;
+	    }
+	    return -1;
+	}
+	
+	/** Return the number of free tiles */
+	public int countFreeTiles () {
+	    if (tiles == null || tiles.length == 0) return -1;
+	    int count = 0;
+	    for (int i=0; i<tiles.length; i++) {
+	        if (tiles[i] == null) count++;
+	    }
+	    return count;
+	}
+	
+	public int getAmount () {
+	    return quantity;
 	}
 }
