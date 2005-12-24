@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.7 2005/12/17 23:49:02 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.8 2005/12/24 13:56:36 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -46,4 +46,9 @@ public interface TileI
 	public List getStations();
 	
 	public int getNumStations();
+
+	public boolean lay (MapHex hex);
+	public boolean remove (MapHex hex);
+	public int countFreeTiles ();
+	public int getAmount ();
 }

@@ -26,6 +26,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	protected List specialProperties = null;
 	protected String auctionType;
 	protected int closingPhase;
+	
+	protected List blockedHexes = null;
 
 	protected boolean closed = false;
 
@@ -52,6 +54,20 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
 					"revenue",
 					"0"));
+			
+			// Blocked hexes (until bought by a company)
+			Element blEl = (Element) element.getElementsByTagName("Blocking").item(0);
+			if (blEl != null) {
+			    String[] hexes = XmlUtils.extractStringAttribute(blEl.getAttributes(), "hex").split(",");
+			    if (hexes != null && hexes.length > 0) {
+			        blockedHexes = new ArrayList();
+			        for (int i=0; i<hexes.length; i++) {
+			            MapHex hex = MapManager.getInstance().getHex(hexes[i]);
+			            blockedHexes.add(hex);
+			            hex.setBlocked(true);
+			        }
+			    }
+			}
 			
 			// Special properties
 			Element spsEl = (Element) element.getElementsByTagName("SpecialProperties").item(0);
@@ -186,6 +202,15 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	public void setHolder(Portfolio portfolio)
 	{
 		this.portfolio = portfolio;
+		
+		/* If this private is blocking map hexes, unblock these hexes
+		 * as soon as it is bought by a company. */
+		if (blockedHexes != null && portfolio.getOwner() instanceof CompanyI) {
+		    Iterator it = blockedHexes.iterator();
+		    while (it.hasNext()) {
+		        ((MapHex)it.next()).setBlocked(false);
+		    }
+		}
 	}
 
 	public void payOut()

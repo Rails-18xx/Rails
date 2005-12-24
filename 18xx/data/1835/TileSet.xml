@@ -1,126 +1,126 @@
 <TileManager  tiles="Tiles.xml">
 	<!-- yellow tiles -->
-	<Tile id="1" amount="1" />
-	<Tile id="2" amount="1" />
-	<Tile id="3" amount="2" />
-	<Tile id="4" amount="3" />
-	<Tile id="5" amount="3" >
+	<Tile id="1" quantity="1" />
+	<Tile id="2" quantity="1" />
+	<Tile id="3" quantity="2" />
+	<Tile id="4" quantity="3" />
+	<Tile id="5" quantity="3" >
 		<Upgrade id="12,13,14,15,205,206" />
 	</Tile>
-	<Tile id="6" amount="3" >
+	<Tile id="6" quantity="3" >
 		<Upgrade id="12,13,14,15,205" />
 	</Tile>
-	<Tile id="7" amount="8">
+	<Tile id="7" quantity="8">
 		<Upgrade id="18,26,27,28,29" />
 	</Tile>
-	<Tile id="8" amount="16">
+	<Tile id="8" quantity="16">
 		<Upgrade id="16,19,23,24,25,28,29" />
 	</Tile>
-	<Tile id="9" amount="12">
+	<Tile id="9" quantity="12">
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
-	<Tile id="55" amount="1" />
-	<Tile id="56" amount="1" />
-	<Tile id="57" amount="2">
+	<Tile id="55" quantity="1" />
+	<Tile id="56" quantity="1" />
+	<Tile id="57" quantity="2">
 		<Upgrade id="14,15,205,206" />
 	</Tile>
-	<Tile id="58" amount="4" />
-	<Tile id="69" amount="2" />
-	<Tile id="201" amount="2">
+	<Tile id="58" quantity="4" />
+	<Tile id="69" quantity="2" />
+	<Tile id="201" quantity="2">
 		<Upgrade id="207,208" />
 	</Tile>
-	<Tile id="202" amount="2">
+	<Tile id="202" quantity="2">
 		<Upgrade id="207,208" />
 	</Tile>
 
 	<!-- green tiles -->
-	<Tile id="12" amount="2">
+	<Tile id="12" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="13" amount="2">
+	<Tile id="13" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="14" amount="2">
+	<Tile id="14" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="15" amount="2">
+	<Tile id="15" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="16" amount="2">
+	<Tile id="16" quantity="2">
 		<Upgrade id="43,70" />
 	</Tile>
-	<Tile id="18" amount="1">
+	<Tile id="18" quantity="1">
 		<Upgrade id="43" />
 	</Tile>
-	<Tile id="19" amount="2">
+	<Tile id="19" quantity="2">
 		<Upgrade id="45,46" />
 	</Tile>
-	<Tile id="20" amount="2">
+	<Tile id="20" quantity="2">
 		<Upgrade id="44,47" />
 	</Tile>
-	<Tile id="23" amount="3">
+	<Tile id="23" quantity="3">
 		<Upgrade id="41,43,45,47" />
 	</Tile>
-	<Tile id="24" amount="3">
+	<Tile id="24" quantity="3">
 		<Upgrade id="42,43,46,47" />
 	</Tile>
-	<Tile id="25" amount="3">
+	<Tile id="25" quantity="3">
 		<Upgrade id="40" />
 	</Tile>
-	<Tile id="26" amount="2">
+	<Tile id="26" quantity="2">
 		<Upgrade id="42,44,45" />
 	</Tile>
-	<Tile id="27" amount="2">
+	<Tile id="27" quantity="2">
 		<Upgrade id="41,44,46" />
 	</Tile>
-	<Tile id="28" amount="2">
+	<Tile id="28" quantity="2">
 		<Upgrade id="39,43,46,70" />
 	</Tile>
-	<Tile id="29" amount="2">
+	<Tile id="29" quantity="2">
 		<Upgrade id="39,43,45,70" />
 	</Tile>
-	<Tile id="87" amount="2" />
-	<Tile id="88" amount="2" />
-	<Tile id="203" amount="2" />
-	<Tile id="204" amount="2" />
-	<Tile id="205" amount="1">
+	<Tile id="87" quantity="2" />
+	<Tile id="88" quantity="2" />
+	<Tile id="203" quantity="2" />
+	<Tile id="204" quantity="2" />
+	<Tile id="205" quantity="1">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="206" amount="1">
+	<Tile id="206" quantity="1">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="207" amount="2">
+	<Tile id="207" quantity="2">
 		<Upgrade id="216" />
 	</Tile>
-	<Tile id="208" amount="2">
+	<Tile id="208" quantity="2">
 		<Upgrade id="216" />
 	</Tile>
-	<Tile id="209" amount="1">
+	<Tile id="209" quantity="1">
 		<Upgrade id="220" />
 	</Tile>
-	<Tile id="210" amount="1" />
-	<Tile id="211" amount="1" />
-	<Tile id="212" amount="1" />
-	<Tile id="213" amount="1" />
-	<Tile id="214" amount="1" />
-	<Tile id="215" amount="1" />
+	<Tile id="210" quantity="1" />
+	<Tile id="211" quantity="1" />
+	<Tile id="212" quantity="1" />
+	<Tile id="213" quantity="1" />
+	<Tile id="214" quantity="1" />
+	<Tile id="215" quantity="1" />
 
 	<!-- Brown tiles -->
-	<Tile id="39" amount="1" />
-	<Tile id="40" amount="1" />
-	<Tile id="41" amount="2" />
-	<Tile id="42" amount="2" />
-	<Tile id="43" amount="1" />
-	<Tile id="44" amount="2" />
-	<Tile id="45" amount="2" />
-	<Tile id="46" amount="2" />
-	<Tile id="47" amount="2" />
-	<Tile id="63" amount="3" />
-	<Tile id="70" amount="1" />
-	<Tile id="216" amount="4" />
-	<Tile id="217" amount="2" />
-	<Tile id="218" amount="2" />
-	<Tile id="219" amount="2" />
-	<Tile id="220" amount="1" />
-	<Tile id="221" amount="1" />
+	<Tile id="39" quantity="1" />
+	<Tile id="40" quantity="1" />
+	<Tile id="41" quantity="2" />
+	<Tile id="42" quantity="2" />
+	<Tile id="43" quantity="1" />
+	<Tile id="44" quantity="2" />
+	<Tile id="45" quantity="2" />
+	<Tile id="46" quantity="2" />
+	<Tile id="47" quantity="2" />
+	<Tile id="63" quantity="3" />
+	<Tile id="70" quantity="1" />
+	<Tile id="216" quantity="4" />
+	<Tile id="217" quantity="2" />
+	<Tile id="218" quantity="2" />
+	<Tile id="219" quantity="2" />
+	<Tile id="220" quantity="1" />
+	<Tile id="221" quantity="1" />
 </TileManager>

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.23 2005/12/15 22:44:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.24 2005/12/24 13:56:36 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -89,6 +89,8 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	protected ArrayList stations;
 	protected boolean hasTokens;
+	
+	protected boolean isBlocked = false;
 
 	public MapHex()
 	{
@@ -410,8 +412,9 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	{
 		// Move tokens from old station list to new station list.
 		// Merge lists if necessary.
+	    if (currentTile != null) currentTile.remove(this);
 		moveTokens(newTile);
-
+		newTile.lay(this);
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
 
@@ -579,4 +582,24 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 			throw e;
 		}
 	}
+	
+	
+    /**
+     * @return Returns the isBlocked.
+     */
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+    /**
+     * @param isBlocked The isBlocked to set.
+     */
+    public void setBlocked(boolean isBlocked) {
+        this.isBlocked = isBlocked;
+    }
+    
+    public boolean isUpgradeableNow () {
+        if (isBlocked) return false;
+        if (currentTile != null) return currentTile.isUpgradeable();
+        return false;
+    }
 }
