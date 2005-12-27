@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.25 2005/12/27 20:34:22 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.26 2005/12/27 20:56:56 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -510,6 +510,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return false;
 	}
 
+	//XXX: Probably very buggy
 	private void moveTokens(TileI newTile)
 	{
 		// Merging Token Lists if needed.
