@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.24 2005/12/24 13:56:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.25 2005/12/27 20:34:22 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -89,7 +89,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	protected ArrayList stations;
 	protected boolean hasTokens;
-	
+
 	protected boolean isBlocked = false;
 
 	public MapHex()
@@ -190,13 +190,22 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
-		stations = (ArrayList) currentTile.getStations();
 		preferredCity = XmlUtils.extractIntegerAttribute(nnp,
 				"preferredCity",
 				0);
 		companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
 		companyDestinationName = XmlUtils.extractStringAttribute(nnp,
 				"destination");
+		
+		//We need completely new objects, not just references to the Tile's stations.
+		stations = new ArrayList();
+		for(int i=0; i < currentTile.getStations().size(); i++)
+		{
+			//sid, type, value, slots
+			Station s = (Station) currentTile.getStations().get(i);
+			stations.add(new Station(s.getId(), s.getType(), s.getValue(), s.getBaseSlots()));
+		}
+		
 	}
 
 	public boolean isNeighbour(MapHex neighbour, int direction)
@@ -412,8 +421,12 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	{
 		// Move tokens from old station list to new station list.
 		// Merge lists if necessary.
-	    if (currentTile != null) currentTile.remove(this);
-		moveTokens(newTile);
+		if (currentTile != null)
+			currentTile.remove(this);
+		
+		if (hasTokens)
+			moveTokens(newTile);
+		
 		newTile.lay(this);
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
@@ -444,16 +457,17 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	}
 
 	/**
-	 * @return ArrayList of all tokens in all stations merged into a single list.
+	 * @return ArrayList of all tokens in all stations merged into a single
+	 *         list.
 	 * 
 	 * To get ArrayList of tokens from stations, use explicit station number
 	 */
 	public List getTokens()
 	{
-		if(stations.size() > 1)
+		if (stations.size() > 1)
 		{
 			ArrayList tokens = new ArrayList();
-			for(int i=0; i < stations.size(); i++)
+			for (int i = 0; i < stations.size(); i++)
 			{
 				tokens.addAll(getTokens(i));
 			}
@@ -465,11 +479,14 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public List getTokens(int stationNumber)
 	{
-	    if (stations.size() > 0) {
-	        return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
-	    } else {
-	        return new ArrayList();
-	    }
+		if (stations.size() > 0)
+		{
+			return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
+		}
+		else
+		{
+			return new ArrayList();
+		}
 	}
 
 	public boolean hasTokens()
@@ -512,7 +529,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 				}
 			}
 
-			stations = newStations;
+			stations = new ArrayList(newStations);
 		}
 		// If not merging, just move the tokens to the new station list.
 		else
@@ -526,7 +543,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 				}
 			}
 
-			stations = newStations;
+			stations = new ArrayList(newStations);
 		}
 	}
 
@@ -582,24 +599,30 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 			throw e;
 		}
 	}
-	
-	
-    /**
-     * @return Returns the isBlocked.
-     */
-    public boolean isBlocked() {
-        return isBlocked;
-    }
-    /**
-     * @param isBlocked The isBlocked to set.
-     */
-    public void setBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
-    }
-    
-    public boolean isUpgradeableNow () {
-        if (isBlocked) return false;
-        if (currentTile != null) return currentTile.isUpgradeable();
-        return false;
-    }
+
+	/**
+	 * @return Returns the isBlocked.
+	 */
+	public boolean isBlocked()
+	{
+		return isBlocked;
+	}
+
+	/**
+	 * @param isBlocked
+	 *            The isBlocked to set.
+	 */
+	public void setBlocked(boolean isBlocked)
+	{
+		this.isBlocked = isBlocked;
+	}
+
+	public boolean isUpgradeableNow()
+	{
+		if (isBlocked)
+			return false;
+		if (currentTile != null)
+			return currentTile.isUpgradeable();
+		return false;
+	}
 }

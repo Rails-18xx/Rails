@@ -1043,7 +1043,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		 * 
 		 * FIXME: Need to obtain the correct station number 
 		 * from hex info or user prompting*/
-		addToken(hex);
 		hex.addToken(this, 0);
 	}
 

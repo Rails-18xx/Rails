@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.3 2005/12/15 22:44:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.4 2005/12/27 20:34:22 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * @author Erik Vos
  */
-public class Station implements TokenHolderI
+public class Station implements TokenHolderI, Cloneable
 {
 
 	private String id;
@@ -18,9 +18,9 @@ public class Station implements TokenHolderI
 	private int value;
 	private int baseSlots;
 	private Track[] tracks;
-	private ArrayList tokens = new ArrayList();
+	private ArrayList tokens;
 	private boolean hasTokens = false;
-	
+
 	public Station(String id, String type, int value)
 	{
 		this(id, type, value, 0);
@@ -32,6 +32,8 @@ public class Station implements TokenHolderI
 		this.type = type;
 		this.value = value;
 		this.baseSlots = slots;
+		
+		tokens = new ArrayList();
 	}
 
 	/**
@@ -76,16 +78,11 @@ public class Station implements TokenHolderI
 
 	public boolean addToken(CompanyI company)
 	{
-		if(tokens.size() < baseSlots)
-		{
-			tokens.add(company);
-			hasTokens = true;
-			return true;
-		}
-		else
-			return false;
+		tokens.add(company);
+		hasTokens = true;
+		return true;
 	}
-	
+
 	public List getTokens()
 	{
 		return tokens;
@@ -104,15 +101,11 @@ public class Station implements TokenHolderI
 			tokens.remove(index);
 
 			if (tokens.size() < 1)
-			{
 				hasTokens = false;
-			}
 
 			return true;
 		}
 		else
-		{
 			return false;
-		}
 	}
 }
