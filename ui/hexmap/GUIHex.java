@@ -461,7 +461,7 @@ public class GUIHex
 	{
 		if (provisionalGUITile != null)
 		{
-			provisionalGUITile.rotate(1);
+			provisionalGUITile.rotate(1, currentGUITile);
 		}
 	}
 
@@ -562,11 +562,20 @@ public class GUIHex
 		this.map = map;
 	}
 
-	public void dropTile(int tileId)
+	public boolean dropTile(int tileId)
 	{
 		provisionalGUITile = new GUITile(tileId, model);
-		provisionalGUITile.setScale(SELECTED_SCALE);
-		toolTip = "Click to rotate";
+		/* Check if we can find a valid orientation of this tile */
+		if (provisionalGUITile.rotate(0, currentGUITile)) {
+		    /* If so, accept it */
+			provisionalGUITile.setScale(SELECTED_SCALE);
+			toolTip = "Click to rotate";
+			return true;
+		} else {
+		    /* If not, refuse it */
+		    provisionalGUITile = null;
+		    return false;
+		}
 
 	}
 
