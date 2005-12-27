@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.8 2005/12/01 00:57:04 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.9 2005/12/27 23:51:28 evos Exp $
  * 
  * Created on 12-Nov-2005
  * Change Log:
@@ -43,7 +43,8 @@ public class GUITile
 			initialise();
 
 		// Find a correct initial orientation.
-		rotate(0);
+		//rotate(0);
+		// Moved to GUIHex, as a constructor cannot return a boolean. 
 	}
 
 	private void initialise()
@@ -71,13 +72,16 @@ public class GUITile
 	 * @param initial:
 	 *            First rotation to try. Should be 0 for the initial tile drop,
 	 *            and 1 at subsequent rotation attempts.
+	 * @return <b>false</b> if no valid rotation exists (i.e. the tile cannot be laid).
 	 */
-	public void rotate(int initial)
+	public boolean rotate(int initial, GUITile previousGUITile)
 	{
 		int i, j, tempRot;
+		TileI prevTile = previousGUITile.getTile();
+		int prevTileRotation = previousGUITile.getRotation();
 
 		/* Loop through all possible rotations */
-		for (i = initial; i <= 5; i++)
+		for (i = initial; i < 6; i++)
 		{
 			tempRot = (rotation + i) % 6;
 			/* Loop through all hex sides */
@@ -87,8 +91,16 @@ public class GUITile
 				 * If the tile has tracks against that side, but there is no
 				 * neighbour, forbid this rotation.
 				 */
-				if (tile.hasTracks(j - tempRot) && !hex.hasNeighbour(j))
-					break;
+				if (tile.hasTracks(j - tempRot)) {
+				    if (!hex.hasNeighbour(j)) 	break;
+				/*
+				 * If the previous tile has tracks against that side, but the new
+				 * one has not, forbid this rotation (not preserving existing track).
+				 */
+				} else {
+				    if (prevTile.hasTracks(j - prevTileRotation)) break;
+				    // TODO: Add a check for preserving station connections on multi-station tiles.
+				}
 			}
 			if (j == 6)
 			{
@@ -97,8 +109,16 @@ public class GUITile
 				 * a valid rotation, so stop here.
 				 */
 				setRotation(tempRot);
-				return;
+				return true;
 			}
+		}
+		if (i == 6) {
+		    /* 
+		     * If we have rotated six times, no valid rotation has been found. 
+		     */
+		    return false;
+		} else {
+		    return true;
 		}
 	}
 

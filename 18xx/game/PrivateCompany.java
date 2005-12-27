@@ -184,6 +184,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	public void setClosed()
 	{
 		closed = true;
+		unblockHexes();
 		Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
 		Log.write("Private " + name + " closes");
 	}
@@ -205,7 +206,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		
 		/* If this private is blocking map hexes, unblock these hexes
 		 * as soon as it is bought by a company. */
-		if (blockedHexes != null && portfolio.getOwner() instanceof CompanyI) {
+		if (portfolio.getOwner() instanceof CompanyI) {
+		    unblockHexes();
+		}
+	}
+	
+	protected void unblockHexes () {
+		if (blockedHexes != null) {
 		    Iterator it = blockedHexes.iterator();
 		    while (it.hasNext()) {
 		        ((MapHex)it.next()).setBlocked(false);

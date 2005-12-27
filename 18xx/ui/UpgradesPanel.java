@@ -26,6 +26,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private static final String noUpgrades = "<html><center>No valid upgrades!</center></html>";
 	private static final String tokenText = "<html><center>Click city hex to lay a token</center></html>";
 	private boolean tokenMode = false;
+	
+	private boolean lastEnabled = false;
 
 	public UpgradesPanel(HexMap map)
 	{
@@ -106,6 +108,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		revalidate();
 		repaint();
+		
+		lastEnabled = enabled;
 	}
 	
 	private BufferedImage getHexImage(int tileId)
@@ -165,9 +169,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-	    map.getSelectedHex().dropTile(Integer.parseInt(((JLabel)e.getSource()).getText()));
+	    int id = Integer.parseInt(((JLabel)e.getSource()).getText());
+	    if (map.getSelectedHex().dropTile(id)) {
+	        /* Accept tile */
+			map.repaint();
+	    } else {
+	        /* Tile cannot be laid in a valid orientation: refuse it */
+	        JOptionPane.showMessageDialog(this, "This tile cannot be laid in a valid orientation.");
+	        upgrades.remove(TileManager.get().getTile(id));
+	        showUpgrades (lastEnabled);
+	    }
 
-		map.repaint();
 	}
 
 	public void mouseEntered(MouseEvent e)
