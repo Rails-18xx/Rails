@@ -19,8 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This Window displays the available operations that may be performed during an Operating Round.
- * Eventually this should be added to the Map Window rather than being a separate Window.
+ * This Window displays the available operations that may be performed during an
+ * Operating Round. Eventually this should be added to the Map Window rather
+ * than being a separate Window.
  * 
  * @author Erik Vos
  */
@@ -83,7 +84,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private OperatingRound round;
 	private StatusWindow statusWindow;
 	private GameStatus gameStatus;
-	
+
 	private List observers = new ArrayList();
 
 	private Player p;
@@ -230,19 +231,39 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		addField(new Caption("Treasury"), cashXOffset, 0, 1, 2, WIDE_BOTTOM);
 		addField(new Caption("Trains"), trainsXOffset, 0, 1, 2, WIDE_RIGHT
 				+ WIDE_BOTTOM);
-		addField(tileCaption = new Caption("Tiles"), tilesXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(tileCaption = new Caption("Tiles"),
+				tilesXOffset,
+				0,
+				2,
+				1,
+				WIDE_RIGHT);
 		addField(new Caption("laid"), tilesXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tilesXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(tokenCaption = new Caption("Tokens"), tokensXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(tokenCaption = new Caption("Tokens"),
+				tokensXOffset,
+				0,
+				2,
+				1,
+				WIDE_RIGHT);
 		addField(new Caption("laid"), tokensXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tokensXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(revenueCaption = new Caption("Revenue"),
+				revXOffset,
+				0,
+				2,
+				1,
+				WIDE_RIGHT);
 		addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
-		addField(trainCaption = new Caption("Trains"), newTrainsXOffset, 0, 2, 1, WIDE_RIGHT);
+		addField(trainCaption = new Caption("Trains"),
+				newTrainsXOffset,
+				0,
+				2,
+				1,
+				WIDE_RIGHT);
 		addField(new Caption("bought"), newTrainsXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"),
 				newTrainsXOffset + 1,
@@ -280,7 +301,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			f = cash[i] = new Field(c.getCashModel());
 			addField(f, cashXOffset, cashYOffset + i, 1, 1, 0);
 
-			f = trains[i] = new Field(c.getPortfolio().getTrainsModel().option(TrainsModel.FULL_LIST));
+			f = trains[i] = new Field(c.getPortfolio()
+					.getTrainsModel()
+					.option(TrainsModel.FULL_LIST));
 			addField(f, trainsXOffset, trainsYOffset + i, 1, 1, WIDE_RIGHT);
 
 			f = tiles[i] = new Field("");
@@ -342,15 +365,15 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
 		statusPanel.add(comp, gbc);
-		
-		if (StatusWindow.useObserver
-		        && comp instanceof ViewObject 
-		        && ((ViewObject)comp).getModel() != null) {
-			observers.add (comp);
+
+		if (StatusWindow.useObserver && comp instanceof ViewObject
+				&& ((ViewObject) comp).getModel() != null)
+		{
+			observers.add(comp);
 		}
 
 	}
-	
+
 	public void updateStatus()
 	{
 
@@ -366,76 +389,79 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			}
 
 			setHighlightsOff();
-			
+
 			if (step == OperatingRound.STEP_LAY_TRACK)
 			{
-			    tileCaption.setHighlight(true);
+				tileCaption.setHighlight(true);
 				tileCost[orCompIndex].setText("");
-			    button1.setVisible(false);
-			    
-			    GameUILoader.mapWindow.requestFocus();
-			    GameUILoader.mapWindow.enableTileLaying(true);
-			    
-			    GameUILoader.mapWindow.setSpecialTileLays(round.getSpecialProperties());
+				button1.setVisible(false);
+
+				GameUILoader.mapWindow.requestFocus();
+				GameUILoader.mapWindow.enableTileLaying(true);
+
+				GameUILoader.mapWindow.setSpecialTileLays(round.getSpecialProperties());
 
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(GameManager.getCurrentPhase().isPrivateSellingAllowed());
+				button2.setEnabled(GameManager.getCurrentPhase()
+						.isPrivateSellingAllowed());
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");
 				button4.setMnemonic(KeyEvent.VK_D);
 				button4.setEnabled(false);
-				
 
 			}
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
 			{
-			    GameUILoader.mapWindow.requestFocus();
-			    GameUILoader.mapWindow.enableBaseTokenLaying(true);
+				GameUILoader.mapWindow.requestFocus();
+				GameUILoader.mapWindow.enableBaseTokenLaying(true);
 
-			    tokenCaption.setHighlight(true);
-			    tokenCost[orCompIndex].setText("");
-			    
+				tokenCaption.setHighlight(true);
+				tokenCost[orCompIndex].setText("");
+
 				button1.setEnabled(false);
-			    button1.setVisible(false);
+				button1.setVisible(false);
 				button4.setEnabled(false);
 
 			}
 			else if (step == OperatingRound.STEP_CALC_REVENUE)
 			{
 
-			    if (round.isActionAllowed()) {
-				    revenueCaption.setHighlight(true);
+				if (round.isActionAllowed())
+				{
+					revenueCaption.setHighlight(true);
 					revenueSelect[orCompIndex].setValue(new Integer(companies[orCompIndex].getLastRevenue()));
 					setSelect(revenue[orCompIndex],
 							revenueSelect[orCompIndex],
 							true);
-	
+
 					button1.setText("Set revenue");
 					button1.setActionCommand("SetRevenue");
 					button1.setMnemonic(KeyEvent.VK_R);
 					button1.setEnabled(true);
 					button1.setVisible(true);
-			    } else {
-					displayMessage (round.getActionNotAllowedMessage());
-			        setRevenue(0);
-			        updateStatus();
-			        return;
-			    }
+				}
+				else
+				{
+					displayMessage(round.getActionNotAllowedMessage());
+					setRevenue(0);
+					updateStatus();
+					return;
+				}
 
 			}
 			else if (step == OperatingRound.STEP_PAYOUT)
 			{
 
-			    revenueCaption.setHighlight(true);
+				revenueCaption.setHighlight(true);
 				button1.setText("Withhold");
 				button1.setActionCommand("Withhold");
 				button1.setMnemonic(KeyEvent.VK_W);
 				button1.setEnabled(true);
 				button1.setVisible(true);
-				
+
 				button2.setText("Split");
 				button2.setActionCommand("Split");
 				button2.setMnemonic(KeyEvent.VK_S);
@@ -445,13 +471,12 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button4.setActionCommand("Payout");
 				button4.setMnemonic(KeyEvent.VK_P);
 				button4.setEnabled(true);
-			    
 
 			}
 			else if (step == OperatingRound.STEP_BUY_TRAIN)
 			{
 
-			    trainCaption.setHighlight(true);
+				trainCaption.setHighlight(true);
 
 				button1.setText("Buy train");
 				button1.setActionCommand("BuyTrain");
@@ -462,7 +487,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(GameManager.getCurrentPhase().isPrivateSellingAllowed());
+				button2.setEnabled(GameManager.getCurrentPhase()
+						.isPrivateSellingAllowed());
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");
@@ -476,7 +502,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button1.setEnabled(false);
 
 			}
-			
+
 			pack();
 
 		}
@@ -493,63 +519,78 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		super.repaint();
 	}
 
-	public void layTile (MapHex hex, TileI tile, int orientation) {
-	    
-	    if (tile == null) {
-	        round.skip(orCompName);
-	    } else {
-	        // Let model process this first
-	        if (round.layTile(orCompName, hex, tile, orientation)) {
-			    // Display the results
-			    int cost = round.getLastTileLayCost();
+	public void layTile(MapHex hex, TileI tile, int orientation)
+	{
+
+		if (tile == null)
+		{
+			round.skip(orCompName);
+		}
+		else
+		{
+			// Let model process this first
+			if (round.layTile(orCompName, hex, tile, orientation))
+			{
+				// Display the results
+				int cost = round.getLastTileLayCost();
 				tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
 				tiles[orCompIndex].setText(round.getLastTileLaid());
-				//updateCash(orCompIndex);
+				// updateCash(orCompIndex);
 				gameStatus.updateCompany(orComp.getPublicNumber());
 				gameStatus.updateBank();
-	        } else {
-	            displayError();
-	        }
+			}
+			else
+			{
+				displayError();
+			}
 			button4.setEnabled(true);
 
-	    }
+		}
 
 		LogWindow.addLog();
 
 		updateStatus();
-		
-		if (round.getStep() != OperatingRound.STEP_LAY_TRACK) {
+
+		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
+		{
 			GameUILoader.mapWindow.enableTileLaying(false);
 			this.requestFocus();
 		}
 	}
-	
-	public void layBaseToken (MapHex hex) {
-	    
-	    if (hex == null) {
-	        round.skip(orCompName);
-	    } else if (round.layBaseToken (orCompName, hex)) {
-		    // Let model process this first
-		    int cost = round.getLastBaseTokenLayCost();
-		    tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-		    tokens[orCompIndex].setText(round.getLastBaseTokenLaid());
-	    } else {
-	        displayError();
-	    }
+
+	public void layBaseToken(MapHex hex)
+	{
+		if (hex == null)
+		{
+			round.skip(orCompName);
+		}
+		else if (round.layBaseToken(orCompName, hex))
+		{
+			// Let model process this first
+			int cost = round.getLastBaseTokenLayCost();
+			tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+			tokens[orCompIndex].setText(round.getLastBaseTokenLaid());
+		}
+		else
+		{
+			displayError();
+		}
 		button4.setEnabled(true);
-	    
+
 		LogWindow.addLog();
 
 		updateStatus();
-		
-		if (round.getStep() != OperatingRound.STEP_LAY_TOKEN) {
+
+		if (round.getStep() != OperatingRound.STEP_LAY_TOKEN)
+		{
 			GameUILoader.mapWindow.enableBaseTokenLaying(false);
 			this.requestFocus();
 		}
 	}
-	
-	private void setRevenue (int amount) {
-	    
+
+	private void setRevenue(int amount)
+	{
+
 		revenue[orCompIndex].setText(Bank.format(amount));
 		round.setRevenue(orCompName, amount);
 		setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
@@ -565,9 +606,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.updateCompany(orComp.getPublicNumber());
 			gameStatus.updateBank();
 		}
-	    
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -583,19 +624,21 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		if (command.equals("LayTrack") || done
 				&& step == OperatingRound.STEP_LAY_TRACK)
 		{
-		    // This is just a No-op. Tile handling is now all done in layTrack().
+			// This is just a No-op. Tile handling is now all done in
+			// layTrack().
 		}
 		else if (command.equals("LayToken") || done
 				&& step == OperatingRound.STEP_LAY_TOKEN)
 		{
-		    // This is just a No-op. Tile handling is now all done in layBaseToken().
+			// This is just a No-op. Tile handling is now all done in
+			// layBaseToken().
 		}
 		else if (command.equals("SetRevenue") || done
 				&& step == OperatingRound.STEP_CALC_REVENUE)
 		{
 			amount = done ? 0
 					: ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
-			setRevenue (amount);
+			setRevenue(amount);
 
 		}
 		else if (command.equals("Payout"))
@@ -645,7 +688,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					.toArray(new TrainI[0]);
 			for (i = 0; i < trainsList.length; i++)
 			{
-				trainsForSale.add(trainsList[i].getName() + "-train from IPO at "
+				trainsForSale.add(trainsList[i].getName()
+						+ "-train from IPO at "
 						+ Bank.format(trainsList[i].getCost()));
 				if (trainsList[i].canBeExchanged()
 						&& orComp.getPortfolio().getTrains().length > 0)
@@ -659,7 +703,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			trainsList = Bank.getPool().getUniqueTrains();
 			for (i = 0; i < trainsList.length; i++)
 			{
-				trainsForSale.add(trainsList[i].getName() + "-train from Pool at "
+				trainsForSale.add(trainsList[i].getName()
+						+ "-train from Pool at "
 						+ Bank.format(trainsList[i].getCost()));
 			}
 			for (int j = 0; j < nc; j++)
@@ -682,14 +727,17 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					trainsForSale.toArray(),
 					trainsForSale.get(1));
-			if (XmlUtils.hasValue(boughtTrain)) {
+			if (XmlUtils.hasValue(boughtTrain))
+			{
 				Matcher m = buyTrainPattern.matcher(boughtTrain);
-				if (m.matches()) // Why does this sometimes give a NullPointerException?
+				if (m.matches()) // Why does this sometimes give a
+				// NullPointerException?
 				{
 					String trainType = m.group(1);
 					String sellerName = m.group(2);
 					boolean exchanging = (m.group(3) != null);
-					TrainTypeI type = TrainManager.get().getTypeByName(trainType);
+					TrainTypeI type = TrainManager.get()
+							.getTypeByName(trainType);
 					train = null;
 					TrainI exchangedTrain = null;
 					Portfolio seller = null;
@@ -711,9 +759,10 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							if (sellingComp != null)
 							{
 								seller = sellingComp.getPortfolio();
-	
+
 								String sPrice = JOptionPane.showInputDialog(this,
-										orComp.getName() + " buys " + boughtTrain
+										orComp.getName() + " buys "
+												+ boughtTrain
 												+ " for which price from "
 												+ sellerName + "?",
 										"Which price?",
@@ -725,20 +774,20 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 								catch (NumberFormatException e)
 								{
 									price = 0; // FIXME: Need better error
-												// handling!
+									// handling!
 								}
 							}
 						}
 					}
-	
+
 					if (seller != null)
 					{
 						train = seller.getTrainOfType(type);
 					}
-	
+
 					if (train != null && exchanging)
 					{
-	
+
 						TrainI[] oldTrains = orComp.getPortfolio()
 								.getUniqueTrains();
 						String[] options = new String[oldTrains.length + 1];
@@ -762,9 +811,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							exchangedTrain = orComp.getPortfolio()
 									.getTrainOfType(exchangedTrainName);
 						}
-	
+
 					}
-	
+
 					if (train != null)
 					{
 						if (!round.buyTrain(orComp.getName(),
@@ -784,7 +833,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							if (exchanging)
 								gameStatus.updateTrains(Bank.getPool());
 							updateCash(orCompIndex);
-	
+
 							if (seller.getOwner() instanceof PublicCompanyI)
 							{
 								for (int k = 0; k < companies.length; k++)
@@ -801,57 +850,70 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							{
 								gameStatus.updateTrains(Bank.getIpo());
 								gameStatus.updateTrains(Bank.getUnavailable());
-	
+
 								if (TrainManager.get().hasAvailabilityChanged())
 								{
 									gameStatus.updateTrains();
-									TrainManager.get().resetAvailabilityChanged();
+									TrainManager.get()
+											.resetAvailabilityChanged();
 								}
 							}
 							newTrainTotalCost[orCompIndex] += price;
 							newTrainCost[orCompIndex].setText(""
 									+ newTrainTotalCost[orCompIndex]);
-	
+
 							trainsBought.add(train);
-							newTrains[orCompIndex].setText(TrainManager
-									.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
-                            //trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
-							
+							newTrains[orCompIndex].setText(TrainManager.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
+							// trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
+
 							// In case a private has closed
-							/* BIG SHORTCUT: It is assumed here that the President 
-							 * always owns the closing Private, which is of course 
-							 * not guaranteed!
-							 * We really need an event mechanism to handle this!
+							/*
+							 * BIG SHORTCUT: It is assumed here that the
+							 * President always owns the closing Private, which
+							 * is of course not guaranteed! We really need an
+							 * event mechanism to handle this!
 							 */
-							gameStatus.updatePlayerPrivates(orComp.getPresident().getIndex());
-							
-		                   // Check if any trains must be discarded
-		                   if (TrainManager.get().hasPhaseChanged()) {
-		                       Iterator it = Game.getCompanyManager().getCompaniesWithExcessTrains().iterator();
-		                       while (it.hasNext()) {
-		                           PublicCompanyI c = (PublicCompanyI) it.next();
-		                           TrainI[] oldTrains = c.getPortfolio().getUniqueTrains();
-		                           String[] options = new String[oldTrains.length];
-		                           for (int j=0; j<oldTrains.length; j++) {
-		                               options [j] = oldTrains[j].getName();
-		                           }
-		                           String discardedTrainName = (String)
-		                           		JOptionPane.showInputDialog (this, "Company "+c.getName()+
-		                           		        " has too many trains. Which train to discard?", 
-		                      		        "Which train to exchange",
-		                      		        JOptionPane.QUESTION_MESSAGE, null,
-		                      		        options,
-		                      		        options[0]);
-		                           if (discardedTrainName != null) {
-		                               TrainI discardedTrain = orComp.getPortfolio().getTrainOfType(discardedTrainName);
-		                               c.getPortfolio().discardTrain (discardedTrain);
-		                               gameStatus.updateTrains(c.getPortfolio());
-		                               //trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
-		                           }
-		                       }
-		                   }
+							gameStatus.updatePlayerPrivates(orComp.getPresident()
+									.getIndex());
+
+							// Check if any trains must be discarded
+							if (TrainManager.get().hasPhaseChanged())
+							{
+								Iterator it = Game.getCompanyManager()
+										.getCompaniesWithExcessTrains()
+										.iterator();
+								while (it.hasNext())
+								{
+									PublicCompanyI c = (PublicCompanyI) it.next();
+									TrainI[] oldTrains = c.getPortfolio()
+											.getUniqueTrains();
+									String[] options = new String[oldTrains.length];
+									for (int j = 0; j < oldTrains.length; j++)
+									{
+										options[j] = oldTrains[j].getName();
+									}
+									String discardedTrainName = (String) JOptionPane.showInputDialog(this,
+											"Company "
+													+ c.getName()
+													+ " has too many trains. Which train to discard?",
+											"Which train to exchange",
+											JOptionPane.QUESTION_MESSAGE,
+											null,
+											options,
+											options[0]);
+									if (discardedTrainName != null)
+									{
+										TrainI discardedTrain = orComp.getPortfolio()
+												.getTrainOfType(discardedTrainName);
+										c.getPortfolio()
+												.discardTrain(discardedTrain);
+										gameStatus.updateTrains(c.getPortfolio());
+										// trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
+									}
+								}
+							}
 						}
-	
+
 					}
 				}
 			}
@@ -867,7 +929,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			String privName;
 			PrivateCompanyI priv;
 			int minPrice = 0, maxPrice = 0;
-			
+
 			while (it.hasNext())
 			{
 				priv = (PrivateCompanyI) it.next();
@@ -880,7 +942,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 							+ Bank.format(maxPrice) + ")");
 				}
 			}
-			
+
 			try
 			{
 				privName = (String) JOptionPane.showInputDialog(this,
@@ -902,20 +964,24 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 						JOptionPane.QUESTION_MESSAGE);
 				amount = Integer.parseInt(price);
 				Player prevOwner = (Player) priv.getPortfolio().getOwner();
-				if (!round.buyPrivate(orComp.getName(), priv.getName(), amount)) {
-				    displayError ();
-				} else {
+				if (!round.buyPrivate(orComp.getName(), priv.getName(), amount))
+				{
+					displayError();
+				}
+				else
+				{
 					updateCash(orCompIndex);
 					gameStatus.updateCash(orComp);
 					gameStatus.updateCash(prevOwner);
-	
+
 					gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
 					gameStatus.updatePlayerPrivates(prevOwner.getIndex());
 				}
 			}
 			catch (NullPointerException e)
 			{
-				// Null Pointer means user hit cancel. Don't bother attempting anything further.
+				// Null Pointer means user hit cancel. Don't bother attempting
+				// anything further.
 			}
 
 		}
@@ -936,32 +1002,33 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					privatesToClose.add(priv.getName());
 				}
 			}
-			
+
 			try
 			{
-			privName = (String) JOptionPane.showInputDialog(this,
-					"Close which private?",
-					"Which Private?",
-					JOptionPane.QUESTION_MESSAGE,
-					null,
-					privatesToClose.toArray(),
-					privatesToClose.get(0));
-			privName = privName.split(" ")[0];
-			priv = Game.getCompanyManager().getPrivateCompany(privName);
-			CashHolder prevOwner = priv.getPortfolio().getOwner();
-			round.closePrivate(privName);
-			if (prevOwner instanceof PublicCompanyI)
-			{
-				gameStatus.updateCompanyPrivates(((PublicCompanyI) prevOwner).getPublicNumber());
+				privName = (String) JOptionPane.showInputDialog(this,
+						"Close which private?",
+						"Which Private?",
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						privatesToClose.toArray(),
+						privatesToClose.get(0));
+				privName = privName.split(" ")[0];
+				priv = Game.getCompanyManager().getPrivateCompany(privName);
+				CashHolder prevOwner = priv.getPortfolio().getOwner();
+				round.closePrivate(privName);
+				if (prevOwner instanceof PublicCompanyI)
+				{
+					gameStatus.updateCompanyPrivates(((PublicCompanyI) prevOwner).getPublicNumber());
+				}
+				else
+				{
+					gameStatus.updatePlayerPrivates(((Player) prevOwner).getIndex());
+				}
 			}
-			else
+			catch (NullPointerException e)
 			{
-				gameStatus.updatePlayerPrivates(((Player) prevOwner).getIndex());
-			}
-			}
-			catch(NullPointerException e)
-			{
-				//Null Pointer means user hit cancel. Don't bother with any more processing.
+				// Null Pointer means user hit cancel. Don't bother with any
+				// more processing.
 			}
 
 		}
@@ -976,21 +1043,24 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		updateStatus();
 
 	}
-	
-	private void setHighlightsOff() {
-	    tileCaption.setHighlight(false);
-	    tokenCaption.setHighlight(false);
-	    revenueCaption.setHighlight(false);
-	    trainCaption.setHighlight(false);
+
+	private void setHighlightsOff()
+	{
+		tileCaption.setHighlight(false);
+		tokenCaption.setHighlight(false);
+		revenueCaption.setHighlight(false);
+		trainCaption.setHighlight(false);
 	}
-	
-	public void close() {
-	    
-	    Iterator it = observers.iterator();
-	    while (it.hasNext()) {
-	        ((ViewObject)it.next()).deRegister();
-	    }
-	    
+
+	public void close()
+	{
+
+		Iterator it = observers.iterator();
+		while (it.hasNext())
+		{
+			((ViewObject) it.next()).deRegister();
+		}
+
 	}
 
 	public int getOrCompIndex()
@@ -1014,7 +1084,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		if ((j = this.orCompIndex) >= 0)
 		{
-		    // Give a new company the turn.
+			// Give a new company the turn.
 			this.playerIndex = companies[orCompIndex].getPresident().getIndex();
 			president[j].setHighlight(true);
 		}
@@ -1051,22 +1121,31 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
-	private void displayMessage (String text) {
-		JOptionPane.showMessageDialog (this, text);
+	private void displayMessage(String text)
+	{
+		JOptionPane.showMessageDialog(this, text);
 	}
-	
-	private void displayError () {
-	    JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+
+	private void displayError()
+	{
+		JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
 	}
-	
-	public void keyPressed(KeyEvent e) {
-	    if (e.getKeyCode() == KeyEvent.VK_F1) {
-	        HelpWindow.displayHelp(GameManager.getInstance().getHelp());
-	        e.consume();
-	    }
+
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == KeyEvent.VK_F1)
+		{
+			HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+			e.consume();
+		}
 	}
-	
-	public void keyReleased(KeyEvent e) {}
-	public void keyTyped (KeyEvent e) {}
+
+	public void keyReleased(KeyEvent e)
+	{
+	}
+
+	public void keyTyped(KeyEvent e)
+	{
+	}
 
 }

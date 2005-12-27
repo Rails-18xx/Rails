@@ -52,13 +52,14 @@ public class OperatingRound implements Round
 	protected String lastTileLaid = "";
 	protected int lastBaseTokenLayCost = 0;
 	protected String lastBaseTokenLaid = "";
-	
+
 	protected List currentSpecialProperties = null;
-	
+
 	protected PhaseI currentPhase;
-	
-	/** Number of tiles that may be laid. 
-	 * TODO: This does not cover cases like "2 yellow or 1 upgrade allowed".
+
+	/**
+	 * Number of tiles that may be laid. TODO: This does not cover cases like "2
+	 * yellow or 1 upgrade allowed".
 	 */
 	protected int normalTileLaysAllowed = 1;
 	protected int normalTileLaysDone = 0;
@@ -76,7 +77,7 @@ public class OperatingRound implements Round
 	/* Constants */
 	public static final int SPLIT_NOT_ALLOWED = 0;
 	public static final int SPLIT_ROUND_UP = 1; // More money to the
-												// shareholders
+	// shareholders
 	public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
 	public static final int STEP_LAY_TRACK = 0;
@@ -85,12 +86,8 @@ public class OperatingRound implements Round
 	public static final int STEP_PAYOUT = 3;
 	public static final int STEP_BUY_TRAIN = 4;
 	public static final int STEP_FINAL = 5;
-	protected static int[] steps = new int[] { STEP_LAY_TRACK, 
-			STEP_LAY_TOKEN,
-			STEP_CALC_REVENUE, 
-			STEP_PAYOUT, 
-			STEP_BUY_TRAIN, 
-			STEP_FINAL };
+	protected static int[] steps = new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN,
+			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_FINAL };
 
 	/**
 	 * The constructor.
@@ -163,7 +160,7 @@ public class OperatingRound implements Round
 		{
 			operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 			GameManager.getInstance().setRound(this);
-			
+
 			// prepare any specials
 			prepareStep(step);
 		}
@@ -254,12 +251,14 @@ public class OperatingRound implements Round
 				break;
 			}
 
-			if (tile == null) break;
+			if (tile == null)
+				break;
 
-		    if (tile.countFreeTiles() == 0) {
-		        errMsg = "Tile "+tile.getName()+" not available";
-		        break;
-		    }
+			if (tile.countFreeTiles() == 0)
+			{
+				errMsg = "Tile " + tile.getName() + " not available";
+				break;
+			}
 
 			// Sort out cost
 			if (hex.getCurrentTile().getId() == hex.getPreprintedTileId())
@@ -303,55 +302,66 @@ public class OperatingRound implements Round
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			lastTileLayCost = cost;
 			lastTileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
-				+ MapHex.getOrientationName(orientation); // FIXME: Wrong!
-			Log.write(operatingCompany.getName() + " lays tile "
-			        + lastTileLaid
+					+ MapHex.getOrientationName(orientation); // FIXME: Wrong!
+			Log.write(operatingCompany.getName() + " lays tile " + lastTileLaid
 					+ (cost > 0 ? " for " + Bank.format(cost) : ""));
-			
+
 			// Was a special property used?
-			SpecialTileLay stl = (SpecialTileLay) checkForUseOfSpecialProperty (hex);
-			if (stl != null) {
-			    System.out.println("A special property of "+stl.getCompany().getName()+" is used");
-			    stl.setExercised();
-			    if (stl.isExtra()) extraTileLaysDone++;
-			    else normalTileLaysDone++;
-		        currentSpecialProperties = 
-		            operatingCompany.getPortfolio().getSpecialProperties(game.special.SpecialTileLay.class);
-			} else {
-			    normalTileLaysDone++;
+			SpecialTileLay stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
+			if (stl != null)
+			{
+				System.out.println("A special property of "
+						+ stl.getCompany().getName() + " is used");
+				stl.setExercised();
+				if (stl.isExtra())
+					extraTileLaysDone++;
+				else
+					normalTileLaysDone++;
+				currentSpecialProperties = operatingCompany.getPortfolio()
+						.getSpecialProperties(game.special.SpecialTileLay.class);
+			}
+			else
+			{
+				normalTileLaysDone++;
 			}
 		}
 
-		if (tile == null || 
-		        normalTileLaysDone >= normalTileLaysAllowed 
-		        && extraTileLaysDone >= extraTileLaysAllowed) {
-		    nextStep(operatingCompany);
+		if (tile == null || normalTileLaysDone >= normalTileLaysAllowed
+				&& extraTileLaysDone >= extraTileLaysAllowed)
+		{
+			nextStep(operatingCompany);
 		}
 
 		return true;
 	}
-	
-	public String getLastTileLaid () {
-	    return lastTileLaid;
+
+	public String getLastTileLaid()
+	{
+		return lastTileLaid;
 	}
+
 	public int getLastTileLayCost()
 	{
 		return lastTileLayCost;
 	}
-	
- 	private SpecialORProperty checkForUseOfSpecialProperty (MapHex hex) {
-	    if (currentSpecialProperties == null) return null;
 
-	    Iterator it = currentSpecialProperties.iterator();
-	    SpecialProperty sp;
-	    while (it.hasNext()) {
-	        sp = (SpecialProperty) it.next();
-	        if (sp instanceof SpecialTileLay
-	                && ((SpecialTileLay)sp).getLocation() == hex) {
-	            return (SpecialORProperty) sp;
-	        }
-	    }
-	    return null;
+	private SpecialORProperty checkForUseOfSpecialProperty(MapHex hex)
+	{
+		if (currentSpecialProperties == null)
+			return null;
+
+		Iterator it = currentSpecialProperties.iterator();
+		SpecialProperty sp;
+		while (it.hasNext())
+		{
+			sp = (SpecialProperty) it.next();
+			if (sp instanceof SpecialTileLay
+					&& ((SpecialTileLay) sp).getLocation() == hex)
+			{
+				return (SpecialORProperty) sp;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -389,11 +399,13 @@ public class OperatingRound implements Round
 				break;
 			}
 
-			if (!operatingCompany.hasTokens()) {
-			    errMsg = "Company has no more tokens";
-			    break;
+			if (!operatingCompany.hasTokens())
+			{
+				errMsg = "Company has no more tokens";
+				break;
 			}
-			cost = Game.getCompanyManager().getBaseTokenLayCostBySequence(operatingCompany.getNextBaseTokenIndex());
+			cost = Game.getCompanyManager()
+					.getBaseTokenLayCostBySequence(operatingCompany.getNextBaseTokenIndex());
 
 			// Does the company have the money?
 			if (cost > operatingCompany.getCash())
@@ -405,22 +417,24 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot process token laying on "+hex.getName()
-			        + " for " + Bank.format(cost) 
-					+ ": " + errMsg);
+			Log.error("Cannot process token laying on " + hex.getName()
+					+ " for " + Bank.format(cost) + ": " + errMsg);
 			return false;
 		}
 
 		operatingCompany.layBaseToken(hex);
-		lastBaseTokenLaid = hex.getName(); // Need to specify station!
+		lastBaseTokenLaid = hex.getName(); // FIXME: Need to specify station!
 		lastBaseTokenLayCost = cost;
-		
-		if (cost > 0) {
-		    Bank.transferCash((CashHolder) operatingCompany, null, cost);
+
+		if (cost > 0)
+		{
+			Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			Log.write(companyName + " lays a token on " + hex.getName()
-			        + " for " + Bank.format(cost));
-		} else {
-		    Log.write (companyName +" lays a free token on "+hex.getName());
+					+ " for " + Bank.format(cost));
+		}
+		else
+		{
+			Log.write(companyName + " lays a free token on " + hex.getName());
 		}
 
 		nextStep(operatingCompany);
@@ -428,18 +442,21 @@ public class OperatingRound implements Round
 		return true;
 	}
 
-	   /**
-     * @return The name of the hex where the last Base Token was laid.
-     */
-    public String getLastBaseTokenLaid() {
-        return lastBaseTokenLaid;
-    }
-    /**
-     * @return The cost of the last Base token laid.
-     */
-    public int getLastBaseTokenLayCost() {
-        return lastBaseTokenLayCost;
-    }
+	/**
+	 * @return The name of the hex where the last Base Token was laid.
+	 */
+	public String getLastBaseTokenLaid()
+	{
+		return lastBaseTokenLaid;
+	}
+
+	/**
+	 * @return The cost of the last Base token laid.
+	 */
+	public int getLastBaseTokenLayCost()
+	{
+		return lastBaseTokenLayCost;
+	}
 
 	/**
 	 * Set a given revenue. This may be a temporary method. We will have to
@@ -675,78 +692,94 @@ public class OperatingRound implements Round
 	 */
 	protected void nextStep(PublicCompanyI company)
 	{
-	    actionPossible = true;
-	    actionNotPossibleMessage = "";
-	    
-	    // Cycle through the steps until we reach one where action is allowed. 
-		while (++step < steps.length) {
-		    
-		    if (step == STEP_LAY_TOKEN 
-		            && operatingCompany.getNumCityTokens() == 0) continue;
-		    
-		    if (step == STEP_CALC_REVENUE
-		            && operatingCompany.getPortfolio().getTrains().length == 0) {
-		        // No trains, then the revenue is zero.
-		        //setRevenue (operatingCompany.getName(), 0);
-		        actionPossible = false;
-		        actionNotPossibleMessage = "No trains owned, so Revenue is "+Bank.format(0);
-		        // which will call this method again twice,
-		        // so by now the step will be increased to STEP_BUY_TRAIN.
-		    }
-		    
-	    
-		    // No reason found to skip this step
-		    return;
-		}
-		
-	    if (step >= steps.length) done(company.getName());
-		
-	}
-	
-	public boolean isActionAllowed() {
-	    return actionPossible;
-	}
-	
-	public String getActionNotAllowedMessage () {
-	    return actionNotPossibleMessage;
-	}
-	
-	protected void prepareStep (int step) {
-	    
-	    currentPhase = PhaseManager.getInstance().getCurrentPhase();
-	    
-	    if (step == STEP_LAY_TRACK) {
+		actionPossible = true;
+		actionNotPossibleMessage = "";
 
-	        normalTileLaysDone = 0;
-	        extraTileLaysAllowed = 0;
-	        extraTileLaysDone = 0;
-	        lastTileLayCost = 0;
-	        lastTileLaid = "";
-	        
-	        // Check for extra or special tile lays
-	        currentSpecialProperties = 
-	            operatingCompany.getPortfolio().getSpecialProperties(game.special.SpecialTileLay.class);
-	        if (currentSpecialProperties != null) {
-	            Iterator it = currentSpecialProperties.iterator();
-	            while (it.hasNext()) {
-	                if (((SpecialTileLay)it.next()).isExtra()) extraTileLaysAllowed++;
-	            }
-	        }
-	    } else {
-	        
-	        currentSpecialProperties = null;
-	    }
+		// Cycle through the steps until we reach one where action is allowed.
+		while (++step < steps.length)
+		{
+
+			if (step == STEP_LAY_TOKEN
+					&& operatingCompany.getNumCityTokens() == 0)
+				continue;
+
+			if (step == STEP_CALC_REVENUE
+					&& operatingCompany.getPortfolio().getTrains().length == 0)
+			{
+				// No trains, then the revenue is zero.
+				// setRevenue (operatingCompany.getName(), 0);
+				actionPossible = false;
+				actionNotPossibleMessage = "No trains owned, so Revenue is "
+						+ Bank.format(0);
+				// which will call this method again twice,
+				// so by now the step will be increased to STEP_BUY_TRAIN.
+			}
+
+			// No reason found to skip this step
+			return;
+		}
+
+		if (step >= steps.length)
+			done(company.getName());
+
 	}
-	
-	public List getSpecialProperties () {
-	    return currentSpecialProperties;
+
+	public boolean isActionAllowed()
+	{
+		return actionPossible;
 	}
-	
-	public void skip(String compName) {
-	    
-	    nextStep (operatingCompany);
-	    
+
+	public String getActionNotAllowedMessage()
+	{
+		return actionNotPossibleMessage;
 	}
+
+	protected void prepareStep(int step)
+	{
+
+		currentPhase = PhaseManager.getInstance().getCurrentPhase();
+
+		if (step == STEP_LAY_TRACK)
+		{
+
+			normalTileLaysDone = 0;
+			extraTileLaysAllowed = 0;
+			extraTileLaysDone = 0;
+			lastTileLayCost = 0;
+			lastTileLaid = "";
+
+			// Check for extra or special tile lays
+			currentSpecialProperties = operatingCompany.getPortfolio()
+					.getSpecialProperties(game.special.SpecialTileLay.class);
+			if (currentSpecialProperties != null)
+			{
+				Iterator it = currentSpecialProperties.iterator();
+				while (it.hasNext())
+				{
+					if (((SpecialTileLay) it.next()).isExtra())
+						extraTileLaysAllowed++;
+				}
+			}
+		}
+		else
+		{
+
+			currentSpecialProperties = null;
+		}
+	}
+
+	public List getSpecialProperties()
+	{
+		return currentSpecialProperties;
+	}
+
+	public void skip(String compName)
+	{
+
+		nextStep(operatingCompany);
+
+	}
+
 	/**
 	 * The current Company is done operating.
 	 * 
@@ -776,7 +809,7 @@ public class OperatingRound implements Round
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 		step = steps[0];
-		prepareStep (step);
+		prepareStep(step);
 
 		return true;
 	}
@@ -1120,52 +1153,68 @@ public class OperatingRound implements Round
 		return new int[] { 0, 40, 100 };
 	}
 
-	public String getHelp () {
-	    StringBuffer b = new StringBuffer();
-	    b.append("<big>Operating round: ").append(getCompositeORNumber()).append("</big><br>");
-	    b.append("<br><b>").append(operatingCompany.getName())
-	    	.append("</b> (president ").append(getCurrentPlayer().getName())
-	    	.append(") has the turn.");
-	    b.append("<br><br>Currently allowed actions:");
-	    if (step == STEP_LAY_TRACK) {
-	        b.append("<br> - Lay a tile");
-	        b.append("<br> - Press 'Done' if you do not want to lay a tile");
-	    } else if (step == STEP_LAY_TOKEN) {
-	        b.append("<br> - Lay a base token or press Done");
-	        b.append("<br> - Press 'Done' if you do not want to lay a base");
-	    } else if (step == STEP_CALC_REVENUE) {
-	        b.append ("<br> - Enter new revenue amount");
-	        b.append("<br> - Press 'Done' if your revenue is zero");
-	    } else if (step == STEP_PAYOUT) {
-	        b.append ("<br> - Choose how the revenue will be paid out");
-	    } else if (step == STEP_BUY_TRAIN) {
-	        b.append ("<br> - Buy one or more trains");
-	        b.append("<br> - Press 'Done' to finish your turn");
-	    }
-	    /* TODO: The below if needs be refined. */
-	    if (GameManager.getInstance().getPhase() > 1 && step != STEP_PAYOUT) {
-	        b.append("<br> - Buy one or more Privates");
-	    }
-	    
-	    if (step == STEP_LAY_TRACK) {
-	        b.append("<br><br><b>Tile laying</b> proceeds as follows:");
-	        b.append("<br><br> 1. On the map, select the hex that you want to lay a new tile upon.");
-	        b.append("<br>If tile laying is allowed on this hex, the current tile will shrink a bit <br>and a red background will show up around its edges;");
-	        b.append("<br>in addition, the tiles that can be laid on that hex will be displayed<br> in the 'upgrade panel' at the left hand side of the map.");
-	        b.append("<br>If tile laying is not allowed there, nothing will happen.");
-	        b.append("<br><br> 2. Select a tile in the upgrade panel.<br>This tile will be copied to the selected hex,<br>in some orientation");
-	        b.append("<br><br> 3. If you want to turn the tile just laid to a different orientation, click it.");
-	        b.append("<br>Repeatedly clicking the tile will rotate it through all allowed orientations.");
-	        b.append("<br><br> 4. Confirm tile laying by clicking 'Done'");
-	        b.append("<br><br>Before 'Done' has been pressed, you can change your mind<br>as often as you want");
-	        b.append(" (presuming that the other players don't get angry).");
-	        b.append("<br> - If you want to select another hex: repeat step 1");
-	        b.append("<br> - If you want to lay another tile on the currently selected hex: repeat step 2.");
-	        b.append("<br> - If you want to undo hex selection: click outside of the map hexes.");
-	        b.append("<br> - If you don't want to lay a tile after all: press 'Cancel'");
-	    }
-	
-	    return b.toString();
+	public String getHelp()
+	{
+		StringBuffer b = new StringBuffer();
+		b.append("<big>Operating round: ")
+				.append(getCompositeORNumber())
+				.append("</big><br>");
+		b.append("<br><b>")
+				.append(operatingCompany.getName())
+				.append("</b> (president ")
+				.append(getCurrentPlayer().getName())
+				.append(") has the turn.");
+		b.append("<br><br>Currently allowed actions:");
+		if (step == STEP_LAY_TRACK)
+		{
+			b.append("<br> - Lay a tile");
+			b.append("<br> - Press 'Done' if you do not want to lay a tile");
+		}
+		else if (step == STEP_LAY_TOKEN)
+		{
+			b.append("<br> - Lay a base token or press Done");
+			b.append("<br> - Press 'Done' if you do not want to lay a base");
+		}
+		else if (step == STEP_CALC_REVENUE)
+		{
+			b.append("<br> - Enter new revenue amount");
+			b.append("<br> - Press 'Done' if your revenue is zero");
+		}
+		else if (step == STEP_PAYOUT)
+		{
+			b.append("<br> - Choose how the revenue will be paid out");
+		}
+		else if (step == STEP_BUY_TRAIN)
+		{
+			b.append("<br> - Buy one or more trains");
+			b.append("<br> - Press 'Done' to finish your turn");
+		}
+		/* TODO: The below if needs be refined. */
+		if (GameManager.getInstance().getPhase() > 1 && step != STEP_PAYOUT)
+		{
+			b.append("<br> - Buy one or more Privates");
+		}
+
+		if (step == STEP_LAY_TRACK)
+		{
+			b.append("<br><br><b>Tile laying</b> proceeds as follows:");
+			b.append("<br><br> 1. On the map, select the hex that you want to lay a new tile upon.");
+			b.append("<br>If tile laying is allowed on this hex, the current tile will shrink a bit <br>and a red background will show up around its edges;");
+			b.append("<br>in addition, the tiles that can be laid on that hex will be displayed<br> in the 'upgrade panel' at the left hand side of the map.");
+			b.append("<br>If tile laying is not allowed there, nothing will happen.");
+			b.append("<br><br> 2. Select a tile in the upgrade panel.<br>This tile will be copied to the selected hex,<br>in some orientation");
+			b.append("<br><br> 3. If you want to turn the tile just laid to a different orientation, click it.");
+			b.append("<br>Repeatedly clicking the tile will rotate it through all allowed orientations.");
+			b.append("<br><br> 4. Confirm tile laying by clicking 'Done'");
+			b.append("<br><br>Before 'Done' has been pressed, you can change your mind<br>as often as you want");
+			b.append(" (presuming that the other players don't get angry).");
+			b.append("<br> - If you want to select another hex: repeat step 1");
+			b.append("<br> - If you want to lay another tile on the currently selected hex: repeat step 2.");
+			b.append("<br> - If you want to undo hex selection: click outside of the map hexes.");
+			b.append("<br> - If you don't want to lay a tile after all: press 'Cancel'");
+		}
+
+		return b.toString();
 	}
 
 }

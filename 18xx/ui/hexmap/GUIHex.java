@@ -355,6 +355,7 @@ public class GUIHex
 		int numTokens = getHexModel().getTokens(0).size();
 		ArrayList tokens = (ArrayList) getHexModel().getTokens(0);
 
+		System.out.println("Hex: " + getHexModel().getName() + " Tokens: " + tokens);
 		for (int i = 0; i < tokens.size(); i++)
 		{
 			PublicCompany co = (PublicCompany) tokens.get(i);
@@ -375,6 +376,9 @@ public class GUIHex
 		{
 			numTokens = getHexModel().getTokens(i).size();
 			tokens = (ArrayList) getHexModel().getTokens(i);
+			
+			System.out.println("Hex: " + getHexModel().getName() + " Tokens: " + tokens);
+			
 			for (int j=0; j < tokens.size(); j++)
 			{
 				origin = getTokenOrigin(numTokens, j, numStations, i);
