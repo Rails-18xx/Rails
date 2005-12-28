@@ -360,6 +360,9 @@ public class GUIHex
 		{
 			PublicCompany co = (PublicCompany) tokens.get(i);
 			Point origin = getTokenOrigin(numTokens, i, 1, 0);
+			
+			System.out.println("Token " + i + " coords: (" + origin.x + "," + origin.y + ")");
+			
 			drawToken(g2, co, origin);
 		}
 	}
@@ -403,26 +406,79 @@ public class GUIHex
 		token.drawToken(g2);
 	}
 	
-	//Beware!  Here be dragons!
-	//And nested switch/case statements!
-	//The horror!
+	/* Beware!  Here be dragons!
+	*  And nested switch/case statements!
+	*  The horror!
+	*  
+	*  NOTE:  CurrentFoo starts at 0
+	*  		  TotalFoo starts at 1
+	*/
 	private Point getTokenOrigin(int numTokens, int currentToken, int numStations, int currentStation)
 	{
 		Point p = new Point();
 		
 		switch(numStations)
 		{
+			//Single city, variable number of token spots.
+			//This is the most common scenario.
 			case 1:
 				switch(numTokens)
 				{
+					//Single dot, basic hex
 					case 1:
 						p.x = (center.x-9);
 						p.y = (center.y-9);
 						return p;
+					//Two dots, common green hex upgrade
+					case 2:
+						//First token
+						if(currentToken == 0)
+						{
+							p.x = (center.x-9);
+							p.y = (center.y-9);
+							return p;
+						}
+						//Second Token
+						else
+						{
+							p.x = (center.x-14);
+							p.y = (center.y+3);
+							return p;					
+						}
+					//Three dots, common brown hex upgrade
+					case 3:
+						//First token
+						if(currentToken == 0)
+						{
+							p.x = (center.x-9);
+							p.y = (center.y-9);
+							return p;
+						}
+						//Second Token
+						else if (currentToken == 1)
+						{
+							p.x = (center.x-14);
+							p.y = (center.y+3);
+							return p;					
+						}
+						//Third Token
+						else
+						{
+							p.x = (center.x);
+							p.y = (center.y);
+							return p;					
+						}
+					//Four dots, slightly less common brown hex upgrade
+					case 4:
+					case 5:
+					case 6:
 					default:
 						return center;
 				}
+			//Big Cities, two stations.
+			//usually only one or two token spots per station
 			case 2:
+				//First Station... (left side)
 				if(currentStation == 0)
 				{
 					switch(numTokens)
@@ -431,10 +487,26 @@ public class GUIHex
 							p.x = (center.x-14);
 							p.y = (center.y+3);
 							return p;
+						case 2:
+							//First token
+							if(currentToken == 0)
+							{
+								p.x = (center.x-14);
+								p.y = (center.y+3);
+								return p;
+							}
+							//Second Token
+							else
+							{
+								p.x = (center.x-20);
+								p.y = (center.y+12);
+								return p;					
+							}
 						default:
 							return center;
 					}
 				}
+				//Second Station... (right side)
 				else
 				{
 					switch(numTokens)
@@ -443,6 +515,21 @@ public class GUIHex
 							p.x = (center.x-1);
 							p.y = (center.y-20);
 							return p;
+						case 2:
+							//First token
+							if(currentToken == 0)
+							{
+								p.x = (center.x-1);
+								p.y = (center.y-20);
+								return p;
+							}
+							//Second Token
+							else
+							{
+								p.x = (center.x-6);
+								p.y = (center.y-8);
+								return p;					
+							}
 						default:
 							return center;
 					}
