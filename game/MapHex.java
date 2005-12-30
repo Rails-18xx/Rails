@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.26 2005/12/27 20:56:56 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.27 2005/12/30 00:49:00 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -196,16 +196,20 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
 		companyDestinationName = XmlUtils.extractStringAttribute(nnp,
 				"destination");
-		
-		//We need completely new objects, not just references to the Tile's stations.
+
+		// We need completely new objects, not just references to the Tile's
+		// stations.
 		stations = new ArrayList();
-		for(int i=0; i < currentTile.getStations().size(); i++)
+		for (int i = 0; i < currentTile.getStations().size(); i++)
 		{
-			//sid, type, value, slots
+			// sid, type, value, slots
 			Station s = (Station) currentTile.getStations().get(i);
-			stations.add(new Station(s.getId(), s.getType(), s.getValue(), s.getBaseSlots()));
+			stations.add(new Station(s.getId(),
+					s.getType(),
+					s.getValue(),
+					s.getBaseSlots()));
 		}
-		
+
 	}
 
 	public boolean isNeighbour(MapHex neighbour, int direction)
@@ -423,10 +427,10 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		// Merge lists if necessary.
 		if (currentTile != null)
 			currentTile.remove(this);
-		
+
 		if (hasTokens)
 			moveTokens(newTile);
-		
+
 		newTile.lay(this);
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
@@ -510,42 +514,83 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return false;
 	}
 
-	//XXX: Probably very buggy
+	//FIXME:  Edge cases need fixing.
+	// When laying a second upgrade tile on the board where another of the same tile already exists
+	// duplicate tokens are added to each matching tile.
 	private void moveTokens(TileI newTile)
 	{
-		// Merging Token Lists if needed.
-		// Only handling merging down to a single station at the moment.
-		// May need to add additional merge code later if other types of merging
-		// becomes necessary.
-		ArrayList newStations = (ArrayList) newTile.getStations();
-		if (newStations.size() < stations.size() && newStations.size() <= 1)
+		ArrayList movedTokens = new ArrayList();
+		ArrayList co = (ArrayList) Game.getCompanyManager()
+				.getAllPublicCompanies();
+		Iterator it = co.iterator();
+
+		// Flip through each company's list of tokens
+		while (it.hasNext())
 		{
-			System.out.println("MERGING TWO STATIONS INTO ONE");
-			for (int i = 0; i < stations.size(); i++)
+			PublicCompany c = (PublicCompany) it.next();
+
+			if (c.hasTokens())
 			{
-				ArrayList tokens = (ArrayList) ((Station) stations.get(i)).getTokens();
-				for (int j = 0; j < tokens.size(); j++)
+				ArrayList t = (ArrayList) c.getTokens();
+				Iterator it2 = t.iterator();
+
+				// If a company has a token in this hex, make a note of it.
+				while (it2.hasNext())
 				{
-					((Station) newStations.get(0)).addToken((PublicCompany) tokens.get(j));
+					MapHex hex = (MapHex) it2.next();
+					if (hex.equals(this))
+					{
+						System.out.println("1. " + hex + " 2. " + this);
+						movedTokens.add(c);
+					}
 				}
 			}
-
-			stations = new ArrayList(newStations);
 		}
-		// If not merging, just move the tokens to the new station list.
+
+		// If all the tokens end up in a single station, just put 'em all there.
+		if (newTile.getStations().size() <= stations.size()
+				&& newTile.getStations().size() == 1)
+		{
+			stations = new ArrayList(newTile.getStations());
+			Iterator it3 = movedTokens.iterator();
+
+			while (it3.hasNext())
+			{
+				((Station) stations.get(0)).addToken((PublicCompany) it3.next());
+			}
+
+			return;
+		}
+		// Nothing merges into more than a single station
+		// So, if there's no merging, then we're just moving tokens 
+		//straight across, station-for-station.
 		else
 		{
-			for (int i = 0; i < stations.size(); i++)
+			ArrayList newStations = new ArrayList(newTile.getStations());
+
+			for (int j = 0; j < stations.size(); j++)
 			{
-				ArrayList tokens = (ArrayList) ((Station) stations.get(i)).getTokens();
-				for (int j = 0; j < tokens.size(); j++)
+				for (int k = 0; k < ((Station) stations.get(j)).getTokens()
+						.size(); k++)
 				{
-					((Station) newStations.get(i)).addToken((PublicCompany) tokens.get(j));
+					Iterator it3 = movedTokens.iterator();
+
+					while (it3.hasNext())
+					{
+						ArrayList tokens = (ArrayList) ((Station) stations.get(j)).getTokens();
+
+						if (((CompanyI) tokens.get(k)).equals(((CompanyI) it.next())))
+						{
+							((Station) newStations.get(j)).addToken((CompanyI) it.next());
+						}
+					}
 				}
 			}
-
-			stations = new ArrayList(newStations);
+			
+			stations.clear();
+			stations = newStations;
 		}
+
 	}
 
 	public List getStations()
@@ -625,5 +670,18 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		if (currentTile != null)
 			return currentTile.isUpgradeable();
 		return false;
+	}
+
+	public boolean equals(MapHex hex)
+	{
+		if (hex.getName().equals(getName()) && hex.row == row
+				&& hex.column == column)
+			return true;
+		return false;
+	}
+	
+	public String toString()
+	{
+		return name + " (" + row + "," + column + ")";
 	}
 }
