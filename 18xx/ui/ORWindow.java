@@ -416,6 +416,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
 			{
 				GameUILoader.mapWindow.requestFocus();
+				GameUILoader.mapWindow.enableTileLaying(false);
 				GameUILoader.mapWindow.enableBaseTokenLaying(true);
 
 				tokenCaption.setHighlight(true);
@@ -553,7 +554,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
 		{
-			GameUILoader.mapWindow.enableTileLaying(false);
+			//GameUILoader.mapWindow.enableTileLaying(false); => updateStatus
 			this.requestFocus();
 		}
 	}

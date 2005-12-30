@@ -22,9 +22,18 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private JButton done;
 	private JLabel label;
 	
-	private static final String tileText = "<html><center>Select an<br>upgrade:</center></html>";
+	private static final String tileText = "<html><center>Select<br>a tile:</center></html>";
 	private static final String noUpgrades = "<html><center>No valid upgrades!</center></html>";
 	private static final String tokenText = "<html><center>Click city hex to lay a token</center></html>";
+	private static final String doneText = "Done";
+	public static final String cancelText = "Cancel";
+	public static final String noTileText = "No tile";
+	public static final String noTokenText = "No token";
+	
+	private String cancelButtonText = noTileText;
+	private boolean doneEnabled = false;
+	
+	private boolean tileMode = false;
 	private boolean tokenMode = false;
 	
 	private boolean lastEnabled = false;
@@ -54,10 +63,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgradePanel.setBorder(border);
 		add(upgradePanel);
 		
-		showUpgrades(false);
+		showUpgrades();
 	}
 
-	public void showUpgrades(boolean enabled)
+	public void showUpgrades()
 	{
 		upgradePanel.removeAll();
 
@@ -92,14 +101,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		    label.setText(noUpgrades);
 		}
 		
-		done = new JButton("Done");
+		done = new JButton(doneText);
 		done.setActionCommand("Done");
 		done.setMnemonic(KeyEvent.VK_D);
 		done.addActionListener(this);
-		done.setEnabled(enabled);
+		done.setEnabled(doneEnabled);
 		upgradePanel.add(done);
 
-		cancel = new JButton("Cancel");
+		cancel = new JButton(cancelButtonText);
 		cancel.setActionCommand("Cancel");
 		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
@@ -109,7 +118,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		revalidate();
 		repaint();
 		
-		lastEnabled = enabled;
+		lastEnabled = doneEnabled;
 	}
 	
 	private BufferedImage getHexImage(int tileId)
@@ -138,11 +147,29 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		this.upgrades = upgrades;
 	}
 	
-	public void setForTokenLaying (boolean tokenMode) {
+	public void initTileLaying (boolean tileMode) {
+	    this.tileMode = tileMode;
+	    label.setText(tileText);
+	    setUpgrades (null);
+	    setDoneEnabled (false);
+	    setCancelText (noTileText);
+	}
+	
+	public void initBaseTokenLaying (boolean tokenMode) {
 	    this.tokenMode = tokenMode;
 	    label.setText(tokenMode ? tokenText : tileText);
-	    upgrades = null;
-	    showUpgrades (false);
+	    setUpgrades (null);
+	    setDoneEnabled (false);
+	    setCancelText (tokenMode ? noTokenText : noTileText);
+	    //showUpgrades ();
+	}
+	
+	public void setCancelText (String text) {
+	    cancel.setText(cancelButtonText = text);
+	}
+	
+	public void setDoneEnabled (boolean enabled) {
+	    done.setEnabled(doneEnabled = enabled);
 	}
 	
 	public void actionPerformed (ActionEvent e) {
@@ -164,7 +191,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		map.repaint();
 
 		upgrades = null;
-		showUpgrades(false);
+		setDoneEnabled (false);
+		showUpgrades();
 	}
 
 	public void mouseClicked(MouseEvent e)
@@ -173,11 +201,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	    if (map.getSelectedHex().dropTile(id)) {
 	        /* Accept tile */
 			map.repaint();
+			setDoneEnabled (true);
+			setCancelText (cancelText);
 	    } else {
 	        /* Tile cannot be laid in a valid orientation: refuse it */
 	        JOptionPane.showMessageDialog(this, "This tile cannot be laid in a valid orientation.");
 	        upgrades.remove(TileManager.get().getTile(id));
-	        showUpgrades (lastEnabled);
+	        setDoneEnabled (false);
+	        showUpgrades ();
+			setCancelText (noTileText);
 	    }
 
 	}
