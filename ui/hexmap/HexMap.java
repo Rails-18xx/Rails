@@ -147,7 +147,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			        // REMOVE TOKEN FROM PREVIOUSLY SELECTED HEX
 			    }
 			    selectedHex = clickedHex;
-			    // DROP A TOKEN - HOW?
+			    if (selectedHex != null) {
+			        upgradesPanel.setCancelText(UpgradesPanel.cancelText);
+			        upgradesPanel.setDoneEnabled(true);
+				    // DROP A TOKEN - HOW?
+			    } else {
+			        upgradesPanel.setCancelText(UpgradesPanel.noTokenText);
+			        upgradesPanel.setDoneEnabled(false);
+			    }
+			    
 			    
 			} else if (clickedHex == selectedHex)
 			{
@@ -171,6 +179,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				} else {
 					JOptionPane.showMessageDialog (this, "This hex cannot be upgraded now");
 				}
+				upgradesPanel.setCancelText(UpgradesPanel.noTileText);
+				upgradesPanel.setDoneEnabled(false);
 			}
 
 			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
@@ -187,6 +197,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				selectedHex.setSelected(false);
 				repaint(selectedHex.getBounds());
 				selectedHex = null;
+				upgradesPanel.setDoneEnabled(false);
+				upgradesPanel.setCancelText(baseTokenLayingEnabled ?
+				        UpgradesPanel.noTokenText : UpgradesPanel.noTileText);
 			}
 		}
 
@@ -292,13 +305,13 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 
 		invalidate();
-		upgradesPanel.showUpgrades(tileLayingEnabled || baseTokenLayingEnabled);
+		upgradesPanel.showUpgrades();
 	}
 
 	public void enableTileLaying(boolean enabled)
 	{
 		tileLayingEnabled = enabled;
-		if (enabled == false && selectedHex != null)
+		if (!enabled && selectedHex != null)
 		{
 			selectedHex.removeTile();
 			selectedHex.setSelected(false);
@@ -311,7 +324,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	    
 	    baseTokenLayingEnabled = enabled;
 	    
-	    if (enabled == false && selectedHex != null) {
+	    if (!enabled && selectedHex != null) {
 	        selectedHex.removeToken();
 	        selectedHex.setSelected(false);
 	        repaint(selectedHex.getBounds());

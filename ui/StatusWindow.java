@@ -296,7 +296,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void repaint()
 	{
 		super.repaint();
-		refreshStatus();
+		//refreshStatus();
 	}
 
 	/*
