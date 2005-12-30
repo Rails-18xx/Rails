@@ -360,9 +360,6 @@ public class GUIHex
 		{
 			PublicCompany co = (PublicCompany) tokens.get(i);
 			Point origin = getTokenOrigin(numTokens, i, 1, 0);
-			
-			System.out.println("Token " + i + " coords: (" + origin.x + "," + origin.y + ")");
-			
 			drawToken(g2, co, origin);
 		}
 	}
@@ -434,15 +431,15 @@ public class GUIHex
 						//First token
 						if(currentToken == 0)
 						{
-							p.x = (center.x-9);
+							p.x = (center.x-5);
 							p.y = (center.y-9);
 							return p;
 						}
 						//Second Token
 						else
 						{
-							p.x = (center.x-14);
-							p.y = (center.y+3);
+							p.x = (center.x-17);
+							p.y = (center.y-9);
 							return p;					
 						}
 					//Three dots, common brown hex upgrade
@@ -450,22 +447,22 @@ public class GUIHex
 						//First token
 						if(currentToken == 0)
 						{
-							p.x = (center.x-9);
-							p.y = (center.y-9);
+							p.x = (center.x-14);
+							p.y = (center.y-3);
 							return p;
 						}
 						//Second Token
 						else if (currentToken == 1)
 						{
-							p.x = (center.x-14);
-							p.y = (center.y+3);
+							p.x = (center.x-5);
+							p.y = (center.y-3);
 							return p;					
 						}
 						//Third Token
 						else
 						{
-							p.x = (center.x);
-							p.y = (center.y);
+							p.x = (center.x-9);
+							p.y = (center.y-14);
 							return p;					
 						}
 					//Four dots, slightly less common brown hex upgrade

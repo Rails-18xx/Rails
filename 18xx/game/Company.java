@@ -19,7 +19,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	protected int companyNumber; // For internal use
 	protected Portfolio portfolio = null;
 
-	private ArrayList tokens = new ArrayList();
+	private ArrayList tokens;
 	private boolean hasTokens = false;
 	protected int numCityTokens = 0;
 	protected int maxCityTokens = 0;
@@ -46,6 +46,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	{
 		this.name = name;
 		this.type = type;
+		this.tokens = new ArrayList();
 	}
 
 	/**
