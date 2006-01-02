@@ -1037,13 +1037,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return maxCityTokens - numCityTokens;
 	}
 
-	public void layBaseToken(MapHex hex)
+	public boolean layBaseToken(MapHex hex)
 	{
 		/* Note: most token code is inherited from Company. 
 		 * 
 		 * FIXME: Need to obtain the correct station number 
 		 * from hex info or user prompting*/
-		hex.addToken(this, 0);
+		return hex.addToken(this, 0);
 	}
 
 	public Object clone()

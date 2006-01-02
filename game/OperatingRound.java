@@ -422,7 +422,9 @@ public class OperatingRound implements Round
 			return false;
 		}
 
-		operatingCompany.layBaseToken(hex);
+		if(!operatingCompany.layBaseToken(hex))
+			return false;
+		
 		lastBaseTokenLaid = hex.getName(); // FIXME: Need to specify station!
 		lastBaseTokenLayCost = cost;
 

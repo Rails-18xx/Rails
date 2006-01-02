@@ -36,7 +36,7 @@ public class GUIHex
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
 	protected int provisionalTileOrientation;
-	
+
 	protected Token provisionalGUIToken = null;
 
 	protected double tileScale = NORMAL_SCALE;
@@ -106,8 +106,7 @@ public class GUIHex
 
 		center = new Point((int) ((xVertex[2] + xVertex[5]) / 2),
 				(int) ((yVertex[0] + yVertex[3]) / 2));
-		Point2D.Double center2D = 	
-		    new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
+		Point2D.Double center2D = new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
 				(yVertex[0] + yVertex[3]) / 2.0);
 
 		final double innerScale = 0.8;
@@ -299,17 +298,17 @@ public class GUIHex
 		{
 			PublicCompany co = (PublicCompany) getHexModel().getCompanyHome();
 
-				if (!co.hasStarted() && !co.hasFloated())
-				{
-					g2.drawString(getHexModel().getCompanyHome().getName(),
-							rectBound.x
-									+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome().getName()))
-									* 1 / 2,
-							rectBound.y
-									+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
-				}
+			if (!co.hasStarted() && !co.hasFloated())
+			{
+				g2.drawString(getHexModel().getCompanyHome().getName(),
+						rectBound.x
+								+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome()
+										.getName())) * 1 / 2,
+						rectBound.y
+								+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
+			}
 		}
-		
+
 		/*
 		 * // Added by Erik Vos: show hex name g2.drawString(hexName,
 		 * rectBound.x + (rectBound.width -
@@ -328,8 +327,9 @@ public class GUIHex
 		 * 7/10));
 		 */
 
-		//System.out.println("Hex: " + getHexModel().getName() + " Co: " + getHexModel().getCompanyHome());
-		//" Tokens: " + getHexModel().getTokens());
+		// System.out.println("Hex: " + getHexModel().getName() + " Co: " +
+		// getHexModel().getCompanyHome());
+		// " Tokens: " + getHexModel().getTokens());
 	}
 
 	private void paintOverlay(Graphics2D g2)
@@ -355,7 +355,6 @@ public class GUIHex
 		int numTokens = getHexModel().getTokens(0).size();
 		ArrayList tokens = (ArrayList) getHexModel().getTokens(0);
 
-		System.out.println("Hex: " + getHexModel().getName() + " Tokens: " + tokens);
 		for (int i = 0; i < tokens.size(); i++)
 		{
 			PublicCompany co = (PublicCompany) tokens.get(i);
@@ -363,7 +362,7 @@ public class GUIHex
 			drawToken(g2, co, origin);
 		}
 	}
-	
+
 	private void paintSplitStations(Graphics2D g2)
 	{
 		int numStations = getHexModel().getStations().size();
@@ -371,15 +370,13 @@ public class GUIHex
 		ArrayList tokens;
 		Point origin;
 		PublicCompany co;
-		
-		for(int i=0; i < numStations; i++)
+
+		for (int i = 0; i < numStations; i++)
 		{
 			numTokens = getHexModel().getTokens(i).size();
 			tokens = (ArrayList) getHexModel().getTokens(i);
-			
-			System.out.println("Hex: " + getHexModel().getName() + " Tokens: " + tokens);
-			
-			for (int j=0; j < tokens.size(); j++)
+
+			for (int j = 0; j < tokens.size(); j++)
 			{
 				origin = getTokenOrigin(numTokens, j, numStations, i);
 				co = (PublicCompany) tokens.get(j);
@@ -387,7 +384,7 @@ public class GUIHex
 			}
 		}
 	}
-	
+
 	private void drawToken(Graphics2D g2, PublicCompany co, Point origin)
 	{
 		Dimension size = new Dimension(40, 40);
@@ -402,140 +399,139 @@ public class GUIHex
 
 		token.drawToken(g2);
 	}
-	
-	/* Beware!  Here be dragons!
-	*  And nested switch/case statements!
-	*  The horror!
-	*  
-	*  NOTE:  CurrentFoo starts at 0
-	*  		  TotalFoo starts at 1
-	*/
-	private Point getTokenOrigin(int numTokens, int currentToken, int numStations, int currentStation)
+
+	/*
+	 * Beware! Here be dragons! And nested switch/case statements! The horror!
+	 * 
+	 * NOTE: CurrentFoo starts at 0 TotalFoo starts at 1
+	 */
+	private Point getTokenOrigin(int numTokens, int currentToken,
+			int numStations, int currentStation)
 	{
 		Point p = new Point();
-		
-		switch(numStations)
+
+		switch (numStations)
 		{
-			//Single city, variable number of token spots.
-			//This is the most common scenario.
+			// Single city, variable number of token spots.
+			// This is the most common scenario.
 			case 1:
-				switch(numTokens)
+				switch (numTokens)
 				{
-					//Single dot, basic hex
+					// Single dot, basic hex
 					case 1:
-						p.x = (center.x-9);
-						p.y = (center.y-9);
+						p.x = (center.x - 9);
+						p.y = (center.y - 9);
 						return p;
-					//Two dots, common green hex upgrade
+					// Two dots, common green hex upgrade
 					case 2:
-						//First token
-						if(currentToken == 0)
+						// First token
+						if (currentToken == 0)
 						{
-							p.x = (center.x-5);
-							p.y = (center.y-9);
+							p.x = (center.x - 5);
+							p.y = (center.y - 9);
 							return p;
 						}
-						//Second Token
+						// Second Token
 						else
 						{
-							p.x = (center.x-17);
-							p.y = (center.y-9);
-							return p;					
-						}
-					//Three dots, common brown hex upgrade
-					case 3:
-						//First token
-						if(currentToken == 0)
-						{
-							p.x = (center.x-14);
-							p.y = (center.y-3);
+							p.x = (center.x - 17);
+							p.y = (center.y - 9);
 							return p;
 						}
-						//Second Token
+					// Three dots, common brown hex upgrade
+					case 3:
+						// First token
+						if (currentToken == 0)
+						{
+							p.x = (center.x - 14);
+							p.y = (center.y - 3);
+							return p;
+						}
+						// Second Token
 						else if (currentToken == 1)
 						{
-							p.x = (center.x-5);
-							p.y = (center.y-3);
-							return p;					
+							p.x = (center.x - 5);
+							p.y = (center.y - 3);
+							return p;
 						}
-						//Third Token
+						// Third Token
 						else
 						{
-							p.x = (center.x-9);
-							p.y = (center.y-14);
-							return p;					
+							p.x = (center.x - 9);
+							p.y = (center.y - 14);
+							return p;
 						}
-					//Four dots, slightly less common brown hex upgrade
+					// Four dots, slightly less common brown hex upgrade
 					case 4:
 					case 5:
 					case 6:
 					default:
 						return center;
 				}
-			//Big Cities, two stations.
-			//usually only one or two token spots per station
+			// Big Cities, two stations.
+			// usually only one or two token spots per station
 			case 2:
-				//First Station... (left side)
-				if(currentStation == 0)
+				// First Station... (left side)
+				if (currentStation == 0)
 				{
-					switch(numTokens)
+					switch (numTokens)
 					{
 						case 1:
-							p.x = (center.x-14);
-							p.y = (center.y+3);
+							p.x = (center.x - 14);
+							p.y = (center.y + 3);
 							return p;
 						case 2:
-							//First token
-							if(currentToken == 0)
+							// First token
+							if (currentToken == 0)
 							{
-								p.x = (center.x-14);
-								p.y = (center.y+3);
+								p.x = (center.x - 14);
+								p.y = (center.y + 3);
 								return p;
 							}
-							//Second Token
+							// Second Token
 							else
 							{
-								p.x = (center.x-20);
-								p.y = (center.y+12);
-								return p;					
+								p.x = (center.x - 20);
+								p.y = (center.y + 12);
+								return p;
 							}
 						default:
 							return center;
 					}
 				}
-				//Second Station... (right side)
+				// Second Station... (right side)
 				else
 				{
-					switch(numTokens)
+					switch (numTokens)
 					{
 						case 1:
-							p.x = (center.x-1);
-							p.y = (center.y-20);
+							p.x = (center.x - 1);
+							p.y = (center.y - 20);
 							return p;
 						case 2:
-							//First token
-							if(currentToken == 0)
+							// First token
+							if (currentToken == 0)
 							{
-								p.x = (center.x-1);
-								p.y = (center.y-20);
+								p.x = (center.x - 1);
+								p.y = (center.y - 20);
 								return p;
 							}
-							//Second Token
+							// Second Token
 							else
 							{
-								p.x = (center.x-6);
-								p.y = (center.y-8);
-								return p;					
+								p.x = (center.x - 6);
+								p.y = (center.y - 8);
+								return p;
 							}
 						default:
 							return center;
 					}
 				}
 			case 3:
-				//TODO: We'll deal with the 3 station scenario later...  much later.
-				
-				//Known cases: 3 single token stations,
-				//				2 double token station and a single token station
+			// TODO: We'll deal with the 3 station scenario later... much later.
+
+			// Known cases: 3 single token stations,
+			// 2 double token station and a single token station
 			default:
 				return center;
 		}
@@ -650,15 +646,18 @@ public class GUIHex
 	{
 		provisionalGUITile = new GUITile(tileId, model);
 		/* Check if we can find a valid orientation of this tile */
-		if (provisionalGUITile.rotate(0, currentGUITile)) {
-		    /* If so, accept it */
+		if (provisionalGUITile.rotate(0, currentGUITile))
+		{
+			/* If so, accept it */
 			provisionalGUITile.setScale(SELECTED_SCALE);
 			toolTip = "Click to rotate";
 			return true;
-		} else {
-		    /* If not, refuse it */
-		    provisionalGUITile = null;
-		    return false;
+		}
+		else
+		{
+			/* If not, refuse it */
+			provisionalGUITile = null;
+			return false;
 		}
 
 	}
@@ -688,21 +687,24 @@ public class GUIHex
 		setSelected(false);
 		setToolTip();
 	}
-	
-	public void dropToken () {
-	    // TO BE CREATED
+
+	public void dropToken()
+	{
+		// TO BE CREATED
 	}
-	
-	public void removeToken() {
-	    provisionalGUIToken = null;
-	    setSelected(false);
-	    setToolTip();
+
+	public void removeToken()
+	{
+		provisionalGUIToken = null;
+		setSelected(false);
+		setToolTip();
 	}
-	
-	public void fixToken () {
-	    GameUILoader.statusWindow.orWindow.layBaseToken (model);
-	    setSelected (false);
-	    
+
+	public void fixToken()
+	{
+		GameUILoader.statusWindow.orWindow.layBaseToken(model);
+		setSelected(false);
+
 	}
 
 }
