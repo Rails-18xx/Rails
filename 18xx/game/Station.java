@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.5 2006/01/02 02:02:41 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.6 2006/01/02 22:37:12 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -32,13 +32,14 @@ public class Station implements TokenHolderI, Cloneable
 		this.type = type;
 		this.value = value;
 		this.baseSlots = slots;
-		
+
 		tokens = new ArrayList();
 	}
-	
+
 	/**
-	 * Creates a clone of the station by calling Station's 4 argument constructor
-	 * with specified station argument's values 
+	 * Creates a clone of the station by calling Station's 4 argument
+	 * constructor with specified station argument's values
+	 * 
 	 * @param s
 	 */
 	public Station(Station s)
@@ -88,9 +89,14 @@ public class Station implements TokenHolderI, Cloneable
 
 	public boolean addToken(CompanyI company)
 	{
-		tokens.add(company);
-		hasTokens = true;
-		return true;
+		if (tokens.size() + 1 <= baseSlots)
+		{
+			tokens.add(company);
+			hasTokens = true;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public List getTokens()
@@ -118,16 +124,16 @@ public class Station implements TokenHolderI, Cloneable
 		else
 			return false;
 	}
-	
+
 	/**
 	 * 
 	 * @param company
-	 * @return true if this Station already contains an 
-	 * instance of the specified company's token.
+	 * @return true if this Station already contains an instance of the
+	 *         specified company's token.
 	 */
 	public boolean contains(CompanyI company)
 	{
-		if(tokens.contains(company))
+		if (tokens.contains(company))
 			return true;
 		return false;
 	}
