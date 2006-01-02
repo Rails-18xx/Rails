@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.28 2006/01/02 02:02:41 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.29 2006/01/02 20:48:14 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -515,7 +515,6 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return false;
 	}
 
-	//FIXME:  Edge cases need fixing.
 	private void moveTokens(TileI newTile)
 	{
 		ArrayList movedTokens = new ArrayList();
@@ -553,6 +552,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 			//To avoid passing a reference of the Tile's station, we create
 			//A new station with the same values as the newTile's station.
 			Station s = new Station((Station)newTile.getStations().get(0));
+			stations.clear();
 			stations.add(s);
 			((Station)stations.get(0)).setTokens(movedTokens);
 		}
@@ -572,8 +572,8 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 					}
 				}
 				
-				stations = new ArrayList();
-				stations.add(s); 
+				stations.remove(i);
+				stations.add(i, s); 
 			}
 		}
 
