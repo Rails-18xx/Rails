@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.27 2005/12/30 00:49:00 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.28 2006/01/02 02:02:41 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -423,15 +423,16 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public void upgrade(TileI newTile, int newOrientation)
 	{
-		// Move tokens from old station list to new station list.
-		// Merge lists if necessary.
 		if (currentTile != null)
 			currentTile.remove(this);
-
+		
+		newTile.lay(this);
+		
+		// Move tokens from old station list to new station list.
+		// Merge lists if necessary.		
 		if (hasTokens)
 			moveTokens(newTile);
 
-		newTile.lay(this);
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
 
@@ -515,80 +516,65 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	}
 
 	//FIXME:  Edge cases need fixing.
-	// When laying a second upgrade tile on the board where another of the same tile already exists
-	// duplicate tokens are added to each matching tile.
 	private void moveTokens(TileI newTile)
 	{
 		ArrayList movedTokens = new ArrayList();
+		ArrayList newStations = (ArrayList) newTile.getStations();
+		
 		ArrayList co = (ArrayList) Game.getCompanyManager()
-				.getAllPublicCompanies();
-		Iterator it = co.iterator();
+				.getAllCompanies();
+		Iterator coIT = co.iterator();
 
 		// Flip through each company's list of tokens
-		while (it.hasNext())
+		while (coIT.hasNext())
 		{
-			PublicCompany c = (PublicCompany) it.next();
+			CompanyI c = (CompanyI) coIT.next();
 
 			if (c.hasTokens())
 			{
 				ArrayList t = (ArrayList) c.getTokens();
-				Iterator it2 = t.iterator();
+				Iterator tokIT = t.iterator();
 
-				// If a company has a token in this hex, make a note of it.
-				while (it2.hasNext())
+				while (tokIT.hasNext())
 				{
-					MapHex hex = (MapHex) it2.next();
+					MapHex hex = (MapHex) tokIT.next();
 					if (hex.equals(this))
 					{
-						System.out.println("1. " + hex + " 2. " + this);
+						// If a company has a token in this hex, make a note of it.
 						movedTokens.add(c);
 					}
 				}
 			}
 		}
-
-		// If all the tokens end up in a single station, just put 'em all there.
-		if (newTile.getStations().size() <= stations.size()
-				&& newTile.getStations().size() == 1)
+		
+		if(newStations.size() == 1)
 		{
-			stations = new ArrayList(newTile.getStations());
-			Iterator it3 = movedTokens.iterator();
-
-			while (it3.hasNext())
-			{
-				((Station) stations.get(0)).addToken((PublicCompany) it3.next());
-			}
-
-			return;
+			//This is here because Java sucks giant flaming donkey balls.
+			//To avoid passing a reference of the Tile's station, we create
+			//A new station with the same values as the newTile's station.
+			Station s = new Station((Station)newTile.getStations().get(0));
+			stations.add(s);
+			((Station)stations.get(0)).setTokens(movedTokens);
 		}
-		// Nothing merges into more than a single station
-		// So, if there's no merging, then we're just moving tokens 
-		//straight across, station-for-station.
 		else
 		{
-			ArrayList newStations = new ArrayList(newTile.getStations());
-
-			for (int j = 0; j < stations.size(); j++)
+			for(int i=0; i < newTile.getStations().size(); i++)
 			{
-				for (int k = 0; k < ((Station) stations.get(j)).getTokens()
-						.size(); k++)
+				Station newStation = (Station) newTile.getStations().get(i);
+				Station oldStation = (Station) stations.get(i);
+				Station s = new Station(newStation);
+				
+				for(int j=0; j < movedTokens.size(); j++)
 				{
-					Iterator it3 = movedTokens.iterator();
-
-					while (it3.hasNext())
+					if(oldStation.getTokens().contains(movedTokens.get(j)))
 					{
-						ArrayList tokens = (ArrayList) ((Station) stations.get(j)).getTokens();
-
-						if (((CompanyI) tokens.get(k)).equals(((CompanyI) it.next())))
-						{
-							((Station) newStations.get(j)).addToken((CompanyI) it.next());
-						}
+						s.getTokens().add(movedTokens.get(j));
 					}
 				}
+				
+				stations = new ArrayList();
+				stations.add(s); 
 			}
-			
-			stations.clear();
-			stations = newStations;
 		}
 
 	}
