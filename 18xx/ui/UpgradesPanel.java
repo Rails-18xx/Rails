@@ -165,7 +165,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		setUpgrades(null);
 		setDoneEnabled(false);
 		setCancelText(tokenMode ? noTokenText : noTileText);
-		// showUpgrades ();
 	}
 
 	public void setCancelText(String text)
