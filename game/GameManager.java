@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.15 2005/12/17 23:49:02 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.16 2006/01/03 23:19:25 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -28,6 +28,7 @@ public class GameManager implements ConfigurableComponentI
 	protected static Player priorityPlayer = null;
 
 	protected static int playerShareLimit = 60;
+	protected static int currentNumberOfOperatingRounds = 1;
 
 	/**
 	 * Current round should not be set here but from within the Round classes.
@@ -42,8 +43,6 @@ public class GameManager implements ConfigurableComponentI
 	protected Round insertedRound = null;
 	protected int orNumber;
 	protected int numOfORs;
-	protected int[] orsPerPhase = new int[] { 1, 2, 2, 3, 3 };
-	protected int phase = 0;
 
 	protected static PhaseI currentPhase = null;
 
@@ -181,18 +180,20 @@ public class GameManager implements ConfigurableComponentI
 		else if (round instanceof StockRound)
 		{
 
+		    numOfORs = currentPhase.getNumberOfOperatingRounds();
+		    System.out.println("Phase="+currentPhase.getName()+" ORs="+numOfORs);
+		    
 			// Create a new OperatingRound (never more than one Stock Round)
 			OperatingRound.resetRelativeORNumber();
 			startOperatingRound();
 
-			numOfORs = orsPerPhase[phase];
 			orNumber = 1;
 
 		}
 		else if (round instanceof OperatingRound)
 		{
 
-			if (++orNumber < numOfORs)
+			if (++orNumber <= numOfORs)
 			{
 
 				// There will be another OR
@@ -239,17 +240,6 @@ public class GameManager implements ConfigurableComponentI
 	 * ORs is delayed until a StockRound finishes.
 	 * 
 	 */
-	public void nextPhase()
-	{
-		if (phase < orsPerPhase.length - 1)
-			phase++;
-	}
-
-	public int getPhase()
-	{
-		return phase;
-	}
-
 	public Round getCurrentRound()
 	{
 		return currentRound;

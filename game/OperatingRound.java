@@ -326,6 +326,8 @@ public class OperatingRound implements Round
 			}
 		}
 
+		System.out.println("Normal="+normalTileLaysDone+"/"+normalTileLaysAllowed
+		        +" special="+extraTileLaysDone+"/"+extraTileLaysAllowed);
 		if (tile == null || normalTileLaysDone >= normalTileLaysAllowed
 				&& extraTileLaysDone >= extraTileLaysAllowed)
 		{
@@ -1192,7 +1194,8 @@ public class OperatingRound implements Round
 			b.append("<br> - Press 'Done' to finish your turn");
 		}
 		/* TODO: The below if needs be refined. */
-		if (GameManager.getInstance().getPhase() > 1 && step != STEP_PAYOUT)
+		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()
+		        && step != STEP_PAYOUT)
 		{
 			b.append("<br> - Buy one or more Privates");
 		}

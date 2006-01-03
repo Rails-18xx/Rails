@@ -23,5 +23,7 @@ public interface PhaseI extends ConfigurableComponentI {
     public boolean doPrivatesClose();
 
     public boolean isPrivateSellingAllowed();
+    
+    public int getNumberOfOperatingRounds ();
 
 }

@@ -159,7 +159,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		getContentPane().add(statusPanel, BorderLayout.NORTH);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-		setTitle("Operating Round");
+		setTitle("Operating Round "+round.getCompositeORNumber());
 		setLocation(300, 650);
 		setSize(800, 400);
 		pack();
@@ -382,6 +382,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 			round = (OperatingRound) GameManager.getInstance()
 					.getCurrentRound();
+			setTitle("Operating Round "+round.getCompositeORNumber());
+			
 			int step = round.getStep();
 			if (round.getOperatingCompanyIndex() != orCompIndex)
 			{
