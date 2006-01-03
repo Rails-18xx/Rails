@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.8 2006/01/03 18:37:41 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.9 2006/01/03 19:57:35 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -145,5 +145,10 @@ public class Station implements TokenHolderI, Cloneable
 	public void setTokens(ArrayList tokens)
 	{
 		this.tokens = tokens;
+	}
+	
+	public String toString()
+	{
+		return "Station ID: " + id + ", Type: " + type + ", Slots: " + baseSlots + ", Value: " + value;
 	}
 }
