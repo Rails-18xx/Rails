@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.plaf.*;
 
 import game.*;
 import game.special.SpecialTileLay;
@@ -219,10 +220,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			GUIHex clickedHex = getHexContainingPoint(point);
-			highlightClickedHex(clickedHex);
 			
 			if (baseTokenLayingEnabled)
 			{
+				highlightClickedHex(clickedHex);
+				
 				if (clickedHex != null)
 				{
 					upgradesPanel.setCancelText(UpgradesPanel.cancelText);
@@ -311,7 +313,25 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
-				selectedHex.fixToken();
+			{
+				if(selectedHex.getHexModel().getStations().size() == 1)
+					selectedHex.fixToken(1);
+				else
+				{
+					Object[] stations = selectedHex.getHexModel().getStations().toArray();
+					Station station = (Station) JOptionPane.showInputDialog(
+							this,
+							"Which station to place the token in?",
+							"Which station?",
+							JOptionPane.PLAIN_MESSAGE,
+							null,
+							stations,
+							stations[0]
+							);
+					
+					selectedHex.fixToken(selectedHex.getHexModel().getStations().indexOf(station));
+				}
+			}
 		}
 		else
 		{
@@ -326,7 +346,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			GameUILoader.statusWindow.orWindow.layBaseToken(null);
+			GameUILoader.statusWindow.orWindow.layBaseToken(null, 0);
 		}
 		else
 		{

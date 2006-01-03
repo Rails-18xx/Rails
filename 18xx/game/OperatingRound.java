@@ -375,7 +375,7 @@ public class OperatingRound implements Round
 	 *            company treasury.
 	 * @return
 	 */
-	public boolean layBaseToken(String companyName, MapHex hex)
+	public boolean layBaseToken(String companyName, MapHex hex, int station)
 	{
 
 		String errMsg = null;
@@ -422,10 +422,10 @@ public class OperatingRound implements Round
 			return false;
 		}
 
-		if(!operatingCompany.layBaseToken(hex))
+		if(!operatingCompany.layBaseToken(hex)) // FIXME: Need to specify station!
 			return false;
 		
-		lastBaseTokenLaid = hex.getName(); // FIXME: Need to specify station!
+		lastBaseTokenLaid = hex.getName();
 		lastBaseTokenLayCost = cost;
 
 		if (cost > 0)

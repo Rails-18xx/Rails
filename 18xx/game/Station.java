@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.7 2006/01/02 22:48:07 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.8 2006/01/03 18:37:41 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -9,6 +9,7 @@ import java.util.*;
 
 /**
  * @author Erik Vos
+ * @author Brett Lentz
  */
 public class Station implements TokenHolderI, Cloneable
 {
@@ -97,7 +98,7 @@ public class Station implements TokenHolderI, Cloneable
 		}
 		else
 		{
-			Log.write("Unable to add token to this station. No more open slots.");
+			Log.error("Unable to add token to this station. No more open slots.");
 			return false;
 		}
 	}
