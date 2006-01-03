@@ -559,13 +559,13 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
-	public void layBaseToken(MapHex hex)
+	public void layBaseToken(MapHex hex, int station)
 	{
 		if (hex == null)
 		{
 			round.skip(orCompName);
 		}
-		else if (round.layBaseToken(orCompName, hex))
+		else if (round.layBaseToken(orCompName, hex, station))
 		{
 			// Let model process this first
 			int cost = round.getLastBaseTokenLayCost();

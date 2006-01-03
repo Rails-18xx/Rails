@@ -700,11 +700,10 @@ public class GUIHex
 		setToolTip();
 	}
 
-	public void fixToken()
+	public void fixToken(int station)
 	{
-		GameUILoader.statusWindow.orWindow.layBaseToken(model);
+		GameUILoader.statusWindow.orWindow.layBaseToken(model, station);
 		setSelected(false);
-
 	}
 
 }
