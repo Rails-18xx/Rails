@@ -43,15 +43,18 @@
 	<Component name="PhaseManager" class="game.PhaseManager">
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
+      <OperatingRounds number="1"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
+      <OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+      <OperatingRounds number="3"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>
