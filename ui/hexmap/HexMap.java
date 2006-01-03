@@ -134,6 +134,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return preferredSize;
 	}
 
+	/*
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
@@ -141,20 +142,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		try
 		{
 			GUIHex clickedHex = getHexContainingPoint(point);
-
+			
 			if (baseTokenLayingEnabled)
 			{
 
-				if (selectedHex != null)
-				{
-					// REMOVE TOKEN FROM PREVIOUSLY SELECTED HEX
-				}
-				selectedHex = clickedHex;
-				if (selectedHex != null)
+				
+				//selectedHex = clickedHex;
+				if (clickedHex != null)
 				{
 					upgradesPanel.setCancelText(UpgradesPanel.cancelText);
 					upgradesPanel.setDoneEnabled(true);
-					// DROP A TOKEN - HOW?
 				}
 				else
 				{
@@ -204,8 +201,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				selectedHex.removeTile();
 				selectedHex.setSelected(false);
-				repaint(selectedHex.getBounds());
 				selectedHex = null;
+				repaint();
 				upgradesPanel.setDoneEnabled(false);
 				upgradesPanel.setCancelText(baseTokenLayingEnabled ? UpgradesPanel.noTokenText
 						: UpgradesPanel.noTileText);
@@ -213,10 +210,101 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 
 		showUpgrades();
+	}*/
+	
+	public void mouseClicked(MouseEvent arg0)
+	{
+		Point point = arg0.getPoint();
 
-		// System.out.println("Tokens: " +
-		// selectedHex.getHexModel().getTokens());
+		try
+		{
+			GUIHex clickedHex = getHexContainingPoint(point);
+			highlightClickedHex(clickedHex);
+			
+			if (baseTokenLayingEnabled)
+			{
+				if (clickedHex != null)
+				{
+					upgradesPanel.setCancelText(UpgradesPanel.cancelText);
+					upgradesPanel.setDoneEnabled(true);
+				}
+				else
+				{
+					upgradesPanel.setCancelText(UpgradesPanel.noTokenText);
+					upgradesPanel.setDoneEnabled(false);
+				}
+			}
+			else if (clickedHex == selectedHex)
+			{
+				selectedHex.rotateTile();
+				repaint(selectedHex.getBounds());
+			}
+			else
+			{
+				if (selectedHex != null)
+				{
+					selectedHex.removeTile();
+					highlightClickedHex(null);
+				}
+				if (clickedHex.getHexModel().isUpgradeableNow())
+				{
+					highlightClickedHex(clickedHex);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(this,
+							"This hex cannot be upgraded now");
+				}
+				upgradesPanel.setCancelText(UpgradesPanel.noTileText);
+				upgradesPanel.setDoneEnabled(false);
+			}
+
+			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
+			// correctly.
+			upgradesPanel.setVisible(false);
+			upgradesPanel.setVisible(true);
+		}
+		catch (NullPointerException e)
+		{
+			// No hex clicked
+			if (selectedHex != null)
+			{
+				selectedHex.removeTile();
+				highlightClickedHex(null);
+				upgradesPanel.setDoneEnabled(false);
+				upgradesPanel.setCancelText(baseTokenLayingEnabled ? UpgradesPanel.noTokenText
+						: UpgradesPanel.noTileText);
+			}
+		}
+
+		showUpgrades();
 	}
+	
+	private void highlightClickedHex(GUIHex clickedHex)
+	{		
+		if(selectedHex == null)
+		{			
+			clickedHex.setSelected(true);
+			selectedHex = clickedHex;
+			repaint(selectedHex.getBounds());			
+		}
+		else if(clickedHex != null && selectedHex != null && clickedHex != selectedHex)
+		{
+			selectedHex.setSelected(false);
+			repaint(selectedHex.getBounds());
+			
+			clickedHex.setSelected(true);
+			selectedHex = clickedHex;
+			repaint(selectedHex.getBounds());
+		}
+		else
+		{
+			selectedHex.setSelected(false);
+			repaint();
+			selectedHex = null;
+		}
+	}
+	
 
 	public void processDone()
 	{

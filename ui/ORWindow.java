@@ -554,7 +554,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
 		{
-			//GameUILoader.mapWindow.enableTileLaying(false); => updateStatus
+			// GameUILoader.mapWindow.enableTileLaying(false); => updateStatus
 			this.requestFocus();
 		}
 	}
@@ -944,45 +944,51 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				}
 			}
 
-			try
+			if (privatesForSale.size() > 0)
 			{
-				privName = (String) JOptionPane.showInputDialog(this,
-						"Buy which private?",
-						"Which Private?",
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						privatesForSale.toArray(),
-						privatesForSale.get(0));
-				privName = privName.split(" ")[0];
-				priv = Game.getCompanyManager().getPrivateCompany(privName);
-				minPrice = (int) (priv.getBasePrice() * orComp.getLowerPrivatePriceFactor());
-				maxPrice = (int) (priv.getBasePrice() * orComp.getUpperPrivatePriceFactor());
-				String price = (String) JOptionPane.showInputDialog(this,
-						"Buy " + privName + " for what price (range "
-								+ Bank.format(minPrice) + " - "
-								+ Bank.format(maxPrice) + ")?",
-						"What price?",
-						JOptionPane.QUESTION_MESSAGE);
-				amount = Integer.parseInt(price);
-				Player prevOwner = (Player) priv.getPortfolio().getOwner();
-				if (!round.buyPrivate(orComp.getName(), priv.getName(), amount))
+				try
 				{
-					displayError();
-				}
-				else
-				{
-					updateCash(orCompIndex);
-					gameStatus.updateCash(orComp);
-					gameStatus.updateCash(prevOwner);
+					privName = (String) JOptionPane.showInputDialog(this,
+							"Buy which private?",
+							"Which Private?",
+							JOptionPane.QUESTION_MESSAGE,
+							null,
+							privatesForSale.toArray(),
+							privatesForSale.get(0));
+					privName = privName.split(" ")[0];
+					priv = Game.getCompanyManager().getPrivateCompany(privName);
+					minPrice = (int) (priv.getBasePrice() * orComp.getLowerPrivatePriceFactor());
+					maxPrice = (int) (priv.getBasePrice() * orComp.getUpperPrivatePriceFactor());
+					String price = (String) JOptionPane.showInputDialog(this,
+							"Buy " + privName + " for what price (range "
+									+ Bank.format(minPrice) + " - "
+									+ Bank.format(maxPrice) + ")?",
+							"What price?",
+							JOptionPane.QUESTION_MESSAGE);
+					amount = Integer.parseInt(price);
+					Player prevOwner = (Player) priv.getPortfolio().getOwner();
+					if (!round.buyPrivate(orComp.getName(),
+							priv.getName(),
+							amount))
+					{
+						displayError();
+					}
+					else
+					{
+						updateCash(orCompIndex);
+						gameStatus.updateCash(orComp);
+						gameStatus.updateCash(prevOwner);
 
-					gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
-					gameStatus.updatePlayerPrivates(prevOwner.getIndex());
+						gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
+						gameStatus.updatePlayerPrivates(prevOwner.getIndex());
+					}
 				}
-			}
-			catch (NullPointerException e)
-			{
-				// Null Pointer means user hit cancel. Don't bother attempting
-				// anything further.
+				catch (NullPointerException e)
+				{
+					// Null Pointer means user hit cancel. Don't bother
+					// attempting
+					// anything further.
+				}
 			}
 
 		}
