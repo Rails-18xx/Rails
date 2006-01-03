@@ -24,8 +24,10 @@ public class Phase implements PhaseI {
     protected HashMap tileColours;
     protected boolean privateSellingAllowed = false;
     protected boolean privatesClose = false;
+    protected int numberOfOperatingRounds = 1;
     
     protected static boolean previousPrivateSellingAllowed = false;
+    protected static int previousNumberOfOperatingRounds = 1;
     
     public Phase (int index, String name) {
         this.index = index;
@@ -54,12 +56,22 @@ public class Phase implements PhaseI {
         nl = el.getElementsByTagName("Privates");
         if (nl != null && nl.getLength() > 0) {
             attributes = nl.item(0).getAttributes();
-            privateSellingAllowed = XmlUtils.extractBooleanAttribute
-            	(attributes, "sellingAllowed", previousPrivateSellingAllowed);
+            privateSellingAllowed = previousPrivateSellingAllowed = 
+                XmlUtils.extractBooleanAttribute
+            		(attributes, "sellingAllowed", previousPrivateSellingAllowed);
             privatesClose = XmlUtils.extractBooleanAttribute
         		(attributes, "close", false);
         }
-	}
+
+        // Operating rounds
+        nl = el.getElementsByTagName("OperatingRounds");
+        if (nl != null && nl.getLength() > 0) {
+            attributes = nl.item(0).getAttributes();
+            numberOfOperatingRounds = previousNumberOfOperatingRounds =
+                XmlUtils.extractIntegerAttribute
+            		(attributes, "number", previousNumberOfOperatingRounds);
+        }
+}
 	
 	public boolean isTileColourAllowed (String tileColour) {
 	    return tileColours.containsKey(tileColour);
@@ -88,5 +100,9 @@ public class Phase implements PhaseI {
      */
     public boolean isPrivateSellingAllowed() {
         return privateSellingAllowed;
+    }
+    
+    public int getNumberOfOperatingRounds () {
+        return numberOfOperatingRounds;
     }
 }
