@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
   <CompanyType name="Private" class="game.PrivateCompany">
-    <AllClose phase="5"/>
   </CompanyType>
   <CompanyType name="Minor" class="game.PublicCompany">
     <ShareUnit percentage="100"/>

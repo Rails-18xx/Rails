@@ -50,6 +50,7 @@
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
       <OperatingRounds number="3"/>
+			<Privates close="yes"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>

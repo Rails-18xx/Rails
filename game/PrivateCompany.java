@@ -183,10 +183,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	 */
 	public void setClosed()
 	{
-		closed = true;
-		unblockHexes();
-		Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
-		Log.write("Private " + name + " closes");
+	    if (!closed) {
+			closed = true;
+			unblockHexes();
+			Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
+			Log.write("Private " + name + " closes");
+	    }
 	}
 
 	/**

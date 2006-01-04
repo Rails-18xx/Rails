@@ -1,5 +1,5 @@
 /*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.7 2005/10/11 17:35:29 wakko666 Exp $
+ * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.8 2006/01/04 20:49:24 evos Exp $
  * Created on 19mar2005 by Erik Vos
  * Changes: 
  */
@@ -26,9 +26,6 @@ public class CompanyType implements CompanyTypeI
 	/*--- Instance attributes ---*/
 	protected String name;
 	protected String className;
-	protected String auctionType;
-	protected int allClosePhase;
-	// protected ArrayList defaultCertificates;
 	protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
 
 	private CompanyI dummyCompany;
@@ -96,22 +93,6 @@ public class CompanyType implements CompanyTypeI
 
 	/*--- Getters and setters ---*/
 	/**
-	 * @return Phase all privates close
-	 */
-	public int getAllClosePhase()
-	{
-		return allClosePhase;
-	}
-
-	/**
-	 * @return Type of Auction
-	 */
-	public String getAuctionType()
-	{
-		return auctionType;
-	}
-
-	/**
 	 * Get the company type name
 	 * 
 	 * @return The name of this company type.
@@ -119,22 +100,6 @@ public class CompanyType implements CompanyTypeI
 	public String getName()
 	{
 		return name;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setAllClosePhase(int i)
-	{
-		allClosePhase = i;
-	}
-
-	/**
-	 * @param string
-	 */
-	public void setAuctionType(String string)
-	{
-		auctionType = string;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.16 2006/01/03 23:19:25 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.17 2006/01/04 20:49:24 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -385,6 +385,10 @@ public class GameManager implements ConfigurableComponentI
 	
 	public static void setCurrentPhase (PhaseI phase) {
 	    currentPhase = phase;
+	    Log.write("Start of phase "+phase.getName());
+	    if (phase.doPrivatesClose()) {
+	        Game.getCompanyManager().closeAllPrivates();
+	    }
 	}
 
 	protected static void addVariant(String name)

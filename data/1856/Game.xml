@@ -41,6 +41,7 @@
 		<Phase name="2">
 			<Tiles colour="yellow,green"/>
       <OperatingRounds number="2"/>
+			<Privates sellingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -48,6 +49,7 @@
 		<Phase name="4">
 			<Tiles colour="yellow,green,brown"/>
       <OperatingRounds number="3"/>
+			<Privates close="yes"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown,grey"/>

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.6 2005/10/11 17:35:29 wakko666 Exp $ 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.7 2006/01/04 20:49:24 evos Exp $ 
  * 
  * Created 19mar2005 by Erik Vos
  * Changes:
@@ -36,31 +36,10 @@ public interface CompanyTypeI {
 	public CompanyI createCompany (String name, Element element) 
 	throws ConfigurationException; 
 
-	
-	/**
-	 * @return phase all privates close
-	 */
-	public int getAllClosePhase();
-
-	/**
-	 * @return auction type
-	 */
-	public String getAuctionType();
-
 	/**
 	 * @return name
 	 */
 	public String getName();
-
-	/**
-	 * @param i
-	 */
-	public void setAllClosePhase(int i);
-
-	/**
-	 * @param string
-	 */
-	public void setAuctionType(String string);
 
 	/**
 	 * @return class name
