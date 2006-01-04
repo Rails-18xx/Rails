@@ -253,4 +253,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	    return specialProperties;
 	}
 
+	
+	public List getBlockedHexes()
+	{
+		return blockedHexes;
+	}
+
 }
