@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.9 2006/01/03 19:57:35 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.10 2006/01/04 01:02:15 wakko666 Exp $
  * 
  * Created on 30-Oct-2005
  * Change Log:
@@ -92,9 +92,17 @@ public class Station implements TokenHolderI, Cloneable
 	{
 		if (tokens.size() + 1 <= baseSlots)
 		{
-			tokens.add(company);
-			hasTokens = true;
-			return true;
+			if (!tokens.contains(company))
+			{
+				tokens.add(company);
+				hasTokens = true;
+				return true;
+			}
+			else
+			{
+				Log.error("Unable to add token to this station.\nThis company already has a token at this location.");
+				return false;
+			}
 		}
 		else
 		{
@@ -146,9 +154,10 @@ public class Station implements TokenHolderI, Cloneable
 	{
 		this.tokens = tokens;
 	}
-	
+
 	public String toString()
 	{
-		return "Station ID: " + id + ", Type: " + type + ", Slots: " + baseSlots + ", Value: " + value;
+		return "Station ID: " + id + ", Type: " + type + ", Slots: "
+				+ baseSlots + ", Value: " + value;
 	}
 }
