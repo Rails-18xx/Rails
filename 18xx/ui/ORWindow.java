@@ -906,7 +906,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 											options[0]);
 									if (discardedTrainName != null)
 									{
-										TrainI discardedTrain = orComp.getPortfolio()
+										TrainI discardedTrain = c.getPortfolio()
 												.getTrainOfType(discardedTrainName);
 										c.getPortfolio()
 												.discardTrain(discardedTrain);

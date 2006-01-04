@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
 	<CompanyType name="Private" class="game.PrivateCompany">
-		<AllClose phase="5"/>
 	</CompanyType>
 	<CompanyType name="Public" class="game.PublicCompany">
 		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>

@@ -34,4 +34,5 @@ public interface TrainManagerI {
 	public boolean hasAvailabilityChanged ();
 	public void resetAvailabilityChanged ();
 	public boolean hasPhaseChanged ();
+
 }
