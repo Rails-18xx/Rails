@@ -291,7 +291,7 @@ public class GUIHex
 							+ (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
 							* 3 / 5,
 					rectBound.y
-							+ ((fontMetrics.getHeight() + rectBound.height) * 6 / 10));
+							+ ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
 		}
 
 		if (getHexModel().getCompanyHome() != null)
@@ -306,6 +306,35 @@ public class GUIHex
 										.getName())) * 1 / 2,
 						rectBound.y
 								+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
+			}
+		}
+
+		if (getHexModel().isBlocked())
+		{
+			ArrayList privates = (ArrayList) Game.getCompanyManager()
+					.getAllPrivateCompanies();
+			Iterator pIT = privates.iterator();
+
+			while (pIT.hasNext())
+			{
+				PrivateCompany p = (PrivateCompany) pIT.next();
+				ArrayList blocked = (ArrayList) p.getBlockedHexes();
+				Iterator bIT = blocked.iterator();
+
+				while (bIT.hasNext())
+				{
+					MapHex hex = (MapHex) bIT.next();
+
+					if (getHexModel().equals(hex))
+					{
+						g2.drawString("(" + p.getName() + ")",
+								rectBound.x
+										+ (rectBound.width - fontMetrics.stringWidth("(" + p.getName() + ")"))
+										* 1 / 2,
+								rectBound.y
+										+ ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
+					}
+				}
 			}
 		}
 
