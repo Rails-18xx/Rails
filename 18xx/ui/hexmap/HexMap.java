@@ -315,7 +315,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			if (selectedHex != null)
 			{
 				if(selectedHex.getHexModel().getStations().size() == 1)
-					selectedHex.fixToken(1);
+					selectedHex.fixToken(0);
 				else
 				{
 					Object[] stations = selectedHex.getHexModel().getStations().toArray();

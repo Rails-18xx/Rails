@@ -513,15 +513,15 @@ public class GUIHex
 							// First token
 							if (currentToken == 0)
 							{
-								p.x = (center.x - 14);
-								p.y = (center.y + 3);
+								p.x = (center.x - 20);
+								p.y = (center.y - 3);
 								return p;
 							}
 							// Second Token
 							else
 							{
-								p.x = (center.x - 20);
-								p.y = (center.y + 12);
+								p.x = (center.x - 10);
+								p.y = (center.y + 9);
 								return p;
 							}
 						default:
@@ -541,15 +541,15 @@ public class GUIHex
 							// First token
 							if (currentToken == 0)
 							{
-								p.x = (center.x - 1);
-								p.y = (center.y - 20);
+								p.x = (center.x - 6);
+								p.y = (center.y - 23);
 								return p;
 							}
 							// Second Token
 							else
 							{
-								p.x = (center.x - 6);
-								p.y = (center.y - 8);
+								p.x = (center.x + 6);
+								p.y = (center.y - 12);
 								return p;
 							}
 						default:
