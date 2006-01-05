@@ -127,6 +127,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	public StockSpaceI getCurrentPrice();
 	
 	public PriceModel getCurrentPriceModel ();
+	
+	public PriceModel getParPriceModel();
 	/**
 	 * @return
 	 */

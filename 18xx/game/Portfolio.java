@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.24 2005/12/11 21:06:45 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.25 2006/01/05 22:09:32 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -7,6 +7,7 @@
 package game;
 
 import game.model.ModelObject;
+import game.model.PrivatesModel;
 import game.model.TrainsModel;
 import game.special.SpecialPropertyI;
 
@@ -31,6 +32,7 @@ public class Portfolio
    protected List trains = new ArrayList();
    protected Map trainsPerType = new HashMap();
    protected TrainsModel trainsModel = new TrainsModel(this);
+   protected PrivatesModel privatesModel = new PrivatesModel (this);
    
    /** Special properties. It is easier to maintain a map of these
     * that to have to search through the privates on each and every action. */
@@ -148,6 +150,7 @@ public class Portfolio
       if (privateCompany.getSpecialProperties() != null) {
           updateSpecialProperties();
       }
+      privatesModel.update();
    }
 
    public void addCertificate(PublicCertificateI certificate)
@@ -169,6 +172,7 @@ public class Portfolio
          if (privateCompanies.get(i) == privateCompany)
          {
             privateCompanies.remove(i);
+            privatesModel.update();
             if (privateCompany.getSpecialProperties() != null) {
                 updateSpecialProperties();
             }
@@ -538,6 +542,10 @@ public class Portfolio
    
    public List getSpecialProperties (Class clazz) {
        return (List) specialProperties.get(clazz);
+   }
+   
+   public ModelObject getPrivatesModel () {
+       return privatesModel;
    }
 
 }

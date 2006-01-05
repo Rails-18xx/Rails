@@ -747,29 +747,33 @@ public class OperatingRound implements Round
 		{
 
 			normalTileLaysDone = 0;
-			extraTileLaysAllowed = 0;
 			extraTileLaysDone = 0;
 			lastTileLayCost = 0;
 			lastTileLaid = "";
 
-			// Check for extra or special tile lays
-			currentSpecialProperties = operatingCompany.getPortfolio()
-					.getSpecialProperties(game.special.SpecialTileLay.class);
-			if (currentSpecialProperties != null)
-			{
-				Iterator it = currentSpecialProperties.iterator();
-				while (it.hasNext())
-				{
-					if (((SpecialTileLay) it.next()).isExtra())
-						extraTileLaysAllowed++;
-				}
-			}
+			checkForExtraTileLays();
+
 		}
 		else
 		{
 
 			currentSpecialProperties = null;
 		}
+	}
+	
+	private void checkForExtraTileLays() {
+        extraTileLaysAllowed = 0;
+        currentSpecialProperties = operatingCompany.getPortfolio()
+                .getSpecialProperties(game.special.SpecialTileLay.class);
+        if (currentSpecialProperties != null) {
+            Iterator it = currentSpecialProperties.iterator();
+            while (it.hasNext()) {
+                SpecialTileLay stl = (SpecialTileLay) it.next();
+                if (stl.isExtra() && !stl.isExercised())
+                    extraTileLaysAllowed++;
+            }
+        }
+	    
 	}
 
 	public List getSpecialProperties()
@@ -1015,6 +1019,9 @@ public class OperatingRound implements Round
 		operatingCompany.getPortfolio().buyPrivate(privCo,
 				player.getPortfolio(),
 				price);
+		
+		// We may have got an extra tile lay right
+		checkForExtraTileLays();
 
 		return true;
 
