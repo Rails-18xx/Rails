@@ -538,9 +538,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				int cost = round.getLastTileLayCost();
 				tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
 				tiles[orCompIndex].setText(round.getLastTileLaid());
-				// updateCash(orCompIndex);
-				gameStatus.updateCompany(orComp.getPublicNumber());
-				gameStatus.updateBank();
 			}
 			else
 			{
@@ -556,7 +553,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
 		{
-			// GameUILoader.mapWindow.enableTileLaying(false); => updateStatus
 			this.requestFocus();
 		}
 	}
@@ -605,9 +601,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
-			gameStatus.updatePlayerCash();
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
 		}
 
 	}
@@ -651,10 +644,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
-			gameStatus.updatePlayerCash();
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
-
 		}
 		else if (command.equals("Split"))
 		{
@@ -663,9 +652,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
-			gameStatus.updatePlayerCash();
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
 
 		}
 		else if (command.equals("Withhold"))
@@ -675,8 +661,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
-			gameStatus.updateCompany(orComp.getPublicNumber());
-			gameStatus.updateBank();
 
 		}
 		else if (command.equals("BuyTrain"))
@@ -829,12 +813,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 						}
 						else
 						{
-							gameStatus.updateTrains(orComp.getPortfolio());
-							gameStatus.updateTrains(seller);
-							gameStatus.updateCash(orComp);
-							gameStatus.updateCash(Bank.getInstance());
-							if (exchanging)
-								gameStatus.updateTrains(Bank.getPool());
 							updateCash(orCompIndex);
 
 							if (seller.getOwner() instanceof PublicCompanyI)
@@ -844,19 +822,15 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 									if (companies[i] == seller.getOwner())
 									{
 										updateCash(k);
-										gameStatus.updateCash(companies[k]);
 										break;
 									}
 								}
 							}
 							else if (seller == Bank.getIpo())
 							{
-								gameStatus.updateTrains(Bank.getIpo());
-								gameStatus.updateTrains(Bank.getUnavailable());
 
 								if (TrainManager.get().hasAvailabilityChanged())
 								{
-									gameStatus.updateTrains();
 									TrainManager.get()
 											.resetAvailabilityChanged();
 								}
@@ -867,17 +841,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 
 							trainsBought.add(train);
 							newTrains[orCompIndex].setText(TrainManager.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
-							// trains[orCompIndex].setText(TrainManager.makeFullList(orComp.getPortfolio()));
-
-							// In case a private has closed
-							/*
-							 * BIG SHORTCUT: It is assumed here that the
-							 * President always owns the closing Private, which
-							 * is of course not guaranteed! We really need an
-							 * event mechanism to handle this!
-							 */
-							gameStatus.updatePlayerPrivates(orComp.getPresident()
-									.getIndex());
 
 							// Check if any trains must be discarded
 							if (TrainManager.get().hasPhaseChanged())
@@ -910,8 +873,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 												.getTrainOfType(discardedTrainName);
 										c.getPortfolio()
 												.discardTrain(discardedTrain);
-										gameStatus.updateTrains(c.getPortfolio());
-										// trains[orCompIndex].setText(TrainManager.makeFullList(c.getPortfolio()));
 									}
 								}
 							}
@@ -978,11 +939,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					else
 					{
 						updateCash(orCompIndex);
-						gameStatus.updateCash(orComp);
-						gameStatus.updateCash(prevOwner);
-
-						gameStatus.updateCompanyPrivates(orComp.getPublicNumber());
-						gameStatus.updatePlayerPrivates(prevOwner.getIndex());
 					}
 				}
 				catch (NullPointerException e)
@@ -1025,14 +981,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				priv = Game.getCompanyManager().getPrivateCompany(privName);
 				CashHolder prevOwner = priv.getPortfolio().getOwner();
 				round.closePrivate(privName);
-				if (prevOwner instanceof PublicCompanyI)
-				{
-					gameStatus.updateCompanyPrivates(((PublicCompanyI) prevOwner).getPublicNumber());
-				}
-				else
-				{
-					gameStatus.updatePlayerPrivates(((Player) prevOwner).getIndex());
-				}
 			}
 			catch (NullPointerException e)
 			{

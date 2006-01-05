@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/PriceModel.java,v 1.2 2005/12/11 21:06:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/PriceModel.java,v 1.3 2006/01/05 22:09:34 evos Exp $
  * 
  * Created on 08-Dec-2005
  * Change Log:
@@ -13,7 +13,7 @@ import game.StockSpaceI;
  */
 public class PriceModel extends ModelObject {
     
-    private StockSpaceI stockPrice;
+    private StockSpaceI stockPrice = null;
     
     public PriceModel (StockSpaceI price) {
         this.stockPrice = price;

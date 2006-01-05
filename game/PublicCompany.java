@@ -53,7 +53,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected int publicNumber = -1; // For internal use
 
 	/** Initial (par) share price, represented by a stock market location object */
-	protected StockSpaceI parPrice = null;
+	protected PriceModel parPrice = null;
 
 	/** Current share price, represented by a stock market location object */
 	// protected StockSpaceI currentPrice = null;
@@ -156,11 +156,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		if (hasStockPrice && XmlUtils.hasValue(startSpace))
 		{
-			parPrice = /* currentPrice = */
-			StockMarket.getInstance().getStockSpace(startSpace);
-			// currentPrice.setPrice (parPrice);
-			// currentPrice = new PriceModel (parPrice);
-			if (parPrice == null)
+			parPrice.setPrice(
+			        StockMarket.getInstance().getStockSpace(startSpace));
+			if (parPrice.getPrice() == null)
 				throw new ConfigurationException("Invalid start space "
 						+ startSpace + "for company " + name);
 		}
@@ -402,8 +400,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void start()
 	{
 		this.hasStarted = true;
-		if (hasStockPrice && parPrice != null)
-			parPrice.addToken(this);
+		if (hasStockPrice && parPrice.getPrice() != null)
+			parPrice.getPrice().addToken(this);
 	}
 
 	/**
@@ -475,9 +473,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		if (hasStockPrice)
 		{
-			parPrice = /* currentPrice = */space;
-			currentPrice.setPrice(space);
-			space.addToken(this);
+		    if (parPrice == null) {
+		        parPrice = new PriceModel (space);
+		    } else {
+		        parPrice.setPrice(space);
+		    }
+			setCurrentPrice(space);
+			if (space != null) space.addToken(this);
 		}
 	}
 
@@ -489,7 +491,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public StockSpaceI getParPrice()
 	{
-		return hasParPrice ? parPrice : currentPrice.getPrice();
+	    if (hasParPrice) {
+	        return parPrice != null ? parPrice.getPrice() : null;
+	    } else {
+	        return currentPrice != null ? currentPrice.getPrice() : null;
+	    }
 	}
 
 	/**
@@ -501,14 +507,20 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void setCurrentPrice(StockSpaceI price)
 	{
-		if (currentPrice == null)
-			currentPrice = new PriceModel(null);
-		currentPrice.setPrice(price);
+	    if (currentPrice == null) {
+	        currentPrice = new PriceModel (price);
+	    } else {
+	        currentPrice.setPrice(price);
+		}
 	}
 
 	public PriceModel getCurrentPriceModel()
 	{
 		return currentPrice;
+	}
+	
+	public PriceModel getParPriceModel() {
+	    return parPrice;
 	}
 
 	/**
@@ -1064,6 +1076,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			((PublicCompanyI) clone).setCertificates(certificates);
 		}
+		((PublicCompanyI) clone).setParPrice(null);
 		((PublicCompanyI) clone).setCurrentPrice(null);
 		return clone;
 	}

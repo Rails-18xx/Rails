@@ -57,7 +57,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	 * <br> - true: push changes (Observer/Observable pattern),
 	 * <br> - false: pull everything on repaint.
 	 */
-	public static boolean useObserver = false;
+	public static boolean useObserver = true;
 	
 	public void initMenu()
 	{
@@ -407,8 +407,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			{
 				startCompany();
 			}
-			if (company.hasFloated())
-				gameStatus.updateCompany(compIndex);
+			//if (company.hasFloated())
+				//gameStatus.updateCompany(compIndex);
 
 		}
 		else if ((compIndex = gameStatus.getCompIndexToBuyFromPool()) >= 0)
@@ -430,7 +430,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				{
 					gameStatus.updatePlayer(compIndex, playerIndex);
 					gameStatus.updatePool(compIndex);
-					gameStatus.updateBank();
+					//gameStatus.updateBank();
 				}
 			}
 
@@ -461,7 +461,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			{
 				gameStatus.updatePlayer(compIndex, playerIndex);
 				gameStatus.updatePool(compIndex);
-				gameStatus.updateBank();
+				//gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
@@ -507,7 +507,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 				gameStatus.updatePlayer(compIndex, playerIndex);
 				gameStatus.updateIPO(compIndex);
-				gameStatus.updateBank();
+				//gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
