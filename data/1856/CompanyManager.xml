@@ -50,4 +50,8 @@
 		<!-- Will probably move later to a GameManager XML-->
 		<NoSaleInFirstSR/>
 	</StockRoundRules>
+	<BaseTokens>
+		<!-- Not sure if this belongs here -->
+		<LayCost method="sequence" cost="0,40,100"/>
+	</BaseTokens>
 </CompanyManager>
