@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.17 2006/01/04 20:49:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.18 2006/01/08 19:32:57 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -29,6 +29,8 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static int playerShareLimit = 60;
 	protected static int currentNumberOfOperatingRounds = 1;
+	
+	protected static boolean companiesCanBuyPrivates = false;
 
 	/**
 	 * Current round should not be set here but from within the Round classes.
@@ -478,6 +480,14 @@ public class GameManager implements ConfigurableComponentI
 				}
 			}
 		}
+	}
+	
+	public static void setCompaniesCanBuyPrivates () {
+	    companiesCanBuyPrivates = true;
+	}
+	
+	public static boolean getCompaniesCanBuyPrivates () {
+	    return companiesCanBuyPrivates;
 	}
 
 	public String getHelp()

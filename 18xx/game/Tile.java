@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.12 2005/12/24 13:56:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.13 2006/01/08 19:32:57 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -232,14 +232,13 @@ public class Tile implements TileI
 	}
 
 	/**
-	 * Is the tile upgradeable now (in the current phase)?
+	 * Is the tile layable now (in the current phase)?
 	 * 
 	 * @return
 	 */
-	public boolean isUpgradeableNow()
+	public boolean isLayableNow()
 	{
-		/* TODO: take phase into account */
-		return upgradeable;
+		return GameManager.getCurrentPhase().isTileColourAllowed(colour);
 	}
 
 	/**

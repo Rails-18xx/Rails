@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.2 2005/11/27 20:59:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.3 2006/01/08 19:32:59 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -8,6 +8,8 @@ package game.special;
 import game.*;
 
 import org.w3c.dom.*;
+
+import util.Utils;
 import util.XmlUtils;
 
 /**
@@ -27,7 +29,7 @@ public class SpecialTileLay extends SpecialORProperty {
         
         NamedNodeMap nnp = stlEl.getAttributes();
         locationCode = XmlUtils.extractStringAttribute(nnp, "location");
-        if (!XmlUtils.hasValue(locationCode))
+        if (!Utils.hasValue(locationCode))
             throw new ConfigurationException ("SpecialTileLay: location missing");
         location = MapManager.getInstance().getHex (locationCode);
         if (location == null)

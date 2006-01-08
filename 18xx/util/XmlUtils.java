@@ -201,8 +201,4 @@ public final class XmlUtils {
         }
         throw new ConfigurationException("Could not find " + elementName + " in " + fileName);
     }
-
-	public static boolean hasValue (String s) {
-		return s != null && !s.equals("");
-	}
 }

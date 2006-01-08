@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.7 2005/12/18 16:20:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/util/Attic/ConvertTilesXML.java,v 1.8 2006/01/08 19:32:59 evos Exp $
  * 
  * Created on 14-Aug-2005
  * Change Log:
@@ -332,7 +332,7 @@ public class ConvertTilesXML {
         String junctionPos = inputJunction.getElementsByTagName("position").item(0).getFirstChild().getNodeValue();
         junctionPosition.put(junctionPos, cityId);
         String jName = (String)cityMap.get(junctionPos);
-        if (XmlUtils.hasValue(jName)) {
+        if (Utils.hasValue(jName)) {
             outputJunction.setAttribute("position", jName);
         } else {
             throw new ConfigurationException ("Unknown position: "+junctionPos);
