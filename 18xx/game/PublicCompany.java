@@ -162,6 +162,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			if (parPrice.getPrice() == null)
 				throw new ConfigurationException("Invalid start space "
 						+ startSpace + "for company " + name);
+			currentPrice.setPrice(parPrice.getPrice());
 		}
 	}
 
@@ -522,6 +523,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	}
 	
 	public PriceModel getParPriceModel() {
+	    // Temporary fix to satisfy GameStatus window. Should be removed there.
+	    if (parPrice == null) return currentPrice;
+	    
 	    return parPrice;
 	}
 

@@ -93,9 +93,13 @@
       <SubItem name="Bay" type="Major"/>
     </Item>
   </StartPacket>
-  	<StockRoundRules>
+  <StockRoundRules>
 		<!-- Will probably move later to a GameManager XML-->
 		<NoSaleInFirstSR/>
 		<NoSaleIfNotOperated/>
 	</StockRoundRules>
+	<BaseTokens>
+		<!-- Not sure if this belongs here -->
+		<LayCost method="distance" cost="20"/>
+	</BaseTokens>
 </CompanyManager>

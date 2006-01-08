@@ -122,13 +122,12 @@ public class OperatingRound implements Round
 		for (int i = 0; i < companies.length; i++)
 		{
 			company = companies[i];
-			if (!company.hasFloated())
-				continue;
-			space = company.getCurrentPrice();
+			if (!company.hasFloated()) continue;
 			// Key must put companies in reverse operating order, because sort
 			// is ascending.
 			if (company.hasStockPrice())
 			{
+				space = company.getCurrentPrice();
 				key = 1000000 * (999 - space.getPrice()) + 10000
 						* (99 - space.getColumn()) + 100 * space.getRow()
 						+ space.getStackPosition(company);
