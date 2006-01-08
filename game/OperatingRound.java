@@ -22,6 +22,8 @@ import game.special.*;
 
 import java.util.*;
 
+import util.Utils;
+
 /**
  * Implements a basic Operating Round.
  * <p>
@@ -47,19 +49,22 @@ public class OperatingRound implements Round
 	protected int operatingCompanyIndex = 0;
 	protected PublicCompanyI operatingCompany;
 
-	protected int currentRevenue;
-	protected int lastTileLayCost = 0;
-	protected String lastTileLaid = "";
-	protected int lastBaseTokenLayCost = 0;
-	protected String lastBaseTokenLaid = "";
+	protected int[] tileLayCost;
+	protected String[] tilesLaid;
+	protected int[] baseTokenLayCost;
+	protected String[] baseTokensLaid;
+	protected int[] revenue;
+	protected int[] trainBuyCost;
+	protected int[] privateBuyCost;
 
 	protected List currentSpecialProperties = null;
 
 	protected PhaseI currentPhase;
 
 	/**
-	 * Number of tiles that may be laid. TODO: This does not cover cases like "2
-	 * yellow or 1 upgrade allowed".
+	 * Number of tiles that may be laid. 
+	 * TODO: This does not cover cases like 
+	 * "2 yellow or 1 upgrade allowed".
 	 */
 	protected int normalTileLaysAllowed = 1;
 	protected int normalTileLaysDone = 0;
@@ -67,10 +72,11 @@ public class OperatingRound implements Round
 	protected int extraTileLaysDone = 0;
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
-
+	
 	/* Permanent memory */
 	static protected Player[] players;
 	static protected PublicCompanyI[] companies;
+	static protected int numberOfCompanies = 0;
 	static protected int relativeORNumber = 0;
 	static protected int cumulativeORNumber = 0;
 
@@ -105,7 +111,6 @@ public class OperatingRound implements Round
 					.getAllPublicCompanies()
 					.toArray(new PublicCompanyI[0]);
 		}
-
 		// Determine operating sequence for this OR.
 		// Shortcut: order considered fixed at the OR start. This is not always
 		// true.
@@ -134,7 +139,7 @@ public class OperatingRound implements Round
 			}
 			operatingCompanies.put(new Integer(key), company);
 		}
-
+		
 		operatingCompanyArray = (PublicCompanyI[]) operatingCompanies.values()
 				.toArray(new PublicCompanyI[0]);
 		step = steps[0];
@@ -143,6 +148,16 @@ public class OperatingRound implements Round
 		cumulativeORNumber++;
 
 		Log.write("\nStart of Operating Round " + getCompositeORNumber());
+
+		numberOfCompanies = operatingCompanyArray.length;
+		
+		revenue = new int[numberOfCompanies];
+		tilesLaid = new String[numberOfCompanies];
+		tileLayCost = new int[numberOfCompanies];
+		baseTokensLaid = new String[numberOfCompanies];
+		baseTokenLayCost = new int[numberOfCompanies];
+		trainBuyCost = new int[numberOfCompanies];
+		privateBuyCost = new int[numberOfCompanies];
 
 		// Private companies pay out
 		Iterator it = Game.getCompanyManager()
@@ -232,6 +247,7 @@ public class OperatingRound implements Round
 
 		String errMsg = null;
 		int cost = 0;
+		SpecialTileLay stl = null;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -254,10 +270,23 @@ public class OperatingRound implements Round
 			if (tile == null)
 				break;
 
+			if (!tile.isLayableNow()) {
+			    errMsg = "Tile " + tile.getName() + " is not yet available";
+			    break;
+			}
 			if (tile.countFreeTiles() == 0)
 			{
-				errMsg = "Tile " + tile.getName() + " not available";
+				errMsg = "Tile " + tile.getName() + " is not available";
 				break;
+			}
+
+			// Was a special property used?
+			if (currentSpecialProperties != null) {
+			    stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
+			    if (stl == null && normalTileLaysDone >= normalTileLaysAllowed) {
+			        errMsg = "Cannot lay a tile without using a Private special property";
+			        break;
+			    }
 			}
 
 			// Sort out cost
@@ -300,14 +329,15 @@ public class OperatingRound implements Round
 			hex.upgrade(tile, orientation);
 
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			lastTileLayCost = cost;
-			lastTileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
-					+ MapHex.getOrientationName(orientation); // FIXME: Wrong!
-			Log.write(operatingCompany.getName() + " lays tile " + lastTileLaid
+			tileLayCost[operatingCompanyIndex] = cost;
+			Utils.appendWithComma (tilesLaid[operatingCompanyIndex], 
+			        "#" + tile.getName() + "/" + hex.getName() + "/"
+					+ MapHex.getOrientationName(orientation)); // FIXME: Wrong!
+			Log.write(operatingCompany.getName() + " lays tile " + tile.getName()
+			        + " at hex " + hex.getName()
 					+ (cost > 0 ? " for " + Bank.format(cost) : ""));
 
 			// Was a special property used?
-			SpecialTileLay stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
 			if (stl != null)
 			{
 				System.out.println("A special property of "
@@ -339,12 +369,12 @@ public class OperatingRound implements Round
 
 	public String getLastTileLaid()
 	{
-		return lastTileLaid;
+		return tilesLaid[operatingCompanyIndex];
 	}
 
 	public int getLastTileLayCost()
 	{
-		return lastTileLayCost;
+		return tileLayCost[operatingCompanyIndex];
 	}
 
 	private SpecialORProperty checkForUseOfSpecialProperty(MapHex hex)
@@ -427,8 +457,9 @@ public class OperatingRound implements Round
 		if(!operatingCompany.layBaseToken(hex, station)) // FIXME: Need to specify station!
 			return false;
 		
-		lastBaseTokenLaid = hex.getName();
-		lastBaseTokenLayCost = cost;
+		Utils.appendWithComma (baseTokensLaid[operatingCompanyIndex],
+		      hex.getName());
+		baseTokenLayCost[operatingCompanyIndex] = cost;
 
 		if (cost > 0)
 		{
@@ -451,7 +482,7 @@ public class OperatingRound implements Round
 	 */
 	public String getLastBaseTokenLaid()
 	{
-		return lastBaseTokenLaid;
+		return baseTokensLaid[operatingCompanyIndex];
 	}
 
 	/**
@@ -459,7 +490,7 @@ public class OperatingRound implements Round
 	 */
 	public int getLastBaseTokenLayCost()
 	{
-		return lastBaseTokenLayCost;
+		return baseTokenLayCost[operatingCompanyIndex];
 	}
 
 	/**
@@ -513,7 +544,7 @@ public class OperatingRound implements Round
 			return false;
 		}
 
-		currentRevenue = amount;
+		revenue[operatingCompanyIndex] = amount;
 		Log.write(companyName + " earns " + Bank.format(amount));
 
 		nextStep(operatingCompany);
@@ -568,14 +599,15 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot payout revenue of " + currentRevenue + ": "
+			Log.error("Cannot payout revenue of " 
+			        + Bank.format (revenue[operatingCompanyIndex]) + ": "
 					+ errMsg);
 			return false;
 		}
 
 		Log.write(companyName + " pays out full dividend of "
-				+ Bank.format(currentRevenue));
-		operatingCompany.payOut(currentRevenue);
+				+ Bank.format(revenue[operatingCompanyIndex]));
+		operatingCompany.payOut(revenue[operatingCompanyIndex]);
 
 		nextStep(operatingCompany);
 
@@ -599,7 +631,7 @@ public class OperatingRound implements Round
 
 		String errMsg = null;
 
-		// Dummy loop to enable a quick jump out.
+		// Dummy loop to enable  quick jump out.
 		while (true)
 		{
 
@@ -626,13 +658,14 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot split revenue of " + Bank.format(currentRevenue)
+			Log.error("Cannot split revenue of " 
+			        + Bank.format(revenue[operatingCompanyIndex])
 					+ ": " + errMsg);
 			return false;
 		}
 
 		Log.write(companyName + " pays out half dividend");
-		operatingCompany.splitRevenue(currentRevenue);
+		operatingCompany.splitRevenue(revenue[operatingCompanyIndex]);
 		nextStep(operatingCompany);
 
 		return true;
@@ -673,14 +706,14 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot withhold revenue of " + currentRevenue + ": "
+			Log.error("Cannot withhold revenue of " + revenue + ": "
 					+ errMsg);
 			return false;
 		}
 		Log.write(companyName + " withholds dividend of "
-				+ Bank.format(currentRevenue));
+				+ Bank.format(revenue[operatingCompanyIndex]));
 
-		operatingCompany.withhold(currentRevenue);
+		operatingCompany.withhold(revenue[operatingCompanyIndex]);
 
 		nextStep(operatingCompany);
 
@@ -748,10 +781,15 @@ public class OperatingRound implements Round
 
 			normalTileLaysDone = 0;
 			extraTileLaysDone = 0;
-			lastTileLayCost = 0;
-			lastTileLaid = "";
+			tileLayCost[operatingCompanyIndex] = 0;
+			tilesLaid[operatingCompanyIndex] = "";
 
 			checkForExtraTileLays();
+
+		} else if (step == STEP_LAY_TOKEN) {
+
+			baseTokenLayCost[operatingCompanyIndex] = 0;
+			baseTokensLaid[operatingCompanyIndex] = "";
 
 		}
 		else
@@ -923,10 +961,16 @@ public class OperatingRound implements Round
 		}
 
 		operatingCompany.buyTrain(train, price);
+		trainBuyCost[operatingCompanyIndex] += price;
 
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
+		currentPhase = GameManager.getCurrentPhase();
 
 		return true;
+	}
+	
+	public int getLastTrainBuyCost () {
+	    return trainBuyCost[operatingCompanyIndex];
 	}
 
 	/**
@@ -961,7 +1005,7 @@ public class OperatingRound implements Round
 				errMsg = "Wrong company " + companyName;
 				break;
 			}
-
+			
 			// Does private exist?
 			if ((privCo = Game.getCompanyManager()
 					.getPrivateCompany(privateName)) == null)
@@ -985,19 +1029,25 @@ public class OperatingRound implements Round
 			player = (Player) owner;
 			basePrice = privCo.getBasePrice();
 
+			// Is private buying allowed?
+			if (!currentPhase.isPrivateSellingAllowed()) {
+			    errMsg = "Private buying is not allowed";
+			    break;
+			}
+
 			// Price must be in the allowed range
 			if (price < basePrice
 					* operatingCompany.getLowerPrivatePriceFactor())
 			{
 				errMsg = "Price is less than lower limit of "
-						+ (int) (basePrice * operatingCompany.getLowerPrivatePriceFactor());
+						+ Bank.format((int) (basePrice * operatingCompany.getLowerPrivatePriceFactor()));
 				break;
 			}
 			if (price > basePrice
 					* operatingCompany.getUpperPrivatePriceFactor())
 			{
 				errMsg = "Price is more than upper limit of "
-						+ (int) (basePrice * operatingCompany.getUpperPrivatePriceFactor());
+						+ Bank.format((int) (basePrice * operatingCompany.getUpperPrivatePriceFactor()));
 				break;
 			}
 			// Does the company have the money?
@@ -1010,8 +1060,9 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot buy private " + privateName + " from "
-					+ (owner == null ? "?" : owner.getName()) + " for " + price
+			Log.error("Cannot buy private " + privateName
+					+ (owner == null ? "" : " from "+owner.getName()) 
+					+ " for " + Bank.format(price)
 					+ ": " + errMsg);
 			return false;
 		}
@@ -1019,6 +1070,7 @@ public class OperatingRound implements Round
 		operatingCompany.getPortfolio().buyPrivate(privCo,
 				player.getPortfolio(),
 				price);
+		privateBuyCost[operatingCompanyIndex] += price;
 		
 		// We may have got an extra tile lay right
 		checkForExtraTileLays();
@@ -1026,6 +1078,11 @@ public class OperatingRound implements Round
 		return true;
 
 	}
+
+	public int getLastPrivateBuyCost () {
+	    return privateBuyCost[operatingCompanyIndex];
+	}
+
 
 	/**
 	 * Close a private. For now, this is an action to be initiated separately
@@ -1228,5 +1285,5 @@ public class OperatingRound implements Round
 
 		return b.toString();
 	}
-
+	
 }

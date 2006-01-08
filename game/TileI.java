@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.8 2005/12/24 13:56:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.9 2006/01/08 19:32:56 evos Exp $
  * 
  * Created on 23-Oct-2005
  * Change Log:
@@ -34,7 +34,7 @@ public interface TileI
 
 	public boolean isUpgradeable();
 
-	public boolean isUpgradeableNow();
+	public boolean isLayableNow();
 
 	public List getUpgrades(MapHex hex);
 	public List getValidUpgrades (MapHex hex, PhaseI phase);

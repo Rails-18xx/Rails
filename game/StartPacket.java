@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.6 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.7 2006/01/08 19:32:56 evos Exp $
  * 
  * Created on 06-May-2005
  * Change Log:
@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import util.Utils;
 import util.XmlUtils;
 
 /**
@@ -52,7 +53,7 @@ public class StartPacket
 	 */
 	StartPacket(String name, String roundClassName)
 	{
-		this.name = XmlUtils.hasValue(name) ? name : DEFAULT_NAME;
+		this.name = Utils.hasValue(name) ? name : DEFAULT_NAME;
 		this.roundClassName = roundClassName;
 		this.variant = GameManager.getVariant();
 		packets.put(name, this);
@@ -84,7 +85,7 @@ public class StartPacket
 			String itemType = XmlUtils.extractStringAttribute(nnp, "type");
 			if (itemType == null)
 				throw new ConfigurationException("No item type");
-			boolean president = XmlUtils.hasValue(XmlUtils.extractStringAttribute(nnp,
+			boolean president = Utils.hasValue(XmlUtils.extractStringAttribute(nnp,
 					"president",
 					""));
 
@@ -116,7 +117,7 @@ public class StartPacket
 				String itemType2 = XmlUtils.extractStringAttribute(nnp2, "type");
 				if (itemType2 == null)
 					throw new ConfigurationException("No item type");
-				boolean president2 = XmlUtils.hasValue(XmlUtils.extractStringAttribute(nnp2,
+				boolean president2 = Utils.hasValue(XmlUtils.extractStringAttribute(nnp2,
 						"president",
 						""));
 

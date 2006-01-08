@@ -4,8 +4,10 @@
 package ui;
 
 import game.*;
+import game.model.PrivatesModel;
 import game.model.TrainsModel;
 import ui.elements.*;
+import util.Utils;
 import util.XmlUtils;
 
 import java.awt.*;
@@ -53,8 +55,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private int sharePriceXOffset, sharePriceYOffset;
 	private Field cash[];
 	private int cashXOffset, cashYOffset;
-	private Field trains[];
-	private int trainsXOffset, trainsYOffset;
+	private Field privates[];
+	private int privatesXOffset, privatesYOffset;
+	private Field newPrivatesCost[];
 	private Field tiles[];
 	private int tilesXOffset, tilesYOffset;
 	private Field tileCost[];
@@ -65,16 +68,18 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private Spinner revenueSelect[];
 	private Field decision[];
 	private int revXOffset, revYOffset;
-	private Field newTrains[];
+	private Field trains[];
+	private int trainsXOffset, trainsYOffset;
 	private Field newTrainCost[];
-	private Select newTrainCostSelect[];
-	private int newTrainsXOffset, newTrainsYOffset;
+	
+	private boolean privatesCanBeBought = false;
+	private boolean privatesCanBeBoughtNow = false;
 
-	private Caption tileCaption, tokenCaption, revenueCaption, trainCaption;
+	private Caption tileCaption, tokenCaption, revenueCaption, trainCaption, privatesCaption;
 
 	private JButton button1;
 	private JButton button2;
-	private JButton button3;
+	//private JButton button3;
 	private JButton button4;
 
 	private int np; // Number of players
@@ -97,7 +102,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	private PublicCompanyI orComp = null;
 	private String orCompName = "";
 
-	private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
+	private Pattern buyTrainPattern 
+		= Pattern.compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
 	private int[] newTrainTotalCost;
 	List trainsBought;
 
@@ -105,6 +111,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 	{
 		super();
 		this.round = round;
+		privatesCanBeBought = GameManager.getCompaniesCanBuyPrivates();
+		
 		statusWindow = parent;
 		gameStatus = parent.getGameStatus();
 		orWindow = this;
@@ -131,13 +139,14 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		button2.addActionListener(this);
 		button2.setEnabled(false);
 		buttonPanel.add(button2);
-
+/*
 		button3 = new JButton("Close private");
 		button3.setActionCommand("ClosePrivate");
 		button3.setMnemonic(KeyEvent.VK_C);
 		button3.addActionListener(this);
 		button3.setEnabled(true);
 		buttonPanel.add(button3);
+		*/
 
 		button4 = new JButton("Done");
 		button4.setActionCommand("Done");
@@ -183,6 +192,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		sharePrice = new Field[nc];
 		cash = new Field[nc];
 		trains = new Field[nc];
+		privates = new Field[nc];
 		tiles = new Field[nc];
 		tileCost = new Field[nc];
 		tokens = new Field[nc];
@@ -190,89 +200,104 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		revenue = new Field[nc];
 		revenueSelect = new Spinner[nc];
 		decision = new Field[nc];
-		newTrains = new Field[nc];
 		newTrainCost = new Field[nc];
-		newTrainTotalCost = new int[nc];
+		newPrivatesCost = new Field[nc];
 
 		leftCompNameXOffset = 0;
 		leftCompNameYOffset = 2;
-		presidentXOffset = leftCompNameXOffset + 1;
-		presidentYOffset = leftCompNameYOffset;
-		sharePriceXOffset = presidentXOffset + 1;
-		sharePriceYOffset = leftCompNameYOffset;
-		cashXOffset = sharePriceXOffset + 1;
-		cashYOffset = leftCompNameYOffset;
-		trainsXOffset = cashXOffset + 1;
-		trainsYOffset = leftCompNameYOffset;
-		tilesXOffset = trainsXOffset + 1;
-		tilesYOffset = leftCompNameYOffset;
-		tokensXOffset = tilesXOffset + 2;
-		tokensYOffset = leftCompNameYOffset;
-		revXOffset = tokensXOffset + 2;
-		revYOffset = leftCompNameYOffset;
-		newTrainsXOffset = revXOffset + 2;
-		newTrainsYOffset = leftCompNameYOffset;
-		rightCompNameXOffset = newTrainsXOffset + 2;
-		rightCompNameYOffset = leftCompNameYOffset;
+		int currentXOffset = leftCompNameXOffset;
+		int lastXWidth = 0;
+		
+		/* Top titles */
+		addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
 
-		addField(new Caption("Company"), 0, 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
+		presidentXOffset = currentXOffset += lastXWidth;
+		presidentYOffset = leftCompNameYOffset;
 		addField(new Caption("President"),
 				presidentXOffset,
 				0,
-				1,
+				lastXWidth = 1,
 				2,
 				WIDE_BOTTOM);
+		
+		sharePriceXOffset = currentXOffset += lastXWidth;
+		sharePriceYOffset = leftCompNameYOffset;
 		addField(new Caption("<html>Share<br>value</html>"),
 				sharePriceXOffset,
 				0,
-				1,
+				lastXWidth = 1,
 				2,
 				WIDE_BOTTOM);
-		addField(new Caption("Treasury"), cashXOffset, 0, 1, 2, WIDE_BOTTOM);
-		addField(new Caption("Trains"), trainsXOffset, 0, 1, 2, WIDE_RIGHT
-				+ WIDE_BOTTOM);
+
+		cashXOffset = currentXOffset += lastXWidth;
+		cashYOffset = leftCompNameYOffset;
+		addField(new Caption("Treasury"), cashXOffset, 0, lastXWidth = 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
+		
+		if (privatesCanBeBought) {
+			privatesXOffset = currentXOffset += lastXWidth;
+			privatesYOffset = leftCompNameYOffset;
+		    addField(privatesCaption = new Caption("Privates"), 
+		            privatesXOffset, 0, lastXWidth = 2, 1, WIDE_RIGHT);
+		    addField(new Caption("owned"), privatesXOffset, 1, 1, 1, WIDE_BOTTOM);
+		    addField(new Caption("cost"), privatesXOffset+1, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
+		}
+		
+		tilesXOffset = currentXOffset += lastXWidth;
+		tilesYOffset = leftCompNameYOffset;
 		addField(tileCaption = new Caption("Tiles"),
 				tilesXOffset,
 				0,
-				2,
+				lastXWidth = 2,
 				1,
 				WIDE_RIGHT);
 		addField(new Caption("laid"), tilesXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tilesXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
+		
+		tokensXOffset = currentXOffset += lastXWidth;
+		tokensYOffset = leftCompNameYOffset;
 		addField(tokenCaption = new Caption("Tokens"),
 				tokensXOffset,
 				0,
-				2,
+				lastXWidth = 2,
 				1,
 				WIDE_RIGHT);
 		addField(new Caption("laid"), tokensXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("cost"), tokensXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
+
+		revXOffset = currentXOffset += lastXWidth;
+		revYOffset = leftCompNameYOffset;
 		addField(revenueCaption = new Caption("Revenue"),
 				revXOffset,
 				0,
-				2,
+				lastXWidth = 2,
 				1,
 				WIDE_RIGHT);
 		addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
 		addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
 				+ WIDE_RIGHT);
+		
+		trainsXOffset = currentXOffset += lastXWidth;
+		trainsYOffset = leftCompNameYOffset;
 		addField(trainCaption = new Caption("Trains"),
-				newTrainsXOffset,
+				trainsXOffset,
 				0,
-				2,
+				lastXWidth = 2,
 				1,
 				WIDE_RIGHT);
-		addField(new Caption("bought"), newTrainsXOffset, 1, 1, 1, WIDE_BOTTOM);
-		addField(new Caption("cost"),
-				newTrainsXOffset + 1,
+		addField(new Caption("owned"), trainsXOffset, 1, 1, 1, WIDE_BOTTOM);
+	    addField(new Caption("cost"),
+            	trainsXOffset + 1,
 				1,
 				1,
 				1,
 				WIDE_BOTTOM + WIDE_RIGHT);
-		addField(new Caption("Company"),
-				newTrainsXOffset + 2,
+
+		rightCompNameXOffset = currentXOffset += lastXWidth;
+		rightCompNameYOffset = leftCompNameYOffset;
+	    addField(new Caption("Company"),
+	            rightCompNameXOffset,
 				0,
 				1,
 				2,
@@ -299,12 +324,21 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0);
 
 			f = cash[i] = new Field(c.getCashModel());
-			addField(f, cashXOffset, cashYOffset + i, 1, 1, 0);
+			addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT);
 
-			f = trains[i] = new Field(c.getPortfolio()
-					.getTrainsModel()
-					.option(TrainsModel.FULL_LIST));
-			addField(f, trainsXOffset, trainsYOffset + i, 1, 1, WIDE_RIGHT);
+			if (privatesCanBeBought) {
+				f = privates[i] = new Field(c.getPortfolio()
+						.getPrivatesModel().option(PrivatesModel.SPACE));
+				addField(f, privatesXOffset, privatesYOffset + i, 1, 1, WIDE_RIGHT);
+				
+				f = newPrivatesCost[i] = new Field("");
+				addField(f,
+						privatesXOffset + 1,
+						privatesYOffset + i,
+						1,
+						1,
+						WIDE_RIGHT);
+			}
 
 			f = tiles[i] = new Field("");
 			addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0);
@@ -326,13 +360,15 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			f = decision[i] = new Field("");
 			addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT);
 
-			f = newTrains[i] = new Field("");
-			addField(f, newTrainsXOffset, newTrainsYOffset + i, 1, 1, 0);
+			f = trains[i] = new Field(c.getPortfolio()
+					.getTrainsModel()
+					.option(TrainsModel.FULL_LIST));
+			addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0);
 
 			f = newTrainCost[i] = new Field("");
 			addField(f,
-					newTrainsXOffset + 1,
-					newTrainsYOffset + i,
+					trainsXOffset + 1,
+					trainsYOffset + i,
 					1,
 					1,
 					WIDE_RIGHT);
@@ -391,6 +427,9 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 			}
 
 			setHighlightsOff();
+			privatesCanBeBought = 
+			    GameManager.getCurrentPhase().isPrivateSellingAllowed();
+
 
 			if (step == OperatingRound.STEP_LAY_TRACK)
 			{
@@ -406,8 +445,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(GameManager.getCurrentPhase()
-						.isPrivateSellingAllowed());
+				button2.setEnabled(privatesCanBeBought);
+				privatesCaption.setHighlight(privatesCanBeBought);
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");
@@ -490,8 +529,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
 				button2.setMnemonic(KeyEvent.VK_V);
-				button2.setEnabled(GameManager.getCurrentPhase()
-						.isPrivateSellingAllowed());
+				button2.setEnabled(privatesCanBeBought);
+				privatesCaption.setHighlight(privatesCanBeBought);
 
 				button4.setText("Done");
 				button4.setActionCommand("Done");
@@ -714,7 +753,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					trainsForSale.toArray(),
 					trainsForSale.get(1));
-			if (XmlUtils.hasValue(boughtTrain))
+			if (Utils.hasValue(boughtTrain))
 			{
 				Matcher m = buyTrainPattern.matcher(boughtTrain);
 				if (m.matches()) // Why does this sometimes give a
@@ -835,12 +874,8 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 											.resetAvailabilityChanged();
 								}
 							}
-							newTrainTotalCost[orCompIndex] += price;
-							newTrainCost[orCompIndex].setText(""
-									+ newTrainTotalCost[orCompIndex]);
-
 							trainsBought.add(train);
-							newTrains[orCompIndex].setText(TrainManager.makeFullList((TrainI[]) trainsBought.toArray(new TrainI[0])));
+							newTrainCost[orCompIndex].setText (Bank.format(round.getLastTrainBuyCost()));
 
 							// Check if any trains must be discarded
 							if (TrainManager.get().hasPhaseChanged())
@@ -928,7 +963,11 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 									+ Bank.format(maxPrice) + ")?",
 							"What price?",
 							JOptionPane.QUESTION_MESSAGE);
-					amount = Integer.parseInt(price);
+					try {
+					    amount = Integer.parseInt(price);
+					} catch (NumberFormatException e) {
+					    amount = 0; // This will generally be refused.
+					}
 					Player prevOwner = (Player) priv.getPortfolio().getOwner();
 					if (!round.buyPrivate(orComp.getName(),
 							priv.getName(),
@@ -939,6 +978,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					else
 					{
 						updateCash(orCompIndex);
+						newPrivatesCost[orCompIndex].setText(Bank.format(round.getLastPrivateBuyCost()));
 					}
 				}
 				catch (NullPointerException e)
@@ -947,45 +987,6 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 					// attempting
 					// anything further.
 				}
-			}
-
-		}
-		else if (command.equals("ClosePrivate"))
-		{
-
-			Iterator it = Game.getCompanyManager()
-					.getAllPrivateCompanies()
-					.iterator();
-			ArrayList privatesToClose = new ArrayList();
-			PrivateCompanyI priv;
-			String privName;
-			while (it.hasNext())
-			{
-				priv = (PrivateCompanyI) it.next();
-				if (!priv.isClosed())
-				{
-					privatesToClose.add(priv.getName());
-				}
-			}
-
-			try
-			{
-				privName = (String) JOptionPane.showInputDialog(this,
-						"Close which private?",
-						"Which Private?",
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						privatesToClose.toArray(),
-						privatesToClose.get(0));
-				privName = privName.split(" ")[0];
-				priv = Game.getCompanyManager().getPrivateCompany(privName);
-				CashHolder prevOwner = priv.getPortfolio().getOwner();
-				round.closePrivate(privName);
-			}
-			catch (NullPointerException e)
-			{
-				// Null Pointer means user hit cancel. Don't bother with any
-				// more processing.
 			}
 
 		}
@@ -1007,6 +1008,7 @@ public class ORWindow extends JFrame implements ActionListener, KeyListener
 		tokenCaption.setHighlight(false);
 		revenueCaption.setHighlight(false);
 		trainCaption.setHighlight(false);
+		privatesCaption.setHighlight(false);
 	}
 
 	public void close()

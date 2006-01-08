@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import util.Utils;
 import util.XmlUtils;
 
 /**
@@ -80,10 +81,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			        spEl = (Element) spsNl.item(i);
 			        nnp2 = spEl.getAttributes();
 			        condition = XmlUtils.extractStringAttribute(nnp2, "condition");
-			        if (!XmlUtils.hasValue(condition))
+			        if (!Utils.hasValue(condition))
 			            throw new ConfigurationException ("Missing condition in private special property");
 			        className = XmlUtils.extractStringAttribute(nnp2, "class");
-			        if (!XmlUtils.hasValue(className))
+			        if (!Utils.hasValue(className))
 			            throw new ConfigurationException ("Missing class in private special property");
 			        
 			        SpecialPropertyI sp =(SpecialPropertyI) Class.forName(className).newInstance();
