@@ -19,11 +19,13 @@ public class ORWindow extends JFrame implements WindowListener
 	private MapPanel mapPanel;
 	private ORPanel ORPanel;
 	private UpgradesPanel upgradePanel;
+	private StatusWindow parent;
 
 	public ORWindow(OperatingRound round, StatusWindow parent)
 	{
 		super();
 		getContentPane().setLayout(new BorderLayout());
+		this.parent = parent;
 
 		if(round != null)
 		{
@@ -82,6 +84,7 @@ public class ORWindow extends JFrame implements WindowListener
 	public void windowClosing(WindowEvent e)
 	{
 		StatusWindow.uncheckMenuItemBox(StatusWindow.MAP);
+		parent.setOrWindow(null);
 		dispose();		
 	}
 

@@ -37,7 +37,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
 	private OperatingRound operatingRound;
-	public ORWindow orWindow;
+	private ORWindow orWindow;
 	private int np = GameManager.getNumberOfPlayers();
 	private int nc;
 
@@ -583,5 +583,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	public void keyTyped(KeyEvent e)
 	{
+	}
+
+	
+	public void setOrWindow(ORWindow orWindow)
+	{
+		this.orWindow = orWindow;
 	}
 }
