@@ -124,9 +124,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public Dimension getMinimumSize()
 	{
-		Dimension dim = getPreferredSize();
-		dim.height /= 2;
-		dim.width /= 2;
+		Dimension dim = new Dimension();
+		Rectangle r = ((GUIHex)h[h.length][h[0].length]).getBounds();
+		dim.height = r.height;
+		dim.width = r.width;
 		return dim;
 	}
 
@@ -135,84 +136,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return preferredSize;
 	}
 
-	/*
-	public void mouseClicked(MouseEvent arg0)
-	{
-		Point point = arg0.getPoint();
-
-		try
-		{
-			GUIHex clickedHex = getHexContainingPoint(point);
-			
-			if (baseTokenLayingEnabled)
-			{
-
-				
-				//selectedHex = clickedHex;
-				if (clickedHex != null)
-				{
-					upgradesPanel.setCancelText(UpgradesPanel.cancelText);
-					upgradesPanel.setDoneEnabled(true);
-				}
-				else
-				{
-					upgradesPanel.setCancelText(UpgradesPanel.noTokenText);
-					upgradesPanel.setDoneEnabled(false);
-				}
-
-			}
-			else if (clickedHex == selectedHex)
-			{
-				selectedHex.rotateTile();
-				repaint(selectedHex.getBounds());
-			}
-			else
-			{
-				if (selectedHex != null)
-				{
-					selectedHex.removeTile();
-					selectedHex.setSelected(false);
-					repaint(selectedHex.getBounds());
-					selectedHex = null;
-				}
-				if (clickedHex.getHexModel().isUpgradeableNow())
-				{
-					clickedHex.setSelected(true);
-					selectedHex = clickedHex;
-					repaint(selectedHex.getBounds());
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(this,
-							"This hex cannot be upgraded now");
-				}
-				upgradesPanel.setCancelText(UpgradesPanel.noTileText);
-				upgradesPanel.setDoneEnabled(false);
-			}
-
-			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
-			// correctly.
-			upgradesPanel.setVisible(false);
-			upgradesPanel.setVisible(true);
-		}
-		catch (NullPointerException e)
-		{
-			// No hex clicked
-			if (selectedHex != null)
-			{
-				selectedHex.removeTile();
-				selectedHex.setSelected(false);
-				selectedHex = null;
-				repaint();
-				upgradesPanel.setDoneEnabled(false);
-				upgradesPanel.setCancelText(baseTokenLayingEnabled ? UpgradesPanel.noTokenText
-						: UpgradesPanel.noTileText);
-			}
-		}
-
-		showUpgrades();
-	}*/
-	
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
@@ -346,14 +269,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			GameUILoader.statusWindow.orWindow.layBaseToken(null, 0);
+			GameUILoader.statusWindow.orWindow.getORPanel().layBaseToken(null, 0);
 		}
 		else
 		{
 			if (selectedHex != null)
 				selectedHex.removeTile();
 			if (tileLayingEnabled)
-				GameUILoader.statusWindow.orWindow.layTile(null, null, 0);
+				GameUILoader.statusWindow.orWindow.getORPanel().layTile(null, null, 0);
 		}
 
 	}

@@ -242,7 +242,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.marketString);
+		StatusWindow.uncheckMenuItemBox(StatusWindow.MARKET);
 		dispose();		
 	}
 

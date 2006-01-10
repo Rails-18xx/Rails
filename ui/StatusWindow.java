@@ -46,19 +46,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private JMenuBar menuBar;
 	private static JMenu fileMenu, optMenu;
 	private JMenuItem menuItem;
-	
+
 	/* Menu Item Static Strings */
-	public static String mapString = "Map";
-	public static String marketString = "Stock Market";
-	public static String logString = "Log Window";
-	
-	/** Selector for the pattern to be used in keeping the 
-	 * individual UI fields up-to-date:
-	 * <br> - true: push changes (Observer/Observable pattern),
-	 * <br> - false: pull everything on repaint.
+	public final static String MAP = "Map";
+	public final static String MARKET = "Stock Market";
+	public final static String LOG = "Log Window";
+
+	/**
+	 * Selector for the pattern to be used in keeping the individual UI fields
+	 * up-to-date: <br> - true: push changes (Observer/Observable pattern), <br> -
+	 * false: pull everything on repaint.
 	 */
 	public static boolean useObserver = true;
-	
+
 	public void initMenu()
 	{
 		menuBar = new JMenuBar();
@@ -96,19 +96,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		optMenu.addSeparator();
 
-		menuItem = new JCheckBoxMenuItem(marketString);
+		menuItem = new JCheckBoxMenuItem(MARKET);
 		menuItem.setName("Stock Market");
 		menuItem.setMnemonic(KeyEvent.VK_K);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem(mapString);
+		menuItem = new JCheckBoxMenuItem(MAP);
 		menuItem.setName("Map");
 		menuItem.setMnemonic(KeyEvent.VK_M);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem(logString);
+		menuItem = new JCheckBoxMenuItem(LOG);
 		menuItem.setName("Log Window");
 		menuItem.setMnemonic(KeyEvent.VK_L);
 		menuItem.addActionListener(this);
@@ -173,7 +173,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		currentRound = gmgr.getCurrentRound();
 		updateStatus();
 		pack();
-		
+
 		gameStatus.addKeyListener(this);
 		buttonPanel.addKeyListener(this);
 		addKeyListener(this);
@@ -195,11 +195,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(false);
 			startRound = (StartRound) currentRound;
 			if (startRoundWindow == null)
-			    startRoundWindow = new StartRoundWindow(startRound, this);
+				startRoundWindow = new StartRoundWindow(startRound, this);
 			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.mapWindow.setVisible(false);
+			GameUILoader.mapPanel.setVisible(false);
 		}
 		else if (currentRound instanceof StockRound)
 		{
@@ -209,7 +209,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(true);
-			GameUILoader.mapWindow.setVisible(false);
+			GameUILoader.mapPanel.setVisible(false);
 
 			enableCheckBoxMenuItem("Stock Market");
 			disableCheckBoxMenuItem("Map");
@@ -222,10 +222,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
 			if (orWindow == null)
-			    orWindow = new ORWindow(operatingRound, this);
+				orWindow = new ORWindow(operatingRound, this);
 
 			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.mapWindow.setVisible(true);
+			GameUILoader.mapPanel.setVisible(true);
 
 			orWindow.requestFocus();
 
@@ -274,11 +274,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void resume(JFrame previous)
 	{
 		this.requestFocus();
-		if (previous instanceof StartRoundWindow) {
-		    startRoundWindow.close();
+		if (previous instanceof StartRoundWindow)
+		{
+			startRoundWindow.close();
 			startRoundWindow = null;
-		} else if (previous instanceof ORWindow) {
-		    orWindow.close();
+		}
+		else if (previous instanceof ORWindow)
+		{
+			orWindow.getORPanel().close();
 			orWindow = null;
 		}
 		currentRound = GameManager.getInstance().getCurrentRound();
@@ -296,7 +299,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void repaint()
 	{
 		super.repaint();
-		//refreshStatus();
+		// refreshStatus();
 	}
 
 	/*
@@ -355,10 +358,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 			if (menuItem.getText().equalsIgnoreCase("Map")
 					&& menuItem.isSelected())
-				GameUILoader.mapWindow.setVisible(true);
+				orWindow = new ORWindow(null, this);
 			else if (menuItem.getText().equalsIgnoreCase("Map")
 					&& !menuItem.isSelected())
-				GameUILoader.mapWindow.setVisible(false);
+			{
+				orWindow.dispose();
+				orWindow = null;
+			}
 		}
 		catch (ClassCastException e)
 		{
@@ -407,8 +413,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			{
 				startCompany();
 			}
-			//if (company.hasFloated())
-				//gameStatus.updateCompany(compIndex);
+			// if (company.hasFloated())
+			// gameStatus.updateCompany(compIndex);
 
 		}
 		else if ((compIndex = gameStatus.getCompIndexToBuyFromPool()) >= 0)
@@ -430,7 +436,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				{
 					gameStatus.updatePlayer(compIndex, playerIndex);
 					gameStatus.updatePool(compIndex);
-					//gameStatus.updateBank();
+					// gameStatus.updateBank();
 				}
 			}
 
@@ -461,7 +467,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			{
 				gameStatus.updatePlayer(compIndex, playerIndex);
 				gameStatus.updatePool(compIndex);
-				//gameStatus.updateBank();
+				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
@@ -507,7 +513,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 				gameStatus.updatePlayer(compIndex, playerIndex);
 				gameStatus.updateIPO(compIndex);
-				//gameStatus.updateBank();
+				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
@@ -553,8 +559,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				{
 					((JCheckBoxMenuItem) optMenu.getMenuComponent(i)).setSelected(false);
 					optMenu.invalidate();
-					return; // Each checkbox should be unique, so once we've
-							// found it we can stop processing menu items.
 				}
 			}
 			catch (NullPointerException e)
@@ -563,14 +567,21 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 		}
 	}
-	
-	public void keyPressed(KeyEvent e) {
-	    if (e.getKeyCode() == KeyEvent.VK_F1) {
-	        HelpWindow.displayHelp(gmgr.getHelp());
-	        e.consume();
-	    }
+
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == KeyEvent.VK_F1)
+		{
+			HelpWindow.displayHelp(gmgr.getHelp());
+			e.consume();
+		}
 	}
-	
-	public void keyReleased(KeyEvent e) {}
-	public void keyTyped (KeyEvent e) {}
+
+	public void keyReleased(KeyEvent e)
+	{
+	}
+
+	public void keyTyped(KeyEvent e)
+	{
+	}
 }
