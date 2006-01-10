@@ -219,6 +219,10 @@ public class OperatingRound implements Round
 	{
 		return cumulativeORNumber;
 	}
+	
+	public static int getLastORNumber() {
+	    return cumulativeORNumber;
+	}
 
 	/**
 	 * @deprecated Currently needed, but will be removed in a later stage.
