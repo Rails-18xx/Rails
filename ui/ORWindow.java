@@ -36,17 +36,24 @@ public class ORWindow extends JFrame implements WindowListener
 			
 			ORPanel = new ORPanel(round, parent, this);
 			getContentPane().add(ORPanel, BorderLayout.SOUTH);
+			setSize(800, 750);
 		}
-		//FIXME: We should only use a new MapPanel if there has never been an OR.
-		//We need some way of finding out if there has been an OR.
+		else if (OperatingRound.getLastORNumber() > 0)
+		{
+			mapPanel = GameUILoader.mapPanel;
+			setSize(mapPanel.getSize());
+			mapPanel.setVisible(true);
+		}
 		else
+		{
 			mapPanel = new MapPanel();
+			setSize(mapPanel.getSize());
+		}
 		
 		getContentPane().add(mapPanel, BorderLayout.CENTER);
 
 		setTitle("Rails: Map");
 		setLocation(10, 10);
-		setSize(800, 750);
 		setVisible(true);
 		addWindowListener(this);
 
