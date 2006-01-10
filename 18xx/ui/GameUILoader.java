@@ -13,7 +13,7 @@ public class GameUILoader
    public static StockChart stockChart;
    public static StatusWindow statusWindow;
    public static LogWindow messageWindow;
-   public static MapWindow mapWindow;
+   public static MapPanel mapPanel;
    public static Options options;
    
    public GameUILoader()
@@ -24,7 +24,7 @@ public class GameUILoader
    public static void gameUIInit()
    {
       stockChart = new StockChart();
-      mapWindow = new MapWindow();
+      mapPanel = new MapPanel();
       messageWindow = new LogWindow();
       statusWindow = new StatusWindow();
    }

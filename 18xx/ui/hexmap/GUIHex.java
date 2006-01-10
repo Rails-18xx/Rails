@@ -709,7 +709,7 @@ public class GUIHex
 				currentTileId = currentTile.getId();
 				currentTileOrientation = provisionalTileOrientation;
 			}
-			GameUILoader.statusWindow.orWindow.layTile(model,
+			GameUILoader.statusWindow.orWindow.getORPanel().layTile(model,
 					currentTile,
 					currentTileOrientation);
 		}
@@ -731,7 +731,7 @@ public class GUIHex
 
 	public void fixToken(int station)
 	{
-		GameUILoader.statusWindow.orWindow.layBaseToken(model, station);
+		GameUILoader.statusWindow.orWindow.getORPanel().layBaseToken(model, station);
 		setSelected(false);
 	}
 

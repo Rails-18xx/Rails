@@ -198,8 +198,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 			}
 
 		}
-		map.repaint();
-
 		upgrades = null;
 		setDoneEnabled(false);
 		showUpgrades();
@@ -211,7 +209,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		if (map.getSelectedHex().dropTile(id))
 		{
 			/* Accept tile */
-			map.repaint();
+			map.repaint(map.getSelectedHex().getBounds());
 			setDoneEnabled(true);
 			setCancelText(cancelText);
 		}

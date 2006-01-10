@@ -82,7 +82,7 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.logString);
+		StatusWindow.uncheckMenuItemBox(StatusWindow.LOG);
 		dispose();		
 	}
 
