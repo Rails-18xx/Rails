@@ -410,8 +410,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			from.removeToken(company);
 			to.addToken(company);
 			company.setCurrentPrice(to);
-			Log.write(company.getName() + " moves from " + from.getName()
-					+ " to " + to.getName());
+			Log.write(company.getName() + " prices goes from " 
+			        + Bank.format(from.getPrice())+ " ("+from.getName()+")"
+					+ " to " + Bank.format(to.getPrice()) + " (" + to.getName() + ")");
 
 			/* Check for game closure */
 			if (to.endsGame())

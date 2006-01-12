@@ -590,4 +590,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	{
 		this.orWindow = orWindow;
 	}
+	public ORWindow getOrWindow () {
+	    return orWindow;
+	}
 }

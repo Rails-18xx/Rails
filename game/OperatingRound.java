@@ -260,7 +260,7 @@ public class OperatingRound implements Round
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = "Wrong company " + companyName + " (expected "+operatingCompany.getName()+")";
 				break;
 			}
 			// Must be correct step
@@ -343,8 +343,8 @@ public class OperatingRound implements Round
 			// Was a special property used?
 			if (stl != null)
 			{
-				System.out.println("A special property of "
-						+ stl.getCompany().getName() + " is used");
+				//System.out.println("A special property of "
+				//		+ stl.getCompany().getName() + " is used");
 				stl.setExercised();
 				if (stl.isExtra())
 					extraTileLaysDone++;
@@ -359,8 +359,8 @@ public class OperatingRound implements Round
 			}
 		}
 
-		System.out.println("Normal="+normalTileLaysDone+"/"+normalTileLaysAllowed
-		        +" special="+extraTileLaysDone+"/"+extraTileLaysAllowed);
+		//System.out.println("Normal="+normalTileLaysDone+"/"+normalTileLaysAllowed
+		//        +" special="+extraTileLaysDone+"/"+extraTileLaysAllowed);
 		if (tile == null || normalTileLaysDone >= normalTileLaysAllowed
 				&& extraTileLaysDone >= extraTileLaysAllowed)
 		{

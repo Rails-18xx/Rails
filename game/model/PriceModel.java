@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/PriceModel.java,v 1.3 2006/01/05 22:09:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/PriceModel.java,v 1.4 2006/01/12 22:13:37 evos Exp $
  * 
  * Created on 08-Dec-2005
  * Change Log:
@@ -29,7 +29,9 @@ public class PriceModel extends ModelObject {
     }
     
     public String toString() {
-        if (stockPrice != null) return Bank.format(stockPrice.getPrice());
+        if (stockPrice != null) {
+            return Bank.format(stockPrice.getPrice()) + " ("+stockPrice.getName()+")"	;
+        }
         return "";
     }
 

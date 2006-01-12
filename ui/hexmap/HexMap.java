@@ -286,7 +286,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			GameUILoader.statusWindow.orWindow.getORPanel().layBaseToken(null,
+			GameUILoader.statusWindow.getOrWindow().getORPanel().layBaseToken(null,
 					0);
 		}
 		else
@@ -294,7 +294,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			if (selectedHex != null)
 				selectedHex.removeTile();
 			if (tileLayingEnabled)
-				GameUILoader.statusWindow.orWindow.getORPanel().layTile(null,
+				GameUILoader.statusWindow.getOrWindow().getORPanel().layTile(null,
 						null,
 						0);
 		}
@@ -421,9 +421,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				if (stl.isExtra())
 					extraTileLays.add(stl);
 
-				System.out.println("Special tile lay allowed on hex "
-						+ stl.getLocation().getName() + ", extra="
-						+ stl.isExtra());
+				//System.out.println("Special tile lay allowed on hex "
+				//		+ stl.getLocation().getName() + ", extra="
+				//		+ stl.isExtra());
 			}
 		}
 	}
