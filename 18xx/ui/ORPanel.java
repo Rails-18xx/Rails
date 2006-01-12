@@ -1061,11 +1061,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	private void updatePrice(int index)
 	{
+	    /*
 		if (companies[index].hasStockPrice())
 		{
 			sharePrice[index].setText(Bank.format(companies[index].getCurrentPrice()
 					.getPrice()));
 		}
+		*/
 	}
 
 	private void displayMessage(String text)
