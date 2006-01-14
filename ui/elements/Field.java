@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.5 2005/12/11 21:06:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.6 2006/01/14 20:52:33 evos Exp $
  * 
  * Created on 06-Aug-2005
  * Change Log:
@@ -48,6 +48,15 @@ public class Field extends JLabel implements ViewObject {
       
       public ModelObject getModel () {
           return modelObject;
+      }
+      
+      public void setModel (ModelObject m) {
+          if (StatusWindow.useObserver) modelObject.deleteObserver(this);
+          modelObject = m;
+          if (StatusWindow.useObserver) {
+              modelObject.addObserver(this);
+              update (null, null);
+          }
       }
       
       public void setHighlight (boolean highlight) {
