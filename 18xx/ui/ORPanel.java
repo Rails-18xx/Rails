@@ -76,7 +76,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	private int nc; // Number of companies
 	private Player[] players;
 	private PublicCompanyI[] companies;
-	private OperatingRound round;
+	private OperatingRound round, previousRound;
 	private StatusWindow statusWindow;
 	private GameStatus gameStatus;
 
@@ -304,8 +304,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		{
 			c = companies[i];
 			f = leftCompName[i] = new Caption(c.getName());
-			f.setBackground(companies[i].getBgColour());
-			f.setForeground(companies[i].getFgColour());
+			f.setBackground(c.getBgColour());
+			f.setForeground(c.getFgColour());
 			addField(f,
 					leftCompNameXOffset,
 					leftCompNameYOffset + i,
@@ -417,6 +417,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 			round = (OperatingRound) GameManager.getInstance()
 					.getCurrentRound();
+			
+			/* Reorder the companies if the round has changed */
+			if (round != previousRound) reorderCompanies();
+			previousRound = round;
 
 			int step = round.getStep();
 			if (round.getOperatingCompanyIndex() != orCompIndex)
@@ -546,6 +550,56 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			statusWindow.resume(orWindow);
 			orWindow.dispose();
 		}
+	}
+	
+	private void reorderCompanies() {
+
+		companies = round.getOperatingCompanies();
+		nc = companies.length;
+
+		for (int i = 0; i < nc; i++)
+		{
+			c = companies[i];
+			leftCompName[i].setText(c.getName());
+			leftCompName[i].setBackground(c.getBgColour());
+			leftCompName[i].setForeground(c.getFgColour());
+
+			president[i].setText(c.hasStarted() ? c.getPresident().getName() : "");
+
+			sharePrice[i].setModel(c.getCurrentPriceModel());
+
+			cash[i].setModel(c.getCashModel());
+
+			if (privatesCanBeBought)
+			{
+				privates[i].setModel(c.getPortfolio().getPrivatesModel());
+
+				newPrivatesCost[i].setText("");
+			}
+
+			tiles[i].setText("");
+
+			tileCost[i].setText("");
+
+			tokens[i].setText("");
+
+			tokenCost[i].setText("");
+
+			/*
+			revenue[i].setText("");
+
+			decision[i].setText("");
+			*/
+
+			trains[i].setModel(c.getPortfolio().getTrainsModel());
+
+			newTrainCost[i].setText("");
+
+			rightCompName[i].setText(c.getName());
+			rightCompName[i].setBackground(c.getBgColour());
+			rightCompName[i].setForeground(c.getFgColour());
+		}
+
 	}
 
 	public void layTile(MapHex hex, TileI tile, int orientation)
