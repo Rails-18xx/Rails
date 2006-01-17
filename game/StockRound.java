@@ -373,7 +373,12 @@ public class StockRound implements Round
 				break;
 			}
 
-			StockSpaceI currentSpace = company.getCurrentPrice();
+			StockSpaceI currentSpace;
+			if (from == ipo && company.hasParPrice()) {
+			    currentSpace = company.getParPrice();
+			} else {
+			    currentSpace = company.getCurrentPrice();
+			}
 
 			// Check if it is allowed to buy more than one certificate (if
 			// requested)
