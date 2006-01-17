@@ -28,6 +28,7 @@ public class Phase implements PhaseI {
     
     protected static boolean previousPrivateSellingAllowed = false;
     protected static int previousNumberOfOperatingRounds = 1;
+    protected static String previousTileColours = "";
     
     public Phase (int index, String name) {
         this.index = index;
@@ -45,11 +46,13 @@ public class Phase implements PhaseI {
         NodeList nl = el.getElementsByTagName("Tiles");
         if (nl != null && nl.getLength() > 0) {
             attributes = nl.item(0).getAttributes();
-            colourList = XmlUtils.extractStringAttribute(attributes, "colour");
-            if (colourList != null) colourArray = colourList.split(",");
-            for (int i=0; i<colourArray.length; i++) {
-                tileColours.put(colourArray[i], null);
-            }
+            colourList = XmlUtils.extractStringAttribute(attributes, "colour", previousTileColours);
+        } else {
+            colourList = previousTileColours;
+        }
+        if (colourList != null) colourArray = colourList.split(",");
+        for (int i=0; i<colourArray.length; i++) {
+            tileColours.put(colourArray[i], null);
         }
 
         // Private-related properties
@@ -61,6 +64,8 @@ public class Phase implements PhaseI {
             		(attributes, "sellingAllowed", previousPrivateSellingAllowed);
             privatesClose = XmlUtils.extractBooleanAttribute
         		(attributes, "close", false);
+        } else {
+            privateSellingAllowed = previousPrivateSellingAllowed;
         }
 
         // Operating rounds
@@ -70,8 +75,11 @@ public class Phase implements PhaseI {
             numberOfOperatingRounds = previousNumberOfOperatingRounds =
                 XmlUtils.extractIntegerAttribute
             		(attributes, "number", previousNumberOfOperatingRounds);
+        } else {
+            numberOfOperatingRounds = previousNumberOfOperatingRounds;
         }
-}
+        System.out.println ("Phase "+index+" "+name+" has "+numberOfOperatingRounds+" ORs");
+	}
 	
 	public boolean isTileColourAllowed (String tileColour) {
 	    return tileColours.containsKey(tileColour);
