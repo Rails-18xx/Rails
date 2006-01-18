@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.29 2006/01/02 20:48:14 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.30 2006/01/18 18:37:51 wakko666 Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -427,12 +427,11 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 			currentTile.remove(this);
 		
 		newTile.lay(this);
-		
+
 		// Move tokens from old station list to new station list.
 		// Merge lists if necessary.		
-		if (hasTokens)
-			moveTokens(newTile);
-
+		moveTokens(newTile);
+		
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
 
