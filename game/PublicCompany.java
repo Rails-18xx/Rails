@@ -1027,14 +1027,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public int getTrainLimit(int phaseIndex)
 	{
-		if (phaseIndex > trainLimit.length)
-		{
-			return trainLimit[trainLimit.length - 1];
-		}
-		else
-		{
-			return trainLimit[phaseIndex];
-		}
+		return trainLimit[Math.min(phaseIndex, trainLimit.length - 1)];
 	}
 
 	/** Must be called in stead of Portfolio.buyTrain if side-effects can occur. */
