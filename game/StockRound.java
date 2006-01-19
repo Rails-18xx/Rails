@@ -52,7 +52,7 @@ public class StockRound implements Round
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
 	protected HashMap playersThatSoldThisRound = new HashMap();
-	/** HashMap per player */
+	/** HashMap per player */ // Not used (yet?)
 	protected HashMap playersThatBoughtThisRound = new HashMap();
 
 	/* Rule constants */
@@ -332,15 +332,6 @@ public class StockRound implements Round
 				break;
 			}
 
-			// The player may not have sold the company this round.
-			if (playersThatSoldThisRound.containsKey(currentPlayer)
-					&& ((HashMap) playersThatSoldThisRound.get(currentPlayer)).containsKey(companyName))
-			{
-				errMsg = currentPlayer.getName() + " already sold "
-						+ companyName + " this turn";
-				break;
-			}
-
 			// Check company
 			company = companyMgr.getPublicCompany(companyName);
 			if (company == null)
@@ -348,6 +339,15 @@ public class StockRound implements Round
 				errMsg = "Company does not exist";
 				break;
 			}
+			
+			// The player may not have sold the company this round.
+			if (isSaleRecorded (currentPlayer, company))
+			{
+				errMsg = currentPlayer.getName() + " already sold "
+						+ companyName + " this turn";
+				break;
+			}
+
 			// The company must have started before
 			if (!company.hasStarted())
 			{
@@ -355,8 +355,8 @@ public class StockRound implements Round
 				break;
 			}
 
-			// The player may not have bought this turn (shortcut: shares in
-			// brown disregarded)
+			// The player may not have bought this turn, unless the company
+			// bought before and now is in the brown area.
 			if (companyBoughtThisTurn != null
 					&& (companyBoughtThisTurn != company || !company.getCurrentPrice()
 							.isNoBuyLimit()))
@@ -448,6 +448,18 @@ public class StockRound implements Round
 			company.checkFlotation();
 
 		return true;
+	}
+	
+	private void recordSale (Player player, PublicCompanyI company) {
+	    if (!playersThatSoldThisRound.containsKey(player)) {
+	        playersThatSoldThisRound.put (player, new HashMap());
+	    }
+	    ((Map)playersThatSoldThisRound.get (player)).put(company, null);
+	}
+	
+	private boolean isSaleRecorded (Player player, PublicCompanyI company) {
+	    return playersThatSoldThisRound.containsKey(currentPlayer)
+			&& ((HashMap) playersThatSoldThisRound.get(currentPlayer)).containsKey(company);
 	}
 
 	/**
@@ -726,12 +738,7 @@ public class StockRound implements Round
 		}
 
 		// Remember that the player has sold this company this round.
-		if (!playersThatSoldThisRound.containsKey(currentPlayer))
-		{
-			playersThatSoldThisRound.put(currentPlayer, new HashMap());
-		}
-		((HashMap) playersThatSoldThisRound.get(currentPlayer)).put(company,
-				null);
+		recordSale (currentPlayer, company);
 
 		if (companyBoughtThisTurn == null)
 			hasSoldThisTurnBeforeBuying = true;
