@@ -22,7 +22,7 @@ import game.special.*;
 
 import java.util.*;
 
-import util.Utils;
+import util.Util;
 
 /**
  * Implements a basic Operating Round.
@@ -333,7 +333,7 @@ public class OperatingRound implements Round
 
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			tileLayCost[operatingCompanyIndex] = cost;
-			Utils.appendWithComma (tilesLaid[operatingCompanyIndex], 
+			Util.appendWithComma (tilesLaid[operatingCompanyIndex], 
 			        "#" + tile.getName() + "/" + hex.getName() + "/"
 					+ MapHex.getOrientationName(orientation)); // FIXME: Wrong!
 			Log.write(operatingCompany.getName() + " lays tile " + tile.getName()
@@ -460,7 +460,7 @@ public class OperatingRound implements Round
 		if(!operatingCompany.layBaseToken(hex, station)) // FIXME: Need to specify station!
 			return false;
 		
-		Utils.appendWithComma (baseTokensLaid[operatingCompanyIndex],
+		Util.appendWithComma (baseTokensLaid[operatingCompanyIndex],
 		      hex.getName());
 		baseTokenLayCost[operatingCompanyIndex] = cost;
 

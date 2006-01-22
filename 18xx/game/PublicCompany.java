@@ -13,7 +13,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-import util.Utils;
+import util.Util;
 import util.XmlUtils;
 
 /**
@@ -155,7 +155,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void init2() throws ConfigurationException
 	{
-		if (hasStockPrice && Utils.hasValue(startSpace))
+		if (hasStockPrice && Util.hasValue(startSpace))
 		{
 			parPrice.setPrice(
 			        StockMarket.getInstance().getStockSpace(startSpace));
@@ -218,13 +218,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 					nnp2 = properties.item(j).getAttributes();
 					String lower = XmlUtils.extractStringAttribute(nnp2,
 							"lowerPriceFactor");
-					if (!Utils.hasValue(lower))
+					if (!Util.hasValue(lower))
 						throw new ConfigurationException(
 								"Lower private price factor missing");
 					lowerPrivatePriceFactor = Float.parseFloat(lower);
 					String upper = XmlUtils.extractStringAttribute(nnp2,
 							"upperPriceFactor");
-					if (!Utils.hasValue(upper))
+					if (!Util.hasValue(upper))
 						throw new ConfigurationException(
 								"Upper private price factor missing");
 					upperPrivatePriceFactor = Float.parseFloat(upper);

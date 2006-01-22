@@ -397,7 +397,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			{
 				round.buy(players[playerIndex].getName(),
 						items[itemIndex].getName());
-				GameStatus.getInstance().updatePlayers();
+				//GameStatus.getInstance().updatePlayers();
 				if (round.hasCompanyJustStarted())
 				{
 					StockChart.refreshStockPanel();
@@ -444,7 +444,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			else
 			{
 				int compIndex = company.getPublicNumber();
-				GameStatus.getInstance().updateIPO(compIndex);
+				//GameStatus.getInstance().updateIPO(compIndex);
 				StockChart.refreshStockPanel();
 			}
 

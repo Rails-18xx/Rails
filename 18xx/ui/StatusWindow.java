@@ -4,6 +4,8 @@
 package ui;
 
 import game.*;
+import game.special.ExchangeForShare;
+import game.special.SpecialSRProperty;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +24,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private JPanel buttonPanel;
 	private GameStatus gameStatus;
-	private JButton buyButton, sellButton, passButton;
+	private JButton buyButton, sellButton, passButton, extraButton;
 	private Player player;
 	private PublicCompanyI[] companies;
 	private PublicCompanyI company;
@@ -57,11 +59,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public final static String SELL = "Sell";
 	public final static String PASS = "Pass";
 	public final static String DONE = "Done";
+	public final static String SWAP = "Swap";
 
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
-	 * up-to-date: <br> - true: push changes (Observer/Observable pattern), <br> -
-	 * false: pull everything on repaint.
+	 * up-to-date: 
+	 * <br> - true: push changes (via the Observer/Observable pattern),
+	 * <br> - false: pull everything on repaint.
 	 */
 	public static boolean useObserver = true;
 
@@ -141,6 +145,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		gameStatus = new GameStatus(this);
 		buttonPanel = new JPanel();
 
+		extraButton = new JButton(""); // Normally invisible, for special properties.
+		extraButton.setVisible(false);
 		buyButton = new JButton(BUY);
 		sellButton = new JButton(SELL);
 		passButton = new JButton(PASS);
@@ -149,6 +155,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		sellButton.setMnemonic(KeyEvent.VK_S);
 		passButton.setMnemonic(KeyEvent.VK_P);
 
+		buttonPanel.add(extraButton);
 		buttonPanel.add(buyButton);
 		buttonPanel.add(sellButton);
 		buttonPanel.add(passButton);
@@ -157,6 +164,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		sellButton.setActionCommand(SELL);
 		passButton.setActionCommand(DONE);
 
+		extraButton.addActionListener(this);
 		buyButton.addActionListener(this);
 		sellButton.addActionListener(this);
 		passButton.addActionListener(this);
@@ -182,9 +190,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		/*----*/
 		gmgr = GameManager.getInstance();
 		currentRound = gmgr.getCurrentRound();
+
 		updateStatus();
 		pack();
-
+		
 		gameStatus.addKeyListener(this);
 		buttonPanel.addKeyListener(this);
 		addKeyListener(this);
@@ -227,7 +236,27 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 			enableCheckBoxMenuItem(MARKET);
 			disableCheckBoxMenuItem(MAP);
-
+			
+			/* Any special properties in force? */
+			player = GameManager.getCurrentPlayer();
+			java.util.List specialProperties = stockRound.getSpecialProperties();
+			if (specialProperties != null && specialProperties.size() > 0) {
+			    /* Assume there will only one special property at a time
+			     * (because we have only one extra button)
+			     */
+			    SpecialSRProperty sp = (SpecialSRProperty) specialProperties.get(0);
+			    if (sp instanceof ExchangeForShare) {
+			        extraButton.setText(((ExchangeForShare)sp).getPrivateCompany().getName()
+			                +"/"+((ExchangeForShare)sp).getPublicCompanyName());
+			        extraButton.setActionCommand(SWAP);
+			        extraButton.setVisible(true);
+			        extraButton.setEnabled(true);
+			    }
+			} else {
+		        extraButton.setEnabled(false);
+		        extraButton.setVisible(false);
+			}
+//System.out.println("Window: SpecProp#="+specialProperties.size());
 			refreshStatus();
 			toFront();
 		}
@@ -344,6 +373,16 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setText(PASS);
 			passButton.setMnemonic(KeyEvent.VK_P);
 		}
+		else if (actor.getActionCommand().equalsIgnoreCase(SWAP)) {
+		    /* Execute a special property (i.e. swap M&H for NYC) */
+		    SpecialSRProperty sp = (SpecialSRProperty)stockRound.getSpecialProperties().get(0);
+		    if (sp instanceof ExchangeForShare) {
+		        ((ExchangeForShare)sp).execute();
+				extraButton.setText("");
+				extraButton.setEnabled(false);
+				extraButton.setVisible(false);
+		    }
+		}
 		else if (actor.getActionCommand().equalsIgnoreCase(QUIT))
 			System.exit(0);
 		// We're not going to actually DO anything with the selected file
@@ -397,9 +436,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		else if (currentRound instanceof OperatingRound)
 		{
 			gameStatus.setSRPlayerTurn(-1);
-			updateStatus();
 		}
-
+		updateStatus();
 	}
 
 	private void buyButtonClicked()
@@ -423,8 +461,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				}
 				else
 				{
-					gameStatus.updatePlayer(compIndex, playerIndex);
-					gameStatus.updateIPO(compIndex);
+					//gameStatus.updatePlayer(compIndex, playerIndex);
+					///gameStatus.updateIPO(compIndex);
 				}
 			}
 			else
@@ -452,8 +490,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				}
 				else
 				{
-					gameStatus.updatePlayer(compIndex, playerIndex);
-					gameStatus.updatePool(compIndex);
+					//gameStatus.updatePlayer(compIndex, playerIndex);
+					//gameStatus.updatePool(compIndex);
 					// gameStatus.updateBank();
 				}
 			}
@@ -483,8 +521,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-				gameStatus.updatePlayer(compIndex, playerIndex);
-				gameStatus.updatePool(compIndex);
+				//gameStatus.updatePlayer(compIndex, playerIndex);
+				//gameStatus.updatePool(compIndex);
 				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
@@ -529,8 +567,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			else
 			{
 
-				gameStatus.updatePlayer(compIndex, playerIndex);
-				gameStatus.updateIPO(compIndex);
+				//gameStatus.updatePlayer(compIndex, playerIndex);
+				//gameStatus.updateIPO(compIndex);
 				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}

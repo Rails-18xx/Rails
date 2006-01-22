@@ -234,7 +234,8 @@ public class GameStatus extends JPanel implements ActionListener
 
 			for (int j = 0; j < np; j++)
 			{
-				f = certPerPlayer[i][j] = new Field("");
+				//f = certPerPlayer[i][j] = new Field("");
+				f = certPerPlayer[i][j] = new Field(players[j].getPortfolio().getShareModel(c));
 				addField(f,
 						certPerPlayerXOffset + j,
 						certPerPlayerYOffset + i,
@@ -253,7 +254,8 @@ public class GameStatus extends JPanel implements ActionListener
 						1,
 						0);
 			}
-			f = certInIPO[i] = new Field(Bank.getIpo().ownsShare(c) + "%");
+			//f = certInIPO[i] = new Field(Bank.getIpo().ownsShare(c) + "%");
+			f = certInIPO[i] = new Field(Bank.getIpo().getShareModel(c));
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
 			f = certInIPOButton[i] = new ClickField(Bank.getIpo().ownsShare(c)
 					+ "%",
@@ -264,7 +266,8 @@ public class GameStatus extends JPanel implements ActionListener
 			f.setVisible(false);
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
 
-			f = certInPool[i] = new Field("");
+			//f = certInPool[i] = new Field("");
+			f = certInPool[i] = new Field(Bank.getPool().getShareModel(c));
 			addField(f,
 					certInPoolXOffset,
 					certInPoolYOffset + i,
@@ -503,6 +506,7 @@ public class GameStatus extends JPanel implements ActionListener
 		return compBuyPoolIndex;
 	}
 
+	/*
 	public void updatePlayer(int compIndex, int playerIndex)
 	{
 		int share = players[playerIndex].getPortfolio()
@@ -513,7 +517,9 @@ public class GameStatus extends JPanel implements ActionListener
 		if (share == 0)
 			setPlayerCertButton(compIndex, playerIndex, false);
 	}
+	*/
 
+	/*
 	public void updateIPO(int compIndex)
 	{
 		int share = Bank.getIpo().ownsShare(companies[compIndex]);
@@ -535,6 +541,7 @@ public class GameStatus extends JPanel implements ActionListener
 		if (share == 0)
 			setPoolCertButton(compIndex, false);
 	}
+	*/
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
@@ -650,6 +657,7 @@ public class GameStatus extends JPanel implements ActionListener
 	 * (perhaps we should do all this via Events) We will check all players, as
 	 * some items my have been assigned "behind the curtains".
 	 */
+	/*
 	public void updatePlayers()
 	{
 
@@ -675,6 +683,7 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 		parent.pack();
 	}
+	*/
 
 	public void updateRevenue(int compIndex)
 	{
