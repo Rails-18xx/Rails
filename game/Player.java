@@ -195,7 +195,6 @@ public class Player implements CashHolder
 	{
 		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit)
 			return false;
-		/** TODO The '60' above must of course be made configurable! */
 		return true;
 	}
 

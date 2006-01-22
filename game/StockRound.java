@@ -103,7 +103,8 @@ public class StockRound implements Round
 		Log.write("\nStart of Stock Round " + stockRoundNumber);
 
 		GameManager.setCurrentPlayerIndex(GameManager.priorityPlayerIndex);
-		currentPlayer = GameManager.getCurrentPlayer();
+		
+		initPlayer();
 		Log.write(currentPlayer.getName() + " has the Priority Deal");
 	}
 
@@ -634,7 +635,7 @@ public class StockRound implements Round
 						+ numberOfPlayers; i++)
 				{
 					otherPlayer = GameManager.getPlayer(i);
-					if (otherPlayer.getPortfolio().ownsShares(company) >= presCert.getShares())
+					if (otherPlayer.getPortfolio().ownsShare(company) >= presCert.getShares())
 					{
 						// Check if he has the right kind of share
 						if (numberToSell > 1
@@ -726,7 +727,7 @@ public class StockRound implements Round
 			for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++)
 			{
 				otherPlayer = GameManager.getPlayer(i);
-				if (otherPlayer.getPortfolio().ownsShares(company) > portfolio.ownsShares(company))
+				if (otherPlayer.getPortfolio().ownsShare(company) > portfolio.ownsShare(company))
 				{
 					portfolio.swapPresidentCertificate(company,
 							otherPlayer.getPortfolio());
@@ -819,10 +820,18 @@ public class StockRound implements Round
 	{
 
 		GameManager.setNextPlayer();
+		initPlayer();
+	}
+	protected void initPlayer() {
+		
 		currentPlayer = GameManager.getCurrentPlayer();
 		companyBoughtThisTurn = null;
 		hasSoldThisTurnBeforeBuying = false;
 		hasPassed = true;
+
+		currentSpecialProperties = currentPlayer.getPortfolio()
+			.getSpecialProperties(game.special.SpecialSRProperty.class);
+		//System.out.println("Player "+currentPlayer.getName()+", spec#="+currentSpecialProperties.size());
 	}
 
 	/**

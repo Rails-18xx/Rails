@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Log.java,v 1.5 2006/01/08 19:32:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Log.java,v 1.6 2006/01/22 21:09:55 evos Exp $
  * 
  * Created on 16-Apr-2005 by Erik Vos
  * 
@@ -31,7 +31,7 @@ public final class Log
 	/** Log a message, and add it to the display buffer */
 	public static void write(String message)
 	{
-		if (Utils.hasValue(message))
+		if (Util.hasValue(message))
 		{
 			System.out.println(message); // Will become a log file later
 			messageBuffer.append(message).append("\n");
@@ -41,7 +41,7 @@ public final class Log
 	/** Add it to the error buffer */
 	public static void error(String message)
 	{
-		if (Utils.hasValue(message))
+		if (Util.hasValue(message))
 		{
 			System.out.println(message);
 			errorBuffer.append(message);

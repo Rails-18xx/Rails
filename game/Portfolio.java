@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.25 2006/01/05 22:09:32 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.26 2006/01/22 21:09:51 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -8,10 +8,14 @@ package game;
 
 import game.model.ModelObject;
 import game.model.PrivatesModel;
+import game.model.ShareModel;
 import game.model.TrainsModel;
+import game.special.SpecialProperty;
 import game.special.SpecialPropertyI;
 
 import java.util.*;
+
+import util.Util;
 
 /**
  * @author Erik
@@ -21,22 +25,24 @@ public class Portfolio
 
    /** Owned private companies */
    protected List privateCompanies = new ArrayList();
+   protected PrivatesModel privatesModel = new PrivatesModel (this);
 
    /** Owned public company certificates */
    protected List certificates = new ArrayList();
 
    /** Owned public company certificates, organised in a HashMap per company */
    protected Map certPerCompany = new HashMap();
+   protected Map shareModelPerCompany = new HashMap();
    
    /** Owned trains */
    protected List trains = new ArrayList();
    protected Map trainsPerType = new HashMap();
    protected TrainsModel trainsModel = new TrainsModel(this);
-   protected PrivatesModel privatesModel = new PrivatesModel (this);
+   
    
    /** Special properties. It is easier to maintain a map of these
     * that to have to search through the privates on each and every action. */
-   protected Map specialProperties = new HashMap();
+   protected List specialProperties = new ArrayList();
 
    /** Who owns the portfolio */
    protected CashHolder owner;
@@ -84,7 +90,7 @@ public class Portfolio
    {
 
       // Move the certificate
-   	transferCertificate (certificate, from, this);
+   	  transferCertificate (certificate, from, this);
 
       //PublicCertificate is no longer for sale.
       // Erik: this is not the intended use of available (which is now redundant).
@@ -163,6 +169,8 @@ public class Portfolio
       }
       ((ArrayList) certPerCompany.get(companyName)).add(certificate);
       certificate.setPortfolio(this);
+
+      getShareModel (certificate.getCompany()).addShare(certificate.getShare());
    }
 
    public boolean removePrivate(PrivateCompanyI privateCompany)
@@ -202,6 +210,15 @@ public class Portfolio
          }
       }
 
+      getShareModel (certificate.getCompany()).addShare(-certificate.getShare());
+  }
+   
+   public ShareModel getShareModel (PublicCompanyI company) {
+       
+       if (!shareModelPerCompany.containsKey(company)) {
+           shareModelPerCompany.put (company, new ShareModel (this, company));
+       }
+       return (ShareModel) shareModelPerCompany.get(company);
    }
 
    public List getPrivateCompanies()
@@ -331,38 +348,20 @@ public class Portfolio
    {
       int share = 0;
       String name = company.getName();
+      PublicCertificateI cert;
       if (certPerCompany.containsKey(name))
       {
          Iterator it = ((List) certPerCompany.get(name)).iterator();
          while (it.hasNext())
          {
-            share += ((PublicCertificateI) it.next()).getShare();
+             cert = (PublicCertificateI) it.next();
+            share += cert.getShare();
+            //System.out.println(name+": comp="+name+" share="+cert.getShare()+", total="+share);
          }
       }
       return share;
    }
 
-   /**
-    * Returns percentage that a portfolio contains of one company.
-    * 
-    * @param company
-    * @return
-    */
-   public int ownsShares(PublicCompanyI company)
-   {
-      int shares = 0;
-      String name = company.getName();
-      if (certPerCompany.containsKey(name))
-      {
-         Iterator it = ((List) certPerCompany.get(name)).iterator();
-         while (it.hasNext())
-         {
-            shares += ((PublicCertificateI) it.next()).getShares();
-         }
-      }
-      return shares;
-   }
-   
    public int ownsCertificates (PublicCompanyI company, int unit, boolean president) {
        int certs = 0;
        String name = company.getName();
@@ -529,19 +528,23 @@ public class Portfolio
 	           while (it2.hasNext()) {
 	               sp = (SpecialPropertyI) it2.next();
 	               if (sp.isExercised()) continue; 
-	               clazz = sp.getClass();
-	               
-		           if (!specialProperties.containsKey(clazz)) {
-	                   specialProperties.put(clazz, new ArrayList());
-	               }
-	               ((List)specialProperties.get(clazz)).add(sp);
+	               specialProperties.add(sp);
 	           }
 	       }
        }
    }
    
    public List getSpecialProperties (Class clazz) {
-       return (List) specialProperties.get(clazz);
+       List result = new ArrayList();
+       if (specialProperties != null && specialProperties.size() > 0) {
+	       Iterator it = specialProperties.iterator();
+	       SpecialProperty sp;
+	       while (it.hasNext()) {
+	           sp = (SpecialProperty)it.next();
+	           if (Util.isInstanceOf (sp, clazz)) result.add (sp);
+	       }
+       }
+       return result;
    }
    
    public ModelObject getPrivatesModel () {

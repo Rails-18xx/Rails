@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialProperty.java,v 1.2 2005/11/27 20:59:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialProperty.java,v 1.3 2006/01/22 21:09:57 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -13,7 +13,7 @@ import game.*;
 public abstract class SpecialProperty implements SpecialPropertyI {
     
     String condition;
-    PrivateCompanyI company;
+    PrivateCompanyI privateCompany;
     int closingValue = 0;
     boolean exercised = false;
     boolean isSRProperty = false; 
@@ -27,15 +27,15 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
     
     public void setCompany (PrivateCompanyI company) {
-        this.company = company;
+        this.privateCompany = company;
     }
     public PrivateCompanyI getCompany () {
-        return company;
+        return privateCompany;
     }
     
     public void setExercised () {
         exercised = true;
-        company.getPortfolio().updateSpecialProperties();
+        privateCompany.getPortfolio().updateSpecialProperties();
     }
     public boolean isExercised() {
         return exercised;

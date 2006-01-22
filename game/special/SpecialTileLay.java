@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.3 2006/01/08 19:32:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialTileLay.java,v 1.4 2006/01/22 21:09:57 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -9,7 +9,7 @@ import game.*;
 
 import org.w3c.dom.*;
 
-import util.Utils;
+import util.Util;
 import util.XmlUtils;
 
 /**
@@ -24,12 +24,15 @@ public class SpecialTileLay extends SpecialORProperty {
     
     public void configureFromXML (Element element) throws ConfigurationException {
         
-        Element stlEl = (Element) element.getElementsByTagName("SpecialTileLay").item(0);
-        if (stlEl == null) throw new ConfigurationException ("SpecialTileLay element missing");
+        NodeList nl = element.getElementsByTagName("SpecialTileLay");
+        if (nl == null || nl.getLength() == 0) {
+            throw new ConfigurationException ("<SpecialTileLay> tag missing");
+        }
+        Element stlEl = (Element) nl.item(0);
         
         NamedNodeMap nnp = stlEl.getAttributes();
         locationCode = XmlUtils.extractStringAttribute(nnp, "location");
-        if (!Utils.hasValue(locationCode))
+        if (!Util.hasValue(locationCode))
             throw new ConfigurationException ("SpecialTileLay: location missing");
         location = MapManager.getInstance().getHex (locationCode);
         if (location == null)

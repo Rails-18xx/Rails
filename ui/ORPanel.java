@@ -793,7 +793,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 					null,
 					trainsForSale.toArray(),
 					trainsForSale.get(1));
-			if (Utils.hasValue(boughtTrain))
+			if (Util.hasValue(boughtTrain))
 			{
 				Matcher m = buyTrainPattern.matcher(boughtTrain);
 				if (m.matches()) // Why does this sometimes give a
