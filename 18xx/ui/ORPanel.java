@@ -485,6 +485,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 					button1.setMnemonic(KeyEvent.VK_R);
 					button1.setEnabled(true);
 					button1.setVisible(true);
+					orWindow.setMessage("EnterRevenue");
 				}
 				else
 				{
@@ -514,6 +515,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				button4.setActionCommand("Payout");
 				button4.setMnemonic(KeyEvent.VK_P);
 				button4.setEnabled(true);
+				
+				orWindow.setMessage("SelectPayout");
 
 			}
 			else if (step == OperatingRound.STEP_BUY_TRAIN)
@@ -537,6 +540,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				button4.setActionCommand("Done");
 				button4.setMnemonic(KeyEvent.VK_D);
 				button4.setEnabled(true);
+				
+				orWindow.setMessage("BuyTrain");
 
 			}
 			else if (step == OperatingRound.STEP_FINAL)

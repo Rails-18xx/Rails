@@ -204,7 +204,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 				String propName = properties.item(j).getNodeName();
 				if (propName == null)
 					continue;
-
 				if (propName.equalsIgnoreCase("ShareUnit"))
 				{
 					shareUnit = XmlUtils.extractIntegerAttribute(properties
@@ -1027,6 +1026,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public int getTrainLimit(int phaseIndex)
 	{
+System.out.println("PhaseIndex:"+phaseIndex+" trainLimit.length:"+trainLimit.length);
 		return trainLimit[Math.min(phaseIndex, trainLimit.length - 1)];
 	}
 
