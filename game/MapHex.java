@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.30 2006/01/18 18:37:51 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.31 2006/02/02 22:29:21 evos Exp $
  * 
  * Created on 10-Aug-2005
  * Change Log:
@@ -650,10 +650,20 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	public boolean isUpgradeableNow()
 	{
-		if (isBlocked)
+		if (isBlocked) {
+		    System.out.println("Hex "+name+" is blocked");
 			return false;
-		if (currentTile != null)
-			return currentTile.isUpgradeable();
+		}
+		if (currentTile != null) {
+			if (currentTile.isUpgradeable()) {
+			    return true;
+			} else {
+			    System.out.println("Hex "+name+" tile "+currentTile.getName()
+			            +" is not upgradable now");
+			    return false;
+			}
+		}
+		System.out.println("No tile on hex "+name);
 		return false;
 	}
 

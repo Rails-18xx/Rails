@@ -19,6 +19,7 @@ public class ORWindow extends JFrame implements WindowListener
 	private MapPanel mapPanel;
 	private ORPanel ORPanel;
 	private UpgradesPanel upgradePanel;
+	private MessagePanel messagePanel;
 	private StatusWindow parent;
 
 	public ORWindow(OperatingRound round, StatusWindow parent)
@@ -27,11 +28,14 @@ public class ORWindow extends JFrame implements WindowListener
 		getContentPane().setLayout(new BorderLayout());
 		this.parent = parent;
 
+		messagePanel = new MessagePanel ();
+		getContentPane().add(messagePanel, BorderLayout.NORTH);
+		
 		if(round != null)
 		{
 			mapPanel = GameUILoader.mapPanel;
 			
-			upgradePanel = new UpgradesPanel(mapPanel.getMap());
+			upgradePanel = new UpgradesPanel(mapPanel.getMap(), this);
 			getContentPane().add(upgradePanel, BorderLayout.WEST);
 			mapPanel.setUpgradesPanel(upgradePanel);
 			mapPanel.getMap().setUpgradesPanel(upgradePanel);
@@ -39,6 +43,8 @@ public class ORWindow extends JFrame implements WindowListener
 			ORPanel = new ORPanel(round, parent, this);
 			getContentPane().add(ORPanel, BorderLayout.SOUTH);
 			setSize(800, 750);
+			
+			
 		}
 		else if (OperatingRound.getLastORNumber() > 0)
 		{
@@ -53,6 +59,7 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		
 		getContentPane().add(mapPanel, BorderLayout.CENTER);
+		mapPanel.setWindow(this);
 
 		setTitle("Rails: Map");
 		setLocation(10, 10);
@@ -60,6 +67,10 @@ public class ORWindow extends JFrame implements WindowListener
 		addWindowListener(this);
 
 		LogWindow.addLog();
+	}
+	
+	public void setMessage (String messageKey) {
+	    messagePanel.setMessage(messageKey);
 	}
 	
 	public MapPanel getMapPanel()

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.2 2006/01/10 22:35:47 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.3 2006/02/02 22:29:21 evos Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -26,9 +26,10 @@ public class MapPanel extends JPanel
 	private HexMap map;
 	private JScrollPane scrollPane;
 	private UpgradesPanel upgradePanel;
-
-	public MapPanel()
-	{
+	private ORWindow parent;
+	
+	public MapPanel () {
+	    
 		Scale.set(15);
 
 		setLayout(new BorderLayout());
@@ -58,6 +59,12 @@ public class MapPanel extends JPanel
 		setSize(map.getPreferredSize().width + 100,
 				map.getPreferredSize().height + 40);
 		setLocation(25, 25);
+		
+	}
+	
+	public void setWindow (ORWindow window) {
+	    parent = window;
+		if (map != null) map.setWindow (parent);
 	}
 
 	public void setSpecialTileLays(java.util.List specials)
