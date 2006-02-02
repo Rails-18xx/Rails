@@ -22,6 +22,23 @@ import ui.*;
 public abstract class HexMap extends JComponent implements MouseListener,
 		MouseMotionListener
 {
+    /* Substeps in tile and token laying */
+    public static final int INACTIVE = 0;
+    public static final int SELECT_HEX_FOR_TILE = 1;
+    public static final int SELECT_TILE = 2;
+    public static final int ROTATE_OR_CONFIRM_TILE = 3;
+    public static final int SELECT_HEX_FOR_TOKEN = 4;
+    public static final int CONFIRM_TOKEN = 5;
+    
+    /* Message key per substep */
+    protected static final String[] messageKey = new String[] {
+        "", "SelectAHexForTile", "SelectATile", "RotateTile", "SelectAHexForToken",
+        "ConfirmToken"
+    };
+    
+    
+    protected int subStep = INACTIVE;
+    
 
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
@@ -30,6 +47,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected GUIHex[][] h;
 	MapHex[][] hexArray;
 	protected ArrayList hexes;
+	protected ORWindow window;
 
 	protected int scale = 2 * Scale.get();
 	protected int cx;
@@ -136,118 +154,88 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return preferredSize;
 	}
 
+	public void setSubStep (int subStep) {
+	    this.subStep = subStep;
+	    if (window != null) {
+	        window.setMessage(messageKey[subStep]);
+	    }
+	    if (upgradesPanel != null) {
+			upgradesPanel.setDoneText(Game.getText(subStep<4 ? "LayTile" : "LayToken"));
+			upgradesPanel.setCancelText(Game.getText(subStep<4 ? "NoTile" : "NoToken"));
+			upgradesPanel.setDoneEnabled(subStep == 3 || subStep == 5);
+	    }
+	        
+	}
+
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
 
-		try
+		GUIHex clickedHex = getHexContainingPoint(point);
+		
+		if (baseTokenLayingEnabled)
 		{
-			GUIHex clickedHex = getHexContainingPoint(point);
+				selectHex(clickedHex);
 
-			if (baseTokenLayingEnabled)
-			{
-				highlightClickedHex(clickedHex);
-
-				if (clickedHex != null)
-				{
-					upgradesPanel.setCancelText(UpgradesPanel.cancelText);
-					upgradesPanel.setDoneEnabled(true);
+				//upgradesPanel.setCancelText(Game.getText("Cancel"));
+				if (selectedHex != null) {
+				    setSubStep (CONFIRM_TOKEN);
+				} else {
+				    setSubStep (SELECT_HEX_FOR_TOKEN);
 				}
-				else
-				{
-					upgradesPanel.setCancelText(UpgradesPanel.noTokenText);
-					upgradesPanel.setDoneEnabled(false);
-				}
-			}
-			else if (clickedHex == selectedHex)
-			{
+		}
+		else if (tileLayingEnabled)
+		{
+		    if (subStep == ROTATE_OR_CONFIRM_TILE && clickedHex == selectedHex) {
+		        
 				selectedHex.rotateTile();
 				repaint(selectedHex.getBounds());
-			}
-			else
-			{
-				if (selectedHex != null)
-				{
-					selectedHex.removeTile();
-					highlightClickedHex(null);
-				}
-				if (clickedHex.getHexModel().isUpgradeableNow())
-				{
-					highlightClickedHex(clickedHex);
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(this,
+				
+		    } else {
+		        
+		        if (selectedHex != null && clickedHex != selectedHex) {
+		            selectedHex.removeTile();
+					selectHex(null);
+		        }
+				if (clickedHex != null) {
+				    if (clickedHex.getHexModel().isUpgradeableNow()) {
+				        selectHex(clickedHex);
+				        setSubStep (SELECT_TILE);
+				    } else {
+				        JOptionPane.showMessageDialog(this,
 							"This hex cannot be upgraded now");
+				    }
 				}
-				upgradesPanel.setCancelText(UpgradesPanel.noTileText);
-				upgradesPanel.setDoneEnabled(false);
-			}
-
-			// FIXME: Kludgy, but it forces the upgrades panel to be drawn
-			// correctly.
-			upgradesPanel.setVisible(false);
-			upgradesPanel.setVisible(true);
-		}
-		catch (NullPointerException e)
-		{
-			// No hex clicked
-			if (selectedHex != null)
-			{
-				selectedHex.removeTile();
-				highlightClickedHex(null);
-
-				try
-				{
-					upgradesPanel.setDoneEnabled(false);
-					upgradesPanel.setCancelText(baseTokenLayingEnabled ? UpgradesPanel.noTokenText
-							: UpgradesPanel.noTileText);
-				}
-				catch (NullPointerException e2)
-				{
-					// UpgradesPanel is null.
-				}
-			}
+		    }
 		}
 
-		try
-		{
+		// FIXME: Kludgy, but it forces the upgrades panel to be drawn
+		// correctly.
+		if (upgradesPanel != null) {
+		    upgradesPanel.setVisible(false);
+		    upgradesPanel.setVisible(true);
 			showUpgrades();
-		}
-		catch (NullPointerException e)
-		{
-			// No upgrades to show because UpgradesPanel is null.
 		}
 	}
 
-	private void highlightClickedHex(GUIHex clickedHex)
+	private void selectHex(GUIHex clickedHex)
 	{
-		if (selectedHex == null)
-		{
-			clickedHex.setSelected(true);
-			selectedHex = clickedHex;
-			repaint(selectedHex.getBounds());
-		}
-		else if (clickedHex != null && selectedHex != null
-				&& clickedHex != selectedHex)
-		{
+	    if (selectedHex != null && clickedHex != selectedHex) {
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
-
-			clickedHex.setSelected(true);
-			selectedHex = clickedHex;
-			repaint(selectedHex.getBounds());
-		}
-		else
-		{
-			selectedHex.setSelected(false);
-			repaint();
 			selectedHex = null;
-		}
+	    }
+
+	    if (clickedHex != null)	{
+			clickedHex.setSelected(true);
+			selectedHex = clickedHex;
+			repaint(selectedHex.getBounds());
+	    }
 	}
 
 	public void processDone()
 	{
+		setSubStep (INACTIVE);
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
@@ -282,6 +270,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void processCancel()
 	{
+		setSubStep (INACTIVE);
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
@@ -355,6 +344,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void showUpgrades()
 	{
+	    if (upgradesPanel == null) return;
+	    
 		if (selectedHex == null || baseTokenLayingEnabled)
 		{
 			upgradesPanel.setUpgrades(null);
@@ -364,44 +355,48 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			ArrayList upgrades = (ArrayList) selectedHex.getCurrentTile()
 					.getValidUpgrades(selectedHex.getHexModel(),
 							GameManager.getCurrentPhase());
-			if (upgrades == null)
-			{
-				upgradesPanel.setUpgrades(null);
-			}
-			else
-			{
-				upgradesPanel.setUpgrades(upgrades);
-			}
+			upgradesPanel.setUpgrades(upgrades);
 		}
 
 		invalidate();
 		upgradesPanel.showUpgrades();
 	}
-
+	
 	public void enableTileLaying(boolean enabled)
 	{
-		tileLayingEnabled = enabled;
-		if (!enabled && selectedHex != null)
-		{
-			selectedHex.removeTile();
-			selectedHex.setSelected(false);
-			repaint(selectedHex.getBounds());
-			selectedHex = null;
+	    if (!tileLayingEnabled && enabled) {
+	        /* Start tile laying step */
+			setSubStep (SELECT_HEX_FOR_TILE);
+	    } else if (tileLayingEnabled && !enabled) {
+		    /* Finish tile laying step */
+		    if (selectedHex != null) {
+				selectedHex.removeTile();
+				selectedHex.setSelected(false);
+				repaint(selectedHex.getBounds());
+				selectedHex = null;
+		    }
+			setSubStep (INACTIVE);
 		}
+		tileLayingEnabled = enabled;
 	}
 
 	public void enableBaseTokenLaying(boolean enabled)
 	{
 
-		baseTokenLayingEnabled = enabled;
-
-		if (!enabled && selectedHex != null)
-		{
-			selectedHex.removeToken();
-			selectedHex.setSelected(false);
-			repaint(selectedHex.getBounds());
-			selectedHex = null;
+	    if (!baseTokenLayingEnabled && enabled) {
+	        /* Start token laying step */
+			setSubStep (SELECT_HEX_FOR_TOKEN);
+	    } else if (baseTokenLayingEnabled && !enabled) {
+		    /* Finish token laying step */
+		    if (selectedHex != null) {
+				selectedHex.removeToken();
+				selectedHex.setSelected(false);
+				repaint(selectedHex.getBounds());
+				selectedHex = null;
+		    }
+			setSubStep (INACTIVE);
 		}
+		baseTokenLayingEnabled = enabled;
 	}
 
 	public void setSpecials(java.util.List specials)
@@ -426,6 +421,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				//		+ stl.isExtra());
 			}
 		}
+	}
+	
+	public void setWindow (ORWindow window) {
+	    this.window = window;
 	}
 
 }
