@@ -284,9 +284,9 @@ public class Player implements CashHolder
 	    return wallet;
 	}
 
-	public void addCash(int amount)
+	public boolean addCash(int amount)
 	{
-		wallet.addCash(amount);
+		return wallet.addCash(amount);
 	}
 
 	/**

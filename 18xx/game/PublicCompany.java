@@ -545,10 +545,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * @param amount
 	 *            The amount to add (may be negative).
 	 */
-	public void addCash(int amount)
+	public boolean addCash(int amount)
 	{
-		treasury.addCash(amount);
-
+		return treasury.addCash(amount);
 	}
 
 	/**
