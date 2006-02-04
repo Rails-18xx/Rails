@@ -30,7 +30,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
 	/** Default limit of shares in the bank pool */
 	private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
-	
+
 	/** The Bank's amont of cash */
 	private static CashModel money;
 
@@ -73,14 +73,15 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 * @param amount
 	 *            The amount of money.
 	 */
-	public static void transferCash(CashHolder from, CashHolder to, int amount)
+	public static boolean transferCash(CashHolder from, CashHolder to,
+			int amount)
 	{
 		if (from == null)
 			from = instance;
 		else if (to == null)
 			to = instance;
-		from.addCash(-amount);
 		to.addCash(amount);
+		return from.addCash(-amount);
 	}
 
 	public Bank()
@@ -97,9 +98,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
 	}
 
-	   /**
-	    * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
-	    */
+	/**
+	 * @see game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+	 */
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
 		NamedNodeMap nnp;
@@ -157,7 +158,8 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	}
 
 	/**
-	 * @param percentage of a company allowed to be in the Bank pool.
+	 * @param percentage
+	 *            of a company allowed to be in the Bank pool.
 	 */
 	public static void setShareLimit(int percentage)
 	{
@@ -228,9 +230,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	/**
 	 * Adds cash back to the bank
 	 */
-	public void addCash(int amount)
+	public boolean addCash(int amount)
 	{
-		money.addCash(amount);
+		return money.addCash(amount);
 	}
 
 	/**
@@ -250,7 +252,8 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	}
 
 	/**
-	 * @param Set Bank's cash.
+	 * @param Set
+	 *            Bank's cash.
 	 */
 	public void setCash(int i)
 	{
@@ -266,9 +269,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	{
 		return money.toString();
 	}
-	
-	public ModelObject getCashModel() {
-	    return money;
+
+	public ModelObject getCashModel()
+	{
+		return money;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.3 2005/12/11 00:03:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CashHolder.java,v 1.4 2006/02/04 01:12:51 wakko666 Exp $
  * 
  * Created on 10-Apr-2005 by Erik Vos
  * 
@@ -30,7 +30,7 @@ public interface CashHolder {
 	/**
 	 * Add (or subtract) cash.
 	 */
-	public abstract void addCash(int amount);
+	public abstract boolean addCash(int amount);
 	
 	/** Get the cash owner's name (needed for logging) */
 	public abstract String getName();
