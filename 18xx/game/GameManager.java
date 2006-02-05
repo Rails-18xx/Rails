@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.18 2006/01/08 19:32:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.19 2006/02/05 21:30:18 evos Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -31,6 +31,9 @@ public class GameManager implements ConfigurableComponentI
 	protected static int currentNumberOfOperatingRounds = 1;
 	
 	protected static boolean companiesCanBuyPrivates = false;
+	protected static boolean gameEndsWithBankruptcy = false;
+	protected static int gameEndsWhenBankHasLessOrEqual = 0;
+	protected static boolean gameEndsAfterSetOfORs = true;
 
 	/**
 	 * Current round should not be set here but from within the Round classes.
@@ -47,6 +50,7 @@ public class GameManager implements ConfigurableComponentI
 	protected int numOfORs;
 
 	protected static PhaseI currentPhase = null;
+	protected static boolean gameOver = false;
 
 	protected static GameManager instance;
 
@@ -119,7 +123,34 @@ public class GameManager implements ConfigurableComponentI
 			Bank.setShareLimit(XmlUtils.extractIntegerAttribute(nnp,
 					"percentage"));
 		}
-	}
+
+		/* End of game criteria */
+		element = (Element) el.getElementsByTagName("EndOfGame")
+				.item(0);
+		if (element != null)
+		{
+		    Element el2;
+			nl = element.getChildNodes();
+			for (int i=0; i<nl.getLength(); i++) {
+			    if (!(nl.item(i) instanceof Element)) continue;
+			    el2 = (Element) nl.item(i);
+			    if (el2.getNodeName().equals("Bankruptcy")) {
+			        gameEndsWithBankruptcy = true;
+			        //System.out.println("Ends with bankruptcy");
+			    } else if (el2.getNodeName().equals("BankBreaks")) {
+			        nnp = el2.getAttributes();
+			        gameEndsWhenBankHasLessOrEqual 
+			        	= XmlUtils.extractIntegerAttribute(nnp, "limit", gameEndsWhenBankHasLessOrEqual);
+			        String attr = XmlUtils.extractStringAttribute(nnp, "finish");
+			        if (attr.equalsIgnoreCase("SetOfORs")) {
+			        	gameEndsAfterSetOfORs = true;
+			        } else if (attr.equalsIgnoreCase("CurrentOR")) {
+			        	gameEndsAfterSetOfORs = false;
+			        }
+			    }
+			}
+		}
+}
 
 	public void startGame()
 	{
@@ -195,6 +226,8 @@ public class GameManager implements ConfigurableComponentI
 		else if (round instanceof OperatingRound)
 		{
 
+		    if (Bank.isBroken() && !gameEndsAfterSetOfORs) finishGame();
+		    
 			if (++orNumber <= numOfORs)
 			{
 
@@ -210,7 +243,7 @@ public class GameManager implements ConfigurableComponentI
 			}
 			else
 			{
-
+			    if (Bank.isBroken() && gameEndsAfterSetOfORs) finishGame();
 				startStockRound();
 			}
 		}
@@ -235,6 +268,19 @@ public class GameManager implements ConfigurableComponentI
 	{
 		playHomeTokens();
 		new OperatingRound();
+	}
+	
+	private void finishGame () {
+	    gameOver = true;
+	    Log.write("Game over!");
+	}
+
+	/**
+	 * To be called by the UI to check if the game is over.
+	 * @return
+	 */
+	public static boolean isGameOver() {
+	    return gameOver;
 	}
 
 	/**

@@ -1025,7 +1025,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public int getTrainLimit(int phaseIndex)
 	{
-System.out.println("PhaseIndex:"+phaseIndex+" trainLimit.length:"+trainLimit.length);
 		return trainLimit[Math.min(phaseIndex, trainLimit.length - 1)];
 	}
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MessagePanel.java,v 1.1 2006/02/02 22:29:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MessagePanel.java,v 1.2 2006/02/05 21:30:19 evos Exp $
  * 
  * Created on 28-Jan-2006
  * Change Log:
@@ -9,6 +9,8 @@ import game.Game;
 
 import java.awt.*;
 import javax.swing.*;
+
+import util.Util;
 
 
 /**
@@ -43,7 +45,9 @@ public class MessagePanel extends JPanel {
 	}
     
     public void setMessage (String messageKey) {
-        message.setText(Game.getText(messageKey));
-    }
+        if (Util.hasValue(messageKey)) {
+            message.setText(Game.getText(messageKey));
+        }
+   }
 
 }

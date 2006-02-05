@@ -411,6 +411,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	public void updateStatus()
 	{
+	    /* End of game checks */
+	    if (GameManager.isGameOver()) {
+	        JOptionPane.showMessageDialog(this, "GAME OVER");
+	        /* Further wrap-up to be added */
+	    } else if (Bank.isJustBroken()) {
+	        /* The message must become configuration-depedent */
+	        JOptionPane.showMessageDialog(this, "Bank is broken. The game will be over after the current set of ORs.");
+	    }
 
 		if (GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
 		{
@@ -633,13 +641,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		LogWindow.addLog();
 
-		updateStatus();
-
 		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
 		{
 			this.requestFocus();
 		}
-	}
+
+		updateStatus();
+}
 
 	public void layBaseToken(MapHex hex, int station)
 	{
@@ -662,13 +670,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		LogWindow.addLog();
 
-		updateStatus();
-
 		if (round.getStep() != OperatingRound.STEP_LAY_TOKEN)
 		{
 			GameUILoader.mapPanel.enableBaseTokenLaying(false);
 			this.requestFocus();
 		}
+		updateStatus();
+
 	}
 
 	private void setRevenue(int amount)

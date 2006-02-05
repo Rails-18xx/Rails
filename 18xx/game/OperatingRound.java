@@ -333,7 +333,8 @@ public class OperatingRound implements Round
 
 			Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			tileLayCost[operatingCompanyIndex] = cost;
-			Util.appendWithComma (tilesLaid[operatingCompanyIndex], 
+			tilesLaid[operatingCompanyIndex] =
+			    Util.appendWithComma (tilesLaid[operatingCompanyIndex], 
 			        "#" + tile.getName() + "/" + hex.getName() + "/"
 					+ MapHex.getOrientationName(orientation)); // FIXME: Wrong!
 			Log.write(operatingCompany.getName() + " lays tile " + tile.getName()
@@ -460,8 +461,9 @@ public class OperatingRound implements Round
 		if(!operatingCompany.layBaseToken(hex, station)) // FIXME: Need to specify station!
 			return false;
 		
-		Util.appendWithComma (baseTokensLaid[operatingCompanyIndex],
-		      hex.getName());
+		baseTokensLaid[operatingCompanyIndex] = 
+		    Util.appendWithComma (baseTokensLaid[operatingCompanyIndex],
+		            hex.getName());
 		baseTokenLayCost[operatingCompanyIndex] = cost;
 
 		if (cost > 0)
