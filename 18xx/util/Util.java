@@ -22,7 +22,7 @@ public final class Util {
 	public static String appendWithComma (String s1, String s2) {
 	    StringBuffer b = new StringBuffer (s1 != null ? s1 : "");
 	    if (b.length() > 0) b.append (", ");
-	    b.append (s1);
+	    b.append (s2);
 	    return b.toString();
 	}
 	
