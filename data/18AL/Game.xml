@@ -4,6 +4,11 @@
 		<Game name="18AL"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
+    <EndOfGame>
+      <Bankruptcy/>
+      <BankBreaks limit="0" finish="currentOR"/><!-- "Runs out"; when "broken", -1 is the limit -->
+      <!-- Also when the share value reaches $300; this is configured in teh stock market XML -->
+    </EndOfGame>
 	</Component>
     <Component name="Bank" class="game.Bank">
       <Bank amount="8000"/>

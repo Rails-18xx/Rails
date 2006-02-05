@@ -6,6 +6,10 @@
 			<PriceProtection />
 		</PlayerShareLimit>
 		<BankPoolLimit percentage="50"/>
+    <EndOfGame>
+      <Bankruptcy/>
+      <BankBreaks limit="0" finish="setOfORs"/><!-- "Runs out"; when "broken", -1 is the limit -->
+    </EndOfGame>
 	</Component>
     <Component name="Bank" class="game.Bank">
       <Bank amount="12000"/>

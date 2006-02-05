@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.6 2006/01/14 20:52:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/elements/Attic/Field.java,v 1.7 2006/02/05 21:31:02 evos Exp $
  * 
  * Created on 06-Aug-2005
  * Change Log:
@@ -67,16 +67,24 @@ public class Field extends JLabel implements ViewObject {
        * which is already prepared in the second constructor and the next two methods */
       /* WARNING: setText also calls repaint(), so we must take care to avoid a loop! */
       //private boolean repaintCalled = false;
+      /*
       public void paintComponent(Graphics g) {
           if (modelObject != null && (pull || !StatusWindow.useObserver)) {
 	          setText (modelObject.toString());
           }
           super.paintComponent(g);
        }
+       */
       
       /** Needed to satisfy the Observer interface. Currently not used. */
       public void update (Observable o1, Object o2) {
-          if (StatusWindow.useObserver) setText(modelObject.toString());
+          if (StatusWindow.useObserver) {
+              if (o2 instanceof String) {
+                  setText ((String)o2);
+              } else {
+                  setText(modelObject.toString());
+              }
+          }
       }
       
       /** Needed to saitsfy the ViewObject interface. Currently not used. */
