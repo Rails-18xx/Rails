@@ -24,11 +24,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	private static final int WIDE_TOP = 4;
 	private static final int WIDE_BOTTOM = 8;
 
-	private ORWindow orWindow;
-	private MapPanel mapPanel;
+	// private ORWindow orWindow;
+	// private MapPanel mapPanel;
 	private JPanel statusPanel;
 	private JPanel buttonPanel;
-	private JPanel ORPanel;
+	// private JPanel ORPanel;
 
 	private GridBagLayout gb;
 	private GridBagConstraints gbc;
@@ -72,15 +72,15 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	// private JButton button3;
 	private JButton button4;
 
-	private int np; // Number of players
-	private int nc; // Number of companies
+	private int np = 0; // Number of players
+	private int nc = 0; // Number of companies
 	private Player[] players;
 	private PublicCompanyI[] companies;
-	private OperatingRound round, previousRound;
-	private StatusWindow statusWindow;
-	private GameStatus gameStatus;
-
-	private List observers = new ArrayList();
+	// private OperatingRound round, previousRound;
+	private Round round, previousRound;
+	// private StatusWindow statusWindow;
+	// private GameStatus gameStatus;
+	// private List observers = new ArrayList();
 
 	private Player p;
 	private PublicCompanyI c;
@@ -96,13 +96,15 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	private int[] newTrainTotalCost;
 	List trainsBought;
 
-	public ORPanel(OperatingRound round, StatusWindow parent, ORWindow window)
+	// public ORPanel(OperatingRound round, StatusWindow parent, ORWindow
+	// window)
+	public ORPanel()
 	{
 		super();
 
-		statusWindow = parent;
-		orWindow = window;
-		gameStatus = parent.getGameStatus();
+		// statusWindow = parent;
+		// orWindow = window;
+		// gameStatus = parent.getGameStatus();
 
 		statusPanel = new JPanel();
 		gb = new GridBagLayout();
@@ -110,9 +112,50 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		statusPanel.setBorder(BorderFactory.createEtchedBorder());
 		statusPanel.setOpaque(true);
 
-		this.round = round;
+		// this.round = round;
+		round = GameManager.getInstance().getCurrentRound();
 		privatesCanBeBought = GameManager.getCompaniesCanBuyPrivates();
 
+		initButtonPanel();
+		gbc = new GridBagConstraints();
+
+		players = Game.getPlayerManager().getPlayersArray();
+		np = GameManager.getNumberOfPlayers();
+
+		if (round instanceof OperatingRound)
+		{
+			companies = ((OperatingRound) round).getOperatingCompanies();
+			nc = companies.length;
+		}
+
+		initFields();
+
+		setLayout(new BorderLayout());
+		add(statusPanel, BorderLayout.NORTH);
+		add(buttonPanel, BorderLayout.SOUTH);
+
+		setVisible(true);
+
+		updateStatus();
+
+		addKeyListener(this);
+	}
+
+	public void repaint()
+	{
+		round = GameManager.getInstance().getCurrentRound();
+		if (round instanceof OperatingRound)
+		{
+			companies = ((OperatingRound) round).getOperatingCompanies();
+			nc = companies.length;
+			
+			initFields();
+			updateStatus();
+		}
+	}
+
+	private void initButtonPanel()
+	{
 		buttonPanel = new JPanel();
 
 		button1 = new JButton("Lay tiles");
@@ -143,27 +186,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		buttonPanel.add(button4);
 
 		buttonPanel.setOpaque(true);
-		gbc = new GridBagConstraints();
-
-		players = Game.getPlayerManager().getPlayersArray();
-		np = GameManager.getNumberOfPlayers();
-		companies = round.getOperatingCompanies();
-		nc = companies.length;
-
-		init();
-
-		setLayout(new BorderLayout());
-		add(statusPanel, BorderLayout.NORTH);
-		add(buttonPanel, BorderLayout.SOUTH);
-
-		setVisible(true);
-
-		updateStatus();
-
-		addKeyListener(this);
 	}
 
-	private void init()
+	private void initFields()
 	{
 
 		leftCompName = new Caption[nc];
@@ -401,33 +426,36 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		statusPanel.add(comp, gbc);
 
-		if (StatusWindow.useObserver && comp instanceof ViewObject
-				&& ((ViewObject) comp).getModel() != null)
-		{
-			observers.add(comp);
-		}
+		/*
+		 * if (StatusWindow.useObserver && comp instanceof ViewObject &&
+		 * ((ViewObject) comp).getModel() != null) { observers.add(comp); }
+		 */
 
 	}
 
 	public void updateStatus()
 	{
-	    /* End of game checks */
-	    if (GameManager.isGameOver()) {
-	        JOptionPane.showMessageDialog(this, "GAME OVER");
-	        /* Further wrap-up to be added */
-	    } else if (Bank.isJustBroken()) {
-	        /* The message must become configuration-depedent */
-	        JOptionPane.showMessageDialog(this, "Bank is broken. The game will be over after the current set of ORs.");
-	    }
+		/* End of game checks */
+		if (GameManager.isGameOver())
+		{
+			JOptionPane.showMessageDialog(this, "GAME OVER");
+			/* Further wrap-up to be added */
+		}
+		else if (Bank.isJustBroken())
+		{
+			/* The message must become configuration-depedent */
+			JOptionPane.showMessageDialog(this,
+					"Bank is broken. The game will be over after the current set of ORs.");
+		}
 
 		if (GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
 		{
-
-			round = (OperatingRound) GameManager.getInstance()
+			OperatingRound round = (OperatingRound) GameManager.getInstance()
 					.getCurrentRound();
-			
+
 			/* Reorder the companies if the round has changed */
-			if (round != previousRound) reorderCompanies();
+			if (round != previousRound)
+				reorderCompanies();
 			previousRound = round;
 
 			int step = round.getStep();
@@ -446,10 +474,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				tileCost[orCompIndex].setText("");
 				button1.setVisible(false);
 
-				GameUILoader.mapPanel.requestFocus();
-				GameUILoader.mapPanel.enableTileLaying(true);
+				// GameUILoader.mapPanel.requestFocus();
+				// GameUILoader.mapPanel.enableTileLaying(true);
+				// GameUILoader.mapPanel.setSpecialTileLays(round.getSpecialProperties());
 
-				GameUILoader.mapPanel.setSpecialTileLays(round.getSpecialProperties());
+				GameUILoader.orWindow.requestFocus();
+				GameUILoader.orWindow.enableTileLaying(true);
+				GameUILoader.getMapPanel()
+						.setSpecialTileLays((ArrayList) round.getSpecialProperties());
 
 				button2.setText("Buy Private");
 				button2.setActionCommand("BuyPrivate");
@@ -465,9 +497,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			}
 			else if (step == OperatingRound.STEP_LAY_TOKEN)
 			{
-				GameUILoader.mapPanel.requestFocus();
-				GameUILoader.mapPanel.enableTileLaying(false);
-				GameUILoader.mapPanel.enableBaseTokenLaying(true);
+				// GameUILoader.mapPanel.requestFocus();
+				// GameUILoader.mapPanel.enableTileLaying(false);
+				// GameUILoader.mapPanel.enableBaseTokenLaying(true);
+
+				GameUILoader.orWindow.requestFocus();
+				GameUILoader.orWindow.enableTileLaying(false);
+				GameUILoader.orWindow.enableBaseTokenLaying(true);
 
 				tokenCaption.setHighlight(true);
 				tokenCost[orCompIndex].setText("");
@@ -493,7 +529,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 					button1.setMnemonic(KeyEvent.VK_R);
 					button1.setEnabled(true);
 					button1.setVisible(true);
-					orWindow.setMessage("EnterRevenue");
+					// orWindow.setMessage("EnterRevenue");
 				}
 				else
 				{
@@ -523,8 +559,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				button4.setActionCommand("Payout");
 				button4.setMnemonic(KeyEvent.VK_P);
 				button4.setEnabled(true);
-				
-				orWindow.setMessage("SelectPayout");
+
+				// orWindow.setMessage("SelectPayout");
 
 			}
 			else if (step == OperatingRound.STEP_BUY_TRAIN)
@@ -548,8 +584,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				button4.setActionCommand("Done");
 				button4.setMnemonic(KeyEvent.VK_D);
 				button4.setEnabled(true);
-				
-				orWindow.setMessage("BuyTrain");
+
+				// orWindow.setMessage("BuyTrain");
 
 			}
 			else if (step == OperatingRound.STEP_FINAL)
@@ -560,14 +596,17 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		else
 		{
 			setORCompanyTurn(-1);
-			statusWindow.resume(orWindow);
-			orWindow.dispose();
+			// statusWindow.resume(orWindow);
+			// orWindow.dispose();
 		}
 	}
-	
-	private void reorderCompanies() {
 
-		companies = round.getOperatingCompanies();
+	private void reorderCompanies()
+	{
+		if (!(round instanceof OperatingRound))
+			return;
+
+		companies = ((OperatingRound) round).getOperatingCompanies();
 		nc = companies.length;
 
 		for (int i = 0; i < nc; i++)
@@ -577,7 +616,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			leftCompName[i].setBackground(c.getBgColour());
 			leftCompName[i].setForeground(c.getFgColour());
 
-			president[i].setText(c.hasStarted() ? c.getPresident().getName() : "");
+			president[i].setText(c.hasStarted() ? c.getPresident().getName()
+					: "");
 
 			sharePrice[i].setModel(c.getCurrentPriceModel());
 
@@ -599,10 +639,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			tokenCost[i].setText("");
 
 			/*
-			revenue[i].setText("");
-
-			decision[i].setText("");
-			*/
+			 * revenue[i].setText("");
+			 * 
+			 * decision[i].setText("");
+			 */
 
 			trains[i].setModel(c.getPortfolio().getTrainsModel());
 
@@ -615,21 +655,27 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	}
 
+	//FIXME:  This needs to be moved somewhere else. Perhaps ORWindow or HexMap.
+	// Having this method located in this class does not make sense. 
 	public void layTile(MapHex hex, TileI tile, int orientation)
 	{
+		if (!(round instanceof OperatingRound))
+			return;
+		OperatingRound oround = (OperatingRound) round;
+
 		if (tile == null)
 		{
-			round.skip(orCompName);
+			oround.skip(orCompName);
 		}
 		else
 		{
 			// Let model process this first
-			if (round.layTile(orCompName, hex, tile, orientation))
+			if (oround.layTile(orCompName, hex, tile, orientation))
 			{
 				// Display the results
-				int cost = round.getLastTileLayCost();
+				int cost = oround.getLastTileLayCost();
 				tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-				tiles[orCompIndex].setText(round.getLastTileLaid());
+				tiles[orCompIndex].setText(oround.getLastTileLaid());
 			}
 			else
 			{
@@ -641,26 +687,32 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		LogWindow.addLog();
 
-		if (round.getStep() != OperatingRound.STEP_LAY_TRACK)
+		if (oround.getStep() != OperatingRound.STEP_LAY_TRACK)
 		{
 			this.requestFocus();
 		}
 
 		updateStatus();
-}
+	}
 
+	//FIXME:  This needs to be moved somewhere else. Perhaps ORWindow or HexMap.
+	// Having this method located in this class does not make sense. 
 	public void layBaseToken(MapHex hex, int station)
 	{
+		if (!(round instanceof OperatingRound))
+			return;
+		OperatingRound oround = (OperatingRound) round;
+
 		if (hex == null)
 		{
-			round.skip(orCompName);
+			oround.skip(orCompName);
 		}
-		else if (round.layBaseToken(orCompName, hex, station))
+		else if (oround.layBaseToken(orCompName, hex, station))
 		{
 			// Let model process this first
-			int cost = round.getLastBaseTokenLayCost();
+			int cost = oround.getLastBaseTokenLayCost();
 			tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-			tokens[orCompIndex].setText(round.getLastBaseTokenLaid());
+			tokens[orCompIndex].setText(oround.getLastBaseTokenLaid());
 		}
 		else
 		{
@@ -670,9 +722,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		LogWindow.addLog();
 
-		if (round.getStep() != OperatingRound.STEP_LAY_TOKEN)
+		if (oround.getStep() != OperatingRound.STEP_LAY_TOKEN)
 		{
-			GameUILoader.mapPanel.enableBaseTokenLaying(false);
+			GameUILoader.orWindow.enableBaseTokenLaying(false);
 			this.requestFocus();
 		}
 		updateStatus();
@@ -681,12 +733,15 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	private void setRevenue(int amount)
 	{
+		if (!(round instanceof OperatingRound))
+			return;
+		OperatingRound oround = (OperatingRound) round;
 
 		revenue[orCompIndex].setText(Bank.format(amount));
-		round.setRevenue(orCompName, amount);
+		oround.setRevenue(orCompName, amount);
 		setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-		gameStatus.updateRevenue(orComp.getPublicNumber());
-		if (round.getStep() != OperatingRound.STEP_PAYOUT)
+		// gameStatus.updateRevenue(orComp.getPublicNumber());
+		if (oround.getStep() != OperatingRound.STEP_PAYOUT)
 		{
 			// The next step is skipped, so update all cash and the share
 			// price
@@ -704,8 +759,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	 */
 	public void actionPerformed(ActionEvent actor)
 	{
+		if (!(round instanceof OperatingRound))
+			return;
+		OperatingRound oround = (OperatingRound) round;
+
 		String command = actor.getActionCommand();
-		int step = round.getStep();
+		int step = oround.getStep();
 		boolean done = command.equals("Done");
 		int amount;
 
@@ -732,7 +791,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		else if (command.equals("Payout"))
 		{
 			decision[orCompIndex].setText("payout");
-			round.fullPayout(orCompName);
+			oround.fullPayout(orCompName);
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
@@ -740,7 +799,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		else if (command.equals("Split"))
 		{
 			decision[orCompIndex].setText("split");
-			round.splitPayout(orCompName);
+			oround.splitPayout(orCompName);
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
@@ -749,7 +808,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		else if (command.equals("Withhold"))
 		{
 			decision[orCompIndex].setText("withheld");
-			round.withholdPayout(orCompName);
+			oround.withholdPayout(orCompName);
 			StockChart.refreshStockPanel();
 			updatePrice(orCompIndex);
 			updateCash(orCompIndex);
@@ -852,8 +911,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 								}
 								catch (NumberFormatException e)
 								{
-									price = 0; // FIXME: Need better error
-									// handling!
+									price = 0; // FIXME: Need better error handling!
 								}
 							}
 						}
@@ -895,7 +953,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 					if (train != null)
 					{
-						if (!round.buyTrain(orComp.getName(),
+						if (!oround.buyTrain(orComp.getName(),
 								train,
 								price,
 								exchangedTrain))
@@ -928,7 +986,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 								}
 							}
 							trainsBought.add(train);
-							newTrainCost[orCompIndex].setText(Bank.format(round.getLastTrainBuyCost()));
+							newTrainCost[orCompIndex].setText(Bank.format(oround.getLastTrainBuyCost()));
 
 							// Check if any trains must be discarded
 							if (TrainManager.get().hasPhaseChanged())
@@ -1025,7 +1083,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 						amount = 0; // This will generally be refused.
 					}
 					Player prevOwner = (Player) priv.getPortfolio().getOwner();
-					if (!round.buyPrivate(orComp.getName(),
+					if (!oround.buyPrivate(orComp.getName(),
 							priv.getName(),
 							amount))
 					{
@@ -1034,7 +1092,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 					else
 					{
 						updateCash(orCompIndex);
-						newPrivatesCost[orCompIndex].setText(Bank.format(round.getLastPrivateBuyCost()));
+						newPrivatesCost[orCompIndex].setText(Bank.format(oround.getLastPrivateBuyCost()));
 					}
 				}
 				catch (NullPointerException e)
@@ -1048,7 +1106,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		}
 		else if (done)
 		{
-			round.done(orComp.getName());
+			oround.done(orComp.getName());
 
 		}
 
@@ -1067,16 +1125,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		privatesCaption.setHighlight(false);
 	}
 
-	public void close()
-	{
-
-		Iterator it = observers.iterator();
-		while (it.hasNext())
-		{
-			((ViewObject) it.next()).deRegister();
-		}
-
-	}
+	/*
+	 * public void close() {
+	 * 
+	 * Iterator it = observers.iterator(); while (it.hasNext()) { ((ViewObject)
+	 * it.next()).deRegister(); }
+	 *  }
+	 */
 
 	public int getOrCompIndex()
 	{
@@ -1128,13 +1183,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	private void updatePrice(int index)
 	{
-	    /*
-		if (companies[index].hasStockPrice())
-		{
-			sharePrice[index].setText(Bank.format(companies[index].getCurrentPrice()
-					.getPrice()));
-		}
-		*/
+		/*
+		 * if (companies[index].hasStockPrice()) {
+		 * sharePrice[index].setText(Bank.format(companies[index].getCurrentPrice()
+		 * .getPrice())); }
+		 */
 	}
 
 	private void displayMessage(String text)
