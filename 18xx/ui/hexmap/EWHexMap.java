@@ -19,7 +19,6 @@ public class EWHexMap extends HexMap
 		setupHexes();
 		cx = scale / 2;
 		cy = 0;
-		
 	}
 
 	protected void setupHexesGUI()
@@ -37,11 +36,12 @@ public class EWHexMap extends HexMap
 				mh = hexArray[i][j];
 				if (mh != null)
 				{
-					GUIHex hex = new GUIHex(
-							(cx + scale	* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
-							(cy + j * 1.5 * scale), 
-							scale, i, j);
-					
+					GUIHex hex = new GUIHex((cx + scale
+							* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
+							(cy + j * 1.5 * scale),
+							scale,
+							i,
+							j);
 
 					hex.setHexModel(mh);
 					hex.originalTileId = hex.currentTileId;
@@ -51,8 +51,8 @@ public class EWHexMap extends HexMap
 				}
 			}
 		}
-        preferredSize = new Dimension(
-                (int)Math.round((hexArray.length +1 ) * GUIHex.SQRT3 * scale),
-                (int)Math.round((hexArray[0].length + 1) * 1.5 * scale));
+		preferredSize = new Dimension((int) Math.round((hexArray.length + 1)
+				* GUIHex.SQRT3 * scale),
+				(int) Math.round((hexArray[0].length + 1) * 1.5 * scale));
 	}
 }

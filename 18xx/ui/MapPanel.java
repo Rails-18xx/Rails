@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.3 2006/02/02 22:29:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.4 2006/02/15 22:48:00 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -10,6 +10,7 @@ import game.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 import ui.hexmap.*;
 
@@ -25,13 +26,12 @@ public class MapPanel extends JPanel
 	private MapManager mmgr;
 	private HexMap map;
 	private JScrollPane scrollPane;
-	private UpgradesPanel upgradePanel;
-	private ORWindow parent;
-	
-	public MapPanel () {
-	    
-		Scale.set(15);
+	//private UpgradesPanel upgradePanel;
+	//private ORWindow parent;
 
+	public MapPanel()
+	{
+		Scale.set(15);
 		setLayout(new BorderLayout());
 
 		mmgr = MapManager.getInstance();
@@ -53,37 +53,42 @@ public class MapPanel extends JPanel
 
 		scrollPane = new JScrollPane(map);
 		scrollPane.setSize(map.getPreferredSize());
+		scrollPane.addMouseListener(map);
 
 		add(scrollPane, BorderLayout.CENTER);
 
-		setSize(map.getPreferredSize().width + 100,
-				map.getPreferredSize().height + 40);
+		setSize(map.getPreferredSize().width,
+				map.getPreferredSize().height);
 		setLocation(25, 25);
-		
-	}
-	
-	public void setWindow (ORWindow window) {
-	    parent = window;
-		if (map != null) map.setWindow (parent);
 	}
 
-	public void setSpecialTileLays(java.util.List specials)
+	/*
+	public void setWindow(ORWindow window)
+	{
+		parent = window;
+		if (map != null)
+			map.setWindow(parent);
+	}
+*/
+	public void setSpecialTileLays(ArrayList specials)
 	{
 		map.setSpecials(specials);
 	}
-	
+
+	/*
 	public void enableBaseTokenLaying(boolean enabled)
 	{
 		map.enableBaseTokenLaying(enabled);
 		upgradePanel.initBaseTokenLaying(enabled);
 	}
-	
+
 	public void enableTileLaying(boolean enabled)
 	{
 		map.enableTileLaying(enabled);
 		upgradePanel.initTileLaying(enabled);
 	}
-
+	*/
+	
 	public void keyPressed(KeyEvent e)
 	{
 		if (e.getKeyCode() == KeyEvent.VK_F1)
@@ -102,9 +107,10 @@ public class MapPanel extends JPanel
 		return map;
 	}
 
-	
+	/*
 	public void setUpgradesPanel(UpgradesPanel upgradePanel)
 	{
 		this.upgradePanel = upgradePanel;
 	}
+	*/
 }

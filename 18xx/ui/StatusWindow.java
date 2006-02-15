@@ -39,7 +39,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
 	private OperatingRound operatingRound;
-	private ORWindow orWindow;
+	//private ORWindow orWindow;
 	private int np = GameManager.getNumberOfPlayers();
 	private int nc;
 
@@ -219,7 +219,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.mapPanel.setVisible(false);
+			GameUILoader.orWindow.setVisible(false);
 
 			disableCheckBoxMenuItem(MAP);
 			disableCheckBoxMenuItem(MARKET);
@@ -232,7 +232,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 
 			GameUILoader.stockChart.setVisible(true);
-			GameUILoader.mapPanel.setVisible(false);
+			GameUILoader.orWindow.setVisible(false);
 
 			enableCheckBoxMenuItem(MARKET);
 			disableCheckBoxMenuItem(MAP);
@@ -264,13 +264,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
-			if (orWindow == null)
-				orWindow = new ORWindow(operatingRound, this);
+			//if (orWindow == null)
+			//	orWindow = new ORWindow(operatingRound, this);
 
 			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.mapPanel.setVisible(true);
-
-			orWindow.requestFocus();
+			GameUILoader.orWindow.setVisible(true);
+			
+			GameUILoader.orWindow.requestFocus();
 
 			enableCheckBoxMenuItem(MAP);
 			disableCheckBoxMenuItem(MARKET);
@@ -324,8 +324,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 		else if (previous instanceof ORWindow)
 		{
-			orWindow.getORPanel().close();
-			orWindow = null;
+			//orWindow.getORPanel().close();
+			//orWindow = null;
 		}
 		currentRound = GameManager.getInstance().getCurrentRound();
 		updateStatus();
@@ -416,14 +416,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		else if (actor.getActionCommand().equalsIgnoreCase(MAP)
 				&& ((JMenuItem) actor.getSource()).isSelected())
 		{
-			orWindow = new ORWindow(null, this);
+			GameUILoader.orWindow.setVisible(true);
 			return;
 		}
 		else if (actor.getActionCommand().equalsIgnoreCase(MAP)
 				&& !((JMenuItem) actor.getSource()).isSelected())
 		{
-			orWindow.dispose();
-			orWindow = null;
+			GameUILoader.orWindow.setVisible(false);
 			return;
 		}
 
@@ -641,6 +640,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	{
 	}
 
+	/*
 	public void setOrWindow(ORWindow orWindow)
 	{
 		this.orWindow = orWindow;
@@ -649,5 +649,5 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public ORWindow getOrWindow()
 	{
 		return orWindow;
-	}
+	}*/
 }

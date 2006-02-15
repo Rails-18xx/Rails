@@ -329,8 +329,8 @@ public class GUIHex
 					{
 						g2.drawString("(" + p.getName() + ")",
 								rectBound.x
-										+ (rectBound.width - fontMetrics.stringWidth("(" + p.getName() + ")"))
-										* 1 / 2,
+										+ (rectBound.width - fontMetrics.stringWidth("("
+												+ p.getName() + ")")) * 1 / 2,
 								rectBound.y
 										+ ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
 					}
@@ -709,7 +709,7 @@ public class GUIHex
 				currentTileId = currentTile.getId();
 				currentTileOrientation = provisionalTileOrientation;
 			}
-			GameUILoader.statusWindow.getOrWindow().getORPanel().layTile(model,
+			GameUILoader.orWindow.getORPanel().layTile(model,
 					currentTile,
 					currentTileOrientation);
 		}
@@ -731,7 +731,7 @@ public class GUIHex
 
 	public void fixToken(int station)
 	{
-		GameUILoader.statusWindow.getOrWindow().getORPanel().layBaseToken(model, station);
+		GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
 		setSelected(false);
 	}
 

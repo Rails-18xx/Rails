@@ -22,23 +22,6 @@ import ui.*;
 public abstract class HexMap extends JComponent implements MouseListener,
 		MouseMotionListener
 {
-    /* Substeps in tile and token laying */
-    public static final int INACTIVE = 0;
-    public static final int SELECT_HEX_FOR_TILE = 1;
-    public static final int SELECT_TILE = 2;
-    public static final int ROTATE_OR_CONFIRM_TILE = 3;
-    public static final int SELECT_HEX_FOR_TOKEN = 4;
-    public static final int CONFIRM_TOKEN = 5;
-    
-    /* Message key per substep */
-    protected static final String[] messageKey = new String[] {
-        "", "SelectAHexForTile", "SelectATile", "RotateTile", "SelectAHexForToken",
-        "ConfirmToken"
-    };
-    
-    
-    protected int subStep = INACTIVE;
-    
 
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
@@ -47,25 +30,18 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected GUIHex[][] h;
 	MapHex[][] hexArray;
 	protected ArrayList hexes;
-	protected ORWindow window;
+	// protected ORWindow window;
 
 	protected int scale = 2 * Scale.get();
 	protected int cx;
 	protected int cy;
 
 	protected static GUIHex selectedHex = null;
-	protected UpgradesPanel upgradesPanel = null;
+	// protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
 
-	/**
-	 * Is tile laying enabled? If not, one can play with tiles, but the "Done"
-	 * button is disabled.
-	 */
-	protected boolean tileLayingEnabled = false;
-	protected java.util.List extraTileLays = new ArrayList();
-	protected java.util.List unconnectedTileLays = new ArrayList();
-
-	protected boolean baseTokenLayingEnabled = false;
+	protected ArrayList extraTileLays = new ArrayList();
+	protected ArrayList unconnectedTileLays = new ArrayList();
 
 	public void setupHexes()
 	{
@@ -144,8 +120,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	{
 		Dimension dim = new Dimension();
 		Rectangle r = ((GUIHex) h[h.length][h[0].length]).getBounds();
-		dim.height = r.height;
-		dim.width = r.width;
+		dim.height = r.height + 40;
+		dim.width = r.width + 100;
 		return dim;
 	}
 
@@ -154,140 +130,80 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return preferredSize;
 	}
 
-	public void setSubStep (int subStep) {
-	    this.subStep = subStep;
-	    if (window != null) {
-	        window.setMessage(messageKey[subStep]);
-	    }
-	    if (upgradesPanel != null) {
-			upgradesPanel.setDoneText(Game.getText(subStep<4 ? "LayTile" : "LayToken"));
-			upgradesPanel.setCancelText(Game.getText(subStep<4 ? "NoTile" : "NoToken"));
-			upgradesPanel.setDoneEnabled(subStep == 3 || subStep == 5);
-	    }
-	        
-	}
-
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
-
 		GUIHex clickedHex = getHexContainingPoint(point);
-		
-		if (baseTokenLayingEnabled)
-		{
-				selectHex(clickedHex);
 
-				//upgradesPanel.setCancelText(Game.getText("Cancel"));
-				if (selectedHex != null) {
-				    setSubStep (CONFIRM_TOKEN);
-				} else {
-				    setSubStep (SELECT_HEX_FOR_TOKEN);
-				}
-		}
-		else if (tileLayingEnabled)
+		if (ORWindow.baseTokenLayingEnabled)
 		{
-		    if (subStep == ROTATE_OR_CONFIRM_TILE && clickedHex == selectedHex) {
-		        
+			selectHex(clickedHex);
+
+			// upgradesPanel.setCancelText(Game.getText("Cancel"));
+			if (selectedHex != null)
+			{
+				GameUILoader.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
+			}
+			else
+			{
+				GameUILoader.orWindow.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
+			}
+		}
+		else if (ORWindow.tileLayingEnabled)
+		{
+			if (GameUILoader.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
+					&& clickedHex == selectedHex)
+			{
 				selectedHex.rotateTile();
 				repaint(selectedHex.getBounds());
-				
-		    } else {
-		        
-		        if (selectedHex != null && clickedHex != selectedHex) {
-		            selectedHex.removeTile();
+			}
+			else
+			{
+
+				if (selectedHex != null && clickedHex != selectedHex)
+				{
+					selectedHex.removeTile();
 					selectHex(null);
-		        }
-				if (clickedHex != null) {
-				    if (clickedHex.getHexModel().isUpgradeableNow()) {
-				        selectHex(clickedHex);
-				        setSubStep (SELECT_TILE);
-				    } else {
-				        JOptionPane.showMessageDialog(this,
-							"This hex cannot be upgraded now");
-				    }
 				}
-		    }
+				if (clickedHex != null)
+				{
+					if (clickedHex.getHexModel().isUpgradeableNow())
+					{
+						selectHex(clickedHex);
+						GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(this,
+								"This hex cannot be upgraded now");
+					}
+				}
+			}
 		}
 
 		// FIXME: Kludgy, but it forces the upgrades panel to be drawn
 		// correctly.
-		if (upgradesPanel != null) {
-		    upgradesPanel.setVisible(false);
-		    upgradesPanel.setVisible(true);
-			showUpgrades();
-		}
+		/*
+		 * if (upgradesPanel != null) { upgradesPanel.setVisible(false);
+		 * upgradesPanel.setVisible(true); showUpgrades(); }
+		 */
 	}
 
 	private void selectHex(GUIHex clickedHex)
 	{
-	    if (selectedHex != null && clickedHex != selectedHex) {
+		if (selectedHex != null && clickedHex != selectedHex)
+		{
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
 			selectedHex = null;
-	    }
+		}
 
-	    if (clickedHex != null)	{
+		if (clickedHex != null)
+		{
 			clickedHex.setSelected(true);
 			selectedHex = clickedHex;
 			repaint(selectedHex.getBounds());
-	    }
-	}
-
-	public void processDone()
-	{
-		setSubStep (INACTIVE);
-		if (baseTokenLayingEnabled)
-		{
-			if (selectedHex != null)
-			{
-				if (selectedHex.getHexModel().getStations().size() == 1)
-					selectedHex.fixToken(0);
-				else
-				{
-					Object[] stations = selectedHex.getHexModel()
-							.getStations()
-							.toArray();
-					Station station = (Station) JOptionPane.showInputDialog(this,
-							"Which station to place the token in?",
-							"Which station?",
-							JOptionPane.PLAIN_MESSAGE,
-							null,
-							stations,
-							stations[0]);
-
-					selectedHex.fixToken(selectedHex.getHexModel()
-							.getStations()
-							.indexOf(station));
-				}
-			}
 		}
-		else
-		{
-			if (selectedHex != null)
-				selectedHex.fixTile(tileLayingEnabled);
-		}
-	}
-
-	public void processCancel()
-	{
-		setSubStep (INACTIVE);
-		if (baseTokenLayingEnabled)
-		{
-			if (selectedHex != null)
-				selectedHex.removeToken();
-			GameUILoader.statusWindow.getOrWindow().getORPanel().layBaseToken(null,
-					0);
-		}
-		else
-		{
-			if (selectedHex != null)
-				selectedHex.removeTile();
-			if (tileLayingEnabled)
-				GameUILoader.statusWindow.getOrWindow().getORPanel().layTile(null,
-						null,
-						0);
-		}
-
 	}
 
 	public void mouseEntered(MouseEvent arg0)
@@ -337,69 +253,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		setToolTipText(hex != null ? hex.getToolTip() : "");
 	}
 
-	public void setUpgradesPanel(UpgradesPanel upgradesPanel)
-	{
-		this.upgradesPanel = upgradesPanel;
-	}
+	/*
+	 * public void setUpgradesPanel(UpgradesPanel upgradesPanel) {
+	 * this.upgradesPanel = upgradesPanel; }
+	 */
 
-	public void showUpgrades()
-	{
-	    if (upgradesPanel == null) return;
-	    
-		if (selectedHex == null || baseTokenLayingEnabled)
-		{
-			upgradesPanel.setUpgrades(null);
-		}
-		else
-		{
-			ArrayList upgrades = (ArrayList) selectedHex.getCurrentTile()
-					.getValidUpgrades(selectedHex.getHexModel(),
-							GameManager.getCurrentPhase());
-			upgradesPanel.setUpgrades(upgrades);
-		}
-
-		invalidate();
-		upgradesPanel.showUpgrades();
-	}
-	
-	public void enableTileLaying(boolean enabled)
-	{
-	    if (!tileLayingEnabled && enabled) {
-	        /* Start tile laying step */
-			setSubStep (SELECT_HEX_FOR_TILE);
-	    } else if (tileLayingEnabled && !enabled) {
-		    /* Finish tile laying step */
-		    if (selectedHex != null) {
-				selectedHex.removeTile();
-				selectedHex.setSelected(false);
-				repaint(selectedHex.getBounds());
-				selectedHex = null;
-		    }
-			setSubStep (INACTIVE);
-		}
-		tileLayingEnabled = enabled;
-	}
-
-	public void enableBaseTokenLaying(boolean enabled)
-	{
-
-	    if (!baseTokenLayingEnabled && enabled) {
-	        /* Start token laying step */
-			setSubStep (SELECT_HEX_FOR_TOKEN);
-	    } else if (baseTokenLayingEnabled && !enabled) {
-		    /* Finish token laying step */
-		    if (selectedHex != null) {
-				selectedHex.removeToken();
-				selectedHex.setSelected(false);
-				repaint(selectedHex.getBounds());
-				selectedHex = null;
-		    }
-			setSubStep (INACTIVE);
-		}
-		baseTokenLayingEnabled = enabled;
-	}
-
-	public void setSpecials(java.util.List specials)
+	public void setSpecials(ArrayList specials)
 	{
 		extraTileLays.clear();
 		unconnectedTileLays.clear();
@@ -416,15 +275,25 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				if (stl.isExtra())
 					extraTileLays.add(stl);
 
-				//System.out.println("Special tile lay allowed on hex "
-				//		+ stl.getLocation().getName() + ", extra="
-				//		+ stl.isExtra());
+				// System.out.println("Special tile lay allowed on hex "
+				// + stl.getLocation().getName() + ", extra="
+				// + stl.isExtra());
 			}
 		}
 	}
 	
-	public void setWindow (ORWindow window) {
-	    this.window = window;
-	}
+	/*
+	 * public void showUpgrades() { if (upgradesPanel == null) return;
+	 * 
+	 * if (selectedHex == null || baseTokenLayingEnabled) {
+	 * upgradesPanel.setUpgrades(null); } else { ArrayList upgrades =
+	 * (ArrayList) selectedHex.getCurrentTile()
+	 * .getValidUpgrades(selectedHex.getHexModel(),
+	 * GameManager.getCurrentPhase()); upgradesPanel.setUpgrades(upgrades); }
+	 * 
+	 * invalidate(); upgradesPanel.showUpgrades(); }
+	 * 
+	 * public void setWindow(ORWindow window) { this.window = window; }
+	 */
 
 }
