@@ -183,7 +183,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		pane.add(buttonPanel, BorderLayout.CENTER);
 		pane.setOpaque(true);
 		setContentPane(pane);
-		refreshStatus();
+		//refreshStatus();
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -192,8 +192,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		currentRound = gmgr.getCurrentRound();
 
 		updateStatus();
-		pack();
-		
+
 		gameStatus.addKeyListener(this);
 		buttonPanel.addKeyListener(this);
 		addKeyListener(this);
@@ -257,17 +256,16 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		        extraButton.setVisible(false);
 			}
 //System.out.println("Window: SpecProp#="+specialProperties.size());
-			refreshStatus();
 			toFront();
 		}
 		else if (currentRound instanceof OperatingRound)
 		{
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
-			//if (orWindow == null)
-			//	orWindow = new ORWindow(operatingRound, this);
 
 			GameUILoader.stockChart.setVisible(false);
+			GameUILoader.orWindow.updateUpgradePanel();
+			GameUILoader.orWindow.updateORPanel();
 			GameUILoader.orWindow.setVisible(true);
 			
 			GameUILoader.orWindow.requestFocus();
@@ -275,7 +273,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			enableCheckBoxMenuItem(MAP);
 			disableCheckBoxMenuItem(MARKET);
 		}
-
+		
+		pack();
 	}
 
 	private void enableCheckBoxMenuItem(String name)
@@ -322,27 +321,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			startRoundWindow.close();
 			startRoundWindow = null;
 		}
-		else if (previous instanceof ORWindow)
-		{
-			//orWindow.getORPanel().close();
-			//orWindow = null;
-		}
+		
 		currentRound = GameManager.getInstance().getCurrentRound();
 		updateStatus();
-	}
-
-	public void refreshStatus()
-	{
-		gameStatus.repaint();
-		// FIXME: Not an ideal fix for various repainting issues, but it works
-		// well enough for now.
-		this.pack();
-	}
-
-	public void repaint()
-	{
-		super.repaint();
-		// refreshStatus();
 	}
 
 	/*
@@ -427,7 +408,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 
 		LogWindow.addLog();
-		pack();
 
 		currentRound = GameManager.getInstance().getCurrentRound();
 		if (currentRound instanceof StockRound)
@@ -436,6 +416,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			gameStatus.setSRPlayerTurn(-1);
 		}
+		
 		updateStatus();
 	}
 
@@ -468,9 +449,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			{
 				startCompany();
 			}
-			// if (company.hasFloated())
-			// gameStatus.updateCompany(compIndex);
-
 		}
 		else if ((compIndex = gameStatus.getCompIndexToBuyFromPool()) >= 0)
 		{
@@ -520,9 +498,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-				//gameStatus.updatePlayer(compIndex, playerIndex);
-				//gameStatus.updatePool(compIndex);
-				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
@@ -550,10 +525,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					stockMarket.getStartSpaces().toArray(),
 					stockMarket.getStartSpaces().get(0));
-			// repaint();
-			// FIXME: Probably should check the boolean startCompany() returns
-			// PublicCompany.startCompany(playerStatus.getPlayerSelected(),
-			// companyStatus.getCompanySelected(), sp);
 			if (!stockRound.startCompany(player.getName(),
 					company.getName(),
 					sp.getPrice()))
@@ -565,10 +536,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-
-				//gameStatus.updatePlayer(compIndex, playerIndex);
-				//gameStatus.updateIPO(compIndex);
-				// gameStatus.updateBank();
 				StockChart.refreshStockPanel();
 			}
 		}
@@ -578,7 +545,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							+ "You must select a company first.",
 					"Company not started.",
 					JOptionPane.OK_OPTION);
-
 	}
 
 	public void enableBuyButton(boolean enable)
@@ -639,15 +605,4 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void keyTyped(KeyEvent e)
 	{
 	}
-
-	/*
-	public void setOrWindow(ORWindow orWindow)
-	{
-		this.orWindow = orWindow;
-	}
-
-	public ORWindow getOrWindow()
-	{
-		return orWindow;
-	}*/
 }

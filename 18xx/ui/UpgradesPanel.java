@@ -16,27 +16,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	private ArrayList upgrades;
 	private JPanel upgradePanel;
-	// private HexMap map;
-	// private ORWindow parent;
 	private Dimension preferredSize = new Dimension(75, 200);
 	private Border border = new EtchedBorder();
 	private JButton cancel;
 	private JButton done;
-	// private JLabel label;
-
-	/*
-	 * private static final String selectAHex = "<html>Select a hex or press
-	 * the \"No Tile\" button</html>"; private static final String tileText = "<html>Select
-	 * a tile, select another hex, or press the \"No Tile\" button</html>";
-	 * private static final String noUpgrades = "<html>AT the moment there is
-	 * no valid upgrade for this hex. Select another hex or press the \"No
-	 * Tile\" button</html>"; private static final String tokenText = "<html>Select
-	 * a city hex to lay a token on that hex, or press the \"No Toek\" button</html>";
-	 * private static final String doneText = "Done"; public static final String
-	 * cancelText = "Cancel"; public static final String noTileText = "No tile";
-	 * public static final String noTokenText = "No token";
-	 */
-
+	
 	private String cancelButtonKey = "NoTile";
 	private String doneButtonKey = "LayTile";
 	private boolean doneEnabled = false;
@@ -46,12 +30,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	private boolean lastEnabled = false;
 
-	public UpgradesPanel(HexMap map, ORWindow parent)
+	public UpgradesPanel()
 	{
 		super(BoxLayout.Y_AXIS);
-
-		// this.map = map;
-		// this.parent = parent;
 
 		setSize(preferredSize);
 		setVisible(true);
@@ -59,14 +40,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgrades = null;
 		upgradePanel = new JPanel();
 
-		// label = new JLabel(tileText);
-		// label.setOpaque(true);
-		// label.setBackground(Color.WHITE);
-		// label.setAlignmentX((float) 0.5);
-		// label.setAlignmentY((float) 0.5);
-		// label.setHorizontalAlignment(SwingConstants.CENTER);
-		// add(label);
-		parent.setMessage("SelectAHexForTile");
+		//GameUILoader.orWindow.setMessage("SelectAHexForTile");
 
 		upgradePanel.setOpaque(true);
 		upgradePanel.setBackground(Color.DARK_GRAY);
@@ -110,7 +84,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		}
 		else if (upgrades.size() == 0)
 		{
-			// parent.setMessage("NoTiles");
+			GameUILoader.orWindow.setMessage("NoTiles");
 		}
 		else
 		{
@@ -138,8 +112,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 				upgradePanel.add(hexLabel);
 			}
-			// label.setText(tileText);
-			// parent.setMessage("SelectATile");
 		}
 
 		done = new JButton(doneButtonKey);
@@ -155,9 +127,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		cancel.addActionListener(this);
 		cancel.setEnabled(true);
 		upgradePanel.add(cancel);
-
-		//revalidate();
-		//repaint();
 
 		lastEnabled = doneEnabled;
 	}
@@ -191,23 +160,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void initTileLaying(boolean tileMode)
 	{
 		this.tileMode = tileMode;
-		// label.setText(tileText);
-		// parent.setMessage("SelectAHexForTile");
 		setUpgrades(null);
-		// setDoneText("LayTile");
-		// setDoneEnabled(false);
-		// setCancelText("NoTile");
 	}
 
 	public void initBaseTokenLaying(boolean tokenMode)
 	{
 		this.tokenMode = tokenMode;
-		// label.setText(tokenMode ? tokenText : tileText);
-		// parent.setMessage(tokenMode ? "SelectAHexForToken" : "SelectATile");
 		setUpgrades(null);
-		// setDoneText(tokenMode ? "LayToken" : "LayTile");
-		// setDoneEnabled(false);
-		// setCancelText(tokenMode ? "NoToken" : "NoTile");
 	}
 
 	public void setCancelText(String text)
@@ -218,11 +177,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void setDoneText(String text)
 	{
 		done.setText(doneButtonKey = text);
-		// try {
-		// throw new Exception ("Set to "+text);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
 	}
 
 	public void setDoneEnabled(boolean enabled)
@@ -252,7 +206,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		}
 		upgrades = null;
-		// setDoneEnabled(false);
 		showUpgrades();
 	}
 
@@ -281,25 +234,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseEntered(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseExited(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mousePressed(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseReleased(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 }

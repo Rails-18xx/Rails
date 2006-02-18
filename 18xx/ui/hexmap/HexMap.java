@@ -19,8 +19,7 @@ import ui.*;
  * Base class that stores common info for HexMap independant of Hex
  * orientations.
  */
-public abstract class HexMap extends JComponent implements MouseListener,
-		MouseMotionListener
+public abstract class HexMap extends JComponent implements MouseListener, MouseMotionListener
 {
 
 	// Abstract Methods
@@ -30,14 +29,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected GUIHex[][] h;
 	MapHex[][] hexArray;
 	protected ArrayList hexes;
-	// protected ORWindow window;
 
 	protected int scale = 2 * Scale.get();
 	protected int cx;
 	protected int cy;
 
 	protected static GUIHex selectedHex = null;
-	// protected UpgradesPanel upgradesPanel = null;
 	protected Dimension preferredSize;
 
 	protected ArrayList extraTileLays = new ArrayList();
@@ -130,66 +127,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return preferredSize;
 	}
 
-	public void mouseClicked(MouseEvent arg0)
-	{
-		Point point = arg0.getPoint();
-		GUIHex clickedHex = getHexContainingPoint(point);
 
-		if (ORWindow.baseTokenLayingEnabled)
-		{
-			selectHex(clickedHex);
-
-			// upgradesPanel.setCancelText(Game.getText("Cancel"));
-			if (selectedHex != null)
-			{
-				GameUILoader.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
-			}
-			else
-			{
-				GameUILoader.orWindow.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
-			}
-		}
-		else if (ORWindow.tileLayingEnabled)
-		{
-			if (GameUILoader.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
-					&& clickedHex == selectedHex)
-			{
-				selectedHex.rotateTile();
-				repaint(selectedHex.getBounds());
-			}
-			else
-			{
-
-				if (selectedHex != null && clickedHex != selectedHex)
-				{
-					selectedHex.removeTile();
-					selectHex(null);
-				}
-				if (clickedHex != null)
-				{
-					if (clickedHex.getHexModel().isUpgradeableNow())
-					{
-						selectHex(clickedHex);
-						GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(this,
-								"This hex cannot be upgraded now");
-					}
-				}
-			}
-		}
-
-		// FIXME: Kludgy, but it forces the upgrades panel to be drawn
-		// correctly.
-		/*
-		 * if (upgradesPanel != null) { upgradesPanel.setVisible(false);
-		 * upgradesPanel.setVisible(true); showUpgrades(); }
-		 */
-	}
-
-	private void selectHex(GUIHex clickedHex)
+	void selectHex(GUIHex clickedHex)
 	{
 		if (selectedHex != null && clickedHex != selectedHex)
 		{
@@ -206,22 +145,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 	}
 
-	public void mouseEntered(MouseEvent arg0)
-	{
-	}
-
-	public void mouseExited(MouseEvent arg0)
-	{
-	}
-
-	public void mousePressed(MouseEvent arg0)
-	{
-	}
-
-	public void mouseReleased(MouseEvent arg0)
-	{
-	}
-
 	public GUIHex getSelectedHex()
 	{
 		return selectedHex;
@@ -231,32 +154,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	{
 		return selectedHex != null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-	 */
-	public void mouseDragged(MouseEvent arg0)
-	{
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-	 */
-	public void mouseMoved(MouseEvent arg0)
-	{
-		Point point = arg0.getPoint();
-		GUIHex hex = getHexContainingPoint(point);
-		setToolTipText(hex != null ? hex.getToolTip() : "");
-	}
-
-	/*
-	 * public void setUpgradesPanel(UpgradesPanel upgradesPanel) {
-	 * this.upgradesPanel = upgradesPanel; }
-	 */
 
 	public void setSpecials(ArrayList specials)
 	{
@@ -282,18 +179,95 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 	}
 	
+	public void mouseClicked(MouseEvent arg0)
+	{
+		Point point = arg0.getPoint();
+		GUIHex clickedHex = getHexContainingPoint(point);
+
+		if (ORWindow.baseTokenLayingEnabled)
+		{
+			selectHex(clickedHex);
+
+			if (selectedHex != null)
+			{
+				GameUILoader.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
+			}
+			else
+			{
+				GameUILoader.orWindow.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
+			}
+		}
+		else if (ORWindow.tileLayingEnabled)
+		{
+			if (GameUILoader.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
+					&& clickedHex == selectedHex)
+			{
+				selectedHex.rotateTile();
+			}
+			else
+			{
+
+				if (selectedHex != null && clickedHex != selectedHex)
+				{
+					selectedHex.removeTile();
+					selectHex(null);
+				}
+				if (clickedHex != null)
+				{
+					if (clickedHex.getHexModel().isUpgradeableNow())
+					{
+						selectHex(clickedHex);
+						GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(this,
+								"This hex cannot be upgraded now");
+					}
+				}
+			}
+		}
+		
+		repaint();
+		GameUILoader.orWindow.updateUpgradePanel();
+		GameUILoader.orWindow.updateORPanel();
+	}
+	
 	/*
-	 * public void showUpgrades() { if (upgradesPanel == null) return;
+	 * (non-Javadoc)
 	 * 
-	 * if (selectedHex == null || baseTokenLayingEnabled) {
-	 * upgradesPanel.setUpgrades(null); } else { ArrayList upgrades =
-	 * (ArrayList) selectedHex.getCurrentTile()
-	 * .getValidUpgrades(selectedHex.getHexModel(),
-	 * GameManager.getCurrentPhase()); upgradesPanel.setUpgrades(upgrades); }
-	 * 
-	 * invalidate(); upgradesPanel.showUpgrades(); }
-	 * 
-	 * public void setWindow(ORWindow window) { this.window = window; }
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
 	 */
+	public void mouseDragged(MouseEvent arg0)
+	{
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
+	public void mouseMoved(MouseEvent arg0)
+	{
+		Point point = arg0.getPoint();
+		GUIHex hex = getHexContainingPoint(point);
+		setToolTipText(hex != null ? hex.getToolTip() : "");
+	}
+
+	public void mouseEntered(MouseEvent arg0)
+	{
+	}
+
+	public void mouseExited(MouseEvent arg0)
+	{
+	}
+
+	public void mousePressed(MouseEvent arg0)
+	{
+	}
+
+	public void mouseReleased(MouseEvent arg0)
+	{
+	}
 
 }
