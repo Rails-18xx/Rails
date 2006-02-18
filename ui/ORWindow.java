@@ -44,33 +44,13 @@ public class ORWindow extends JFrame implements WindowListener
 	 */
 	public static boolean tileLayingEnabled = false;
 
-	// private StatusWindow parent;
-
-	// public ORWindow(OperatingRound round, StatusWindow parent)
 	public ORWindow()
 	{
 		super();
 		getContentPane().setLayout(new BorderLayout());
-		// this.parent = parent;
 
 		messagePanel = new MessagePanel();
 		getContentPane().add(messagePanel, BorderLayout.NORTH);
-
-		/*
-		 * if(round != null) { mapPanel = GameUILoader.mapPanel;
-		 * 
-		 * upgradePanel = new UpgradesPanel(mapPanel.getMap(), this);
-		 * getContentPane().add(upgradePanel, BorderLayout.WEST);
-		 * mapPanel.setUpgradesPanel(upgradePanel);
-		 * mapPanel.getMap().setUpgradesPanel(upgradePanel);
-		 * 
-		 * ORPanel = new ORPanel(round, parent, this);
-		 * getContentPane().add(ORPanel, BorderLayout.SOUTH); setSize(800, 750); }
-		 * else if (OperatingRound.getLastORNumber() > 0) { mapPanel =
-		 * GameUILoader.mapPanel; setSize(mapPanel.getSize());
-		 * mapPanel.setVisible(true); } else { mapPanel = new MapPanel();
-		 * setSize(mapPanel.getSize()); }
-		 */
 
 		if (mapPanel == null)
 			mapPanel = new MapPanel();
@@ -78,12 +58,10 @@ public class ORWindow extends JFrame implements WindowListener
 			mapPanel = GameUILoader.getMapPanel();
 		getContentPane().add(mapPanel, BorderLayout.CENTER);
 		addMouseListener(mapPanel.getMap());
-		// mapPanel.setWindow(this);
 
-		upgradePanel = new UpgradesPanel(mapPanel.getMap(), this);
+		upgradePanel = new UpgradesPanel();
 		getContentPane().add(upgradePanel, BorderLayout.WEST);
-		// mapPanel.setUpgradesPanel(upgradePanel);
-		// mapPanel.getMap().setUpgradesPanel(upgradePanel);
+		addMouseListener(upgradePanel);
 
 		ORPanel = new ORPanel();
 		getContentPane().add(ORPanel, BorderLayout.SOUTH);
@@ -210,8 +188,6 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			// GameUILoader.statusWindow.getOrWindow().getORPanel().layBaseToken(null,
-			// 0);
 			ORPanel.layBaseToken(null, 0);
 		}
 		else
@@ -220,8 +196,6 @@ public class ORWindow extends JFrame implements WindowListener
 				selectedHex.removeTile();
 			if (tileLayingEnabled)
 				ORPanel.layTile(null, null, 0);
-			// GameUILoader.statusWindow.getOrWindow().getORPanel().layTile(null,
-			// null, 0);
 		}
 	}
 
@@ -272,5 +246,16 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		baseTokenLayingEnabled = enabled;
 	}
-
+	
+	public void updateUpgradePanel()
+	{
+		upgradePanel.setVisible(false);
+		upgradePanel.setVisible(true);
+	}
+	
+	public void updateORPanel()
+	{
+		ORPanel.setVisible(false);
+		ORPanel.setVisible(true);
+	}
 }
