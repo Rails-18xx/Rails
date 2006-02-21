@@ -178,6 +178,8 @@ public class ORWindow extends JFrame implements WindowListener
 			if (selectedHex != null)
 				selectedHex.fixTile(tileLayingEnabled);
 		}
+		
+		updateUpgradePanel();
 	}
 
 	public void processCancel()
@@ -197,6 +199,8 @@ public class ORWindow extends JFrame implements WindowListener
 			if (tileLayingEnabled)
 				ORPanel.layTile(null, null, 0);
 		}
+		
+		updateUpgradePanel();
 	}
 
 	public void enableTileLaying(boolean enabled)

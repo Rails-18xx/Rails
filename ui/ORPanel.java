@@ -693,7 +693,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		{
 			// The next step is skipped, so update all cash and the share
 			// price
-			StockChart.refreshStockPanel();
+			//StockChart.refreshStockPanel();
 			repaint();
 		}
 
@@ -739,21 +739,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 		{
 			decision[orCompIndex].setText("payout");
 			oround.fullPayout(orCompName);
-			StockChart.refreshStockPanel();
+			//StockChart.refreshStockPanel();
 			repaint();
 		}
 		else if (command.equals("Split"))
 		{
 			decision[orCompIndex].setText("split");
 			oround.splitPayout(orCompName);
-			StockChart.refreshStockPanel();
+			//StockChart.refreshStockPanel();
 			repaint();
 		}
 		else if (command.equals("Withhold"))
 		{
 			decision[orCompIndex].setText("withheld");
 			oround.withholdPayout(orCompName);
-			StockChart.refreshStockPanel();
+			//StockChart.refreshStockPanel();
 			repaint();
 		}
 		else if (command.equals("BuyTrain"))

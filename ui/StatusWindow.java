@@ -9,8 +9,8 @@ import game.special.SpecialSRProperty;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
+import java.util.*;
 
 /**
  * This is the Window used for displaying nearly all of the game status. This is
@@ -439,11 +439,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							"",
 							JOptionPane.OK_OPTION);
 				}
-				else
-				{
+				//else
+				//{
 					//gameStatus.updatePlayer(compIndex, playerIndex);
 					///gameStatus.updateIPO(compIndex);
-				}
+				//}
 			}
 			else
 			{
@@ -465,12 +465,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							"",
 							JOptionPane.OK_OPTION);
 				}
-				else
-				{
+				//else
+				//{
 					//gameStatus.updatePlayer(compIndex, playerIndex);
 					//gameStatus.updatePool(compIndex);
 					// gameStatus.updateBank();
-				}
+				//}
 			}
 
 		}
@@ -498,7 +498,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-				StockChart.refreshStockPanel();
+				GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else
@@ -536,7 +536,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-				StockChart.refreshStockPanel();
+				//GameUILoader.stockChart.refreshStockPanel((ArrayList) Game.getStockMarket().getStartSpaces());
+				GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else

@@ -211,6 +211,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseClicked(MouseEvent e)
 	{
+		if(!(e.getSource() instanceof JLabel))
+			return;
+		
 		HexMap map = GameUILoader.getMapPanel().getMap();
 
 		int id = Integer.parseInt(((JLabel) e.getSource()).getText());
