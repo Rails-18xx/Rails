@@ -36,7 +36,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 {
 
 	private JPanel stockPanel;
-	private static JLayeredPane[][] stockMarket;
 	private JLabel priceLabel;
 	private JLayeredPane layeredPane;
 
@@ -47,6 +46,21 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 	private Dimension size;
 	private ArrayList tokenList;
 
+	public StockChart()
+	{
+		super();
+
+		initialize();
+		populateGridBag();
+		populateStockPanel();
+
+		stockPanel.setBackground(Color.LIGHT_GRAY);
+		
+		addWindowListener(this);
+		addKeyListener(this);
+		pack();
+	}
+	
 	private void initialize()
 	{
 		setTitle("Rails: Stock Chart");
@@ -63,7 +77,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		gc = new GridBagConstraints();
 
 		market = Game.getStockMarket().getStockChart();
-		stockMarket = new JLayeredPane[market.length][market[0].length];
 	}
 
 	private void populateGridBag()
@@ -87,7 +100,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 			for (int j = 0; j < market[0].length; j++)
 			{
 				setupChartSpace(i, j);
-				stockPanel.add(stockMarket[i][j]);
+				stockPanel.add(layeredPane);
 			}
 		}
 	}
@@ -99,8 +112,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		
 		layeredPane = new JLayeredPane();
 		priceLabel = new JLabel();
-
-		stockMarket[x][y] = layeredPane;
 
 		priceLabel.setBounds(1, 1, size.width, size.height);
 		priceLabel.setOpaque(true);
@@ -146,7 +157,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 				tokenList = (ArrayList) market[x][y].getTokens();
 
 				placeToken(tokenList, layeredPane);
-				System.out.println(tokenList);
 			}
 		}
 		catch (NullPointerException e)
@@ -232,25 +242,27 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		populateStockPanel();
 	}
 
+	/*
 	public void refreshStockPanel(ArrayList spaces)
 	{
-		refreshStockPanel();
+		Iterator it = spaces.iterator();
+		while (it.hasNext())
+		{
+			StockSpace sp = (StockSpace) it.next();
+			setupChartSpace(sp.getColumn(), sp.getRow());
+			
+			stockPanel.remove(getIndexValue(sp.getColumn(), sp.getRow()));
+			stockPanel.add(layeredPane, getIndexValue(sp.getColumn(), sp.getRow()));
+			stockPanel.validate();
+		}
 	}
-
-	public StockChart()
+	
+	private int getIndexValue(int x, int y)
 	{
-		super();
-
-		initialize();
-		populateGridBag();
-		populateStockPanel();
-
-		stockPanel.setBackground(Color.LIGHT_GRAY);
-		
-		addWindowListener(this);
-		addKeyListener(this);
-		pack();
+		int length = market.length;
+		return y*length + x;
 	}
+	*/
 
 	public void windowActivated(WindowEvent e)
 	{
