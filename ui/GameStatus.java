@@ -506,7 +506,6 @@ public class GameStatus extends JPanel implements ActionListener
 		return compBuyPoolIndex;
 	}
 
-	/*
 	public void updatePlayer(int compIndex, int playerIndex)
 	{
 		int share = players[playerIndex].getPortfolio()
@@ -517,9 +516,7 @@ public class GameStatus extends JPanel implements ActionListener
 		if (share == 0)
 			setPlayerCertButton(compIndex, playerIndex, false);
 	}
-	*/
 
-	/*
 	public void updateIPO(int compIndex)
 	{
 		int share = Bank.getIpo().ownsShare(companies[compIndex]);
@@ -541,7 +538,6 @@ public class GameStatus extends JPanel implements ActionListener
 		if (share == 0)
 			setPoolCertButton(compIndex, false);
 	}
-	*/
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
@@ -657,7 +653,6 @@ public class GameStatus extends JPanel implements ActionListener
 	 * (perhaps we should do all this via Events) We will check all players, as
 	 * some items my have been assigned "behind the curtains".
 	 */
-	/*
 	public void updatePlayers()
 	{
 
@@ -683,7 +678,6 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 		parent.pack();
 	}
-	*/
 
 	public void updateRevenue(int compIndex)
 	{
