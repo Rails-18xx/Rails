@@ -439,11 +439,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							"",
 							JOptionPane.OK_OPTION);
 				}
-				//else
-				//{
-					//gameStatus.updatePlayer(compIndex, playerIndex);
-					///gameStatus.updateIPO(compIndex);
-				//}
+				else
+				{
+					gameStatus.updatePlayer(compIndex, playerIndex);
+					gameStatus.updateIPO(compIndex);
+				}
 			}
 			else
 			{
@@ -465,12 +465,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							"",
 							JOptionPane.OK_OPTION);
 				}
-				//else
-				//{
-					//gameStatus.updatePlayer(compIndex, playerIndex);
-					//gameStatus.updatePool(compIndex);
-					// gameStatus.updateBank();
-				//}
+				else
+				{
+					gameStatus.updatePlayer(compIndex, playerIndex);
+					gameStatus.updatePool(compIndex);
+					 //gameStatus.updateBank();
+				}
 			}
 
 		}
