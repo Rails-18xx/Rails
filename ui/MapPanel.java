@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.5 2006/02/18 21:56:15 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MapPanel.java,v 1.6 2006/03/21 21:51:50 wakko666 Exp $
  * 
  * Created on 08-Aug-2005
  * Change Log:
@@ -52,7 +52,7 @@ public class MapPanel extends JPanel
 
 		scrollPane = new JScrollPane(map);
 		scrollPane.setSize(map.getPreferredSize());
-		scrollPane.addMouseListener(map);
+		scrollPane.getViewport().addMouseListener(map);
 
 		add(scrollPane, BorderLayout.CENTER);
 

@@ -46,7 +46,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	private static Portfolio scrapHeap = null;
 
 	private static Bank instance = null;
-	
+
 	/** Is the bank broken (remains true once set) */
 	private static boolean broken = false;
 	/** Is the bank just broken (returns true exactly once) */
@@ -237,26 +237,30 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 */
 	public boolean addCash(int amount)
 	{
-	    boolean negative = money.addCash(amount);
-	    
-	    /* Check if the bank has broken.
-	     * In some games <0 could apply, so this will become configurable.
-	     */ 
-	    if (money.getCash() <= 0 && !broken) {
-	        broken = true;
-	        Log.write ("Bank is broken");
-	    }
+		boolean negative = money.addCash(amount);
+
+		/*
+		 * Check if the bank has broken. In some games <0 could apply, so this
+		 * will become configurable.
+		 */
+		if (money.getCash() <= 0 && !broken)
+		{
+			broken = true;
+			Log.write("Bank is broken");
+		}
 		return money.addCash(amount);
 	}
-	
-	public static boolean isBroken () {
-	    return broken;
+
+	public static boolean isBroken()
+	{
+		return broken;
 	}
-	
-	public static boolean isJustBroken () {
-	    boolean result = broken && !brokenReported;
-	    brokenReported = true;
-	    return result;
+
+	public static boolean isJustBroken()
+	{
+		boolean result = broken && !brokenReported;
+		brokenReported = true;
+		return result;
 	}
 
 	/**

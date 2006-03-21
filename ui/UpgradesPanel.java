@@ -29,6 +29,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private boolean tokenMode = false;
 
 	private boolean lastEnabled = false;
+	
+	public static final String DONE = "Done";
+	public static final String CANCEL = "Cancel";
 
 	public UpgradesPanel()
 	{
@@ -115,14 +118,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		}
 
 		done = new JButton(doneButtonKey);
-		done.setActionCommand("Done");
+		done.setActionCommand(DONE);
 		done.setMnemonic(KeyEvent.VK_D);
 		done.addActionListener(this);
 		done.setEnabled(doneEnabled);
 		upgradePanel.add(done);
 
 		cancel = new JButton(cancelButtonKey);
-		cancel.setActionCommand("Cancel");
+		cancel.setActionCommand(CANCEL);
 		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
 		cancel.setEnabled(true);
@@ -189,11 +192,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		String command = e.getActionCommand();
 
-		if (command.equals("Cancel"))
+		if (command.equals(CANCEL))
 		{
 			GameUILoader.orWindow.processCancel();
 		}
-		else if (command.equals("Done"))
+		else if (command.equals(DONE))
 		{
 			if (GameUILoader.getMapPanel().getMap().getSelectedHex() != null)
 			{

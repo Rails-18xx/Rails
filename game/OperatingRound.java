@@ -840,7 +840,6 @@ public class OperatingRound implements Round
 	 */
 	public boolean done(String companyName)
 	{
-
 		String errMsg = null;
 
 		if (!companyName.equals(operatingCompany.getName()))
