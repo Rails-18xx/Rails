@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.19 2006/02/05 21:30:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.20 2006/03/21 21:51:53 wakko666 Exp $
  * 
  * Created on 04-May-2005
  * Change Log:
@@ -29,7 +29,7 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static int playerShareLimit = 60;
 	protected static int currentNumberOfOperatingRounds = 1;
-	
+
 	protected static boolean companiesCanBuyPrivates = false;
 	protected static boolean gameEndsWithBankruptcy = false;
 	protected static int gameEndsWhenBankHasLessOrEqual = 0;
@@ -125,32 +125,40 @@ public class GameManager implements ConfigurableComponentI
 		}
 
 		/* End of game criteria */
-		element = (Element) el.getElementsByTagName("EndOfGame")
-				.item(0);
+		element = (Element) el.getElementsByTagName("EndOfGame").item(0);
 		if (element != null)
 		{
-		    Element el2;
+			Element el2;
 			nl = element.getChildNodes();
-			for (int i=0; i<nl.getLength(); i++) {
-			    if (!(nl.item(i) instanceof Element)) continue;
-			    el2 = (Element) nl.item(i);
-			    if (el2.getNodeName().equals("Bankruptcy")) {
-			        gameEndsWithBankruptcy = true;
-			        //System.out.println("Ends with bankruptcy");
-			    } else if (el2.getNodeName().equals("BankBreaks")) {
-			        nnp = el2.getAttributes();
-			        gameEndsWhenBankHasLessOrEqual 
-			        	= XmlUtils.extractIntegerAttribute(nnp, "limit", gameEndsWhenBankHasLessOrEqual);
-			        String attr = XmlUtils.extractStringAttribute(nnp, "finish");
-			        if (attr.equalsIgnoreCase("SetOfORs")) {
-			        	gameEndsAfterSetOfORs = true;
-			        } else if (attr.equalsIgnoreCase("CurrentOR")) {
-			        	gameEndsAfterSetOfORs = false;
-			        }
-			    }
+			for (int i = 0; i < nl.getLength(); i++)
+			{
+				if (!(nl.item(i) instanceof Element))
+					continue;
+				el2 = (Element) nl.item(i);
+				if (el2.getNodeName().equals("Bankruptcy"))
+				{
+					gameEndsWithBankruptcy = true;
+					// System.out.println("Ends with bankruptcy");
+				}
+				else if (el2.getNodeName().equals("BankBreaks"))
+				{
+					nnp = el2.getAttributes();
+					gameEndsWhenBankHasLessOrEqual = XmlUtils.extractIntegerAttribute(nnp,
+							"limit",
+							gameEndsWhenBankHasLessOrEqual);
+					String attr = XmlUtils.extractStringAttribute(nnp, "finish");
+					if (attr.equalsIgnoreCase("SetOfORs"))
+					{
+						gameEndsAfterSetOfORs = true;
+					}
+					else if (attr.equalsIgnoreCase("CurrentOR"))
+					{
+						gameEndsAfterSetOfORs = false;
+					}
+				}
 			}
 		}
-}
+	}
 
 	public void startGame()
 	{
@@ -192,75 +200,60 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public void nextRound(Round round)
 	{
-
 		if (round instanceof StartRound)
 		{
-
 			if (startPacket != null && !startPacket.areAllSold())
 			{
-
 				startOperatingRound();
-
 			}
 			else
 			{
-
 				startStockRound();
-
 			}
-
 		}
 		else if (round instanceof StockRound)
 		{
+			numOfORs = currentPhase.getNumberOfOperatingRounds();
+			System.out.println("Phase=" + currentPhase.getName() + " ORs="
+					+ numOfORs);
 
-		    numOfORs = currentPhase.getNumberOfOperatingRounds();
-		    System.out.println("Phase="+currentPhase.getName()+" ORs="+numOfORs);
-		    
 			// Create a new OperatingRound (never more than one Stock Round)
 			OperatingRound.resetRelativeORNumber();
 			startOperatingRound();
 
 			orNumber = 1;
-
 		}
 		else if (round instanceof OperatingRound)
 		{
+			if (Bank.isBroken() && !gameEndsAfterSetOfORs)
+				finishGame();
 
-		    if (Bank.isBroken() && !gameEndsAfterSetOfORs) finishGame();
-		    
 			if (++orNumber <= numOfORs)
 			{
-
 				// There will be another OR
 				startOperatingRound();
-
 			}
 			else if (startPacket != null && !startPacket.areAllSold())
 			{
-
 				startStartRound();
-
 			}
 			else
 			{
-			    if (Bank.isBroken() && gameEndsAfterSetOfORs) finishGame();
+				if (Bank.isBroken() && gameEndsAfterSetOfORs)
+					finishGame();
 				startStockRound();
 			}
 		}
-
 	}
 
 	private void startStartRound()
 	{
-
 		String startRoundClassName = startPacket.getRoundClassName();
 		((StartRound) instantiate(startRoundClassName)).start(startPacket);
-
 	}
 
 	private void startStockRound()
 	{
-
 		new StockRound().start();
 	}
 
@@ -269,18 +262,21 @@ public class GameManager implements ConfigurableComponentI
 		playHomeTokens();
 		new OperatingRound();
 	}
-	
-	private void finishGame () {
-	    gameOver = true;
-	    Log.write("Game over!");
+
+	private void finishGame()
+	{
+		gameOver = true;
+		Log.write("Game over!");
 	}
 
 	/**
 	 * To be called by the UI to check if the game is over.
+	 * 
 	 * @return
 	 */
-	public static boolean isGameOver() {
-	    return gameOver;
+	public static boolean isGameOver()
+	{
+		return gameOver;
 	}
 
 	/**
@@ -430,13 +426,15 @@ public class GameManager implements ConfigurableComponentI
 	{
 		return currentPhase;
 	}
-	
-	public static void setCurrentPhase (PhaseI phase) {
-	    currentPhase = phase;
-	    Log.write("Start of phase "+phase.getName());
-	    if (phase.doPrivatesClose()) {
-	        Game.getCompanyManager().closeAllPrivates();
-	    }
+
+	public static void setCurrentPhase(PhaseI phase)
+	{
+		currentPhase = phase;
+		Log.write("Start of phase " + phase.getName());
+		if (phase.doPrivatesClose())
+		{
+			Game.getCompanyManager().closeAllPrivates();
+		}
 	}
 
 	protected static void addVariant(String name)
@@ -503,18 +501,19 @@ public class GameManager implements ConfigurableComponentI
 					{
 						// if these are the same number, we haven't yet played
 						// the city token.
-						if (((PublicCompany) companies[compIndex]).getMaxCityTokens() == 
-							((PublicCompany) companies[compIndex]).getNumCityTokens())
+						if (((PublicCompany) companies[compIndex]).getMaxCityTokens() == ((PublicCompany) companies[compIndex]).getNumCityTokens())
 						{
 							try
 							{
-								if (map[i][j].getCompanyHome().equals(companies[compIndex]))
+								if (map[i][j].getCompanyHome()
+										.equals(companies[compIndex]))
 								{
-									if(map[i][j].getPreferredHomeCity() > 0)
-										map[i][j].addToken(companies[compIndex], map[i][j].getPreferredHomeCity()-1);
+									if (map[i][j].getPreferredHomeCity() > 0)
+										map[i][j].addToken(companies[compIndex],
+												map[i][j].getPreferredHomeCity() - 1);
 									else
 										map[i][j].addToken(companies[compIndex]);
-									
+
 								}
 							}
 							catch (NullPointerException e)
@@ -527,13 +526,15 @@ public class GameManager implements ConfigurableComponentI
 			}
 		}
 	}
-	
-	public static void setCompaniesCanBuyPrivates () {
-	    companiesCanBuyPrivates = true;
+
+	public static void setCompaniesCanBuyPrivates()
+	{
+		companiesCanBuyPrivates = true;
 	}
-	
-	public static boolean getCompaniesCanBuyPrivates () {
-	    return companiesCanBuyPrivates;
+
+	public static boolean getCompaniesCanBuyPrivates()
+	{
+		return companiesCanBuyPrivates;
 	}
 
 	public String getHelp()

@@ -97,7 +97,6 @@ public class StockRound implements Round
 
 	public void start()
 	{
-
 		stockRoundNumber++;
 
 		Log.write("\nStart of Stock Round " + stockRoundNumber);

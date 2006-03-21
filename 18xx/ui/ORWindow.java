@@ -262,4 +262,17 @@ public class ORWindow extends JFrame implements WindowListener
 		ORPanel.setVisible(false);
 		ORPanel.setVisible(true);
 	}
+	
+	public static void updateORWindow()
+	{
+		if(GameManager.getInstance().getCurrentRound() instanceof StockRound)
+		{
+			GameUILoader.statusWindow.updateStatus();
+		}
+		else
+		{
+			GameUILoader.orWindow.pack();
+			GameUILoader.orWindow.repaint();
+		}
+	}
 }

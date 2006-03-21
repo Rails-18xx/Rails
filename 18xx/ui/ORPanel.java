@@ -87,6 +87,18 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	private Pattern buyTrainPattern = Pattern.compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
 	private int[] newTrainTotalCost;
 	List trainsBought;
+	
+	//Strings
+	public static final String LAY_TILES = "Lay Tiles";
+	public static final String LAY_TRACK = "Lay Track";
+	public static final String LAY_TOKEN = "Lay Token";
+	public static final String BUY_PRIVATE = "Buy Private";
+	public static final String DONE = "Done";
+	public static final String SET_REVENUE = "Set Revenue";
+	public static final String WITHHOLD = "Withhold";
+	public static final String SPLIT = "Split";
+	public static final String PAYOUT = "Pay out";
+	public static final String BUY_TRAIN = "Buy Train";
 
 	public ORPanel()
 	{
@@ -143,22 +155,22 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 	{
 		buttonPanel = new JPanel();
 
-		button1 = new JButton("Lay tiles");
-		button1.setActionCommand("LayTile");
+		button1 = new JButton(LAY_TILES);
+		button1.setActionCommand(LAY_TILES);
 		button1.setMnemonic(KeyEvent.VK_T);
 		button1.addActionListener(this);
 		button1.setEnabled(true);
 		buttonPanel.add(button1);
 
-		button2 = new JButton("Buy private");
-		button2.setActionCommand("BuyPrivate");
+		button2 = new JButton(BUY_PRIVATE);
+		button2.setActionCommand(BUY_PRIVATE);
 		button2.setMnemonic(KeyEvent.VK_V);
 		button2.addActionListener(this);
 		button2.setEnabled(false);
 		buttonPanel.add(button2);
 
-		button3 = new JButton("Done");
-		button3.setActionCommand("Done");
+		button3 = new JButton(DONE);
+		button3.setActionCommand(DONE);
 		button3.setMnemonic(KeyEvent.VK_D);
 		button3.addActionListener(this);
 		button3.setEnabled(true);
@@ -452,14 +464,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 				GameUILoader.getMapPanel()
 						.setSpecialTileLays((ArrayList) round.getSpecialProperties());
 
-				button2.setText("Buy Private");
-				button2.setActionCommand("BuyPrivate");
+				button2.setText(BUY_PRIVATE);
+				button2.setActionCommand(BUY_PRIVATE);
 				button2.setMnemonic(KeyEvent.VK_V);
 				button2.setEnabled(privatesCanBeBought);
 				privatesCaption.setHighlight(privatesCanBeBought);
 
-				button3.setText("Done");
-				button3.setActionCommand("Done");
+				button3.setText(DONE);
+				button3.setActionCommand(DONE);
 				button3.setMnemonic(KeyEvent.VK_D);
 				button3.setEnabled(false);
 
@@ -487,8 +499,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 							revenueSelect[orCompIndex],
 							true);
 
-					button1.setText("Set revenue");
-					button1.setActionCommand("SetRevenue");
+					button1.setText(SET_REVENUE);
+					button1.setActionCommand(SET_REVENUE);
 					button1.setMnemonic(KeyEvent.VK_R);
 					button1.setEnabled(true);
 					button1.setVisible(true);
@@ -506,19 +518,19 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			{
 
 				revenueCaption.setHighlight(true);
-				button1.setText("Withhold");
-				button1.setActionCommand("Withhold");
+				button1.setText(WITHHOLD);
+				button1.setActionCommand(WITHHOLD);
 				button1.setMnemonic(KeyEvent.VK_W);
 				button1.setEnabled(true);
 				button1.setVisible(true);
 
-				button2.setText("Split");
-				button2.setActionCommand("Split");
+				button2.setText(SPLIT);
+				button2.setActionCommand(SPLIT);
 				button2.setMnemonic(KeyEvent.VK_S);
 				button2.setEnabled(companies[orCompIndex].isSplitAllowed());
 
-				button3.setText("Pay out");
-				button3.setActionCommand("Payout");
+				button3.setText(PAYOUT);
+				button3.setActionCommand(PAYOUT);
 				button3.setMnemonic(KeyEvent.VK_P);
 				button3.setEnabled(true);
 			}
@@ -526,20 +538,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			{
 				trainCaption.setHighlight(true);
 
-				button1.setText("Buy train");
-				button1.setActionCommand("BuyTrain");
+				button1.setText(BUY_TRAIN);
+				button1.setActionCommand(BUY_TRAIN);
 				button1.setMnemonic(KeyEvent.VK_T);
 				button1.setEnabled(true);
 				button1.setVisible(true);
 
-				button2.setText("Buy Private");
-				button2.setActionCommand("BuyPrivate");
+				button2.setText(BUY_PRIVATE);
+				button2.setActionCommand(BUY_PRIVATE);
 				button2.setMnemonic(KeyEvent.VK_V);
 				button2.setEnabled(privatesCanBeBought);
 				privatesCaption.setHighlight(privatesCanBeBought);
 
-				button3.setText("Done");
-				button3.setActionCommand("Done");
+				button3.setText(DONE);
+				button3.setActionCommand(DONE);
 				button3.setMnemonic(KeyEvent.VK_D);
 				button3.setEnabled(true);
 
@@ -712,22 +724,22 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 		String command = actor.getActionCommand();
 		int step = oround.getStep();
-		boolean done = command.equals("Done");
+		boolean done = command.equals(DONE);
 		int amount;
 
-		if (command.equals("LayTrack") || done
+		if (command.equals(LAY_TRACK) || done
 				&& step == OperatingRound.STEP_LAY_TRACK)
 		{
 			// This is just a No-op. Tile handling is now all done in
 			// layTrack().
 		}
-		else if (command.equals("LayToken") || done
+		else if (command.equals(LAY_TOKEN) || done
 				&& step == OperatingRound.STEP_LAY_TOKEN)
 		{
 			// This is just a No-op. Tile handling is now all done in
 			// layBaseToken().
 		}
-		else if (command.equals("SetRevenue") || done
+		else if (command.equals(SET_REVENUE) || done
 				&& step == OperatingRound.STEP_CALC_REVENUE)
 		{
 			amount = done ? 0
@@ -735,28 +747,28 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			setRevenue(amount);
 
 		}
-		else if (command.equals("Payout"))
+		else if (command.equals(PAYOUT))
 		{
-			decision[orCompIndex].setText("payout");
+			decision[orCompIndex].setText(PAYOUT);
 			oround.fullPayout(orCompName);
 			//StockChart.refreshStockPanel();
 			repaint();
 		}
-		else if (command.equals("Split"))
+		else if (command.equals(SPLIT))
 		{
-			decision[orCompIndex].setText("split");
+			decision[orCompIndex].setText(SPLIT);
 			oround.splitPayout(orCompName);
 			//StockChart.refreshStockPanel();
 			repaint();
 		}
-		else if (command.equals("Withhold"))
+		else if (command.equals(WITHHOLD))
 		{
-			decision[orCompIndex].setText("withheld");
+			decision[orCompIndex].setText(WITHHOLD);
 			oround.withholdPayout(orCompName);
 			//StockChart.refreshStockPanel();
 			repaint();
 		}
-		else if (command.equals("BuyTrain"))
+		else if (command.equals(BUY_TRAIN))
 		{
 			ArrayList trainsForSale = new ArrayList();
 			trainsForSale.add("None");
@@ -970,7 +982,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			}
 
 		}
-		else if (command.equals("BuyPrivate"))
+		else if (command.equals(BUY_PRIVATE))
 		{
 
 			Iterator it = Game.getCompanyManager()
@@ -1044,15 +1056,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			}
 
 		}
-		else if (done)
+		else if (command.equals(DONE))
 		{
 			oround.done(orComp.getName());
-
 		}
 
 		LogWindow.addLog();
 
-		repaint();
+		ORWindow.updateORWindow();
 	}
 
 	private void setHighlightsOff()
