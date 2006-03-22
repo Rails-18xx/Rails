@@ -271,7 +271,6 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		else
 		{
-			GameUILoader.orWindow.pack();
 			GameUILoader.orWindow.repaint();
 		}
 	}
