@@ -208,9 +208,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	public void updateStatus()
 	{
+		currentRound = GameManager.getInstance().getCurrentRound();
+		
 		if (currentRound instanceof StartRound)
 		{
-
 			passButton.setEnabled(false);
 			startRound = (StartRound) currentRound;
 			if (startRoundWindow == null)

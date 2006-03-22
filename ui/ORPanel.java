@@ -146,6 +146,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 			companies = ((OperatingRound) round).getOperatingCompanies();
 			nc = companies.length;
 			
+			statusPanel.removeAll();
 			initFields();
 			updateStatus();
 		}
@@ -181,7 +182,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener
 
 	private void initFields()
 	{
-
 		leftCompName = new Caption[nc];
 		rightCompName = new Caption[nc];
 		president = new Field[nc];
