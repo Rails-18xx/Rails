@@ -43,6 +43,8 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 	public void setupHexes()
 	{
 		setupHexesGUI();
+		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 
 	/**
