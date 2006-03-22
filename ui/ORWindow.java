@@ -57,7 +57,6 @@ public class ORWindow extends JFrame implements WindowListener
 		else
 			mapPanel = GameUILoader.getMapPanel();
 		getContentPane().add(mapPanel, BorderLayout.CENTER);
-		addMouseListener(mapPanel.getMap());
 
 		upgradePanel = new UpgradesPanel();
 		getContentPane().add(upgradePanel, BorderLayout.WEST);
