@@ -35,6 +35,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	/*----*/
 	private GameManager gmgr;
 	private Round currentRound;
+	private Round previousRound = null;
 	private StockRound stockRound;
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
@@ -66,6 +67,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	 * up-to-date: 
 	 * <br> - true: push changes (via the Observer/Observable pattern),
 	 * <br> - false: pull everything on repaint.
+	 * NOTE: currently, 'false' does not work for the stock chart. 
 	 */
 	public static boolean useObserver = true;
 
@@ -218,11 +220,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				startRoundWindow = new StartRoundWindow(startRound, this);
 			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
-			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.orWindow.setVisible(false);
-
-			disableCheckBoxMenuItem(MAP);
-			disableCheckBoxMenuItem(MARKET);
+			if (currentRound != previousRound) {
+				GameUILoader.stockChart.setVisible(false);
+				GameUILoader.orWindow.setVisible(false);
+	
+				disableCheckBoxMenuItem(MAP);
+				disableCheckBoxMenuItem(MARKET);
+			}
 		}
 		else if (currentRound instanceof StockRound)
 		{
@@ -230,12 +234,16 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(true);
 			stockRound = (StockRound) currentRound;
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+			
+			if (currentRound != previousRound) {
 
-			GameUILoader.stockChart.setVisible(true);
-			GameUILoader.orWindow.setVisible(false);
+			    GameUILoader.stockChart.setVisible(true);
+				GameUILoader.orWindow.setVisible(false);
 
-			enableCheckBoxMenuItem(MARKET);
-			disableCheckBoxMenuItem(MAP);
+				enableCheckBoxMenuItem(MARKET);
+				disableCheckBoxMenuItem(MAP);
+			}
+
 			
 			/* Any special properties in force? */
 			player = GameManager.getCurrentPlayer();
@@ -265,19 +273,23 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
 
-			GameUILoader.stockChart.setVisible(false);
-			//GameUILoader.orWindow.updateUpgradePanel();
-			//GameUILoader.orWindow.updateORPanel();
-			//GameUILoader.orWindow.setVisible(true);
-			
-			//GameUILoader.orWindow.requestFocus();
-			GameUILoader.orWindow.activate();
+			if (currentRound != previousRound) {
+				GameUILoader.stockChart.setVisible(false);
+				//GameUILoader.orWindow.updateUpgradePanel();
+				//GameUILoader.orWindow.updateORPanel();
+				//GameUILoader.orWindow.setVisible(true);
+				
+				//GameUILoader.orWindow.requestFocus();
+				GameUILoader.orWindow.activate();
 
-			enableCheckBoxMenuItem(MAP);
-			disableCheckBoxMenuItem(MARKET);
+				enableCheckBoxMenuItem(MAP);
+				disableCheckBoxMenuItem(MARKET);
+			}
 		}
 		
 		pack();
+		
+		previousRound = currentRound;
 	}
 
 	private void enableCheckBoxMenuItem(String name)
@@ -373,40 +385,22 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		// until the infrastructure for saved games is built
 		else if (actor.getActionCommand().equalsIgnoreCase(SAVE))
 			returnVal = new JFileChooser().showSaveDialog(this);
-		else if (actor.getActionCommand().equalsIgnoreCase(LOG)
-				&& ((JMenuItem) actor.getSource()).isSelected())
+		else if (actor.getActionCommand().equalsIgnoreCase(LOG))
 		{
-			GameUILoader.messageWindow.setVisible(true);
+			GameUILoader.messageWindow.setVisible(
+					((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LOG)
-				&& !((JMenuItem) actor.getSource()).isSelected())
+		else if (actor.getActionCommand().equalsIgnoreCase(MARKET))
 		{
-			GameUILoader.messageWindow.setVisible(false);
+			GameUILoader.stockChart.setVisible(
+					((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MARKET)
-				&& ((JMenuItem) actor.getSource()).isSelected())
+		else if (actor.getActionCommand().equalsIgnoreCase(MAP))
 		{
-			GameUILoader.stockChart.setVisible(true);
-			return;
-		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MARKET)
-				&& !((JMenuItem) actor.getSource()).isSelected())
-		{
-			GameUILoader.stockChart.setVisible(false);
-			return;
-		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MAP)
-				&& ((JMenuItem) actor.getSource()).isSelected())
-		{
-			GameUILoader.orWindow.setVisible(true);
-			return;
-		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MAP)
-				&& !((JMenuItem) actor.getSource()).isSelected())
-		{
-			GameUILoader.orWindow.setVisible(false);
+			GameUILoader.orWindow.setVisible(
+					((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
 
@@ -501,7 +495,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			else
 			{
-				GameUILoader.stockChart.refreshStockPanel();
+				//GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else
@@ -540,7 +534,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			else
 			{
 				//GameUILoader.stockChart.refreshStockPanel((ArrayList) Game.getStockMarket().getStartSpaces());
-				GameUILoader.stockChart.refreshStockPanel();
+				//GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else

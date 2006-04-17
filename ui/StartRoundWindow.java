@@ -445,7 +445,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			{
 				//int compIndex = company.getPublicNumber();
 				//GameStatus.getInstance().updateIPO(compIndex);
-				GameUILoader.stockChart.refreshStockPanel();
+				//GameUILoader.stockChart.refreshStockPanel();
 			}
 
 		}

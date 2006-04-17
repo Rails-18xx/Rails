@@ -24,6 +24,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+
+import ui.elements.GUIStockSpace;
+
 import java.util.*;
 
 /**
@@ -99,12 +102,14 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		{
 			for (int j = 0; j < market[0].length; j++)
 			{
-				setupChartSpace(i, j);
-				stockPanel.add(layeredPane);
+		        //setupChartSpace(i, j);
+		        //stockPanel.add(layeredPane);
+			    stockPanel.add (new GUIStockSpace (i, j, market[i][j]));
 			}
 		}
 	}
 
+	/*
 	private void setupChartSpace(int x, int y)
 	{
 		depth = 0;
@@ -186,6 +191,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 			origin.y += 6;
 		}
 	}
+	*/
 
 	/**
 	 * Quick n' dirty method of converting strings to color objects. This has
@@ -193,6 +199,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 	 * 
 	 * @deprecated
 	 */
+	/*
 	private static Color stringToColor(String color)
 	{
 		if (color.equalsIgnoreCase("yellow"))
@@ -238,9 +245,10 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 
 	public void refreshStockPanel()
 	{
-		stockPanel.removeAll();
-		populateStockPanel();
+		//stockPanel.removeAll();
+		//populateStockPanel();
 	}
+	*/
 
 	/*
 	public void refreshStockPanel(ArrayList spaces)
