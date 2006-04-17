@@ -6,6 +6,7 @@ package game;
 
 import game.model.CashModel;
 import game.model.ModelObject;
+import game.model.MoneyModel;
 import game.model.PriceModel;
 
 import java.awt.Color;
@@ -67,7 +68,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected boolean hasStarted = false;
 
 	/** Revenue earned in the company's previous operating turn. */
-	protected int lastRevenue = 0;
+	protected MoneyModel lastRevenue = null;
 
 	/** Is the company operational ("has it floated")? */
 	protected boolean hasFloated = false;
@@ -148,6 +149,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		this.portfolio = new Portfolio(name, this);
 		this.capitalisation = type.getCapitalisation();
 		treasury = new CashModel(this);
+		lastRevenue = new MoneyModel (this);
 	}
 
 	/**
@@ -164,6 +166,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 						+ startSpace + "for company " + name);
 			currentPrice.setPrice(parPrice.getPrice());
 		}
+		
+
 	}
 
 	/**
@@ -679,7 +683,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	protected void setLastRevenue(int i)
 	{
-		lastRevenue = i;
+		lastRevenue.setAmount(i);
 	}
 
 	/**
@@ -689,7 +693,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public int getLastRevenue()
 	{
-		return lastRevenue;
+		return lastRevenue.getAmount();
+	}
+	
+	public ModelObject getLastRevenueModel () {
+	    return lastRevenue;
 	}
 
 	/**
