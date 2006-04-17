@@ -338,27 +338,6 @@ public class GUIHex
 			}
 		}
 
-		/*
-		 * // Added by Erik Vos: show hex name g2.drawString(hexName,
-		 * rectBound.x + (rectBound.width -
-		 * fontMetrics.stringWidth(getHexModel().getName())) * 2/5, rectBound.y +
-		 * ((fontMetrics.getHeight() + rectBound.height) * 3/10));
-		 * 
-		 * g2.drawString("("+model.getX()+","+model.getY()+")", rectBound.x +
-		 * (rectBound.width -
-		 * fontMetrics.stringWidth("("+getHexModel().getX()+","+getHexModel().getY()+")")) *
-		 * 1/3, rectBound.y + ((fontMetrics.getHeight() + rectBound.height) *
-		 * 1/2)); // Added by Erik Vos: show the preprinted tile id
-		 * g2.drawString(currentTileId == -999 ? "?" : "#" + currentTileId,
-		 * rectBound.x + (rectBound.width -
-		 * fontMetrics.stringWidth("#"+getHexModel().getPreprintedTileId())) *
-		 * 2/5, rectBound.y + ((fontMetrics.getHeight() + rectBound.height) *
-		 * 7/10));
-		 */
-
-		// System.out.println("Hex: " + getHexModel().getName() + " Co: " +
-		// getHexModel().getCompanyHome());
-		// " Tokens: " + getHexModel().getTokens());
 	}
 
 	private void paintOverlay(Graphics2D g2)

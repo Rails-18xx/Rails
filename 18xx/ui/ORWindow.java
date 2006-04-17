@@ -19,7 +19,7 @@ public class ORWindow extends JFrame implements WindowListener
 {
 
 	private MapPanel mapPanel;
-	private ORPanel ORPanel;
+	private ORPanel orPanel;
 	private UpgradesPanel upgradePanel;
 	private MessagePanel messagePanel;
 
@@ -62,8 +62,8 @@ public class ORWindow extends JFrame implements WindowListener
 		getContentPane().add(upgradePanel, BorderLayout.WEST);
 		addMouseListener(upgradePanel);
 
-		ORPanel = new ORPanel();
-		getContentPane().add(ORPanel, BorderLayout.SOUTH);
+		orPanel = new ORPanel();
+		getContentPane().add(orPanel, BorderLayout.SOUTH);
 
 		setTitle("Rails: Map");
 		setLocation(10, 10);
@@ -86,7 +86,7 @@ public class ORWindow extends JFrame implements WindowListener
 	
 	public ORPanel getORPanel()
 	{
-		return ORPanel;
+		return orPanel;
 	}
 
 	public void windowActivated(WindowEvent e)
@@ -134,25 +134,35 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		if (upgradePanel != null)
 		{
+		    if (tileLayingEnabled && (subStep == SELECT_TILE
+		            || subStep == ROTATE_OR_CONFIRM_TILE)) {
+		        upgradePanel.populate();
+		    } else {
+		        upgradePanel.setUpgrades(null);
+		    }
 			upgradePanel.setDoneText(Game.getText(subStep < 4 ? "LayTile"
 					: "LayToken"));
 			upgradePanel.setCancelText(Game.getText(subStep < 4 ? "NoTile"
 					: "NoToken"));
-			upgradePanel.setDoneEnabled(subStep == 3 || subStep == 5);
+			upgradePanel.setDoneEnabled(subStep == ROTATE_OR_CONFIRM_TILE 
+			        || subStep == CONFIRM_TOKEN);
 		}
 
 	}
 
 	public void processDone()
 	{
-		GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+	    HexMap map = mapPanel.getMap();
+		GUIHex selectedHex = map.getSelectedHex();
 		setSubStep(INACTIVE);
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
 			{
-				if (selectedHex.getHexModel().getStations().size() == 1)
+				if (selectedHex.getHexModel().getStations().size() == 1) {
 					selectedHex.fixToken(0);
+					map.selectHex (null);
+				}
 				else
 				{
 					Object[] stations = selectedHex.getHexModel()
@@ -174,8 +184,10 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		else
 		{
-			if (selectedHex != null)
+			if (selectedHex != null) {
 				selectedHex.fixTile(tileLayingEnabled);
+				map.selectHex(null);
+			}
 		}
 		
 		updateUpgradePanel();
@@ -189,14 +201,14 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			ORPanel.layBaseToken(null, 0);
+			orPanel.layBaseToken(null, 0);
 		}
 		else
 		{
 			if (selectedHex != null)
 				selectedHex.removeTile();
 			if (tileLayingEnabled)
-				ORPanel.layTile(null, null, 0);
+				orPanel.layTile(null, null, 0);
 		}
 		
 		updateUpgradePanel();
@@ -224,6 +236,7 @@ public class ORWindow extends JFrame implements WindowListener
 			setSubStep(INACTIVE);
 		}
 		tileLayingEnabled = enabled;
+		upgradePanel.setTileMode(enabled);
 	}
 
 	public void enableBaseTokenLaying(boolean enabled)
@@ -248,6 +261,7 @@ public class ORWindow extends JFrame implements WindowListener
 			setSubStep(INACTIVE);
 		}
 		baseTokenLayingEnabled = enabled;
+		upgradePanel.setTileMode (enabled);
 	}
 	
 	public void updateUpgradePanel()
@@ -258,8 +272,17 @@ public class ORWindow extends JFrame implements WindowListener
 	
 	public void updateORPanel()
 	{
-		ORPanel.setVisible(false);
-		ORPanel.setVisible(true);
+		//orPanel.setVisible(false);
+		//orPanel.setVisible(true);
+	    orPanel.revalidate();
+	}
+	
+	public void activate() {
+	    updateUpgradePanel();
+	    orPanel.recreate();
+	    orPanel.updateStatus();
+	    setVisible(true);
+	    requestFocus();
 	}
 	
 	public static void updateORWindow()
@@ -270,7 +293,12 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		else
 		{
-			GameUILoader.orWindow.repaint();
+			GameUILoader.orWindow.updateStatus();
+
 		}
+	}
+	
+	public void updateStatus() {
+	    orPanel.updateStatus();
 	}
 }

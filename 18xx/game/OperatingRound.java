@@ -60,6 +60,7 @@ public class OperatingRound implements Round
 	protected List currentSpecialProperties = null;
 
 	protected PhaseI currentPhase;
+	protected String thisOrNumber;
 
 	/**
 	 * Number of tiles that may be laid. TODO: This does not cover cases like "2
@@ -145,6 +146,7 @@ public class OperatingRound implements Round
 
 		relativeORNumber++;
 		cumulativeORNumber++;
+		thisOrNumber = getCompositeORNumber();
 
 		Log.write("\nStart of Operating Round " + getCompositeORNumber());
 
@@ -256,7 +258,6 @@ public class OperatingRound implements Round
 		// Dummy loop to enable a quick jump out.
 		while (true)
 		{
-
 			// Checks
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))

@@ -130,21 +130,29 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 	}
 
 
-	void selectHex(GUIHex clickedHex)
+	public void selectHex(GUIHex clickedHex)
 	{
-		if (selectedHex != null && clickedHex != selectedHex)
+System.out.println("selecthex called for hex "
+        + (clickedHex != null ? clickedHex.getName() : "null")
+        +", selected was "
+        + (selectedHex != null ? selectedHex.getName() : "null"));
+
+        if (selectedHex == clickedHex) return;
+		if (selectedHex != null)
 		{
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
-			selectedHex = null;
+			System.out.println("Hex "+selectedHex.getName()+" deselected and repainted");
 		}
 
 		if (clickedHex != null)
 		{
 			clickedHex.setSelected(true);
-			selectedHex = clickedHex;
-			repaint(selectedHex.getBounds());
+			repaint(clickedHex.getBounds());
+			System.out.println("Hex "+clickedHex.getName()+" selected and repainted");
 		}
+		selectedHex = clickedHex;
+
 	}
 
 	public GUIHex getSelectedHex()
@@ -152,7 +160,7 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 		return selectedHex;
 	}
 
-	public boolean isHexSelected()
+	public boolean isAHexSelected() // Not used
 	{
 		return selectedHex != null;
 	}
@@ -205,6 +213,7 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 					&& clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
+				repaint (selectedHex.getBounds());
 			}
 			else
 			{
@@ -230,7 +239,7 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 			}
 		}
 		
-		repaint();
+		//repaint();
 		GameUILoader.orWindow.updateUpgradePanel();
 		GameUILoader.orWindow.updateORPanel();
 	}
