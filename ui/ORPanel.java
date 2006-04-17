@@ -384,7 +384,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             f = tokenCost[i] = new Field("");
             addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, WIDE_RIGHT);
 
-            f = revenue[i] = new Field("");
+            f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
@@ -575,52 +575,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     }
 
-    /*
-    private void reorderCompanies() {
-        if (!(round instanceof OperatingRound))
-            return;
-
-        companies = oRound.getOperatingCompanies();
-        nc = companies.length;
-
-        for (int i = 0; i < nc; i++) {
-            c = companies[i];
-            leftCompName[i].setText(c.getName());
-            leftCompName[i].setBackground(c.getBgColour());
-            leftCompName[i].setForeground(c.getFgColour());
-
-            president[i].setText(c.hasStarted() ? c.getPresident().getName()
-                    : "");
-
-            sharePrice[i].setModel(c.getCurrentPriceModel());
-
-            cash[i].setModel(c.getCashModel());
-
-            if (privatesCanBeBought) {
-                privates[i].setModel(c.getPortfolio().getPrivatesModel());
-
-                newPrivatesCost[i].setText("");
-            }
-
-            tiles[i].setText("");
-
-            tileCost[i].setText("");
-
-            tokens[i].setText("");
-
-            tokenCost[i].setText("");
-
-            trains[i].setModel(c.getPortfolio().getTrainsModel());
-
-            newTrainCost[i].setText("");
-
-            rightCompName[i].setText(c.getName());
-            rightCompName[i].setBackground(c.getBgColour());
-            rightCompName[i].setForeground(c.getFgColour());
-        }
-
-    }
-    */
 
     //FIXME: This needs to be moved somewhere else. Perhaps ORWindow or HexMap.
     // Having this method located in this class does not make sense.

@@ -301,7 +301,7 @@ public class GameStatus extends JPanel implements ActionListener
 			f = compCash[i] = new Field(c.getCashModel());
 			addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0);
 
-			f = compRevenue[i] = new Field(Bank.format(c.getLastRevenue()));
+			f = compRevenue[i] = new Field(c.getLastRevenueModel());
 			addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0);
 
 			f = compTrains[i] = new Field(c.getPortfolio().getTrainsModel().option(TrainsModel.FULL_LIST));

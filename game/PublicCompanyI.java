@@ -4,6 +4,7 @@
  */
 package game;
 
+import game.model.ModelObject;
 import game.model.PriceModel;
 
 import java.awt.Color;
@@ -176,6 +177,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	 * @return The last revenue amount.
 	 */
 	public int getLastRevenue();
+	
+	public ModelObject getLastRevenueModel ();
 
 	public Player getPresident();
 
