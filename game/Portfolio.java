@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.26 2006/01/22 21:09:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.27 2006/04/17 14:17:03 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -541,7 +541,8 @@ public class Portfolio
 	       SpecialProperty sp;
 	       while (it.hasNext()) {
 	           sp = (SpecialProperty)it.next();
-	           if (Util.isInstanceOf (sp, clazz)) result.add (sp);
+	           if (sp.isExecutionable() 
+	                   && Util.isInstanceOf (sp, clazz)) result.add (sp);
 	       }
        }
        return result;

@@ -103,4 +103,7 @@ public interface CompanyManagerI
 	   public int getBaseTokenLayCostBySequence (int index);
 
 		public void closeAllPrivates();
+		
+		public List getPrivatesOwnedByPlayers ();
+
 }

@@ -57,11 +57,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	{
 		showUpgrades();
 	}
-
-	private void showUpgrades()
-	{
-		upgradePanel.removeAll();
-
+	
+	public void populate() {
 		try
 		{
 		upgrades = (ArrayList) GameUILoader.getMapPanel()
@@ -78,6 +75,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		{
 			upgrades = null;
 		}
+	}
+
+	private void showUpgrades()
+	{
+		upgradePanel.removeAll();
+
 
 		if (tokenMode)
 		{
@@ -160,13 +163,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		this.upgrades = upgrades;
 	}
 
-	public void initTileLaying(boolean tileMode)
+	public void setTileMode (boolean tileMode)
 	{
 		this.tileMode = tileMode;
 		setUpgrades(null);
 	}
 
-	public void initBaseTokenLaying(boolean tokenMode)
+	public void setBaseTokenMode (boolean tokenMode)
 	{
 		this.tokenMode = tokenMode;
 		setUpgrades(null);

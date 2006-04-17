@@ -261,15 +261,17 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 		else if (currentRound instanceof OperatingRound)
 		{
+		    System.out.println("StatusWindow updating ORPanel");
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
 
 			GameUILoader.stockChart.setVisible(false);
-			GameUILoader.orWindow.updateUpgradePanel();
-			GameUILoader.orWindow.updateORPanel();
-			GameUILoader.orWindow.setVisible(true);
+			//GameUILoader.orWindow.updateUpgradePanel();
+			//GameUILoader.orWindow.updateORPanel();
+			//GameUILoader.orWindow.setVisible(true);
 			
-			GameUILoader.orWindow.requestFocus();
+			//GameUILoader.orWindow.requestFocus();
+			GameUILoader.orWindow.activate();
 
 			enableCheckBoxMenuItem(MAP);
 			disableCheckBoxMenuItem(MARKET);

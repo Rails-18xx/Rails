@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialPropertyI.java,v 1.2 2005/11/27 20:59:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/SpecialPropertyI.java,v 1.3 2006/04/17 14:17:05 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -18,6 +18,8 @@ public interface SpecialPropertyI extends ConfigurableComponentI {
     
     public void setCompany (PrivateCompanyI company);
     public PrivateCompanyI getCompany();
+    
+    public boolean isExecutionable();
     
     public void setExercised ();
     public boolean isExercised();

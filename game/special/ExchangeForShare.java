@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/ExchangeForShare.java,v 1.2 2006/01/22 21:09:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/special/Attic/ExchangeForShare.java,v 1.3 2006/04/17 14:17:05 evos Exp $
  * 
  * Created on 24-Nov-2005
  * Change Log:
@@ -36,6 +36,12 @@ public class ExchangeForShare extends SpecialSRProperty {
         if (!Util.hasValue(publicCompanyName))
             throw new ConfigurationException ("ExchangeForShare: company name missing");
         share = XmlUtils.extractIntegerAttribute(nnp, "share", 10);
+    }
+    
+    public boolean isExecutionable () {
+        
+        return GameManager.getCurrentPhase().isPrivateSellingAllowed()
+        	&& privateCompany.getPortfolio().getOwner() instanceof Player;
     }
     
     public boolean execute () {
