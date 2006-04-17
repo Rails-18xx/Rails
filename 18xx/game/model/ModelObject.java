@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/ModelObject.java,v 1.2 2005/12/11 21:06:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/ModelObject.java,v 1.3 2006/04/17 20:45:35 evos Exp $
  * 
  * Created on 08-Dec-2005
  * Change Log:
@@ -38,7 +38,7 @@ public abstract class ModelObject extends Observable {
     }
     
     /**
-     * The minumum action that causes the view objects to be updated.
+     * The minimum action that causes the view objects to be updated.
      * This method can be used if the object embedded in this class
      * is just a reference to an outside object (e.g. Portfolio).  
      */

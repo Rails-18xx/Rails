@@ -5,6 +5,8 @@
  */
 package game;
 
+import game.model.ModelObject;
+
 import java.util.*;
 
 /**
@@ -12,7 +14,7 @@ import java.util.*;
  * 
  * @author Erik Vos
  */
-public class StockSpace implements StockSpaceI
+public class StockSpace extends ModelObject implements StockSpaceI
 {
 
 	/*--- Class attributes ---*/
@@ -28,7 +30,6 @@ public class StockSpace implements StockSpaceI
 	protected boolean closesCompany = false;// For 1856 and other games
 	protected boolean endsGame = false; // For 1841 and other games
 	protected boolean start = false; // Company may start here
-	protected boolean hasTokens = false;
 	protected StockSpaceTypeI type = null;
 	protected ArrayList tokens = new ArrayList();
 	protected ArrayList fixedStartPrices = new ArrayList();
@@ -41,7 +42,6 @@ public class StockSpace implements StockSpaceI
 		this.type = type;
 		this.row = Integer.parseInt(name.substring(1)) - 1;
 		this.column = (int) (name.toUpperCase().charAt(0) - '@') - 1;
-		this.hasTokens = false;
 	}
 
 	public StockSpace(String name, int price)
@@ -62,8 +62,9 @@ public class StockSpace implements StockSpaceI
 	 */
 	public boolean addToken(CompanyI company)
 	{
+System.out.println(company.getName()+" token added to "+name);
 		tokens.add(company);
-		this.setHasTokens(true);
+		notifyViewObjects();
 		return true;
 	}
 
@@ -76,16 +77,12 @@ public class StockSpace implements StockSpaceI
 	 */
 	public boolean removeToken(CompanyI company)
 	{
+System.out.println(company.getName()+" token removed from "+name);
 		int index = tokens.indexOf(company);
 		if (index >= 0)
 		{
 			tokens.remove(index);
-
-			if (tokens.size() < 1)
-			{
-				hasTokens = false;
-			}
-
+			notifyViewObjects();
 			return true;
 		}
 		else
@@ -154,7 +151,11 @@ public class StockSpace implements StockSpaceI
 	 */
 	public String getColour()
 	{
-		return type.getColour();
+	    if (type != null) {
+	        return type.getColour();
+	    } else {
+	        return "";
+	    }
 	}
 
 	/**
@@ -294,15 +295,7 @@ public class StockSpace implements StockSpaceI
 	 */
 	public boolean hasTokens()
 	{
-		return hasTokens;
-	}
-
-	/**
-	 * @param hasTokens
-	 */
-	public void setHasTokens(boolean b)
-	{
-		hasTokens = b;
+		return !tokens.isEmpty();
 	}
 
 	public String toString()
