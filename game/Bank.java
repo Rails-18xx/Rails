@@ -248,7 +248,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			broken = true;
 			Log.write("Bank is broken");
 		}
-		return money.addCash(amount);
+		return negative;
 	}
 
 	public static boolean isBroken()

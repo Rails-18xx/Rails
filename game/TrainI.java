@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainI.java,v 1.3 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainI.java,v 1.4 2006/04/23 15:53:40 evos Exp $
  * 
  * Created on 21-Aug-2005
  * Change Log:
@@ -59,5 +59,5 @@ public interface TrainI
 
 	public boolean canBeExchanged();
 
-	public void setCanBeExchanged(boolean value);
+
 }

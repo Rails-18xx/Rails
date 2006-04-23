@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainTypeI.java,v 1.2 2005/10/11 17:35:29 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainTypeI.java,v 1.3 2006/04/23 15:53:40 evos Exp $
  * 
  * Created on 19-Aug-2005
  * Change Log:
@@ -29,8 +29,12 @@ public interface TrainTypeI
 	/**
 	 * @return Returns the firstExchange.
 	 */
-	public boolean isFirstExchange();
+	public boolean nextCanBeExchanged();
 
+	public void addToBoughtFromIPO ();
+	
+	public int getNumberBoughtFromIPO ();
+	
 	/**
 	 * @return Returns the firstExchangeCost.
 	 */
