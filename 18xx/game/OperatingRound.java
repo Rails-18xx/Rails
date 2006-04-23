@@ -910,8 +910,6 @@ public class OperatingRound implements Round
 				errMsg = "No train specified";
 				break;
 			}
-			// Assume for now that buying this train is allowed.
-			// Actually we should check this here.
 
 			// Zero price means face value.
 			if (price == 0)
@@ -959,8 +957,9 @@ public class OperatingRound implements Round
 					.getTrainOfType(exchangedTrain.getType());
 			Bank.getPool().buyTrain(oldTrain, 0);
 			Log.write(operatingCompany.getName() + " exchanges "
-					+ exchangedTrain + "-train for a " + train.getName()
-					+ "-train from " + oldHolder.getName() + " for "
+					+ exchangedTrain.getName() + "-train for a " 
+					+ train.getName() + "-train from " 
+					+ oldHolder.getName() + " for "
 					+ Bank.format(price));
 		}
 		else
@@ -971,6 +970,7 @@ public class OperatingRound implements Round
 		}
 
 		operatingCompany.buyTrain(train, price);
+		if (oldHolder == Bank.getIpo()) train.getType().addToBoughtFromIPO();
 		trainBuyCost[operatingCompanyIndex] += price;
 
 		TrainManager.get().checkTrainAvailability(train, oldHolder);

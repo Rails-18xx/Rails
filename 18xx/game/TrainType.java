@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.4 2005/11/27 20:59:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.5 2006/04/23 15:53:40 evos Exp $
  * 
  * Created on 19-Aug-2005
  * Change Log:
@@ -38,7 +38,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	private String scoreCities = "single";
 	protected int cityScoreFactor = 1;
 
-	protected boolean firstExchange = false;
+	protected boolean firstCanBeExchanged = false;
+	protected int numberBoughtFromIPO = 0;
+	
 	private boolean real; // Only to determine if top-level attributes must be
 	// read.
 
@@ -182,7 +184,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			firstExchangeCost = XmlUtils.extractIntegerAttribute(exch,
 					"cost",
 					0);
-			firstExchange = (firstExchangeCost > 0);
+			firstCanBeExchanged = (firstExchangeCost > 0);
 		}
 
 		if (real)
@@ -250,9 +252,17 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	/**
 	 * @return Returns the firstExchange.
 	 */
-	public boolean isFirstExchange()
+	public boolean nextCanBeExchanged()
 	{
-		return firstExchange;
+		return firstCanBeExchanged && numberBoughtFromIPO == 0;
+	}
+	
+	public void addToBoughtFromIPO () {
+	    numberBoughtFromIPO++;
+	}
+	
+	public int getNumberBoughtFromIPO () {
+	    return numberBoughtFromIPO;
 	}
 
 	/**
