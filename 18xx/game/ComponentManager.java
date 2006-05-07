@@ -87,7 +87,7 @@ public class ComponentManager
 			}
 			String file = XmlUtils.extractStringAttribute(nnp,
 					COMPONENT_FILE_TAG);
-			String filePath = "./data/" + gameName + "/" + file;
+			String filePath = "data/" + gameName + "/" + file;
 
 			// Only one component per name.
 			if (mComponentMap.get(name) != null)

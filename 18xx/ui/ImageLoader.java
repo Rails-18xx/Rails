@@ -6,6 +6,8 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 
+import util.Util;
+
 /**
  * This class handles loading our tile images.
  * It provides BufferedImages to be associated with the Hex.
@@ -15,7 +17,7 @@ import javax.imageio.ImageIO;
  */
 public class ImageLoader
 {
-    private static final String tileDir = "./tiles/images/";
+    private static final String tileDir = "tiles/images/";
     private static HashMap tileMap;
     
     //String fn = "tile" + Integer.toString(getTileId()) + ".gif";
@@ -27,8 +29,9 @@ public class ImageLoader
 
         try
         {
-     	   File f = new File(tileDir + fn);
-     	   BufferedImage img = ImageIO.read(f);
+     	   //File f = new File(tileDir + fn);
+     	   //BufferedImage img = ImageIO.read(f);
+            BufferedImage img = ImageIO.read (Util.getStreamForFile(tileDir + fn));
      	   tileMap.put(id, img);
      	   
      	   return true;

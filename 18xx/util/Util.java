@@ -5,6 +5,20 @@
  */
 package util;
 
+import game.ConfigurationException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author Erik Vos
  */
@@ -34,5 +48,29 @@ public final class Util {
 	        c = c.getSuperclass();
 	    }
 	    return false;
+	}
+	
+	/** Open an input stream from a file, which may exist as a physical file
+	 * or in a JAR file. The name must be valid for both options.
+	 * @author Erik Vos
+	 */
+	public static InputStream getStreamForFile (String fileName) 
+	throws IOException {
+
+	     File file = new File(fileName);
+	     if (file.exists()) {
+             return new FileInputStream (file);
+	     } else {
+	          // Search in the jar
+	          File jarFile = new File ("./Rails.jar");
+              JarFile jf = new JarFile (jarFile);
+              JarInputStream jis = new JarInputStream (new FileInputStream(jarFile));
+              for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry()) {
+                  if (fileName.equals(je.getName())) {
+                      return jis;
+                  }
+              }
+              return null;
+	      }
 	}
 }
