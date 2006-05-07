@@ -8,7 +8,15 @@ package util;
 import game.ConfigurationException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -166,17 +174,43 @@ public final class XmlUtils {
      */
     public static Element findElementInFile(String fileName, String elementName) throws ConfigurationException
     {
-        Document doc;
+        Document doc = null;
         try {
-            File theFile = new File(fileName);
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             // Step 2: create a DocumentBuilder
             DocumentBuilder db = dbf.newDocumentBuilder();
+            
             // Step 3: parse the input file to get a Document object
-            doc = db.parse(theFile);
-        } catch (ParserConfigurationException e) {
+            doc = db.parse(Util.getStreamForFile(fileName));
+            /*
+            File theFile = new File(fileName);
+            
+            if (theFile.exists()) {
+                // Step 3: parse the input file to get a Document object
+                doc = db.parse(theFile);
+            } else {
+                // File not found, then look into the jar file
+                File jarFile = new File ("./Rails.jar");
+                try {
+                    JarFile jf = new JarFile (jarFile);
+                    JarInputStream jis = new JarInputStream (new FileInputStream(jarFile));
+                    String jeName;
+                    for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry()) {
+                        if (fileName.equals(je.getName())) {
+                            // Step 3: parse the input file to get a Document object
+                            doc = db.parse(jis);
+                            break;
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new ConfigurationException ("Error while opening file " + fileName, e);
+                }
+               
+            }
+            */
+         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Could not read/parse " + fileName
                     + " to find element " + elementName, e);
         } catch (SAXException e) {
@@ -185,6 +219,10 @@ public final class XmlUtils {
         } catch (IOException e) {
             throw new ConfigurationException("Could not read/parse " + fileName
                     + " to find element " + elementName, e);
+        }
+        
+        if (doc == null) {
+            throw new ConfigurationException ("Cannot find file "+ fileName);
         }
     
         // Now find the named Element

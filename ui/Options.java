@@ -25,6 +25,12 @@ import javax.swing.plaf.basic.*;
 import ui.GameUILoader;
 
 import java.util.*;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.*;
 import game.*;
 
@@ -157,7 +163,30 @@ public class Options extends JDialog implements ActionListener
    private String[] getGameList()
    {
       File dataDir = new File("./data/");
-      return dataDir.list();
+      String[] files = dataDir.list();
+      if (files == null || files.length == 0) {
+          // Search in the jar
+          File jarFile = new File ("./Rails.jar");
+          try {
+              JarFile jf = new JarFile (jarFile);
+              JarInputStream jis = new JarInputStream (new FileInputStream(jarFile));
+              String jeName;
+              Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
+              Matcher m;
+              List games = new ArrayList();
+              for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry()) {
+                  m = p.matcher(je.getName());
+                  if (m.matches()) {
+                      // Found a game
+                      games.add(m.group(1));
+                  }
+              }
+              files = (String[]) games.toArray(new String[0]);
+          } catch (IOException e) {
+              System.out.println("While opening jar file: "+e);
+          }
+      }
+      return files;
    }
    
    private void populateGameList(String[] gameNames, JComboBox gameNameBox)
