@@ -1207,7 +1207,77 @@ public class OperatingRound implements Round
 		}
 		return (PrivateCompanyI[]) buyablePrivates.toArray(new PrivateCompanyI[0]);
 	}
-
+	
+	/** 
+	 * Get a list of buyable trains for the currently operating company.
+	 * Omit trains that the company has no money for. If there is no cash to
+	 * buy any train from the Bank, prepare for emergency train buying.
+	 * @return List of all trains that could potentially be bought.
+	 */
+	/* Part of this logic was originally part of ui.ORPanel, 
+	 * but was moved here by EV 20may2006 as it belongs here. */ 
+	public List getBuyableTrains() {
+	    
+	    if (operatingCompany == null) return null;
+	    
+	    int cash = operatingCompany.getCash();
+	    int cost;
+	    List buyableTrains = new ArrayList();
+	    List trains;
+	    TrainI train;
+	    boolean hasTrains = operatingCompany.getPortfolio().getTrains().length > 0;
+	    TrainI cheapestTrain = null;
+	    int costOfCheapestTrain = 0;
+	    
+	    /* New trains */
+        trains =  TrainManager.get().getAvailableNewTrains();
+        for (Iterator it = trains.iterator(); it.hasNext(); ) {
+            train = (TrainI) it.next();
+            cost = train.getCost();
+            if (cost <= cash) {
+                buyableTrains.add (new BuyableTrain (train, cost));
+            } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
+                cheapestTrain = train;
+                costOfCheapestTrain = cost;
+            }
+            if (train.canBeExchanged() && hasTrains) {
+                cost = train.getType().getFirstExchangeCost();
+                if (cost <= cash) buyableTrains.add (new BuyableTrain (train, cost).setForExchange());
+            }
+        }
+        
+        /* Used trains */
+        trains = Bank.getPool().getUniqueTrains();
+		for (Iterator it = trains.iterator(); it.hasNext();) {
+		    train = (TrainI) it.next();
+		    cost = train.getCost();
+		    if (cost <= cash) {
+		        buyableTrains.add (new BuyableTrain (train, cost));
+		    } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
+                cheapestTrain = train;
+		        costOfCheapestTrain = cost;
+		    }
+		}
+		if (!hasTrains && buyableTrains.isEmpty()) {
+		    buyableTrains.add (new BuyableTrain (cheapestTrain, costOfCheapestTrain)
+		            .setMustRaiseCash(costOfCheapestTrain - cash));
+		}
+		
+		/* Other company trains */
+		PublicCompanyI c;
+		for (int j = 0; j < operatingCompanyArray.length; j++) {
+			c = operatingCompanyArray[j];
+			if (c == operatingCompany) continue;
+			trains = c.getPortfolio().getUniqueTrains();
+			for (Iterator it = trains.iterator(); it.hasNext();) {
+			    train = (TrainI) it.next();
+			    buyableTrains.add (new BuyableTrain (train, 0));
+			}
+		}
+    
+	    return buyableTrains;
+	}
+	
 	/**
 	 * Chech if revenue may be split.
 	 * 
