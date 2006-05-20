@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/Attic/MessagePanel.java,v 1.3 2006/02/18 21:56:15 wakko666 Exp $
- * 
- * Created on 28-Jan-2006
- * Change Log:
- */
 package ui;
 
 import game.Game;
@@ -12,9 +7,6 @@ import javax.swing.*;
 
 import util.Util;
 
-/**
- * @author Erik Vos
- */
 public class MessagePanel extends JPanel
 {
 

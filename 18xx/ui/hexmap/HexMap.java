@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2005
- */
 package ui.hexmap;
 
 import java.awt.*;
@@ -19,7 +16,8 @@ import ui.*;
  * Base class that stores common info for HexMap independant of Hex
  * orientations.
  */
-public abstract class HexMap extends JComponent implements MouseListener, MouseMotionListener
+public abstract class HexMap extends JComponent implements MouseListener,
+		MouseMotionListener
 {
 
 	// Abstract Methods
@@ -129,27 +127,29 @@ public abstract class HexMap extends JComponent implements MouseListener, MouseM
 		return preferredSize;
 	}
 
-
 	public void selectHex(GUIHex clickedHex)
 	{
-System.out.println("selecthex called for hex "
-        + (clickedHex != null ? clickedHex.getName() : "null")
-        +", selected was "
-        + (selectedHex != null ? selectedHex.getName() : "null"));
+		System.out.println("selecthex called for hex "
+				+ (clickedHex != null ? clickedHex.getName() : "null")
+				+ ", selected was "
+				+ (selectedHex != null ? selectedHex.getName() : "null"));
 
-        if (selectedHex == clickedHex) return;
+		if (selectedHex == clickedHex)
+			return;
 		if (selectedHex != null)
 		{
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
-			System.out.println("Hex "+selectedHex.getName()+" deselected and repainted");
+			System.out.println("Hex " + selectedHex.getName()
+					+ " deselected and repainted");
 		}
 
 		if (clickedHex != null)
 		{
 			clickedHex.setSelected(true);
 			repaint(clickedHex.getBounds());
-			System.out.println("Hex "+clickedHex.getName()+" selected and repainted");
+			System.out.println("Hex " + clickedHex.getName()
+					+ " selected and repainted");
 		}
 		selectedHex = clickedHex;
 
@@ -188,7 +188,7 @@ System.out.println("selecthex called for hex "
 			}
 		}
 	}
-	
+
 	public void mouseClicked(MouseEvent arg0)
 	{
 		Point point = arg0.getPoint();
@@ -213,7 +213,7 @@ System.out.println("selecthex called for hex "
 					&& clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
-				repaint (selectedHex.getBounds());
+				repaint(selectedHex.getBounds());
 			}
 			else
 			{
@@ -238,12 +238,12 @@ System.out.println("selecthex called for hex "
 				}
 			}
 		}
-		
-		//repaint();
+
+		// repaint();
 		GameUILoader.orWindow.updateUpgradePanel();
 		GameUILoader.orWindow.updateORPanel();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

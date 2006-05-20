@@ -1,15 +1,8 @@
-/*
- * Created on 05-Mar-2005
- *
- * IG Adams
- */
 package game;
 
 import org.w3c.dom.Element;
 
 /**
- * @author iadams
- * 
  * Interaface for game components which can be configured from an XML element.
  */
 public interface ConfigurableComponentI

@@ -20,7 +20,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private Border border = new EtchedBorder();
 	private JButton cancel;
 	private JButton done;
-	
+
 	private String cancelButtonKey = "NoTile";
 	private String doneButtonKey = "LayTile";
 	private boolean doneEnabled = false;
@@ -29,7 +29,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private boolean tokenMode = false;
 
 	private boolean lastEnabled = false;
-	
+
 	public static final String DONE = "Done";
 	public static final String CANCEL = "Cancel";
 
@@ -43,7 +43,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgrades = null;
 		upgradePanel = new JPanel();
 
-		//GameUILoader.orWindow.setMessage("SelectAHexForTile");
+		// GameUILoader.orWindow.setMessage("SelectAHexForTile");
 
 		upgradePanel.setOpaque(true);
 		upgradePanel.setBackground(Color.DARK_GRAY);
@@ -52,26 +52,27 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		showUpgrades();
 	}
-	
+
 	public void repaint()
 	{
 		showUpgrades();
 	}
-	
-	public void populate() {
+
+	public void populate()
+	{
 		try
 		{
-		upgrades = (ArrayList) GameUILoader.getMapPanel()
-				.getMap()
-				.getSelectedHex()
-				.getCurrentTile()
-				.getValidUpgrades(GameUILoader.getMapPanel()
-						.getMap()
-						.getSelectedHex()
-						.getHexModel(),
-						GameManager.getCurrentPhase());
+			upgrades = (ArrayList) GameUILoader.getMapPanel()
+					.getMap()
+					.getSelectedHex()
+					.getCurrentTile()
+					.getValidUpgrades(GameUILoader.getMapPanel()
+							.getMap()
+							.getSelectedHex()
+							.getHexModel(),
+							GameManager.getCurrentPhase());
 		}
-		catch(NullPointerException e)
+		catch (NullPointerException e)
 		{
 			upgrades = null;
 		}
@@ -80,7 +81,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private void showUpgrades()
 	{
 		upgradePanel.removeAll();
-
 
 		if (tokenMode)
 		{
@@ -163,13 +163,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		this.upgrades = upgrades;
 	}
 
-	public void setTileMode (boolean tileMode)
+	public void setTileMode(boolean tileMode)
 	{
 		this.tileMode = tileMode;
 		setUpgrades(null);
 	}
 
-	public void setBaseTokenMode (boolean tokenMode)
+	public void setBaseTokenMode(boolean tokenMode)
 	{
 		this.tokenMode = tokenMode;
 		setUpgrades(null);
@@ -217,9 +217,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-		if(!(e.getSource() instanceof JLabel))
+		if (!(e.getSource() instanceof JLabel))
 			return;
-		
+
 		HexMap map = GameUILoader.getMapPanel().getMap();
 
 		int id = Integer.parseInt(((JLabel) e.getSource()).getText());

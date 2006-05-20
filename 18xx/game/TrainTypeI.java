@@ -1,13 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainTypeI.java,v 1.3 2006/04/23 15:53:40 evos Exp $
- * 
- * Created on 19-Aug-2005
- * Change Log:
- */
 package game;
 
-/**
- * @author Erik Vos
- */
 public interface TrainTypeI
 {
 
@@ -31,10 +23,10 @@ public interface TrainTypeI
 	 */
 	public boolean nextCanBeExchanged();
 
-	public void addToBoughtFromIPO ();
-	
-	public int getNumberBoughtFromIPO ();
-	
+	public void addToBoughtFromIPO();
+
+	public int getNumberBoughtFromIPO();
+
 	/**
 	 * @return Returns the firstExchangeCost.
 	 */

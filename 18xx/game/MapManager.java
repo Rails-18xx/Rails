@@ -1,20 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapManager.java,v 1.13 2005/12/02 23:33:28 wakko666 Exp $
- * 
- * Created on 08-Aug-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
-
 import org.w3c.dom.*;
-
 import util.XmlUtils;
 
 /**
  * MapManager configures the map layout from XML
- * 
- * @author Erik Vos
  */
 public class MapManager implements ConfigurableComponentI
 {

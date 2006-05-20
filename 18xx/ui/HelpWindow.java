@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -14,9 +11,6 @@ import java.awt.event.*;
  * It displays logged messages to the user during the game.
  * 
  *  My head is a wheel.
- * 
- * @author Erik Vos
- * @author Brett
  */
 public class HelpWindow extends JFrame implements WindowListener
 {

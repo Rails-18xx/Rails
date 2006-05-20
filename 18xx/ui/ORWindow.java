@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -13,7 +10,6 @@ import javax.swing.*;
 /**
  * This Window displays the available operations that may be performed during an
  * Operating Round. This window also contains the Game Map.
- * 
  */
 public class ORWindow extends JFrame implements WindowListener
 {

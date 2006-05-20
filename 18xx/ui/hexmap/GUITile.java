@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/ui/hexmap/Attic/GUITile.java,v 1.9 2005/12/27 23:51:28 evos Exp $
- * 
- * Created on 12-Nov-2005
- * Change Log:
- */
 package ui.hexmap;
 
 import java.awt.Graphics2D;
@@ -15,8 +10,6 @@ import game.*;
 
 /**
  * This class represents the GUI version of a tile.
- * 
- * @author Erik Vos
  */
 public class GUITile
 {

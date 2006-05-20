@@ -1,9 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Log.java,v 1.6 2006/01/22 21:09:55 evos Exp $
- * 
- * Created on 16-Apr-2005 by Erik Vos
- * 
- * Change Log:
- */
 package game;
 
 import util.*;
@@ -11,8 +5,6 @@ import util.*;
 /**
  * Class to write a log, and also to maintain a log message stack for writing to
  * the UI.
- * 
- * @author Erik
  */
 public final class Log
 {

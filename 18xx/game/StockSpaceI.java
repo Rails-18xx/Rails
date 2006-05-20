@@ -1,13 +1,7 @@
-/*
- * Created on 12-Mar-2005
- */
 package game;
 
 import java.util.*;
 
-/**
- * @author Erik
- */
 public interface StockSpaceI extends TokenHolderI
 {
 

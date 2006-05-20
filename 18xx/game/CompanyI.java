@@ -1,15 +1,8 @@
-/*
- * Created on 05-Mar-2005
- *
- * IG Adams
- */
 package game;
 
 import org.w3c.dom.Element;
 
 /**
- * @author iadams
- *
  * To be implemented by any Company object.
  */
 public interface CompanyI extends TokenHolderI {

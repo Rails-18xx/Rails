@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -12,11 +9,6 @@ import java.awt.event.*;
 /**
  * This is the UI for the LogWindow.
  * It displays logged messages to the user during the game.
- * 
- *  My head is a wheel.
- * 
- * @author Erik Vos
- * @author Brett
  */
 public class LogWindow extends JFrame implements WindowListener, KeyListener
 {

@@ -1,16 +1,9 @@
-/*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StockSpaceType.java,v 1.4 2005/10/11 17:35:29 wakko666 Exp $
- * Created on 19mar2005 by Erik Vos
- * Changes: 
- */
 package game;
 
 /**
  * Objects of this class represent a type of square on the StockMarket with
  * special properties,usually represented by a non-white square colour. The
  * default type is "white", which has no special properties.
- * 
- * @author Erik Vos
  */
 public class StockSpaceType implements StockSpaceTypeI
 {

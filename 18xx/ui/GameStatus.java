@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -15,13 +12,10 @@ import ui.StatusWindow;
 import ui.elements.*;
 
 import java.util.*;
-import java.util.List;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of game
  * status information.
- * 
- * @author blentz
  */
 public class GameStatus extends JPanel implements ActionListener
 {

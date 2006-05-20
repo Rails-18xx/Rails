@@ -1,21 +1,3 @@
-/*
- * Rails: an 18xx game system. Copyright (C) 2005 Brett Lentz
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
 package game;
 
 import game.model.CashModel;
@@ -25,7 +7,7 @@ import game.model.WorthModel;
 import java.util.*;
 
 /**
- *	Player class holds all player-specific data
+ * Player class holds all player-specific data
  */
 
 public class Player implements CashHolder
@@ -52,7 +34,7 @@ public class Player implements CashHolder
 	private int index = 0;
 
 	private CashModel wallet = new CashModel(this);
-	
+
 	private WorthModel worth = new WorthModel(this);
 
 	private int blockedCash = 0;
@@ -99,7 +81,7 @@ public class Player implements CashHolder
 		// Set the sertificate limit
 		playerCertificateLimit = playerCertificateLimits[numberOfPlayers];
 	}
-	
+
 	/**
 	 * @return Certificate Limit for Players
 	 */
@@ -279,9 +261,10 @@ public class Player implements CashHolder
 	{
 		return wallet.toString();
 	}
-	
-	public ModelObject getCashModel() {
-	    return wallet;
+
+	public ModelObject getCashModel()
+	{
+		return wallet;
 	}
 
 	public boolean addCash(int amount)
@@ -314,9 +297,10 @@ public class Player implements CashHolder
 	{
 		return Bank.format(getWorth());
 	}
-	
-	public WorthModel getWorthModel () {
-	    return worth;
+
+	public WorthModel getWorthModel()
+	{
+		return worth;
 	}
 
 	public String toString()

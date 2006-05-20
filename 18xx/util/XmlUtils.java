@@ -1,22 +1,8 @@
-/*
- * Created on 05-Mar-2005
- *
- *IG Adams
- */
 package util;
 
 import game.ConfigurationException;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,8 +12,6 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /**
- * @author iadams
- *
  * Booch utility class providing helper functions for working with XML.
  */
 public final class XmlUtils {

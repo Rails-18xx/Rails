@@ -1,21 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/GameManager.java,v 1.20 2006/03/21 21:51:53 wakko666 Exp $
- * 
- * Created on 04-May-2005
- * Change Log:
- */
 package game;
 
 import util.*;
-
 import java.util.*;
-
 import org.w3c.dom.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded à la 1830.
- * 
- * @author Erik Vos
  */
 public class GameManager implements ConfigurableComponentI
 {

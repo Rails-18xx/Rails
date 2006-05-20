@@ -1,14 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartPacket.java,v 1.8 2006/01/22 21:09:55 evos Exp $
- * 
- * Created on 06-May-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
-
 import org.w3c.dom.*;
-
 import util.Util;
 import util.XmlUtils;
 
@@ -16,8 +9,6 @@ import util.XmlUtils;
  * A Start Packet comprises a number of Start Items. The typical start packet
  * must be completely sold out before normal share buying can start (but there
  * are exceptions to this rule).
- * 
- * @author Erik Vos
  */
 public class StartPacket
 {

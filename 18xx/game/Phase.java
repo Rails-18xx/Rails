@@ -1,11 +1,6 @@
-/*
- * Created on Sep 7, 2005
- * Author: Erik Vos
- */
 package game;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import util.XmlUtils;
@@ -14,9 +9,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-/**
- * @author Erik Vos
- */
 public class Phase implements PhaseI {
     
     protected int index;

@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -15,9 +12,6 @@ import java.util.*;
 /**
  * This is the Window used for displaying nearly all of the game status. This is
  * also from where the ORWindow and StartRoundWindow are triggered.
- * 
- * @Author Erik Vos
- * @author Brett
  */
 public class StatusWindow extends JFrame implements ActionListener, KeyListener
 {

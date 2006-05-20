@@ -1,16 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Station.java,v 1.10 2006/01/04 01:02:15 wakko666 Exp $
- * 
- * Created on 30-Oct-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 
-/**
- * @author Erik Vos
- * @author Brett Lentz
- */
 public class Station implements TokenHolderI, Cloneable
 {
 

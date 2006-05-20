@@ -1,20 +1,3 @@
-/*
- * Rails: an 18xx game system. Copyright (C) 2005 Brett Lentz
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
 package ui;
 
 import java.awt.*;
@@ -37,231 +20,243 @@ import game.*;
 /**
  * The Options dialog window displays the first window presented to the user.
  * This window contains all of the options available for starting a new game.
- * 
- * @author Brett
- *
  */
 public class Options extends JDialog implements ActionListener
 {
-   GridBagConstraints gc;
-   JPanel optionsPane, playersPane, buttonPane;
-   JButton newButton, loadButton, quitButton;
-   JComboBox[] playerBoxes;
-   JComboBox gameNameBox;
-   JTextField[] playerNameFields;
-   BasicComboBoxRenderer renderer;
-   Dimension size, optSize;
-   
-   private void initialize()
-   {
-      gc = new GridBagConstraints();
-      
-      optionsPane = new JPanel();
-      playersPane = new JPanel();
-      buttonPane = new JPanel();
-      
-      newButton = new JButton("New Game");      
-      loadButton = new JButton("Load Game");     
-      quitButton = new JButton("Quit");
-      
-      newButton.setMnemonic(KeyEvent.VK_N);
-      loadButton.setMnemonic(KeyEvent.VK_L);
-      quitButton.setMnemonic(KeyEvent.VK_Q);
-      
-      renderer = new BasicComboBoxRenderer();
-      size = new Dimension(50,30);
-      optSize = new Dimension(50,50);
-      gameNameBox = new JComboBox();
-      
-      playerBoxes = new JComboBox[Player.MAX_PLAYERS];
-      playerNameFields = new JTextField[Player.MAX_PLAYERS];
-      
-      this.getContentPane().setLayout(new GridBagLayout()); 
-      this.getContentPane().setLayout(new GridBagLayout()); 
-      this.setTitle("Rails: New Game");
-      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      
-      renderer.setPreferredSize(size);
-      
-      playersPane.add(new JLabel("Players:"));
-      playersPane.add(new JLabel(""));
-      playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS+1,0));
-      playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
-      
-      for(int i=0; i < playerBoxes.length; i++)
-      {
-         playerBoxes[i] = new JComboBox();
-         playerBoxes[i].setRenderer(renderer);
-         playerBoxes[i].addItem("None");
-         playerBoxes[i].addItem("Human");
-         playerBoxes[i].addItem("AI eventually goes here.");  
-         playerBoxes[i].setSelectedIndex(1);
-         playersPane.add(playerBoxes[i]);
-         playerBoxes[i].setPreferredSize(size);
-         
-         playerNameFields[i] = new JTextField();
-         playerNameFields[i].setPreferredSize(size);
-         playersPane.add(playerNameFields[i]);
-      }
-      
-      //FIXME: Not intended for Production 
-      playerNameFields[0].setText("0");
-      playerNameFields[1].setText("1");
-      playerNameFields[2].setText("2");
-      
-      populateGameList(getGameList(), gameNameBox);
-      
-      optionsPane.add(new JLabel("Options"));
-      optionsPane.add(new JLabel(""));
-      optionsPane.add(new JLabel("Game:"));
-      optionsPane.add(gameNameBox);
-      optionsPane.setLayout(new GridLayout(5,2));
-      optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
-      optionsPane.setPreferredSize(optSize);
-      
-      newButton.addActionListener(this);
-      loadButton.addActionListener(this);
-      quitButton.addActionListener(this);
-      
-      buttonPane.add(newButton);
-      buttonPane.add(loadButton);
-      buttonPane.add(quitButton);
-      buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
-   }
-  
-   private void populateGridBag()
-   {
-      gc.gridx = 0;
-      gc.gridy = 0;
-      gc.weightx = 1.0;
-      gc.weighty = 1.0;
-      gc.gridwidth = 1;
-      gc.fill = GridBagConstraints.BOTH;
-      this.getContentPane().add(playersPane, gc); 
 
-      gc.gridx = 0;
-      gc.gridy = 1;
-      gc.fill = 1;
-      gc.weightx = 0.5;
-      gc.weighty = 0.5;
-      gc.gridwidth = 1;
-      //gc.ipadx = 50;
-      gc.ipady = 50;
-      this.getContentPane().add(optionsPane, gc); 
+	GridBagConstraints gc;
+	JPanel optionsPane, playersPane, buttonPane;
+	JButton newButton, loadButton, quitButton;
+	JComboBox[] playerBoxes;
+	JComboBox gameNameBox;
+	JTextField[] playerNameFields;
+	BasicComboBoxRenderer renderer;
+	Dimension size, optSize;
 
-      gc.gridx = 0;
-      gc.gridy = 2;
-      gc.weightx = 0.0;
-      gc.weighty = 0.0;
-      gc.gridwidth = 1;
-      gc.ipady = 0;
-      gc.fill = GridBagConstraints.HORIZONTAL;
-      this.getContentPane().add(buttonPane, gc); 
-   }
+	private void initialize()
+	{
+		gc = new GridBagConstraints();
 
-   //FIXME: Ridiculously rudimentary and fragile method for populating a ComboBox
-   private String[] getGameList()
-   {
-      File dataDir = new File("./data/");
-      String[] files = dataDir.list();
-      if (files == null || files.length == 0) {
-          // Search in the jar
-          File jarFile = new File ("./Rails.jar");
-          try {
-              JarFile jf = new JarFile (jarFile);
-              JarInputStream jis = new JarInputStream (new FileInputStream(jarFile));
-              String jeName;
-              Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
-              Matcher m;
-              List games = new ArrayList();
-              for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry()) {
-                  m = p.matcher(je.getName());
-                  if (m.matches()) {
-                      // Found a game
-                      games.add(m.group(1));
-                  }
-              }
-              files = (String[]) games.toArray(new String[0]);
-          } catch (IOException e) {
-              System.out.println("While opening jar file: "+e);
-          }
-      }
-      return files;
-   }
-   
-   private void populateGameList(String[] gameNames, JComboBox gameNameBox)
-   {
-      Arrays.sort(gameNames);
-      for(int i=0; i < gameNames.length; i++)
-      {
-         if(!gameNames[i].equalsIgnoreCase("CVS") && !gameNames[i].startsWith("."))
-            gameNameBox.addItem(gameNames[i]);
-      }
-   }
-   
-   public Options()
-   {
-      super();
-      
-      initialize();
-      populateGridBag();
-      
-      this.pack();
-      this.setVisible(true);
-   }
-   public void actionPerformed(ActionEvent arg0)
-   {
-      if (arg0.getSource().equals(newButton))
-      {
-         ArrayList playerNames = new ArrayList();
-         
-         for(int i=0;i < playerBoxes.length; i++)
-         {
-            if(playerBoxes[i].getSelectedItem().toString().equalsIgnoreCase("Human")
-                    && !playerNameFields[i].getText().equals(""))	
-            {
-               playerNames.add(playerNameFields[i].getText());
-            }
-         }
-         
-         if(playerNames.size() < Player.MIN_PLAYERS || playerNames.size() > Player.MAX_PLAYERS)
-         {
-            if(JOptionPane.showConfirmDialog(this, "Not enough players. Continue Anyway?", "Are you sure?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-            {
-               return;
-            }
-         }
-         
-         try
-         {
-            this.setVisible(false);
+		optionsPane = new JPanel();
+		playersPane = new JPanel();
+		buttonPane = new JPanel();
 
-            Game.initialise(gameNameBox.getSelectedItem().toString());
-            Game.getPlayerManager(playerNames);
-            GameManager.getInstance().startGame();
-            
-            GameUILoader.gameUIInit();
-         }
-         catch(NullPointerException e)
-         {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Unable to load selected game.");            
-         }
-         
-      }
-      
-      if (arg0.getSource().equals(loadButton))
-      {
-  		//We're not going to actually DO anything with the selected file
-  		//until the infrastructure for saved games is built
-    	  JFileChooser fc = new JFileChooser();
-    	  int result = fc.showOpenDialog(this.getContentPane());
-      }
-      
-      if (arg0.getSource().equals(quitButton))
-      {
-         System.exit(0);
-      }
-      
-   }
+		newButton = new JButton("New Game");
+		loadButton = new JButton("Load Game");
+		quitButton = new JButton("Quit");
+
+		newButton.setMnemonic(KeyEvent.VK_N);
+		loadButton.setMnemonic(KeyEvent.VK_L);
+		quitButton.setMnemonic(KeyEvent.VK_Q);
+
+		renderer = new BasicComboBoxRenderer();
+		size = new Dimension(50, 30);
+		optSize = new Dimension(50, 50);
+		gameNameBox = new JComboBox();
+
+		playerBoxes = new JComboBox[Player.MAX_PLAYERS];
+		playerNameFields = new JTextField[Player.MAX_PLAYERS];
+
+		this.getContentPane().setLayout(new GridBagLayout());
+		this.getContentPane().setLayout(new GridBagLayout());
+		this.setTitle("Rails: New Game");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		renderer.setPreferredSize(size);
+
+		playersPane.add(new JLabel("Players:"));
+		playersPane.add(new JLabel(""));
+		playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS + 1, 0));
+		playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
+
+		for (int i = 0; i < playerBoxes.length; i++)
+		{
+			playerBoxes[i] = new JComboBox();
+			playerBoxes[i].setRenderer(renderer);
+			playerBoxes[i].addItem("None");
+			playerBoxes[i].addItem("Human");
+			playerBoxes[i].addItem("AI eventually goes here.");
+			playerBoxes[i].setSelectedIndex(1);
+			playersPane.add(playerBoxes[i]);
+			playerBoxes[i].setPreferredSize(size);
+
+			playerNameFields[i] = new JTextField();
+			playerNameFields[i].setPreferredSize(size);
+			playersPane.add(playerNameFields[i]);
+		}
+
+		// FIXME: Not intended for Production
+		playerNameFields[0].setText("0");
+		playerNameFields[1].setText("1");
+		playerNameFields[2].setText("2");
+
+		populateGameList(getGameList(), gameNameBox);
+
+		optionsPane.add(new JLabel("Options"));
+		optionsPane.add(new JLabel(""));
+		optionsPane.add(new JLabel("Game:"));
+		optionsPane.add(gameNameBox);
+		optionsPane.setLayout(new GridLayout(5, 2));
+		optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
+		optionsPane.setPreferredSize(optSize);
+
+		newButton.addActionListener(this);
+		loadButton.addActionListener(this);
+		quitButton.addActionListener(this);
+
+		buttonPane.add(newButton);
+		buttonPane.add(loadButton);
+		buttonPane.add(quitButton);
+		buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
+	}
+
+	private void populateGridBag()
+	{
+		gc.gridx = 0;
+		gc.gridy = 0;
+		gc.weightx = 1.0;
+		gc.weighty = 1.0;
+		gc.gridwidth = 1;
+		gc.fill = GridBagConstraints.BOTH;
+		this.getContentPane().add(playersPane, gc);
+
+		gc.gridx = 0;
+		gc.gridy = 1;
+		gc.fill = 1;
+		gc.weightx = 0.5;
+		gc.weighty = 0.5;
+		gc.gridwidth = 1;
+		// gc.ipadx = 50;
+		gc.ipady = 50;
+		this.getContentPane().add(optionsPane, gc);
+
+		gc.gridx = 0;
+		gc.gridy = 2;
+		gc.weightx = 0.0;
+		gc.weighty = 0.0;
+		gc.gridwidth = 1;
+		gc.ipady = 0;
+		gc.fill = GridBagConstraints.HORIZONTAL;
+		this.getContentPane().add(buttonPane, gc);
+	}
+
+	private String[] getGameList()
+	{
+		File dataDir = new File("./data/");
+		String[] files = dataDir.list();
+		if (files == null || files.length == 0)
+		{
+			// Search in the jar
+			File jarFile = new File("./Rails.jar");
+			try
+			{
+				JarFile jf = new JarFile(jarFile);
+				JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
+				String jeName;
+				Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
+				Matcher m;
+				List games = new ArrayList();
+				for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
+				{
+					m = p.matcher(je.getName());
+					if (m.matches())
+					{
+						// Found a game
+						games.add(m.group(1));
+					}
+				}
+				files = (String[]) games.toArray(new String[0]);
+			}
+			catch (IOException e)
+			{
+				System.out.println("While opening jar file: " + e);
+			}
+		}
+		return files;
+	}
+
+	private void populateGameList(String[] gameNames, JComboBox gameNameBox)
+	{
+		Arrays.sort(gameNames);
+		for (int i = 0; i < gameNames.length; i++)
+		{
+			if (!gameNames[i].equalsIgnoreCase("CVS")
+					&& !gameNames[i].startsWith("."))
+				gameNameBox.addItem(gameNames[i]);
+		}
+	}
+
+	public Options()
+	{
+		super();
+
+		initialize();
+		populateGridBag();
+
+		this.pack();
+		this.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent arg0)
+	{
+		if (arg0.getSource().equals(newButton))
+		{
+			ArrayList playerNames = new ArrayList();
+
+			for (int i = 0; i < playerBoxes.length; i++)
+			{
+				if (playerBoxes[i].getSelectedItem()
+						.toString()
+						.equalsIgnoreCase("Human")
+						&& !playerNameFields[i].getText().equals(""))
+				{
+					playerNames.add(playerNameFields[i].getText());
+				}
+			}
+
+			if (playerNames.size() < Player.MIN_PLAYERS
+					|| playerNames.size() > Player.MAX_PLAYERS)
+			{
+				if (JOptionPane.showConfirmDialog(this,
+						"Not enough players. Continue Anyway?",
+						"Are you sure?",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+				{
+					return;
+				}
+			}
+
+			try
+			{
+				this.setVisible(false);
+
+				Game.initialise(gameNameBox.getSelectedItem().toString());
+				Game.getPlayerManager(playerNames);
+				GameManager.getInstance().startGame();
+
+				GameUILoader.gameUIInit();
+			}
+			catch (NullPointerException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this,
+						"Unable to load selected game.");
+			}
+
+		}
+
+		if (arg0.getSource().equals(loadButton))
+		{
+			// We're not going to actually DO anything with the selected file
+			// until the infrastructure for saved games is built
+			JFileChooser fc = new JFileChooser();
+			int result = fc.showOpenDialog(this.getContentPane());
+		}
+
+		if (arg0.getSource().equals(quitButton))
+		{
+			System.exit(0);
+		}
+
+	}
 }

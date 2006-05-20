@@ -1,14 +1,10 @@
 package ui;
 
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-
 /**
  * Class Scale holds static information used to scale all GUI elements.
- * @version $Id: Scale.java,v 1.2 2005/09/23 19:56:54 wakko666 Exp $
- * @author David Ripton
  */
 
 public final class Scale

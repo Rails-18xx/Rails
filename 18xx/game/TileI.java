@@ -1,17 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TileI.java,v 1.9 2006/01/08 19:32:56 evos Exp $
- * 
- * Created on 23-Oct-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 
 import org.w3c.dom.Element;
 
-/**
- * @author Erik Vos
- */
 public interface TileI
 {
 

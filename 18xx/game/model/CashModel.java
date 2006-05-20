@@ -1,17 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/CashModel.java,v 1.3 2006/02/04 01:12:51 wakko666 Exp $
- * 
- * Created on 10-Dec-2005
- * Change Log:
- */
 package game.model;
 
 import game.Bank;
 import game.CashHolder;
 import game.PublicCompanyI;
 
-/**
- * @author Erik Vos
- */
 public class CashModel extends ModelObject
 {
 

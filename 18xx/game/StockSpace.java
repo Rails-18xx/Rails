@@ -1,18 +1,10 @@
-/*
- * Created on 24-Feb-2005
- * Changes: 
- * 05mar2005 EV: Changed some names.
- */
 package game;
 
 import game.model.ModelObject;
-
 import java.util.*;
 
 /**
  * Objects of this class represent a square on the StockMarket.
- * 
- * @author Erik Vos
  */
 public class StockSpace extends ModelObject implements StockSpaceI
 {

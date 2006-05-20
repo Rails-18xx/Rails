@@ -1,6 +1,3 @@
-/*
- * Created on Apr 29, 2005
- */
 package ui;
 
 import game.*;
@@ -13,9 +10,6 @@ import javax.swing.*;
 
 /**
  * This displays the Auction Window
- * 
- * @author Erik Vos
- * @author Brett
  */
 public class StartRoundWindow extends JFrame implements ActionListener, KeyListener
 {
