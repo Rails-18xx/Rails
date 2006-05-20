@@ -732,38 +732,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         TrainI train;
         int i;
 
-        /*
-        List trainsList = TrainManager.get().getAvailableNewTrains();
-        for (Iterator it = trainsList.iterator(); it.hasNext();) {
-            train = (TrainI) it.next();
-            trainsForSale.add(train.getName() + "-train from IPO at "
-                    + Bank.format(train.getCost()));
-            if (train.canBeExchanged()
-                    && orComp.getPortfolio().getTrains().length > 0) {
-                trainsForSale.add(train.getName()
-                        + "-train from IPO (exchanged) at "
-                        + Bank.format(train.getType()
-                                .getFirstExchangeCost()));
-            }
-        }
-        trainsList = Bank.getPool().getUniqueTrains();
-        for (Iterator it = trainsList.iterator(); it.hasNext();) {
-            train = (TrainI) it.next();
-            trainsForSale.add(train.getName() + "-train from Pool at "
-                    + Bank.format(train.getCost()));
-        }
-        for (int j = 0; j < nc; j++) {
-            c = companies[j];
-            if (c == orComp)
-                continue;
-            trainsList = c.getPortfolio().getUniqueTrains();
-            for (Iterator it = trainsList.iterator(); it.hasNext();) {
-               train = (TrainI) it.next();
-               trainsForSale.add(train.getName() + "-train from "
-                        + c.getName());
-            }
-        }
-        */
         BuyableTrain bTrain;
         Portfolio holder;
         String prompt;
@@ -801,130 +769,101 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 "Buy which train?", "Which train",
                 JOptionPane.QUESTION_MESSAGE, null, prompts.toArray(),
                 prompts.get(1));
-        if (Util.hasValue(boughtTrain)) {
-            Matcher m = buyTrainPattern.matcher(boughtTrain);
-            if (m.matches()) // Why does this sometimes give a
-            // NullPointerException?
-            {
-                String trainType = m.group(1);
-                String sellerName = m.group(2);
-                boolean exchanging = (m.group(3) != null);
-                TrainTypeI type = TrainManager.get().getTypeByName(trainType);
-                train = null;
-                TrainI exchangedTrain = null;
-                Portfolio seller = null;
-                int price = 0;
-                if (type != null) {
-                    if (sellerName.equals("IPO")) {
-                        seller = Bank.getIpo();
-                    } else if (sellerName.equals("Pool")) {
-                        seller = Bank.getPool();
-                    } else if (sellerName != null) {
-                        PublicCompanyI sellingComp = Game.getCompanyManager()
-                                .getPublicCompany(sellerName);
-                        if (sellingComp != null) {
-                            seller = sellingComp.getPortfolio();
+        
+        if (!Util.hasValue(boughtTrain)) return;
+        
+        bTrain = (BuyableTrain) promptToTrain.get(boughtTrain);
+        train = bTrain.getTrain();
+        Portfolio seller = train.getHolder();
+        int price = bTrain.getFixedCost();
 
-                            String sPrice = JOptionPane.showInputDialog(this,
-                                    orComp.getName() + " buys " + boughtTrain
-                                            + " for which price from "
-                                            + sellerName + "?", "Which price?",
-                                    JOptionPane.QUESTION_MESSAGE);
-                            try {
-                                price = Integer.parseInt(sPrice);
-                            } catch (NumberFormatException e) {
-                                price = 0; // FIXME: Need better error handling!
-                            }
-                        }
+        if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
+            String sPrice = JOptionPane.showInputDialog(this,
+                    orComp.getName() + " buys " + boughtTrain
+                            + " for which price from "
+                            + seller.getName() + "?", "Which price?",
+                    JOptionPane.QUESTION_MESSAGE);
+            try {
+                price = Integer.parseInt(sPrice);
+            } catch (NumberFormatException e) {
+                price = 0; // FIXME: Need better error handling!
+            }
+        }
+
+        TrainI exchangedTrain = null;
+        if (train != null && bTrain.isForExchange()) {
+
+            TrainI[] oldTrains = (TrainI[]) orComp.getPortfolio()
+                    .getUniqueTrains().toArray(new TrainI[0]);
+            String[] options = new String[oldTrains.length + 1];
+            options[0] = "None";
+            for (int j = 0; j < oldTrains.length; j++) {
+                options[j + 1] = oldTrains[j].getName();
+            }
+            String exchangedTrainName = (String) JOptionPane
+                    .showInputDialog(this,
+                            "Which train to exchange for "
+                                    + Bank.format(price),
+                            "Which train to exchange",
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            options, options[1]);
+            if (exchangedTrainName != null
+                    && !exchangedTrainName.equalsIgnoreCase("None")) {
+                exchangedTrain = orComp.getPortfolio().getTrainOfType(
+                        exchangedTrainName);
+            }
+
+        }
+
+        if (train != null) {
+            if (!oRound.buyTrain(orComp.getName(), train, price,
+                    exchangedTrain)) {
+                JOptionPane.showMessageDialog(this, Log
+                        .getErrorBuffer());
+            } else {
+                if (seller == Bank.getIpo()) {
+
+                    if (TrainManager.get().hasAvailabilityChanged()) {
+                        TrainManager.get().resetAvailabilityChanged();
                     }
                 }
+                trainsBought.add(train);
+                newTrainCost[orCompIndex].setText(Bank.format(oRound
+                        .getLastTrainBuyCost()));
 
-                if (seller != null) {
-                    train = seller.getTrainOfType(type);
-                }
-
-                if (train != null && exchanging) {
-
-                    TrainI[] oldTrains = (TrainI[]) orComp.getPortfolio()
-                            .getUniqueTrains().toArray(new TrainI[0]);
-                    String[] options = new String[oldTrains.length + 1];
-                    options[0] = "None";
-                    for (int j = 0; j < oldTrains.length; j++) {
-                        options[j + 1] = oldTrains[j].getName();
-                    }
-                    String exchangedTrainName = (String) JOptionPane
-                            .showInputDialog(this,
-                                    "Which train to exchange for "
-                                            + Bank.format(type
-                                                    .getFirstExchangeCost()),
-                                    "Which train to exchange",
-                                    JOptionPane.QUESTION_MESSAGE, null,
-                                    options, options[1]);
-                    if (exchangedTrainName != null
-                            && !exchangedTrainName.equalsIgnoreCase("None")) {
-                        price = type.getFirstExchangeCost();
-                        exchangedTrain = orComp.getPortfolio().getTrainOfType(
-                                exchangedTrainName);
-                    }
-
-                }
-
-                if (train != null) {
-                    if (!oRound.buyTrain(orComp.getName(), train, price,
-                            exchangedTrain)) {
-                        JOptionPane.showMessageDialog(this, Log
-                                .getErrorBuffer());
-                    } else {
-                        /*
-                         * if (seller.getOwner() instanceof PublicCompanyI) {
-                         * for (int k = 0; k < companies.length; k++) { if
-                         * (companies[i] == seller.getOwner()) { updateCash(k);
-                         * break; } } } else
-                         */if (seller == Bank.getIpo()) {
-
-                            if (TrainManager.get().hasAvailabilityChanged()) {
-                                TrainManager.get().resetAvailabilityChanged();
-                            }
+                // Check if any trains must be discarded
+                if (TrainManager.get().hasPhaseChanged()) {
+                    Iterator it = Game.getCompanyManager()
+                            .getCompaniesWithExcessTrains().iterator();
+                    while (it.hasNext()) {
+                        PublicCompanyI c = (PublicCompanyI) it.next();
+                        TrainI[] oldTrains = (TrainI[]) c.getPortfolio()
+                                .getUniqueTrains().toArray(new TrainI[0]);
+                        String[] options = new String[oldTrains.length];
+                        for (int j = 0; j < oldTrains.length; j++) {
+                            options[j] = oldTrains[j].getName();
                         }
-                        trainsBought.add(train);
-                        newTrainCost[orCompIndex].setText(Bank.format(oRound
-                                .getLastTrainBuyCost()));
-
-                        // Check if any trains must be discarded
-                        if (TrainManager.get().hasPhaseChanged()) {
-                            Iterator it = Game.getCompanyManager()
-                                    .getCompaniesWithExcessTrains().iterator();
-                            while (it.hasNext()) {
-                                PublicCompanyI c = (PublicCompanyI) it.next();
-                                TrainI[] oldTrains = (TrainI[]) c.getPortfolio()
-                                        .getUniqueTrains().toArray(new TrainI[0]);
-                                String[] options = new String[oldTrains.length];
-                                for (int j = 0; j < oldTrains.length; j++) {
-                                    options[j] = oldTrains[j].getName();
-                                }
-                                String discardedTrainName = (String) JOptionPane
-                                        .showInputDialog(
-                                                this,
-                                                "Company "
-                                                        + c.getName()
-                                                        + " has too many trains. Which train to discard?",
-                                                "Which train to exchange",
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                null, options, options[0]);
-                                if (discardedTrainName != null) {
-                                    TrainI discardedTrain = c.getPortfolio()
-                                            .getTrainOfType(discardedTrainName);
-                                    c.getPortfolio().discardTrain(
-                                            discardedTrain);
-                                }
-                            }
-                            
-                            
+                        String discardedTrainName = (String) JOptionPane
+                                .showInputDialog(
+                                        this,
+                                        "Company "
+                                                + c.getName()
+                                                + " has too many trains. Which train to discard?",
+                                        "Which train to exchange",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null, options, options[0]);
+                        if (discardedTrainName != null) {
+                            TrainI discardedTrain = c.getPortfolio()
+                                    .getTrainOfType(discardedTrainName);
+                            c.getPortfolio().discardTrain(
+                                    discardedTrain);
                         }
                     }
-
+                    
+                    
                 }
             }
+
         }
 
     }
