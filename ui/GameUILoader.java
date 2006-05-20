@@ -1,12 +1,7 @@
-/*
- * Created on Apr 25, 2005
- */
 package ui;
 
 /**
  * This class is called by main() and loads all of the UI components
- * 
- * @author blentz
  */
 public class GameUILoader
 {

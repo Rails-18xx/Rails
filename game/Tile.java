@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Tile.java,v 1.13 2006/01/08 19:32:57 evos Exp $
- * 
- * Created on 23-Oct-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
@@ -11,9 +6,6 @@ import java.util.regex.*;
 import org.w3c.dom.*;
 import util.XmlUtils;
 
-/**
- * @author Erik Vos
- */
 public class Tile implements TileI
 {
 

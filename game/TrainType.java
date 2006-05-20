@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainType.java,v 1.5 2006/04/23 15:53:40 evos Exp $
- * 
- * Created on 19-Aug-2005
- * Change Log:
- */
 package game;
 
 import java.util.ArrayList;
@@ -12,9 +7,6 @@ import org.w3c.dom.*;
 
 import util.XmlUtils;
 
-/**
- * @author Erik Vos
- */
 public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 {
 
@@ -40,7 +32,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	protected boolean firstCanBeExchanged = false;
 	protected int numberBoughtFromIPO = 0;
-	
+
 	private boolean real; // Only to determine if top-level attributes must be
 	// read.
 
@@ -256,13 +248,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		return firstCanBeExchanged && numberBoughtFromIPO == 0;
 	}
-	
-	public void addToBoughtFromIPO () {
-	    numberBoughtFromIPO++;
+
+	public void addToBoughtFromIPO()
+	{
+		numberBoughtFromIPO++;
 	}
-	
-	public int getNumberBoughtFromIPO () {
-	    return numberBoughtFromIPO;
+
+	public int getNumberBoughtFromIPO()
+	{
+		return numberBoughtFromIPO;
 	}
 
 	/**

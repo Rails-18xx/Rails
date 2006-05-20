@@ -1,8 +1,3 @@
-/*
- * $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyType.java,v 1.8 2006/01/04 20:49:24 evos Exp $
- * Created on 19mar2005 by Erik Vos
- * Changes: 
- */
 package game;
 
 import org.w3c.dom.Element;
@@ -15,8 +10,6 @@ import org.w3c.dom.Element;
  * This class contains common properties of the companies of one type, and aids
  * in configuring the companies by reducing the need to repeatedly specify
  * common properties with different companies.
- * 
- * @author Erik Vos
  */
 public class CompanyType implements CompanyTypeI
 {

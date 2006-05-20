@@ -1,13 +1,7 @@
-/*
- * Created on Apr 28, 2005
- */
 package game;
 
 import java.util.*;
 
-/**
- * @author blentz
- */
 public class PlayerManager
 {
 

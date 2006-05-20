@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartItem.java,v 1.8 2005/10/11 17:35:29 wakko666 Exp $
- * 
- * Created on 04-May-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
@@ -14,8 +9,6 @@ import java.util.*;
  * <p>
  * During XML parsing, only the certificate name and other attributes are saved.
  * The certificate objects are linked to in the later initialisation step.
- * 
- * @author Erik Vos
  */
 public class StartItem
 {

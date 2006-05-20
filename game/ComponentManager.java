@@ -1,8 +1,3 @@
-/*
- * Created on 05-Mar-2005
- *
- * IG Adams
- */
 package game;
 
 import java.lang.reflect.Constructor;
@@ -16,8 +11,6 @@ import org.w3c.dom.NodeList;
 import util.XmlUtils;
 
 /**
- * @author iadams
- * 
  * ComponentManage - an implementation of ComponentManagerI, which handles the
  * creation and configuration of game components, and acts as a discovery point
  * for other components to find them.

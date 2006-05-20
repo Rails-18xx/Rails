@@ -1,7 +1,3 @@
-/*
- * Created on 05mar2005
- *
- */
 package game;
 
 import game.model.CashModel;
@@ -27,8 +23,6 @@ import util.XmlUtils;
  * form in which ownership is expressed.
  * <p>
  * Company shares may or may not have a price on the stock market.
- * 
- * @author Erik Vos
  */
 public class PublicCompany extends Company implements PublicCompanyI
 {

@@ -1,14 +1,7 @@
-/*
- * Created on 05mar2005
- *
- */
 package game;
 
 import java.util.*;
 
-/**
- * @author Erik Vos
- */
 public abstract class Company implements CompanyI, ConfigurableComponentI,
 		Cloneable
 {
@@ -236,4 +229,5 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		
 		return false;
 	}
+
 }

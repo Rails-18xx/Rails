@@ -1,6 +1,3 @@
-/*
- * Created on 30-Apr-2005
- */
 package game;
 
 import java.util.List;
@@ -8,8 +5,6 @@ import java.util.List;
 /**
  * A common interface to the various "Rounds". A Round is defined as any process
  * in an 18xx game where different players have "turns".
- * 
- * @author Erik Vos
  */
 public interface Round
 {

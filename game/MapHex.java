@@ -1,15 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/MapHex.java,v 1.31 2006/02/02 22:29:21 evos Exp $
- * 
- * Created on 10-Aug-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 import java.util.regex.*;
-
 import org.w3c.dom.*;
-
 import util.XmlUtils;
 
 /**
@@ -36,8 +29,6 @@ import util.XmlUtils;
  * <p>
  * For EW-oriented tiles the above picture should be rotated 30 degrees
  * clockwise.
- * 
- * @author Erik Vos
  */
 public class MapHex implements ConfigurableComponentI, TokenHolderI
 {

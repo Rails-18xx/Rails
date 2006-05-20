@@ -1,27 +1,7 @@
-/*
- * Rails: an 18xx game system. Copyright (C) 2005 Brett Lentz
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
 package game;
 
 import game.special.*;
-
 import java.util.*;
-
 import util.Util;
 
 /**
@@ -31,8 +11,6 @@ import util.Util;
  * round, the current instance should be discarded.
  * <p>
  * Permanent memory is formed by static attributes.
- * 
- * @author Erik Vos
  */
 public class OperatingRound implements Round
 {
@@ -853,6 +831,15 @@ public class OperatingRound implements Round
 			errMsg = "Wrong company " + companyName;
 			return false;
 		}
+		
+		if(operatingCompany.getPortfolio().getTrains().length == 0)
+		{
+			//FIXME: Need to check for valid route before throwing an error.
+			errMsg = companyName + " owns no trains.";
+			setStep(STEP_BUY_TRAIN);
+			Log.error(errMsg);
+			return false;
+		}
 
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
@@ -1180,6 +1167,17 @@ public class OperatingRound implements Round
 	public int getStep()
 	{
 		return step;
+	}
+	
+	/**
+	 * Bypass normal order of operations and explicitly set round step.
+	 * This should only be done for specific game exceptions, such as forced train purchases.
+	 * 
+	 * @param step
+	 */
+	private void setStep(int step)
+	{
+		this.step = step;
 	}
 
 	public int getOperatingCompanyIndex()

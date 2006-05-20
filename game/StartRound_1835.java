@@ -1,16 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1835.java,v 1.7 2005/11/20 15:26:24 evos Exp $
- * 
- * Created on 23-May-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 
 /**
  * Implements an 1835-style startpacket sale.
- * 
- * @author Erik Vos
  */
 public class StartRound_1835 extends StartRound
 {

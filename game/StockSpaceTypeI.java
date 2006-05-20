@@ -1,21 +1,7 @@
-/*
- * Created on 12-Mar-2005
- */
 package game;
-
-/*
- * $Header: /cvsroot/rails/18xx/game/StockSpaceTypeI.java,v 1.3 2005/05/24
- * 21:38:04 evos Exp $
- * 
- * Created 19mar2005 by Erik Vos Changes:
- * 
- */
 
 /**
  * The interface for StockSpaceType.
- * 
- * @author Erik Vos
- * 
  */
 public interface StockSpaceTypeI
 {

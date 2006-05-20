@@ -1,13 +1,6 @@
-/*
- * Created on 05-Mar-2005
- *
- * IG Adams
- */
 package game;
 
 /**
- * @author iadams
- * 
  * Class for reporting problems with reading configuration files.
  */
 public class ConfigurationException extends Exception

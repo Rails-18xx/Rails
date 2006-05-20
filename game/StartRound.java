@@ -1,15 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound.java,v 1.8 2005/11/25 22:38:25 evos Exp $
- * 
- * Created on 06-May-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 
-/**
- * @author Erik Vos
- */
 public abstract class StartRound implements StartRoundI
 {
 

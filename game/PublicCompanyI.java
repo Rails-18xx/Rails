@@ -1,7 +1,3 @@
-/*
- * Created on 05mar2005
- *
- */
 package game;
 
 import game.model.ModelObject;
@@ -12,8 +8,6 @@ import java.util.*;
 
 /**
  * Interface to be used to access PublicCompany instances.
- * 
- * @author Erik Vos
  */
 public interface PublicCompanyI extends CompanyI, CashHolder
 {

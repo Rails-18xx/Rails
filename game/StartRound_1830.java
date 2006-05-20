@@ -1,16 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/StartRound_1830.java,v 1.11 2005/11/20 15:26:24 evos Exp $
- * 
- * Created on 06-May-2005
- * Change Log:
- */
 package game;
 
 import java.util.*;
 
 /**
  * Implements an 1830-style initial auction.
- * 
- * @author Erik Vos
  */
 public class StartRound_1830 extends StartRound
 {

@@ -1,6 +1,3 @@
-/*
- * Created on Apr 24, 2005
- */
 package test;
 
 import ui.*;

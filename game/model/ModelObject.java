@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/model/Attic/ModelObject.java,v 1.3 2006/04/17 20:45:35 evos Exp $
- * 
- * Created on 08-Dec-2005
- * Change Log:
- */
 package game.model;
 
 import java.util.Observable;
@@ -12,7 +7,6 @@ import java.util.Observable;
  * in some form in the View (UI).
  * <p>This class extends Observable to allow it to be used with the Observer
  * pattern, but this usage is optional.
- * @author Erik Vos
  */
 public abstract class ModelObject extends Observable {
     

@@ -1,13 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TrainI.java,v 1.4 2006/04/23 15:53:40 evos Exp $
- * 
- * Created on 21-Aug-2005
- * Change Log:
- */
 package game;
 
-/**
- * @author Erik Vos
- */
 public interface TrainI
 {
 
@@ -58,6 +50,5 @@ public interface TrainI
 	public void setRusted();
 
 	public boolean canBeExchanged();
-
 
 }

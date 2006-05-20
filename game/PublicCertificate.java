@@ -1,14 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/PublicCertificate.java,v 1.3 2005/10/11 17:35:29 wakko666 Exp $
- * 
- * Created on 09-Apr-2005 by Erik Vos
- * 
- * Change Log:
- */
 package game;
 
-/**
- * @author Erik
- */
 public class PublicCertificate implements PublicCertificateI, Cloneable
 {
 

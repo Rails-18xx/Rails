@@ -1,15 +1,8 @@
-/*
- * Created on 12-Mar-2005
- */
 package game;
 
 import java.util.List;
-
 import org.w3c.dom.Element;
 
-/**
- * @author Erik
- */
 public interface StockMarketI
 {
 

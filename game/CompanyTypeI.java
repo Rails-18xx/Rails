@@ -1,17 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/CompanyTypeI.java,v 1.7 2006/01/04 20:49:24 evos Exp $ 
- * 
- * Created 19mar2005 by Erik Vos
- * Changes:
- * 
- */
 package game;
 
 import org.w3c.dom.Element;
 
 /**
  * The interface for StockSpaceType.
- * @author Erik Vos 
- * 
  */
 public interface CompanyTypeI {
 

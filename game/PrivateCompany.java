@@ -1,7 +1,3 @@
-/*
- * Created on 05mar2005
- *
- */
 package game;
 
 import game.special.SpecialPropertyI;
@@ -13,9 +9,6 @@ import org.w3c.dom.*;
 import util.Util;
 import util.XmlUtils;
 
-/**
- * @author Erik Vos
- */
 public class PrivateCompany extends Company implements PrivateCompanyI
 {
 
@@ -27,7 +20,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	protected List specialProperties = null;
 	protected String auctionType;
 	protected int closingPhase;
-	
+
 	protected List blockedHexes = null;
 
 	protected boolean closed = false;
@@ -55,47 +48,58 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
 					"revenue",
 					"0"));
-			
-			// Blocked hexes (until bought by a company)
-			Element blEl = (Element) element.getElementsByTagName("Blocking").item(0);
-			if (blEl != null) {
-			    String[] hexes = XmlUtils.extractStringAttribute(blEl.getAttributes(), "hex").split(",");
-			    if (hexes != null && hexes.length > 0) {
-			        blockedHexes = new ArrayList();
-			        for (int i=0; i<hexes.length; i++) {
-			            MapHex hex = MapManager.getInstance().getHex(hexes[i]);
-			            blockedHexes.add(hex);
-			            hex.setBlocked(true);
-			        }
-			    }
-			}
-			
-			// Special properties
-			Element spsEl = (Element) element.getElementsByTagName("SpecialProperties").item(0);
-			if (spsEl != null) {
-			    specialProperties = new ArrayList();
-			    NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
-			    Element spEl;
-			    String condition, className;
-			    for (int i=0; i<spsNl.getLength(); i++) {
-			        spEl = (Element) spsNl.item(i);
-			        nnp2 = spEl.getAttributes();
-			        condition = XmlUtils.extractStringAttribute(nnp2, "condition");
-			        if (!Util.hasValue(condition))
-			            throw new ConfigurationException ("Missing condition in private special property");
-			        className = XmlUtils.extractStringAttribute(nnp2, "class");
-			        if (!Util.hasValue(className))
-			            throw new ConfigurationException ("Missing class in private special property");
-			        
-			        SpecialPropertyI sp =(SpecialPropertyI) Class.forName(className).newInstance();
-			        sp.setCompany (this);
-			        sp.setCondition (condition);
-			        specialProperties.add(sp);
-			        sp.configureFromXML(spEl);
 
-			    }
+			// Blocked hexes (until bought by a company)
+			Element blEl = (Element) element.getElementsByTagName("Blocking")
+					.item(0);
+			if (blEl != null)
+			{
+				String[] hexes = XmlUtils.extractStringAttribute(blEl.getAttributes(),
+						"hex")
+						.split(",");
+				if (hexes != null && hexes.length > 0)
+				{
+					blockedHexes = new ArrayList();
+					for (int i = 0; i < hexes.length; i++)
+					{
+						MapHex hex = MapManager.getInstance().getHex(hexes[i]);
+						blockedHexes.add(hex);
+						hex.setBlocked(true);
+					}
+				}
 			}
-			
+
+			// Special properties
+			Element spsEl = (Element) element.getElementsByTagName("SpecialProperties")
+					.item(0);
+			if (spsEl != null)
+			{
+				specialProperties = new ArrayList();
+				NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
+				Element spEl;
+				String condition, className;
+				for (int i = 0; i < spsNl.getLength(); i++)
+				{
+					spEl = (Element) spsNl.item(i);
+					nnp2 = spEl.getAttributes();
+					condition = XmlUtils.extractStringAttribute(nnp2,
+							"condition");
+					if (!Util.hasValue(condition))
+						throw new ConfigurationException("Missing condition in private special property");
+					className = XmlUtils.extractStringAttribute(nnp2, "class");
+					if (!Util.hasValue(className))
+						throw new ConfigurationException("Missing class in private special property");
+
+					SpecialPropertyI sp = (SpecialPropertyI) Class.forName(className)
+							.newInstance();
+					sp.setCompany(this);
+					sp.setCondition(condition);
+					specialProperties.add(sp);
+					sp.configureFromXML(spEl);
+
+				}
+			}
+
 		}
 		catch (Exception e)
 		{
@@ -184,12 +188,15 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	 */
 	public void setClosed()
 	{
-	    if (!closed) {
+		if (!closed)
+		{
 			closed = true;
 			unblockHexes();
-			Portfolio.transferCertificate(this, portfolio, Bank.getUnavailable());
+			Portfolio.transferCertificate(this,
+					portfolio,
+					Bank.getUnavailable());
 			Log.write("Private " + name + " closes");
-	    }
+		}
 	}
 
 	/**
@@ -206,20 +213,26 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	public void setHolder(Portfolio portfolio)
 	{
 		this.portfolio = portfolio;
-		
-		/* If this private is blocking map hexes, unblock these hexes
-		 * as soon as it is bought by a company. */
-		if (portfolio.getOwner() instanceof CompanyI) {
-		    unblockHexes();
+
+		/*
+		 * If this private is blocking map hexes, unblock these hexes as soon as
+		 * it is bought by a company.
+		 */
+		if (portfolio.getOwner() instanceof CompanyI)
+		{
+			unblockHexes();
 		}
 	}
-	
-	protected void unblockHexes () {
-		if (blockedHexes != null) {
-		    Iterator it = blockedHexes.iterator();
-		    while (it.hasNext()) {
-		        ((MapHex)it.next()).setBlocked(false);
-		    }
+
+	protected void unblockHexes()
+	{
+		if (blockedHexes != null)
+		{
+			Iterator it = blockedHexes.iterator();
+			while (it.hasNext())
+			{
+				((MapHex) it.next()).setBlocked(false);
+			}
 		}
 	}
 
@@ -251,12 +264,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		}
 		return clone;
 	}
-	
-	public List getSpecialProperties() {
-	    return specialProperties;
+
+	public List getSpecialProperties()
+	{
+		return specialProperties;
 	}
 
-	
 	public List getBlockedHexes()
 	{
 		return blockedHexes;
