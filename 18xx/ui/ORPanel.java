@@ -719,8 +719,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         updateStatus();
 
-        if (done
-                && !(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)) {
+        if (/*done
+                &&*/ !(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)) {
             ORWindow.updateORWindow();
         }
     }
@@ -749,16 +749,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             /* Create a prompt per buying option */
             b = new StringBuffer();
             
-            if (bTrain.mustRaiseCashFor()) {
-                b.append("Raise ").append(Bank.format(bTrain.getCashToRaise()))
-                	.append(" for ");
-            }
             b.append (train.getName()).append("-train from ").append(train.getHolder().getName());
             if (bTrain.isForExchange()) {
                 b.append (" (exchanged)");
             }
             if (cost > 0) {
                 b.append (" at ").append(Bank.format(cost));
+            }
+            if (bTrain.mustPresidentAddCash()) {
+                b.append (" (you must add ")
+                	.append(Bank.format(bTrain.getPresidentCashToAdd()))
+                	.append (")");
+            } else if (bTrain.mayPresidentAddCash()) {
+                b.append (" (you may add up to ")
+            	.append(Bank.format(bTrain.getPresidentCashToAdd()))
+            	.append (")");
             }
             prompt = b.toString();
             prompts.add(prompt);
@@ -773,6 +778,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         if (!Util.hasValue(boughtTrain)) return;
         
         bTrain = (BuyableTrain) promptToTrain.get(boughtTrain);
+        if (bTrain == null) return;
+        
         train = bTrain.getTrain();
         Portfolio seller = train.getHolder();
         int price = bTrain.getFixedCost();
@@ -816,7 +823,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
 
         if (train != null) {
-            if (!oRound.buyTrain(orComp.getName(), train, price,
+            if (!oRound.buyTrain(orComp.getName(), bTrain, price,
                     exchangedTrain)) {
                 JOptionPane.showMessageDialog(this, Log
                         .getErrorBuffer());

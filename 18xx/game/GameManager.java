@@ -34,9 +34,10 @@ public class GameManager implements ConfigurableComponentI
 	 * privates payout and then immediately starts a new Start Round.
 	 */
 	protected static Round currentRound = null;
+	protected static Round interruptedRound = null;
 
-	protected Round insertingRound = null;
-	protected Round insertedRound = null;
+	//protected Round insertingRound = null;
+	//protected Round insertedRound = null;
 	protected int orNumber;
 	protected int numOfORs;
 
@@ -252,6 +253,18 @@ public class GameManager implements ConfigurableComponentI
 	{
 		playHomeTokens();
 		new OperatingRound();
+	}
+	
+	public void startShareSellingRound(OperatingRound or, 
+	        PublicCompanyI companyNeedingTrain, int cashToRaise) {
+	    
+	    interruptedRound = currentRound;
+	    new ShareSellingRound (companyNeedingTrain, cashToRaise).start();
+	}
+	
+	public void finishShareSellingRound () {
+	    currentRound = interruptedRound;
+	    ((OperatingRound)currentRound).resumeTrainBuying();
 	}
 
 	private void finishGame()

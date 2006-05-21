@@ -225,7 +225,17 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		else if (currentRound instanceof StockRound)
 		{
 
-			passButton.setEnabled(true);
+		    if ((currentRound instanceof ShareSellingRound)) {
+				passButton.setEnabled(false);
+				int cash = ((ShareSellingRound)currentRound).getRemainingCashToRaise();
+				JOptionPane.showMessageDialog(this,
+						"You must raise "+Bank.format(cash)+" by selling shares",
+						"",
+						JOptionPane.OK_OPTION);
+		    } else {
+				passButton.setEnabled(true);
+		    }
+			passButton.setEnabled(!(currentRound instanceof ShareSellingRound));
 			stockRound = (StockRound) currentRound;
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			
@@ -263,7 +273,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 		else if (currentRound instanceof OperatingRound)
 		{
-		    System.out.println("StatusWindow updating ORPanel");
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
 
@@ -432,8 +441,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				}
 				else
 				{
-					gameStatus.updatePlayer(compIndex, playerIndex);
-					gameStatus.updateIPO(compIndex);
+					//gameStatus.updatePlayer(compIndex, playerIndex);
+					//gameStatus.updateIPO(compIndex);
 				}
 			}
 			else
@@ -458,8 +467,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				}
 				else
 				{
-					gameStatus.updatePlayer(compIndex, playerIndex);
-					gameStatus.updatePool(compIndex);
+					//gameStatus.updatePlayer(compIndex, playerIndex);
+					//gameStatus.updatePool(compIndex);
 					 //gameStatus.updateBank();
 				}
 			}
