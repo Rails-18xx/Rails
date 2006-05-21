@@ -16,8 +16,8 @@ public class OperatingRound implements Round
 {
 
 	/* Transient memory (per round only) */
-	protected Player currentPlayer;
-	protected int currentPlayerIndex;
+	//protected Player currentPlayer;
+	//protected int currentPlayerIndex;
 	protected int step;
 	protected boolean actionPossible = true;
 	protected String actionNotPossibleMessage = "";
@@ -39,6 +39,10 @@ public class OperatingRound implements Round
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
+	
+	protected BuyableTrain savedBuyableTrain = null;
+	protected int savedPrice = 0;
+	protected int cashToBeRaisedByPresident = 0;
 
 	/**
 	 * Number of tiles that may be laid. TODO: This does not cover cases like "2
@@ -859,17 +863,20 @@ public class OperatingRound implements Round
 
 	/**
 	 */
-	public boolean buyTrain(String companyName, TrainI train, int price)
+	public boolean buyTrain(String companyName, BuyableTrain bTrain, int price)
 	{
 
-		return buyTrain(companyName, train, price, null);
+		return buyTrain(companyName, bTrain, price, null);
 	}
 
-	public boolean buyTrain(String companyName, TrainI train, int price,
+	public boolean buyTrain(String companyName, BuyableTrain bTrain, int price,
 			TrainI exchangedTrain)
 	{
 
+	    TrainI train = null;
 		String errMsg = null;
+		int presidentCash = 0;
+		boolean presidentMustSellShares = false;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -892,7 +899,7 @@ public class OperatingRound implements Round
 				break;
 			}
 
-			if (train == null)
+			if (bTrain == null || (train = bTrain.getTrain()) == null)
 			{
 				errMsg = "No train specified";
 				break;
@@ -919,20 +926,59 @@ public class OperatingRound implements Round
 				errMsg = "Would exceed train limit of " + trainLimit;
 				break;
 			}
-
-			// Does the company have the money?
-			if (price > operatingCompany.getCash())
-			{
-				errMsg = "Not enough money";
-				break;
+			
+			/* Check if this is an emergency buy */
+			Player currentPlayer = operatingCompany.getPresident();
+			if (bTrain.mustPresidentAddCash()) {
+			    // From the Bank
+		        presidentCash = bTrain.getPresidentCashToAdd();
+			    if (currentPlayer.getCash() >= presidentCash) {
+			        Bank.transferCash(currentPlayer, operatingCompany, presidentCash);
+			    } else {
+			        presidentMustSellShares = true;
+			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
+			    }
+			} else if (bTrain.mayPresidentAddCash()) {
+			    // From another company
+			    presidentCash = price - operatingCompany.getCash();
+			    if (presidentCash > bTrain.getPresidentCashToAdd()) {
+			        errMsg = "President may not add more than " 
+			            + Bank.format (bTrain.getPresidentCashToAdd());
+			        break;
+			    } else if (currentPlayer.getCash() >= presidentCash) {
+			        Bank.transferCash(currentPlayer, operatingCompany, presidentCash);
+			    } else {
+			        presidentMustSellShares = true;
+			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
+			    }
+			    
+			} else {
+			    // No forced buy - does the company have the money?
+				if (price > operatingCompany.getCash())
+				{
+					errMsg = "Not enough money";
+					break;
+				}
 			}
+
 			break;
 		}
 		if (errMsg != null)
 		{
-			Log.error(companyName + " cannot buy " + train.getName()
-					+ "-train for " + Bank.format(price) + ": " + errMsg);
+			Log.error(companyName + " cannot buy " 
+			        + (train != null ? train.getName()+"-" : "unknown ")
+					+ "train for " + Bank.format(price) + ": " + errMsg);
 			return false;
+		}
+		
+		if (presidentMustSellShares) {
+		    savedBuyableTrain = bTrain;
+		    savedPrice = price;
+
+			GameManager.getInstance().startShareSellingRound (this, operatingCompany, 
+			        cashToBeRaisedByPresident);
+
+		    return true;
 		}
 
 		Portfolio oldHolder = train.getHolder();
@@ -964,6 +1010,12 @@ public class OperatingRound implements Round
 		currentPhase = GameManager.getCurrentPhase();
 
 		return true;
+	}
+	
+	public void resumeTrainBuying () {
+	    
+	    buyTrain (operatingCompany.getName(), savedBuyableTrain, savedPrice);
+	    savedBuyableTrain = null;
 	}
 
 	public int getLastTrainBuyCost()
@@ -1132,7 +1184,7 @@ public class OperatingRound implements Round
 		return true;
 
 	}
-
+	
 	/*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
 	/**
@@ -1215,7 +1267,7 @@ public class OperatingRound implements Round
 	 * @return List of all trains that could potentially be bought.
 	 */
 	/* Part of this logic was originally part of ui.ORPanel, 
-	 * but was moved here by EV 20may2006 as it belongs here. */ 
+	 * but was moved here by EV 20may2006 where it belongs. */ 
 	public List getBuyableTrains() {
 	    
 	    if (operatingCompany == null) return null;
@@ -1226,6 +1278,7 @@ public class OperatingRound implements Round
 	    List trains;
 	    TrainI train;
 	    boolean hasTrains = operatingCompany.getPortfolio().getTrains().length > 0;
+	    boolean presidentMayHelp = false;
 	    TrainI cheapestTrain = null;
 	    int costOfCheapestTrain = 0;
 	    
@@ -1260,18 +1313,24 @@ public class OperatingRound implements Round
 		}
 		if (!hasTrains && buyableTrains.isEmpty()) {
 		    buyableTrains.add (new BuyableTrain (cheapestTrain, costOfCheapestTrain)
-		            .setMustRaiseCash(costOfCheapestTrain - cash));
+		            .setPresidentMustAddCash(costOfCheapestTrain - cash));
+		    presidentMayHelp = true;
 		}
 		
 		/* Other company trains */
 		PublicCompanyI c;
+		BuyableTrain bt;
 		for (int j = 0; j < operatingCompanyArray.length; j++) {
 			c = operatingCompanyArray[j];
 			if (c == operatingCompany) continue;
 			trains = c.getPortfolio().getUniqueTrains();
 			for (Iterator it = trains.iterator(); it.hasNext();) {
 			    train = (TrainI) it.next();
-			    buyableTrains.add (new BuyableTrain (train, 0));
+			    bt = new BuyableTrain (train, 0);
+			    if (presidentMayHelp && cash < train.getCost()) {
+			        bt.setPresidentMayAddCash(train.getCost() - cash);
+			    }
+			    buyableTrains.add (bt);
 			}
 		}
     

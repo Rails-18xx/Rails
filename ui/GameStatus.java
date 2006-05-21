@@ -500,6 +500,7 @@ public class GameStatus extends JPanel implements ActionListener
 		return compBuyPoolIndex;
 	}
 
+	/*
 	public void updatePlayer(int compIndex, int playerIndex)
 	{
 		int share = players[playerIndex].getPortfolio()
@@ -532,6 +533,7 @@ public class GameStatus extends JPanel implements ActionListener
 		if (share == 0)
 			setPoolCertButton(compIndex, false);
 	}
+	*/
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
@@ -642,40 +644,11 @@ public class GameStatus extends JPanel implements ActionListener
 		certInPoolButton[i].setVisible(clickable);
 	}
 
-	/**
-	 * ----- Actions from other windows that have consequences here -----
-	 * (perhaps we should do all this via Events) We will check all players, as
-	 * some items my have been assigned "behind the curtains".
-	 */
-	public void updatePlayers()
-	{
-
-		Player p;
-		Portfolio pf;
-		String compName;
-		int compIndex, share;
-
-		for (int i = 0; i < np; i++)
-		{
-			p = players[i];
-			pf = p.getPortfolio();
-
-			Iterator it = pf.getCertPerCompany().keySet().iterator();
-			while (it.hasNext())
-			{
-				compName = (String) it.next();
-				compIndex = cm.getPublicCompany(compName).getPublicNumber();
-				share = pf.ownsShare(companies[compIndex]);
-				String text = share > 0 ? share + "%" : "";
-				certPerPlayer[compIndex][i].setText(text);
-			}
-		}
-		parent.pack();
-	}
-
+	/*
 	public void updateRevenue(int compIndex)
 	{
 		compRevenue[compIndex].setText(Bank.format(companies[compIndex].getLastRevenue()));
 	}
+	*/
 
 }

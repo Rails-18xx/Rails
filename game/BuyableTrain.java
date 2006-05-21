@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/BuyableTrain.java,v 1.1 2006/05/20 20:54:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/BuyableTrain.java,v 1.2 2006/05/21 18:48:03 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -13,8 +13,9 @@ public class BuyableTrain {
     private TrainI train;
     private int fixedCost = 0;
     private boolean forExchange = false;
-    private boolean mustRaiseCash = false;
-    private int cashToRaise = 0;
+    private boolean presidentMustAddCash = false;
+    private boolean presidentMayAddCash = false;
+    private int presidentCashToAdd = 0;
     
     public BuyableTrain (TrainI train, int fixedCost) {
         
@@ -27,9 +28,15 @@ public class BuyableTrain {
         return this;
     }
     
-    public BuyableTrain setMustRaiseCash (int amount) {
-        mustRaiseCash = true;
-        cashToRaise = amount;
+    public BuyableTrain setPresidentMustAddCash (int amount) {
+        presidentMustAddCash = true;
+        presidentCashToAdd = amount;
+        return this;
+    }
+    
+    public BuyableTrain setPresidentMayAddCash (int amount) {
+        presidentMayAddCash = true;
+        presidentCashToAdd = amount;
         return this;
     }
     
@@ -45,12 +52,16 @@ public class BuyableTrain {
         return forExchange;
     }
     
-    public boolean mustRaiseCashFor () {
-        return mustRaiseCash;
+    public boolean mustPresidentAddCash () {
+        return presidentMustAddCash;
     }
     
-    public int getCashToRaise () {
-        return cashToRaise;
+    public boolean mayPresidentAddCash () {
+        return presidentMayAddCash;
+    }
+    
+    public int getPresidentCashToAdd () {
+        return presidentCashToAdd;
     }
     
     public Portfolio getHolder () {
