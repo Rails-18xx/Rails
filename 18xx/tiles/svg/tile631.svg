@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   viewBox="0 0 1 1"
+   preserveAspectRatio="none"
+   id="svg1934"
+   sodipodi:version="0.32"
+   inkscape:version="0.43"
+   sodipodi:docname="tile631.svg"
+   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
+   version="1.0">
+  <metadata
+     id="metadata1989">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1987" />
+  <sodipodi:namedview
+     inkscape:window-height="540"
+     inkscape:window-width="749"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.52361111"
+     inkscape:cx="360"
+     inkscape:cy="360"
+     inkscape:window-x="110"
+     inkscape:window-y="110"
+     inkscape:current-layer="svg1934" />
+  <title
+     id="title1936">SVG drawing</title>
+  <desc
+     id="desc1938">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
+  <rect
+     x="0"
+     y="0"
+     width="1"
+     height="1"
+     style="fill:#ffffff;stroke:none"
+     id="rect1940" />
+  <g
+     transform="matrix(5.418114e-3,0,0,-5.739835e-3,-1.175565e-3,1.000747)"
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="g1942">
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   style="fill:#ffff00;fill-rule:nonzero;stroke:#ffff00;stroke-width:0;stroke-linejoin:round"
+   id="polygon1944" />
+<text
+   transform="matrix(1,0,0,-1,109.86,7.9141)"
+   style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
+   id="text1946">631</text>
+
+<line
+   x1="92.5"
+   y1="44.5"
+   x2="92.5"
+   y2="72.5"
+   style="stroke:#ffffff;stroke-width:16"
+   id="line1948" />
+<line
+   x1="62.5"
+   y1="132.5"
+   x2="76.5"
+   y2="108.5"
+   style="stroke:#ffffff;stroke-width:16"
+   id="line1950" />
+<path
+   d="M 161.5,40.5 L 161.3,40.129 C 140.37,52.164 116.64,58.5 92.5,58.5"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round"
+   id="path1952" />
+<path
+   d="M 92.5,58.5 L 92.5,58.5 C 68.359,58.5 44.637,52.164 23.711,40.133"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round"
+   id="path1954" />
+<path
+   d="M 69.5,120.5 L 69.434,120.62 C 83.703,128.83 92.5,144.04 92.5,160.5"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round"
+   id="path1956" />
+<path
+   d="M 23.5,120.5 L 23.57,120.62 C 30.547,116.61 38.457,114.5 46.5,114.5 C 54.547,114.5 62.457,116.61 69.434,120.62"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round"
+   id="path1958" />
+<path
+   d="M 161.5,40.5 L 161.3,40.129 C 140.37,52.164 116.64,58.5 92.5,58.5"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round"
+   id="path1960" />
+<path
+   d="M 92.5,58.5 L 92.5,58.5 C 68.359,58.5 44.637,52.164 23.711,40.133"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round"
+   id="path1962" />
+<path
+   d="M 69.5,120.5 L 69.434,120.62 C 83.703,128.83 92.5,144.04 92.5,160.5"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round"
+   id="path1964" />
+<path
+   d="M 23.5,120.5 L 23.57,120.62 C 30.547,116.61 38.457,114.5 46.5,114.5 C 54.547,114.5 62.457,116.61 69.434,120.62"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round"
+   id="path1966" />
+<line
+   x1="92.5"
+   y1="46.5"
+   x2="92.5"
+   y2="70.5"
+   style="stroke-width:12"
+   id="line1968" />
+<path
+   d="M 134.99,20.5 L 134.98,20.708 L 134.95,20.913 L 134.89,21.115 L 134.82,21.314 L 134.72,21.509 L 134.61,21.701 L 134.48,21.889 L 134.32,22.072 L 134.15,22.251 L 133.97,22.425 L 133.76,22.594 L 133.54,22.758 L 133.3,22.917 L 133.05,23.069 L 132.79,23.216 L 132.5,23.356 L 132.21,23.49 L 131.9,23.617 L 131.58,23.737 L 131.25,23.849 L 130.9,23.954 L 130.55,24.052 L 130.18,24.141 L 129.8,24.222 L 129.42,24.294 L 129.02,24.357 L 128.62,24.412 L 128.21,24.457 L 127.79,24.493 L 127.37,24.518 L 126.94,24.534 L 126.5,24.539 C 121.81,24.539 118.01,22.73 118.01,20.5 C 118.01,18.27 121.81,16.461 126.5,16.461 C 131.19,16.461 134.99,18.27 134.99,20.5 z "
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+   id="path1970" />
+<path
+   d="M 134.99,20.5 L 134.98,20.708 L 134.95,20.913 L 134.89,21.115 L 134.82,21.314 L 134.72,21.509 L 134.61,21.701 L 134.48,21.889 L 134.32,22.072 L 134.15,22.251 L 133.97,22.425 L 133.76,22.594 L 133.54,22.758 L 133.3,22.917 L 133.05,23.069 L 132.79,23.216 L 132.5,23.356 L 132.21,23.49 L 131.9,23.617 L 131.58,23.737 L 131.25,23.849 L 130.9,23.954 L 130.55,24.052 L 130.18,24.141 L 129.8,24.222 L 129.42,24.294 L 129.02,24.357 L 128.62,24.412 L 128.21,24.457 L 127.79,24.493 L 127.37,24.518 L 126.94,24.534 L 126.5,24.539 C 121.81,24.539 118.01,22.73 118.01,20.5 C 118.01,18.27 121.81,16.461 126.5,16.461 C 131.19,16.461 134.99,18.27 134.99,20.5 z "
+   style="stroke-width:0.84906;stroke-linecap:round;stroke-linejoin:round"
+   id="path1972" />
+<text
+   transform="matrix(1,0,0,-1,121.19,17.977)"
+   style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
+   id="text1974">10</text>
+
+<line
+   x1="63.5"
+   y1="130.5"
+   x2="75.5"
+   y2="110.5"
+   style="stroke-width:12"
+   id="line1976" />
+<path
+   d="M 134.99,140.5 L 134.98,140.71 L 134.95,140.91 L 134.89,141.11 L 134.82,141.31 L 134.72,141.51 L 134.61,141.7 L 134.48,141.89 L 134.32,142.07 L 134.15,142.25 L 133.97,142.42 L 133.76,142.59 L 133.54,142.76 L 133.3,142.92 L 133.05,143.07 L 132.79,143.22 L 132.5,143.36 L 132.21,143.49 L 131.9,143.62 L 131.58,143.74 L 131.25,143.85 L 130.9,143.95 L 130.55,144.05 L 130.18,144.14 L 129.8,144.22 L 129.42,144.29 L 129.02,144.36 L 128.62,144.41 L 128.21,144.46 L 127.79,144.49 L 127.37,144.52 L 126.94,144.53 L 126.5,144.54 C 121.81,144.54 118.01,142.73 118.01,140.5 C 118.01,138.27 121.81,136.46 126.5,136.46 C 131.19,136.46 134.99,138.27 134.99,140.5 z "
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+   id="path1978" />
+<path
+   d="M 134.99,140.5 L 134.98,140.71 L 134.95,140.91 L 134.89,141.11 L 134.82,141.31 L 134.72,141.51 L 134.61,141.7 L 134.48,141.89 L 134.32,142.07 L 134.15,142.25 L 133.97,142.42 L 133.76,142.59 L 133.54,142.76 L 133.3,142.92 L 133.05,143.07 L 132.79,143.22 L 132.5,143.36 L 132.21,143.49 L 131.9,143.62 L 131.58,143.74 L 131.25,143.85 L 130.9,143.95 L 130.55,144.05 L 130.18,144.14 L 129.8,144.22 L 129.42,144.29 L 129.02,144.36 L 128.62,144.41 L 128.21,144.46 L 127.79,144.49 L 127.37,144.52 L 126.94,144.53 L 126.5,144.54 C 121.81,144.54 118.01,142.73 118.01,140.5 C 118.01,138.27 121.81,136.46 126.5,136.46 C 131.19,136.46 134.99,138.27 134.99,140.5 z "
+   style="stroke-width:0.84906;stroke-linecap:round;stroke-linejoin:round"
+   id="path1980" />
+<text
+   transform="matrix(1,0,0,-1,121.19,137.98)"
+   style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
+   id="text1982">10</text>
+
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   style="stroke-width:1;stroke-linejoin:round"
+   id="polygon1984" />
+</g></svg>
