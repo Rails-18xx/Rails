@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   viewBox="0 0 1 1"
+   preserveAspectRatio="none"
+   id="svg6709"
+   sodipodi:version="0.32"
+   inkscape:version="0.43"
+   sodipodi:docname="tile677.svg"
+   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
+   version="1.0">
+  <metadata
+     id="metadata6740">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6738" />
+  <sodipodi:namedview
+     inkscape:window-height="540"
+     inkscape:window-width="749"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.52361111"
+     inkscape:cx="360"
+     inkscape:cy="360"
+     inkscape:window-x="22"
+     inkscape:window-y="22"
+     inkscape:current-layer="svg6709" />
+  <title
+     id="title6711">SVG drawing</title>
+  <desc
+     id="desc6713">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
+  <rect
+     x="0"
+     y="0"
+     width="1"
+     height="1"
+     style="fill:#ffffff;stroke:none"
+     id="rect6715" />
+  <g
+     transform="matrix(5.418114e-3,0,0,-5.739835e-3,-1.175565e-3,1.000747)"
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="g6717">
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   style="fill:#38ac00;fill-rule:nonzero;stroke:#38ac00;stroke-width:0;stroke-linejoin:round"
+   id="polygon6719" />
+<text
+   transform="matrix(1,0,0,-1,109.17,7.9141)"
+   style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
+   id="text6721">677</text>
+
+<line
+   x1="161.5"
+   y1="40.5"
+   x2="23.5"
+   y2="120.5"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round"
+   id="line6723" />
+<path
+   d="M 92.5,160.5 L 92.5,160.5 C 92.5,111.11 118.89,65.488 161.7,40.871"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round"
+   id="path6725" />
+<line
+   x1="161.5"
+   y1="40.5"
+   x2="23.5"
+   y2="120.5"
+   style="stroke-width:12;stroke-linecap:round"
+   id="line6727" />
+<path
+   d="M 92.5,160.5 L 92.5,160.5 C 92.5,111.11 118.89,65.488 161.7,40.871"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round"
+   id="path6729" />
+<line
+   x1="161.5"
+   y1="40.5"
+   x2="23.5"
+   y2="120.5"
+   style="stroke:#ffffff;stroke-width:8;stroke-linecap:round;stroke-dasharray:12"
+   id="line6731" />
+<path
+   d="M 92.5,160.5 L 92.5,160.5 C 92.5,111.11 118.89,65.488 161.7,40.871"
+   style="stroke:#ffffff;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:12"
+   id="path6733" />
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   style="stroke-width:1;stroke-linejoin:round"
+   id="polygon6735" />
+</g></svg>
