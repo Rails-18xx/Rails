@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.43"
    sodipodi:docname="tile-1.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
+   sodipodi:docbase="C:\Documents and Settings\lentz\workspace\18xx\tiles\svg"
    version="1.0">
   <metadata
      id="metadata4161">
@@ -39,23 +39,16 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
-     inkscape:window-x="110"
-     inkscape:window-y="110"
+     inkscape:zoom="2.9619917"
+     inkscape:cx="52.045656"
+     inkscape:cy="50.979697"
+     inkscape:window-x="417"
+     inkscape:window-y="249"
      inkscape:current-layer="svg4138" />
   <title
      id="title4140">SVG drawing</title>
   <desc
      id="desc4142">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
-  <rect
-     x="0"
-     y="0"
-     width="1"
-     height="1"
-     style="fill:#ffffff;stroke:none"
-     id="rect4144" />
   <g
      transform="matrix(5.418114e-3,0,0,-6.213736e-3,-1.175565e-3,1.000871)"
      xml:space="preserve"
@@ -69,6 +62,7 @@
    transform="matrix(1,0,0,-1,112.86,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text4150">-1</text>
+
 
 <path
    d="M 102.5,120.5 L 102.49,121.01 L 102.45,121.52 L 102.38,122.02 L 102.3,122.51 L 102.18,123 L 102.05,123.47 L 101.89,123.94 L 101.71,124.39 L 101.51,124.83 L 101.29,125.27 L 101.05,125.68 L 100.79,126.09 L 100.51,126.48 L 100.22,126.86 L 99.901,127.22 L 99.57,127.57 L 99.222,127.9 L 98.86,128.22 L 98.482,128.51 L 98.09,128.79 L 97.684,129.05 L 97.265,129.29 L 96.834,129.51 L 96.391,129.71 L 95.937,129.89 L 95.472,130.05 L 94.998,130.18 L 94.514,130.3 L 94.022,130.38 L 93.522,130.45 L 93.014,130.49 L 92.5,130.5 C 86.98,130.5 82.5,126.02 82.5,120.5 C 82.5,114.98 86.98,110.5 92.5,110.5 C 98.02,110.5 102.5,114.98 102.5,120.5 z "

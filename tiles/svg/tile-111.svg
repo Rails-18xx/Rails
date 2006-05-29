@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.43"
    sodipodi:docname="tile-111.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
+   sodipodi:docbase="C:\Documents and Settings\lentz\workspace\18xx\tiles\svg"
    version="1.0">
   <metadata
      id="metadata5159">
@@ -49,13 +49,6 @@
      id="title5106">SVG drawing</title>
   <desc
      id="desc5108">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
-  <rect
-     x="0"
-     y="0"
-     width="1"
-     height="1"
-     style="fill:#ffffff;stroke:none"
-     id="rect5110" />
   <g
      transform="matrix(5.418114e-3,0,0,-5.333139e-3,-1.175565e-3,0.939964)"
      xml:space="preserve"
@@ -69,6 +62,7 @@
    transform="matrix(1,0,0,-1,108.36,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text5116">-111</text>
+
 
 <polygon
    points="68.5,56.5 116.5,56.5 116.5,104.5 68.5,104.5 68.5,56.5 "

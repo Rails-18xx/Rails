@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.43"
    sodipodi:docname="tile-113.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
+   sodipodi:docbase="C:\Documents and Settings\lentz\workspace\18xx\tiles\svg"
    version="1.0">
   <metadata
      id="metadata5253">
@@ -44,18 +44,11 @@
      inkscape:cy="335.00053"
      inkscape:window-x="110"
      inkscape:window-y="110"
-     inkscape:current-layer="g5216" />
+     inkscape:current-layer="svg5208" />
   <title
      id="title5210">SVG drawing</title>
   <desc
      id="desc5212">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
-  <rect
-     x="0"
-     y="0"
-     width="1"
-     height="1"
-     style="fill:#ffffff;stroke:none"
-     id="rect5214" />
   <g
      transform="matrix(1.7361e-3,0,0,-1.7361e-3,-3.125e-2,1.1875)"
      xml:space="preserve"
@@ -72,6 +65,7 @@
    id="text5220"
    x="366.89853"
    y="-160.24263">-113</text>
+
 
 <path
    d="M 381.93125,412.41735 L 381.83634,416.61007 L 381.55161,420.74847 L 381.04541,424.82576 L 380.38103,428.83855 L 379.52683,432.78005 L 378.51444,436.64685 L 377.31222,440.43218 L 375.95182,444.12924 L 374.43324,447.74143 L 372.75646,451.25177 L 370.95314,454.66366 L 368.96,457.97031 L 366.84031,461.16492 L 364.59407,464.24411 L 362.18964,467.20108 L 359.6903,470.02904 L 357.06441,472.728 L 354.31197,475.28777 L 351.43299,477.70834 L 348.45909,479.97614 L 345.35865,482.11494 L 342.19492,484.05004 L 338.90466,485.84934 L 335.55111,487.4789 L 332.10266,488.93872 L 328.58144,490.22878 L 324.97796,491.31516 L 321.30488,492.23178 L 317.56536,492.94472 L 313.76573,493.4879 L 309.90916,493.79344 L 306.00196,493.89529 C 264.07,493.89529 230.07266,457.41354 230.07266,412.41735 C 230.07266,367.42116 264.07,330.93941 306.00196,330.93941 C 347.92126,330.93941 381.93125,367.42116 381.93125,412.41735 z "
@@ -145,6 +139,7 @@
    id="text5246"
    x="188.15903"
    y="-586.50488">30</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
