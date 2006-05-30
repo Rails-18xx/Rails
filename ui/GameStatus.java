@@ -12,6 +12,7 @@ import ui.StatusWindow;
 import ui.elements.*;
 
 import java.util.*;
+import java.util.List;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of game
@@ -89,6 +90,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private int compSellIndex = -1;
 	private int compBuyIPOIndex = -1;
 	private int compBuyPoolIndex = -1;
+	private List buyableCertificates, sellableCertificates;
 
 	private ButtonGroup buySellGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
@@ -251,14 +253,14 @@ public class GameStatus extends JPanel implements ActionListener
 			//f = certInIPO[i] = new Field(Bank.getIpo().ownsShare(c) + "%");
 			f = certInIPO[i] = new Field(Bank.getIpo().getShareModel(c));
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
-			f = certInIPOButton[i] = new ClickField(Bank.getIpo().ownsShare(c)
-					+ "%",
+			f = certInIPOButton[i] = new ClickField(certInIPO[i].getText(),
 					"BuyIPO",
 					"Click to select for buying",
 					this,
 					buySellGroup);
 			f.setVisible(false);
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
+			certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
 			//f = certInPool[i] = new Field("");
 			f = certInPool[i] = new Field(Bank.getPool().getShareModel(c));
@@ -268,7 +270,7 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					1,
 					WIDE_RIGHT);
-			f = certInPoolButton[i] = new ClickField("",
+			f = certInPoolButton[i] = new ClickField(certInPool[i].getText(),
 					"BuyPool",
 					"Click to buy",
 					this,
@@ -280,6 +282,7 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					1,
 					WIDE_RIGHT);
+			certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/*sic*/
 
 			f = parPrice[i] = new Field(c.getParPriceModel());
 			addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0);
@@ -499,41 +502,18 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		return compBuyPoolIndex;
 	}
-
-	/*
-	public void updatePlayer(int compIndex, int playerIndex)
-	{
-		int share = players[playerIndex].getPortfolio()
-				.ownsShare(companies[compIndex]);
-		String text = share > 0 ? share + "%" : "";
-		certPerPlayer[compIndex][playerIndex].setText(text);
-		certPerPlayerButton[compIndex][playerIndex].setText(text);
-		if (share == 0)
-			setPlayerCertButton(compIndex, playerIndex, false);
+	
+	public List getBuyOrSellOptions () {
+	    if (compBuyIPOIndex >= 0) {
+	        return this.certInIPOButton[compBuyIPOIndex].getOptions();
+	    } else if (compBuyPoolIndex >= 0) {
+	        return certInPoolButton[compBuyPoolIndex].getOptions();
+	    } else if (compSellIndex >= 0) {
+	        return this.certPerPlayerButton[srPlayerIndex][compSellIndex].getOptions();
+	    } else {
+	        return new ArrayList();
+	    }
 	}
-
-	public void updateIPO(int compIndex)
-	{
-		int share = Bank.getIpo().ownsShare(companies[compIndex]);
-		String text = share > 0 ? share + "%" : "";
-		certInIPO[compIndex].setText(text);
-		certInIPOButton[compIndex].setText(text);
-		if (share == 0)
-			setIPOCertButton(compIndex, false);
-		//parPrice[compIndex].setText(Bank.format(companies[compIndex].getParPrice()
-		//		.getPrice()));
-	}
-
-	public void updatePool(int compIndex)
-	{
-		int share = Bank.getPool().ownsShare(companies[compIndex]);
-		String text = share > 0 ? share + "%" : "";
-		certInPool[compIndex].setText(text);
-		certInPoolButton[compIndex].setText(text);
-		if (share == 0)
-			setPoolCertButton(compIndex, false);
-	}
-	*/
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
@@ -572,6 +552,7 @@ public class GameStatus extends JPanel implements ActionListener
 				}
 			}
 
+			/*
 			for (i = 0; i < nc; i++)
 			{
 				if ((share = Bank.getIpo().ownsShare(companies[i])) > 0
@@ -591,6 +572,27 @@ public class GameStatus extends JPanel implements ActionListener
 					setPoolCertButton(i, true);
 				}
 			}
+			*/
+			
+			for (i = 0; i < nc; i++)
+			{
+				setIPOCertButton(i, false);
+				setPoolCertButton(i, false);
+			}
+			TradeableCertificate tCert;
+			PublicCertificateI cert;
+			int index;
+			for (Iterator it = buyableCertificates.iterator(); it.hasNext(); ) {
+			    tCert = (TradeableCertificate) it.next();
+			    cert = tCert.getCert();
+			    index = cert.getCompany().getPublicNumber();
+			    if (cert.getPortfolio() == Bank.getIpo()) {
+			        setIPOCertButton (index, true, tCert);
+			    } else {
+			        setPoolCertButton (index, true, tCert);
+			    }
+			}
+			
 		}
 		else
 		{
@@ -605,6 +607,10 @@ public class GameStatus extends JPanel implements ActionListener
 		((StatusWindow) parent).enableSellButton(false);
 		repaint();
 	}
+	
+	public void setBuyableCertificates (List certs) {
+	    buyableCertificates = certs;
+	}
 
 	public String getSRPlayer()
 	{
@@ -612,6 +618,12 @@ public class GameStatus extends JPanel implements ActionListener
 			return players[srPlayerIndex].getName();
 		else
 			return "";
+	}
+
+	private void setPlayerCertButton(int i, int j, boolean clickable, Object o) {
+	    
+	    setPlayerCertButton (i, j, clickable);
+	    if (clickable) certPerPlayerButton[i][j].addOption (o);
 	}
 
 	private void setPlayerCertButton(int i, int j, boolean clickable)
@@ -623,15 +635,29 @@ public class GameStatus extends JPanel implements ActionListener
 		certPerPlayer[i][j].setVisible(!clickable);
 		certPerPlayerButton[i][j].setVisible(clickable);
 	}
+	
+	private void setIPOCertButton (int i, boolean clickable, Object o) {
+	    
+	    setIPOCertButton(i, clickable);
+	    if (clickable) certInIPOButton[i].addOption(o);
+	}
 
 	private void setIPOCertButton(int i, boolean clickable)
 	{
 		if (clickable)
 		{
 			certInIPOButton[i].setText(certInIPO[i].getText());
+		} else {
+		    certInIPOButton[i].clearOptions();
 		}
 		certInIPO[i].setVisible(!clickable);
 		certInIPOButton[i].setVisible(clickable);
+	}
+
+	private void setPoolCertButton (int i, boolean clickable, Object o) {
+	    
+	    setPoolCertButton(i, clickable);
+	    if (clickable) certInPoolButton[i].addOption(o);
 	}
 
 	private void setPoolCertButton(int i, boolean clickable)
@@ -639,16 +665,11 @@ public class GameStatus extends JPanel implements ActionListener
 		if (clickable)
 		{
 			certInPoolButton[i].setText(certInPool[i].getText());
+		} else {
+		    certInPoolButton[i].clearOptions();
 		}
 		certInPool[i].setVisible(!clickable);
 		certInPoolButton[i].setVisible(clickable);
 	}
-
-	/*
-	public void updateRevenue(int compIndex)
-	{
-		compRevenue[compIndex].setText(Bank.format(companies[compIndex].getLastRevenue()));
-	}
-	*/
 
 }

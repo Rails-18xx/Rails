@@ -180,7 +180,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			{
 				cert = (PublicCertificateI) it2.next();
 				ipo.addCertificate(cert);
-				// Log.write("*** Cert"+cert+"added to IPO");
+				/** TODO in some games not all certs are buyable at the start */  
 			}
 		}
 	}
@@ -299,5 +299,5 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	{
 		return moneyFormat.replaceFirst("@", "" + amount);
 	}
-
+	
 }

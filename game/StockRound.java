@@ -97,6 +97,91 @@ public class StockRound implements Round
 	{
 		return stockRoundNumber;
 	}
+	
+	/**
+	 * Create a list of certificates that a player may buy in a Stock Round,
+	 * taking all rules into account.
+	 * @return List of buyable certificates.
+	 */
+	public List getBuyableCerts () {
+	    
+	    /** buyableCerts is a map per companyname.
+	     * Each entry is a List with buyable certificates of that company.
+	     */
+	    List buyableCerts = new ArrayList();
+	    
+	    if (!mayCurrentPlayerBuyAtAll()
+	            || !currentPlayer.mayBuyCertificates(1)) return buyableCerts;
+	    
+	    List certs;
+	    PublicCertificateI cert;
+	    TradeableCertificate tCert;
+	    PublicCompanyI comp;
+	    int price;
+	    
+	    int playerCash = currentPlayer.getCash();
+	    
+	    /* Get the next available IPO certificates */
+	    String compName;
+	    Map map = Bank.getIpo().getCertsPerCompanyMap();
+	    int lowestStartPrice = 999;
+	    int highestStartPrice = 0;
+	    int shares;
+	    int[] startPrices = stockMarket.getStartPrices();
+
+	    for (Iterator it = map.keySet().iterator(); it.hasNext(); ) {
+	        compName = (String) it.next();
+	        certs = (List) map.get(compName);
+	        /* Only the top certificate is buyable from the IPO */
+	        cert = (PublicCertificateI) certs.get(0);
+	        comp = cert.getCompany();
+	        if (isSaleRecorded (currentPlayer, comp)) continue;
+	        if (!currentPlayer.mayBuyCompanyShare(comp, 1)) continue;
+	        shares = cert.getShares(); 
+	        
+	        if (!comp.hasStarted()) {
+                for (int i=0; i<startPrices.length; i++) {
+                    if (startPrices[i] * shares <= playerCash) {
+                        buyableCerts.add(new TradeableCertificate (cert, startPrices[i]));
+                    }
+                }
+	        } else if (comp.hasParPrice()) {
+	            price = comp.getParPrice().getPrice() * cert.getShares();
+		        if (playerCash < price) continue;
+	            buyableCerts.add(new TradeableCertificate (cert, price));
+	        } else {
+	            price = comp.getCurrentPrice().getPrice() * cert.getShares();
+		        if (playerCash < price) continue;
+	            buyableCerts.add(new TradeableCertificate (cert, price));
+	        }
+
+	    }
+	    
+	    /* Get the unique Pool certificates and check which ones can be bought */
+	    for (Iterator it = Bank.getPool().getUniqueTradeableCertificates().iterator();
+	    		it.hasNext(); ) {
+	        tCert = (TradeableCertificate) it.next();
+	        if (playerCash < tCert.getPrice()) continue;
+	        comp = tCert.getCert().getCompany();
+	        if (isSaleRecorded (currentPlayer, comp)) continue;
+	        if (!currentPlayer.mayBuyCompanyShare(comp, 1)) continue;
+	        buyableCerts.add (tCert);
+	    }
+	    
+	    return buyableCerts;
+	}
+
+	/**
+	 * Create a list of certificates that a player may sell in a Stock Round,
+	 * taking all rules taken into account.
+	 * @return List of sellable certificates.
+	 */
+	public static List getSellableCerts () {
+	    
+	    List certs = new ArrayList();
+	    
+	    return certs;
+	}
 
 	/*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 

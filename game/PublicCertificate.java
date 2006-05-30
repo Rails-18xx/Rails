@@ -161,6 +161,19 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	{
 		return (PublicCertificateI) this.clone();
 	}
+	
+	/**
+	 * Two certificates are "equal" if they both belong to the same company, 
+	 * represent the same share percentage, and are not a preseident share. 
+	 * @param cert public company certificate to compare with. 
+	 * @return True if the certs are "equal" in the defined sense.
+	 */
+	public boolean equals (PublicCertificateI cert) {
+	    return (cert != null
+	            && this.company == cert.getCompany()
+	            && this.president == cert.isPresidentShare()
+	            && this.shares == cert.getShares());
+	}
 
 	public String toString()
 	{

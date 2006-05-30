@@ -17,6 +17,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	protected int numRows = 0;
 	protected int numCols = 0;
 	protected ArrayList startSpaces = new ArrayList();
+	protected int[] startPrices;
 
 	protected static StockMarketI instance;
 
@@ -56,6 +57,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		/* Read and configure the stock market space types */
 		NodeList types = topElement.getElementsByTagName(StockSpaceTypeI.ELEMENT_ID);
 		NodeList typeFlags;
+		
 		for (int i = 0; i < types.getLength(); i++)
 		{
 			Element typeElement = (Element) types.item(i);
@@ -192,6 +194,11 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 				}
 			}
 
+		}
+		
+		startPrices = new int[startSpaces.size()];
+		for (int i=0; i<startPrices.length; i++) {
+		    startPrices[i] = ((StockSpaceI)startSpaces.get(i)).getPrice();
 		}
 
 		stockChart = new StockSpace[numRows][numCols];
@@ -412,7 +419,16 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	{
 		return startSpaces;
 	}
-
+	
+	/**
+	 * Return start prices as an int array.
+	 * Note: this array is NOT sorted. 
+	 * @return
+	 */
+	public int[] getStartPrices() {
+	    return startPrices;
+	}
+	
 	public StockSpaceI getStartSpace(int price)
 	{
 		Iterator it = startSpaces.iterator();

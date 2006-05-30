@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.29 2006/05/20 20:53:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.30 2006/05/30 21:50:38 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -230,6 +230,10 @@ public class Portfolio
    {
       return certificates;
    }
+   
+   public Map getCertsPerCompanyMap () {
+       return certPerCompany;
+   }
 
    public List getCertificatesPerCompany(String compName)
    {
@@ -245,7 +249,33 @@ public class Portfolio
          return new ArrayList();
       }
    }
+   
+   /**
+    * Get a list of unique (i.e. unequal) certificates in this Portfolio
+    * at the current price.
+    * @return List of unique TradeableCertificate objects.
+    */
+    public List getUniqueTradeableCertificates () {
+       
+        List uniqueCerts = new ArrayList();
+        PublicCertificateI cert, cert2, prevCert = null;
+        Iterator it2;
 
+outer:  for (Iterator it = certificates.iterator(); it.hasNext(); ) {
+            cert = (PublicCertificateI) it.next();
+            if (cert.equals(prevCert)) continue;
+            prevCert = cert;
+            for (it2 = uniqueCerts.iterator(); it2.hasNext(); ) {
+                if (cert.equals(((TradeableCertificate) it2.next()).getCert())) continue outer;
+            }
+	        uniqueCerts.add(new TradeableCertificate(cert,
+	                cert.getCompany().getCurrentPrice().getPrice() * cert.getShares()));
+	    }
+        return uniqueCerts;
+
+   }
+
+   /*
    public PublicCertificateI getNextAvailableCertificate()
    {
       for (int i = 0; i < certificates.size(); i++)
@@ -257,6 +287,7 @@ public class Portfolio
       }
       return null;
    }
+   */
    /**
     * Find a certificate for a given company.
     * @param company The public company for which a certificate is found.
