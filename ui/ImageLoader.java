@@ -1,12 +1,15 @@
 package ui;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-
 import javax.imageio.ImageIO;
-
 import util.Util;
+import game.Log;
+import org.apache.batik.transcoder.*;
+import org.apache.batik.transcoder.image.ImageTranscoder;
+
 
 /**
  * This class handles loading our tile images. It provides BufferedImages to be
@@ -15,13 +18,82 @@ import util.Util;
 public class ImageLoader
 {
 
-	private static final String tileDir = "tiles/images/";
+	private static final String tileDir = "tiles/svg/";
 	private static HashMap tileMap;
 
-	// String fn = "tile" + Integer.toString(getTileId()) + ".gif";
+    /* cheat, using batik transcoder API. we only want the Image */
+    private static class BufferedImageTranscoder extends ImageTranscoder
+    {
+        private BufferedImage image;
 
+        public BufferedImage createImage(int width, int height)
+        {
+            return new BufferedImage(width, height, 
+                BufferedImage.TYPE_INT_ARGB);
+        }
+
+        public void writeImage(BufferedImage image, TranscoderOutput output)
+            throws TranscoderException
+        {
+            this.image = image;
+        }
+
+        public BufferedImage getImage()
+        {
+            return image;
+        }
+    }
+    
 	private boolean loadTile(int tileID)
 	{
+		
+		String fn = "tile" + tileID + ".svg";
+        Image image = null;
+        int width = 180;
+        int height = 167;
+        
+        try
+        {
+            java.net.URL url;
+            url = new java.net.URL("file:" +
+                    tileDir + fn);
+            // url will not be null even is the file doesn't exist,
+            // so we need to check if connection can be opened
+            if (url != null)
+            {
+                InputStream stream = url.openStream();
+                if (url.openStream() != null)
+                {
+                    BufferedImageTranscoder t = new BufferedImageTranscoder();
+                    t.addTranscodingHint(ImageTranscoder.KEY_WIDTH,
+                            new Float(width));
+                    t.addTranscodingHint(ImageTranscoder.KEY_HEIGHT,
+                            new Float(height));
+                    TranscoderInput input = new TranscoderInput(stream);
+                    t.transcode(input, null);
+                    image = t.getImage();
+                }
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            // nothing to do
+        	Log.error(fn + " in " + tileDir + "not found.");
+        	return false;
+        }
+        catch (Exception e)
+        {
+            Log.error("SVG transcoding for " + fn + " in " + tileDir +
+                    " failed with " + e);
+            // nothing to do
+            return false;
+        }
+        
+        tileMap.put(Integer.toString(tileID), image);
+        return true;
+    }
+
+		/*
 		String fn = "tile" + Integer.toString(tileID) + ".gif";
 		String id = Integer.toString(tileID);
 
@@ -41,7 +113,7 @@ public class ImageLoader
 
 			return false;
 		}
-	}
+	}*/
 
 	public BufferedImage getTile(int tileID)
 	{
