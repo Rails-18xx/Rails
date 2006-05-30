@@ -7,7 +7,11 @@ import game.special.SpecialSRProperty;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import ui.elements.ClickField;
+
 import java.util.*;
+import java.util.List;
 
 /**
  * This is the Window used for displaying nearly all of the game status. This is
@@ -31,6 +35,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private Round currentRound;
 	private Round previousRound = null;
 	private StockRound stockRound;
+	private List buyableCertificates;
+	private List sellableCertificates;
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
 	private OperatingRound operatingRound;
@@ -237,6 +243,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		    }
 			passButton.setEnabled(!(currentRound instanceof ShareSellingRound));
 			stockRound = (StockRound) currentRound;
+			buyableCertificates = stockRound.getBuyableCerts();
+			gameStatus.setBuyableCertificates (buyableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			
 			if (currentRound != previousRound) {
@@ -423,6 +431,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private void buyButtonClicked()
 	{
 		playerIndex = GameManager.getCurrentPlayerIndex();
+		
 
 		if ((compIndex = gameStatus.getCompIndexToBuyFromIPO()) >= 0)
 		{
@@ -515,19 +524,27 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private void startCompany()
 	{
 		StockMarket stockMarket = (StockMarket) Game.getStockMarket();
+		List startOptions = gameStatus.getBuyOrSellOptions();
+		String[] options = new String[startOptions.size()];
+		for (int i=0; i<options.length; i++) {
+		    options[i] = Bank.format(((TradeableCertificate)startOptions.get(i)).getPrice());
+		}
 
 		if (company != null)
 		{
-			StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this,
+			String sp = (String) JOptionPane.showInputDialog(this,
 					"Start company at what price?",
 					"What Price?",
 					JOptionPane.INFORMATION_MESSAGE,
 					null,
-					stockMarket.getStartSpaces().toArray(),
-					stockMarket.getStartSpaces().get(0));
+					options,
+					options[0]);
+					//stockMarket.getStartSpaces().toArray(),
+					//stockMarket.getStartSpaces().get(0));
+			int startPrice = Integer.parseInt(sp.replaceAll("\\D",""));
 			if (!stockRound.startCompany(player.getName(),
 					company.getName(),
-					sp.getPrice()))
+					startPrice))
 			{
 				JOptionPane.showMessageDialog(this,
 						Log.getErrorBuffer(),
@@ -590,18 +607,18 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
-	public void keyPressed(KeyEvent e)
-	{
-		if (e.getKeyCode() == KeyEvent.VK_F1)
-		{
-			HelpWindow.displayHelp(gmgr.getHelp());
-			e.consume();
-		}
-	}
-
 	public void keyReleased(KeyEvent e)
 	{
 	}
+
+    public void keyPressed(KeyEvent e)
+    {
+    	if (e.getKeyCode() == KeyEvent.VK_F1)
+    	{
+    		HelpWindow.displayHelp(gmgr.getHelp());
+    		e.consume();
+    	}
+    }
 
 	public void keyTyped(KeyEvent e)
 	{

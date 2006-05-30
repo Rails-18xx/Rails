@@ -44,7 +44,9 @@ public interface StockMarketI
 
 	public List getStartSpaces();
 
-	public StockSpaceI getStartSpace(int price);
+	public int[] getStartPrices();
+
+    public StockSpaceI getStartSpace(int price);
 
 	public boolean isGameOver();
 
