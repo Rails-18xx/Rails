@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TradeableCertificate.java,v 1.1 2006/05/30 21:50:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/TradeableCertificate.java,v 1.2 2006/06/07 22:21:42 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -39,6 +39,15 @@ public class TradeableCertificate {
     
     public CashHolder getOwner () {
         return cert.getPortfolio().getOwner();
+    }
+    
+    /** Facility to correct a previously assumed price
+     * (needed when selling multiple shares).
+     * @param price
+     */
+    public void setPrice (int price) {
+      
+        this.price = price;
     }
     
 

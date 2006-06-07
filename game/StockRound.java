@@ -105,9 +105,6 @@ public class StockRound implements Round
 	 */
 	public List getBuyableCerts () {
 	    
-	    /** buyableCerts is a map per companyname.
-	     * Each entry is a List with buyable certificates of that company.
-	     */
 	    List buyableCerts = new ArrayList();
 	    
 	    if (!mayCurrentPlayerBuyAtAll()
@@ -132,6 +129,7 @@ public class StockRound implements Round
 	    for (Iterator it = map.keySet().iterator(); it.hasNext(); ) {
 	        compName = (String) it.next();
 	        certs = (List) map.get(compName);
+	        if (certs == null || certs.isEmpty()) continue;
 	        /* Only the top certificate is buyable from the IPO */
 	        cert = (PublicCertificateI) certs.get(0);
 	        comp = cert.getCompany();
@@ -176,11 +174,54 @@ public class StockRound implements Round
 	 * taking all rules taken into account.
 	 * @return List of sellable certificates.
 	 */
-	public static List getSellableCerts () {
+	public List getSellableCerts () {
 	    
-	    List certs = new ArrayList();
+	    List sellableCerts = new ArrayList();
 	    
-	    return certs;
+	    if (!mayCurrentPlayerSellAtAll()) return sellableCerts;
+	    
+	    List certs;
+	    PublicCertificateI cert;
+	    TradeableCertificate tCert;
+	    PublicCompanyI comp;
+	    String compName;
+	    int price;
+
+	    /* Get the unique Player certificates and check which ones can be sold */
+	    for (Iterator it = currentPlayer.getPortfolio().getUniqueTradeableCertificates().iterator();
+	    		it.hasNext(); ) {
+	        tCert = (TradeableCertificate) it.next();
+	        cert = tCert.getCert();
+            comp = cert.getCompany();
+            compName = comp.getName();
+	        
+	        /* Would there be more than 50% in the Pool? */
+	        if (cert.getShare() + pool.ownsShare(comp) > Bank.getPoolShareLimit()) {
+	            continue;
+	        }
+	        /* If a president's share: is there another player having enough shares? */
+	        if (cert.isPresidentShare()) {
+	            boolean victimFound = false;
+	            Player[] players = GameManager.getPlayers();
+	            for (int i=0; i<numberOfPlayers; i++) {
+	                if (players[i] == currentPlayer) continue;
+	                if (players[i].getPortfolio().ownsShare(comp) >= cert.getShare()) {
+	                    victimFound = true;
+	                    break;
+	                }
+	                
+	            }
+	            if (!victimFound) continue;
+	        }
+	        
+	        /* If a cert was sold before this turn, correct the price */
+	        if (sellPrices.containsKey(compName)) {
+	            price = cert.getShares() * ((StockSpaceI) sellPrices.get(compName)).getPrice();
+	            tCert.setPrice(price);
+	        }
+	        sellableCerts.add (tCert);
+	    }
+	    return sellableCerts;
 	}
 
 	/*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/

@@ -62,5 +62,13 @@ public interface PublicCertificateI extends Certificate
 
 	/** Clone this certificate */
 	public PublicCertificateI copy();
+	
+	/** Compare certificates 
+	 * 
+	 * @param cert Another publoc certificate.
+	 * @return TRUE if the certificates are of the same company and
+	 * represent the same number of shares.
+	 */
+	public boolean equals (PublicCertificateI cert);
 
 }

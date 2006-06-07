@@ -170,9 +170,9 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	 */
 	public boolean equals (PublicCertificateI cert) {
 	    return (cert != null
-	            && this.company == cert.getCompany()
-	            && this.president == cert.isPresidentShare()
-	            && this.shares == cert.getShares());
+	            && getCompany() == cert.getCompany()
+	            && isPresidentShare() == cert.isPresidentShare()
+	            && getShares() == cert.getShares());
 	}
 
 	public String toString()

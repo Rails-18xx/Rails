@@ -542,6 +542,7 @@ public class GameStatus extends JPanel implements ActionListener
 
 			upperPlayerCaption[j].setHighlight(true);
 			lowerPlayerCaption[j].setHighlight(true);
+			/*
 			for (i = 0; i < nc; i++)
 			{
 				share = players[j].getPortfolio().ownsShare(companies[i]);
@@ -551,6 +552,7 @@ public class GameStatus extends JPanel implements ActionListener
 					setPlayerCertButton(i, j, true);
 				}
 			}
+			*/
 
 			/*
 			for (i = 0; i < nc; i++)
@@ -578,10 +580,12 @@ public class GameStatus extends JPanel implements ActionListener
 			{
 				setIPOCertButton(i, false);
 				setPoolCertButton(i, false);
+				setPlayerCertButton(i, j, false);
 			}
 			TradeableCertificate tCert;
 			PublicCertificateI cert;
 			int index;
+			
 			for (Iterator it = buyableCertificates.iterator(); it.hasNext(); ) {
 			    tCert = (TradeableCertificate) it.next();
 			    cert = tCert.getCert();
@@ -591,6 +595,13 @@ public class GameStatus extends JPanel implements ActionListener
 			    } else {
 			        setPoolCertButton (index, true, tCert);
 			    }
+			}
+			
+			for (Iterator it = sellableCertificates.iterator(); it.hasNext(); ) {
+			    tCert = (TradeableCertificate) it.next();
+			    cert = tCert.getCert();
+			    index = cert.getCompany().getPublicNumber();
+		        setPlayerCertButton (index, j, true, tCert);
 			}
 			
 		}
@@ -610,6 +621,10 @@ public class GameStatus extends JPanel implements ActionListener
 	
 	public void setBuyableCertificates (List certs) {
 	    buyableCertificates = certs;
+	}
+	
+	public void setSellableCertificates (List certs) {
+	    sellableCertificates = certs;
 	}
 
 	public String getSRPlayer()

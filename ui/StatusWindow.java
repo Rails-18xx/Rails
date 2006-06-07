@@ -244,7 +244,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(!(currentRound instanceof ShareSellingRound));
 			stockRound = (StockRound) currentRound;
 			buyableCertificates = stockRound.getBuyableCerts();
+			sellableCertificates = stockRound.getSellableCerts();
 			gameStatus.setBuyableCertificates (buyableCertificates);
+			gameStatus.setSellableCertificates (sellableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			
 			if (currentRound != previousRound) {

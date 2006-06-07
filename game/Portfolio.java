@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.30 2006/05/30 21:50:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.31 2006/06/07 22:21:42 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -259,6 +259,7 @@ public class Portfolio
        
         List uniqueCerts = new ArrayList();
         PublicCertificateI cert, cert2, prevCert = null;
+        TradeableCertificate tCert2;
         Iterator it2;
 
 outer:  for (Iterator it = certificates.iterator(); it.hasNext(); ) {
@@ -266,7 +267,15 @@ outer:  for (Iterator it = certificates.iterator(); it.hasNext(); ) {
             if (cert.equals(prevCert)) continue;
             prevCert = cert;
             for (it2 = uniqueCerts.iterator(); it2.hasNext(); ) {
-                if (cert.equals(((TradeableCertificate) it2.next()).getCert())) continue outer;
+                tCert2 = (TradeableCertificate) it2.next();
+                cert2 = tCert2.getCert();
+                if (cert.equals(cert2)) continue outer;
+                if (!cert.getCompany().equals(cert2.getCompany())) continue;
+                /* From here on we are comparing certs of the same company */
+                /* Exclude president share if there also is a non-president share available */
+                if (cert.isPresidentShare()) continue outer;
+                if (cert2.isPresidentShare()) it2.remove();
+                
             }
 	        uniqueCerts.add(new TradeableCertificate(cert,
 	                cert.getCompany().getCurrentPrice().getPrice() * cert.getShares()));
