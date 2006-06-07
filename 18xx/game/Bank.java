@@ -148,7 +148,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 * @param percentage
 	 *            of a company allowed to be in the Bank pool.
 	 */
-	public static void setShareLimit(int percentage)
+	public static void setPoolShareLimit(int percentage)
 	{
 		poolShareLimit = percentage;
 	}

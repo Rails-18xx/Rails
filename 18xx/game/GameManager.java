@@ -112,7 +112,7 @@ public class GameManager implements ConfigurableComponentI
 		if (element != null)
 		{
 			nnp = element.getAttributes();
-			Bank.setShareLimit(XmlUtils.extractIntegerAttribute(nnp,
+			Bank.setPoolShareLimit(XmlUtils.extractIntegerAttribute(nnp,
 					"percentage"));
 		}
 
