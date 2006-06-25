@@ -389,6 +389,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		}
 		else if (actor.getActionCommand().equalsIgnoreCase(DONE))
 		{
+		    if (GameManager.isGameOver()) {
+		        System.exit(0);
+		    }
 			stockRound.done(gameStatus.getSRPlayer());
 			passButton.setText(PASS);
 			passButton.setMnemonic(KeyEvent.VK_P);
@@ -611,11 +614,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		GameUILoader.stockChart.setVisible(true);
 	    
 	    /* Disable all buttons */
-		passButton.setEnabled(false);
+		passButton.setEnabled(true);
+		passButton.setText("Close all windows");
 		extraButton.setVisible(false);
-		buyButton.setEnabled(false);
-		sellButton.setEnabled(false);
+		buyButton.setVisible(false);
+		sellButton.setVisible(false);
 		GameUILoader.orWindow.finish();
+		
+		toFront();
 
 	}
 
