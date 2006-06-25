@@ -43,6 +43,7 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static PhaseI currentPhase = null;
 	protected static boolean gameOver = false;
+	protected static boolean endedByBankruptcy = false;
 
 	protected static GameManager instance;
 
@@ -192,7 +193,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public void nextRound(Round round)
 	{
-		if (round instanceof StartRound)
+	    if (round instanceof StartRound)
 		{
 			if (startPacket != null && !startPacket.areAllSold())
 			{
@@ -217,10 +218,11 @@ public class GameManager implements ConfigurableComponentI
 		}
 		else if (round instanceof OperatingRound)
 		{
-			if (Bank.isBroken() && !gameEndsAfterSetOfORs)
+			if (Bank.isBroken() && !gameEndsAfterSetOfORs) {
+			    
 				finishGame();
 
-			if (++orNumber <= numOfORs)
+			} else if (++orNumber <= numOfORs)
 			{
 				// There will be another OR
 				startOperatingRound();
@@ -231,9 +233,11 @@ public class GameManager implements ConfigurableComponentI
 			}
 			else
 			{
-				if (Bank.isBroken() && gameEndsAfterSetOfORs)
+				if (Bank.isBroken() && gameEndsAfterSetOfORs) {
 					finishGame();
-				startStockRound();
+				} else {
+				    startStockRound();
+				}
 			}
 		}
 	}
@@ -266,11 +270,22 @@ public class GameManager implements ConfigurableComponentI
 	    currentRound = interruptedRound;
 	    ((OperatingRound)currentRound).resumeTrainBuying();
 	}
+	
+	public void registerBankruptcy() {
+        endedByBankruptcy = true;
+        Log.write ("Player "+currentPlayer.getName()+ " is bankrupt.");
+	    if (gameEndsWithBankruptcy) {
+	        finishGame();
+	    }
+	}
 
 	private void finishGame()
 	{
 		gameOver = true;
-		Log.write("Game over!");
+		Log.write("Game over.");
+		currentRound = null;
+		
+		logGameReport();
 	}
 
 	/**
@@ -282,6 +297,43 @@ public class GameManager implements ConfigurableComponentI
 	{
 		return gameOver;
 	}
+	
+	public void logGameReport() {
+	    
+	    Log.write(getGameReport());
+	}
+	
+	/**
+	 * Create a HTML-formatted game status report.
+	 * @return
+	 */
+	public String getGameReport () {
+	    
+	    StringBuffer b = new StringBuffer();
+	    
+	    /* Sort players by total worth */
+	    ArrayList rankedPlayers = new ArrayList();
+	    for (int ip=0; ip < players.length; ip++) {
+	        rankedPlayers.add(players[ip]);
+	    }
+	    Collections.sort(rankedPlayers);
+	    
+	    /* Report winner */
+	    Player winner = (Player) rankedPlayers.get(0);
+	    b.append("The winner is "+winner.getName()+"!");
+	    
+	    /* Report final ranking */
+	    b.append("\n\nThe final ranking is:");
+	    Player p;
+	    int i=0;
+	    for (Iterator it = rankedPlayers.iterator(); it.hasNext(); ) {
+	        p = (Player) it.next();
+	        b.append ("\n"+(++i) + ". "+Bank.format(p.getWorth()) + " " + p.getName());
+	    }
+	    
+	    return b.toString();
+	}
+	
 
 	/**
 	 * Should be called whenever a Phase changes. The effect on the number of

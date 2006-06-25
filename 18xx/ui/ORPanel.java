@@ -200,7 +200,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
      */
 
     public void recreate() {
-        System.out.println("ORPanel.recreate() called");
+        //System.out.println("ORPanel.recreate() called");
         round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -218,7 +218,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
     
     private void deRegisterObservers () {
-        System.out.println("Deregistering observers");
+        //System.out.println("Deregistering observers");
         if (StatusWindow.useObserver) {
 	        for (Iterator it=observers.iterator(); it.hasNext(); ) {
 	            ((ViewObject)it.next()).deRegister();
@@ -435,11 +435,23 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void updateStatus() {
+ 
         
         /* End of game checks */
         if (GameManager.isGameOver()) {
-            JOptionPane.showMessageDialog(this, "GAME OVER");
-            /** TODO Further wrap-up to be added */
+
+	        JOptionPane.showMessageDialog(this, "GAME OVER",
+					"",
+					JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog (this,
+			        GameManager.getInstance().getGameReport(),
+			        "",
+			        JOptionPane.OK_OPTION);
+			/* All other wrapping up has already been done when calling 
+			 * getSellableCertificates, so we can just finish now.
+			 */
+			GameUILoader.statusWindow.finish();
+			return;
         } else if (Bank.isJustBroken()) {
             /* The message must become configuration-depedent */
             JOptionPane
@@ -515,6 +527,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     button1.setMnemonic(KeyEvent.VK_R);
                     button1.setEnabled(true);
                     button1.setVisible(true);
+                    GameUILoader.orWindow.setMessage("EnterRevenue");
                 } else {
                     displayMessage(oRound.getActionNotAllowedMessage());
                     setRevenue(0);
@@ -540,6 +553,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setActionCommand(PAYOUT);
                 button3.setMnemonic(KeyEvent.VK_P);
                 button3.setEnabled(true);
+
+                GameUILoader.orWindow.setMessage("SelectPayout");
+            
             } else if (step == OperatingRound.STEP_BUY_TRAIN) {
                 trainCaption.setHighlight(true);
 
@@ -559,6 +575,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setActionCommand(DONE);
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(true);
+
+                GameUILoader.orWindow.setMessage("BuyTrain");
 
             } else if (step == OperatingRound.STEP_FINAL) {
                 button1.setEnabled(false);
@@ -1009,6 +1027,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     public void keyTyped(KeyEvent e) {
     }
     
+    public void finish() {
+
+        button1.setEnabled(false);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
+    }
     
 
 }

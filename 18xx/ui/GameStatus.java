@@ -542,39 +542,6 @@ public class GameStatus extends JPanel implements ActionListener
 
 			upperPlayerCaption[j].setHighlight(true);
 			lowerPlayerCaption[j].setHighlight(true);
-			/*
-			for (i = 0; i < nc; i++)
-			{
-				share = players[j].getPortfolio().ownsShare(companies[i]);
-				if (share > 0
-						&& stockRound.isCompanySellable(companies[i].getName()))
-				{
-					setPlayerCertButton(i, j, true);
-				}
-			}
-			*/
-
-			/*
-			for (i = 0; i < nc; i++)
-			{
-				if ((share = Bank.getIpo().ownsShare(companies[i])) > 0
-						&& (stockRound.isCompanyBuyable(companies[i].getName(),
-								Bank.getIpo()) || stockRound.isCompanyStartable(companies[i].getName())))
-				{
-					setIPOCertButton(i, true);
-				}
-			}
-
-			for (i = 0; i < nc; i++)
-			{
-				if ((share = Bank.getPool().ownsShare(companies[i])) > 0
-						&& stockRound.isCompanyBuyable(companies[i].getName(),
-								Bank.getPool()))
-				{
-					setPoolCertButton(i, true);
-				}
-			}
-			*/
 			
 			for (i = 0; i < nc; i++)
 			{

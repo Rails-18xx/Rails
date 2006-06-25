@@ -188,6 +188,9 @@ public class StockRound implements Round
 	    int price;
 
 	    /* Get the unique Player certificates and check which ones can be sold */
+	    //System.out.println("player="+currentPlayer);
+	    //System.out.println("portfolio="+currentPlayer.getPortfolio());
+	    //System.out.println("certs="+currentPlayer.getPortfolio().getUniqueTradeableCertificates());
 	    for (Iterator it = currentPlayer.getPortfolio().getUniqueTradeableCertificates().iterator();
 	    		it.hasNext(); ) {
 	        tCert = (TradeableCertificate) it.next();
