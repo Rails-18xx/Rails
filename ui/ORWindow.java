@@ -287,7 +287,7 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			GameUILoader.statusWindow.updateStatus();
 		}
-		else
+		else if(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
 		{
 			GameUILoader.orWindow.updateStatus();
 
@@ -296,5 +296,14 @@ public class ORWindow extends JFrame implements WindowListener
 	
 	public void updateStatus() {
 	    orPanel.updateStatus();
+	}
+	
+	/**
+	 * Game-end settings
+	 *
+	 */
+	public void finish() {
+	    orPanel.finish();
+	    upgradePanel.finish();
 	}
 }

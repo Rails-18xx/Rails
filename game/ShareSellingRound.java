@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.1 2006/05/21 18:48:03 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.2 2006/06/25 19:54:48 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -30,6 +30,7 @@ public class ShareSellingRound extends StockRound {
     
     public void start() {
         System.out.println("Share selling round started");
+        currentPlayer = sellingPlayer;
     }
     
     public boolean isCompanyBuyable(String companyName, Portfolio source) {
@@ -46,6 +47,22 @@ public class ShareSellingRound extends StockRound {
 	
 	public boolean mayCurrentPlayerBuyAtAll() {
 	    return false;
+	}
+
+	/**
+	 * Get a list of certificates that can be sold.
+	 * If none can be sold, register bankruptcy. 
+	 */
+	public List getSellableCerts () {
+	    
+	    List sellableCertificates = super.getSellableCerts();
+	    
+	    if (sellableCertificates.isEmpty() && cashToRaise > 0) {
+	        GameManager.getInstance().registerBankruptcy();
+	    }
+	    
+	    return sellableCertificates;
+	    
 	}
 
 	/**

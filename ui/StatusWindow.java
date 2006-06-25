@@ -231,17 +231,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		else if (currentRound instanceof StockRound)
 		{
 
-		    if ((currentRound instanceof ShareSellingRound)) {
-				passButton.setEnabled(false);
-				int cash = ((ShareSellingRound)currentRound).getRemainingCashToRaise();
-				JOptionPane.showMessageDialog(this,
-						"You must raise "+Bank.format(cash)+" by selling shares",
-						"",
-						JOptionPane.OK_OPTION);
-		    } else {
-				passButton.setEnabled(true);
-		    }
-			passButton.setEnabled(!(currentRound instanceof ShareSellingRound));
 			stockRound = (StockRound) currentRound;
 			buyableCertificates = stockRound.getBuyableCerts();
 			sellableCertificates = stockRound.getSellableCerts();
@@ -249,6 +238,34 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setSellableCertificates (sellableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			
+		    if ((currentRound instanceof ShareSellingRound)) {
+				passButton.setEnabled(false);
+				int cash = ((ShareSellingRound)currentRound).getRemainingCashToRaise();
+				if (sellableCertificates.isEmpty()) {
+					JOptionPane.showMessageDialog(this,
+							"You must raise "+Bank.format(cash)+", but you can't sell any more shares, so you are Bankrupt!",
+							"",
+							JOptionPane.OK_OPTION);
+					/* For now assume that this ends the game (not true in all games) */
+					JOptionPane.showMessageDialog (this,
+					        GameManager.getInstance().getGameReport(),
+					        "",
+					        JOptionPane.OK_OPTION);
+					/* All other wrapping up has already been done when calling 
+					 * getSellableCertificates, so we can just finish now.
+					 */
+					finish();
+					return;
+				} else {
+					JOptionPane.showMessageDialog(this,
+							"You must raise "+Bank.format(cash)+" by selling shares",
+							"",
+							JOptionPane.OK_OPTION);
+				}
+		    } else {
+				passButton.setEnabled(true);
+		    }
+
 			if (currentRound != previousRound) {
 
 			    GameUILoader.stockChart.setVisible(true);
@@ -278,7 +295,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		        extraButton.setEnabled(false);
 		        extraButton.setVisible(false);
 			}
-//System.out.println("Window: SpecProp#="+specialProperties.size());
 			toFront();
 		}
 		else if (currentRound instanceof OperatingRound)
@@ -288,11 +304,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 			if (currentRound != previousRound) {
 				GameUILoader.stockChart.setVisible(false);
-				//GameUILoader.orWindow.updateUpgradePanel();
-				//GameUILoader.orWindow.updateORPanel();
-				//GameUILoader.orWindow.setVisible(true);
-				
-				//GameUILoader.orWindow.requestFocus();
 				GameUILoader.orWindow.activate();
 
 				enableCheckBoxMenuItem(MAP);
@@ -450,11 +461,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							"",
 							JOptionPane.OK_OPTION);
 				}
-				else
-				{
-					//gameStatus.updatePlayer(compIndex, playerIndex);
-					//gameStatus.updateIPO(compIndex);
-				}
 			}
 			else
 			{
@@ -475,12 +481,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							Log.getErrorBuffer(),
 							"",
 							JOptionPane.OK_OPTION);
-				}
-				else
-				{
-					//gameStatus.updatePlayer(compIndex, playerIndex);
-					//gameStatus.updatePool(compIndex);
-					 //gameStatus.updateBank();
 				}
 			}
 
@@ -506,10 +506,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			if (!stockRound.sellShare(player.getName(), company.getName()))
 			{
 				JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
-			}
-			else
-			{
-				//GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else
@@ -541,8 +537,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					options,
 					options[0]);
-					//stockMarket.getStartSpaces().toArray(),
-					//stockMarket.getStartSpaces().get(0));
 			int startPrice = Integer.parseInt(sp.replaceAll("\\D",""));
 			if (!stockRound.startCompany(player.getName(),
 					company.getName(),
@@ -552,11 +546,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						Log.getErrorBuffer(),
 						"",
 						JOptionPane.OK_OPTION);
-			}
-			else
-			{
-				//GameUILoader.stockChart.refreshStockPanel((ArrayList) Game.getStockMarket().getStartSpaces());
-				//GameUILoader.stockChart.refreshStockPanel();
 			}
 		}
 		else
@@ -607,6 +596,27 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				// Seperators are null
 			}
 		}
+	}
+	
+	/**
+	 * Finish the application.
+	 */
+	public void finish () {
+	    
+	    /* Complete the log */
+	    LogWindow.addLog();
+	    
+	    setVisible(true);
+		GameUILoader.messageWindow.setVisible(true);
+		GameUILoader.stockChart.setVisible(true);
+	    
+	    /* Disable all buttons */
+		passButton.setEnabled(false);
+		extraButton.setVisible(false);
+		buyButton.setEnabled(false);
+		sellButton.setEnabled(false);
+		GameUILoader.orWindow.finish();
+
 	}
 
 	public void keyReleased(KeyEvent e)

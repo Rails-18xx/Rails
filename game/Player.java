@@ -10,7 +10,7 @@ import java.util.*;
  * Player class holds all player-specific data
  */
 
-public class Player implements CashHolder
+public class Player implements CashHolder, Comparable
 {
 
 	/** Default limit to percentage of a company a player may hold */
@@ -385,5 +385,13 @@ public class Player implements CashHolder
 	public int getIndex()
 	{
 		return index;
+	}
+	
+	/**
+	 * Compare Players by their total worth, in descending order.
+	 * This method implements the Comparable interface.
+	 */
+	public int compareTo (Object p) {
+	    return - new Integer (getWorth()).compareTo(new Integer (((Player)p).getWorth()));
 	}
 }

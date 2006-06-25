@@ -256,4 +256,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void mouseReleased(MouseEvent e)
 	{
 	}
+	
+	public void finish() {
+	    cancel.setEnabled(false);
+	    done.setEnabled(false);
+	}
 }

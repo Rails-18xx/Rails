@@ -1266,8 +1266,6 @@ public class OperatingRound implements Round
 	 * buy any train from the Bank, prepare for emergency train buying.
 	 * @return List of all trains that could potentially be bought.
 	 */
-	/* Part of this logic was originally part of ui.ORPanel, 
-	 * but was moved here by EV 20may2006 where it belongs. */ 
 	public List getBuyableTrains() {
 	    
 	    if (operatingCompany == null) return null;
