@@ -18,7 +18,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 public class ImageLoader
 {
 
-	private static final String tileDir = "tiles/svg/";
+	private static String tileDir = "tiles/svg/";
 	private static HashMap tileMap;
 
     /* cheat, using batik transcoder API. we only want the Image */
@@ -77,9 +77,27 @@ public class ImageLoader
         }
         catch (FileNotFoundException e)
         {
-            // nothing to do
-        	Log.error(fn + " in " + tileDir + "not found.");
-        	return false;
+        	//If we can't load the SVGs for some reason, revert to using the GIFs.
+        	tileDir = "tiles/images/";
+    		fn = "tile" + Integer.toString(tileID) + ".gif";
+    		String id = Integer.toString(tileID);
+
+    		try
+    		{
+    			// File f = new File(tileDir + fn);
+    			// BufferedImage img = ImageIO.read(f);
+    			BufferedImage img = ImageIO.read(Util.getStreamForFile(tileDir + fn));
+    			tileMap.put(id, img);
+
+    			return true;
+    		}
+    		catch (IOException ex)
+    		{
+    			System.out.println("Unable to load file: " + tileDir + fn);
+    			tileMap.put(id, null);
+
+    			return false;
+    		}
         }
         catch (Exception e)
         {
@@ -92,28 +110,6 @@ public class ImageLoader
         tileMap.put(Integer.toString(tileID), image);
         return true;
     }
-
-		/*
-		String fn = "tile" + Integer.toString(tileID) + ".gif";
-		String id = Integer.toString(tileID);
-
-		try
-		{
-			// File f = new File(tileDir + fn);
-			// BufferedImage img = ImageIO.read(f);
-			BufferedImage img = ImageIO.read(Util.getStreamForFile(tileDir + fn));
-			tileMap.put(id, img);
-
-			return true;
-		}
-		catch (IOException e)
-		{
-			System.out.println("Unable to load tile file: " + tileDir + fn);
-			tileMap.put(id, null);
-
-			return false;
-		}
-	}*/
 
 	public BufferedImage getTile(int tileID)
 	{
