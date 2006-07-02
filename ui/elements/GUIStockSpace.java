@@ -105,7 +105,8 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 		PublicCompanyI co;
 		Token token;
 
-		for (int k = 0; k < tokenList.size(); k++)
+		//for (int k = 0; k < tokenList.size(); k++)
+		for (int k = tokenList.size()-1; k >=0 ; k--)
 		{
 			co = (PublicCompanyI) tokenList.get(k);
 			bgColour = co.getBgColour();

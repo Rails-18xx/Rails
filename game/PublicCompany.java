@@ -231,6 +231,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 				{
 					poolPaysOut = true;
 				}
+				else if (propName.equalsIgnoreCase("IPOPaysOut"))
+				{
+					ipoPaysOut = true;
+				}
 				else if (propName.equalsIgnoreCase("Float") && floatPerc == 0)
 				{
 					nnp2 = properties.item(j).getAttributes();
@@ -756,7 +760,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		while (it.hasNext())
 		{
 			cert = ((PublicCertificateI) it.next());
-			recipient = cert.getPortfolio().getBeneficiary(this);
+			recipient = getBeneficiary(cert);
 			part = amount * cert.getShares() * shareUnit / 100;
 			// For reporting, we want to add up the amounts per recipient
 			if (split.containsKey(recipient))
@@ -777,6 +781,19 @@ public class PublicCompany extends Company implements PublicCompanyI
 			Bank.transferCash(null, recipient, part);
 		}
 
+	}
+	
+	/** Who gets the per-share revenue? */
+	protected CashHolder getBeneficiary (PublicCertificateI cert) {
+	    
+	    Portfolio holder = cert.getPortfolio();
+	    CashHolder beneficiary = holder.getOwner();
+	    // Special cases apply if the holder is the IPO or the Pool
+	    if (holder == Bank.getIpo() && ipoPaysOut
+	            || holder == Bank.getPool() && poolPaysOut) {
+	        beneficiary = this;
+	    }
+	    return beneficiary;
 	}
 
 	/**
@@ -996,7 +1013,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void checkFlotation()
 	{
 		if (hasStarted && !hasFloated
-				&& percentageOwnedByPlayers() >= floatPerc)
+				&& percentageOwnedByPlayers() >= floatPerc
+				&& currentPrice.getPrice() != null)
 		{
 			// Float company (limit and capitalisation to be made configurable)
 			setFloated();
