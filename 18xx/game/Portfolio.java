@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.31 2006/06/07 22:21:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.32 2006/07/02 17:21:49 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -48,17 +48,17 @@ public class Portfolio
    protected CashHolder owner;
 
    /** Who receives the dividends (may differ from owner if that is the Bank) */
-   protected boolean paysToCompany = false;
+   //protected boolean paysToCompany = false;
 
    /** Name of portfolio */
    protected String name;
 
-   public Portfolio(String name, CashHolder holder, boolean paysToCompany)
-   {
-      this.name = name;
-      this.owner = holder;
-      this.paysToCompany = paysToCompany;
-   }
+   //public Portfolio(String name, CashHolder holder, boolean paysToCompany)
+   //{
+   //   this.name = name;
+   //   this.owner = holder;
+   //   this.paysToCompany = paysToCompany;
+   //}
 
    public Portfolio(String name, CashHolder holder)
    {
@@ -334,17 +334,17 @@ outer:  for (Iterator it = certificates.iterator(); it.hasNext(); ) {
    /**
     * @return
     */
-   public CashHolder getBeneficiary(PublicCompanyI company)
-   {
-      if (paysToCompany)
-      {
-         return (CashHolder) company;
-      }
-      else
-      {
-         return owner;
-      }
-   }
+   //public CashHolder getBeneficiary(PublicCompanyI company)
+   //{
+   //   if (paysToCompany)
+   //   {
+   //      return (CashHolder) company;
+   //   }
+   //   else
+   //   {
+   //      return owner;
+   //   }
+   //}
 
    /**
     * @return

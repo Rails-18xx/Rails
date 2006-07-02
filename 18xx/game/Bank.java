@@ -77,11 +77,10 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		instance = this;
 		money = new CashModel(this);
 		// Create the IPO and the Bank Pool.
-		// Here the Pool pays out, but that should be made configurable.
-		ipo = new Portfolio("IPO", this, false);
-		pool = new Portfolio("Pool", this, true);
-		unavailable = new Portfolio("Unavailable", this, false);
-		scrapHeap = new Portfolio("ScrapHeap", this, false);
+		ipo = new Portfolio("IPO", this);
+		pool = new Portfolio("Pool", this);
+		unavailable = new Portfolio("Unavailable", this);
+		scrapHeap = new Portfolio("ScrapHeap", this);
 
 	}
 

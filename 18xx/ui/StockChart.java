@@ -79,7 +79,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		
 		for (int i = 0; i < market.length; i++)
 		{
-		    l = new JLabel(""+i, JLabel.CENTER);
+		    l = new JLabel(""+(i+1), JLabel.CENTER);
 		    l.setAlignmentX(Component.CENTER_ALIGNMENT);
 		    //l.setMinimumSize(new Dimension(20,40));
 		    //l.setPreferredSize(new Dimension(20,40));
