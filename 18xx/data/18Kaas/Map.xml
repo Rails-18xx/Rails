@@ -1,0 +1,87 @@
+<Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="A">
+	<!-- To be added: orientation, impassable hex sides, etc.-->
+	<Hex name="A16" tile="0"/>
+	<Hex name="A18" tile="-3" value="10" orientation="0"/>
+	<Hex name="B11" tile="-8" orientation="1"/>
+	<Hex name="B13" tile="-10"/>
+	<Hex name="B15" tile="0"/>
+	<Hex name="B17" tile="-10" home="CPR"/>
+	<Hex name="B19" tile="0"/>
+	<Hex name="C10" tile="0" cost="80"/>
+	<Hex name="C12" tile="-1"/>
+	<Hex name="C14" tile="0"/>
+	<Hex name="C16" tile="0"/>
+	<Hex name="C18" tile="0"/>
+	<Hex name="C20" tile="-901" orientation="3" revenue="40,50"/>
+	<Hex name="D7" tile="-3" value="10" orientation="5"/>
+	<Hex name="D9" tile="0" cost="80"/>
+	<Hex name="D13" tile="0" cost="80"/>
+	<Hex name="D15" tile="0"/>
+	<Hex name="D17" tile="0"/>
+	<Hex name="D19" tile="0"/>
+	<Hex name="E8" tile="0"/>
+	<Hex name="E10" tile="-105" value="30" orientation="1" home="NYC"/>
+	<Hex name="E14" tile="-10"/>
+	<Hex name="E16" tile="0"/>
+	<Hex name="E18" tile="-2"/>
+	<Hex name="F7" tile="-1"/>
+	<Hex name="F9" tile="0"/>
+	<Hex name="F13" tile="-1"/>
+	<Hex name="F15" tile="0" cost="80"/>
+	<Hex name="F17" tile="0"/>
+	<Hex name="F19" tile="-8" orientation="3"/>
+	<Hex name="G6" tile="0" cost="80"/>
+	<Hex name="G8" tile="-11" cost="80" label="B+" home="B&amp;O"/>
+	<Hex name="G10" tile="-22" home="NYNH" preferredStation="2"/><!-- not the right tile! TBD -->
+	<Hex name="G12" tile="0" cost="80"/><!-- not the right tile, should be empty yellow-->
+	<Hex name="G14" tile="0"/>
+	<Hex name="G16" tile="-20" cost="80" label="OO"/>
+	<Hex name="G18" tile="-20" label="OO"/>
+	<Hex name="G20" tile="-901" orientation="1" revenue="40,50"/>
+	<Hex name="H5" tile="-10"/>
+	<Hex name="H7" tile="-1"/>
+	<Hex name="H9" tile="0"/>
+	<Hex name="H11" tile="-2"/>
+	<Hex name="H13" tile="-10"/>
+	<Hex name="H15" tile="0" cost="80"/>
+	<Hex name="H17" tile="0"/>
+	<Hex name="H19" tile="0"/>
+	<Hex name="I4" tile="-1"/>
+	<Hex name="I6" tile="0"/>
+	<Hex name="I8" tile="-10"/>
+	<Hex name="I10" tile="0"/>
+	<Hex name="I12" tile="-10" cost="80" label="U" home="PRR"/>
+	<Hex name="I14" tile="-2" cost="80"/>
+	<Hex name="I16" tile="0" cost="80"/>
+	<Hex name="I18" tile="0"/>
+	<Hex name="J3" tile="-901" orientation="4" revenue="10,60"/>
+	<Hex name="J5" tile="-8" orientation="5"/>
+	<Hex name="J7" tile="-20" label="OO"/>
+	<Hex name="J9" tile="0" cost="120"/>
+	<Hex name="J11" tile="0" cost="80"/>
+	<Hex name="J13" tile="0"/>
+	<Hex name="J15" tile="0" cost="80"/>
+	<Hex name="J17" tile="-902" orientation="3" revenue="*2"/>
+	<Hex name="K6" tile="0" cost="80"/>
+	<Hex name="K8" tile="-11" orientation="5" label="B" home="B&amp;M"/>
+	<Hex name="K10" tile="0"/>
+	<Hex name="K12" tile="-20" label="OO"/>
+	<Hex name="K14" tile="0"/>
+	<Hex name="K16" tile="-10" cost="120"/>
+	<Hex name="K18" tile="-901" orientation="2" revenue="*2"/>
+  <Hex name="L1" tile="-901" orientation="5" revenue="10,60"/>
+	<Hex name="L3" tile="-10"/>
+	<Hex name="L5" tile="0"/>
+	<Hex name="L7" tile="-8" orientation="4"/>
+	<Hex name="L9" tile="-902" orientation="4" revenue="30,60"/>
+	<Hex name="L13" tile="-1"/>
+	<Hex name="L15" tile="-1" cost="80"/>
+	<Hex name="L17" tile="0"/>
+	<Hex name="M14" tile="0"/>
+	<Hex name="M16" tile="0" cost="80"/>
+	<Hex name="N15" tile="0" cost="80"/>
+	<Hex name="N17" tile="0"/>
+	<Hex name="N19" tile="-901" orientation="2" revenue="30,50"/>
+	<Hex name="O14" tile="-901" orientation="4" revenue="20,30"/>
+	<Hex name="O16" tile="-105" orientation="3" revenue="30" home="C&amp;O"/>
+</Map>

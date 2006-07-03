@@ -164,6 +164,7 @@ public class Tile implements TileI
 				}
 
 			}
+			/* TODO Hex-dependent placement rules */ 
 		}
 
 	}

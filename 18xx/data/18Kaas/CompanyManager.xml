@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="game.PrivateCompany">
+	</CompanyType>
+	<CompanyType name="Public" class="game.PublicCompany">
+		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<TrainLimit number="4,4,3,2"/>
+	</CompanyType>
+	<Company name="SVNRR" type="Private" basePrice="20" revenue="5">
+    <Blocking hex="H9"/>
+  </Company>
+	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
+    <Blocking hex="D15"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="D15" extra="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
+    <Blocking hex="K16"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="K16" extra="no" costApplies="yes"/>
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTokenLay">
+				<SpecialTokenLay location="K16" extra="no" costApplies="no"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
+    <Blocking hex="D9"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="NYC" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25">
+    <Blocking hex="J7"/>
+  </Company>
+	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30">
+    <Blocking hex="G6,G8"/>
+  </Company>
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000FF">
+		<FirstTrainCloses type="Private" name="B&amp;O"/>
+	</Company>
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"/>
+	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"/>
+	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"/>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"/>
+	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"/>
+	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"/>
+	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"/>
+	<StartPacket roundClass="game.StartRound_1830">
+		<Item name="SVNRR" type="Private" basePrice="20"/>
+		<Item name="C&amp;StL" type="Private" basePrice="40"/>
+		<Item name="D&amp;H" type="Private" basePrice="70"/>
+		<Item name="M&amp;H" type="Private" basePrice="110"/>
+		<Item name="C&amp;A" type="Private" basePrice="160">
+			<SubItem name="PRR" type="Public" />
+		</Item>
+		<Item name="B&amp;O" type="Private" basePrice="220">
+			<SubItem name="B&amp;O" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+	<StockRoundRules>
+		<!-- Will probably move later to a GameManager XML-->
+		<NoSaleInFirstSR/>
+	</StockRoundRules>
+	<BaseTokens>
+		<!-- Not sure if this belongs here -->
+		<LayCost method="sequence" cost="0,40,100"/>
+	</BaseTokens>
+</CompanyManager>

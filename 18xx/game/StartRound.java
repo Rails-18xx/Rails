@@ -209,6 +209,8 @@ public abstract class StartRound implements StartRoundI
 				nextStep = SET_PRICE;
 			}
 			// Check if the company has floated (also applies to minors)
+			// Redundant?? Cannot be done here when buying SFSL presidency
+			// from start packet in 1870.
 			comp.checkFlotation();
 		}
 	}

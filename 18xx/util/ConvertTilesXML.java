@@ -1,4 +1,4 @@
-package util;
+	package util;
 
 import java.io.*;
 import java.util.*;
@@ -216,6 +216,7 @@ public class ConvertTilesXML
 				.item(0)
 				.getFirstChild()
 				.getNodeValue();
+		System.out.println(id);
 		tileNo = id;
 		outputTile.setAttribute("id", id);
 		int intId;
@@ -251,11 +252,13 @@ public class ConvertTilesXML
 		{
 			outputTile.setAttribute("name", m.group(1));
 		}
-		else if (intId > 0)
+		else outputTile.setAttribute("name", name);
+		// The below does not work for "B+"
+		    /*if (intId > 0)
 		{
 			throw new ConfigurationException("Tile with ID=" + id
 					+ " has a name not starting with a number: " + name);
-		}
+		}*/
 
 		/*
 		 * Create map to hold the station 'identifiers', which are referred to
@@ -340,10 +343,12 @@ public class ConvertTilesXML
 				.getFirstChild()
 				.getNodeValue();
 
-		String[] station = (String[]) ((String[]) stationMap.get(type)).clone();
+		String[] station = ((String[]) stationMap.get(type));
 		if (station == null)
 		{
 			throw new ConfigurationException("Unknown junction type: " + type);
+		} else {
+		    station = (String[]) station.clone();
 		}
 
 		/*
