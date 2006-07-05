@@ -32,7 +32,7 @@
 	<Hex name="F19" tile="-8" orientation="3"/>
 	<Hex name="G6" tile="0" cost="80"/>
 	<Hex name="G8" tile="-11" cost="80" label="B+" home="B&amp;O"/>
-	<Hex name="G10" tile="-22" home="NYNH" preferredStation="2"/><!-- not the right tile! TBD -->
+	<Hex name="G10" tile="-22" home="NYNH" orientation="5" preferredStation="2"/><!-- not the right tile! TBD -->
 	<Hex name="G12" tile="0" cost="80"/><!-- not the right tile, should be empty yellow-->
 	<Hex name="G14" tile="0"/>
 	<Hex name="G16" tile="-20" cost="80" label="OO"/>
