@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.32 2006/07/02 17:21:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.33 2006/07/06 20:50:18 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -229,6 +229,21 @@ public class Portfolio
    public List getCertificates()
    {
       return certificates;
+   }
+   
+   /** Get the number of certificates that count against the certificate limit */
+   public int getNumberOfCountedCertificates () {
+       
+       int number = privateCompanies.size(); // May not hold for all games
+       PublicCertificateI cert;
+       PublicCompanyI comp;
+       for (Iterator it = certificates.iterator(); it.hasNext(); ) {
+           cert = (PublicCertificateI) it.next();
+           comp = cert.getCompany();
+           if (!comp.hasFloated() 
+                   || !cert.getCompany().getCurrentPrice().isNoCertLimit()) number++;
+       }
+       return number;
    }
    
    public Map getCertsPerCompanyMap () {

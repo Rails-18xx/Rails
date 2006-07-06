@@ -63,6 +63,10 @@ public class GameStatus extends JPanel implements ActionListener
 	private int playerPrivatesXOffset, playerPrivatesYOffset;
 	private Field playerWorth[];
 	private int playerWorthXOffset, playerWorthYOffset;
+	private Field playerCertCount[];
+	private int playerCertCountXOffset, playerCertCountYOffset;
+	private Field certLimit;
+	private int certLimitXOffset, certLimitYOffset;
 	private Field bankCash;
 	private int bankCashXOffset, bankCashYOffset;
 	private Field poolTrains;
@@ -144,6 +148,7 @@ public class GameStatus extends JPanel implements ActionListener
 		playerCash = new Field[np];
 		playerPrivates = new Field[np];
 		playerWorth = new Field[np];
+		playerCertCount = new Field[np];
 		upperPlayerCaption = new Caption[np];
 		lowerPlayerCaption = new Caption[np];
 
@@ -171,6 +176,10 @@ public class GameStatus extends JPanel implements ActionListener
 		playerPrivatesYOffset = nc + 3;
 		playerWorthXOffset = 1;
 		playerWorthYOffset = nc + 4;
+		playerCertCountXOffset = 1;
+		playerCertCountYOffset = nc + 5;
+		certLimitXOffset = np + 2;
+		certLimitYOffset = playerCertCountYOffset;
 		bankCashXOffset = np + 2;
 		bankCashYOffset = nc + 3;
 		poolTrainsXOffset = np + 3;
@@ -354,11 +363,23 @@ public class GameStatus extends JPanel implements ActionListener
 			addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, 0);
 		}
 
+		addField(new Caption("Certs"), 0, playerCertCountYOffset, 1, 1, WIDE_RIGHT+WIDE_TOP);
+		for (int i = 0; i < np; i++)
+		{
+			f = playerCertCount[i] = new Field(players[i].getCertCountModel(), true);
+			addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1, 1, WIDE_TOP);
+		}
+
+
 		for (int i = 0; i < np; i++)
 		{
 			f = lowerPlayerCaption[i] = new Caption(players[i].getName());
-			addField(f, i + 1, playerWorthYOffset + 1, 1, 1, WIDE_TOP);
+			addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, WIDE_TOP);
 		}
+		
+		// Certificate Limit
+		addField (new Caption ("Limit"), certLimitXOffset-1, certLimitYOffset, 1, 1, WIDE_TOP+WIDE_LEFT);
+		addField (new Field (""+Player.getCertLimit()), certLimitXOffset, certLimitYOffset, 1, 1, WIDE_TOP);
 
 		// Bank
 		addField(new Caption("Bank"),
