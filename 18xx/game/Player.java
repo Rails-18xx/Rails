@@ -1,6 +1,7 @@
 package game;
 
 import game.model.CashModel;
+import game.model.CertCountModel;
 import game.model.ModelObject;
 import game.model.WorthModel;
 
@@ -36,6 +37,8 @@ public class Player implements CashHolder, Comparable
 	private CashModel wallet = new CashModel(this);
 
 	private WorthModel worth = new WorthModel(this);
+	
+	private CertCountModel certCount = new CertCountModel (this);
 
 	private int blockedCash = 0;
 
@@ -156,9 +159,10 @@ public class Player implements CashHolder, Comparable
 	 *            Number of certificates to buy (usually 1 but not always so).
 	 * @return True if it is allowed.
 	 */
-	public boolean mayBuyCertificates(int number)
+	public boolean mayBuyCertificate(PublicCompanyI comp, int number)
 	{
-		if (portfolio.getCertificates().size() + number > playerCertificateLimit)
+	    if (comp.hasFloated() && comp.getCurrentPrice().isNoCertLimit()) return true;
+		if (portfolio.getNumberOfCountedCertificates() + number > playerCertificateLimit)
 			return false;
 		return true;
 	}
@@ -175,8 +179,9 @@ public class Player implements CashHolder, Comparable
 	 */
 	public boolean mayBuyCompanyShare(PublicCompanyI company, int number)
 	{
-		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit)
-			return false;
+	    // Check for per-company share limit
+		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit
+		        && !company.getCurrentPrice().isNoHoldLimit()) return false;
 		return true;
 	}
 
@@ -301,6 +306,10 @@ public class Player implements CashHolder, Comparable
 	public WorthModel getWorthModel()
 	{
 		return worth;
+	}
+	
+	public CertCountModel getCertCountModel () {
+	    return certCount;
 	}
 
 	public String toString()

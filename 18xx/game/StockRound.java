@@ -107,9 +107,6 @@ public class StockRound implements Round
 	    
 	    List buyableCerts = new ArrayList();
 	    
-	    if (!mayCurrentPlayerBuyAtAll()
-	            || !currentPlayer.mayBuyCertificates(1)) return buyableCerts;
-	    
 	    List certs;
 	    PublicCertificateI cert;
 	    TradeableCertificate tCert;
@@ -119,40 +116,43 @@ public class StockRound implements Round
 	    int playerCash = currentPlayer.getCash();
 	    
 	    /* Get the next available IPO certificates */
-	    String compName;
-	    Map map = Bank.getIpo().getCertsPerCompanyMap();
-	    int lowestStartPrice = 999;
-	    int highestStartPrice = 0;
-	    int shares;
-	    int[] startPrices = stockMarket.getStartPrices();
-
-	    for (Iterator it = map.keySet().iterator(); it.hasNext(); ) {
-	        compName = (String) it.next();
-	        certs = (List) map.get(compName);
-	        if (certs == null || certs.isEmpty()) continue;
-	        /* Only the top certificate is buyable from the IPO */
-	        cert = (PublicCertificateI) certs.get(0);
-	        comp = cert.getCompany();
-	        if (isSaleRecorded (currentPlayer, comp)) continue;
-	        if (!currentPlayer.mayBuyCompanyShare(comp, 1)) continue;
-	        shares = cert.getShares(); 
-	        
-	        if (!comp.hasStarted()) {
-                for (int i=0; i<startPrices.length; i++) {
-                    if (startPrices[i] * shares <= playerCash) {
-                        buyableCerts.add(new TradeableCertificate (cert, startPrices[i]));
-                    }
-                }
-	        } else if (comp.hasParPrice()) {
-	            price = comp.getParPrice().getPrice() * cert.getShares();
-		        if (playerCash < price) continue;
-	            buyableCerts.add(new TradeableCertificate (cert, price));
-	        } else {
-	            price = comp.getCurrentPrice().getPrice() * cert.getShares();
-		        if (playerCash < price) continue;
-	            buyableCerts.add(new TradeableCertificate (cert, price));
-	        }
-
+	    // Never buy more than one from the IPO
+	    if (this.companyBoughtThisTurn == null) {
+		    String compName;
+		    Map map = Bank.getIpo().getCertsPerCompanyMap();
+		    int lowestStartPrice = 999;
+		    int highestStartPrice = 0;
+		    int shares;
+		    int[] startPrices = stockMarket.getStartPrices();
+	
+		    for (Iterator it = map.keySet().iterator(); it.hasNext(); ) {
+		        compName = (String) it.next();
+		        certs = (List) map.get(compName);
+		        if (certs == null || certs.isEmpty()) continue;
+		        /* Only the top certificate is buyable from the IPO */
+		        cert = (PublicCertificateI) certs.get(0);
+		        comp = cert.getCompany();
+		        if (isSaleRecorded (currentPlayer, comp)) continue;
+		        if (!currentPlayer.mayBuyCompanyShare(comp, 1)) continue;
+		        shares = cert.getShares(); 
+		        
+		        if (!comp.hasStarted()) {
+	                for (int i=0; i<startPrices.length; i++) {
+	                    if (startPrices[i] * shares <= playerCash) {
+	                        buyableCerts.add(new TradeableCertificate (cert, startPrices[i]));
+	                    }
+	                }
+		        } else if (comp.hasParPrice()) {
+		            price = comp.getParPrice().getPrice() * cert.getShares();
+			        if (playerCash < price) continue;
+		            buyableCerts.add(new TradeableCertificate (cert, price));
+		        } else {
+		            price = comp.getCurrentPrice().getPrice() * cert.getShares();
+			        if (playerCash < price) continue;
+		            buyableCerts.add(new TradeableCertificate (cert, price));
+		        }
+	
+		    }
 	    }
 	    
 	    /* Get the unique Pool certificates and check which ones can be bought */
@@ -162,7 +162,13 @@ public class StockRound implements Round
 	        if (playerCash < tCert.getPrice()) continue;
 	        comp = tCert.getCert().getCompany();
 	        if (isSaleRecorded (currentPlayer, comp)) continue;
+	        if (companyBoughtThisTurn != null) {
+	            // If a cert was bought before, only brown zone ones can be bought again
+	            if (comp != companyBoughtThisTurn) continue;
+	            if (!comp.getCurrentPrice().isNoBuyLimit()) continue;
+	        }
 	        if (!currentPlayer.mayBuyCompanyShare(comp, 1)) continue;
+	        if (!currentPlayer.mayBuyCertificate(comp, 1)) continue;
 	        buyableCerts.add (tCert);
 	    }
 	    
@@ -198,12 +204,12 @@ public class StockRound implements Round
             comp = cert.getCompany();
             compName = comp.getName();
 	        
-	        /* Would there be more than 50% in the Pool? */
-	        if (cert.getShare() + pool.ownsShare(comp) > Bank.getPoolShareLimit()) {
-	            continue;
-	        }
-	        /* If a president's share: is there another player having enough shares? */
 	        if (cert.isPresidentShare()) {
+	            /* Would even selling one unit give more that 50% in the Pool? */
+	            if (comp.getShareUnit() + pool.ownsShare(comp) > Bank.getPoolShareLimit()) {
+	                continue;
+	            }
+		        /* Can the presidency be dumped? */
 	            boolean victimFound = false;
 	            Player[] players = GameManager.getPlayers();
 	            for (int i=0; i<numberOfPlayers; i++) {
@@ -212,9 +218,13 @@ public class StockRound implements Round
 	                    victimFound = true;
 	                    break;
 	                }
-	                
 	            }
 	            if (!victimFound) continue;
+	        } else {
+		        /* Would there be more than 50% in the Pool? */
+		        if (cert.getShare() + pool.ownsShare(comp) > Bank.getPoolShareLimit()) {
+		            continue;
+		        }
 	        }
 	        
 	        /* If a cert was sold before this turn, correct the price */
@@ -309,7 +319,7 @@ public class StockRound implements Round
 			// (shortcut: assume that any additional certs are one share each)
 			numberOfCertsToBuy = shares - (cert.getShares() - 1);
 			// Check if the player may buy that many certificates.
-			if (!currentPlayer.mayBuyCertificates(numberOfCertsToBuy))
+			if (!currentPlayer.mayBuyCertificate(company, numberOfCertsToBuy))
 			{
 				errMsg = "Cannot buy more certificates";
 				break;
@@ -499,7 +509,7 @@ public class StockRound implements Round
 			// Check if player would not exceed the certificate limit.
 			// (shortcut: assume 1 cert == 1 certificate)
 			if (!currentSpace.isNoCertLimit()
-					&& !currentPlayer.mayBuyCertificates(shares))
+					&& !currentPlayer.mayBuyCertificate(company, shares))
 			{
 				errMsg = currentPlayer.getName()
 						+ " would exceed certificate limit";
@@ -1072,10 +1082,12 @@ public class StockRound implements Round
 	 * 
 	 * @return True if any buying is allowed.
 	 */
+	/*
 	public boolean mayCurrentPlayerBuyAtAll()
 	{
 		return companyBoughtThisTurn == null;
 	}
+	*/
 
 	public static void setNoSaleInFirstSR()
 	{
