@@ -1,5 +1,6 @@
 package game.model;
 
+import game.Player;
 import game.Portfolio;
 import game.PublicCompanyI;
 
@@ -9,12 +10,14 @@ public class ShareModel extends ModelObject
 	private int share;
 	private Portfolio portfolio;
 	private PublicCompanyI company;
+	private boolean markPresidency = false;
 
 	public ShareModel(Portfolio portfolio, PublicCompanyI company)
 	{
 		this.portfolio = portfolio;
 		this.company = company;
 		this.share = 0;
+		this.markPresidency = (portfolio.getOwner() instanceof Player);
 		// System.out.println("SHAREMODEL.ShareModel share="+share);
 	}
 
@@ -48,7 +51,8 @@ public class ShareModel extends ModelObject
 	{
 		if (share == 0)
 			return "";
-		return share + "%";
+		return share + "%"
+			+ (markPresidency && company.getPresident() == portfolio.getOwner() ? "P" : "");
 	}
 
 }

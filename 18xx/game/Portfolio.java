@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.33 2006/07/06 20:50:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.34 2006/07/06 22:11:56 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -467,6 +467,10 @@ outer:  for (Iterator it = certificates.iterator(); it.hasNext(); ) {
            return null;
        }
        Portfolio.transferCertificate (cert, this, other);
+       
+       // Make sure the old President is no longer marked as such
+       getShareModel(company).setShare();
+       
        return swapped;
    }
    
