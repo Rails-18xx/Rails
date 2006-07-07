@@ -16,7 +16,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	private ArrayList upgrades;
 	private JPanel upgradePanel;
-	private Dimension preferredSize = new Dimension(75, 200);
+	private JScrollPane scrollPane;
+	private Dimension preferredSize = new Dimension(100, 200);
 	private Border border = new EtchedBorder();
 	private JButton cancel;
 	private JButton done;
@@ -43,13 +44,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgrades = null;
 		upgradePanel = new JPanel();
 
-		// GameUILoader.orWindow.setMessage("SelectAHexForTile");
-
 		upgradePanel.setOpaque(true);
 		upgradePanel.setBackground(Color.DARK_GRAY);
 		upgradePanel.setBorder(border);
-		add(upgradePanel);
+		upgradePanel.setLayout(new GridLayout(15, 1));
 
+		scrollPane = new JScrollPane(upgradePanel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setSize(getPreferredSize());
+		
+		add(scrollPane);
 		showUpgrades();
 	}
 
