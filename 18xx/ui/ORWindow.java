@@ -131,8 +131,6 @@ public class ORWindow extends JFrame implements WindowListener
 		if (upgradePanel != null)
 		{
 			upgradePanel.setUpgrades(null);
-			upgradePanel.setDoneText("LayTile");
-			upgradePanel.setCancelText("NoTile");
 
 			switch (subStep)
 			{
@@ -141,6 +139,8 @@ public class ORWindow extends JFrame implements WindowListener
 					upgradePanel.setCancelEnabled(false);
 					break;
 				case SELECT_HEX_FOR_TILE:
+					upgradePanel.setDoneText("LayTile");
+					upgradePanel.setCancelText("NoTile");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(true);
 					break;
@@ -160,8 +160,6 @@ public class ORWindow extends JFrame implements WindowListener
 					break;
 				case CONFIRM_TOKEN:
 					upgradePanel.setDoneEnabled(true);
-					upgradePanel.setDoneText("LayToken");
-					upgradePanel.setCancelText("NoToken");
 					break;
 				default:
 					upgradePanel.setDoneEnabled(false);
@@ -199,9 +197,17 @@ public class ORWindow extends JFrame implements WindowListener
 							stations,
 							stations[0]);
 
+					try
+					{
 					selectedHex.fixToken(selectedHex.getHexModel()
 							.getStations()
 							.indexOf(station));
+					}
+					catch(ArrayIndexOutOfBoundsException e)
+					{
+						//Clicked on a hex that doesn't have a tile or a station in it.
+						Log.error("No Station in this Hex. Unable to place Token.");
+					}
 				}
 			}
 		}
