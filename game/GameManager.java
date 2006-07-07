@@ -597,5 +597,4 @@ public class GameManager implements ConfigurableComponentI
 	{
 		return currentRound.getHelp();
 	}
-
 }

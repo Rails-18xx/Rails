@@ -23,6 +23,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private JButton done;
 
 	private String cancelButtonKey = "NoTile";
+	private boolean cancelEnabled = false;
 	private String doneButtonKey = "LayTile";
 	private boolean doneEnabled = false;
 
@@ -129,14 +130,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		done.setActionCommand(DONE);
 		done.setMnemonic(KeyEvent.VK_D);
 		done.addActionListener(this);
-		done.setEnabled(doneEnabled);
+		setDoneEnabled(doneEnabled);
 		upgradePanel.add(done);
 
 		cancel = new JButton(cancelButtonKey);
 		cancel.setActionCommand(CANCEL);
 		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
-		cancel.setEnabled(true);
+		setCancelEnabled(cancelEnabled);
 		upgradePanel.add(cancel);
 
 		lastEnabled = doneEnabled;
@@ -193,6 +194,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void setDoneEnabled(boolean enabled)
 	{
 		done.setEnabled(doneEnabled = enabled);
+	}
+	
+	public void setCancelEnabled(boolean enabled)
+	{
+		cancel.setEnabled(cancelEnabled = enabled);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -263,7 +269,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	}
 	
 	public void finish() {
-	    cancel.setEnabled(false);
-	    done.setEnabled(false);
+	    setDoneEnabled(false);
+	    setCancelEnabled(false);
 	}
 }

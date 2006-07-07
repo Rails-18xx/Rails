@@ -74,12 +74,12 @@ public class ORWindow extends JFrame implements WindowListener
 	{
 		messagePanel.setMessage(messageKey);
 	}
-	
+
 	public MapPanel getMapPanel()
 	{
 		return mapPanel;
 	}
-	
+
 	public ORPanel getORPanel()
 	{
 		return orPanel;
@@ -130,34 +130,61 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		if (upgradePanel != null)
 		{
-		    if (tileLayingEnabled && (subStep == SELECT_TILE
-		            || subStep == ROTATE_OR_CONFIRM_TILE)) {
-		        upgradePanel.populate();
-		    } else {
-		        upgradePanel.setUpgrades(null);
-		    }
-			upgradePanel.setDoneText(Game.getText(subStep < 4 ? "LayTile"
-					: "LayToken"));
-			upgradePanel.setCancelText(Game.getText(subStep < 4 ? "NoTile"
-					: "NoToken"));
-			upgradePanel.setDoneEnabled(subStep == ROTATE_OR_CONFIRM_TILE 
-			        || subStep == CONFIRM_TOKEN);
+			upgradePanel.setUpgrades(null);
+			upgradePanel.setDoneText("LayTile");
+			upgradePanel.setCancelText("NoTile");
+
+			switch (subStep)
+			{
+				case INACTIVE:
+					upgradePanel.setDoneEnabled(false);
+					upgradePanel.setCancelEnabled(false);
+					break;
+				case SELECT_HEX_FOR_TILE:
+					upgradePanel.setDoneEnabled(false);
+					upgradePanel.setCancelEnabled(true);
+					break;
+				case SELECT_TILE:
+					if (tileLayingEnabled)
+						upgradePanel.populate();
+					upgradePanel.setDoneEnabled(false);
+					break;
+				case ROTATE_OR_CONFIRM_TILE:
+					upgradePanel.setDoneEnabled(true);
+					break;
+				case SELECT_HEX_FOR_TOKEN:
+					upgradePanel.setDoneEnabled(false);
+					upgradePanel.setCancelEnabled(true);
+					upgradePanel.setDoneText("LayToken");
+					upgradePanel.setCancelText("NoToken");
+					break;
+				case CONFIRM_TOKEN:
+					upgradePanel.setDoneEnabled(true);
+					upgradePanel.setDoneText("LayToken");
+					upgradePanel.setCancelText("NoToken");
+					break;
+				default:
+					upgradePanel.setDoneEnabled(false);
+					upgradePanel.setCancelEnabled(false);
+				break;
+			}
 		}
 
 	}
 
 	public void processDone()
 	{
-	    HexMap map = mapPanel.getMap();
+		HexMap map = mapPanel.getMap();
 		GUIHex selectedHex = map.getSelectedHex();
 		setSubStep(INACTIVE);
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
 			{
-				if (selectedHex.getHexModel().getStations().size() == 1) {
+				if (selectedHex.getHexModel().getStations().size() == 1)
+				{
 					selectedHex.fixToken(0);
-					map.selectHex (null);
+					map.selectHex(null);
 				}
 				else
 				{
@@ -180,12 +207,13 @@ public class ORWindow extends JFrame implements WindowListener
 		}
 		else
 		{
-			if (selectedHex != null) {
+			if (selectedHex != null)
+			{
 				selectedHex.fixTile(tileLayingEnabled);
 				map.selectHex(null);
 			}
 		}
-		
+
 		updateUpgradePanel();
 	}
 
@@ -206,7 +234,7 @@ public class ORWindow extends JFrame implements WindowListener
 			if (tileLayingEnabled)
 				orPanel.layTile(null, null, 0);
 		}
-		
+
 		updateUpgradePanel();
 	}
 
@@ -257,53 +285,54 @@ public class ORWindow extends JFrame implements WindowListener
 			setSubStep(INACTIVE);
 		}
 		baseTokenLayingEnabled = enabled;
-		upgradePanel.setTileMode (enabled);
+		upgradePanel.setTileMode(enabled);
 	}
-	
+
 	public void updateUpgradePanel()
 	{
 		upgradePanel.setVisible(false);
 		upgradePanel.setVisible(true);
 	}
-	
+
 	public void updateORPanel()
 	{
-		//orPanel.setVisible(false);
-		//orPanel.setVisible(true);
-	    orPanel.revalidate();
+		orPanel.revalidate();
 	}
-	
-	public void activate() {
-	    updateUpgradePanel();
-	    orPanel.recreate();
-	    orPanel.updateStatus();
-	    setVisible(true);
-	    requestFocus();
+
+	public void activate()
+	{
+		updateUpgradePanel();
+		orPanel.recreate();
+		orPanel.updateStatus();
+		setVisible(true);
+		requestFocus();
 	}
-	
+
 	public static void updateORWindow()
 	{
-		if(GameManager.getInstance().getCurrentRound() instanceof StockRound)
+		if (GameManager.getInstance().getCurrentRound() instanceof StockRound)
 		{
 			GameUILoader.statusWindow.updateStatus();
 		}
-		else if(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
+		else if (GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
 		{
 			GameUILoader.orWindow.updateStatus();
 
 		}
 	}
-	
-	public void updateStatus() {
-	    orPanel.updateStatus();
+
+	public void updateStatus()
+	{
+		orPanel.updateStatus();
 	}
-	
+
 	/**
 	 * Game-end settings
-	 *
+	 * 
 	 */
-	public void finish() {
-	    orPanel.finish();
-	    upgradePanel.finish();
+	public void finish()
+	{
+		orPanel.finish();
+		upgradePanel.finish();
 	}
 }

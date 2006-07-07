@@ -17,146 +17,88 @@ import java.util.regex.*;
 public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private static final int NARROW_GAP = 1;
-
     private static final int WIDE_GAP = 3;
-
     private static final int WIDE_LEFT = 1;
-
     private static final int WIDE_RIGHT = 2;
-
     private static final int WIDE_TOP = 4;
-
     private static final int WIDE_BOTTOM = 8;
-
+    
     private JPanel statusPanel;
-
     private JPanel buttonPanel;
-
+    
     private GridBagLayout gb;
-
     private GridBagConstraints gbc;
 
     // Grid elements per function
     private Caption leftCompName[];
-
     private int leftCompNameXOffset, leftCompNameYOffset;
-
     private Caption rightCompName[];
-
     private int rightCompNameXOffset, rightCompNameYOffset;
-
     private Field president[];
-
     private int presidentXOffset, presidentYOffset;
-
     private Field sharePrice[];
-
     private int sharePriceXOffset, sharePriceYOffset;
-
     private Field cash[];
-
     private int cashXOffset, cashYOffset;
-
     private Field privates[];
-
     private int privatesXOffset, privatesYOffset;
-
     private Field newPrivatesCost[];
-
     private Field tiles[];
-
     private int tilesXOffset, tilesYOffset;
-
     private Field tileCost[];
-
     private Field tokens[];
-
     private Field tokenCost[];
-
     private int tokensXOffset, tokensYOffset;
-
     private Field revenue[];
-
     private Spinner revenueSelect[];
-
     private Field decision[];
-
     private int revXOffset, revYOffset;
-
     private Field trains[];
-
     private int trainsXOffset, trainsYOffset;
-
     private Field newTrainCost[];
-
+    
     private boolean privatesCanBeBought = false;
-
     private boolean privatesCanBeBoughtNow = false;
-
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
             privatesCaption;
 
     private JButton button1;
-
     private JButton button2;
-
     private JButton button3;
 
     private int np = 0; // Number of players
-
     private int nc = 0; // Number of companies
 
     private Player[] players;
-
     private PublicCompanyI[] companies;
-
     private Round round, previousRound;
-
     private OperatingRound oRound;
-
     private Player p;
-
     private PublicCompanyI c;
-
     private JComponent f;
-    
     private List observers = new ArrayList();
 
     // Current state
     private int playerIndex = -1;
-
     private int orCompIndex = -1;
-
     private PublicCompanyI orComp = null;
-
     private String orCompName = "";
-
     private Pattern buyTrainPattern = Pattern
             .compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
 
     private int[] newTrainTotalCost;
-
     private List trainsBought;
 
     //Strings
     public static final String LAY_TILES = "Lay Tiles";
-
     public static final String LAY_TRACK = "Lay Track";
-
     public static final String LAY_TOKEN = "Lay Token";
-
     public static final String BUY_PRIVATE = "Buy Private";
-
     public static final String DONE = "Done";
-
     public static final String SET_REVENUE = "Set Revenue";
-
     public static final String WITHHOLD = "Withhold";
-
     public static final String SPLIT = "Split";
-
     public static final String PAYOUT = "Pay out";
-
     public static final String BUY_TRAIN = "Buy Train";
 
     public ORPanel() {
@@ -1034,5 +976,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button3.setEnabled(false);
     }
     
+    public PublicCompanyI[] getOperatingCompanies()
+    {
+    	return companies;
+    }
 
 }
