@@ -215,7 +215,9 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 			{
-				selectedHex.fixTile(tileLayingEnabled);
+				if (!selectedHex.fixTile(tileLayingEnabled)) {
+				    selectedHex.removeTile();
+				}
 				map.selectHex(null);
 			}
 		}

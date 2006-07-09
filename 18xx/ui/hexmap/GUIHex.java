@@ -677,23 +677,36 @@ public class GUIHex
 		setToolTip();
 	}
 
-	public void fixTile(boolean tileLayingEnabled)
+	public boolean fixTile(boolean tileLayingEnabled)
 	{
-		if (tileLayingEnabled)
-		{
-			currentGUITile = provisionalGUITile;
-			if (currentGUITile != null)
-			{
-				currentTile = currentGUITile.getTile();
-				currentTileId = currentTile.getId();
-				currentTileOrientation = provisionalTileOrientation;
+	    boolean canFixTile = true;
+	    
+		if (tileLayingEnabled && provisionalGUITile != null) {
+
+			// We must first check the Model before we can update the View.
+			OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
+		    canFixTile = or.layTile(or.getOperatingCompany().getName(),
+		            model, provisionalGUITile.getTile(),
+					provisionalTileOrientation);
+
+		    if (canFixTile) {
+				currentGUITile = provisionalGUITile;
+				if (currentGUITile != null)
+				{
+					currentTile = currentGUITile.getTile();
+					currentTileId = currentTile.getId();
+					currentTileOrientation = provisionalTileOrientation;
+				}
+		        GameUILoader.orWindow.getORPanel().layTile(model,
+						currentTile,
+						currentTileOrientation);
+			} else {
+			    GameUILoader.orWindow.getORPanel().displayError();
 			}
-			GameUILoader.orWindow.getORPanel().layTile(model,
-					currentTile,
-					currentTileOrientation);
 		}
 		setSelected(false);
 		setToolTip();
+		return canFixTile;
 	}
 
 	public void dropToken()

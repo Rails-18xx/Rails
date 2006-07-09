@@ -550,15 +550,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             oRound.skip(orCompName);
         } else {
             // Let model process this first
-            if (oRound.layTile(orCompName, hex, tile, orientation)) {
+            //if (oRound.layTile(orCompName, hex, tile, orientation)) {
                 // Display the results
                 int cost = oRound.getLastTileLayCost();
                 tileCost[orCompIndex]
                         .setText(cost > 0 ? Bank.format(cost) : "");
                 tiles[orCompIndex].setText(oRound.getLastTileLaid());
-            } else {
-                displayError();
-            }
+            //} else {
+            //    displayError();
+            //    return false;
+            //}
             button3.setEnabled(true);
 
         }
@@ -570,6 +571,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
 
         updateStatus();
+        return;
     }
 
     //FIXME: This needs to be moved somewhere else. Perhaps ORWindow or HexMap.
@@ -942,17 +944,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         else
             return "";
     }
-
+    
+    public Round getRound () {
+        return round;
+    }
+    
     private void setSelect(JComponent f, JComponent s, boolean active) {
         f.setVisible(!active);
         s.setVisible(active);
     }
 
-    private void displayMessage(String text) {
+    public void displayMessage(String text) {
         JOptionPane.showMessageDialog(this, text);
     }
 
-    private void displayError() {
+    public void displayError() {
         JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
     }
 
