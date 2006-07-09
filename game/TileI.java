@@ -42,5 +42,5 @@ public interface TileI
 	public boolean lay (MapHex hex);
 	public boolean remove (MapHex hex);
 	public int countFreeTiles ();
-	public int getAmount ();
+	public int getQuantity ();
 }

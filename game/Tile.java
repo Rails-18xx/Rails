@@ -20,15 +20,10 @@ public class Tile implements TileI
 	private List stations = new ArrayList();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
-	
-	/** Array that will have as many elements as there are tiles available.
-	 * The value is the MapHex on which a tile is laid, or null if it is free.
-	 * If the array size is 0, the tiles are not counted (this covers both
-	 * preprinted tiles, and tiles that are available in an unlimited quantity.   
-	 * (Hopefully this array will do as a replacement for separate objects per physical tile).
-	 */
 	private int quantity;
-	private MapHex[] tiles;
+	private boolean unlimited = false;
+	public static final int UNLIMITED = -1;
+	private ArrayList tilesLaid = new ArrayList();
 
 	public Tile(Integer id)
 	{
@@ -121,8 +116,9 @@ public class Tile implements TileI
 		/* Amount */
 		NamedNodeMap seAttr = se.getAttributes();
 		quantity = XmlUtils.extractIntegerAttribute(seAttr, "quantity", 0);
-		/* The value '99' means 'unlimited' */
-		if (quantity > 0 && quantity < 99) tiles = new MapHex[quantity];
+		/* Value '99' and '-1' mean 'unlimited' */
+		unlimited = (quantity == 99 || quantity == UNLIMITED);
+		if (unlimited) quantity = UNLIMITED;
 
 		/* Upgrades */
 		NodeList upgnl = se.getElementsByTagName("Upgrade");
@@ -288,26 +284,15 @@ public class Tile implements TileI
 	}
 	
 	public boolean lay (MapHex hex) {
-	    if (tiles == null || tiles.length == 0) return true;
-	    int index = findTile (null);
-	    if (index >= 0) {
-	        tiles[index] = hex;
-	        //System.out.println("+++ Tile #"+name+" nr. "+(index+1)+" laid on hex "+hex.getName());
-	        return true;
-	    } else {
-	        return false;
-	    }
+
+	    tilesLaid.add(hex);
+	    return true;
 	}
 	
 	public boolean remove (MapHex hex) {
-	    if (tiles == null || tiles.length == 0) return true;
-	    int index = findTile (hex);
-	    if (index >= 0) {
-	        tiles[index] = null;
-	        return true;
-	    } else {
-	        return false;
-	    }
+	    
+	    tilesLaid.remove(hex);
+	    return true;
 	}
 	
 	/** Find the index of the tile laid on a certain hex.
@@ -315,6 +300,7 @@ public class Tile implements TileI
 	 * @param hex 
 	 * @return
 	 */
+	/*
 	private int findTile(MapHex hex) {
 	    if (tiles == null || tiles.length == 0) return -1;
 	    for (int i=0; i<tiles.length; i++) {
@@ -322,18 +308,17 @@ public class Tile implements TileI
 	    }
 	    return -1;
 	}
+	*/
 	
 	/** Return the number of free tiles */
 	public int countFreeTiles () {
-	    if (tiles == null || tiles.length == 0) return -1;
-	    int count = 0;
-	    for (int i=0; i<tiles.length; i++) {
-	        if (tiles[i] == null) count++;
-	    }
-	    return count;
+	    if (unlimited) 
+	        return UNLIMITED;
+	    else
+	        return quantity - tilesLaid.size();
 	}
 	
-	public int getAmount () {
+	public int getQuantity () {
 	    return quantity;
 	}
 }

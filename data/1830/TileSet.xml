@@ -35,22 +35,22 @@
 	<Tile id="-903"/>
 	
 	<!-- Yellow tiles -->
-	<Tile id="1" amount="1" />
-	<Tile id="2" amount="1" />
-	<Tile id="3" amount="2" />
-	<Tile id="4" amount="2" />
-	<Tile id="7" amount="4">
+	<Tile id="1" quantity="1" />
+	<Tile id="2" quantity="1" />
+	<Tile id="3" quantity="2" />
+	<Tile id="4" quantity="2" />
+	<Tile id="7" quantity="4">
 		<Upgrade id="18,26,27,28,29" />
 	</Tile>
-	<Tile id="8" amount="8">
+	<Tile id="8" quantity="8">
 		<Upgrade id="16,19,23,24,25,28,29" />
 	</Tile>
-	<Tile id="9" amount="7">
+	<Tile id="9" quantity="7">
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
-	<Tile id="55" amount="1" />
-	<Tile id="56" amount="1" />
-	<Tile id="57" amount="4">
+	<Tile id="55" quantity="1" />
+	<Tile id="56" quantity="1" />
+	<Tile id="57" quantity="4">
 		<Upgrade id="14,15" />
 	</Tile>
 	<Tile id="58" quantity="2" />
