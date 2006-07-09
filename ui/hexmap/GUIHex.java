@@ -721,10 +721,21 @@ public class GUIHex
 		setToolTip();
 	}
 
-	public void fixToken(int station)
+	public boolean fixToken(int station)
 	{
-		GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
+		OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
+		boolean canFixToken = 
+		    or.layBaseToken(or.getOperatingCompany().getName(),
+	            model,
+				station);
+		if (canFixToken) {
+	        GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
+	    } else {
+	        GameUILoader.orWindow.getORPanel().displayError();
+	    }
 		setSelected(false);
+		
+		return canFixToken;
 	}
 
 }

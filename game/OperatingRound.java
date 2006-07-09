@@ -311,7 +311,8 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot process tile laying: " + errMsg);
+			Log.error("Cannot lay tile on " + hex.getName()
+					+ " for " + Bank.format(cost) + ": " + errMsg);
 			return false;
 		}
 
@@ -441,7 +442,7 @@ public class OperatingRound implements Round
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot process token laying on " + hex.getName()
+			Log.error("Cannot lay base token on " + hex.getName()
 					+ " for " + Bank.format(cost) + ": " + errMsg);
 			return false;
 		}
