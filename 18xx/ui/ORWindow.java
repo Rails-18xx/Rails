@@ -174,14 +174,17 @@ public class ORWindow extends JFrame implements WindowListener
 	{
 		HexMap map = mapPanel.getMap();
 		GUIHex selectedHex = map.getSelectedHex();
-		setSubStep(INACTIVE);
 		if (baseTokenLayingEnabled)
 		{
 			if (selectedHex != null)
 			{
 				if (selectedHex.getHexModel().getStations().size() == 1)
 				{
-					selectedHex.fixToken(0);
+					if (selectedHex.fixToken(0)) {
+						//setSubStep(INACTIVE);
+					} else {
+					    setSubStep (SELECT_HEX_FOR_TOKEN);
+					}
 					map.selectHex(null);
 				}
 				else
@@ -199,9 +202,12 @@ public class ORWindow extends JFrame implements WindowListener
 
 					try
 					{
-					selectedHex.fixToken(selectedHex.getHexModel()
-							.getStations()
-							.indexOf(station));
+						if  (selectedHex.fixToken(selectedHex.getHexModel()
+								.getStations()
+								.indexOf(station))) {
+						} else {
+						    setSubStep (SELECT_HEX_FOR_TOKEN);
+						}
 					}
 					catch(ArrayIndexOutOfBoundsException e)
 					{
@@ -217,6 +223,9 @@ public class ORWindow extends JFrame implements WindowListener
 			{
 				if (!selectedHex.fixTile(tileLayingEnabled)) {
 				    selectedHex.removeTile();
+				    setSubStep (SELECT_HEX_FOR_TILE);
+				} else {
+					//setSubStep(INACTIVE);
 				}
 				map.selectHex(null);
 			}
@@ -298,7 +307,7 @@ public class ORWindow extends JFrame implements WindowListener
 
 	public void updateUpgradePanel()
 	{
-		upgradePanel.setVisible(false);
+		upgradePanel.setVisible(false);	
 		upgradePanel.setVisible(true);
 	}
 

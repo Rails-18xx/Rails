@@ -584,13 +584,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         if (hex == null) {
             oRound.skip(orCompName);
-        } else if (oRound.layBaseToken(orCompName, hex, station)) {
+        } else {//if (oRound.layBaseToken(orCompName, hex, station)) {
             // Let model process this first
             int cost = oRound.getLastBaseTokenLayCost();
             tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
             tokens[orCompIndex].setText(oRound.getLastBaseTokenLaid());
-        } else {
-            displayError();
+        //} else {
+        //    displayError();
         }
         button3.setEnabled(true);
 

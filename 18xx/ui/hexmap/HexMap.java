@@ -214,6 +214,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			{
 				selectedHex.rotateTile();
 				repaint(selectedHex.getBounds());
+				
+				return; // No further actions, in particular no upgrades panel repaint!
 			}
 			else
 			{

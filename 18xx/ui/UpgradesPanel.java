@@ -199,6 +199,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void setCancelEnabled(boolean enabled)
 	{
 		cancel.setEnabled(cancelEnabled = enabled);
+		//new Exception ("CANCEL "+(cancelEnabled?"EN":"DIS")+"ABLED").printStackTrace(System.out);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -222,7 +223,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 			}
 
 		}
-		upgrades = null;
+		upgrades = null; //???
 		showUpgrades();
 	}
 
