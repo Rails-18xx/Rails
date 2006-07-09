@@ -251,7 +251,7 @@ public class OperatingRound implements Round
 			// Must be correct step
 			if (step != STEP_LAY_TRACK)
 			{
-				errMsg = "Wrong action, expected Tile laying cost";
+				errMsg = "Wrong action, did noy expect Tile laying";
 				break;
 			}
 
