@@ -319,7 +319,7 @@ public class OperatingRound implements Round
 		{
 			hex.upgrade(tile, orientation);
 
-			Bank.transferCash((CashHolder) operatingCompany, null, cost);
+			if (cost > 0) Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			tileLayCost[operatingCompanyIndex] = cost;
 			tilesLaid[operatingCompanyIndex] = Util.appendWithComma(tilesLaid[operatingCompanyIndex],
 					"#" + tile.getName() + "/" + hex.getName() + "/"
