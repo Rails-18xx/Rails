@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.w3c.dom.*;
 
-import util.XmlUtils;
+import util.*;
 
 public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 {
@@ -81,14 +81,14 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			name = XmlUtils.extractStringAttribute(attr, "name");
 			if (name == null)
 			{
-				throw new ConfigurationException("No name specified");
+				throw new ConfigurationException(LocalText.getText("NoNameSpecified"));
 			}
 
 			// Cost
 			cost = XmlUtils.extractIntegerAttribute(attr, "cost");
 			if (cost == 0)
 			{
-				throw new ConfigurationException("Invalid or zero cost specified");
+				throw new ConfigurationException(LocalText.getText("InvalidCost"));
 			}
 
 			// Amount
@@ -99,14 +99,14 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 			else if (amount <= 0)
 			{
-				throw new ConfigurationException("Invalid or zero amount specified");
+				throw new ConfigurationException(LocalText.getText("InvalidAmount"));
 			}
 
 			// Major stops
 			majorStops = XmlUtils.extractIntegerAttribute(attr, "majorStops");
 			if (majorStops == 0)
 			{
-				throw new ConfigurationException("Invalid or zero major stops specified");
+				throw new ConfigurationException(LocalText.getText("InvalidStops"));
 			}
 
 			// Minor stops

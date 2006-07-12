@@ -2,6 +2,7 @@ package game;
 
 import game.model.ModelObject;
 import java.util.*;
+import util.LocalText;
 
 /**
  * Objects of this class represent a square on the StockMarket.
@@ -54,7 +55,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean addToken(CompanyI company)
 	{
-System.out.println(company.getName()+" token added to "+name);
+		System.out.println(company.getName() + LocalText.getText("TokenAdded") + " " + name);
 		tokens.add(company);
 		notifyViewObjects();
 		return true;
@@ -69,7 +70,7 @@ System.out.println(company.getName()+" token added to "+name);
 	 */
 	public boolean removeToken(CompanyI company)
 	{
-System.out.println(company.getName()+" token removed from "+name);
+		System.out.println(company.getName() + LocalText.getText("TokenRemoved") + " " + name);
 		int index = tokens.indexOf(company);
 		if (index >= 0)
 		{
@@ -143,11 +144,14 @@ System.out.println(company.getName()+" token removed from "+name);
 	 */
 	public String getColour()
 	{
-	    if (type != null) {
-	        return type.getColour();
-	    } else {
-	        return "";
-	    }
+		if (type != null)
+		{
+			return type.getColour();
+		}
+		else
+		{
+			return "";
+		}
 	}
 
 	/**
@@ -267,7 +271,8 @@ System.out.println(company.getName()+" token removed from "+name);
 	}
 
 	/**
-	 * @param set space as a starting space
+	 * @param set
+	 *            space as a starting space
 	 */
 	public void setStart(boolean b)
 	{
@@ -275,7 +280,8 @@ System.out.println(company.getName()+" token removed from "+name);
 	}
 
 	/**
-	 * @param set if token is left of ledge 
+	 * @param set
+	 *            if token is left of ledge
 	 */
 	public void setLeftOfLedge(boolean b)
 	{

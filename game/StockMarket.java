@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.*;
-import util.XmlUtils;
+import util.*;
 
 public class StockMarket implements StockMarketI, ConfigurableComponentI
 {
@@ -57,7 +57,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		/* Read and configure the stock market space types */
 		NodeList types = topElement.getElementsByTagName(StockSpaceTypeI.ELEMENT_ID);
 		NodeList typeFlags;
-		
+
 		for (int i = 0; i < types.getLength(); i++)
 		{
 			Element typeElement = (Element) types.item(i);
@@ -68,7 +68,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 					StockSpaceTypeI.NAME_TAG);
 			if (name == null)
 			{
-				throw new ConfigurationException("Unnamed stock space type found.");
+				throw new ConfigurationException(LocalText.getText("UnnamedStockSpaceType"));
 			}
 			String colour = XmlUtils.extractStringAttribute(nnp,
 					StockSpaceTypeI.COLOUR_TAG);
@@ -76,8 +76,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			/* Check for duplicates */
 			if (stockSpaceTypes.get(name) != null)
 			{
-				throw new ConfigurationException("Stock space type " + name
-						+ " configured twice");
+				throw new ConfigurationException(LocalText.getText("StockSpaceType1")
+						+ name + LocalText.getText("ConfiguredTwice2"));
 			}
 
 			/* Create the type */
@@ -125,28 +125,28 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 					StockSpaceI.NAME_TAG);
 			if (name == null)
 			{
-				throw new ConfigurationException("Unnamed stock space found.");
+				throw new ConfigurationException(LocalText.getText("UnnamedStockSpace"));
 			}
 			String price = XmlUtils.extractStringAttribute(nnp,
 					StockSpaceI.PRICE_TAG);
 			if (price == null)
 			{
-				throw new ConfigurationException("Stock space " + name
-						+ " has no price defined.");
+				throw new ConfigurationException(LocalText.getText("StockSpace1") + " " + name
+						+ LocalText.getText("NoPrice2"));
 			}
 			String typeName = XmlUtils.extractStringAttribute(nnp,
 					StockSpaceI.TYPE_TAG);
 			if (typeName != null
 					&& (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null)
 			{
-				throw new ConfigurationException("Stock space type " + type
-						+ " is undefined.");
+				throw new ConfigurationException(LocalText.getText("StockSpaceType1") + " " + type
+						+ LocalText.getText("IsUndefined2"));
 			}
 
 			if (stockChartSpaces.get(name) != null)
 			{
-				throw new ConfigurationException("Stock space " + name
-						+ " configured twice");
+				throw new ConfigurationException(LocalText.getText("StockSpace1") + name
+						+ LocalText.getText("ConfiguredTwice2"));
 			}
 
 			StockSpaceI space = new StockSpace(name,
@@ -195,10 +195,11 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			}
 
 		}
-		
+
 		startPrices = new int[startSpaces.size()];
-		for (int i=0; i<startPrices.length; i++) {
-		    startPrices[i] = ((StockSpaceI)startSpaces.get(i)).getPrice();
+		for (int i = 0; i < startPrices.length; i++)
+		{
+			startPrices[i] = ((StockSpaceI) startSpaces.get(i)).getPrice();
 		}
 
 		stockChart = new StockSpace[numRows][numCols];
@@ -376,7 +377,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
-			Log.write(company.getName() + " closes at " + newsquare.getName());
+			Log.write(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
 		}
 		else
 		{
@@ -390,22 +391,22 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		// To be written to a log file in the future.
 		if (to == null || from == to)
 		{
-			Log.write(company.getName() + " stays at " + from.getName());
+			Log.write(company.getName() + LocalText.getText("STAYS_AT") + " " + from.getName());
 		}
 		else
 		{
 			from.removeToken(company);
 			to.addToken(company);
 			company.setCurrentPrice(to);
-			Log.write(company.getName() + " prices goes from "
+			Log.write(company.getName() + LocalText.getText("PRICE_GOES_FROM") + " "
 					+ Bank.format(from.getPrice()) + " (" + from.getName()
-					+ ")" + " to " + Bank.format(to.getPrice()) + " ("
+					+ ") " + LocalText.getText("TO") + " " + Bank.format(to.getPrice()) + " ("
 					+ to.getName() + ")");
 
 			/* Check for game closure */
 			if (to.endsGame())
 			{
-				Log.write("Game over!");
+				Log.write(LocalText.getText("GAME_OVER"));
 				gameOver = true;
 			}
 
@@ -419,16 +420,17 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	{
 		return startSpaces;
 	}
-	
+
 	/**
-	 * Return start prices as an int array.
-	 * Note: this array is NOT sorted. 
+	 * Return start prices as an int array. Note: this array is NOT sorted.
+	 * 
 	 * @return
 	 */
-	public int[] getStartPrices() {
-	    return startPrices;
+	public int[] getStartPrices()
+	{
+		return startPrices;
 	}
-	
+
 	public StockSpaceI getStartSpace(int price)
 	{
 		Iterator it = startSpaces.iterator();

@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.regex.*;
 
 import org.w3c.dom.*;
-import util.XmlUtils;
+import util.*;
 
 public class Tile implements TileI
 {
@@ -56,7 +56,8 @@ public class Tile implements TileI
 
 		colour = XmlUtils.extractStringAttribute(teAttr, "colour");
 		if (colour == null)
-			throw new ConfigurationException("Missing colour in tile " + id);
+			throw new ConfigurationException(LocalText.getText("TileColorMissing")
+					+ " " + id);
 
 		upgradeable = !colour.equals("red") && !colour.equals("fixed");
 
@@ -75,8 +76,8 @@ public class Tile implements TileI
 			toStr = XmlUtils.extractStringAttribute(nnp, "to");
 			if (fromStr == null || toStr == null)
 			{
-				throw new ConfigurationException("Missing from or to in tile "
-						+ id);
+				throw new ConfigurationException(LocalText.getText("FromToMissing")
+						+ " " + id);
 			}
 
 			from = getPointNumber(fromStr);
@@ -101,24 +102,25 @@ public class Tile implements TileI
 			nnp = stationElement.getAttributes();
 			sid = XmlUtils.extractStringAttribute(nnp, "id");
 			if (sid == null)
-				throw new ConfigurationException("Tile " + this.id
-						+ " has Station w/o id");
+				throw new ConfigurationException(LocalText.getText("TILE")
+						+ this.id + LocalText.getText("StationNoID"));
 			type = XmlUtils.extractStringAttribute(nnp, "type");
 			if (type == null)
-				throw new ConfigurationException("Tile " + this.id
-						+ " has Station w/o type");
+				throw new ConfigurationException(LocalText.getText("TILE")
+						+ this.id + LocalText.getText("StationNoType"));
 			value = XmlUtils.extractIntegerAttribute(nnp, "value", 0);
 			slots = XmlUtils.extractIntegerAttribute(nnp, "slots", 0);
 			station = new Station(sid, type, value, slots);
 			stations.add(station);
 		}
-		
+
 		/* Amount */
 		NamedNodeMap seAttr = se.getAttributes();
 		quantity = XmlUtils.extractIntegerAttribute(seAttr, "quantity", 0);
 		/* Value '99' and '-1' mean 'unlimited' */
 		unlimited = (quantity == 99 || quantity == UNLIMITED);
-		if (unlimited) quantity = UNLIMITED;
+		if (unlimited)
+			quantity = UNLIMITED;
 
 		/* Upgrades */
 		NodeList upgnl = se.getElementsByTagName("Upgrade");
@@ -147,20 +149,30 @@ public class Tile implements TileI
 						}
 						else
 						{
-							throw new ConfigurationException("Tile " + name
-									+ ": upgrade " + id + " not found");
+							throw new ConfigurationException(LocalText.getText("TILE")
+									+ name
+									+ ": "
+									+ LocalText.getText("UPGRADE")
+									+ id
+									+ LocalText.getText("NOT_FOUND"));
 						}
 					}
 					catch (NumberFormatException e)
 					{
-						throw new ConfigurationException("Tile " + name
-								+ ": non-numeric upgrade " + idArray[j], e);
+						throw new ConfigurationException(LocalText.getText("TILE")
+								+ name
+								+ ": "
+								+ LocalText.getText("NON_NUMERIC")
+								+ LocalText.getText("UPGRADE")
+								+ " "
+								+ idArray[j],
+								e);
 					}
 
 				}
 
 			}
-			/* TODO Hex-dependent placement rules */ 
+			/* TODO Hex-dependent placement rules */
 		}
 
 	}
@@ -202,7 +214,7 @@ public class Tile implements TileI
 			return -Integer.parseInt(m.group(1));
 		}
 		// Should add some validation!
-		throw new ConfigurationException("Invalid track end: " + trackEnd);
+		throw new ConfigurationException(LocalText.getText("InvalidTrackEnd") + ": " + trackEnd);
 	}
 
 	public boolean hasTracks(int sideNumber)
@@ -253,19 +265,22 @@ public class Tile implements TileI
 		 */
 		return upgradesString;
 	}
-	
-	public List getValidUpgrades (MapHex hex, PhaseI phase) {
-	    List valid = new ArrayList();
-	    Iterator it = upgrades.iterator();
-	    Tile upgrade;
-	    while (it.hasNext()) {
-	        upgrade = (Tile)it.next();
-	        if (phase.isTileColourAllowed(upgrade.getColour())
-	                && upgrade.countFreeTiles() != 0 /* -1 means unlimited */) {
-	            valid.add(upgrade);
-	        }
-	    }
-	    return valid;
+
+	public List getValidUpgrades(MapHex hex, PhaseI phase)
+	{
+		List valid = new ArrayList();
+		Iterator it = upgrades.iterator();
+		Tile upgrade;
+		while (it.hasNext())
+		{
+			upgrade = (Tile) it.next();
+			if (phase.isTileColourAllowed(upgrade.getColour())
+					&& upgrade.countFreeTiles() != 0 /* -1 means unlimited */)
+			{
+				valid.add(upgrade);
+			}
+		}
+		return valid;
 	}
 
 	public boolean hasStations()
@@ -277,48 +292,50 @@ public class Tile implements TileI
 	{
 		return stations;
 	}
-	
+
 	public int getNumStations()
 	{
 		return stations.size();
 	}
-	
-	public boolean lay (MapHex hex) {
 
-	    tilesLaid.add(hex);
-	    return true;
+	public boolean lay(MapHex hex)
+	{
+
+		tilesLaid.add(hex);
+		return true;
 	}
-	
-	public boolean remove (MapHex hex) {
-	    
-	    tilesLaid.remove(hex);
-	    return true;
+
+	public boolean remove(MapHex hex)
+	{
+
+		tilesLaid.remove(hex);
+		return true;
 	}
-	
-	/** Find the index of the tile laid on a certain hex.
-	 * If the argument is null, the first free tile index is returned. 
-	 * @param hex 
+
+	/**
+	 * Find the index of the tile laid on a certain hex. If the argument is
+	 * null, the first free tile index is returned.
+	 * 
+	 * @param hex
 	 * @return
 	 */
 	/*
-	private int findTile(MapHex hex) {
-	    if (tiles == null || tiles.length == 0) return -1;
-	    for (int i=0; i<tiles.length; i++) {
-	        if (tiles[i] == hex) return i;
-	    }
-	    return -1;
-	}
-	*/
-	
+	 * private int findTile(MapHex hex) { if (tiles == null || tiles.length ==
+	 * 0) return -1; for (int i=0; i<tiles.length; i++) { if (tiles[i] == hex)
+	 * return i; } return -1; }
+	 */
+
 	/** Return the number of free tiles */
-	public int countFreeTiles () {
-	    if (unlimited) 
-	        return UNLIMITED;
-	    else
-	        return quantity - tilesLaid.size();
+	public int countFreeTiles()
+	{
+		if (unlimited)
+			return UNLIMITED;
+		else
+			return quantity - tilesLaid.size();
 	}
-	
-	public int getQuantity () {
-	    return quantity;
+
+	public int getQuantity()
+	{
+		return quantity;
 	}
 }
