@@ -5,7 +5,7 @@ import game.model.ModelObject;
 
 import java.util.*;
 import org.w3c.dom.*;
-import util.XmlUtils;
+import util.*;
 
 public class Bank implements CashHolder, ConfigurableComponentI
 {

@@ -10,6 +10,7 @@ import javax.swing.border.*;
 
 import game.*;
 import ui.hexmap.*;
+import util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener
 {
@@ -19,21 +20,18 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private JScrollPane scrollPane;
 	private Dimension preferredSize = new Dimension(100, 200);
 	private Border border = new EtchedBorder();
-	private JButton cancel;
-	private JButton done;
-
+	
 	private String cancelButtonKey = "NoTile";
-	private boolean cancelEnabled = false;
 	private String doneButtonKey = "LayTile";
+	
+	private boolean cancelEnabled = false;
 	private boolean doneEnabled = false;
-
 	private boolean tileMode = false;
 	private boolean tokenMode = false;
-
 	private boolean lastEnabled = false;
 
-	public static final String DONE = "Done";
-	public static final String CANCEL = "Cancel";
+	private JButton cancel = new JButton(cancelButtonKey);
+	private JButton done = new JButton(doneButtonKey);
 
 	public UpgradesPanel()
 	{
@@ -54,6 +52,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setSize(getPreferredSize());
+		
+		done.setActionCommand(LocalText.getText("Done"));
+		done.setMnemonic(KeyEvent.VK_D);
+		done.addActionListener(this);
+		cancel.setActionCommand(LocalText.getText("Cancel"));
+		cancel.setMnemonic(KeyEvent.VK_C);
+		cancel.addActionListener(this);
 		
 		add(scrollPane);
 		showUpgrades();
@@ -126,18 +131,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 			}
 		}
 
-		done = new JButton(doneButtonKey);
-		done.setActionCommand(DONE);
-		done.setMnemonic(KeyEvent.VK_D);
-		done.addActionListener(this);
-		setDoneEnabled(doneEnabled);
 		upgradePanel.add(done);
-
-		cancel = new JButton(cancelButtonKey);
-		cancel.setActionCommand(CANCEL);
-		cancel.setMnemonic(KeyEvent.VK_C);
-		cancel.addActionListener(this);
-		setCancelEnabled(cancelEnabled);
 		upgradePanel.add(cancel);
 
 		lastEnabled = doneEnabled;
@@ -199,7 +193,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void setCancelEnabled(boolean enabled)
 	{
 		cancel.setEnabled(cancelEnabled = enabled);
-		//new Exception ("CANCEL "+(cancelEnabled?"EN":"DIS")+"ABLED").printStackTrace(System.out);
+		//new Exception ("Cancel "+(cancelEnabled?"EN":"DIS")+"ABLED").printStackTrace(System.out);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -207,11 +201,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 		String command = e.getActionCommand();
 
-		if (command.equals(CANCEL))
+		if (command.equals(LocalText.getText("Cancel")))
 		{
 			GameUILoader.orWindow.processCancel();
 		}
-		else if (command.equals(DONE))
+		else if (command.equals(LocalText.getText("Done")))
 		{
 			if (GameUILoader.getMapPanel().getMap().getSelectedHex() != null)
 			{

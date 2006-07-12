@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import util.LocalText;
+
 /**
  * This Window displays the available operations that may be performed during an
  * Operating Round. This window also contains the Game Map.
@@ -95,8 +97,7 @@ public class ORWindow extends JFrame implements WindowListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.MAP);
-		// parent.setOrWindow(null);
+		StatusWindow.uncheckMenuItemBox(LocalText.getText("MAP"));
 		dispose();
 	}
 
@@ -135,33 +136,46 @@ public class ORWindow extends JFrame implements WindowListener
 			switch (subStep)
 			{
 				case INACTIVE:
+					//System.out.println("subStep = Inactive");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(false);
 					break;
 				case SELECT_HEX_FOR_TILE:
+					//System.out.println("subStep = Select hex for tile");
 					upgradePanel.setDoneText("LayTile");
 					upgradePanel.setCancelText("NoTile");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(true);
 					break;
 				case SELECT_TILE:
+					//System.out.println("subStep = Select Tile");
 					if (tileLayingEnabled)
 						upgradePanel.populate();
 					upgradePanel.setDoneEnabled(false);
 					break;
 				case ROTATE_OR_CONFIRM_TILE:
+					//System.out.println("subStep = Rotate or Confirm Tile");
 					upgradePanel.setDoneEnabled(true);
 					break;
 				case SELECT_HEX_FOR_TOKEN:
+					//System.out.println("subStep = Select hex for token");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(true);
 					upgradePanel.setDoneText("LayToken");
 					upgradePanel.setCancelText("NoToken");
 					break;
 				case CONFIRM_TOKEN:
-					upgradePanel.setDoneEnabled(true);
+					//System.out.println("subStep = Confirm Token");
+					PublicCompany co = (PublicCompany) orPanel.getOperatingCompanies()[orPanel.getOrCompIndex()];
+					
+					if(co.hasTokensLeft())
+						upgradePanel.setDoneEnabled(true);
+					else
+						upgradePanel.setDoneEnabled(false);
+					
 					break;
 				default:
+					//System.out.println("subStep = default");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(false);
 				break;

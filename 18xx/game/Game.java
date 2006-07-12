@@ -6,6 +6,8 @@ import util.XmlUtils;
 import java.io.File;
 import java.util.*;
 
+import util.LocalText;
+
 public class Game
 {
 	/**
@@ -23,12 +25,6 @@ public class Game
 	protected static ArrayList companyList;
 	protected static String name;
 	
-	protected static String language = "en";
-	protected static String country = "";
-	protected static String localeCode = language;
-	protected static Locale locale;
-	protected static ResourceBundle localisedText;
-
 	public static String[] getGames()
 	{
 		File dataDir = new File("./data/");
@@ -84,14 +80,14 @@ public class Game
 		}
 		catch (Exception e)
 		{
-			System.out.println("Game setup from file " + file + " failed");
+			System.out.println(LocalText.getText("GameSetupFailed1") + file + LocalText.getText("GameSetupFailed2"));
 			e.printStackTrace();
 		}
 		
 		//We need to do this assignment after we've loaded all the XML data. 
 		MapManager.assignHomesAndDestinations();
 		
-		System.out.println(Game.getText("SelectATile"));
+		System.out.println(LocalText.getText("SelectATile"));
 	}
 
 	/**
@@ -110,15 +106,6 @@ public class Game
 		return instance;
 	}
 	
-	public static void setLocale (String localeCode) {
-	    
-	    Game.localeCode = localeCode;
-	    String[] codes = localeCode.split("_");
-	    if (codes.length > 0) language = codes[0];
-	    if (codes.length > 1) country = codes[1];
-	    
-	}
-
 	/*----- Getters -----*/
 
 	/**
@@ -174,37 +161,5 @@ public class Game
 	public static String getName()
 	{
 		return name;
-	}
-	
-	public static String getText (String key) {
-
-	    if (key == null || key.length() == 0) return "";
-	    
-	    /* Load the texts */
-	    if (localisedText == null) {
-	        locale = new Locale (language, country);
-	        localisedText =
-	            ResourceBundle.getBundle("LocalisedText", locale);
-	    }
-	    
-	    /* If the key contains a space, something is wrong, check who did that! */
-	    if (key.indexOf(" ") > -1) {
-	        try {
-	            throw new Exception ("Invalid resource key '"+key+"'");
-	        } catch (Exception e) {
-	            //System.out.println(e.getMessage());
-	            e.printStackTrace();
-	        }
-	    }
-	    /* Find the text */
-	    try {
-	        return (localisedText.getString(key));
-	    } catch (MissingResourceException e) {
-	        System.out.println("Missing text for key "+key+" in locale "
-	                +locale.getDisplayName()+" ("+localeCode+")");
-	        /* If the text is not found, return the key in brackets */
-	        return "<"+key+">";
-	    }
-
 	}
 }

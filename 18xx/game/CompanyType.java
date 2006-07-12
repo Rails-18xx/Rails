@@ -1,6 +1,7 @@
 package game;
 
 import org.w3c.dom.Element;
+import util.LocalText;
 
 /**
  * Objects of this class represent a particular type of company, of which
@@ -53,8 +54,8 @@ public class CompanyType implements CompanyTypeI
 		}
 		catch (Exception e)
 		{
-			throw new ConfigurationException("Class " + className
-					+ " cannot be instantiated", e);
+			throw new ConfigurationException(LocalText.getText("ClassNoInstance1") + className
+					+ LocalText.getText("ClassNoInstance2"), e);
 		}
 		dummyCompany.init("", this);
 		dummyCompany.configureFromXML(element);
@@ -79,7 +80,7 @@ public class CompanyType implements CompanyTypeI
 		}
 		catch (CloneNotSupportedException e)
 		{
-			Log.error("Cannot create company " + name + " by cloning");
+			Log.error(LocalText.getText("CantCloneCompany1") + name + LocalText.getText("CantCloneCompany2"));
 		}
 		return newCompany;
 	}

@@ -5,7 +5,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
-import util.Util;
+import util.*;
 import game.Log;
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
@@ -93,7 +93,7 @@ public class ImageLoader
     		}
     		catch (IOException ex)
     		{
-    			System.out.println("Unable to load file: " + tileDir + fn);
+    			System.out.println(LocalText.getText("FileLoadException") + tileDir + fn);
     			tileMap.put(id, null);
 
     			return false;

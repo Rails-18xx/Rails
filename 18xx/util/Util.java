@@ -8,9 +8,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
+import util.LocalText;
+
 public final class Util
 {
-
 	/**
 	 * No-args private constructor, to prevent (meaningless) construction of one
 	 * of these.
@@ -64,7 +65,7 @@ public final class Util
 		else
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails.jar");
+			File jarFile = new File("./Rails-" + LocalText.version + ".jar");
 			JarFile jf = new JarFile(jarFile);
 			JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
 			for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())

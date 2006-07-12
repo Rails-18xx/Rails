@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-import util.XmlUtils;
+import util.*;
 
 /**
  * ComponentManage - an implementation of ComponentManagerI, which handles the
@@ -41,7 +41,7 @@ public class ComponentManager
 		{
 			return sTheOne;
 		}
-		throw new ConfigurationException("ComponentManager has not yet been configured.");
+		throw new ConfigurationException(LocalText.getText("ComponentManagerNotYetConfigured"));
 	}
 
 	public static synchronized void configureInstance(String gameName,
@@ -49,7 +49,7 @@ public class ComponentManager
 	{
 		if (sTheOne != null)
 		{
-			throw new ConfigurationException("Cannot reconfigure the ComponentManager");
+			throw new ConfigurationException(LocalText.getText("ComponentManagerNotReconfigured"));
 		}
 		sTheOne = new ComponentManager(gameName, element);
 	}
@@ -69,14 +69,14 @@ public class ComponentManager
 					COMPONENT_NAME_TAG);
 			if (name == null)
 			{
-				throw new ConfigurationException("Unnamed component found.");
+				throw new ConfigurationException(LocalText.getText("UnnamedComponent"));
 			}
 			String clazz = XmlUtils.extractStringAttribute(nnp,
 					COMPONENT_CLASS_TAG);
 			if (name == null)
 			{
-				throw new ConfigurationException("Component " + name
-						+ " has no class defined.");
+				throw new ConfigurationException(LocalText.getText("Component") + " " + name
+						+ LocalText.getText("ComponentNoClass2"));
 			}
 			String file = XmlUtils.extractStringAttribute(nnp,
 					COMPONENT_FILE_TAG);
@@ -85,8 +85,8 @@ public class ComponentManager
 			// Only one component per name.
 			if (mComponentMap.get(name) != null)
 			{
-				throw new ConfigurationException("Component " + name
-						+ " is configured twice.");
+				throw new ConfigurationException(LocalText.getText("Component") + " " + name
+						+ LocalText.getText("ComponentConfiguredTwice2"));
 			}
 
 			// Now construct the component
@@ -106,8 +106,8 @@ public class ComponentManager
 				// do not between
 				// them make a well-formed system. Debugging aided by chaining
 				// the caught exception.
-				throw new ConfigurationException("Couldn't instantiate an object of class "
-						+ clazz + " for component " + name,
+				throw new ConfigurationException(LocalText.getText("ComponentNoClass1")
+						+ clazz + " " + LocalText.getText("ComponentNoClass2") + " " + name,
 						ex);
 			}
 
@@ -125,13 +125,13 @@ public class ComponentManager
 			catch (ConfigurationException e)
 			{
 				// Temporarily allow components to be incompletely configured.
-				System.out.println("Temporarily accepting configuration failure");
+				System.out.println(LocalText.getText("AcceptingConfigFailure"));
 				e.printStackTrace();
 			}
 
 			// Add it to the map of known components.
 			mComponentMap.put(name, component);
-			System.out.println("Component " + name + " initialised as " + clazz);
+			System.out.println(LocalText.getText("Component") + name + LocalText.getText("ComponentInitAs") + " " + clazz);
 		}
 	}
 

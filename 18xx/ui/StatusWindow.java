@@ -13,6 +13,8 @@ import ui.elements.ClickField;
 import java.util.*;
 import java.util.List;
 
+import util.LocalText;
+
 /**
  * This is the Window used for displaying nearly all of the game status. This is
  * also from where the ORWindow and StartRoundWindow are triggered.
@@ -40,7 +42,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
 	private OperatingRound operatingRound;
-	//private ORWindow orWindow;
+	// private ORWindow orWindow;
 	private int np = GameManager.getNumberOfPlayers();
 	private int nc;
 
@@ -50,39 +52,26 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private static JMenu fileMenu, optMenu;
 	private JMenuItem menuItem;
 
-	/* Static Strings */
-	public final static String MAP = "Map";
-	public final static String MARKET = "Stock Market";
-	public final static String LOG = "Log Window";
-	public final static String QUIT = "Quit";
-	public final static String SAVE = "Save";
-	public final static String BUY = "Buy";
-	public final static String SELL = "Sell";
-	public final static String PASS = "Pass";
-	public final static String DONE = "Done";
-	public final static String SWAP = "Swap";
-
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
-	 * up-to-date: 
-	 * <br> - true: push changes (via the Observer/Observable pattern),
-	 * <br> - false: pull everything on repaint.
-	 * NOTE: currently, 'false' does not work for the stock chart. 
+	 * up-to-date: <br> - true: push changes (via the Observer/Observable
+	 * pattern), <br> - false: pull everything on repaint. NOTE: currently,
+	 * 'false' does not work for the stock chart.
 	 */
 	public static boolean useObserver = true;
 
 	public void initMenu()
 	{
 		menuBar = new JMenuBar();
-		fileMenu = new JMenu("File");
-		optMenu = new JMenu("Options");
+		fileMenu = new JMenu(LocalText.getText("FILE"));
+		optMenu = new JMenu(LocalText.getText("OPTIONS"));
 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		optMenu.setMnemonic(KeyEvent.VK_O);
 
-		menuItem = new JMenuItem(SAVE);
-		menuItem.setName(SAVE);
-		menuItem.setActionCommand(SAVE);
+		menuItem = new JMenuItem(LocalText.getText("SAVE"));
+		menuItem.setName(LocalText.getText("SAVE"));
+		menuItem.setActionCommand(LocalText.getText("SAVE"));
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
@@ -91,9 +80,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		fileMenu.addSeparator();
 
-		menuItem = new JMenuItem(QUIT);
-		menuItem.setName(QUIT);
-		menuItem.setActionCommand(QUIT);
+		menuItem = new JMenuItem(LocalText.getText("QUIT"));
+		menuItem.setName(LocalText.getText("QUIT"));
+		menuItem.setActionCommand(LocalText.getText("QUIT"));
 		menuItem.setMnemonic(KeyEvent.VK_Q);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
 				ActionEvent.ALT_MASK));
@@ -102,31 +91,31 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		menuBar.add(fileMenu);
 
-		menuItem = new JMenuItem("Set Scale");
-		menuItem.setName("Set Scale");
+		menuItem = new JMenuItem(LocalText.getText("SET_SCALE"));
+		menuItem.setName(LocalText.getText("SET_SCALE"));
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
 		optMenu.addSeparator();
 
-		menuItem = new JCheckBoxMenuItem(MARKET);
-		menuItem.setName(MARKET);
-		menuItem.setActionCommand(MARKET);
+		menuItem = new JCheckBoxMenuItem(LocalText.getText("MARKET"));
+		menuItem.setName(LocalText.getText("MARKET"));
+		menuItem.setActionCommand(LocalText.getText("MARKET"));
 		menuItem.setMnemonic(KeyEvent.VK_K);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem(MAP);
-		menuItem.setName(MAP);
-		menuItem.setActionCommand(MAP);
+		menuItem = new JCheckBoxMenuItem(LocalText.getText("MAP"));
+		menuItem.setName(LocalText.getText("MAP"));
+		menuItem.setActionCommand(LocalText.getText("MAP"));
 		menuItem.setMnemonic(KeyEvent.VK_M);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem(LOG);
-		menuItem.setName(LOG);
-		menuItem.setActionCommand(LOG);
+		menuItem = new JCheckBoxMenuItem(LocalText.getText("LOG"));
+		menuItem.setName(LocalText.getText("LOG"));
+		menuItem.setActionCommand(LocalText.getText("LOG"));
 		menuItem.setMnemonic(KeyEvent.VK_L);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
@@ -147,11 +136,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		gameStatus = new GameStatus(this);
 		buttonPanel = new JPanel();
 
-		extraButton = new JButton(""); // Normally invisible, for special properties.
+		extraButton = new JButton(""); // Normally invisible, for special
+										// properties.
 		extraButton.setVisible(false);
-		buyButton = new JButton(BUY);
-		sellButton = new JButton(SELL);
-		passButton = new JButton(PASS);
+		buyButton = new JButton(LocalText.getText("BUY"));
+		sellButton = new JButton(LocalText.getText("SELL"));
+		passButton = new JButton(LocalText.getText("PASS"));
 
 		buyButton.setMnemonic(KeyEvent.VK_B);
 		sellButton.setMnemonic(KeyEvent.VK_S);
@@ -162,9 +152,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		buttonPanel.add(sellButton);
 		buttonPanel.add(passButton);
 
-		buyButton.setActionCommand(BUY);
-		sellButton.setActionCommand(SELL);
-		passButton.setActionCommand(DONE);
+		buyButton.setActionCommand(LocalText.getText("BUY"));
+		sellButton.setActionCommand(LocalText.getText("SELL"));
+		passButton.setActionCommand(LocalText.getText("Done"));
 
 		extraButton.addActionListener(this);
 		buyButton.addActionListener(this);
@@ -177,7 +167,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
 		buttonPanel.setOpaque(false);
 
-		setTitle("Rails: Game Status");
+		setTitle(LocalText.getText("GAME_STATUS_TITLE"));
 		pane.setLayout(new BorderLayout());
 		init();
 		initMenu();
@@ -185,7 +175,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		pane.add(buttonPanel, BorderLayout.CENTER);
 		pane.setOpaque(true);
 		setContentPane(pane);
-		//refreshStatus();
+		// refreshStatus();
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -211,7 +201,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void updateStatus()
 	{
 		currentRound = GameManager.getInstance().getCurrentRound();
-		
+
 		if (currentRound instanceof StartRound)
 		{
 			passButton.setEnabled(false);
@@ -220,12 +210,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				startRoundWindow = new StartRoundWindow(startRound, this);
 			startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
-			if (currentRound != previousRound) {
+			if (currentRound != previousRound)
+			{
 				GameUILoader.stockChart.setVisible(false);
 				GameUILoader.orWindow.setVisible(false);
-	
-				disableCheckBoxMenuItem(MAP);
-				disableCheckBoxMenuItem(MARKET);
+
+				disableCheckBoxMenuItem(LocalText.getText("MAP"));
+				disableCheckBoxMenuItem(LocalText.getText("MARKET"));
 			}
 		}
 		else if (currentRound instanceof StockRound)
@@ -234,66 +225,86 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			stockRound = (StockRound) currentRound;
 			buyableCertificates = stockRound.getBuyableCerts();
 			sellableCertificates = stockRound.getSellableCerts();
-			gameStatus.setBuyableCertificates (buyableCertificates);
-			gameStatus.setSellableCertificates (sellableCertificates);
+			gameStatus.setBuyableCertificates(buyableCertificates);
+			gameStatus.setSellableCertificates(sellableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-			
-		    if ((currentRound instanceof ShareSellingRound)) {
+
+			if ((currentRound instanceof ShareSellingRound))
+			{
 				passButton.setEnabled(false);
-				int cash = ((ShareSellingRound)currentRound).getRemainingCashToRaise();
-				if (sellableCertificates.isEmpty()) {
+				int cash = ((ShareSellingRound) currentRound).getRemainingCashToRaise();
+				if (sellableCertificates.isEmpty())
+				{
 					JOptionPane.showMessageDialog(this,
-							"You must raise "+Bank.format(cash)+", but you can't sell any more shares, so you are Bankrupt!",
+							"You must raise "
+									+ Bank.format(cash)
+									+ ", but you can't sell any more shares, so you are Bankrupt!",
 							"",
 							JOptionPane.OK_OPTION);
-					/* For now assume that this ends the game (not true in all games) */
-					JOptionPane.showMessageDialog (this,
-					        GameManager.getInstance().getGameReport(),
-					        "",
-					        JOptionPane.OK_OPTION);
-					/* All other wrapping up has already been done when calling 
+					/*
+					 * For now assume that this ends the game (not true in all
+					 * games)
+					 */
+					JOptionPane.showMessageDialog(this,
+							GameManager.getInstance().getGameReport(),
+							"",
+							JOptionPane.OK_OPTION);
+					/*
+					 * All other wrapping up has already been done when calling
 					 * getSellableCertificates, so we can just finish now.
 					 */
 					finish();
 					return;
-				} else {
+				}
+				else
+				{
 					JOptionPane.showMessageDialog(this,
-							"You must raise "+Bank.format(cash)+" by selling shares",
+							"You must raise " + Bank.format(cash)
+									+ " by selling shares",
 							"",
 							JOptionPane.OK_OPTION);
 				}
-		    } else {
+			}
+			else
+			{
 				passButton.setEnabled(true);
-		    }
-
-			if (currentRound != previousRound) {
-
-			    GameUILoader.stockChart.setVisible(true);
-				GameUILoader.orWindow.setVisible(false);
-
-				enableCheckBoxMenuItem(MARKET);
-				disableCheckBoxMenuItem(MAP);
 			}
 
-			
+			if (currentRound != previousRound)
+			{
+
+				GameUILoader.stockChart.setVisible(true);
+				GameUILoader.orWindow.setVisible(false);
+
+				enableCheckBoxMenuItem(LocalText.getText("MARKET"));
+				disableCheckBoxMenuItem(LocalText.getText("MAP"));
+			}
+
 			/* Any special properties in force? */
 			player = GameManager.getCurrentPlayer();
 			java.util.List specialProperties = stockRound.getSpecialProperties();
-			if (specialProperties != null && specialProperties.size() > 0) {
-			    /* Assume there will only one special property at a time
-			     * (because we have only one extra button)
-			     */
-			    SpecialSRProperty sp = (SpecialSRProperty) specialProperties.get(0);
-			    if (sp instanceof ExchangeForShare) {
-			        extraButton.setText(((ExchangeForShare)sp).getPrivateCompany().getName()
-			                +"/"+((ExchangeForShare)sp).getPublicCompanyName());
-			        extraButton.setActionCommand(SWAP);
-			        extraButton.setVisible(true);
-			        extraButton.setEnabled(true);
-			    }
-			} else {
-		        extraButton.setEnabled(false);
-		        extraButton.setVisible(false);
+			if (specialProperties != null && specialProperties.size() > 0)
+			{
+				/*
+				 * Assume there will only one special property at a time
+				 * (because we have only one extra button)
+				 */
+				SpecialSRProperty sp = (SpecialSRProperty) specialProperties.get(0);
+				if (sp instanceof ExchangeForShare)
+				{
+					extraButton.setText(((ExchangeForShare) sp).getPrivateCompany()
+							.getName()
+							+ "/"
+							+ ((ExchangeForShare) sp).getPublicCompanyName());
+					extraButton.setActionCommand(LocalText.getText("SWAP"));
+					extraButton.setVisible(true);
+					extraButton.setEnabled(true);
+				}
+			}
+			else
+			{
+				extraButton.setEnabled(false);
+				extraButton.setVisible(false);
 			}
 			toFront();
 		}
@@ -302,17 +313,18 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setEnabled(false);
 			operatingRound = (OperatingRound) currentRound;
 
-			if (currentRound != previousRound) {
+			if (currentRound != previousRound)
+			{
 				GameUILoader.stockChart.setVisible(false);
 				GameUILoader.orWindow.activate();
 
-				enableCheckBoxMenuItem(MAP);
-				disableCheckBoxMenuItem(MARKET);
+				enableCheckBoxMenuItem(LocalText.getText("MAP"));
+				disableCheckBoxMenuItem(LocalText.getText("MARKET"));
 			}
 		}
-		
+
 		pack();
-		
+
 		previousRound = currentRound;
 	}
 
@@ -360,7 +372,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			startRoundWindow.close();
 			startRoundWindow = null;
 		}
-		
+
 		currentRound = GameManager.getInstance().getCurrentRound();
 		updateStatus();
 	}
@@ -375,59 +387,60 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		int returnVal = 0;
 		player = GameManager.getCurrentPlayer();
 
-		if (actor.getActionCommand().equalsIgnoreCase(BUY))
+		if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("BUY")))
 		{
 			buyButtonClicked();
-			passButton.setText(DONE);
+			passButton.setText(LocalText.getText("Done"));
 			passButton.setMnemonic(KeyEvent.VK_D);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(SELL))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SELL")))
 		{
 			sellButtonClicked();
-			passButton.setText(DONE);
+			passButton.setText(LocalText.getText("Done"));
 			passButton.setMnemonic(KeyEvent.VK_D);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(DONE))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("Done")))
 		{
-		    if (GameManager.isGameOver()) {
-		        System.exit(0);
-		    }
+			if (GameManager.isGameOver())
+			{
+				System.exit(0);
+			}
 			stockRound.done(gameStatus.getSRPlayer());
-			passButton.setText(PASS);
+			passButton.setText(LocalText.getText("PASS"));
 			passButton.setMnemonic(KeyEvent.VK_P);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(SWAP)) {
-		    /* Execute a special property (i.e. swap M&H for NYC) */
-		    SpecialSRProperty sp = (SpecialSRProperty)stockRound.getSpecialProperties().get(0);
-		    if (sp instanceof ExchangeForShare) {
-		        ((ExchangeForShare)sp).execute();
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SWAP")))
+		{
+			/* Execute a special property (i.e. swap M&H for NYC) */
+			SpecialSRProperty sp = (SpecialSRProperty) stockRound.getSpecialProperties()
+					.get(0);
+			if (sp instanceof ExchangeForShare)
+			{
+				((ExchangeForShare) sp).execute();
 				extraButton.setText("");
 				extraButton.setEnabled(false);
 				extraButton.setVisible(false);
-		    }
+			}
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(QUIT))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("QUIT")))
 			System.exit(0);
 		// We're not going to actually DO anything with the selected file
 		// until the infrastructure for saved games is built
-		else if (actor.getActionCommand().equalsIgnoreCase(SAVE))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SAVE")))
 			returnVal = new JFileChooser().showSaveDialog(this);
-		else if (actor.getActionCommand().equalsIgnoreCase(LOG))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("LOG")))
 		{
-			GameUILoader.messageWindow.setVisible(
-					((JMenuItem) actor.getSource()).isSelected());
+			GameUILoader.messageWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MARKET))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("MARKET")))
 		{
-			GameUILoader.stockChart.setVisible(
-					((JMenuItem) actor.getSource()).isSelected());
+			GameUILoader.stockChart.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(MAP))
+		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("MAP")))
 		{
-			GameUILoader.orWindow.setVisible(
-					((JMenuItem) actor.getSource()).isSelected());
+			GameUILoader.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
 
@@ -440,14 +453,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			gameStatus.setSRPlayerTurn(-1);
 		}
-		
+
 		updateStatus();
 	}
 
 	private void buyButtonClicked()
 	{
 		playerIndex = GameManager.getCurrentPlayerIndex();
-		
 
 		if ((compIndex = gameStatus.getCompIndexToBuyFromIPO()) >= 0)
 		{
@@ -527,8 +539,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		StockMarket stockMarket = (StockMarket) Game.getStockMarket();
 		List startOptions = gameStatus.getBuyOrSellOptions();
 		String[] options = new String[startOptions.size()];
-		for (int i=0; i<options.length; i++) {
-		    options[i] = Bank.format(((TradeableCertificate)startOptions.get(i)).getPrice());
+		for (int i = 0; i < options.length; i++)
+		{
+			options[i] = Bank.format(((TradeableCertificate) startOptions.get(i)).getPrice());
 		}
 
 		if (company != null)
@@ -540,7 +553,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 					null,
 					options,
 					options[0]);
-			int startPrice = Integer.parseInt(sp.replaceAll("\\D",""));
+			int startPrice = Integer.parseInt(sp.replaceAll("\\D", ""));
 			if (!stockRound.startCompany(player.getName(),
 					company.getName(),
 					startPrice))
@@ -600,27 +613,28 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 		}
 	}
-	
+
 	/**
 	 * Finish the application.
 	 */
-	public void finish () {
-	    
-	    /* Complete the log */
-	    LogWindow.addLog();
-	    
-	    setVisible(true);
+	public void finish()
+	{
+
+		/* Complete the log */
+		LogWindow.addLog();
+
+		setVisible(true);
 		GameUILoader.messageWindow.setVisible(true);
 		GameUILoader.stockChart.setVisible(true);
-	    
-	    /* Disable all buttons */
+
+		/* Disable all buttons */
 		passButton.setEnabled(true);
-		passButton.setText("Close all windows");
+		passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
 		extraButton.setVisible(false);
 		buyButton.setVisible(false);
 		sellButton.setVisible(false);
 		GameUILoader.orWindow.finish();
-		
+
 		toFront();
 
 	}
@@ -629,14 +643,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	{
 	}
 
-    public void keyPressed(KeyEvent e)
-    {
-    	if (e.getKeyCode() == KeyEvent.VK_F1)
-    	{
-    		HelpWindow.displayHelp(gmgr.getHelp());
-    		e.consume();
-    	}
-    }
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == KeyEvent.VK_F1)
+		{
+			HelpWindow.displayHelp(gmgr.getHelp());
+			e.consume();
+		}
+	}
 
 	public void keyTyped(KeyEvent e)
 	{
