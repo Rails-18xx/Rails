@@ -86,7 +86,7 @@ public class ComponentManager
 			if (mComponentMap.get(name) != null)
 			{
 				throw new ConfigurationException(LocalText.getText("Component") + " " + name
-						+ LocalText.getText("ComponentConfiguredTwice2"));
+						+ LocalText.getText("ConfiguredTwice2"));
 			}
 
 			// Now construct the component
