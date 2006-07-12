@@ -1,5 +1,6 @@
 package ui;
 
+import util.LocalText;
 import game.*;
 
 import java.awt.*;
@@ -74,7 +75,7 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.LOG);
+		StatusWindow.uncheckMenuItemBox(LocalText.getText("LOG"));
 		dispose();		
 	}
 

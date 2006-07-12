@@ -1,11 +1,9 @@
 package ui;
 
-import game.Game;
-
 import java.awt.*;
 import javax.swing.*;
 
-import util.Util;
+import util.*;
 
 public class MessagePanel extends JPanel
 {
@@ -40,7 +38,7 @@ public class MessagePanel extends JPanel
 	{
 		if (Util.hasValue(messageKey))
 		{
-			message.setText(Game.getText(messageKey));
+			message.setText(LocalText.getText(messageKey));
 		}
 	}
 

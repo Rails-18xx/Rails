@@ -14,6 +14,8 @@ import ui.elements.*;
 import java.util.*;
 import java.util.List;
 
+import util.LocalText;
+
 /**
  * This class is incorporated into StatusWindow and displays the bulk of game
  * status information.
@@ -189,39 +191,91 @@ public class GameStatus extends JPanel implements ActionListener
 		futureTrainsXOffset = np + 6;
 		futureTrainsYOffset = nc + 3;
 
-		addField(new Caption("Company"), 0, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM);
-		addField(new Caption("Players"), certPerPlayerXOffset, 0, np, 1, 0);
+		addField(new Caption(LocalText.getText("COMPANY")),
+				0,
+				0,
+				1,
+				2,
+				WIDE_RIGHT + WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("PLAYERS")),
+				certPerPlayerXOffset,
+				0,
+				np,
+				1,
+				0);
 		for (int i = 0; i < np; i++)
 		{
 			playerIndex.put(players[i], new Integer(i));
 			f = upperPlayerCaption[i] = new Caption(players[i].getName());
 			addField(f, certPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
 		}
-		addField(new Caption("Bank shares"),
+		addField(new Caption(LocalText.getText("BANK_SHARES")),
 				certInIPOXOffset,
 				0,
 				2,
 				1,
 				WIDE_LEFT + WIDE_RIGHT);
-		addField(new Caption("IPO"), certInIPOXOffset, 1, 1, 1, WIDE_LEFT
-				+ WIDE_BOTTOM);
-		addField(new Caption("Pool"), certInPoolXOffset, 1, 1, 1, WIDE_RIGHT
-				+ WIDE_BOTTOM);
-		addField(new Caption("Prices"), parPriceXOffset, 0, 2, 1, WIDE_RIGHT);
-		addField(new Caption("Par"), parPriceXOffset, 1, 1, 1, WIDE_BOTTOM);
-		addField(new Caption("Curr"), currPriceXOffset, 1, 1, 1, WIDE_RIGHT
-				+ WIDE_BOTTOM);
-		addField(new Caption("Company details"), compCashXOffset, 0, 4, 1, 0);
-		addField(new Caption("Cash"), compCashXOffset, 1, 1, 1, WIDE_BOTTOM);
-		addField(new Caption("Rev"), compRevenueXOffset, 1, 1, 1, WIDE_BOTTOM);
-		addField(new Caption("Trains"), compTrainsXOffset, 1, 1, 1, WIDE_BOTTOM);
-		addField(new Caption("Privates"),
+		addField(new Caption(LocalText.getText("IPO")),
+				certInIPOXOffset,
+				1,
+				1,
+				1,
+				WIDE_LEFT + WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("POOL")),
+				certInPoolXOffset,
+				1,
+				1,
+				1,
+				WIDE_RIGHT + WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("PRICES")),
+				parPriceXOffset,
+				0,
+				2,
+				1,
+				WIDE_RIGHT);
+		addField(new Caption(LocalText.getText("PAR")),
+				parPriceXOffset,
+				1,
+				1,
+				1,
+				WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("CURRENT")),
+				currPriceXOffset,
+				1,
+				1,
+				1,
+				WIDE_RIGHT + WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
+				compCashXOffset,
+				0,
+				4,
+				1,
+				0);
+		addField(new Caption(LocalText.getText("CASH")),
+				compCashXOffset,
+				1,
+				1,
+				1,
+				WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("REVENUE")),
+				compRevenueXOffset,
+				1,
+				1,
+				1,
+				WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("TRAINS")),
+				compTrainsXOffset,
+				1,
+				1,
+				1,
+				WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("PRIVATES")),
 				compPrivatesXOffset,
 				1,
 				1,
 				1,
 				WIDE_BOTTOM);
-		addField(new Caption("Company"),
+		addField(new Caption(LocalText.getText("COMPANY")),
 				compPrivatesXOffset + 1,
 				0,
 				1,
@@ -239,8 +293,8 @@ public class GameStatus extends JPanel implements ActionListener
 
 			for (int j = 0; j < np; j++)
 			{
-				//f = certPerPlayer[i][j] = new Field("");
-				f = certPerPlayer[i][j] = new Field(players[j].getPortfolio().getShareModel(c));
+				f = certPerPlayer[i][j] = new Field(players[j].getPortfolio()
+						.getShareModel(c));
 				addField(f,
 						certPerPlayerXOffset + j,
 						certPerPlayerYOffset + i,
@@ -248,8 +302,8 @@ public class GameStatus extends JPanel implements ActionListener
 						1,
 						0);
 				f = certPerPlayerButton[i][j] = new ClickField("",
-						"Sell",
-						"Click to select for selling",
+						LocalText.getText("SELL"),
+						LocalText.getText("ClickForSell"),
 						this,
 						buySellGroup);
 				addField(f,
@@ -259,19 +313,17 @@ public class GameStatus extends JPanel implements ActionListener
 						1,
 						0);
 			}
-			//f = certInIPO[i] = new Field(Bank.getIpo().ownsShare(c) + "%");
 			f = certInIPO[i] = new Field(Bank.getIpo().getShareModel(c));
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
 			f = certInIPOButton[i] = new ClickField(certInIPO[i].getText(),
-					"BuyIPO",
-					"Click to select for buying",
+					LocalText.getText("BUY") + LocalText.getText("IPO"),
+					LocalText.getText("ClickToSelectForBuy"),
 					this,
 					buySellGroup);
 			f.setVisible(false);
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
 			certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
-			//f = certInPool[i] = new Field("");
 			f = certInPool[i] = new Field(Bank.getPool().getShareModel(c));
 			addField(f,
 					certInPoolXOffset,
@@ -280,8 +332,8 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					WIDE_RIGHT);
 			f = certInPoolButton[i] = new ClickField(certInPool[i].getText(),
-					"BuyPool",
-					"Click to buy",
+					LocalText.getText("BUY") + LocalText.getText("POOL"),
+					LocalText.getText("ClickToBuy"),
 					this,
 					buySellGroup);
 			f.setVisible(false);
@@ -291,11 +343,11 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					1,
 					WIDE_RIGHT);
-			certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/*sic*/
+			certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
 
 			f = parPrice[i] = new Field(c.getParPriceModel());
 			addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0);
-			
+
 			f = currPrice[i] = new Field(c.getCurrentPriceModel());
 			addField(f,
 					currPriceXOffset,
@@ -310,10 +362,15 @@ public class GameStatus extends JPanel implements ActionListener
 			f = compRevenue[i] = new Field(c.getLastRevenueModel());
 			addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0);
 
-			f = compTrains[i] = new Field(c.getPortfolio().getTrainsModel().option(TrainsModel.FULL_LIST));
+			f = compTrains[i] = new Field(c.getPortfolio()
+					.getTrainsModel()
+					.option(TrainsModel.FULL_LIST));
 			addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0);
 
-			f = compPrivates[i] = new Field(c.getPortfolio().getPrivatesModel().option(PrivatesModel.SPACE));			addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
+			f = compPrivates[i] = new Field(c.getPortfolio()
+					.getPrivatesModel()
+					.option(PrivatesModel.SPACE));
+			addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
 			f = new Caption(c.getName());
 			f.setForeground(c.getFgColour());
 			f.setBackground(c.getBgColour());
@@ -326,8 +383,12 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 
 		// Player possessions
-		addField(new Caption("Cash"), 0, playerCashYOffset, 1, 1, WIDE_TOP
-				+ WIDE_RIGHT);
+		addField(new Caption(LocalText.getText("CASH")),
+				0,
+				playerCashYOffset,
+				1,
+				1,
+				WIDE_TOP + WIDE_RIGHT);
 		for (int i = 0; i < np; i++)
 		{
 			f = playerCash[i] = new Field(players[i].getCashModel());
@@ -347,7 +408,9 @@ public class GameStatus extends JPanel implements ActionListener
 				WIDE_RIGHT);
 		for (int i = 0; i < np; i++)
 		{
-			f = playerPrivates[i] = new Field(players[i].getPortfolio().getPrivatesModel().option(PrivatesModel.BREAK));
+			f = playerPrivates[i] = new Field(players[i].getPortfolio()
+					.getPrivatesModel()
+					.option(PrivatesModel.BREAK));
 			addField(f,
 					playerPrivatesXOffset + i,
 					playerPrivatesYOffset,
@@ -356,33 +419,58 @@ public class GameStatus extends JPanel implements ActionListener
 					0);
 		}
 
-		addField(new Caption("Worth"), 0, playerWorthYOffset, 1, 1, WIDE_RIGHT);
+		addField(new Caption(LocalText.getText("WORTH")),
+				0,
+				playerWorthYOffset,
+				1,
+				1,
+				WIDE_RIGHT);
 		for (int i = 0; i < np; i++)
 		{
 			f = playerWorth[i] = new Field(players[i].getWorthModel(), true);
 			addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, 0);
 		}
 
-		addField(new Caption("Certs"), 0, playerCertCountYOffset, 1, 1, WIDE_RIGHT+WIDE_TOP);
+		addField(new Caption("Certs"),
+				0,
+				playerCertCountYOffset,
+				1,
+				1,
+				WIDE_RIGHT + WIDE_TOP);
 		for (int i = 0; i < np; i++)
 		{
-			f = playerCertCount[i] = new Field(players[i].getCertCountModel(), true);
-			addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1, 1, WIDE_TOP);
+			f = playerCertCount[i] = new Field(players[i].getCertCountModel(),
+					true);
+			addField(f,
+					playerCertCountXOffset + i,
+					playerCertCountYOffset,
+					1,
+					1,
+					WIDE_TOP);
 		}
-
 
 		for (int i = 0; i < np; i++)
 		{
 			f = lowerPlayerCaption[i] = new Caption(players[i].getName());
 			addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, WIDE_TOP);
 		}
-		
+
 		// Certificate Limit
-		addField (new Caption ("Limit"), certLimitXOffset-1, certLimitYOffset, 1, 1, WIDE_TOP+WIDE_LEFT);
-		addField (new Field (""+Player.getCertLimit()), certLimitXOffset, certLimitYOffset, 1, 1, WIDE_TOP);
+		addField(new Caption(LocalText.getText("LIMIT")),
+				certLimitXOffset - 1,
+				certLimitYOffset,
+				1,
+				1,
+				WIDE_TOP + WIDE_LEFT);
+		addField(new Field("" + Player.getCertLimit()),
+				certLimitXOffset,
+				certLimitYOffset,
+				1,
+				1,
+				WIDE_TOP);
 
 		// Bank
-		addField(new Caption("Bank"),
+		addField(new Caption(LocalText.getText("BANK")),
 				bankCashXOffset - 1,
 				bankCashYOffset - 1,
 				1,
@@ -396,14 +484,16 @@ public class GameStatus extends JPanel implements ActionListener
 				WIDE_TOP);
 		bankCash = new Field(Bank.getInstance().getCashModel());
 		addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0);
-		
+
 		addField(new Caption("Used trains"),
 				poolTrainsXOffset,
 				poolTrainsYOffset - 1,
 				2,
 				1,
 				WIDE_TOP + WIDE_RIGHT);
-		poolTrains = new Field(Bank.getPool().getTrainsModel().option(TrainsModel.FULL_LIST));
+		poolTrains = new Field(Bank.getPool()
+				.getTrainsModel()
+				.option(TrainsModel.FULL_LIST));
 		addField(poolTrains,
 				poolTrainsXOffset,
 				poolTrainsYOffset,
@@ -418,7 +508,9 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_TOP);
-		newTrains = new Field(Bank.getIpo().getTrainsModel().option(TrainsModel.ABBR_LIST));
+		newTrains = new Field(Bank.getIpo()
+				.getTrainsModel()
+				.option(TrainsModel.ABBR_LIST));
 		addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0);
 
 		dummyButton = new ClickField("", "", "", this, buySellGroup);
@@ -430,7 +522,9 @@ public class GameStatus extends JPanel implements ActionListener
 				3,
 				1,
 				WIDE_LEFT + WIDE_TOP);
-		futureTrains = new Field(Bank.getUnavailable().getTrainsModel().option(TrainsModel.ABBR_LIST));
+		futureTrains = new Field(Bank.getUnavailable()
+				.getTrainsModel()
+				.option(TrainsModel.ABBR_LIST));
 		addField(futureTrains,
 				futureTrainsXOffset,
 				futureTrainsYOffset,
@@ -486,19 +580,21 @@ public class GameStatus extends JPanel implements ActionListener
 		if (source instanceof ClickField)
 		{
 			gbc = gb.getConstraints(source);
-			if (command.equals("Sell"))
+			if (command.equals(LocalText.getText("SELL")))
 			{
 				compSellIndex = gbc.gridy - certPerPlayerYOffset;
 				compBuyIPOIndex = compBuyPoolIndex = -1;
 				((StatusWindow) parent).enableSellButton(true);
 			}
-			else if (command.equals("BuyIPO"))
+			else if (command.equals(LocalText.getText("BUY")
+					+ LocalText.getText("IPO")))
 			{
 				compBuyIPOIndex = gbc.gridy - certInIPOYOffset;
 				compSellIndex = compBuyPoolIndex = -1;
 				((StatusWindow) parent).enableBuyButton(true);
 			}
-			else if (command.equals("BuyPool"))
+			else if (command.equals(LocalText.getText("BUY")
+					+ LocalText.getText("POOL")))
 			{
 				compBuyPoolIndex = gbc.gridy - certInPoolYOffset;
 				compSellIndex = compBuyIPOIndex = -1;
@@ -523,22 +619,29 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		return compBuyPoolIndex;
 	}
-	
-	public List getBuyOrSellOptions () {
-	    if (compBuyIPOIndex >= 0) {
-	        return this.certInIPOButton[compBuyIPOIndex].getOptions();
-	    } else if (compBuyPoolIndex >= 0) {
-	        return certInPoolButton[compBuyPoolIndex].getOptions();
-	    } else if (compSellIndex >= 0) {
-	        return this.certPerPlayerButton[srPlayerIndex][compSellIndex].getOptions();
-	    } else {
-	        return new ArrayList();
-	    }
+
+	public List getBuyOrSellOptions()
+	{
+		if (compBuyIPOIndex >= 0)
+		{
+			return this.certInIPOButton[compBuyIPOIndex].getOptions();
+		}
+		else if (compBuyPoolIndex >= 0)
+		{
+			return certInPoolButton[compBuyPoolIndex].getOptions();
+		}
+		else if (compSellIndex >= 0)
+		{
+			return this.certPerPlayerButton[srPlayerIndex][compSellIndex].getOptions();
+		}
+		else
+		{
+			return new ArrayList();
+		}
 	}
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
-
 		int i, j, share;
 
 		dummyButton.setSelected(true);
@@ -563,7 +666,7 @@ public class GameStatus extends JPanel implements ActionListener
 
 			upperPlayerCaption[j].setHighlight(true);
 			lowerPlayerCaption[j].setHighlight(true);
-			
+
 			for (i = 0; i < nc; i++)
 			{
 				setIPOCertButton(i, false);
@@ -573,25 +676,30 @@ public class GameStatus extends JPanel implements ActionListener
 			TradeableCertificate tCert;
 			PublicCertificateI cert;
 			int index;
-			
-			for (Iterator it = buyableCertificates.iterator(); it.hasNext(); ) {
-			    tCert = (TradeableCertificate) it.next();
-			    cert = tCert.getCert();
-			    index = cert.getCompany().getPublicNumber();
-			    if (cert.getPortfolio() == Bank.getIpo()) {
-			        setIPOCertButton (index, true, tCert);
-			    } else {
-			        setPoolCertButton (index, true, tCert);
-			    }
+
+			for (Iterator it = buyableCertificates.iterator(); it.hasNext();)
+			{
+				tCert = (TradeableCertificate) it.next();
+				cert = tCert.getCert();
+				index = cert.getCompany().getPublicNumber();
+				if (cert.getPortfolio() == Bank.getIpo())
+				{
+					setIPOCertButton(index, true, tCert);
+				}
+				else
+				{
+					setPoolCertButton(index, true, tCert);
+				}
 			}
-			
-			for (Iterator it = sellableCertificates.iterator(); it.hasNext(); ) {
-			    tCert = (TradeableCertificate) it.next();
-			    cert = tCert.getCert();
-			    index = cert.getCompany().getPublicNumber();
-		        setPlayerCertButton (index, j, true, tCert);
+
+			for (Iterator it = sellableCertificates.iterator(); it.hasNext();)
+			{
+				tCert = (TradeableCertificate) it.next();
+				cert = tCert.getCert();
+				index = cert.getCompany().getPublicNumber();
+				setPlayerCertButton(index, j, true, tCert);
 			}
-			
+
 		}
 		else
 		{
@@ -606,13 +714,15 @@ public class GameStatus extends JPanel implements ActionListener
 		((StatusWindow) parent).enableSellButton(false);
 		repaint();
 	}
-	
-	public void setBuyableCertificates (List certs) {
-	    buyableCertificates = certs;
+
+	public void setBuyableCertificates(List certs)
+	{
+		buyableCertificates = certs;
 	}
-	
-	public void setSellableCertificates (List certs) {
-	    sellableCertificates = certs;
+
+	public void setSellableCertificates(List certs)
+	{
+		sellableCertificates = certs;
 	}
 
 	public String getSRPlayer()
@@ -623,10 +733,12 @@ public class GameStatus extends JPanel implements ActionListener
 			return "";
 	}
 
-	private void setPlayerCertButton(int i, int j, boolean clickable, Object o) {
-	    
-	    setPlayerCertButton (i, j, clickable);
-	    if (clickable) certPerPlayerButton[i][j].addOption (o);
+	private void setPlayerCertButton(int i, int j, boolean clickable, Object o)
+	{
+
+		setPlayerCertButton(i, j, clickable);
+		if (clickable)
+			certPerPlayerButton[i][j].addOption(o);
 	}
 
 	private void setPlayerCertButton(int i, int j, boolean clickable)
@@ -638,11 +750,13 @@ public class GameStatus extends JPanel implements ActionListener
 		certPerPlayer[i][j].setVisible(!clickable);
 		certPerPlayerButton[i][j].setVisible(clickable);
 	}
-	
-	private void setIPOCertButton (int i, boolean clickable, Object o) {
-	    
-	    setIPOCertButton(i, clickable);
-	    if (clickable) certInIPOButton[i].addOption(o);
+
+	private void setIPOCertButton(int i, boolean clickable, Object o)
+	{
+
+		setIPOCertButton(i, clickable);
+		if (clickable)
+			certInIPOButton[i].addOption(o);
 	}
 
 	private void setIPOCertButton(int i, boolean clickable)
@@ -650,17 +764,21 @@ public class GameStatus extends JPanel implements ActionListener
 		if (clickable)
 		{
 			certInIPOButton[i].setText(certInIPO[i].getText());
-		} else {
-		    certInIPOButton[i].clearOptions();
+		}
+		else
+		{
+			certInIPOButton[i].clearOptions();
 		}
 		certInIPO[i].setVisible(!clickable);
 		certInIPOButton[i].setVisible(clickable);
 	}
 
-	private void setPoolCertButton (int i, boolean clickable, Object o) {
-	    
-	    setPoolCertButton(i, clickable);
-	    if (clickable) certInPoolButton[i].addOption(o);
+	private void setPoolCertButton(int i, boolean clickable, Object o)
+	{
+
+		setPoolCertButton(i, clickable);
+		if (clickable)
+			certInPoolButton[i].addOption(o);
 	}
 
 	private void setPoolCertButton(int i, boolean clickable)
@@ -668,8 +786,10 @@ public class GameStatus extends JPanel implements ActionListener
 		if (clickable)
 		{
 			certInPoolButton[i].setText(certInPool[i].getText());
-		} else {
-		    certInPoolButton[i].clearOptions();
+		}
+		else
+		{
+			certInPoolButton[i].clearOptions();
 		}
 		certInPool[i].setVisible(!clickable);
 		certInPoolButton[i].setVisible(clickable);

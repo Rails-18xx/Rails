@@ -8,6 +8,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import util.LocalText;
+
 /**
  * This displays the Auction Window
  */
@@ -78,7 +80,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		this.round = round;
 		statusWindow = parent;
 		startRoundPanel = this;
-		setTitle("Rails: Start Round");
+		setTitle(LocalText.getText("START_ROUND_TITLE"));
 		getContentPane().setLayout(new BorderLayout());
 
 		statusPanel = new JPanel();
@@ -89,15 +91,15 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
 		buttonPanel = new JPanel();
 
-		buyButton = new JButton("Buy");
-		buyButton.setActionCommand("Buy");
+		buyButton = new JButton(LocalText.getText("BUY"));
+		buyButton.setActionCommand(LocalText.getText("BUY"));
 		buyButton.setMnemonic(KeyEvent.VK_B);
 		buyButton.addActionListener(this);
 		buyButton.setEnabled(false);
 		buttonPanel.add(buyButton);
 
-		bidButton = new JButton("Bid:");
-		bidButton.setActionCommand("Bid");
+		bidButton = new JButton(LocalText.getText("BID") + ":");
+		bidButton.setActionCommand(LocalText.getText("BID"));
 		bidButton.setMnemonic(KeyEvent.VK_D);
 		bidButton.addActionListener(this);
 		bidButton.setEnabled(false);
@@ -112,8 +114,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		bidAmount.setEnabled(false);
 		buttonPanel.add(bidAmount);
 
-		passButton = new JButton("Pass");
-		passButton.setActionCommand("Pass");
+		passButton = new JButton(LocalText.getText("PASS"));
+		passButton.setActionCommand(LocalText.getText("PASS"));
 		passButton.setMnemonic(KeyEvent.VK_P);
 		passButton.addActionListener(this);
 		passButton.setEnabled(true);
@@ -173,20 +175,20 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		playerFreeXOffset = 3;
 		playerFreeYOffset = ni + 3;
 
-		addField(new Caption("Item"), 0, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM);
-		addField(new Caption("<html>Base<br>Price</html>"),
+		addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("BASE_PRICE")),
 				basePriceXOffset,
 				0,
 				1,
 				2,
 				WIDE_BOTTOM);
-		addField(new Caption("<html>Min.<br>Bid</html>"),
+		addField(new Caption(LocalText.getText("MINIMUM_BID")),
 				minBidXOffset,
 				0,
 				1,
 				2,
 				WIDE_BOTTOM + WIDE_RIGHT);
-		addField(new Caption("Players"), bidPerPlayerXOffset, 0, np, 1, 0);
+		addField(new Caption(LocalText.getText("PLAYERS")), bidPerPlayerXOffset, 0, np, 1, 0);
 		for (int i = 0; i < np; i++)
 		{
 			f = upperPlayerCaption[i] = new Caption(players[i].getName());
@@ -224,7 +226,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 
 		// Player money
-		addField(new Caption("Bids"),
+		addField(new Caption(LocalText.getText("BID")),
 				playerBidsXOffset - 1,
 				playerBidsYOffset,
 				1,
@@ -241,7 +243,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					WIDE_TOP);
 		}
 
-		addField(new Caption("Free"),
+		addField(new Caption(LocalText.getText("FREE")),
 				playerBidsXOffset - 1,
 				playerFreeYOffset,
 				1,

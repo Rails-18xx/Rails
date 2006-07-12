@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.*;
 import game.*;
+import util.LocalText;
 
 /**
  * The Options dialog window displays the first window presented to the user.
@@ -32,7 +33,7 @@ public class Options extends JDialog implements ActionListener
 	JTextField[] playerNameFields;
 	BasicComboBoxRenderer renderer;
 	Dimension size, optSize;
-
+	
 	private void initialize()
 	{
 		gc = new GridBagConstraints();
@@ -147,7 +148,7 @@ public class Options extends JDialog implements ActionListener
 		if (files == null || files.length == 0)
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails.jar");
+			File jarFile = new File("./Rails-" + LocalText.version + ".jar");
 			try
 			{
 				JarFile jf = new JarFile(jarFile);

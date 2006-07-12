@@ -6,6 +6,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import ui.elements.GUIStockSpace;
 
+import util.LocalText;
+
 /**
  * This class displays the StockMarket Window.
  */
@@ -120,7 +122,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(StatusWindow.MARKET);
+		StatusWindow.uncheckMenuItemBox(LocalText.getText("MARKET"));
 		dispose();
 	}
 

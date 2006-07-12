@@ -174,6 +174,11 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return tokens;
 	}
 
+	/**
+	 * @return hasTokens, which can be a bit confusing. hasTokens 
+	 * can be thought of as hasPlayedTokens. Returns true if the 
+	 * company has played one or more of its tokens. 
+	 */
 	public boolean hasTokens()
 	{
 		return hasTokens;
@@ -228,6 +233,18 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 			return true;
 		
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @return True if company has tokens available for play. 
+	 */
+	public boolean hasTokensLeft()
+	{
+		if(tokens.size() <= maxCityTokens)
+			return true;
+		else
+			return false;
 	}
 
 }
