@@ -1336,6 +1336,12 @@ public class OperatingRound implements Round
 	    return buyableTrains;
 	}
 	
+	public boolean isOperatingCompanyAtTrainLimit() {
+	    
+	    return operatingCompany.getPortfolio().getTrains().length 
+	    		>= operatingCompany.getTrainLimit(currentPhase.getIndex());
+	}
+	
 	/**
 	 * Chech if revenue may be split.
 	 * 

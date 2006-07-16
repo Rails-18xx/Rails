@@ -1047,6 +1047,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		return trainLimit[Math.min(phaseIndex, trainLimit.length - 1)];
 	}
+	
+	public boolean mayBuyTrains () {
+	    
+	    return portfolio.getTrains().length < getTrainLimit(GameManager.getCurrentPhase().getIndex());
+	}
 
 	/** Must be called in stead of Portfolio.buyTrain if side-effects can occur. */
 	public void buyTrain(TrainI train, int price)

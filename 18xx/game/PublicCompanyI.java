@@ -227,11 +227,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	public void checkFlotation();
 
 	public int getCapitalisation();
-
 	public void setCapitalisation(int capitalisation);
 
 	public int getTrainLimit (int phaseIndex);
-
+	public boolean mayBuyTrains ();
 	public void buyTrain (TrainI train, int price);
 	
 	public int getNextBaseTokenIndex ();
