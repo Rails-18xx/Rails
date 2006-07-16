@@ -129,10 +129,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void selectHex(GUIHex clickedHex)
 	{
-		System.out.println("selecthex called for hex "
-				+ (clickedHex != null ? clickedHex.getName() : "null")
-				+ ", selected was "
-				+ (selectedHex != null ? selectedHex.getName() : "null"));
+		//System.out.println("selecthex called for hex "
+		//		+ (clickedHex != null ? clickedHex.getName() : "null")
+		//		+ ", selected was "
+		//		+ (selectedHex != null ? selectedHex.getName() : "null"));
 
 		if (selectedHex == clickedHex)
 			return;
@@ -140,8 +140,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
-			System.out.println("Hex " + selectedHex.getName()
-					+ " deselected and repainted");
+			//System.out.println("Hex " + selectedHex.getName()
+			//		+ " deselected and repainted");
 		}
 
 		if (clickedHex != null)

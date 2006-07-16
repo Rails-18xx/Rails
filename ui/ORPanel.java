@@ -796,9 +796,11 @@ private void buyTrain()
         int price = bTrain.getFixedCost();
 
         if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
-            prompt = orComp.getName() + " buys " + boughtTrain
-            	+ " for which price from "
-            	+ seller.getName() + "?";
+            //prompt = orComp.getName() + " buys " + boughtTrain
+            //	+ " for which price from "
+            //	+ seller.getName() + "?";
+            prompt = LocalText.getText ("WHICH_TRAIN_PRICE",
+                    new String [] {orComp.getName(), train.getName(), seller.getName()});
             String response;
             for (;;) {
             	response = JOptionPane.showInputDialog(this,
@@ -813,7 +815,7 @@ private void buyTrain()
 	            if (price > 0) break; // Got a good (or bad, but valid) price.
 	            
             	if (!prompt.startsWith("Please")) {
-            	    prompt = "Please enter a valid price or hit Cancel"
+            	    prompt = LocalText.getText("ENTER_PRICE_OR_CANCEL")
             	        + "\n" + prompt;
             	}
             }

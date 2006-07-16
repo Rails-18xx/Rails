@@ -55,7 +55,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean addToken(CompanyI company)
 	{
-		System.out.println(company.getName() + LocalText.getText("TokenAdded") + " " + name);
+		//System.out.println(company.getName() + LocalText.getText("TokenAdded") + " " + name);
 		tokens.add(company);
 		notifyViewObjects();
 		return true;
@@ -70,7 +70,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean removeToken(CompanyI company)
 	{
-		System.out.println(company.getName() + LocalText.getText("TokenRemoved") + " " + name);
+		//System.out.println(company.getName() + LocalText.getText("TokenRemoved") + " " + name);
 		int index = tokens.indexOf(company);
 		if (index >= 0)
 		{
