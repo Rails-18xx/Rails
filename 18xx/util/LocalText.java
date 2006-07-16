@@ -1,5 +1,6 @@
 package util;
 
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -17,8 +18,13 @@ public class LocalText extends ResourceBundle
 	protected static Locale locale;
 	protected static ResourceBundle localisedText;
 
-	public static String getText(String key)
+	public static String getText(String key) {
+	    return getText (key, null);
+	}
+	
+	public static String getText (String key, Object[] parameters) 
 	{
+	    String result = "";
 
 		if (key == null || key.length() == 0)
 			return "";
@@ -46,7 +52,7 @@ public class LocalText extends ResourceBundle
 		/* Find the text */
 		try
 		{
-			return (localisedText.getString(key));
+			result = localisedText.getString(key);
 		}
 		catch (MissingResourceException e)
 		{
@@ -55,6 +61,12 @@ public class LocalText extends ResourceBundle
 			/* If the text is not found, return the key in brackets */
 			return "<" + key + ">";
 		}
+		
+		if (parameters != null) {
+		    result = MessageFormat.format (result, parameters);
+		}
+		
+		return result;
 
 	}
 
