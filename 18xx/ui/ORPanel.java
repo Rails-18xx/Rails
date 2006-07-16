@@ -220,6 +220,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button2.setMnemonic(KeyEvent.VK_V);
         button2.addActionListener(this);
         button2.setEnabled(false);
+        button2.setVisible(false);
         buttonPanel.add(button2);
 
         button3 = new JButton(LocalText.getText("Done"));
@@ -471,6 +472,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
                 button2.setMnemonic(KeyEvent.VK_V);
                 button2.setEnabled(privatesCanBeBought);
+                button2.setVisible(privatesCanBeBought);
                 privatesCaption.setHighlight(privatesCanBeBought);
 
                 button3.setText(LocalText.getText("Done"));
@@ -523,6 +525,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button2.setActionCommand(LocalText.getText("SPLIT"));
                 button2.setMnemonic(KeyEvent.VK_S);
                 button2.setEnabled(companies[orCompIndex].isSplitAllowed());
+                button2.setVisible(companies[orCompIndex].isSplitAllowed());
 
                 button3.setText(LocalText.getText("PAYOUT"));
                 button3.setActionCommand(LocalText.getText("PAYOUT"));
@@ -544,6 +547,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
                 button2.setMnemonic(KeyEvent.VK_V);
                 button2.setEnabled(privatesCanBeBought);
+                button2.setVisible(privatesCanBeBought);
                 privatesCaption.setHighlight(privatesCanBeBought);
 
                 button3.setText(LocalText.getText("Done"));
