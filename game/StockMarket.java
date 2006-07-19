@@ -1,5 +1,8 @@
 package game;
 
+import game.action.Action;
+import game.action.PriceMove;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -339,7 +342,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 		else
 		{
-			processMove(company, oldsquare, newsquare);
+		    Action.add (new PriceMove (oldsquare, newsquare, company));
+			//processMove(company, oldsquare, newsquare);
 		}
 	}
 
@@ -385,7 +389,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 	}
 
-	protected void processMove(PublicCompanyI company, StockSpaceI from,
+	public void processMove(PublicCompanyI company, StockSpaceI from,
 			StockSpaceI to)
 	{
 		// To be written to a log file in the future.

@@ -1,6 +1,7 @@
 package ui;
 
 import game.*;
+import game.action.Action;
 import game.special.ExchangeForShare;
 import game.special.SpecialSRProperty;
 
@@ -50,7 +51,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private JMenuBar menuBar;
 	private static JMenu fileMenu, optMenu;
-	private JMenuItem menuItem;
+	private JMenuItem menuItem, undoItem;
 
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
@@ -121,6 +122,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		optMenu.add(menuItem);
 
 		menuBar.add(optMenu);
+
+		undoItem = new JMenuItem(LocalText.getText("UNDO"));
+		undoItem.setName(LocalText.getText("UNDO"));
+		undoItem.setActionCommand(LocalText.getText("UNDO"));
+		undoItem.setMnemonic(KeyEvent.VK_U);
+		undoItem.addActionListener(this);
+		undoItem.setEnabled(false);
+		menuBar.add(undoItem);
 
 		setJMenuBar(menuBar);
 	}
@@ -228,6 +237,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setBuyableCertificates(buyableCertificates);
 			gameStatus.setSellableCertificates(sellableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+			
+			undoItem.setEnabled(!Action.isEmpty());
 
 			if ((currentRound instanceof ShareSellingRound))
 			{
@@ -442,7 +453,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			GameUILoader.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
-		}
+		} else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("UNDO")))
+		{
+		    Action.undoLast();
+		    updateStatus();
+			return;
+		} 
 
 		LogWindow.addLog();
 

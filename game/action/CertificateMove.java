@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/CertificateMove.java,v 1.1 2006/07/17 22:00:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/CertificateMove.java,v 1.2 2006/07/19 22:08:50 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -16,7 +16,7 @@ public class CertificateMove extends Move {
     Portfolio from;
     Portfolio to;
     
-    public CertificateMove (PublicCertificateI certificate, Portfolio from, Portfolio to) {
+    public CertificateMove (Portfolio from, Portfolio to, PublicCertificateI certificate) {
         
         this.certificate = certificate;
         this.from = from;

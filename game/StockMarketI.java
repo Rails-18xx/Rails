@@ -50,4 +50,7 @@ public interface StockMarketI
 
 	public boolean isGameOver();
 
+	public void processMove(PublicCompanyI company, StockSpaceI from,
+			StockSpaceI to);
+
 }
