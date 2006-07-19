@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.1 2006/07/17 22:00:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.2 2006/07/19 22:08:50 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -60,6 +60,7 @@ public class Action {
             currentAction.moves.add (move);
         	return true;
         } else {
+            move.execute();
             System.out.println ("Action is not open");
             return false;
         }
@@ -69,12 +70,37 @@ public class Action {
         if (lastAction != null && currentAction == null) {
             lastAction.undo();
             actionStack.remove(lastAction);
-            lastAction = (Action) actionStack.get(actionStack.size()-1);
+            if (actionStack.size() > 0) {
+                lastAction = (Action) actionStack.get(actionStack.size()-1);
+            } else {
+                lastAction = null;
+            }
             return true;
         } else {
             System.out.println ("Invalid undo");
             return false;
         }
+    }
+    
+    public static boolean isEmpty() {
+        return actionStack.size() == 0;
+    }
+    
+    public static boolean isOpen() {
+        return currentAction != null;
+    }
+    
+    /**
+     * Clear the whole stack.
+     * To be used if a state change occurs that cannot (yet) be undone. 
+     * @return
+     */
+    public static boolean clear () {
+        if (currentAction != null) currentAction.execute();
+        actionStack = new ArrayList();
+        currentAction = lastAction = null;
+        return true;
+        
     }
     
     public void execute () {

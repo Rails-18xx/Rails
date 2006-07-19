@@ -1,5 +1,9 @@
 package game;
 
+import game.action.Action;
+import game.action.DoubleMapChange;
+import game.action.StateChange;
+
 import java.util.*;
 import util.LocalText;
 
@@ -406,6 +410,8 @@ public class StockRound implements Round
 					+ companyName + ": " + errMsg);
 			return false;
 		}
+		
+		Action.start();
 
 		// All is OK, now start the company
 		company.start(startSpace);
@@ -427,19 +433,30 @@ public class StockRound implements Round
 
 		// XXX: Is there any way we can improve the structure of this message to
 		// make localization easier?
+		/*
 		Log.write(playerName + LocalText.getText("STARTS") + " " + companyName
 				+ LocalText.getText("AT") + " " + price + " "
 				+ LocalText.getText("AND") + " " + LocalText.getText("BUYS")
 				+ " " + shares + " " + LocalText.getText("SHARES") + " ("
 				+ cert.getShare() + "%) " + LocalText.getText("FOR") + " "
 				+ Bank.format(shares * price) + ".");
+		*/
+		Log.write(LocalText.getText ("START_COMPANY_LOG", new String[] {
+		        playerName,
+		        companyName,
+		        String.valueOf(price),
+		        String.valueOf(shares),
+		        String.valueOf(cert.getShare()),
+		        Bank.format (shares * price)}));
 
 		company.checkFlotation();
 
-		companyBoughtThisTurn = company;
+		//companyBoughtThisTurn = company;
+		Action.add (new StateChange(companyBoughtThisTurn, company));
 		hasPassed = false;
 		setPriority();
 
+		Action.finish();
 		return true;
 	}
 
@@ -612,20 +629,31 @@ public class StockRound implements Round
 		}
 
 		// All seems OK, now buy the shares.
+		Action.start();
 		PublicCertificateI cert;
 		for (int i = 0; i < shares; i++)
 		{
 			cert = from.findCertificate(company, false);
+			/*
 			Log.write(playerName + " " + LocalText.getText("BUYS") + " "
 					+ shares + LocalText.getText("SHARE") + " ("
 					+ cert.getShare() + "%) " + LocalText.getText("OF") + " "
 					+ companyName + " " + LocalText.getText("FROM") + " "
 					+ from.getName() + " " + LocalText.getText("FOR") + " "
 					+ Bank.format(shares * price) + ".");
+			*/
+			Log.write(LocalText.getText("BUY_SHARES_LOG", new String[] {
+			        playerName,
+			        String.valueOf(shares),
+			        String.valueOf(cert.getShare()),
+			        companyName,
+			        from.getName(),
+			        Bank.format(shares * price)}));
 			currentPlayer.buy(cert, price * cert.getShares());
 		}
 
-		companyBoughtThisTurn = company;
+		//companyBoughtThisTurn = company;
+		Action.add (new StateChange (companyBoughtThisTurn, company));
 		hasPassed = false;
 		setPriority();
 
@@ -633,16 +661,21 @@ public class StockRound implements Round
 		if (from == ipo)
 			company.checkFlotation();
 
+		Action.finish();
 		return true;
 	}
 
 	private void recordSale(Player player, PublicCompanyI company)
 	{
+	    /*
 		if (!playersThatSoldThisRound.containsKey(player))
 		{
 			playersThatSoldThisRound.put(player, new HashMap());
 		}
 		((Map) playersThatSoldThisRound.get(player)).put(company, null);
+		*/
+	    Action.add (new DoubleMapChange (playersThatSoldThisRound,
+	            player, company, null));
 	}
 
 	private boolean isSaleRecorded(Player player, PublicCompanyI company)
@@ -881,11 +914,19 @@ public class StockRound implements Round
 			sellPrices.put(companyName, sellPrice);
 		}
 
+		/*
 		Log.write(playerName + " " + LocalText.getText("SOLD") + " " + number
 				+ " " + LocalText.getText("SHARES") + " ("
 				+ (number * company.getShareUnit()) + "%) "
 				+ LocalText.getText("OF") + " " + companyName + " "
 				+ LocalText.getText("FOR") + " " + Bank.format(number * price));
+		*/
+		Log.write (LocalText.getText("SELL_SHARES_LOG", new String[]{
+		        playerName,
+		        String.valueOf(number),
+		        String.valueOf((number * company.getShareUnit())),
+		        companyName,
+		        Bank.format(number * price)}));
 
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
@@ -903,6 +944,7 @@ public class StockRound implements Round
 		}
 
 		// Transfer the sold certificates
+		Action.start();
 		Iterator it = certsToSell.iterator();
 		while (it.hasNext())
 		{
@@ -938,6 +980,7 @@ public class StockRound implements Round
 			hasSoldThisTurnBeforeBuying = true;
 		hasPassed = false;
 		setPriority();
+		Action.finish();
 
 		return true;
 	}
@@ -1002,6 +1045,9 @@ public class StockRound implements Round
 			sellPrices = new HashMap();
 
 		}
+		
+		// Clear the undo stack, we cannot yet handle turn changes
+		Action.clear();
 
 		return true;
 	}
