@@ -154,7 +154,7 @@ public class StartRound_1835 extends StartRound
 			}
 			if (startRoundNumber > 1)
 			{
-				newIndex = GameManager.getPriorityPlayerIndex();
+				newIndex = GameManager.getPriorityPlayer().getIndex();
 			}
 			else if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
 			{

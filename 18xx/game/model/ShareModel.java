@@ -52,7 +52,8 @@ public class ShareModel extends ModelObject
 		if (share == 0)
 			return "";
 		return share + "%"
-			+ (markPresidency && company.getPresident() == portfolio.getOwner() ? "P" : "");
+			+ ((portfolio.getOwner() instanceof Player)
+			        && company.getPresident() == portfolio.getOwner() ? "P" : "");
 	}
 
 }

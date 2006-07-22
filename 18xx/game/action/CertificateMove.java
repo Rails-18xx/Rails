@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/CertificateMove.java,v 1.2 2006/07/19 22:08:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/CertificateMove.java,v 1.3 2006/07/22 22:51:53 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -35,5 +35,12 @@ public class CertificateMove extends Move {
         Portfolio.transferCertificate(certificate, to, from);
         return true;
     }
+    
+    public String toString() {
+        return "CertMove: "+certificate.getShare()+"%"
+        	+ (certificate.isPresidentShare() ? "(Pres) " : " ")
+        	+ certificate.getCompany().getName()
+        	+ " from "+from.getName()+" to "+to.getName();
+   }
 
 }

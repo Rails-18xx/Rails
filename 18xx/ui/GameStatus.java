@@ -714,6 +714,14 @@ public class GameStatus extends JPanel implements ActionListener
 		((StatusWindow) parent).enableSellButton(false);
 		repaint();
 	}
+	
+	public void setPriorityPlayer (int index) {
+	    
+	    for (int j=0; j<np; j++) {
+			upperPlayerCaption[j].setText (players[j].getName()
+					+ (j == index ? " PD" : ""));
+		}
+	}
 
 	public void setBuyableCertificates(List certs)
 	{

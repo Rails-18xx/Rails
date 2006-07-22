@@ -237,6 +237,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setBuyableCertificates(buyableCertificates);
 			gameStatus.setSellableCertificates(sellableCertificates);
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+			gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
 			
 			undoItem.setEnabled(!Action.isEmpty());
 

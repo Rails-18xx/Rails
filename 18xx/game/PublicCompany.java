@@ -1,9 +1,13 @@
 package game;
 
+import game.action.Action;
+import game.action.CashMove;
+import game.action.StateChange;
 import game.model.CashModel;
 import game.model.ModelObject;
 import game.model.MoneyModel;
 import game.model.PriceModel;
+import game.state.StateObject;
 
 import java.awt.Color;
 import java.util.*;
@@ -59,15 +63,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected CashModel treasury = null;
 
 	/** Has the company started? */
-	protected boolean hasStarted = false;
+	protected StateObject hasStarted = null;
 
 	/** Revenue earned in the company's previous operating turn. */
 	protected MoneyModel lastRevenue = null;
 
 	/** Is the company operational ("has it floated")? */
-	protected boolean hasFloated = false;
-
-	/** Has teh company already operated? */
+	protected StateObject hasFloated = null;
+	
+	/** Has the company already operated? */
 	protected boolean hasOperated = false;
 
 	/** Is the company closed (or bankrupt)? */
@@ -102,7 +106,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/** Does the company have a stock price (minors often don't) */
 	protected boolean hasStockPrice = true;
 
-	/** Does the company have a fixed par price? */
+	/** Does the company have a par price? */
 	protected boolean hasParPrice = true;
 
 	protected boolean splitAllowed = false;
@@ -144,7 +148,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 		this.capitalisation = type.getCapitalisation();
 		treasury = new CashModel(this);
 		lastRevenue = new MoneyModel (this);
-	}
+
+	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
+	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
+		
+}
 
 	/**
 	 * Final initialisation, after all XML has been processed.
@@ -159,6 +167,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				throw new ConfigurationException("Invalid start space "
 						+ startSpace + "for company " + name);
 			currentPrice.setPrice(parPrice.getPrice());
+			
 		}
 		
 
@@ -388,14 +397,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return canBuyStock;
 	}
 
-	/**
-	 * @param hasStarted
-	 *            The hasStarted to set.
-	 */
 	public void start(StockSpaceI startSpace)
 	{
-		this.hasStarted = true;
+		//this.hasStarted = true;
+	    Action.add (new StateChange (hasStarted, Boolean.TRUE));
 		setParPrice(startSpace);
+		// The current price is set via the Stock Market
+		StockMarket.getInstance().start(this, startSpace);
 	}
 
 	/**
@@ -403,9 +411,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void start()
 	{
-		this.hasStarted = true;
-		if (hasStockPrice && parPrice.getPrice() != null)
-			parPrice.getPrice().addToken(this);
+		//this.hasStarted = true;
+	    Action.add (new StateChange (hasStarted, Boolean.TRUE));
+		if (hasStockPrice && parPrice.getPrice() != null) {
+			//setCurrentPrice (parPrice.getPrice());
+			// The current price is set via the Stock Market
+			StockMarket.getInstance().start(this, parPrice.getPrice());
+		}
 	}
 
 	/**
@@ -413,7 +425,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasStarted()
 	{
-		return hasStarted;
+		return ((Boolean)hasStarted.getState()).booleanValue();
 	}
 
 	/**
@@ -423,7 +435,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 
 		int cash = 0;
-		this.hasFloated = true;
+		//hasFloated = true;
+		Action.add (new StateChange (hasFloated, Boolean.TRUE));
 		if (hasStockPrice)
 		{
 			int capFactor = 0;
@@ -441,7 +454,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			cash = fixedPrice;
 		}
-		Bank.transferCash(null, this, cash);
+		//Bank.transferCash(null, this, cash);
+		Action.add (new CashMove (Bank.getInstance(), this, cash));
 		Log.write(name + " floats and receives " + Bank.format(cash));
 	}
 
@@ -452,7 +466,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasFloated()
 	{
-		return hasFloated;
+		return ((Boolean)hasFloated.getState()).booleanValue();
 	}
 
 	/**
@@ -478,12 +492,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (hasStockPrice)
 		{
 		    if (parPrice == null) {
-		        parPrice = new PriceModel (space);
-		    } else {
-		        parPrice.setPrice(space);
+		        parPrice = new PriceModel (this);
+//System.out.println("+"+name+" parPrice["+parPrice.hashCode()+"] created as "+parPrice.hashCode());
 		    }
-			setCurrentPrice(space);
-			if (space != null) space.addToken(this);
+		    if (space != null) {
+		        parPrice.setPrice(space);
+		        
+//System.out.println("+"+name+" parPrice["+parPrice.hashCode()+"] set to "+space);
+		    }
 		}
 	}
 
@@ -512,10 +528,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void setCurrentPrice(StockSpaceI price)
 	{
 	    if (currentPrice == null) {
-	        currentPrice = new PriceModel (price);
-	    } else {
+	        currentPrice = new PriceModel (this);
+//System.out.println("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
+	    }
+	    if (price != null) {
 	        currentPrice.setPrice(price);
-		}
+//System.out.println("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
+	    }
 	}
 
 	public PriceModel getCurrentPriceModel()
@@ -869,7 +888,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company
 				.getShareUnit())))
 		{
-			company.setParPrice(startSpace);
+			company.start(startSpace);
 			// company.setClosed(false);
 			int price = startSpace.getPrice()
 					* (cert.getShare() / company.getShareUnit());
@@ -966,7 +985,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void checkPresidencyOnBuy(Player buyer)
 	{
 
-		if (!hasStarted || buyer == getPresident() || certificates.size() < 2)
+		if (!hasStarted() || buyer == getPresident() || certificates.size() < 2)
 			return;
 		Player pres = getPresident();
 		int presShare = pres.getPortfolio().ownsShare(this);
@@ -1012,7 +1031,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public void checkFlotation()
 	{
-		if (hasStarted && !hasFloated
+		if (hasStarted() && !hasFloated()
 				&& percentageOwnedByPlayers() >= floatPerc
 				&& currentPrice.getPrice() != null)
 		{
@@ -1100,6 +1119,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		((PublicCompanyI) clone).setParPrice(null);
 		((PublicCompanyI) clone).setCurrentPrice(null);
+		
 		return clone;
 	}
 }

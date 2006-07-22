@@ -1,6 +1,10 @@
 package game;
 
 import util.*;
+import game.action.Action;
+import game.action.StateChange;
+import game.state.StateObject;
+
 import java.util.*;
 import org.w3c.dom.*;
 
@@ -15,8 +19,10 @@ public class GameManager implements ConfigurableComponentI
 	protected static int numberOfPlayers;
 	protected static int currentPlayerIndex = 0;
 	protected static Player currentPlayer = null;
-	protected static int priorityPlayerIndex = 0;
-	protected static Player priorityPlayer = null;
+	//protected static int priorityPlayerIndex = 0;
+	//protected static Player priorityPlayer = null;
+	protected static StateObject priorityPlayerWrapper = 
+	    new StateObject ("PriorityPlayer", Player.class);
 
 	protected static int playerShareLimit = 60;
 	protected static int currentNumberOfOperatingRounds = 1;
@@ -157,6 +163,8 @@ public class GameManager implements ConfigurableComponentI
 	{
 		players = Game.getPlayerManager().getPlayersArray();
 		numberOfPlayers = players.length;
+		//setPriorityPlayer (players[0]);
+		priorityPlayerWrapper.setState(players[0]);
 
 		if (startPacket == null)
 			startPacket = StartPacket.getStartPacket("Initial");
@@ -393,10 +401,12 @@ public class GameManager implements ConfigurableComponentI
 	/**
 	 * @return Returns the priorityPlayerIndex.
 	 */
+	/*
 	public static int getPriorityPlayerIndex()
 	{
-		return priorityPlayerIndex;
+		return priorityPlayer.getIndex();
 	}
+	*/
 
 	/**
 	 * @param priorityPlayerIndex
@@ -404,11 +414,13 @@ public class GameManager implements ConfigurableComponentI
 	 *            number of players; if so, the modulus is taken. This allows
 	 *            giving the next player the priority bu adding +1.
 	 */
+	/*
 	public static void setPriorityPlayerIndex(int priorityPlayerIndex)
 	{
 		GameManager.priorityPlayerIndex = priorityPlayerIndex % numberOfPlayers;
 		GameManager.priorityPlayer = players[GameManager.priorityPlayerIndex];
 	}
+	*/
 
 	/**
 	 * Set priority deal to the player after the current player.
@@ -416,9 +428,22 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static void setPriorityPlayer()
 	{
-		priorityPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers;
-		priorityPlayer = players[priorityPlayerIndex];
+		int priorityPlayerIndex = (currentPlayer.getIndex() + 1) % numberOfPlayers;
+		setPriorityPlayer (players[priorityPlayerIndex]);
 
+	}
+	
+	public static void setPriorityPlayer(Player player) {
+	    Action.add (new StateChange (priorityPlayerWrapper, player));
+	    //priorityPlayer = player;
+	}
+
+	/**
+	 * @return Returns the priorityPlayer.
+	 */
+	public static Player getPriorityPlayer()
+	{
+		return (Player) priorityPlayerWrapper.getState();
 	}
 
 	/**
@@ -452,14 +477,6 @@ public class GameManager implements ConfigurableComponentI
 	public static Player getPlayer(int index)
 	{
 		return players[index % players.length];
-	}
-
-	/**
-	 * @return Returns the priorityPlayer.
-	 */
-	public static Player getPriorityPlayer()
-	{
-		return priorityPlayer;
 	}
 
 	public static void setNextPlayer()

@@ -1,13 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/PriceMove.java,v 1.1 2006/07/19 22:08:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/PriceMove.java,v 1.2 2006/07/22 22:51:53 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
  */
 package game.action;
 
-import game.PublicCompanyI;
-import game.StockMarket;
+//import game.PublicCompanyI;
+//import game.StockMarket;
 import game.StockSpaceI;
+import game.model.PriceModel;
 
 /**
  * @author Erik Vos
@@ -15,16 +16,19 @@ import game.StockSpaceI;
 public class PriceMove extends Move {
     
     protected StockSpaceI from, to;
-    protected PublicCompanyI company;
+    protected PriceModel price;
+   // protected PublicCompanyI company;
     
-    public PriceMove (StockSpaceI from, StockSpaceI to, PublicCompanyI company) {
+    public PriceMove (PriceModel price, StockSpaceI from, StockSpaceI to) {
         this.from = from;
         this.to = to;
-        this.company = company;
+        this.price = price;
+        //this.company = price.getCompany();
     }
 
     public boolean execute() {
-        StockMarket.getInstance().processMove (company, from, to);
+        price.setState(to);
+        //StockMarket.getInstance().processMove (company, from, to);
         return true;
     }
 
@@ -32,8 +36,16 @@ public class PriceMove extends Move {
      * @see game.action.Move#undo()
      */
     public boolean undo() {
-        StockMarket.getInstance().processMove (company, to, from);
+        price.setState(from);
+        //StockMarket.getInstance().processMove (company, to, from);
         return true;
+    }
+    
+    public Object getObject() {return price;}
+    
+    public String toString () {
+        return "PriceMove: "+price.getCompany().getName()
+            +" from "+from+" to "+to;
     }
 
 }
