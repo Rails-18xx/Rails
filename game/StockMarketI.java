@@ -30,6 +30,8 @@ public interface StockMarketI
 
 	public StockSpace getStockSpace(String name);
 
+	public void start (PublicCompanyI company, StockSpaceI price);
+	
 	public void payOut(PublicCompanyI company);
 
 	public void withhold(PublicCompanyI company);

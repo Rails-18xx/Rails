@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.36 2006/07/19 22:08:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.37 2006/07/22 22:51:53 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -185,13 +185,23 @@ public class Portfolio
 
 	public void addCertificate(PublicCertificateI certificate)
 	{
-		certificates.add(certificate);
+	    // When undoing a company start, put the President back at the top.
+	    boolean atTop = certificate.isPresidentShare() && this == Bank.getIpo();
+	    
+	    if (atTop)
+	        certificates.add(0, certificate);
+	    else 
+	        certificates.add(certificate);
+	        
 		String companyName = certificate.getCompany().getName();
 		if (!certPerCompany.containsKey(companyName))
 		{
 			certPerCompany.put(companyName, new ArrayList());
 		}
-		((ArrayList) certPerCompany.get(companyName)).add(certificate);
+		if (atTop)
+		    ((ArrayList) certPerCompany.get(companyName)).add(0, certificate);
+		else
+		    ((ArrayList) certPerCompany.get(companyName)).add(certificate);
 		certificate.setPortfolio(this);
 
 		getShareModel(certificate.getCompany()).addShare(certificate.getShare());

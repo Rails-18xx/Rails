@@ -2,6 +2,7 @@ package game;
 
 import game.action.Action;
 import game.action.PriceMove;
+import game.action.PriceTokenMove;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -270,6 +271,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	}
 
 	/*--- Actions ---*/
+	
+	public void start (PublicCompanyI company, StockSpaceI price) {
+	    prepareMove (company, null, price);
+	}
 
 	public void payOut(PublicCompanyI company)
 	{
@@ -294,7 +299,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	protected void moveUp(PublicCompanyI company)
 	{
 		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = null;
+		StockSpaceI newsquare = oldsquare;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (row > 0)
@@ -305,13 +310,13 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			newsquare = getStockSpace(row + 1, col + 1);
 		}
-		processMove(company, oldsquare, newsquare);
+		prepareMove(company, oldsquare, newsquare);
 	}
 
 	protected void moveDown(PublicCompanyI company, int numberOfSpaces)
 	{
 		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = null;
+		StockSpaceI newsquare = oldsquare;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 
@@ -334,7 +339,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			newsquare = getStockSpace(newrow, col);
 		}
-		if (newsquare != null && newsquare.closesCompany())
+		if (newsquare != oldsquare && newsquare.closesCompany())
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
@@ -342,8 +347,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 		else
 		{
-		    Action.add (new PriceMove (oldsquare, newsquare, company));
-			//processMove(company, oldsquare, newsquare);
+		    prepareMove(company, oldsquare, newsquare);
 		}
 	}
 
@@ -351,7 +355,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	{
 		/* Ignore the amount for now */
 		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = null;
+		StockSpaceI newsquare = oldsquare;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
@@ -361,13 +365,13 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		else if (row > 0 && (newsquare = getStockSpace(row - 1, col)) != null)
 		{
 		}
-		processMove(company, oldsquare, newsquare);
+		prepareMove(company, oldsquare, newsquare);
 	}
 
 	protected void moveLeftOrDown(PublicCompanyI company)
 	{
 		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = null;
+		StockSpaceI newsquare = oldsquare;
 		int row = oldsquare.getRow();
 		int col = oldsquare.getColumn();
 		if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null)
@@ -377,7 +381,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 				&& (newsquare = getStockSpace(row + 1, col)) != null)
 		{
 		}
-		if (newsquare != null && newsquare.closesCompany())
+		if (newsquare != oldsquare && newsquare.closesCompany())
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
@@ -385,27 +389,34 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 		else
 		{
-			processMove(company, oldsquare, newsquare);
+			prepareMove(company, oldsquare, newsquare);
 		}
 	}
-
-	public void processMove(PublicCompanyI company, StockSpaceI from,
-			StockSpaceI to)
-	{
+	
+	protected void prepareMove (PublicCompanyI company,
+	        StockSpaceI from, StockSpaceI to) {
 		// To be written to a log file in the future.
-		if (to == null || from == to)
+		if (from != null && from == to)
 		{
-			Log.write(company.getName() + LocalText.getText("STAYS_AT") + " " + from.getName());
+			Log.write(LocalText.getText("PRICE_STAYS_LOG", new String[] {
+			        company.getName(),
+			        Bank.format(from.getPrice()),
+			        from.getName()
+			}));
+			return;
 		}
-		else
+		else if (from == null && to != null)
 		{
-			from.removeToken(company);
-			to.addToken(company);
-			company.setCurrentPrice(to);
-			Log.write(company.getName() + LocalText.getText("PRICE_GOES_FROM") + " "
-					+ Bank.format(from.getPrice()) + " (" + from.getName()
-					+ ") " + LocalText.getText("TO") + " " + Bank.format(to.getPrice()) + " ("
-					+ to.getName() + ")");
+		}
+		else if (from != null && to != null)
+		{
+			Log.write (LocalText.getText("PRICE_MOVES_LOG", new String[] {
+			        company.getName(),
+			        Bank.format(from.getPrice()),
+			        from.getName(),
+			        Bank.format(to.getPrice()),
+			        to.getName()
+			}));
 
 			/* Check for game closure */
 			if (to.endsGame())
@@ -415,6 +426,17 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			}
 
 		}
+		company.setCurrentPrice(to);
+		Action.add (new PriceTokenMove (company, from, to));
+	}
+
+	public void processMove(PublicCompanyI company, StockSpaceI from,
+			StockSpaceI to)
+	{
+		// To be written to a log file in the future.
+		if (from != null) from.removeToken(company);
+		if (to != null) to.addToken(company);
+		//company.getCurrentPriceModel().setState(to);
 	}
 
 	/**

@@ -3,6 +3,7 @@ package game;
 import game.action.Action;
 import game.action.DoubleMapChange;
 import game.action.StateChange;
+import game.state.StateObject;
 
 import java.util.*;
 import util.LocalText;
@@ -23,7 +24,9 @@ public class StockRound implements Round
 	protected static int numberOfPlayers;
 	protected Player currentPlayer;
 
-	protected PublicCompanyI companyBoughtThisTurn = null;
+	//protected PublicCompanyI companyBoughtThisTurn = null;
+	protected StateObject companyBoughtThisTurnWrapper = 
+	    new StateObject ("CompanyBoughtThisTurn", PublicCompany.class);
 	protected boolean hasSoldThisTurnBeforeBuying = false;
 	protected boolean hasPassed = true; // Is set false on any player action
 	protected int numPasses = 0;
@@ -86,10 +89,12 @@ public class StockRound implements Round
 		Log.write("\n" + LocalText.getText("StartStockRound")
 				+ stockRoundNumber);
 
-		GameManager.setCurrentPlayerIndex(GameManager.priorityPlayerIndex);
+		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 
 		initPlayer();
-		Log.write(currentPlayer.getName() + LocalText.getText("HasPriority"));
+		Log.write(LocalText.getText("HasPriority", new String[] {
+		        currentPlayer.getName()
+		        }));
 	}
 
 	/*----- General methods -----*/
@@ -125,7 +130,9 @@ public class StockRound implements Round
 
 		/* Get the next available IPO certificates */
 		// Never buy more than one from the IPO
-		if (this.companyBoughtThisTurn == null)
+		PublicCompanyI companyBoughtThisTurn = 
+			(PublicCompanyI) companyBoughtThisTurnWrapper.getState();
+		if (companyBoughtThisTurn == null)
 		{
 			String compName;
 			Map map = Bank.getIpo().getCertsPerCompanyMap();
@@ -223,7 +230,7 @@ public class StockRound implements Round
 		if (!mayCurrentPlayerSellAtAll())
 			return sellableCerts;
 
-		List certs;
+		//List certs;
 		PublicCertificateI cert;
 		TradeableCertificate tCert;
 		PublicCompanyI comp;
@@ -339,7 +346,7 @@ public class StockRound implements Round
 			}
 
 			// The player may not have bought this turn.
-			if (companyBoughtThisTurn != null)
+			if (companyBoughtThisTurnWrapper.getState() != null)
 			{
 				errMsg = company.getName() + LocalText.getText("AlreadyBought");
 				break;
@@ -431,28 +438,19 @@ public class StockRound implements Round
 					cert.getCertificatePrice());
 		}
 
-		// XXX: Is there any way we can improve the structure of this message to
-		// make localization easier?
-		/*
-		Log.write(playerName + LocalText.getText("STARTS") + " " + companyName
-				+ LocalText.getText("AT") + " " + price + " "
-				+ LocalText.getText("AND") + " " + LocalText.getText("BUYS")
-				+ " " + shares + " " + LocalText.getText("SHARES") + " ("
-				+ cert.getShare() + "%) " + LocalText.getText("FOR") + " "
-				+ Bank.format(shares * price) + ".");
-		*/
 		Log.write(LocalText.getText ("START_COMPANY_LOG", new String[] {
 		        playerName,
 		        companyName,
 		        String.valueOf(price),
 		        String.valueOf(shares),
 		        String.valueOf(cert.getShare()),
-		        Bank.format (shares * price)}));
+		        Bank.format (shares * price)
+		        }));
 
 		company.checkFlotation();
 
 		//companyBoughtThisTurn = company;
-		Action.add (new StateChange(companyBoughtThisTurn, company));
+		Action.add (new StateChange(companyBoughtThisTurnWrapper, company));
 		hasPassed = false;
 		setPriority();
 
@@ -548,6 +546,8 @@ public class StockRound implements Round
 
 			// The player may not have bought this turn, unless the company
 			// bought before and now is in the brown area.
+			PublicCompanyI companyBoughtThisTurn 
+				= (PublicCompanyI) companyBoughtThisTurnWrapper.getState();
 			if (companyBoughtThisTurn != null
 					&& (companyBoughtThisTurn != company || !company.getCurrentPrice()
 							.isNoBuyLimit()))
@@ -653,7 +653,7 @@ public class StockRound implements Round
 		}
 
 		//companyBoughtThisTurn = company;
-		Action.add (new StateChange (companyBoughtThisTurn, company));
+		Action.add (new StateChange (companyBoughtThisTurnWrapper, company));
 		hasPassed = false;
 		setPriority();
 
@@ -662,6 +662,7 @@ public class StockRound implements Round
 			company.checkFlotation();
 
 		Action.finish();
+//reportShares(company);
 		return true;
 	}
 
@@ -856,7 +857,7 @@ public class StockRound implements Round
 						+ numberOfPlayers; i++)
 				{
 					otherPlayer = GameManager.getPlayer(i);
-					if (otherPlayer.getPortfolio().ownsShare(company) >= presCert.getShares())
+					if (otherPlayer.getPortfolio().ownsShare(company) >= presCert.getShare())
 					{
 						// Check if he has the right kind of share
 						if (numberToSell > 1
@@ -914,13 +915,8 @@ public class StockRound implements Round
 			sellPrices.put(companyName, sellPrice);
 		}
 
-		/*
-		Log.write(playerName + " " + LocalText.getText("SOLD") + " " + number
-				+ " " + LocalText.getText("SHARES") + " ("
-				+ (number * company.getShareUnit()) + "%) "
-				+ LocalText.getText("OF") + " " + companyName + " "
-				+ LocalText.getText("FOR") + " " + Bank.format(number * price));
-		*/
+		Action.start();
+
 		Log.write (LocalText.getText("SELL_SHARES_LOG", new String[]{
 		        playerName,
 		        String.valueOf(number),
@@ -931,8 +927,10 @@ public class StockRound implements Round
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
 		{
-			Log.write(dumpedPlayer.getName()
-					+ LocalText.getText("IS_NOW_PRES_OF") + " " + companyName);
+			Log.write(LocalText.getText("IS_NOW_PRES_OF", new String[] {
+					        dumpedPlayer.getName(),
+					        companyName
+					}));
 			// First swap the certificates
 			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
 			List swapped = portfolio.swapPresidentCertificate(company,
@@ -944,7 +942,6 @@ public class StockRound implements Round
 		}
 
 		// Transfer the sold certificates
-		Action.start();
 		Iterator it = certsToSell.iterator();
 		while (it.hasNext())
 		{
@@ -976,15 +973,25 @@ public class StockRound implements Round
 		// Remember that the player has sold this company this round.
 		recordSale(currentPlayer, company);
 
-		if (companyBoughtThisTurn == null)
+		if (companyBoughtThisTurnWrapper.getState() == null)
 			hasSoldThisTurnBeforeBuying = true;
 		hasPassed = false;
 		setPriority();
 		Action.finish();
-
+//reportShares(company);
 		return true;
 	}
-
+/*
+public void reportShares(PublicCompanyI c) {
+    System.out.print (c.getName()+" shares owned by");
+    for (Iterator it = c.getCertificates().iterator(); it.hasNext(); ) {
+        PublicCertificateI cc = (PublicCertificateI) it.next();
+        System.out.print (" "+cc.getPortfolio().getName()+":"+cc.getShare()+"%"
+                +(cc.isPresidentShare() ? "P" : ""));
+    }
+    System.out.println();
+}
+*/
 	/**
 	 * The current Player passes or is done.
 	 * 
@@ -1066,7 +1073,7 @@ public class StockRound implements Round
 	{
 
 		currentPlayer = GameManager.getCurrentPlayer();
-		companyBoughtThisTurn = null;
+		companyBoughtThisTurnWrapper.setState(null);
 		hasSoldThisTurnBeforeBuying = false;
 		hasPassed = true;
 
@@ -1092,16 +1099,18 @@ public class StockRound implements Round
 	 */
 	public static Player getPriorityPlayer()
 	{
-		return GameManager.priorityPlayer;
+		return GameManager.getPriorityPlayer();
 	}
 
 	/**
 	 * @return The index of the player that has the Priority Deal.
 	 */
+	/*
 	public static int getPriorityPlayerIndex()
 	{
 		return GameManager.priorityPlayerIndex;
 	}
+	*/
 
 	/**
 	 * @return The player that has the turn.
@@ -1196,6 +1205,9 @@ public class StockRound implements Round
 	{
 		if (stockRoundNumber == 1 && noSaleInFirstSR)
 			return false;
+		PublicCompanyI companyBoughtThisTurn =
+			(PublicCompanyI) companyBoughtThisTurnWrapper.getState();
+		
 		if (sequenceRule == SELL_BUY_OR_BUY_SELL
 				&& companyBoughtThisTurn != null && hasSoldThisTurnBeforeBuying
 				|| sequenceRule == SELL_BUY && companyBoughtThisTurn != null)

@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.2 2006/07/19 22:08:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.3 2006/07/22 22:51:53 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package game.action;
+
+import game.GameManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,6 +25,7 @@ public class Action {
     private Action () {}
     
     public static boolean start () {
+        //System.out.println(">>> Start Action");
         if (currentAction == null) {
             currentAction = new Action();
             return true;
@@ -33,14 +36,15 @@ public class Action {
     }
     
     public static boolean finish () {
+        //System.out.println("<<< Finish Action");
         if (currentAction != null) {
             actionStack.add (currentAction);
-            currentAction.execute();
+            //currentAction.execute();
             lastAction = currentAction;
             currentAction = null;
             return true;
         } else {
-            System.out.println ("Action is not open");
+            System.out.println ("No action open for finish");
             return false;
        }
     }
@@ -50,18 +54,21 @@ public class Action {
             currentAction = null;
             return true;
         } else {
-            System.out.println ("Action is not open");
+            System.out.println ("No action open for cancel");
             return false;
          }
     }
     
     public static boolean add (Move move) {
+
+        move.execute();
         if (currentAction != null) {
-            currentAction.moves.add (move);
+            currentAction.moves.add (0, move); // Prepare for undo in reverse order!
         	return true;
         } else {
-            move.execute();
-            System.out.println ("Action is not open");
+            System.out.println ("No Action open for "+move);
+            //new Exception ("No Action open for add: "+move).printStackTrace();
+            
             return false;
         }
     }

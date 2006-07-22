@@ -65,7 +65,7 @@ public abstract class StartRound implements StartRoundI
 		}
 
 		GameManager.getInstance().setRound(this);
-		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayerIndex());
+		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 		Log.write("\nStart of initial round");
 		Log.write(getCurrentPlayer().getName() + " has the Priority Deal");
 	}
@@ -150,7 +150,7 @@ public abstract class StartRound implements StartRoundI
 		assignItem(player, item, item.getBasePrice());
 
 		// Set priority
-		GameManager.setPriorityPlayerIndex(GameManager.getCurrentPlayerIndex() + 1);
+		GameManager.setPriorityPlayer();
 		numPasses = 0;
 
 		// Next action
@@ -194,24 +194,25 @@ public abstract class StartRound implements StartRoundI
 			PublicCertificateI pubCert = (PublicCertificateI) cert;
 			PublicCompanyI comp = pubCert.getCompany();
 			// Start the company, look for a fixed start price
-			if (!comp.hasStarted()
-					&& (!comp.hasStockPrice() || pubCert.isPresidentShare()))
-			{
-				comp.start();
-				companyJustStarted = true;
+			if (!comp.hasStarted()) {
+			    if (!comp.hasStockPrice()) {
+			        comp.start();
+					companyJustStarted = true;
+					comp.checkFlotation();
+			    } else if (pubCert.isPresidentShare()) {
+					companyJustStarted = true;
+					// If there is no start price, we need to get one
+					if (comp.getParPrice() == null) {
+						companyNeedingPrice = comp;
+						nextStep = SET_PRICE;
+					}
+			    }
 			}
-			// If there is no start price, we need to get one
-			if (comp.hasStockPrice() && comp.getParPrice() == null
-					&& pubCert.isPresidentShare())
-			{
-				// We must set the start price!
-				companyNeedingPrice = comp;
-				nextStep = SET_PRICE;
-			}
+
 			// Check if the company has floated (also applies to minors)
 			// Redundant?? Cannot be done here when buying SFSL presidency
 			// from start packet in 1870.
-			comp.checkFlotation();
+			//comp.checkFlotation();
 		}
 	}
 
