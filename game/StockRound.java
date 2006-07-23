@@ -238,9 +238,6 @@ public class StockRound implements Round
 		int price;
 
 		/* Get the unique Player certificates and check which ones can be sold */
-		// System.out.println("player="+currentPlayer);
-		// System.out.println("portfolio="+currentPlayer.getPortfolio());
-		// System.out.println("certs="+currentPlayer.getPortfolio().getUniqueTradeableCertificates());
 		for (Iterator it = currentPlayer.getPortfolio()
 				.getUniqueTradeableCertificates()
 				.iterator(); it.hasNext();)
@@ -341,14 +338,14 @@ public class StockRound implements Round
 			// Only the player that has the turn may buy
 			if (!playerName.equals(currentPlayer.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer") + " " + playerName;
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 
 			// The player may not have bought this turn.
 			if (companyBoughtThisTurnWrapper.getState() != null)
 			{
-				errMsg = company.getName() + LocalText.getText("AlreadyBought");
+				errMsg = LocalText.getText("AlreadyBought", playerName);
 				break;
 			}
 
@@ -356,14 +353,13 @@ public class StockRound implements Round
 			company = companyMgr.getPublicCompany(companyName);
 			if (company == null)
 			{
-				errMsg = LocalText.getText("CompanyDoesNotExist");
+				errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
 				break;
 			}
 			// The company may not have started yet.
 			if (company.hasStarted())
 			{
-				errMsg = company.getName()
-						+ LocalText.getText("CompanyAlreadyStarted");
+				errMsg = LocalText.getText("CompanyAlreadyStarted", companyName);
 				break;
 			}
 
@@ -395,8 +391,7 @@ public class StockRound implements Round
 				// Else the given price must be a valid start price
 				if ((startSpace = stockMarket.getStartSpace(price)) == null)
 				{
-					errMsg = LocalText.getText("InvalidStartPrice") + ": "
-							+ price;
+					errMsg = LocalText.getText("InvalidStartPrice");
 					break;
 				}
 			}
@@ -413,8 +408,11 @@ public class StockRound implements Round
 
 		if (errMsg != null)
 		{
-			Log.error(playerName + LocalText.getText("CantStart") + " "
-					+ companyName + ": " + errMsg);
+			Log.error(LocalText.getText("CantStart", new String[] {
+			        playerName,
+			        companyName,
+			        Bank.format(price),
+			        errMsg}));
 			return false;
 		}
 		
@@ -515,7 +513,7 @@ public class StockRound implements Round
 			// Only the player that has the turn may buy
 			if (!playerName.equals(currentPlayer.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer") + " " + playerName;
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 
@@ -523,24 +521,23 @@ public class StockRound implements Round
 			company = companyMgr.getPublicCompany(companyName);
 			if (company == null)
 			{
-				errMsg = LocalText.getText("NoCompany");
+				errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
 				break;
 			}
 
 			// The player may not have sold the company this round.
 			if (isSaleRecorded(currentPlayer, company))
 			{
-				errMsg = currentPlayer.getName()
-						+ LocalText.getText("AlreadySold") + " " + companyName
-						+ LocalText.getText("ThisTurn");
+				errMsg = LocalText.getText("AlreadySoldThisTurn", new String[] {
+						        currentPlayer.getName(),
+						        companyName});
 				break;
 			}
 
 			// The company must have started before
 			if (!company.hasStarted())
 			{
-				errMsg = LocalText.getText("COMPANY") + " " + companyName
-						+ LocalText.getText("NotYetStarted");
+				errMsg =  LocalText.getText("NotYetStarted", companyName);
 				break;
 			}
 
@@ -552,18 +549,16 @@ public class StockRound implements Round
 					&& (companyBoughtThisTurn != company || !company.getCurrentPrice()
 							.isNoBuyLimit()))
 			{
-				errMsg = currentPlayer.getName()
-						+ LocalText.getText("AlreadyBought") + " "
-						+ companyBoughtThisTurn.getName()
-						+ LocalText.getText("ThisTurn");
+				errMsg =  LocalText.getText("AlreadyBought", playerName);
 				break;
 			}
 
 			// Check if that many shares are available
 			if (shares > from.ownsShare(company))
 			{
-				errMsg = companyName + " " + LocalText.getText("SHARES")
-						+ LocalText.getText("NotAvailable");
+				errMsg = LocalText.getText("NotAvailable", new String[] {
+						        companyName,
+						        from.getName()});
 				break;
 			}
 
@@ -581,8 +576,7 @@ public class StockRound implements Round
 			// requested)
 			if (shares > 1 && !currentSpace.isNoBuyLimit())
 			{
-				errMsg = LocalText.getText("CantBuyMoreThanOne") + " "
-						+ companyName + " " + LocalText.getText("SHARE");
+				errMsg = LocalText.getText("CantBuyMoreThanOne", companyName);
 				break;
 			}
 
