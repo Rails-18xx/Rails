@@ -22,6 +22,10 @@ public class LocalText extends ResourceBundle
 	    return getText (key, null);
 	}
 	
+	public static String getText (String key, Object parameter) {
+	    return getText (key, new Object[] {parameter});
+	}
+	
 	public static String getText (String key, Object[] parameters) 
 	{
 	    String result = "";
