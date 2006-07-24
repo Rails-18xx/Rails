@@ -51,7 +51,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private JMenuBar menuBar;
 	private static JMenu fileMenu, optMenu;
-	private JMenuItem menuItem, undoItem;
+	private JMenuItem menuItem, undoItem, redoItem;
 
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
@@ -125,11 +125,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		undoItem = new JMenuItem(LocalText.getText("UNDO"));
 		undoItem.setName(LocalText.getText("UNDO"));
-		undoItem.setActionCommand(LocalText.getText("UNDO"));
+		undoItem.setActionCommand("UNDO");
 		undoItem.setMnemonic(KeyEvent.VK_U);
 		undoItem.addActionListener(this);
 		undoItem.setEnabled(false);
 		menuBar.add(undoItem);
+
+		redoItem = new JMenuItem(LocalText.getText("REDO"));
+		redoItem.setName(LocalText.getText("REDO"));
+		redoItem.setActionCommand("REDO");
+		redoItem.setMnemonic(KeyEvent.VK_R);
+		redoItem.addActionListener(this);
+		redoItem.setEnabled(false);
+		menuBar.add(redoItem);
 
 		setJMenuBar(menuBar);
 	}
@@ -239,7 +247,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
 			
-			undoItem.setEnabled(!Action.isEmpty());
+			undoItem.setEnabled(Action.isUndoable());
+			redoItem.setEnabled(Action.isRedoable());
 
 			if ((currentRound instanceof ShareSellingRound))
 			{
@@ -308,7 +317,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							.getName()
 							+ "/"
 							+ ((ExchangeForShare) sp).getPublicCompanyName());
-					extraButton.setActionCommand(LocalText.getText("SWAP"));
+					extraButton.setActionCommand("SWAP");
 					extraButton.setVisible(true);
 					extraButton.setEnabled(true);
 				}
@@ -421,7 +430,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setText(LocalText.getText("PASS"));
 			passButton.setMnemonic(KeyEvent.VK_P);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SWAP")))
+		else if (actor.getActionCommand().equalsIgnoreCase("SWAP"))
 		{
 			/* Execute a special property (i.e. swap M&H for NYC) */
 			SpecialSRProperty sp = (SpecialSRProperty) stockRound.getSpecialProperties()
@@ -454,9 +463,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		{
 			GameUILoader.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
-		} else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("UNDO")))
+		} else if (actor.getActionCommand().equalsIgnoreCase("UNDO"))
 		{
-		    Action.undoLast();
+		    Action.undo();
+		    updateStatus();
+			return;
+		} else if (actor.getActionCommand().equalsIgnoreCase("REDO"))
+		{
+		    Action.redo();
 		    updateStatus();
 			return;
 		} 

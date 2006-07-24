@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.3 2006/07/22 22:51:53 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.4 2006/07/24 20:50:28 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package game.action;
-
-import game.GameManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,8 +17,8 @@ public class Action {
     private List moves = new ArrayList();
     
     private static Action currentAction = null;
-    private static Action lastAction = null;
     private static List actionStack = new ArrayList();
+    private static int lastIndex = -1;
     
     private Action () {}
     
@@ -39,8 +37,7 @@ public class Action {
         //System.out.println("<<< Finish Action");
         if (currentAction != null) {
             actionStack.add (currentAction);
-            //currentAction.execute();
-            lastAction = currentAction;
+            lastIndex++;
             currentAction = null;
             return true;
         } else {
@@ -51,6 +48,7 @@ public class Action {
     
     public static boolean cancel () {
         if (currentAction != null) {
+            currentAction.unexecute();
             currentAction = null;
             return true;
         } else {
@@ -66,31 +64,40 @@ public class Action {
             currentAction.moves.add (0, move); // Prepare for undo in reverse order!
         	return true;
         } else {
-            System.out.println ("No Action open for "+move);
+            // Uncomment one of the next statements to detect un-undoable actions
+            //System.out.println ("No Action open for "+move);
             //new Exception ("No Action open for add: "+move).printStackTrace();
             
             return false;
         }
     }
     
-    public static boolean undoLast () {
-        if (lastAction != null && currentAction == null) {
-            lastAction.undo();
-            actionStack.remove(lastAction);
-            if (actionStack.size() > 0) {
-                lastAction = (Action) actionStack.get(actionStack.size()-1);
-            } else {
-                lastAction = null;
-            }
+    public static boolean undo () {
+        if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
+            ((Action) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
-            System.out.println ("Invalid undo");
+            System.out.println ("Invalid undo: index="+lastIndex+" size="+actionStack.size());
             return false;
         }
     }
     
-    public static boolean isEmpty() {
-        return actionStack.size() == 0;
+    public static boolean redo () {
+        if (currentAction == null && lastIndex < actionStack.size()-1) {
+            ((Action) actionStack.get(++lastIndex)).execute();
+            return true;
+        } else {
+            System.out.println ("Invalid redo: index="+lastIndex+" size="+actionStack.size());
+            return false;
+        }
+    }
+    
+    public static boolean isUndoable() {
+        return lastIndex >= 0;
+    }
+    
+    public static boolean isRedoable() {
+        return lastIndex < actionStack.size()-1;
     }
     
     public static boolean isOpen() {
@@ -105,20 +112,21 @@ public class Action {
     public static boolean clear () {
         if (currentAction != null) currentAction.execute();
         actionStack = new ArrayList();
-        currentAction = lastAction = null;
+        currentAction = null;
+        lastIndex = -1;
         return true;
         
     }
     
-    public void execute () {
+    private void execute () {
         
         for (Iterator it = moves.iterator(); it.hasNext(); ) {
             ((Move)it.next()).execute();
         }
     }
     
-    public void undo () {
-        // TODO: Must actually do this in reverse order
+    private void unexecute () {
+
         for (Iterator it = moves.iterator(); it.hasNext(); ) {
             ((Move)it.next()).undo();
         }
