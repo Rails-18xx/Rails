@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="game.GameManager">
 		<Game name="1835"/>
+    <Variant name="Standard"/>
 		<Variant name="Clemens"/>
 		<Variant name="Snake"/>
 		<PlayerShareLimit percentage="60"/>

@@ -233,6 +233,19 @@ public class Options extends JDialog implements ActionListener
 
 				Game.initialise(gameNameBox.getSelectedItem().toString());
 				Game.getPlayerManager(playerNames);
+				
+				List variants = GameManager.getVariants();
+				if (variants != null && variants.size() > 1) {
+				    String variant = (String) JOptionPane.showInputDialog (
+				            this,
+				            LocalText.getText("WHICH_VARIANT", Game.getName()),
+				            "", 
+				            JOptionPane.PLAIN_MESSAGE,
+				            null,
+				            (String[])variants.toArray(new String[0]),
+				            (String)variants.get(0));
+				    if (variant != null) GameManager.setVariant(variant);
+				}
 				GameManager.getInstance().startGame();
 
 				GameUILoader.gameUIInit();
