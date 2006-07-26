@@ -93,8 +93,9 @@ public class Options extends JDialog implements ActionListener
 
 		populateGameList(getGameList(), gameNameBox);
 
-		optionsPane.add(new JLabel("Options"));
+		optionsPane.add(new JLabel("Game Options"));
 		optionsPane.add(new JLabel(""));
+		
 		optionsPane.add(new JLabel("Game:"));
 		optionsPane.add(gameNameBox);
 		optionsPane.setLayout(new GridLayout(5, 2));
@@ -105,6 +106,9 @@ public class Options extends JDialog implements ActionListener
 		loadButton.addActionListener(this);
 		quitButton.addActionListener(this);
 
+		//XXX: Until we can load/save a game, we'll set this to disabled to reduce confusion.
+		loadButton.setEnabled(false);
+		
 		buttonPane.add(newButton);
 		buttonPane.add(loadButton);
 		buttonPane.add(quitButton);
