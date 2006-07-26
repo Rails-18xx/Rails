@@ -24,15 +24,62 @@
   <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10"/>
   <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15"/>
   <Company name="LD"  longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
-  <Company name="BB"  longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25"/>
-  <Company name="HB"  longname="Hannoversche Bahn" type="Private" basePrice="160" revenue="30"/>
-
-  <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80"/>
-  <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170"/>
-  <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80"/>
-  <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160"/>
-  <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80"/>
-  <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80"/>
+  <Company name="BB"  longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
+ 		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="HB"  longname="Hannoversche Bahn" type="Private" basePrice="160" revenue="30">
+ 		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80">
+    <SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="5"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170">
+		<SpecialProperties>
+			<SpecialProperty condition="phase=4" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80">
+		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="5"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160">
+		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80">
+		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="5"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
+  <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80">
+		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+				<ExchangeForShare company="Pr" share="5"/>
+			</SpecialProperty>
+		</SpecialProperties>
+  </Company>
 
   <Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" fgColour="FFFFFF" bgColour="0000FF"/>
   <Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" fgColour="FFFFFF" bgColour="FF0000">
@@ -67,8 +114,9 @@
     <ShareUnit percentage="5"/>
     <Float percentage="10"/>
     <Certificate type="President" shares="2"/>
-    <Certificate shares="2" number="7"/>
-    <Certificate shares="1" number="4"/>
+    <Certificate shares="2" number="3"/>
+    <Certificate shares="2" number="4" status="reserved"/>
+    <Certificate shares="1" number="4" status="reserved"/>
 	<TrainLimit number="0,0,4,3"/>
   </Company>
   
