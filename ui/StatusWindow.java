@@ -79,6 +79,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
 		menuItem.addActionListener(this);
+		menuItem.setEnabled(false); //XXX: Setting to disabled until we implement load/save
 		fileMenu.add(menuItem);
 
 		fileMenu.addSeparator();
@@ -98,6 +99,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		menuItem.setName(LocalText.getText("SET_SCALE"));
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.addActionListener(this);
+		menuItem.setEnabled(false); //XXX: Setting to disabled until we implement this
 		optMenu.add(menuItem);
 
 		optMenu.addSeparator();
