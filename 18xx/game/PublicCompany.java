@@ -323,13 +323,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 			}
 
 			if (hasParPrice) GameManager.setHasAnyParPrice(true);
-System.out.println(name+": sp="+hasStockPrice+" pp="+hasParPrice+" GM="+GameManager.hasAnyParPrice());
+//System.out.println(name+": sp="+hasStockPrice+" pp="+hasParPrice+" GM="+GameManager.hasAnyParPrice());
 			NodeList typeElements = element.getElementsByTagName("Certificate");
 			if (typeElements.getLength() > 0)
 			{
 				int shareTotal = 0;
 				boolean gotPresident = false;
 				PublicCertificateI certificate;
+				certificates = new ArrayList(); // Throw away the per-type specification
 
 				for (int j = 0; j < typeElements.getLength(); j++)
 				{
