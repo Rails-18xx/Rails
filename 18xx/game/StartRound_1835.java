@@ -2,6 +2,8 @@ package game;
 
 import java.util.*;
 
+import util.LocalText;
+
 /**
  * Implements an 1835-style startpacket sale.
  */
@@ -14,7 +16,6 @@ public class StartRound_1835 extends StartRound
 	private int turns = 0;
 	private int numberOfPlayers = GameManager.getNumberOfPlayers();
 	private String variant;
-	private StartItem[] buyableItems;
 
 	/* Additional variants */
 	public static final String CLEMENS_VARIANT = "Clemens";
@@ -26,6 +27,7 @@ public class StartRound_1835 extends StartRound
 	public StartRound_1835()
 	{
 		super();
+		hasBidding = false;
 	}
 
 	/**
@@ -51,8 +53,8 @@ public class StartRound_1835 extends StartRound
 		}
 
 		// Select initially buyable items
-		setBuyableItems();
 		defaultStep = nextStep = BUY_OR_PASS;
+		//getBuyableItems(); // Needed for Start Window
 	}
 
 	/**
@@ -62,9 +64,50 @@ public class StartRound_1835 extends StartRound
 	 * 
 	 * @return An array of start items that can be bought.
 	 */
-	public StartItem[] getBuyableItems()
+	public StartItem[] getBuyableItems() {return null;}
+	
+	public List getStartItems()
 	{
-		return buyableItems;
+		Player currentPlayer = GameManager.getCurrentPlayer();
+		int cashToSpend = currentPlayer.getCash();
+		List startItems = startPacket.getItems();
+		StartItem item;
+		int row;
+		int minRow = 0;
+		int items = 0;
+		
+		Iterator it = startItems.iterator();
+		while (it.hasNext())
+		{
+			item = (StartItem) it.next();
+			if (item.isSold()) {
+				item.setStatus (StartItem.SOLD);
+			} else if (item.getBasePrice() > cashToSpend) {
+				item.setStatus (StartItem.UNAVAILABLE);
+			} else if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
+				item.setStatus (StartItem.BUYABLE);
+			} else {
+				row = item.getRow();
+				if (minRow == 0)
+					minRow = row;
+				if (row == minRow)
+				{
+					// Allow all items in the top row.
+					item.setStatus (StartItem.BUYABLE);
+					items++;
+				}
+				else if (row == minRow + 1 && items == 1)
+				{
+					// Allow the first item in the next row if the
+					// top row has only one item.
+					item.setStatus (StartItem.BUYABLE);
+				} else {
+					item.setStatus (StartItem.UNAVAILABLE);
+				}
+			}
+		}
+		
+		return startItems;
 	}
 
 	/**
@@ -124,7 +167,7 @@ public class StartRound_1835 extends StartRound
 	public boolean bid(String playerName, String itemName, int amount)
 	{
 
-		Log.error("Invalid action in this game");
+		Log.error(LocalText.getText("InvalidAction"));
 		return false;
 	}
 
@@ -145,7 +188,6 @@ public class StartRound_1835 extends StartRound
 		{
 
 			// Select the player that has the turn
-			int currentIndex = GameManager.getCurrentPlayerIndex();
 			int newIndex = 0;
 			if (++turns == numberOfPlayers)
 			{
@@ -170,9 +212,6 @@ public class StartRound_1835 extends StartRound
 			}
 			GameManager.setCurrentPlayerIndex(newIndex);
 
-			// Select the items that may be bought
-			setBuyableItems();
-
 			nextStep = BUY_OR_PASS;
 		}
 		return;
@@ -191,7 +230,7 @@ public class StartRound_1835 extends StartRound
 	public boolean setPrice(String playerName, String companyName, int parPrice)
 	{
 
-		Log.error("Invalid action in this game");
+		Log.error(LocalText.getText("InvalidAction"));
 		return false;
 	}
 
@@ -213,7 +252,7 @@ public class StartRound_1835 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = "Wrong player";
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 			break;
@@ -221,82 +260,29 @@ public class StartRound_1835 extends StartRound
 
 		if (errMsg != null)
 		{
-			Log.error("Invalid pass by " + playerName + ": " + errMsg);
+			Log.error(LocalText.getText("InvalidPass", new String[] {
+					playerName,
+					errMsg
+				}));
 			return false;
 		}
 
-		Log.write(playerName + " passes.");
+		Log.write(LocalText.getText("PASSES", playerName));
 		GameManager.setNextPlayer();
 
 		if (++numPasses >= numPlayers)
 		{
 			// All players have passed.
-			Log.write("All players have passed.");
+			Log.write(LocalText.getText("ALL_PASSED"));
 			GameManager.getInstance().nextRound(this);
 		}
 
 		return true;
 	}
 
-	/*----- Internal functions -----*/
-	private void setBuyableItems()
-	{
-		List buyItems = new ArrayList();
-		Iterator it = startPacket.getItems().iterator();
-		StartItem b;
-		int row;
-		int minRow = 0;
-		int items = 0;
-		while (it.hasNext())
-		{
-			if (!(b = (StartItem) it.next()).isSold())
-			{
-				if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
-				{
-					buyItems.add(b);
-				}
-				else
-				{
-					row = b.getRow();
-					if (minRow == 0)
-						minRow = row;
-					if (row == minRow)
-					{
-						// Allow all items in the top row.
-						buyItems.add(b);
-						items++;
-					}
-					else if (row == minRow + 1 && items == 1)
-					{
-						// Allow the first item in the next row if the
-						// top row has only one item.
-						buyItems.add(b);
-						break;
-					}
-					else if (row > minRow + 1)
-						break;
-				}
-			}
-		}
-		if (buyItems.size() > 0)
-		{
-			buyableItems = (StartItem[]) buyItems.toArray(new StartItem[0]);
-		}
-		else
-		{
-			buyableItems = new StartItem[0];
-		}
-	}
-
 	public boolean isBuyable(StartItem item)
 	{
-
-		for (int i = 0; i < buyableItems.length; i++)
-		{
-			if (item == buyableItems[i])
-				return true;
-		}
-		return false;
+		return item.getStatus() == StartItem.BUYABLE;
 	}
 
 	public boolean isBiddable(StartItem item)

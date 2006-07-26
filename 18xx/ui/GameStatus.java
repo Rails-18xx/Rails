@@ -77,6 +77,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private int newTrainsXOffset, newTrainsYOffset;
 	private Field futureTrains;
 	private int futureTrainsXOffset, futureTrainsYOffset;
+	private int rightCompCaptionXOffset, rightCompCaptionYOffset;
 
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
@@ -86,6 +87,9 @@ public class GameStatus extends JPanel implements ActionListener
 	private Player[] players;
 	private PublicCompanyI[] companies;
 	private CompanyManagerI cm;
+	
+	private boolean hasParPrices = false;
+	private boolean compCanBuyPrivates = false;
 
 	private Player p;
 	private PublicCompanyI c;
@@ -127,6 +131,9 @@ public class GameStatus extends JPanel implements ActionListener
 		companies = (PublicCompanyI[]) cm.getAllPublicCompanies()
 				.toArray(new PublicCompanyI[0]);
 		nc = companies.length;
+		
+		hasParPrices = GameManager.hasAnyParPrice();
+		compCanBuyPrivates = GameManager.canAnyCompBuyPrivates();
 
 		init();
 
@@ -154,42 +161,51 @@ public class GameStatus extends JPanel implements ActionListener
 		upperPlayerCaption = new Caption[np];
 		lowerPlayerCaption = new Caption[np];
 
-		certPerPlayerXOffset = 1;
-		certPerPlayerYOffset = 2;
-		certInIPOXOffset = np + 1;
-		certInIPOYOffset = 2;
-		certInPoolXOffset = np + 2;
-		certInPoolYOffset = 2;
-		parPriceXOffset = np + 3;
-		parPriceYOffset = 2;
-		currPriceXOffset = np + 4;
-		currPriceYOffset = 2;
-		compCashXOffset = np + 5;
-		compCashYOffset = 2;
-		compRevenueXOffset = np + 6;
-		compRevenueYOffset = 2;
-		compTrainsXOffset = np + 7;
-		compTrainsYOffset = 2;
-		compPrivatesXOffset = np + 8;
-		compPrivatesYOffset = 2;
-		playerCashXOffset = 1;
-		playerCashYOffset = nc + 2;
-		playerPrivatesXOffset = 1;
-		playerPrivatesYOffset = nc + 3;
-		playerWorthXOffset = 1;
-		playerWorthYOffset = nc + 4;
-		playerCertCountXOffset = 1;
-		playerCertCountYOffset = nc + 5;
-		certLimitXOffset = np + 2;
+		int lastX = 0;
+		int lastY = 1;
+		certPerPlayerXOffset = ++lastX;
+		certPerPlayerYOffset = ++lastY;
+		certInIPOXOffset = (lastX += np);
+		certInIPOYOffset = lastY;
+		certInPoolXOffset = ++lastX;
+		certInPoolYOffset = lastY;
+		if (hasParPrices) {
+			parPriceXOffset = ++lastX;
+			parPriceYOffset = lastY;
+		}
+		currPriceXOffset = ++lastX;
+		currPriceYOffset = lastY;
+		compCashXOffset = ++lastX;
+		compCashYOffset = lastY;
+		compRevenueXOffset = ++lastX;
+		compRevenueYOffset = lastY;
+		compTrainsXOffset = ++lastX;
+		compTrainsYOffset = lastY;
+		if (compCanBuyPrivates) {
+			compPrivatesXOffset = ++lastX;
+			compPrivatesYOffset = lastY;
+		}
+		rightCompCaptionXOffset = ++lastX;
+		rightCompCaptionYOffset = lastY;
+		
+		playerCashXOffset = certPerPlayerXOffset;
+		playerCashYOffset = (lastY += nc);
+		playerPrivatesXOffset = certPerPlayerXOffset;
+		playerPrivatesYOffset = ++lastY;
+		playerWorthXOffset = certPerPlayerXOffset;
+		playerWorthYOffset = ++lastY;
+		playerCertCountXOffset = certPerPlayerXOffset;
+		playerCertCountYOffset = ++lastY;
+		certLimitXOffset = certInPoolXOffset;
 		certLimitYOffset = playerCertCountYOffset;
-		bankCashXOffset = np + 2;
-		bankCashYOffset = nc + 3;
-		poolTrainsXOffset = np + 3;
-		poolTrainsYOffset = nc + 3;
-		newTrainsXOffset = np + 5;
-		newTrainsYOffset = nc + 3;
-		futureTrainsXOffset = np + 6;
-		futureTrainsYOffset = nc + 3;
+		bankCashXOffset = certInPoolXOffset;
+		bankCashYOffset = playerPrivatesYOffset;
+		poolTrainsXOffset = bankCashXOffset + 1;
+		poolTrainsYOffset = playerPrivatesYOffset;
+		newTrainsXOffset = compCashXOffset;
+		newTrainsYOffset = playerPrivatesYOffset;
+		futureTrainsXOffset = compRevenueXOffset;
+		futureTrainsYOffset = playerPrivatesYOffset;
 
 		addField(new Caption(LocalText.getText("COMPANY")),
 				0,
@@ -227,28 +243,38 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_RIGHT + WIDE_BOTTOM);
-		addField(new Caption(LocalText.getText("PRICES")),
-				parPriceXOffset,
-				0,
-				2,
-				1,
-				WIDE_RIGHT);
-		addField(new Caption(LocalText.getText("PAR")),
-				parPriceXOffset,
-				1,
-				1,
-				1,
-				WIDE_BOTTOM);
-		addField(new Caption(LocalText.getText("CURRENT")),
-				currPriceXOffset,
-				1,
-				1,
-				1,
-				WIDE_RIGHT + WIDE_BOTTOM);
+		if (this.hasParPrices) {
+			addField(new Caption(LocalText.getText("PRICES")),
+					parPriceXOffset,
+					0,
+					2,
+					1,
+					WIDE_RIGHT);
+			addField(new Caption(LocalText.getText("PAR")),
+					parPriceXOffset,
+					1,
+					1,
+					1,
+					WIDE_BOTTOM);
+			addField(new Caption(LocalText.getText("CURRENT")),
+					currPriceXOffset,
+					1,
+					1,
+					1,
+					WIDE_RIGHT + WIDE_BOTTOM);
+		} else {
+			addField(new Caption(LocalText.getText("CURRENT_PRICE")),
+					currPriceXOffset,
+					0,
+					1,
+					2,
+					WIDE_RIGHT + WIDE_BOTTOM);
+
+		}
 		addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
 				compCashXOffset,
 				0,
-				4,
+				this.compCanBuyPrivates ? 4 : 3,
 				1,
 				0);
 		addField(new Caption(LocalText.getText("CASH")),
@@ -269,14 +295,16 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_BOTTOM);
-		addField(new Caption(LocalText.getText("PRIVATES")),
+		if (compCanBuyPrivates) {
+			addField(new Caption(LocalText.getText("PRIVATES")),
 				compPrivatesXOffset,
 				1,
 				1,
 				1,
 				WIDE_BOTTOM);
+		}
 		addField(new Caption(LocalText.getText("COMPANY")),
-				compPrivatesXOffset + 1,
+				rightCompCaptionXOffset,
 				0,
 				1,
 				2,
@@ -345,8 +373,10 @@ public class GameStatus extends JPanel implements ActionListener
 					WIDE_RIGHT);
 			certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
 
-			f = parPrice[i] = new Field(c.getParPriceModel());
-			addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0);
+			if (this.hasParPrices) {
+				f = parPrice[i] = new Field(c.getParPriceModel());
+				addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0);
+			}
 
 			f = currPrice[i] = new Field(c.getCurrentPriceModel());
 			addField(f,
@@ -367,16 +397,19 @@ public class GameStatus extends JPanel implements ActionListener
 					.option(TrainsModel.FULL_LIST));
 			addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0);
 
-			f = compPrivates[i] = new Field(c.getPortfolio()
-					.getPrivatesModel()
-					.option(PrivatesModel.SPACE));
-			addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
+			if (this.compCanBuyPrivates) {
+				f = compPrivates[i] = new Field(c.getPortfolio()
+						.getPrivatesModel()
+						.option(PrivatesModel.SPACE));
+				addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
+			}
+			
 			f = new Caption(c.getName());
 			f.setForeground(c.getFgColour());
 			f.setBackground(c.getBgColour());
 			addField(f,
-					compPrivatesXOffset + 1,
-					compPrivatesYOffset + i,
+					rightCompCaptionXOffset,
+					i,
 					1,
 					1,
 					WIDE_LEFT);
@@ -488,7 +521,7 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(new Caption("Used trains"),
 				poolTrainsXOffset,
 				poolTrainsYOffset - 1,
-				2,
+				hasParPrices ? 2 : 1,
 				1,
 				WIDE_TOP + WIDE_RIGHT);
 		poolTrains = new Field(Bank.getPool()
@@ -497,7 +530,7 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(poolTrains,
 				poolTrainsXOffset,
 				poolTrainsYOffset,
-				2,
+				hasParPrices ? 2 : 1,
 				1,
 				WIDE_RIGHT);
 
@@ -519,7 +552,7 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(new Caption("Future trains"),
 				futureTrainsXOffset,
 				futureTrainsYOffset - 1,
-				3,
+				this.compCanBuyPrivates ? 3 : 2,
 				1,
 				WIDE_LEFT + WIDE_TOP);
 		futureTrains = new Field(Bank.getUnavailable()
@@ -528,7 +561,7 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(futureTrains,
 				futureTrainsXOffset,
 				futureTrainsYOffset,
-				3,
+				this.compCanBuyPrivates ? 3 : 2,
 				1,
 				WIDE_LEFT);
 

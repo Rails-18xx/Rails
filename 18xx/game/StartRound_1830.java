@@ -2,13 +2,14 @@ package game;
 
 import java.util.*;
 
+import util.LocalText;
+
 /**
  * Implements an 1830-style initial auction.
  */
 public class StartRound_1830 extends StartRound
 {
 
-	private StartItem auctionItem = null;
 	private int numBidders;
 
 	/**
@@ -17,6 +18,7 @@ public class StartRound_1830 extends StartRound
 	public StartRound_1830()
 	{
 		super();
+		hasBidding = true;
 	}
 
 	/**
@@ -53,6 +55,43 @@ public class StartRound_1830 extends StartRound
 		{
 			return new StartItem[0];
 		}
+	}
+	
+	/**
+	 * Return the start items, marked as appropriate for an 1830-style auction.
+	 */
+	public List getStartItems () {
+		
+		StartItem item;
+		Player currentPlayer = getCurrentPlayer();
+		
+		for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
+			item = (StartItem) it.next();
+			
+			if (item.isSold()) {
+				item.setStatus (StartItem.SOLD);
+			} else if (auctionItem != null) {
+				// There is just one tradeable item: the one up for auctioning
+				item.setStatus(item == auctionItem 
+						? StartItem.AUCTIONED 
+						: StartItem.UNAVAILABLE);
+			} else {
+				item.setStatus(item == startPacket.getFirstUnsoldItem()
+						? StartItem.BUYABLE
+						: StartItem.BIDDABLE);
+			}
+
+			if (item.getStatus() == StartItem.BUYABLE
+					&& currentPlayer.getUnblockedCash() < item.getBasePrice()) {
+				item.setStatus(StartItem.UNAVAILABLE);
+			} else if ((item.getStatus() == StartItem.BIDDABLE
+					|| item.getStatus() == StartItem.AUCTIONED)
+					&& currentPlayer.getUnblockedCash() + item.getBid(currentPlayer)
+						< item.getMinimumBid()) {
+				item.setStatus(StartItem.UNAVAILABLE);
+			}
+		}
+		return itemsToSell;
 	}
 
 	/**
@@ -156,34 +195,33 @@ public class StartRound_1830 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = "Wrong player";
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 			// Check name of item
 			if (!itemMap.containsKey(itemName))
 			{
-				errMsg = "Not found";
+				errMsg = LocalText.getText("DoesNotExist");
 				break;
 			}
 			item = (StartItem) itemMap.get(itemName);
 			// Must not be the first item
 			if (!isBiddable(item))
 			{
-				errMsg = "Cannot bid on this item";
+				errMsg = LocalText.getText("CannotBid");
 				break;
 			}
 			// Bid must be at least 5 above last bid
 			if (amount < item.getMinimumBid())
 			{
-				errMsg = "Bid too low, minimum is " + (item.getMinimumBid());
+				errMsg = LocalText.getText("BidTooLow", ""+item.getMinimumBid());
 				break;
 			}
 			previousBid = item.getBid(player);
 			int available = player.getUnblockedCash() + previousBid;
 			if (amount > available)
 			{
-				errMsg = "Bid too high, player has " + Bank.format(available)
-						+ " free for bidding";
+				errMsg = LocalText.getText("BidTooHigh", Bank.format(available));
 				break;
 			}
 
@@ -192,8 +230,11 @@ public class StartRound_1830 extends StartRound
 
 		if (errMsg != null)
 		{
-			Log.error("Invalid bid by " + playerName + " on " + itemName + ": "
-					+ errMsg);
+			Log.error(LocalText.getText("InvalidBid", new String[]{
+					playerName,
+					itemName,
+					errMsg
+				}));
 			return false;
 		}
 
@@ -201,9 +242,12 @@ public class StartRound_1830 extends StartRound
 		if (previousBid > 0)
 			player.unblockCash(previousBid);
 		player.blockCash(amount);
-		Log.write(playerName + " bids " + Bank.format(amount) + " on "
-				+ itemName + ". Remains "
-				+ Bank.format(player.getUnblockedCash()) + "");
+		Log.write(LocalText.getText("BID_ITEM_LOG", new String[] {
+				playerName,
+				Bank.format(amount),
+				itemName,
+				Bank.format(player.getUnblockedCash())
+			}));
 
 		if (auctionItem == null)
 		{
@@ -255,7 +299,7 @@ public class StartRound_1830 extends StartRound
 				// More than one bid on the next item: start a bid round.
 				auctionItem = nextItem;
 				nextStep = BID_OR_PASS;
-				Log.write(auctionItem.getName() + " will be auctioned");
+				Log.write(LocalText.getText("TO_AUCTION", auctionItem.getName()));
 				// Start left of the currently highest bidder
 				setNextBidder(auctionItem, auctionItem.getBidder().getIndex());
 				break;
@@ -288,7 +332,7 @@ public class StartRound_1830 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = "Wrong player";
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 			break;
@@ -296,11 +340,14 @@ public class StartRound_1830 extends StartRound
 
 		if (errMsg != null)
 		{
-			Log.error("Invalid pass by " + playerName + ": " + errMsg);
+			Log.error(LocalText.getText("InvalidPass", new String[] {
+					playerName,
+					errMsg
+				}));
 			return false;
 		}
 
-		Log.write(playerName + " passes.");
+		Log.write(LocalText.getText("PASSES", playerName));
 
 		if (auctionItem != null)
 		{
@@ -342,16 +389,17 @@ public class StartRound_1830 extends StartRound
 			if (++numPasses >= numPlayers)
 			{
 				// All players have passed.
-				Log.write("All players passed");
+				Log.write(LocalText.getText("ALL_PASSED"));
 				// It the first item has not been sold yet, reduce its price by
 				// 5.
 				if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem())
 				{
 					startPacket.getFirstItem().basePrice -= 5;
-					Log.write("Price of "
-							+ startPacket.getFirstItem().getName()
-							+ " now reduced to "
-							+ Bank.format(startPacket.getFirstItem().basePrice));
+					Log.write(LocalText.getText("ITEM_PRICE_REDUCED",
+							new String[] {
+								startPacket.getFirstItem().getName(),
+								Bank.format(startPacket.getFirstItem().basePrice)
+						}));
 					numPasses = 0;
 					if (startPacket.getFirstItem().basePrice == 0)
 					{

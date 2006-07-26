@@ -27,8 +27,13 @@ public class StockRound implements Round
 	//protected PublicCompanyI companyBoughtThisTurn = null;
 	protected StateObject companyBoughtThisTurnWrapper = 
 	    new StateObject ("CompanyBoughtThisTurn", PublicCompany.class);
-	protected boolean hasSoldThisTurnBeforeBuying = false;
-	protected boolean hasPassed = true; // Is set false on any player action
+	
+	protected StateObject hasSoldThisTurnBeforeBuying = 
+		new StateObject ("HoldSoldBeforeBuyingThisTurn", Boolean.FALSE);
+	
+	protected StateObject hasPassed = 
+		new StateObject ("HasPassed", Boolean.TRUE); // Is set false on any player action
+	
 	protected int numPasses = 0;
 
 	protected Map sellPrices = new HashMap();
@@ -449,7 +454,7 @@ public class StockRound implements Round
 
 		//companyBoughtThisTurn = company;
 		Action.add (new StateChange(companyBoughtThisTurnWrapper, company));
-		hasPassed = false;
+		Action.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
 
 		Action.finish();
@@ -604,8 +609,7 @@ public class StockRound implements Round
 			// Check if the Player has the money.
 			if (currentPlayer.getCash() < shares * price)
 			{
-				errMsg = currentPlayer.getName()
-						+ LocalText.getText("HaveNotEnoughMoney");
+				errMsg = LocalText.getText("NoMoney");
 				break;
 			}
 
@@ -614,11 +618,13 @@ public class StockRound implements Round
 
 		if (errMsg != null)
 		{
-			Log.error(playerName + LocalText.getText("CantBuy") + shares + " "
-					+ LocalText.getText("SHARE") + " "
-					+ LocalText.getText("OF") + companyName + " "
-					+ LocalText.getText("FROM") + " " + from.getName() + ": "
-					+ errMsg);
+			Log.error(LocalText.getText("CantBuy", new String[] {
+					playerName,
+					String.valueOf(shares),
+					companyName,
+					from.getName(),
+					errMsg
+					}));
 			return false;
 		}
 
@@ -628,14 +634,6 @@ public class StockRound implements Round
 		for (int i = 0; i < shares; i++)
 		{
 			cert = from.findCertificate(company, false);
-			/*
-			Log.write(playerName + " " + LocalText.getText("BUYS") + " "
-					+ shares + LocalText.getText("SHARE") + " ("
-					+ cert.getShare() + "%) " + LocalText.getText("OF") + " "
-					+ companyName + " " + LocalText.getText("FROM") + " "
-					+ from.getName() + " " + LocalText.getText("FOR") + " "
-					+ Bank.format(shares * price) + ".");
-			*/
 			Log.write(LocalText.getText("BUY_SHARES_LOG", new String[] {
 			        playerName,
 			        String.valueOf(shares),
@@ -648,7 +646,7 @@ public class StockRound implements Round
 
 		//companyBoughtThisTurn = company;
 		Action.add (new StateChange (companyBoughtThisTurnWrapper, company));
-		hasPassed = false;
+		Action.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
 
 		// Check if the company has floated
@@ -761,7 +759,7 @@ public class StockRound implements Round
 		PublicCertificateI cert = null;
 		PublicCertificateI presCert = null;
 		List certsToSell = new ArrayList();
-		List certsToSwap = new ArrayList();
+		//List certsToSwap = new ArrayList();
 		Player dumpedPlayer = null;
 		int presSharesToSell = 0;
 		int numberToSell = number;
@@ -784,7 +782,7 @@ public class StockRound implements Round
 			}
 			if (!playerName.equals(currentPlayer.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer") + " " + playerName;
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 
@@ -886,10 +884,12 @@ public class StockRound implements Round
 
 		if (errMsg != null)
 		{
-			Log.error(playerName + " " + LocalText.getText("CantSell") + " "
-					+ number + " " + LocalText.getText("SHARES") + " "
-					+ LocalText.getText("OF") + " " + companyName + ": "
-					+ errMsg);
+			Log.error(LocalText.getText("CantSell", new String[] {
+					playerName,
+					String.valueOf(number),
+					companyName,
+					errMsg
+					}));
 			return false;
 		}
 
@@ -956,9 +956,10 @@ public class StockRound implements Round
 				{
 					portfolio.swapPresidentCertificate(company,
 							otherPlayer.getPortfolio());
-					Log.write(otherPlayer.getName()
-							+ LocalText.getText("IS_NOW_PRES_OF") + " "
-							+ companyName);
+					Log.write(LocalText.getText("IS_NOW_PRES_OF", new String[]{
+									otherPlayer.getName(),
+									companyName
+							}));
 					break;
 				}
 			}
@@ -968,8 +969,8 @@ public class StockRound implements Round
 		recordSale(currentPlayer, company);
 
 		if (companyBoughtThisTurnWrapper.getState() == null)
-			hasSoldThisTurnBeforeBuying = true;
-		hasPassed = false;
+			Action.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
+		Action.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
 		Action.finish();
 //reportShares(company);
@@ -996,20 +997,18 @@ public void reportShares(PublicCompanyI c) {
 	public boolean done(String playerName)
 	{
 
-		String errMsg = null;
-
 		currentPlayer = GameManager.getCurrentPlayer();
 
 		if (!playerName.equals(currentPlayer.getName()))
 		{
-			errMsg = LocalText.getText("WrongPlayer") + " " + playerName;
+			Log.error(LocalText.getText("WrongPlayer") + " " + playerName);
 			return false;
 		}
 
-		if (hasPassed)
+		if (((Boolean)hasPassed.getState()).booleanValue())
 		{
 			numPasses++;
-			Log.write(currentPlayer.getName() + LocalText.getText("PASSES"));
+			Log.write(LocalText.getText("PASSES", currentPlayer.getName()));
 		}
 		else
 		{
@@ -1023,7 +1022,6 @@ public void reportShares(PublicCompanyI c) {
 
 			// Check if any companies are sold out.
 			Iterator it = companyMgr.getAllPublicCompanies().iterator();
-			boolean soldOut;
 			PublicCompanyI company;
 			while (it.hasNext())
 			{
@@ -1068,8 +1066,8 @@ public void reportShares(PublicCompanyI c) {
 
 		currentPlayer = GameManager.getCurrentPlayer();
 		companyBoughtThisTurnWrapper.setState(null);
-		hasSoldThisTurnBeforeBuying = false;
-		hasPassed = true;
+		hasSoldThisTurnBeforeBuying.setState(Boolean.FALSE);
+		hasPassed.setState(Boolean.TRUE);
 
 		currentSpecialProperties = currentPlayer.getPortfolio()
 				.getSpecialProperties(game.special.SpecialSRProperty.class);
@@ -1203,7 +1201,8 @@ public void reportShares(PublicCompanyI c) {
 			(PublicCompanyI) companyBoughtThisTurnWrapper.getState();
 		
 		if (sequenceRule == SELL_BUY_OR_BUY_SELL
-				&& companyBoughtThisTurn != null && hasSoldThisTurnBeforeBuying
+				&& companyBoughtThisTurn != null 
+				&& ((Boolean)hasSoldThisTurnBeforeBuying.getState()).booleanValue()
 				|| sequenceRule == SELL_BUY && companyBoughtThisTurn != null)
 			return false;
 		return true;

@@ -117,7 +117,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/*---- variables needed during initialisation -----*/
 	protected String startSpace = null;
 
-	protected int capitalisation = 0;
+	protected int capitalisation = CAPITALISE_FULL;
 
 	/** Fixed price (for a 1835-style minor) */
 	protected int fixedPrice = 0;
@@ -145,7 +145,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 			this.publicNumber = numberOfPublicCompanies++;
 
 		this.portfolio = new Portfolio(name, this);
-		this.capitalisation = type.getCapitalisation();
 		treasury = new CashModel(this);
 		lastRevenue = new MoneyModel (this);
 
@@ -209,7 +208,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			{
 
 				String propName = properties.item(j).getNodeName();
-				if (propName == null)
+				if (propName == null || propName.equals("#text"))
 					continue;
 				if (propName.equalsIgnoreCase("ShareUnit"))
 				{
@@ -220,6 +219,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				else if (propName.equalsIgnoreCase("CanBuyPrivates"))
 				{
 					canBuyPrivates = true;
+					GameManager.setCanAnyCompBuyPrivates(true);
 					GameManager.setCompaniesCanBuyPrivates();
 					nnp2 = properties.item(j).getAttributes();
 					String lower = XmlUtils.extractStringAttribute(nnp2,
@@ -256,7 +256,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 					hasStockPrice = XmlUtils.extractBooleanAttribute(nnp2,
 							"market", true);
 					hasParPrice = XmlUtils.extractBooleanAttribute(nnp2, "par",
-							true);
+							hasStockPrice);
 				}
 				else if (propName.equalsIgnoreCase("Payout"))
 				{
@@ -302,9 +302,28 @@ public class PublicCompany extends Company implements PublicCompanyI
 								"Only Privates can be closed on first train buy");
 					}
 				}
+				else if (propName.equalsIgnoreCase("Capitalisation"))
+				{
+					nnp2 = properties.item(j).getAttributes();
+					String capType = XmlUtils.extractStringAttribute(nnp2,
+							"type", "full");
+					if (capType.equalsIgnoreCase("full"))
+					{
+						setCapitalisation (CAPITALISE_FULL);
+					} else if (capType.equalsIgnoreCase("incremental")) {
+						setCapitalisation (CAPITALISE_INCREMENTAL);
+					}
+					else
+					{
+						throw new ConfigurationException(
+								"Invalid capitalisation type: "+capType);
+					}
+				}
 
 			}
 
+			if (hasParPrice) GameManager.setHasAnyParPrice(true);
+System.out.println(name+": sp="+hasStockPrice+" pp="+hasParPrice+" GM="+GameManager.hasAnyParPrice());
 			NodeList typeElements = element.getElementsByTagName("Certificate");
 			if (typeElements.getLength() > 0)
 			{
@@ -1033,7 +1052,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		if (hasStarted() && !hasFloated()
 				&& percentageOwnedByPlayers() >= floatPerc
-				&& currentPrice.getPrice() != null)
+				/*&& currentPrice.getPrice() != null*/)
 		{
 			// Float company (limit and capitalisation to be made configurable)
 			setFloated();

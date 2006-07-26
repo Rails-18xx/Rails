@@ -33,6 +33,7 @@ public class Game
 
 	public static void NewGame(String gameName, ArrayList playerNames)
 	{
+		name = gameName;
 		initialise(gameName);
 		companyManager = getCompanyManager();
 		companyList = (ArrayList) companyManager.getAllPublicCompanies();
