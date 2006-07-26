@@ -2,16 +2,25 @@ package game;
 
 import java.util.*;
 
+import util.LocalText;
+
 public abstract class StartRound implements StartRoundI
 {
 
 	protected StartPacket startPacket = null;
 	protected Map itemMap = null;
+	protected List itemsToSell = null;
+	protected StartItem auctionItem = null;
 	protected int numPasses = 0;
 	protected int numPlayers;
 	protected String variant;
 	protected int nextStep;
 	protected int defaultStep;
+	
+	/** Should the UI present bidding into and facilities?
+	 * This value MUST be set in the actual StartRound constructor.
+	 */
+	protected boolean hasBidding; 
 
 	/*----- Start Round states -----*/
 	/** The current player must buy, bid or pass */
@@ -56,18 +65,26 @@ public abstract class StartRound implements StartRoundI
 		numPlayers = PlayerManager.getNumberOfPlayers();
 
 		itemMap = new HashMap();
+		itemsToSell = new ArrayList();
 		Iterator it = startPacket.getItems().iterator();
 		StartItem item;
 		while (it.hasNext())
 		{
 			item = (StartItem) it.next();
-			itemMap.put(item.getName(), item);
+			
+			// New: we only include items that have not yet been sold
+			// at the start of the current StartRound
+			if (!item.isSold()) {
+				itemMap.put(item.getName(), item);
+				itemsToSell.add(item);
+			}
 		}
 
 		GameManager.getInstance().setRound(this);
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
-		Log.write("\nStart of initial round");
-		Log.write(getCurrentPlayer().getName() + " has the Priority Deal");
+		Log.write("");
+		Log.write(LocalText.getText("StartOfInitialRound"));
+		Log.write (LocalText.getText("HasPriority", getCurrentPlayer().getName()));
 	}
 
 	/*----- Processing player actions -----*/
@@ -118,13 +135,13 @@ public abstract class StartRound implements StartRoundI
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = "Wrong player";
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 			// Check name of item
 			if (!itemMap.containsKey(itemName))
 			{
-				errMsg = "Not found";
+				errMsg = LocalText.getText("DoesNotExist");
 				break;
 			}
 
@@ -133,7 +150,12 @@ public abstract class StartRound implements StartRoundI
 			// Is the item buyable?
 			if (!isBuyable(item))
 			{
-				errMsg = "Cannot buy this item";
+				errMsg = LocalText.getText("NotForSale");
+				break;
+			}
+			
+			if (player.getUnblockedCash() < item.getBasePrice()) {
+				errMsg = LocalText.getText("NoMoney");
 				break;
 			}
 
@@ -142,8 +164,11 @@ public abstract class StartRound implements StartRoundI
 
 		if (errMsg != null)
 		{
-			Log.error("Invalid buy by " + playerName + " of " + itemName + ": "
-					+ errMsg);
+			Log.error (LocalText.getText("CantBuyItem", new String[] {
+					playerName,
+					itemName,
+					errMsg
+				}));
 			return false;
 		}
 
@@ -180,7 +205,10 @@ public abstract class StartRound implements StartRoundI
 		if (item.hasSecondary())
 		{
 			Certificate extra = item.getSecondary();
-			Log.write(player.getName() + " also gets " + extra.getName());
+			Log.write(LocalText.getText("ALSO_GETS", new String[] {
+					player.getName(),
+					extra.getName()
+				}));
 			player.buy(extra, 0);
 			checksOnBuying(extra);
 		}
@@ -205,8 +233,13 @@ public abstract class StartRound implements StartRoundI
 					if (comp.getParPrice() == null) {
 						companyNeedingPrice = comp;
 						nextStep = SET_PRICE;
+					} else {
+						comp.start();
+						comp.checkFlotation();
 					}
 			    }
+			} else {
+				comp.checkFlotation();
 			}
 
 			// Check if the company has floated (also applies to minors)
@@ -239,25 +272,25 @@ public abstract class StartRound implements StartRoundI
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = "Wrong player";
+				errMsg = LocalText.getText("WrongPlayer");
 				break;
 			}
 			// Check state
 			if (nextStep != SET_PRICE)
 			{
-				errMsg = "No price to be set";
+				errMsg = LocalText.getText("NoPriceToSet");
 				break;
 			}
 			// Check company
 			if (!companyName.equals(companyNeedingPrice.getName()))
 			{
-				errMsg = "Wrong company";
+				errMsg = LocalText.getText("WrongCompany");
 				break;
 			}
 			// Check par price
 			if ((startSpace = StockMarket.getInstance().getStartSpace(parPrice)) == null)
 			{
-				errMsg = "Invalid par price";
+				errMsg = LocalText.getText("InvalidStartPrice");
 				break;
 			}
 			break;
@@ -265,13 +298,20 @@ public abstract class StartRound implements StartRoundI
 
 		if (errMsg != null)
 		{
-			Log.error("Invalid par price " + Bank.format(parPrice) + " set by "
-					+ playerName + " for" + companyName + ": " + errMsg);
+			Log.error(LocalText.getText("InvalidParPriceSetting", new String[] {
+					Bank.format(parPrice),
+					playerName,
+					companyName,
+					errMsg
+				}));
 			return false;
 		}
 
-		Log.write(playerName + " starts " + companyName + " at "
-				+ Bank.format(parPrice));
+		Log.write(LocalText.getText("START_COMPANY", new String[] {
+				playerName,
+				companyName,
+				Bank.format(parPrice)
+			}));
 		companyNeedingPrice.start(startSpace);
 
 		// Check if company already floats
@@ -280,8 +320,10 @@ public abstract class StartRound implements StartRoundI
 		{
 			// Float company
 			companyNeedingPrice.setFloated();
-			Log.write(companyName + " floats and receives "
-					+ Bank.format(companyNeedingPrice.getCash()));
+			Log.write(LocalText.getText("FLOATS", new String[] {
+					companyName,
+					Bank.format(companyNeedingPrice.getCash())
+				}));
 		}
 
 		companyNeedingPrice = null;
@@ -341,6 +383,12 @@ public abstract class StartRound implements StartRoundI
 	 * @return An array of start items, possibly empry.
 	 */
 	public abstract StartItem[] getBuyableItems();
+	
+	public abstract List getStartItems ();
+	
+	public StartItem getAuctionedItem() {
+		return auctionItem;
+	}
 
 	/**
 	 * Get a list of items that the current player may bid upon.
@@ -397,6 +445,10 @@ public abstract class StartRound implements StartRoundI
 	
 	public List getSpecialProperties () {
 	    return null;
+	}
+
+	public boolean hasBidding() {
+		return hasBidding;
 	}
 
 }

@@ -137,10 +137,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private int[] newTrainTotalCost;
 
     private List trainsBought;
-
+    
     public ORPanel() {
         super();
-
+        
         statusPanel = new JPanel();
         gb = new GridBagLayout();
         statusPanel.setLayout(gb);
@@ -453,7 +453,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             president[orCompIndex].setHighlight(true);
 
-            privatesCanBeBought = GameManager.getCurrentPhase()
+            privatesCanBeBoughtNow = GameManager.getCurrentPhase()
                     .isPrivateSellingAllowed()
                     && !Game.getCompanyManager().getPrivatesOwnedByPlayers()
                             .isEmpty();
@@ -468,12 +468,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 GameUILoader.getMapPanel().setSpecialTileLays(
                         (ArrayList) round.getSpecialProperties());
 
-                button2.setText(LocalText.getText("BUY_PRIVATE"));
-                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
-                button2.setMnemonic(KeyEvent.VK_V);
-                button2.setEnabled(privatesCanBeBought);
-                button2.setVisible(privatesCanBeBought);
-                privatesCaption.setHighlight(privatesCanBeBought);
+                if (privatesCanBeBought) {
+	                button2.setText(LocalText.getText("BUY_PRIVATE"));
+	                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
+	                button2.setMnemonic(KeyEvent.VK_V);
+	                button2.setEnabled(privatesCanBeBoughtNow);
+	                button2.setVisible(privatesCanBeBoughtNow);
+	                privatesCaption.setHighlight(privatesCanBeBoughtNow);
+                } else {
+                	button2.setVisible(false);
+                }
 
                 button3.setText(LocalText.getText("Done"));
                 button3.setActionCommand(LocalText.getText("Done"));
@@ -543,12 +547,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button1.setEnabled(oRound.getOperatingCompany().mayBuyTrains());
                 button1.setVisible(true);
 
-                button2.setText(LocalText.getText("BUY_PRIVATE"));
-                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
-                button2.setMnemonic(KeyEvent.VK_V);
-                button2.setEnabled(privatesCanBeBought);
-                button2.setVisible(privatesCanBeBought);
-                privatesCaption.setHighlight(privatesCanBeBought);
+                if (privatesCanBeBought) {
+	                button2.setText(LocalText.getText("BUY_PRIVATE"));
+	                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
+	                button2.setMnemonic(KeyEvent.VK_V);
+	                button2.setEnabled(privatesCanBeBoughtNow);
+	                button2.setVisible(privatesCanBeBoughtNow);
+	                privatesCaption.setHighlight(privatesCanBeBoughtNow);
+                } else {
+                    button2.setVisible(false);
+                }
 
                 button3.setText(LocalText.getText("Done"));
                 button3.setActionCommand(LocalText.getText("Done"));
@@ -996,7 +1004,7 @@ private void buyTrain()
         tokenCaption.setHighlight(false);
         revenueCaption.setHighlight(false);
         trainCaption.setHighlight(false);
-        privatesCaption.setHighlight(false);
+        if (privatesCanBeBought) privatesCaption.setHighlight(false);
         if (orCompIndex >= 0)
             president[orCompIndex].setHighlight(false);
     }

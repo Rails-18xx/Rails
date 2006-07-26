@@ -231,14 +231,15 @@ public class Options extends JDialog implements ActionListener
 			{
 				this.setVisible(false);
 
-				Game.initialise(gameNameBox.getSelectedItem().toString());
+				String gameName = gameNameBox.getSelectedItem().toString();
+				Game.initialise(gameName);
 				Game.getPlayerManager(playerNames);
 				
 				List variants = GameManager.getVariants();
 				if (variants != null && variants.size() > 1) {
 				    String variant = (String) JOptionPane.showInputDialog (
 				            this,
-				            LocalText.getText("WHICH_VARIANT", Game.getName()),
+				            LocalText.getText("WHICH_VARIANT", gameName),
 				            "", 
 				            JOptionPane.PLAIN_MESSAGE,
 				            null,

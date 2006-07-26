@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.37 2006/07/22 22:51:53 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.38 2006/07/26 20:19:23 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -280,6 +280,7 @@ public class Portfolio
 			cert = (PublicCertificateI) it.next();
 			comp = cert.getCompany();
 			if (!comp.hasFloated()
+					|| !comp.hasStockPrice()
 					|| !cert.getCompany().getCurrentPrice().isNoCertLimit())
 				number++;
 		}

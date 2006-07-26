@@ -50,7 +50,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	JPanel pane = new JPanel(new BorderLayout());
 
 	private JMenuBar menuBar;
-	private static JMenu fileMenu, optMenu;
+	private static JMenu fileMenu, optMenu, moveMenu;
 	private JMenuItem menuItem, undoItem, redoItem;
 
 	/**
@@ -66,9 +66,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu(LocalText.getText("FILE"));
 		optMenu = new JMenu(LocalText.getText("OPTIONS"));
+		moveMenu = new JMenu(LocalText.getText("MOVE"));
 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		optMenu.setMnemonic(KeyEvent.VK_O);
+		moveMenu.setMnemonic(KeyEvent.VK_M);
 
 		menuItem = new JMenuItem(LocalText.getText("SAVE"));
 		menuItem.setName(LocalText.getText("SAVE"));
@@ -129,7 +131,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		undoItem.setMnemonic(KeyEvent.VK_U);
 		undoItem.addActionListener(this);
 		undoItem.setEnabled(false);
-		menuBar.add(undoItem);
+		moveMenu.add(undoItem);
 
 		redoItem = new JMenuItem(LocalText.getText("REDO"));
 		redoItem.setName(LocalText.getText("REDO"));
@@ -137,7 +139,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		redoItem.setMnemonic(KeyEvent.VK_R);
 		redoItem.addActionListener(this);
 		redoItem.setEnabled(false);
-		menuBar.add(redoItem);
+		moveMenu.add(redoItem);
+		
+		menuBar.add (moveMenu);
 
 		setJMenuBar(menuBar);
 	}

@@ -1,5 +1,7 @@
 package game;
 
+import java.util.List;
+
 public interface StartRoundI extends Round
 {
 
@@ -13,6 +15,10 @@ public interface StartRoundI extends Round
 	public StartItem[] getBuyableItems();
 
 	public StartItem[] getBiddableItems();
+	
+	public List getStartItems ();
+
+	public StartItem getAuctionedItem();
 
 	public PublicCompanyI getCompanyNeedingPrice();
 

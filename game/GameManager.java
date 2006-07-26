@@ -50,6 +50,8 @@ public class GameManager implements ConfigurableComponentI
 	protected static PhaseI currentPhase = null;
 	protected static boolean gameOver = false;
 	protected static boolean endedByBankruptcy = false;
+	protected static boolean hasAnyParPrice = false;
+	protected static boolean canAnyCompBuyPrivates = false;
 
 	protected static GameManager instance;
 
@@ -628,4 +630,22 @@ public class GameManager implements ConfigurableComponentI
 	{
 		return currentRound.getHelp();
 	}
+
+	public static boolean hasAnyParPrice() {
+		return hasAnyParPrice;
+	}
+
+	public static void setHasAnyParPrice(boolean hasAnyParPrice) {
+		GameManager.hasAnyParPrice = hasAnyParPrice;
+	}
+
+	public static boolean canAnyCompBuyPrivates() {
+		return canAnyCompBuyPrivates;
+	}
+
+	public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
+		GameManager.canAnyCompBuyPrivates = canAnyCompBuyPrivates;
+	}
+	
+	
 }

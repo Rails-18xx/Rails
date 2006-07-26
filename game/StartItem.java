@@ -29,6 +29,14 @@ public class StartItem
 	protected Map bidders = new HashMap();
 	protected boolean sold;
 	protected int buyPrice = 0;
+	
+	// Status info for the UI
+	protected int status;
+	public static final int UNAVAILABLE = 0;
+	public static final int BIDDABLE = 1;
+	public static final int BUYABLE = 2;
+	public static final int AUCTIONED = 3;
+	public static final int SOLD = 4;
 
 	// For initialisation purposes only
 	protected String type = null;
@@ -434,6 +442,8 @@ public class StartItem
 			return null;
 		}
 	}
+	
+	
 
 	/**
 	 * Class Bid holds the details of a particular bid on this item: the bidder
@@ -480,6 +490,16 @@ public class StartItem
 		{
 			return amount;
 		}
+	}
+
+
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }
