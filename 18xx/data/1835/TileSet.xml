@@ -1,4 +1,47 @@
 <TileManager  tiles="Tiles.xml">
+	<!-- Preprinted tiles -->
+	<Tile id="0"><!-- Empty space -->
+		<Upgrade id="7,8,9"/>
+	</Tile>
+	<Tile id="-1"><!-- 1 town -->
+		<Upgrade id="3,4,58"/>
+	</Tile>
+	<Tile id="-2"><!-- 2 towns -->
+		<Upgrade id="1,2,55,56,69"/>
+	</Tile>
+	<Tile id="-3"/>
+	<Tile id="-7"/>
+	<Tile id="-8"/>
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57" hex="!H2,H20,I3,O15"/>
+    <Upgrade id="201,202" hex="H2,H20,I3,O15"/>
+	</Tile>
+	<Tile id="-39"/>
+	<Tile id="-41"/>
+	<Tile id="-58"/>
+	<Tile id="-114"/>
+	<Tile id="-143"/>
+	<Tile id="-800"/>
+	<Tile id="-801"/>
+	<Tile id="-802"/>
+	<Tile id="-803"><!--Hamburg-->
+    <Upgrade id="221"/>
+	</Tile>
+	<Tile id="-804"/>
+	<Tile id="-805"/>
+	<Tile id="-806"><!--Berlin-->
+    <Upgrade id="209"/>
+  </Tile>
+	<Tile id="-807"><!--XX-->
+    <Upgrade id="210,211,212,213,214,215"/>
+  </Tile>
+	<Tile id="-808"/>
+	<Tile id="-809"><!--Frankfurt (Y)-->
+    <Upgrade id="216"/>
+  </Tile>
+	<Tile id="-810"/>
+	<Tile id="-901"/>
+	
 	<!-- yellow tiles -->
 	<Tile id="1" quantity="1" />
 	<Tile id="2" quantity="1" />
