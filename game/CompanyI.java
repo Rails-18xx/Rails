@@ -5,7 +5,7 @@ import org.w3c.dom.Element;
 /**
  * To be implemented by any Company object.
  */
-public interface CompanyI extends TokenHolderI {
+public interface CompanyI {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -74,11 +74,6 @@ public interface CompanyI extends TokenHolderI {
 	public void setCertLimitCount(int i);
 	
 	public abstract Object clone() throws CloneNotSupportedException;
-
-	public boolean addToken(MapHex hex);
-	
-	public int getNumCityTokens();
-
 
 	
 	// Overriding some standard methods with something more useful.

@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Interface to be used to access PublicCompany instances.
  */
-public interface PublicCompanyI extends CompanyI, CashHolder
+public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 {
 
 	public static final int CAPITALISE_FULL = 0;
@@ -234,6 +234,18 @@ public interface PublicCompanyI extends CompanyI, CashHolder
 	public void buyTrain (TrainI train, int price);
 	
 	public int getNextBaseTokenIndex ();
-	public boolean layBaseToken (MapHex hex, int station);
+	public boolean layBaseToken ();
+	public int getNumCityTokens();
+	public int getMaxCityTokens();
+	public boolean addToken(TokenHolderI hex);
+	
+    public MapHex getHomeHex();
+    public void setHomeHex(MapHex homeHex);
+    public Station getHomeStation();
+    public void setHomeStation(Station homeStation);
+    public MapHex getDestinationHex();
+
+
+
 
 }

@@ -79,7 +79,7 @@ public class Station implements TokenHolderI, Cloneable
 		return value;
 	}
 
-	public boolean addToken(CompanyI company)
+	public boolean addToken(TokenHolderI company)
 	{
 		if (tokens.size() + 1 <= baseSlots)
 		{
@@ -112,7 +112,7 @@ public class Station implements TokenHolderI, Cloneable
 		return hasTokens;
 	}
 
-	public boolean removeToken(CompanyI company)
+	public boolean removeToken(TokenHolderI company)
 	{
 		int index = tokens.indexOf(company);
 		if (index >= 0)
@@ -134,7 +134,7 @@ public class Station implements TokenHolderI, Cloneable
 	 * @return true if this Station already contains an instance of the
 	 *         specified company's token.
 	 */
-	public boolean contains(CompanyI company)
+	public boolean contains(PublicCompanyI company)
 	{
 		if (tokens.contains(company))
 			return true;

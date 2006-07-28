@@ -60,11 +60,11 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	protected TileI currentTile;
 	protected int currentTileRotation;
 	protected int tileCost;
-	protected int preferredCity;
-	protected PublicCompany companyHome = new PublicCompany();
-	protected PublicCompany companyDestination = new PublicCompany();
-	protected String companyHomeName;
-	protected String companyDestinationName;
+	//protected int preferredCity;
+	//protected PublicCompany companyHome = new PublicCompany();
+	//protected PublicCompany companyDestination = new PublicCompany();
+	//protected String companyHomeName;
+	//protected String companyDestinationName;
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
@@ -82,6 +82,9 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	protected boolean hasTokens;
 
 	protected boolean isBlocked = false;
+	
+	protected Map homes;
+	protected List destinations;
 
 	public MapHex()
 	{
@@ -181,12 +184,12 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
-		preferredCity = XmlUtils.extractIntegerAttribute(nnp,
-				"preferredCity",
-				0);
-		companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
-		companyDestinationName = XmlUtils.extractStringAttribute(nnp,
-				"destination");
+		//preferredCity = XmlUtils.extractIntegerAttribute(nnp,
+		//		"preferredCity",
+		//		0);
+		//companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
+		//companyDestinationName = XmlUtils.extractStringAttribute(nnp,
+		//		"destination");
 
 		// We need completely new objects, not just references to the Tile's
 		// stations.
@@ -402,15 +405,15 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return tileCost;
 	}
 
-	public CompanyI getCompanyHome()
-	{
-		return companyHome;
-	}
+	//public CompanyI getCompanyHome()
+	//{
+	//	return companyHome;
+	//}
 
-	public CompanyI getCompanyDestination()
-	{
-		return companyDestination;
-	}
+	//public CompanyI getCompanyDestination()
+	//{
+	//	return companyDestination;
+	//}
 
 	public void upgrade(TileI newTile, int newOrientation)
 	{
@@ -429,19 +432,20 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		// Further consequences to be processed here, e.g. new routes etc.
 	}
 
-	public int getPreferredHomeCity()
+	//public int getPreferredHomeCity()
+	//{
+	//	return preferredCity;
+	//}
+
+	public boolean addToken(TokenHolderI company)
 	{
-		return preferredCity;
+		return addToken(company, null);
 	}
 
-	public boolean addToken(CompanyI company)
+	public boolean addToken(TokenHolderI company, Station station)
 	{
-		return addToken(company, 0);
-	}
-
-	public boolean addToken(CompanyI company, int stationNumber)
-	{
-		if (((Station) stations.get(stationNumber)).addToken(company))
+	    if (station == null) station = (Station)stations.get(0);
+		if (station.addToken(company))
 		{
 			company.addToken(this);
 			hasTokens = true;
@@ -489,7 +493,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return hasTokens;
 	}
 
-	public boolean removeToken(CompanyI company)
+	public boolean removeToken(TokenHolderI company)
 	{
 		for (int i = 0; i < stations.size(); i++)
 		{
@@ -517,7 +521,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		// Flip through each company's list of tokens
 		while (coIT.hasNext())
 		{
-			CompanyI c = (CompanyI) coIT.next();
+			PublicCompanyI c = (PublicCompanyI) coIT.next();
 
 			if (c.hasTokens())
 			{
@@ -573,16 +577,34 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	{
 		return stations;
 	}
-
-	public String getCompanyDestinationName()
-	{
-		return companyDestinationName;
+	
+	public void addHome (PublicCompanyI company, Station station) {
+	    if (homes == null) homes = new HashMap();
+	    homes.put (company, station);
+	}
+	
+	public Map getHomes () {
+	    return homes;
+	}
+	
+	public void addDestination (PublicCompanyI company) {
+	    if (destinations == null) destinations = new ArrayList();
+	    destinations.add (company);
+	}
+	
+	public List getDestinations () {
+	    return destinations;
 	}
 
-	public String getCompanyHomeName()
-	{
-		return companyHomeName;
-	}
+	//public String getCompanyDestinationName()
+	//{
+	//	return companyDestinationName;
+	//}
+
+	//public String getCompanyHomeName()
+	//{
+	//	return companyHomeName;
+	//}
 
 	/**
 	 * Necessary mechanism for delaying assignment of companyHome until after
@@ -590,18 +612,18 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	 * 
 	 * Called by MapManager.assignHomesAndDestinations()
 	 */
-	protected void assignHome() throws NullPointerException
-	{
-		try
-		{
-			companyHome = (PublicCompany) Game.getCompanyManager()
-					.getPublicCompany(companyHomeName);
-		}
-		catch (NullPointerException e)
-		{
-			throw e;
-		}
-	}
+	//protected void assignHome() throws NullPointerException
+	//{
+	//	try
+	//	{
+	//		companyHome = (PublicCompany) Game.getCompanyManager()
+	//				.getPublicCompany(companyHomeName);
+	//	}
+	//	catch (NullPointerException e)
+	//	{
+	//		throw e;
+	//	}
+	//}
 
 	/**
 	 * Necessary mechanism for delaying assignment of companyDestination until
@@ -609,18 +631,18 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	 * 
 	 * Called by MapManager.assignHomesAndDestinations()
 	 */
-	protected void assignDestination() throws NullPointerException
-	{
-		try
-		{
-			companyDestination = (PublicCompany) Game.getCompanyManager()
-					.getPublicCompany(companyDestinationName);
-		}
-		catch (NullPointerException e)
-		{
-			throw e;
-		}
-	}
+	//protected void assignDestination() throws NullPointerException
+	//{
+	//	try
+	//	{
+	//		companyDestination = (PublicCompany) Game.getCompanyManager()
+	//				.getPublicCompany(companyDestinationName);
+	//	}
+	//	catch (NullPointerException e)
+	//	{
+	//		throw e;
+	//	}
+	//}
 
 	/**
 	 * @return Returns the isBlocked.

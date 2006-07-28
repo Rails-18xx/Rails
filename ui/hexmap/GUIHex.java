@@ -294,19 +294,26 @@ public class GUIHex
 							+ ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
 		}
 
-		if (getHexModel().getCompanyHome() != null)
+		Map homes;
+		if ((homes = getHexModel().getHomes()) != null)
 		{
-			PublicCompany co = (PublicCompany) getHexModel().getCompanyHome();
+		    StringBuffer b = new StringBuffer();
+		    for (Iterator it = homes.keySet().iterator(); it.hasNext(); ) {
+		        
+		        PublicCompanyI co = (PublicCompanyI) it.next();
 
-			if (!co.hasStarted() && !co.hasFloated())
-			{
-				g2.drawString(getHexModel().getCompanyHome().getName(),
-						rectBound.x
-								+ (rectBound.width - fontMetrics.stringWidth(getHexModel().getCompanyHome()
-										.getName())) * 1 / 2,
-						rectBound.y
-								+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
-			}
+				if (!co.hasStarted() && !co.hasFloated())
+				{
+				    if (b.length() > 0) b.append(",");
+				    b.append(co.getName());
+				}
+		    }
+		    String label = b.toString();
+			g2.drawString(label,
+					rectBound.x
+							+ (rectBound.width - fontMetrics.stringWidth(label)) * 1 / 2,
+					rectBound.y
+							+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
 		}
 
 		if (getHexModel().isBlocked())
@@ -633,10 +640,13 @@ public class GUIHex
 						+ Bank.format(model.getTileCost()));
 		}
 
-		if (this.getHexModel().getCompanyDestination() != null)
-			tt.append("<br><b>Destination</b>: "
-					+ this.getHexModel().getCompanyDestination());
-
+		if (getHexModel().getDestinations() != null) {
+			tt.append("<br><b>Destination</b>:");
+			for (Iterator it = getHexModel().getDestinations().iterator(); it.hasNext(); ) {
+			    tt.append (" ");
+				tt.append(((PublicCompanyI)it.next()).getName());
+			}
+		}
 		toolTip = tt.toString();
 	}
 

@@ -19,10 +19,10 @@
       <Players number="5" cash="420" certLimit="13"/>
       <Players number="6" cash="350" certLimit="11"/>
     </Component>
-    <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
-    <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
 	<Component name="TileManager" class="game.TileManager" file="TileSet.xml"/>
 	<Component name="Map" class="game.MapManager" file="Map.xml"/>
+    <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
+    <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
 	<Component name="TrainManager" class="game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="major"/>

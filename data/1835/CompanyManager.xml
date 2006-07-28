@@ -39,6 +39,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80">
+    <Home hex="H2"/>
     <SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -46,6 +47,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170">
+    <Home hex="E19" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="phase=4" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
@@ -53,6 +55,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80">
+    <Home hex="F14"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -60,6 +63,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160">
+    <Home hex="G5"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
@@ -67,6 +71,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80">
+    <Home hex="E19" city="2"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -74,6 +79,7 @@
 		</SpecialProperties>
   </Company>
   <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80">
+    <Home hex="C11" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -81,31 +87,39 @@
 		</SpecialProperties>
   </Company>
 
-  <Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" fgColour="FFFFFF" bgColour="0000FF"/>
+  <Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" fgColour="FFFFFF" bgColour="0000FF">
+    <Home hex="O15"/>
+  </Company>
   <Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" fgColour="FFFFFF" bgColour="FF0000">
-	<FirstTrainCloses type="Private" name="LD"/>
+    <Home hex="H16"/>
+	  <FirstTrainCloses type="Private" name="LD"/>
   </Company>
   <Company name="Bad" longname="Badische Eisenbahn" type="Major" startspace="B4" fgColour="FFFFFF" bgColour="808000">
+    <Home hex="L6"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="6"/>
     <Certificate shares="2" number="1"/>
   </Company>
   <Company name="Wrt" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" fgColour="000000" bgColour="FFFF00">
+    <Home hex="M9"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="6"/>
     <Certificate shares="2" number="1"/>
   </Company>
   <Company name="Hes" longname="Hessische Eisenbahn" type="Major" startspace="B4" fgColour="000000" bgColour="00CC00">
+    <Home hex="J8"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="6"/>
     <Certificate shares="2" number="1"/>
   </Company>
   <Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5" fgColour="FFFFFF" bgColour="800080">
+    <Home hex="C13"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="2" number="2"/>
     <Certificate shares="1" number="4"/>
   </Company>
   <Company name="Old" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" fgColour="000000" bgColour="C0C0C0">
+    <Home hex="D6"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="2" number="2"/>
     <Certificate shares="1" number="4"/>
