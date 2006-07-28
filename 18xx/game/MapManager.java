@@ -215,6 +215,21 @@ public class MapManager implements ConfigurableComponentI
 	 */
 	protected static void assignHomesAndDestinations()
 	{
+	    PublicCompanyI company;
+	    MapHex hex;
+	    Station station;
+	    
+	    for (Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
+	    		it.hasNext(); ) {
+	        company = (PublicCompanyI) it.next();
+	        if ((hex = company.getHomeHex()) != null) {
+	            hex.addHome(company, company.getHomeStation());
+	        }
+	        if ((hex = company.getDestinationHex()) != null) {
+	            hex.addDestination(company);
+	        }
+	    }
+	    /*
 		for (int i = 0; i < hexes.length; i++)
 		{
 			for (int j = 0; j < hexes[i].length; j++)
@@ -238,5 +253,6 @@ public class MapManager implements ConfigurableComponentI
 				}
 			}
 		}
+		*/
 	}
 }

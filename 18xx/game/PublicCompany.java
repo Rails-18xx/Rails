@@ -48,10 +48,22 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Hexadecimal representation (RRGGBB) of the background colour. */
 	protected String bgHexColour;
+	
+	/** Home hex & city **/
+	protected MapHex homeHex = null;
+	protected Station homeStation = null;
+	
+	/** Destination hex **/
+	protected MapHex destinationHex = null;	
 
 	/** Sequence number in the array of public companies - may not be useful */
 	protected int publicNumber = -1; // For internal use
 
+	private ArrayList tokens;
+	private boolean hasTokens = false;
+	protected int numCityTokens = 0;
+	protected int maxCityTokens = 0;
+	
 	/** Initial (par) share price, represented by a stock market location object */
 	protected PriceModel parPrice = null;
 
@@ -151,6 +163,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
 	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
 		
+		this.tokens = new ArrayList();
 }
 
 	/**
@@ -215,7 +228,36 @@ public class PublicCompany extends Company implements PublicCompanyI
 					shareUnit = XmlUtils.extractIntegerAttribute(properties
 							.item(j).getAttributes(), "percentage", shareUnit);
 				}
-
+				else if (propName.equalsIgnoreCase("Home"))
+				{
+					nnp2 = properties.item(j).getAttributes();
+				    String homeName = XmlUtils.extractStringAttribute(nnp2,
+						"hex");
+				    MapHex hex = MapManager.getInstance().getHex(homeName);
+				    if (hex != null) {
+				        homeHex = hex;
+				        List stations = hex.getStations();
+				        int homeCity = XmlUtils.extractIntegerAttribute(nnp2,
+				                "city", 1);
+				        homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
+				    } else {
+				        throw new ConfigurationException ("Invalid home hex "
+				                + homeName + " for company "+name);
+				    }
+				}
+				else if (propName.equalsIgnoreCase("Destination"))
+				{
+					nnp2 = properties.item(j).getAttributes();
+				    String destName = XmlUtils.extractStringAttribute(nnp2,
+						"hex");
+				    MapHex hex = MapManager.getInstance().getHex(destName);
+				    if (hex != null) {
+				        destinationHex = hex;
+				    } else {
+				        throw new ConfigurationException ("Invalid destination hex "
+				                + destName + " for company "+name);
+				    }
+				}
 				else if (propName.equalsIgnoreCase("CanBuyPrivates"))
 				{
 					canBuyPrivates = true;
@@ -409,6 +451,36 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return fgHexColour;
 	}
 
+    /**
+     * @return Returns the homeHex.
+     */
+    public MapHex getHomeHex() {
+        return homeHex;
+    }
+    /**
+     * @param homeHex The homeHex to set.
+     */
+    public void setHomeHex(MapHex homeHex) {
+        this.homeHex = homeHex;
+    }
+    /**
+     * @return Returns the homeStation.
+     */
+    public Station getHomeStation() {
+        return homeStation;
+    }
+    /**
+     * @param homeStation The homeStation to set.
+     */
+    public void setHomeStation(Station homeStation) {
+        this.homeStation = homeStation;
+    }
+    /**
+     * @return Returns the destinationHex.
+     */
+    public MapHex getDestinationHex() {
+        return destinationHex;
+    }
 	/**
 	 * @return
 	 */
@@ -1110,9 +1182,85 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return maxCityTokens - numCityTokens;
 	}
 
-	public boolean layBaseToken(MapHex hex, int station)
+	public boolean layBaseToken()
 	{
-		return hex.addToken(this, station);
+		return homeHex.addToken(this, homeStation);
+	}
+	/**
+	 * Preferred method for adding tokens to company.
+	 * 
+	 * Assumes checking for available space has already done by Station.addToken().
+	 * This method should never be called before Station.addToken().
+	 */
+	public boolean addToken(TokenHolderI hex)
+	{
+		tokens.add(hex);
+		hasTokens = true;
+		numCityTokens--;
+		
+		return true;
+	}
+
+	public List getTokens()
+	{
+		return tokens;
+	}
+
+	/**
+	 * @return hasTokens, which can be a bit confusing. hasTokens 
+	 * can be thought of as hasPlayedTokens. Returns true if the 
+	 * company has played one or more of its tokens. 
+	 */
+	public boolean hasTokens()
+	{
+		return hasTokens;
+	}
+
+	public boolean removeToken(TokenHolderI company)
+	{
+		int index = tokens.indexOf(company);
+		if (index >= 0 && tokens.get(index) instanceof PublicCompanyI)
+		{
+			tokens.remove(index);
+
+			if (tokens.size() < 1)
+			{
+				hasTokens = false;
+			}
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public int getNumCityTokens()
+	{
+		return numCityTokens;
+	}
+
+	public void setNumCityTokens(int numCityTokens)
+	{
+		this.numCityTokens = numCityTokens;
+	}
+
+	public int getMaxCityTokens()
+	{
+		return maxCityTokens;
+	}
+
+	/**
+	 * 
+	 * @return True if company has tokens available for play. 
+	 */
+	public boolean hasTokensLeft()
+	{
+		if(tokens.size() <= maxCityTokens)
+			return true;
+		else
+			return false;
 	}
 
 	public Object clone()

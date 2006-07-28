@@ -86,8 +86,11 @@ public class ImageLoader
     		{
     			// File f = new File(tileDir + fn);
     			// BufferedImage img = ImageIO.read(f);
-    			BufferedImage img = ImageIO.read(Util.getStreamForFile(tileDir + fn));
-    			tileMap.put(id, img);
+    		    InputStream str = Util.getStreamForFile(tileDir + fn);
+    		    if (str != null) {
+    		        BufferedImage img = ImageIO.read(str);
+    		        tileMap.put(id, img);
+    		    }
 
     			return true;
     		}

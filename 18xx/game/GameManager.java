@@ -579,11 +579,17 @@ public class GameManager implements ConfigurableComponentI
 
 		for (int compIndex = 0; compIndex < companies.length; compIndex++)
 		{
-			if (companies[compIndex].hasFloated()
-					&& companies[compIndex].hasStarted())
+		    PublicCompanyI company = companies[compIndex];
+			if (company.hasFloated() && company.hasStarted())
 			{
-				MapHex[][] map = MapManager.getInstance().getHexes();
+			    // If the home token has not been placed yet, do it.
+			    if (company.getMaxCityTokens() == company.getNumCityTokens()) {
+			        company.layBaseToken();
+			    }
+			    
+				//MapHex[][] map = MapManager.getInstance().getHexes();
 
+				/*
 				for (int i = 0; i < map.length; i++)
 				{
 					for (int j = 0; j < map[i].length; j++)
@@ -612,6 +618,8 @@ public class GameManager implements ConfigurableComponentI
 						}
 					}
 				}
+				*/
+				
 			}
 		}
 	}

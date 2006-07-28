@@ -447,8 +447,7 @@ public class OperatingRound implements Round
 			return false;
 		}
 
-		if (!operatingCompany.layBaseToken(hex, station)) // FIXME: Need to
-															// specify station!
+		if (!operatingCompany.layBaseToken()) // The company knows its home
 			return false;
 
 		baseTokensLaid[operatingCompanyIndex] = Util.appendWithComma(baseTokensLaid[operatingCompanyIndex],

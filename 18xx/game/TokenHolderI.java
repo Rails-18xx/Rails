@@ -15,7 +15,7 @@ public interface TokenHolderI
 	 * 
 	 * @param company
 	 */
-	public boolean addToken(CompanyI company);
+	public boolean addToken(TokenHolderI company);
 
 	/**
 	 * Remove a token from the pile.
@@ -24,7 +24,7 @@ public interface TokenHolderI
 	 *            The company object to remove.
 	 * @return False if the token was not found.
 	 */
-	public boolean removeToken(CompanyI company);
+	public boolean removeToken(TokenHolderI company);
 
 	/**
 	 * @return ArrayList of all tokens we have.

@@ -12,10 +12,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	protected int companyNumber; // For internal use
 	protected Portfolio portfolio = null;
 
-	private ArrayList tokens;
-	private boolean hasTokens = false;
-	protected int numCityTokens = 0;
-	protected int maxCityTokens = 0;
 
 	/**
 	 * The value per certificate at the end of the game. Default 0 (for
@@ -39,7 +35,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	{
 		this.name = name;
 		this.type = type;
-		this.tokens = new ArrayList();
 	}
 
 	/**
@@ -154,71 +149,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return false;
 	}
 
-	/**
-	 * Preferred method for adding tokens to company.
-	 * 
-	 * Assumes checking for available space has already done by Station.addToken().
-	 * This method should never be called before Station.addToken().
-	 */
-	public boolean addToken(MapHex hex)
-	{
-		tokens.add(hex);
-		hasTokens = true;
-		numCityTokens--;
-		
-		return true;
-	}
-
-	public List getTokens()
-	{
-		return tokens;
-	}
-
-	/**
-	 * @return hasTokens, which can be a bit confusing. hasTokens 
-	 * can be thought of as hasPlayedTokens. Returns true if the 
-	 * company has played one or more of its tokens. 
-	 */
-	public boolean hasTokens()
-	{
-		return hasTokens;
-	}
-
-	public boolean removeToken(CompanyI company)
-	{
-		int index = tokens.indexOf(company);
-		if (index >= 0 && tokens.get(index) instanceof Company)
-		{
-			tokens.remove(index);
-
-			if (tokens.size() < 1)
-			{
-				hasTokens = false;
-			}
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public int getNumCityTokens()
-	{
-		return numCityTokens;
-	}
-
-	public void setNumCityTokens(int numCityTokens)
-	{
-		this.numCityTokens = numCityTokens;
-	}
-
-	public int getMaxCityTokens()
-	{
-		return maxCityTokens;
-	}
-
 	public String toString()
 	{
 		return getTypeName() + ": " + getCompanyNumber() + ". " + getName()
@@ -235,16 +165,5 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return false;
 	}
 	
-	/**
-	 * 
-	 * @return True if company has tokens available for play. 
-	 */
-	public boolean hasTokensLeft()
-	{
-		if(tokens.size() <= maxCityTokens)
-			return true;
-		else
-			return false;
-	}
 
 }
