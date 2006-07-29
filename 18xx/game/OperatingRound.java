@@ -273,11 +273,15 @@ public class OperatingRound implements Round
 			if (currentSpecialProperties != null)
 			{
 				stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
-				if (stl == null && normalTileLaysDone >= normalTileLaysAllowed)
+				//if (stl == null && normalTileLaysDone >= normalTileLaysAllowed)
+				if (stl == null && exceedsTilesAllowance (tile))
 				{
 					errMsg = "Cannot lay a tile without using a Private special property";
 					break;
 				}
+			} else if (exceedsTilesAllowance (tile)) {
+			    errMsg = "Cannot lay that many tiles of this colour";
+			    break;
 			}
 
 			// Sort out cost
@@ -368,6 +372,23 @@ public class OperatingRound implements Round
 	public int getLastTileLayCost()
 	{
 		return tileLayCost[operatingCompanyIndex];
+	}
+	
+	/**
+	 * Check if the allowed number of tile lays would be exceeded.
+	 * The check as currently implemented covers 1835 only.
+	 * 
+	 * This check does specifically not cover games where the choice 
+	 * is like "2 yellow or 1 green".
+	 * Neither does it cover cases where 2 yellow tiles can be laid only 
+	 * in a company's first OR (18EU).
+	 * @param tile
+	 * @return
+	 */
+	private boolean exceedsTilesAllowance (TileI tile) {
+	    if (normalTileLaysAllowed == 0) 
+	        normalTileLaysAllowed = operatingCompany.getNumberOfTileLays(tile.getColour());
+	    return normalTileLaysDone >= normalTileLaysAllowed;
 	}
 
 	private SpecialORProperty checkForUseOfSpecialProperty(MapHex hex)
@@ -855,6 +876,7 @@ public class OperatingRound implements Round
 		}
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+		normalTileLaysAllowed = 0; // We will set this after the (first) tile is laid.
 		step = steps[0];
 		prepareStep(step);
 

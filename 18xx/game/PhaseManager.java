@@ -85,5 +85,9 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 			GameManager.setCurrentPhase(nextPhase);
 		}
 	}
+	
+	public static PhaseI getPhaseNyName (String name) {
+	    return (PhaseI) phaseMap.get(name);
+	}
 
 }

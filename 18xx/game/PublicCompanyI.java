@@ -246,6 +246,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
     public void setHomeStation(Station homeStation);
     public MapHex getDestinationHex();
 
+	public int getNumberOfTileLays (String tileColour);
 
 
 

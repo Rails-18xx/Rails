@@ -125,6 +125,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Is the revenue always split (typical for non-share minors) */
 	protected boolean splitAlways = false;
+	
+	/** A map per tile colour. 
+	 * Each entry contains a map per phase,
+	 * of which each value is an Integer defining the number of allowed tile lays.
+	 * Only numbers deviating from 1 need be specified,
+	 * the default is always 1.
+	 */
+	protected Map numberOfTileLays = null;
 
 	/*---- variables needed during initialisation -----*/
 	protected String startSpace = null;
@@ -359,6 +367,26 @@ public class PublicCompany extends Company implements PublicCompanyI
 					{
 						throw new ConfigurationException(
 								"Invalid capitalisation type: "+capType);
+					}
+				} else if (propName.equalsIgnoreCase("NumberOfTileLays")) {
+					
+				    nnp2 = properties.item(j).getAttributes();
+					String colourString = XmlUtils.extractStringAttribute(nnp2, "colour");
+				    if (colourString == null) throw new ConfigurationException ("No colour entry for NumberOfTileLays");
+					String phaseString = XmlUtils.extractStringAttribute(nnp2, "phase");
+				    if (phaseString == null) throw new ConfigurationException ("No phase entry for NumberOfTileLays");
+					int number = XmlUtils.extractIntegerAttribute(nnp2, "number");
+					Integer lays = new Integer (number);
+					
+					String[] colours = colourString.split(",");
+					HashMap phaseMap;
+					String[] phases = phaseString.split(",");
+					for (int i=0; i<colours.length; i++){
+					    if (numberOfTileLays == null) numberOfTileLays = new HashMap();
+					    numberOfTileLays.put(colours[i], (phaseMap = new HashMap()));
+					    for (int k=0; k<phases.length; k++) {
+					        phaseMap.put(phases[k], lays);
+					    }
 					}
 				}
 
@@ -1254,8 +1282,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void setNumCityTokens(int numCityTokens)
 	{
 		this.numCityTokens = numCityTokens;
-System.out.println("***NumCityTokens for "+name+" set to "+numCityTokens);
-}
+	}
 
 	public int getMaxCityTokens()
 	{
@@ -1272,6 +1299,20 @@ System.out.println("***NumCityTokens for "+name+" set to "+numCityTokens);
 			return true;
 		else
 			return false;
+	}
+	
+	public int getNumberOfTileLays (String tileColour) {
+	    
+	    if (numberOfTileLays == null) return 1;
+	    
+	    Map phaseMap = (Map) numberOfTileLays.get(tileColour);
+	    if (phaseMap == null) return 1;
+	    
+	    PhaseI phase = PhaseManager.getInstance().getCurrentPhase();
+	    Integer i = (Integer) phaseMap.get(phase.getName());
+	    if (i == null) return 1;
+	    
+	    return i.intValue();
 	}
 
 	public Object clone()
