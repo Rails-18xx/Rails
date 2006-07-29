@@ -198,10 +198,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		{
 			// sid, type, value, slots
 			Station s = (Station) currentTile.getStations().get(i);
-			stations.add(new Station(s.getId(),
-					s.getType(),
-					s.getValue(),
-					s.getBaseSlots()));
+			stations.add(new Station(s));  // Clone it
 		}
 
 	}
@@ -442,6 +439,11 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		return addToken(company, null);
 	}
 
+	public boolean addToken(TokenHolderI company, int station)
+	{
+		return addToken(company, (Station)stations.get(station));
+	}
+
 	public boolean addToken(TokenHolderI company, Station station)
 	{
 	    if (station == null) station = (Station)stations.get(0);
@@ -515,7 +517,7 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		ArrayList newStations = (ArrayList) newTile.getStations();
 		
 		ArrayList co = (ArrayList) Game.getCompanyManager()
-				.getAllCompanies();
+				.getAllPublicCompanies();
 		Iterator coIT = co.iterator();
 
 		// Flip through each company's list of tokens

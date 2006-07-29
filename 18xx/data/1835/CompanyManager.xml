@@ -38,7 +38,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80">
+  <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
     <Home hex="H2"/>
     <SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
@@ -46,7 +46,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170">
+  <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
     <Home hex="E19" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="phase=4" class="game.special.ExchangeForShare">
@@ -54,7 +54,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80">
+  <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
     <Home hex="F14"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
@@ -62,7 +62,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160">
+  <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
     <Home hex="G5"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
@@ -70,7 +70,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80">
+  <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
     <Home hex="E19" city="2"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
@@ -78,7 +78,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
-  <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80">
+  <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
     <Home hex="C11" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">

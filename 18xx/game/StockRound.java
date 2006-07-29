@@ -251,7 +251,7 @@ public class StockRound implements Round
 			cert = tCert.getCert();
 			comp = cert.getCompany();
 			compName = comp.getName();
-
+			
 			if (cert.isPresidentShare())
 			{
 				/* Would even selling one unit give more that 50% in the Pool? */

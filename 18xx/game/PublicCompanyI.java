@@ -234,7 +234,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public void buyTrain (TrainI train, int price);
 	
 	public int getNextBaseTokenIndex ();
-	public boolean layBaseToken ();
+	public boolean layBaseToken (MapHex hex, int station);
+	public boolean layHomeBaseTokens();
 	public int getNumCityTokens();
 	public int getMaxCityTokens();
 	public boolean addToken(TokenHolderI hex);
