@@ -10,4 +10,5 @@ public interface PhaseManagerI
 	public void setNextPhase();
 
 	public void setPhase(String name);
+	
 }

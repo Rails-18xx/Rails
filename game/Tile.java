@@ -13,7 +13,7 @@ public class Tile implements TileI
 	private String name;
 	private String colour; // May become a separate class TileType
 	private boolean upgradeable;
-	private List upgrades = new ArrayList();
+	private List upgrades = new ArrayList(); // Contains Upgrade instances
 	private String upgradesString = "";
 	private List[] tracksPerSide = new ArrayList[6];
 	private List tracks = new ArrayList();
@@ -127,13 +127,20 @@ public class Tile implements TileI
 		String ids;
 		int id;
 		String[] idArray;
-		TileI upgrade;
+		TileI upgradeTile;
+		Upgrade upgrade;
+		String hexes;
+		String[] hexArray;
+		MapHex hex;
+		
 		for (int i = 0; i < upgnl.getLength(); i++)
 		{
 			trackElement = (Element) trackElements.item(i);
 			nnp = ((Element) upgnl.item(i)).getAttributes();
 			ids = XmlUtils.extractStringAttribute(nnp, "id");
 			upgradesString = ids; // TEMPORARY
+			List newUpgrades = new ArrayList();
+			
 			if (ids != null)
 			{
 				idArray = ids.split(",");
@@ -142,37 +149,39 @@ public class Tile implements TileI
 					try
 					{
 						id = Integer.parseInt(idArray[j]);
-						upgrade = TileManager.get().getTile(id);
-						if (upgrade != null)
+						upgradeTile = TileManager.get().getTile(id);
+						if (upgradeTile != null)
 						{
+							upgrade = new Upgrade (upgradeTile);
 							upgrades.add(upgrade);
+							newUpgrades.add(upgrade);
 						}
 						else
 						{
-							throw new ConfigurationException(LocalText.getText("TILE")
-									+ name
-									+ ": "
-									+ LocalText.getText("UPGRADE")
-									+ id
-									+ LocalText.getText("NOT_FOUND"));
+							throw new ConfigurationException(LocalText.getText("UpgradeNotFound",
+							        new String[] {name, String.valueOf(id)}));
 						}
 					}
 					catch (NumberFormatException e)
 					{
-						throw new ConfigurationException(LocalText.getText("TILE")
-								+ name
-								+ ": "
-								+ LocalText.getText("NON_NUMERIC")
-								+ LocalText.getText("UPGRADE")
-								+ " "
-								+ idArray[j],
+						throw new ConfigurationException(LocalText.getText("NonNumericUpgrade",
+						        new String[] {name, idArray[j]}),
 								e);
 					}
 
 				}
 
 			}
-			/* TODO Hex-dependent placement rules */
+
+			// Process any included or excluded hexes for the current set of upgrades
+			hexes = XmlUtils.extractStringAttribute(nnp, "hex");
+			if (hexes != null) 
+			{
+	            for (Iterator it = newUpgrades.iterator(); it.hasNext(); ) {
+	                ((Upgrade)it.next()).setHexes(hexes);
+	            }
+			    
+			}
 		}
 
 	}
@@ -252,7 +261,15 @@ public class Tile implements TileI
 	 */
 	public List getUpgrades(MapHex hex)
 	{
-		return upgrades;
+	    List upgr = new ArrayList();
+	    Upgrade upgrade;
+	    TileI tile;
+	    for (Iterator it = upgrades.iterator(); it.hasNext(); ) {
+	        upgrade = (Upgrade) it.next();
+	        tile = upgrade.getTile();
+	        if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add (tile);
+	    }
+		return upgr;
 	}
 
 	public String getUpgradesString(MapHex hex)
@@ -270,14 +287,17 @@ public class Tile implements TileI
 	{
 		List valid = new ArrayList();
 		Iterator it = upgrades.iterator();
-		Tile upgrade;
+		Upgrade upgrade;
+		TileI tile;
 		while (it.hasNext())
 		{
-			upgrade = (Tile) it.next();
-			if (phase.isTileColourAllowed(upgrade.getColour())
-					&& upgrade.countFreeTiles() != 0 /* -1 means unlimited */)
+			upgrade = (Upgrade) it.next();
+			tile = (TileI) upgrade.getTile();
+			if (phase.isTileColourAllowed(tile.getColour())
+					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
+					&& upgrade.isAllowedForHex(hex))
 			{
-				valid.add(upgrade);
+				valid.add(tile);
 			}
 		}
 		return valid;
@@ -337,5 +357,71 @@ public class Tile implements TileI
 	public int getQuantity()
 	{
 		return quantity;
+	}
+	
+	protected class Upgrade {
+	    
+	    /** The upgrade tile */
+	    TileI tile;
+	    
+	    /** Hexes where the upgrade can be executed */
+	    List allowedHexes = null;
+	    /** Hexes where the upgrade cannot be executed 
+	     * Only one of allowedHexes and disallowedHexes should be used 
+	     * */
+	    List disallowedHexes = null;
+	    
+	    /** A temporary String holding the in/excluded hexes.
+	     * This will be processed at the first usage, because Tiles
+	     * are initialised before the Map.
+	     * @author Erik Vos
+	     */
+	    String hexes = null;
+	    
+	    protected Upgrade (TileI tile) {
+	        this.tile = tile;
+	    }
+	    
+	    protected boolean isAllowedForHex (MapHex hex) {
+	        
+	        if (hexes != null) convertHexString();
+	        
+	        if (allowedHexes != null) {
+	            return allowedHexes.contains(hex);
+	        } else if (disallowedHexes != null) {
+	            return !disallowedHexes.contains(hex);
+	        } else {
+	            return true;
+	        }
+	    }
+	    
+	    protected TileI getTile() {
+	        return tile;
+	    }
+	    
+	    protected void setHexes (String hexes) {
+	        this.hexes = hexes;
+	    }
+	    
+	    private void convertHexString () {
+	        
+	        boolean allowed = !hexes.startsWith("!");
+	        if (!allowed) hexes = hexes.substring(1);
+	        String[] hexArray = hexes.split(",");
+	        MapHex hex;
+	        for (int i=0; i<hexArray.length; i++) {
+	            hex = MapManager.getInstance().getHex(hexArray[i]);
+	            if (hex != null) {
+	                if (allowed) {
+	                    if (allowedHexes == null) allowedHexes = new ArrayList();
+	                    allowedHexes.add (hex);
+	                } else {
+	                    if (disallowedHexes == null) disallowedHexes = new ArrayList();
+	                    disallowedHexes.add(hex);
+	                }
+	            }
+	        }
+	        hexes = null; // Do this only once
+	    }
 	}
 }
