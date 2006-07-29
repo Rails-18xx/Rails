@@ -18,7 +18,7 @@
       <Players number="5" cash="390" certLimit="12"/>
       <Players number="6" cash="340" certLimit="11"/>
       <Players number="7" cash="310" certLimit="9"/>
-      <Money format="DM @"/>
+      <Money format="@M"/>
     </Component>
 	<Component name="TileManager" class="game.TileManager" file="TileSet.xml"/>
 	<Component name="Map" class="game.MapManager" file="Map.xml"/>

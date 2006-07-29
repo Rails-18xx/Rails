@@ -11,7 +11,6 @@ public class Station implements TokenHolderI, Cloneable
 	private int baseSlots;
 	private Track[] tracks;
 	private ArrayList tokens;
-	private boolean hasTokens = false;
 
 	public Station(String id, String type, int value)
 	{
@@ -81,12 +80,11 @@ public class Station implements TokenHolderI, Cloneable
 
 	public boolean addToken(TokenHolderI company)
 	{
-		if (tokens.size() + 1 <= baseSlots)
+	    if (tokens.size() + 1 <= baseSlots)
 		{
 			if (!tokens.contains(company))
 			{
 				tokens.add(company);
-				hasTokens = true;
 				return true;
 			}
 			else
@@ -109,7 +107,7 @@ public class Station implements TokenHolderI, Cloneable
 
 	public boolean hasTokens()
 	{
-		return hasTokens;
+		return tokens.size() > 0;
 	}
 
 	public boolean removeToken(TokenHolderI company)
@@ -118,10 +116,6 @@ public class Station implements TokenHolderI, Cloneable
 		if (index >= 0)
 		{
 			tokens.remove(index);
-
-			if (tokens.size() < 1)
-				hasTokens = false;
-
 			return true;
 		}
 		else

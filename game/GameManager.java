@@ -584,7 +584,7 @@ public class GameManager implements ConfigurableComponentI
 			{
 			    // If the home token has not been placed yet, do it.
 			    if (company.getMaxCityTokens() == company.getNumCityTokens()) {
-			        company.layBaseToken();
+			        company.layHomeBaseTokens();
 			    }
 			    
 				//MapHex[][] map = MapManager.getInstance().getHexes();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.38 2006/07/26 20:19:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.39 2006/07/29 16:08:31 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -116,7 +116,7 @@ public class Portfolio
 			PublicCompanyI comp = certificate.getCompany();
 			CashHolder recipient;
 			if (comp.hasFloated()
-					&& from.owner == Bank.getIpo()
+					&& from == Bank.getIpo()
 					&& comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL)
 			{
 				recipient = (CashHolder) comp;
@@ -348,14 +348,14 @@ public class Portfolio
 			}
 			try
 			{
-			uniqueCerts.add(new TradeableCertificate(cert, cert.getCompany()
-					.getCurrentPrice()
-					.getPrice()
-					* cert.getShares()));
+			StockSpaceI currentPrice = cert.getCompany().getCurrentPrice();
+			int price = currentPrice != null ? currentPrice.getPrice() : 0;
+			uniqueCerts.add(new TradeableCertificate(cert, price * cert.getShares()));
 			}
 			catch(NullPointerException e)
 			{
-				System.out.println("Null Pointer in Portfolio.java, line 332");
+				System.out.println("Null Pointer in Portfolio.java");
+				e.printStackTrace();
 			}
 		}
 		return uniqueCerts;

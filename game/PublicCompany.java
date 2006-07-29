@@ -59,8 +59,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/** Sequence number in the array of public companies - may not be useful */
 	protected int publicNumber = -1; // For internal use
 
-	private ArrayList tokens;
-	private boolean hasTokens = false;
+	protected ArrayList baseTokenedHexes;
+	protected boolean hasPlayedTokens = false;
 	protected int numCityTokens = 0;
 	protected int maxCityTokens = 0;
 	
@@ -163,7 +163,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
 	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
 		
-		this.tokens = new ArrayList();
+		this.baseTokenedHexes = new ArrayList();
 }
 
 	/**
@@ -212,7 +212,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		maxCityTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
 		numCityTokens = maxCityTokens;
-
+//System.out.println("***For "+name+": "+maxCityTokens+" tokens");
 		if (element != null)
 		{
 			NodeList properties = element.getChildNodes();
@@ -1182,8 +1182,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return maxCityTokens - numCityTokens;
 	}
 
-	public boolean layBaseToken()
+	public boolean layBaseToken(MapHex hex, int station)
 	{
+		return hex.addToken(this, station);
+	}
+	
+	public boolean layHomeBaseTokens () {
+	    
+	    // Assume for now that companies have only one home base.
+	    // This is not true in 1841!
 		return homeHex.addToken(this, homeStation);
 	}
 	/**
@@ -1191,11 +1198,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * 
 	 * Assumes checking for available space has already done by Station.addToken().
 	 * This method should never be called before Station.addToken().
+	 * 
+	 * TODO: Confusing name, as this method records *playing* a token,
+	 * i.e. *removing* a token from the company charter and plaving it on the map.
 	 */
 	public boolean addToken(TokenHolderI hex)
 	{
-		tokens.add(hex);
-		hasTokens = true;
+	    baseTokenedHexes.add(hex);
+		hasPlayedTokens = true;
 		numCityTokens--;
 		
 		return true;
@@ -1203,7 +1213,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public List getTokens()
 	{
-		return tokens;
+		return baseTokenedHexes;
 	}
 
 	/**
@@ -1213,19 +1223,19 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasTokens()
 	{
-		return hasTokens;
+		return hasPlayedTokens;
 	}
 
 	public boolean removeToken(TokenHolderI company)
 	{
-		int index = tokens.indexOf(company);
-		if (index >= 0 && tokens.get(index) instanceof PublicCompanyI)
+		int index = baseTokenedHexes.indexOf(company);
+		if (index >= 0 && baseTokenedHexes.get(index) instanceof PublicCompanyI)
 		{
-			tokens.remove(index);
+			baseTokenedHexes.remove(index);
 
-			if (tokens.size() < 1)
+			if (baseTokenedHexes.size() < 1)
 			{
-				hasTokens = false;
+				hasPlayedTokens = false;
 			}
 
 			return true;
@@ -1244,7 +1254,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void setNumCityTokens(int numCityTokens)
 	{
 		this.numCityTokens = numCityTokens;
-	}
+System.out.println("***NumCityTokens for "+name+" set to "+numCityTokens);
+}
 
 	public int getMaxCityTokens()
 	{
@@ -1257,7 +1268,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasTokensLeft()
 	{
-		if(tokens.size() <= maxCityTokens)
+		if(baseTokenedHexes.size() <= maxCityTokens)
 			return true;
 		else
 			return false;
