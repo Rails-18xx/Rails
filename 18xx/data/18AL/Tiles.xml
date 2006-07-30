@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Tiles>
-  <Tile id="0" colour="white"/>
-  <Tile id="-1" colour="white">
+  <Tile id="0" colour="white" name="empty"/>
+  <Tile id="-1" colour="white" name="1 village">
     <Station id="city1" type="Town" position="002"/>
   </Tile>
-  <Tile id="-10" colour="white">
+  <Tile id="-10" colour="white" name="1 city">
     <Station id="city1" type="City" slots="1" position="302"/>
   </Tile>
-  <Tile id="-111" colour="fixed">
+  <Tile id="-111" colour="fixed" name="Meridian">
     <Station id="city1" type="City" slots="2" position="0"/>
     <Track gauge="normal" from="city1" to="side0"/>
     <Track gauge="normal" from="city1" to="side1"/>
     <Track gauge="normal" from="city1" to="side3"/>
   </Tile>
-  <Tile id="-112" colour="fixed">
+  <Tile id="-112" colour="fixed" name="Tupelo">
     <Station id="city1" type="City" slots="1" value="30" position="0"/>
     <Track gauge="normal" from="city1" to="side1"/>
     <Track gauge="normal" from="city1" to="side2"/>
     <Track gauge="normal" from="city1" to="side3"/>
   </Tile>
-  <Tile id="-113" colour="fixed">
+  <Tile id="-113" colour="fixed" name="Oxmoor">
     <Station id="city1" type="City" slots="1" value="30" position="0"/>
     <Track gauge="normal" from="city1" to="side5"/>
     <Track gauge="normal" from="city1" to="side1"/>
     <Track gauge="normal" from="city1" to="side3"/>
   </Tile>
-  <Tile id="-3" colour="fixed">
+  <Tile id="-3" colour="fixed" name="MF 3">
     <Station id="city1" type="Town" value="10" position="352"/>
     <Track gauge="normal" from="city1" to="side2"/>
     <Track gauge="normal" from="city1" to="side3"/>
   </Tile>
-  <Tile id="-901" colour="red">
+  <Tile id="-901" colour="red" name="OM 1 way">
     <Station id="city1" type="OffMapCity" value="-1" position="0"/>
     <Track gauge="normal" from="city1" to="side2"/>
   </Tile>
-  <Tile id="-902" colour="red">
+  <Tile id="-902" colour="red" name="OM 2 way">
     <Station id="city1" type="OffMapCity" value="-1" position="0"/>
     <Track gauge="normal" from="city1" to="side2"/>
     <Track gauge="normal" from="city1" to="side1"/>
   </Tile>
-  <Tile id="-912" colour="red">
+  <Tile id="-912" colour="red" name="OMCity-2">
     <Station id="city1" type="OffMapCity" slots="1" position="0"/>
     <Track gauge="normal" from="city1" to="side1"/>
     <Track gauge="normal" from="city1" to="side2"/>
   </Tile>
-  <Tile id="-913" colour="red">
+  <Tile id="-913" colour="red" name="OMCity-3">
     <Station id="city1" type="OffMapCity" slots="1" position="0"/>
     <Track gauge="normal" from="city1" to="side1"/>
     <Track gauge="normal" from="city1" to="side2"/>

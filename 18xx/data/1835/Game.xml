@@ -52,6 +52,7 @@
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
       <OperatingRounds number="2"/>
+      <OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green"/>
@@ -60,6 +61,7 @@
 			<Tiles colour="yellow,green,brown"/>
       <OperatingRounds number="3"/>
       <Privates close="yes"/>
+      <OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>

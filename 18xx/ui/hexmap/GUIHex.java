@@ -619,8 +619,18 @@ public class GUIHex
 			while (it.hasNext())
 			{
 				st = (Station) it.next();
-				tt.append("<br>  ").append(st.getType());
-				tt.append(": value ").append(st.getValue());
+				tt.append("<br>  ").append(st.getType()).append(": value ");
+				if (model.hasOffBoardValues()) {
+				    tt.append(model.getCurrentOffBoardValue()).append(" [");
+				    int[] values = model.getOffBoardValues();
+				    for (int i=0; i<values.length; i++) {
+				        if (i>0) tt.append(",");
+				        tt.append(values[i]);
+				    }
+				    tt.append("]");
+				} else {
+				    tt.append(st.getValue());
+				}
 				if (st.getValue() > 0 && st.getBaseSlots() > 0)
 				{
 					tt.append(", ").append(st.getBaseSlots()).append(" slots");

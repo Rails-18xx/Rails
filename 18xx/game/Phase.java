@@ -17,10 +17,12 @@ public class Phase implements PhaseI {
     protected boolean privateSellingAllowed = false;
     protected boolean privatesClose = false;
     protected int numberOfOperatingRounds = 1;
+    protected int offBoardRevenueStep = 1;
     
     protected static boolean previousPrivateSellingAllowed = false;
     protected static int previousNumberOfOperatingRounds = 1;
     protected static String previousTileColours = "";
+    protected static int previousOffBoardRevenueStep = 1;
     
     public Phase (int index, String name) {
         this.index = index;
@@ -70,7 +72,18 @@ public class Phase implements PhaseI {
         } else {
             numberOfOperatingRounds = previousNumberOfOperatingRounds;
         }
-        System.out.println ("Phase "+index+" "+name+" has "+numberOfOperatingRounds+" ORs");
+        //System.out.println ("Phase "+index+" "+name+" has "+numberOfOperatingRounds+" ORs");
+        
+        // Off-board revenue steps
+        nl = el.getElementsByTagName("OffBoardRevenue");
+        if (nl != null && nl.getLength() > 0) {
+            attributes = nl.item(0).getAttributes();
+            offBoardRevenueStep = previousOffBoardRevenueStep =
+                XmlUtils.extractIntegerAttribute
+            		(attributes, "step", previousOffBoardRevenueStep);
+        } else {
+            offBoardRevenueStep = previousOffBoardRevenueStep;
+        }
 	}
 	
 	public boolean isTileColourAllowed (String tileColour) {
@@ -104,5 +117,12 @@ public class Phase implements PhaseI {
     
     public int getNumberOfOperatingRounds () {
         return numberOfOperatingRounds;
+    }
+    
+    /**
+     * @return Returns the offBoardRevenueStep.
+     */
+    public int getOffBoardRevenueStep() {
+        return offBoardRevenueStep;
     }
 }
