@@ -247,7 +247,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 				        List stations = hex.getStations();
 				        int homeCity = XmlUtils.extractIntegerAttribute(nnp2,
 				                "city", 1);
-				        homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
+				        if (stations != null && stations.size() > 0) {
+				            homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
+				        }
 				    } else {
 				        throw new ConfigurationException ("Invalid home hex "
 				                + homeName + " for company "+name);

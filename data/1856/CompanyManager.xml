@@ -25,18 +25,51 @@
   <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
   <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
   
-  <Company name="GT"  type="Public" tokens="4" fgColour="000000" bgColour="40B0A0"/>
-  <Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040"/>
-  <Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080"/>
-  <Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0"/>
-  <Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF"/>
-  <Company name="WR"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030"/>
-  <Company name="CV"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080"/>
-  <Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff"/>
-  <Company name="CA"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000"/>
+  <Company name="GT"  type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+    <Home hex="P9"/>
+    <Destination hex="K8"/>
+  </Company>
+  <Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
+    <Home hex="L15"/>
+    <Destination hex="J11"/>
+  </Company>
+  <Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
+    <Home hex="J15"/>
+    <Destination hex="N17"/>
+  </Company>
+  <Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
+    <Home hex="C14"/>
+    <Destination hex="F17"/>
+  </Company>
+  <Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
+    <Home hex="J11"/>
+    <Destination hex="F9"/>
+  </Company>
+  <Company name="WR"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
+    <Home hex="O16"/>
+    <Destination hex="L15"/>
+  </Company>
+  <Company name="CV"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
+    <Home hex="N11"/>
+    <Destination hex="I14"/>
+  </Company>
+  <Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
+    <Home hex="M4"/>
+    <Destination hex="N11"/>
+  </Company>
+  <Company name="CA"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+    <Home hex="D17"/>
+    <Destination hex="H15"/>
+  </Company>
   <Company name="CGR" type="Public" tokens="10" fgColour="FFFFFF" bgColour="000000"/>
-  <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000"/>
-  <Company name="GW"  type="Public" tokens="4" fgColour="000000" bgColour="b090b0"/>
+  <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
+    <Home hex="K8"/>
+    <Destination hex="H5"/>
+  </Company>
+  <Company name="GW"  type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
+    <Home hex="F15"/>
+    <Destination hex="A20"/>
+  </Company>
 
   <StartPacket roundClass="game.StartRound_1830">
     <Item name="Flos"      type="Private" basePrice="20"/>

@@ -49,14 +49,29 @@
   </Company>
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000FF">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
+    <Home hex="G8"/>
 	</Company>
-	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"/>
-	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"/>
-	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"/>
-	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"/>
-	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"/>
-	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"/>
-	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"/>
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000">
+    <Home hex="I12"/>
+	</Company>
+	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000">
+    <Home hex="G10" city="2"/>
+	</Company>
+	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000">
+    <Home hex="E10"/>
+	</Company>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00">
+    <Home hex="G16"/>
+	</Company>
+	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060">
+    <Home hex="K8"/>
+	</Company>
+	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF">
+    <Home hex="O16"/>
+	</Company>
+	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000">
+    <Home hex="B17"/>
+	</Company>
 	<StartPacket roundClass="game.StartRound_1830">
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>

@@ -44,6 +44,9 @@ public class Tile implements TileI
 			throws ConfigurationException
 	{
 
+	    if (te == null) {
+	        throw new ConfigurationException ("Missing Tile in Tiles.xml");
+	    }
 		/*
 		 * EV 23oct05: There is a lot to read and configure here, for now we
 		 * only read the tracks to determine the impassable hexsides of offmap

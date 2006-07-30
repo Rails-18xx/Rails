@@ -1,6 +1,6 @@
 <Map mapClass="ui.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Hex name="A2" tile="0"/>
-	<Hex name="A4" tile="-912" orientation="2" home="L&amp;N" revenue="40,50"/>
+	<Hex name="A4" tile="-912" orientation="2" revenue="40,50"/>
 	<Hex name="B1" tile="-901" revenue="40,30"/><!--Corinth-->
 	<Hex name="B3" tile="0" impassable="D3"/>
 	<Hex name="B5" tile="0"/>
@@ -14,10 +14,10 @@
 	<Hex name="D7" tile="-3" orientation="1"/><!--Rome-->
 	<Hex name="E2" tile="0"/>
 	<Hex name="E4" tile="0"/>
-	<Hex name="E6" tile="5" orientation="5" home="TAG">
+	<Hex name="E6" tile="5" orientation="5">
 		<Coalfield/>
 	</Hex>
-	<Hex name="F1" tile="-112" home="ATN"/><!--Tupelo-->
+	<Hex name="F1" tile="-112"/><!--Tupelo-->
 	<Hex name="F3" tile="0"/>
 	<Hex name="F5" tile="0"/>
 	<Hex name="F7" tile="0" cost="60"/>
@@ -27,10 +27,10 @@
 	<Hex name="G4" tile="-10" cost="60"><!--Birmingham-->
 		<Coalfield/>
 	</Hex>
-	<Hex name="G6" tile="-10" home="ABC"><!--Anniston-->
+	<Hex name="G6" tile="-10"><!--Anniston-->
 		<Coalfield/>
 	</Hex>
-	<Hex name="G8" tile="-902" orientation="2" revenue="40,70"/><!--Atlanta-->
+	<Hex name="G8" tile="-902" orientation="2" value="40,70"/><!--Atlanta-->
 	<Hex name="H1" tile="0"/>
 	<Hex name="H3" tile="-10"><!--Tuscaloosa-->
 		<Coalfield/>
@@ -51,9 +51,9 @@
 	<Hex name="K4" tile="6" orientation="2"/><!--Selma-->
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="0"/>
-	<Hex name="L1" tile="-111" revenue="30,40"/><!--Meridian-->
+	<Hex name="L1" tile="-111" value="30,40"/><!--Meridian-->
 	<Hex name="L3" tile="0" cost="20"/>
-	<Hex name="L5" tile="-10" home="WRA"/><!--Montgomery-->
+	<Hex name="L5" tile="-10"/><!--Montgomery-->
 	<Hex name="L7" tile="0"/>
 	<Hex name="M2" tile="0" cost="20">
 		<Swamp/>
@@ -77,7 +77,7 @@
 	<Hex name="P5" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
-	<Hex name="P7" tile="-902" orientation="4" revenue="30,40"/><!--Gulf-->
-	<Hex name="Q2" tile="-913" orientation="4" revenue="40,50" home="M&amp;O"/><!--Mobile-->
+	<Hex name="P7" tile="-902" orientation="4" value="30,40"/><!--Gulf-->
+	<Hex name="Q2" tile="-913" orientation="4" value="40,50"/><!--Mobile-->
 	
 </Map>

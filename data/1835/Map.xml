@@ -16,7 +16,7 @@
   <Hex name="C15" tile="0"/>
   <Hex name="C17" tile="0"/>
   <Hex name="C19" tile="0"/>
-  <Hex name="C21" tile="-901" orientation="2"/><!--Ostpreussen-->
+  <Hex name="C21" tile="-901" orientation="2" value="20,20,40"/><!--Ostpreussen-->
   <Hex name="D4" tile="-8"/>
   <Hex name="D6" tile="-805"/><!--Oldenburg-->
   <Hex name="D8" tile="-10" cost="50"/><!--Bremen-->
@@ -64,7 +64,7 @@
   <Hex name="H16" tile="-10"/><!--Leipzig-->
   <Hex name="H18" tile="0"/>
   <Hex name="H20" tile="-10"/><!--Dresden-->
-  <Hex name="H22" tile="-901" orientation="2"/><!--Oberschlesien-->
+  <Hex name="H22" tile="-901" orientation="2" value="20,30,40"/><!--Oberschlesien-->
   <Hex name="I1" tile="-143"/>
   <Hex name="I3" tile="-10" cost="50"/><!--Koln-->
   <Hex name="I5" tile="0"/>
@@ -98,7 +98,7 @@
   <Hex name="L12" tile="0"/>
   <Hex name="L14" tile="-810"/><!--Nurnberg/Furth-->
   <Hex name="L16" tile="0"/>
-  <Hex name="M5" tile="-901" orientation="4"/><!--Elsas/Lothringen-->
+  <Hex name="M5" tile="-901" orientation="4" value="0,50,0"/><!--Elsas/Lothringen-->
   <Hex name="M7" tile="-2"/>
   <Hex name="M9" tile="-10"/><!--Stuttgart-->
   <Hex name="M11" tile="0"/>
@@ -106,7 +106,7 @@
   <Hex name="M15" tile="-1" cost="50"/>
   <Hex name="M17" tile="0" cost="50"/>
   <Hex name="M19" tile="-3" orientation="1"/>
-  <Hex name="N4" tile="-901" orientation="5"/>
+  <Hex name="N4" tile="-901" orientation="5" value="0,50,0"/>
   <Hex name="N6" tile="-41"/>
   <Hex name="N8" tile="0" cost="70"/>
   <Hex name="N10" tile="-2"/>

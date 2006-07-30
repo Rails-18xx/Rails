@@ -3,6 +3,7 @@ package ui;
 import game.*;
 import game.model.*;
 import ui.elements.*;
+import ui.hexmap.HexMap;
 import util.*;
 
 import java.awt.*;
@@ -865,7 +866,10 @@ private void buyTrain()
 
 		if (train != null)
 		{
-			if (!oRound.buyTrain(orComp.getName(),
+		    // Remember the old off-board revenue step
+		    int oldOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
+
+		    if (!oRound.buyTrain(orComp.getName(),
 					bTrain,
 					price,
 					exchangedTrain))
@@ -923,6 +927,12 @@ private void buyTrain()
                     
                 }
 			}
+		    
+		    int newOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
+		    if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
+		        HexMap.updateOffBoardToolTips();
+		    }
+
 		}
 
     }    

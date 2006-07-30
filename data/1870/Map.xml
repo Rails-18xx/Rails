@@ -1,5 +1,5 @@
 <Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="A">
-	<Hex name="A2" tile="-902" revenue="30,40,50" destination="FW"/><!--Denver-->
+	<Hex name="A2" tile="-902" value="30,40,50"/><!--Denver-->
 	<Hex name="A4" tile="0"/>
 	<Hex name="A6" tile="0"/>
 	<Hex name="A8" tile="0"/>
@@ -9,12 +9,12 @@
 	<Hex name="A16" tile="-2" cost="40"/>
 	<Hex name="A18" tile="0"/>
 	<Hex name="A20" tile="0"/>
-	<Hex name="A22" tile="-902" orientation="2" revenue="40,50,60" destination="IC"/><!--Chicago-->
+	<Hex name="A22" tile="-902" orientation="2" value="40,50,60"/><!--Chicago-->
 	<Hex name="B3" tile="0"/>
 	<Hex name="B5" tile="0"/>
 	<Hex name="B7" tile="-1"/>
-	<Hex name="B9" tile="-10" home="ATSF"/><!-- Topeka-->
-	<Hex name="B11" tile="-10" label="P" cost="40" home="KATY"/><!--Kansas City-->
+	<Hex name="B9" tile="-10"/><!-- Topeka-->
+	<Hex name="B11" tile="-10" label="P" cost="40"/><!--Kansas City-->
 	<Hex name="B13" tile="-1" cost="40"/>
 	<Hex name="B15" tile="0"/>
 	<Hex name="B17" tile="0" cost="40"/>
@@ -28,7 +28,7 @@
 	<Hex name="C12" tile="0"/>
 	<Hex name="C14" tile="0" cost="40"/>
 	<Hex name="C16" tile="0" cost="40"/>
-	<Hex name="C18" tile="-10" cost="40" home="MP" destination="GMO"/><!--St.Louis-->
+	<Hex name="C18" tile="-10" cost="40"/><!--St.Louis-->
 	<Hex name="C20" tile="0"/>
 	<Hex name="D1" tile="0"/>
 	<Hex name="D3" tile="0"/>
@@ -46,7 +46,7 @@
 	<Hex name="E6" tile="0"/>
 	<Hex name="E8" tile="-1"/>
 	<Hex name="E10" tile="0"/>
-	<Hex name="E12" tile="-10" cost="60" home="SLSF"/><!--Springfield-->
+	<Hex name="E12" tile="-10" cost="60"/><!--Springfield-->
 	<Hex name="E14" tile="0" cost="60"/>
 	<Hex name="E16" tile="0" cost="60"/>
 	<Hex name="E18" tile="0" cost="60"/>
@@ -80,7 +80,7 @@
 	<Hex name="H11" tile="0"/>
 	<Hex name="H13" tile="-10"/><!-- Little Rock-->
 	<Hex name="H15" tile="0"/>
-	<Hex name="H17" tile="-10" cost="60" home="SSW"/>
+	<Hex name="H17" tile="-10" cost="60"/>
 	<Hex name="H19" tile="0"/>
 	<Hex name="H21" tile="-1"/>
 	<Hex name="I2" tile="0"/>
@@ -94,8 +94,8 @@
 	<Hex name="I18" tile="0"/>
 	<Hex name="I20" tile="0"/>
 	<Hex name="J1" tile="0"/>
-	<Hex name="J3" tile="-10" label="P" home="FW" destination="SSW"/><!--Fort Worth-->
-	<Hex name="J5" tile="-10" label="P" home="TP" destination="MP"/><!--Dallas-->
+	<Hex name="J3" tile="-10" label="P"/><!--Fort Worth-->
+	<Hex name="J5" tile="-10" label="P"/><!--Dallas-->
 	<Hex name="J7" tile="0"/>
 	<Hex name="J9" tile="-1"/>
 	<Hex name="J11" tile="0" cost="60"/>
@@ -111,7 +111,7 @@
 	<Hex name="K10" tile="0" cost="60"/>
 	<Hex name="K12" tile="0"/>
 	<Hex name="K14" tile="-1" cost="80"/>
-	<Hex name="K16" tile="-10" home="IC"/><!--Jackson-->
+	<Hex name="K16" tile="-10"/><!--Jackson-->
 	<Hex name="K18" tile="0"/>
 	<Hex name="K20" tile="-1"/>
 	<Hex name="L1" tile="0"/>
@@ -134,9 +134,9 @@
 	<Hex name="M14" tile="-10" cost="80"/><!--Baton Rouge-->
 	<Hex name="M16" tile="0"/>
 	<Hex name="M18" tile="0"/>
-	<Hex name="M20" tile="-10" home="GMO"/><!--Mobile-->
-	<Hex name="M22" tile="-903" orientation="2" revenue="20,30,50" destination="SLSF"/>
-	<Hex name="N1" tile="-903" orientation="5" revenue="20,40,50" home="SP" destination="ATSF,KATY"/>
+	<Hex name="M20" tile="-10"/><!--Mobile-->
+	<Hex name="M22" tile="-903" orientation="2" value="20,30,50"/>
+	<Hex name="N1" tile="-903" orientation="5" value="20,40,50"/>
 	<Hex name="N3" tile="0"/>
 	<Hex name="N5" tile="0"/>
 	<Hex name="N7" tile="-10" cost="80"/><!--Galveston-->
@@ -144,7 +144,7 @@
 	<Hex name="N11" tile="0" cost="80"/>
 	<Hex name="N13" tile="0" cost="80"/>
 	<Hex name="N15" tile="0" cost="80"/>
-	<Hex name="N17" tile="-10" impassable="N19" label="P" cost="80" destination="SP,TP"/><!--New Orleans-->
+	<Hex name="N17" tile="-10" impassable="N19" label="P" cost="80"/><!--New Orleans-->
 	<Hex name="N19" tile="0" cost="80"/>
 	<Hex name="N21" tile="0" cost="80"/>
 	<Hex name="O2" tile="0" cost="60"/>

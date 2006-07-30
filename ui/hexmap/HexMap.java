@@ -26,7 +26,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h;
 	MapHex[][] hexArray;
-	protected ArrayList hexes;
+	protected static ArrayList hexes;
 
 	protected int scale = 2 * Scale.get();
 	protected int cx;
@@ -283,4 +283,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	{
 	}
 
+	public static void updateOffBoardToolTips() {
+	    
+	    GUIHex hex;
+	    for (Iterator it = hexes.iterator(); it.hasNext(); ) {
+	        hex = (GUIHex)it.next();
+	        if (hex.getHexModel().hasOffBoardValues()) {
+	            hex.setToolTip();
+	        }
+	    }
+	}
 }

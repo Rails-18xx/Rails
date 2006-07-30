@@ -1030,7 +1030,7 @@ public class OperatingRound implements Round
 
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
 		currentPhase = GameManager.getCurrentPhase();
-
+		
 		return true;
 	}
 	

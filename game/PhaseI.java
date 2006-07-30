@@ -18,4 +18,5 @@ public interface PhaseI extends ConfigurableComponentI
 
 	public int getNumberOfOperatingRounds();
 
+    public int getOffBoardRevenueStep();
 }

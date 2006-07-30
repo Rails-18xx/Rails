@@ -69,6 +69,7 @@
 			<Tiles colour="yellow,green,brown"/>
 			<Privates close="yes"/>
       <OperatingRounds number="3"/>
+      <OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>

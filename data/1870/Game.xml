@@ -60,6 +60,7 @@
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown,grey"/>
 			<Privates close="yes"/>
+      <OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown,grey"/>
@@ -69,6 +70,7 @@
 		</Phase>
 		<Phase name="8">
 			<Tiles colour="yellow,green,brown,grey"/>
+      <OffBoardRevenue step="3"/>
 		</Phase>
 	</Component>
 </ComponentManager>

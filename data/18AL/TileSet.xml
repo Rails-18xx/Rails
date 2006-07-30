@@ -34,10 +34,10 @@
 		<Upgrade id="14,15" />
 	</Tile>
 	<Tile id="58" quantity="3" />
-	<Tile id="1441" quantity="1">
+	<Tile id="1441" quantity="1"><!--Missing!-->
 		<Upgrade id="1442" />
 	</Tile>
-	<Tile id="1445" quantity="1" />
+	<Tile id="1445" quantity="1" /><!--Missing!-->
 
 	<!-- Green tiles -->
 	<Tile id="14" quantity="4">
@@ -82,10 +82,10 @@
 	<Tile id="142" quantity="2" />
 	<Tile id="143" quantity="2" />
 	<Tile id="144" quantity="2" />
-	<Tile id="1442" quantity="1">
+	<Tile id="1442" quantity="1"><!--Missing!-->
 		<Upgrade id="1444" />
 	</Tile>
-	<Tile id="1443" quantity="1">
+	<Tile id="1443" quantity="1"><!--Missing!-->
 		<Upgrade id="1444" />
 	</Tile>
 	
@@ -101,10 +101,10 @@
 	<Tile id="47" quantity="2" />
 	<Tile id="63" quantity="7" />
 	<Tile id="70" quantity="1" />
-	<Tile id="444" quantity="2">
+	<Tile id="444" quantity="2"><!--Missing!-->
 		<Upgrade id="446" />
 	</Tile>
 	
 	<!-- Grey tiles -->
-	<Tile id="446" quantity="1" />
+	<Tile id="446" quantity="1" /><!--Missing!-->
 </TileManager>

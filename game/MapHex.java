@@ -3,6 +3,8 @@ package game;
 import java.util.*;
 import java.util.regex.*;
 import org.w3c.dom.*;
+
+import util.Util;
 import util.XmlUtils;
 
 /**
@@ -68,6 +70,9 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
+	
+	/** Values if this is an off-board hex */
+	protected int[] offBoardValues = null;
 
 	/*
 	 * Temporary storage for impassable hexsides. Once neighbours has been set
@@ -199,6 +204,21 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 			// sid, type, value, slots
 			Station s = (Station) currentTile.getStations().get(i);
 			stations.add(new Station(s));  // Clone it
+		}
+
+		// Off-board renevue values
+		String valueString = XmlUtils.extractStringAttribute(nnp, "value");
+		if (Util.hasValue (valueString)) {
+		    String[] values = valueString.split(",");
+		    offBoardValues = new int[values.length];
+		    for (int i=0; i<values.length; i++) {
+		        try {
+		            offBoardValues[i] = Integer.parseInt(values[i]);
+		        } catch (NumberFormatException e) {
+		            throw new ConfigurationException 
+		            	("Invalid off-board value "+values[i]+" for hex "+name, e);
+		        }
+		    }
 		}
 
 	}
@@ -680,6 +700,23 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		}
 		System.out.println("No tile on hex "+name);
 		return false;
+	}
+	
+	public boolean hasOffBoardValues () {
+	    return offBoardValues != null;
+	}
+	
+	public int[] getOffBoardValues () {
+	    return offBoardValues;
+	}
+	
+	public int getCurrentOffBoardValue () {
+	    if (hasOffBoardValues()) {
+	        return offBoardValues[Math.min(offBoardValues.length, 
+	                PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep()) - 1];
+	    } else {
+	        return 0;
+	    }
 	}
 
 	public boolean equals(MapHex hex)
