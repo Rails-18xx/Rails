@@ -33,7 +33,8 @@ public class Options extends JDialog implements ActionListener
 	JTextField[] playerNameFields;
 	BasicComboBoxRenderer renderer;
 	Dimension size, optSize;
-	
+	JCheckBox checkBox;
+
 	private void initialize()
 	{
 		gc = new GridBagConstraints();
@@ -92,23 +93,23 @@ public class Options extends JDialog implements ActionListener
 		playerNameFields[2].setText("2");
 
 		populateGameList(getGameList(), gameNameBox);
+		gameNameBox.addActionListener(this);
 
-		optionsPane.add(new JLabel("Game Options"));
-		optionsPane.add(new JLabel(""));
-		
 		optionsPane.add(new JLabel("Game:"));
 		optionsPane.add(gameNameBox);
-		optionsPane.setLayout(new GridLayout(5, 2));
+		optionsPane.setLayout(new GridLayout(4, 1));
 		optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
 		optionsPane.setPreferredSize(optSize);
+		addVariants(optionsPane);
 
 		newButton.addActionListener(this);
 		loadButton.addActionListener(this);
 		quitButton.addActionListener(this);
 
-		//XXX: Until we can load/save a game, we'll set this to disabled to reduce confusion.
+		// XXX: Until we can load/save a game, we'll set this to disabled to
+		// reduce confusion.
 		loadButton.setEnabled(false);
-		
+
 		buttonPane.add(newButton);
 		buttonPane.add(loadButton);
 		buttonPane.add(quitButton);
@@ -204,6 +205,28 @@ public class Options extends JDialog implements ActionListener
 
 	public void actionPerformed(ActionEvent arg0)
 	{
+		String variant = null;
+		String gameName = gameNameBox.getSelectedItem().toString();
+
+		if (arg0.getSource().equals(gameNameBox))
+		{
+			optionsPane.removeAll();
+			optionsPane.add(new JLabel("Game:"));
+			optionsPane.add(gameNameBox);
+			
+			addVariants(optionsPane);
+
+			setVisible(false);
+			setVisible(true);
+		}
+
+		if (arg0.getSource().equals(checkBox))
+		{
+			//TODO: Add checks to assure that only one checkbox is checked at any time.
+			if (((JCheckBox) arg0.getSource()).isSelected())
+				variant = ((JCheckBox) arg0.getSource()).getName();
+		}
+
 		if (arg0.getSource().equals(newButton))
 		{
 			ArrayList playerNames = new ArrayList();
@@ -233,26 +256,11 @@ public class Options extends JDialog implements ActionListener
 
 			try
 			{
-				this.setVisible(false);
+				if (variant != null)
+					GameManager.setVariant(variant);
 
-				String gameName = gameNameBox.getSelectedItem().toString();
 				Game.initialise(gameName);
-				Game.getPlayerManager(playerNames);
-				
-				List variants = GameManager.getVariants();
-				if (variants != null && variants.size() > 1) {
-				    String variant = (String) JOptionPane.showInputDialog (
-				            this,
-				            LocalText.getText("WHICH_VARIANT", gameName),
-				            "", 
-				            JOptionPane.PLAIN_MESSAGE,
-				            null,
-				            (String[])variants.toArray(new String[0]),
-				            (String)variants.get(0));
-				    if (variant != null) GameManager.setVariant(variant);
-				}
 				GameManager.getInstance().startGame();
-
 				GameUILoader.gameUIInit();
 			}
 			catch (NullPointerException e)
@@ -261,7 +269,6 @@ public class Options extends JDialog implements ActionListener
 				JOptionPane.showMessageDialog(this,
 						"Unable to load selected game.");
 			}
-
 		}
 
 		if (arg0.getSource().equals(loadButton))
@@ -277,5 +284,24 @@ public class Options extends JDialog implements ActionListener
 			System.exit(0);
 		}
 
+	}
+	
+	private void addVariants(JPanel panel)
+	{
+		List variants = GameManager.getVariants();
+		Iterator it = variants.iterator();
+		
+		panel.add(new JLabel("Variants: "));
+
+		while (it.hasNext())
+		{
+			String variantName = (String) it.next();
+			checkBox = new JCheckBox(variantName);
+			checkBox.setName(variantName);
+			checkBox.setText(variantName);
+			checkBox.addActionListener(this);
+			checkBox.setVisible(true);
+			panel.add(checkBox);
+		}
 	}
 }
