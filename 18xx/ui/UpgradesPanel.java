@@ -139,8 +139,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	private BufferedImage getHexImage(int tileId)
 	{
-		ImageLoader il = new ImageLoader();
-		return il.getTile(tileId);
+		return GameUILoader.getImageLoader().getTile(tileId);
 	}
 
 	public Dimension getPreferredSize()
