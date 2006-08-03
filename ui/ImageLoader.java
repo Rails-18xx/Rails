@@ -46,9 +46,10 @@ public class ImageLoader
     
 	private boolean loadTile(int tileID)
 	{
-		
 		String fn = "tile" + tileID + ".svg";
-        Image image = null;
+		String id = Integer.toString(tileID);
+		
+        BufferedImage image = null;
         int width = 180;
         int height = 167;
         
@@ -80,7 +81,6 @@ public class ImageLoader
         	//If we can't load the SVGs for some reason, revert to using the GIFs.
         	tileDir = "tiles/images/";
     		fn = "tile" + Integer.toString(tileID) + ".gif";
-    		String id = Integer.toString(tileID);
 
     		try
     		{
@@ -88,11 +88,8 @@ public class ImageLoader
     			// BufferedImage img = ImageIO.read(f);
     		    InputStream str = Util.getStreamForFile(tileDir + fn);
     		    if (str != null) {
-    		        BufferedImage img = ImageIO.read(str);
-    		        tileMap.put(id, img);
+    		        image = ImageIO.read(str);
     		    }
-
-    			return true;
     		}
     		catch (IOException ex)
     		{
@@ -110,7 +107,7 @@ public class ImageLoader
             return false;
         }
         
-        tileMap.put(Integer.toString(tileID), image);
+        tileMap.put(id, image);
         return true;
     }
 

@@ -11,6 +11,7 @@ public class GameUILoader
    private static MapPanel mapPanel;
    public static ORWindow orWindow;
    public static Options options;
+   public static ImageLoader imageLoader;
    
    public GameUILoader()
    {
@@ -19,6 +20,7 @@ public class GameUILoader
    
    public static void gameUIInit()
    {
+	  imageLoader = new ImageLoader();
       stockChart = new StockChart();
       messageWindow = new LogWindow();
       orWindow = new ORWindow();
@@ -29,5 +31,10 @@ public class GameUILoader
    public static MapPanel getMapPanel()
    {
 	   return mapPanel;
+   }
+   
+   public static ImageLoader getImageLoader()
+   {
+	   return imageLoader;
    }
 }
