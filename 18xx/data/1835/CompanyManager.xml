@@ -21,9 +21,51 @@
 	<TrainLimit number="4,4,3,2"/>
   </CompanyType>
   
-  <Company name="NF"  longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5"/>
-  <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10"/>
-  <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15"/>
+  <Company name="NF"  longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPresident" class="game.special.SpecialTokenLay">
+				<SpecialTokenLay location="L14" extra="yes" costApplies="no"/>
+			</SpecialProperty>
+		</SpecialProperties>
+    <ClosingConditions>
+      <ClosingCondition>
+        <SpecialPropertiesExercised/>
+      </ClosingCondition>
+    </ClosingConditions>
+  </Company>
+  <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPresident" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="M15" extra="yes" costApplies="no" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByPresident" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="M17" extra="yes" costApplies="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+    <ClosingConditions connector="and">
+      <ClosingCondition>
+        <TileLaid hex="M15"/>
+      </ClosingCondition>
+      <ClosingCondition>
+        <TileLaid hex="M17"/>
+      </ClosingCondition>
+    </ClosingConditions>
+  </Company>
+  <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPresident" class="game.special.SpecialTileLay">
+				<SpecialTileLay location="J6" extra="yes" costApplies="no" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByPresident" class="game.special.SpecialTokenLay">
+				<SpecialTokenLay location="J6" extra="yes" costApplies="no"/>
+			</SpecialProperty>
+		</SpecialProperties>
+    <ClosingConditions>
+      <ClosingCondition>
+        <SpecialPropertiesExercised/>
+      </ClosingCondition>
+    </ClosingConditions>
+  </Company>
   <Company name="LD"  longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
   <Company name="BB"  longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
  		<SpecialProperties>
