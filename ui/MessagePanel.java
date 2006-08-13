@@ -34,11 +34,11 @@ public class MessagePanel extends JPanel
 		setVisible(true);
 	}
 
-	public void setMessage(String messageKey)
+	public void setMessage(String messageText)
 	{
-		if (Util.hasValue(messageKey))
+		if (Util.hasValue(messageText))
 		{
-			message.setText(LocalText.getText(messageKey));
+			message.setText("<html>"+messageText);
 		}
 	}
 

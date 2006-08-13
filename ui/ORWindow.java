@@ -1,7 +1,11 @@
 package ui;
 
 import game.*;
+import game.special.*;
 import ui.hexmap.*;
+
+import java.util.Iterator;
+import java.util.List;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -127,7 +131,34 @@ public class ORWindow extends JFrame implements WindowListener
 		ORWindow.subStep = subStep;
 		if (this != null)
 		{
-			setMessage(messageKey[subStep]);
+		    String message = LocalText.getText(messageKey[subStep]);
+		    List specialProperties = 
+		        ((OperatingRound)GameManager.getInstance().getCurrentRound()).getSpecialProperties();
+		    SpecialORProperty sp;
+		    String extraTileMessage = "";
+		    String extraTokenMessage = "";
+		    String extraMessage = "";
+		    for (Iterator it = specialProperties.iterator(); it.hasNext() ;) {
+		        sp = (SpecialORProperty) it.next();
+		        if (sp instanceof SpecialTileLay) {
+		            if (extraTileMessage.length() > 0) extraTileMessage += ", ";
+		            extraTileMessage +=((SpecialTileLay)sp).getLocation().getName();
+		        } else if (sp instanceof SpecialTokenLay) {
+		            if (extraTokenMessage.length() > 0) extraTokenMessage += ", ";
+		            extraTokenMessage +=((SpecialTileLay)sp).getLocation().getName();
+		        }
+		    }
+		    if (extraTileMessage.length() > 0) {
+		        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
+		    }
+		    if (extraTokenMessage.length() > 0) {
+		        extraMessage += LocalText.getText("ExtraToken", extraTokenMessage);
+		    }
+		    if (extraMessage.length() > 0) {
+		        message += " <font color=\"red\">" + extraMessage + "</font>";
+		    }
+
+			setMessage(message);
 		}
 		if (upgradePanel != null)
 		{
