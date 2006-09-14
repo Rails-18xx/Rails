@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/Action.java,v 1.4 2006/07/24 20:50:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.1 2006/09/14 19:33:31 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
-package game.action;
+package game.move;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,29 +12,29 @@ import java.util.List;
 /**
  * @author Erik Vos
  */
-public class Action {
+public class MoveSet {
 
     private List moves = new ArrayList();
     
-    private static Action currentAction = null;
+    private static MoveSet currentAction = null;
     private static List actionStack = new ArrayList();
     private static int lastIndex = -1;
     
-    private Action () {}
+    private MoveSet () {}
     
     public static boolean start () {
-        //System.out.println(">>> Start Action");
+        //System.out.println(">>> Start MoveSet");
         if (currentAction == null) {
-            currentAction = new Action();
+            currentAction = new MoveSet();
             return true;
         } else {
-            System.out.println ("Action is already open");
+            System.out.println ("MoveSet is already open");
             return false;
         }
     }
     
     public static boolean finish () {
-        //System.out.println("<<< Finish Action");
+        //System.out.println("<<< Finish MoveSet");
         if (currentAction != null) {
             actionStack.add (currentAction);
             lastIndex++;
@@ -65,8 +65,8 @@ public class Action {
         	return true;
         } else {
             // Uncomment one of the next statements to detect un-undoable actions
-            //System.out.println ("No Action open for "+move);
-            //new Exception ("No Action open for add: "+move).printStackTrace();
+            //System.out.println ("No MoveSet open for "+move);
+            //new Exception ("No MoveSet open for add: "+move).printStackTrace();
             
             return false;
         }
@@ -74,7 +74,7 @@ public class Action {
     
     public static boolean undo () {
         if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
-            ((Action) actionStack.get(lastIndex--)).unexecute();
+            ((MoveSet) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
             System.out.println ("Invalid undo: index="+lastIndex+" size="+actionStack.size());
@@ -84,7 +84,7 @@ public class Action {
     
     public static boolean redo () {
         if (currentAction == null && lastIndex < actionStack.size()-1) {
-            ((Action) actionStack.get(++lastIndex)).execute();
+            ((MoveSet) actionStack.get(++lastIndex)).execute();
             return true;
         } else {
             System.out.println ("Invalid redo: index="+lastIndex+" size="+actionStack.size());

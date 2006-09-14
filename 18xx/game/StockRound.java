@@ -1,8 +1,8 @@
 package game;
 
-import game.action.Action;
-import game.action.DoubleMapChange;
-import game.action.StateChange;
+import game.move.DoubleMapChange;
+import game.move.MoveSet;
+import game.move.StateChange;
 import game.state.StateObject;
 
 import java.util.*;
@@ -421,7 +421,7 @@ public class StockRound implements Round
 			return false;
 		}
 		
-		Action.start();
+		MoveSet.start();
 
 		// All is OK, now start the company
 		company.start(startSpace);
@@ -453,11 +453,11 @@ public class StockRound implements Round
 		company.checkFlotation();
 
 		//companyBoughtThisTurn = company;
-		Action.add (new StateChange(companyBoughtThisTurnWrapper, company));
-		Action.add (new StateChange (hasPassed, Boolean.FALSE));
+		MoveSet.add (new StateChange(companyBoughtThisTurnWrapper, company));
+		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
 
-		Action.finish();
+		MoveSet.finish();
 		return true;
 	}
 
@@ -629,7 +629,7 @@ public class StockRound implements Round
 		}
 
 		// All seems OK, now buy the shares.
-		Action.start();
+		MoveSet.start();
 		PublicCertificateI cert;
 		for (int i = 0; i < shares; i++)
 		{
@@ -645,15 +645,15 @@ public class StockRound implements Round
 		}
 
 		//companyBoughtThisTurn = company;
-		Action.add (new StateChange (companyBoughtThisTurnWrapper, company));
-		Action.add (new StateChange (hasPassed, Boolean.FALSE));
+		MoveSet.add (new StateChange (companyBoughtThisTurnWrapper, company));
+		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
 
 		// Check if the company has floated
 		if (from == ipo)
 			company.checkFlotation();
 
-		Action.finish();
+		MoveSet.finish();
 //reportShares(company);
 		return true;
 	}
@@ -667,7 +667,7 @@ public class StockRound implements Round
 		}
 		((Map) playersThatSoldThisRound.get(player)).put(company, null);
 		*/
-	    Action.add (new DoubleMapChange (playersThatSoldThisRound,
+	    MoveSet.add (new DoubleMapChange (playersThatSoldThisRound,
 	            player, company, null));
 	}
 
@@ -909,7 +909,7 @@ public class StockRound implements Round
 			sellPrices.put(companyName, sellPrice);
 		}
 
-		Action.start();
+		MoveSet.start();
 
 		Log.write (LocalText.getText("SELL_SHARES_LOG", new String[]{
 		        playerName,
@@ -969,10 +969,10 @@ public class StockRound implements Round
 		recordSale(currentPlayer, company);
 
 		if (companyBoughtThisTurnWrapper.getState() == null)
-			Action.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
-		Action.add (new StateChange (hasPassed, Boolean.FALSE));
+			MoveSet.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
+		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		setPriority();
-		Action.finish();
+		MoveSet.finish();
 //reportShares(company);
 		return true;
 	}
@@ -1046,7 +1046,7 @@ public void reportShares(PublicCompanyI c) {
 		}
 		
 		// Clear the undo stack, we cannot yet handle turn changes
-		Action.clear();
+		MoveSet.clear();
 
 		return true;
 	}

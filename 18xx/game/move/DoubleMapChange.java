@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/DoubleMapChange.java,v 1.1 2006/07/19 22:08:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/DoubleMapChange.java,v 1.1 2006/09/14 19:33:31 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
  */
-package game.action;
+package game.move;
 
 import java.util.HashMap;
 import java.util.Map;

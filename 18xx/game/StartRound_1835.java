@@ -133,7 +133,7 @@ public class StartRound_1835 extends StartRound
 		return null;
 	}
 
-	/*----- Action methods -----*/
+	/*----- MoveSet methods -----*/
 
 	/**
 	 * The current player bids 5 more than the previous bid on a given start

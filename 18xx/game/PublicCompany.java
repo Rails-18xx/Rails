@@ -1,12 +1,12 @@
 package game;
 
-import game.action.Action;
-import game.action.CashMove;
-import game.action.StateChange;
 import game.model.CashModel;
 import game.model.ModelObject;
 import game.model.MoneyModel;
 import game.model.PriceModel;
+import game.move.CashMove;
+import game.move.MoveSet;
+import game.move.StateChange;
 import game.state.StateObject;
 
 import java.awt.Color;
@@ -522,7 +522,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void start(StockSpaceI startSpace)
 	{
 		//this.hasStarted = true;
-	    Action.add (new StateChange (hasStarted, Boolean.TRUE));
+	    MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
 		setParPrice(startSpace);
 		// The current price is set via the Stock Market
 		StockMarket.getInstance().start(this, startSpace);
@@ -534,7 +534,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void start()
 	{
 		//this.hasStarted = true;
-	    Action.add (new StateChange (hasStarted, Boolean.TRUE));
+	    MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
 		if (hasStockPrice && parPrice.getPrice() != null) {
 			//setCurrentPrice (parPrice.getPrice());
 			// The current price is set via the Stock Market
@@ -558,7 +558,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		int cash = 0;
 		//hasFloated = true;
-		Action.add (new StateChange (hasFloated, Boolean.TRUE));
+		MoveSet.add (new StateChange (hasFloated, Boolean.TRUE));
 		if (hasStockPrice)
 		{
 			int capFactor = 0;
@@ -577,7 +577,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			cash = fixedPrice;
 		}
 		//Bank.transferCash(null, this, cash);
-		Action.add (new CashMove (Bank.getInstance(), this, cash));
+		MoveSet.add (new CashMove (Bank.getInstance(), this, cash));
 		Log.write(name + " floats and receives " + Bank.format(cash));
 	}
 

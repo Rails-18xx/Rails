@@ -144,7 +144,7 @@ public class StartRound_1830 extends StartRound
 		return companyNeedingPrice;
 	}
 
-	/*----- Action methods -----*/
+	/*----- MoveSet methods -----*/
 
 	/**
 	 * The current player bids 5 more than the previous bid on a given start

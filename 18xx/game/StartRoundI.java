@@ -26,7 +26,7 @@ public interface StartRoundI extends Round
 
 	public int getCurrentPlayerIndex();
 
-	/*----- Action methods -----*/
+	/*----- MoveSet methods -----*/
 
 	public boolean bid(String playerName, String itemName, int amount);
 

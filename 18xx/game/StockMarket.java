@@ -1,8 +1,8 @@
 package game;
 
-import game.action.Action;
-import game.action.PriceMove;
-import game.action.PriceTokenMove;
+import game.move.MoveSet;
+import game.move.PriceMove;
+import game.move.PriceTokenMove;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -427,7 +427,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 
 		}
 		company.setCurrentPrice(to);
-		Action.add (new PriceTokenMove (company, from, to));
+		MoveSet.add (new PriceTokenMove (company, from, to));
 	}
 
 	public void processMove(PublicCompanyI company, StockSpaceI from,
