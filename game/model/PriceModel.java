@@ -3,8 +3,8 @@ package game.model;
 import game.Bank;
 import game.PublicCompanyI;
 import game.StockSpaceI;
-import game.action.Action;
-import game.action.PriceMove;
+import game.move.MoveSet;
+import game.move.PriceMove;
 import game.state.StateI;
 
 public class PriceModel extends ModelObject implements StateI
@@ -20,7 +20,7 @@ public class PriceModel extends ModelObject implements StateI
 
 	public void setPrice(StockSpaceI price)
 	{
-	    Action.add (new PriceMove (this, stockPrice, price));
+	    MoveSet.add (new PriceMove (this, stockPrice, price));
 	}
 
 	public StockSpaceI getPrice()

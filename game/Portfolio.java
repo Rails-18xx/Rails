@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.39 2006/07/29 16:08:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.40 2006/09/14 19:33:03 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -6,13 +6,13 @@
  */
 package game;
 
-import game.action.Action;
-import game.action.CashMove;
-import game.action.CertificateMove;
 import game.model.ModelObject;
 import game.model.PrivatesModel;
 import game.model.ShareModel;
 import game.model.TrainsModel;
+import game.move.CashMove;
+import game.move.CertificateMove;
+import game.move.MoveSet;
 import game.special.SpecialProperty;
 import game.special.SpecialPropertyI;
 
@@ -97,7 +97,7 @@ public class Portfolio
 
 		// Move the certificate
 		//transferCertificate(certificate, from, this);
-	    Action.add (new CertificateMove (from, this, certificate));
+	    MoveSet.add (new CertificateMove (from, this, certificate));
 
 
 		// PublicCertificate is no longer for sale.
@@ -126,7 +126,7 @@ public class Portfolio
 				recipient = from.owner;
 			}
 			//Bank.transferCash(owner, recipient, price);
-			Action.add (new CashMove (owner, recipient, price));
+			MoveSet.add (new CashMove (owner, recipient, price));
 		}
 	}
 
@@ -142,7 +142,7 @@ public class Portfolio
 				+ Bank.format(price));
 
 		// Move the certificate
-		Action.add(new CertificateMove (from, Bank.getPool(), certificate));
+		MoveSet.add(new CertificateMove (from, Bank.getPool(), certificate));
 		//from.removeCertificate(certificate);
 		//Bank.getPool().addCertificate(certificate);
 		//certificate.setPortfolio(Bank.getPool());
@@ -151,7 +151,7 @@ public class Portfolio
 		certificate.setAvailable(true);
 
 		// Move the money
-		Action.add(new CashMove (Bank.getInstance(), from.owner, price));
+		MoveSet.add(new CashMove (Bank.getInstance(), from.owner, price));
 		//Bank.transferCash(Bank.getInstance(), from.owner, price);
 	}
 
@@ -538,7 +538,7 @@ public class Portfolio
 			{
 				swapCert = other.findCertificate(company, 1, false);
 				//Portfolio.transferCertificate(swapCert, other, this);
-				Action.add (new CertificateMove (other, this, swapCert));
+				MoveSet.add (new CertificateMove (other, this, swapCert));
 				swapped.add(swapCert);
 
 			}
@@ -547,7 +547,7 @@ public class Portfolio
 		{
 			swapCert = other.findCertificate(company, 2, false);
 			//Portfolio.transferCertificate(swapCert, other, this);
-			Action.add (new CertificateMove(other, this, swapCert));
+			MoveSet.add (new CertificateMove(other, this, swapCert));
 			swapped.add(swapCert);
 		}
 		else
@@ -555,7 +555,7 @@ public class Portfolio
 			return null;
 		}
 		//Portfolio.transferCertificate(cert, this, other);
-		Action.add (new CertificateMove (this, other, cert));
+		MoveSet.add (new CertificateMove (this, other, cert));
 
 		// Make sure the old President is no longer marked as such
 		getShareModel(company).setShare();

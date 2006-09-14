@@ -1,7 +1,7 @@
 package ui;
 
 import game.*;
-import game.action.Action;
+import game.move.MoveSet;
 import game.special.ExchangeForShare;
 import game.special.SpecialSRProperty;
 
@@ -253,8 +253,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
 			gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
 			
-			undoItem.setEnabled(Action.isUndoable());
-			redoItem.setEnabled(Action.isRedoable());
+			undoItem.setEnabled(MoveSet.isUndoable());
+			redoItem.setEnabled(MoveSet.isRedoable());
 
 			if ((currentRound instanceof ShareSellingRound))
 			{
@@ -471,12 +471,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			return;
 		} else if (actor.getActionCommand().equalsIgnoreCase("UNDO"))
 		{
-		    Action.undo();
+		    MoveSet.undo();
 		    updateStatus();
 			return;
 		} else if (actor.getActionCommand().equalsIgnoreCase("REDO"))
 		{
-		    Action.redo();
+		    MoveSet.redo();
 		    updateStatus();
 			return;
 		} 

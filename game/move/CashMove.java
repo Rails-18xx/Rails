@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/CashMove.java,v 1.1 2006/07/17 22:00:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/CashMove.java,v 1.1 2006/09/14 19:33:31 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
-package game.action;
+package game.move;
 
 import game.*;
 

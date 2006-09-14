@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/PriceTokenMove.java,v 1.1 2006/07/22 22:51:53 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/PriceTokenMove.java,v 1.1 2006/09/14 19:33:31 evos Exp $
  * 
  * Created on 22-Jul-2006
  * Change Log:
  */
-package game.action;
+package game.move;
 
 import game.PublicCompanyI;
 import game.StockMarket;

@@ -1,8 +1,8 @@
 package game;
 
 import util.*;
-import game.action.Action;
-import game.action.StateChange;
+import game.move.MoveSet;
+import game.move.StateChange;
 import game.state.StateObject;
 
 import java.util.*;
@@ -436,7 +436,7 @@ public class GameManager implements ConfigurableComponentI
 	}
 	
 	public static void setPriorityPlayer(Player player) {
-	    Action.add (new StateChange (priorityPlayerWrapper, player));
+	    MoveSet.add (new StateChange (priorityPlayerWrapper, player));
 	    //priorityPlayer = player;
 	}
 
