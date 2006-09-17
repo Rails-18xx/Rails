@@ -1,6 +1,7 @@
 package ui;
 
 import game.*;
+import game.action.*;
 import game.model.*;
 import ui.elements.*;
 import ui.hexmap.HexMap;
@@ -111,7 +112,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private PublicCompanyI[] companies;
 
-    private Round round, previousRound;
+    private RoundI round, previousRound;
 
     private OperatingRound oRound;
 
@@ -138,6 +139,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private int[] newTrainTotalCost;
 
     private List trainsBought;
+    
+    private PossibleActions possibleActions = PossibleActions.getInstance();
     
     public ORPanel() {
         super();
@@ -415,7 +418,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void updateStatus() {
-
+        
         /* End of game checks */
         if (GameManager.isGameOver()) {
 
@@ -454,10 +457,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             president[orCompIndex].setHighlight(true);
 
-            privatesCanBeBoughtNow = GameManager.getCurrentPhase()
-                    .isPrivateSellingAllowed()
-                    && !Game.getCompanyManager().getPrivatesOwnedByPlayers()
-                            .isEmpty();
+            //privatesCanBeBoughtNow = GameManager.getCurrentPhase()
+            //        .isPrivateSellingAllowed()
+            //        && !Game.getCompanyManager().getPrivatesOwnedByPlayers()
+            //               .isEmpty();
+            privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
 
             if (step == OperatingRound.STEP_LAY_TRACK) {
                 tileCaption.setHighlight(true);
@@ -465,9 +469,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button1.setVisible(false);
 
                 GameUILoader.orWindow.requestFocus();
-                GameUILoader.orWindow.enableTileLaying(true);
-                GameUILoader.getMapPanel().setSpecialTileLays(
-                        (ArrayList) round.getSpecialProperties());
+                
+                if (possibleActions.contains(LayTile.class)) {
+	                GameUILoader.orWindow.enableTileLaying(true);
+	                GameUILoader.getMapPanel().setSpecialTileLays(
+	                        (ArrayList) round.getSpecialProperties()); //??
+                }
 
                 if (privatesCanBeBought) {
 	                button2.setText(LocalText.getText("BUY_PRIVATE"));
@@ -941,24 +948,34 @@ private void buyTrain()
 
         int amount;
 
-        Iterator it = Game.getCompanyManager().getAllPrivateCompanies()
-                .iterator();
-        ArrayList privatesForSale = new ArrayList();
+        //Iterator it = Game.getCompanyManager().getAllPrivateCompanies()
+        //        .iterator();
+        List privatesForSale = new ArrayList();
+        Map privatesForSaleMap = new HashMap();
         String privName;
-        PrivateCompanyI priv;
+        //PrivateCompanyI priv;
         int minPrice = 0, maxPrice = 0;
 
-        while (it.hasNext()) {
-            priv = (PrivateCompanyI) it.next();
-            if (priv.getPortfolio().getOwner() instanceof Player) {
-                minPrice = (int) (priv.getBasePrice() * orComp
-                        .getLowerPrivatePriceFactor());
-                maxPrice = (int) (priv.getBasePrice() * orComp
-                        .getUpperPrivatePriceFactor());
-                privatesForSale.add(priv.getName() + " ("
-                        + Bank.format(minPrice) + " - " + Bank.format(maxPrice)
-                        + ")");
-            }
+        //while (it.hasNext()) {
+        //    priv = (PrivateCompanyI) it.next();
+        //    if (priv.getPortfolio().getOwner() instanceof Player) {
+        //        minPrice = (int) (priv.getBasePrice() * orComp
+        //                .getLowerPrivatePriceFactor());
+        //        maxPrice = (int) (priv.getBasePrice() * orComp
+        //                .getUpperPrivatePriceFactor());
+        //        privatesForSale.add(priv.getName() + " ("
+        //                + Bank.format(minPrice) + " - " + Bank.format(maxPrice)
+        //                + ")");
+        //    }
+        //}
+        BuyPrivate action;
+        for (Iterator it = possibleActions.get(BuyPrivate.class).iterator(); it.hasNext(); ) {
+            action = (BuyPrivate) it.next();
+            privName = action.getPrivateCompany().getName();
+            privatesForSale.add(privName 
+                    + " (" + Bank.format(action.getMinimumPrice())
+                    + " - " + Bank.format(action.getMaximumPrice()) + ")");
+            privatesForSaleMap.put(privName, action);
         }
 
         if (privatesForSale.size() > 0) {
@@ -969,11 +986,14 @@ private void buyTrain()
                         JOptionPane.QUESTION_MESSAGE, null, privatesForSale
                                 .toArray(), privatesForSale.get(0));
                 privName = privName.split(" ")[0];
-                priv = Game.getCompanyManager().getPrivateCompany(privName);
-                minPrice = (int) (priv.getBasePrice() * orComp
-                        .getLowerPrivatePriceFactor());
-                maxPrice = (int) (priv.getBasePrice() * orComp
-                        .getUpperPrivatePriceFactor());
+                action = (BuyPrivate) privatesForSaleMap.get(privName);
+                minPrice = action.getMinimumPrice();
+                maxPrice = action.getMaximumPrice();
+                //priv = Game.getCompanyManager().getPrivateCompany(privName);
+                //minPrice = (int) (priv.getBasePrice() * orComp
+                //        .getLowerPrivatePriceFactor());
+                //maxPrice = (int) (priv.getBasePrice() * orComp
+                //        .getUpperPrivatePriceFactor());
                 String price = (String) JOptionPane.showInputDialog(this,
                         LocalText.getText("BUY") + " " + privName
                                 + LocalText.getText("FOR_WHAT_PRICE") + " ("
@@ -989,7 +1009,7 @@ private void buyTrain()
                 }
                 //Player prevOwner = (Player) priv.getPortfolio().getOwner();
                 if (!oRound
-                        .buyPrivate(orComp.getName(), priv.getName(), amount)) {
+                        .buyPrivate(orComp.getName(), privName, amount)) {
                     displayError();
                 } else {
                     //repaint();
@@ -1049,7 +1069,7 @@ private void buyTrain()
             return "";
     }
 
-    public Round getRound() {
+    public RoundI getRound() {
         return round;
     }
 

@@ -35,8 +35,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	/*----*/
 	private GameManager gmgr;
-	private Round currentRound;
-	private Round previousRound = null;
+	private RoundI currentRound;
+	private RoundI previousRound = null;
 	private StockRound stockRound;
 	private List buyableCertificates;
 	private List sellableCertificates;

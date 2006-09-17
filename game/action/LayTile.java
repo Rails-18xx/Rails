@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.1 2006/09/14 19:33:02 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.2 2006/09/17 20:42:50 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -22,7 +22,7 @@ public class LayTile extends PossibleAction {
     private MapHex location = null; 
     
     /** Highest tile colour (empty means unspecified) */
-    private String maxTileColour = "";
+    private Map tileColours = null;
     
     /** Allowed tiles on a specific location (empty means unspecified) */
     private List tiles = new ArrayList();
@@ -42,12 +42,15 @@ public class LayTile extends PossibleAction {
     /**
      * Allow laying a tile on a given location.
      */
-    public LayTile(MapHex location, String maxTileColour) {
+    public LayTile(MapHex location, Map tileColours) {
         this.location = location;
-        this.maxTileColour = maxTileColour;
+        this.tileColours = tileColours;
     }
     
-    
+    public LayTile (SpecialTileLay specialProperty) {
+        this.location = specialProperty.getLocation();
+        this.specialProperty = specialProperty;
+    }
 
     /**
      * @return Returns the chosenHex.
@@ -103,10 +106,15 @@ public class LayTile extends PossibleAction {
     public MapHex getLocation() {
         return location;
     }
+    
+    
     /**
-     * @return Returns the maxTileColour.
+     * @return Returns the tileColours.
      */
-    public String getMaxTileColour() {
-        return maxTileColour;
+    public Map getTileColours() {
+        return tileColours;
+    }
+    public boolean isTileColourAllowed (String tileColour) {
+        return tileColours.containsKey(tileColour);
     }
 }

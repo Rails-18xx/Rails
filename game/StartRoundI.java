@@ -2,7 +2,7 @@ package game;
 
 import java.util.List;
 
-public interface StartRoundI extends Round
+public interface StartRoundI extends RoundI
 {
 
 	public static final int BID_OR_BUY = 0;
