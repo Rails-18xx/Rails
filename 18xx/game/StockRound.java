@@ -1,5 +1,6 @@
 package game;
 
+import game.action.PossibleActions;
 import game.move.DoubleMapChange;
 import game.move.MoveSet;
 import game.move.StateChange;
@@ -17,7 +18,7 @@ import util.LocalText;
  * Permanent memory is formed by static attributes (like who has the Priority
  * Deal).
  */
-public class StockRound implements Round
+public class StockRound extends Round
 {
 
 	/* Transient memory (per round only) */
@@ -113,7 +114,7 @@ public class StockRound implements Round
 	{
 		return stockRoundNumber;
 	}
-
+	
 	/**
 	 * Create a list of certificates that a player may buy in a Stock Round,
 	 * taking all rules into account.

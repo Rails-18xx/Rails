@@ -4,7 +4,7 @@ import java.util.*;
 
 import util.LocalText;
 
-public abstract class StartRound implements StartRoundI
+public abstract class StartRound extends Round implements StartRoundI
 {
 
 	protected StartPacket startPacket = null;
@@ -86,6 +86,7 @@ public abstract class StartRound implements StartRoundI
 		Log.write(LocalText.getText("StartOfInitialRound"));
 		Log.write (LocalText.getText("HasPriority", getCurrentPlayer().getName()));
 	}
+	
 
 	/*----- Processing player actions -----*/
 	/**

@@ -1,5 +1,6 @@
 package game;
 
+import game.action.*;
 import game.special.*;
 import java.util.*;
 import util.Util;
@@ -12,7 +13,7 @@ import util.Util;
  * <p>
  * Permanent memory is formed by static attributes.
  */
-public class OperatingRound implements Round
+public class OperatingRound extends Round
 {
 
 	/* Transient memory (per round only) */
@@ -76,7 +77,7 @@ public class OperatingRound implements Round
 	public static final int STEP_FINAL = 5;
 	protected static int[] steps = new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN,
 			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_FINAL };
-
+	
 	/**
 	 * The constructor.
 	 */
@@ -360,6 +361,8 @@ public class OperatingRound implements Round
 		{
 			nextStep(operatingCompany);
 		}
+		
+		updateStatus("layTile");
 
 		return true;
 	}
@@ -487,6 +490,8 @@ public class OperatingRound implements Round
 		}
 
 		nextStep(operatingCompany);
+		
+		updateStatus("layBaseToken");
 
 		return true;
 	}
@@ -771,6 +776,8 @@ public class OperatingRound implements Round
 
 		if (step >= steps.length)
 			done(company.getName());
+		
+		updateStatus("nextStep");
 
 	}
 
@@ -788,15 +795,15 @@ public class OperatingRound implements Round
 	{
 
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
-
+		
+		updateStatus("prepareStep");
+		
 		if (step == STEP_LAY_TRACK)
 		{
 			normalTileLaysDone = 0;
 			extraTileLaysDone = 0;
 			tileLayCost[operatingCompanyIndex] = 0;
 			tilesLaid[operatingCompanyIndex] = "";
-
-			checkForExtraTileLays();
 		}
 		else if (step == STEP_LAY_TOKEN)
 		{
@@ -808,11 +815,13 @@ public class OperatingRound implements Round
 		{
 			currentSpecialProperties = null;
 		}
+		
 	}
-
-	private void checkForExtraTileLays()
+	
+	private List getExtraTileLays()
 	{
 		extraTileLaysAllowed = 0;
+		List extraTileLays = new ArrayList();
 		currentSpecialProperties = operatingCompany.getPortfolio()
 				.getSpecialProperties(game.special.SpecialTileLay.class);
 		if (currentSpecialProperties != null)
@@ -821,11 +830,13 @@ public class OperatingRound implements Round
 			while (it.hasNext())
 			{
 				SpecialTileLay stl = (SpecialTileLay) it.next();
-				if (stl.isExtra() && !stl.isExercised())
+				if (stl.isExtra() && !stl.isExercised()) {
 					extraTileLaysAllowed++;
+					extraTileLays.add (new LayTile (stl));
+				}
 			}
 		}
-
+		return extraTileLays;
 	}
 
 	public List getSpecialProperties()
@@ -1031,6 +1042,8 @@ public class OperatingRound implements Round
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
 		currentPhase = GameManager.getCurrentPhase();
 		
+		updateStatus("buyTrain");
+		
 		return true;
 	}
 	
@@ -1145,7 +1158,9 @@ public class OperatingRound implements Round
 		privateBuyCost[operatingCompanyIndex] += price;
 
 		// We may have got an extra tile lay right
-		checkForExtraTileLays();
+		getExtraTileLays();
+		
+		updateStatus("buyPrivate");
 
 		return true;
 
@@ -1257,6 +1272,48 @@ public class OperatingRound implements Round
 	public int getOperatingCompanyIndex()
 	{
 		return operatingCompanyIndex;
+	}
+	
+	protected void updateStatus (String fromWhere) {
+	    
+	    System.out.println (">>> updateStatus called from "+fromWhere);
+	    updateStatus();
+	    
+	}
+	/**
+	 * To be called after each change, to re-establish the currently allowed actions.
+	 * (new method, intended to absorb code from several other methods). 
+	 *
+	 */
+	protected void updateStatus () {
+	    
+		/* Create a new list of possible actions for the UI */
+		possibleActions.clear();
+
+		if (step <= STEP_LAY_TRACK)
+		{
+			// For now, we can only create a generic "lay tile anywhere" action.
+			possibleActions.add (new LayTile (null, currentPhase.getTileColours()));
+
+			// Check for extra tile lays from special properties
+			possibleActions.addAll (getExtraTileLays());
+		}
+		
+		// Can private companies be bought?
+		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {
+		    PrivateCompanyI privComp;
+		    int minPrice, maxPrice;
+		    for (Iterator it = Game.getCompanyManager().getPrivatesOwnedByPlayers().iterator();
+		    		it.hasNext(); ) {
+		        privComp = (PrivateCompanyI) it.next();
+		        minPrice = (int) (privComp.getBasePrice() * operatingCompany
+                        .getLowerPrivatePriceFactor());
+		        maxPrice = (int) (privComp.getBasePrice() * operatingCompany
+                        .getUpperPrivatePriceFactor());
+		        possibleActions.add (new BuyPrivate (privComp, minPrice, maxPrice));
+		    }
+		}
+
 	}
 
 	/**

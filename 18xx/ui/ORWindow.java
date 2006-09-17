@@ -1,6 +1,7 @@
 package ui;
 
 import game.*;
+import game.action.PossibleActions;
 import game.special.*;
 import ui.hexmap.*;
 
@@ -45,6 +46,7 @@ public class ORWindow extends JFrame implements WindowListener
 	 * button is disabled.
 	 */
 	public static boolean tileLayingEnabled = false;
+	protected PossibleActions possibleActions = PossibleActions.getInstance();
 
 	public ORWindow()
 	{

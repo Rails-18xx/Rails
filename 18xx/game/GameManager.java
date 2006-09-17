@@ -39,8 +39,8 @@ public class GameManager implements ConfigurableComponentI
 	 * been sold, it finishes by starting an Operating Round, which handles the
 	 * privates payout and then immediately starts a new Start Round.
 	 */
-	protected static Round currentRound = null;
-	protected static Round interruptedRound = null;
+	protected static RoundI currentRound = null;
+	protected static RoundI interruptedRound = null;
 
 	// protected Round insertingRound = null;
 	// protected Round insertedRound = null;
@@ -189,7 +189,7 @@ public class GameManager implements ConfigurableComponentI
 		return instance;
 	}
 
-	public void setRound(Round round)
+	public void setRound(RoundI round)
 	{
 
 		currentRound = round;
@@ -201,7 +201,7 @@ public class GameManager implements ConfigurableComponentI
 	 * @param round
 	 *            The object that represents the finishing round.
 	 */
-	public void nextRound(Round round)
+	public void nextRound(RoundI round)
 	{
 		if (round instanceof StartRound)
 		{
@@ -364,7 +364,7 @@ public class GameManager implements ConfigurableComponentI
 	 * ORs is delayed until a StockRound finishes.
 	 * 
 	 */
-	public Round getCurrentRound()
+	public RoundI getCurrentRound()
 	{
 		return currentRound;
 	}
