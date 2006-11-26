@@ -1071,7 +1071,7 @@ public void reportShares(PublicCompanyI c) {
 		hasPassed.setState(Boolean.TRUE);
 
 		currentSpecialProperties = currentPlayer.getPortfolio()
-				.getSpecialProperties(game.special.SpecialSRProperty.class);
+				.getSpecialProperties(game.special.SpecialSRProperty.class, false);
 		// System.out.println("Player "+currentPlayer.getName()+",
 		// spec#="+currentSpecialProperties.size());
 	}

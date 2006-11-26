@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/PossibleActions.java,v 1.1 2006/09/17 20:42:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/PossibleActions.java,v 1.2 2006/11/26 19:30:00 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -67,6 +67,10 @@ public class PossibleActions {
     
     public List get (Class clazz) {
         return (List)possibleActions.get(clazz);
+    }
+    
+    public Map getAll () {
+        return possibleActions;
     }
 
 }

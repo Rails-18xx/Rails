@@ -1297,10 +1297,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasTokensLeft()
 	{
-		if(baseTokenedHexes.size() <= maxCityTokens)
-			return true;
-		else
-			return false;
+		return (baseTokenedHexes.size() <= maxCityTokens);
 	}
 	
 	public int getNumberOfTileLays (String tileColour) {

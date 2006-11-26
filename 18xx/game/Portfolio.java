@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.40 2006/09/14 19:33:03 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.41 2006/11/26 19:29:59 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -176,9 +176,13 @@ public class Portfolio
 	{
 		privateCompanies.add(privateCompany);
 		privateCompany.setHolder(this);
+		System.out.println("Adding "+privateCompany.getName()+" to portfolio of "+name);
 		if (privateCompany.getSpecialProperties() != null)
 		{
+		    System.out.println(privateCompany.getName()+" has special properties!");
 			updateSpecialProperties();
+		} else {
+		    System.out.println(privateCompany.getName()+" has no special properties");
 		}
 		privatesModel.update();
 	}
@@ -209,41 +213,25 @@ public class Portfolio
 
 	public boolean removePrivate(PrivateCompanyI privateCompany)
 	{
-		for (int i = 0; i < privateCompanies.size(); i++)
-		{
-			if (privateCompanies.get(i) == privateCompany)
+	    boolean removed = privateCompanies.remove(privateCompany);
+		if (removed) {
+			privatesModel.update();
+			if (privateCompany.getSpecialProperties() != null)
 			{
-				privateCompanies.remove(i);
-				privatesModel.update();
-				if (privateCompany.getSpecialProperties() != null)
-				{
-					updateSpecialProperties();
-				}
-				return true;
+				updateSpecialProperties();
 			}
 		}
-		return false;
+		return removed;
 	}
 
 	public void removeCertificate(PublicCertificateI certificate)
 	{
-		for (int i = 0; i < certificates.size(); i++)
-		{
-			if (certificates.get(i) == certificate)
-			{
-				certificates.remove(i);
-			}
-		}
-		String companyName = certificate.getCompany().getName();
-		ArrayList certs = (ArrayList) getCertificatesPerCompany(companyName);
+	    certificates.remove(certificate);
 
-		for (int i = 0; i < certs.size(); i++)
-		{
-			if (certs.get(i) == certificate)
-			{
-				certs.remove(i);
-			}
-		}
+		String companyName = certificate.getCompany().getName();
+		
+		List certs = (List) getCertificatesPerCompany(companyName);
+		certs.remove(certificate);
 
 		getShareModel(certificate.getCompany()).addShare(-certificate.getShare());
 	}
@@ -674,8 +662,9 @@ public class Portfolio
 	public void updateSpecialProperties()
 	{
 
-		if (owner instanceof Player || owner instanceof CompanyI)
+		if (owner instanceof Player || owner instanceof PublicCompanyI)
 		{
+		    System.out.println("Updating special properties of "+getName());
 			specialProperties.clear();
 			Iterator it = privateCompanies.iterator();
 			Iterator it2;
@@ -696,13 +685,14 @@ public class Portfolio
 					sp = (SpecialPropertyI) it2.next();
 					if (sp.isExercised())
 						continue;
+					System.out.println("For "+name+" found spec.prop "+sp);
 					specialProperties.add(sp);
 				}
 			}
 		}
 	}
 
-	public List getSpecialProperties(Class clazz)
+	public List getSpecialProperties(Class clazz, boolean includeExercised)
 	{
 		List result = new ArrayList();
 		if (specialProperties != null && specialProperties.size() > 0)
@@ -712,8 +702,10 @@ public class Portfolio
 			while (it.hasNext())
 			{
 				sp = (SpecialProperty) it.next();
-				if (sp.isExecutionable() && Util.isInstanceOf(sp, clazz))
+				if (sp.isExecutionable() && Util.isInstanceOf(sp, clazz)
+				        && (!sp.isExercised() || includeExercised)) {
 					result.add(sp);
+				}
 			}
 		}
 		return result;
