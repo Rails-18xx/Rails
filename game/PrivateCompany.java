@@ -274,5 +274,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	{
 		return blockedHexes;
 	}
+	
+	public void closeIfExcercised () {
+	    
+	}
 
 }

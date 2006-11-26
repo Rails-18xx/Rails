@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.2 2006/09/17 20:42:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.3 2006/11/26 19:30:00 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -16,6 +16,13 @@ import game.special.SpecialTileLay;
  */
 public class LayTile extends PossibleAction {
     
+    /* LayTile types */
+    public final static int GENERIC = 0; // Stop-gap only
+    public final static int LOCATION_SPECIFIC = 1; // Valis hex and allowed tiles 
+    public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
+    
+    protected int type = 0;
+    
     /*--- Preconditions ---*/
     
     /** Where to lay a tile (null means anywhere) */
@@ -25,7 +32,7 @@ public class LayTile extends PossibleAction {
     private Map tileColours = null;
     
     /** Allowed tiles on a specific location (empty means unspecified) */
-    private List tiles = new ArrayList();
+    private List tiles = null;
     
     /** Special property that will be fulfilled by this tile lay.
      * If null, this is a normal tile lay. */
@@ -42,12 +49,19 @@ public class LayTile extends PossibleAction {
     /**
      * Allow laying a tile on a given location.
      */
-    public LayTile(MapHex location, Map tileColours) {
+    public LayTile(MapHex location, List tiles) {
+        type = LOCATION_SPECIFIC;
         this.location = location;
+        this.tiles = tiles;
+    }
+    
+    public LayTile(Map tileColours) {
+        type = GENERIC;
         this.tileColours = tileColours;
     }
     
-    public LayTile (SpecialTileLay specialProperty) {
+     public LayTile (SpecialTileLay specialProperty) {
+        type = SPECIAL_PROPERTY;
         this.location = specialProperty.getLocation();
         this.specialProperty = specialProperty;
     }
@@ -107,6 +121,9 @@ public class LayTile extends PossibleAction {
         return location;
     }
     
+    public int getType () {
+        return type;
+    }
     
     /**
      * @return Returns the tileColours.
@@ -116,5 +133,12 @@ public class LayTile extends PossibleAction {
     }
     public boolean isTileColourAllowed (String tileColour) {
         return tileColours.containsKey(tileColour);
+    }
+    public void setTileColours (Map map) {
+        tileColours = map;
+    }
+    
+    public String toString () {
+        return "LayTile type="+type+" location="+location+" spec.prop="+specialProperty;
     }
 }

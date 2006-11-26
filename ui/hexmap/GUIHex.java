@@ -1,6 +1,7 @@
 package ui.hexmap;
 
 import game.*;
+import game.action.LayTile;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -697,7 +698,7 @@ public class GUIHex
 		setToolTip();
 	}
 
-	public boolean fixTile(boolean tileLayingEnabled)
+	public boolean fixTile (boolean tileLayingEnabled, LayTile allowance)
 	{
 	    boolean canFixTile = true;
 	    
@@ -707,7 +708,7 @@ public class GUIHex
 			OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
 		    canFixTile = or.layTile(or.getOperatingCompany().getName(),
 		            model, provisionalGUITile.getTile(),
-					provisionalTileOrientation);
+					provisionalTileOrientation, allowance);
 
 		    if (canFixTile) {
 				currentGUITile = provisionalGUITile;

@@ -4,11 +4,13 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.plaf.*;
 
 import game.*;
+import game.action.LayTile;
 import game.special.SpecialTileLay;
 import ui.*;
 
@@ -35,8 +37,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected static GUIHex selectedHex = null;
 	protected Dimension preferredSize;
 
-	protected ArrayList extraTileLays = new ArrayList();
-	protected ArrayList unconnectedTileLays = new ArrayList();
+	//protected ArrayList extraTileLays = new ArrayList();
+	//protected ArrayList unconnectedTileLays = new ArrayList();
+	/** A list of all allowed tile lays */ /*(may be redundant) */
+	protected List allowedTileLays = null;
+	/** A Map linking tile allowed tiles to each map hex */
+	protected Map allowedTilesPerHex = null;
 
 	public void setupHexes()
 	{
@@ -165,6 +171,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return selectedHex != null;
 	}
 
+	/*
 	public void setSpecials(ArrayList specials)
 	{
 		extraTileLays.clear();
@@ -187,6 +194,35 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				// + stl.isExtra());
 			}
 		}
+	}
+	*/
+	public void setAllowedTileLays (List allowedTileLays) {
+	    
+	    this.allowedTileLays = allowedTileLays;
+	    LayTile allowance;
+	    MapHex location;
+	    allowedTilesPerHex = new HashMap();
+	    
+	    /* Build the per-hex allowances map */
+	    for (Iterator it = this.allowedTileLays.iterator(); it.hasNext(); ) {
+	        allowance = (LayTile) it.next();
+	        location = allowance.getLocation(); 
+	        /* The location may be null, which means: anywhere.
+	         * This is intended to be a temporary fixture, to be replaced
+	         * by a detailed allowed-tiles-per-hex specification later.  
+	         */
+	        allowedTilesPerHex.put(location, allowance);
+	    }
+	}
+	
+	public LayTile getAllowanceForHex (MapHex hex) {
+	    if (allowedTilesPerHex.containsKey(hex)) {
+	        return (LayTile) allowedTilesPerHex.get(hex);
+	    } else if (allowedTilesPerHex.containsKey(null)) {
+	        return (LayTile) allowedTilesPerHex.get(null);
+	    } else {
+	        return null;
+	    }
 	}
 
 	public void mouseClicked(MouseEvent arg0)
@@ -228,6 +264,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				if (clickedHex != null)
 				{
 					if (clickedHex.getHexModel().isUpgradeableNow())
+					    /* Direct call to Model to be replaced later by use of
+					     * allowedTilesPerHex. Would not work yet.
+					     */ 
 					{
 						selectHex(clickedHex);
 						GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);

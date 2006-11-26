@@ -21,8 +21,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private Dimension preferredSize = new Dimension(100, 200);
 	private Border border = new EtchedBorder();
 	
-	private String cancelButtonKey = "NoTile";
-	private String doneButtonKey = "LayTile";
+	private final String INIT_CANCEL_TEXT = "NoTile";
+	private final String INIT_DONE_TEXT = "LayTile";
 	
 	private boolean cancelEnabled = false;
 	private boolean doneEnabled = false;
@@ -30,8 +30,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private boolean tokenMode = false;
 	private boolean lastEnabled = false;
 
-	private JButton cancel = new JButton(cancelButtonKey);
-	private JButton done = new JButton(doneButtonKey);
+	private JButton cancelButton = new JButton(LocalText.getText(INIT_CANCEL_TEXT));
+	private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
+	
+	private HexMap hexMap;
 
 	public UpgradesPanel()
 	{
@@ -53,12 +55,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setSize(getPreferredSize());
 		
-		done.setActionCommand(LocalText.getText("Done"));
-		done.setMnemonic(KeyEvent.VK_D);
-		done.addActionListener(this);
-		cancel.setActionCommand(LocalText.getText("Cancel"));
-		cancel.setMnemonic(KeyEvent.VK_C);
-		cancel.addActionListener(this);
+		doneButton.setActionCommand("Done");
+		doneButton.setMnemonic(KeyEvent.VK_D);
+		doneButton.addActionListener(this);
+		cancelButton.setActionCommand("Cancel");
+		cancelButton.setMnemonic(KeyEvent.VK_C);
+		cancelButton.addActionListener(this);
 		
 		add(scrollPane);
 		showUpgrades();
@@ -71,14 +73,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void populate()
 	{
+	    if (hexMap == null) hexMap = GameUILoader.getMapPanel().getMap();
+	    
 		try
 		{
-			upgrades = (ArrayList) GameUILoader.getMapPanel()
-					.getMap()
+			upgrades = (ArrayList) hexMap
 					.getSelectedHex()
 					.getCurrentTile()
-					.getValidUpgrades(GameUILoader.getMapPanel()
-							.getMap()
+					.getValidUpgrades(hexMap
 							.getSelectedHex()
 							.getHexModel(),
 							GameManager.getCurrentPhase());
@@ -101,7 +103,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		}
 		else if (upgrades.size() == 0)
 		{
-			GameUILoader.orWindow.setMessage("NoTiles");
+			GameUILoader.orWindow.setMessage(LocalText.getText("NoTiles"));
 		}
 		else
 		{
@@ -131,8 +133,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 			}
 		}
 
-		upgradePanel.add(done);
-		upgradePanel.add(cancel);
+		upgradePanel.add(doneButton);
+		upgradePanel.add(cancelButton);
 
 		lastEnabled = doneEnabled;
 	}
@@ -176,37 +178,39 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void setCancelText(String text)
 	{
-		cancel.setText(cancelButtonKey = text);
+		cancelButton.setText(LocalText.getText(text));
 	}
 
 	public void setDoneText(String text)
 	{
-		done.setText(doneButtonKey = text);
+		doneButton.setText(LocalText.getText(text));
 	}
 
 	public void setDoneEnabled(boolean enabled)
 	{
-		done.setEnabled(doneEnabled = enabled);
+		doneButton.setEnabled(doneEnabled = enabled);
 	}
 	
 	public void setCancelEnabled(boolean enabled)
 	{
-		cancel.setEnabled(cancelEnabled = enabled);
+		cancelButton.setEnabled(cancelEnabled = enabled);
 		//new Exception ("Cancel "+(cancelEnabled?"EN":"DIS")+"ABLED").printStackTrace(System.out);
 	}
 
 	public void actionPerformed(ActionEvent e)
 	{
 
+	    if (hexMap == null) hexMap = GameUILoader.getMapPanel().getMap();
 		String command = e.getActionCommand();
+		Object source = e.getSource();
 
-		if (command.equals(LocalText.getText("Cancel")))
+		if (source == cancelButton /*command.equals("Cancel")*/)
 		{
 			GameUILoader.orWindow.processCancel();
 		}
-		else if (command.equals(LocalText.getText("Done")))
+		else if (source == doneButton /*command.equals("Done")*/)
 		{
-			if (GameUILoader.getMapPanel().getMap().getSelectedHex() != null)
+			if (hexMap.getSelectedHex() != null)
 			{
 				GameUILoader.orWindow.processDone();
 			}

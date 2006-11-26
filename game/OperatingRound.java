@@ -37,6 +37,10 @@ public class OperatingRound extends Round
 	protected int[] privateBuyCost;
 
 	protected List currentSpecialProperties = null;
+	protected List currentSpecialTileLays = new ArrayList();
+	protected List currentNormalTileLays = new ArrayList();
+	//protected List normalTileLaysDone;
+	protected Map specialPropertyPerHex = new HashMap();
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
@@ -49,10 +53,10 @@ public class OperatingRound extends Round
 	 * Number of tiles that may be laid. TODO: This does not cover cases like "2
 	 * yellow or 1 upgrade allowed".
 	 */
-	protected int normalTileLaysAllowed = 1;
-	protected int normalTileLaysDone = 0;
-	protected int extraTileLaysAllowed = 0;
-	protected int extraTileLaysDone = 0;
+	//protected int normalTileLaysAllowed = 1;
+	//protected int normalTileLaysDone = 0;
+	//protected int extraTileLaysAllowed = 0;
+	//protected int extraTileLaysDone = 0;
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
 
@@ -221,22 +225,26 @@ public class OperatingRound extends Round
 	/*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
 	/**
-	 * A (perhaps temporary) method via which the cost of track laying can be
-	 * accounted for.
-	 * 
+	 * Validate and, if OK, process laying a tile. 
 	 * @param companyName
 	 *            The name of the company that lays the track.
-	 * @param amountSpent
-	 *            The cost of laying the track, which is subtracted from the
-	 *            company treasury.
+	 * @param hex The MapHex object where the tile is laid on.
+	 * @param tile An instance of the tile that has been laid.
+	 * @param orientation The orientation in which the tile has been laid.
+	 * Anunrotated tile has orientation 0. For any 60 degrees of clockwise
+	 * rotation, the orientation number increases by one.
+	 * @param allowance
+	 * A LayTile (PossibleActions) instance selected and used by the GUI
+	 * to enable the actual tile laying.
 	 */
 	public boolean layTile(String companyName, MapHex hex, TileI tile,
-			int orientation)
+			int orientation, LayTile allowance)
 	{
 
 		String errMsg = null;
 		int cost = 0;
 		SpecialTileLay stl = null;
+		boolean extra = false;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -271,6 +279,7 @@ public class OperatingRound extends Round
 			}
 
 			// Was a special property used?
+			/*
 			if (currentSpecialProperties != null)
 			{
 				stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
@@ -282,6 +291,29 @@ public class OperatingRound extends Round
 				}
 			} else if (exceedsTilesAllowance (tile)) {
 			    errMsg = "Cannot lay that many tiles of this colour";
+			    break;
+			}
+			*/
+		    /* Check if the current tile is allowed via the LayTile allowance.
+		     * (currently the set if tiles is always null, which means
+		     * that this check is redundant. This may change in the future.
+		     */  
+			if (allowance != null) {
+			    List tiles = allowance.getTiles();
+			    if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
+			        errMsg = "Tile #" + tile.getName() +" may not be laid in hex "+hex.getName();
+			        break;
+			    }
+			    stl = allowance.getSpecialProperty();
+			    if (stl != null) extra = stl.isExtra();
+			}
+			
+			/* If this counts as a normal tile lay, check if the allowed number of
+			 * normal tile lays is not exceeded.
+			 */ 
+			if (!extra && !validateNormalTileLay(tile)) {
+			    errMsg = "Number of normal tile lays of colour " + tile.getColour()
+			    	+ " would be exceeded.";
 			    break;
 			}
 
@@ -338,26 +370,31 @@ public class OperatingRound extends Round
 			// Was a special property used?
 			if (stl != null)
 			{
-				// System.out.println("A special property of "
-				// + stl.getCompany().getName() + " is used");
 				stl.setExercised();
-				if (stl.isExtra())
-					extraTileLaysDone++;
-				else
-					normalTileLaysDone++;
-				currentSpecialProperties = operatingCompany.getPortfolio()
-						.getSpecialProperties(game.special.SpecialTileLay.class);
+				currentSpecialTileLays.remove(allowance);
+				System.out.println("This was a special tile lay, "+
+				        (extra?"":" not")+" extra");
+				
 			}
-			else
+			if (!extra)
 			{
-				normalTileLaysDone++;
+				registerNormalTileLay (tile);
+				System.out.println("This was a normal tile lay");
 			}
+			if (currentNormalTileLays.isEmpty()) {
+			    System.out.println("No more normal tile lays are allowed");
+			} else {
+			    int number = ((Integer)((LayTile)currentNormalTileLays.get(0)).getTileColours().get(tile.getColour())).intValue();
+			    System.out.println("Now "+number+" normal tiles may be laid");
+			}
+			setSpecialTileLays();
+			System.out.println("There are now "+currentSpecialTileLays.size()+" special tile lay objects");
 		}
 
 		// System.out.println("Normal="+normalTileLaysDone+"/"+normalTileLaysAllowed
 		// +" special="+extraTileLaysDone+"/"+extraTileLaysAllowed);
-		if (tile == null || normalTileLaysDone >= normalTileLaysAllowed
-				&& extraTileLaysDone >= extraTileLaysAllowed)
+		if (tile == null 
+		        || currentNormalTileLays.isEmpty() && currentSpecialTileLays.isEmpty())
 		{
 			nextStep(operatingCompany);
 		}
@@ -365,6 +402,49 @@ public class OperatingRound extends Round
 		updateStatus("layTile");
 
 		return true;
+	}
+	
+	protected boolean validateNormalTileLay (TileI tile) {
+	    return checkNormalTileLay (tile, false);
+	}
+	
+	protected void registerNormalTileLay (TileI tile) {
+	    checkNormalTileLay (tile, true);
+	}
+	
+	protected boolean checkNormalTileLay (TileI tile, boolean update) {
+	    
+	    if (currentNormalTileLays.isEmpty()) return false;
+	    //normalTileLaysDone.add(tile);
+	    String colour = tile.getColour();
+	    LayTile allowance = (LayTile) currentNormalTileLays.get(0);
+	    if (allowance == null) return false;
+	    
+	    // TODO: get(0) - perhaps we always have only one entry?
+	    // Probably we have mixed up locations and number-of-tiles-allowed.
+	    Map allowancePerColour = (Map) allowance.getTileColours();
+	    Integer oldAllowedNumberObject = ((Integer)allowancePerColour.get(colour));
+	    if (oldAllowedNumberObject == null) return false;
+	    int oldAllowedNumber = oldAllowedNumberObject.intValue();
+	    if (oldAllowedNumber <= 0) return false;
+	    
+	    if (!update) return true;
+	    
+	    /* We will assume that in all cases the following assertions hold:
+	     * 1. If the allowed number for the colour of the just laid tile 
+	     * reaches zero, all normal tile lays have been consumed.  
+	     * 2. If any colour is laid, no different colours may be laid.
+	     * THIS MAY NOT BE TRUE FOR ALL GAMES!
+	     */
+	    if (oldAllowedNumber <= 1) {
+	        currentNormalTileLays.clear();
+	    } else /*oldAllowedNumber > 1*/ {
+	        allowancePerColour.clear(); // Remove all other colours
+	        allowancePerColour.put(colour, new Integer(oldAllowedNumber-1));
+	        allowance.setTileColours(allowancePerColour);
+	    }
+	    
+	    return true;
 	}
 
 	public String getLastTileLaid()
@@ -388,11 +468,13 @@ public class OperatingRound extends Round
 	 * @param tile
 	 * @return
 	 */
+	/*
 	private boolean exceedsTilesAllowance (TileI tile) {
 	    if (normalTileLaysAllowed == 0) 
 	        normalTileLaysAllowed = operatingCompany.getNumberOfTileLays(tile.getColour());
 	    return normalTileLaysDone >= normalTileLaysAllowed;
 	}
+	*/
 
 	private SpecialORProperty checkForUseOfSpecialProperty(MapHex hex)
 	{
@@ -796,12 +878,9 @@ public class OperatingRound extends Round
 
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
-		updateStatus("prepareStep");
-		
 		if (step == STEP_LAY_TRACK)
 		{
-			normalTileLaysDone = 0;
-			extraTileLaysDone = 0;
+			setNormalTileLays();
 			tileLayCost[operatingCompanyIndex] = 0;
 			tilesLaid[operatingCompanyIndex] = "";
 		}
@@ -816,27 +895,58 @@ public class OperatingRound extends Round
 			currentSpecialProperties = null;
 		}
 		
+		updateStatus("prepareStep");
+		
 	}
 	
-	private List getExtraTileLays()
-	{
-		extraTileLaysAllowed = 0;
-		List extraTileLays = new ArrayList();
+	/**
+	 * Create a List of allowed normal tile lays (see LayTile class).
+	 * This method should be called only once per company turn in an OR:
+	 * at the start of the tile laying step.
+	 */
+	protected void setNormalTileLays() {
+	    
+	    /* Normal tile lays */
+	    currentNormalTileLays.clear();
+	    Map tileLaysPerColour = currentPhase.getTileColours();
+	    String colour;
+	    int allowedNumber;
+	    for (Iterator it = tileLaysPerColour.keySet().iterator(); it.hasNext(); ) {
+	        colour = (String) it.next();
+	        allowedNumber = operatingCompany.getNumberOfTileLays(colour);
+	        // Replace the null map value with the allowed number of lays
+	        tileLaysPerColour.put(colour, new Integer (allowedNumber));
+	    }
+	    currentNormalTileLays.add (new LayTile (tileLaysPerColour));
+
+	}
+	
+	/**
+	 * Create a List of allowed special tile lays (see LayTile class).
+	 * This method should be called before each user action in the tile laying step.
+	 */
+	protected void setSpecialTileLays() {
+	    
+	    /* Special-property tile lays */
+		currentSpecialTileLays.clear();
+		specialPropertyPerHex.clear();
 		currentSpecialProperties = operatingCompany.getPortfolio()
-				.getSpecialProperties(game.special.SpecialTileLay.class);
+				.getSpecialProperties(game.special.SpecialTileLay.class, false);
 		if (currentSpecialProperties != null)
 		{
 			Iterator it = currentSpecialProperties.iterator();
 			while (it.hasNext())
 			{
 				SpecialTileLay stl = (SpecialTileLay) it.next();
-				if (stl.isExtra() && !stl.isExercised()) {
-					extraTileLaysAllowed++;
-					extraTileLays.add (new LayTile (stl));
+				System.out.println("Spec.prop:"+stl);
+				if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
+				    /* If the special tile lay is not extra, it is only 
+				     * allowed if normal tile lays are also (still) allowed */
+					specialPropertyPerHex.put(stl.getLocation(), stl);
+					currentSpecialTileLays.add (new LayTile (stl));
 				}
 			}
 		}
-		return extraTileLays;
 	}
 
 	public List getSpecialProperties()
@@ -887,7 +997,7 @@ public class OperatingRound extends Round
 		}
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-		normalTileLaysAllowed = 0; // We will set this after the (first) tile is laid.
+		//normalTileLaysDone.clear();
 		step = steps[0];
 		prepareStep(step);
 
@@ -1158,7 +1268,7 @@ public class OperatingRound extends Round
 		privateBuyCost[operatingCompanyIndex] += price;
 
 		// We may have got an extra tile lay right
-		getExtraTileLays();
+		//setSpecialTileLays();
 		
 		updateStatus("buyPrivate");
 
@@ -1292,11 +1402,12 @@ public class OperatingRound extends Round
 
 		if (step <= STEP_LAY_TRACK)
 		{
-			// For now, we can only create a generic "lay tile anywhere" action.
-			possibleActions.add (new LayTile (null, currentPhase.getTileColours()));
+			setSpecialTileLays();
+			System.out.println("Normal tile lays: "+currentNormalTileLays.size());
+			System.out.println("Special tile lays: "+currentSpecialTileLays.size());
 
-			// Check for extra tile lays from special properties
-			possibleActions.addAll (getExtraTileLays());
+			possibleActions.addAll (currentNormalTileLays);
+			possibleActions.addAll (currentSpecialTileLays);
 		}
 		
 		// Can private companies be bought?

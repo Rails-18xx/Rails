@@ -462,7 +462,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             //        && !Game.getCompanyManager().getPrivatesOwnedByPlayers()
             //               .isEmpty();
             privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
-
+ 
             if (step == OperatingRound.STEP_LAY_TRACK) {
                 tileCaption.setHighlight(true);
                 tileCost[orCompIndex].setText("");
@@ -470,11 +470,26 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 GameUILoader.orWindow.requestFocus();
                 
-                if (possibleActions.contains(LayTile.class)) {
-	                GameUILoader.orWindow.enableTileLaying(true);
-	                GameUILoader.getMapPanel().setSpecialTileLays(
-	                        (ArrayList) round.getSpecialProperties()); //??
+                //FOr debugging
+                Map a = possibleActions.getAll();
+                if (a.isEmpty()) System.out.println("No possible actions!!");
+                for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
+                    Object o = it.next();
+                    if (o instanceof LayTile) {
+                        System.out.println("PossibleAction: "+((LayTile)o));
+                    } else {
+                        System.out.println("PossibleAction: "+o);
+                    }
                 }
+                
+                if (possibleActions.contains(LayTile.class)) {
+                    System.out.println("Tiles can be laid");
+	                GameUILoader.orWindow.enableTileLaying(true);
+	                //GameUILoader.getMapPanel().setSpecialTileLays(
+	                //        (ArrayList) round.getSpecialProperties()); //??
+	                GameUILoader.getMapPanel().setAllowedTileLays (possibleActions.get(LayTile.class));
+	                GameUILoader.orWindow.updateMessage(); //??
+               }
 
                 if (privatesCanBeBought) {
 	                button2.setText(LocalText.getText("BUY_PRIVATE"));
@@ -492,6 +507,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(false);
 
+                GameUILoader.orWindow.updateMessage();
+
             } else if (step == OperatingRound.STEP_LAY_TOKEN) {
                 GameUILoader.orWindow.requestFocus();
                 GameUILoader.orWindow.enableTileLaying(false);
@@ -503,6 +520,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button1.setEnabled(false);
                 button1.setVisible(false);
                 button3.setEnabled(false);
+
+                GameUILoader.orWindow.updateMessage();
+
             } else if (step == OperatingRound.STEP_CALC_REVENUE) {
                 if (oRound.isActionAllowed()) {
                     revenueCaption.setHighlight(true);
@@ -516,7 +536,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     button1.setMnemonic(KeyEvent.VK_R);
                     button1.setEnabled(true);
                     button1.setVisible(true);
-                    GameUILoader.orWindow.setMessage("EnterRevenue");
+                    GameUILoader.orWindow.setMessage(LocalText.getText("EnterRevenue"));
                 } else {
                     displayMessage(oRound.getActionNotAllowedMessage());
                     setRevenue(0);
@@ -544,7 +564,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setMnemonic(KeyEvent.VK_P);
                 button3.setEnabled(true);
 
-                GameUILoader.orWindow.setMessage("SelectPayout");
+                GameUILoader.orWindow.setMessage(LocalText.getText("SelectPayout"));
 
             } else if (step == OperatingRound.STEP_BUY_TRAIN) {
                 trainCaption.setHighlight(true);
@@ -571,7 +591,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(true);
 
-                GameUILoader.orWindow.setMessage("BuyTrain");
+                GameUILoader.orWindow.setMessage(LocalText.getText("BuyTrain"));
 
             } else if (step == OperatingRound.STEP_FINAL) {
                 button1.setEnabled(false);
@@ -612,7 +632,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             //    return false;
             //}
             button3.setEnabled(true);
-
         }
 
         LogWindow.addLog();
@@ -688,7 +707,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         boolean done = command.equals(LocalText.getText("Done"));
         int amount;
 
-        if (command.equals(LocalText.getText("LAY_TRACK")) || done
+        /*if (command.equals(LocalText.getText("LAY_TRACK")) || done
                 && step == OperatingRound.STEP_LAY_TRACK) {
             // This is just a No-op. Tile handling is now all done in
             // layTrack().
@@ -696,7 +715,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 && step == OperatingRound.STEP_LAY_TOKEN) {
             // This is just a No-op. Tile handling is now all done in
             // layBaseToken().
-        } else if (command.equals(LocalText.getText("SET_REVENUE")) || done
+        } else*/ if (command.equals(LocalText.getText("SET_REVENUE")) || done
                 && step == OperatingRound.STEP_CALC_REVENUE) {
             amount = done ? 0 : ((Integer) revenueSelect[orCompIndex]
                     .getValue()).intValue();
@@ -1000,21 +1019,21 @@ private void buyTrain()
                                 + LocalText.getText("RANGE") + " "
                                 + Bank.format(minPrice) + " - "
                                 + Bank.format(maxPrice) + ")?", LocalText
-                                .getText("WHAT_PRICE"),
+                                .getText("WHICH_PRICE"),
                         JOptionPane.QUESTION_MESSAGE);
                 try {
                     amount = Integer.parseInt(price);
                 } catch (NumberFormatException e) {
                     amount = 0; // This will generally be refused.
                 }
-                //Player prevOwner = (Player) priv.getPortfolio().getOwner();
+
                 if (!oRound
                         .buyPrivate(orComp.getName(), privName, amount)) {
                     displayError();
                 } else {
-                    //repaint();
                     newPrivatesCost[orCompIndex].setText(Bank.format(oRound
                             .getLastPrivateBuyCost()));
+                    GameUILoader.orWindow.updateMessage();
                 }
             } catch (NullPointerException e) {
                 // Null Pointer means user hit cancel.
@@ -1024,10 +1043,6 @@ private void buyTrain()
 
     }
 
-    /*
-     * public void refresh() { //setVisible(false); //setVisible(true);
-     * revalidate(); }
-     */
 
     private void setHighlightsOff() {
         tileCaption.setHighlight(false);

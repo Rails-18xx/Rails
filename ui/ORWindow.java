@@ -1,12 +1,14 @@
 package ui;
 
 import game.*;
+import game.action.LayTile;
 import game.action.PossibleActions;
 import game.special.*;
 import ui.hexmap.*;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -130,38 +132,88 @@ public class ORWindow extends JFrame implements WindowListener
 
 	public void setSubStep(int subStep)
 	{
+	    System.out.println("Setting substep to "+subStep);
 		ORWindow.subStep = subStep;
-		if (this != null)
-		{
-		    String message = LocalText.getText(messageKey[subStep]);
-		    List specialProperties = 
-		        ((OperatingRound)GameManager.getInstance().getCurrentRound()).getSpecialProperties();
-		    SpecialORProperty sp;
-		    String extraTileMessage = "";
-		    String extraTokenMessage = "";
-		    String extraMessage = "";
-		    for (Iterator it = specialProperties.iterator(); it.hasNext() ;) {
-		        sp = (SpecialORProperty) it.next();
-		        if (sp instanceof SpecialTileLay) {
-		            if (extraTileMessage.length() > 0) extraTileMessage += ", ";
-		            extraTileMessage +=((SpecialTileLay)sp).getLocation().getName();
-		        } else if (sp instanceof SpecialTokenLay) {
-		            if (extraTokenMessage.length() > 0) extraTokenMessage += ", ";
-		            extraTokenMessage +=((SpecialTileLay)sp).getLocation().getName();
+		
+		updateMessage();
+		
+		updateUpgradesPanel();
+	}
+	
+	public void updateMessage() {
+	    
+	    // For now, this only has an effect during tile and token laying.
+	    // Perhaps we need to centralise message updating here in a later stage.
+	    if (subStep == INACTIVE) return;
+	    
+	    String message = LocalText.getText(messageKey[subStep]);
+	    //List specialProperties = 
+	    //    ((OperatingRound)GameManager.getInstance().getCurrentRound()).getSpecialProperties();
+	    SpecialORProperty sp;
+	    
+	    /* Add any extra messages */
+	    String extraMessage = "";
+	    if (subStep == SELECT_HEX_FOR_TILE) {
+		    /* Compose prompt for tile laying */
+		    LayTile tileLay;
+		    StringBuffer normalTileMessage = new StringBuffer(" ");
+		    StringBuffer extraTileMessage = new StringBuffer(" ");
+		    
+		    List tileLays = possibleActions.get(LayTile.class);
+		    System.out.println("There are "+tileLays.size()+" TileLay objects");
+		    int ii=0;
+		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
+		        Map tileColours;
+		        //sp = (SpecialORProperty) it.next();
+		        tileLay = (LayTile) it.next();
+			    System.out.println("TileLay object "+(++ii)+": "+tileLay);
+		        sp = tileLay.getSpecialProperty();
+		        /* A LayTile object contais either:
+		         * 1. a special property (specifying a location)
+		         * 2. a location (perhaps a list of?) where a specified
+		         * set of tiles may be laid, or
+		         * 3. a map specifying how many tiles of any colour may be laid "anywhere".
+		         * The last option is only a stopgap as we can't yet determine connectivity.  
+		         */
+		        if (sp != null && sp instanceof SpecialTileLay) {
+		            if (extraTileMessage.length() > 1) extraTileMessage.append(", ");
+		            extraTileMessage.append (((SpecialTileLay)sp).getLocation().getName())
+		            	.append(" (") 
+		            	.append(((SpecialTileLay)sp).isExtra() ? "" : "not ")
+		            	.append(" extra)");
+		        } else if ((tileColours = tileLay.getTileColours()) != null) {
+		            String colour;
+		            int number;
+		            for (Iterator it2 = tileColours.keySet().iterator(); it2.hasNext(); ) {
+		                colour = (String) it2.next();
+		                number = ((Integer)tileColours.get(colour)).intValue();
+		                if (normalTileMessage.length() > 1) {
+		                    normalTileMessage.append(" ")
+		                    	.append(LocalText.getText("OR"))
+		                    	        .append(" ");
+		                }
+		                normalTileMessage.append(number).append(" ").append(colour);
+		            }
 		        }
+			    if (extraTileMessage.length() > 1) {
+			        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
+			    }
 		    }
-		    if (extraTileMessage.length() > 0) {
-		        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
-		    }
-		    if (extraTokenMessage.length() > 0) {
-		        extraMessage += LocalText.getText("ExtraToken", extraTokenMessage);
-		    }
-		    if (extraMessage.length() > 0) {
-		        message += " <font color=\"red\">" + extraMessage + "</font>";
-		    }
+	        if (normalTileMessage.length() > 1) {
+	            message += " "+LocalText.getText("TileColours", normalTileMessage);
+	        }
+	    }
+	    if (extraMessage.length() > 0) {
+	        //message += " <font color=\"red\">" + extraMessage + "</font>";
+	        message += "<br><font color=\"red\">" + extraMessage + "</font>";
+	    }
 
-			setMessage(message);
-		}
+		setMessage(message);
+		
+	}
+	
+	private void updateUpgradesPanel() {
+
 		if (upgradePanel != null)
 		{
 			upgradePanel.setUpgrades(null);
@@ -268,7 +320,8 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 			{
-				if (!selectedHex.fixTile(tileLayingEnabled)) {
+			    LayTile allowance = map.getAllowanceForHex(selectedHex.getHexModel());
+				if (!selectedHex.fixTile(tileLayingEnabled, allowance)) {
 				    selectedHex.removeTile();
 				    setSubStep (SELECT_HEX_FOR_TILE);
 				} else {

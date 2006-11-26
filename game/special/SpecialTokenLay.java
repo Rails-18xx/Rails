@@ -57,4 +57,8 @@ public class SpecialTokenLay extends SpecialORProperty
 	{
 		return location;
 	}
+	
+	public String toString() {
+	    return "SpecialTokenLay hex="+locationCode+" extra="+extra+" cost="+costApplies;
+	}
 }

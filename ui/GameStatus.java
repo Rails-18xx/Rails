@@ -409,7 +409,7 @@ public class GameStatus extends JPanel implements ActionListener
 			f.setBackground(c.getBgColour());
 			addField(f,
 					rightCompCaptionXOffset,
-					i,
+					certPerPlayerYOffset + i,
 					1,
 					1,
 					WIDE_LEFT);

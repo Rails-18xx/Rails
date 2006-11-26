@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import ui.hexmap.*;
 
@@ -50,9 +51,14 @@ public class MapPanel extends JPanel
 		setLocation(25, 25);
 	}
 
+	/*
 	public void setSpecialTileLays(ArrayList specials)
 	{
 		map.setSpecials(specials);
+	}
+	*/
+	public void setAllowedTileLays (List allowedTileLays) {
+	    map.setAllowedTileLays (allowedTileLays);
 	}
 
 	public void keyPressed(KeyEvent e)
