@@ -472,13 +472,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 
                 //FOr debugging
                 Map a = possibleActions.getAll();
+                PossibleAction pa;
                 if (a.isEmpty()) System.out.println("No possible actions!!");
                 for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
-                    Object o = it.next();
-                    if (o instanceof LayTile) {
-                        System.out.println("PossibleAction: "+((LayTile)o));
-                    } else {
-                        System.out.println("PossibleAction: "+o);
+                    for (Iterator it2 = possibleActions.get((Class)it.next()).iterator(); it2.hasNext(); ) {
+                        pa = (PossibleAction) it2.next();
+	                    if (pa instanceof LayTile) { //Does not work
+	                        System.out.println("PossibleAction: "+((LayTile)pa));
+	                    } else {
+	                        System.out.println("PossibleAction: "+pa);
+	                    }
                     }
                 }
                 
@@ -488,7 +491,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 	                //GameUILoader.getMapPanel().setSpecialTileLays(
 	                //        (ArrayList) round.getSpecialProperties()); //??
 	                GameUILoader.getMapPanel().setAllowedTileLays (possibleActions.get(LayTile.class));
-	                GameUILoader.orWindow.updateMessage(); //??
+	                //GameUILoader.orWindow.updateMessage(); //??
                }
 
                 if (privatesCanBeBought) {

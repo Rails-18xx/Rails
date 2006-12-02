@@ -1,7 +1,6 @@
 package game;
 
 import game.move.MoveSet;
-import game.move.PriceMove;
 import game.move.PriceTokenMove;
 
 import java.util.ArrayList;

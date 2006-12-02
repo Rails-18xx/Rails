@@ -1,7 +1,5 @@
 package game;
 
-import java.util.*;
-
 public abstract class Company implements CompanyI, ConfigurableComponentI,
 		Cloneable
 {

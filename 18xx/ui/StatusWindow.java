@@ -9,9 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import ui.elements.ClickField;
-
-import java.util.*;
 import java.util.List;
 
 import util.LocalText;

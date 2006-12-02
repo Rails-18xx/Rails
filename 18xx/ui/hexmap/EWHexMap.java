@@ -3,8 +3,6 @@ package ui.hexmap;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import ui.Scale;
-
 import game.*;
 
 /**

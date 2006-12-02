@@ -7,17 +7,13 @@ import util.*;
 
 public class MessagePanel extends JPanel
 {
+	private JLabel message;
 
-	JLabel message;
-
-	//GridBagLayout gb;
-	//GridBagConstraints gbc = new GridBagConstraints();
 	Color background = new Color(225, 225, 225);
 
 	public MessagePanel()
 	{
-		super(/*new GridBagLayout()*/);
-		//gb = (GridBagLayout) getLayout();
+		super();
 
 		setBackground(background);
 		setLines(1);
@@ -28,10 +24,6 @@ public class MessagePanel extends JPanel
 		message.setVerticalAlignment(SwingConstants.CENTER);
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		message.setOpaque(true);
-		//gbc.gridx = gbc.gridy = 0;
-		//gbc.insets = new Insets(0, 0, 0, 0);
-		//gbc.anchor = GridBagConstraints.WEST;
-		//add(message, gbc);
 		add(message);
 		message.setVisible(true);
 		setVisible(true);
@@ -43,7 +35,7 @@ public class MessagePanel extends JPanel
 		{
 			int lines = messageText.split("<[Bb][Rr]>").length + 1;
 			setLines (lines);
-			message.setText("<html>"+messageText+"</html>");
+			message.setText("<html><center>"+messageText+"</center></html>");
 		}
 	}
 	

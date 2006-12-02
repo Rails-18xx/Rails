@@ -7,11 +7,8 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.plaf.*;
-
 import game.*;
 import game.action.LayTile;
-import game.special.SpecialTileLay;
 import ui.*;
 
 /**
@@ -281,8 +278,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 
 		// repaint();
-		GameUILoader.orWindow.updateUpgradePanel();
-		GameUILoader.orWindow.updateORPanel();
+		GameUILoader.orWindow.repaintUpgradePanel();
+		GameUILoader.orWindow.repaintORPanel();
 	}
 
 	/*
