@@ -248,6 +248,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
 	public int getNumberOfTileLays (String tileColour);
 
+	public boolean mustOwnATrain ();
 
 
 }

@@ -147,6 +147,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Private to close if first train is bought */
 	protected String privateToCloseOnFirstTrain = null;
+	
+	/** Must the company own a train */
+	protected boolean mustOwnATrain = true;
 
 	/**
 	 * The constructor. The way this class is instantiated does not allow
@@ -318,7 +321,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 					splitAlways = split.equalsIgnoreCase("always");
 					splitAllowed = split.equalsIgnoreCase("allowed");
 				}
-				else if (propName.equalsIgnoreCase("TrainLimit"))
+				else if (propName.equalsIgnoreCase("Trains"))
 				{
 					nnp2 = properties.item(j).getAttributes();
 					String numbers = XmlUtils.extractStringAttribute(nnp2,
@@ -337,6 +340,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 									"Invalid train limit " + numberArray[i], e);
 						}
 					}
+					mustOwnATrain = XmlUtils.extractBooleanAttribute(nnp2,
+							"mandatory", mustOwnATrain);
 				}
 				else if (propName.equalsIgnoreCase("FirstTrainCloses"))
 				{
@@ -1312,6 +1317,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    if (i == null) return 1;
 	    
 	    return i.intValue();
+	}
+	
+	public boolean mustOwnATrain () {
+	    return mustOwnATrain;
 	}
 
 	public Object clone()

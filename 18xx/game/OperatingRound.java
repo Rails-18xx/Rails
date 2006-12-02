@@ -978,7 +978,8 @@ public class OperatingRound extends Round
 			return false;
 		}
 		
-		if(operatingCompany.getPortfolio().getTrains().length == 0)
+		if(operatingCompany.getPortfolio().getTrains().length == 0
+		        && operatingCompany.mustOwnATrain())
 		{
 			//FIXME: Need to check for valid route before throwing an error.
 			errMsg = companyName + " owns no trains.";
