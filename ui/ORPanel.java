@@ -510,7 +510,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(false);
 
-                GameUILoader.orWindow.updateMessage();
+                //GameUILoader.orWindow.updateMessage(); // Done via enableTileLaying()
 
             } else if (step == OperatingRound.STEP_LAY_TOKEN) {
                 GameUILoader.orWindow.requestFocus();
