@@ -2,7 +2,6 @@ package game;
 
 import game.model.ModelObject;
 import java.util.*;
-import util.LocalText;
 
 /**
  * Objects of this class represent a square on the StockMarket.

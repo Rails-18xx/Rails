@@ -144,6 +144,7 @@ public class ORWindow extends JFrame implements WindowListener
 	    
 	    // For now, this only has an effect during tile and token laying.
 	    // Perhaps we need to centralise message updating here in a later stage.
+	    System.out.println("Calling updateMessage, subStep="+subStep);
 	    if (subStep == INACTIVE) return;
 	    
 	    String message = LocalText.getText(messageKey[subStep]);
@@ -331,7 +332,7 @@ public class ORWindow extends JFrame implements WindowListener
 			}
 		}
 
-		updateUpgradePanel();
+		repaintUpgradePanel();
 	}
 
 	public void processCancel()
@@ -352,14 +353,14 @@ public class ORWindow extends JFrame implements WindowListener
 				orPanel.layTile(null, null, 0);
 		}
 
-		updateUpgradePanel();
+		repaintUpgradePanel();
 	}
 
 	public void enableTileLaying(boolean enabled)
 	{
 		GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
 
-		if (!tileLayingEnabled && enabled)
+		if (/*!tileLayingEnabled &&*/ enabled)
 		{
 			/* Start tile laying step */
 			setSubStep(SELECT_HEX_FOR_TILE);
@@ -405,20 +406,20 @@ public class ORWindow extends JFrame implements WindowListener
 		upgradePanel.setTileMode(enabled);
 	}
 
-	public void updateUpgradePanel()
+	public void repaintUpgradePanel()
 	{
 		upgradePanel.setVisible(false);	
 		upgradePanel.setVisible(true);
 	}
 
-	public void updateORPanel()
+	public void repaintORPanel()
 	{
 		orPanel.revalidate();
 	}
 
 	public void activate()
 	{
-		updateUpgradePanel();
+		repaintUpgradePanel();
 		orPanel.recreate();
 		orPanel.updateStatus();
 		setVisible(true);
