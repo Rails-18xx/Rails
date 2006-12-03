@@ -13,7 +13,7 @@ public class SpecialTokenLay extends SpecialORProperty
 	String locationCode = null;
 	MapHex location = null;
 	boolean extra = false;
-	boolean costApplies = true;
+	boolean free = false;
 
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
@@ -35,9 +35,9 @@ public class SpecialTokenLay extends SpecialORProperty
 					+ " does not exist");
 
 		extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
-		costApplies = XmlUtils.extractBooleanAttribute(nnp,
-				"costApplies",
-				costApplies);
+		free = XmlUtils.extractBooleanAttribute(nnp,
+				"free",
+				free);
 		closingValue = XmlUtils.extractIntegerAttribute(nnp,
 				"closingValue",
 				closingValue);
@@ -48,9 +48,9 @@ public class SpecialTokenLay extends SpecialORProperty
 		return extra;
 	}
 
-	public boolean costApplies()
+	public boolean isFree()
 	{
-		return costApplies;
+		return free;
 	}
 
 	public MapHex getLocation()
@@ -59,6 +59,6 @@ public class SpecialTokenLay extends SpecialORProperty
 	}
 	
 	public String toString() {
-	    return "SpecialTokenLay hex="+locationCode+" extra="+extra+" cost="+costApplies;
+	    return "SpecialTokenLay hex="+locationCode+" extra="+extra+" cost="+free;
 	}
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.*;
 import game.*;
 import game.action.LayTile;
+import game.action.LayToken;
 import ui.*;
 
 /**
@@ -40,6 +41,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	protected List allowedTileLays = null;
 	/** A Map linking tile allowed tiles to each map hex */
 	protected Map allowedTilesPerHex = null;
+	/** A list of all allowed token lays */ /*(may be redundant) */
+	protected List allowedTokenLays = null;
+	/** A Map linking tile allowed tiles to each map hex */
+	protected Map allowedTokensPerHex = null;
 
 	public void setupHexes()
 	{
@@ -212,11 +217,40 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	    }
 	}
 	
-	public LayTile getAllowanceForHex (MapHex hex) {
+	public LayTile getTileAllowanceForHex (MapHex hex) {
 	    if (allowedTilesPerHex.containsKey(hex)) {
 	        return (LayTile) allowedTilesPerHex.get(hex);
 	    } else if (allowedTilesPerHex.containsKey(null)) {
 	        return (LayTile) allowedTilesPerHex.get(null);
+	    } else {
+	        return null;
+	    }
+	}
+
+	public void setAllowedTokenLays (List allowedTokenLays) {
+	    
+	    this.allowedTokenLays = allowedTokenLays;
+	    LayToken allowance;
+	    MapHex location;
+	    allowedTokensPerHex = new HashMap();
+	    
+	    /* Build the per-hex allowances map */
+	    for (Iterator it = this.allowedTokenLays.iterator(); it.hasNext(); ) {
+	        allowance = (LayToken) it.next();
+	        location = allowance.getLocation(); 
+	        /* The location may be null, which means: anywhere.
+	         * This is intended to be a temporary fixture, to be replaced
+	         * by a detailed allowed-tiles-per-hex specification later.  
+	         */
+	        allowedTokensPerHex.put(location, allowance);
+	    }
+	}
+	
+	public LayToken getTokenAllowanceForHex (MapHex hex) {
+	    if (allowedTokensPerHex.containsKey(hex)) {
+	        return (LayToken) allowedTokensPerHex.get(hex);
+	    } else if (allowedTokensPerHex.containsKey(null)) {
+	        return (LayToken) allowedTokensPerHex.get(null);
 	    } else {
 	        return null;
 	    }

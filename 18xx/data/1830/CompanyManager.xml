@@ -26,10 +26,10 @@
     <Blocking hex="F16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
-				<SpecialTileLay location="F16" extra="no" costApplies="yes"/>
+				<SpecialTileLay location="F16" extra="no" free="no"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTokenLay">
-				<SpecialTokenLay location="F16" extra="no" costApplies="no"/>
+				<SpecialTokenLay location="F16" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
