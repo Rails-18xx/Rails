@@ -2,6 +2,7 @@ package ui.hexmap;
 
 import game.*;
 import game.action.LayTile;
+import game.action.LayToken;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -742,13 +743,13 @@ public class GUIHex
 		setToolTip();
 	}
 
-	public boolean fixToken(int station)
+	public boolean fixToken(int station, LayToken allowance)
 	{
 		OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
 		boolean canFixToken = 
 		    or.layBaseToken(or.getOperatingCompany().getName(),
 	            model,
-				station);
+				station, allowance);
 		if (canFixToken) {
 	        GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
 	    } else {

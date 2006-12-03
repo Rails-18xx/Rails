@@ -470,14 +470,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 GameUILoader.orWindow.requestFocus();
                 
-                //FOr debugging
+                //For debugging
                 Map a = possibleActions.getAll();
                 PossibleAction pa;
                 if (a.isEmpty()) System.out.println("No possible actions!!");
                 for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
                     for (Iterator it2 = possibleActions.get((Class)it.next()).iterator(); it2.hasNext(); ) {
                         pa = (PossibleAction) it2.next();
-	                    if (pa instanceof LayTile) { //Does not work
+	                    if (pa instanceof LayTile) {
 	                        System.out.println("PossibleAction: "+((LayTile)pa));
 	                    } else {
 	                        System.out.println("PossibleAction: "+pa);
@@ -513,12 +513,34 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 //GameUILoader.orWindow.updateMessage(); // Done via enableTileLaying()
 
             } else if (step == OperatingRound.STEP_LAY_TOKEN) {
+ 
                 GameUILoader.orWindow.requestFocus();
                 GameUILoader.orWindow.enableTileLaying(false);
                 GameUILoader.orWindow.enableBaseTokenLaying(true);
 
                 tokenCaption.setHighlight(true);
                 tokenCost[orCompIndex].setText("");
+
+                //For debugging
+                Map a = possibleActions.getAll();
+                PossibleAction pa;
+                if (a.isEmpty()) System.out.println("No possible actions!!");
+                for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
+                    for (Iterator it2 = possibleActions.get((Class)it.next()).iterator(); it2.hasNext(); ) {
+                        pa = (PossibleAction) it2.next();
+	                    if (pa instanceof LayToken) {
+	                        System.out.println("PossibleAction: "+((LayToken)pa));
+	                    } else {
+	                        System.out.println("PossibleAction: "+pa);
+	                    }
+                    }
+                }
+                
+                if (possibleActions.contains(LayToken.class)) {
+                    System.out.println("Tokens can be laid");
+	                GameUILoader.orWindow.enableBaseTokenLaying(true);
+	                GameUILoader.getMapPanel().setAllowedTokenLays (possibleActions.get(LayToken.class));
+               }
 
                 button1.setEnabled(false);
                 button1.setVisible(false);

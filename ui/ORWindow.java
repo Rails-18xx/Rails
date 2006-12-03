@@ -2,6 +2,7 @@ package ui;
 
 import game.*;
 import game.action.LayTile;
+import game.action.LayToken;
 import game.action.PossibleActions;
 import game.special.*;
 import ui.hexmap.*;
@@ -165,6 +166,7 @@ public class ORWindow extends JFrame implements WindowListener
 		    int ii=0;
 		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
 		        Map tileColours;
+		        MapHex hex;
 		        //sp = (SpecialORProperty) it.next();
 		        tileLay = (LayTile) it.next();
 			    System.out.println("TileLay object "+(++ii)+": "+tileLay);
@@ -177,11 +179,18 @@ public class ORWindow extends JFrame implements WindowListener
 		         * The last option is only a stopgap as we can't yet determine connectivity.  
 		         */
 		        if (sp != null && sp instanceof SpecialTileLay) {
+		            hex = ((SpecialTileLay)sp).getLocation();
 		            if (extraTileMessage.length() > 1) extraTileMessage.append(", ");
-		            extraTileMessage.append (((SpecialTileLay)sp).getLocation().getName())
+		            extraTileMessage.append (hex.getName())
 		            	.append(" (") 
 		            	.append(((SpecialTileLay)sp).isExtra() ? "" : "not ")
-		            	.append(" extra)");
+		            	.append("extra");
+		            if (hex.getTileCost() > 0) {
+		                extraTileMessage.append (", ")
+		                	.append(((SpecialTileLay)sp).isFree()?"":"not ")
+			            	.append(" free");
+		            }
+		            extraTileMessage.append(")");
 		        } else if ((tileColours = tileLay.getTileColours()) != null) {
 		            String colour;
 		            int number;
@@ -202,6 +211,53 @@ public class ORWindow extends JFrame implements WindowListener
 		    }
 	        if (normalTileMessage.length() > 1) {
 	            message += " "+LocalText.getText("TileColours", normalTileMessage);
+	        }
+	        
+	    } else if (subStep == SELECT_HEX_FOR_TOKEN) {
+	        
+		    /* Compose prompt for tile laying */
+		    LayToken tokenLay;
+		    MapHex location;
+		    StringBuffer normalTokenMessage = new StringBuffer(" ");
+		    StringBuffer extraTokenMessage = new StringBuffer(" ");
+		    
+		    List tokenLays = possibleActions.get(LayToken.class);
+		    System.out.println("There are "+tokenLays.size()+" TokenLay objects");
+		    int ii=0;
+		    for (Iterator it = tokenLays.iterator(); it.hasNext(); ) {
+
+		        tokenLay = (LayToken) it.next();
+			    System.out.println("TokenLay object "+(++ii)+": "+tokenLay);
+		        sp = tokenLay.getSpecialProperty();
+		        /* A LayToken object contais either:
+		         * 1. a special property (specifying a location)
+		         * 2. a location (perhaps a list of?) where a token of a specified
+		         * company (the currently operating one) may be laid, or
+		         * 3. null location and the currently operating company.
+		         * The last option is only a stopgap as we can't yet determine connectivity.  
+		         */
+		        if (sp != null && sp instanceof SpecialTokenLay) {
+		            if (extraTokenMessage.length() > 1) extraTokenMessage.append(", ");
+		            extraTokenMessage.append (((SpecialTokenLay)sp).getLocation().getName())
+	            	.append(" (") 
+	            	.append(((SpecialTokenLay)sp).isExtra() ? "" : "not ")
+	            	.append("extra, ")
+	            	.append(((SpecialTokenLay)sp).isFree()?"":"not ")
+	            	.append("free)");
+			        } else if ((location = tokenLay.getLocation()) != null) {
+	                if (normalTokenMessage.length() > 1) {
+	                    normalTokenMessage.append(" ")
+	                    	.append(LocalText.getText("OR"))
+	                    	        .append(" ");
+	                }
+	                normalTokenMessage.append(location.getName());
+		        }
+			    if (extraTokenMessage.length() > 1) {
+			        extraMessage += LocalText.getText("ExtraToken", extraTokenMessage);
+			    }
+		    }
+	        if (normalTokenMessage.length() > 1) {
+	            message += " "+LocalText.getText("NormalToken", normalTokenMessage);
 	        }
 	    }
 	    if (extraMessage.length() > 0) {
@@ -278,9 +334,10 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 			{
+			    LayToken allowance = map.getTokenAllowanceForHex(selectedHex.getHexModel());
 				if (selectedHex.getHexModel().getStations().size() == 1)
 				{
-					if (selectedHex.fixToken(0)) {
+					if (selectedHex.fixToken(0, allowance)) {
 						//setSubStep(INACTIVE);
 					} else {
 					    setSubStep (SELECT_HEX_FOR_TOKEN);
@@ -304,7 +361,7 @@ public class ORWindow extends JFrame implements WindowListener
 					{
 						if  (selectedHex.fixToken(selectedHex.getHexModel()
 								.getStations()
-								.indexOf(station))) {
+								.indexOf(station), allowance)) {
 						} else {
 						    setSubStep (SELECT_HEX_FOR_TOKEN);
 						}
@@ -321,7 +378,7 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 			{
-			    LayTile allowance = map.getAllowanceForHex(selectedHex.getHexModel());
+			    LayTile allowance = map.getTileAllowanceForHex(selectedHex.getHexModel());
 				if (!selectedHex.fixTile(tileLayingEnabled, allowance)) {
 				    selectedHex.removeTile();
 				    setSubStep (SELECT_HEX_FOR_TILE);

@@ -41,6 +41,8 @@ public class OperatingRound extends Round
 	protected List currentNormalTileLays = new ArrayList();
 	//protected List normalTileLaysDone;
 	protected Map specialPropertyPerHex = new HashMap();
+	protected List currentNormalTokenLays = new ArrayList();
+	protected List currentSpecialTokenLays = new ArrayList();
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
@@ -165,7 +167,8 @@ public class OperatingRound extends Round
 			GameManager.getInstance().setRound(this);
 
 			// prepare any specials
-			prepareStep(step);
+			prepareStep();
+			updateStatus("OperatingRound"); // PERHAPS NEEDED HERE?
 		}
 		else
 		{
@@ -321,6 +324,7 @@ public class OperatingRound extends Round
 			if (hex.getCurrentTile().getId() == hex.getPreprintedTileId())
 			{
 				cost = hex.getTileCost();
+				if (stl != null && stl.isFree()) cost = 0;
 			}
 			else
 			{
@@ -396,7 +400,7 @@ public class OperatingRound extends Round
 		if (tile == null 
 		        || currentNormalTileLays.isEmpty() && currentSpecialTileLays.isEmpty())
 		{
-			nextStep(operatingCompany);
+			nextStep();
 		}
 		
 		updateStatus("layTile");
@@ -506,11 +510,14 @@ public class OperatingRound extends Round
 	 *            company treasury.
 	 * @return
 	 */
-	public boolean layBaseToken(String companyName, MapHex hex, int station)
+	public boolean layBaseToken(String companyName, MapHex hex, int station,
+	        LayToken allowance)
 	{
 
 		String errMsg = null;
 		int cost = 0;
+		SpecialTokenLay stl = null;
+		boolean extra = false;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -530,13 +537,26 @@ public class OperatingRound extends Round
 				break;
 			}
 
-			if (!operatingCompany.hasTokens())
+			if (!operatingCompany.hasTokensLeft())
 			{
 				errMsg = "Company has no more tokens";
 				break;
 			}
+			
+			if (allowance != null) {
+			    MapHex location = allowance.getLocation();
+			    if (location != null && location != hex) {
+			        errMsg = "Token laid in "+hex.getName()
+			        	+" but property is for hex " + location.getName() +": mismatch";
+			        break;
+			    }
+			    stl = allowance.getSpecialProperty();
+			    if (stl != null) extra = stl.isExtra();
+			}
+
 			cost = Game.getCompanyManager()
 					.getBaseTokenLayCostBySequence(operatingCompany.getNextBaseTokenIndex());
+			if (stl != null && stl.isFree()) cost = 0;
 
 			// Does the company have the money?
 			if (cost > operatingCompany.getCash())
@@ -571,7 +591,31 @@ public class OperatingRound extends Round
 			Log.write(companyName + " lays a free token on " + hex.getName());
 		}
 
-		nextStep(operatingCompany);
+		// Was a special property used?
+		if (stl != null)
+		{
+			stl.setExercised();
+			currentSpecialTokenLays.remove(allowance);
+			System.out.println("This was a special token lay, "+
+			        (extra?"":" not")+" extra");
+			
+		}
+		if (!extra)
+		{
+			currentNormalTokenLays.clear();
+			System.out.println("This was a normal token lay");
+		}
+		if (currentNormalTokenLays.isEmpty()) {
+		    System.out.println("No more normal token lays are allowed");
+		} else {
+		    System.out.println("A normal token lay is still allowed");
+		}
+		setSpecialTokenLays();
+		System.out.println("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
+		if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
+		{
+			nextStep();
+		}
 		
 		updateStatus("layBaseToken");
 
@@ -648,18 +692,18 @@ public class OperatingRound extends Round
 		revenue[operatingCompanyIndex] = amount;
 		Log.write(companyName + " earns " + Bank.format(amount));
 
-		nextStep(operatingCompany);
+		nextStep();
 
 		// If we already know what to do: do it.
 		if (amount == 0)
 		{
 			operatingCompany.withhold(0);
-			nextStep(operatingCompany);
+			nextStep();
 		}
 		else if (operatingCompany.isSplitAlways())
 		{
 			operatingCompany.splitRevenue(amount);
-			nextStep(operatingCompany);
+			nextStep();
 		}
 
 		return true;
@@ -710,7 +754,7 @@ public class OperatingRound extends Round
 				+ Bank.format(revenue[operatingCompanyIndex]));
 		operatingCompany.payOut(revenue[operatingCompanyIndex]);
 
-		nextStep(operatingCompany);
+		nextStep();
 
 		return true;
 	}
@@ -767,7 +811,7 @@ public class OperatingRound extends Round
 
 		Log.write(companyName + " pays out half dividend");
 		operatingCompany.splitRevenue(revenue[operatingCompanyIndex]);
-		nextStep(operatingCompany);
+		nextStep();
 
 		return true;
 	}
@@ -815,7 +859,7 @@ public class OperatingRound extends Round
 
 		operatingCompany.withhold(revenue[operatingCompanyIndex]);
 
-		nextStep(operatingCompany);
+		nextStep();
 
 		return true;
 	}
@@ -827,7 +871,7 @@ public class OperatingRound extends Round
 	 * @param company
 	 *            The current company.
 	 */
-	protected void nextStep(PublicCompanyI company)
+	protected void nextStep()
 	{
 		actionPossible = true;
 		actionNotPossibleMessage = "";
@@ -853,13 +897,16 @@ public class OperatingRound extends Round
 			}
 
 			// No reason found to skip this step
-			return;
+			break;
 		}
 
-		if (step >= steps.length)
-			done(company.getName());
+		if (step >= steps.length) {
+			done(operatingCompany.getName());
+		} else {
+		    prepareStep();
+		}
 		
-		updateStatus("nextStep");
+		//updateStatus("nextStep");  // REDUNDANT??
 
 	}
 
@@ -873,9 +920,9 @@ public class OperatingRound extends Round
 		return actionNotPossibleMessage;
 	}
 
-	protected void prepareStep(int step)
+	protected void prepareStep()
 	{
-
+	    System.out.println("Prepare step "+step);
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
@@ -886,7 +933,7 @@ public class OperatingRound extends Round
 		}
 		else if (step == STEP_LAY_TOKEN)
 		{
-
+			setNormalTokenLays();
 			baseTokenLayCost[operatingCompanyIndex] = 0;
 			baseTokensLaid[operatingCompanyIndex] = "";
 		}
@@ -895,7 +942,7 @@ public class OperatingRound extends Round
 			currentSpecialProperties = null;
 		}
 		
-		updateStatus("prepareStep");
+		//updateStatus("prepareStep");
 		
 	}
 	
@@ -948,6 +995,48 @@ public class OperatingRound extends Round
 			}
 		}
 	}
+	
+	protected void setNormalTokenLays () {
+	    
+	    /* Normal token lays */
+	    currentNormalTokenLays.clear();
+	    
+	    /* For now, we allow one token of the currently operating company */
+	    if (operatingCompany.hasTokensLeft()) {
+	        currentNormalTokenLays.add (new LayToken (null, operatingCompany));
+	    }
+	    
+	}
+
+	/**
+	 * Create a List of allowed special token lays (see LayToken class).
+	 * This method should be called before each user action in the base token laying step.
+	 * TODO: Token preparation is practically identical to Tile preparation,
+	 * perhaps the two can be merged to one generic procedure.
+	 */
+	protected void setSpecialTokenLays() {
+	    
+	    /* Special-property tile lays */
+		currentSpecialTokenLays.clear();
+		specialPropertyPerHex.clear();
+		currentSpecialProperties = operatingCompany.getPortfolio()
+				.getSpecialProperties(game.special.SpecialTokenLay.class, false);
+		if (currentSpecialProperties != null)
+		{
+			Iterator it = currentSpecialProperties.iterator();
+			while (it.hasNext())
+			{
+				SpecialTokenLay stl = (SpecialTokenLay) it.next();
+				System.out.println("Spec.prop:"+stl);
+				if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
+				    /* If the special tile lay is not extra, it is only 
+				     * allowed if normal tile lays are also (still) allowed */
+					specialPropertyPerHex.put(stl.getLocation(), stl);
+					currentSpecialTokenLays.add (new LayToken (stl));
+				}
+			}
+		}
+	}
 
 	public List getSpecialProperties()
 	{
@@ -956,8 +1045,12 @@ public class OperatingRound extends Round
 
 	public void skip(String compName)
 	{
-
-		nextStep(operatingCompany);
+	    /* TODO Should insert some validation here, as this method
+	     * is called from the GUI.
+	     */
+	    System.out.println("Skip step "+step);
+		nextStep();
+		updateStatus ("Skip");
 
 	}
 
@@ -1000,7 +1093,8 @@ public class OperatingRound extends Round
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 		//normalTileLaysDone.clear();
 		step = steps[0];
-		prepareStep(step);
+		prepareStep();
+		updateStatus("Done");
 
 		return true;
 	}
@@ -1401,7 +1495,7 @@ public class OperatingRound extends Round
 		/* Create a new list of possible actions for the UI */
 		possibleActions.clear();
 
-		if (step <= STEP_LAY_TRACK)
+		if (step == STEP_LAY_TRACK)
 		{
 			setSpecialTileLays();
 			System.out.println("Normal tile lays: "+currentNormalTileLays.size());
@@ -1409,6 +1503,15 @@ public class OperatingRound extends Round
 
 			possibleActions.addAll (currentNormalTileLays);
 			possibleActions.addAll (currentSpecialTileLays);
+		}
+		else if (step == STEP_LAY_TOKEN) 
+		{
+		    setSpecialTokenLays();
+			System.out.println("Normal token lays: "+currentNormalTokenLays.size());
+			System.out.println("Special token lays: "+currentSpecialTokenLays.size());
+
+			possibleActions.addAll (currentNormalTokenLays);
+			possibleActions.addAll (currentSpecialTokenLays);
 		}
 		
 		// Can private companies be bought?

@@ -239,6 +239,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public int getNumCityTokens();
 	public int getMaxCityTokens();
 	public boolean addToken(TokenHolderI hex);
+	public boolean hasTokensLeft();
 	
     public MapHex getHomeHex();
     public void setHomeHex(MapHex homeHex);

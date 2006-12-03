@@ -60,6 +60,10 @@ public class MapPanel extends JPanel
 	    map.setAllowedTileLays (allowedTileLays);
 	}
 
+	public void setAllowedTokenLays (List allowedTokenLays) {
+	    map.setAllowedTokenLays (allowedTokenLays);
+	}
+
 	public void keyPressed(KeyEvent e)
 	{
 		if (e.getKeyCode() == KeyEvent.VK_F1)
