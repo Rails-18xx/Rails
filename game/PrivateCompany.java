@@ -93,7 +93,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					SpecialPropertyI sp = (SpecialPropertyI) Class.forName(className)
 							.newInstance();
 					sp.setCompany(this);
-					sp.setCondition(condition);
+					sp.setUsableIfOwnedByPlayer(condition.matches("(?i).*ifOwnedByPlayer.*"));
+					sp.setUsableIfOwnedByCompany(condition.matches("(?i).*ifOwnedByCompany.*"));
 					specialProperties.add(sp);
 					sp.configureFromXML(spEl);
 

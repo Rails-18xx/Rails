@@ -946,6 +946,14 @@ public class OperatingRound extends Round
 		
 	}
 	
+	protected void setSpecialProperties (Class clazz) {
+		currentSpecialProperties = operatingCompany.getPortfolio()
+			.getSpecialProperties(clazz, false);
+		currentSpecialProperties.addAll (operatingCompany.getPresident().getPortfolio()
+		    .getSpecialProperties(clazz, false));
+
+	}
+	
 	/**
 	 * Create a List of allowed normal tile lays (see LayTile class).
 	 * This method should be called only once per company turn in an OR:
@@ -977,15 +985,15 @@ public class OperatingRound extends Round
 	    /* Special-property tile lays */
 		currentSpecialTileLays.clear();
 		specialPropertyPerHex.clear();
-		currentSpecialProperties = operatingCompany.getPortfolio()
-				.getSpecialProperties(game.special.SpecialTileLay.class, false);
-		if (currentSpecialProperties != null)
+		setSpecialProperties(game.special.SpecialTileLay.class);
+		if (currentSpecialProperties != null && !currentSpecialProperties.isEmpty())
 		{
 			Iterator it = currentSpecialProperties.iterator();
 			while (it.hasNext())
 			{
-				SpecialTileLay stl = (SpecialTileLay) it.next();
-				System.out.println("Spec.prop:"+stl);
+				Object o = it.next();
+				System.out.println("Spec.prop: "+o);
+				SpecialTileLay stl = (SpecialTileLay) o;
 				if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
 				    /* If the special tile lay is not extra, it is only 
 				     * allowed if normal tile lays are also (still) allowed */
@@ -1019,8 +1027,7 @@ public class OperatingRound extends Round
 	    /* Special-property tile lays */
 		currentSpecialTokenLays.clear();
 		specialPropertyPerHex.clear();
-		currentSpecialProperties = operatingCompany.getPortfolio()
-				.getSpecialProperties(game.special.SpecialTokenLay.class, false);
+		setSpecialProperties(game.special.SpecialTokenLay.class);
 		if (currentSpecialProperties != null)
 		{
 			Iterator it = currentSpecialProperties.iterator();
