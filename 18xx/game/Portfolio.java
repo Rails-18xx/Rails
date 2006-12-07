@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.41 2006/11/26 19:29:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.42 2006/12/07 22:38:22 uid188894 Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -702,8 +702,12 @@ public class Portfolio
 			while (it.hasNext())
 			{
 				sp = (SpecialProperty) it.next();
-				if (sp.isExecutionable() && Util.isInstanceOf(sp, clazz)
-				        && (!sp.isExercised() || includeExercised)) {
+				if ((clazz == null || Util.isInstanceOf(sp, clazz))
+				        && sp.isExecutionable() 
+				        && (!sp.isExercised() || includeExercised)
+				        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
+				             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
+				    System.out.println("Adding SP: "+sp);
 					result.add(sp);
 				}
 			}

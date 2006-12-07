@@ -59,7 +59,7 @@ public class SpecialTileLay extends SpecialORProperty
 	}
 	
 	public String toString() {
-	    return "SpecialTileLay hex="+locationCode+" extra="+extra+" cost="+free;
+	    return "SpecialTileLay comp="+privateCompany.getName()+" hex="+locationCode+" extra="+extra+" cost="+free;
 	}
 
 }

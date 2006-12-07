@@ -6,15 +6,19 @@ import game.ConfigurableComponentI;
 public interface SpecialPropertyI extends ConfigurableComponentI
 {
 
-	public void setCondition(String condition);
-
-	public String getCondition();
-
 	public void setCompany(PrivateCompanyI company);
 
 	public PrivateCompanyI getCompany();
 
 	public boolean isExecutionable();
+
+    public boolean isUsableIfOwnedByCompany();
+    
+    public void setUsableIfOwnedByCompany(boolean usableIfOwnedByCompany);
+    
+    public boolean isUsableIfOwnedByPlayer();
+
+    public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer);
 
 	public void setExercised();
 

@@ -205,9 +205,9 @@ public class ORWindow extends JFrame implements WindowListener
 		                normalTileMessage.append(number).append(" ").append(colour);
 		            }
 		        }
-			    if (extraTileMessage.length() > 1) {
-			        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
-			    }
+		    }
+		    if (extraTileMessage.length() > 1) {
+		        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
 		    }
 	        if (normalTileMessage.length() > 1) {
 	            message += " "+LocalText.getText("TileColours", normalTileMessage);
@@ -252,9 +252,9 @@ public class ORWindow extends JFrame implements WindowListener
 	                }
 	                normalTokenMessage.append(location.getName());
 		        }
-			    if (extraTokenMessage.length() > 1) {
-			        extraMessage += LocalText.getText("ExtraToken", extraTokenMessage);
-			    }
+		    }
+		    if (extraTokenMessage.length() > 1) {
+		        extraMessage += LocalText.getText("ExtraToken", extraTokenMessage);
 		    }
 	        if (normalTokenMessage.length() > 1) {
 	            message += " "+LocalText.getText("NormalToken", normalTokenMessage);

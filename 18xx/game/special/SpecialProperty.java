@@ -5,22 +5,13 @@ import game.*;
 public abstract class SpecialProperty implements SpecialPropertyI
 {
 
-	String condition;
-	PrivateCompanyI privateCompany;
-	int closingValue = 0;
-	boolean exercised = false;
-	boolean isSRProperty = false;
-	boolean isORProperty = false;
-
-	public void setCondition(String condition)
-	{
-		this.condition = condition;
-	}
-
-	public String getCondition()
-	{
-		return condition;
-	}
+	protected PrivateCompanyI privateCompany;
+	protected int closingValue = 0;
+	protected boolean exercised = false;
+	protected boolean isSRProperty = false;
+	protected boolean isORProperty = false;
+	protected boolean usableIfOwnedByPlayer = false;
+	protected boolean usableIfOwnedByCompany = false;
 
 	public void setCompany(PrivateCompanyI company)
 	{
@@ -32,6 +23,34 @@ public abstract class SpecialProperty implements SpecialPropertyI
 		return privateCompany;
 	}
 
+    /**
+     * @return Returns the usableIfOwnedByCompany.
+     */
+    public boolean isUsableIfOwnedByCompany() {
+        return usableIfOwnedByCompany;
+    }
+    /**
+     * @param usableIfOwnedByCompany The usableIfOwnedByCompany to set.
+     */
+    public void setUsableIfOwnedByCompany(boolean usableIfOwnedByCompany) {
+        this.usableIfOwnedByCompany = usableIfOwnedByCompany;
+//        if (usableIfOwnedByCompany)
+//System.out.println(privateCompany.getName()+" spec.prop. "+getClass().getName()+" is usable if owned by a Company");
+    }
+    /**
+     * @return Returns the usableIfOwnedByPlayer.
+     */
+    public boolean isUsableIfOwnedByPlayer() {
+        return usableIfOwnedByPlayer;
+    }
+    /**
+     * @param usableIfOwnedByPlayer The usableIfOwnedByPlayer to set.
+     */
+    public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer) {
+        this.usableIfOwnedByPlayer = usableIfOwnedByPlayer;
+//        if (usableIfOwnedByPlayer)
+//System.out.println(privateCompany.getName()+" spec.prop. "+getClass().getName()+" is usable if owned by a Player");
+    }
 	public void setExercised()
 	{
 		exercised = true;
@@ -58,4 +77,7 @@ public abstract class SpecialProperty implements SpecialPropertyI
 		return isORProperty;
 	}
 
+	public String toString () {
+	    return getClass().getName() + " of private " + privateCompany.getName();
+	}
 }
