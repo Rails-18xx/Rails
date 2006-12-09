@@ -19,6 +19,17 @@ import util.LocalText;
  */
 public class StatusWindow extends JFrame implements ActionListener, KeyListener
 {
+    protected static final String QUIT_CMD = "Quit";
+    protected static final String SAVE_CMD = "Save";
+    protected static final String UNDO_CMD = "Undo";
+    protected static final String REDO_CMD = "Redo";
+    protected static final String MARKET_CMD = "Market";
+    protected static final String MAP_CMD = "Map";
+    protected static final String LOG_CMD = "Log";
+    protected static final String BUY_CMD = "Buy";
+    protected static final String SELL_CMD = "Sell";
+    protected static final String DONE_CMD = "Done";
+    protected static final String SWAP_CMD = "Swap";
 
 	private JPanel buttonPanel;
 	private GameStatus gameStatus;
@@ -70,8 +81,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		moveMenu.setMnemonic(KeyEvent.VK_M);
 
 		menuItem = new JMenuItem(LocalText.getText("SAVE"));
-		menuItem.setName(LocalText.getText("SAVE"));
-		menuItem.setActionCommand(LocalText.getText("SAVE"));
+		//menuItem.setName(SAVE_CMD);
+		menuItem.setActionCommand(SAVE_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
@@ -82,8 +93,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		fileMenu.addSeparator();
 
 		menuItem = new JMenuItem(LocalText.getText("QUIT"));
-		menuItem.setName(LocalText.getText("QUIT"));
-		menuItem.setActionCommand(LocalText.getText("QUIT"));
+		//menuItem.setName(QUIT_CMD);
+		menuItem.setActionCommand(QUIT_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_Q);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
 				ActionEvent.ALT_MASK));
@@ -93,7 +104,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		menuBar.add(fileMenu);
 
 		menuItem = new JMenuItem(LocalText.getText("SET_SCALE"));
-		menuItem.setName(LocalText.getText("SET_SCALE"));
+		//menuItem.setName(LocalText.getText("SET_SCALE"));
 		menuItem.setMnemonic(KeyEvent.VK_S);
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false); //XXX: Setting to disabled until we implement this
@@ -102,22 +113,22 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		optMenu.addSeparator();
 
 		menuItem = new JCheckBoxMenuItem(LocalText.getText("MARKET"));
-		menuItem.setName(LocalText.getText("MARKET"));
-		menuItem.setActionCommand(LocalText.getText("MARKET"));
+		menuItem.setName(MARKET_CMD);
+		menuItem.setActionCommand(MARKET_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_K);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
 		menuItem = new JCheckBoxMenuItem(LocalText.getText("MAP"));
-		menuItem.setName(LocalText.getText("MAP"));
-		menuItem.setActionCommand(LocalText.getText("MAP"));
+		menuItem.setName(MAP_CMD);
+		menuItem.setActionCommand(MAP_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_M);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
 		menuItem = new JCheckBoxMenuItem(LocalText.getText("LOG"));
 		menuItem.setName(LocalText.getText("LOG"));
-		menuItem.setActionCommand(LocalText.getText("LOG"));
+		menuItem.setActionCommand(LOG_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_L);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
@@ -126,7 +137,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		undoItem = new JMenuItem(LocalText.getText("UNDO"));
 		undoItem.setName(LocalText.getText("UNDO"));
-		undoItem.setActionCommand("UNDO");
+		undoItem.setActionCommand(UNDO_CMD);
 		undoItem.setMnemonic(KeyEvent.VK_U);
 		undoItem.addActionListener(this);
 		undoItem.setEnabled(false);
@@ -134,7 +145,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		redoItem = new JMenuItem(LocalText.getText("REDO"));
 		redoItem.setName(LocalText.getText("REDO"));
-		redoItem.setActionCommand("REDO");
+		redoItem.setActionCommand(REDO_CMD);
 		redoItem.setMnemonic(KeyEvent.VK_R);
 		redoItem.addActionListener(this);
 		redoItem.setEnabled(false);
@@ -172,9 +183,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		buttonPanel.add(sellButton);
 		buttonPanel.add(passButton);
 
-		buyButton.setActionCommand(LocalText.getText("BUY"));
-		sellButton.setActionCommand(LocalText.getText("SELL"));
-		passButton.setActionCommand(LocalText.getText("Done"));
+		buyButton.setActionCommand(BUY_CMD);
+		sellButton.setActionCommand(SELL_CMD);
+		passButton.setActionCommand(DONE_CMD);
 
 		extraButton.addActionListener(this);
 		buyButton.addActionListener(this);
@@ -235,8 +246,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				GameUILoader.stockChart.setVisible(false);
 				GameUILoader.orWindow.setVisible(false);
 
-				disableCheckBoxMenuItem(LocalText.getText("MAP"));
-				disableCheckBoxMenuItem(LocalText.getText("MARKET"));
+				disableCheckBoxMenuItem(MAP_CMD);
+				disableCheckBoxMenuItem(MARKET_CMD);
 			}
 		}
 		else if (currentRound instanceof StockRound)
@@ -300,8 +311,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				GameUILoader.stockChart.setVisible(true);
 				GameUILoader.orWindow.setVisible(false);
 
-				enableCheckBoxMenuItem(LocalText.getText("MARKET"));
-				disableCheckBoxMenuItem(LocalText.getText("MAP"));
+				enableCheckBoxMenuItem(MARKET_CMD);
+				disableCheckBoxMenuItem(MAP_CMD);
 			}
 
 			/* Any special properties in force? */
@@ -320,7 +331,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 							.getName()
 							+ "/"
 							+ ((ExchangeForShare) sp).getPublicCompanyName());
-					extraButton.setActionCommand("SWAP");
+					extraButton.setActionCommand(SWAP_CMD);
 					extraButton.setVisible(true);
 					extraButton.setEnabled(true);
 				}
@@ -342,8 +353,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				GameUILoader.stockChart.setVisible(false);
 				GameUILoader.orWindow.activate();
 
-				enableCheckBoxMenuItem(LocalText.getText("MAP"));
-				disableCheckBoxMenuItem(LocalText.getText("MARKET"));
+				enableCheckBoxMenuItem(MAP_CMD);
+				disableCheckBoxMenuItem(MARKET_CMD);
 			}
 		}
 
@@ -411,19 +422,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		int returnVal = 0;
 		player = GameManager.getCurrentPlayer();
 
-		if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("BUY")))
+		if (actor.getActionCommand().equals(BUY_CMD))
 		{
 			buyButtonClicked();
-			passButton.setText(LocalText.getText("Done"));
+			passButton.setText(DONE_CMD);
 			passButton.setMnemonic(KeyEvent.VK_D);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SELL")))
+		else if (actor.getActionCommand().equals(SELL_CMD))
 		{
 			sellButtonClicked();
-			passButton.setText(LocalText.getText("Done"));
+			passButton.setText(DONE_CMD);
 			passButton.setMnemonic(KeyEvent.VK_D);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("Done")))
+		else if (actor.getActionCommand().equals(DONE_CMD))
 		{
 			if (GameManager.isGameOver())
 			{
@@ -433,7 +444,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			passButton.setText(LocalText.getText("PASS"));
 			passButton.setMnemonic(KeyEvent.VK_P);
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase("SWAP"))
+		else if (actor.getActionCommand().equals(SWAP_CMD))
 		{
 			/* Execute a special property (i.e. swap M&H for NYC) */
 			SpecialSRProperty sp = (SpecialSRProperty) stockRound.getSpecialProperties()
@@ -446,32 +457,32 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 				extraButton.setVisible(false);
 			}
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("QUIT")))
+		else if (actor.getActionCommand().equals(QUIT_CMD))
 			System.exit(0);
 		// We're not going to actually DO anything with the selected file
 		// until the infrastructure for saved games is built
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("SAVE")))
+		else if (actor.getActionCommand().equals(SAVE_CMD))
 			returnVal = new JFileChooser().showSaveDialog(this);
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("LOG")))
+		else if (actor.getActionCommand().equals(LOG_CMD))
 		{
 			GameUILoader.messageWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("MARKET")))
+		else if (actor.getActionCommand().equals(MARKET_CMD))
 		{
 			GameUILoader.stockChart.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
-		else if (actor.getActionCommand().equalsIgnoreCase(LocalText.getText("MAP")))
+		else if (actor.getActionCommand().equals(MAP_CMD))
 		{
 			GameUILoader.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
-		} else if (actor.getActionCommand().equalsIgnoreCase("UNDO"))
+		} else if (actor.getActionCommand().equals(UNDO_CMD))
 		{
 		    MoveSet.undo();
 		    updateStatus();
 			return;
-		} else if (actor.getActionCommand().equalsIgnoreCase("REDO"))
+		} else if (actor.getActionCommand().equals(REDO_CMD))
 		{
 		    MoveSet.redo();
 		    updateStatus();

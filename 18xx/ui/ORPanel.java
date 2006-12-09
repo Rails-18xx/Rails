@@ -29,6 +29,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private static final int WIDE_TOP = 4;
 
     private static final int WIDE_BOTTOM = 8;
+    
+    private static final String BUY_PRIVATE_CMD = "BuyPrivate";
+    private static final String BUY_TRAIN_CMD = "BuyTrain";
+    private static final String WITHHOLD_CMD = "Withhold";
+    private static final String SPLIT_CMD = "Split";
+    private static final String PAYOUT_CMD = "Payout";
+    private static final String SET_REVENUE_CMD = "SetRevenue";
+    private static final String LAY_TILE_CMD = "LayTile";
+    private static final String LAY_TOKEN_CMD = "LayToken";
+    private static final String DONE_CMD = "Done";
 
     private JPanel statusPanel;
 
@@ -213,14 +223,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         buttonPanel = new JPanel();
 
         button1 = new JButton(LocalText.getText("LayTile"));
-        button1.setActionCommand(LocalText.getText("LayTile"));
+        button1.setActionCommand(LAY_TILE_CMD);
         button1.setMnemonic(KeyEvent.VK_T);
         button1.addActionListener(this);
         button1.setEnabled(true);
         buttonPanel.add(button1);
 
         button2 = new JButton(LocalText.getText("BUY_PRIVATE"));
-        button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
+        button2.setActionCommand(BUY_PRIVATE_CMD);
         button2.setMnemonic(KeyEvent.VK_V);
         button2.addActionListener(this);
         button2.setEnabled(false);
@@ -228,7 +238,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         buttonPanel.add(button2);
 
         button3 = new JButton(LocalText.getText("Done"));
-        button3.setActionCommand(LocalText.getText("Done"));
+        button3.setActionCommand(DONE_CMD);
         button3.setMnemonic(KeyEvent.VK_D);
         button3.addActionListener(this);
         button3.setEnabled(true);
@@ -496,7 +506,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 if (privatesCanBeBought) {
 	                button2.setText(LocalText.getText("BUY_PRIVATE"));
-	                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
+	                button2.setActionCommand(BUY_PRIVATE_CMD);
 	                button2.setMnemonic(KeyEvent.VK_V);
 	                button2.setEnabled(privatesCanBeBoughtNow);
 	                button2.setVisible(privatesCanBeBoughtNow);
@@ -506,7 +516,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 }
 
                 button3.setText(LocalText.getText("Done"));
-                button3.setActionCommand(LocalText.getText("Done"));
+                button3.setActionCommand(DONE_CMD);
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(false);
 
@@ -557,7 +567,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                             true);
 
                     button1.setText(LocalText.getText("SET_REVENUE"));
-                    button1.setActionCommand(LocalText.getText("SET_REVENUE"));
+                    button1.setActionCommand(SET_REVENUE_CMD);
                     button1.setMnemonic(KeyEvent.VK_R);
                     button1.setEnabled(true);
                     button1.setVisible(true);
@@ -573,19 +583,19 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 revenueCaption.setHighlight(true);
                 button1.setText(LocalText.getText("WITHHOLD"));
-                button1.setActionCommand(LocalText.getText("WITHHOLD"));
+                button1.setActionCommand(WITHHOLD_CMD);
                 button1.setMnemonic(KeyEvent.VK_W);
                 button1.setEnabled(true);
                 button1.setVisible(true);
 
                 button2.setText(LocalText.getText("SPLIT"));
-                button2.setActionCommand(LocalText.getText("SPLIT"));
+                button2.setActionCommand(SPLIT_CMD);
                 button2.setMnemonic(KeyEvent.VK_S);
                 button2.setEnabled(companies[orCompIndex].isSplitAllowed());
                 button2.setVisible(companies[orCompIndex].isSplitAllowed());
 
                 button3.setText(LocalText.getText("PAYOUT"));
-                button3.setActionCommand(LocalText.getText("PAYOUT"));
+                button3.setActionCommand(PAYOUT_CMD);
                 button3.setMnemonic(KeyEvent.VK_P);
                 button3.setEnabled(true);
 
@@ -595,14 +605,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 trainCaption.setHighlight(true);
 
                 button1.setText(LocalText.getText("BUY_TRAIN"));
-                button1.setActionCommand(LocalText.getText("BUY_TRAIN"));
+                button1.setActionCommand(BUY_TRAIN_CMD);
                 button1.setMnemonic(KeyEvent.VK_T);
                 button1.setEnabled(oRound.getOperatingCompany().mayBuyTrains());
                 button1.setVisible(true);
 
                 if (privatesCanBeBought) {
 	                button2.setText(LocalText.getText("BUY_PRIVATE"));
-	                button2.setActionCommand(LocalText.getText("BUY_PRIVATE"));
+	                button2.setActionCommand(BUY_PRIVATE_CMD);
 	                button2.setMnemonic(KeyEvent.VK_V);
 	                button2.setEnabled(privatesCanBeBoughtNow);
 	                button2.setVisible(privatesCanBeBoughtNow);
@@ -612,7 +622,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 }
 
                 button3.setText(LocalText.getText("Done"));
-                button3.setActionCommand(LocalText.getText("Done"));
+                button3.setActionCommand(DONE_CMD);
                 button3.setMnemonic(KeyEvent.VK_D);
                 button3.setEnabled(true);
 
@@ -729,7 +739,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         String command = actor.getActionCommand();
         int step = oRound.getStep();
-        boolean done = command.equals(LocalText.getText("Done"));
+        boolean done = command.equals(DONE_CMD);
         int amount;
 
         /*if (command.equals(LocalText.getText("LAY_TRACK")) || done
@@ -740,35 +750,36 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 && step == OperatingRound.STEP_LAY_TOKEN) {
             // This is just a No-op. Tile handling is now all done in
             // layBaseToken().
-        } else*/ if (command.equals(LocalText.getText("SET_REVENUE")) || done
+        } else*/ 
+        if (command.equals(SET_REVENUE_CMD) || done
                 && step == OperatingRound.STEP_CALC_REVENUE) {
             amount = done ? 0 : ((Integer) revenueSelect[orCompIndex]
                     .getValue()).intValue();
             setRevenue(amount);
             revenue[orCompIndex].setText(Bank.format(amount));
 
-        } else if (command.equals(LocalText.getText("PAYOUT"))) {
+        } else if (command.equals(PAYOUT_CMD)) {
             decision[orCompIndex].setText(LocalText.getText("PAYOUT"));
             oRound.fullPayout(orCompName);
             //StockChart.refreshStockPanel();
             //repaint();
-        } else if (command.equals(LocalText.getText("SPLIT"))) {
+        } else if (command.equals(SPLIT_CMD)) {
             decision[orCompIndex].setText(LocalText.getText("SPLIT"));
             oRound.splitPayout(orCompName);
             //StockChart.refreshStockPanel();
             //repaint();
-        } else if (command.equals(LocalText.getText("WITHHOLD"))) {
+        } else if (command.equals(WITHHOLD_CMD)) {
             decision[orCompIndex].setText(LocalText.getText("WITHHOLD"));
             oRound.withholdPayout(orCompName);
             //StockChart.refreshStockPanel();
             //repaint();
-        } else if (command.equals(LocalText.getText("BUY_TRAIN"))) {
+        } else if (command.equals(BUY_TRAIN_CMD)) {
             buyTrain();
-        } else if (command.equals(LocalText.getText("BUY_PRIVATE"))) {
+        } else if (command.equals(BUY_PRIVATE_CMD)) {
 
             buyPrivate();
 
-        } else if (command.equals(LocalText.getText("Done"))) {
+        } else if (command.equals(DONE_CMD)) {
             if (!oRound.done(orComp.getName())) {
                 displayError();
             }
@@ -811,29 +822,26 @@ private void buyTrain()
             /* Create a prompt per buying option */
             b = new StringBuffer();
             
-			b.append(train.getName())
-					.append("-" + LocalText.getText("TRAIN_FROM") + " ")
-					.append(train.getHolder().getName());
+			b.append(LocalText.getText("BUY_TRAIN_FROM", new String[] {
+					        train.getName(),
+					        train.getHolder().getName()}));
 			if (bTrain.isForExchange())
 			{
-				b.append(" (" + LocalText.getText("EXCHANGED") + ")");
+				b.append(" (").append(LocalText.getText("EXCHANGED")).append(")");
             }
 			if (cost > 0)
 			{
-				b.append(" " + LocalText.getText("AT") + " ")
-						.append(Bank.format(cost));
+				b.append(" ").append(LocalText.getText("AT_PRICE",Bank.format(cost)));
             }
 			if (bTrain.mustPresidentAddCash())
 			{
-				b.append(" (" + LocalText.getText("YOU_MUST_ADD") + " ")
-                	.append(Bank.format(bTrain.getPresidentCashToAdd()))
-                	.append (")");
+				b.append(LocalText.getText("YOU_MUST_ADD_CASH",
+				        Bank.format(bTrain.getPresidentCashToAdd())));
 			}
 			else if (bTrain.mayPresidentAddCash())
 			{
-				b.append(" (" + LocalText.getText("YOU_MAY_ADD") + " ")
-            	.append(Bank.format(bTrain.getPresidentCashToAdd()))
-            	.append (")");
+				b.append(LocalText.getText("YOU_MAY_ADD_CASH",
+				        Bank.format(bTrain.getPresidentCashToAdd())));
             }
             prompt = b.toString();
             prompts.add(prompt);
@@ -899,8 +907,8 @@ private void buyTrain()
                 options[j + 1] = oldTrains[j].getName();
             }
 			String exchangedTrainName = (String) JOptionPane.showInputDialog(this,
-					LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR")
-                                    + Bank.format(price),
+					LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
+                                    Bank.format(price)),
 					LocalText.getText("WHICH_TRAIN_EXCHANGE"),
 					JOptionPane.QUESTION_MESSAGE,
 					null,
@@ -957,13 +965,10 @@ private void buyTrain()
 						{
                             options[j] = oldTrains[j].getName();
                         }
-						String discardedTrainName = (String) JOptionPane.showInputDialog(this,
-								LocalText.getText("COMPANY")
-										+ " "
-                                                + c.getName()
-										+ LocalText.getText("HAS_TOO_MANY_TRAINS"),
-								LocalText.getText("WHICH_TRAIN_EXCHANGE"),
-                                        JOptionPane.QUESTION_MESSAGE,
+						String discardedTrainName = (String) JOptionPane.showInputDialog (this,
+						        LocalText.getText("HAS_TOO_MANY_TRAINS", c.getName()),
+								LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
+                                JOptionPane.QUESTION_MESSAGE,
 								null,
 								options,
 								options[0]);
@@ -1039,12 +1044,15 @@ private void buyTrain()
                 //maxPrice = (int) (priv.getBasePrice() * orComp
                 //        .getUpperPrivatePriceFactor());
                 String price = (String) JOptionPane.showInputDialog(this,
-                        LocalText.getText("BUY") + " " + privName
-                                + LocalText.getText("FOR_WHAT_PRICE") + " ("
-                                + LocalText.getText("RANGE") + " "
-                                + Bank.format(minPrice) + " - "
-                                + Bank.format(maxPrice) + ")?", LocalText
-                                .getText("WHICH_PRICE"),
+                        //LocalText.getText("BUY") + " " + privName
+                        //        + LocalText.getText("FOR_WHAT_PRICE") + " ("
+                        //        + LocalText.getText("RANGE") + " "
+                        //        + Bank.format(minPrice) + " - "
+                        //        + Bank.format(maxPrice) + ")?",
+                        LocalText.getText("WHICH_PRIVATE_PRICE", new String[] {
+                                privName,
+                                Bank.format(minPrice), Bank.format(maxPrice)}),
+                        LocalText.getText("WHICH_PRICE"),
                         JOptionPane.QUESTION_MESSAGE);
                 try {
                     amount = Integer.parseInt(price);
