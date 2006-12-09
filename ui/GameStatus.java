@@ -29,6 +29,10 @@ public class GameStatus extends JPanel implements ActionListener
 	private static final int WIDE_RIGHT = 2;
 	private static final int WIDE_TOP = 4;
 	private static final int WIDE_BOTTOM = 8;
+	
+	private static final String BUY_FROM_IPO_CMD = "BuyFromIPO";
+	private static final String BUY_FROM_POOL_CMD = "BuyFromPool";
+	private static final String SELL_CMD = "Sell";
 
 	private static GameStatus gameStatus;
 	private JFrame parent;
@@ -330,7 +334,7 @@ public class GameStatus extends JPanel implements ActionListener
 						1,
 						0);
 				f = certPerPlayerButton[i][j] = new ClickField("",
-						LocalText.getText("SELL"),
+						SELL_CMD,
 						LocalText.getText("ClickForSell"),
 						this,
 						buySellGroup);
@@ -344,8 +348,8 @@ public class GameStatus extends JPanel implements ActionListener
 			f = certInIPO[i] = new Field(Bank.getIpo().getShareModel(c));
 			addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
 			f = certInIPOButton[i] = new ClickField(certInIPO[i].getText(),
-					LocalText.getText("BUY") + LocalText.getText("IPO"),
-					LocalText.getText("ClickToSelectForBuy"),
+					BUY_FROM_IPO_CMD,
+					LocalText.getText("ClickToSelectForBuying"),
 					this,
 					buySellGroup);
 			f.setVisible(false);
@@ -360,8 +364,8 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					WIDE_RIGHT);
 			f = certInPoolButton[i] = new ClickField(certInPool[i].getText(),
-					LocalText.getText("BUY") + LocalText.getText("POOL"),
-					LocalText.getText("ClickToBuy"),
+					BUY_FROM_POOL_CMD,
+					LocalText.getText("ClickToSelectForBuying"),
 					this,
 					buySellGroup);
 			f.setVisible(false);
@@ -613,21 +617,19 @@ public class GameStatus extends JPanel implements ActionListener
 		if (source instanceof ClickField)
 		{
 			gbc = gb.getConstraints(source);
-			if (command.equals(LocalText.getText("SELL")))
+			if (command.equals(SELL_CMD))
 			{
 				compSellIndex = gbc.gridy - certPerPlayerYOffset;
 				compBuyIPOIndex = compBuyPoolIndex = -1;
 				((StatusWindow) parent).enableSellButton(true);
 			}
-			else if (command.equals(LocalText.getText("BUY")
-					+ LocalText.getText("IPO")))
+			else if (command.equals(BUY_FROM_IPO_CMD))
 			{
 				compBuyIPOIndex = gbc.gridy - certInIPOYOffset;
 				compSellIndex = compBuyPoolIndex = -1;
 				((StatusWindow) parent).enableBuyButton(true);
 			}
-			else if (command.equals(LocalText.getText("BUY")
-					+ LocalText.getText("POOL")))
+			else if (command.equals(BUY_FROM_POOL_CMD))
 			{
 				compBuyPoolIndex = gbc.gridy - certInPoolYOffset;
 				compSellIndex = compBuyIPOIndex = -1;
