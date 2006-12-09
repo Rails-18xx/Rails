@@ -100,7 +100,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		buttonPanel = new JPanel();
 
 		buyButton = new JButton(LocalText.getText("BUY"));
-		buyButton.setActionCommand(LocalText.getText("BUY"));
+		buyButton.setActionCommand(BUY_CMD);
 		buyButton.setMnemonic(KeyEvent.VK_B);
 		buyButton.addActionListener(this);
 		buyButton.setEnabled(false);
@@ -108,7 +108,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
 		if (includeBidding) {
 			bidButton = new JButton(LocalText.getText("BID") + ":");
-			bidButton.setActionCommand(LocalText.getText("BID"));
+			bidButton.setActionCommand(BID_CMD);
 			bidButton.setMnemonic(KeyEvent.VK_D);
 			bidButton.addActionListener(this);
 			bidButton.setEnabled(false);
@@ -125,7 +125,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 
 		passButton = new JButton(LocalText.getText("PASS"));
-		passButton.setActionCommand(LocalText.getText("PASS"));
+		passButton.setActionCommand(PASS_CMD);
 		passButton.setMnemonic(KeyEvent.VK_P);
 		passButton.addActionListener(this);
 		passButton.setEnabled(true);
@@ -338,7 +338,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			//if (round.isBuyable(item))
 			if (status == StartItem.BUYABLE)
 			{
-				itemNameButton[i].setToolTipText("Click to select for buying");
+				itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
 				itemNameButton[i].setActionCommand(BUY_CMD);
 				setItemNameButton(i, true);
 				if (includeBidding) minBid[i].setText("");
@@ -346,14 +346,14 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			//else if (round.isBiddable(item))
 			else if (status == StartItem.BIDDABLE)
 			{
-				itemNameButton[i].setToolTipText("Click to select for bidding");
+				itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBidding"));
 				itemNameButton[i].setActionCommand(BID_CMD);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
 			}
 			else if (status == StartItem.AUCTIONED)
 			{
-				itemNameButton[i].setToolTipText("This item is auctioned now");
+				itemNameButton[i].setToolTipText(LocalText.getText("ThisItemIsAuctionedNow"));
 				itemNameButton[i].setActionCommand(BID_CMD);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
