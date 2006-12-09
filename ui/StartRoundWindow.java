@@ -23,6 +23,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private static final int WIDE_RIGHT = 2;
 	private static final int WIDE_TOP = 4;
 	private static final int WIDE_BOTTOM = 8;
+	
+	protected static final String BUY_CMD = "Buy";
+	protected static final String BID_CMD = "Bid";
+	protected static final String PASS_CMD = "Pass";
 
 	//private static StartRoundWindow startRoundPanel;
 	private JPanel statusPanel;
@@ -335,7 +339,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			if (status == StartItem.BUYABLE)
 			{
 				itemNameButton[i].setToolTipText("Click to select for buying");
-				itemNameButton[i].setActionCommand("Buy");
+				itemNameButton[i].setActionCommand(BUY_CMD);
 				setItemNameButton(i, true);
 				if (includeBidding) minBid[i].setText("");
 			}
@@ -343,14 +347,14 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			else if (status == StartItem.BIDDABLE)
 			{
 				itemNameButton[i].setToolTipText("Click to select for bidding");
-				itemNameButton[i].setActionCommand("Bid");
+				itemNameButton[i].setActionCommand(BID_CMD);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
 			}
 			else if (status == StartItem.AUCTIONED)
 			{
 				itemNameButton[i].setToolTipText("This item is auctioned now");
-				itemNameButton[i].setActionCommand("Bid");
+				itemNameButton[i].setActionCommand(BID_CMD);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
 				itemIndex = i;
@@ -422,7 +426,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		{
 			gbc = gb.getConstraints(source);
 			itemIndex = gbc.gridy - bidPerPlayerYOffset;
-			if (command.equals("Buy"))
+			if (command.equals(BUY_CMD))
 			{
 				buyButton.setEnabled(true);
 				if (includeBidding) {
@@ -430,7 +434,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					bidAmount.setEnabled(false);
 				}
 			}
-			else if (command.equals("Bid"))
+			else if (command.equals(BID_CMD))
 			{
 				buyButton.setEnabled(false);
 				if (includeBidding) {
@@ -444,7 +448,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 		else if (source instanceof JButton)
 		{
-			if (command.equals("Buy"))
+			if (command.equals(BUY_CMD))
 			{
 				round.buy(players[playerIndex].getName(),
 						items[itemIndex].getName());
@@ -455,14 +459,14 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					round.resetCompanyJustStarted();
 				}
 			}
-			else if (command.equals("Bid"))
+			else if (command.equals(BID_CMD))
 			{
 				round.bid(players[playerIndex].getName(),
 						items[itemIndex].getName(),
 						((Integer) bidAmount.getValue()).intValue());
 				bidPerPlayer[itemIndex][playerIndex].setText(Bank.format(items[itemIndex].getBid()));
 			}
-			else if (command.equals("Pass"))
+			else if (command.equals(PASS_CMD))
 			{
 				round.pass(players[playerIndex].getName());
 			}
