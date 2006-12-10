@@ -1,5 +1,9 @@
 package game;
 
+import game.model.ModelObject;
+import game.move.MoveSet;
+import game.move.TileMove;
+
 import java.util.*;
 import java.util.regex.*;
 import org.w3c.dom.*;
@@ -32,7 +36,7 @@ import util.XmlUtils;
  * For EW-oriented tiles the above picture should be rotated 30 degrees
  * clockwise.
  */
-public class MapHex implements ConfigurableComponentI, TokenHolderI
+public class MapHex extends ModelObject implements ConfigurableComponentI, TokenHolderI
 {
 
 	public static final int EW = 0;
@@ -432,8 +436,14 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	//	return companyDestination;
 	//}
 
+	/** Prepare a tile upgrade.
+	 * The actual tile replacement is done in replaceTile(), via a TileMove object.
+	 */
 	public void upgrade(TileI newTile, int newOrientation)
 	{
+	    MoveSet.add(new TileMove (this, currentTile, currentTileRotation,
+	            newTile, newOrientation));
+	    /*
 		if (currentTile != null)
 			currentTile.remove(this);
 		
@@ -445,6 +455,42 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 		
 		currentTile = newTile;
 		currentTileRotation = newOrientation;
+		*/
+
+		// Further consequences to be processed here, e.g. new routes etc.
+	}
+	
+	/** Execute a tile replacement.
+	 * This method should only be called from TileMove objects.
+	 * It is also used to undo tile lays.
+	 * @param oldTile The tile to be replaced (only used for validation).
+	 * @param newTile The new tile to be laid on this hex.
+	 * @param newTileOrientation The orientation of the new tile (0-5).*/
+	public void replaceTile (TileI oldTile, TileI newTile, int newTileOrientation) {
+	    
+	    if (oldTile != currentTile) {
+	        new Exception ("ERROR! Hex "+name+" wants to replace tile #"+oldTile.getName()
+	                +" but has tile #"+currentTile.getName()+"!")
+	            .printStackTrace();
+	    }
+		if (currentTile != null) {
+			currentTile.remove(this);
+		}
+		
+		System.out.println("On hex "+name+" replacing tile "
+		        +currentTile.getName()+"/"+currentTileRotation
+		        +" by "+newTile.getName()+"/"+newTileOrientation);
+		
+		newTile.lay(this);
+
+		// Move tokens from old station list to new station list.
+		// Merge lists if necessary.		
+		moveTokens(newTile);
+		
+		currentTile = newTile;
+		currentTileRotation = newTileOrientation;
+		
+		update(); // To notify ViewObject (Observer)
 
 		// Further consequences to be processed here, e.g. new routes etc.
 	}
@@ -730,5 +776,14 @@ public class MapHex implements ConfigurableComponentI, TokenHolderI
 	public String toString()
 	{
 		return name + " (" + row + "," + column + ")";
+	}
+	
+	/**
+	 * The string sent to the GUIHex as it is notified.
+	 * Format is tile/orientation. 
+	 * @TODO include tokens??
+	 */
+	public Object getNotificationObject() {
+	    return currentTile.getName() + "/" + currentTileRotation; 
 	}
 }

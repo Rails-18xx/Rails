@@ -3,6 +3,7 @@ package ui;
 import game.*;
 import game.action.*;
 import game.model.*;
+import game.move.MoveSet;
 import ui.elements.*;
 import ui.hexmap.HexMap;
 import util.*;
@@ -39,6 +40,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private static final String LAY_TILE_CMD = "LayTile";
     private static final String LAY_TOKEN_CMD = "LayToken";
     private static final String DONE_CMD = "Done";
+    private static final String UNDO_CMD = "Undo";
+    private static final String REDO_CMD = "Redo";
 
     private JPanel statusPanel;
 
@@ -113,6 +116,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JButton button2;
 
     private JButton button3;
+    
+    private JButton undoButton;
+    private JButton redoButton;
 
     private int np = 0; // Number of players
 
@@ -243,6 +249,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button3.addActionListener(this);
         button3.setEnabled(true);
         buttonPanel.add(button3);
+        
+        undoButton = new JButton(LocalText.getText("UNDO"));
+        undoButton.setActionCommand(UNDO_CMD);
+        undoButton.setMnemonic(KeyEvent.VK_U);
+        undoButton.addActionListener(this);
+        undoButton.setEnabled(false);
+        buttonPanel.add(undoButton);
+
+        redoButton = new JButton(LocalText.getText("REDO"));
+        redoButton.setActionCommand(REDO_CMD);
+        redoButton.setMnemonic(KeyEvent.VK_R);
+        redoButton.addActionListener(this);
+        redoButton.setEnabled(false);
+        buttonPanel.add(redoButton);
 
         buttonPanel.setOpaque(true);
     }
@@ -631,6 +651,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             } else if (step == OperatingRound.STEP_FINAL) {
                 button1.setEnabled(false);
             }
+            
+		    enableUndo (MoveSet.isUndoable());
+		    enableRedo (MoveSet.isRedoable());
+
             if (StatusWindow.useObserver) {
                 revalidate();
             } else {
@@ -783,6 +807,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             if (!oRound.done(orComp.getName())) {
                 displayError();
             }
+        } else if (command.equals(UNDO_CMD)) {
+            System.out.println("UNDO!");
+            oRound.undo();
+        } else if (command.equals(REDO_CMD)) {
+            System.out.println("REDO!");
+            oRound.redo();
         }
 
         LogWindow.addLog();
@@ -1156,6 +1186,13 @@ private void buyTrain()
 
     public PublicCompanyI[] getOperatingCompanies() {
         return companies;
+    }
+
+    public void enableUndo (boolean enabled) {
+        undoButton.setEnabled (enabled);
+    }
+    public void enableRedo (boolean enabled) {
+        redoButton.setEnabled (enabled);
     }
 
 }

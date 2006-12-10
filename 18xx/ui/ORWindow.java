@@ -137,7 +137,6 @@ public class ORWindow extends JFrame implements WindowListener
 		ORWindow.subStep = subStep;
 		
 		updateMessage();
-		
 		updateUpgradesPanel();
 	}
 	
@@ -435,6 +434,7 @@ public class ORWindow extends JFrame implements WindowListener
 			setSubStep(INACTIVE);
 		}
 		tileLayingEnabled = enabled;
+		baseTokenLayingEnabled = false;
 		upgradePanel.setTileMode(enabled);
 	}
 
@@ -460,6 +460,7 @@ public class ORWindow extends JFrame implements WindowListener
 			setSubStep(INACTIVE);
 		}
 		baseTokenLayingEnabled = enabled;
+		tileLayingEnabled = false;
 		upgradePanel.setTileMode(enabled);
 	}
 

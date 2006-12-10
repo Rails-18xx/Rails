@@ -1,7 +1,11 @@
 package game;
 
 import game.action.*;
+import game.move.MoveSet;
+import game.move.StateChange;
 import game.special.*;
+import game.state.StateObject;
+
 import java.util.*;
 import util.Util;
 
@@ -13,13 +17,14 @@ import util.Util;
  * <p>
  * Permanent memory is formed by static attributes.
  */
-public class OperatingRound extends Round
+public class OperatingRound extends Round implements Observer
 {
 
 	/* Transient memory (per round only) */
 	//protected Player currentPlayer;
 	//protected int currentPlayerIndex;
-	protected int step;
+    protected StateObject stepObject;
+    //protected int step;
 	protected boolean actionPossible = true;
 	protected String actionNotPossibleMessage = "";
 
@@ -75,6 +80,7 @@ public class OperatingRound extends Round
 	// shareholders
 	public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
+	public static final int STEP_INITIAL = 0;
 	public static final int STEP_LAY_TRACK = 0;
 	public static final int STEP_LAY_TOKEN = 1;
 	public static final int STEP_CALC_REVENUE = 2;
@@ -131,7 +137,6 @@ public class OperatingRound extends Round
 
 		operatingCompanyArray = (PublicCompanyI[]) operatingCompanies.values()
 				.toArray(new PublicCompanyI[0]);
-		step = steps[0];
 
 		relativeORNumber++;
 		cumulativeORNumber++;
@@ -166,9 +171,7 @@ public class OperatingRound extends Round
 			operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 			GameManager.getInstance().setRound(this);
 
-			// prepare any specials
-			prepareStep();
-			updateStatus("OperatingRound"); // PERHAPS NEEDED HERE?
+			setStep (STEP_INITIAL);
 		}
 		else
 		{
@@ -261,7 +264,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_LAY_TRACK)
+			if (getStep() != STEP_LAY_TRACK)
 			{
 				errMsg = "Wrong action, did noy expect Tile laying";
 				break;
@@ -357,6 +360,8 @@ public class OperatingRound extends Round
 			return false;
 		}
 
+	    MoveSet.start();
+	    
 		if (tile != null)
 		{
 			hex.upgrade(tile, orientation);
@@ -401,9 +406,10 @@ public class OperatingRound extends Round
 		        || currentNormalTileLays.isEmpty() && currentSpecialTileLays.isEmpty())
 		{
 			nextStep();
+		} else {
+			updateStatus("layTile");
 		}
-		
-		updateStatus("layTile");
+		MoveSet.finish();
 
 		return true;
 	}
@@ -531,7 +537,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_LAY_TOKEN)
+			if (getStep() != STEP_LAY_TOKEN)
 			{
 				errMsg = "Wrong action, not expecting Token lay";
 				break;
@@ -615,9 +621,9 @@ public class OperatingRound extends Round
 		if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
 		{
 			nextStep();
+		} else {
+		    updateStatus("layBaseToken");
 		}
-		
-		updateStatus("layBaseToken");
 
 		return true;
 	}
@@ -664,7 +670,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_CALC_REVENUE)
+			if (getStep() != STEP_CALC_REVENUE)
 			{
 				errMsg = "Wrong action, expected Revenue calculation";
 				break;
@@ -735,7 +741,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_PAYOUT)
+			if (getStep() != STEP_PAYOUT)
 			{
 				errMsg = "Wrong action, expected Revenue Assignment";
 				break;
@@ -788,7 +794,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_PAYOUT)
+			if (getStep() != STEP_PAYOUT)
 			{
 				errMsg = "Wrong action, expected Revenue Assignment";
 				break;
@@ -842,7 +848,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_PAYOUT)
+			if (getStep() != STEP_PAYOUT)
 			{
 				errMsg = "Wrong action, expected Revenue Assignment";
 				break;
@@ -877,9 +883,15 @@ public class OperatingRound extends Round
 		actionNotPossibleMessage = "";
 
 		// Cycle through the steps until we reach one where action is allowed.
-		while (++step < steps.length)
+		int step = getStep();
+		int stepIndex;
+		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
+		    if (steps[stepIndex] == step) break;
+		}
+		while (++stepIndex < steps.length)
 		{
-
+		    step = steps[stepIndex];
+		    
 			if (step == STEP_LAY_TOKEN
 					&& operatingCompany.getNumCityTokens() == 0)
 				continue;
@@ -900,10 +912,11 @@ public class OperatingRound extends Round
 			break;
 		}
 
+	    
 		if (step >= steps.length) {
 			done(operatingCompany.getName());
 		} else {
-		    prepareStep();
+		    setStep(step);
 		}
 		
 		//updateStatus("nextStep");  // REDUNDANT??
@@ -922,18 +935,19 @@ public class OperatingRound extends Round
 
 	protected void prepareStep()
 	{
+	    int step = ((Integer)stepObject.getState()).intValue();
 	    System.out.println("Prepare step "+step);
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
 		{
-			setNormalTileLays();
+			//setNormalTileLays();
 			tileLayCost[operatingCompanyIndex] = 0;
 			tilesLaid[operatingCompanyIndex] = "";
 		}
 		else if (step == STEP_LAY_TOKEN)
 		{
-			setNormalTokenLays();
+			//setNormalTokenLays();
 			baseTokenLayCost[operatingCompanyIndex] = 0;
 			baseTokensLaid[operatingCompanyIndex] = "";
 		}
@@ -941,8 +955,6 @@ public class OperatingRound extends Round
 		{
 			currentSpecialProperties = null;
 		}
-		
-		//updateStatus("prepareStep");
 		
 	}
 	
@@ -1055,9 +1067,9 @@ public class OperatingRound extends Round
 	    /* TODO Should insert some validation here, as this method
 	     * is called from the GUI.
 	     */
-	    System.out.println("Skip step "+step);
+	    System.out.println("Skip step "+((Integer)stepObject.getState()).intValue());
 		nextStep();
-		updateStatus ("Skip");
+		//updateStatus ("Skip");
 
 	}
 
@@ -1087,21 +1099,25 @@ public class OperatingRound extends Round
 			Log.error(errMsg);
 			return false;
 		}
+		
+		MoveSet.clear();
 
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
 			// OR done. Inform GameManager.
 			Log.write("End of Operating Round " + getCompositeORNumber());
 			operatingCompany = null;
+			stepObject.deleteObserver(this);
+			stepObject = null;
 			GameManager.getInstance().nextRound(this);
 			return true;
 		}
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 		//normalTileLaysDone.clear();
-		step = steps[0];
-		prepareStep();
-		updateStatus("Done");
+		setStep (STEP_INITIAL);
+		//prepareStep();
+		//updateStatus("Done");
 
 		return true;
 	}
@@ -1138,7 +1154,7 @@ public class OperatingRound extends Round
 				break;
 			}
 			// Must be correct step
-			if (step != STEP_BUY_TRAIN)
+			if (getStep() != STEP_BUY_TRAIN)
 			{
 				errMsg = "Wrong action, expected Train buying cost";
 				break;
@@ -1467,7 +1483,7 @@ public class OperatingRound extends Round
 	 */
 	public int getStep()
 	{
-		return step;
+		return ((Integer)stepObject.getState()).intValue();
 	}
 	
 	/**
@@ -1476,9 +1492,16 @@ public class OperatingRound extends Round
 	 * 
 	 * @param step
 	 */
-	private void setStep(int step)
+	protected void setStep(int step)
 	{
-		this.step = step;
+	    if (stepObject == null) {
+	        stepObject = new StateObject("ORStep", Integer.class);
+	        stepObject.addObserver(this);
+	    }
+	    MoveSet.add(new StateChange (stepObject, new Integer(step)));
+		
+		prepareStep();
+		updateStatus("setStep");
 	}
 
 	public int getOperatingCompanyIndex()
@@ -1501,9 +1524,12 @@ public class OperatingRound extends Round
 	    
 		/* Create a new list of possible actions for the UI */
 		possibleActions.clear();
+		
+		int step = getStep();
 
 		if (step == STEP_LAY_TRACK)
 		{
+		    setNormalTileLays();
 			setSpecialTileLays();
 			System.out.println("Normal tile lays: "+currentNormalTileLays.size());
 			System.out.println("Special tile lays: "+currentSpecialTileLays.size());
@@ -1513,6 +1539,7 @@ public class OperatingRound extends Round
 		}
 		else if (step == STEP_LAY_TOKEN) 
 		{
+		    setNormalTokenLays();
 		    setSpecialTokenLays();
 			System.out.println("Normal token lays: "+currentNormalTokenLays.size());
 			System.out.println("Special token lays: "+currentSpecialTokenLays.size());
@@ -1666,6 +1693,7 @@ public class OperatingRound extends Round
 
 	public String getHelp()
 	{
+	    int step = getStep();
 		StringBuffer b = new StringBuffer();
 		b.append("<big>Operating round: ")
 				.append(getCompositeORNumber())
@@ -1727,6 +1755,25 @@ public class OperatingRound extends Round
 		}
 
 		return b.toString();
+	}
+	
+	/**
+	 * Update the status if the step has changed by an Undo or Redo
+	 */
+	public void update (Observable observable, Object object) {
+	    if (observable == stepObject) {
+	        prepareStep();
+	        updateStatus();
+	    }
+	}
+	
+	public void undo() {
+	    MoveSet.undo();
+	    updateStatus("undo");
+	}
+	public void redo() {
+	    MoveSet.redo();
+	    updateStatus("redo");
 	}
 
 }

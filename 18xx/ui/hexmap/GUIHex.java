@@ -3,6 +3,7 @@ package ui.hexmap;
 import game.*;
 import game.action.LayTile;
 import game.action.LayToken;
+import game.model.ModelObject;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -10,13 +11,16 @@ import java.util.*;
 import javax.swing.*;
 
 import ui.GameUILoader;
+import ui.ORWindow;
+import ui.StatusWindow;
 import ui.Token;
+import ui.elements.ViewObject;
 
 /**
  * Base class that holds common components for GUIHexes of all orientations.
  */
 
-public class GUIHex
+public class GUIHex implements ViewObject
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
@@ -37,12 +41,12 @@ public class GUIHex
 
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
-	protected int provisionalTileOrientation;
+	//protected int provisionalTileOrientation;
 
 	protected Token provisionalGUIToken = null;
-
+	
 	protected double tileScale = NORMAL_SCALE;
-	protected JComponent map;
+	//protected static JComponent map;
 
 	protected String toolTip = "";
 
@@ -142,6 +146,11 @@ public class GUIHex
 		currentGUITile = new GUITile(currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		setToolTip();
+		
+		if (StatusWindow.useObserver) {
+			model.addObserver(this);
+		}
+
 
 	}
 
@@ -662,16 +671,6 @@ public class GUIHex
 		toolTip = tt.toString();
 	}
 
-	public JComponent getMap()
-	{
-		return map;
-	}
-
-	public void setMap(JComponent map)
-	{
-		this.map = map;
-	}
-
 	public boolean dropTile(int tileId)
 	{
 		provisionalGUITile = new GUITile(tileId, model);
@@ -709,9 +708,10 @@ public class GUIHex
 			OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
 		    canFixTile = or.layTile(or.getOperatingCompany().getName(),
 		            model, provisionalGUITile.getTile(),
-					provisionalTileOrientation, allowance);
+		            provisionalGUITile.getRotation(), allowance);
 
 		    if (canFixTile) {
+		        /*
 				currentGUITile = provisionalGUITile;
 				if (currentGUITile != null)
 				{
@@ -719,6 +719,7 @@ public class GUIHex
 					currentTileId = currentTile.getId();
 					currentTileOrientation = provisionalTileOrientation;
 				}
+				*/
 		        GameUILoader.orWindow.getORPanel().layTile(model,
 						currentTile,
 						currentTileOrientation);
@@ -758,6 +759,42 @@ public class GUIHex
 		setSelected(false);
 		
 		return canFixToken;
+	}
+
+	/** Needed to satisfy the ViewObject interface. Currently not used. */
+	public void deRegister()
+	{
+		if (model != null && StatusWindow.useObserver)
+			model.deleteObserver(this);
+	}
+	
+	public ModelObject getModel() {
+	    return model;
+	}
+	
+	public void update (Observable observable, Object notificationObject) {
+	    
+	    if (notificationObject instanceof String) {
+	        /* The below code so far only deals with tile lay undo/redo.
+	         * Tokens still to do */ 
+	        String[] elements = ((String)notificationObject).split("/");
+	        currentTileId = Integer.parseInt(elements[0]);
+	        currentTileOrientation = Integer.parseInt(elements[1]);
+	        currentGUITile = new GUITile(currentTileId, model);
+	        currentGUITile.setRotation(currentTileOrientation);
+	        currentTile = currentGUITile.getTile();
+	        
+			GameUILoader.getMapPanel().getMap().repaint(getBounds());
+			
+	        provisionalGUITile = null;
+	        /*
+	        setSelected(false);
+	        setToolTip();
+	        */
+
+	        System.out.println("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
+			GameUILoader.orWindow.updateStatus();
+	    }
 	}
 
 }

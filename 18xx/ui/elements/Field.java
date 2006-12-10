@@ -33,7 +33,7 @@ public class Field extends JLabel implements ViewObject
 
 	public Field(ModelObject modelObject)
 	{
-		this(modelObject.toString());
+		this((String)modelObject.getNotificationObject());
 		this.modelObject = modelObject;
 		if (StatusWindow.useObserver)
 			modelObject.addObserver(this);
@@ -73,7 +73,7 @@ public class Field extends JLabel implements ViewObject
 	{
 		if (modelObject != null && (pull || !StatusWindow.useObserver))
 		{
-			setText(modelObject.toString());
+			setText((String)modelObject.getNotificationObject());
 		}
 		super.paintComponent(g);
 	}
@@ -94,7 +94,7 @@ public class Field extends JLabel implements ViewObject
 		}
 	}
 
-	/** Needed to saitsfy the ViewObject interface. Currently not used. */
+	/** Needed to satisfy the ViewObject interface. Currently not used. */
 	public void deRegister()
 	{
 		if (modelObject != null && StatusWindow.useObserver)
