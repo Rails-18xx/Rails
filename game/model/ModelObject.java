@@ -14,7 +14,7 @@ public abstract class ModelObject extends Observable {
     
     protected void notifyViewObjects() {
         setChanged();
-        notifyObservers (toString());
+        notifyObservers (getNotificationObject());
         clearChanged();
     }
     
@@ -38,6 +38,16 @@ public abstract class ModelObject extends Observable {
      */
     public void update () {
         notifyViewObjects();
+    }
+    
+    /**
+     * The object that is sent to the Observer along with a notification.
+     * The default result is the Observable's toString(), but it can
+     * be overridden where needed.  
+     * @return
+     */
+    public Object getNotificationObject() {
+        return toString();
     }
 
 }

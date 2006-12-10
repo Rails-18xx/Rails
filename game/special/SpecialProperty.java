@@ -1,13 +1,17 @@
 package game.special;
 
 import game.*;
+import game.move.MoveSet;
+import game.move.StateChange;
+import game.state.StateObject;
 
 public abstract class SpecialProperty implements SpecialPropertyI
 {
 
 	protected PrivateCompanyI privateCompany;
 	protected int closingValue = 0;
-	protected boolean exercised = false;
+	protected StateObject exercised = new StateObject("SpecialPropertyExercised", 
+	        Boolean.FALSE);
 	protected boolean isSRProperty = false;
 	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
@@ -53,13 +57,13 @@ public abstract class SpecialProperty implements SpecialPropertyI
     }
 	public void setExercised()
 	{
-		exercised = true;
+		MoveSet.add (new StateChange (exercised, Boolean.TRUE));
 		privateCompany.getPortfolio().updateSpecialProperties();
 	}
 
 	public boolean isExercised()
 	{
-		return exercised;
+		return ((Boolean)exercised.getState()).booleanValue();
 	}
 
 	public int getClosingValue()

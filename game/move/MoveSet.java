@@ -1,13 +1,17 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.1 2006/09/14 19:33:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.2 2006/12/10 20:42:00 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package game.move;
 
+import game.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import util.LocalText;
 
 /**
  * @author Erik Vos
@@ -35,14 +39,18 @@ public class MoveSet {
     
     public static boolean finish () {
         //System.out.println("<<< Finish MoveSet");
-        if (currentAction != null) {
-            actionStack.add (currentAction);
-            lastIndex++;
+        if (currentAction == null) {
+            System.out.println ("No action open for finish");
+            return false;
+        } else if (currentAction.isEmpty()) {
+            System.out.println("Action to finish is empty and will be discarded");
             currentAction = null;
             return true;
         } else {
-            System.out.println ("No action open for finish");
-            return false;
+             actionStack.add (currentAction);
+             lastIndex++;
+             currentAction = null;
+             return true;
        }
     }
     
@@ -74,6 +82,7 @@ public class MoveSet {
     
     public static boolean undo () {
         if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
+            Log.write(LocalText.getText("UNDO"));
             ((MoveSet) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
@@ -84,6 +93,7 @@ public class MoveSet {
     
     public static boolean redo () {
         if (currentAction == null && lastIndex < actionStack.size()-1) {
+            Log.write(LocalText.getText("REDO"));
             ((MoveSet) actionStack.get(++lastIndex)).execute();
             return true;
         } else {
@@ -130,5 +140,9 @@ public class MoveSet {
         for (Iterator it = moves.iterator(); it.hasNext(); ) {
             ((Move)it.next()).undo();
         }
+    }
+    
+    private boolean isEmpty () {
+        return moves.isEmpty();
     }
 }

@@ -31,7 +31,7 @@ public class PriceModel extends ModelObject implements StateI
 	public PublicCompanyI getCompany() {
 	    return company;
 	}
-
+	
 	public String toString()
 	{
 		if (stockPrice != null)
