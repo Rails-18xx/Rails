@@ -53,55 +53,31 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     // Grid elements per function
     private Caption leftCompName[];
-
     private int leftCompNameXOffset, leftCompNameYOffset;
-
     private Caption rightCompName[];
-
     private int rightCompNameXOffset, rightCompNameYOffset;
-
     private Field president[];
-
     private int presidentXOffset, presidentYOffset;
-
     private Field sharePrice[];
-
     private int sharePriceXOffset, sharePriceYOffset;
-
     private Field cash[];
-
     private int cashXOffset, cashYOffset;
-
     private Field privates[];
-
     private int privatesXOffset, privatesYOffset;
-
     private Field newPrivatesCost[];
-
     private Field tiles[];
-
     private int tilesXOffset, tilesYOffset;
-
     private Field tileCost[];
-
     private Field tokens[];
-
     private Field tokenCost[];
-
+    private Field tokensLeft[];
     private int tokensXOffset, tokensYOffset;
-
     private Field revenue[];
-
     private Spinner revenueSelect[];
-
     private Field decision[];
-
     private int revXOffset, revYOffset;
-
     private Field trains[];
-
     private int trainsXOffset, trainsYOffset;
-
     private Field newTrainCost[];
 
     private boolean privatesCanBeBought = false;
@@ -279,6 +255,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         tileCost = new Field[nc];
         tokens = new Field[nc];
         tokenCost = new Field[nc];
+        tokensLeft = new Field[nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
         decision = new Field[nc];
@@ -331,9 +308,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         tokensXOffset = currentXOffset += lastXWidth;
         tokensYOffset = leftCompNameYOffset;
         addField(tokenCaption = new Caption("Tokens"), tokensXOffset, 0,
-                lastXWidth = 2, 1, WIDE_RIGHT);
+                lastXWidth = 3, 1, WIDE_RIGHT);
         addField(new Caption("laid"), tokensXOffset, 1, 1, 1, WIDE_BOTTOM);
-        addField(new Caption("cost"), tokensXOffset + 1, 1, 1, 1, WIDE_BOTTOM
+        addField(new Caption("cost"), tokensXOffset+1, 1, 1, 1, WIDE_BOTTOM);
+        addField(new Caption("left"), tokensXOffset+2, 1, 1, 1, WIDE_BOTTOM
                 + WIDE_RIGHT);
 
         revXOffset = currentXOffset += lastXWidth;
@@ -396,7 +374,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0);
 
             f = tokenCost[i] = new Field("");
-            addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0);
+
+            f = tokensLeft[i] = new Field(c.getBaseTokensModel());
+            addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1, WIDE_RIGHT);
 
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);

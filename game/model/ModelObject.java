@@ -15,6 +15,7 @@ public abstract class ModelObject extends Observable {
     protected void notifyViewObjects() {
         setChanged();
         notifyObservers (getNotificationObject());
+        //System.out.println("*** '"+getNotificationObject()+"' sent from "+getClass().getName());
         clearChanged();
     }
     

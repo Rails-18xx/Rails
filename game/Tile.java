@@ -45,7 +45,8 @@ public class Tile implements TileI
 	{
 
 	    if (te == null) {
-	        throw new ConfigurationException ("Missing Tile in Tiles.xml");
+	        throw new ConfigurationException (
+	                LocalText.getText("TileMissing", String.valueOf(id)));
 	    }
 		/*
 		 * EV 23oct05: There is a lot to read and configure here, for now we
@@ -59,8 +60,8 @@ public class Tile implements TileI
 
 		colour = XmlUtils.extractStringAttribute(teAttr, "colour");
 		if (colour == null)
-			throw new ConfigurationException(LocalText.getText("TileColorMissing")
-					+ " " + id);
+			throw new ConfigurationException(
+			        LocalText.getText("TileColorMissing", String.valueOf(id)));
 
 		upgradeable = !colour.equals("red") && !colour.equals("fixed");
 
@@ -79,8 +80,8 @@ public class Tile implements TileI
 			toStr = XmlUtils.extractStringAttribute(nnp, "to");
 			if (fromStr == null || toStr == null)
 			{
-				throw new ConfigurationException(LocalText.getText("FromToMissing")
-						+ " " + id);
+				throw new ConfigurationException(
+				        LocalText.getText("FromOrToMissing", String.valueOf(id)));
 			}
 
 			from = getPointNumber(fromStr);
@@ -105,12 +106,12 @@ public class Tile implements TileI
 			nnp = stationElement.getAttributes();
 			sid = XmlUtils.extractStringAttribute(nnp, "id");
 			if (sid == null)
-				throw new ConfigurationException(LocalText.getText("TILE")
-						+ this.id + LocalText.getText("StationNoID"));
+				throw new ConfigurationException(
+				        LocalText.getText("TileStationHasNoID", String.valueOf(id)));
 			type = XmlUtils.extractStringAttribute(nnp, "type");
 			if (type == null)
-				throw new ConfigurationException(LocalText.getText("TILE")
-						+ this.id + LocalText.getText("StationNoType"));
+				throw new ConfigurationException(
+				        LocalText.getText("TileStationHasNoType", String.valueOf(id)));
 			value = XmlUtils.extractIntegerAttribute(nnp, "value", 0);
 			slots = XmlUtils.extractIntegerAttribute(nnp, "slots", 0);
 			station = new Station(sid, type, value, slots);

@@ -284,22 +284,6 @@ public class OperatingRound extends Round implements Observer
 				break;
 			}
 
-			// Was a special property used?
-			/*
-			if (currentSpecialProperties != null)
-			{
-				stl = (SpecialTileLay) checkForUseOfSpecialProperty(hex);
-				//if (stl == null && normalTileLaysDone >= normalTileLaysAllowed)
-				if (stl == null && exceedsTilesAllowance (tile))
-				{
-					errMsg = "Cannot lay a tile without using a Private special property";
-					break;
-				}
-			} else if (exceedsTilesAllowance (tile)) {
-			    errMsg = "Cannot lay that many tiles of this colour";
-			    break;
-			}
-			*/
 		    /* Check if the current tile is allowed via the LayTile allowance.
 		     * (currently the set if tiles is always null, which means
 		     * that this check is redundant. This may change in the future.
@@ -360,6 +344,7 @@ public class OperatingRound extends Round implements Observer
 			return false;
 		}
 
+		/* End of validation, start of execution */
 	    MoveSet.start();
 	    
 		if (tile != null)
@@ -549,6 +534,11 @@ public class OperatingRound extends Round implements Observer
 				break;
 			}
 			
+			if (!hex.hasTokenSlotsLeft(station)) {
+			    errMsg = "City has no empty slots";
+			    break;
+			}
+			
 			if (allowance != null) {
 			    MapHex location = allowance.getLocation();
 			    if (location != null && location != hex) {
@@ -579,51 +569,58 @@ public class OperatingRound extends Round implements Observer
 			return false;
 		}
 
-		if (!operatingCompany.layBaseToken(hex, station))
-			return false;
+		/* End of validation, start of execution */
+	    //MoveSet.start();
+	    
+		if (operatingCompany.layBaseToken(hex, station)) {
+		    /* TODO: the false return value must be impossible. */
 
-		baseTokensLaid[operatingCompanyIndex] = Util.appendWithComma(baseTokensLaid[operatingCompanyIndex],
-				hex.getName());
-		baseTokenLayCost[operatingCompanyIndex] = cost;
-
-		if (cost > 0)
-		{
-			Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			Log.write(companyName + " lays a token on " + hex.getName()
-					+ " for " + Bank.format(cost));
+		    /* TODO: should the below items be made ModelObjects? */
+			baseTokensLaid[operatingCompanyIndex] = Util.appendWithComma(baseTokensLaid[operatingCompanyIndex],
+					hex.getName());
+			baseTokenLayCost[operatingCompanyIndex] = cost;
+	
+			if (cost > 0)
+			{
+				Bank.transferCash((CashHolder) operatingCompany, null, cost);
+				Log.write(companyName + " lays a token on " + hex.getName()
+						+ " for " + Bank.format(cost));
+			}
+			else
+			{
+				Log.write(companyName + " lays a free token on " + hex.getName());
+			}
+	
+			// Was a special property used?
+			if (stl != null)
+			{
+				stl.setExercised();
+				currentSpecialTokenLays.remove(allowance);
+				System.out.println("This was a special token lay, "+
+				        (extra?"":" not")+" extra");
+				
+			}
+			if (!extra)
+			{
+				currentNormalTokenLays.clear();
+				System.out.println("This was a normal token lay");
+			}
+			if (currentNormalTokenLays.isEmpty()) {
+			    System.out.println("No more normal token lays are allowed");
+			} else {
+			    System.out.println("A normal token lay is still allowed");
+			}
+			setSpecialTokenLays();
+			System.out.println("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
+			if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
+			{
+				nextStep();
+			} else {
+			    updateStatus("layBaseToken");
+			}
+	
 		}
-		else
-		{
-			Log.write(companyName + " lays a free token on " + hex.getName());
-		}
-
-		// Was a special property used?
-		if (stl != null)
-		{
-			stl.setExercised();
-			currentSpecialTokenLays.remove(allowance);
-			System.out.println("This was a special token lay, "+
-			        (extra?"":" not")+" extra");
-			
-		}
-		if (!extra)
-		{
-			currentNormalTokenLays.clear();
-			System.out.println("This was a normal token lay");
-		}
-		if (currentNormalTokenLays.isEmpty()) {
-		    System.out.println("No more normal token lays are allowed");
-		} else {
-		    System.out.println("A normal token lay is still allowed");
-		}
-		setSpecialTokenLays();
-		System.out.println("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
-		if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
-		{
-			nextStep();
-		} else {
-		    updateStatus("layBaseToken");
-		}
+		//MoveSet.finish();
 
 		return true;
 	}

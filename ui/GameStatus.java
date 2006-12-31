@@ -61,6 +61,8 @@ public class GameStatus extends JPanel implements ActionListener
 	private int compRevenueXOffset, compRevenueYOffset;
 	private Field compTrains[];
 	private int compTrainsXOffset, compTrainsYOffset;
+	private Field compTokens[];
+	private int compTokensXOffset, compTokensYOffset;
 	private Field compPrivates[];
 	private int compPrivatesXOffset, compPrivatesYOffset;
 	private Field playerCash[];
@@ -157,6 +159,7 @@ public class GameStatus extends JPanel implements ActionListener
 		compCash = new Field[nc];
 		compRevenue = new Field[nc];
 		compTrains = new Field[nc];
+		compTokens = new Field[nc];
 		compPrivates = new Field[nc];
 		playerCash = new Field[np];
 		playerPrivates = new Field[np];
@@ -185,6 +188,8 @@ public class GameStatus extends JPanel implements ActionListener
 		compRevenueYOffset = lastY;
 		compTrainsXOffset = ++lastX;
 		compTrainsYOffset = lastY;
+		compTokensXOffset = ++lastX;
+		compTokensYOffset = lastY;
 		if (compCanBuyPrivates) {
 			compPrivatesXOffset = ++lastX;
 			compPrivatesYOffset = lastY;
@@ -278,7 +283,7 @@ public class GameStatus extends JPanel implements ActionListener
 		addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
 				compCashXOffset,
 				0,
-				this.compCanBuyPrivates ? 4 : 3,
+				this.compCanBuyPrivates ? 5 : 4,
 				1,
 				0);
 		addField(new Caption(LocalText.getText("CASH")),
@@ -295,6 +300,12 @@ public class GameStatus extends JPanel implements ActionListener
 				WIDE_BOTTOM);
 		addField(new Caption(LocalText.getText("TRAINS")),
 				compTrainsXOffset,
+				1,
+				1,
+				1,
+				WIDE_BOTTOM);
+		addField(new Caption(LocalText.getText("TOKENS")),
+				compTokensXOffset,
 				1,
 				1,
 				1,
@@ -400,6 +411,9 @@ public class GameStatus extends JPanel implements ActionListener
 					.getTrainsModel()
 					.option(TrainsModel.FULL_LIST));
 			addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0);
+
+			f = compTokens[i] = new Field(c.getBaseTokensModel());
+			addField(f, compTokensXOffset, compTokensYOffset + i, 1, 1, 0);
 
 			if (this.compCanBuyPrivates) {
 				f = compPrivates[i] = new Field(c.getPortfolio()
