@@ -492,7 +492,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		
 		update(); // To notify ViewObject (Observer)
 
-		// Further consequences to be processed here, e.g. new routes etc.
+		/* TODO: Further consequences to be processed here, e.g. new routes etc. */
 	}
 
 	//public int getPreferredHomeCity()
@@ -521,6 +521,19 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		}
 		else
 			return false;
+	}
+	
+	public boolean hasTokenSlotsLeft (int station) {
+	    if (station < stations.size()) {
+		    return hasTokenSlotsLeft ((Station)stations.get(station));
+	    } else {
+	        System.out.println("ERROR: invalid station "+station+", max is "+(stations.size()-1));
+	        return false;
+	    }
+	}
+	
+	public boolean hasTokenSlotsLeft (Station station) {
+	    return station != null && station.hasTokenSlotsLeft();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package game;
 
+import game.model.BaseTokensModel;
 import game.model.CashModel;
 import game.model.ModelObject;
 import game.model.MoneyModel;
@@ -63,6 +64,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected boolean hasPlayedTokens = false;
 	protected int numCityTokens = 0;
 	protected int maxCityTokens = 0;
+	protected BaseTokensModel baseTokensModel; // Create after cloning
 	
 	/** Initial (par) share price, represented by a stock market location object */
 	protected PriceModel parPrice = null;
@@ -160,7 +162,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		super();
 	}
 
-	/** Initialisation, to be called directly after instantiation */
+	/** Initialisation, to be called directly after instantiation (cloning)*/
 	public void init(String name, CompanyTypeI type)
 	{
 		super.init(name, type);
@@ -170,6 +172,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		this.portfolio = new Portfolio(name, this);
 		treasury = new CashModel(this);
 		lastRevenue = new MoneyModel (this);
+		baseTokensModel = new BaseTokensModel (this);
 
 	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
 	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
@@ -1222,6 +1225,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return hex.addToken(this, station);
 	}
 	
+	public BaseTokensModel getBaseTokensModel() {
+	    return baseTokensModel;
+	}
+	
 	public boolean layHomeBaseTokens () {
 	    
 	    // Assume for now that companies have only one home base.
@@ -1242,6 +1249,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    baseTokenedHexes.add(hex);
 		hasPlayedTokens = true;
 		numCityTokens--;
+		baseTokensModel.update();
 		
 		return true;
 	}
@@ -1272,6 +1280,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			{
 				hasPlayedTokens = false;
 			}
+			baseTokensModel.update();
 
 			return true;
 		}
@@ -1303,6 +1312,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public boolean hasTokensLeft()
 	{
 		return (baseTokenedHexes.size() <= maxCityTokens);
+	}
+	
+	public int getFreeBaseTokens () {
+	    return maxCityTokens - baseTokenedHexes.size();
 	}
 	
 	public int getNumberOfTileLays (String tileColour) {

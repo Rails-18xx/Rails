@@ -2,6 +2,18 @@ package game;
 
 import java.util.*;
 
+/**
+ * A Station object represents a (group of) token slot(s) on a specific tile.
+ * Each tokenable city tile has as many Station objects as it has cities.
+ * <p>
+ * N.B. The class name City is reserved for a city as a node in a Route,
+ * which will be linked to a MapHex object.
+ * Of course, each City object will correspond with exactly one Station object.
+ * However, as a tile is upgraded, the Station objects will be replaced by those
+ * of the new tile, whereas the City objects will remain the same (unless when cities merge).
+ * 
+ * @author Erik Vos
+ */
 public class Station implements TokenHolderI, Cloneable
 {
 
@@ -108,6 +120,10 @@ public class Station implements TokenHolderI, Cloneable
 	public boolean hasTokens()
 	{
 		return tokens.size() > 0;
+	}
+	
+	public boolean hasTokenSlotsLeft() {
+	    return tokens.size() < baseSlots;
 	}
 
 	public boolean removeToken(TokenHolderI company)

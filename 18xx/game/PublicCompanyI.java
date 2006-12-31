@@ -1,5 +1,6 @@
 package game;
 
+import game.model.BaseTokensModel;
 import game.model.ModelObject;
 import game.model.PriceModel;
 
@@ -240,6 +241,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public int getMaxCityTokens();
 	public boolean addToken(TokenHolderI hex);
 	public boolean hasTokensLeft();
+	public int getFreeBaseTokens ();
+	public BaseTokensModel getBaseTokensModel();
+
 	
     public MapHex getHomeHex();
     public void setHomeHex(MapHex homeHex);
