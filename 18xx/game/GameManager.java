@@ -583,7 +583,7 @@ public class GameManager implements ConfigurableComponentI
 			if (company.hasFloated() && company.hasStarted())
 			{
 			    // If the home token has not been placed yet, do it.
-			    if (company.getMaxCityTokens() == company.getNumCityTokens()) {
+			    if (company.getNumberOfLaidBaseTokens() == 0) {
 			        company.layHomeBaseTokens();
 			    }
 			    

@@ -46,6 +46,10 @@ public final class Util
 		}
 		return false;
 	}
+	
+	public static String getClassShortName (Object object) {
+	    return object.getClass().getName().replaceAll(".*\\.", "");
+	}
 
 	/**
 	 * Open an input stream from a file, which may exist as a physical file or

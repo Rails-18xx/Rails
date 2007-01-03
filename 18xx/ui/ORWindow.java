@@ -309,7 +309,7 @@ public class ORWindow extends JFrame implements WindowListener
 					//System.out.println("subStep = Confirm Token");
 					PublicCompany co = (PublicCompany) orPanel.getOperatingCompanies()[orPanel.getOrCompIndex()];
 					
-					if(co.hasTokensLeft())
+					if(co.getNumberOfFreeBaseTokens() > 0)
 						upgradePanel.setDoneEnabled(true);
 					else
 						upgradePanel.setDoneEnabled(false);

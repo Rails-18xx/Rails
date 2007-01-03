@@ -2,7 +2,7 @@ package game;
 
 import java.util.*;
 
-public interface StockSpaceI extends TokenHolderI
+public interface StockSpaceI // extends TokenHolderI
 {
 
 	/*--- Constants ---*/
@@ -144,5 +144,8 @@ public interface StockSpaceI extends TokenHolderI
 	 * @return
 	 */
 	public boolean isNoHoldLimit();
+
+	public boolean addToken(PublicCompanyI company);
+	public boolean removeToken(PublicCompanyI company);
 
 }
