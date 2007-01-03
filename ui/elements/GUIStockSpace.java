@@ -17,7 +17,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import ui.StatusWindow;
-import ui.Token;
+import ui.GUIToken;
 
 public class GUIStockSpace extends JLayeredPane implements ViewObject
 {
@@ -103,7 +103,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 		Color bgColour;
 		Color fgColour;
 		PublicCompanyI co;
-		Token token;
+		GUIToken token;
 
 		//for (int k = 0; k < tokenList.size(); k++)
 		for (int k = tokenList.size()-1; k >=0 ; k--)
@@ -112,7 +112,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 			bgColour = co.getBgColour();
 			fgColour = co.getFgColour();
 
-			token = new Token(fgColour, bgColour, co.getName());
+			token = new GUIToken(fgColour, bgColour, co.getName());
 			token.setBounds(origin.x, origin.y, size.width, size.height);
 
 			add(token, new Integer(0), 0);

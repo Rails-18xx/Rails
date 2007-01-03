@@ -3,6 +3,7 @@ package game;
 import game.model.ModelObject;
 import game.move.MoveSet;
 import game.move.TileMove;
+import game.move.TokenMove;
 
 import java.util.*;
 import java.util.regex.*;
@@ -36,7 +37,8 @@ import util.XmlUtils;
  * For EW-oriented tiles the above picture should be rotated 30 degrees
  * clockwise.
  */
-public class MapHex extends ModelObject implements ConfigurableComponentI, TokenHolderI
+public class MapHex extends ModelObject 
+	implements ConfigurableComponentI, StationHolderI
 {
 
 	public static final int EW = 0;
@@ -87,8 +89,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 	 */
 	protected String impassable = null;
 
-	protected ArrayList stations;
-	protected boolean hasTokens;
+	protected List stations;
+	//protected boolean hasTokens;
 
 	protected boolean isBlocked = false;
 	
@@ -207,7 +209,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		{
 			// sid, type, value, slots
 			Station s = (Station) currentTile.getStations().get(i);
-			stations.add(new Station(s));  // Clone it
+			stations.add(new Station(this, s));  // Clone it
 		}
 
 		// Off-board renevue values
@@ -441,32 +443,59 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 	 */
 	public void upgrade(TileI newTile, int newOrientation)
 	{
-	    MoveSet.add(new TileMove (this, currentTile, currentTileRotation,
-	            newTile, newOrientation));
-	    /*
-		if (currentTile != null)
-			currentTile.remove(this);
-		
-		newTile.lay(this);
+	    /* Create a new set of stations, each with the tokens that will end up there,
+	     * and save both the old and the new set.
+	     */
+		List newTileStations = (ArrayList) newTile.getStations();
+		List newHexStations = new ArrayList();
+	    
+		Station oldStation, newStation;
+	    TokenI token;
+	    
+	    /* Clone the stations of the new tile. */
+	    for (int i=0; i<newTileStations.size(); i++) {
+	        newStation = new Station (this, (Station) newTileStations.get(i));
+		    newHexStations.add (newStation);
+	    }
+	    
+		/* TODO: If the number of stations is > 1, then we need code to map
+		 * the old to the new stations. Let's for now take the shortcut that
+		 * station 0 on the old tile maps to station 0 on the new one.
+		 * This is definitely insufficient to handle the 1830 OO cities correctly! 
+		 */
+	    for (int i=0, j=0; i<stations.size(); i++, j++) {
+		    
+		    oldStation = (Station) stations.get(i);
 
-		// Move tokens from old station list to new station list.
-		// Merge lists if necessary.		
-		moveTokens(newTile);
-		
-		currentTile = newTile;
-		currentTileRotation = newOrientation;
-		*/
+		    /* TODO: The below statement handles simple 2-to-1 or 3-to-1 station 
+		     * mergers, as in 1856 Toronto and 18EU Vienna & Berlin.
+			 * This is not sufficient to handle complex cases like Vienna in 1837,
+			 * where 3 out of 6 green stations merge to 1 out of 4 brown stations.
+			 */
+	        j = Math.min(j, newTileStations.size()-1);
 
-		// Further consequences to be processed here, e.g. new routes etc.
+	        newStation = (Station) newHexStations.get(j);
+
+		    for (Iterator it = oldStation.getTokens().iterator(); it.hasNext(); ) {
+		        token = (TokenI) it.next();
+		        newStation.addToken(token);
+		    }
+		    
+		}
+	    MoveSet.add(new TileMove (this, currentTile, currentTileRotation, stations,
+	            newTile, newOrientation, newHexStations));
+
+		/* TODO Further consequences to be processed here, e.g. new routes etc.*/
 	}
-	
+
 	/** Execute a tile replacement.
 	 * This method should only be called from TileMove objects.
 	 * It is also used to undo tile lays.
 	 * @param oldTile The tile to be replaced (only used for validation).
 	 * @param newTile The new tile to be laid on this hex.
 	 * @param newTileOrientation The orientation of the new tile (0-5).*/
-	public void replaceTile (TileI oldTile, TileI newTile, int newTileOrientation) {
+	public void replaceTile (TileI oldTile, TileI newTile, int newTileOrientation,
+	        List newStations) {
 	    
 	    if (oldTile != currentTile) {
 	        new Exception ("ERROR! Hex "+name+" wants to replace tile #"+oldTile.getName()
@@ -483,16 +512,14 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		
 		newTile.lay(this);
 
-		// Move tokens from old station list to new station list.
-		// Merge lists if necessary.		
-		moveTokens(newTile);
-		
 		currentTile = newTile;
 		currentTileRotation = newTileOrientation;
 		
+		stations = newStations;
+		/* TODO: Further consequences to be processed here, e.g. new routes etc. */
+		
 		update(); // To notify ViewObject (Observer)
 
-		/* TODO: Further consequences to be processed here, e.g. new routes etc. */
 	}
 
 	//public int getPreferredHomeCity()
@@ -500,19 +527,20 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 	//	return preferredCity;
 	//}
 
-	public boolean addToken(TokenHolderI company)
+	public boolean layBaseToken(PublicCompanyI company)
 	{
-		return addToken(company, null);
+		return layBaseToken(company, null);
 	}
 
-	public boolean addToken(TokenHolderI company, int station)
+	public boolean layBaseToken(PublicCompanyI company, int station)
 	{
-		return addToken(company, (Station)stations.get(station));
+		return layBaseToken(company, (Station)stations.get(station));
 	}
 
-	public boolean addToken(TokenHolderI company, Station station)
+	public boolean layBaseToken(PublicCompanyI company, Station station)
 	{
 	    if (station == null) station = (Station)stations.get(0);
+	    /*
 		if (station.addToken(company))
 		{
 			company.addToken(this);
@@ -521,6 +549,16 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		}
 		else
 			return false;
+		*/
+	    
+	    BaseToken token = company.getFreeToken();
+	    if (token == null) {
+	        System.out.println("ERROR: company "+company.getName()+" has no free token");
+	        return false;
+	    } else {
+	        MoveSet.add(new TokenMove (company.getFreeToken(), company, station));
+	        return true;
+	    }
 	}
 	
 	public boolean hasTokenSlotsLeft (int station) {
@@ -569,11 +607,14 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		}
 	}
 
+	/*
 	public boolean hasTokens()
 	{
 		return hasTokens;
 	}
+	*/
 
+	/*
 	public boolean removeToken(TokenHolderI company)
 	{
 		for (int i = 0; i < stations.size(); i++)
@@ -589,70 +630,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI, Token
 		}
 		return false;
 	}
+	*/
 
-	private void moveTokens(TileI newTile)
-	{
-		ArrayList movedTokens = new ArrayList();
-		ArrayList newStations = (ArrayList) newTile.getStations();
-		
-		ArrayList co = (ArrayList) Game.getCompanyManager()
-				.getAllPublicCompanies();
-		Iterator coIT = co.iterator();
-
-		// Flip through each company's list of tokens
-		while (coIT.hasNext())
-		{
-			PublicCompanyI c = (PublicCompanyI) coIT.next();
-
-			if (c.hasTokens())
-			{
-				ArrayList t = (ArrayList) c.getTokens();
-				Iterator tokIT = t.iterator();
-
-				while (tokIT.hasNext())
-				{
-					MapHex hex = (MapHex) tokIT.next();
-					if (hex.equals(this))
-					{
-						// If a company has a token in this hex, make a note of it.
-						movedTokens.add(c);
-					}
-				}
-			}
-		}
-		
-		if(newStations.size() == 1)
-		{
-			//This is here because Java sucks giant flaming donkey balls.
-			//To avoid passing a reference of the Tile's station, we create
-			//A new station with the same values as the newTile's station.
-			Station s = new Station((Station)newTile.getStations().get(0));
-			stations.clear();
-			stations.add(s);
-			((Station)stations.get(0)).setTokens(movedTokens);
-		}
-		else
-		{
-			for(int i=0; i < newTile.getStations().size(); i++)
-			{
-				Station newStation = (Station) newTile.getStations().get(i);
-				Station oldStation = (Station) stations.get(i);
-				Station s = new Station(newStation);
-				
-				for(int j=0; j < movedTokens.size(); j++)
-				{
-					if(oldStation.getTokens().contains(movedTokens.get(j)))
-					{
-						s.getTokens().add(movedTokens.get(j));
-					}
-				}
-				
-				stations.remove(i);
-				stations.add(i, s); 
-			}
-		}
-
-	}
 
 	public List getStations()
 	{

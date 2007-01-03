@@ -60,10 +60,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/** Sequence number in the array of public companies - may not be useful */
 	protected int publicNumber = -1; // For internal use
 
-	protected ArrayList baseTokenedHexes;
-	protected boolean hasPlayedTokens = false;
-	protected int numCityTokens = 0;
-	protected int maxCityTokens = 0;
+	/** @deprecated */
+	//protected ArrayList baseTokenedHexes;
+	protected List allBaseTokens;
+	protected List freeBaseTokens;
+	protected List laidBaseTokens;
+	//protected boolean hasPlayedTokens = false;
+	protected int numberOfBaseTokens = 0;
+	//protected int maxCityTokens = 0;
 	protected BaseTokensModel baseTokensModel; // Create after cloning
 	
 	/** Initial (par) share price, represented by a stock market location object */
@@ -177,7 +181,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
 	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
 		
-		this.baseTokenedHexes = new ArrayList();
+		allBaseTokens = new ArrayList();
+		freeBaseTokens = new ArrayList();
+		laidBaseTokens = new ArrayList();
+
 }
 
 	/**
@@ -196,6 +203,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 			
 		}
 		
+		BaseToken token;
+		for (int i=0; i<numberOfBaseTokens; i++) {
+		    token = new BaseToken (this);
+		    allBaseTokens.add (token);
+		    freeBaseTokens.add (token);
+		}
 
 	}
 
@@ -224,8 +237,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
-		maxCityTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
-		numCityTokens = maxCityTokens;
+		numberOfBaseTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
+		//numCityTokens = maxCityTokens;
 //System.out.println("***For "+name+": "+maxCityTokens+" tokens");
 		if (element != null)
 		{
@@ -1215,15 +1228,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 	}
 
-	public int getNextBaseTokenIndex()
-	{
-		return maxCityTokens - numCityTokens;
-	}
-
+	/*
 	public boolean layBaseToken(MapHex hex, int station)
 	{
 		return hex.addToken(this, station);
 	}
+	*/
 	
 	public BaseTokensModel getBaseTokensModel() {
 	    return baseTokensModel;
@@ -1233,8 +1243,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    
 	    // Assume for now that companies have only one home base.
 	    // This is not true in 1841!
-		return homeHex.addToken(this, homeStation);
+		return homeHex.layBaseToken(this, homeStation);
 	}
+	
 	/**
 	 * Preferred method for adding tokens to company.
 	 * 
@@ -1243,20 +1254,62 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * 
 	 * TODO: Confusing name, as this method records *playing* a token,
 	 * i.e. *removing* a token from the company charter and plaving it on the map.
-	 */
+	 *//*
 	public boolean addToken(TokenHolderI hex)
 	{
 	    baseTokenedHexes.add(hex);
-		hasPlayedTokens = true;
+		//hasPlayedTokens = true;
 		numCityTokens--;
 		baseTokensModel.update();
 		
 		return true;
 	}
+	*/
+	
+	public BaseToken getFreeToken() {
+	    if (freeBaseTokens.size() > 0) {
+	        return (BaseToken) freeBaseTokens.get(0);
+	    } else {
+	        return null;
+	    }
+	}
+	/** Add a token to the company charter, i.e. remove a token from the map. */
+	public boolean addToken (TokenI token) {
+	    
+	    boolean result = false;
+	    if (token instanceof BaseToken 
+	            && laidBaseTokens.remove (token)) {
+	        token.setHolder(this);
+	        result = freeBaseTokens.add (token);
+	        this.baseTokensModel.update();
+	    }
+	    return result;
+	    
+	}
 
-	public List getTokens()
+	public List getLaidBaseTokens()
 	{
-		return baseTokenedHexes;
+		return laidBaseTokens;
+	}
+	
+	public List getTokens() {
+	    return allBaseTokens;
+	}
+	
+	public int getNumberOfBaseTokens () {
+	    return allBaseTokens.size();
+	}
+	
+	public int getNumberOfFreeBaseTokens () {
+	    return freeBaseTokens.size();
+	}
+	
+	public int getNumberOfLaidBaseTokens() {
+	    return laidBaseTokens.size();
+	}
+	
+	public boolean hasTokens() {
+	    return (allBaseTokens.size() > 0);
 	}
 
 	/**
@@ -1264,11 +1317,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * can be thought of as hasPlayedTokens. Returns true if the 
 	 * company has played one or more of its tokens. 
 	 */
+	/*
 	public boolean hasTokens()
 	{
 		return hasPlayedTokens;
 	}
+	*/
 
+	/*
 	public boolean removeToken(TokenHolderI company)
 	{
 		int index = baseTokenedHexes.indexOf(company);
@@ -1278,7 +1334,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 			if (baseTokenedHexes.size() < 1)
 			{
-				hasPlayedTokens = false;
+				//hasPlayedTokens = false;
 			}
 			baseTokensModel.update();
 
@@ -1289,7 +1345,21 @@ public class PublicCompany extends Company implements PublicCompanyI
 			return false;
 		}
 	}
+	*/
+	
+	public boolean removeToken (TokenI token) {
+	    
+	    boolean result = false;
+	    if (token instanceof BaseToken 
+	            && freeBaseTokens.remove (token)) {
+	        result = laidBaseTokens.add (token);
+	        this.baseTokensModel.update();
+	    }
+	    return result;
+	    
+	}
 
+	/*
 	public int getNumCityTokens()
 	{
 		return numCityTokens;
@@ -1304,19 +1374,24 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		return maxCityTokens;
 	}
+	*/
 
 	/**
 	 * 
 	 * @return True if company has tokens available for play. 
 	 */
+	/*
 	public boolean hasTokensLeft()
 	{
-		return (baseTokenedHexes.size() <= maxCityTokens);
+		return (getNumberOfFreeBaseTokens() > 0);
 	}
+	*/
 	
+	/*
 	public int getFreeBaseTokens () {
 	    return maxCityTokens - baseTokenedHexes.size();
 	}
+	*/
 	
 	public int getNumberOfTileLays (String tileColour) {
 	    

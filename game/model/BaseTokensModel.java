@@ -14,14 +14,14 @@ public class BaseTokensModel extends ModelObject
 
 	public String toString()
 	{
-	    int maxTokens = company.getMaxCityTokens();
-	    int freeTokens = company.getFreeBaseTokens();
-	    if (maxTokens == 0) {
+	    int allTokens = company.getNumberOfBaseTokens();
+	    int freeTokens = company.getNumberOfFreeBaseTokens();
+	    if (allTokens == 0) {
 	        return "";
 	    } else if (freeTokens == 0) {
-	        return "-/" + maxTokens;
+	        return "-/" + allTokens;
 	    } else {
-	        return freeTokens + "/" + maxTokens;
+	        return freeTokens + "/" + allTokens;
 	    }
 	}
 

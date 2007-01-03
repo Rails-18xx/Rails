@@ -13,7 +13,7 @@ import javax.swing.*;
 import ui.GameUILoader;
 import ui.ORWindow;
 import ui.StatusWindow;
-import ui.Token;
+import ui.GUIToken;
 import ui.elements.ViewObject;
 
 /**
@@ -43,7 +43,7 @@ public class GUIHex implements ViewObject
 	protected GUITile provisionalGUITile = null;
 	//protected int provisionalTileOrientation;
 
-	protected Token provisionalGUIToken = null;
+	protected GUIToken provisionalGUIToken = null;
 	
 	protected double tileScale = NORMAL_SCALE;
 	//protected static JComponent map;
@@ -291,7 +291,7 @@ public class GUIHex implements ViewObject
 
 		paintOverlay(g2);
 
-		if (getHexModel().hasTokens())
+		//if (getHexModel().hasTokens())  // Not really needed!? Method no longer exists
 			paintToken(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
@@ -383,7 +383,7 @@ public class GUIHex implements ViewObject
 
 		for (int i = 0; i < tokens.size(); i++)
 		{
-			PublicCompany co = (PublicCompany) tokens.get(i);
+			PublicCompany co = (PublicCompany) ((BaseToken)tokens.get(i)).getCompany();
 			Point origin = getTokenOrigin(numTokens, i, 1, 0);
 			drawToken(g2, co, origin);
 		}
@@ -405,7 +405,7 @@ public class GUIHex implements ViewObject
 			for (int j = 0; j < tokens.size(); j++)
 			{
 				origin = getTokenOrigin(numTokens, j, numStations, i);
-				co = (PublicCompany) tokens.get(j);
+				co = (PublicCompany) ((BaseToken)tokens.get(j)).getCompany();
 				drawToken(g2, co, origin);
 			}
 		}
@@ -415,7 +415,7 @@ public class GUIHex implements ViewObject
 	{
 		Dimension size = new Dimension(40, 40);
 
-		Token token = new Token(co.getFgColour(),
+		GUIToken token = new GUIToken(co.getFgColour(),
 				co.getBgColour(),
 				co.getName(),
 				origin.x,

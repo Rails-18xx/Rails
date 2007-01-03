@@ -8,7 +8,7 @@ import javax.swing.*;
  * This class draws a company's token.
  */
 
-public class Token extends JPanel
+public class GUIToken extends JPanel
 {
 
 	private Color fgColor, bgColor;
@@ -46,27 +46,27 @@ public class Token extends JPanel
 		super.paintComponent(g);
 	}
 
-	public Token(String name)
+	public GUIToken(String name)
 	{
 		this(Color.BLACK, Color.WHITE, name, DEFAULT_X_COORD, DEFAULT_Y_COORD, DEFAULT_DIAMETER);
 	}
 
-	public Token(Color fc, Color bc, String name)
+	public GUIToken(Color fc, Color bc, String name)
 	{
 		this(fc, bc, name, DEFAULT_X_COORD, DEFAULT_Y_COORD, DEFAULT_DIAMETER);
 	}
 
-	public Token(double x, double y, String name)
+	public GUIToken(double x, double y, String name)
 	{
 		this(Color.BLACK, Color.WHITE, name, x, y, DEFAULT_DIAMETER);
 	}
 	
-	public Token(Color fc, Color bc, String name, double x, double y)
+	public GUIToken(Color fc, Color bc, String name, double x, double y)
 	{
 		this(fc, bc, name, x, y, DEFAULT_DIAMETER);
 	}
 
-	public Token(Color fc, Color bc, String name, double x, double y,
+	public GUIToken(Color fc, Color bc, String name, double x, double y,
 			double diameter)
 	{
 		super();

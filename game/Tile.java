@@ -6,7 +6,7 @@ import java.util.regex.*;
 import org.w3c.dom.*;
 import util.*;
 
-public class Tile implements TileI
+public class Tile implements TileI, StationHolderI
 {
 
 	private int id;
@@ -112,9 +112,14 @@ public class Tile implements TileI
 			if (type == null)
 				throw new ConfigurationException(
 				        LocalText.getText("TileStationHasNoType", String.valueOf(id)));
+			if (!Station.isTypeValid(type)) {
+			    throw new ConfigurationException(
+			            LocalText.getText("TileStationHasInvalidType",
+			                    new String[] {String.valueOf(id), type}));
+			}
 			value = XmlUtils.extractIntegerAttribute(nnp, "value", 0);
 			slots = XmlUtils.extractIntegerAttribute(nnp, "slots", 0);
-			station = new Station(sid, type, value, slots);
+			station = new Station(this, sid, type, value, slots);
 			stations.add(station);
 		}
 

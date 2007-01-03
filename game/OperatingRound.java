@@ -528,7 +528,7 @@ public class OperatingRound extends Round implements Observer
 				break;
 			}
 
-			if (!operatingCompany.hasTokensLeft())
+			if (operatingCompany.getNumberOfFreeBaseTokens() == 0)
 			{
 				errMsg = "Company has no more tokens";
 				break;
@@ -551,7 +551,7 @@ public class OperatingRound extends Round implements Observer
 			}
 
 			cost = Game.getCompanyManager()
-					.getBaseTokenLayCostBySequence(operatingCompany.getNextBaseTokenIndex());
+					.getBaseTokenLayCostBySequence(operatingCompany.getNumberOfLaidBaseTokens());
 			if (stl != null && stl.isFree()) cost = 0;
 
 			// Does the company have the money?
@@ -570,9 +570,10 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		/* End of validation, start of execution */
-	    //MoveSet.start();
+	    MoveSet.start();
 	    
-		if (operatingCompany.layBaseToken(hex, station)) {
+		if (/*operatingCompany.layBaseToken(hex, station)*/
+		        hex.layBaseToken(operatingCompany, station)) {
 		    /* TODO: the false return value must be impossible. */
 
 		    /* TODO: should the below items be made ModelObjects? */
@@ -620,7 +621,7 @@ public class OperatingRound extends Round implements Observer
 			}
 	
 		}
-		//MoveSet.finish();
+		MoveSet.finish();
 
 		return true;
 	}
@@ -890,7 +891,7 @@ public class OperatingRound extends Round implements Observer
 		    step = steps[stepIndex];
 		    
 			if (step == STEP_LAY_TOKEN
-					&& operatingCompany.getNumCityTokens() == 0)
+					&& operatingCompany.getNumberOfFreeBaseTokens() == 0)
 				continue;
 
 			if (step == STEP_CALC_REVENUE
@@ -1019,7 +1020,7 @@ public class OperatingRound extends Round implements Observer
 	    currentNormalTokenLays.clear();
 	    
 	    /* For now, we allow one token of the currently operating company */
-	    if (operatingCompany.hasTokensLeft()) {
+	    if (operatingCompany.getNumberOfFreeBaseTokens() > 0) {
 	        currentNormalTokenLays.add (new LayToken (null, operatingCompany));
 	    }
 	    
