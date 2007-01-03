@@ -573,6 +573,30 @@ public class MapHex extends ModelObject
 	public boolean hasTokenSlotsLeft (Station station) {
 	    return station != null && station.hasTokenSlotsLeft();
 	}
+	
+	/** Check if the tile already has a token of a company in any station */
+	public boolean hasTokenOfCompany (PublicCompanyI company) {
+	    
+	    for (Iterator it = stations.iterator(); it.hasNext(); ) {
+	        if (hasTokenOfCompany (company, (Station)it.next())) return true;
+	    }
+	    return false;
+	}
+	
+	/** Check if the tile already has a token of a company in one station */
+	public boolean hasTokenOfCompany (PublicCompanyI company, Station station) {
+	    
+	    for (Iterator it = station.getTokens().iterator(); it.hasNext(); ) {
+	        if (((BaseToken)it.next()).getCompany() == company) return true;
+	    }
+	    return false;
+	}
+
+	/** Check if the tile already has a token of a company in one station */
+	public boolean hasTokenOfCompany (PublicCompanyI company, int station) {
+	    
+	    return hasTokenOfCompany (company, (Station)stations.get(station));
+	}
 
 	/**
 	 * @return ArrayList of all tokens in all stations merged into a single
