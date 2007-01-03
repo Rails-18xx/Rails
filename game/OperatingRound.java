@@ -539,6 +539,15 @@ public class OperatingRound extends Round implements Observer
 			    break;
 			}
 			
+			/* TODO: the below condition holds for 1830.
+			 * in some games, separate cities on one tile may hold 
+			 * tokens of the same company; this case is not yet covered.
+			 */
+			if (hex.hasTokenOfCompany(operatingCompany)) {
+			    errMsg = "Tile already has a token of this company";
+			    break;
+			}
+			
 			if (allowance != null) {
 			    MapHex location = allowance.getLocation();
 			    if (location != null && location != hex) {
