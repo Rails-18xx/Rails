@@ -342,7 +342,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
-			Log.write(company.getName() + " closes at " + newsquare.getName());
+			LogBuffer.add(company.getName() + " closes at " + newsquare.getName());
 		}
 		else
 		{
@@ -384,7 +384,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
-			Log.write(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
+			LogBuffer.add(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
 		}
 		else
 		{
@@ -397,7 +397,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		// To be written to a log file in the future.
 		if (from != null && from == to)
 		{
-			Log.write(LocalText.getText("PRICE_STAYS_LOG", new String[] {
+			LogBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
 			        company.getName(),
 			        Bank.format(from.getPrice()),
 			        from.getName()
@@ -409,7 +409,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 		else if (from != null && to != null)
 		{
-			Log.write (LocalText.getText("PRICE_MOVES_LOG", new String[] {
+			LogBuffer.add (LocalText.getText("PRICE_MOVES_LOG", new String[] {
 			        company.getName(),
 			        Bank.format(from.getPrice()),
 			        from.getName(),
@@ -420,7 +420,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			/* Check for game closure */
 			if (to.endsGame())
 			{
-				Log.write(LocalText.getText("GAME_OVER"));
+				LogBuffer.add(LocalText.getText("GAME_OVER"));
 				gameOver = true;
 			}
 

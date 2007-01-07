@@ -517,7 +517,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						1))
 				{
 					JOptionPane.showMessageDialog(this,
-							Log.getErrorBuffer(),
+							LogBuffer.get(),
 							"",
 							JOptionPane.OK_OPTION);
 				}
@@ -538,7 +538,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						1))
 				{
 					JOptionPane.showMessageDialog(this,
-							Log.getErrorBuffer(),
+							LogBuffer.get(),
 							"",
 							JOptionPane.OK_OPTION);
 				}
@@ -565,7 +565,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			company = companies[compIndex];
 			if (!stockRound.sellShare(player.getName(), company.getName()))
 			{
-				JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+				JOptionPane.showMessageDialog(this, LogBuffer.get());
 			}
 		}
 		else
@@ -604,7 +604,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 					startPrice))
 			{
 				JOptionPane.showMessageDialog(this,
-						Log.getErrorBuffer(),
+						LogBuffer.get(),
 						"",
 						JOptionPane.OK_OPTION);
 			}

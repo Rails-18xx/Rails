@@ -421,7 +421,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		}
 		catch (CloneNotSupportedException e)
 		{
-			Log.error("Cannot clone traintype " + name);
+			MessageBuffer.add("Cannot clone traintype " + name);
 			System.out.println(e.getStackTrace());
 		}
 

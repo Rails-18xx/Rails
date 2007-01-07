@@ -556,7 +556,7 @@ public class MapHex extends ModelObject
 	        System.out.println("ERROR: company "+company.getName()+" has no free token");
 	        return false;
 	    } else {
-	        MoveSet.add(new TokenMove (company.getFreeToken(), company, station));
+	        MoveSet.add(new TokenMove (token, company, station));
 	        return true;
 	    }
 	}

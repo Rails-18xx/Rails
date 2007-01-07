@@ -76,7 +76,7 @@ public class Player implements CashHolder, Comparable
 			player = (Player) players[i];
 			player.index = i;
 			Bank.transferCash(null, player, startCash);
-			Log.write("Player " + player.getName() + " receives "
+			LogBuffer.add("Player " + player.getName() + " receives "
 					+ Bank.format(startCash) + ". Bank now has "
 					+ Bank.getInstance().getFormattedCash());
 		}

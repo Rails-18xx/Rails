@@ -723,9 +723,8 @@ public class GUIHex implements ViewObject
 		        GameUILoader.orWindow.getORPanel().layTile(model,
 						currentTile,
 						currentTileOrientation);
-			} else {
-			    GameUILoader.orWindow.getORPanel().displayError();
 			}
+			GameUILoader.orWindow.getORPanel().displayMessage();
 		}
 		setSelected(false);
 		setToolTip();
@@ -753,9 +752,8 @@ public class GUIHex implements ViewObject
 				station, allowance);
 		if (canFixToken) {
 	        GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
-	    } else {
-	        GameUILoader.orWindow.getORPanel().displayError();
 	    }
+        GameUILoader.orWindow.getORPanel().displayMessage();
 		setSelected(false);
 		
 		return canFixToken;

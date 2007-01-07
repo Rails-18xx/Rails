@@ -368,7 +368,7 @@ public class ORWindow extends JFrame implements WindowListener
 					catch(ArrayIndexOutOfBoundsException e)
 					{
 						//Clicked on a hex that doesn't have a tile or a station in it.
-						Log.error("No Station in this Hex. Unable to place Token.");
+					    MessageBuffer.add("No Station in this Hex. Unable to place Token.");
 					}
 				}
 			}

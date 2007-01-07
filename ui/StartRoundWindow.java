@@ -494,7 +494,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					sp.getPrice()))
 			{
 				JOptionPane.showMessageDialog(this,
-						Log.getErrorBuffer(),
+						LogBuffer.get(),
 						LocalText.getText("ERROR"),
 						JOptionPane.OK_OPTION);
 			}
@@ -560,7 +560,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	}
 	
     public void displayError() {
-    	String message = Log.getErrorBuffer();
+    	String message = LogBuffer.get();
     	if (Util.hasValue(message)) {
     		JOptionPane.showMessageDialog(this, message);
     	}

@@ -560,7 +560,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 GameUILoader.orWindow.updateMessage();
 
             } else if (step == OperatingRound.STEP_CALC_REVENUE) {
-                if (oRound.isActionAllowed()) {
+                //if (oRound.isActionAllowed()) {
                     revenueCaption.setHighlight(true);
                     revenueSelect[orCompIndex].setValue(new Integer(
                             companies[orCompIndex].getLastRevenue()));
@@ -573,12 +573,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     button1.setEnabled(true);
                     button1.setVisible(true);
                     GameUILoader.orWindow.setMessage(LocalText.getText("EnterRevenue"));
-                } else {
-                    displayMessage(oRound.getActionNotAllowedMessage());
-                    setRevenue(0);
-                    updateStatus();
-                    return;
-                }
+               //} else {
+               //     displayMessage(oRound.getActionNotAllowedMessage());
+               //     setRevenue(0);
+               //     updateStatus();
+               //     return;
+               // }
 
             } else if (step == OperatingRound.STEP_PAYOUT) {
 
@@ -684,9 +684,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         return;
     }
 
-    //FIXME: This needs to be moved somewhere else. Perhaps ORWindow or HexMap.
-    // Having this method located in this class does not make sense.
-    // EV: See layTile.
+    /** Postprocess a token lay in the GUI. The engine has already
+     * validated the token lay, and the game state has been fully updated.
+     * @param hex
+     * @param station
+     */
     public void layBaseToken(MapHex hex, int station) {
         if (!(round instanceof OperatingRound))
             return;
@@ -704,13 +706,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
         button3.setEnabled(true);
 
-        LogWindow.addLog();
-
         if (oRound.getStep() != OperatingRound.STEP_LAY_TOKEN) {
             GameUILoader.orWindow.enableBaseTokenLaying(false);
             this.requestFocus();
         }
         updateStatus();
+
+        LogWindow.addLog();
+        displayMessage();
 
     }
 
@@ -786,7 +789,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         } else if (command.equals(DONE_CMD)) {
             if (!oRound.done(orComp.getName())) {
-                displayError();
+                displayMessage();
             }
         } else if (command.equals(UNDO_CMD)) {
             System.out.println("UNDO!");
@@ -944,7 +947,7 @@ private void buyTrain()
 					price,
 					exchangedTrain))
 			{
-				JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+				JOptionPane.showMessageDialog(this, LogBuffer.get());
 			}
 			else
 			{
@@ -1073,7 +1076,7 @@ private void buyTrain()
 
                 if (!oRound
                         .buyPrivate(orComp.getName(), privName, amount)) {
-                    displayError();
+                    displayMessage();
                 } else {
                     newPrivatesCost[orCompIndex].setText(Bank.format(oRound
                             .getLastPrivateBuyCost()));
@@ -1137,12 +1140,15 @@ private void buyTrain()
         s.setVisible(active);
     }
 
-    public void displayMessage(String text) {
+    public void displayPopup(String text) {
         JOptionPane.showMessageDialog(this, text);
     }
 
-    public void displayError() {
-        JOptionPane.showMessageDialog(this, Log.getErrorBuffer());
+    public void displayMessage() {
+        String message;
+        if (Util.hasValue(message = MessageBuffer.get())) {
+            JOptionPane.showMessageDialog(this, message);
+        }
     }
 
     public void keyPressed(KeyEvent e) {

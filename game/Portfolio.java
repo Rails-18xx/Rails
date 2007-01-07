@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.42 2006/12/07 22:38:22 uid188894 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.43 2007/01/07 19:25:26 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -75,12 +75,12 @@ public class Portfolio
 
 		if (from == Bank.getIpo())
 		{
-			Log.write(name + " buys " + privateCompany.getName() + " for "
+			LogBuffer.add(name + " buys " + privateCompany.getName() + " for "
 					+ Bank.format(price) + ".");
 		}
 		else
 		{
-			Log.write(name + " buys " + privateCompany.getName() + " from "
+			LogBuffer.add(name + " buys " + privateCompany.getName() + " from "
 					+ from.getName() + " for " + Bank.format(price) + ".");
 		}
 
@@ -137,7 +137,7 @@ public class Portfolio
 			Portfolio from, int price)
 	{
 
-		Log.write(from.getName() + " sells " + certificate.getShare() + "% of "
+		LogBuffer.add(from.getName() + " sells " + certificate.getShare() + "% of "
 				+ certificate.getCompany().getName() + " to the Bank for "
 				+ Bank.format(price));
 
@@ -588,7 +588,7 @@ public class Portfolio
 	public void discardTrain(TrainI train)
 	{
 		transferTrain(train, this, Bank.getPool());
-		Log.write("Company " + name + " discards " + train.getName()
+		LogBuffer.add("Company " + name + " discards " + train.getName()
 				+ "-train to Pool");
 	}
 

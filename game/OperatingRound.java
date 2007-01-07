@@ -1,12 +1,15 @@
 package game;
 
 import game.action.*;
+import game.move.CashMove;
 import game.move.MoveSet;
 import game.move.StateChange;
 import game.special.*;
 import game.state.StateObject;
 
 import java.util.*;
+
+import util.LocalText;
 import util.Util;
 
 /**
@@ -142,7 +145,7 @@ public class OperatingRound extends Round implements Observer
 		cumulativeORNumber++;
 		thisOrNumber = getCompositeORNumber();
 
-		Log.write("\nStart of Operating Round " + getCompositeORNumber());
+		LogBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
 
 		numberOfCompanies = operatingCompanyArray.length;
 
@@ -176,7 +179,7 @@ public class OperatingRound extends Round implements Observer
 		else
 		{
 			// No operating companies yet: close the round.
-			Log.write("End of Operating Round" + getCompositeORNumber());
+			LogBuffer.add (LocalText.getText("END_OR", getCompositeORNumber()));
 			GameManager.getInstance().nextRound(this);
 		}
 	}
@@ -259,14 +262,15 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName + " (expected "
-						+ operatingCompany.getName() + ")";
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
 			if (getStep() != STEP_LAY_TRACK)
 			{
-				errMsg = "Wrong action, did noy expect Tile laying";
+				errMsg = LocalText.getText("WrongActionNoTileLay");
 				break;
 			}
 
@@ -275,12 +279,12 @@ public class OperatingRound extends Round implements Observer
 
 			if (!tile.isLayableNow())
 			{
-				errMsg = "Tile " + tile.getName() + " is not yet available";
+				errMsg = LocalText.getText("TileNotYetAvailable", tile.getName());
 				break;
 			}
 			if (tile.countFreeTiles() == 0)
 			{
-				errMsg = "Tile " + tile.getName() + " is not available";
+				errMsg = LocalText.getText("TileNotAvailable", tile.getName());
 				break;
 			}
 
@@ -291,7 +295,10 @@ public class OperatingRound extends Round implements Observer
 			if (allowance != null) {
 			    List tiles = allowance.getTiles();
 			    if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
-			        errMsg = "Tile #" + tile.getName() +" may not be laid in hex "+hex.getName();
+			        errMsg = LocalText.getText("TileMayNotBeLaidInHex", new String[] {
+			                tile.getName(),
+			                hex.getName()
+			        });
 			        break;
 			    }
 			    stl = allowance.getSpecialProperty();
@@ -302,8 +309,8 @@ public class OperatingRound extends Round implements Observer
 			 * normal tile lays is not exceeded.
 			 */ 
 			if (!extra && !validateNormalTileLay(tile)) {
-			    errMsg = "Number of normal tile lays of colour " + tile.getColour()
-			    	+ " would be exceeded.";
+			    errMsg = LocalText.getText("NumberOfNormalTileLaysExceeded", 
+			            tile.getColour());
 			    break;
 			}
 
@@ -321,26 +328,37 @@ public class OperatingRound extends Round implements Observer
 			// Amount must be non-negative multiple of 10
 			if (cost < 0)
 			{
-				errMsg = "Negative amount not allowed";
+				errMsg = LocalText.getText("NegativeAmountNotAllowed",
+				        Bank.format(cost));
 				break;
 			}
 			if (cost % 10 != 0)
 			{
-				errMsg = "Amount must be a multiple of 10";
+				errMsg = LocalText.getText("AmountMustBeMultipleOf10",
+				        Bank.format(cost));
 				break;
 			}
 			// Does the company have the money?
 			if (cost > operatingCompany.getCash())
 			{
-				errMsg = "Not enough money";
+				errMsg = LocalText.getText("NotEnoughMoney", new String[] {
+				        companyName,
+				        Bank.format(operatingCompany.getCash()),
+				        Bank.format(cost)
+				});
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot lay tile on " + hex.getName()
-					+ " for " + Bank.format(cost) + ": " + errMsg);
+			MessageBuffer.add(LocalText.getText("CannotLayTileOn", new String[] {
+			        companyName,
+			        tile.getName(),
+			        hex.getName(),
+			        Bank.format(cost),
+			        errMsg
+			}));
 			return false;
 		}
 
@@ -357,9 +375,20 @@ public class OperatingRound extends Round implements Observer
 					"#" + tile.getName() + "/" + hex.getName() + "/"
 							+ MapHex.getOrientationName(orientation)); // FIXME:
 																		// Wrong!
-			Log.write(operatingCompany.getName() + " lays tile "
-					+ tile.getName() + " at hex " + hex.getName()
-					+ (cost > 0 ? " for " + Bank.format(cost) : ""));
+			if (cost > 0) {
+			    LogBuffer.add(LocalText.getText("LaysTileAt", new String[] {
+			            companyName,
+			            tile.getName(),
+			            hex.getName()
+			    }));
+			} else {
+			    LogBuffer.add(LocalText.getText("LaysTileAtFor", new String[] {
+			            companyName,
+			            tile.getName(),
+			            hex.getName(),
+			            Bank.format(cost)
+			    }));
+			}
 
 			// Was a special property used?
 			if (stl != null)
@@ -518,24 +547,26 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
 			if (getStep() != STEP_LAY_TOKEN)
 			{
-				errMsg = "Wrong action, not expecting Token lay";
+				errMsg = LocalText.getText("WrongActionNoTokenLay");
 				break;
 			}
 
 			if (operatingCompany.getNumberOfFreeBaseTokens() == 0)
 			{
-				errMsg = "Company has no more tokens";
+				errMsg = LocalText.getText("HasNoTokensLeft", companyName);
 				break;
 			}
 			
 			if (!hex.hasTokenSlotsLeft(station)) {
-			    errMsg = "City has no empty slots";
+			    errMsg = LocalText.getText("CityHasNoEmptySlots");
 			    break;
 			}
 			
@@ -544,15 +575,18 @@ public class OperatingRound extends Round implements Observer
 			 * tokens of the same company; this case is not yet covered.
 			 */
 			if (hex.hasTokenOfCompany(operatingCompany)) {
-			    errMsg = "Tile already has a token of this company";
+			    errMsg = LocalText.getText("TileAlreadyHasToken", new String[] {
+			            hex.getName(),
+			            companyName});
 			    break;
 			}
 			
 			if (allowance != null) {
 			    MapHex location = allowance.getLocation();
 			    if (location != null && location != hex) {
-			        errMsg = "Token laid in "+hex.getName()
-			        	+" but property is for hex " + location.getName() +": mismatch";
+			        errMsg = LocalText.getText("TokenLayingHexMismatch", new String[] {
+			                hex.getName(),
+			                location.getName()});
 			        break;
 			    }
 			    stl = allowance.getSpecialProperty();
@@ -566,15 +600,18 @@ public class OperatingRound extends Round implements Observer
 			// Does the company have the money?
 			if (cost > operatingCompany.getCash())
 			{
-				errMsg = "Not enough money";
+				errMsg = LocalText.getText("NotEnoughMoney", companyName);
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot lay base token on " + hex.getName()
-					+ " for " + Bank.format(cost) + ": " + errMsg);
+			MessageBuffer.add(LocalText.getText("CannotLayBaseTokenOn", new String[] {
+			        companyName,
+			        hex.getName(),
+			        Bank.format(cost),
+			        errMsg}));
 			return false;
 		}
 
@@ -592,13 +629,18 @@ public class OperatingRound extends Round implements Observer
 	
 			if (cost > 0)
 			{
-				Bank.transferCash((CashHolder) operatingCompany, null, cost);
-				Log.write(companyName + " lays a token on " + hex.getName()
-						+ " for " + Bank.format(cost));
+				//Bank.transferCash((CashHolder) operatingCompany, null, cost);
+			    MoveSet.add (new CashMove (operatingCompany, null, cost));
+				LogBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
+				        companyName,
+				        hex.getName(),
+				        Bank.format(cost)}));
 			}
 			else
 			{
-				Log.write(companyName + " lays a free token on " + hex.getName());
+				LogBuffer.add(LocalText.getText("LAYS_FREE_TOKEN_ON", new String[] {
+				        companyName,
+				        hex.getName()}));
 			}
 	
 			// Was a special property used?
@@ -606,19 +648,19 @@ public class OperatingRound extends Round implements Observer
 			{
 				stl.setExercised();
 				currentSpecialTokenLays.remove(allowance);
-				System.out.println("This was a special token lay, "+
-				        (extra?"":" not")+" extra");
+				//System.out.println("This was a special token lay, "+
+				//        (extra?"":" not")+" extra");
 				
 			}
 			if (!extra)
 			{
 				currentNormalTokenLays.clear();
-				System.out.println("This was a normal token lay");
+				//System.out.println("This was a normal token lay");
 			}
 			if (currentNormalTokenLays.isEmpty()) {
-			    System.out.println("No more normal token lays are allowed");
+			    //System.out.println("No more normal token lays are allowed");
 			} else {
-			    System.out.println("A normal token lay is still allowed");
+			    //System.out.println("A normal token lay is still allowed");
 			}
 			setSpecialTokenLays();
 			System.out.println("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
@@ -655,6 +697,7 @@ public class OperatingRound extends Round implements Observer
 	 * Set a given revenue. This may be a temporary method. We will have to
 	 * enter revenues manually as long as the program cannot yet do the
 	 * calculations.
+	 * <p>Note: This method is called with a zero amount if there is no revenue.
 	 * 
 	 * @param amount
 	 *            The revenue.
@@ -673,7 +716,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
@@ -698,26 +743,14 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot process revenue of " + amount + ": " + errMsg);
+			MessageBuffer.add("Cannot process revenue of " + amount + ": " + errMsg);
 			return false;
 		}
 
 		revenue[operatingCompanyIndex] = amount;
-		Log.write(companyName + " earns " + Bank.format(amount));
+		LogBuffer.add(companyName + " earns " + Bank.format(amount));
 
-		nextStep();
-
-		// If we already know what to do: do it.
-		if (amount == 0)
-		{
-			operatingCompany.withhold(0);
-			nextStep();
-		}
-		else if (operatingCompany.isSplitAlways())
-		{
-			operatingCompany.splitRevenue(amount);
-			nextStep();
-		}
+		nextStep();  // NOT IN A MOVESET??
 
 		return true;
 	}
@@ -744,7 +777,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
@@ -757,17 +792,19 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot payout revenue of "
+			MessageBuffer.add("Cannot payout revenue of "
 					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
 					+ errMsg);
 			return false;
 		}
 
-		Log.write(companyName + " pays out full dividend of "
+		LogBuffer.add(companyName + " pays out full dividend of "
 				+ Bank.format(revenue[operatingCompanyIndex]));
+		
+		MoveSet.start();
 		operatingCompany.payOut(revenue[operatingCompanyIndex]);
-
 		nextStep();
+		MoveSet.finish();
 
 		return true;
 	}
@@ -797,7 +834,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
@@ -816,15 +855,17 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot split revenue of "
+			MessageBuffer.add("Cannot split revenue of "
 					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
 					+ errMsg);
 			return false;
 		}
 
-		Log.write(companyName + " pays out half dividend");
+		LogBuffer.add(companyName + " pays out half dividend");
+		MoveSet.start();
 		operatingCompany.splitRevenue(revenue[operatingCompanyIndex]);
 		nextStep();
+		MoveSet.finish();
 
 		return true;
 	}
@@ -851,7 +892,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
@@ -864,15 +907,17 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot withhold revenue of " + revenue + ": " + errMsg);
+			MessageBuffer.add("Cannot withhold revenue of " + revenue + ": " + errMsg);
 			return false;
 		}
-		Log.write(companyName + " withholds dividend of "
+		LogBuffer.add(companyName + " withholds dividend of "
 				+ Bank.format(revenue[operatingCompanyIndex]));
 
+		MoveSet.start();
 		operatingCompany.withhold(revenue[operatingCompanyIndex]);
 
 		nextStep();
+		MoveSet.finish();
 
 		return true;
 	}
@@ -886,10 +931,10 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void nextStep()
 	{
-		actionPossible = true;
-		actionNotPossibleMessage = "";
+		//actionPossible = true;
+		//actionNotPossibleMessage = "";
 
-		// Cycle through the steps until we reach one where action is allowed.
+		// Cycle through the steps until we reach one where a user action is expected.
 		int step = getStep();
 		int stepIndex;
 		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
@@ -900,19 +945,41 @@ public class OperatingRound extends Round implements Observer
 		    step = steps[stepIndex];
 		    
 			if (step == STEP_LAY_TOKEN
-					&& operatingCompany.getNumberOfFreeBaseTokens() == 0)
+					&& operatingCompany.getNumberOfFreeBaseTokens() == 0) {
 				continue;
+			}
 
-			if (step == STEP_CALC_REVENUE
-					&& operatingCompany.getPortfolio().getTrains().length == 0)
-			{
-				// No trains, then the revenue is zero.
-				// setRevenue (operatingCompany.getName(), 0);
-				actionPossible = false;
-				actionNotPossibleMessage = "No trains owned, so Revenue is "
-						+ Bank.format(0);
-				// which will call this method again twice,
-				// so by now the step will be increased to STEP_BUY_TRAIN.
+			if (step == STEP_CALC_REVENUE) {
+			    
+			    if (operatingCompany.getPortfolio().getTrains().length == 0)
+				{
+					// No trains, then the revenue is zero.
+					revenue[operatingCompanyIndex] = 0;
+					LogBuffer.add(operatingCompany.getName() + " earns " + Bank.format(0));
+					continue;
+				}
+			}
+			
+			if (step == STEP_PAYOUT) {
+			    
+				// If we already know what to do: do it.
+			    int amount = revenue[operatingCompanyIndex];
+				if (amount == 0)
+				{
+				    /* Zero dividend: process it and go to the next step */
+					operatingCompany.withhold(0);
+					MessageBuffer.add ("No trains owned, so Revenue is "
+							+ Bank.format(0));
+					//new Exception("HERE").printStackTrace();
+					continue;
+				}
+
+				else if (operatingCompany.isSplitAlways())
+				{
+				    /* Automatic revenue split: process it and go to the next step */
+					operatingCompany.splitRevenue(amount);
+					continue;
+				}
 			}
 
 			// No reason found to skip this step
@@ -930,6 +997,7 @@ public class OperatingRound extends Round implements Observer
 
 	}
 
+	/*
 	public boolean isActionAllowed()
 	{
 		return actionPossible;
@@ -939,6 +1007,7 @@ public class OperatingRound extends Round implements Observer
 	{
 		return actionNotPossibleMessage;
 	}
+	*/
 
 	protected void prepareStep()
 	{
@@ -1075,7 +1144,9 @@ public class OperatingRound extends Round implements Observer
 	     * is called from the GUI.
 	     */
 	    System.out.println("Skip step "+((Integer)stepObject.getState()).intValue());
+	    MoveSet.start();
 		nextStep();
+		MoveSet.finish();
 		//updateStatus ("Skip");
 
 	}
@@ -1093,7 +1164,9 @@ public class OperatingRound extends Round implements Observer
 
 		if (!companyName.equals(operatingCompany.getName()))
 		{
-			errMsg = "Wrong company " + companyName;
+			errMsg = LocalText.getText("WrongCompany", new String[] {
+			        companyName,
+			        operatingCompany.getName()});
 			return false;
 		}
 		
@@ -1103,7 +1176,7 @@ public class OperatingRound extends Round implements Observer
 			//FIXME: Need to check for valid route before throwing an error.
 			errMsg = companyName + " owns no trains.";
 			setStep(STEP_BUY_TRAIN);
-			Log.error(errMsg);
+			MessageBuffer.add(errMsg);
 			return false;
 		}
 		
@@ -1112,7 +1185,7 @@ public class OperatingRound extends Round implements Observer
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
 			// OR done. Inform GameManager.
-			Log.write("End of Operating Round " + getCompositeORNumber());
+			LogBuffer.add("End of Operating Round " + getCompositeORNumber());
 			operatingCompany = null;
 			stepObject.deleteObserver(this);
 			stepObject = null;
@@ -1157,7 +1230,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 			// Must be correct step
@@ -1233,7 +1308,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error(companyName + " cannot buy " 
+			MessageBuffer.add(companyName + " cannot buy " 
 			        + (train != null ? train.getName()+"-" : "unknown ")
 					+ "train for " + Bank.format(price) + ": " + errMsg);
 			return false;
@@ -1257,7 +1332,7 @@ public class OperatingRound extends Round implements Observer
 			TrainI oldTrain = operatingCompany.getPortfolio()
 					.getTrainOfType(exchangedTrain.getType());
 			Bank.getPool().buyTrain(oldTrain, 0);
-			Log.write(operatingCompany.getName() + " exchanges "
+			LogBuffer.add(operatingCompany.getName() + " exchanges "
 					+ exchangedTrain.getName() + "-train for a " 
 					+ train.getName() + "-train from " 
 					+ oldHolder.getName() + " for "
@@ -1265,7 +1340,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		else
 		{
-			Log.write(operatingCompany.getName() + " buys " + train.getName()
+			LogBuffer.add(operatingCompany.getName() + " buys " + train.getName()
 					+ "-train from " + oldHolder.getName() + " for "
 					+ Bank.format(price));
 		}
@@ -1322,7 +1397,9 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct company.
 			if (!companyName.equals(operatingCompany.getName()))
 			{
-				errMsg = "Wrong company " + companyName;
+				errMsg = LocalText.getText("WrongCompany", new String[] {
+				        companyName,
+				        operatingCompany.getName()});
 				break;
 			}
 
@@ -1381,7 +1458,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot buy private " + privateName
+			MessageBuffer.add("Cannot buy private " + privateName
 					+ (owner == null ? "" : " from " + owner.getName())
 					+ " for " + Bank.format(price) + ": " + errMsg);
 			return false;
@@ -1446,12 +1523,12 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			Log.error("Cannot close private " + privateName + ": " + errMsg);
+			MessageBuffer.add("Cannot close private " + privateName + ": " + errMsg);
 			return false;
 		}
 
 		privCo.setClosed();
-		Log.write("Private " + privateName + " is closed");
+		LogBuffer.add("Private " + privateName + " is closed");
 
 		return true;
 

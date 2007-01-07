@@ -150,7 +150,7 @@ public class StartRound_1835 extends StartRound
 	public boolean bid5(String playerName, String itemName)
 	{
 
-		Log.error("Invalid action in this game");
+		MessageBuffer.add("Invalid action in this game");
 		return false;
 	}
 
@@ -167,7 +167,7 @@ public class StartRound_1835 extends StartRound
 	public boolean bid(String playerName, String itemName, int amount)
 	{
 
-		Log.error(LocalText.getText("InvalidAction"));
+		MessageBuffer.add(LocalText.getText("InvalidAction"));
 		return false;
 	}
 
@@ -230,7 +230,7 @@ public class StartRound_1835 extends StartRound
 	public boolean setPrice(String playerName, String companyName, int parPrice)
 	{
 
-		Log.error(LocalText.getText("InvalidAction"));
+		MessageBuffer.add(LocalText.getText("InvalidAction"));
 		return false;
 	}
 
@@ -260,20 +260,20 @@ public class StartRound_1835 extends StartRound
 
 		if (errMsg != null)
 		{
-			Log.error(LocalText.getText("InvalidPass", new String[] {
+			MessageBuffer.add(LocalText.getText("InvalidPass", new String[] {
 					playerName,
 					errMsg
 				}));
 			return false;
 		}
 
-		Log.write(LocalText.getText("PASSES", playerName));
+		LogBuffer.add(LocalText.getText("PASSES", playerName));
 		GameManager.setNextPlayer();
 
 		if (++numPasses >= numPlayers)
 		{
 			// All players have passed.
-			Log.write(LocalText.getText("ALL_PASSED"));
+			LogBuffer.add(LocalText.getText("ALL_PASSED"));
 			GameManager.getInstance().nextRound(this);
 		}
 

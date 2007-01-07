@@ -160,7 +160,12 @@ public class Station implements TokenHolderI, Cloneable
 	/** Stub */
 	public boolean addToken (TokenI token) {
 	    
-	    return tokens.add(token);
+	    if (tokens.contains(token)) {
+	        return false;
+	    } else {
+		    token.setHolder(this);
+	        return tokens.add(token);
+	    }
 	}
 
 	public List getTokens()

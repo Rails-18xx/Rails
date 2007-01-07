@@ -92,13 +92,13 @@ public class StockRound extends Round
 	{
 		stockRoundNumber++;
 
-		Log.write("\n" + LocalText.getText("StartStockRound")
+		LogBuffer.add("\n" + LocalText.getText("StartStockRound")
 				+ stockRoundNumber);
 
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 
 		initPlayer();
-		Log.write(LocalText.getText("HasPriority", new String[] {
+		LogBuffer.add(LocalText.getText("HasPriority", new String[] {
 		        currentPlayer.getName()
 		        }));
 	}
@@ -414,7 +414,7 @@ public class StockRound extends Round
 
 		if (errMsg != null)
 		{
-			Log.error(LocalText.getText("CantStart", new String[] {
+			MessageBuffer.add(LocalText.getText("CantStart", new String[] {
 			        playerName,
 			        companyName,
 			        Bank.format(price),
@@ -442,7 +442,7 @@ public class StockRound extends Round
 					cert.getCertificatePrice());
 		}
 
-		Log.write(LocalText.getText ("START_COMPANY_LOG", new String[] {
+		LogBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
 		        playerName,
 		        companyName,
 		        String.valueOf(price),
@@ -619,7 +619,7 @@ public class StockRound extends Round
 
 		if (errMsg != null)
 		{
-			Log.error(LocalText.getText("CantBuy", new String[] {
+			MessageBuffer.add(LocalText.getText("CantBuy", new String[] {
 					playerName,
 					String.valueOf(shares),
 					companyName,
@@ -635,7 +635,7 @@ public class StockRound extends Round
 		for (int i = 0; i < shares; i++)
 		{
 			cert = from.findCertificate(company, false);
-			Log.write(LocalText.getText("BUY_SHARES_LOG", new String[] {
+			LogBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
 			        playerName,
 			        String.valueOf(shares),
 			        String.valueOf(cert.getShare()),
@@ -885,7 +885,7 @@ public class StockRound extends Round
 
 		if (errMsg != null)
 		{
-			Log.error(LocalText.getText("CantSell", new String[] {
+			MessageBuffer.add(LocalText.getText("CantSell", new String[] {
 					playerName,
 					String.valueOf(number),
 					companyName,
@@ -912,7 +912,7 @@ public class StockRound extends Round
 
 		MoveSet.start();
 
-		Log.write (LocalText.getText("SELL_SHARES_LOG", new String[]{
+		LogBuffer.add (LocalText.getText("SELL_SHARES_LOG", new String[]{
 		        playerName,
 		        String.valueOf(number),
 		        String.valueOf((number * company.getShareUnit())),
@@ -922,7 +922,7 @@ public class StockRound extends Round
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
 		{
-			Log.write(LocalText.getText("IS_NOW_PRES_OF", new String[] {
+			LogBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[] {
 					        dumpedPlayer.getName(),
 					        companyName
 					}));
@@ -957,7 +957,7 @@ public class StockRound extends Round
 				{
 					portfolio.swapPresidentCertificate(company,
 							otherPlayer.getPortfolio());
-					Log.write(LocalText.getText("IS_NOW_PRES_OF", new String[]{
+					LogBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[]{
 									otherPlayer.getName(),
 									companyName
 							}));
@@ -1002,14 +1002,14 @@ public void reportShares(PublicCompanyI c) {
 
 		if (!playerName.equals(currentPlayer.getName()))
 		{
-			Log.error(LocalText.getText("WrongPlayer") + " " + playerName);
+			MessageBuffer.add(LocalText.getText("WrongPlayer") + " " + playerName);
 			return false;
 		}
 
 		if (((Boolean)hasPassed.getState()).booleanValue())
 		{
 			numPasses++;
-			Log.write(LocalText.getText("PASSES", currentPlayer.getName()));
+			LogBuffer.add(LocalText.getText("PASSES", currentPlayer.getName()));
 		}
 		else
 		{
@@ -1019,7 +1019,7 @@ public void reportShares(PublicCompanyI c) {
 		if (numPasses >= numberOfPlayers)
 		{
 
-			Log.write(LocalText.getText("END_SR") + " " + stockRoundNumber);
+			LogBuffer.add(LocalText.getText("END_SR") + " " + stockRoundNumber);
 
 			// Check if any companies are sold out.
 			Iterator it = companyMgr.getAllPublicCompanies().iterator();
@@ -1029,7 +1029,7 @@ public void reportShares(PublicCompanyI c) {
 				company = (PublicCompanyI) it.next();
 				if (company.hasStockPrice() && company.isSoldOut())
 				{
-					Log.write(company.getName() + LocalText.getText("SOLD_OUT"));
+					LogBuffer.add(company.getName() + LocalText.getText("SOLD_OUT"));
 					stockMarket.soldOut(company);
 				}
 			}

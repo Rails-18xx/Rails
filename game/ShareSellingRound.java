@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.2 2006/06/25 19:54:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.3 2007/01/07 19:25:26 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -225,7 +225,7 @@ public class ShareSellingRound extends StockRound {
 
 		if (errMsg != null)
 		{
-			Log.error(playerName + " cannot sell " + number + " share(s) of "
+			MessageBuffer.add(playerName + " cannot sell " + number + " share(s) of "
 					+ companyName + ": " + errMsg);
 			return false;
 		}
@@ -246,14 +246,14 @@ public class ShareSellingRound extends StockRound {
 			sellPrices.put(companyName, sellPrice);
 		}
 
-		Log.write(playerName + " sells " + number + " shares ("
+		LogBuffer.add(playerName + " sells " + number + " shares ("
 				+ (number * company.getShareUnit()) + "%) of " + companyName
 				+ " for " + Bank.format(number * price));
 
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
 		{
-			Log.write("Presidency of " + companyName + " is transferred to "
+			LogBuffer.add("Presidency of " + companyName + " is transferred to "
 					+ dumpedPlayer.getName());
 			// First swap the certificates
 			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
@@ -286,7 +286,7 @@ public class ShareSellingRound extends StockRound {
 				{
 					portfolio.swapPresidentCertificate(company,
 							otherPlayer.getPortfolio());
-					Log.write("Presidency of " + companyName
+					LogBuffer.add("Presidency of " + companyName
 							+ " is transferred to " + otherPlayer.getName());
 					break;
 				}
