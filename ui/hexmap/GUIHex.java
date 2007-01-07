@@ -8,10 +8,8 @@ import game.model.ModelObject;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
-import javax.swing.*;
 
 import ui.GameUILoader;
-import ui.ORWindow;
 import ui.StatusWindow;
 import ui.GUIToken;
 import ui.elements.ViewObject;

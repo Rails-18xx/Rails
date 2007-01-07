@@ -1,16 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayToken.java,v 1.1 2006/12/03 21:38:13 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayToken.java,v 1.2 2007/01/07 19:37:18 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
  */
 package game.action;
 
-import java.util.*;
-
 import game.MapHex;
 import game.PublicCompanyI;
-import game.TileI;
-import game.special.SpecialTileLay;
 import game.special.SpecialTokenLay;
 
 /**

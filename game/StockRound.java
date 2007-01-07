@@ -1,6 +1,5 @@
 package game;
 
-import game.action.PossibleActions;
 import game.move.DoubleMapChange;
 import game.move.MoveSet;
 import game.move.StateChange;

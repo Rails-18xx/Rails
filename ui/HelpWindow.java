@@ -1,7 +1,5 @@
 package ui;
 
-import game.*;
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
