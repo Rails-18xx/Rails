@@ -55,7 +55,7 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public static void addLog()
 	{
-		String newText = Log.getMessageBuffer();
+		String newText = LogBuffer.get();
 		if (newText.length() > 0)
 		{
 			buffer.insert(buffer.length() - 7, newText.replaceAll("\n", "<br>"));

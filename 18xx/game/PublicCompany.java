@@ -599,7 +599,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		//Bank.transferCash(null, this, cash);
 		MoveSet.add (new CashMove (Bank.getInstance(), this, cash));
-		Log.write(name + " floats and receives " + Bank.format(cash));
+		LogBuffer.add(name + " floats and receives " + Bank.format(cash));
 	}
 
 	/**
@@ -894,8 +894,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 		// For now, hardcode the rule that payout is rounded up.
 		int withheld = ((int) amount / (2 * getNumberOfShares()))
 				* getNumberOfShares();
-		Bank.transferCash(null, this, withheld);
-		Log.write(name + " receives " + Bank.format(withheld));
+		//Bank.transferCash(null, this, withheld);
+		MoveSet.add(new CashMove (null, this, withheld));
+		LogBuffer.add(name + " receives " + Bank.format(withheld));
 
 		// Payout the remainder
 		int payed = amount - withheld;
@@ -939,8 +940,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 			if (recipient instanceof Bank)
 				continue;
 			part = ((Integer) split.get(recipient)).intValue();
-			Log.write(recipient.getName() + " receives " + Bank.format(part));
-			Bank.transferCash(null, recipient, part);
+			LogBuffer.add(recipient.getName() + " receives " + Bank.format(part));
+			//Bank.transferCash(null, recipient, part);
+			MoveSet.add(new CashMove (null, recipient, part));
 		}
 
 	}
@@ -968,7 +970,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 
 		setLastRevenue(amount);
-		Bank.transferCash(null, this, amount);
+		//Bank.transferCash(null, this, amount);
+		MoveSet.add (new CashMove (null, this, amount));
 		// Move the token
 		if (hasStockPrice)
 			Game.getStockMarket().withhold(this);
@@ -1137,7 +1140,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			pres.getPortfolio().swapPresidentCertificate(this,
 					buyer.getPortfolio());
-			Log.write("Presidency of " + name + " is transferred to "
+			LogBuffer.add("Presidency of " + name + " is transferred to "
 					+ buyer.getName());
 		}
 	}
@@ -1166,7 +1169,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				// Presidency must be transferred
 				seller.getPortfolio().swapPresidentCertificate(this,
 						player.getPortfolio());
-				Log.write("Presidency of " + name + " is transferred to "
+				LogBuffer.add("Presidency of " + name + " is transferred to "
 						+ player.getName());
 			}
 		}
@@ -1228,13 +1231,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 	}
 
-	/*
-	public boolean layBaseToken(MapHex hex, int station)
-	{
-		return hex.addToken(this, station);
-	}
-	*/
-	
 	public BaseTokensModel getBaseTokensModel() {
 	    return baseTokensModel;
 	}
@@ -1246,26 +1242,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return homeHex.layBaseToken(this, homeStation);
 	}
 	
-	/**
-	 * Preferred method for adding tokens to company.
-	 * 
-	 * Assumes checking for available space has already done by Station.addToken().
-	 * This method should never be called before Station.addToken().
-	 * 
-	 * TODO: Confusing name, as this method records *playing* a token,
-	 * i.e. *removing* a token from the company charter and plaving it on the map.
-	 *//*
-	public boolean addToken(TokenHolderI hex)
-	{
-	    baseTokenedHexes.add(hex);
-		//hasPlayedTokens = true;
-		numCityTokens--;
-		baseTokensModel.update();
-		
-		return true;
-	}
-	*/
-	
 	public BaseToken getFreeToken() {
 	    if (freeBaseTokens.size() > 0) {
 	        return (BaseToken) freeBaseTokens.get(0);
@@ -1273,7 +1249,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 	        return null;
 	    }
 	}
-	/** Add a token to the company charter, i.e. remove a token from the map. */
+	/**
+	 * Add a base token to the company charter.
+	 * This method is called when a base token is removed from a map hex.
+	 * This may happen because of an Undo action. 
+	 * In some games tokens can be taken back for more "regular" reasons as well.
+	 * The token is removed from the company laid token list
+	 * and added to the free token list.
+	 */
+
 	public boolean addToken (TokenI token) {
 	    
 	    boolean result = false;
@@ -1313,40 +1297,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 	}
 
 	/**
-	 * @return hasTokens, which can be a bit confusing. hasTokens 
-	 * can be thought of as hasPlayedTokens. Returns true if the 
-	 * company has played one or more of its tokens. 
+	 * Remove a base token from the company charter.
+	 * This method is called when a base token is laid on a map hex.
+	 * The token is removed from the company free token list
+	 * and added to the laid token list.
+	 * In other words: lay a base token
 	 */
-	/*
-	public boolean hasTokens()
-	{
-		return hasPlayedTokens;
-	}
-	*/
-
-	/*
-	public boolean removeToken(TokenHolderI company)
-	{
-		int index = baseTokenedHexes.indexOf(company);
-		if (index >= 0 && baseTokenedHexes.get(index) instanceof PublicCompanyI)
-		{
-			baseTokenedHexes.remove(index);
-
-			if (baseTokenedHexes.size() < 1)
-			{
-				//hasPlayedTokens = false;
-			}
-			baseTokensModel.update();
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	*/
-	
 	public boolean removeToken (TokenI token) {
 	    
 	    boolean result = false;
@@ -1359,40 +1315,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    
 	}
 
-	/*
-	public int getNumCityTokens()
-	{
-		return numCityTokens;
-	}
-
-	public void setNumCityTokens(int numCityTokens)
-	{
-		this.numCityTokens = numCityTokens;
-	}
-
-	public int getMaxCityTokens()
-	{
-		return maxCityTokens;
-	}
-	*/
-
-	/**
-	 * 
-	 * @return True if company has tokens available for play. 
-	 */
-	/*
-	public boolean hasTokensLeft()
-	{
-		return (getNumberOfFreeBaseTokens() > 0);
-	}
-	*/
-	
-	/*
-	public int getFreeBaseTokens () {
-	    return maxCityTokens - baseTokenedHexes.size();
-	}
-	*/
-	
 	public int getNumberOfTileLays (String tileColour) {
 	    
 	    if (numberOfTileLays == null) return 1;
@@ -1421,7 +1343,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		catch (CloneNotSupportedException e)
 		{
-			Log.error("Cannot clone company " + name);
+			MessageBuffer.add("Cannot clone company " + name);
 			System.out.println(e.getStackTrace());
 		}
 

@@ -83,7 +83,7 @@ public class ExchangeForShare extends SpecialSRProperty
 		}
 		if (errMsg != null)
 		{
-			Log.error(player.getName() + " cannot swap private company"
+			MessageBuffer.add(player.getName() + " cannot swap private company"
 					+ privateCompany.getName() + " for a " + share
 					+ "% share(s) of " + publicCompanyName + ": " + errMsg);
 			return false;
@@ -93,7 +93,7 @@ public class ExchangeForShare extends SpecialSRProperty
 				.findCertificate(publicCompany, false) : Bank.getPool()
 				.findCertificate(publicCompany, false);
 		player.buy(cert, 0);
-		Log.write(player.getName() + " swaps " + privateCompany.getName()
+		LogBuffer.add(player.getName() + " swaps " + privateCompany.getName()
 				+ " for a " + share + "% certificate of " + publicCompanyName);
 		setExercised();
 		privateCompany.setClosed();

@@ -54,7 +54,7 @@ public class Game
 
 	public static void initialise(String name)
 	{
-		Log.write("Game is " + name);
+		LogBuffer.add("Game is " + name);
 		String file = "data/" + name + "/Game.xml";
 		try
 		{

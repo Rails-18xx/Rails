@@ -6,19 +6,11 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import java.net.*;
 import util.*;
-import game.Log;
+import game.MessageBuffer;
+
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
-import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
-import org.apache.batik.swing.svg.GVTTreeBuilderAdapter;
-import org.apache.batik.swing.svg.GVTTreeBuilderEvent;
-import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
-import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
-import org.w3c.dom.Document;
 
 /**
  * This class handles loading our tile images. It provides BufferedImages to be
@@ -68,12 +60,12 @@ public class ImageLoader
 		catch (FileNotFoundException e)
 		{
 			//If loading the SVG fails, try loading the GIF. 
-			Log.error("SVG Tile ID: " + tileID	+ " not found. Attempting to load GIF version of tile.");
+			MessageBuffer.add("SVG Tile ID: " + tileID	+ " not found. Attempting to load GIF version of tile.");
 			image = getGIFTile(tileID);
 		}
 		catch (Exception e)
 		{
-			Log.error("SVG transcoding for tile id " + tileID + " failed with " + e);
+		    MessageBuffer.add("SVG transcoding for tile id " + tileID + " failed with " + e);
 		}
 
 		tileMap.put(Integer.toString(tileID), image);
@@ -147,7 +139,7 @@ public class ImageLoader
 		}
 		catch (IOException e)
 		{
-			Log.error("Error loading file: " + tileURL + "\nLoad failed with "
+			MessageBuffer.add("Error loading file: " + tileURL + "\nLoad failed with "
 					+ e);
 			return null;
 		}

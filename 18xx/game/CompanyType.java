@@ -80,7 +80,7 @@ public class CompanyType implements CompanyTypeI
 		}
 		catch (CloneNotSupportedException e)
 		{
-			Log.error(LocalText.getText("CantCloneCompany1") + name + LocalText.getText("CantCloneCompany2"));
+			MessageBuffer.add(LocalText.getText("CantCloneCompany1") + name + LocalText.getText("CantCloneCompany2"));
 		}
 		return newCompany;
 	}

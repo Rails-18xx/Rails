@@ -100,7 +100,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			nnp = node.getAttributes();
 			money.setCash(XmlUtils.extractIntegerAttribute(nnp, "amount", 12000));
 		}
-		Log.write("Bank size is " + money.getCash());
+		LogBuffer.add("Bank size is " + money.getCash());
 
 		NodeList players = element.getElementsByTagName("Players");
 		for (int i = 0; i < players.getLength(); i++)
@@ -227,7 +227,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		if (money.getCash() <= 0 && !broken)
 		{
 			broken = true;
-			Log.write("Bank is broken");
+			LogBuffer.add("Bank is broken");
 		}
 		return negative;
 	}

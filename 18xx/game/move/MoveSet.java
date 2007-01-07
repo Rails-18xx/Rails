@@ -1,11 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.2 2006/12/10 20:42:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.3 2007/01/07 19:24:56 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package game.move;
 
-import game.Log;
+import game.LogBuffer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -82,7 +82,7 @@ public class MoveSet {
     
     public static boolean undo () {
         if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
-            Log.write(LocalText.getText("UNDO"));
+            LogBuffer.add(LocalText.getText("UNDO"));
             ((MoveSet) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
@@ -93,7 +93,7 @@ public class MoveSet {
     
     public static boolean redo () {
         if (currentAction == null && lastIndex < actionStack.size()-1) {
-            Log.write(LocalText.getText("REDO"));
+            LogBuffer.add(LocalText.getText("REDO"));
             ((MoveSet) actionStack.get(++lastIndex)).execute();
             return true;
         } else {

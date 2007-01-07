@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TokenMove.java,v 1.1 2007/01/03 22:34:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TokenMove.java,v 1.2 2007/01/07 19:24:56 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -34,7 +34,7 @@ public class TokenMove extends Move {
         this.token = token;
         this.from = from;
         this.to = to;
-        System.out.println(toString());
+        //System.out.println(toString());
     }
 
 

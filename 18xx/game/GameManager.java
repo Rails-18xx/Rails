@@ -291,7 +291,7 @@ public class GameManager implements ConfigurableComponentI
 	public void registerBankruptcy()
 	{
 		endedByBankruptcy = true;
-		Log.write("Player " + currentPlayer.getName() + " is bankrupt.");
+		LogBuffer.add("Player " + currentPlayer.getName() + " is bankrupt.");
 		if (gameEndsWithBankruptcy)
 		{
 			finishGame();
@@ -301,7 +301,7 @@ public class GameManager implements ConfigurableComponentI
 	private void finishGame()
 	{
 		gameOver = true;
-		Log.write("Game over.");
+		LogBuffer.add("Game over.");
 		currentRound = null;
 
 		logGameReport();
@@ -320,7 +320,7 @@ public class GameManager implements ConfigurableComponentI
 	public void logGameReport()
 	{
 
-		Log.write(getGameReport());
+		LogBuffer.add(getGameReport());
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class GameManager implements ConfigurableComponentI
 	public static void setCurrentPhase(PhaseI phase)
 	{
 		currentPhase = phase;
-		Log.write("Start of phase " + phase.getName());
+		LogBuffer.add("Start of phase " + phase.getName());
 		if (phase.doPrivatesClose())
 		{
 			Game.getCompanyManager().closeAllPrivates();
@@ -545,7 +545,7 @@ public class GameManager implements ConfigurableComponentI
 		if (existVariant(variant))
 		{
 			GameManager.variant = variant;
-			Log.write("Variant is " + variant);
+			LogBuffer.add("Variant is " + variant);
 		}
 	}
 
@@ -562,7 +562,7 @@ public class GameManager implements ConfigurableComponentI
 		}
 		catch (Exception e)
 		{
-			Log.error("Cannot instantiate class " + className);
+			MessageBuffer.add("Cannot instantiate class " + className);
 			System.out.println(e.getStackTrace());
 			return null;
 		}
