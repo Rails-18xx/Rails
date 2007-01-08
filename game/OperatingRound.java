@@ -1238,13 +1238,13 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct step
 			if (getStep() != STEP_BUY_TRAIN)
 			{
-				errMsg = "Wrong action, expected Train buying cost";
+				errMsg = LocalText.getText("WrongActionNoTrainBuyingCost");
 				break;
 			}
 
 			if (bTrain == null || (train = bTrain.getTrain()) == null)
 			{
-				errMsg = "No train specified";
+				errMsg = LocalText.getText("NoTrainSpecified");
 				break;
 			}
 
@@ -1255,7 +1255,8 @@ public class OperatingRound extends Round implements Observer
 			// Amount must be non-negative
 			if (price < 0)
 			{
-				errMsg = "Negative amount not allowed";
+				errMsg = LocalText.getText("NegativeAmountNotAllowed",
+				        Bank.format(price));
 				break;
 			}
 
@@ -1266,7 +1267,8 @@ public class OperatingRound extends Round implements Observer
 					.getCurrentPhaseIndex());
 			if (currentNumberOfTrains >= trainLimit)
 			{
-				errMsg = "Would exceed train limit of " + trainLimit;
+				errMsg = LocalText.getText("WouldExceedTrainLimit", 
+				        String.valueOf(trainLimit));
 				break;
 			}
 			
@@ -1285,8 +1287,8 @@ public class OperatingRound extends Round implements Observer
 			    // From another company
 			    presidentCash = price - operatingCompany.getCash();
 			    if (presidentCash > bTrain.getPresidentCashToAdd()) {
-			        errMsg = "President may not add more than " 
-			            + Bank.format (bTrain.getPresidentCashToAdd());
+			        errMsg = LocalText.getText("PresidentMayNotAddMoreThan", 
+			            Bank.format (bTrain.getPresidentCashToAdd()));
 			        break;
 			    } else if (currentPlayer.getCash() >= presidentCash) {
 			        Bank.transferCash(currentPlayer, operatingCompany, presidentCash);
@@ -1299,7 +1301,11 @@ public class OperatingRound extends Round implements Observer
 			    // No forced buy - does the company have the money?
 				if (price > operatingCompany.getCash())
 				{
-					errMsg = "Not enough money";
+					errMsg = LocalText.getText("NotEnoughMoney", new String[] {
+					        companyName,
+					        Bank.format(operatingCompany.getCash()),
+					        Bank.format(price)
+					});
 					break;
 				}
 			}
@@ -1308,9 +1314,11 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add(companyName + " cannot buy " 
-			        + (train != null ? train.getName()+"-" : "unknown ")
-					+ "train for " + Bank.format(price) + ": " + errMsg);
+			MessageBuffer.add(LocalText.getText("CannotBuyTrainFor", new String[] {
+			        companyName,
+			        train.getName(),
+			        Bank.format(price),
+			        errMsg}));
 			return false;
 		}
 		
@@ -1332,17 +1340,20 @@ public class OperatingRound extends Round implements Observer
 			TrainI oldTrain = operatingCompany.getPortfolio()
 					.getTrainOfType(exchangedTrain.getType());
 			Bank.getPool().buyTrain(oldTrain, 0);
-			LogBuffer.add(operatingCompany.getName() + " exchanges "
-					+ exchangedTrain.getName() + "-train for a " 
-					+ train.getName() + "-train from " 
-					+ oldHolder.getName() + " for "
-					+ Bank.format(price));
+			LogBuffer.add(LocalText.getText("ExchangesTrain", new String[] {
+			        companyName,
+			        exchangedTrain.getName(),
+			        train.getName(),
+			        oldHolder.getName(),
+			        Bank.format(price)}));
 		}
 		else
 		{
-			LogBuffer.add(operatingCompany.getName() + " buys " + train.getName()
-					+ "-train from " + oldHolder.getName() + " for "
-					+ Bank.format(price));
+			LogBuffer.add(LocalText.getText("BuysTrain", new String[] {
+			        companyName,
+			        train.getName(),
+			        oldHolder.getName(),
+					Bank.format(price)}));
 		}
 
 		operatingCompany.buyTrain(train, price);
@@ -1407,20 +1418,20 @@ public class OperatingRound extends Round implements Observer
 			if ((privCo = Game.getCompanyManager()
 					.getPrivateCompany(privateName)) == null)
 			{
-				errMsg = "Private " + privateName + " does not exist";
+				errMsg = LocalText.getText("PrivateDoesNotExist", privateName);
 				break;
 			}
 			// Is private still open?
 			if (privCo.isClosed())
 			{
-				errMsg = "Private " + privateName + " is already closed";
+				errMsg = LocalText.getText("PrivateIsAlreadyClosed", privateName);
 				break;
 			}
 			// Is private owned by a player?
 			owner = privCo.getPortfolio().getOwner();
 			if (!(owner instanceof Player))
 			{
-				errMsg = "Private " + privateName + " is not owned by a player";
+				errMsg = LocalText.getText("PrivateIsNotOwnedByAPlayer", privateName);
 				break;
 			}
 			player = (Player) owner;
@@ -1429,7 +1440,7 @@ public class OperatingRound extends Round implements Observer
 			// Is private buying allowed?
 			if (!currentPhase.isPrivateSellingAllowed())
 			{
-				errMsg = "Private buying is not allowed";
+				errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
 				break;
 			}
 
@@ -1437,30 +1448,51 @@ public class OperatingRound extends Round implements Observer
 			if (price < basePrice
 					* operatingCompany.getLowerPrivatePriceFactor())
 			{
-				errMsg = "Price is less than lower limit of "
-						+ Bank.format((int) (basePrice * operatingCompany.getLowerPrivatePriceFactor()));
+				errMsg = LocalText.getText("PriceBelowLowerLimit", new String[] {
+				        Bank.format(price),
+				        Bank.format((int)(basePrice * operatingCompany.getLowerPrivatePriceFactor())),
+				        privateName
+				});
 				break;
 			}
 			if (price > basePrice
 					* operatingCompany.getUpperPrivatePriceFactor())
 			{
-				errMsg = "Price is more than upper limit of "
-						+ Bank.format((int) (basePrice * operatingCompany.getUpperPrivatePriceFactor()));
+				errMsg = LocalText.getText("PriceAboveUpperLimit", new String[] {
+				        Bank.format(price),
+				        Bank.format((int)(basePrice * operatingCompany.getUpperPrivatePriceFactor())),
+				        privateName
+				});
 				break;
 			}
 			// Does the company have the money?
 			if (price > operatingCompany.getCash())
 			{
-				errMsg = "Not enough money";
+				errMsg = LocalText.getText("NotEnoughMoney", new String[] {
+				        companyName,
+				        Bank.format(operatingCompany.getCash()),
+				        Bank.format(price)
+				});
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot buy private " + privateName
-					+ (owner == null ? "" : " from " + owner.getName())
-					+ " for " + Bank.format(price) + ": " + errMsg);
+		    if (owner != null) {
+		        MessageBuffer.add(LocalText.getText("CannotBuyPrivateFromFor", new String[] {
+		                privateName,
+		                owner.getName(),
+		                Bank.format(price),
+		                errMsg
+		        }));
+		    } else {
+		        MessageBuffer.add(LocalText.getText("CannotBuyPrivateFor", new String[] {
+		                privateName,
+		                Bank.format(price),
+		                errMsg
+		        }));
+		    }
 			return false;
 		}
 
@@ -1509,13 +1541,13 @@ public class OperatingRound extends Round implements Observer
 			if ((privCo = Game.getCompanyManager()
 					.getPrivateCompany(privateName)) == null)
 			{
-				errMsg = "Private " + privateName + " does not exist";
+				errMsg = LocalText.getText("PrivateDoesNotExist", privateName);
 				break;
 			}
 			// Is private still open?
 			if (privCo.isClosed())
 			{
-				errMsg = "Private " + privateName + " is already closed";
+				errMsg = LocalText.getText("PrivateIsAlreadyClosed", privateName);
 				break;
 			}
 
@@ -1523,12 +1555,15 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot close private " + privateName + ": " + errMsg);
+			MessageBuffer.add(LocalText.getText("CannotClosePrivate", new String[] {
+			        privateName,
+			        errMsg
+			}));
 			return false;
 		}
 
 		privCo.setClosed();
-		LogBuffer.add("Private " + privateName + " is closed");
+		LogBuffer.add(LocalText.getText("PRIVATE_IS_CLOSED", privateName));
 
 		return true;
 
@@ -1775,6 +1810,7 @@ public class OperatingRound extends Round implements Observer
 		return new int[] { 0, 40, 100 };
 	}
 
+	/* TODO This is just a start of a possible approach to a Help system */
 	public String getHelp()
 	{
 	    int step = getStep();
