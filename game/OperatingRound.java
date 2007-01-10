@@ -47,6 +47,7 @@ public class OperatingRound extends Round implements Observer
 	protected List currentSpecialProperties = null;
 	protected List currentSpecialTileLays = new ArrayList();
 	protected List currentNormalTileLays = new ArrayList();
+	protected Map tileLaysPerColour = new HashMap();
 	//protected List normalTileLaysDone;
 	protected Map specialPropertyPerHex = new HashMap();
 	protected List currentNormalTokenLays = new ArrayList();
@@ -1009,6 +1010,10 @@ public class OperatingRound extends Round implements Observer
 	}
 	*/
 
+	/**
+	 * This method is only called at the start of each step
+	 * (unlike updateStatus(), which is called aftereach user action)
+	 */
 	protected void prepareStep()
 	{
 	    int step = ((Integer)stepObject.getState()).intValue();
@@ -1020,6 +1025,7 @@ public class OperatingRound extends Round implements Observer
 			//setNormalTileLays();
 			tileLayCost[operatingCompanyIndex] = 0;
 			tilesLaid[operatingCompanyIndex] = "";
+			getNormalTileLays();
 		}
 		else if (step == STEP_LAY_TOKEN)
 		{
@@ -1042,16 +1048,15 @@ public class OperatingRound extends Round implements Observer
 
 	}
 	
+	
 	/**
 	 * Create a List of allowed normal tile lays (see LayTile class).
 	 * This method should be called only once per company turn in an OR:
 	 * at the start of the tile laying step.
 	 */
-	protected void setNormalTileLays() {
+	protected void getNormalTileLays() {
 	    
-	    /* Normal tile lays */
-	    currentNormalTileLays.clear();
-	    Map tileLaysPerColour = currentPhase.getTileColours();
+	    tileLaysPerColour = currentPhase.getTileColours();
 	    String colour;
 	    int allowedNumber;
 	    for (Iterator it = tileLaysPerColour.keySet().iterator(); it.hasNext(); ) {
@@ -1060,6 +1065,11 @@ public class OperatingRound extends Round implements Observer
 	        // Replace the null map value with the allowed number of lays
 	        tileLaysPerColour.put(colour, new Integer (allowedNumber));
 	    }
+	}
+	protected void setNormalTileLays() {
+	    
+	    /* Normal tile lays */
+	    currentNormalTileLays.clear();
 	    currentNormalTileLays.add (new LayTile (tileLaysPerColour));
 
 	}

@@ -36,8 +36,8 @@
 	<Hex name="D7" tile="0"/>
 	<Hex name="D9" tile="-1"/>
 	<Hex name="D11" tile="0"/>
-	<Hex name="D13" tile="0" cost="-60"/>
-	<Hex name="D15" tile="0" cost="-60"/>
+	<Hex name="D13" tile="0" cost="60"/>
+	<Hex name="D15" tile="0" cost="60"/>
 	<Hex name="D17" tile="-1" cost="40"/>
 	<Hex name="D19" tile="0"/>
 	<Hex name="D21" tile="-1"/>
