@@ -10,7 +10,7 @@
 		<Upgrade id="1,2,55,56,69"/>
 	</Tile>
 	<Tile id="-10"><!-- 1 city -->
-		<Upgrade id="57"/>
+		<Upgrade id="5,6,57"/>
 	</Tile>
 	<Tile id="-902"/>
 	<Tile id="-903"/>

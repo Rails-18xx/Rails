@@ -403,6 +403,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 					
 					String[] colours = colourString.split(",");
 					HashMap phaseMap;
+					/** TODO: should not be necessary to specify all phases separately */
 					String[] phases = phaseString.split(",");
 					for (int i=0; i<colours.length; i++){
 					    if (numberOfTileLays == null) numberOfTileLays = new HashMap();
