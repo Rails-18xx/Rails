@@ -1,6 +1,11 @@
 /*
- * Created on 26-Feb-2005
+ * This was an early example UI.
+ * Commented out because it uses a very old version of the API 
+ * and is no longer maintained. 
+ *  
  */
+
+/*
 package test;
 
 import game.*;
@@ -10,10 +15,13 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.*;
+*/
 
 /**
  * @author Erik
  */
+
+/*
 public class StockMarketTestServlet extends HttpServlet {
 
 	private StockMarketI stockMarket = null;
@@ -24,17 +32,21 @@ public class StockMarketTestServlet extends HttpServlet {
 
 	}
 
+*/
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+/*
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		doWork(request, response);
 	}
-
+*/
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+
+/*
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		doWork(request, response);
@@ -54,8 +66,9 @@ public class StockMarketTestServlet extends HttpServlet {
 		List startSpaces;
 		int price;
 		
-		if (stockMarket == null) {
+		if (stockMarket == null) {  */
 			/* Initialise */
+/*
 			String gameName = request.getParameter("Game");
 			if (gameName != null && !gameName.equals("")) {
 				game = Game.getInstance();
@@ -66,8 +79,10 @@ public class StockMarketTestServlet extends HttpServlet {
 			game = null;
 			stockMarket = null;
 		} else {
+		*/
 			/* Process the action performed. Note: companies not mentioned yet. */
 			//iterator = game.getCompanyManager().getAllCompanies().iterator();
+/*
 			CompanyManagerI compMgr = Game.getCompanyManager();
 			iterator = compMgr.getAllPublicNames().iterator();
 			while (iterator.hasNext()) {
@@ -112,11 +127,12 @@ public class StockMarketTestServlet extends HttpServlet {
 			}
 
 		}
-
+*/
 		/* Create the new Stock Chart HTML page */
-		response.setContentType("text/html");
+		//response.setContentType("text/html");
 
 		/* Read some properties */
+/*
 		Properties prop = new Properties();
 		prop.load(this.getClass().getClassLoader().getResourceAsStream("testservlet.properties"));
 		String styleSheetPrefix = prop.getProperty("StyleSheetPrefix");
@@ -300,3 +316,4 @@ public class StockMarketTestServlet extends HttpServlet {
 	}
 
 }
+*/
