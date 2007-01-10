@@ -1,6 +1,9 @@
 /*
- * Created on 26-Feb-2005
+ * This was an early example UI.
+ * Commented out because it uses a very old version of the API 
+ * and is no longer maintained. 
  */
+/*
 package test;
 
 import game.*;
@@ -10,10 +13,13 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.*;
+*/
 
 /**
  * @author Erik
  */
+
+/*
 public class GameTestServlet extends HttpServlet {
 
 	private static final int SELECTGAME = 0;
@@ -64,24 +70,28 @@ public class GameTestServlet extends HttpServlet {
 		super.init(config);
 
 	}
-
+*/
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
+
+/*
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		doWork(request, response);
 	}
-
+*/
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
+
+/*
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		doWork(request, response);
@@ -106,7 +116,9 @@ public class GameTestServlet extends HttpServlet {
 		Portfolio pool = Bank.getPool();
 
 		if (process == SELECTGAME) {
+		*/
 			/* Initialise */
+/*
 			String gameName = request.getParameter("Game");
 			if (gameName != null && !gameName.equals("")) {
 				game = Game.getInstance();
@@ -217,12 +229,13 @@ public class GameTestServlet extends HttpServlet {
 							.getParameter("StartPrice")) ? Integer
 							.parseInt(sprice) : 0;
 					stockRound.startCompany(playerName, cmpy, price);
-
+*/
 					/*
 					 * Buying shares from the IPO (shortcuts: (1) price is not
 					 * always Par price, (2) sometimes initial shares are bought
 					 * from company treasury)
 					 */
+/*
 				} else if (hasValue(request.getParameter("BuyIPO"))) {
 
 					cmpy = request.getParameter("BuyIPOCompany");
@@ -280,11 +293,12 @@ public class GameTestServlet extends HttpServlet {
 				}
 			}
 		}
-
+*/
 		/* Create the new Stock Chart HTML page */
-		response.setContentType("text/html");
+		//response.setContentType("text/html");
 
 		/* Read some properties */
+/*
 		Properties prop = new Properties();
 		prop.load(this.getClass().getClassLoader().getResourceAsStream(
 				"testservlet.properties"));
@@ -928,3 +942,4 @@ public class GameTestServlet extends HttpServlet {
 		return s != null && !s.equals("");
 	}
 }
+*/
