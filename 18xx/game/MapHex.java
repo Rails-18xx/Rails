@@ -539,6 +539,11 @@ public class MapHex extends ModelObject
 
 	public boolean layBaseToken(PublicCompanyI company, Station station)
 	{
+	    if (stations == null || stations.isEmpty()) {
+	        System.out.println("ERROR: tile "+getName()
+	        		+" has no station for home token of company "+company.getName());
+	        return false;
+	    }
 	    if (station == null) station = (Station)stations.get(0);
 	    /*
 		if (station.addToken(company))
