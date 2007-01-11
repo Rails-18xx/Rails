@@ -78,8 +78,8 @@
   </Tile>
   <Tile id="-804" colour="fixed" name="Schwerin">
     <Station id="city1" type="City" slots="1" value="10" position="002"/>
-    <Station id="city2" type="" position="007"/>
-    <Station id="city3" type="" position="008"/>
+    <Station id="city2" type="Junction" position="007"/>
+    <Station id="city3" type="Junction" position="008"/>
     <Track gauge="normal" from="city1" to="side0"/>
     <Track gauge="normal" from="side4" to="side2"/>
     <Track gauge="normal" from="side4" to="city2"/>

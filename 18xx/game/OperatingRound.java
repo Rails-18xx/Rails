@@ -402,15 +402,10 @@ public class OperatingRound extends Round implements Observer
 			}
 			if (!extra)
 			{
-				registerNormalTileLay (tile);
 				System.out.println("This was a normal tile lay");
+				registerNormalTileLay (tile);
 			}
-			if (currentNormalTileLays.isEmpty()) {
-			    System.out.println("No more normal tile lays are allowed");
-			} else {
-			    int number = ((Integer)((LayTile)currentNormalTileLays.get(0)).getTileColours().get(tile.getColour())).intValue();
-			    System.out.println("Now "+number+" normal tiles may be laid");
-			}
+
 			setSpecialTileLays();
 			System.out.println("There are now "+currentSpecialTileLays.size()+" special tile lay objects");
 		}
@@ -442,13 +437,13 @@ public class OperatingRound extends Round implements Observer
 	    if (currentNormalTileLays.isEmpty()) return false;
 	    //normalTileLaysDone.add(tile);
 	    String colour = tile.getColour();
-	    LayTile allowance = (LayTile) currentNormalTileLays.get(0);
-	    if (allowance == null) return false;
+	    //LayTile allowance = (LayTile) currentNormalTileLays.get(0);
+	    //if (allowance == null) return false;
 	    
 	    // TODO: get(0) - perhaps we always have only one entry?
 	    // Probably we have mixed up locations and number-of-tiles-allowed.
-	    Map allowancePerColour = (Map) allowance.getTileColours();
-	    Integer oldAllowedNumberObject = ((Integer)allowancePerColour.get(colour));
+	    //Map allowancePerColour = (Map) allowance.getTileColours();
+	    Integer oldAllowedNumberObject = ((Integer)tileLaysPerColour.get(colour));
 	    if (oldAllowedNumberObject == null) return false;
 	    int oldAllowedNumber = oldAllowedNumberObject.intValue();
 	    if (oldAllowedNumber <= 0) return false;
@@ -462,11 +457,13 @@ public class OperatingRound extends Round implements Observer
 	     * THIS MAY NOT BE TRUE FOR ALL GAMES!
 	     */
 	    if (oldAllowedNumber <= 1) {
+	        tileLaysPerColour.clear();
+	        System.out.println("No more normal tile lays allowed");
 	        currentNormalTileLays.clear();
 	    } else /*oldAllowedNumber > 1*/ {
-	        allowancePerColour.clear(); // Remove all other colours
-	        allowancePerColour.put(colour, new Integer(oldAllowedNumber-1));
-	        allowance.setTileColours(allowancePerColour);
+	        tileLaysPerColour.clear(); // Remove all other colours
+	        tileLaysPerColour.put(colour, new Integer(oldAllowedNumber-1));
+	        System.out.println((oldAllowedNumber-1)+" more "+colour+" tile lays allowed");
 	    }
 	    
 	    return true;
@@ -1056,7 +1053,7 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void getNormalTileLays() {
 	    
-	    tileLaysPerColour = currentPhase.getTileColours();
+	    tileLaysPerColour = new HashMap (currentPhase.getTileColours()); //Clone it.
 	    String colour;
 	    int allowedNumber;
 	    for (Iterator it = tileLaysPerColour.keySet().iterator(); it.hasNext(); ) {
@@ -1070,7 +1067,9 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* Normal tile lays */
 	    currentNormalTileLays.clear();
-	    currentNormalTileLays.add (new LayTile (tileLaysPerColour));
+	    if (!tileLaysPerColour.isEmpty()) {
+	        currentNormalTileLays.add (new LayTile (tileLaysPerColour));
+	    }
 
 	}
 	
@@ -1083,6 +1082,11 @@ public class OperatingRound extends Round implements Observer
 	    /* Special-property tile lays */
 		currentSpecialTileLays.clear();
 		specialPropertyPerHex.clear();
+		/* In 1835, this only applies to major companies.
+		 * TODO: For now, hardcode this, but it must become configurable later.
+		 */
+		if (operatingCompany.getType().getName().equals("Minor")) return;
+		
 		setSpecialProperties(game.special.SpecialTileLay.class);
 		if (currentSpecialProperties != null && !currentSpecialProperties.isEmpty())
 		{
@@ -1125,6 +1129,12 @@ public class OperatingRound extends Round implements Observer
 	    /* Special-property tile lays */
 		currentSpecialTokenLays.clear();
 		specialPropertyPerHex.clear();
+
+		/* In 1835, this only applies to major companies.
+		 * TODO: For now, hardcode this, but it must become configurable later.
+		 */
+		if (operatingCompany.getType().getName().equals("Minor")) return;
+
 		setSpecialProperties(game.special.SpecialTokenLay.class);
 		if (currentSpecialProperties != null)
 		{

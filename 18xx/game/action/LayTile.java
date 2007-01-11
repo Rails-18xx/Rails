@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.3 2006/11/26 19:30:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/action/Attic/LayTile.java,v 1.4 2007/01/11 21:34:26 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -139,6 +139,19 @@ public class LayTile extends PossibleAction {
     }
     
     public String toString () {
-        return "LayTile type="+type+" location="+location+" spec.prop="+specialProperty;
+        StringBuffer b = new StringBuffer("TileLay");
+        b.append(" type=").append(type);
+        if (location != null) b.append(" location=").append(location);
+        if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);
+        if (tileColours != null && !tileColours.isEmpty()) {
+            String key;
+            int value;
+            for (Iterator it = tileColours.keySet().iterator(); it.hasNext(); ) {
+                key = (String) it.next();
+                value = ((Integer)tileColours.get(key)).intValue();
+                b.append(" ").append(key).append(":").append(value);
+            }
+        }
+        return b.toString();
     }
 }
