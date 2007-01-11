@@ -44,8 +44,9 @@ public class Station implements TokenHolderI, Cloneable
 	public static final String OFF_MAP_AREA = "OffMapCity";
 	public static final String PORT = "Port";
 	public static final String PASS = "Pass";
+	public static final String JUNCTION = "Junction"; // No station, just a branching point.
 	private static final String[] types = {
-	        CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS
+	        CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION
 	};
 	private static final List validTypes = Arrays.asList(types);
 	
