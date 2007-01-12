@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import ui.GameUILoader;
 import ui.StatusWindow;
 import ui.GUIToken;
@@ -69,6 +71,8 @@ public class GUIHex implements ViewObject
 	static boolean useOverlay = true;
 	// Selection is in-between GUI and game state.
 	private boolean selected;
+
+	protected static Logger log = Logger.getLogger(GUIHex.class.getPackage().getName());
 
 	public GUIHex(double cx, double cy, int scale, double xCoord, double yCoord)
 	{
@@ -788,7 +792,7 @@ public class GUIHex implements ViewObject
 	        setToolTip();
 	        */
 
-	        System.out.println("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
+	        log.debug ("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
 			GameUILoader.orWindow.updateStatus();
 	    }
 	}

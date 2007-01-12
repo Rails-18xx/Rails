@@ -7,6 +7,9 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
+
+import org.apache.log4j.Logger;
+
 import game.*;
 import game.action.LayTile;
 import game.action.LayToken;
@@ -19,6 +22,8 @@ import ui.*;
 public abstract class HexMap extends JComponent implements MouseListener,
 		MouseMotionListener
 {
+
+	protected static Logger log = Logger.getLogger(HexMap.class.getPackage().getName());
 
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
@@ -137,10 +142,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public void selectHex(GUIHex clickedHex)
 	{
-		//System.out.println("selecthex called for hex "
-		//		+ (clickedHex != null ? clickedHex.getName() : "null")
-		//		+ ", selected was "
-		//		+ (selectedHex != null ? selectedHex.getName() : "null"));
+		log.debug ("selecthex called for hex "
+				+ (clickedHex != null ? clickedHex.getName() : "null")
+				+ ", selected was "
+				+ (selectedHex != null ? selectedHex.getName() : "null"));
 
 		if (selectedHex == clickedHex)
 			return;
@@ -148,15 +153,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		{
 			selectedHex.setSelected(false);
 			repaint(selectedHex.getBounds());
-			//System.out.println("Hex " + selectedHex.getName()
-			//		+ " deselected and repainted");
+			log.debug ("Hex " + selectedHex.getName()
+					+ " deselected and repainted");
 		}
 
 		if (clickedHex != null)
 		{
 			clickedHex.setSelected(true);
 			repaint(clickedHex.getBounds());
-			System.out.println("Hex " + clickedHex.getName()
+			log.debug ("Hex " + clickedHex.getName()
 					+ " selected and repainted");
 		}
 		selectedHex = clickedHex;
@@ -173,31 +178,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return selectedHex != null;
 	}
 
-	/*
-	public void setSpecials(ArrayList specials)
-	{
-		extraTileLays.clear();
-		unconnectedTileLays.clear();
-		if (specials != null)
-		{
-			Iterator it = specials.iterator();
-			SpecialTileLay stl;
-			while (it.hasNext())
-			{
-				stl = (SpecialTileLay) it.next();
-				if (stl.isExercised())
-					continue;
-				unconnectedTileLays.add(stl);
-				if (stl.isExtra())
-					extraTileLays.add(stl);
-
-				// System.out.println("Special tile lay allowed on hex "
-				// + stl.getLocation().getName() + ", extra="
-				// + stl.isExtra());
-			}
-		}
-	}
-	*/
 	public void setAllowedTileLays (List allowedTileLays) {
 	    
 	    this.allowedTileLays = allowedTileLays;

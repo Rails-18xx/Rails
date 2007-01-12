@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.3 2007/01/07 19:25:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.4 2007/01/12 22:51:27 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -29,7 +29,7 @@ public class ShareSellingRound extends StockRound {
 }
     
     public void start() {
-        System.out.println("Share selling round started");
+        log.info ("Share selling round started");
         currentPlayer = sellingPlayer;
     }
     
@@ -225,7 +225,7 @@ public class ShareSellingRound extends StockRound {
 
 		if (errMsg != null)
 		{
-			MessageBuffer.add(playerName + " cannot sell " + number + " share(s) of "
+			DisplayBuffer.add(playerName + " cannot sell " + number + " share(s) of "
 					+ companyName + ": " + errMsg);
 			return false;
 		}
@@ -246,14 +246,14 @@ public class ShareSellingRound extends StockRound {
 			sellPrices.put(companyName, sellPrice);
 		}
 
-		LogBuffer.add(playerName + " sells " + number + " shares ("
+		ReportBuffer.add(playerName + " sells " + number + " shares ("
 				+ (number * company.getShareUnit()) + "%) of " + companyName
 				+ " for " + Bank.format(number * price));
 
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
 		{
-			LogBuffer.add("Presidency of " + companyName + " is transferred to "
+			ReportBuffer.add("Presidency of " + companyName + " is transferred to "
 					+ dumpedPlayer.getName());
 			// First swap the certificates
 			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
@@ -286,7 +286,7 @@ public class ShareSellingRound extends StockRound {
 				{
 					portfolio.swapPresidentCertificate(company,
 							otherPlayer.getPortfolio());
-					LogBuffer.add("Presidency of " + companyName
+					ReportBuffer.add("Presidency of " + companyName
 							+ " is transferred to " + otherPlayer.getName());
 					break;
 				}

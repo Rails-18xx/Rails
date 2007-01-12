@@ -72,7 +72,6 @@ public class Phase implements PhaseI {
         } else {
             numberOfOperatingRounds = previousNumberOfOperatingRounds;
         }
-        //System.out.println ("Phase "+index+" "+name+" has "+numberOfOperatingRounds+" ORs");
         
         // Off-board revenue steps
         nl = el.getElementsByTagName("OffBoardRevenue");

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.43 2007/01/07 19:25:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.44 2007/01/12 22:51:26 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -17,6 +17,8 @@ import game.special.SpecialProperty;
 import game.special.SpecialPropertyI;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import util.Util;
 
@@ -63,6 +65,8 @@ public class Portfolio
 	// this.paysToCompany = paysToCompany;
 	// }
 
+	protected static Logger log = Logger.getLogger(Portfolio.class.getPackage().getName());
+
 	public Portfolio(String name, CashHolder holder)
 	{
 		this.name = name;
@@ -75,12 +79,12 @@ public class Portfolio
 
 		if (from == Bank.getIpo())
 		{
-			LogBuffer.add(name + " buys " + privateCompany.getName() + " for "
+			ReportBuffer.add(name + " buys " + privateCompany.getName() + " for "
 					+ Bank.format(price) + ".");
 		}
 		else
 		{
-			LogBuffer.add(name + " buys " + privateCompany.getName() + " from "
+			ReportBuffer.add(name + " buys " + privateCompany.getName() + " from "
 					+ from.getName() + " for " + Bank.format(price) + ".");
 		}
 
@@ -137,7 +141,7 @@ public class Portfolio
 			Portfolio from, int price)
 	{
 
-		LogBuffer.add(from.getName() + " sells " + certificate.getShare() + "% of "
+		ReportBuffer.add(from.getName() + " sells " + certificate.getShare() + "% of "
 				+ certificate.getCompany().getName() + " to the Bank for "
 				+ Bank.format(price));
 
@@ -176,13 +180,13 @@ public class Portfolio
 	{
 		privateCompanies.add(privateCompany);
 		privateCompany.setHolder(this);
-		System.out.println("Adding "+privateCompany.getName()+" to portfolio of "+name);
+		log.debug ("Adding "+privateCompany.getName()+" to portfolio of "+name);
 		if (privateCompany.getSpecialProperties() != null)
 		{
-		    System.out.println(privateCompany.getName()+" has special properties!");
+		    log.debug (privateCompany.getName()+" has special properties!");
 			updateSpecialProperties();
 		} else {
-		    System.out.println(privateCompany.getName()+" has no special properties");
+		    log.debug (privateCompany.getName()+" has no special properties");
 		}
 		privatesModel.update();
 	}
@@ -342,8 +346,7 @@ public class Portfolio
 			}
 			catch(NullPointerException e)
 			{
-				System.out.println("Null Pointer in Portfolio.java");
-				e.printStackTrace();
+				log.error ("Null Pointer in Portfolio.java", e);
 			}
 		}
 		return uniqueCerts;
@@ -464,8 +467,6 @@ public class Portfolio
 			{
 				cert = (PublicCertificateI) it.next();
 				share += cert.getShare();
-				// System.out.println(name+": comp="+name+"
-				// share="+cert.getShare()+", total="+share);
 			}
 		}
 		return share;
@@ -588,7 +589,7 @@ public class Portfolio
 	public void discardTrain(TrainI train)
 	{
 		transferTrain(train, this, Bank.getPool());
-		LogBuffer.add("Company " + name + " discards " + train.getName()
+		ReportBuffer.add("Company " + name + " discards " + train.getName()
 				+ "-train to Pool");
 	}
 
@@ -664,7 +665,7 @@ public class Portfolio
 
 		if (owner instanceof Player || owner instanceof PublicCompanyI)
 		{
-		    System.out.println("Updating special properties of "+getName());
+		    log.debug ("Updating special properties of "+getName());
 			specialProperties.clear();
 			Iterator it = privateCompanies.iterator();
 			Iterator it2;
@@ -685,7 +686,7 @@ public class Portfolio
 					sp = (SpecialPropertyI) it2.next();
 					if (sp.isExercised())
 						continue;
-					System.out.println("For "+name+" found spec.prop "+sp);
+					log.debug ("For "+name+" found spec.prop "+sp);
 					specialProperties.add(sp);
 				}
 			}
@@ -707,7 +708,7 @@ public class Portfolio
 				        && (!sp.isExercised() || includeExercised)
 				        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
 				             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-				    System.out.println("Adding SP: "+sp);
+				    log.debug ("Adding SP: "+sp);
 					result.add(sp);
 				}
 			}

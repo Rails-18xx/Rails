@@ -1,5 +1,7 @@
 package game;
 
+import org.apache.log4j.Logger;
+
 public class PublicCertificate implements PublicCertificateI, Cloneable
 {
 
@@ -17,6 +19,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	protected boolean available;
 	/** Current holder of the certificate */
 	protected Portfolio portfolio;
+
+	protected static Logger log = Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
 	public PublicCertificate(int shares)
 	{
@@ -151,8 +155,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 		}
 		catch (CloneNotSupportedException e)
 		{
-			System.out.println("Cannot clone certificate:\n"
-					+ e.getStackTrace());
+			log.fatal ("Cannot clone certificate:", e);
 			return null;
 		}
 	}

@@ -1,15 +1,17 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.3 2007/01/07 19:24:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/MoveSet.java,v 1.4 2007/01/12 22:51:29 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package game.move;
 
-import game.LogBuffer;
+import game.ReportBuffer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import util.LocalText;
 
@@ -24,26 +26,28 @@ public class MoveSet {
     private static List actionStack = new ArrayList();
     private static int lastIndex = -1;
     
+	protected static Logger log = Logger.getLogger(MoveSet.class.getPackage().getName());
+
     private MoveSet () {}
     
     public static boolean start () {
-        //System.out.println(">>> Start MoveSet");
+        log.debug (">>> Start MoveSet");
         if (currentAction == null) {
             currentAction = new MoveSet();
             return true;
         } else {
-            System.out.println ("MoveSet is already open");
+            log.warn ("MoveSet is already open");
             return false;
         }
     }
     
     public static boolean finish () {
-        //System.out.println("<<< Finish MoveSet");
+        log.debug ("<<< Finish MoveSet");
         if (currentAction == null) {
-            System.out.println ("No action open for finish");
+            log.warn  ("No action open for finish");
             return false;
         } else if (currentAction.isEmpty()) {
-            System.out.println("Action to finish is empty and will be discarded");
+            log.warn ("Action to finish is empty and will be discarded");
             currentAction = null;
             return true;
         } else {
@@ -60,7 +64,7 @@ public class MoveSet {
             currentAction = null;
             return true;
         } else {
-            System.out.println ("No action open for cancel");
+            log.warn ("No action open for cancel");
             return false;
          }
     }
@@ -73,7 +77,7 @@ public class MoveSet {
         	return true;
         } else {
             // Uncomment one of the next statements to detect un-undoable actions
-            //System.out.println ("No MoveSet open for "+move);
+            log.warn ("No MoveSet open for "+move);
             //new Exception ("No MoveSet open for add: "+move).printStackTrace();
             
             return false;
@@ -82,22 +86,22 @@ public class MoveSet {
     
     public static boolean undo () {
         if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
-            LogBuffer.add(LocalText.getText("UNDO"));
+            ReportBuffer.add(LocalText.getText("UNDO"));
             ((MoveSet) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
-            System.out.println ("Invalid undo: index="+lastIndex+" size="+actionStack.size());
+            log.error ("Invalid undo: index="+lastIndex+" size="+actionStack.size());
             return false;
         }
     }
     
     public static boolean redo () {
         if (currentAction == null && lastIndex < actionStack.size()-1) {
-            LogBuffer.add(LocalText.getText("REDO"));
+            ReportBuffer.add(LocalText.getText("REDO"));
             ((MoveSet) actionStack.get(++lastIndex)).execute();
             return true;
         } else {
-            System.out.println ("Invalid redo: index="+lastIndex+" size="+actionStack.size());
+            log.error ("Invalid redo: index="+lastIndex+" size="+actionStack.size());
             return false;
         }
     }

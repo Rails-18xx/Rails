@@ -38,8 +38,6 @@ public abstract class SpecialProperty implements SpecialPropertyI
      */
     public void setUsableIfOwnedByCompany(boolean usableIfOwnedByCompany) {
         this.usableIfOwnedByCompany = usableIfOwnedByCompany;
-//        if (usableIfOwnedByCompany)
-//System.out.println(privateCompany.getName()+" spec.prop. "+getClass().getName()+" is usable if owned by a Company");
     }
     /**
      * @return Returns the usableIfOwnedByPlayer.
@@ -52,9 +50,8 @@ public abstract class SpecialProperty implements SpecialPropertyI
      */
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer) {
         this.usableIfOwnedByPlayer = usableIfOwnedByPlayer;
-//        if (usableIfOwnedByPlayer)
-//System.out.println(privateCompany.getName()+" spec.prop. "+getClass().getName()+" is usable if owned by a Player");
     }
+    
 	public void setExercised()
 	{
 		MoveSet.add (new StateChange (exercised, Boolean.TRUE));

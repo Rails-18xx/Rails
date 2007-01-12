@@ -11,18 +11,18 @@ import java.awt.event.*;
  * This is the UI for the LogWindow.
  * It displays logged messages to the user during the game.
  */
-public class LogWindow extends JFrame implements WindowListener, KeyListener
+public class ReportWindow extends JFrame implements WindowListener, KeyListener
 {
 
 	private JLabel message;
 	private JScrollPane messageScroller;
 	private JScrollBar vbar;
 	private JPanel messagePanel;
-	private static LogWindow messageWindow;
+	private static ReportWindow messageWindow;
 
 	private static StringBuffer buffer = new StringBuffer("<html></html>");
 
-	public LogWindow()
+	public ReportWindow()
 	{
 		messageWindow = this;
 
@@ -55,7 +55,7 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public static void addLog()
 	{
-		String newText = LogBuffer.get();
+		String newText = ReportBuffer.get();
 		if (newText.length() > 0)
 		{
 			buffer.insert(buffer.length() - 7, newText.replaceAll("\n", "<br>"));
@@ -75,7 +75,7 @@ public class LogWindow extends JFrame implements WindowListener, KeyListener
 
 	public void windowClosing(WindowEvent e)
 	{
-		StatusWindow.uncheckMenuItemBox(LocalText.getText("LOG"));
+		StatusWindow.uncheckMenuItemBox(LocalText.getText("REPORT"));
 		dispose();		
 	}
 

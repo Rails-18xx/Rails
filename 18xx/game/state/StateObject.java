@@ -1,5 +1,7 @@
 package game.state;
 
+import org.apache.log4j.Logger;
+
 import game.model.ModelObject;
 import util.Util;
 
@@ -9,6 +11,8 @@ public class StateObject extends ModelObject implements StateI {
 	private Object object = null;
 	private Class clazz = null;
 	
+	protected static Logger log = Logger.getLogger(StateObject.class.getPackage().getName());
+
 	public StateObject (String name, Class clazz) {
 	    this.name = name;
 		if (clazz == null) {
@@ -40,11 +44,11 @@ public class StateObject extends ModelObject implements StateI {
 	public void setState(Object object) {
 		if (object == null || Util.isInstanceOf (object, clazz)) {
 			this.object = object;
-			System.out.println("StateObject "+name+" set to "+object);
+			log.debug ("StateObject "+name+" set to "+object);
 		} else {
-			new Exception ("Incompatible object type "+object.getClass().getName()
-					+ "passed to State wrapper for object type "+this.object.getClass().getName()+" at:")
-				.printStackTrace();
+		    log.error("Incompatible object type "+object.getClass().getName()
+					+ "passed to State wrapper for object type "+this.object.getClass().getName()+" at:",
+					new Exception (""));
 		}
 		update();
 	}

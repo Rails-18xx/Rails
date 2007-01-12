@@ -7,6 +7,8 @@ import game.move.TokenMove;
 
 import java.util.*;
 import java.util.regex.*;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
 import util.Util;
@@ -96,6 +98,8 @@ public class MapHex extends ModelObject
 	
 	protected Map homes;
 	protected List destinations;
+
+	protected static Logger log = Logger.getLogger(MapHex.class.getPackage().getName());
 
 	public MapHex()
 	{
@@ -506,7 +510,7 @@ public class MapHex extends ModelObject
 			currentTile.remove(this);
 		}
 		
-		System.out.println("On hex "+name+" replacing tile "
+		log.debug ("On hex "+name+" replacing tile "
 		        +currentTile.getName()+"/"+currentTileRotation
 		        +" by "+newTile.getName()+"/"+newTileOrientation);
 		
@@ -540,7 +544,7 @@ public class MapHex extends ModelObject
 	public boolean layBaseToken(PublicCompanyI company, Station station)
 	{
 	    if (stations == null || stations.isEmpty()) {
-	        System.out.println("ERROR: tile "+getName()
+	        log.error ("Tile "+getName()
 	        		+" has no station for home token of company "+company.getName());
 	        return false;
 	    }
@@ -558,7 +562,7 @@ public class MapHex extends ModelObject
 	    
 	    BaseToken token = company.getFreeToken();
 	    if (token == null) {
-	        System.out.println("ERROR: company "+company.getName()+" has no free token");
+	        log.error ("Company "+company.getName()+" has no free token");
 	        return false;
 	    } else {
 	        MoveSet.add(new TokenMove (token, company, station));
@@ -570,7 +574,7 @@ public class MapHex extends ModelObject
 	    if (station < stations.size()) {
 		    return hasTokenSlotsLeft ((Station)stations.get(station));
 	    } else {
-	        System.out.println("ERROR: invalid station "+station+", max is "+(stations.size()-1));
+	        log.error ("Invalid station "+station+", max is "+(stations.size()-1));
 	        return false;
 	    }
 	}
@@ -636,32 +640,6 @@ public class MapHex extends ModelObject
 		}
 	}
 
-	/*
-	public boolean hasTokens()
-	{
-		return hasTokens;
-	}
-	*/
-
-	/*
-	public boolean removeToken(TokenHolderI company)
-	{
-		for (int i = 0; i < stations.size(); i++)
-		{
-			if (((Station) stations.get(i)).removeToken(company))
-			{
-				// XXX: Could be buggy if loop exits before hitting all stations
-				// in the tile.
-				if (!((Station) stations.get(i)).hasTokens())
-					hasTokens = false;
-				return true;
-			}
-		}
-		return false;
-	}
-	*/
-
-
 	public List getStations()
 	{
 		return stations;
@@ -685,54 +663,6 @@ public class MapHex extends ModelObject
 	    return destinations;
 	}
 
-	//public String getCompanyDestinationName()
-	//{
-	//	return companyDestinationName;
-	//}
-
-	//public String getCompanyHomeName()
-	//{
-	//	return companyHomeName;
-	//}
-
-	/**
-	 * Necessary mechanism for delaying assignment of companyHome until after
-	 * all of the proper elements of the XML have been loaded.
-	 * 
-	 * Called by MapManager.assignHomesAndDestinations()
-	 */
-	//protected void assignHome() throws NullPointerException
-	//{
-	//	try
-	//	{
-	//		companyHome = (PublicCompany) Game.getCompanyManager()
-	//				.getPublicCompany(companyHomeName);
-	//	}
-	//	catch (NullPointerException e)
-	//	{
-	//		throw e;
-	//	}
-	//}
-
-	/**
-	 * Necessary mechanism for delaying assignment of companyDestination until
-	 * after all of the proper elements of the XML have been loaded.
-	 * 
-	 * Called by MapManager.assignHomesAndDestinations()
-	 */
-	//protected void assignDestination() throws NullPointerException
-	//{
-	//	try
-	//	{
-	//		companyDestination = (PublicCompany) Game.getCompanyManager()
-	//				.getPublicCompany(companyDestinationName);
-	//	}
-	//	catch (NullPointerException e)
-	//	{
-	//		throw e;
-	//	}
-	//}
-
 	/**
 	 * @return Returns the isBlocked.
 	 */
@@ -753,19 +683,19 @@ public class MapHex extends ModelObject
 	public boolean isUpgradeableNow()
 	{
 		if (isBlocked) {
-		    System.out.println("Hex "+name+" is blocked");
+		    log.debug ("Hex "+name+" is blocked");
 			return false;
 		}
 		if (currentTile != null) {
 			if (currentTile.isUpgradeable()) {
 			    return true;
 			} else {
-			    System.out.println("Hex "+name+" tile "+currentTile.getName()
+			    log.debug ("Hex "+name+" tile "+currentTile.getName()
 			            +" is not upgradable now");
 			    return false;
 			}
 		}
-		System.out.println("No tile on hex "+name);
+		log.debug ("No tile on hex "+name);
 		return false;
 	}
 	

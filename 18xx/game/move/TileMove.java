@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TileMove.java,v 1.2 2007/01/03 22:34:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TileMove.java,v 1.3 2007/01/12 22:51:29 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -32,7 +32,7 @@ public class TileMove extends Move {
         this.newTile = newTile;
         this.newTileOrientation = newTileOrientation;
         this.newStations = newStations;
-        System.out.println("TileMove hex "+hex.getName()
+        log.debug ("TileMove hex "+hex.getName()
                 +" from "+oldTile.getName()+"/"+oldTileOrientation
                 +" to "+newTile.getName()+"/"+newTileOrientation);
     }

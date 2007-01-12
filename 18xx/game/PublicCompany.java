@@ -238,8 +238,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
 
 		numberOfBaseTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
-		//numCityTokens = maxCityTokens;
-//System.out.println("***For "+name+": "+maxCityTokens+" tokens");
+
 		if (element != null)
 		{
 			NodeList properties = element.getChildNodes();
@@ -417,7 +416,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			}
 
 			if (hasParPrice) GameManager.setHasAnyParPrice(true);
-//System.out.println(name+": sp="+hasStockPrice+" pp="+hasParPrice+" GM="+GameManager.hasAnyParPrice());
+
 			NodeList typeElements = element.getElementsByTagName("Certificate");
 			if (typeElements.getLength() > 0)
 			{
@@ -600,7 +599,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		//Bank.transferCash(null, this, cash);
 		MoveSet.add (new CashMove (Bank.getInstance(), this, cash));
-		LogBuffer.add(name + " floats and receives " + Bank.format(cash));
+		ReportBuffer.add(name + " floats and receives " + Bank.format(cash));
 	}
 
 	/**
@@ -637,12 +636,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 		    if (parPrice == null) {
 		        parPrice = new PriceModel (this);
-//System.out.println("+"+name+" parPrice["+parPrice.hashCode()+"] created as "+parPrice.hashCode());
 		    }
 		    if (space != null) {
 		        parPrice.setPrice(space);
-		        
-//System.out.println("+"+name+" parPrice["+parPrice.hashCode()+"] set to "+space);
 		    }
 		}
 	}
@@ -673,11 +669,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 	    if (currentPrice == null) {
 	        currentPrice = new PriceModel (this);
-//System.out.println("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
+	        log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
 	    }
 	    if (price != null) {
 	        currentPrice.setPrice(price);
-//System.out.println("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
+	        log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
 	    }
 	}
 
@@ -897,7 +893,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				* getNumberOfShares();
 		//Bank.transferCash(null, this, withheld);
 		MoveSet.add(new CashMove (null, this, withheld));
-		LogBuffer.add(name + " receives " + Bank.format(withheld));
+		ReportBuffer.add(name + " receives " + Bank.format(withheld));
 
 		// Payout the remainder
 		int payed = amount - withheld;
@@ -941,7 +937,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			if (recipient instanceof Bank)
 				continue;
 			part = ((Integer) split.get(recipient)).intValue();
-			LogBuffer.add(recipient.getName() + " receives " + Bank.format(part));
+			ReportBuffer.add(recipient.getName() + " receives " + Bank.format(part));
 			//Bank.transferCash(null, recipient, part);
 			MoveSet.add(new CashMove (null, recipient, part));
 		}
@@ -1141,7 +1137,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			pres.getPortfolio().swapPresidentCertificate(this,
 					buyer.getPortfolio());
-			LogBuffer.add("Presidency of " + name + " is transferred to "
+			ReportBuffer.add("Presidency of " + name + " is transferred to "
 					+ buyer.getName());
 		}
 	}
@@ -1170,7 +1166,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				// Presidency must be transferred
 				seller.getPortfolio().swapPresidentCertificate(this,
 						player.getPortfolio());
-				LogBuffer.add("Presidency of " + name + " is transferred to "
+				ReportBuffer.add("Presidency of " + name + " is transferred to "
 						+ player.getName());
 			}
 		}
@@ -1344,8 +1340,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		catch (CloneNotSupportedException e)
 		{
-			MessageBuffer.add("Cannot clone company " + name);
-			System.out.println(e.getStackTrace());
+			log.fatal ("Cannot clone company " + name);
+			return null;
 		}
 
 		/*

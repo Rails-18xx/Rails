@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
 import util.*;
@@ -54,6 +55,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	boolean available = false;
 	boolean rusted = false;
+
+	protected static Logger log = Logger.getLogger(TrainType.class.getPackage().getName());
 
 	/**
 	 * @param real
@@ -421,8 +424,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		}
 		catch (CloneNotSupportedException e)
 		{
-			MessageBuffer.add("Cannot clone traintype " + name);
-			System.out.println(e.getStackTrace());
+			log.fatal ("Cannot clone traintype " + name, e);
+			return null;
 		}
 
 		return clone;

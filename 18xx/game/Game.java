@@ -1,6 +1,8 @@
 package game;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
+
 import util.XmlUtils;
 
 import java.io.File;
@@ -24,7 +26,9 @@ public class Game
 	protected static Bank bank;
 	protected static ArrayList companyList;
 	protected static String name;
-	
+
+	protected static Logger log = Logger.getLogger(Game.class.getPackage().getName());
+
 	public static String[] getGames()
 	{
 		File dataDir = new File("./data/");
@@ -54,7 +58,8 @@ public class Game
 
 	public static void initialise(String name)
 	{
-		LogBuffer.add("Game is " + name);
+		ReportBuffer.add("Game is " + name);
+		log.info("========== Start of game " + name + " ==========");
 		String file = "data/" + name + "/Game.xml";
 		try
 		{
@@ -81,14 +86,12 @@ public class Game
 		}
 		catch (Exception e)
 		{
-			System.out.println(LocalText.getText("GameSetupFailed1") + file + LocalText.getText("GameSetupFailed2"));
-			e.printStackTrace();
+			log.fatal (LocalText.getText("GameSetupFailed", file), e);
 		}
 		
 		//We need to do this assignment after we've loaded all the XML data. 
 		MapManager.assignHomesAndDestinations();
 		
-		System.out.println(LocalText.getText("SelectATile"));
 	}
 
 	/**

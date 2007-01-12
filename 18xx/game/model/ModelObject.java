@@ -2,6 +2,8 @@ package game.model;
 
 import java.util.Observable;
 
+import org.apache.log4j.Logger;
+
 /**
  * A generic superclass for all Model values that need be displayed
  * in some form in the View (UI).
@@ -12,10 +14,12 @@ public abstract class ModelObject extends Observable {
     
     protected int option = 0;
     
+	protected static Logger log = Logger.getLogger(ModelObject.class.getPackage().getName());
+
     protected void notifyViewObjects() {
         setChanged();
         notifyObservers (getNotificationObject());
-        //System.out.println("*** '"+getNotificationObject()+"' sent from "+getClass().getName());
+        //log.debug ("'"+getNotificationObject()+"' sent from "+getClass().getName());
         clearChanged();
     }
     

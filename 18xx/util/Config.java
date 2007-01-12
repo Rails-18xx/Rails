@@ -4,6 +4,8 @@ import java.util.*;
 //import org.apache.commons.logging.*;
 import java.io.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * This is a simple utility class with a collection of static functions to load a property object from a property file, to retrieve a particular value from the property file etc.
  * @author Ramiah Bala, rewritten by Erik Vos
@@ -17,6 +19,8 @@ public final class Config {
 	private static Properties prop = new Properties();
 	private static boolean loaded = false;
 	
+	protected static Logger log = Logger.getLogger(Config.class.getPackage().getName());
+
 	/**
 	 * Hidden contructor, the class is never instantiated.
 	 */
@@ -44,7 +48,7 @@ public final class Config {
 	private static void load(String filename, boolean required) {
 			
 		try {
-			System.out.println ("Loading properties from file "
+			log.info ("Loading properties from file "
 					+ filename);
 			prop.load(
 					Config.class.getClassLoader().getResourceAsStream(filename));

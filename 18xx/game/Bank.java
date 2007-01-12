@@ -4,6 +4,8 @@ import game.model.CashModel;
 import game.model.ModelObject;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import util.*;
 
@@ -41,6 +43,8 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	private static String moneyFormat = "$@";
 
 	private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
+
+	protected static Logger log = Logger.getLogger(Bank.class.getPackage().getName());
 
 	/**
 	 * @return an instance of the Bank object
@@ -100,7 +104,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			nnp = node.getAttributes();
 			money.setCash(XmlUtils.extractIntegerAttribute(nnp, "amount", 12000));
 		}
-		LogBuffer.add("Bank size is " + money.getCash());
+		ReportBuffer.add(LocalText.getText("BankSizeIs", format(money.getCash())));
 
 		NodeList players = element.getElementsByTagName("Players");
 		for (int i = 0; i < players.getLength(); i++)
@@ -115,13 +119,13 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			if (i == 0)
 			{
 				Player.MIN_PLAYERS = number;
-				System.out.println("MIN_PLAYERS: " + Player.MIN_PLAYERS);
+				log.debug("MIN_PLAYERS: " + Player.MIN_PLAYERS);
 			}
 
 			if (i == players.getLength() - 1)
 			{
 				Player.MAX_PLAYERS = number;
-				System.out.println("MAX_PLAYERS: " + Player.MAX_PLAYERS);
+				log.debug("MAX_PLAYERS: " + Player.MAX_PLAYERS);
 			}
 		}
 
@@ -227,7 +231,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		if (money.getCash() <= 0 && !broken)
 		{
 			broken = true;
-			LogBuffer.add("Bank is broken");
+			ReportBuffer.add(LocalText.getText("BankIsBroken"));
 		}
 		return negative;
 	}
@@ -296,7 +300,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
 	public static String format(int amount)
 	{
-		return moneyFormat.replaceFirst("@", "" + amount);
+		return moneyFormat.replaceFirst("@", String.valueOf(amount));
 	}
 	
 }

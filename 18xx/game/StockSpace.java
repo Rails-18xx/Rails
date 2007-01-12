@@ -3,6 +3,10 @@ package game;
 import game.model.ModelObject;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
+import util.LocalText;
+
 /**
  * Objects of this class represent a square on the StockMarket.
  */
@@ -25,6 +29,8 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	protected StockSpaceTypeI type = null;
 	protected ArrayList tokens = new ArrayList();
 	protected ArrayList fixedStartPrices = new ArrayList();
+
+	protected static Logger log = Logger.getLogger(StockSpace.class.getPackage().getName());
 
 	/*--- Contructors ---*/
 	public StockSpace(String name, int price, StockSpaceTypeI type)
@@ -54,7 +60,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean addToken(PublicCompanyI company)
 	{
-		//System.out.println(company.getName() + LocalText.getText("TokenAdded") + " " + name);
+	    log.debug (company.getName() + LocalText.getText("TokenAdded") + " " + name);
 		tokens.add(company);
 		notifyViewObjects();
 		return true;
@@ -69,7 +75,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean removeToken(PublicCompanyI company)
 	{
-		//System.out.println(company.getName() + LocalText.getText("TokenRemoved") + " " + name);
+	    log.debug (company.getName() + " token removed " + name);
 		int index = tokens.indexOf(company);
 		if (index >= 0)
 		{

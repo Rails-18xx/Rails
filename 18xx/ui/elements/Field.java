@@ -81,7 +81,6 @@ public class Field extends JLabel implements ViewObject
 	/** Needed to satisfy the Observer interface. */
 	public void update(Observable o1, Object o2)
 	{
-	    //System.out.println("*** '"+o2+"' received from "+o1.getClass().getName());
 		if (StatusWindow.useObserver)
 		{
 			if (o2 instanceof String)

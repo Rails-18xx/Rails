@@ -6,6 +6,8 @@ import game.move.StateChange;
 import game.state.StateObject;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
 /**
@@ -69,6 +71,8 @@ public class GameManager implements ConfigurableComponentI
 	/** A Map of variant names */
 	protected static List lVariants = new ArrayList();
 	protected static Map mVariants = new HashMap();
+
+	protected static Logger log = Logger.getLogger(GameManager.class.getPackage().getName());
 
 	static
 	{
@@ -139,7 +143,6 @@ public class GameManager implements ConfigurableComponentI
 				if (el2.getNodeName().equals("Bankruptcy"))
 				{
 					gameEndsWithBankruptcy = true;
-					// System.out.println("Ends with bankruptcy");
 				}
 				else if (el2.getNodeName().equals("BankBreaks"))
 				{
@@ -217,7 +220,7 @@ public class GameManager implements ConfigurableComponentI
 		else if (round instanceof StockRound)
 		{
 			numOfORs = currentPhase.getNumberOfOperatingRounds();
-			System.out.println("Phase=" + currentPhase.getName() + " ORs="
+			log.info ("Phase=" + currentPhase.getName() + " ORs="
 					+ numOfORs);
 
 			// Create a new OperatingRound (never more than one Stock Round)
@@ -291,7 +294,7 @@ public class GameManager implements ConfigurableComponentI
 	public void registerBankruptcy()
 	{
 		endedByBankruptcy = true;
-		LogBuffer.add("Player " + currentPlayer.getName() + " is bankrupt.");
+		ReportBuffer.add("Player " + currentPlayer.getName() + " is bankrupt.");
 		if (gameEndsWithBankruptcy)
 		{
 			finishGame();
@@ -301,7 +304,7 @@ public class GameManager implements ConfigurableComponentI
 	private void finishGame()
 	{
 		gameOver = true;
-		LogBuffer.add("Game over.");
+		ReportBuffer.add("Game over.");
 		currentRound = null;
 
 		logGameReport();
@@ -320,7 +323,7 @@ public class GameManager implements ConfigurableComponentI
 	public void logGameReport()
 	{
 
-		LogBuffer.add(getGameReport());
+		ReportBuffer.add(getGameReport());
 	}
 
 	/**
@@ -519,7 +522,7 @@ public class GameManager implements ConfigurableComponentI
 	public static void setCurrentPhase(PhaseI phase)
 	{
 		currentPhase = phase;
-		LogBuffer.add("Start of phase " + phase.getName());
+		ReportBuffer.add("Start of phase " + phase.getName());
 		if (phase.doPrivatesClose())
 		{
 			Game.getCompanyManager().closeAllPrivates();
@@ -545,7 +548,8 @@ public class GameManager implements ConfigurableComponentI
 		if (existVariant(variant))
 		{
 			GameManager.variant = variant;
-			LogBuffer.add("Variant is " + variant);
+			ReportBuffer.add("Variant is " + variant);
+			log.info ("Game variant is "+variant);
 		}
 	}
 
@@ -562,8 +566,7 @@ public class GameManager implements ConfigurableComponentI
 		}
 		catch (Exception e)
 		{
-			MessageBuffer.add("Cannot instantiate class " + className);
-			System.out.println(e.getStackTrace());
+			log.fatal ("Cannot instantiate class " + className, e);
 			return null;
 		}
 	}
