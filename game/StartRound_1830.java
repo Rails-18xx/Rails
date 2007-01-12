@@ -230,7 +230,7 @@ public class StartRound_1830 extends StartRound
 
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("InvalidBid", new String[]{
+			DisplayBuffer.add(LocalText.getText("InvalidBid", new String[]{
 					playerName,
 					itemName,
 					errMsg
@@ -242,7 +242,7 @@ public class StartRound_1830 extends StartRound
 		if (previousBid > 0)
 			player.unblockCash(previousBid);
 		player.blockCash(amount);
-		LogBuffer.add(LocalText.getText("BID_ITEM_LOG", new String[] {
+		ReportBuffer.add(LocalText.getText("BID_ITEM_LOG", new String[] {
 				playerName,
 				Bank.format(amount),
 				itemName,
@@ -299,7 +299,7 @@ public class StartRound_1830 extends StartRound
 				// More than one bid on the next item: start a bid round.
 				auctionItem = nextItem;
 				nextStep = BID_OR_PASS;
-				LogBuffer.add(LocalText.getText("TO_AUCTION", auctionItem.getName()));
+				ReportBuffer.add(LocalText.getText("TO_AUCTION", auctionItem.getName()));
 				// Start left of the currently highest bidder
 				setNextBidder(auctionItem, auctionItem.getBidder().getIndex());
 				break;
@@ -340,14 +340,14 @@ public class StartRound_1830 extends StartRound
 
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("InvalidPass", new String[] {
+			DisplayBuffer.add(LocalText.getText("InvalidPass", new String[] {
 					playerName,
 					errMsg
 				}));
 			return false;
 		}
 
-		LogBuffer.add(LocalText.getText("PASSES", playerName));
+		ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
 		if (auctionItem != null)
 		{
@@ -389,13 +389,13 @@ public class StartRound_1830 extends StartRound
 			if (++numPasses >= numPlayers)
 			{
 				// All players have passed.
-				LogBuffer.add(LocalText.getText("ALL_PASSED"));
+				ReportBuffer.add(LocalText.getText("ALL_PASSED"));
 				// It the first item has not been sold yet, reduce its price by
 				// 5.
 				if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem())
 				{
 					startPacket.getFirstItem().basePrice -= 5;
-					LogBuffer.add(LocalText.getText("ITEM_PRICE_REDUCED",
+					ReportBuffer.add(LocalText.getText("ITEM_PRICE_REDUCED",
 							new String[] {
 								startPacket.getFirstItem().getName(),
 								Bank.format(startPacket.getFirstItem().basePrice)

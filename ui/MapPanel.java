@@ -4,6 +4,8 @@ import game.*;
 
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -20,6 +22,8 @@ public class MapPanel extends JPanel
 	private HexMap map;
 	private JScrollPane scrollPane;
 
+	protected static Logger log = Logger.getLogger(MapPanel.class.getPackage().getName());
+
 	public MapPanel()
 	{
 		Scale.set(15);
@@ -33,7 +37,7 @@ public class MapPanel extends JPanel
 		}
 		catch (Exception e)
 		{
-			System.out.println("Map class instantiation error:\n");
+			log.fatal ("Map class instantiation error:", e);
 			e.printStackTrace();
 			return;
 		}

@@ -15,6 +15,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import util.LocalText;
 
 /**
@@ -51,6 +53,8 @@ public class ORWindow extends JFrame implements WindowListener
 	public static boolean tileLayingEnabled = false;
 	protected PossibleActions possibleActions = PossibleActions.getInstance();
 
+	protected static Logger log = Logger.getLogger(ORWindow.class.getPackage().getName());
+
 	public ORWindow()
 	{
 		super();
@@ -78,7 +82,7 @@ public class ORWindow extends JFrame implements WindowListener
 		setSize(800, 600);
 		addWindowListener(this);
 
-		LogWindow.addLog();
+		ReportWindow.addLog();
 	}
 
 	public void setMessage(String messageKey)
@@ -133,7 +137,7 @@ public class ORWindow extends JFrame implements WindowListener
 
 	public void setSubStep(int subStep)
 	{
-	    System.out.println("Setting substep to "+subStep);
+	    log.debug ("Setting substep to "+subStep);
 		ORWindow.subStep = subStep;
 		
 		updateMessage();
@@ -144,7 +148,7 @@ public class ORWindow extends JFrame implements WindowListener
 	    
 	    // For now, this only has an effect during tile and token laying.
 	    // Perhaps we need to centralise message updating here in a later stage.
-	    System.out.println("Calling updateMessage, subStep="+subStep);
+	    log.debug ("Calling updateMessage, subStep="+subStep);
 	    if (subStep == INACTIVE) return;
 	    
 	    String message = LocalText.getText(messageKey[subStep]);
@@ -161,14 +165,14 @@ public class ORWindow extends JFrame implements WindowListener
 		    StringBuffer extraTileMessage = new StringBuffer(" ");
 		    
 		    List tileLays = possibleActions.get(LayTile.class);
-		    System.out.println("There are "+tileLays.size()+" TileLay objects");
+		    log.debug ("There are "+tileLays.size()+" TileLay objects");
 		    int ii=0;
 		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
 		        Map tileColours;
 		        MapHex hex;
 		        //sp = (SpecialORProperty) it.next();
 		        tileLay = (LayTile) it.next();
-			    System.out.println("TileLay object "+(++ii)+": "+tileLay);
+		        log.debug ("TileLay object "+(++ii)+": "+tileLay);
 		        sp = tileLay.getSpecialProperty();
 		        /* A LayTile object contais either:
 		         * 1. a special property (specifying a location)
@@ -221,12 +225,12 @@ public class ORWindow extends JFrame implements WindowListener
 		    StringBuffer extraTokenMessage = new StringBuffer(" ");
 		    
 		    List tokenLays = possibleActions.get(LayToken.class);
-		    System.out.println("There are "+tokenLays.size()+" TokenLay objects");
+		    log.debug ("There are "+tokenLays.size()+" TokenLay objects");
 		    int ii=0;
 		    for (Iterator it = tokenLays.iterator(); it.hasNext(); ) {
 
 		        tokenLay = (LayToken) it.next();
-			    System.out.println("TokenLay object "+(++ii)+": "+tokenLay);
+		        log.debug ("TokenLay object "+(++ii)+": "+tokenLay);
 		        sp = tokenLay.getSpecialProperty();
 		        /* A LayToken object contais either:
 		         * 1. a special property (specifying a location)
@@ -277,36 +281,36 @@ public class ORWindow extends JFrame implements WindowListener
 			switch (subStep)
 			{
 				case INACTIVE:
-					//System.out.println("subStep = Inactive");
+					log.debug ("subStep = Inactive");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(false);
 					break;
 				case SELECT_HEX_FOR_TILE:
-					//System.out.println("subStep = Select hex for tile");
+					log.debug ("subStep = Select hex for tile");
 					upgradePanel.setDoneText("LayTile");
 					upgradePanel.setCancelText("NoTile");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(true);
 					break;
 				case SELECT_TILE:
-					//System.out.println("subStep = Select Tile");
+					log.debug ("subStep = Select Tile");
 					if (tileLayingEnabled)
 						upgradePanel.populate();
 					upgradePanel.setDoneEnabled(false);
 					break;
 				case ROTATE_OR_CONFIRM_TILE:
-					//System.out.println("subStep = Rotate or Confirm Tile");
+					log.debug ("subStep = Rotate or Confirm Tile");
 					upgradePanel.setDoneEnabled(true);
 					break;
 				case SELECT_HEX_FOR_TOKEN:
-					//System.out.println("subStep = Select hex for token");
+					log.debug ("subStep = Select hex for token");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(true);
 					upgradePanel.setDoneText("LayToken");
 					upgradePanel.setCancelText("NoToken");
 					break;
 				case CONFIRM_TOKEN:
-					//System.out.println("subStep = Confirm Token");
+				    log.debug ("subStep = Confirm Token");
 					PublicCompany co = (PublicCompany) orPanel.getOperatingCompanies()[orPanel.getOrCompIndex()];
 					
 					if(co.getNumberOfFreeBaseTokens() > 0)
@@ -316,7 +320,7 @@ public class ORWindow extends JFrame implements WindowListener
 					
 					break;
 				default:
-					//System.out.println("subStep = default");
+				    log.debug ("subStep = default");
 					upgradePanel.setDoneEnabled(false);
 					upgradePanel.setCancelEnabled(false);
 				break;
@@ -368,7 +372,7 @@ public class ORWindow extends JFrame implements WindowListener
 					catch(ArrayIndexOutOfBoundsException e)
 					{
 						//Clicked on a hex that doesn't have a tile or a station in it.
-					    MessageBuffer.add("No Station in this Hex. Unable to place Token.");
+					    DisplayBuffer.add("No Station in this Hex. Unable to place Token.");
 					}
 				}
 			}

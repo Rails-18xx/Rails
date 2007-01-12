@@ -146,7 +146,7 @@ public class OperatingRound extends Round implements Observer
 		cumulativeORNumber++;
 		thisOrNumber = getCompositeORNumber();
 
-		LogBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
+		ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
 
 		numberOfCompanies = operatingCompanyArray.length;
 
@@ -180,7 +180,7 @@ public class OperatingRound extends Round implements Observer
 		else
 		{
 			// No operating companies yet: close the round.
-			LogBuffer.add (LocalText.getText("END_OR", getCompositeORNumber()));
+			ReportBuffer.add (LocalText.getText("END_OR", getCompositeORNumber()));
 			GameManager.getInstance().nextRound(this);
 		}
 	}
@@ -353,7 +353,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("CannotLayTileOn", new String[] {
+			DisplayBuffer.add(LocalText.getText("CannotLayTileOn", new String[] {
 			        companyName,
 			        tile.getName(),
 			        hex.getName(),
@@ -377,13 +377,13 @@ public class OperatingRound extends Round implements Observer
 							+ MapHex.getOrientationName(orientation)); // FIXME:
 																		// Wrong!
 			if (cost > 0) {
-			    LogBuffer.add(LocalText.getText("LaysTileAt", new String[] {
+			    ReportBuffer.add(LocalText.getText("LaysTileAt", new String[] {
 			            companyName,
 			            tile.getName(),
 			            hex.getName()
 			    }));
 			} else {
-			    LogBuffer.add(LocalText.getText("LaysTileAtFor", new String[] {
+			    ReportBuffer.add(LocalText.getText("LaysTileAtFor", new String[] {
 			            companyName,
 			            tile.getName(),
 			            hex.getName(),
@@ -396,22 +396,20 @@ public class OperatingRound extends Round implements Observer
 			{
 				stl.setExercised();
 				currentSpecialTileLays.remove(allowance);
-				System.out.println("This was a special tile lay, "+
+				log.debug ("This was a special tile lay, "+
 				        (extra?"":" not")+" extra");
 				
 			}
 			if (!extra)
 			{
-				System.out.println("This was a normal tile lay");
+			    log.debug ("This was a normal tile lay");
 				registerNormalTileLay (tile);
 			}
 
 			setSpecialTileLays();
-			System.out.println("There are now "+currentSpecialTileLays.size()+" special tile lay objects");
+			log.debug ("There are now "+currentSpecialTileLays.size()+" special tile lay objects");
 		}
 
-		// System.out.println("Normal="+normalTileLaysDone+"/"+normalTileLaysAllowed
-		// +" special="+extraTileLaysDone+"/"+extraTileLaysAllowed);
 		if (tile == null 
 		        || currentNormalTileLays.isEmpty() && currentSpecialTileLays.isEmpty())
 		{
@@ -458,12 +456,12 @@ public class OperatingRound extends Round implements Observer
 	     */
 	    if (oldAllowedNumber <= 1) {
 	        tileLaysPerColour.clear();
-	        System.out.println("No more normal tile lays allowed");
+	        log.debug ("No more normal tile lays allowed");
 	        currentNormalTileLays.clear();
 	    } else /*oldAllowedNumber > 1*/ {
 	        tileLaysPerColour.clear(); // Remove all other colours
 	        tileLaysPerColour.put(colour, new Integer(oldAllowedNumber-1));
-	        System.out.println((oldAllowedNumber-1)+" more "+colour+" tile lays allowed");
+	        log.debug ((oldAllowedNumber-1)+" more "+colour+" tile lays allowed");
 	    }
 	    
 	    return true;
@@ -605,7 +603,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("CannotLayBaseTokenOn", new String[] {
+			DisplayBuffer.add(LocalText.getText("CannotLayBaseTokenOn", new String[] {
 			        companyName,
 			        hex.getName(),
 			        Bank.format(cost),
@@ -629,14 +627,14 @@ public class OperatingRound extends Round implements Observer
 			{
 				//Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			    MoveSet.add (new CashMove (operatingCompany, null, cost));
-				LogBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
+				ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
 				        companyName,
 				        hex.getName(),
 				        Bank.format(cost)}));
 			}
 			else
 			{
-				LogBuffer.add(LocalText.getText("LAYS_FREE_TOKEN_ON", new String[] {
+				ReportBuffer.add(LocalText.getText("LAYS_FREE_TOKEN_ON", new String[] {
 				        companyName,
 				        hex.getName()}));
 			}
@@ -646,22 +644,22 @@ public class OperatingRound extends Round implements Observer
 			{
 				stl.setExercised();
 				currentSpecialTokenLays.remove(allowance);
-				//System.out.println("This was a special token lay, "+
-				//        (extra?"":" not")+" extra");
+				log.debug ("This was a special token lay, "+
+				        (extra?"":" not")+" extra");
 				
 			}
 			if (!extra)
 			{
 				currentNormalTokenLays.clear();
-				//System.out.println("This was a normal token lay");
+				log.debug ("This was a normal token lay");
 			}
 			if (currentNormalTokenLays.isEmpty()) {
-			    //System.out.println("No more normal token lays are allowed");
+			    log.debug ("No more normal token lays are allowed");
 			} else {
-			    //System.out.println("A normal token lay is still allowed");
+			    log.debug ("A normal token lay is still allowed");
 			}
 			setSpecialTokenLays();
-			System.out.println("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
+			log.debug ("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
 			if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
 			{
 				nextStep();
@@ -741,12 +739,12 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot process revenue of " + amount + ": " + errMsg);
+			DisplayBuffer.add("Cannot process revenue of " + amount + ": " + errMsg);
 			return false;
 		}
 
 		revenue[operatingCompanyIndex] = amount;
-		LogBuffer.add(companyName + " earns " + Bank.format(amount));
+		ReportBuffer.add(companyName + " earns " + Bank.format(amount));
 
 		nextStep();  // NOT IN A MOVESET??
 
@@ -790,13 +788,13 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot payout revenue of "
+			DisplayBuffer.add("Cannot payout revenue of "
 					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
 					+ errMsg);
 			return false;
 		}
 
-		LogBuffer.add(companyName + " pays out full dividend of "
+		ReportBuffer.add(companyName + " pays out full dividend of "
 				+ Bank.format(revenue[operatingCompanyIndex]));
 		
 		MoveSet.start();
@@ -853,13 +851,13 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot split revenue of "
+			DisplayBuffer.add("Cannot split revenue of "
 					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
 					+ errMsg);
 			return false;
 		}
 
-		LogBuffer.add(companyName + " pays out half dividend");
+		ReportBuffer.add(companyName + " pays out half dividend");
 		MoveSet.start();
 		operatingCompany.splitRevenue(revenue[operatingCompanyIndex]);
 		nextStep();
@@ -905,10 +903,10 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add("Cannot withhold revenue of " + revenue + ": " + errMsg);
+			DisplayBuffer.add("Cannot withhold revenue of " + revenue + ": " + errMsg);
 			return false;
 		}
-		LogBuffer.add(companyName + " withholds dividend of "
+		ReportBuffer.add(companyName + " withholds dividend of "
 				+ Bank.format(revenue[operatingCompanyIndex]));
 
 		MoveSet.start();
@@ -953,7 +951,7 @@ public class OperatingRound extends Round implements Observer
 				{
 					// No trains, then the revenue is zero.
 					revenue[operatingCompanyIndex] = 0;
-					LogBuffer.add(operatingCompany.getName() + " earns " + Bank.format(0));
+					ReportBuffer.add(operatingCompany.getName() + " earns " + Bank.format(0));
 					continue;
 				}
 			}
@@ -966,7 +964,7 @@ public class OperatingRound extends Round implements Observer
 				{
 				    /* Zero dividend: process it and go to the next step */
 					operatingCompany.withhold(0);
-					MessageBuffer.add ("No trains owned, so Revenue is "
+					DisplayBuffer.add ("No trains owned, so Revenue is "
 							+ Bank.format(0));
 					//new Exception("HERE").printStackTrace();
 					continue;
@@ -1014,7 +1012,7 @@ public class OperatingRound extends Round implements Observer
 	protected void prepareStep()
 	{
 	    int step = ((Integer)stepObject.getState()).intValue();
-	    System.out.println("Prepare step "+step);
+	    log.debug ("Prepare step "+step);
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
@@ -1094,7 +1092,7 @@ public class OperatingRound extends Round implements Observer
 			while (it.hasNext())
 			{
 				Object o = it.next();
-				System.out.println("Spec.prop: "+o);
+				log.debug ("Spec.prop: "+o);
 				SpecialTileLay stl = (SpecialTileLay) o;
 				if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
 				    /* If the special tile lay is not extra, it is only 
@@ -1142,7 +1140,7 @@ public class OperatingRound extends Round implements Observer
 			while (it.hasNext())
 			{
 				SpecialTokenLay stl = (SpecialTokenLay) it.next();
-				System.out.println("Spec.prop:"+stl);
+				log.debug ("Spec.prop:"+stl);
 				if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
 				    /* If the special tile lay is not extra, it is only 
 				     * allowed if normal tile lays are also (still) allowed */
@@ -1163,7 +1161,7 @@ public class OperatingRound extends Round implements Observer
 	    /* TODO Should insert some validation here, as this method
 	     * is called from the GUI.
 	     */
-	    System.out.println("Skip step "+((Integer)stepObject.getState()).intValue());
+	    log.debug ("Skip step "+((Integer)stepObject.getState()).intValue());
 	    MoveSet.start();
 		nextStep();
 		MoveSet.finish();
@@ -1196,7 +1194,7 @@ public class OperatingRound extends Round implements Observer
 			//FIXME: Need to check for valid route before throwing an error.
 			errMsg = companyName + " owns no trains.";
 			setStep(STEP_BUY_TRAIN);
-			MessageBuffer.add(errMsg);
+			DisplayBuffer.add(errMsg);
 			return false;
 		}
 		
@@ -1205,7 +1203,7 @@ public class OperatingRound extends Round implements Observer
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
 			// OR done. Inform GameManager.
-			LogBuffer.add("End of Operating Round " + getCompositeORNumber());
+			ReportBuffer.add("End of Operating Round " + getCompositeORNumber());
 			operatingCompany = null;
 			stepObject.deleteObserver(this);
 			stepObject = null;
@@ -1334,7 +1332,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("CannotBuyTrainFor", new String[] {
+			DisplayBuffer.add(LocalText.getText("CannotBuyTrainFor", new String[] {
 			        companyName,
 			        train.getName(),
 			        Bank.format(price),
@@ -1360,7 +1358,7 @@ public class OperatingRound extends Round implements Observer
 			TrainI oldTrain = operatingCompany.getPortfolio()
 					.getTrainOfType(exchangedTrain.getType());
 			Bank.getPool().buyTrain(oldTrain, 0);
-			LogBuffer.add(LocalText.getText("ExchangesTrain", new String[] {
+			ReportBuffer.add(LocalText.getText("ExchangesTrain", new String[] {
 			        companyName,
 			        exchangedTrain.getName(),
 			        train.getName(),
@@ -1369,7 +1367,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		else
 		{
-			LogBuffer.add(LocalText.getText("BuysTrain", new String[] {
+			ReportBuffer.add(LocalText.getText("BuysTrain", new String[] {
 			        companyName,
 			        train.getName(),
 			        oldHolder.getName(),
@@ -1500,14 +1498,14 @@ public class OperatingRound extends Round implements Observer
 		if (errMsg != null)
 		{
 		    if (owner != null) {
-		        MessageBuffer.add(LocalText.getText("CannotBuyPrivateFromFor", new String[] {
+		        DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFromFor", new String[] {
 		                privateName,
 		                owner.getName(),
 		                Bank.format(price),
 		                errMsg
 		        }));
 		    } else {
-		        MessageBuffer.add(LocalText.getText("CannotBuyPrivateFor", new String[] {
+		        DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFor", new String[] {
 		                privateName,
 		                Bank.format(price),
 		                errMsg
@@ -1575,7 +1573,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("CannotClosePrivate", new String[] {
+			DisplayBuffer.add(LocalText.getText("CannotClosePrivate", new String[] {
 			        privateName,
 			        errMsg
 			}));
@@ -1583,7 +1581,7 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		privCo.setClosed();
-		LogBuffer.add(LocalText.getText("PRIVATE_IS_CLOSED", privateName));
+		ReportBuffer.add(LocalText.getText("PRIVATE_IS_CLOSED", privateName));
 
 		return true;
 
@@ -1650,7 +1648,7 @@ public class OperatingRound extends Round implements Observer
 	
 	protected void updateStatus (String fromWhere) {
 	    
-	    System.out.println (">>> updateStatus called from "+fromWhere);
+	    log.debug  (">>> updateStatus called from "+fromWhere);
 	    updateStatus();
 	    
 	}
@@ -1670,8 +1668,8 @@ public class OperatingRound extends Round implements Observer
 		{
 		    setNormalTileLays();
 			setSpecialTileLays();
-			System.out.println("Normal tile lays: "+currentNormalTileLays.size());
-			System.out.println("Special tile lays: "+currentSpecialTileLays.size());
+			log.debug ("Normal tile lays: "+currentNormalTileLays.size());
+			log.debug ("Special tile lays: "+currentSpecialTileLays.size());
 
 			possibleActions.addAll (currentNormalTileLays);
 			possibleActions.addAll (currentSpecialTileLays);
@@ -1680,8 +1678,8 @@ public class OperatingRound extends Round implements Observer
 		{
 		    setNormalTokenLays();
 		    setSpecialTokenLays();
-			System.out.println("Normal token lays: "+currentNormalTokenLays.size());
-			System.out.println("Special token lays: "+currentSpecialTokenLays.size());
+		    log.debug ("Normal token lays: "+currentNormalTokenLays.size());
+		    log.debug ("Special token lays: "+currentSpecialTokenLays.size());
 
 			possibleActions.addAll (currentNormalTokenLays);
 			possibleActions.addAll (currentSpecialTokenLays);

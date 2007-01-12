@@ -25,7 +25,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
     protected static final String REDO_CMD = "Redo";
     protected static final String MARKET_CMD = "Market";
     protected static final String MAP_CMD = "Map";
-    protected static final String LOG_CMD = "Log";
+    protected static final String REPORT_CMD = "Report";
     protected static final String BUY_CMD = "Buy";
     protected static final String SELL_CMD = "Sell";
     protected static final String DONE_CMD = "Done";
@@ -126,9 +126,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
-		menuItem = new JCheckBoxMenuItem(LocalText.getText("LOG"));
-		menuItem.setName(LocalText.getText("LOG"));
-		menuItem.setActionCommand(LOG_CMD);
+		menuItem = new JCheckBoxMenuItem(LocalText.getText("REPORT"));
+		menuItem.setName(LocalText.getText("REPORT"));
+		menuItem.setActionCommand(REPORT_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_L);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
@@ -463,9 +463,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		// until the infrastructure for saved games is built
 		else if (actor.getActionCommand().equals(SAVE_CMD))
 			returnVal = new JFileChooser().showSaveDialog(this);
-		else if (actor.getActionCommand().equals(LOG_CMD))
+		else if (actor.getActionCommand().equals(REPORT_CMD))
 		{
-			GameUILoader.messageWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+			GameUILoader.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
 		}
 		else if (actor.getActionCommand().equals(MARKET_CMD))
@@ -489,7 +489,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			return;
 		} 
 
-		LogWindow.addLog();
+		ReportWindow.addLog();
 
 		currentRound = GameManager.getInstance().getCurrentRound();
 		if (currentRound instanceof StockRound)
@@ -517,7 +517,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						1))
 				{
 					JOptionPane.showMessageDialog(this,
-							LogBuffer.get(),
+							ReportBuffer.get(),
 							"",
 							JOptionPane.OK_OPTION);
 				}
@@ -538,7 +538,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						1))
 				{
 					JOptionPane.showMessageDialog(this,
-							LogBuffer.get(),
+							ReportBuffer.get(),
 							"",
 							JOptionPane.OK_OPTION);
 				}
@@ -565,7 +565,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			company = companies[compIndex];
 			if (!stockRound.sellShare(player.getName(), company.getName()))
 			{
-				JOptionPane.showMessageDialog(this, LogBuffer.get());
+				JOptionPane.showMessageDialog(this, ReportBuffer.get());
 			}
 		}
 		else
@@ -604,7 +604,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 					startPrice))
 			{
 				JOptionPane.showMessageDialog(this,
-						LogBuffer.get(),
+						ReportBuffer.get(),
 						"",
 						JOptionPane.OK_OPTION);
 			}
@@ -666,10 +666,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	{
 
 		/* Complete the log */
-		LogWindow.addLog();
+		ReportWindow.addLog();
 
 		setVisible(true);
-		GameUILoader.messageWindow.setVisible(true);
+		GameUILoader.reportWindow.setVisible(true);
 		GameUILoader.stockChart.setVisible(true);
 
 		/* Disable all buttons */

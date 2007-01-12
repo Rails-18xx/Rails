@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -35,11 +36,13 @@ public class ComponentManager
 	/** The name of the XML attribute for the component's configuration file. */
 	public static final String COMPONENT_FILE_TAG = "file";
 
+	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
+
 	public static ComponentManager getInstance() throws ConfigurationException
 	{
-		if (sTheOne != null)
+		if (instance != null)
 		{
-			return sTheOne;
+			return instance;
 		}
 		throw new ConfigurationException(LocalText.getText("ComponentManagerNotYetConfigured"));
 	}
@@ -47,11 +50,11 @@ public class ComponentManager
 	public static synchronized void configureInstance(String gameName,
 			Element element) throws ConfigurationException
 	{
-		if (sTheOne != null)
+		if (instance != null)
 		{
 			throw new ConfigurationException(LocalText.getText("ComponentManagerNotReconfigured"));
 		}
-		sTheOne = new ComponentManager(gameName, element);
+		instance = new ComponentManager(gameName, element);
 	}
 
 	private ComponentManager(String gameName, Element element)
@@ -75,8 +78,8 @@ public class ComponentManager
 					COMPONENT_CLASS_TAG);
 			if (name == null)
 			{
-				throw new ConfigurationException(LocalText.getText("Component") + " " + name
-						+ LocalText.getText("ComponentNoClass2"));
+				throw new ConfigurationException(
+				        LocalText.getText("ComponentHasNoClass", name));
 			}
 			String file = XmlUtils.extractStringAttribute(nnp,
 					COMPONENT_FILE_TAG);
@@ -85,8 +88,7 @@ public class ComponentManager
 			// Only one component per name.
 			if (mComponentMap.get(name) != null)
 			{
-				throw new ConfigurationException(LocalText.getText("Component") + " " + name
-						+ LocalText.getText("ConfiguredTwice2"));
+				throw new ConfigurationException(LocalText.getText("ComponentConfiguredTwice", name));
 			}
 
 			// Now construct the component
@@ -106,9 +108,9 @@ public class ComponentManager
 				// do not between
 				// them make a well-formed system. Debugging aided by chaining
 				// the caught exception.
-				throw new ConfigurationException(LocalText.getText("ComponentNoClass1")
-						+ clazz + " " + LocalText.getText("ComponentNoClass2") + " " + name,
-						ex);
+				throw new ConfigurationException(
+				        LocalText.getText("ComponentHasNoClass", clazz), ex);
+				
 			}
 
 			// Configure the component, from a file, or the embedded XML.
@@ -125,13 +127,15 @@ public class ComponentManager
 			catch (ConfigurationException e)
 			{
 				// Temporarily allow components to be incompletely configured.
-				System.out.println(LocalText.getText("AcceptingConfigFailure"));
-				e.printStackTrace();
+				log.warn(LocalText.getText("AcceptingConfigFailure"), e);
 			}
 
 			// Add it to the map of known components.
 			mComponentMap.put(name, component);
-			System.out.println(LocalText.getText("Component") + name + LocalText.getText("ComponentInitAs") + " " + clazz);
+			log.debug (LocalText.getText("ComponentInitAs", new String[] {
+			        name,
+			        clazz
+			}));
 		}
 	}
 
@@ -151,7 +155,7 @@ public class ComponentManager
 	private Map mComponentMap = new HashMap();
 
 	/** Remember our singleton instance. */
-	private static ComponentManager sTheOne;
+	private static ComponentManager instance;
 	
 	public static String getGameName () {
 	    return gameName;

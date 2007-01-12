@@ -134,22 +134,22 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 					StockSpaceI.PRICE_TAG);
 			if (price == null)
 			{
-				throw new ConfigurationException(LocalText.getText("StockSpace1") + " " + name
-						+ LocalText.getText("NoPrice2"));
+				throw new ConfigurationException(
+				        LocalText.getText("StockSpaceHasNoPrice", name));
 			}
 			String typeName = XmlUtils.extractStringAttribute(nnp,
 					StockSpaceI.TYPE_TAG);
 			if (typeName != null
 					&& (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null)
 			{
-				throw new ConfigurationException(LocalText.getText("StockSpaceType1") + " " + type
-						+ LocalText.getText("IsUndefined2"));
+				throw new ConfigurationException(
+				        LocalText.getText("StockSpaceTypeUndefined", type));
 			}
 
 			if (stockChartSpaces.get(name) != null)
 			{
-				throw new ConfigurationException(LocalText.getText("StockSpace1") + name
-						+ LocalText.getText("ConfiguredTwice2"));
+				throw new ConfigurationException(
+				        LocalText.getText("StockSpaceIsConfiguredTwice",  name));
 			}
 
 			StockSpaceI space = new StockSpace(name,
@@ -342,7 +342,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
-			LogBuffer.add(company.getName() + " closes at " + newsquare.getName());
+			ReportBuffer.add(company.getName() + " closes at " + newsquare.getName());
 		}
 		else
 		{
@@ -384,7 +384,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		{
 			company.setClosed();
 			oldsquare.removeToken(company);
-			LogBuffer.add(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
+			ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
 		}
 		else
 		{
@@ -397,7 +397,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		// To be written to a log file in the future.
 		if (from != null && from == to)
 		{
-			LogBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
+			ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
 			        company.getName(),
 			        Bank.format(from.getPrice()),
 			        from.getName()
@@ -409,7 +409,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		}
 		else if (from != null && to != null)
 		{
-			LogBuffer.add (LocalText.getText("PRICE_MOVES_LOG", new String[] {
+			ReportBuffer.add (LocalText.getText("PRICE_MOVES_LOG", new String[] {
 			        company.getName(),
 			        Bank.format(from.getPrice()),
 			        from.getName(),
@@ -420,7 +420,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			/* Check for game closure */
 			if (to.endsGame())
 			{
-				LogBuffer.add(LocalText.getText("GAME_OVER"));
+				ReportBuffer.add(LocalText.getText("GAME_OVER"));
 				gameOver = true;
 			}
 

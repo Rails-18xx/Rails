@@ -196,7 +196,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			Portfolio.transferCertificate(this,
 					portfolio,
 					Bank.getUnavailable());
-			LogBuffer.add("Private " + name + " closes");
+			ReportBuffer.add("Private " + name + " closes");
 		}
 	}
 
@@ -239,7 +239,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 
 	public void payOut()
 	{
-		LogBuffer.add(portfolio.getOwner().getName() + " receives "
+		ReportBuffer.add(portfolio.getOwner().getName() + " receives "
 				+ Bank.format(revenue) + " for " + name);
 		Bank.transferCash(null, portfolio.getOwner(), revenue);
 	}
@@ -260,8 +260,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		}
 		catch (CloneNotSupportedException e)
 		{
-			MessageBuffer.add("Cannot clone company " + name);
-			System.out.println(e.getStackTrace());
+			log.fatal ("Cannot clone company " + name);
+			return null;
 		}
 		return clone;
 	}

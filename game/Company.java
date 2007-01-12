@@ -1,5 +1,7 @@
 package game;
 
+import org.apache.log4j.Logger;
+
 public abstract class Company implements CompanyI, ConfigurableComponentI,
 		Cloneable
 {
@@ -23,6 +25,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	protected int certLimitCount = 2;
 
 	protected boolean closed = false;
+
+	protected static Logger log = Logger.getLogger(Company.class.getPackage().getName());
 
 	public Company()
 	{

@@ -54,8 +54,7 @@ public class CompanyType implements CompanyTypeI
 		}
 		catch (Exception e)
 		{
-			throw new ConfigurationException(LocalText.getText("ClassNoInstance1") + className
-					+ LocalText.getText("ClassNoInstance2"), e);
+			throw new ConfigurationException(LocalText.getText("ClassCannotBeInstantiated", className), e);
 		}
 		dummyCompany.init("", this);
 		dummyCompany.configureFromXML(element);
@@ -75,12 +74,18 @@ public class CompanyType implements CompanyTypeI
 		try
 		{
 			newCompany = (CompanyI) dummyCompany.clone();
+			if (newCompany == null) {
+			    throw new ConfigurationException ("Cannot clone company " + name);
+			}
 			newCompany.init(name, this);
 			newCompany.configureFromXML(element);
 		}
 		catch (CloneNotSupportedException e)
 		{
-			MessageBuffer.add(LocalText.getText("CantCloneCompany1") + name + LocalText.getText("CantCloneCompany2"));
+			DisplayBuffer.add(LocalText.getText("CantCloneCompany", new String[] {
+			        name,
+			        this.name
+			}));
 		}
 		return newCompany;
 	}

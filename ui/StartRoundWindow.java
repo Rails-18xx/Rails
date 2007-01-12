@@ -153,7 +153,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		requestFocus();
 
-		LogWindow.addLog();
+		ReportWindow.addLog();
 		
 		addKeyListener(this);
 
@@ -477,7 +477,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			}
 			setSRPlayerTurn(((StartRound) round).getCurrentPlayerIndex());
 		}
-		LogWindow.addLog();
+		ReportWindow.addLog();
 		if (round.nextStep() == StartRound.SET_PRICE)
 		{
 			PublicCompanyI company = round.getCompanyNeedingPrice();
@@ -494,7 +494,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					sp.getPrice()))
 			{
 				JOptionPane.showMessageDialog(this,
-						LogBuffer.get(),
+						ReportBuffer.get(),
 						LocalText.getText("ERROR"),
 						JOptionPane.OK_OPTION);
 			}
@@ -560,7 +560,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	}
 	
     public void displayError() {
-    	String message = LogBuffer.get();
+    	String message = ReportBuffer.get();
     	if (Util.hasValue(message)) {
     		JOptionPane.showMessageDialog(this, message);
     	}

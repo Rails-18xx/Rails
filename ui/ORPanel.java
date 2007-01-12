@@ -13,6 +13,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
 import java.util.List;
 import java.util.regex.*;
@@ -134,6 +136,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
+	protected static Logger log = Logger.getLogger(ORPanel.class.getPackage().getName());
+
     public ORPanel() {
         super();
         
@@ -170,12 +174,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
     }
 
-    /*
-     * public void repaint() { System.out.println("ORPanel.repaint() called"); }
-     */
-
     public void recreate() {
-        //System.out.println("ORPanel.recreate() called");
+        log.debug ("ORPanel.recreate() called");
         round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -193,7 +193,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void deRegisterObservers() {
-        //System.out.println("Deregistering observers");
+        log.debug ("Deregistering observers");
         if (StatusWindow.useObserver) {
             for (Iterator it = observers.iterator(); it.hasNext();) {
                 ((ViewObject) it.next()).deRegister();
@@ -484,20 +484,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 //For debugging
                 Map a = possibleActions.getAll();
                 PossibleAction pa;
-                if (a.isEmpty()) System.out.println("No possible actions!!");
+                if (a.isEmpty()) log.debug ("No possible actions!!");
                 for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
                     for (Iterator it2 = possibleActions.get((Class)it.next()).iterator(); it2.hasNext(); ) {
                         pa = (PossibleAction) it2.next();
 	                    if (pa instanceof LayTile) {
-	                        System.out.println("PossibleAction: "+((LayTile)pa));
+	                        log.debug ("PossibleAction: "+((LayTile)pa));
 	                    } else {
-	                        System.out.println("PossibleAction: "+pa);
+	                        log.debug ("PossibleAction: "+pa);
 	                    }
                     }
                 }
                 
                 if (possibleActions.contains(LayTile.class)) {
-                    System.out.println("Tiles can be laid");
+                    log.debug ("Tiles can be laid");
 	                GameUILoader.orWindow.enableTileLaying(true);
 	                //GameUILoader.getMapPanel().setSpecialTileLays(
 	                //        (ArrayList) round.getSpecialProperties()); //??
@@ -535,20 +535,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 //For debugging
                 Map a = possibleActions.getAll();
                 PossibleAction pa;
-                if (a.isEmpty()) System.out.println("No possible actions!!");
+                if (a.isEmpty()) log.debug ("No possible actions!!");
                 for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
                     for (Iterator it2 = possibleActions.get((Class)it.next()).iterator(); it2.hasNext(); ) {
                         pa = (PossibleAction) it2.next();
 	                    if (pa instanceof LayToken) {
-	                        System.out.println("PossibleAction: "+((LayToken)pa));
+	                        log.debug ("PossibleAction: "+((LayToken)pa));
 	                    } else {
-	                        System.out.println("PossibleAction: "+pa);
+	                        log.debug ("PossibleAction: "+pa);
 	                    }
                     }
                 }
                 
                 if (possibleActions.contains(LayToken.class)) {
-                    System.out.println("Tokens can be laid");
+                    log.debug ("Tokens can be laid");
 	                GameUILoader.orWindow.enableBaseTokenLaying(true);
 	                GameUILoader.getMapPanel().setAllowedTokenLays (possibleActions.get(LayToken.class));
                }
@@ -674,7 +674,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             button3.setEnabled(true);
         }
 
-        LogWindow.addLog();
+        ReportWindow.addLog();
 
         if (oRound.getStep() != OperatingRound.STEP_LAY_TRACK) {
             this.requestFocus();
@@ -712,7 +712,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
         updateStatus();
 
-        LogWindow.addLog();
+        ReportWindow.addLog();
         displayMessage();
 
     }
@@ -792,14 +792,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 displayMessage();
             }
         } else if (command.equals(UNDO_CMD)) {
-            System.out.println("UNDO!");
+            log.debug ("UNDO!");
             oRound.undo();
         } else if (command.equals(REDO_CMD)) {
-            System.out.println("REDO!");
+            log.debug ("REDO!");
             oRound.redo();
         }
 
-        LogWindow.addLog();
+        ReportWindow.addLog();
 
         updateStatus();
 
@@ -947,7 +947,7 @@ private void buyTrain()
 					price,
 					exchangedTrain))
 			{
-				JOptionPane.showMessageDialog(this, LogBuffer.get());
+				JOptionPane.showMessageDialog(this, ReportBuffer.get());
 			}
 			else
 			{
@@ -1146,7 +1146,7 @@ private void buyTrain()
 
     public void displayMessage() {
         String message;
-        if (Util.hasValue(message = MessageBuffer.get())) {
+        if (Util.hasValue(message = DisplayBuffer.get())) {
             JOptionPane.showMessageDialog(this, message);
         }
     }

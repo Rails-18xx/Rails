@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 
+import org.apache.log4j.Logger;
+
 import ui.GameUILoader;
 
 import java.util.*;
@@ -34,6 +36,8 @@ public class Options extends JDialog implements ActionListener
 	BasicComboBoxRenderer renderer;
 	Dimension size, optSize;
 	
+	protected static Logger log = Logger.getLogger(Options.class.getPackage().getName());
+
 	private void initialize()
 	{
 		gc = new GridBagConstraints();
@@ -174,7 +178,7 @@ public class Options extends JDialog implements ActionListener
 			}
 			catch (IOException e)
 			{
-				System.out.println("While opening jar file: " + e);
+			    log.debug ("While opening jar file: " + jarFile, e);
 			}
 		}
 		return files;

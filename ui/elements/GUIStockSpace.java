@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
+import org.apache.log4j.Logger;
+
 import ui.StatusWindow;
 import ui.GUIToken;
 
@@ -34,6 +36,8 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 	private static final Color BROWN = new Color(144, 72, 0);
 	private static final Color LIGHT_GRAY = new Color(200, 200, 200);
 	private static final Color ORANGE = new Color(255, 180, 0);
+
+	protected static Logger log = Logger.getLogger(GUIStockSpace.class.getPackage().getName());
 
 	public GUIStockSpace(int x, int y, StockSpace model)
 	{
@@ -203,7 +207,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 		}
 		else
 		{
-			System.out.println("Warning: Unknown color: " + color + ".");
+			log.warn ("Unknown color: " + color + ".");
 			return Color.MAGENTA;
 		}
 	}

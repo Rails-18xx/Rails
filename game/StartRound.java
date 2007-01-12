@@ -82,9 +82,9 @@ public abstract class StartRound extends Round implements StartRoundI
 
 		GameManager.getInstance().setRound(this);
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
-		LogBuffer.add("");
-		LogBuffer.add(LocalText.getText("StartOfInitialRound"));
-		LogBuffer.add (LocalText.getText("HasPriority", getCurrentPlayer().getName()));
+		ReportBuffer.add("");
+		ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
+		ReportBuffer.add (LocalText.getText("HasPriority", getCurrentPlayer().getName()));
 	}
 	
 
@@ -165,7 +165,7 @@ public abstract class StartRound extends Round implements StartRoundI
 
 		if (errMsg != null)
 		{
-			MessageBuffer.add (LocalText.getText("CantBuyItem", new String[] {
+			DisplayBuffer.add (LocalText.getText("CantBuyItem", new String[] {
 					playerName,
 					itemName,
 					errMsg
@@ -206,7 +206,7 @@ public abstract class StartRound extends Round implements StartRoundI
 		if (item.hasSecondary())
 		{
 			Certificate extra = item.getSecondary();
-			LogBuffer.add(LocalText.getText("ALSO_GETS", new String[] {
+			ReportBuffer.add(LocalText.getText("ALSO_GETS", new String[] {
 					player.getName(),
 					extra.getName()
 				}));
@@ -299,7 +299,7 @@ public abstract class StartRound extends Round implements StartRoundI
 
 		if (errMsg != null)
 		{
-			MessageBuffer.add(LocalText.getText("InvalidParPriceSetting", new String[] {
+			DisplayBuffer.add(LocalText.getText("InvalidParPriceSetting", new String[] {
 					Bank.format(parPrice),
 					playerName,
 					companyName,
@@ -308,7 +308,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			return false;
 		}
 
-		LogBuffer.add(LocalText.getText("START_COMPANY", new String[] {
+		ReportBuffer.add(LocalText.getText("START_COMPANY", new String[] {
 				playerName,
 				companyName,
 				Bank.format(parPrice)
@@ -321,7 +321,7 @@ public abstract class StartRound extends Round implements StartRoundI
 		{
 			// Float company
 			companyNeedingPrice.setFloated();
-			LogBuffer.add(LocalText.getText("FLOATS", new String[] {
+			ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
 					companyName,
 					Bank.format(companyNeedingPrice.getCash())
 				}));
