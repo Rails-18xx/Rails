@@ -70,7 +70,7 @@ public final class Util
 		{
 			// Search in the jar
 			File jarFile = new File("./Rails-" + LocalText.version + ".jar");
-			JarFile jf = new JarFile(jarFile);
+			//JarFile jf = new JarFile(jarFile);
 			JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
 			for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
 			{
