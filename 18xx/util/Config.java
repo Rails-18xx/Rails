@@ -15,6 +15,10 @@ public final class Config {
 
 	//private static Log logger = LogFactory.getLog (Properties.class.getName()); 
 	
+	/** Default property file name. */
+	/* It will be reset from GameTest. */
+	private static String myConfigFile = "my.properties";
+	
 	/** One Properties object for all properties */
 	private static Properties prop = new Properties();
 	private static boolean loaded = false;
@@ -26,12 +30,16 @@ public final class Config {
 	 */
 	private Config() {
 	}
+	
+	public static void setConfigFile (String myConfigFile) {
+		Config.myConfigFile = myConfigFile;
+	}
 
 	public static String get (String key) {
 		
 		if (prop.isEmpty() || !loaded) {
 			/* List the property files to read here */
-			load("my.properties", false);
+			load(myConfigFile, false);
 			loaded = true;
 		}
 		if (prop.containsKey(key)) return prop.getProperty(key);
