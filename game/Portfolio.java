@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.44 2007/01/12 22:51:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/Portfolio.java,v 1.45 2007/01/16 20:32:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import util.LocalText;
 import util.Util;
 
 /**
@@ -77,15 +78,16 @@ public class Portfolio
 			int price)
 	{
 
-		if (from == Bank.getIpo())
+		if (from != Bank.getIpo())
+		/* The initial buy is reported from StartRound. 
+		 * This message should also move to elsewhere. */
 		{
-			ReportBuffer.add(name + " buys " + privateCompany.getName() + " for "
-					+ Bank.format(price) + ".");
-		}
-		else
-		{
-			ReportBuffer.add(name + " buys " + privateCompany.getName() + " from "
-					+ from.getName() + " for " + Bank.format(price) + ".");
+			ReportBuffer.add(LocalText.getText("BuysPrivateFromFor", new String[] {
+					name,
+					privateCompany.getName(),
+					from.getName(),
+					Bank.format(price)
+			}));
 		}
 
 		// Move the private certificate
@@ -141,9 +143,11 @@ public class Portfolio
 			Portfolio from, int price)
 	{
 
-		ReportBuffer.add(from.getName() + " sells " + certificate.getShare() + "% of "
-				+ certificate.getCompany().getName() + " to the Bank for "
-				+ Bank.format(price));
+		ReportBuffer.add(LocalText.getText("SellsItemFor", new String[] {
+		        from.getName(),
+		        certificate.getName(),
+				Bank.format(price)
+		}));
 
 		// Move the certificate
 		MoveSet.add(new CertificateMove (from, Bank.getPool(), certificate));
@@ -589,8 +593,10 @@ public class Portfolio
 	public void discardTrain(TrainI train)
 	{
 		transferTrain(train, this, Bank.getPool());
-		ReportBuffer.add("Company " + name + " discards " + train.getName()
-				+ "-train to Pool");
+		ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
+				name,
+				train.getName()
+		}));
 	}
 
 	public static void transferTrain(TrainI train, Portfolio from, Portfolio to)

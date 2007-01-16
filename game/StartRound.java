@@ -198,9 +198,12 @@ public abstract class StartRound extends Round implements StartRoundI
 	protected void assignItem(Player player, StartItem item, int price)
 	{
 
-		// Log.write ("***"+player.getName()+" buys "+item.getName()+" for
-		// "+Bank.format(price));
 		Certificate primary = item.getPrimary();
+		ReportBuffer.add(LocalText.getText("BuysItemFor", new String[] {
+				player.getName(),
+				primary.getName(),
+				Bank.format(price)
+			}));
 		player.buy(primary, price);
 		checksOnBuying(primary);
 		if (item.hasSecondary())
@@ -251,7 +254,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	}
 
 	/**
-	 * Set a par price.
+	 * Set a public company initial share price.
 	 * 
 	 * @param playerName
 	 *            The name of the par price setting player.
@@ -321,10 +324,10 @@ public abstract class StartRound extends Round implements StartRoundI
 		{
 			// Float company
 			companyNeedingPrice.setFloated();
-			ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
-					companyName,
-					Bank.format(companyNeedingPrice.getCash())
-				}));
+			//ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
+			//		companyName,
+			//		Bank.format(companyNeedingPrice.getCash())
+			//	}));
 		}
 
 		companyNeedingPrice = null;

@@ -239,9 +239,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 
 	public void payOut()
 	{
-		ReportBuffer.add(portfolio.getOwner().getName() + " receives "
-				+ Bank.format(revenue) + " for " + name);
-		Bank.transferCash(null, portfolio.getOwner(), revenue);
+		if (portfolio.getOwner() != Bank.getInstance()) {
+			ReportBuffer.add(portfolio.getOwner().getName() + " receives "
+					+ Bank.format(revenue) + " for " + name);
+			Bank.transferCash(null, portfolio.getOwner(), revenue);
+		}
 	}
 
 	public String toString()

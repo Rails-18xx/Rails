@@ -2,6 +2,8 @@ package game;
 
 import org.apache.log4j.Logger;
 
+import util.LocalText;
+
 public class PublicCertificate implements PublicCertificateI, Cloneable
 {
 
@@ -101,10 +103,30 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 		}
 	}
 
+	/** Get the name of a certificate. 
+	 The name is derived from the company name and the 
+	 share percentage of this certificate.
+	 If it is a 100% share (as occurs with e.g. 1835 minors),
+	 only the company name is given.
+	 If it is a president's share, that fact is mentioned.
+	 */
 	public String getName()
 	{
-		return company.getName() + " " + getShare() + "% "
-				+ (president ? "president " : "") + "share";
+		int share = getShare();
+		if (share == 100) {
+			/* Applies to shareless minors: just name the company */
+			return company.getName();
+		} else if (president){
+			return LocalText.getText("PRES_CERT_NAME", new String[] {
+					company.getName(),
+					String.valueOf(getShare())
+			});
+		} else {
+			return LocalText.getText("CERT_NAME", new String[] {
+					company.getName(),
+					String.valueOf(getShare())
+			});
+		}
 	}
 
 	/**
@@ -167,8 +189,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	
 	/**
 	 * Two certificates are "equal" if they both belong to the same company, 
-	 * represent the same share percentage, and are not a preseident share. 
-	 * @param cert public company certificate to compare with. 
+	 * represent the same share percentage, and are not a president share. 
+	 * @param cert Public company certificate to compare with. 
 	 * @return True if the certs are "equal" in the defined sense.
 	 */
 	public boolean equals (PublicCertificateI cert) {
@@ -180,7 +202,6 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 
 	public String toString()
 	{
-		return "PublicCertificate: " + company.getName() + ", Shares: "
-				+ shares;
+		return "PublicCertificate: " + getName();
 	}
 }

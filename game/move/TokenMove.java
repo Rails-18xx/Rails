@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TokenMove.java,v 1.3 2007/01/12 22:51:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/move/Attic/TokenMove.java,v 1.4 2007/01/16 20:32:31 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -48,9 +48,9 @@ public class TokenMove extends Move {
     }
     
     public String toString() {
-        if (token == null) log.debug ("Token is null");
-        if (from == null) log.debug ("From is null");
-        if (to == null) log.debug ("To is null");        
+        if (token == null) log.error ("Token is null");
+        if (from == null) log.error ("From is null");
+        if (to == null) log.error ("To is null");        
         return "TokenMove: "+token.getName()
         	+ " from " + from.getName()
         	+ " to " + to.getName();
