@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import util.LocalText;
 import util.Util;
 import util.XmlUtils;
 
@@ -599,7 +600,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		//Bank.transferCash(null, this, cash);
 		MoveSet.add (new CashMove (Bank.getInstance(), this, cash));
-		ReportBuffer.add(name + " floats and receives " + Bank.format(cash));
+		ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
+				name,
+				Bank.format(cash)
+		}));
 	}
 
 	/**
@@ -669,11 +673,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 	    if (currentPrice == null) {
 	        currentPrice = new PriceModel (this);
-	        log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
+	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
 	    }
 	    if (price != null) {
 	        currentPrice.setPrice(price);
-	        log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
+	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
 	    }
 	}
 

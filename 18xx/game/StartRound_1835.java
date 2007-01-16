@@ -210,7 +210,16 @@ public class StartRound_1835 extends StartRound
 			{
 				newIndex = turns;
 			}
+			Player oldPlayer = GameManager.getCurrentPlayer();
 			GameManager.setCurrentPlayerIndex(newIndex);
+			Player newPlayer = GameManager.getCurrentPlayer();
+			log.debug ("Game turn has moved from "
+					+ oldPlayer.getName()+" to "+newPlayer.getName()
+					+" [startRound="+startRoundNumber
+					+" cycle="+cycle
+					+" turn="+turns
+					+" newIndex="+newIndex
+					+"]");
 
 			nextStep = BUY_OR_PASS;
 		}
@@ -218,7 +227,9 @@ public class StartRound_1835 extends StartRound
 	}
 
 	/**
-	 * Set a par price.
+	 * Set an initial price for a President's share acquired
+	 * in a Start Round.
+	 * This action does not apply to 1835, where start prices are fixed.
 	 * 
 	 * @param playerName
 	 *            The name of the par price setting player.
@@ -268,7 +279,8 @@ public class StartRound_1835 extends StartRound
 		}
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
-		GameManager.setNextPlayer();
+		//GameManager.setNextPlayer();
+		setNextAction();
 
 		if (++numPasses >= numPlayers)
 		{

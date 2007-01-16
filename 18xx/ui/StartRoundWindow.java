@@ -475,7 +475,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 				bidButton.setEnabled(false);
 				bidAmount.setEnabled(false);
 			}
-			setSRPlayerTurn(((StartRound) round).getCurrentPlayerIndex());
 		}
 		ReportWindow.addLog();
 		if (round.nextStep() == StartRound.SET_PRICE)
@@ -513,6 +512,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 		else
 		{
+			setSRPlayerTurn(((StartRound) round).getCurrentPlayerIndex());
 		    displayError();
 			updateStatus();
 			pack();
@@ -560,7 +560,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	}
 	
     public void displayError() {
-    	String message = ReportBuffer.get();
+    	String message = DisplayBuffer.get();
     	if (Util.hasValue(message)) {
     		JOptionPane.showMessageDialog(this, message);
     	}
