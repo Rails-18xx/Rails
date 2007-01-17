@@ -1141,8 +1141,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			pres.getPortfolio().swapPresidentCertificate(this,
 					buyer.getPortfolio());
-			ReportBuffer.add("Presidency of " + name + " is transferred to "
-					+ buyer.getName());
+			ReportBuffer.add(
+					LocalText.getText("PresidencyIsTransferredTo", new String[] {
+							name,
+							buyer.getName()
+					}));
 		}
 	}
 
@@ -1170,8 +1173,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 				// Presidency must be transferred
 				seller.getPortfolio().swapPresidentCertificate(this,
 						player.getPortfolio());
-				ReportBuffer.add("Presidency of " + name + " is transferred to "
-						+ player.getName());
+				ReportBuffer.add(
+						LocalText.getText("PresidencyIsTransferredTo", new String[] {
+								name,
+								player.getName()
+						}));
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.4 2007/01/12 22:51:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/game/Attic/ShareSellingRound.java,v 1.5 2007/01/17 20:38:24 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -8,6 +8,8 @@ package game;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import util.LocalText;
 
 /**
  * @author Erik Vos
@@ -108,19 +110,19 @@ public class ShareSellingRound extends StockRound {
 			// Check everything
 			if (number <= 0)
 			{
-				errMsg = "Cannot sell less that one share";
+				errMsg = LocalText.getText("NoSellZero");
 				break;
 			}
 			if (!playerName.equals(currentPlayer.getName()))
 			{
-				errMsg = "Wrong player " + playerName;
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 
 			// May not sell in certain cases
 			if (!mayCurrentPlayerSellAtAll())
 			{
-				errMsg = "May not sell anymore in this turn";
+				errMsg = LocalText.getText("SoldEnough");
 				break;
 			}
 
@@ -128,21 +130,23 @@ public class ShareSellingRound extends StockRound {
 			company = companyMgr.getPublicCompany(companyName);
 			if (company == null)
 			{
-				errMsg = "Company does not exist";
+				errMsg = LocalText.getText("CompanyDoesNotExist",companyName);
 				break;
 			}
 
 			// The player must have the share(s)
 			if (portfolio.ownsShare(company) < number)
 			{
-				errMsg = "Does not have the share(s)";
+				errMsg = LocalText.getText("DoesNotHaveTheShares");
 				break;
 			}
 
 			// The pool may not get over its limit.
-			if (pool.ownsShare(company) + number * company.getShareUnit() > Bank.getPoolShareLimit())
+			if (pool.ownsShare(company) + number * company.getShareUnit()
+					> Bank.getPoolShareLimit())
 			{
-				errMsg = "Pool would get over its share holding limit";
+				errMsg = LocalText.getText("PoolWouldGetOverLimit",
+						String.valueOf(Bank.getPoolShareLimit()));
 				break;
 			}
 
@@ -171,11 +175,11 @@ public class ShareSellingRound extends StockRound {
 			if (numberToSell == 0)
 				presCert = null;
 
+			Player otherPlayer = null;
 			if (numberToSell > 0 && presCert != null
 					&& numberToSell <= presCert.getShares())
 			{
 				// More to sell and we are President: see if we can dump it.
-				Player otherPlayer;
 				for (int i = currentIndex + 1; i < currentIndex
 						+ numberOfPlayers; i++)
 				{
@@ -201,11 +205,11 @@ public class ShareSellingRound extends StockRound {
 			{
 				if (presCert != null)
 				{
-					errMsg = "Cannot dump presidency";
+					errMsg = LocalText.getText("CannotDumpPresidency");
 				}
 				else
 				{
-					errMsg = "Does not have that many shares";
+					errMsg = LocalText.getText("DoesNotHaveTheShares");
 				}
 				break;
 			}
@@ -215,7 +219,7 @@ public class ShareSellingRound extends StockRound {
 			if (presCert != null && dumpedPlayer != null && presSharesToSell > 0
 			        && company == companyNeedingTrain)
 			{
-			    errMsg = "Cannot dump presidency of train buying company";
+			    errMsg = LocalText.getText("CannotDumpTrainBuyingPresidency");
 			    break;
 			}
 			
@@ -225,8 +229,13 @@ public class ShareSellingRound extends StockRound {
 
 		if (errMsg != null)
 		{
-			DisplayBuffer.add(playerName + " cannot sell " + number + " share(s) of "
-					+ companyName + ": " + errMsg);
+			DisplayBuffer.add(
+					LocalText.getText("CantSell", new String[] {
+							playerName,
+							String.valueOf(number),
+							companyName,
+							errMsg
+					}));
 			return false;
 		}
 

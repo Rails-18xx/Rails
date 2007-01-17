@@ -195,7 +195,7 @@ public class StartRound_1830 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer");
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 			// Check name of item
@@ -332,7 +332,7 @@ public class StartRound_1830 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer");
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 			break;

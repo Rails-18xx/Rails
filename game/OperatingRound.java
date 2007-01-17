@@ -720,31 +720,40 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct step
 			if (getStep() != STEP_CALC_REVENUE)
 			{
-				errMsg = "Wrong action, expected Revenue calculation";
+				errMsg = LocalText.getText("WrongActionNoRevenue");
 				break;
 			}
 
 			// Amount must be non-negative multiple of 10
 			if (amount < 0)
 			{
-				errMsg = "Negative amount not allowed";
+				errMsg = LocalText.getText("NegativeAmountNotAllowed",
+						String.valueOf(amount));
 				break;
 			}
 			if (amount % 10 != 0)
 			{
-				errMsg = "Must be a multiple of 10";
+				errMsg = LocalText.getText("AmountMustBeMultipleOf10",
+						String.valueOf(amount));
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			DisplayBuffer.add("Cannot process revenue of " + amount + ": " + errMsg);
+			DisplayBuffer.add(LocalText.getText("CannotProcessRevenue", new String[] {
+					String.valueOf(amount),
+					companyName,
+					errMsg
+			}));
 			return false;
 		}
 
 		revenue[operatingCompanyIndex] = amount;
-		ReportBuffer.add(companyName + " earns " + Bank.format(amount));
+		ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
+				companyName,
+				Bank.format(amount)
+		}));
 
 		nextStep();  // NOT IN A MOVESET??
 
@@ -781,21 +790,24 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct step
 			if (getStep() != STEP_PAYOUT)
 			{
-				errMsg = "Wrong action, expected Revenue Assignment";
+				errMsg = LocalText.getText("WrongActionNoDividend");
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			DisplayBuffer.add("Cannot payout revenue of "
-					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
-					+ errMsg);
+			DisplayBuffer.add(LocalText.getText("CannotPayOutRevenue", new String[] {
+					companyName,
+					Bank.format(revenue[operatingCompanyIndex]),
+					errMsg}));
 			return false;
 		}
 
-		ReportBuffer.add(companyName + " pays out full dividend of "
-				+ Bank.format(revenue[operatingCompanyIndex]));
+		ReportBuffer.add(LocalText.getText("CompanyPaysOutFull", new String[] {
+				companyName,
+				Bank.format(revenue[operatingCompanyIndex])
+		}));
 		
 		MoveSet.start();
 		operatingCompany.payOut(revenue[operatingCompanyIndex]);
@@ -838,26 +850,29 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct step
 			if (getStep() != STEP_PAYOUT)
 			{
-				errMsg = "Wrong action, expected Revenue Assignment";
+				errMsg = LocalText.getText("WrongActionNoDividend");
 				break;
 			}
 			// Split must be allowed
 			if (splitRule == SPLIT_NOT_ALLOWED)
 			{
-				errMsg = "Split not allowed";
+				errMsg = LocalText.getText("SplitNotAllowed");
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			DisplayBuffer.add("Cannot split revenue of "
-					+ Bank.format(revenue[operatingCompanyIndex]) + ": "
-					+ errMsg);
+			DisplayBuffer.add(
+				LocalText.getText("CannotSplitRevenue", new String[] {
+					Bank.format(revenue[operatingCompanyIndex]),
+					errMsg
+				}));
 			return false;
 		}
 
-		ReportBuffer.add(companyName + " pays out half dividend");
+		ReportBuffer.add(
+				LocalText.getText("CompanySplits", companyName));
 		MoveSet.start();
 		operatingCompany.splitRevenue(revenue[operatingCompanyIndex]);
 		nextStep();
@@ -896,18 +911,26 @@ public class OperatingRound extends Round implements Observer
 			// Must be correct step
 			if (getStep() != STEP_PAYOUT)
 			{
-				errMsg = "Wrong action, expected Revenue Assignment";
+				errMsg = "WrongActionNoDividend";
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			DisplayBuffer.add("Cannot withhold revenue of " + revenue + ": " + errMsg);
+			DisplayBuffer.add(
+					LocalText.getText("CannotWithholdRevenue", new String[] {
+							companyName,
+							String.valueOf(revenue),
+							errMsg
+					}));
 			return false;
 		}
-		ReportBuffer.add(companyName + " withholds dividend of "
-				+ Bank.format(revenue[operatingCompanyIndex]));
+		ReportBuffer.add(
+				LocalText.getText("CompanyWithholds", new String[] {
+						companyName,
+						Bank.format(revenue[operatingCompanyIndex])
+				}));
 
 		MoveSet.start();
 		operatingCompany.withhold(revenue[operatingCompanyIndex]);
@@ -951,7 +974,10 @@ public class OperatingRound extends Round implements Observer
 				{
 					// No trains, then the revenue is zero.
 					revenue[operatingCompanyIndex] = 0;
-					ReportBuffer.add(operatingCompany.getName() + " earns " + Bank.format(0));
+					ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
+							operatingCompany.getName(),
+							Bank.format(0)
+					}));
 					continue;
 				}
 			}
@@ -964,9 +990,11 @@ public class OperatingRound extends Round implements Observer
 				{
 				    /* Zero dividend: process it and go to the next step */
 					operatingCompany.withhold(0);
-					DisplayBuffer.add ("No trains owned, so Revenue is "
-							+ Bank.format(0));
-					//new Exception("HERE").printStackTrace();
+					DisplayBuffer.add (
+							LocalText.getText("RevenueWithNoTrains", new String[] {
+									operatingCompany.getName(),
+									Bank.format(0)
+							}));
 					continue;
 				}
 
@@ -1192,7 +1220,7 @@ public class OperatingRound extends Round implements Observer
 		        && operatingCompany.mustOwnATrain())
 		{
 			//FIXME: Need to check for valid route before throwing an error.
-			errMsg = companyName + " owns no trains.";
+			errMsg = LocalText.getText("CompanyMustOwnATrain", companyName);
 			setStep(STEP_BUY_TRAIN);
 			DisplayBuffer.add(errMsg);
 			return false;
@@ -1203,8 +1231,8 @@ public class OperatingRound extends Round implements Observer
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
 			// OR done. Inform GameManager.
-			ReportBuffer.add("End of Operating Round " + getCompositeORNumber());
-			operatingCompany = null;
+			ReportBuffer.add(
+					LocalText.getText("EndOfOperatingRound", getCompositeORNumber()));
 			stepObject.deleteObserver(this);
 			stepObject = null;
 			GameManager.getInstance().nextRound(this);

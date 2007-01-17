@@ -42,7 +42,7 @@ public final class Config {
 			load(myConfigFile, false);
 			loaded = true;
 		}
-		if (prop.containsKey(key)) return prop.getProperty(key);
+		if (prop.containsKey(key)) return prop.getProperty(key).trim();
 		
 		return "";		
 	}

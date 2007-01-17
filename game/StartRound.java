@@ -136,7 +136,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer");
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 			// Check name of item
@@ -276,7 +276,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer");
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 			// Check state

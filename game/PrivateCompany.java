@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import util.LocalText;
 import util.Util;
 import util.XmlUtils;
 
@@ -196,7 +197,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			Portfolio.transferCertificate(this,
 					portfolio,
 					Bank.getUnavailable());
-			ReportBuffer.add("Private " + name + " closes");
+			ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 		}
 	}
 
@@ -240,16 +241,19 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	public void payOut()
 	{
 		if (portfolio.getOwner() != Bank.getInstance()) {
-			ReportBuffer.add(portfolio.getOwner().getName() + " receives "
-					+ Bank.format(revenue) + " for " + name);
+			ReportBuffer.add(
+					LocalText.getText("ReceivesFor", new String[] {
+							portfolio.getOwner().getName(),
+							Bank.format(revenue),
+							name
+					}));
 			Bank.transferCash(null, portfolio.getOwner(), revenue);
 		}
 	}
 
 	public String toString()
 	{
-		return "Private Company Number: " + privateNumber + " of "
-				+ PrivateCompany.numberOfPrivateCompanies;
+		return "Private: "+name;
 	}
 
 	public Object clone()
