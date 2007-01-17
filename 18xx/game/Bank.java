@@ -37,10 +37,18 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	private static boolean brokenReported = false;
 
 	/**
-	 * The money format template. '@' is replsced by the amount, the rest is
-	 * copied.
+	 * The money format template. 
+	 * '@' is replaced by the numeric amount, the rest is copied.
 	 */
-	private static String moneyFormat = "$@";
+	private static String moneyFormat = null;
+	private static final String DEFAULT_MONEY_FORMAT = "$@";
+	static {
+		String configFormat = Config.get("money_format");
+		if (Util.hasValue(configFormat)
+				&& configFormat.matches(".*@.*")) {
+			moneyFormat = configFormat;
+		}
+	}
 
 	private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
@@ -95,10 +103,26 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	{
 		NamedNodeMap nnp;
 		int number, startCash, certLimit;
-		int maxNumber = 0;
+		//int maxNumber = 0;
+		Element node;
 
 		// Parse the Bank element
-		Element node = (Element) element.getElementsByTagName("Bank").item(0);
+		
+		/* First set the money format */
+		if (moneyFormat == null) {
+			/* Only use the game-specific format if it has not been overridden
+			 * in the configuration file (see static block above) */
+			node = (Element) element.getElementsByTagName("Money").item(0);
+			if (node != null)
+			{
+				nnp = node.getAttributes();
+				moneyFormat = XmlUtils.extractStringAttribute(nnp, "format");
+			}
+		}
+		/* Make sure that we have a format */
+		if (!Util.hasValue(moneyFormat)) moneyFormat = DEFAULT_MONEY_FORMAT;
+
+		node = (Element) element.getElementsByTagName("Bank").item(0);
 		if (node != null)
 		{
 			nnp = node.getAttributes();
@@ -136,13 +160,6 @@ public class Bank implements CashHolder, ConfigurableComponentI
 			poolShareLimit = XmlUtils.extractIntegerAttribute(nnp,
 					"percentage",
 					DEFAULT_POOL_SHARE_LIMIT);
-		}
-
-		node = (Element) element.getElementsByTagName("Money").item(0);
-		if (node != null)
-		{
-			nnp = node.getAttributes();
-			moneyFormat = XmlUtils.extractStringAttribute(nnp, "format", "$@");
 		}
 
 	}

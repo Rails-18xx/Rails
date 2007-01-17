@@ -7,6 +7,8 @@ import game.model.WorthModel;
 
 import java.util.*;
 
+import util.LocalText;
+
 /**
  * Player class holds all player-specific data
  */
@@ -76,10 +78,18 @@ public class Player implements CashHolder, Comparable
 			player = (Player) players[i];
 			player.index = i;
 			Bank.transferCash(null, player, startCash);
-			ReportBuffer.add("Player " + player.getName() + " receives "
-					+ Bank.format(startCash) + ". Bank now has "
-					+ Bank.getInstance().getFormattedCash());
+			//ReportBuffer.add("Player " + player.getName() + " receives "
+			//		+ Bank.format(startCash) + ". Bank now has "
+			//		+ Bank.getInstance().getFormattedCash());
+			ReportBuffer.add(LocalText.getText("PlayerIs", new String[] {
+					String.valueOf(i+1),
+					player.getName()
+			}));
 		}
+		ReportBuffer.add(LocalText.getText("PlayerCash",
+				Bank.format(startCash)));
+		ReportBuffer.add(LocalText.getText("BankHas", 
+				Bank.format(Bank.getInstance().getCash())));
 
 		// Set the sertificate limit
 		playerCertificateLimit = playerCertificateLimits[numberOfPlayers];

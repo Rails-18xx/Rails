@@ -294,7 +294,8 @@ public class GameManager implements ConfigurableComponentI
 	public void registerBankruptcy()
 	{
 		endedByBankruptcy = true;
-		ReportBuffer.add("Player " + currentPlayer.getName() + " is bankrupt.");
+		ReportBuffer.add(LocalText.getText("PlayerIsBankrupt",
+				currentPlayer.getName()));
 		if (gameEndsWithBankruptcy)
 		{
 			finishGame();
@@ -304,7 +305,7 @@ public class GameManager implements ConfigurableComponentI
 	private void finishGame()
 	{
 		gameOver = true;
-		ReportBuffer.add("Game over.");
+		ReportBuffer.add(LocalText.getText("GameOver"));
 		currentRound = null;
 
 		logGameReport();
@@ -404,30 +405,6 @@ public class GameManager implements ConfigurableComponentI
 	}
 
 	/**
-	 * @return Returns the priorityPlayerIndex.
-	 */
-	/*
-	public static int getPriorityPlayerIndex()
-	{
-		return priorityPlayer.getIndex();
-	}
-	*/
-
-	/**
-	 * @param priorityPlayerIndex
-	 *            The priorityPlayerIndex to set. The value may exceed the
-	 *            number of players; if so, the modulus is taken. This allows
-	 *            giving the next player the priority bu adding +1.
-	 */
-	/*
-	public static void setPriorityPlayerIndex(int priorityPlayerIndex)
-	{
-		GameManager.priorityPlayerIndex = priorityPlayerIndex % numberOfPlayers;
-		GameManager.priorityPlayer = players[GameManager.priorityPlayerIndex];
-	}
-	*/
-
-	/**
 	 * Set priority deal to the player after the current player.
 	 * 
 	 */
@@ -524,7 +501,7 @@ public class GameManager implements ConfigurableComponentI
 	public static void setCurrentPhase(PhaseI phase)
 	{
 		currentPhase = phase;
-		ReportBuffer.add("Start of phase " + phase.getName());
+		ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
 		if (phase.doPrivatesClose())
 		{
 			Game.getCompanyManager().closeAllPrivates();
@@ -550,7 +527,7 @@ public class GameManager implements ConfigurableComponentI
 		if (existVariant(variant))
 		{
 			GameManager.variant = variant;
-			ReportBuffer.add("Variant is " + variant);
+			ReportBuffer.add(LocalText.getText("VariantIs",  variant));
 			log.info ("Game variant is "+variant);
 		}
 	}
@@ -588,43 +565,13 @@ public class GameManager implements ConfigurableComponentI
 			if (company.hasFloated() && company.hasStarted())
 			{
 			    // If the home token has not been placed yet, do it.
+				/* TODO: in reality, the home token placement time
+				 * is game-dependent, so it should be configured. (EV)
+				 */
 			    if (company.getNumberOfLaidBaseTokens() == 0) {
 			        company.layHomeBaseTokens();
 			    }
 			    
-				//MapHex[][] map = MapManager.getInstance().getHexes();
-
-				/*
-				for (int i = 0; i < map.length; i++)
-				{
-					for (int j = 0; j < map[i].length; j++)
-					{
-						// if these are the same number, we haven't yet played
-						// the city token.
-						if (((PublicCompany) companies[compIndex]).getMaxCityTokens() == ((PublicCompany) companies[compIndex]).getNumCityTokens())
-						{
-							try
-							{
-								if (map[i][j].getCompanyHome()
-										.equals(companies[compIndex]))
-								{
-									if (map[i][j].getPreferredHomeCity() > 0)
-										map[i][j].addToken(companies[compIndex],
-												map[i][j].getPreferredHomeCity() - 1);
-									else
-										map[i][j].addToken(companies[compIndex]);
-
-								}
-							}
-							catch (NullPointerException e)
-							{
-								// Not our home or no home here. So sad.
-							}
-						}
-					}
-				}
-				*/
-				
 			}
 		}
 	}

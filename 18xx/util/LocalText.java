@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 public class LocalText extends ResourceBundle
 {
 
@@ -17,6 +19,8 @@ public class LocalText extends ResourceBundle
 	protected static String localeCode = language;
 	protected static Locale locale;
 	protected static ResourceBundle localisedText;
+
+	protected static Logger log = Logger.getLogger(LocalText.class.getPackage().getName());
 
 	public static String getText(String key) {
 	    return getText (key, null);
@@ -36,6 +40,26 @@ public class LocalText extends ResourceBundle
 		/* Load the texts */
 		if (localisedText == null)
 		{
+			/* Check what locale has been configured, if any.
+			 * If not, we use the default assigned above.
+			 */
+			String item;
+			if (Util.hasValue(item = Config.get("language"))) {
+				language = item.toLowerCase();
+			}
+			if (Util.hasValue(item = Config.get("country"))) {
+				country = item.toUpperCase();
+				localeCode = language + "_" + country;
+			}
+			if (Util.hasValue(item = Config.get("locale"))) {
+				localeCode = item;
+				if (localeCode.length()>=2) language = localeCode.substring(0,2);
+				if (localeCode.length()>=5) country = localeCode.substring(3,5);
+			}
+			log.debug ("Language="+language+", country="+country
+					+", locale="+localeCode);
+			
+			/* Create the locale and get the resource bundle. */
 			locale = new Locale(language, country);
 			localisedText = ResourceBundle.getBundle("LocalisedText", locale);
 		}

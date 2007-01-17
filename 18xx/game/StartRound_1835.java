@@ -150,7 +150,7 @@ public class StartRound_1835 extends StartRound
 	public boolean bid5(String playerName, String itemName)
 	{
 
-		DisplayBuffer.add("Invalid action in this game");
+		DisplayBuffer.add(LocalText.getText("InvalidAction"));
 		return false;
 	}
 
@@ -263,7 +263,7 @@ public class StartRound_1835 extends StartRound
 			// Check player
 			if (!playerName.equals(player.getName()))
 			{
-				errMsg = LocalText.getText("WrongPlayer");
+				errMsg = LocalText.getText("WrongPlayer", playerName);
 				break;
 			}
 			break;

@@ -35,6 +35,7 @@ public class Game
 		return dataDir.list();
 	}
 
+	/* NOT USED!!
 	public static void NewGame(String gameName, ArrayList playerNames)
 	{
 		name = gameName;
@@ -44,6 +45,7 @@ public class Game
 		stockMarket = getStockMarket();
 		playerManager = getPlayerManager(playerNames);
 	}
+	*/
 
 	/**
 	 * Protected constructor.
@@ -51,14 +53,15 @@ public class Game
 	 * @param name
 	 *            Name of the game (e.g. "1830").
 	 */
-	public Game()
+	protected Game()
 	{
 
 	}
 
 	public static void initialise(String name)
 	{
-		ReportBuffer.add("Game is " + name);
+		Game.name = name;
+		ReportBuffer.add(LocalText.getText("GameIs", name));
 		log.info("========== Start of game " + name + " ==========");
 		String file = "data/" + name + "/Game.xml";
 		try

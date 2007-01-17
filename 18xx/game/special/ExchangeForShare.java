@@ -2,6 +2,7 @@ package game.special;
 
 import org.w3c.dom.*;
 
+import util.LocalText;
 import util.Util;
 import util.XmlUtils;
 
@@ -58,8 +59,8 @@ public class ExchangeForShare extends SpecialSRProperty
 			/* Check if the private is owned by a player */
 			if (!(portfolio.getOwner() instanceof Player))
 			{
-				errMsg = privateCompany.getName()
-						+ " is currently not owned by a player";
+				errMsg = LocalText.getText("PrivateIsNotOwnedByAPlayer",
+						privateCompany.getName());
 				break;
 			}
 
@@ -68,24 +69,32 @@ public class ExchangeForShare extends SpecialSRProperty
 			/* Check if a share is available */
 			if (!ipoHasShare && !poolHasShare)
 			{
-				errMsg = "No share of " + publicCompanyName + " is available";
+				errMsg = LocalText.getText("NoSharesAvailable", publicCompanyName);
 				break;
 			}
 			/* Check if the player has room for a share of this company */
 			if (!player.mayBuyCompanyShare(publicCompany, 1))
 			{
 				// TODO: Not nice to use '1' here, should be percentage.
-				errMsg = player.getName() + " would exceed holding limit of "
-						+ publicCompanyName;
+				// TODO: below message should include hold limit percentage.
+				errMsg = LocalText.getText("WouldExceedHoldLimit", new String[] {
+						player.getName(),
+						publicCompanyName
+					});
 				break;
 			}
 			break;
 		}
 		if (errMsg != null)
 		{
-			DisplayBuffer.add(player.getName() + " cannot swap private company"
-					+ privateCompany.getName() + " for a " + share
-					+ "% share(s) of " + publicCompanyName + ": " + errMsg);
+			DisplayBuffer.add(
+				LocalText.getText("CannotSwapPrivateForCertificate", new String[] {
+					player.getName(),
+					privateCompany.getName(),
+					String.valueOf(share),
+					publicCompanyName,
+					errMsg
+				}));
 			return false;
 		}
 
@@ -93,8 +102,12 @@ public class ExchangeForShare extends SpecialSRProperty
 				.findCertificate(publicCompany, false) : Bank.getPool()
 				.findCertificate(publicCompany, false);
 		player.buy(cert, 0);
-		ReportBuffer.add(player.getName() + " swaps " + privateCompany.getName()
-				+ " for a " + share + "% certificate of " + publicCompanyName);
+		ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate", new String[] {
+				player.getName(),
+				privateCompany.getName(),
+				String.valueOf(share),
+				publicCompanyName
+		}));
 		setExercised();
 		privateCompany.setClosed();
 

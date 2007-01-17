@@ -18,7 +18,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.*;
 import game.*;
+import util.Config;
 import util.LocalText;
+import util.Util;
 
 /**
  * The Options dialog window displays the first window presented to the user.
@@ -90,10 +92,19 @@ public class Options extends JDialog implements ActionListener
 			playersPane.add(playerNameFields[i]);
 		}
 
-		// FIXME: Not intended for Production
-		playerNameFields[0].setText("0");
-		playerNameFields[1].setText("1");
-		playerNameFields[2].setText("2");
+		//playerNameFields[0].setText("0");
+		//playerNameFields[1].setText("1");
+		//playerNameFields[2].setText("2");
+		/* Prefill with any configured player names.
+		 * This can be useful to speed up testing purposes.
+		 */
+		String testPlayerList = Config.get("default_players");
+		if (Util.hasValue(testPlayerList)) {
+			String[] testPlayers = testPlayerList.split(",");
+			for (int i=0; i<testPlayers.length; i++) {
+				playerNameFields[i].setText(testPlayers[i]);
+			}
+		}
 
 		populateGameList(getGameList(), gameNameBox);
 
