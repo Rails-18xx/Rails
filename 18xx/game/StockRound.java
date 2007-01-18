@@ -591,7 +591,8 @@ public class StockRound extends Round
 					&& !currentPlayer.mayBuyCertificate(company, shares))
 			{
 				errMsg = currentPlayer.getName()
-						+ LocalText.getText("WouldExceedCertLimit");
+						+ LocalText.getText("WouldExceedCertLimit", 
+								String.valueOf(Player.getCertLimit()));
 				break;
 			}
 

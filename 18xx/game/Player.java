@@ -107,6 +107,11 @@ public class Player implements CashHolder, Comparable
 	{
 		playerShareLimit = percentage;
 	}
+	
+
+	public static int getShareLimit() {
+		return playerShareLimit;
+	}
 
 	public Player(String name)
 	{

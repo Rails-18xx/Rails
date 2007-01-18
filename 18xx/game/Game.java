@@ -12,6 +12,8 @@ import util.LocalText;
 
 public class Game
 {
+	public static final String version = "1.0.1";
+
 	/**
 	 * Game is a singleton class.
 	 */

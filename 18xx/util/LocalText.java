@@ -11,9 +11,6 @@ import org.apache.log4j.Logger;
 public class LocalText extends ResourceBundle
 {
 
-	public static final String version = "1.0.1"; // FIXME: This should be
-													// configured via XML.
-
 	protected static String language = "en";
 	protected static String country = "";
 	protected static String localeCode = language;

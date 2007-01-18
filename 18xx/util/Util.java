@@ -1,5 +1,7 @@
 package util;
 
+import game.Game;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,7 +9,6 @@ import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import util.LocalText;
 
 public final class Util
 {
@@ -68,7 +69,7 @@ public final class Util
 		else
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails-" + LocalText.version + ".jar");
+			File jarFile = new File("./Rails-" + Game.version + ".jar");
 			//JarFile jf = new JarFile(jarFile);
 			JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
 			for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
