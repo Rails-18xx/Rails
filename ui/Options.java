@@ -167,7 +167,7 @@ public class Options extends JDialog implements ActionListener
 		if (files == null || files.length == 0)
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails-" + LocalText.version + ".jar");
+			File jarFile = new File("./Rails-" + Game.version + ".jar");
 			try
 			{
 				JarFile jf = new JarFile(jarFile);

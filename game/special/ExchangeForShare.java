@@ -76,11 +76,8 @@ public class ExchangeForShare extends SpecialSRProperty
 			if (!player.mayBuyCompanyShare(publicCompany, 1))
 			{
 				// TODO: Not nice to use '1' here, should be percentage.
-				// TODO: below message should include hold limit percentage.
-				errMsg = LocalText.getText("WouldExceedHoldLimit", new String[] {
-						player.getName(),
-						publicCompanyName
-					});
+				errMsg = LocalText.getText("WouldExceedHoldLimit",
+						String.valueOf(Player.getShareLimit()));
 				break;
 			}
 			break;
