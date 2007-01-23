@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <CompanyType name="Private" class="game.PrivateCompany">
+  <CompanyType name="Private" class="rails.game.PrivateCompany">
   </CompanyType>
-  <CompanyType name="Minor" class="game.PublicCompany">
+  <CompanyType name="Minor" class="rails.game.PublicCompany">
     <ShareUnit percentage="100"/>
     <Certificate type="President" shares="1"/>
 	<StockPrice market="no"/>
 	<Payout split="always"/>
 	<Trains number="2,2,1" mandatory="no"/>
   </CompanyType>
-  <CompanyType name="Major" class="game.PublicCompany" capitalisation="incremental">
+  <CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
     <PoolPaysOut/>
     <Float percentage="50"/>
     <StockPrice par="yes"/>
@@ -23,7 +23,7 @@
   
   <Company name="NF"  longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="L14" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -35,10 +35,10 @@
   </Company>
   <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="M15" extra="yes" free="yes" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="M17" extra="yes" free="yes" />
 			</SpecialProperty>
 		</SpecialProperties>
@@ -53,10 +53,10 @@
   </Company>
   <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="J6" extra="yes" free="yes" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="J6" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -69,14 +69,14 @@
   <Company name="LD"  longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
   <Company name="BB"  longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
  		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
   </Company>
   <Company name="HB"  longname="Hannoversche Bahn" type="Private" basePrice="160" revenue="30">
  		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -84,7 +84,7 @@
   <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
     <Home hex="H2"/>
     <SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -92,7 +92,7 @@
   <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
     <Home hex="E19" city="1"/>
 		<SpecialProperties>
-			<SpecialProperty condition="phase=4" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="phase=4" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -100,7 +100,7 @@
   <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
     <Home hex="F14"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -108,7 +108,7 @@
   <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
     <Home hex="G5"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -116,7 +116,7 @@
   <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
     <Home hex="E19" city="2"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -124,7 +124,7 @@
   <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
     <Home hex="C11" city="1"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifStarted" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifStarted" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -177,7 +177,7 @@
 	<TrainLimit number="0,0,4,3"/>
   </Company>
   
-  <StartPacket roundClass="game.StartRound_1835" variant="Snake">
+  <StartPacket roundClass="rails.game.StartRound_1835" variant="Snake">
     <Item name="NF"   type="Private" basePrice="100" row="1">
       <SubItem name="Bay" type="Major"/>
     </Item>

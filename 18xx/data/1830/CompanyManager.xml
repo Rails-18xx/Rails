@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="game.PrivateCompany">
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
 	</CompanyType>
-	<CompanyType name="Public" class="game.PublicCompany">
+	<CompanyType name="Public" class="rails.game.PublicCompany">
 		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
@@ -17,7 +17,7 @@
 	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
     <Blocking hex="B20"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="B20" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -25,10 +25,10 @@
 	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
     <Blocking hex="F16"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F16" extra="no" free="no"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" class="game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="F16" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -36,7 +36,7 @@
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
     <Blocking hex="D18"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" class="game.special.ExchangeForShare">
+			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -72,7 +72,7 @@
 	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000">
     <Home hex="A19"/>
   </Company>
-	<StartPacket roundClass="game.StartRound_1830">
+	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>
 		<Item name="D&amp;H" type="Private" basePrice="70"/>

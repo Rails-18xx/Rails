@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <CompanyType name="Private" class="game.PrivateCompany">
+  <CompanyType name="Private" class="rails.game.PrivateCompany">
   </CompanyType>
-  <CompanyType name="Public" class="game.PublicCompany">
+  <CompanyType name="Public" class="rails.game.PublicCompany">
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <PoolPaysOut/>
     <Float percentage="30"/><!-- Should be variable-->
@@ -71,7 +71,7 @@
     <Destination hex="A20"/>
   </Company>
 
-  <StartPacket roundClass="game.StartRound_1830">
+  <StartPacket roundClass="rails.game.StartRound_1830">
     <Item name="Flos"      type="Private" basePrice="20"/>
     <Item name="W&amp;SR" type="Private" basePrice="40"/>
     <Item name="TCC"   type="Private" basePrice="50"/>
