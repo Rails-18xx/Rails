@@ -1,4 +1,4 @@
-<Map mapClass="ui.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="horizontal" even="A">
+<Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="horizontal" even="A">
 	<!-- To be added: tiles, orientation, impassable hex sides, etc.-->
 	<Hex name="A20" tile="-902" value="30,50,60"/>
 	<Hex name="B13" tile="-902" value="30,50,50"/>

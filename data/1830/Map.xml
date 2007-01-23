@@ -1,4 +1,4 @@
-<Map mapClass="ui.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
+<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
 	<Hex name="A9" tile="-901" orientation="0" value="30,50"/>
 	<Hex name="A11" tile="-902" orientation="1" value="30,50"/>
 	<Hex name="A17" tile="-7" orientation="1"/>

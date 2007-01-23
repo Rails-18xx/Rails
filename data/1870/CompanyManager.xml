@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <CompanyType name="Private" class="game.PrivateCompany">
+  <CompanyType name="Private" class="rails.game.PrivateCompany">
   </CompanyType>
-  <CompanyType name="Public" class="game.PublicCompany">
+  <CompanyType name="Public" class="rails.game.PublicCompany">
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <IPOPaysOut/>
     <Float percentage="60"/>
@@ -61,7 +61,7 @@
     <Destination hex="A22"/>
   </Company>
 
-  <StartPacket roundClass="game.StartRound_1830">
+  <StartPacket roundClass="rails.game.StartRound_1830">
     <Item name="GRSC"  type="Private" basePrice="20"/>
     <Item name="Brdg"  type="Private" basePrice="40"/>
     <Item name="Cattl" type="Private" basePrice="50"/>

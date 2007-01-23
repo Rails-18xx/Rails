@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="game.GameManager">
+	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1835"/>
     <Variant name="Standard"/>
 		<Variant name="Clemens"/>
@@ -11,7 +11,7 @@
       <BankBreaks limit="0" finish="currentOR"/><!-- "Runs out"; when "broken", -1 is the limit -->
     </EndOfGame>
 	</Component>
-    <Component name="Bank" class="game.Bank">
+    <Component name="Bank" class="rails.game.Bank">
       <Bank amount="12000"/>
       <Players number="3" cash="600" certLimit="19"/>
       <Players number="4" cash="475" certLimit="15"/>
@@ -20,11 +20,11 @@
       <Players number="7" cash="310" certLimit="9"/>
       <Money format="@M"/>
     </Component>
-	<Component name="TileManager" class="game.TileManager" file="TileSet.xml"/>
-	<Component name="Map" class="game.MapManager" file="Map.xml"/>
-    <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
-    <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
-	<Component name="TrainManager" class="game.TrainManager">
+	<Component name="TileManager" class="rails.game.TileManager" file="TileSet.xml"/>
+	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
+    <Component name="CompanyManager" class="rails.game.CompanyManager" file="CompanyManager.xml"/>
+    <Component name="StockMarket" class="rails.game.StockMarket" file="StockMarket.xml"/>
+	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
@@ -44,7 +44,7 @@
 		<Train name="6+6" majorStops="6" minorStops="6" cost="720" amount="4"
 			rustedTrain="3+3"/>
 	</Component>
-	<Component name="PhaseManager" class="game.PhaseManager">
+	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
       <OperatingRounds number="1"/>

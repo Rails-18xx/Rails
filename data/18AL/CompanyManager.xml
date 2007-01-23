@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="game.PrivateCompany">
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
 	</CompanyType>
-	<CompanyType name="Public" class="game.PublicCompany">
+	<CompanyType name="Public" class="rails.game.PublicCompany">
 		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
@@ -42,7 +42,7 @@
     <Destination hex="G4"/>
 	</Company>
   
-	<StartPacket roundClass="game.StartRound_1830">
+	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Item name="Tusc" type="Private" basePrice="20"/>
 		<Item name="S&amp;NA" type="Private" basePrice="40"/>
 		<Item name="B&amp;SLC" type="Private" basePrice="70"/>

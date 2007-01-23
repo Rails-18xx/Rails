@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="game.GameManager">
+	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1856"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
@@ -9,18 +9,18 @@
       <BankBreaks limit="0" finish="setOfORs"/><!-- "Runs out"; when "broken", -1 is the limit -->
     </EndOfGame>
 	</Component>
-    <Component name="Bank" class="game.Bank">
+    <Component name="Bank" class="rails.game.Bank">
       <Bank amount="12000"/>
       <Players number="3" cash="500" certLimit="28"/>
       <Players number="4" cash="375" certLimit="22"/>
       <Players number="5" cash="300" certLimit="18"/>
       <Players number="6" cash="250" certLimit="15"/>
     </Component>
-	<Component name="TileManager" class="game.TileManager" file="TileSet.xml"/>
-	<Component name="Map" class="game.MapManager" file="Map.xml"/>
-    <Component name="CompanyManager" class="game.CompanyManager" file="CompanyManager.xml"/>
-    <Component name="StockMarket" class="game.StockMarket" file="StockMarket.xml"/>
-	<Component name="TrainManager" class="game.TrainManager">
+	<Component name="TileManager" class="rails.game.TileManager" file="TileSet.xml"/>
+	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
+    <Component name="CompanyManager" class="rails.game.CompanyManager" file="CompanyManager.xml"/>
+    <Component name="StockMarket" class="rails.game.StockMarket" file="StockMarket.xml"/>
+	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>
@@ -37,7 +37,7 @@
 			<ExchangeFirst cost="750"/>
 		</Train>
 	</Component>
-	<Component name="PhaseManager" class="game.PhaseManager">
+	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="1" >
 			<Tiles colour="yellow"/>
       <OperatingRounds number="1"/>
