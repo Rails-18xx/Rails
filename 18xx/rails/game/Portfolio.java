@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.2 2007/05/20 17:54:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.3 2007/05/20 20:10:20 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -94,11 +94,11 @@ public class Portfolio
 
 		// Move the private certificate
 		//transferCertificate(privateCompany, from, this);
-		MoveSet.add(new CertificateMove (from, this, privateCompany));
+		new CertificateMove (from, this, privateCompany);
 
 		// Move the money
 		//Bank.transferCash(owner, from.owner, price);
-		if (price > 0) MoveSet.add (new CashMove (owner, from.owner, price));
+		if (price > 0) new CashMove (owner, from.owner, price);
 	}
 
 	public void buyCertificate(PublicCertificateI certificate, Portfolio from,
@@ -106,8 +106,7 @@ public class Portfolio
 	{
 
 		// Move the certificate
-		//transferCertificate(certificate, from, this);
-	    MoveSet.add (new CertificateMove (from, this, certificate));
+	    new CertificateMove (from, this, certificate);
 
 
 		// PublicCertificate is no longer for sale.
@@ -136,7 +135,7 @@ public class Portfolio
 				recipient = from.owner;
 			}
 			//Bank.transferCash(owner, recipient, price);
-			MoveSet.add (new CashMove (owner, recipient, price));
+			new CashMove (owner, recipient, price);
 		}
 	}
 
@@ -154,7 +153,7 @@ public class Portfolio
 		}));
 
 		// Move the certificate
-		MoveSet.add(new CertificateMove (from, Bank.getPool(), certificate));
+		new CertificateMove (from, Bank.getPool(), certificate);
 		//from.removeCertificate(certificate);
 		//Bank.getPool().addCertificate(certificate);
 		//certificate.setPortfolio(Bank.getPool());
@@ -163,7 +162,7 @@ public class Portfolio
 		certificate.setAvailable(true);
 
 		// Move the money
-		MoveSet.add(new CashMove (Bank.getInstance(), from.owner, price));
+		new CashMove (Bank.getInstance(), from.owner, price);
 		//Bank.transferCash(Bank.getInstance(), from.owner, price);
 	}
 
@@ -535,7 +534,7 @@ public class Portfolio
 			{
 				swapCert = other.findCertificate(company, 1, false);
 				//Portfolio.transferCertificate(swapCert, other, this);
-				MoveSet.add (new CertificateMove (other, this, swapCert));
+				new CertificateMove (other, this, swapCert);
 				swapped.add(swapCert);
 
 			}
@@ -544,7 +543,7 @@ public class Portfolio
 		{
 			swapCert = other.findCertificate(company, 2, false);
 			//Portfolio.transferCertificate(swapCert, other, this);
-			MoveSet.add (new CertificateMove(other, this, swapCert));
+			new CertificateMove(other, this, swapCert);
 			swapped.add(swapCert);
 		}
 		else
@@ -552,7 +551,7 @@ public class Portfolio
 			return null;
 		}
 		//Portfolio.transferCertificate(cert, this, other);
-		MoveSet.add (new CertificateMove (this, other, cert));
+		new CertificateMove (this, other, cert);
 
 		// Make sure the old President is no longer marked as such
 		getShareModel(company).setShare();
@@ -590,14 +589,14 @@ public class Portfolio
 	public void buyTrain(TrainI train, int price)
 	{
 		CashHolder oldOwner = train.getOwner();
-		MoveSet.add (new TrainMove (train, train.getHolder(), this));
-		if (price > 0) MoveSet.add (new CashMove (owner, oldOwner, price));
+		new TrainMove (train, train.getHolder(), this);
+		if (price > 0) new CashMove (owner, oldOwner, price);
 	}
 
 	public void discardTrain(TrainI train)
 	{
 		//transferTrain(train, this, Bank.getPool());
-		MoveSet.add (new TrainMove (train, this, Bank.getPool()));
+		new TrainMove (train, this, Bank.getPool());
 		ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
 				name,
 				train.getName()

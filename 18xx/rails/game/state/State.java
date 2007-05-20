@@ -43,10 +43,10 @@ public class State extends ModelObject implements StateI {
 	public void set (Object object) {
 		if (object == null) {
 		    if (this.object != null) 
-		        MoveSet.add (new StateChange (this, object));
+		        new StateChange (this, object);
 		} else if (Util.isInstanceOf (object, clazz)) {
 		    if (!object.equals(this.object)) 
-		        MoveSet.add (new StateChange (this, object));
+		        new StateChange (this, object);
 		} else {
 		    log.error("Incompatible object type "+object.getClass().getName()
 					+ "passed to " + getClassName() + " wrapper for object type "+clazz.getName()+" at:",

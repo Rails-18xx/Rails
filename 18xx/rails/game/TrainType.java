@@ -58,9 +58,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	protected ArrayList trains = null;
 
 	//boolean available = false;
-	protected BooleanState availableObject = new BooleanState ("TrainTypeAvailable", false);
+	protected BooleanState available = new BooleanState ("TrainTypeAvailable", false);
 	//boolean rusted = false;
-	protected BooleanState rustedObject = new BooleanState ("TrainTypeRusted", false);
+	protected BooleanState rusted = new BooleanState ("TrainTypeRusted", false);
 
 	protected static Logger log = Logger.getLogger(TrainType.class.getPackage().getName());
 
@@ -379,7 +379,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	 */
 	public boolean isAvailable()
 	{
-		return availableObject.booleanValue();
+		return available.booleanValue();
 	}
 
 	/**
@@ -387,8 +387,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	 */
 	public void setAvailable()
 	{
-		availableObject.set(true);
-		//MoveSet.add(new StateChange (availableObject, availableValue));
+		available.set(true);
+		//MoveSet.add(new StateChange (available, availableValue));
 
 		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
@@ -396,9 +396,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 					Bank.getUnavailable(),
 					Bank.getIpo());
 			*/
-			MoveSet.add (new TrainMove ((TrainI) it.next(), 
+			new TrainMove ((TrainI) it.next(), 
 					Bank.getUnavailable(),
-					Bank.getIpo()));
+					Bank.getIpo());
 		}
 	}
 
@@ -411,16 +411,16 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		//this.rusted = true;
 		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
-	    rustedObject.set(true);
+	    rusted.set(true);
 		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
 			((TrainI) it.next()).setRusted();
 		}
 	}
 
-	public boolean getRusted()
+	public boolean hasRusted()
 	{
-		return rustedObject.booleanValue();
+		return rusted.booleanValue();
 	}
 
 	public Object clone()

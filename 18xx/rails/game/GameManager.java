@@ -417,7 +417,7 @@ public class GameManager implements ConfigurableComponentI
 	}
 	
 	public static void setPriorityPlayer(Player player) {
-	    MoveSet.add (new StateChange (priorityPlayerWrapper, player));
+	    priorityPlayerWrapper.set(player);
 	    log.debug ("Priority player set to "
 	    		+player.getIndex()+" "+player.getName());
 	    //priorityPlayer = player;

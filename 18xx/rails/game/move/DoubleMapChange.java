@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.1 2007/01/23 21:50:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.2 2007/05/20 20:10:13 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
@@ -27,6 +27,8 @@ public class DoubleMapChange extends Move {
         this.firstKey = firstKey;
         this.secondKey = secondKey;
         this.value = value;
+        
+        MoveSet.add (this);
     }
 
     public boolean execute() {

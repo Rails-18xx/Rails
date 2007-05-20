@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.2 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.3 2007/05/20 20:10:19 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -19,6 +19,8 @@ public class StateChange extends Move {
         this.object = object;
         this.oldValue = object.getState();
         this.newValue = newValue;
+        
+        MoveSet.add (this);
     }
     
     public boolean execute() {

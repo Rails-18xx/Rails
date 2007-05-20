@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.1 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.2 2007/05/20 20:10:21 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
@@ -39,7 +39,7 @@ public class StringState extends State {
         StringBuffer newValue = new StringBuffer (oldValue);
         if (newValue.length() > 0) newValue.append (delimiter);
         newValue.append (value);
-        MoveSet.add (new StateChange (this, newValue.toString()));
+        new StateChange (this, newValue.toString());
     }
     
     public String stringValue() {

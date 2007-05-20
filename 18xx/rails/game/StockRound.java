@@ -672,8 +672,8 @@ public class StockRound extends Round
 		}
 		((Map) playersThatSoldThisRound.get(player)).put(company, null);
 		*/
-	    MoveSet.add (new DoubleMapChange (playersThatSoldThisRound,
-	            player, company, null));
+	    new DoubleMapChange (playersThatSoldThisRound,
+	            player, company, null);
 	}
 
 	private boolean isSaleRecorded(Player player, PublicCompanyI company)

@@ -190,7 +190,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			//Portfolio.transferCertificate(this,
 			//		portfolio,
 			//		Bank.getUnavailable());
-			MoveSet.add (new CertificateMove (getPortfolio(), Bank.getScrapHeap(), (Certificate)this));
+			new CertificateMove (getPortfolio(), Bank.getScrapHeap(), 
+			        (Certificate)this);
 			ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 		}
 	}

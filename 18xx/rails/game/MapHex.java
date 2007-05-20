@@ -487,8 +487,8 @@ public class MapHex extends ModelObject
 		    }
 		    
 		}
-	    MoveSet.add(new TileMove (this, currentTile, currentTileRotation, stations,
-	            newTile, newOrientation, newHexStations));
+	    new TileMove (this, currentTile, currentTileRotation, stations,
+	            newTile, newOrientation, newHexStations);
 
 		/* TODO Further consequences to be processed here, e.g. new routes etc.*/
 	}
@@ -566,7 +566,7 @@ public class MapHex extends ModelObject
 	        log.error ("Company "+company.getName()+" has no free token");
 	        return false;
 	    } else {
-	        MoveSet.add(new TokenMove (token, company, station));
+	        new TokenMove (token, company, station);
 	        return true;
 	    }
 	}

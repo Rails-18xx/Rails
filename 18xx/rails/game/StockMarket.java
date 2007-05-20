@@ -427,7 +427,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 
 		}
 		company.setCurrentPrice(to);
-		MoveSet.add (new PriceTokenMove (company, from, to));
+		new PriceTokenMove (company, from, to);
 	}
 
 	public void processMove(PublicCompanyI company, StockSpaceI from,

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/TrainMove.java,v 1.1 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/TrainMove.java,v 1.2 2007/05/20 20:10:19 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -28,6 +28,8 @@ public class TrainMove extends Move {
         this.train = train;
         this.from = from;
         this.to = to;
+        
+        MoveSet.add (this);
     }
 
 
