@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.2 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.3 2007/05/20 20:10:18 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -33,6 +33,8 @@ public class TileMove extends Move {
         this.newTile = newTile;
         this.newTileOrientation = newTileOrientation;
         this.newStations = newStations;
+        
+        MoveSet.add (this);
     }
 
 

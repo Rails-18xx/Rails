@@ -87,7 +87,7 @@ public interface TrainTypeI
 
 	public void setRusted();
 
-	public boolean getRusted();
+	public boolean hasRusted();
 
 	public String getReleasedTrainTypeName();
 

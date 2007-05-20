@@ -22,7 +22,7 @@ public class PriceModel extends ModelObject implements StateI
 
 	public void setPrice(StockSpaceI price)
 	{
-	    MoveSet.add (new PriceMove (this, stockPrice, price));
+	    new PriceMove (this, stockPrice, price);
 	}
 
 	public StockSpaceI getPrice()

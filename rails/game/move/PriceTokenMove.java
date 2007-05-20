@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.1 2007/01/23 21:50:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.2 2007/05/20 20:10:19 evos Exp $
  * 
  * Created on 22-Jul-2006
  * Change Log:
@@ -21,6 +21,8 @@ public class PriceTokenMove extends Move {
         this.company = company;
         this.from = from;
         this.to = to;
+        
+        MoveSet.add (this);
     }
 
     public boolean execute() {

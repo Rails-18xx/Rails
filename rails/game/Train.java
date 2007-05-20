@@ -18,7 +18,7 @@ public class Train implements TrainI
 
 	protected Portfolio holder;
 	//protected boolean rusted = false;
-	protected BooleanState rusted;
+	//protected BooleanState rusted; // Does not seem to be used
 	// protected boolean canBeExchanged = false;
 
 	protected static final Portfolio unavailable = Bank.getUnavailable();
@@ -35,7 +35,7 @@ public class Train implements TrainI
 		this.townScoreFactor = type.getTownScoreFactor();
 		this.townCountIndicator = type.getTownCountIndicator();
 
-		rusted = new BooleanState (getName()+"Rusted", false);
+		//rusted = new BooleanState (getName()+"Rusted", false);
 
 		unavailable.addTrain(this);
 
@@ -124,9 +124,9 @@ public class Train implements TrainI
 	{
 		//rusted = true;
 		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
-	    rusted.set (true);
+	    //rusted.set (true);
 		//Portfolio.transferTrain(this, holder, Bank.getScrapHeap());
-		MoveSet.add (new TrainMove (this, holder, Bank.getScrapHeap()));
+		new TrainMove (this, holder, Bank.getScrapHeap());
 	}
 
 	public boolean canBeExchanged()

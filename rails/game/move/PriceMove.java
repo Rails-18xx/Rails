@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceMove.java,v 1.1 2007/01/23 21:50:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceMove.java,v 1.2 2007/05/20 20:10:19 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -24,6 +24,7 @@ public class PriceMove extends Move {
         this.to = to;
         this.price = price;
         //this.company = price.getCompany();
+        MoveSet.add (this);
     }
 
     public boolean execute() {

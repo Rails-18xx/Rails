@@ -368,7 +368,7 @@ public class OperatingRound extends Round implements Observer
 			hex.upgrade(tile, orientation);
 
 			if (cost > 0) //Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			    MoveSet.add (new CashMove ((CashHolder) operatingCompany, null, cost));
+			    new CashMove ((CashHolder) operatingCompany, null, cost);
 			//tileLayCost[operatingCompanyIndex] = cost;
 			//tilesLaid[operatingCompanyIndex] 
 			//    = Util.appendWithDelimiter(tilesLaid[operatingCompanyIndex],
@@ -631,7 +631,7 @@ public class OperatingRound extends Round implements Observer
 			if (cost > 0)
 			{
 				//Bank.transferCash((CashHolder) operatingCompany, null, cost);
-			    MoveSet.add (new CashMove (operatingCompany, null, cost));
+			    new CashMove (operatingCompany, null, cost);
 				ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
 				        companyName,
 				        hex.getName(),
@@ -1324,7 +1324,7 @@ public class OperatingRound extends Round implements Observer
 		        presidentCash = bTrain.getPresidentCashToAdd();
 			    if (currentPlayer.getCash() >= presidentCash) {
 			        //Bank.transferCash(currentPlayer, operatingCompany, presidentCash);
-			        MoveSet.add (new CashMove(currentPlayer, operatingCompany, presidentCash));
+			        new CashMove(currentPlayer, operatingCompany, presidentCash);
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
@@ -1338,7 +1338,7 @@ public class OperatingRound extends Round implements Observer
 			        break;
 			    } else if (currentPlayer.getCash() >= presidentCash) {
 			        //Bank.transferCash(currentPlayer, operatingCompany, presidentCash);
-			        MoveSet.add (new CashMove(currentPlayer, operatingCompany, presidentCash));
+			        new CashMove(currentPlayer, operatingCompany, presidentCash);
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();

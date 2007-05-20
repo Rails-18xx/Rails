@@ -638,7 +638,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			cash = fixedPrice;
 		}
 		//Bank.transferCash(null, this, cash);
-		MoveSet.add (new CashMove (Bank.getInstance(), this, cash));
+		new CashMove (Bank.getInstance(), this, cash);
 		ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
 				name,
 				Bank.format(cash)
@@ -936,7 +936,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			int withheld = ((int) amount / (2 * getNumberOfShares()))
 					* getNumberOfShares();
 			//Bank.transferCash(null, this, withheld);
-			MoveSet.add(new CashMove (null, this, withheld));
+			new CashMove (null, this, withheld);
 			ReportBuffer.add(name + " receives " + Bank.format(withheld));
 	
 			// Payout the remainder
@@ -986,7 +986,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			part = ((Integer) split.get(recipient)).intValue();
 			ReportBuffer.add(recipient.getName() + " receives " + Bank.format(part));
 			//Bank.transferCash(null, recipient, part);
-			MoveSet.add(new CashMove (null, recipient, part));
+			new CashMove (null, recipient, part);
 		}
 
 	}
@@ -1016,7 +1016,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		//setLastRevenue(amount);
 		
 		//Bank.transferCash(null, this, amount);
-		if (amount > 0) MoveSet.add (new CashMove (null, this, amount));
+		if (amount > 0) new CashMove (null, this, amount);
 		// Move the token
 		if (hasStockPrice)
 			Game.getStockMarket().withhold(this);

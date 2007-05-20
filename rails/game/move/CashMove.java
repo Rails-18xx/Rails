@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.2 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.3 2007/05/20 20:10:19 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -30,6 +30,8 @@ public class CashMove extends Move {
         this.from = from != null ? from : bank;
         this.to = to != null ? to : bank;
         this.amount = amount;
+        
+        MoveSet.add (this);
     }
 
     public boolean execute() {
