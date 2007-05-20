@@ -83,7 +83,7 @@ public interface TrainTypeI
 	 * @param available
 	 *            The available to set.
 	 */
-	public void setAvailable(boolean available);
+	public void setAvailable();
 
 	public void setRusted();
 

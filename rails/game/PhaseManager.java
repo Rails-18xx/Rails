@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import rails.game.state.State;
 import rails.util.XmlUtils;
 
 
@@ -18,7 +19,8 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 	protected static HashMap phaseMap;
 
 	protected static int numberOfPhases = 0;
-	protected static int currentIndex = 0;
+	//protected static int currentIndex = 0;
+	protected static State currentPhase = new State ("CurrentPhase", Phase.class);
 
 	public PhaseManager()
 	{
@@ -57,33 +59,38 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 			phaseMap.put(name, phase);
 			phase.configureFromXML(pe);
 		}
-		GameManager.setCurrentPhase((PhaseI) phaseList.get(0));
+		PhaseI initialPhase = (PhaseI) phaseList.get(0);
+		setPhase (initialPhase);
 
 	}
 
 	public PhaseI getCurrentPhase()
 	{
-		return (PhaseI) phaseList.get(currentIndex);
+		return (PhaseI) currentPhase.getState();
 	}
 
 	public int getCurrentPhaseIndex()
 	{
-		return currentIndex;
+		return getCurrentPhase().getIndex();
 	}
 
-	public void setNextPhase()
-	{
-		if (currentIndex < numberOfPhases - 1)
-			++currentIndex;
-	}
+	//public void setNextPhase()
+	//{
+	//	if (currentIndex < numberOfPhases - 1)
+	//		++currentIndex;
+	//}
 
 	public void setPhase(String name)
 	{
-		PhaseI nextPhase = (PhaseI) phaseMap.get(name);
-		if (nextPhase != null)
+		PhaseI phase = (PhaseI) phaseMap.get(name);
+		setPhase (phase);
+	}
+	
+	protected void setPhase (PhaseI phase) {
+		if (phase != null)
 		{
-			currentIndex = nextPhase.getIndex();
-			GameManager.setCurrentPhase(nextPhase);
+			currentPhase.set (phase);
+			GameManager.initialiseNewPhase(phase);
 		}
 	}
 	

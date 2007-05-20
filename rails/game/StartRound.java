@@ -2,6 +2,7 @@ package rails.game;
 
 import java.util.*;
 
+import rails.game.move.MoveSet;
 import rails.util.LocalText;
 
 
@@ -173,6 +174,8 @@ public abstract class StartRound extends Round implements StartRoundI
 				}));
 			return false;
 		}
+		
+		MoveSet.start();
 
 		assignItem(player, item, item.getBasePrice());
 
@@ -182,6 +185,9 @@ public abstract class StartRound extends Round implements StartRoundI
 
 		// Next action
 		setNextAction();
+		
+		MoveSet.finish();
+		
 		return true;
 
 	}

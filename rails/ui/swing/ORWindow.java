@@ -482,7 +482,7 @@ public class ORWindow extends JFrame implements WindowListener
 	public void activate()
 	{
 		repaintUpgradePanel();
-		orPanel.recreate();
+		// orPanel.recreate(); Also done via next statement
 		orPanel.updateStatus();
 		setVisible(true);
 		requestFocus();

@@ -166,6 +166,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public int getCash();
 
 	public String getFormattedCash();
+	
+	public void setLastRevenue (int revenue);
 
 	/**
 	 * Get the last revenue earned by this company.
@@ -233,7 +235,23 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
 	public int getTrainLimit (int phaseIndex);
 	public boolean mayBuyTrains ();
+	
+	public void initTurn();
+	
 	public void buyTrain (TrainI train, int price);
+	public ModelObject getTrainsSpentThisTurnModel ();
+	
+	public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
+			int price);
+	public ModelObject getPrivatesSpentThisTurnModel ();
+	
+	public void layTile (MapHex hex, TileI tile, int orientation, int cost);
+	public ModelObject getTilesLaidThisTurnModel ();
+	public ModelObject getTilesCostThisTurnModel ();
+	
+	public void layBaseToken (MapHex hex, int cost);
+	public ModelObject getTokensLaidThisTurnModel ();
+	public ModelObject getTokensCostThisTurnModel ();
 	
 	//public int getNextBaseTokenIndex ();
 	//public boolean layBaseToken (MapHex hex, int station);

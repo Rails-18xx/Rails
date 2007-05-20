@@ -38,18 +38,6 @@ public class Game
 		return dataDir.list();
 	}
 
-	/* NOT USED!!
-	public static void NewGame(String gameName, ArrayList playerNames)
-	{
-		name = gameName;
-		initialise(gameName);
-		companyManager = getCompanyManager();
-		companyList = (ArrayList) companyManager.getAllPublicCompanies();
-		stockMarket = getStockMarket();
-		playerManager = getPlayerManager(playerNames);
-	}
-	*/
-
 	/**
 	 * Protected constructor.
 	 * 
@@ -72,6 +60,10 @@ public class Game
 			// Have the ComponentManager work through the other rails.game files
 			Element elem = XmlUtils.findElementInFile(file,
 					ComponentManager.ELEMENT_ID);
+			if (elem == null) {
+				throw new ConfigurationException ("No Game XML element found in file "+file);
+			}
+
 			ComponentManager.configureInstance(name, elem);
 
 			componentManager = ComponentManager.getInstance();

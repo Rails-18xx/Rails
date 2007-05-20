@@ -1,17 +1,15 @@
 package rails.game.special;
 
 import rails.game.*;
-import rails.game.move.MoveSet;
-import rails.game.move.StateChange;
-import rails.game.state.StateObject;
+import rails.game.state.BooleanState;
 
 public abstract class SpecialProperty implements SpecialPropertyI
 {
 
 	protected PrivateCompanyI privateCompany;
 	protected int closingValue = 0;
-	protected StateObject exercised = new StateObject("SpecialPropertyExercised", 
-	        Boolean.FALSE);
+	protected BooleanState exercised = new BooleanState("SpecialPropertyExercised", 
+	        false);
 	protected boolean isSRProperty = false;
 	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
@@ -54,13 +52,13 @@ public abstract class SpecialProperty implements SpecialPropertyI
     
 	public void setExercised()
 	{
-		MoveSet.add (new StateChange (exercised, Boolean.TRUE));
+		exercised.set (true);
 		privateCompany.getPortfolio().updateSpecialProperties();
 	}
 
 	public boolean isExercised()
 	{
-		return ((Boolean)exercised.getState()).booleanValue();
+		return exercised.booleanValue();
 	}
 
 	public int getClosingValue()

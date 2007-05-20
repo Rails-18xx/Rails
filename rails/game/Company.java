@@ -2,6 +2,8 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
+import rails.game.state.BooleanState;
+
 public abstract class Company implements CompanyI, ConfigurableComponentI,
 		Cloneable
 {
@@ -24,7 +26,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	 */
 	protected int certLimitCount = 2;
 
-	protected boolean closed = false;
+	//protected boolean closed = false;
+	protected BooleanState closedObject;
 
 	protected static Logger log = Logger.getLogger(Company.class.getPackage().getName());
 
@@ -37,6 +40,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	{
 		this.name = name;
 		this.type = type;
+		closedObject = new BooleanState (name+"Closed", false);
 	}
 
 	/**
@@ -60,7 +64,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	 */
 	public boolean isClosed()
 	{
-		return closed;
+		return closedObject.booleanValue();
 	}
 
 	/**
@@ -68,7 +72,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	 */
 	public void setClosed()
 	{
-		closed = true;
+		closedObject.set (true);
 	}
 
 	/**

@@ -26,11 +26,11 @@ public final class Util
 		return s != null && !s.equals("");
 	}
 
-	public static String appendWithComma(String s1, String s2)
+	public static String appendWithDelimiter(String s1, String s2, String delimiter)
 	{
 		StringBuffer b = new StringBuffer(s1 != null ? s1 : "");
 		if (b.length() > 0)
-			b.append(", ");
+			b.append(delimiter);
 		b.append(s2);
 		return b.toString();
 	}

@@ -1,5 +1,9 @@
 package rails.game;
 
+import rails.game.move.MoveSet;
+import rails.game.move.TrainMove;
+import rails.game.state.BooleanState;
+
 public class Train implements TrainI
 {
 
@@ -13,7 +17,8 @@ public class Train implements TrainI
 	protected int townCountIndicator;
 
 	protected Portfolio holder;
-	protected boolean rusted = false;
+	//protected boolean rusted = false;
+	protected BooleanState rusted;
 	// protected boolean canBeExchanged = false;
 
 	protected static final Portfolio unavailable = Bank.getUnavailable();
@@ -29,6 +34,8 @@ public class Train implements TrainI
 		this.cityScoreFactor = type.getCityScoreFactor();
 		this.townScoreFactor = type.getTownScoreFactor();
 		this.townCountIndicator = type.getTownCountIndicator();
+
+		rusted = new BooleanState (getName()+"Rusted", false);
 
 		unavailable.addTrain(this);
 
@@ -115,8 +122,11 @@ public class Train implements TrainI
 
 	public void setRusted()
 	{
-		rusted = true;
-		Portfolio.transferTrain(this, holder, Bank.getScrapHeap());
+		//rusted = true;
+		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
+	    rusted.set (true);
+		//Portfolio.transferTrain(this, holder, Bank.getScrapHeap());
+		MoveSet.add (new TrainMove (this, holder, Bank.getScrapHeap()));
 	}
 
 	public boolean canBeExchanged()

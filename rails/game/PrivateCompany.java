@@ -5,6 +5,8 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import rails.game.move.CertificateMove;
+import rails.game.move.MoveSet;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -24,8 +26,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	protected int closingPhase;
 
 	protected List blockedHexes = null;
-
-	protected boolean closed = false;
 
 	public PrivateCompany()
 	{
@@ -163,14 +163,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	}
 
 	/**
-	 * @return if Private is Closed
-	 */
-	public boolean isClosed()
-	{
-		return closed;
-	}
-
-	/**
 	 * @return Phase this Private closes
 	 */
 	public int getClosingPhase()
@@ -191,13 +183,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	 */
 	public void setClosed()
 	{
-		if (!closed)
+		if (!isClosed())
 		{
-			closed = true;
+			super.setClosed();
 			unblockHexes();
-			Portfolio.transferCertificate(this,
-					portfolio,
-					Bank.getUnavailable());
+			//Portfolio.transferCertificate(this,
+			//		portfolio,
+			//		Bank.getUnavailable());
+			MoveSet.add (new CertificateMove (getPortfolio(), Bank.getScrapHeap(), (Certificate)this));
 			ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 		}
 	}

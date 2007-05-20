@@ -330,7 +330,7 @@ public class Player implements CashHolder, Comparable
 
 	public String toString()
 	{
-		return "Name: " + name + " Cash: " + wallet;
+		return name;
 	}
 
 	/**

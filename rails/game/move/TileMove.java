@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.1 2007/01/23 21:50:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.2 2007/05/20 17:54:52 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -33,28 +33,27 @@ public class TileMove extends Move {
         this.newTile = newTile;
         this.newTileOrientation = newTileOrientation;
         this.newStations = newStations;
-        log.debug ("TileMove hex "+hex.getName()
-                +" from "+oldTile.getName()+"/"+oldTileOrientation
-                +" to "+newTile.getName()+"/"+newTileOrientation);
     }
 
 
     public boolean execute() {
 
         hex.replaceTile (oldTile, newTile, newTileOrientation, newStations);
+        log.debug ("-Done: "+toString());
         return true;
     }
 
     public boolean undo() {
         
         hex.replaceTile (newTile, oldTile, oldTileOrientation, oldStations);
+        log.debug ("-Undone: " + toString());
         return true;
     }
     
     public String toString() {
-        return "TileMove: "+hex.getName()
-        	+ ", old tile:#" + oldTile.getName()
-        	+ ", new tile:#" + newTile.getName();
+        return "TileMove: hex "+hex.getName()
+               +" from #"+oldTile.getName()+"/"+oldTileOrientation
+               +" to #"+newTile.getName()+"/"+newTileOrientation;
    }
 
 }

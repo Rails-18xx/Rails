@@ -43,7 +43,7 @@ public class ShareModel extends ModelObject
 		return share;
 	}
 
-	public String toString()
+	public String getText()
 	{
 		if (share == 0)
 			return "";

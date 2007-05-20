@@ -418,7 +418,7 @@ public class GameStatus extends JPanel implements ActionListener
 
 			if (this.compCanBuyPrivates) {
 				f = compPrivates[i] = new Field(c.getPortfolio()
-						.getPrivatesModel()
+						.getPrivatesOwnedModel()
 						.option(PrivatesModel.SPACE));
 				addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1, 0);
 			}
@@ -461,7 +461,7 @@ public class GameStatus extends JPanel implements ActionListener
 		for (int i = 0; i < np; i++)
 		{
 			f = playerPrivates[i] = new Field(players[i].getPortfolio()
-					.getPrivatesModel()
+					.getPrivatesOwnedModel()
 					.option(PrivatesModel.BREAK));
 			addField(f,
 					playerPrivatesXOffset + i,

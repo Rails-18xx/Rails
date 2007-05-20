@@ -12,7 +12,7 @@ public class BaseTokensModel extends ModelObject
 		this.company = company;
 	}
 
-	public String toString()
+	public String getText()
 	{
 	    int allTokens = company.getNumberOfBaseTokens();
 	    int freeTokens = company.getNumberOfFreeBaseTokens();

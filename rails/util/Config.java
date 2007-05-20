@@ -13,8 +13,6 @@ import org.apache.log4j.Logger;
  */
 public final class Config {
 
-	//private static Log logger = LogFactory.getLog (Properties.class.getName()); 
-	
 	/** Default property file name. */
 	/* It will be reset from GameTest. */
 	private static String myConfigFile = "my.properties";
@@ -67,9 +65,9 @@ public final class Config {
 				FNFE.printStackTrace(System.err);
 			}
 
-		} catch (IOException IOE) {
+		} catch (Exception e) {
 			System.err.println("Exception whilst loading properties file "+filename);
-			IOE.printStackTrace(System.err);
+			e.printStackTrace(System.err);
 		}
 	}
 }

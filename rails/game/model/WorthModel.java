@@ -13,7 +13,7 @@ public class WorthModel extends ModelObject
 		this.owner = owner;
 	}
 
-	public String toString()
+	public String getText()
 	{
 		return Bank.format(owner.getWorth());
 	}

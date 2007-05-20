@@ -12,10 +12,12 @@ public class PriceModel extends ModelObject implements StateI
 
 	private StockSpaceI stockPrice = null;
 	private PublicCompanyI company = null;
+	private String name = null;
 
-	public PriceModel(PublicCompanyI company)
+	public PriceModel(PublicCompanyI company, String name)
 	{
 		this.company = company;
+		this.name = name;
 	}
 
 	public void setPrice(StockSpaceI price)
@@ -32,7 +34,7 @@ public class PriceModel extends ModelObject implements StateI
 	    return company;
 	}
 	
-	public String toString()
+	public String getText()
 	{
 		if (stockPrice != null)
 		{
@@ -56,10 +58,13 @@ public class PriceModel extends ModelObject implements StateI
 			notifyViewObjects();
 		} else {
 			new Exception ("Incompatible object type "+object.getClass().getName()
-					+ "passed to State wrapper for object type StockSpaceI")
+					+ "passed to PriceModel "+name)
 				.printStackTrace();
 		}
 	}
 
+	public String getName() {
+	    return name;
+	}
 
 }

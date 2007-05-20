@@ -1,22 +1,22 @@
 package rails.game.model;
 
 import java.util.Iterator;
+import java.util.List;
 
-import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
 
 
 public class PrivatesModel extends ModelObject
 {
 
-	private Portfolio portfolio;
+	private List privatesList;
 
 	public static final int SPACE = 0;
 	public static final int BREAK = 1;
 
-	public PrivatesModel(Portfolio portfolio)
+	public PrivatesModel(List privatesList)
 	{
-		this.portfolio = portfolio;
+		this.privatesList = privatesList;
 	}
 
 	public ModelObject option(int i)
@@ -26,11 +26,11 @@ public class PrivatesModel extends ModelObject
 		return this;
 	}
 
-	public String toString()
+	public String getText()
 	{
 
 		StringBuffer buf = new StringBuffer("<html>");
-		Iterator it = portfolio.getPrivateCompanies().iterator();
+		Iterator it = privatesList.iterator();
 		PrivateCompanyI priv;
 		while (it.hasNext())
 		{

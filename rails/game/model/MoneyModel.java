@@ -1,35 +1,37 @@
 package rails.game.model;
 
 import rails.game.Bank;
+import rails.game.state.BooleanState;
+import rails.game.state.IntegerState;
 
-public class MoneyModel extends ModelObject
+public class MoneyModel extends IntegerState
 {
+    public static final int SUPPRESS_ZERO = 1;
+    public static final int SUPPRESS_INITIAL_ZERO = 2;
+    private BooleanState initialised;
 
-	int amount = 0;
-	boolean initialised = false;
-	Object owner = null;
-
-	public MoneyModel(Object owner)
+	public MoneyModel(String name)
 	{
-		this.owner = owner;
+	    super (name);
+	    initialised = new BooleanState (name+"Initialised", false);
+	}
+	
+	public void set (int value) {
+	    super.set (value);
+	    if (!initialised.booleanValue()) initialised.set(true);
 	}
 
-	public void setAmount(int amount)
+	public String getText()
 	{
-		this.amount = amount;
-		initialised = true;
-		notifyViewObjects();
+	    int amount = intValue();
+	    if (amount == 0 
+	            && (option == SUPPRESS_ZERO
+	            	|| !initialised.booleanValue() 
+	            		&& option == SUPPRESS_INITIAL_ZERO)) {
+	        return "";
+	    } else {
+	        return Bank.format(amount);
+	    }
 	}
-
-	public int getAmount()
-	{
-		return amount;
-	}
-
-	public String toString()
-	{
-
-		return (initialised ? Bank.format(amount) : "");
-	}
-
+	
 }

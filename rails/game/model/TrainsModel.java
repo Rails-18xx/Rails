@@ -23,7 +23,7 @@ public class TrainsModel extends ModelObject
 		return this;
 	}
 
-	public String toString()
+	public String getText()
 	{
 		if (option == FULL_LIST)
 		{

@@ -13,7 +13,7 @@ public class CertCountModel extends ModelObject
 		this.owner = owner;
 	}
 
-	public String toString()
+	public String getText()
 	{
 		return ""+owner.getPortfolio().getNumberOfCountedCertificates();
 	}
