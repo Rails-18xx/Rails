@@ -13,8 +13,8 @@ import rails.game.model.MoneyModel;
 import rails.game.model.PriceModel;
 import rails.game.move.CashMove;
 import rails.game.move.MoveSet;
-import rails.game.move.StateChange;
-import rails.game.state.StateObject;
+import rails.game.state.BooleanState;
+import rails.game.state.StringState;
 import rails.util.LocalText;
 import rails.util.Util;
 import rails.util.XmlUtils;
@@ -83,19 +83,27 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected CashModel treasury = null;
 
 	/** Has the company started? */
-	protected StateObject hasStarted = null;
+	protected BooleanState hasStarted = null;
 
 	/** Revenue earned in the company's previous operating turn. */
 	protected MoneyModel lastRevenue = null;
 
 	/** Is the company operational ("has it floated")? */
-	protected StateObject hasFloated = null;
+	protected BooleanState hasFloated = null;
 	
 	/** Has the company already operated? */
 	protected boolean hasOperated = false;
 
 	/** Is the company closed (or bankrupt)? */
 	protected boolean closed = false;
+	
+	/* Spendings in the current operating turn */
+	protected MoneyModel privatesCostThisTurn;
+	protected StringState tilesLaidThisTurn;
+	protected MoneyModel tilesCostThisTurn;
+	protected StringState tokensLaidThisTurn;
+	protected MoneyModel tokensCostThisTurn;
+	protected MoneyModel trainsCostThisTurn;
 
 	protected boolean canBuyStock = false;
 
@@ -154,7 +162,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected int[] trainLimit = new int[0];
 
 	/** Private to close if first train is bought */
-	protected String privateToCloseOnFirstTrain = null;
+	protected String privateToCloseOnFirstTrainName = null;
+	protected PrivateCompanyI privateToCloseOnFirstTrain = null;
 	
 	/** Must the company own a train */
 	protected boolean mustOwnATrain = true;
@@ -177,16 +186,23 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		this.portfolio = new Portfolio(name, this);
 		treasury = new CashModel(this);
-		lastRevenue = new MoneyModel (this);
+		lastRevenue = new MoneyModel (name+"lastRevenue");
 		baseTokensModel = new BaseTokensModel (this);
 
-	    hasStarted = new StateObject ("HasStarted", Boolean.FALSE);
-	    hasFloated = new StateObject ("HasFloated", Boolean.FALSE);
+	    hasStarted = new BooleanState (name+"hasStarted", false);
+	    hasFloated = new BooleanState (name+"hasFloated", false);
 		
 		allBaseTokens = new ArrayList();
 		freeBaseTokens = new ArrayList();
 		laidBaseTokens = new ArrayList();
-
+		
+		/* Spendings in the current operating turn */
+		privatesCostThisTurn = new MoneyModel ("PrivatesCostFor"+name);
+		tilesLaidThisTurn = new StringState ("TilesLaidBy"+name);
+		tilesCostThisTurn = new MoneyModel ("TilesCostFor"+name);
+		tokensLaidThisTurn = new StringState ("TokensLaidBy"+name);
+		tokensCostThisTurn = new MoneyModel ("TokensCostFor"+name);
+		trainsCostThisTurn = new MoneyModel ("TrainsCostFor"+name);
 }
 
 	/**
@@ -213,6 +229,18 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 
 	}
+
+	/** Reset turn objects */
+	public void initTurn() {
+	    
+	    privatesCostThisTurn.set(0);
+	    tilesLaidThisTurn.set("");
+	    tilesCostThisTurn.set(0);
+	    tokensLaidThisTurn.set("");
+	    tokensCostThisTurn.set(0);
+	    trainsCostThisTurn.set(0);
+	}
+	    
 
 	/**
 	 * To configure all public companies from the &lt;PublicCompany&gt; XML
@@ -367,7 +395,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 							"type", "Private");
 					if (typeName.equalsIgnoreCase("Private"))
 					{
-						privateToCloseOnFirstTrain = XmlUtils
+						privateToCloseOnFirstTrainName = XmlUtils
 								.extractStringAttribute(nnp2, "name");
 					}
 					else
@@ -545,10 +573,18 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void start(StockSpaceI startSpace)
 	{
 		//this.hasStarted = true;
-	    MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
+	    //MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
+	    hasStarted.set (true);
 		setParPrice(startSpace);
 		// The current price is set via the Stock Market
 		StockMarket.getInstance().start(this, startSpace);
+		
+		/* Final initialisations */
+		if (Util.hasValue(privateToCloseOnFirstTrainName)) {
+		    privateToCloseOnFirstTrain = Game.getCompanyManager().getPrivateCompany(
+				privateToCloseOnFirstTrainName);
+		}
+
 	}
 
 	/**
@@ -557,7 +593,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void start()
 	{
 		//this.hasStarted = true;
-	    MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
+	    //MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
+	    hasStarted.set(true);
 		if (hasStockPrice && parPrice.getPrice() != null) {
 			//setCurrentPrice (parPrice.getPrice());
 			// The current price is set via the Stock Market
@@ -570,7 +607,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasStarted()
 	{
-		return ((Boolean)hasStarted.getState()).booleanValue();
+		return hasStarted.booleanValue();
 	}
 
 	/**
@@ -581,7 +618,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		int cash = 0;
 		//hasFloated = true;
-		MoveSet.add (new StateChange (hasFloated, Boolean.TRUE));
+		//MoveSet.add (new StateChange (hasFloated, Boolean.TRUE));
+		hasFloated.set (true);
 		if (hasStockPrice)
 		{
 			int capFactor = 0;
@@ -614,7 +652,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasFloated()
 	{
-		return ((Boolean)hasFloated.getState()).booleanValue();
+		return hasFloated.booleanValue();
 	}
 
 	/**
@@ -640,7 +678,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (hasStockPrice)
 		{
 		    if (parPrice == null) {
-		        parPrice = new PriceModel (this);
+		        parPrice = new PriceModel (this, name+"ParPrice");
 		    }
 		    if (space != null) {
 		        parPrice.setPrice(space);
@@ -673,7 +711,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void setCurrentPrice(StockSpaceI price)
 	{
 	    if (currentPrice == null) {
-	        currentPrice = new PriceModel (this);
+	        currentPrice = new PriceModel (this, name+"CurrentPrice");
 	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
 	    }
 	    if (price != null) {
@@ -843,9 +881,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * @param i
 	 *            The last revenue amount.
 	 */
-	protected void setLastRevenue(int i)
+	public void setLastRevenue(int i)
 	{
-		lastRevenue.setAmount(i);
+		lastRevenue.set(i);
 	}
 
 	/**
@@ -855,7 +893,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public int getLastRevenue()
 	{
-		return lastRevenue.getAmount();
+		return lastRevenue.intValue();
 	}
 	
 	public ModelObject getLastRevenueModel () {
@@ -873,7 +911,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void payOut(int amount)
 	{
 
-		setLastRevenue(amount);
+		//setLastRevenue(amount);
 
 		distributePayout(amount);
 
@@ -890,19 +928,21 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void splitRevenue(int amount)
 	{
 
-		setLastRevenue(amount);
-
-		// Withhold half of it
-		// For now, hardcode the rule that payout is rounded up.
-		int withheld = ((int) amount / (2 * getNumberOfShares()))
-				* getNumberOfShares();
-		//Bank.transferCash(null, this, withheld);
-		MoveSet.add(new CashMove (null, this, withheld));
-		ReportBuffer.add(name + " receives " + Bank.format(withheld));
-
-		// Payout the remainder
-		int payed = amount - withheld;
-		distributePayout(payed);
+		//setLastRevenue(amount);
+		
+		if (amount > 0) {
+			// Withhold half of it
+			// For now, hardcode the rule that payout is rounded up.
+			int withheld = ((int) amount / (2 * getNumberOfShares()))
+					* getNumberOfShares();
+			//Bank.transferCash(null, this, withheld);
+			MoveSet.add(new CashMove (null, this, withheld));
+			ReportBuffer.add(name + " receives " + Bank.format(withheld));
+	
+			// Payout the remainder
+			int payed = amount - withheld;
+			distributePayout(payed);
+		}
 
 		// Move the token
 		if (hasStockPrice)
@@ -917,6 +957,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected void distributePayout(int amount)
 	{
 
+	    if (amount == 0) return;
+	    
 		Iterator it = certificates.iterator();
 		PublicCertificateI cert;
 		int part;
@@ -971,9 +1013,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void withhold(int amount)
 	{
 
-		setLastRevenue(amount);
+		//setLastRevenue(amount);
+		
 		//Bank.transferCash(null, this, amount);
-		MoveSet.add (new CashMove (null, this, amount));
+		if (amount > 0) MoveSet.add (new CashMove (null, this, amount));
 		// Move the token
 		if (hasStockPrice)
 			Game.getStockMarket().withhold(this);
@@ -1225,20 +1268,73 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    
 	    return portfolio.getTrains().length < getTrainLimit(GameManager.getCurrentPhase().getIndex());
 	}
-
+	
 	/** Must be called in stead of Portfolio.buyTrain if side-effects can occur. */
 	public void buyTrain(TrainI train, int price)
 	{
 		portfolio.buyTrain(train, price);
-		if (this.privateToCloseOnFirstTrain != null)
+		trainsCostThisTurn.add (price);
+		if (privateToCloseOnFirstTrain != null
+		        && !privateToCloseOnFirstTrain.isClosed())
 		{
-			PrivateCompanyI priv = Game.getCompanyManager().getPrivateCompany(
-					privateToCloseOnFirstTrain);
-			priv.setClosed();
-			privateToCloseOnFirstTrain = null;
+		    privateToCloseOnFirstTrain.setClosed();
 		}
 	}
 
+	public ModelObject getTrainsSpentThisTurnModel () {
+	    return (ModelObject)trainsCostThisTurn; 
+	}
+	
+	public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
+			int price)
+	{
+	    portfolio.buyPrivate(privateCompany, from, price);
+	    
+	    privatesCostThisTurn.add(price);
+	}
+	
+	public ModelObject getPrivatesSpentThisTurnModel () {
+	    return (ModelObject)privatesCostThisTurn; 
+	}
+	
+	public void layTile (MapHex hex, TileI tile, int orientation, int cost) {
+	    
+	    String tileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
+				+ MapHex.getOrientationName(orientation);
+		//String oldTilesLaid = tilesLaidThisTurn.getText(); 
+		//String newTilesLaid = Util.appendWithDelimiter(oldTilesLaid, tileLaid, " ");
+		//MoveSet.add (new StateChange (tilesLaidThisTurn, newTilesLaid));
+	    tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
+
+	    //int spentBefore = ((Integer)tilesCostThisTurn.getState()).intValue();
+	    //int spentTotal = spentBefore + cost;
+	    //MoveSet.add (new StateChange (tilesCostThisTurn, new Integer (spentTotal)));
+	    if (cost > 0) tilesCostThisTurn.add(cost);
+	}
+	
+	public ModelObject getTilesLaidThisTurnModel () {
+	    return (ModelObject)tilesLaidThisTurn; 
+	}
+	
+	public ModelObject getTilesCostThisTurnModel () {
+	    return (ModelObject)tilesCostThisTurn; 
+	}
+	
+	public void layBaseToken (MapHex hex, int cost) {
+	    
+	    String tokenLaid = hex.getName();
+	    tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
+	    if (cost > 0) tokensCostThisTurn.add(cost);
+	}
+	
+	public ModelObject getTokensLaidThisTurnModel () {
+	    return (ModelObject)tokensLaidThisTurn; 
+	}
+	
+	public ModelObject getTokensCostThisTurnModel () {
+	    return (ModelObject)tokensCostThisTurn; 
+	}
+	
 	public BaseTokensModel getBaseTokensModel() {
 	    return baseTokensModel;
 	}

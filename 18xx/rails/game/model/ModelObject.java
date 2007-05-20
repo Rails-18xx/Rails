@@ -18,7 +18,7 @@ public abstract class ModelObject extends Observable {
 
     protected void notifyViewObjects() {
         setChanged();
-        notifyObservers (getNotificationObject());
+        notifyObservers (getText());
         //log.debug ("'"+getNotificationObject()+"' sent from "+getClass().getName());
         clearChanged();
     }
@@ -51,8 +51,6 @@ public abstract class ModelObject extends Observable {
      * be overridden where needed.  
      * @return
      */
-    public Object getNotificationObject() {
-        return toString();
-    }
+    public abstract String getText();
 
 }

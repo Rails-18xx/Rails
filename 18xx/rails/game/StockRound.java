@@ -5,8 +5,8 @@ import java.util.*;
 
 import rails.game.move.DoubleMapChange;
 import rails.game.move.MoveSet;
-import rails.game.move.StateChange;
-import rails.game.state.StateObject;
+import rails.game.state.BooleanState;
+import rails.game.state.State;
 import rails.util.LocalText;
 
 /**
@@ -26,14 +26,14 @@ public class StockRound extends Round
 	protected Player currentPlayer;
 
 	//protected PublicCompanyI companyBoughtThisTurn = null;
-	protected StateObject companyBoughtThisTurnWrapper = 
-	    new StateObject ("CompanyBoughtThisTurn", PublicCompany.class);
+	protected State companyBoughtThisTurnWrapper = 
+	    new State ("CompanyBoughtThisTurn", PublicCompany.class);
 	
-	protected StateObject hasSoldThisTurnBeforeBuying = 
-		new StateObject ("HoldSoldBeforeBuyingThisTurn", Boolean.FALSE);
+	protected BooleanState hasSoldThisTurnBeforeBuying = 
+		new BooleanState ("HoldSoldBeforeBuyingThisTurn", false);
 	
-	protected StateObject hasPassed = 
-		new StateObject ("HasPassed", Boolean.TRUE); // Is set false on any player action
+	protected BooleanState hasPassed = 
+		new BooleanState ("HasPassed", true); // Is set false on any player action
 	
 	protected int numPasses = 0;
 
@@ -454,8 +454,9 @@ public class StockRound extends Round
 		company.checkFlotation();
 
 		//companyBoughtThisTurn = company;
-		MoveSet.add (new StateChange(companyBoughtThisTurnWrapper, company));
-		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+		companyBoughtThisTurnWrapper.set((Object)company);
+		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+		hasPassed.set (false);
 		setPriority();
 
 		MoveSet.finish();
@@ -647,8 +648,10 @@ public class StockRound extends Round
 		}
 
 		//companyBoughtThisTurn = company;
-		MoveSet.add (new StateChange (companyBoughtThisTurnWrapper, company));
-		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+		//MoveSet.add (new StateChange (companyBoughtThisTurnWrapper, company));
+		companyBoughtThisTurnWrapper.set (company);
+		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+		hasPassed.set(false);
 		setPriority();
 
 		// Check if the company has floated
@@ -971,8 +974,10 @@ public class StockRound extends Round
 		recordSale(currentPlayer, company);
 
 		if (companyBoughtThisTurnWrapper.getState() == null)
-			MoveSet.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
-		MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+			//MoveSet.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
+		    hasSoldThisTurnBeforeBuying.set (true);
+		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
+		hasPassed.set (false);
 		setPriority();
 		MoveSet.finish();
 //reportShares(company);
@@ -997,7 +1002,7 @@ public class StockRound extends Round
 			return false;
 		}
 
-		if (((Boolean)hasPassed.getState()).booleanValue())
+		if (hasPassed.booleanValue())
 		{
 			numPasses++;
 			ReportBuffer.add(LocalText.getText("PASSES", currentPlayer.getName()));
@@ -1057,9 +1062,9 @@ public class StockRound extends Round
 	{
 
 		currentPlayer = GameManager.getCurrentPlayer();
-		companyBoughtThisTurnWrapper.setState(null);
-		hasSoldThisTurnBeforeBuying.setState(Boolean.FALSE);
-		hasPassed.setState(Boolean.TRUE);
+		companyBoughtThisTurnWrapper.set(null);
+		hasSoldThisTurnBeforeBuying.set(false);
+		hasPassed.set(true);
 
 		currentSpecialProperties = currentPlayer.getPortfolio()
 				.getSpecialProperties(rails.game.special.SpecialSRProperty.class, false);
@@ -1194,7 +1199,7 @@ public class StockRound extends Round
 		
 		if (sequenceRule == SELL_BUY_OR_BUY_SELL
 				&& companyBoughtThisTurn != null 
-				&& ((Boolean)hasSoldThisTurnBeforeBuying.getState()).booleanValue()
+				&& hasSoldThisTurnBeforeBuying.booleanValue()
 				|| sequenceRule == SELL_BUY && companyBoughtThisTurn != null)
 			return false;
 		return true;

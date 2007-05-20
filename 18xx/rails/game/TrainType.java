@@ -6,6 +6,9 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
+import rails.game.move.MoveSet;
+import rails.game.move.TrainMove;
+import rails.game.state.BooleanState;
 import rails.util.*;
 
 
@@ -54,8 +57,10 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	protected ArrayList trains = null;
 
-	boolean available = false;
-	boolean rusted = false;
+	//boolean available = false;
+	protected BooleanState availableObject = new BooleanState ("TrainTypeAvailable", false);
+	//boolean rusted = false;
+	protected BooleanState rustedObject = new BooleanState ("TrainTypeRusted", false);
 
 	protected static Logger log = Logger.getLogger(TrainType.class.getPackage().getName());
 
@@ -374,24 +379,26 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	 */
 	public boolean isAvailable()
 	{
-		return available;
+		return availableObject.booleanValue();
 	}
 
 	/**
-	 * @param available
-	 *            The available to set.
+	 * Make a train type available for buying by public companies.
 	 */
-	public void setAvailable(boolean available)
+	public void setAvailable()
 	{
-		this.available = available;
-		if (available)
+		availableObject.set(true);
+		//MoveSet.add(new StateChange (availableObject, availableValue));
+
+		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
-			for (Iterator it = trains.iterator(); it.hasNext();)
-			{
-				Portfolio.transferTrain(((TrainI) it.next()),
-						Bank.getUnavailable(),
-						Bank.getIpo());
-			}
+			/*Portfolio.transferTrain(((TrainI) it.next()),
+					Bank.getUnavailable(),
+					Bank.getIpo());
+			*/
+			MoveSet.add (new TrainMove ((TrainI) it.next(), 
+					Bank.getUnavailable(),
+					Bank.getIpo()));
 		}
 	}
 
@@ -402,7 +409,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	public void setRusted()
 	{
-		this.rusted = true;
+		//this.rusted = true;
+		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
+	    rustedObject.set(true);
 		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
 			((TrainI) it.next()).setRusted();
@@ -411,7 +420,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	public boolean getRusted()
 	{
-		return rusted;
+		return rustedObject.booleanValue();
 	}
 
 	public Object clone()

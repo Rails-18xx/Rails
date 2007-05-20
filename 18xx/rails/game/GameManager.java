@@ -2,7 +2,7 @@ package rails.game;
 
 import rails.game.move.MoveSet;
 import rails.game.move.StateChange;
-import rails.game.state.StateObject;
+import rails.game.state.State;
 import rails.util.*;
 
 import java.util.*;
@@ -23,8 +23,8 @@ public class GameManager implements ConfigurableComponentI
 	protected static Player currentPlayer = null;
 	//protected static int priorityPlayerIndex = 0;
 	//protected static Player priorityPlayer = null;
-	protected static StateObject priorityPlayerWrapper = 
-	    new StateObject ("PriorityPlayer", Player.class);
+	protected static State priorityPlayerWrapper = 
+	    new State ("PriorityPlayer", Player.class);
 
 	protected static int playerShareLimit = 60;
 	protected static int currentNumberOfOperatingRounds = 1;
@@ -49,7 +49,7 @@ public class GameManager implements ConfigurableComponentI
 	protected int orNumber;
 	protected int numOfORs;
 
-	protected static PhaseI currentPhase = null;
+	//protected static PhaseI currentPhase = null;
 	protected static boolean gameOver = false;
 	protected static boolean endedByBankruptcy = false;
 	protected static boolean hasAnyParPrice = false;
@@ -219,6 +219,7 @@ public class GameManager implements ConfigurableComponentI
 		}
 		else if (round instanceof StockRound)
 		{
+		    PhaseI currentPhase = PhaseManager.getInstance().getCurrentPhase();
 			numOfORs = currentPhase.getNumberOfOperatingRounds();
 			log.info ("Phase=" + currentPhase.getName() + " ORs="
 					+ numOfORs);
@@ -495,12 +496,11 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static PhaseI getCurrentPhase()
 	{
-		return currentPhase;
+		return PhaseManager.getInstance().getCurrentPhase();
 	}
 
-	public static void setCurrentPhase(PhaseI phase)
+	public static void initialiseNewPhase(PhaseI phase)
 	{
-		currentPhase = phase;
 		ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
 		if (phase.doPrivatesClose())
 		{

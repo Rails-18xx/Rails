@@ -735,7 +735,7 @@ public class MapHex extends ModelObject
 	 * Format is tile/orientation. 
 	 * @TODO include tokens??
 	 */
-	public Object getNotificationObject() {
+	public String getText() {
 	    return currentTile.getName() + "/" + currentTileRotation; 
 	}
 }

@@ -7,7 +7,7 @@ public interface PhaseManagerI
 
 	public PhaseI getCurrentPhase();
 
-	public void setNextPhase();
+	//public void setNextPhase();
 
 	public void setPhase(String name);
 	

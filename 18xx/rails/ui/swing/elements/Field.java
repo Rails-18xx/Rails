@@ -34,7 +34,7 @@ public class Field extends JLabel implements ViewObject
 
 	public Field(ModelObject modelObject)
 	{
-		this((String)modelObject.getNotificationObject());
+		this(modelObject.getText());
 		this.modelObject = modelObject;
 		if (StatusWindow.useObserver)
 			modelObject.addObserver(this);
@@ -74,7 +74,7 @@ public class Field extends JLabel implements ViewObject
 	{
 		if (modelObject != null && (pull || !StatusWindow.useObserver))
 		{
-			setText((String)modelObject.getNotificationObject());
+			setText((String)modelObject.getText());
 		}
 		super.paintComponent(g);
 	}

@@ -175,7 +175,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void recreate() {
-        log.debug ("ORPanel.recreate() called");
+        log.debug ("ORPanel.recreate() called"/*, new Exception("TRACE")*/);
         round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -354,32 +354,35 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT);
 
             if (privatesCanBeBought) {
-                f = privates[i] = new Field(c.getPortfolio().getPrivatesModel()
-                        .option(PrivatesModel.SPACE));
+                f = privates[i] = new Field(c.getPortfolio().getPrivatesOwnedModel());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT);
 
-                f = newPrivatesCost[i] = new Field("");
+                f = newPrivatesCost[i] = new Field(c.getPrivatesSpentThisTurnModel()
+                        .option(MoneyModel.SUPPRESS_ZERO));
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT);
             }
 
-            f = tiles[i] = new Field("");
+            f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());
             addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0);
 
-            f = tileCost[i] = new Field("");
+            f = tileCost[i] = new Field(c.getTilesCostThisTurnModel()
+                    .option(MoneyModel.SUPPRESS_ZERO));
             addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT);
 
-            f = tokens[i] = new Field("");
+            f = tokens[i] = new Field(c.getTokensLaidThisTurnModel());
             addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0);
 
-            f = tokenCost[i] = new Field("");
+            f = tokenCost[i] = new Field(c.getTokensCostThisTurnModel()
+                    .option(MoneyModel.SUPPRESS_ZERO));
             addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0);
 
             f = tokensLeft[i] = new Field(c.getBaseTokensModel());
             addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1, WIDE_RIGHT);
 
-            f = revenue[i] = new Field(c.getLastRevenueModel());
+            f = revenue[i] = new Field(c.getLastRevenueModel()
+                    .option(MoneyModel.SUPPRESS_INITIAL_ZERO));
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
@@ -391,7 +394,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     TrainsModel.FULL_LIST));
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0);
 
-            f = newTrainCost[i] = new Field("");
+            f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel()
+                    .option(MoneyModel.SUPPRESS_ZERO));
             addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT);
 
             f = rightCompName[i] = new Caption(c.getName());
@@ -476,7 +480,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
  
             if (step == OperatingRound.STEP_LAY_TRACK) {
                 tileCaption.setHighlight(true);
-                tileCost[orCompIndex].setText("");
+                //tileCost[orCompIndex].setText("");
                 button1.setVisible(false);
 
                 GameUILoader.orWindow.requestFocus();
@@ -530,7 +534,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 GameUILoader.orWindow.enableBaseTokenLaying(true);
 
                 tokenCaption.setHighlight(true);
-                tokenCost[orCompIndex].setText("");
+                //tokenCost[orCompIndex].setText("");
 
                 //For debugging
                 Map a = possibleActions.getAll();
@@ -664,9 +668,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             // Let model process this first
             //if (oRound.layTile(orCompName, hex, tile, orientation)) {
             // Display the results
-            int cost = oRound.getLastTileLayCost();
-            tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-            tiles[orCompIndex].setText(oRound.getLastTileLaid());
+            //int cost = oRound.getLastTileLayCost();
+            //tileCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+            //tiles[orCompIndex].setText(oRound.getLastTileLaid());
             //} else {
             //    displayError();
             //    return false;
@@ -698,9 +702,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             oRound.skip(orCompName);
         } else {// if (oRound.layBaseToken(orCompName, hex, station)) {
             // Let model process this first
-            int cost = oRound.getLastBaseTokenLayCost();
-            tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
-            tokens[orCompIndex].setText(oRound.getLastBaseTokenLaid());
+            //int cost = oRound.getLastBaseTokenLayCost();
+            //tokenCost[orCompIndex].setText(cost > 0 ? Bank.format(cost) : "");
+            //tokens[orCompIndex].setText(oRound.getLastBaseTokenLaid());
             //} else {
             //    displayError();
         }
@@ -722,7 +726,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             return;
         oRound = (OperatingRound) round;
 
-        revenue[orCompIndex].setText(Bank.format(amount));
+        //revenue[orCompIndex].setText(Bank.format(amount));
         oRound.setRevenue(orCompName, amount);
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
         // gameStatus.updateRevenue(orComp.getPublicNumber());
@@ -960,7 +964,7 @@ private void buyTrain()
                     }
                 }
                 trainsBought.add(train);
-				newTrainCost[orCompIndex].setText(Bank.format(oRound.getLastTrainBuyCost()));
+				//newTrainCost[orCompIndex].setText(Bank.format(oRound.getLastTrainBuyCost()));
 
                 // Check if any trains must be discarded
 				if (TrainManager.get().hasPhaseChanged())
@@ -1078,8 +1082,8 @@ private void buyTrain()
                         .buyPrivate(orComp.getName(), privName, amount)) {
                     displayMessage();
                 } else {
-                    newPrivatesCost[orCompIndex].setText(Bank.format(oRound
-                            .getLastPrivateBuyCost()));
+                    //newPrivatesCost[orCompIndex].setText(Bank.format(oRound
+                    //        .getLastPrivateBuyCost()));
                     GameUILoader.orWindow.updateMessage();
                 }
             } catch (NullPointerException e) {

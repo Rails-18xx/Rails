@@ -9,6 +9,8 @@ public class CashModel extends ModelObject
 
 	private int cash;
 	private CashHolder owner;
+	
+	public static final int SUPPRESS_ZERO = 1;
 
 	public CashModel(CashHolder owner)
 	{
@@ -43,14 +45,16 @@ public class CashModel extends ModelObject
 	 * 
 	 * @see rails.rails.game.model.ModelObject#getValue()
 	 */
-	public String toString()
+	public String getText()
 	{
-		if (owner instanceof PublicCompanyI
+	    if (cash == 0 && (option & SUPPRESS_ZERO) > 0
+	        || owner instanceof PublicCompanyI
 				&& !((PublicCompanyI) owner).hasStarted())
 		{
 			return "";
+		} else {
+		    return Bank.format(cash);
 		}
-		return Bank.format(cash);
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
-import rails.util.LocalText;
 
 
 /**
@@ -302,8 +301,12 @@ public class StockSpace extends ModelObject implements StockSpaceI
 		return !tokens.isEmpty();
 	}
 
-	public String toString()
+	public String getText()
 	{
 		return Bank.format(price);
+	}
+	
+	public String toString() {
+	    return getText();
 	}
 }

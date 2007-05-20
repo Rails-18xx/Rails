@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/CertificateMove.java,v 1.1 2007/01/23 21:50:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/CertificateMove.java,v 1.2 2007/05/20 17:54:52 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -12,11 +12,11 @@ import rails.game.*;
  */
 public class CertificateMove extends Move {
     
-    PublicCertificateI certificate;
+    Certificate certificate;
     Portfolio from;
     Portfolio to;
     
-    public CertificateMove (Portfolio from, Portfolio to, PublicCertificateI certificate) {
+    public CertificateMove (Portfolio from, Portfolio to, Certificate certificate) {
         
         this.certificate = certificate;
         this.from = from;
@@ -37,10 +37,24 @@ public class CertificateMove extends Move {
     }
     
     public String toString() {
-        return "CertMove: "+certificate.getShare()+"%"
-        	+ (certificate.isPresidentShare() ? "(Pres) " : " ")
-        	+ certificate.getCompany().getName()
-        	+ " from "+from.getName()+" to "+to.getName();
+    	
+    	String certType, certDesc;
+    	if (certificate instanceof PublicCertificateI) {
+    		PublicCertificateI pc = (PublicCertificateI) certificate;
+    		certType = "public";
+	        certDesc = pc.getShare()+"%"
+	        	+ (pc.isPresidentShare() ? "(Pres) " : " ")
+	        	+ pc.getCompany().getName();
+    	} else if (certificate instanceof PrivateCompanyI) {
+    		certType = "private";
+    		certDesc = ((PrivateCompanyI) certificate).getName();
+    	} else {
+    		certType = "unknown: " + certificate.getClass().getName();
+    		certDesc = certificate.getName();
+    	}
+		return "CertMove (" + certType + "): " + certDesc 
+			+ " from " + from.getName() + " to " + to.getName();
+    	
    }
 
 }

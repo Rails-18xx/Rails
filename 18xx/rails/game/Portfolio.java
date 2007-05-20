@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.1 2007/01/23 21:50:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.2 2007/05/20 17:54:51 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -18,6 +18,7 @@ import rails.game.model.TrainsModel;
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
 import rails.game.move.MoveSet;
+import rails.game.move.TrainMove;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
@@ -32,7 +33,7 @@ public class Portfolio
 
 	/** Owned private companies */
 	protected List privateCompanies = new ArrayList();
-	protected PrivatesModel privatesModel = new PrivatesModel(this);
+	protected PrivatesModel privatesOwnedModel = new PrivatesModel(privateCompanies);
 
 	/** Owned public company certificates */
 	protected List certificates = new ArrayList();
@@ -92,10 +93,12 @@ public class Portfolio
 		}
 
 		// Move the private certificate
-		transferCertificate(privateCompany, from, this);
+		//transferCertificate(privateCompany, from, this);
+		MoveSet.add(new CertificateMove (from, this, privateCompany));
 
 		// Move the money
-		Bank.transferCash(owner, from.owner, price);
+		//Bank.transferCash(owner, from.owner, price);
+		if (price > 0) MoveSet.add (new CashMove (owner, from.owner, price));
 	}
 
 	public void buyCertificate(PublicCertificateI certificate, Portfolio from,
@@ -193,7 +196,7 @@ public class Portfolio
 		} else {
 		    log.debug (privateCompany.getName()+" has no special properties");
 		}
-		privatesModel.update();
+		privatesOwnedModel.update();
 	}
 
 	public void addCertificate(PublicCertificateI certificate)
@@ -224,7 +227,7 @@ public class Portfolio
 	{
 	    boolean removed = privateCompanies.remove(privateCompany);
 		if (removed) {
-			privatesModel.update();
+			privatesOwnedModel.update();
 			if (privateCompany.getSpecialProperties() != null)
 			{
 				updateSpecialProperties();
@@ -587,19 +590,21 @@ public class Portfolio
 	public void buyTrain(TrainI train, int price)
 	{
 		CashHolder oldOwner = train.getOwner();
-		transferTrain(train, train.getHolder(), this);
-		Bank.transferCash(owner, oldOwner, price);
+		MoveSet.add (new TrainMove (train, train.getHolder(), this));
+		if (price > 0) MoveSet.add (new CashMove (owner, oldOwner, price));
 	}
 
 	public void discardTrain(TrainI train)
 	{
-		transferTrain(train, this, Bank.getPool());
+		//transferTrain(train, this, Bank.getPool());
+		MoveSet.add (new TrainMove (train, this, Bank.getPool()));
 		ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
 				name,
 				train.getName()
 		}));
 	}
 
+	/** Should only be called from Move methods now */
 	public static void transferTrain(TrainI train, Portfolio from, Portfolio to)
 	{
 		from.removeTrain(train);
@@ -723,9 +728,9 @@ public class Portfolio
 		return result;
 	}
 
-	public ModelObject getPrivatesModel()
+	public ModelObject getPrivatesOwnedModel()
 	{
-		return privatesModel;
+		return privatesOwnedModel;
 	}
 
 }
