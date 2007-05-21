@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.2 2007/05/20 20:10:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.3 2007/05/21 22:06:37 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
  */
 package rails.game.state;
 
-import rails.game.move.MoveSet;
 import rails.game.move.StateChange;
 
 /**

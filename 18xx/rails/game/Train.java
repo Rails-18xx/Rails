@@ -1,8 +1,6 @@
 package rails.game;
 
-import rails.game.move.MoveSet;
 import rails.game.move.TrainMove;
-import rails.game.state.BooleanState;
 
 public class Train implements TrainI
 {

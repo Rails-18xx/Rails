@@ -475,7 +475,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 				bidButton.setEnabled(false);
 				bidAmount.setEnabled(false);
 			}
+			
+			// Unselect the selected private
+			dummyButton.setSelected(true);
 		}
+		
 		ReportWindow.addLog();
 		if (round.nextStep() == StartRound.SET_PRICE)
 		{
@@ -534,7 +538,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
 		int i, j, share;
 
-		dummyButton.setSelected(true);
+		//dummyButton.setSelected(true);
 
 		if ((j = this.playerIndex) >= 0)
 		{

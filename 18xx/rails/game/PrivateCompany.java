@@ -6,7 +6,6 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import rails.game.move.CertificateMove;
-import rails.game.move.MoveSet;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;

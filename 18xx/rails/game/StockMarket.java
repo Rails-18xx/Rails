@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.*;
 
-import rails.game.move.MoveSet;
 import rails.game.move.PriceTokenMove;
 import rails.util.*;
 

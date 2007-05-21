@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
 import rails.game.model.ModelObject;
-import rails.game.move.MoveSet;
 import rails.game.move.TileMove;
 import rails.game.move.TokenMove;
 import rails.util.Util;
