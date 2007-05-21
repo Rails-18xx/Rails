@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.3 2007/05/20 20:10:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.4 2007/05/21 22:06:36 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -17,7 +17,6 @@ import rails.game.model.ShareModel;
 import rails.game.model.TrainsModel;
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
-import rails.game.move.MoveSet;
 import rails.game.move.TrainMove;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;

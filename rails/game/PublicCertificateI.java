@@ -6,7 +6,7 @@ public interface PublicCertificateI extends Certificate
 	/**
 	 * @return if company is available
 	 */
-	public boolean isAvailable();
+	//public boolean isAvailable();
 
 	/**
 	 * @return if this certificate is a president's share

@@ -1,7 +1,5 @@
 package rails.game;
 
-import rails.game.move.MoveSet;
-import rails.game.move.StateChange;
 import rails.game.state.State;
 import rails.util.*;
 

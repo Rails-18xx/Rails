@@ -3,7 +3,6 @@ package rails.game.model;
 import rails.game.Bank;
 import rails.game.PublicCompanyI;
 import rails.game.StockSpaceI;
-import rails.game.move.MoveSet;
 import rails.game.move.PriceMove;
 import rails.game.state.StateI;
 

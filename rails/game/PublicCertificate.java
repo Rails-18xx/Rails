@@ -45,10 +45,10 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	/**
 	 * @return if Certificate is Available
 	 */
-	public boolean isAvailable()
-	{
-		return available;
-	}
+	//public boolean isAvailable()
+	//{
+	//	return available;
+	//}
 
 	/**
 	 * @return Portfolio this certificate belongs to.

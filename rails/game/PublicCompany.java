@@ -12,7 +12,6 @@ import rails.game.model.ModelObject;
 import rails.game.model.MoneyModel;
 import rails.game.model.PriceModel;
 import rails.game.move.CashMove;
-import rails.game.move.MoveSet;
 import rails.game.state.BooleanState;
 import rails.game.state.StringState;
 import rails.util.LocalText;
@@ -1091,6 +1090,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			return false;
 	}
 
+	/*
 	public PublicCertificateI getNextAvailableCertificate()
 	{
 		for (int i = 0; i < certificates.size(); i++)
@@ -1102,6 +1102,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 		return null;
 	}
+	*/
 
 	/**
 	 * @return Returns the lowerPrivatePriceFactor.

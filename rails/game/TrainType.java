@@ -6,7 +6,6 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
-import rails.game.move.MoveSet;
 import rails.game.move.TrainMove;
 import rails.game.state.BooleanState;
 import rails.util.*;
