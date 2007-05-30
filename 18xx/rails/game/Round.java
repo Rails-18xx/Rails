@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.1 2007/01/23 21:50:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.2 2007/05/30 20:16:47 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 
 /**
@@ -51,6 +52,10 @@ public class Round implements RoundI {
     public List getSpecialProperties() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    public boolean process (PossibleAction action) {
+    	return true;
     }
 
 }

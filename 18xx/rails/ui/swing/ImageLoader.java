@@ -27,7 +27,7 @@ public class ImageLoader
 	private static int height = 167;
 	private static String svgTileDir = "tiles/svg/";
 	private static String gifTileDir = "tiles/images/";
-	
+	private static String tileRootDir = Config.get("tile.root_directory");
 	private static String preference = Config.get("tile.format_preference");
 	private static Logger log = Logger.getLogger(ImageLoader.class.getPackage().getName());
 
@@ -119,7 +119,7 @@ public class ImageLoader
 			//{
 				//InputStream stream = tileURL.openStream();
 				//if (tileURL.openStream() != null)
-				InputStream stream = Util.getStreamForFile(svgTileDir + fn);
+				InputStream stream = Util.getStreamForFile(tileRootDir+"/"+svgTileDir + fn);
 				if (stream != null)
 				{
 					BufferedImageTranscoder t = new BufferedImageTranscoder();
@@ -151,12 +151,12 @@ public class ImageLoader
 		String fn = "tile" + Integer.toString(tileID) + ".gif";
 		//URL tileURL = buildURL(fn, gifTileDir);
 		log.debug("Loading tile "+fn);
-
+		
 		BufferedImage image = null;
 
 		try
 		{
-			InputStream str = Util.getStreamForFile(gifTileDir + fn);
+			InputStream str = Util.getStreamForFile(tileRootDir+"/"+gifTileDir + fn);
 			if (str != null)
 			{
 				image = ImageIO.read(str);

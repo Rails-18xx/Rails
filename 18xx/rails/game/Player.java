@@ -3,9 +3,11 @@ package rails.game;
 
 import java.util.*;
 
+import rails.game.model.CalculatedMoneyModel;
 import rails.game.model.CashModel;
 import rails.game.model.CertCountModel;
 import rails.game.model.ModelObject;
+import rails.game.model.MoneyModel;
 import rails.game.model.WorthModel;
 import rails.util.LocalText;
 
@@ -43,7 +45,8 @@ public class Player implements CashHolder, Comparable
 	
 	private CertCountModel certCount = new CertCountModel (this);
 
-	private int blockedCash = 0;
+	private MoneyModel blockedCash;
+	private CalculatedMoneyModel freeCash; 
 
 	private boolean hasPriority = false;
 
@@ -118,6 +121,8 @@ public class Player implements CashHolder, Comparable
 	{
 		this.name = name;
 		portfolio = new Portfolio(name, this);
+		freeCash = new CalculatedMoneyModel (this, "getFreeCash");
+		blockedCash = new MoneyModel (name+"_blockedCash");
 	}
 
 	/**
@@ -278,11 +283,6 @@ public class Player implements CashHolder, Comparable
 		return wallet.getCash();
 	}
 
-	public String getFormattedCash()
-	{
-		return wallet.toString();
-	}
-
 	public ModelObject getCashModel()
 	{
 		return wallet;
@@ -290,7 +290,9 @@ public class Player implements CashHolder, Comparable
 
 	public boolean addCash(int amount)
 	{
-		return wallet.addCash(amount);
+		boolean result = wallet.addCash(amount);
+		freeCash.update();
+		return result;
 	}
 
 	/**
@@ -314,10 +316,10 @@ public class Player implements CashHolder, Comparable
 		return worth;
 	}
 
-	public String getFormattedWorth()
-	{
-		return Bank.format(getWorth());
-	}
+	//public String getFormattedWorth()
+	//{
+	//	return Bank.format(getWorth());
+	//}
 
 	public WorthModel getWorthModel()
 	{
@@ -326,6 +328,14 @@ public class Player implements CashHolder, Comparable
 	
 	public CertCountModel getCertCountModel () {
 	    return certCount;
+	}
+	
+	public CalculatedMoneyModel getFreeCashModel() {
+		return freeCash;
+	}
+	
+	public MoneyModel getBlockedCashModel () {
+		return blockedCash;
 	}
 
 	public String toString()
@@ -350,13 +360,14 @@ public class Player implements CashHolder, Comparable
 	 */
 	public boolean blockCash(int amount)
 	{
-		if (amount > wallet.getCash() - blockedCash)
+		if (amount > wallet.getCash() - blockedCash.intValue())
 		{
 			return false;
 		}
 		else
 		{
-			blockedCash += amount;
+			blockedCash.add (amount);
+			freeCash.update();
 			return true;
 		}
 	}
@@ -370,13 +381,14 @@ public class Player implements CashHolder, Comparable
 	 */
 	public boolean unblockCash(int amount)
 	{
-		if (amount > blockedCash)
+		if (amount > blockedCash.intValue())
 		{
 			return false;
 		}
 		else
 		{
-			blockedCash -= amount;
+			blockedCash.add (-amount);
+			freeCash.update();
 			return true;
 		}
 	}
@@ -386,25 +398,25 @@ public class Player implements CashHolder, Comparable
 	 * 
 	 * @return Always true.
 	 */
-	public boolean unblockCash()
-	{
-		blockedCash = 0;
-		return true;
-	}
+	//public boolean unblockCash()
+	//{
+	//	blockedCash.set (0);
+	//	return true;
+	//}
 
 	/**
 	 * Return the unblocked cash (available for bidding)
 	 * 
 	 * @return
 	 */
-	public int getUnblockedCash()
+	public int getFreeCash()
 	{
-		return wallet.getCash() - blockedCash;
+		return wallet.getCash() - blockedCash.intValue();
 	}
 
 	public int getBlockedCash()
 	{
-		return blockedCash;
+		return blockedCash.intValue();
 	}
 
 	public int getIndex()

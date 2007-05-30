@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.1 2007/01/23 21:50:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.2 2007/05/30 20:16:48 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -23,13 +23,15 @@ public class PossibleActions {
     
     private static PossibleActions instance = new PossibleActions();
     
-    private Map possibleActions;
+    private Map possibleActionMap;
+    private List possibleActionList;
 
     /**
      * This class can only be instantiated locally.
      */
     private PossibleActions() {
-        possibleActions = new HashMap();
+        possibleActionMap = new HashMap();
+        possibleActionList = new ArrayList();
     }
     
     public static PossibleActions getInstance() {
@@ -37,15 +39,17 @@ public class PossibleActions {
     }
     
     public void clear() {
-        possibleActions.clear();
+        possibleActionMap.clear();
+        possibleActionList.clear();
     }
 
     public void add (PossibleAction action) {
         Class clazz = action.getClass();
-        if (!possibleActions.containsKey(clazz)) {
-            possibleActions.put(clazz, new ArrayList());
+        if (!possibleActionMap.containsKey(clazz)) {
+            possibleActionMap.put(clazz, new ArrayList());
         }
-        ((List)possibleActions.get(clazz)).add (action);
+        ((List)possibleActionMap.get(clazz)).add (action);
+        possibleActionList.add(action);
     }
     
     public void addAll (List actions) {
@@ -58,19 +62,28 @@ public class PossibleActions {
                 // Error!
             }
        }
+        possibleActionList.add(actions);
     }
     
     public boolean contains (Class clazz) {
-        return possibleActions.containsKey(clazz)
-        	&& !((List)possibleActions.get(clazz)).isEmpty();
+        return possibleActionMap.containsKey(clazz)
+        	&& !((List)possibleActionMap.get(clazz)).isEmpty();
     }
     
-    public List get (Class clazz) {
-        return (List)possibleActions.get(clazz);
+    public List getType (Class clazz) {
+        return (List)possibleActionMap.get(clazz);
     }
     
-    public Map getAll () {
-        return possibleActions;
+    public Map getMap () {
+        return possibleActionMap;
+    }
+    
+    public List getList() {
+    	return possibleActionList;
+    }
+    
+    public boolean isEmpty() {
+    	return possibleActionList.isEmpty();
     }
 
 }

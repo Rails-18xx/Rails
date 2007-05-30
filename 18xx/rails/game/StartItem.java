@@ -2,6 +2,12 @@ package rails.game;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
+import rails.game.model.ModelObject;
+import rails.game.model.MoneyModel;
+import rails.game.state.*;
+
 /**
  * Each object of this class represents a "start packet item", which consist of
  * one or two certificates. The whole start packet must be bought before the
@@ -17,26 +23,34 @@ public class StartItem
 	protected String name = null;
 	protected Certificate primary = null;
 	protected Certificate secondary = null;
-	protected int basePrice;
+	protected MoneyModel basePrice = new MoneyModel(name+"_basePrice");
 	protected int row = 0;
 	protected int column = 0;
 	protected int index = nextIndex++;
 
 	// Bids
-	protected int bid = 0;
-	protected int bids = 0;
-	protected Player bidder = null;
-	protected Map bidders = new HashMap();
-	protected boolean sold;
-	protected int buyPrice = 0;
+	protected IntegerState lastBidderIndex 
+		= new IntegerState(name+"highestBidder", -1);
+	protected static Player[] players;
+	protected static int numberOfPlayers;
+	protected MoneyModel[] bids;
+	protected MoneyModel minimumBid = new MoneyModel(name+"_minimumBid"); 
+	//protected int buyPrice = 0;
 	
-	// Status info for the UI
-	protected int status;
+	// Status info for the UI ==> MOVED TO BuyOrBidStartItem
+	// TODO REDUNDANT??
+    /** Status of the start item (buyable? biddable?) regardless
+     * whether the current player has the amount of (unblocked)
+     * cash to buy it or to bid on it.
+     */
+	protected IntegerState status;
+
 	public static final int UNAVAILABLE = 0;
 	public static final int BIDDABLE = 1;
 	public static final int BUYABLE = 2;
 	public static final int AUCTIONED = 3;
-	public static final int SOLD = 4;
+	public static final int NEEDS_SHARE_PRICE = 4;
+	public static final int SOLD = 5;
 
 	// For initialisation purposes only
 	protected String type = null;
@@ -50,6 +64,8 @@ public class StartItem
 	protected static Portfolio unavailable;
 	protected static CompanyManagerI compMgr;
 	protected static int nextIndex = 0;
+
+	protected static Logger log = Logger.getLogger(StartItem.class.getPackage().getName());
 
 	/**
 	 * The constructor, taking the properties of the "primary" (often teh only)
@@ -71,8 +87,11 @@ public class StartItem
 	{
 		this.name = name;
 		this.type = type;
-		this.basePrice = basePrice;
+		this.basePrice.set (basePrice);
 		this.president = president;
+		status = new IntegerState (name+"_status");
+
+		
 	}
 
 	/**
@@ -98,6 +117,16 @@ public class StartItem
 	 */
 	public void init()
 	{
+		if (players == null) {
+			players = Game.getPlayerManager().getPlayersArray();
+			numberOfPlayers = players.length;
+		}
+		bids = new MoneyModel [numberOfPlayers];
+		for (int i=0; i<numberOfPlayers; i++) {
+			bids[i] = new MoneyModel(name+"bidBy"+players[i].getName());
+			
+		}
+		minimumBid.set(basePrice.intValue()+5);
 
 		if (ipo == null)
 			ipo = Bank.getIpo();
@@ -116,8 +145,7 @@ public class StartItem
 			primary = ipo.findCertificate((PublicCompanyI) company, president);
 			// Move the certificate to the "unavailable" pool.
 			PublicCertificateI pubcert = (PublicCertificateI) primary;
-			// Log.write("*** Company"+name+" certificate
-			// "+primary+"/"+pubcert);
+
 			if (pubcert.getPortfolio() == null
 					|| !pubcert.getPortfolio().getName().equals("Unavailable"))
 				unavailable.buyCertificate(pubcert, pubcert.getPortfolio(), 0);
@@ -144,7 +172,8 @@ public class StartItem
 							0);
 			}
 		}
-	}
+
+}
 
 	public int getIndex()
 	{
@@ -236,9 +265,13 @@ public class StartItem
 	 */
 	public int getBasePrice()
 	{
-		return basePrice;
+		return basePrice.intValue();
 	}
-
+	
+	public void reduceBasePriceBy (int amount) {
+		basePrice.add(-amount);
+	}
+ 
 	/**
 	 * Get the start item name (which is the company name of the primary
 	 * certificate).
@@ -263,27 +296,10 @@ public class StartItem
 	 */
 	public void setBid(int amount, Player bidder)
 	{
-		bid = amount;
-		bids++;
-		this.bidder = bidder;
-		if (bidder != null)
-			bidders.put(bidder.getName(), new Bid(bidder.getName(), amount));
-	}
-
-	/**
-	 * Remove a player from the list of bidders.
-	 * 
-	 * @param player
-	 *            The player to be removed.
-	 * @return The remaining number of bidders.
-	 */
-	public int removeBid(Player player)
-	{
-		if (player != null && bidders.containsKey(player.getName()))
-		{
-			bidders.remove(player.getName());
-		}
-		return bidders.size();
+		int index = bidder.getIndex();
+		lastBidderIndex.set(index);
+		bids[index].set(amount);
+		minimumBid.set(amount + 5);
 	}
 
 	/**
@@ -293,7 +309,12 @@ public class StartItem
 	 */
 	public int getBid()
 	{
-		return bid;
+		int index = lastBidderIndex.intValue();
+		if (index < 0) {
+			return 0;
+		} else {
+			return bids[index].intValue();
+		}
 	}
 
 	/**
@@ -305,15 +326,8 @@ public class StartItem
 	 */
 	public int getBid(Player player)
 	{
-		String playerName = player.getName();
-		if (bidders.containsKey(playerName))
-		{
-			return ((Bid) bidders.get(playerName)).getAmount();
-		}
-		else
-		{
-			return 0;
-		}
+		int index = player.getIndex();
+		return bids[index].intValue();
 	}
 
 	/**
@@ -324,7 +338,11 @@ public class StartItem
 	 */
 	public int getBidders()
 	{
-		return bidders.size();
+		int bidders = 0;
+		for (int i=0; i<numberOfPlayers; i++) {
+			if (bids[i].intValue() != 0) bidders++;
+		}
+		return bidders;
 	}
 
 	/**
@@ -334,17 +352,12 @@ public class StartItem
 	 */
 	public Player getBidder()
 	{
-		return bidder;
-	}
-
-	/**
-	 * Check if any bids have bene done so far.
-	 * 
-	 * @return True if there is any bid.
-	 */
-	public boolean hasBid()
-	{
-		return bidder != null;
+		int index = lastBidderIndex.intValue();
+		if (index < 0) {
+			return null;
+		} else {
+			return players[lastBidderIndex.intValue()];
+		}
 	}
 
 	/**
@@ -354,14 +367,7 @@ public class StartItem
 	 */
 	public int getMinimumBid()
 	{
-		if (bid > 0)
-		{
-			return bid + 5;
-		}
-		else
-		{
-			return basePrice + 5;
-		}
+		return minimumBid.intValue();
 	}
 
 	/**
@@ -373,7 +379,9 @@ public class StartItem
 	 */
 	public boolean hasBid(String playerName)
 	{
-		return bidders.containsKey(playerName);
+		Player player = Game.getPlayerManager().getPlayerByName(playerName);
+		int index = player.getIndex();
+		return bids[index].intValue() > 0;
 	}
 
 	/**
@@ -383,9 +391,11 @@ public class StartItem
 	 *            The name of the player.
 	 * @return His latest Bid object.
 	 */
-	public Bid getBidForPlayer(String playerName)
+	public int getBidForPlayer(String playerName)
 	{
-		return (Bid) bidders.get(playerName);
+		Player player = Game.getPlayerManager().getPlayerByName(playerName);
+		int index = player.getIndex();
+		return bids[index].intValue();
 	}
 
 	/**
@@ -395,7 +405,7 @@ public class StartItem
 	 */
 	public boolean isSold()
 	{
-		return sold;
+		return status.intValue() == SOLD;
 	}
 
 	/**
@@ -404,17 +414,23 @@ public class StartItem
 	 * @param sold
 	 *            The new sold status (usually true).
 	 */
-	public void setSold(int buyPrice)
+	public void setSold(Player player, int buyPrice)
 	{
-		this.sold = true;
-		bidders = null;
-		bid = bids = 0;
-		this.buyPrice = buyPrice;
-	}
-
-	public int getBuyPrice()
-	{
-		return buyPrice;
+		status.set (SOLD);
+		
+		int index = player.getIndex();
+		lastBidderIndex.set(index);
+		
+		// For display purposes, set all lower bids to zero
+		for (int i=0; i<numberOfPlayers; i++) {
+			// Unblock any bid money
+			if (bids[i].intValue() > 0) {
+				players[i].unblockCash(bids[i].intValue());
+				if (index != i) bids[i].set(0);
+			}
+		}
+		bids[index].set(buyPrice);
+		minimumBid.set(0);
 	}
 
 	/**
@@ -427,79 +443,59 @@ public class StartItem
 	 */
 	public PublicCompanyI needsPriceSetting()
 	{
-		if (primary instanceof PublicCertificateI
-				&& ((PublicCertificateI) primary).isPresidentShare())
-		{
-			return ((PublicCertificateI) primary).getCompany();
+		PublicCompanyI company;
+		
+		if ((company = checkNeedForPriceSetting(primary)) != null) {
+			return company;
+		} else if (secondary != null 
+				&& ((company = checkNeedForPriceSetting(secondary)) != null)) {
+			return company;
 		}
-		else if (secondary != null && secondary instanceof PublicCertificateI
-				&& ((PublicCertificateI) secondary).isPresidentShare())
-		{
-			return ((PublicCertificateI) secondary).getCompany();
-		}
-		else
-		{
-			return null;
-		}
+
+		return null;
 	}
 	
-	
-
-	/**
-	 * Class Bid holds the details of a particular bid on this item: the bidder
-	 * and the amount.
-	 * 
-	 * @author Erik Vos
+	/** If a start item component a President's certificate that needs
+	 * price setting, return the name of thecompany for which the price must be set.
+	 * @param certificate
+	 * @return Name of public company, or null
 	 */
-	public class Bid
-	{
+	protected PublicCompanyI checkNeedForPriceSetting (Certificate certificate) {
 
-		String bidderName;
-		int amount;
-
-		/**
-		 * Create a new Bid.
-		 * 
-		 * @param playerName
-		 *            The bidding player.
-		 * @param amount
-		 *            The bid amount.
-		 */
-		protected Bid(String playerName, int amount)
-		{
-			bidderName = playerName;
-			this.amount = amount;
-		}
-
-		/**
-		 * Get the bidding player.
-		 * 
-		 * @return Player name.
-		 */
-		public String getBidderName()
-		{
-			return bidderName;
-		}
-
-		/**
-		 * Get the bid amount.
-		 * 
-		 * @return The bid amount.
-		 */
-		public int getAmount()
-		{
-			return amount;
-		}
+		if (!(certificate instanceof PublicCertificateI)) return null;
+		
+		PublicCertificateI publicCert = (PublicCertificateI) certificate;
+		
+		if (!publicCert.isPresidentShare()) return null;
+		
+		PublicCompanyI company = publicCert.getCompany();
+		
+		if (!company.hasStockPrice()) return null;
+		
+		if (company.getParPrice() != null) return null;
+		
+		return company;
+		
 	}
-
-
-
+	
 	public int getStatus() {
-		return status;
+		return status.intValue();
 	}
 
 	public void setStatus(int status) {
-		this.status = status;
+		this.status.set(status);
+	}
+	
+	public ModelObject getBasePriceModel () {
+		return (ModelObject) basePrice;
+	}
+	
+	public ModelObject getBidForPlayerModel (int index) {
+		return (ModelObject) bids[index];
+	}
+	
+	public ModelObject getMinimumBidModel () {
+		return (ModelObject) minimumBid;
 	}
 
 }

@@ -14,7 +14,7 @@ public interface CashHolder {
 	 * Returns the amount of cash, formatted
 	 * @return
 	 */
-	public abstract String getFormattedCash();
+	//public abstract String getFormattedCash();
 
 	public ModelObject getCashModel ();
 

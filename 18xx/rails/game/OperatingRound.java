@@ -93,8 +93,10 @@ public class OperatingRound extends Round implements Observer
 	
 	/**
 	 * The constructor.
+	 * @param operate If false, only the privates pay out.
+	 * This applies if the Start Packet has not yet been sold completely.
 	 */
-	public OperatingRound()
+	public OperatingRound(boolean operate)
 	{
 
 		if (players == null)
@@ -107,53 +109,7 @@ public class OperatingRound extends Round implements Observer
 					.getAllPublicCompanies()
 					.toArray(new PublicCompanyI[0]);
 		}
-		// Determine operating sequence for this OR.
-		// Shortcut: order considered fixed at the OR start. This is not always
-		// true.
-		operatingCompanies = new TreeMap();
-		PublicCompanyI company;
-		StockSpaceI space;
-		int key, stackPos;
-		int minorNo = 0;
-		for (int i = 0; i < companies.length; i++)
-		{
-			company = companies[i];
-			if (!company.hasFloated())
-				continue;
-			// Key must put companies in reverse operating order, because sort
-			// is ascending.
-			if (company.hasStockPrice())
-			{
-				space = company.getCurrentPrice();
-				key = 1000000 * (999 - space.getPrice()) + 10000
-						* (99 - space.getColumn()) + 100 * space.getRow()
-						+ space.getStackPosition(company);
-			}
-			else
-			{
-				key = ++minorNo;
-			}
-			operatingCompanies.put(new Integer(key), company);
-		}
-
-		operatingCompanyArray = (PublicCompanyI[]) operatingCompanies.values()
-				.toArray(new PublicCompanyI[0]);
-
-		relativeORNumber++;
-		cumulativeORNumber++;
-		thisOrNumber = getCompositeORNumber();
-
-		ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
-
-		numberOfCompanies = operatingCompanyArray.length;
-
-		//revenue = new int[numberOfCompanies];
-		//tilesLaid = new String[numberOfCompanies];
-		//tileLayCost = new int[numberOfCompanies];
-		//baseTokensLaid = new String[numberOfCompanies];
-		//baseTokenLayCost = new int[numberOfCompanies];
-		//trainBuyCost = new int[numberOfCompanies];
-
+		
 		// Private companies pay out
 		Iterator it = Game.getCompanyManager()
 				.getAllPrivateCompanies()
@@ -165,21 +121,74 @@ public class OperatingRound extends Round implements Observer
 			if (!priv.isClosed())
 				priv.payOut();
 		}
-
-		if (operatingCompanyArray.length > 0)
-		{
-			operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-			operatingCompany.initTurn();
-			GameManager.getInstance().setRound(this);
-
-			setStep (STEP_INITIAL);
+		
+		if (operate) {
+		
+			// Determine operating sequence for this OR.
+			// Shortcut: order considered fixed at the OR start. This is not always
+			// true.
+			operatingCompanies = new TreeMap();
+			PublicCompanyI company;
+			StockSpaceI space;
+			int key, stackPos;
+			int minorNo = 0;
+			for (int i = 0; i < companies.length; i++)
+			{
+				company = companies[i];
+				if (!company.hasFloated())
+					continue;
+				// Key must put companies in reverse operating order, because sort
+				// is ascending.
+				if (company.hasStockPrice())
+				{
+					space = company.getCurrentPrice();
+					key = 1000000 * (999 - space.getPrice()) + 10000
+							* (99 - space.getColumn()) + 100 * space.getRow()
+							+ space.getStackPosition(company);
+				}
+				else
+				{
+					key = ++minorNo;
+				}
+				operatingCompanies.put(new Integer(key), company);
+			}
+	
+			operatingCompanyArray = (PublicCompanyI[]) operatingCompanies.values()
+					.toArray(new PublicCompanyI[0]);
+	
+			relativeORNumber++;
+			cumulativeORNumber++;
+			thisOrNumber = getCompositeORNumber();
+	
+			ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
+	
+			numberOfCompanies = operatingCompanyArray.length;
+	
+			//revenue = new int[numberOfCompanies];
+			//tilesLaid = new String[numberOfCompanies];
+			//tileLayCost = new int[numberOfCompanies];
+			//baseTokensLaid = new String[numberOfCompanies];
+			//baseTokenLayCost = new int[numberOfCompanies];
+			//trainBuyCost = new int[numberOfCompanies];
+	
+	
+			if (operatingCompanyArray.length > 0)
+			{
+				operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+				operatingCompany.initTurn();
+				GameManager.getInstance().setRound(this);
+	
+				setStep (STEP_INITIAL);
+			}
+			
+			return;
 		}
-		else
-		{
-			// No operating companies yet: close the round.
-			ReportBuffer.add (LocalText.getText("END_OR", getCompositeORNumber()));
-			GameManager.getInstance().nextRound(this);
-		}
+		
+		// No operating companies yet: close the round.
+		String text = LocalText.getText("ShortORExecuted");
+		ReportBuffer.add (text);
+		DisplayBuffer.add (text);
+		GameManager.getInstance().nextRound(this);
 	}
 
 	/*----- General methods -----*/

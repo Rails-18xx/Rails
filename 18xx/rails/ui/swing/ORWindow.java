@@ -164,7 +164,7 @@ public class ORWindow extends JFrame implements WindowListener
 		    StringBuffer normalTileMessage = new StringBuffer(" ");
 		    StringBuffer extraTileMessage = new StringBuffer(" ");
 		    
-		    List tileLays = possibleActions.get(LayTile.class);
+		    List tileLays = possibleActions.getType(LayTile.class);
 		    log.debug ("There are "+tileLays.size()+" TileLay objects");
 		    int ii=0;
 		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
@@ -224,7 +224,7 @@ public class ORWindow extends JFrame implements WindowListener
 		    StringBuffer normalTokenMessage = new StringBuffer(" ");
 		    StringBuffer extraTokenMessage = new StringBuffer(" ");
 		    
-		    List tokenLays = possibleActions.get(LayToken.class);
+		    List tokenLays = possibleActions.getType(LayToken.class);
 		    log.debug ("There are "+tokenLays.size()+" TokenLay objects");
 		    int ii=0;
 		    for (Iterator it = tokenLays.iterator(); it.hasNext(); ) {

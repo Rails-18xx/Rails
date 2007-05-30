@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
@@ -241,7 +242,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 							Bank.format(revenue),
 							name
 					}));
-			Bank.transferCash(null, portfolio.getOwner(), revenue);
+			//Bank.transferCash(null, portfolio.getOwner(), revenue);
+			new CashMove (null, portfolio.getOwner(), revenue);
 		}
 	}
 

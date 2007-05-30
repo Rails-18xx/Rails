@@ -263,5 +263,9 @@ public class StartPacket
 	{
 		return variant;
 	}
+	
+	public int getNumberOfItems () {
+		return items.size();
+	}
 
 }

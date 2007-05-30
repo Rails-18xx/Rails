@@ -585,6 +585,16 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 
 	}
+	
+	public void start (int price) {
+		StockSpaceI startSpace = StockMarket.getInstance().getStartSpace(price);
+		if (startSpace == null) {
+			log.error ("Invalid start price "+Bank.format(price));
+		} else {
+			start (startSpace);
+		}
+
+	}
 
 	/**
 	 * Start a company with a fixed par price.
