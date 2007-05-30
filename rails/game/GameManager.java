@@ -17,11 +17,13 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static Player[] players;
 	protected static int numberOfPlayers;
-	protected static int currentPlayerIndex = 0;
-	protected static Player currentPlayer = null;
+	//protected static int currentPlayerIndex = 0;
+	//protected static Player currentPlayer = null;
+	protected static State currentPlayer =
+		new State ("CurrentPlayer", Player.class);
 	//protected static int priorityPlayerIndex = 0;
 	//protected static Player priorityPlayer = null;
-	protected static State priorityPlayerWrapper = 
+	protected static State priorityPlayer = 
 	    new State ("PriorityPlayer", Player.class);
 
 	protected static int playerShareLimit = 60;
@@ -167,7 +169,7 @@ public class GameManager implements ConfigurableComponentI
 		players = Game.getPlayerManager().getPlayersArray();
 		numberOfPlayers = players.length;
 		//setPriorityPlayer (players[0]);
-		priorityPlayerWrapper.setState(players[0]);
+		priorityPlayer.setState(players[0]);
 
 		if (startPacket == null)
 			startPacket = StartPacket.getStartPacket("Initial");
@@ -208,7 +210,7 @@ public class GameManager implements ConfigurableComponentI
 		{
 			if (startPacket != null && !startPacket.areAllSold())
 			{
-				startOperatingRound();
+				startOperatingRound(false);
 			}
 			else
 			{
@@ -224,7 +226,7 @@ public class GameManager implements ConfigurableComponentI
 
 			// Create a new OperatingRound (never more than one Stock Round)
 			OperatingRound.resetRelativeORNumber();
-			startOperatingRound();
+			startOperatingRound(true);
 
 			orNumber = 1;
 		}
@@ -239,7 +241,7 @@ public class GameManager implements ConfigurableComponentI
 			else if (++orNumber <= numOfORs)
 			{
 				// There will be another OR
-				startOperatingRound();
+				startOperatingRound(true);
 			}
 			else if (startPacket != null && !startPacket.areAllSold())
 			{
@@ -270,10 +272,10 @@ public class GameManager implements ConfigurableComponentI
 		new StockRound().start();
 	}
 
-	private void startOperatingRound()
+	private void startOperatingRound(boolean operate)
 	{
-		playHomeTokens();
-		new OperatingRound();
+		playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
+		new OperatingRound(operate);
 	}
 
 	public void startShareSellingRound(OperatingRound or,
@@ -377,7 +379,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static int getCurrentPlayerIndex()
 	{
-		return currentPlayerIndex;
+		return getCurrentPlayer().getIndex();
 	}
 
 	/**
@@ -386,21 +388,13 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static void setCurrentPlayerIndex(int currentPlayerIndex)
 	{
-		GameManager.currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
-		GameManager.currentPlayer = players[GameManager.currentPlayerIndex];
+		currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
+		currentPlayer.set (players[currentPlayerIndex]);
 	}
 
 	public static void setCurrentPlayer(Player player)
 	{
-		currentPlayer = player;
-		for (int i = 0; i < numberOfPlayers; i++)
-		{
-			if (player == players[i])
-			{
-				currentPlayerIndex = i;
-				break;
-			}
-		}
+		currentPlayer.set(player);
 	}
 
 	/**
@@ -409,16 +403,15 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static void setPriorityPlayer()
 	{
-		int priorityPlayerIndex = (currentPlayer.getIndex() + 1) % numberOfPlayers;
+		int priorityPlayerIndex = (getCurrentPlayer().getIndex() + 1) % numberOfPlayers;
 		setPriorityPlayer (players[priorityPlayerIndex]);
 
 	}
 	
 	public static void setPriorityPlayer(Player player) {
-	    priorityPlayerWrapper.set(player);
+	    priorityPlayer.set(player);
 	    log.debug ("Priority player set to "
 	    		+player.getIndex()+" "+player.getName());
-	    //priorityPlayer = player;
 	}
 
 	/**
@@ -426,7 +419,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getPriorityPlayer()
 	{
-		return (Player) priorityPlayerWrapper.getState();
+		return (Player) priorityPlayer.getState();
 	}
 
 	/**
@@ -434,7 +427,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getCurrentPlayer()
 	{
-		return currentPlayer;
+		return (Player)currentPlayer.getState();
 	}
 
 	/**
@@ -464,8 +457,9 @@ public class GameManager implements ConfigurableComponentI
 
 	public static void setNextPlayer()
 	{
+		int currentPlayerIndex = getCurrentPlayerIndex();
 		currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
-		currentPlayer = players[currentPlayerIndex];
+		setCurrentPlayerIndex (currentPlayerIndex);
 	}
 
 	/**
@@ -527,6 +521,8 @@ public class GameManager implements ConfigurableComponentI
 			GameManager.variant = variant;
 			ReportBuffer.add(LocalText.getText("VariantIs",  variant));
 			log.info ("Game variant is "+variant);
+		} else {
+			log.error ("Unknown variant selected: "+variant);
 		}
 	}
 

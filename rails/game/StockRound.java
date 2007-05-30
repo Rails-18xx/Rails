@@ -397,7 +397,10 @@ public class StockRound extends Round
 				// Else the given price must be a valid start price
 				if ((startSpace = stockMarket.getStartSpace(price)) == null)
 				{
-					errMsg = LocalText.getText("InvalidStartPrice");
+					errMsg = LocalText.getText("InvalidStartPrice", new String[] {
+							Bank.format(price),
+							company.getName()
+					});
 					break;
 				}
 			}
@@ -1106,7 +1109,7 @@ public class StockRound extends Round
 	 */
 	public Player getCurrentPlayer()
 	{
-		return GameManager.currentPlayer;
+		return GameManager.getCurrentPlayer();
 	}
 
 	/**
@@ -1114,7 +1117,7 @@ public class StockRound extends Round
 	 */
 	public int getCurrentPlayerIndex()
 	{
-		return GameManager.currentPlayerIndex;
+		return GameManager.getCurrentPlayerIndex();
 	}
 
 	public List getSpecialProperties()

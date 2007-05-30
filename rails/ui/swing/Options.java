@@ -252,8 +252,9 @@ public class Options extends JDialog implements ActionListener
 				this.setVisible(false);
 
 				String gameName = gameNameBox.getSelectedItem().toString();
-				Game.initialise(gameName);
 				Game.getPlayerManager(playerNames);
+				Game.initialise(gameName);
+				Player.initPlayers(Game.getPlayerManager().getPlayersArray());
 				
 				List variants = GameManager.getVariants();
 				if (variants != null && variants.size() > 1) {
@@ -265,7 +266,11 @@ public class Options extends JDialog implements ActionListener
 				            null,
 				            (String[])variants.toArray(new String[0]),
 				            (String)variants.get(0));
-				    if (variant != null) GameManager.setVariant(variant);
+				    if (variant != null) {
+				    	GameManager.setVariant(variant);
+				    } else {
+				    	JOptionPane.showMessageDialog(this, "Null variant selected!??");
+				    }
 				}
 				GameManager.getInstance().startGame();
 

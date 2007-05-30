@@ -2,6 +2,10 @@ package rails.game;
 
 import java.util.*;
 
+import rails.game.action.BuyOrBidStartItem;
+import rails.game.action.NullAction;
+import rails.game.move.MoveSet;
+import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 
@@ -12,11 +16,14 @@ public class StartRound_1835 extends StartRound
 {
 
 	/* To control the player sequence in the Clemens and Snake variants */
-	private static int cycle = 0;
-	private static int startRoundNumber = 0;
-	private int turns = 0;
+	private static IntegerState turn
+		= new IntegerState ("TurnNumber", 0);
+
+	private static IntegerState startRoundNumber
+		= new IntegerState ("StartRoundNumber" , 0);
+
 	private int numberOfPlayers = GameManager.getNumberOfPlayers();
-	private String variant;
+	//private String variant;
 
 	/* Additional variants */
 	public static final String CLEMENS_VARIANT = "Clemens";
@@ -40,22 +47,30 @@ public class StartRound_1835 extends StartRound
 	public void start(StartPacket startPacket)
 	{
 		super.start(startPacket);
-		startRoundNumber++;
-		variant = GameManager.getVariant();
+		startRoundNumber.add(1);
+		//variant = GameManager.getVariant();
 
 		// Select first player
-		if (variant.equalsIgnoreCase("Clemens"))
-		{
-			GameManager.setCurrentPlayerIndex(numberOfPlayers - 1);
-		}
-		else
-		{
-			GameManager.setCurrentPlayerIndex(0);
-		}
+		//if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
+		//{
+		//	GameManager.setCurrentPlayerIndex(numberOfPlayers - 1);
+		//}
+		//else
+		//{
+		//	GameManager.setCurrentPlayerIndex(0);
+		//}
 
-		// Select initially buyable items
-		defaultStep = nextStep = BUY_OR_PASS;
-		//getBuyableItems(); // Needed for Start Window
+		if (!setPossibleActions()) {
+			/* If nobody can do anything, keep executing 
+			 * Operating and Start rounds until someone has got
+			 * enough money to buy one of the remaining items.
+			 * The game mechanism ensures that this will
+			 * ultimately be possible.
+			 */
+			//possibleActions.add (new NullAction (NullAction.CLOSE));
+			GameManager.getInstance().nextRound(this);
+		}
+		
 	}
 
 	/**
@@ -65,7 +80,103 @@ public class StartRound_1835 extends StartRound
 	 * 
 	 * @return An array of start items that can be bought.
 	 */
-	public StartItem[] getBuyableItems() {return null;}
+	//public StartItem[] getBuyableItems() {return null;}
+	
+	public boolean setPossibleActions() {
+		
+		List startItems = startPacket.getItems();
+		StartItem item;
+		int row;
+		boolean buyable;
+		int items = 0;
+		int minRow = 0;
+		
+		/* First, mark which items are buyable.
+		 * Once buyable, they always remain so until bought,
+		 * so there is no need to check is an item is still buyable.
+		 */ 
+		Iterator it = startItems.iterator();
+		while (it.hasNext())
+		{
+			item = (StartItem) it.next();
+			buyable = false;
+			
+			if (item.isSold()) {
+				// Already sold: skip
+			} else if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
+				buyable = true;
+			} else {
+				row = item.getRow();
+				if (minRow == 0)
+					minRow = row;
+				if (row == minRow)
+				{
+					// Allow all items in the top row.
+					buyable = true;
+					items++;
+				}
+				else if (row == minRow + 1 && items == 1)
+				{
+					// Allow the first item in the next row if the
+					// top row has only one item.
+					buyable = true;
+				}
+			}
+			if (buyable) {
+				item.setStatus (StartItem.BUYABLE);
+				//log.debug("Item "+item.getName()+" is buyable");
+			//} else {
+				//log.debug("Item "+item.getName()+" is NOT buyable");
+			}
+		}
+		possibleActions.clear();
+		
+		/* Repeat until we have found a player with enough money 
+		 * to buy some item */ 
+		while (possibleActions.isEmpty()) {
+		
+			Player currentPlayer = getCurrentPlayer();
+			int cashToSpend = currentPlayer.getCash();
+			
+			it = startItems.iterator();
+			while (it.hasNext())
+			{
+				item = (StartItem) it.next();
+				
+				if (item.getStatus() == StartItem.BUYABLE) {
+					if (item.getBasePrice() <= cashToSpend) {
+						/* Player does have the cash */
+						possibleActions.add(new BuyOrBidStartItem (
+								item,
+								item.getBasePrice(),
+								item.getStatus()));
+						//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
+					//} else {
+						//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is NOT buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
+					}
+				}
+			}
+
+			if (possibleActions.isEmpty()) {
+				String message = LocalText.getText("CannotBuyAnything",
+						currentPlayer.getName());
+				ReportBuffer.add(message);
+				DisplayBuffer.add (message);
+				numPasses.add(1);
+				if (numPasses.intValue() == numberOfPlayers) {
+					/* No-one has enough cash left to buy anything,
+					 * so close the Start Round. */
+					return false;
+				}
+				setNextPlayer();
+			}
+		}
+		
+		/* Pass is always allowed */
+		possibleActions.add (new NullAction (NullAction.PASS));
+		
+		return true;
+	}
 	
 	public List getStartItems()
 	{
@@ -111,44 +222,9 @@ public class StartRound_1835 extends StartRound
 		return startItems;
 	}
 
-	/**
-	 * Get a list of items that teh current player may bid upon.
-	 * <p>
-	 * In an 1835-style auction this method will always return an empty list.
-	 * 
-	 * @return An empty array of start items.
-	 */
-	public StartItem[] getBiddableItems()
-	{
-		return new StartItem[0];
-	}
-
-	/**
-	 * Get the company for which a par price must be set in the SET_PRICE state.
-	 * Not used in 1835.
-	 * 
-	 * @return Always null.
-	 */
-	public PublicCompanyI getCompanyNeedingPrice()
-	{
-		return null;
-	}
-
 	/*----- MoveSet methods -----*/
 
-	/**
-	 * The current player bids 5 more than the previous bid on a given start
-	 * item.
-	 * <p>
-	 * A separate method is provided for this action because 5 is the usual
-	 * amount with which bids are raised.
-	 * 
-	 * @param playerName
-	 *            The name of the current player (for checking purposes).
-	 * @param itemName
-	 *            The name of the start item on which the bid is placed.
-	 */
-	public boolean bid5(String playerName, String itemName)
+	public boolean bid(String playerName, BuyOrBidStartItem item)
 	{
 
 		DisplayBuffer.add(LocalText.getText("InvalidAction"));
@@ -156,60 +232,40 @@ public class StartRound_1835 extends StartRound
 	}
 
 	/**
-	 * The current player bids on a given start item.
-	 * 
-	 * @param playerName
-	 *            The name of the current player (for checking purposes).
-	 * @param itemName
-	 *            The name of the start item on which the bid is placed.
-	 * @param amount
-	 *            The bid amount.
-	 */
-	public boolean bid(String playerName, String itemName, int amount)
-	{
-
-		DisplayBuffer.add(LocalText.getText("InvalidAction"));
-		return false;
-	}
-
-	/**
-	 * Define the next action to take after a start item is bought.
+	 * Set the next player turn.
 	 * 
 	 */
-	protected void setNextAction()
+	protected void setNextPlayer()
 	{
 
-		if (startPacket.areAllSold())
-		{
-			// No more start items: start a stock round
-			nextStep = CLOSED;
-			GameManager.getInstance().nextRound(this);
-		}
-		else
-		{
-
-			// Select the player that has the turn
-			int newIndex = 0;
-			if (++turns == numberOfPlayers)
+		/* Select the player that has the turn.*/
+		
+		if (startRoundNumber.intValue() == 1) {
+			/* Some variants have a reversed player order in the first 
+			 * or second cycle of the first round
+			 * (a cycle spans one turn of all players).
+			 * In such a case we need to keep track of 
+			 * the number of player turns.  
+			 */
+			turn.add (1);
+			int turnNumber = turn.intValue();
+			int cycleNumber = turnNumber / numberOfPlayers;
+			int turnIndex = turnNumber % numberOfPlayers;
+			int newIndex;
+		
+			if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
 			{
-				cycle++;
-				turns = 0;
-			}
-			if (startRoundNumber > 1)
-			{
-				newIndex = GameManager.getPriorityPlayer().getIndex();
-			}
-			else if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
-			{
-				newIndex = cycle == 0 ? numberOfPlayers - 1 - turns : turns;
+				/* Reverse ordee in the first cycle only */
+				newIndex = cycleNumber == 0 ? numberOfPlayers - 1 - turnIndex : turnIndex;
 			}
 			else if (variant.equalsIgnoreCase(SNAKE_VARIANT))
 			{
-				newIndex = cycle == 1 ? numberOfPlayers - 1 - turns : turns;
+				/* Reverse order in the second cycle only */
+				newIndex = cycleNumber == 1 ? numberOfPlayers - 1 - turnIndex : turnIndex;
 			}
 			else
 			{
-				newIndex = turns;
+				newIndex = turnIndex;
 			}
 			Player oldPlayer = GameManager.getCurrentPlayer();
 			GameManager.setCurrentPlayerIndex(newIndex);
@@ -217,33 +273,22 @@ public class StartRound_1835 extends StartRound
 			log.debug ("Game turn has moved from "
 					+ oldPlayer.getName()+" to "+newPlayer.getName()
 					+" [startRound="+startRoundNumber
-					+" cycle="+cycle
-					+" turn="+turns
+					+" cycle="+cycleNumber
+					+" turn="+turnNumber
 					+" newIndex="+newIndex
-					+"]");
-
-			nextStep = BUY_OR_PASS;
+						+"]");
+			
+		} else {
+			
+			/* In any subsequent Round, the normal order applies. */
+			Player oldPlayer = GameManager.getCurrentPlayer();
+			super.setNextPlayer();
+			Player newPlayer = GameManager.getCurrentPlayer();
+			log.debug ("Game turn has moved from "
+					+ oldPlayer.getName()+" to "+newPlayer.getName());
 		}
+
 		return;
-	}
-
-	/**
-	 * Set an initial price for a President's share acquired
-	 * in a Start Round.
-	 * This action does not apply to 1835, where start prices are fixed.
-	 * 
-	 * @param playerName
-	 *            The name of the par price setting player.
-	 * @param companyName
-	 *            The name of teh company for which a par price is set.
-	 * @param parPrice
-	 *            The par price.
-	 */
-	public boolean setPrice(String playerName, String companyName, int parPrice)
-	{
-
-		DisplayBuffer.add(LocalText.getText("InvalidAction"));
-		return false;
 	}
 
 	/**
@@ -280,27 +325,22 @@ public class StartRound_1835 extends StartRound
 		}
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
-		//GameManager.setNextPlayer();
-		setNextAction();
+		
+		MoveSet.start();
 
-		if (++numPasses >= numPlayers)
+		numPasses.add(1);
+		
+		if (numPasses.intValue() >= numPlayers)
 		{
 			// All players have passed.
 			ReportBuffer.add(LocalText.getText("ALL_PASSED"));
+			numPasses.set(0);
 			GameManager.getInstance().nextRound(this);
+		} else {
+			setNextPlayer();
 		}
 
 		return true;
-	}
-
-	public boolean isBuyable(StartItem item)
-	{
-		return item.getStatus() == StartItem.BUYABLE;
-	}
-
-	public boolean isBiddable(StartItem item)
-	{
-		return false;
 	}
 
 	public String getHelp() {

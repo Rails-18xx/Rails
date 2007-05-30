@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.2 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.3 2007/05/30 20:16:50 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -93,7 +93,7 @@ public class MoveSet {
     public static boolean undo () {
         if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
             ReportBuffer.add(LocalText.getText("UNDO"));
-            log.debug ("MoveSet undo index is "+lastIndex);
+            //log.debug ("MoveSet undo index is "+lastIndex);
             ((MoveSet) actionStack.get(lastIndex--)).unexecute();
             return true;
         } else {
@@ -106,7 +106,7 @@ public class MoveSet {
         if (currentAction == null && lastIndex < actionStack.size()-1) {
             ReportBuffer.add(LocalText.getText("REDO"));
             ((MoveSet) actionStack.get(++lastIndex)).execute();
-            log.debug ("MoveSet redo index is "+lastIndex);
+            //log.debug ("MoveSet redo index is "+lastIndex);
             return true;
         } else {
             log.error ("Invalid redo: index="+lastIndex+" size="+actionStack.size());

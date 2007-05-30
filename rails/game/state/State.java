@@ -2,6 +2,8 @@ package rails.game.state;
 
 import org.apache.log4j.Logger;
 
+import rails.game.GameManager;
+import rails.game.Player;
 import rails.game.model.ModelObject;
 import rails.game.move.StateChange;
 import rails.util.Util;

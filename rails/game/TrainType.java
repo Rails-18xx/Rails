@@ -8,6 +8,7 @@ import org.w3c.dom.*;
 
 import rails.game.move.TrainMove;
 import rails.game.state.BooleanState;
+import rails.game.state.IntegerState;
 import rails.util.*;
 
 
@@ -35,7 +36,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	protected int cityScoreFactor = 1;
 
 	protected boolean firstCanBeExchanged = false;
-	protected int numberBoughtFromIPO = 0;
+	protected IntegerState numberBoughtFromIPO 
+		= new IntegerState (name+"TransBought", 0);
 
 	private boolean real; // Only to determine if top-level attributes must be
 	// read.
@@ -254,17 +256,17 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	 */
 	public boolean nextCanBeExchanged()
 	{
-		return firstCanBeExchanged && numberBoughtFromIPO == 0;
+		return firstCanBeExchanged && numberBoughtFromIPO.intValue() == 0;
 	}
 
 	public void addToBoughtFromIPO()
 	{
-		numberBoughtFromIPO++;
+		numberBoughtFromIPO.add(1);
 	}
 
 	public int getNumberBoughtFromIPO()
 	{
-		return numberBoughtFromIPO;
+		return numberBoughtFromIPO.intValue();
 	}
 
 	/**

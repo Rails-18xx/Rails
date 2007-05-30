@@ -65,6 +65,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public void start(StockSpaceI startSpace);
 
 	public void start();
+	
+	public void start (int price);
 
 	/**
 	 * @return Returns true is the company has started.

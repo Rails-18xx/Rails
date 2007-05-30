@@ -23,7 +23,7 @@ public class PlayerManager
 			players[i] = new Player(playerNames.get(i).toString());
 		}
 
-		Player.initPlayers(players);
+		//Player.initPlayers(players);
 	}
 
 	public PlayerManager(ArrayList playerNames)
