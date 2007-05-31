@@ -74,7 +74,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private int playerWorthXOffset, playerWorthYOffset;
 	private Field playerCertCount[];
 	private int playerCertCountXOffset, playerCertCountYOffset;
-	private Field certLimit;
+	//private Field certLimit;
 	private int certLimitXOffset, certLimitYOffset;
 	private Field bankCash;
 	private int bankCashXOffset, bankCashYOffset;
@@ -84,7 +84,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private int newTrainsXOffset, newTrainsYOffset;
 	private Field futureTrains;
 	private int futureTrainsXOffset, futureTrainsYOffset;
-	private int rightCompCaptionXOffset, rightCompCaptionYOffset;
+	private int rightCompCaptionXOffset;//, rightCompCaptionYOffset;
 
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
@@ -98,7 +98,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private boolean hasParPrices = false;
 	private boolean compCanBuyPrivates = false;
 
-	private Player p;
+	//private Player p;
 	private PublicCompanyI c;
 	private JComponent f;
 
@@ -112,8 +112,10 @@ public class GameStatus extends JPanel implements ActionListener
 	private ButtonGroup buySellGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
 
-	private Map companyIndex = new HashMap();
-	private Map playerIndex = new HashMap();
+	private Map<PublicCompanyI, Integer> companyIndex 
+		= new HashMap<PublicCompanyI, Integer>();
+	private Map<Player, Integer> playerIndex 
+		= new HashMap<Player, Integer>();
 
 	public GameStatus(JFrame parent)
 	{
@@ -196,7 +198,7 @@ public class GameStatus extends JPanel implements ActionListener
 			compPrivatesYOffset = lastY;
 		}
 		rightCompCaptionXOffset = ++lastX;
-		rightCompCaptionYOffset = lastY;
+		//rightCompCaptionYOffset = lastY;
 		
 		playerCashXOffset = certPerPlayerXOffset;
 		playerCashYOffset = (lastY += nc);
@@ -670,7 +672,7 @@ public class GameStatus extends JPanel implements ActionListener
 		return compBuyPoolIndex;
 	}
 
-	public List getBuyOrSellOptions()
+	public List<Object> getBuyOrSellOptions()
 	{
 		if (compBuyIPOIndex >= 0)
 		{
@@ -686,13 +688,13 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 		else
 		{
-			return new ArrayList();
+			return new ArrayList<Object>();
 		}
 	}
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
-		int i, j, share;
+		int i, j;
 
 		dummyButton.setSelected(true);
 
@@ -711,8 +713,8 @@ public class GameStatus extends JPanel implements ActionListener
 		if ((j = this.srPlayerIndex) >= 0)
 		{
 
-			StockRound stockRound = (StockRound) GameManager.getInstance()
-					.getCurrentRound();
+			//StockRound stockRound = (StockRound) GameManager.getInstance()
+			//		.getCurrentRound();
 
 			upperPlayerCaption[j].setHighlight(true);
 			lowerPlayerCaption[j].setHighlight(true);

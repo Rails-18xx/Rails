@@ -29,7 +29,7 @@ public class OperatingRound extends Round implements Observer
 	protected boolean actionPossible = true;
 	protected String actionNotPossibleMessage = "";
 
-	protected TreeMap operatingCompanies;
+	protected TreeMap<Integer, PublicCompanyI> operatingCompanies;
 	protected PublicCompanyI[] operatingCompanyArray;
 	protected int operatingCompanyIndex = 0;
 	protected PublicCompanyI operatingCompany;
@@ -41,14 +41,16 @@ public class OperatingRound extends Round implements Observer
 	//protected int[] revenue;
 	//protected int[] trainBuyCost;
 
-	protected List currentSpecialProperties = null;
-	protected List currentSpecialTileLays = new ArrayList();
-	protected List currentNormalTileLays = new ArrayList();
-	protected Map tileLaysPerColour = new HashMap();
+	protected List<SpecialPropertyI> currentSpecialProperties = null;
+	protected List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
+	protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
+	protected Map<String, Integer> tileLaysPerColour 
+		= new HashMap<String, Integer>();
 	//protected List normalTileLaysDone;
-	protected Map specialPropertyPerHex = new HashMap();
-	protected List currentNormalTokenLays = new ArrayList();
-	protected List currentSpecialTokenLays = new ArrayList();
+	protected Map<MapHex, SpecialPropertyI> specialPropertyPerHex 
+		= new HashMap<MapHex, SpecialPropertyI>();
+	protected List<LayToken> currentNormalTokenLays = new ArrayList<LayToken>();
+	protected List<LayToken> currentSpecialTokenLays = new ArrayList<LayToken>();
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
@@ -127,10 +129,10 @@ public class OperatingRound extends Round implements Observer
 			// Determine operating sequence for this OR.
 			// Shortcut: order considered fixed at the OR start. This is not always
 			// true.
-			operatingCompanies = new TreeMap();
+			operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
 			PublicCompanyI company;
 			StockSpaceI space;
-			int key, stackPos;
+			int key;//, stackPos;
 			int minorNo = 0;
 			for (int i = 0; i < companies.length; i++)
 			{
@@ -453,7 +455,7 @@ public class OperatingRound extends Round implements Observer
 	    // TODO: get(0) - perhaps we always have only one entry?
 	    // Probably we have mixed up locations and number-of-tiles-allowed.
 	    //Map allowancePerColour = (Map) allowance.getTileColours();
-	    Integer oldAllowedNumberObject = ((Integer)tileLaysPerColour.get(colour));
+	    Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
 	    if (oldAllowedNumberObject == null) return false;
 	    int oldAllowedNumber = oldAllowedNumberObject.intValue();
 	    if (oldAllowedNumber <= 0) return false;
@@ -508,6 +510,7 @@ public class OperatingRound extends Round implements Observer
 	}
 	*/
 
+	/*
 	private SpecialORProperty checkForUseOfSpecialProperty(MapHex hex)
 	{
 		if (currentSpecialProperties == null)
@@ -526,6 +529,7 @@ public class OperatingRound extends Round implements Observer
 		}
 		return null;
 	}
+	*/
 
 	/**
 	 * A (perhaps temporary) method via which the cost of station token laying
@@ -1086,7 +1090,7 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void getNormalTileLays() {
 	    
-	    tileLaysPerColour = new HashMap (currentPhase.getTileColours()); //Clone it.
+	    tileLaysPerColour = new HashMap<String, Integer> (currentPhase.getTileColours()); //Clone it.
 	    String colour;
 	    int allowedNumber;
 	    for (Iterator it = tileLaysPerColour.keySet().iterator(); it.hasNext(); ) {
@@ -1186,7 +1190,7 @@ public class OperatingRound extends Round implements Observer
 		}
 	}
 
-	public List getSpecialProperties()
+	public List<SpecialPropertyI> getSpecialProperties()
 	{
 		return currentSpecialProperties;
 	}
@@ -1389,7 +1393,7 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		Portfolio oldHolder = train.getHolder();
-		CashHolder oldOwner = oldHolder.getOwner();
+		//CashHolder oldOwner = oldHolder.getOwner();
 
 		/* End of validation, start of execution */
 	    MoveSet.start();
@@ -1758,7 +1762,8 @@ public class OperatingRound extends Round implements Observer
 	 */
 	public PrivateCompanyI[] getBuyablePrivates()
 	{
-		ArrayList buyablePrivates = new ArrayList();
+		ArrayList<PrivateCompanyI> buyablePrivates 
+			= new ArrayList<PrivateCompanyI>();
 		PrivateCompanyI privCo;
 		Iterator it = Game.getCompanyManager()
 				.getAllPrivateCompanies()
@@ -1778,13 +1783,13 @@ public class OperatingRound extends Round implements Observer
 	 * buy any train from the Bank, prepare for emergency train buying.
 	 * @return List of all trains that could potentially be bought.
 	 */
-	public List getBuyableTrains() {
+	public List<BuyableTrain> getBuyableTrains() {
 	    
 	    if (operatingCompany == null) return null;
 	    
 	    int cash = operatingCompany.getCash();
 	    int cost;
-	    List buyableTrains = new ArrayList();
+	    List<BuyableTrain> buyableTrains = new ArrayList<BuyableTrain>();
 	    List trains;
 	    TrainI train;
 	    boolean hasTrains = operatingCompany.getPortfolio().getTrains().length > 0;

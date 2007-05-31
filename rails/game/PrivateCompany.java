@@ -21,11 +21,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 
 	protected int basePrice = 0;
 	protected int revenue = 0;
-	protected List specialProperties = null;
+	protected List<SpecialPropertyI> specialProperties = null;
 	protected String auctionType;
 	protected int closingPhase;
 
-	protected List blockedHexes = null;
+	protected List<MapHex> blockedHexes = null;
 
 	public PrivateCompany()
 	{
@@ -61,7 +61,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 						.split(",");
 				if (hexes != null && hexes.length > 0)
 				{
-					blockedHexes = new ArrayList();
+					blockedHexes = new ArrayList<MapHex>();
 					for (int i = 0; i < hexes.length; i++)
 					{
 						MapHex hex = MapManager.getInstance().getHex(hexes[i]);
@@ -76,7 +76,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					.item(0);
 			if (spsEl != null)
 			{
-				specialProperties = new ArrayList();
+				specialProperties = new ArrayList<SpecialPropertyI>();
 				NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
 				Element spEl;
 				String condition, className;
@@ -225,10 +225,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	{
 		if (blockedHexes != null)
 		{
-			Iterator it = blockedHexes.iterator();
-			while (it.hasNext())
+			//Iterator it = blockedHexes.iterator();
+			//while (it.hasNext())
+			for (MapHex hex : blockedHexes)
 			{
-				((MapHex) it.next()).setBlocked(false);
+				//((MapHex) it.next()).setBlocked(false);
+				hex.setBlocked(false);
 			}
 		}
 	}
@@ -268,7 +270,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		return clone;
 	}
 
-	public List getSpecialProperties()
+	public List<SpecialPropertyI> getSpecialProperties()
 	{
 		return specialProperties;
 	}

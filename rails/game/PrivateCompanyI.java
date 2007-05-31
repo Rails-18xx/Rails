@@ -2,6 +2,8 @@ package rails.game;
 
 import java.util.List;
 
+import rails.game.special.SpecialPropertyI;
+
 public interface PrivateCompanyI extends CompanyI, Certificate
 {
 
@@ -28,5 +30,5 @@ public interface PrivateCompanyI extends CompanyI, Certificate
 
 	public void payOut();
 
-	public List getSpecialProperties();
+	public List<SpecialPropertyI> getSpecialProperties();
 }

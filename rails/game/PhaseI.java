@@ -6,7 +6,7 @@ public interface PhaseI extends ConfigurableComponentI
 {
 	public boolean isTileColourAllowed(String tileColour);
 
-	public Map getTileColours();
+	public Map<String, Integer> getTileColours();
 
 	public int getIndex();
 

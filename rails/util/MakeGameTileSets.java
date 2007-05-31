@@ -37,7 +37,7 @@ public class MakeGameTileSets
 			else if (args[0].equalsIgnoreCase("ALL"))
 			{
 
-				List games = new ArrayList();
+				List<String> games = new ArrayList<String>();
 
 				File gamesDir = new File("data");
 				if (gamesDir.exists() && gamesDir.isDirectory())
@@ -77,7 +77,7 @@ public class MakeGameTileSets
 		Element inputTopElement = XmlUtils.findElementInFile(tilesFilePath,
 				"Tiles");
 
-		Map tileMap = new HashMap();
+		Map<String, Element> tileMap = new HashMap<String, Element>();
 		Element tileSpec;
 		String tileName;
 		NodeList tList = inputTopElement.getElementsByTagName("Tile");
@@ -107,7 +107,7 @@ public class MakeGameTileSets
 		if (tileSet == null)
 			return;
 		NodeList tiles = tileSet.getElementsByTagName("Tile");
-		Map tilesInSet = new HashMap();
+		Map<String, Object> tilesInSet = new HashMap<String, Object>();
 
 		// Also open and read the map tiles.
 		String mapPath = "data/" + gameName + "/Map.xml";

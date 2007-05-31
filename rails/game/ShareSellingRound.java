@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.1 2007/01/23 21:50:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.2 2007/05/31 20:49:51 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -56,9 +56,9 @@ public class ShareSellingRound extends StockRound {
 	 * Get a list of certificates that can be sold.
 	 * If none can be sold, register bankruptcy. 
 	 */
-	public List getSellableCerts () {
+	public List<TradeableCertificate> getSellableCerts () {
 	    
-	    List sellableCertificates = super.getSellableCerts();
+	    List<TradeableCertificate> sellableCertificates = super.getSellableCerts();
 	    
 	    if (sellableCertificates.isEmpty() && cashToRaise > 0) {
 	        GameManager.getInstance().registerBankruptcy();
@@ -97,8 +97,9 @@ public class ShareSellingRound extends StockRound {
 		PublicCompanyI company = null;
 		PublicCertificateI cert = null;
 		PublicCertificateI presCert = null;
-		List certsToSell = new ArrayList();
-		List certsToSwap = new ArrayList();
+		List<PublicCertificateI> certsToSell 
+			= new ArrayList<PublicCertificateI>();
+		//List certsToSwap = new ArrayList();
 		Player dumpedPlayer = null;
 		int presSharesToSell = 0;
 		int numberToSell = number;
@@ -267,7 +268,7 @@ public class ShareSellingRound extends StockRound {
 					+ dumpedPlayer.getName());
 			// First swap the certificates
 			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-			List swapped = portfolio.swapPresidentCertificate(company,
+			List<PublicCertificateI> swapped = portfolio.swapPresidentCertificate(company,
 					dumpedPortfolio);
 			for (int i = 0; i < presSharesToSell; i++)
 			{

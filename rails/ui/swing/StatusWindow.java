@@ -40,7 +40,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private PublicCompanyI company;
 	private CompanyManagerI cm;
 	private Portfolio ipo, pool;
-	private int compIndex, playerIndex;
+	private int compIndex;//, playerIndex;
 
 	/*----*/
 	private GameManager gmgr;
@@ -51,10 +51,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private List sellableCertificates;
 	private StartRound startRound;
 	private StartRoundWindow startRoundWindow;
-	private OperatingRound operatingRound;
+	//private OperatingRound operatingRound;
 	// private ORWindow orWindow;
-	private int np = GameManager.getNumberOfPlayers();
-	private int nc;
+	//private int np = GameManager.getNumberOfPlayers();
+	//private int nc;
 
 	JPanel pane = new JPanel(new BorderLayout());
 
@@ -224,10 +224,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private void init()
 	{
-		PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
-				.getAllPublicCompanies()
-				.toArray(new PublicCompanyI[0]);
-		nc = companies.length;
+		//PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
+		//		.getAllPublicCompanies()
+		//		.toArray(new PublicCompanyI[0]);
+		//nc = companies.length;
 	}
 
 	public void updateStatus()
@@ -347,7 +347,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		else if (currentRound instanceof OperatingRound)
 		{
 			passButton.setEnabled(false);
-			operatingRound = (OperatingRound) currentRound;
+			//operatingRound = (OperatingRound) currentRound;
 
 			if (currentRound != previousRound)
 			{
@@ -420,7 +420,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	 */
 	public void actionPerformed(ActionEvent actor)
 	{
-		int returnVal = 0;
+		//int returnVal = 0;
 		player = GameManager.getCurrentPlayer();
 
 		if (actor.getActionCommand().equals(BUY_CMD))
@@ -463,7 +463,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		// We're not going to actually DO anything with the selected file
 		// until the infrastructure for saved games is built
 		else if (actor.getActionCommand().equals(SAVE_CMD))
-			returnVal = new JFileChooser().showSaveDialog(this);
+			new JFileChooser().showSaveDialog(this);
 		else if (actor.getActionCommand().equals(REPORT_CMD))
 		{
 			GameUILoader.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
@@ -505,7 +505,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private void buyButtonClicked()
 	{
-		playerIndex = GameManager.getCurrentPlayerIndex();
+		//playerIndex = GameManager.getCurrentPlayerIndex();
 
 		if ((compIndex = gameStatus.getCompIndexToBuyFromIPO()) >= 0)
 		{
@@ -560,7 +560,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private void sellButtonClicked()
 	{
 		int compIndex;
-		int playerIndex = GameManager.getCurrentPlayerIndex();
+		//int playerIndex = GameManager.getCurrentPlayerIndex();
 		if ((compIndex = gameStatus.getCompIndexToSell()) >= 0)
 		{
 			company = companies[compIndex];
@@ -582,7 +582,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private void startCompany()
 	{
-		StockMarket stockMarket = (StockMarket) Game.getStockMarket();
+		//StockMarket stockMarket = (StockMarket) Game.getStockMarket();
 		List startOptions = gameStatus.getBuyOrSellOptions();
 		String[] options = new String[startOptions.size()];
 		for (int i = 0; i < options.length; i++)

@@ -157,7 +157,7 @@ public class Player implements CashHolder, Comparable
 			throw e;
 		}
 
-		Game.getPlayerManager().setBoughtStockLast(this);
+		//Game.getPlayerManager().setBoughtStockLast(this);
 		hasBoughtStockThisTurn = true;
 	}
 

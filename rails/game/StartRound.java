@@ -18,7 +18,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	protected StartPacket startPacket = null;
 	//protected Map itemMap = null;
 	protected int[] itemIndex;
-	protected List itemsToSell = null;
+	protected List<StartItem> itemsToSell = null;
 	protected State auctionItemState = new State ("AuctionItem", StartItem.class);
 	protected IntegerState numPasses = new IntegerState("StartRoundPasses");
 	protected int numPlayers;
@@ -71,7 +71,7 @@ public abstract class StartRound extends Round implements StartRoundI
 		numPlayers = GameManager.getNumberOfPlayers();
 
 		//itemMap = new HashMap();
-		itemsToSell = new ArrayList();
+		itemsToSell = new ArrayList<StartItem>();
 		itemIndex = new int[startPacket.getItems().size()];
 		int index = 0;
 		
@@ -438,7 +438,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	 */
 	//public abstract StartItem[] getBuyableItems();
 	
-	public abstract List getStartItems ();
+	public abstract List<StartItem> getStartItems ();
 	
 	////public StartItem getAuctionedItem() {
 	//	return auctionItem;
@@ -475,12 +475,12 @@ public abstract class StartRound extends Round implements StartRoundI
 	//}
 	
 	public ModelObject getBidModel (int privateIndex, int playerIndex) {
-		log.debug("Asking BidModel for private="+privateIndex+", player="+playerIndex+", itemsToSell.size="+itemsToSell.size());
-		if (itemsToSell.size() <= privateIndex) {
-			for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
-				log.debug("  Item="+((StartItem)it.next()).getName());
-			}
-		}
+		//log.debug("Asking BidModel for private="+privateIndex+", player="+playerIndex+", itemsToSell.size="+itemsToSell.size());
+		//if (itemsToSell.size() <= privateIndex) {
+		//	for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
+		//		log.debug("  Item="+((StartItem)it.next()).getName());
+		//	}
+		//}
 		return ((StartItem)itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
 	}
 	

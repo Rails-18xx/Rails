@@ -15,7 +15,7 @@ public class ClickField extends JToggleButton
 	private final Insets buttonInsets = new Insets(0, 1, 0, 1);
 	
 	/** options canbe used to hold choices to me made after clicking this button */
-	private List options = new ArrayList();
+	private List<Object> options = new ArrayList<Object>();
 
 	public ClickField(String text, String actionCommand, String toolTip,
 			ActionListener caller, ButtonGroup group)
@@ -35,7 +35,7 @@ public class ClickField extends JToggleButton
 	    options.add(o);
 	}
 	
-	public List getOptions () {
+	public List<Object> getOptions () {
 	    return options;
 	}
 	

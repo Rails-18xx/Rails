@@ -13,7 +13,7 @@ public class Phase implements PhaseI {
     
     protected int index;
     protected String name;
-    protected HashMap tileColours;
+    protected HashMap<String, Integer> tileColours;
     protected boolean privateSellingAllowed = false;
     protected boolean privatesClose = false;
     protected int numberOfOperatingRounds = 1;
@@ -34,7 +34,7 @@ public class Phase implements PhaseI {
 	    NamedNodeMap attributes;
 	    String colourList;
 	    String[] colourArray = new String[0];
-	    tileColours = new HashMap();
+	    tileColours = new HashMap<String, Integer>();
 	    
 	    // Allowed tile colours
         NodeList nl = el.getElementsByTagName("Tiles");
@@ -89,7 +89,7 @@ public class Phase implements PhaseI {
 	    return tileColours.containsKey(tileColour);
 	}
 	
-	public Map getTileColours () {
+	public Map<String, Integer> getTileColours () {
 	    return tileColours;
 	}
 	

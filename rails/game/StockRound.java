@@ -5,6 +5,7 @@ import java.util.*;
 
 import rails.game.move.DoubleMapChange;
 import rails.game.move.MoveSet;
+import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 import rails.game.state.State;
 import rails.util.LocalText;
@@ -37,9 +38,10 @@ public class StockRound extends Round
 	
 	protected int numPasses = 0;
 
-	protected Map sellPrices = new HashMap();
+	protected Map<String, StockSpaceI> sellPrices 
+		= new HashMap<String, StockSpaceI>();
 
-	protected List currentSpecialProperties = null;
+	protected List<SpecialPropertyI> currentSpecialProperties = null;
 
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
@@ -124,7 +126,8 @@ public class StockRound extends Round
 	public List getBuyableCerts()
 	{
 
-		List buyableCerts = new ArrayList();
+		List<TradeableCertificate> buyableCerts 
+			= new ArrayList<TradeableCertificate>();
 
 		List certs;
 		PublicCertificateI cert;
@@ -142,8 +145,8 @@ public class StockRound extends Round
 		{
 			String compName;
 			Map map = Bank.getIpo().getCertsPerCompanyMap();
-			int lowestStartPrice = 999;
-			int highestStartPrice = 0;
+			//int lowestStartPrice = 999;
+			//int highestStartPrice = 0;
 			int shares;
 			int[] startPrices = stockMarket.getStartPrices();
 
@@ -228,27 +231,30 @@ public class StockRound extends Round
 	 * 
 	 * @return List of sellable certificates.
 	 */
-	public List getSellableCerts()
+	public List<TradeableCertificate> getSellableCerts()
 	{
 
-		List sellableCerts = new ArrayList();
+		List<TradeableCertificate> sellableCerts 
+			= new ArrayList<TradeableCertificate>();
 
 		if (!mayCurrentPlayerSellAtAll())
 			return sellableCerts;
 
 		//List certs;
 		PublicCertificateI cert;
-		TradeableCertificate tCert;
+		//TradeableCertificate tCert;
 		PublicCompanyI comp;
 		String compName;
 		int price;
 
 		/* Get the unique Player certificates and check which ones can be sold */
-		for (Iterator it = currentPlayer.getPortfolio()
-				.getUniqueTradeableCertificates()
-				.iterator(); it.hasNext();)
+		//for (Iterator it = currentPlayer.getPortfolio()
+		//		.getUniqueTradeableCertificates()
+		//		.iterator(); it.hasNext();)
+		for (TradeableCertificate tCert : currentPlayer.getPortfolio()
+				.getUniqueTradeableCertificates())
 		{
-			tCert = (TradeableCertificate) it.next();
+			//tCert = (TradeableCertificate) it.next();
 			cert = tCert.getCert();
 			comp = cert.getCompany();
 			compName = comp.getName();
@@ -766,7 +772,8 @@ public class StockRound extends Round
 		PublicCompanyI company = null;
 		PublicCertificateI cert = null;
 		PublicCertificateI presCert = null;
-		List certsToSell = new ArrayList();
+		List<PublicCertificateI> certsToSell 
+			= new ArrayList<PublicCertificateI>();
 		//List certsToSwap = new ArrayList();
 		Player dumpedPlayer = null;
 		int presSharesToSell = 0;
@@ -935,7 +942,7 @@ public class StockRound extends Round
 					}));
 			// First swap the certificates
 			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-			List swapped = portfolio.swapPresidentCertificate(company,
+			List<PublicCertificateI> swapped = portfolio.swapPresidentCertificate(company,
 					dumpedPortfolio);
 			for (int i = 0; i < presSharesToSell; i++)
 			{
@@ -1041,7 +1048,7 @@ public class StockRound extends Round
 		{
 
 			setNextPlayer();
-			sellPrices = new HashMap();
+			sellPrices = new HashMap<String, StockSpaceI>();
 
 		}
 		
@@ -1120,7 +1127,7 @@ public class StockRound extends Round
 		return GameManager.getCurrentPlayerIndex();
 	}
 
-	public List getSpecialProperties()
+	public List<SpecialPropertyI> getSpecialProperties()
 	{
 		return currentSpecialProperties;
 	}

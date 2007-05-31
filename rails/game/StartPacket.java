@@ -18,7 +18,8 @@ public class StartPacket
 	 * A Map holding all start packets of a rails.game (yes, there can be more than
 	 * one, e.g. 18US).
 	 */
-	private static Map packets = new HashMap();
+	private static Map<String, StartPacket> packets 
+		= new HashMap<String, StartPacket>();
 
 	/**
 	 * The start packet name. Usually the default name "Ïnitial" is used.
@@ -29,7 +30,7 @@ public class StartPacket
 	/** The start round variant name */
 	private String variant;
 	/** The start items in this packet. */
-	private List items = new ArrayList();
+	private List<StartItem> items = new ArrayList<StartItem>();
 
 	/** Default name */
 	public static final String DEFAULT_NAME = "Initial";
@@ -63,8 +64,8 @@ public class StartPacket
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
 		NodeList children = element.getElementsByTagName("Item");
-		Portfolio ipo = Bank.getIpo();
-		Portfolio unavailable = Bank.getUnavailable();
+		//Portfolio ipo = Bank.getIpo();
+		//Portfolio unavailable = Bank.getUnavailable();
 
 		for (int i = 0; i < children.getLength(); i++)
 		{
@@ -126,16 +127,18 @@ public class StartPacket
 	 */
 	protected static void init()
 	{
-		Iterator it = packets.values().iterator();
-		StartPacket sp;
-		Iterator it2;
-		while (it.hasNext())
+		//Iterator it = packets.values().iterator();
+		//StartPacket sp;
+		//Iterator it2;
+		//while (it.hasNext())
+		for (StartPacket sp : packets.values())
 		{
-			sp = (StartPacket) it.next();
-			it2 = sp.items.iterator();
-			while (it2.hasNext())
+			//sp = (StartPacket) it.next();
+			//it2 = sp.items.iterator();
+			//while (it2.hasNext())
+			for (StartItem item : sp.items)
 			{
-				((StartItem) it2.next()).init();
+				item.init();
 			}
 		}
 	}
@@ -167,7 +170,7 @@ public class StartPacket
 	 * 
 	 * @return The List of start items.
 	 */
-	public List getItems()
+	public List<StartItem> getItems()
 	{
 		return items;
 	}
@@ -203,12 +206,12 @@ public class StartPacket
 	 */
 	public StartItem getFirstUnsoldItem()
 	{
-		StartItem result;
-		Iterator it = items.iterator();
-		while (it.hasNext())
+		//StartItem result;
+		//Iterator it = items.iterator();
+		//while (it.hasNext())
+		for (StartItem item : items)
 		{
-			if (!(result = (StartItem) it.next()).isSold())
-				return result;
+			if (!item.isSold()) return item;
 		}
 		return null;
 	}
@@ -220,14 +223,15 @@ public class StartPacket
 	 */
 	public List getUnsoldItems()
 	{
-		List unsoldItems = new ArrayList();
-		Iterator it = items.iterator();
-		StartItem u;
-		while (it.hasNext())
+		List<StartItem> unsoldItems = new ArrayList<StartItem>();
+		//Iterator it = items.iterator();
+		//StartItem u;
+		//while (it.hasNext())
+		for (StartItem item : items)
 		{
-			if (!(u = (StartItem) it.next()).isSold())
+			if (!(item.isSold()))
 			{
-				unsoldItems.add(u);
+				unsoldItems.add(item);
 			}
 		}
 		return unsoldItems;
@@ -240,10 +244,11 @@ public class StartPacket
 	 */
 	public boolean areAllSold()
 	{
-		Iterator it = items.iterator();
-		while (it.hasNext())
+		//Iterator it = items.iterator();
+		//while (it.hasNext())
+		for (StartItem item : items)
 		{
-			if (!((StartItem) it.next()).isSold())
+			if (!item.isSold())
 				return false;
 		}
 		return true;

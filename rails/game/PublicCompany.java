@@ -63,9 +63,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** @deprecated */
 	//protected ArrayList baseTokenedHexes;
-	protected List allBaseTokens;
-	protected List freeBaseTokens;
-	protected List laidBaseTokens;
+	protected List<BaseToken> allBaseTokens;
+	protected List<BaseToken> freeBaseTokens;
+	protected List<BaseToken> laidBaseTokens;
 	//protected boolean hasPlayedTokens = false;
 	protected int numberOfBaseTokens = 0;
 	//protected int maxCityTokens = 0;
@@ -119,7 +119,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected boolean poolPaysOut = false;
 
 	/** The certificates of this company (minimum 1) */
-	protected ArrayList certificates;
+	protected ArrayList<PublicCertificateI> certificates;
 
 	/** Privates and Certificates owned by the public company */
 	protected Portfolio portfolio;
@@ -147,7 +147,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * Only numbers deviating from 1 need be specified,
 	 * the default is always 1.
 	 */
-	protected Map numberOfTileLays = null;
+	protected Map<String, HashMap<String, Integer>> numberOfTileLays = null;
 
 	/*---- variables needed during initialisation -----*/
 	protected String startSpace = null;
@@ -185,23 +185,23 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 		this.portfolio = new Portfolio(name, this);
 		treasury = new CashModel(this);
-		lastRevenue = new MoneyModel (name+"lastRevenue");
+		lastRevenue = new MoneyModel (name+"_lastRevenue");
 		baseTokensModel = new BaseTokensModel (this);
 
-	    hasStarted = new BooleanState (name+"hasStarted", false);
-	    hasFloated = new BooleanState (name+"hasFloated", false);
+	    hasStarted = new BooleanState (name+"_hasStarted", false);
+	    hasFloated = new BooleanState (name+"_hasFloated", false);
 		
-		allBaseTokens = new ArrayList();
-		freeBaseTokens = new ArrayList();
-		laidBaseTokens = new ArrayList();
+		allBaseTokens = new ArrayList<BaseToken>();
+		freeBaseTokens = new ArrayList<BaseToken>();
+		laidBaseTokens = new ArrayList<BaseToken>();
 		
 		/* Spendings in the current operating turn */
-		privatesCostThisTurn = new MoneyModel ("PrivatesCostFor"+name);
-		tilesLaidThisTurn = new StringState ("TilesLaidBy"+name);
-		tilesCostThisTurn = new MoneyModel ("TilesCostFor"+name);
-		tokensLaidThisTurn = new StringState ("TokensLaidBy"+name);
-		tokensCostThisTurn = new MoneyModel ("TokensCostFor"+name);
-		trainsCostThisTurn = new MoneyModel ("TrainsCostFor"+name);
+		privatesCostThisTurn = new MoneyModel (name+"_spentOnPrivates");
+		tilesLaidThisTurn = new StringState (name+"_tilesLaid");
+		tilesCostThisTurn = new MoneyModel (name+"_spentOnTiles");
+		tokensLaidThisTurn = new StringState (name+"_tokensLaid");
+		tokensCostThisTurn = new MoneyModel (name+"_spentOnTokens");
+		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
 }
 
 	/**
@@ -430,18 +430,19 @@ public class PublicCompany extends Company implements PublicCompanyI
 					Integer lays = new Integer (number);
 					
 					String[] colours = colourString.split(",");
-					HashMap phaseMap;
+					HashMap<String, Integer> phaseMap;
 					/** TODO: should not be necessary to specify all phases separately */
 					String[] phases = phaseString.split(",");
 					for (int i=0; i<colours.length; i++){
-					    if (numberOfTileLays == null) numberOfTileLays = new HashMap();
-					    numberOfTileLays.put(colours[i], (phaseMap = new HashMap()));
+					    if (numberOfTileLays == null) numberOfTileLays 
+					    	= new HashMap<String, HashMap<String, Integer>>();
+					    numberOfTileLays.put(colours[i], 
+					    		(phaseMap = new HashMap<String, Integer>()));
 					    for (int k=0; k<phases.length; k++) {
 					        phaseMap.put(phases[k], lays);
 					    }
 					}
 				}
-
 			}
 
 			if (hasParPrice) GameManager.setHasAnyParPrice(true);
@@ -452,7 +453,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				int shareTotal = 0;
 				boolean gotPresident = false;
 				PublicCertificateI certificate;
-				certificates = new ArrayList(); // Throw away the per-type specification
+				certificates = new ArrayList<PublicCertificateI>(); // Throw away the per-type specification
 
 				for (int j = 0; j < typeElements.getLength(); j++)
 				{
@@ -805,7 +806,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * @return ArrayList containing the certificates (item 0 is the President's
 	 *         share).
 	 */
-	public List getCertificates()
+	public List<PublicCertificateI> getCertificates()
 	{
 		return certificates;
 	}
@@ -819,7 +820,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void setCertificates(List list)
 	{
-		certificates = new ArrayList();
+		certificates = new ArrayList<PublicCertificateI>();
 		Iterator it = list.iterator();
 		PublicCertificateI cert;
 		while (it.hasNext())
@@ -841,7 +842,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void addCertificate(PublicCertificateI certificate)
 	{
 		if (certificates == null)
-			certificates = new ArrayList();
+			certificates = new ArrayList<PublicCertificateI>();
 		certificates.add(certificate);
 		certificate.setCompany(this);
 	}
@@ -968,15 +969,16 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	    if (amount == 0) return;
 	    
-		Iterator it = certificates.iterator();
-		PublicCertificateI cert;
+		//Iterator it = certificates.iterator();
+		//PublicCertificateI cert;
 		int part;
-		CashHolder recipient;
-		Map split = new HashMap();
-		while (it.hasNext())
+		//CashHolder recipient;
+		Map<CashHolder, Integer> split = new HashMap<CashHolder, Integer>();
+		//while (it.hasNext())
+		for (PublicCertificateI cert : certificates)
 		{
-			cert = ((PublicCertificateI) it.next());
-			recipient = getBeneficiary(cert);
+			//cert = ((PublicCertificateI) it.next());
+			CashHolder recipient = getBeneficiary(cert);
 			part = amount * cert.getShares() * shareUnit / 100;
 			// For reporting, we want to add up the amounts per recipient
 			if (split.containsKey(recipient))
@@ -986,10 +988,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 			split.put(recipient, new Integer(part));
 		}
 		// Report and add the cash
-		it = split.keySet().iterator();
-		while (it.hasNext())
+		//it = split.keySet().iterator();
+		//while (it.hasNext())
+		for (CashHolder recipient : split.keySet())
 		{
-			recipient = (CashHolder) it.next();
+			//recipient = (CashHolder) it.next();
 			if (recipient instanceof Bank)
 				continue;
 			part = ((Integer) split.get(recipient)).intValue();
@@ -1039,11 +1042,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean isSoldOut()
 	{
-		Iterator it = certificates.iterator();
-		PublicCertificateI cert;
-		while (it.hasNext())
+		//Iterator it = certificates.iterator();
+		//PublicCertificateI cert;
+		//while (it.hasNext())
+		for (PublicCertificateI cert : certificates)
 		{
-			if (((PublicCertificateI) it.next()).getPortfolio().getOwner() instanceof Bank)
+			if (cert.getPortfolio().getOwner() instanceof Bank)
 			{
 				return false;
 			}
@@ -1379,7 +1383,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    if (token instanceof BaseToken 
 	            && laidBaseTokens.remove (token)) {
 	        token.setHolder(this);
-	        result = freeBaseTokens.add (token);
+	        result = freeBaseTokens.add ((BaseToken)token);
 	        this.baseTokensModel.update();
 	    }
 	    return result;
@@ -1423,7 +1427,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    boolean result = false;
 	    if (token instanceof BaseToken 
 	            && freeBaseTokens.remove (token)) {
-	        result = laidBaseTokens.add (token);
+	        result = laidBaseTokens.add ((BaseToken)token);
 	        this.baseTokensModel.update();
 	    }
 	    return result;

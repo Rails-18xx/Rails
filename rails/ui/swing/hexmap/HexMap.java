@@ -32,7 +32,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	// GUI hexes need to be recreated for each object, since scale varies.
 	protected GUIHex[][] h;
 	MapHex[][] hexArray;
-	protected static ArrayList hexes;
+	protected static ArrayList<GUIHex> hexes;
 
 	protected int scale = 2 * Scale.get();
 	protected int cx;
@@ -44,13 +44,13 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	//protected ArrayList extraTileLays = new ArrayList();
 	//protected ArrayList unconnectedTileLays = new ArrayList();
 	/** A list of all allowed tile lays */ /*(may be redundant) */
-	protected List allowedTileLays = null;
+	protected List<LayTile> allowedTileLays = null;
 	/** A Map linking tile allowed tiles to each map hex */
-	protected Map allowedTilesPerHex = null;
+	protected Map<MapHex, LayTile> allowedTilesPerHex = null;
 	/** A list of all allowed token lays */ /*(may be redundant) */
-	protected List allowedTokenLays = null;
+	protected List<LayToken> allowedTokenLays = null;
 	/** A Map linking tile allowed tiles to each map hex */
-	protected Map allowedTokensPerHex = null;
+	protected Map<MapHex, LayToken> allowedTokensPerHex = null;
 
 	public void setupHexes()
 	{
@@ -65,10 +65,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	 */
 	GUIHex getHexContainingPoint(Point2D.Double point)
 	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
+		//Iterator it = hexes.iterator();
+		//while (it.hasNext())
+		for (GUIHex hex : hexes)
 		{
-			GUIHex hex = (GUIHex) it.next();
+			//GUIHex hex = (GUIHex) it.next();
 			if (hex.contains(point))
 			{
 				return hex;
@@ -80,10 +81,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	GUIHex getHexContainingPoint(Point point)
 	{
-		Iterator it = hexes.iterator();
-		while (it.hasNext())
+		//Iterator it = hexes.iterator();
+		//while (it.hasNext())
+		for (GUIHex hex : hexes)
 		{
-			GUIHex hex = (GUIHex) it.next();
+			//GUIHex hex = (GUIHex) it.next();
 			if (hex.contains(point))
 			{
 				return hex;
@@ -179,16 +181,17 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return selectedHex != null;
 	}
 
-	public void setAllowedTileLays (List allowedTileLays) {
+	public void setAllowedTileLays (List<LayTile> allowedTileLays) {
 	    
 	    this.allowedTileLays = allowedTileLays;
-	    LayTile allowance;
+	    //LayTile allowance;
 	    MapHex location;
-	    allowedTilesPerHex = new HashMap();
+	    allowedTilesPerHex = new HashMap<MapHex, LayTile>();
 	    
 	    /* Build the per-hex allowances map */
-	    for (Iterator it = this.allowedTileLays.iterator(); it.hasNext(); ) {
-	        allowance = (LayTile) it.next();
+	   // for (Iterator it = this.allowedTileLays.iterator(); it.hasNext(); ) {
+	    for (LayTile allowance : this.allowedTileLays) {
+	        //allowance = (LayTile) it.next();
 	        location = allowance.getLocation(); 
 	        /* The location may be null, which means: anywhere.
 	         * This is intended to be a temporary fixture, to be replaced
@@ -208,16 +211,17 @@ public abstract class HexMap extends JComponent implements MouseListener,
 	    }
 	}
 
-	public void setAllowedTokenLays (List allowedTokenLays) {
+	public void setAllowedTokenLays (List<LayToken> allowedTokenLays) {
 	    
 	    this.allowedTokenLays = allowedTokenLays;
-	    LayToken allowance;
+	    //LayToken allowance;
 	    MapHex location;
-	    allowedTokensPerHex = new HashMap();
+	    allowedTokensPerHex = new HashMap<MapHex, LayToken>();
 	    
 	    /* Build the per-hex allowances map */
-	    for (Iterator it = this.allowedTokenLays.iterator(); it.hasNext(); ) {
-	        allowance = (LayToken) it.next();
+	    //for (Iterator it = this.allowedTokenLays.iterator(); it.hasNext(); ) {
+	    for (LayToken allowance : this.allowedTokenLays) {
+	        //allowance = (LayToken) it.next();
 	        location = allowance.getLocation(); 
 	        /* The location may be null, which means: anywhere.
 	         * This is intended to be a temporary fixture, to be replaced
@@ -336,9 +340,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	public static void updateOffBoardToolTips() {
 	    
-	    GUIHex hex;
-	    for (Iterator it = hexes.iterator(); it.hasNext(); ) {
-	        hex = (GUIHex)it.next();
+	   // GUIHex hex;
+	    //for (Iterator it = hexes.iterator(); it.hasNext(); ) {
+		for (GUIHex hex : hexes) {
+	        //hex = (GUIHex)it.next();
 	        if (hex.getHexModel().hasOffBoardValues()) {
 	            hex.setToolTip();
 	        }

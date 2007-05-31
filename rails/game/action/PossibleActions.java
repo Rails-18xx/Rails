@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.2 2007/05/30 20:16:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.3 2007/05/31 20:49:52 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -7,7 +7,6 @@ package rails.game.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +22,15 @@ public class PossibleActions {
     
     private static PossibleActions instance = new PossibleActions();
     
-    private Map possibleActionMap;
-    private List possibleActionList;
+    private Map<Class, List<PossibleAction>> possibleActionMap;
+    private List<PossibleAction> possibleActionList;
 
     /**
      * This class can only be instantiated locally.
      */
     private PossibleActions() {
-        possibleActionMap = new HashMap();
-        possibleActionList = new ArrayList();
+        possibleActionMap = new HashMap<Class, List<PossibleAction>>();
+        possibleActionList = new ArrayList<PossibleAction>();
     }
     
     public static PossibleActions getInstance() {
@@ -46,23 +45,23 @@ public class PossibleActions {
     public void add (PossibleAction action) {
         Class clazz = action.getClass();
         if (!possibleActionMap.containsKey(clazz)) {
-            possibleActionMap.put(clazz, new ArrayList());
+            possibleActionMap.put(clazz, new ArrayList<PossibleAction>());
         }
-        ((List)possibleActionMap.get(clazz)).add (action);
+        ((List<PossibleAction>)possibleActionMap.get(clazz)).add (action);
         possibleActionList.add(action);
     }
     
-    public void addAll (List actions) {
-        Object object;
-        PossibleAction action;
-        for (Iterator it = actions.iterator(); it.hasNext(); ) {
-            if ((object = it.next()) instanceof PossibleAction) {
-                add ((PossibleAction)object);
-            } else {
+    public void addAll (List<? extends PossibleAction> actions) {
+        //Object object;
+        //PossibleAction action;
+        for (PossibleAction action : actions) {
+            //if ((object = it.next()) instanceof PossibleAction) {
+                add (action);
+            //} else {
                 // Error!
-            }
+            //}
        }
-        possibleActionList.add(actions);
+       // possibleActionList.addAll(actions);
     }
     
     public boolean contains (Class clazz) {
@@ -71,7 +70,7 @@ public class PossibleActions {
     }
     
     public List getType (Class clazz) {
-        return (List)possibleActionMap.get(clazz);
+        return possibleActionMap.get(clazz);
     }
     
     public Map getMap () {

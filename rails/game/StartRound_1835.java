@@ -178,11 +178,11 @@ public class StartRound_1835 extends StartRound
 		return true;
 	}
 	
-	public List getStartItems()
+	public List<StartItem> getStartItems()
 	{
 		Player currentPlayer = GameManager.getCurrentPlayer();
 		int cashToSpend = currentPlayer.getCash();
-		List startItems = startPacket.getItems();
+		List<StartItem> startItems = startPacket.getItems();
 		StartItem item;
 		int row;
 		int minRow = 0;

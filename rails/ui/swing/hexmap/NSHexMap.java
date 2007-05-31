@@ -23,7 +23,7 @@ public class NSHexMap extends HexMap
 
 	protected void setupHexesGUI()
 	{
-		hexes = new ArrayList();
+		hexes = new ArrayList<GUIHex>();
 
 		scale = Scale.get();
 

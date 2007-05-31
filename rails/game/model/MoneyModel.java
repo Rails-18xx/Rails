@@ -12,13 +12,26 @@ public class MoneyModel extends IntegerState
 
 	public MoneyModel(String name)
 	{
-	    super (name);
-	    initialised = new BooleanState (name+"Initialised", false);
+	    super (name, 0);
+	}
+	
+	public MoneyModel (String name, int value) {
+		
+		super (name, value);
 	}
 	
 	public void set (int value) {
+		
 	    super.set (value);
-	    if (!initialised.booleanValue()) initialised.set(true);
+	    
+    	/* Set initialisation state only if it matters */ 
+	    if (option == SUPPRESS_INITIAL_ZERO 
+	    		&& initialised == null) {
+		    initialised = new BooleanState (name+"_initialised", false);
+	    }
+	    if (initialised != null && !initialised.booleanValue()) {
+	    	initialised.set(true);
+	    }
 	}
 
 	public String getText()
@@ -26,8 +39,9 @@ public class MoneyModel extends IntegerState
 	    int amount = intValue();
 	    if (amount == 0 
 	            && (option == SUPPRESS_ZERO
-	            	|| !initialised.booleanValue() 
-	            		&& option == SUPPRESS_INITIAL_ZERO)) {
+	            	|| option == SUPPRESS_INITIAL_ZERO
+	            		&& initialised != null 
+	            		&& !initialised.booleanValue())) {
 	        return "";
 	    } else {
 	        return Bank.format(amount);

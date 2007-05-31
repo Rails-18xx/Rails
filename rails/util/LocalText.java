@@ -107,7 +107,7 @@ public class LocalText extends ResourceBundle
 
 	}
 
-	public Enumeration getKeys()
+	public Enumeration<String> getKeys()
 	{
 		// TODO Auto-generated method stub
 		return null;

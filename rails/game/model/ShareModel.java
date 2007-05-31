@@ -10,14 +10,14 @@ public class ShareModel extends ModelObject
 	private int share;
 	private Portfolio portfolio;
 	private PublicCompanyI company;
-	private boolean markPresidency = false;
+	//private boolean markPresidency = false;
 
 	public ShareModel(Portfolio portfolio, PublicCompanyI company)
 	{
 		this.portfolio = portfolio;
 		this.company = company;
 		this.share = 0;
-		this.markPresidency = (portfolio.getOwner() instanceof Player);
+		//this.markPresidency = (portfolio.getOwner() instanceof Player);
 	}
 
 	public void setShare(int share)

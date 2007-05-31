@@ -153,7 +153,8 @@ public class ComponentManager
 	}
 
 	/** Remember our singleton instance. */
-	private Map mComponentMap = new HashMap();
+	private Map<String, ConfigurableComponentI> mComponentMap 
+		= new HashMap<String, ConfigurableComponentI>();
 
 	/** Remember our singleton instance. */
 	private static ComponentManager instance;

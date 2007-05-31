@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.3 2007/05/30 20:16:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.4 2007/05/31 20:49:52 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -21,10 +21,10 @@ import rails.util.LocalText;
  */
 public class MoveSet {
 
-    private List moves = new ArrayList();
+    private List<Move> moves = new ArrayList<Move>();
     
     private static MoveSet currentAction = null;
-    private static List actionStack = new ArrayList();
+    private static List<MoveSet> actionStack = new ArrayList<MoveSet>();
     private static int lastIndex = -1;
     
 	protected static Logger log = Logger.getLogger(MoveSet.class.getPackage().getName());
@@ -133,7 +133,7 @@ public class MoveSet {
      */
     public static boolean clear () {
         if (currentAction != null) currentAction.execute();
-        actionStack = new ArrayList();
+        actionStack = new ArrayList<MoveSet>();
         currentAction = null;
         lastIndex = -1;
         return true;

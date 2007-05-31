@@ -27,8 +27,10 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	protected boolean endsGame = false; // For 1841 and other games
 	protected boolean start = false; // Company may start here
 	protected StockSpaceTypeI type = null;
-	protected ArrayList tokens = new ArrayList();
-	protected ArrayList fixedStartPrices = new ArrayList();
+	protected ArrayList<PublicCompanyI> tokens 
+		= new ArrayList<PublicCompanyI>();
+	protected ArrayList<PublicCompanyI> fixedStartPrices 
+		= new ArrayList<PublicCompanyI>();
 
 	protected static Logger log = Logger.getLogger(StockSpace.class.getPackage().getName());
 
@@ -92,7 +94,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	/**
 	 * @return
 	 */
-	public List getTokens()
+	public List<PublicCompanyI> getTokens()
 	{
 		return tokens;
 	}
@@ -105,15 +107,18 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public int getStackPosition(PublicCompanyI company)
 	{
-		int pos = -1;
-		Iterator it = tokens.iterator();
-		while (it.hasNext())
-		{
-			pos++;
-			if ((PublicCompanyI) it.next() == company)
-				return pos;
-		}
-		return -1;
+		return tokens.indexOf(company);
+		//int pos = -1;
+		//Iterator it = tokens.iterator();
+		//while (it.hasNext())
+		//for (PublicCompanyI comp : tokens)
+		//{
+			//pos++;
+			//if ((PublicCompanyI) it.next() == company)
+			//	return pos;
+			//if (comp == company) break;
+		//}
+		//return pos;
 	}
 
 	/*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
@@ -122,7 +127,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 		fixedStartPrices.add(company);
 	}
 
-	public List getFixedStartPrices()
+	public List<PublicCompanyI> getFixedStartPrices()
 	{
 		return fixedStartPrices;
 	}

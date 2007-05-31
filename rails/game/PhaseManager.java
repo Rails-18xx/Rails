@@ -15,8 +15,8 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 {
 
 	protected static PhaseManagerI instance = null;
-	protected static ArrayList phaseList;
-	protected static HashMap phaseMap;
+	protected static ArrayList<Phase> phaseList;
+	protected static HashMap<String, Phase> phaseMap;
 
 	protected static int numberOfPhases = 0;
 	//protected static int currentIndex = 0;
@@ -42,8 +42,8 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 		 */
 		NodeList phases = el.getElementsByTagName("Phase");
 		numberOfPhases = phases.getLength();
-		phaseList = new ArrayList();
-		phaseMap = new HashMap();
+		phaseList = new ArrayList<Phase>();
+		phaseMap = new HashMap<String, Phase>();
 		Phase phase;
 		Element pe;
 		String name;

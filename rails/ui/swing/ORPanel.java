@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.List;
-import java.util.regex.*;
 
 public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
@@ -40,7 +39,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private static final String PAYOUT_CMD = "Payout";
     private static final String SET_REVENUE_CMD = "SetRevenue";
     private static final String LAY_TILE_CMD = "LayTile";
-    private static final String LAY_TOKEN_CMD = "LayToken";
+    //private static final String LAY_TOKEN_CMD = "LayToken";
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
@@ -98,7 +97,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JButton undoButton;
     private JButton redoButton;
 
-    private int np = 0; // Number of players
+    //private int np = 0; // Number of players
 
     private int nc = 0; // Number of companies
 
@@ -110,13 +109,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private OperatingRound oRound;
 
-    private Player p;
+    //private Player p;
 
     private PublicCompanyI c;
 
     private JComponent f;
 
-    private List observers = new ArrayList();
+    private List<JComponent> observers = new ArrayList<JComponent>();
 
     // Current state
     private int playerIndex = -1;
@@ -127,12 +126,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private String orCompName = "";
 
-    private Pattern buyTrainPattern = Pattern
-            .compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
+    //private Pattern buyTrainPattern = Pattern
+    //        .compile("(.+)-train from (\\S+)( \\(exchanged\\))?.*");
 
-    private int[] newTrainTotalCost;
+    //private int[] newTrainTotalCost;
 
-    private List trainsBought;
+    private List<TrainI> trainsBought;
     
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
@@ -154,7 +153,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         gbc = new GridBagConstraints();
 
         players = Game.getPlayerManager().getPlayersArray();
-        np = GameManager.getNumberOfPlayers();
+        //np = GameManager.getNumberOfPlayers();
 
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -505,6 +504,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 	                GameUILoader.orWindow.enableTileLaying(true);
 	                //GameUILoader.getMapPanel().setSpecialTileLays(
 	                //        (ArrayList) round.getSpecialProperties()); //??
+	                //List<LayTile> allowedTileLays = possibleActions.getType(LayTile.class);
 	                GameUILoader.getMapPanel().setAllowedTileLays (possibleActions.getType(LayTile.class));
 	                //GameUILoader.orWindow.updateMessage(); //??
                }
@@ -817,13 +817,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 private void buyTrain()
 	{
 
-        List prompts = new ArrayList();
-        Map promptToTrain = new HashMap();
+        List<String> prompts = new ArrayList<String>();
+        Map<String, Object> promptToTrain = new HashMap<String, Object>();
         TrainI train;
-        int i;
+        //int i;
 
         BuyableTrain bTrain;
-        Portfolio holder;
+        //Portfolio holder;
         String prompt;
         StringBuffer b;
         int cost;
@@ -1017,8 +1017,10 @@ private void buyTrain()
 
         //Iterator it = Game.getCompanyManager().getAllPrivateCompanies()
         //        .iterator();
-        List privatesForSale = new ArrayList();
-        Map privatesForSaleMap = new HashMap();
+        List<String> privatesForSale 
+        	= new ArrayList<String>();
+        Map<String, BuyPrivate> privatesForSaleMap 
+        	= new HashMap<String, BuyPrivate>();
         String privName;
         //PrivateCompanyI priv;
         int minPrice = 0, maxPrice = 0;
@@ -1125,7 +1127,7 @@ private void buyTrain()
             this.playerIndex = companies[orCompIndex].getPresident().getIndex();
         }
 
-        trainsBought = new ArrayList();
+        trainsBought = new ArrayList<TrainI>();
     }
 
     public String getORPlayer() {

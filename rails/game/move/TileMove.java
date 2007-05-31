@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.3 2007/05/20 20:10:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.4 2007/05/31 20:49:52 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -18,13 +18,13 @@ public class TileMove extends Move {
     MapHex hex;
     TileI oldTile;
     int oldTileOrientation;
-    List oldStations;
+    List<Station> oldStations;
     TileI newTile;
     int newTileOrientation;
-    List newStations;
+    List<Station> newStations;
     
-    public TileMove (MapHex hex, TileI oldTile, int oldTileOrientation, List oldStations,
-            TileI newTile, int newTileOrientation, List newStations) {
+    public TileMove (MapHex hex, TileI oldTile, int oldTileOrientation, List<Station> oldStations,
+            TileI newTile, int newTileOrientation, List<Station> newStations) {
         
         this.hex = hex;
         this.oldTile = oldTile;
@@ -41,7 +41,7 @@ public class TileMove extends Move {
     public boolean execute() {
 
         hex.replaceTile (oldTile, newTile, newTileOrientation, newStations);
-        log.debug ("-Done: "+toString());
+        //log.debug ("-Done: "+toString());
         return true;
     }
 

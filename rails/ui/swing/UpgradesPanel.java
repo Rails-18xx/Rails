@@ -25,11 +25,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	private final String INIT_CANCEL_TEXT = "NoTile";
 	private final String INIT_DONE_TEXT = "LayTile";
 	
-	private boolean cancelEnabled = false;
-	private boolean doneEnabled = false;
-	private boolean tileMode = false;
+	//private boolean cancelEnabled = false;
+	//private boolean doneEnabled = false;
+	//private boolean tileMode = false;
 	private boolean tokenMode = false;
-	private boolean lastEnabled = false;
+	//private boolean lastEnabled = false;
 
 	private JButton cancelButton = new JButton(LocalText.getText(INIT_CANCEL_TEXT));
 	private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
@@ -137,7 +137,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		upgradePanel.add(doneButton);
 		upgradePanel.add(cancelButton);
 
-		lastEnabled = doneEnabled;
+		//lastEnabled = doneEnabled;
 	}
 
 	private BufferedImage getHexImage(int tileId)
@@ -167,7 +167,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void setTileMode(boolean tileMode)
 	{
-		this.tileMode = tileMode;
+		//this.tileMode = tileMode;
 		setUpgrades(null);
 	}
 
@@ -189,12 +189,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void setDoneEnabled(boolean enabled)
 	{
-		doneButton.setEnabled(doneEnabled = enabled);
+		doneButton.setEnabled(enabled);
 	}
 	
 	public void setCancelEnabled(boolean enabled)
 	{
-		cancelButton.setEnabled(cancelEnabled = enabled);
+		cancelButton.setEnabled(enabled);
 		//new Exception ("Cancel "+(cancelEnabled?"EN":"DIS")+"ABLED").printStackTrace(System.out);
 	}
 
@@ -202,7 +202,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	{
 
 	    if (hexMap == null) hexMap = GameUILoader.getMapPanel().getMap();
-		String command = e.getActionCommand();
+		//String command = e.getActionCommand();
 		Object source = e.getSource();
 
 		if (source == cancelButton /*command.equals("Cancel")*/)
