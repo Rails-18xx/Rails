@@ -6,6 +6,8 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
+import rails.game.action.LayTile;
+import rails.game.action.LayToken;
 import rails.ui.swing.hexmap.*;
 
 import java.awt.*;
@@ -61,11 +63,11 @@ public class MapPanel extends JPanel
 		map.setSpecials(specials);
 	}
 	*/
-	public void setAllowedTileLays (List allowedTileLays) {
+	public void setAllowedTileLays (List<LayTile> allowedTileLays) {
 	    map.setAllowedTileLays (allowedTileLays);
 	}
 
-	public void setAllowedTokenLays (List allowedTokenLays) {
+	public void setAllowedTokenLays (List<LayToken> allowedTokenLays) {
 	    map.setAllowedTokenLays (allowedTokenLays);
 	}
 

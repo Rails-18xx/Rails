@@ -7,7 +7,7 @@ public class PlayerManager
 
 	private static Player[] players;
 	private ArrayList playerNames;
-	private Player boughtStockLast;
+	//private Player boughtStockLast;
 
 	public static int getNumberOfPlayers()
 	{
@@ -36,10 +36,12 @@ public class PlayerManager
 	/**
 	 * @return Returns the playerNames.
 	 */
+	/*
 	public ArrayList getPlayerNames()
 	{
 		return playerNames;
 	}
+	*/
 
 	/**
 	 * @return Returns an array of all players.
@@ -49,6 +51,7 @@ public class PlayerManager
 		return players;
 	}
 
+	/*
 	public ArrayList getPlayersArrayList()
 	{
 		ArrayList playersList = new ArrayList();
@@ -60,10 +63,11 @@ public class PlayerManager
 
 		return playersList;
 	}
+	*/
 
 	public Player getPlayerByName(String name)
 	{
-		Player player;
+		//Player player;
 
 		for (int i = 0; i < players.length; i++)
 		{
@@ -78,17 +82,21 @@ public class PlayerManager
 	/**
 	 * @return Returns the boughtStockLast.
 	 */
+	/*
 	public Player getBoughtStockLast()
 	{
 		return boughtStockLast;
 	}
+	/*
 
 	/**
 	 * @param boughtStockLast
 	 *            The boughtStockLast to set.
 	 */
+	/*
 	public void setBoughtStockLast(Player boughtStockLast)
 	{
 		this.boughtStockLast = boughtStockLast;
 	}
+	*/
 }

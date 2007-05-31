@@ -2,6 +2,8 @@ package rails.game;
 
 import java.util.List;
 
+import rails.game.special.SpecialPropertyI;
+
 /**
  * A common interface to the various "Rounds". A Round is defined as any process
  * in an 18xx rails.game where different players have "turns".
@@ -18,6 +20,6 @@ public interface RoundI
 	
 	public String getHelp();
 	
-	public List getSpecialProperties();
+	public List<SpecialPropertyI> getSpecialProperties();
 	
 }

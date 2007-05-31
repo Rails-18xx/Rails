@@ -91,13 +91,13 @@ public class MapHex extends ModelObject
 	 */
 	protected String impassable = null;
 
-	protected List stations;
+	protected List<Station> stations;
 	//protected boolean hasTokens;
 
 	protected boolean isBlocked = false;
 	
-	protected Map homes;
-	protected List destinations;
+	protected Map<PublicCompanyI, Station> homes;
+	protected List<PublicCompanyI> destinations;
 
 	protected static Logger log = Logger.getLogger(MapHex.class.getPackage().getName());
 
@@ -208,7 +208,7 @@ public class MapHex extends ModelObject
 
 		// We need completely new objects, not just references to the Tile's
 		// stations.
-		stations = new ArrayList();
+		stations = new ArrayList<Station>();
 		for (int i = 0; i < currentTile.getStations().size(); i++)
 		{
 			// sid, type, value, slots
@@ -450,15 +450,17 @@ public class MapHex extends ModelObject
 	    /* Create a new set of stations, each with the tokens that will end up there,
 	     * and save both the old and the new set.
 	     */
-		List newTileStations = (ArrayList) newTile.getStations();
-		List newHexStations = new ArrayList();
+		List<Station> newTileStations = (ArrayList<Station>) newTile.getStations();
+		List<Station> newHexStations = new ArrayList<Station>();
 	    
 		Station oldStation, newStation;
 	    TokenI token;
 	    
 	    /* Clone the stations of the new tile. */
-	    for (int i=0; i<newTileStations.size(); i++) {
-	        newStation = new Station (this, (Station) newTileStations.get(i));
+	    //for (int i=0; i<newTileStations.size(); i++) {
+	    for (Station station : newTileStations) {
+	        //newStation = new Station (this, (Station) newTileStations.get(i));
+	    	newStation = new Station (this, station);
 		    newHexStations.add (newStation);
 	    }
 	    
@@ -499,7 +501,7 @@ public class MapHex extends ModelObject
 	 * @param newTile The new tile to be laid on this hex.
 	 * @param newTileOrientation The orientation of the new tile (0-5).*/
 	public void replaceTile (TileI oldTile, TileI newTile, int newTileOrientation,
-	        List newStations) {
+	        List<Station> newStations) {
 	    
 	    if (oldTile != currentTile) {
 	        new Exception ("ERROR! Hex "+name+" wants to replace tile #"+oldTile.getName()
@@ -617,7 +619,7 @@ public class MapHex extends ModelObject
 	{
 		if (stations.size() > 1)
 		{
-			ArrayList tokens = new ArrayList();
+			ArrayList<TokenI> tokens = new ArrayList<TokenI>();
 			for (int i = 0; i < stations.size(); i++)
 			{
 				tokens.addAll(getTokens(i));
@@ -628,25 +630,25 @@ public class MapHex extends ModelObject
 			return getTokens(0);
 	}
 
-	public List getTokens(int stationNumber)
+	public List<TokenI> getTokens(int stationNumber)
 	{
 		if (stations.size() > 0)
 		{
-			return (ArrayList) ((Station) stations.get(stationNumber)).getTokens();
+			return (ArrayList<TokenI>) ((Station) stations.get(stationNumber)).getTokens();
 		}
 		else
 		{
-			return new ArrayList();
+			return new ArrayList<TokenI>();
 		}
 	}
 
-	public List getStations()
+	public List<Station> getStations()
 	{
 		return stations;
 	}
 	
 	public void addHome (PublicCompanyI company, Station station) {
-	    if (homes == null) homes = new HashMap();
+	    if (homes == null) homes = new HashMap<PublicCompanyI, Station>();
 	    homes.put (company, station);
 	}
 	
@@ -655,7 +657,7 @@ public class MapHex extends ModelObject
 	}
 	
 	public void addDestination (PublicCompanyI company) {
-	    if (destinations == null) destinations = new ArrayList();
+	    if (destinations == null) destinations = new ArrayList<PublicCompanyI>();
 	    destinations.add (company);
 	}
 	

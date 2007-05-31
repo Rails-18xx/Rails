@@ -21,7 +21,7 @@ public class MapManager implements ConfigurableComponentI
 	protected static boolean letterAHasEvenNumbers;
 
 	protected static MapHex[][] hexes;
-	protected Map mHexes = new HashMap();
+	protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
 
 	protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
 	protected static final int[] yXEvenDeltaNS = new int[] { +1, 0, -1, -1, -1,
@@ -106,10 +106,12 @@ public class MapManager implements ConfigurableComponentI
 		}
 
 		hexes = new MapHex[1 + maxX][1 + maxY];
-		Iterator it = mHexes.keySet().iterator();
-		while (it.hasNext())
+		//Iterator it = mHexes.keySet().iterator();
+		//while (it.hasNext())
+		for (String hexName : mHexes.keySet())
 		{
-			hex = (MapHex) mHexes.get((String) it.next());
+			//hex = (MapHex) mHexes.get((String) it.next());
+			hex = (MapHex) mHexes.get(hexName);
 			hexes[hex.getX()][hex.getY()] = hex;
 		}
 
@@ -218,7 +220,7 @@ public class MapManager implements ConfigurableComponentI
 	{
 	    PublicCompanyI company;
 	    MapHex hex;
-	    Station station;
+	    //Station station;
 	    
 	    for (Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
 	    		it.hasNext(); ) {

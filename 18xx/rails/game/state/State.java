@@ -2,8 +2,6 @@ package rails.game.state;
 
 import org.apache.log4j.Logger;
 
-import rails.game.GameManager;
-import rails.game.Player;
 import rails.game.model.ModelObject;
 import rails.game.move.StateChange;
 import rails.util.Util;
@@ -62,7 +60,7 @@ public class State extends ModelObject implements StateI {
 	/** Must only be called by the Move execute() and undo() methods */
 	public void setState(Object object) {
 		this.object = object;
-		log.debug (getClassName() + " "+name+" set to "+object);
+		//log.debug (getClassName() + " "+name+" set to "+object);
 		notifyViewObjects();
 	}
 	

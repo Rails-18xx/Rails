@@ -1,7 +1,5 @@
 package rails.game;
 
-import java.util.*;
-
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
@@ -23,7 +21,7 @@ public class StartItem
 	protected String name = null;
 	protected Certificate primary = null;
 	protected Certificate secondary = null;
-	protected MoneyModel basePrice = new MoneyModel(name+"_basePrice");
+	protected MoneyModel basePrice;
 	protected int row = 0;
 	protected int column = 0;
 	protected int index = nextIndex++;
@@ -34,7 +32,7 @@ public class StartItem
 	protected static Player[] players;
 	protected static int numberOfPlayers;
 	protected MoneyModel[] bids;
-	protected MoneyModel minimumBid = new MoneyModel(name+"_minimumBid"); 
+	protected MoneyModel minimumBid;
 	//protected int buyPrice = 0;
 	
 	// Status info for the UI ==> MOVED TO BuyOrBidStartItem
@@ -87,11 +85,11 @@ public class StartItem
 	{
 		this.name = name;
 		this.type = type;
+		this.basePrice = new MoneyModel(name+"_basePrice");
 		this.basePrice.set (basePrice);
 		this.president = president;
 		status = new IntegerState (name+"_status");
-
-		
+		minimumBid = new MoneyModel(name+"_minimumBid");		
 	}
 
 	/**
@@ -123,7 +121,7 @@ public class StartItem
 		}
 		bids = new MoneyModel [numberOfPlayers];
 		for (int i=0; i<numberOfPlayers; i++) {
-			bids[i] = new MoneyModel(name+"bidBy"+players[i].getName());
+			bids[i] = new MoneyModel(name+"_bidBy_"+players[i].getName());
 			
 		}
 		minimumBid.set(basePrice.intValue()+5);

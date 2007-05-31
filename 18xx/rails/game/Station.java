@@ -36,7 +36,7 @@ public class Station implements TokenHolderI, Cloneable
 	private int value;
 	private int baseSlots;
 	private Track[] tracks;
-	private ArrayList tokens;
+	private ArrayList<TokenI> tokens;
 	private StationHolderI holder; // Tile or MapHex
 	
 	public static final String CITY = "City";
@@ -69,7 +69,7 @@ public class Station implements TokenHolderI, Cloneable
 		this.value = value;
 		this.baseSlots = slots;
 
-		tokens = new ArrayList();
+		tokens = new ArrayList<TokenI>();
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class Station implements TokenHolderI, Cloneable
 	    }
 	}
 
-	public List getTokens()
+	public List<TokenI> getTokens()
 	{
 		return tokens;
 	}
@@ -217,7 +217,7 @@ public class Station implements TokenHolderI, Cloneable
 		return false;
 	}
 
-	public void setTokens(ArrayList tokens)
+	public void setTokens(ArrayList<TokenI> tokens)
 	{
 		this.tokens = tokens;
 	}

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.4 2007/05/21 22:06:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.5 2007/05/31 20:49:51 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -18,7 +18,7 @@ import rails.game.model.TrainsModel;
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
 import rails.game.move.TrainMove;
-import rails.game.special.SpecialProperty;
+//import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -31,26 +31,33 @@ public class Portfolio
 {
 
 	/** Owned private companies */
-	protected List privateCompanies = new ArrayList();
-	protected PrivatesModel privatesOwnedModel = new PrivatesModel(privateCompanies);
+	protected List<PrivateCompanyI> privateCompanies 
+		= new ArrayList<PrivateCompanyI>();
+	protected PrivatesModel privatesOwnedModel 
+		= new PrivatesModel(privateCompanies);
 
 	/** Owned public company certificates */
-	protected List certificates = new ArrayList();
+	protected List<PublicCertificateI> certificates 
+		= new ArrayList<PublicCertificateI>();
 
 	/** Owned public company certificates, organised in a HashMap per company */
-	protected Map certPerCompany = new HashMap();
-	protected Map shareModelPerCompany = new HashMap();
+	protected Map<String, List<PublicCertificateI>> certPerCompany 
+		= new HashMap<String, List<PublicCertificateI>>();
+	protected Map<PublicCompanyI, ShareModel> shareModelPerCompany 
+		= new HashMap<PublicCompanyI, ShareModel>();
 
 	/** Owned trains */
-	protected List trains = new ArrayList();
-	protected Map trainsPerType = new HashMap();
+	protected List<TrainI> trains = new ArrayList<TrainI>();
+	protected Map<TrainTypeI, List<TrainI>> trainsPerType 
+		= new HashMap<TrainTypeI, List<TrainI>>();
 	protected TrainsModel trainsModel = new TrainsModel(this);
 
 	/**
 	 * Special properties. It is easier to maintain a map of these that to have
 	 * to search through the privates on each and every action.
 	 */
-	protected List specialProperties = new ArrayList();
+	protected List<SpecialPropertyI> specialProperties 
+		= new ArrayList<SpecialPropertyI>();
 
 	/** Who owns the portfolio */
 	protected CashHolder owner;
@@ -210,12 +217,12 @@ public class Portfolio
 		String companyName = certificate.getCompany().getName();
 		if (!certPerCompany.containsKey(companyName))
 		{
-			certPerCompany.put(companyName, new ArrayList());
+			certPerCompany.put(companyName, new ArrayList<PublicCertificateI>());
 		}
 		if (atTop)
-		    ((ArrayList) certPerCompany.get(companyName)).add(0, certificate);
+		    (certPerCompany.get(companyName)).add(0, certificate);
 		else
-		    ((ArrayList) certPerCompany.get(companyName)).add(certificate);
+		    (certPerCompany.get(companyName)).add(certificate);
 		certificate.setPortfolio(this);
 
 		getShareModel(certificate.getCompany()).addShare(certificate.getShare());
@@ -261,7 +268,7 @@ public class Portfolio
 		return privateCompanies;
 	}
 
-	public List getCertificates()
+	public List<PublicCertificateI> getCertificates()
 	{
 		return certificates;
 	}
@@ -271,11 +278,12 @@ public class Portfolio
 	{
 
 		int number = privateCompanies.size(); // May not hold for all games
-		PublicCertificateI cert;
+		//PublicCertificateI cert;
 		PublicCompanyI comp;
-		for (Iterator it = certificates.iterator(); it.hasNext();)
+		//for (Iterator it = certificates.iterator(); it.hasNext();)
+		for (PublicCertificateI cert : certificates)
 		{
-			cert = (PublicCertificateI) it.next();
+			//cert = (PublicCertificateI) it.next();
 			comp = cert.getCompany();
 			if (!comp.hasFloated()
 					|| !comp.hasStockPrice()
@@ -311,17 +319,20 @@ public class Portfolio
 	 * 
 	 * @return List of unique TradeableCertificate objects.
 	 */
-	public List getUniqueTradeableCertificates()
+	public List<TradeableCertificate> getUniqueTradeableCertificates()
 	{
 
-		List uniqueCerts = new ArrayList();
-		PublicCertificateI cert, cert2, prevCert = null;
+		List<TradeableCertificate> uniqueCerts 
+			= new ArrayList<TradeableCertificate>();
+		PublicCertificateI /*cert,*/ cert2, prevCert = null;
 		TradeableCertificate tCert2;
 		Iterator it2;
 
-		outer: for (Iterator it = certificates.iterator(); it.hasNext();)
+		outer: 
+		//for (Iterator it = certificates.iterator(); it.hasNext();)
+		for (PublicCertificateI cert : certificates)
 		{
-			cert = (PublicCertificateI) it.next();
+			//cert = (PublicCertificateI) it.next();
 			if (cert.equals(prevCert))
 				continue;
 			prevCert = cert;
@@ -442,10 +453,12 @@ public class Portfolio
 	/**
 	 * @return
 	 */
-	public HashMap getCertPerCompany()
+	/*
+	public Map<String, List<PublicCertificateI>> getCertPerCompany()
 	{
-		return (HashMap) certPerCompany;
+		return certPerCompany;
 	}
+	/*
 
 	/**
 	 * @return
@@ -514,10 +527,12 @@ public class Portfolio
 	 *            The new President's portfolio.
 	 * @return The common certificates returned.
 	 */
-	public List swapPresidentCertificate(PublicCompanyI company, Portfolio other)
+	public List<PublicCertificateI> swapPresidentCertificate
+			(PublicCompanyI company, Portfolio other)
 	{
 
-		List swapped = new ArrayList();
+		List<PublicCertificateI> swapped 
+			= new ArrayList<PublicCertificateI>();
 		PublicCertificateI swapCert;
 
 		// Find the President's certificate
@@ -564,8 +579,8 @@ public class Portfolio
 		trains.add(train);
 		TrainTypeI type = train.getType();
 		if (trainsPerType.get(type) == null)
-			trainsPerType.put(type, new ArrayList());
-		((List) trainsPerType.get(train.getType())).add(train);
+			trainsPerType.put(type, new ArrayList<TrainI>());
+		((List<TrainI>) trainsPerType.get(train.getType())).add(train);
 		train.setHolder(this);
 		trainsModel.update();
 	}
@@ -573,7 +588,7 @@ public class Portfolio
 	public void removeTrain(TrainI train)
 	{
 		trains.remove(train);
-		TrainTypeI type = train.getType();
+		//TrainTypeI type = train.getType();
 		((List) trainsPerType.get(train.getType())).remove(train);
 		train.setHolder(null);
 		trainsModel.update();
@@ -618,7 +633,7 @@ public class Portfolio
 	public TrainI[] getTrainsPerType(TrainTypeI type)
 	{
 
-		List trainsFound = new ArrayList();
+		List<TrainI> trainsFound = new ArrayList<TrainI>();
 		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
 			TrainI train = (TrainI) it.next();
@@ -635,11 +650,12 @@ public class Portfolio
 	}
 
 	/** Returns one train of any type held */
-	public List getUniqueTrains()
+	public List<TrainI> getUniqueTrains()
 	{
 
-		List trainsFound = new ArrayList();
-		Map trainTypesFound = new HashMap();
+		List<TrainI> trainsFound = new ArrayList<TrainI>();
+		Map<TrainTypeI, Object> trainTypesFound 
+			= new HashMap<TrainTypeI, Object>();
 		for (Iterator it = trains.iterator(); it.hasNext();)
 		{
 			TrainI train = (TrainI) it.next();
@@ -677,23 +693,25 @@ public class Portfolio
 		{
 		    log.debug ("Updating special properties of "+getName());
 			specialProperties.clear();
-			Iterator it = privateCompanies.iterator();
-			Iterator it2;
-			PrivateCompanyI priv;
-			List sps;
-			SpecialPropertyI sp;
-			Class clazz;
-			List list;
-			while (it.hasNext())
+			//Iterator it = privateCompanies.iterator();
+			//Iterator it2;
+			//PrivateCompanyI priv;
+			List<SpecialPropertyI> sps;
+			//SpecialPropertyI sp;
+			//Class clazz;
+			//List list;
+			//while (it.hasNext())
+			for (PrivateCompanyI priv : privateCompanies)
 			{
-				priv = (PrivateCompanyI) it.next();
+				//priv = (PrivateCompanyI) it.next();
 				sps = priv.getSpecialProperties();
 				if (sps == null)
 					continue;
-				it2 = sps.iterator();
-				while (it2.hasNext())
+				//it2 = sps.iterator();
+				//while (it2.hasNext())
+				for (SpecialPropertyI sp : sps)
 				{
-					sp = (SpecialPropertyI) it2.next();
+					//sp = (SpecialPropertyI) it2.next();
 					if (sp.isExercised())
 						continue;
 					log.debug ("For "+name+" found spec.prop "+sp);
@@ -703,16 +721,18 @@ public class Portfolio
 		}
 	}
 
-	public List getSpecialProperties(Class clazz, boolean includeExercised)
+	public List<SpecialPropertyI> getSpecialProperties
+		(Class clazz, boolean includeExercised)
 	{
-		List result = new ArrayList();
+		List<SpecialPropertyI> result = new ArrayList<SpecialPropertyI>();
 		if (specialProperties != null && specialProperties.size() > 0)
 		{
-			Iterator it = specialProperties.iterator();
-			SpecialProperty sp;
-			while (it.hasNext())
+			//Iterator it = specialProperties.iterator();
+			//SpecialProperty sp;
+			//while (it.hasNext())
+			for (SpecialPropertyI sp : specialProperties)
 			{
-				sp = (SpecialProperty) it.next();
+				//sp = (SpecialProperty) it.next();
 				if ((clazz == null || Util.isInstanceOf(sp, clazz))
 				        && sp.isExecutionable() 
 				        && (!sp.isExercised() || includeExercised)

@@ -9,7 +9,6 @@ import rails.game.model.CalculatedMoneyModel;
 import rails.game.model.MoneyModel;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
-import rails.util.Util;
 
 import java.util.Iterator;
 import java.util.List;
@@ -64,7 +63,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
 
-	private JButton bid5Button;
 	private JButton bidButton;
 	private JButton buyButton;
 	private JSpinner bidAmount;
@@ -86,7 +84,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private static JMenu moveMenu;
 	private JMenuItem undoItem, redoItem;
 
-	private Player p;
 	private StartItem si;
 	private JComponent f;
 
@@ -382,7 +379,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	{
 		StartItem item;
 		//StartItem auctionedItem = round.getAuctionedItem();
-		Player p;
 		int i, j, status;
 		BuyOrBidStartItem activeItem;
 		

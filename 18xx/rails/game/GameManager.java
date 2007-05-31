@@ -69,8 +69,8 @@ public class GameManager implements ConfigurableComponentI
 	protected static String variant = STANDARD;
 
 	/** A Map of variant names */
-	protected static List lVariants = new ArrayList();
-	protected static Map mVariants = new HashMap();
+	protected static List<String> lVariants = new ArrayList<String>();
+	//protected static Map mVariants = new HashMap();
 
 	protected static Logger log = Logger.getLogger(GameManager.class.getPackage().getName());
 
@@ -339,7 +339,7 @@ public class GameManager implements ConfigurableComponentI
 		StringBuffer b = new StringBuffer();
 
 		/* Sort players by total worth */
-		ArrayList rankedPlayers = new ArrayList();
+		ArrayList<Player> rankedPlayers = new ArrayList<Player>();
 		for (int ip = 0; ip < players.length; ip++)
 		{
 			rankedPlayers.add(players[ip]);
@@ -352,11 +352,12 @@ public class GameManager implements ConfigurableComponentI
 
 		/* Report final ranking */
 		b.append("\n\nThe final ranking is:");
-		Player p;
+		//Player p;
 		int i = 0;
-		for (Iterator it = rankedPlayers.iterator(); it.hasNext();)
+		//for (Iterator it = rankedPlayers.iterator(); it.hasNext();)
+		for (Player p : rankedPlayers)
 		{
-			p = (Player) it.next();
+			//p = (Player) it.next();
 			b.append("\n" + (++i) + ". " + Bank.format(p.getWorth()) + " "
 					+ p.getName());
 		}
@@ -473,7 +474,7 @@ public class GameManager implements ConfigurableComponentI
 	/**
 	 * @return List of variants
 	 */
-	public static List getVariants()
+	public static List<String> getVariants()
 	{
 		return lVariants;
 	}
@@ -502,10 +503,10 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static void addVariant(String name)
 	{
-		if (!mVariants.containsKey(name))
+		if (!lVariants.contains(name))
 		{
 			lVariants.add(name);
-			mVariants.put(name, null);
+			//mVariants.put(name, null);
 		}
 	}
 
@@ -528,7 +529,8 @@ public class GameManager implements ConfigurableComponentI
 
 	public static boolean existVariant(String variant)
 	{
-		return mVariants.containsKey(variant);
+		//return mVariants.containsKey(variant);
+		return lVariants.contains(variant);
 	}
 
 	private Object instantiate(String className)

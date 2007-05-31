@@ -13,13 +13,16 @@ import rails.util.*;
 public class StockMarket implements StockMarketI, ConfigurableComponentI
 {
 
-	protected HashMap stockSpaceTypes = new HashMap();
-	protected HashMap stockChartSpaces = new HashMap();
+	protected HashMap<String, StockSpaceTypeI> stockSpaceTypes 
+		= new HashMap<String, StockSpaceTypeI>();
+	protected HashMap<String, StockSpaceI> stockChartSpaces 
+		= new HashMap<String, StockSpaceI>();
 	protected StockSpace stockChart[][];
 	protected StockSpace currentSquare;
 	protected int numRows = 0;
 	protected int numCols = 0;
-	protected ArrayList startSpaces = new ArrayList();
+	protected ArrayList<StockSpaceI> startSpaces 
+		= new ArrayList<StockSpaceI>();
 	protected int[] startPrices;
 
 	protected static StockMarketI instance;
@@ -232,7 +235,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 				.getAllPublicCompanies()
 				.iterator();
 		PublicCompanyI comp;
-		StockSpaceI space;
+		//StockSpaceI space;
 		while (it.hasNext())
 		{
 			comp = (PublicCompanyI) it.next();
@@ -491,10 +494,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	 * @param companiesStarted
 	 *            The companiesStarted to set.
 	 */
+	/*
 	public void setCompaniesStarted(PublicCompany companyStarted)
 	{
 		companiesStarted.add(companyStarted);
 	}
+	*/
 
 	/**
 	 * @return Returns the ipoPile.
@@ -508,10 +513,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	 * @param ipoPile
 	 *            The ipoPile to set.
 	 */
+	/*
 	public void addShareToPile(PublicCertificate stock)
 	{
 		ipoPile.add(stock);
 	}
+	*/
 
 	public PublicCertificate removeShareFromPile(PublicCertificate stock)
 	{

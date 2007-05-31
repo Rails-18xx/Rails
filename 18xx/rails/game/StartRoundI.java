@@ -2,7 +2,6 @@ package rails.game;
 
 import java.util.List;
 
-import rails.game.action.BuyOrBidStartItem;
 import rails.game.action.PossibleAction;
 import rails.game.model.ModelObject;
 
@@ -13,7 +12,7 @@ public interface StartRoundI extends RoundI
 
 	//public int nextStep();
 
-	public List getStartItems ();
+	public List<StartItem> getStartItems ();
 
 	public StartPacket getStartPacket();
 

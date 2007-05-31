@@ -22,7 +22,7 @@ public class EWHexMap extends HexMap
 
 	protected void setupHexesGUI()
 	{
-		hexes = new ArrayList();
+		hexes = new ArrayList<GUIHex>();
 
 		MapManager mmgr = MapManager.getInstance();
 		hexArray = mmgr.getHexes();

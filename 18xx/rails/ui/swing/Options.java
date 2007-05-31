@@ -17,7 +17,7 @@ import rails.util.Util;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+//import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,12 +171,12 @@ public class Options extends JDialog implements ActionListener
 			File jarFile = new File("./Rails-" + Game.version + ".jar");
 			try
 			{
-				JarFile jf = new JarFile(jarFile);
+				//JarFile jf = new JarFile(jarFile);
 				JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
-				String jeName;
+				//String jeName;
 				Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
 				Matcher m;
-				List games = new ArrayList();
+				List<String> games = new ArrayList<String>();
 				for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
 				{
 					m = p.matcher(je.getName());
@@ -222,7 +222,7 @@ public class Options extends JDialog implements ActionListener
 	{
 		if (arg0.getSource().equals(newButton))
 		{
-			ArrayList playerNames = new ArrayList();
+			ArrayList<String> playerNames = new ArrayList<String>();
 
 			for (int i = 0; i < playerBoxes.length; i++)
 			{
@@ -256,7 +256,7 @@ public class Options extends JDialog implements ActionListener
 				Game.initialise(gameName);
 				Player.initPlayers(Game.getPlayerManager().getPlayersArray());
 				
-				List variants = GameManager.getVariants();
+				List<String> variants = GameManager.getVariants();
 				if (variants != null && variants.size() > 1) {
 				    String variant = (String) JOptionPane.showInputDialog (
 				            this,
@@ -290,7 +290,7 @@ public class Options extends JDialog implements ActionListener
 			// We're not going to actually DO anything with the selected file
 			// until the infrastructure for saved games is built
 			JFileChooser fc = new JFileChooser();
-			int result = fc.showOpenDialog(this.getContentPane());
+			fc.showOpenDialog(this.getContentPane());
 		}
 
 		if (arg0.getSource().equals(quitButton))

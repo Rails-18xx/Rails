@@ -21,7 +21,7 @@ import org.apache.log4j.*;
 public class ImageLoader
 {
 
-	private static HashMap tileMap;
+	private static HashMap<String, BufferedImage> tileMap;
 	//private static HashMap canvasMap;
 	private static int width = 180;
 	private static int height = 167;
@@ -205,7 +205,7 @@ public class ImageLoader
 
 	public ImageLoader()
 	{
-		tileMap = new HashMap();
+		tileMap = new HashMap<String, BufferedImage>();
 		//canvasMap = new HashMap();
 	}
 

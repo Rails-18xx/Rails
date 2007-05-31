@@ -14,17 +14,17 @@ public class Tile implements TileI, StationHolderI
 	private String name;
 	private String colour; // May become a separate class TileType
 	private boolean upgradeable;
-	private List upgrades = new ArrayList(); // Contains Upgrade instances
+	private List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
 	private String upgradesString = "";
-	private List[] tracksPerSide = new ArrayList[6];
-	private List tracks = new ArrayList();
-	private List stations = new ArrayList();
+	private List<Track>[] tracksPerSide = new ArrayList[6];
+	private List<Track> tracks = new ArrayList<Track>();
+	private List<Station> stations = new ArrayList<Station>();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
 	private boolean unlimited = false;
 	public static final int UNLIMITED = -1;
-	private ArrayList tilesLaid = new ArrayList();
+	private ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
 	public Tile(Integer id)
 	{
@@ -32,7 +32,7 @@ public class Tile implements TileI, StationHolderI
 		name = "" + this.id;
 
 		for (int i = 0; i < 6; i++)
-			tracksPerSide[i] = new ArrayList();
+			tracksPerSide[i] = new ArrayList<Track>();
 	}
 
 	/**
@@ -140,8 +140,8 @@ public class Tile implements TileI, StationHolderI
 		TileI upgradeTile;
 		Upgrade upgrade;
 		String hexes;
-		String[] hexArray;
-		MapHex hex;
+		//String[] hexArray;
+		//MapHex hex;
 		
 		for (int i = 0; i < upgnl.getLength(); i++)
 		{
@@ -149,7 +149,7 @@ public class Tile implements TileI, StationHolderI
 			nnp = ((Element) upgnl.item(i)).getAttributes();
 			ids = XmlUtils.extractStringAttribute(nnp, "id");
 			upgradesString = ids; // TEMPORARY
-			List newUpgrades = new ArrayList();
+			List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
 			
 			if (ids != null)
 			{
@@ -269,13 +269,14 @@ public class Tile implements TileI, StationHolderI
 	 *            The MapHex to be upgraded.
 	 * @return A List of valid upgrade TileI objects.
 	 */
-	public List getUpgrades(MapHex hex)
+	public List<TileI> getUpgrades(MapHex hex)
 	{
-	    List upgr = new ArrayList();
-	    Upgrade upgrade;
+	    List<TileI> upgr = new ArrayList<TileI>();
+	    //Upgrade upgrade;
 	    TileI tile;
-	    for (Iterator it = upgrades.iterator(); it.hasNext(); ) {
-	        upgrade = (Upgrade) it.next();
+	    //for (Iterator it = upgrades.iterator(); it.hasNext(); ) {
+	    for (Upgrade upgrade : upgrades) {
+	        //upgrade = (Upgrade) it.next();
 	        tile = upgrade.getTile();
 	        if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add (tile);
 	    }
@@ -293,15 +294,16 @@ public class Tile implements TileI, StationHolderI
 		return upgradesString;
 	}
 
-	public List getValidUpgrades(MapHex hex, PhaseI phase)
+	public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase)
 	{
-		List valid = new ArrayList();
-		Iterator it = upgrades.iterator();
-		Upgrade upgrade;
+		List<TileI> valid = new ArrayList<TileI>();
+		//Iterator it = upgrades.iterator();
+		//Upgrade upgrade;
 		TileI tile;
-		while (it.hasNext())
+		//while (it.hasNext())
+		for (Upgrade upgrade : upgrades)
 		{
-			upgrade = (Upgrade) it.next();
+			//upgrade = (Upgrade) it.next();
 			tile = (TileI) upgrade.getTile();
 			if (phase.isTileColourAllowed(tile.getColour())
 					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
@@ -375,11 +377,11 @@ public class Tile implements TileI, StationHolderI
 	    TileI tile;
 	    
 	    /** Hexes where the upgrade can be executed */
-	    List allowedHexes = null;
+	    List<MapHex> allowedHexes = null;
 	    /** Hexes where the upgrade cannot be executed 
 	     * Only one of allowedHexes and disallowedHexes should be used 
 	     * */
-	    List disallowedHexes = null;
+	    List<MapHex> disallowedHexes = null;
 	    
 	    /** A temporary String holding the in/excluded hexes.
 	     * This will be processed at the first usage, because Tiles
@@ -423,10 +425,10 @@ public class Tile implements TileI, StationHolderI
 	            hex = MapManager.getInstance().getHex(hexArray[i]);
 	            if (hex != null) {
 	                if (allowed) {
-	                    if (allowedHexes == null) allowedHexes = new ArrayList();
+	                    if (allowedHexes == null) allowedHexes = new ArrayList<MapHex>();
 	                    allowedHexes.add (hex);
 	                } else {
-	                    if (disallowedHexes == null) disallowedHexes = new ArrayList();
+	                    if (disallowedHexes == null) disallowedHexes = new ArrayList<MapHex>();
 	                    disallowedHexes.add(hex);
 	                }
 	            }

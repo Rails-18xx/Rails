@@ -27,13 +27,14 @@ public class ConvertTilesXML
 
 	private static String outputFilePath = "tiles/Tiles.xml";
 
-	private static Map colourMap, stationMap, gaugeMap, sidesMap, cityMap;
-	private static Map junctionPosition;
+	private static Map<String, String> colourMap, gaugeMap, sidesMap, cityMap;
+	private static Map<String, String[]> stationMap;
+	private static Map<String, String> junctionPosition;
 
 	/** Maps non-edge non-station junctions to tracks ending there. */
-	private static Map unresolvedTrack;
+	private static Map<String, List<Element>> unresolvedTrack;
 	/** Maps tracks to edge/station junctions */
-	private static Map resolvedTrack;
+	private static Map<Element, String> resolvedTrack;
 
 	private static Pattern namePattern = Pattern.compile("^(\\d+)(/.*)?");
 
@@ -44,7 +45,7 @@ public class ConvertTilesXML
 
 	static
 	{
-		colourMap = new HashMap();
+		colourMap = new HashMap<String, String>();
 		colourMap.put("tlYellow", "yellow");
 		colourMap.put("tlGreen", "green");
 		colourMap.put("tlBrown", "brown");
@@ -55,7 +56,7 @@ public class ConvertTilesXML
 		colourMap.put("tlMapUpgradableToGreen", "yellow");
 		colourMap.put("tlMapUpgradableToBrown", "green");
 
-		stationMap = new HashMap();
+		stationMap = new HashMap<String, String[]>();
 		stationMap.put("jtWhistlestop", new String[] { "Town", "0" });
 		stationMap.put("jtCity", new String[] { "City", "1" });
 		stationMap.put("jtDoubleCity", new String[] { "City", "2" });
@@ -64,7 +65,7 @@ public class ConvertTilesXML
 		stationMap.put("jtNone", new String [] {"", "0"});
 		// Note: an additional station type is "Pass".
 
-		gaugeMap = new HashMap();
+		gaugeMap = new HashMap<String, String>();
 		gaugeMap.put("ctNormal", "normal");
 		gaugeMap.put("ctSmall", "narrow");
 		gaugeMap.put("ctUniversal", "dual");
@@ -72,7 +73,7 @@ public class ConvertTilesXML
 		gaugeMap.put("ctMountain", "normal");
 		// 1841 Pass: Station type is changed to Pass.
 
-		sidesMap = new HashMap();
+		sidesMap = new HashMap<String, String>();
 		sidesMap.put("tp4SideA", "side0");
 		sidesMap.put("tp4SideB", "side1");
 		sidesMap.put("tp4SideC", "side2");
@@ -80,7 +81,7 @@ public class ConvertTilesXML
 		sidesMap.put("tp4SideE", "side4");
 		sidesMap.put("tp4SideF", "side5");
 
-		cityMap = new HashMap();
+		cityMap = new HashMap<String, String>();
 		cityMap.put("tpCenter", "0");
 		cityMap.put("tp1SideA", "001");
 		cityMap.put("tp1CornerA", "051");
@@ -221,10 +222,10 @@ public class ConvertTilesXML
 		System.out.println(id);
 		tileNo = id;
 		outputTile.setAttribute("id", id);
-		int intId;
+		//int intId;
 		try
 		{
-			intId = Integer.parseInt(id);
+			int intId = Integer.parseInt(id);
 		}
 		catch (NumberFormatException e)
 		{
@@ -266,7 +267,7 @@ public class ConvertTilesXML
 		 * Create map to hold the station 'identifiers', which are referred to
 		 * in the track definitions.
 		 */
-		junctionPosition = new HashMap();
+		junctionPosition = new HashMap<String, String>();
 		outputJunction = null;
 
 		Element junctions = (Element) inputTile.getElementsByTagName("junctions")
@@ -281,8 +282,8 @@ public class ConvertTilesXML
 			convertJunction(i, inputJunction, outputJunction);
 		}
 
-		unresolvedTrack = new HashMap();
-		resolvedTrack = new HashMap();
+		unresolvedTrack = new HashMap<String, List<Element>>();
+		resolvedTrack = new HashMap<Element, String>();
 
 		Element connections = (Element) inputTile.getElementsByTagName("connections")
 				.item(0);
@@ -298,7 +299,7 @@ public class ConvertTilesXML
 		while (it.hasNext())
 		{
 			String key = (String) it.next();
-			List list = (List) unresolvedTrack.get(key);
+			List<Element> list = unresolvedTrack.get(key);
 			Element[] ends = (Element[]) list.toArray(new Element[0]);
 			if (ends.length <= 1)
 			{
@@ -371,7 +372,7 @@ public class ConvertTilesXML
 			outputJunction.setAttribute("slots", station[1]);
 		}
 
-		String[] p = (String[]) ((String[]) stationMap.get(type)).clone();
+		//String[] p = (String[]) ((String[]) stationMap.get(type)).clone();
 		if (station == null)
 		{
 			throw new ConfigurationException("Unknown junction type: " + type);
@@ -467,9 +468,9 @@ public class ConvertTilesXML
 		{
 			if (!unresolvedTrack.containsKey(position))
 			{
-				unresolvedTrack.put(position, new ArrayList());
+				unresolvedTrack.put(position, new ArrayList<Element>());
 			}
-			((List) unresolvedTrack.get(position)).add(outputConnection);
+			((List<Element>) unresolvedTrack.get(position)).add(outputConnection);
 			return false;
 		}
 	}

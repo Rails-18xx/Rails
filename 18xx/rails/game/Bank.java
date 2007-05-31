@@ -182,10 +182,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		// Add privates
 		List privates = Game.getCompanyManager().getAllPrivateCompanies();
 		Iterator it = privates.iterator();
-		PrivateCompanyI priv;
 		while (it.hasNext())
 		{
-			ipo.addPrivate(priv = (PrivateCompanyI) it.next());
+			ipo.addPrivate((PrivateCompanyI) it.next());
 		}
 
 		// Add public companies

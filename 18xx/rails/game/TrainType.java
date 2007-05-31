@@ -56,7 +56,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	private String releasedTrainTypeName = null;
 	protected TrainTypeI releasedTrainType = null;
 
-	protected ArrayList trains = null;
+	protected ArrayList<Train> trains = null;
 
 	//boolean available = false;
 	protected BooleanState available = new BooleanState ("TrainTypeAvailable", false);
@@ -74,7 +74,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		this.real = real;
 		if (real)
-			trains = new ArrayList();
+			trains = new ArrayList<Train>();
 	}
 
 	/**
@@ -391,13 +391,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		available.set(true);
 		//MoveSet.add(new StateChange (available, availableValue));
 
-		for (Iterator it = trains.iterator(); it.hasNext();)
+		//for (Iterator it = trains.iterator(); it.hasNext();)
+		for (TrainI train : trains) 
 		{
 			/*Portfolio.transferTrain(((TrainI) it.next()),
 					Bank.getUnavailable(),
 					Bank.getIpo());
 			*/
-			new TrainMove ((TrainI) it.next(), 
+			//new TrainMove ((TrainI) it.next(), 
+			new TrainMove (train, 
 					Bank.getUnavailable(),
 					Bank.getIpo());
 		}

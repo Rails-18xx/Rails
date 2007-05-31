@@ -5,7 +5,6 @@ import java.util.*;
 import rails.game.action.BuyOrBidStartItem;
 import rails.game.action.NullAction;
 import rails.game.move.MoveSet;
-import rails.game.state.State;
 import rails.util.LocalText;
 
 
@@ -163,7 +162,7 @@ public class StartRound_1830 extends StartRound
 	/**
 	 * Return the start items, marked as appropriate for an 1830-style auction.
 	 */
-	public List getStartItems () {
+	public List<StartItem> getStartItems () {
 		
 		StartItem item;
 		Player currentPlayer = getCurrentPlayer();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.1 2007/01/23 21:50:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.2 2007/05/31 20:49:52 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -30,7 +30,7 @@ public class LayTile extends PossibleAction {
     private MapHex location = null; 
     
     /** Highest tile colour (empty means unspecified) */
-    private Map tileColours = null;
+    private Map<String, Integer> tileColours = null;
     
     /** Allowed tiles on a specific location (empty means unspecified) */
     private List tiles = null;
@@ -56,7 +56,7 @@ public class LayTile extends PossibleAction {
         this.tiles = tiles;
     }
     
-    public LayTile(Map tileColours) {
+    public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
         this.tileColours = tileColours;
     }
@@ -129,13 +129,13 @@ public class LayTile extends PossibleAction {
     /**
      * @return Returns the tileColours.
      */
-    public Map getTileColours() {
+    public Map<String, Integer> getTileColours() {
         return tileColours;
     }
     public boolean isTileColourAllowed (String tileColour) {
         return tileColours.containsKey(tileColour);
     }
-    public void setTileColours (Map map) {
+    public void setTileColours (Map<String, Integer> map) {
         tileColours = map;
     }
     
