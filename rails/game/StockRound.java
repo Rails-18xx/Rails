@@ -45,7 +45,7 @@ public class StockRound extends Round
 
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
-	protected HashMap playersThatSoldThisRound = new HashMap();
+	protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound = new HashMap();
 	/** HashMap per player */
 	// Not used (yet?)
 	protected HashMap playersThatBoughtThisRound = new HashMap();

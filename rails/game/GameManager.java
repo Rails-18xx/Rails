@@ -339,7 +339,7 @@ public class GameManager implements ConfigurableComponentI
 		StringBuffer b = new StringBuffer();
 
 		/* Sort players by total worth */
-		ArrayList<Player> rankedPlayers = new ArrayList<Player>();
+		List<Player> rankedPlayers = new ArrayList<Player>();
 		for (int ip = 0; ip < players.length; ip++)
 		{
 			rankedPlayers.add(players[ip]);

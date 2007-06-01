@@ -16,7 +16,7 @@ public class Tile implements TileI, StationHolderI
 	private boolean upgradeable;
 	private List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
 	private String upgradesString = "";
-	private List<Track>[] tracksPerSide = new ArrayList[6];
+	private List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Station> stations = new ArrayList<Station>();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");

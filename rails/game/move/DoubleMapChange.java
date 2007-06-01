@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.2 2007/05/20 20:10:13 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.3 2007/06/01 20:24:37 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
@@ -31,9 +31,10 @@ public class DoubleMapChange extends Move {
         MoveSet.add (this);
     }
 
-    public boolean execute() {
+	public boolean execute() {
         
         if (map == null) map = new HashMap();
+        // I've failed to make the below warning-free
         if (!map.containsKey(firstKey)) map.put(firstKey, new HashMap());
         ((Map)map.get(firstKey)).put(secondKey, value);
         

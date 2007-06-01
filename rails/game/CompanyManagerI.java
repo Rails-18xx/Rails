@@ -38,14 +38,14 @@ public interface CompanyManagerI
 	 * 
 	 * @return a List of the all the Private Company names
 	 */
-	List getAllPrivateNames();
+	//List getAllPrivateNames();
 
 	/**
 	 * Gives a list of Strings, the names of all registered Public Companies.
 	 * 
 	 * @return a List of the all the Public Company names
 	 */
-	List getAllPublicNames();
+	//List getAllPublicNames();
 
 	/**
 	 * Gives a list of all the registered Companies.

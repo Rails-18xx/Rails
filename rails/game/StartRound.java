@@ -75,11 +75,12 @@ public abstract class StartRound extends Round implements StartRoundI
 		itemIndex = new int[startPacket.getItems().size()];
 		int index = 0;
 		
-		Iterator it = startPacket.getItems().iterator();
-		StartItem item;
-		while (it.hasNext())
+		//Iterator it = startPacket.getItems().iterator();
+		//StartItem item;
+		//while (it.hasNext())
+		for (StartItem item : startPacket.getItems())
 		{
-			item = (StartItem) it.next();
+			//item = (StartItem) it.next();
 			
 			// New: we only include items that have not yet been sold
 			// at the start of the current StartRound
@@ -232,6 +233,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			}
 			// Check item
 			boolean validItem = false;
+			// TODO It seems this loop can't be turned into a for/in one
 			for (Iterator it = possibleActions.getType(BuyOrBidStartItem.class).iterator();
 					it.hasNext();) { 
 				BuyOrBidStartItem activeItem = (BuyOrBidStartItem) it.next();
@@ -248,10 +250,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			}
 
 			// Is the item buyable?
-			/*if (status == StartItem.AUCTIONED
-					&& boughtItem.isPassMeansBuy()) {
-				price = item.getBid();
-			} else*/ if (status == StartItem.BUYABLE 
+			if (status == StartItem.BUYABLE 
 					|| status == StartItem.NEEDS_SHARE_PRICE) {
 				price = item.getBasePrice();
 			} else {
