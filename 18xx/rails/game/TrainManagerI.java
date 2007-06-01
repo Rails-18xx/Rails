@@ -25,7 +25,7 @@ public interface TrainManagerI
 
 	public TrainTypeI getTypeByName(String name);
 
-	public List getTrainTypes();
+	public List<TrainTypeI> getTrainTypes();
 
 	public void checkTrainAvailability(TrainI train, Portfolio from);
 

@@ -19,7 +19,7 @@ public class HelpWindow extends JFrame implements WindowListener
 	private JPanel messagePanel;
 	private static HelpWindow helpWindow;
 
-	private static StringBuffer buffer = new StringBuffer("<html></html>");
+	//private static StringBuffer buffer = new StringBuffer("<html></html>");
 	
 	public static void displayHelp (String text) { 
 	    

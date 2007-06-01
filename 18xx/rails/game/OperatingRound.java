@@ -42,15 +42,19 @@ public class OperatingRound extends Round implements Observer
 	//protected int[] trainBuyCost;
 
 	protected List<SpecialPropertyI> currentSpecialProperties = null;
-	protected List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
-	protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
+	protected List<LayTile> currentSpecialTileLays 
+		= new ArrayList<LayTile>();
+	protected List<LayTile> currentNormalTileLays 
+		= new ArrayList<LayTile>();
 	protected Map<String, Integer> tileLaysPerColour 
 		= new HashMap<String, Integer>();
 	//protected List normalTileLaysDone;
 	protected Map<MapHex, SpecialPropertyI> specialPropertyPerHex 
 		= new HashMap<MapHex, SpecialPropertyI>();
-	protected List<LayToken> currentNormalTokenLays = new ArrayList<LayToken>();
-	protected List<LayToken> currentSpecialTokenLays = new ArrayList<LayToken>();
+	protected List<LayToken> currentNormalTokenLays 
+		= new ArrayList<LayToken>();
+	protected List<LayToken> currentSpecialTokenLays 
+		= new ArrayList<LayToken>();
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
@@ -100,6 +104,12 @@ public class OperatingRound extends Round implements Observer
 	 */
 	public OperatingRound(boolean operate)
 	{
+		relativeORNumber++;
+		cumulativeORNumber++;
+		thisOrNumber = getCompositeORNumber();
+
+		ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
+
 
 		if (players == null)
 		{
@@ -113,13 +123,14 @@ public class OperatingRound extends Round implements Observer
 		}
 		
 		// Private companies pay out
-		Iterator it = Game.getCompanyManager()
-				.getAllPrivateCompanies()
-				.iterator();
-		PrivateCompanyI priv;
-		while (it.hasNext())
+		//Iterator it = Game.getCompanyManager()
+		//		.getAllPrivateCompanies()
+		//		.iterator();
+		//PrivateCompanyI priv;
+		//while (it.hasNext())
+		for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies()) 
 		{
-			priv = (PrivateCompanyI) it.next();
+			//priv = (PrivateCompanyI) it.next();
 			if (!priv.isClosed())
 				priv.payOut();
 		}

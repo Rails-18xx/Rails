@@ -45,15 +45,16 @@ public class StartRound_1830 extends StartRound
 		
 		if (StartPacket.getStartPacket().areAllSold()) return false;
 		
-		StartItem item;
+		//StartItem item;
 		StartItem auctionItem = (StartItem) auctionItemState.getState();
 		
 		while (possibleActions.isEmpty()) {
 			
 			Player currentPlayer = getCurrentPlayer();
 
-			for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
-				item = (StartItem) it.next();
+			//for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
+			for (StartItem item : itemsToSell) {
+				//item = (StartItem) it.next();
 				
 				if (item.isSold()) {
 					// Don't include
@@ -151,11 +152,11 @@ public class StartRound_1830 extends StartRound
 			possibleActions.add (new NullAction (NullAction.PASS));
 		}
 		
-		for (Iterator it = possibleActions.getList().iterator();
-			it.hasNext(); ) {
-			log.debug("~Action: "+it.next().toString());
-		}
-		log.debug("numPasses="+numPasses.intValue());
+		//for (Iterator it = possibleActions.getList().iterator();
+		//	it.hasNext(); ) {
+		//	log.debug("~Action: "+it.next().toString());
+		//}
+		//log.debug("numPasses="+numPasses.intValue());
 		return true;
 	}
 	

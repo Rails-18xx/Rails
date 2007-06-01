@@ -82,8 +82,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 
 	public void setPhase(String name)
 	{
-		PhaseI phase = (PhaseI) phaseMap.get(name);
-		setPhase (phase);
+		setPhase (phaseMap.get(name));
 	}
 	
 	protected void setPhase (PhaseI phase) {
@@ -95,7 +94,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 	}
 	
 	public static PhaseI getPhaseNyName (String name) {
-	    return (PhaseI) phaseMap.get(name);
+	    return phaseMap.get(name);
 	}
 
 }

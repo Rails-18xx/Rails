@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.3 2007/05/31 20:49:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.4 2007/06/01 20:24:37 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -69,6 +69,7 @@ public class PossibleActions {
         	&& !((List)possibleActionMap.get(clazz)).isEmpty();
     }
     
+    // The return type cannot be generified because of problems in ORPanel
     public List getType (Class clazz) {
         return possibleActionMap.get(clazz);
     }

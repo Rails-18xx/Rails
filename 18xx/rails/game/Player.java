@@ -16,7 +16,7 @@ import rails.util.LocalText;
  * Player class holds all player-specific data
  */
 
-public class Player implements CashHolder, Comparable
+public class Player implements CashHolder, Comparable<Player>
 {
 
 	/** Default limit to percentage of a company a player may hold */
@@ -428,7 +428,7 @@ public class Player implements CashHolder, Comparable
 	 * Compare Players by their total worth, in descending order.
 	 * This method implements the Comparable interface.
 	 */
-	public int compareTo (Object p) {
-	    return - new Integer (getWorth()).compareTo(new Integer (((Player)p).getWorth()));
+	public int compareTo (Player p) {
+	    return - new Integer (getWorth()).compareTo(new Integer (p.getWorth()));
 	}
 }

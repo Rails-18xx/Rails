@@ -84,8 +84,9 @@ public class StartRound_1835 extends StartRound
 	
 	public boolean setPossibleActions() {
 		
-		List startItems = startPacket.getItems();
-		StartItem item;
+		List<StartItem> startItems = startPacket.getItems();
+		List<StartItem> buyableItems = new ArrayList<StartItem>();
+		//StartItem item;
 		int row;
 		boolean buyable;
 		int items = 0;
@@ -95,10 +96,11 @@ public class StartRound_1835 extends StartRound
 		 * Once buyable, they always remain so until bought,
 		 * so there is no need to check is an item is still buyable.
 		 */ 
-		Iterator it = startItems.iterator();
-		while (it.hasNext())
+		//Iterator it = startItems.iterator();
+		//while (it.hasNext())
+		for (StartItem item : startItems)
 		{
-			item = (StartItem) it.next();
+			//item = (StartItem) it.next();
 			buyable = false;
 			
 			if (item.isSold()) {
@@ -124,6 +126,7 @@ public class StartRound_1835 extends StartRound
 			}
 			if (buyable) {
 				item.setStatus (StartItem.BUYABLE);
+				buyableItems.add(item);
 				//log.debug("Item "+item.getName()+" is buyable");
 			//} else {
 				//log.debug("Item "+item.getName()+" is NOT buyable");
@@ -138,22 +141,21 @@ public class StartRound_1835 extends StartRound
 			Player currentPlayer = getCurrentPlayer();
 			int cashToSpend = currentPlayer.getCash();
 			
-			it = startItems.iterator();
-			while (it.hasNext())
+			//it = startItems.iterator();
+			//while (it.hasNext())
+			for (StartItem item : buyableItems)
 			{
-				item = (StartItem) it.next();
+				//item = (StartItem) it.next();
 				
-				if (item.getStatus() == StartItem.BUYABLE) {
-					if (item.getBasePrice() <= cashToSpend) {
-						/* Player does have the cash */
-						possibleActions.add(new BuyOrBidStartItem (
-								item,
-								item.getBasePrice(),
-								item.getStatus()));
-						//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
-					//} else {
-						//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is NOT buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
-					}
+				if (item.getBasePrice() <= cashToSpend) {
+					/* Player does have the cash */
+					possibleActions.add(new BuyOrBidStartItem (
+							item,
+							item.getBasePrice(),
+							item.getStatus()));
+					//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
+				//} else {
+					//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is NOT buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
 				}
 			}
 
@@ -183,15 +185,16 @@ public class StartRound_1835 extends StartRound
 		Player currentPlayer = GameManager.getCurrentPlayer();
 		int cashToSpend = currentPlayer.getCash();
 		List<StartItem> startItems = startPacket.getItems();
-		StartItem item;
+		//StartItem item;
 		int row;
 		int minRow = 0;
 		int items = 0;
 		
-		Iterator it = startItems.iterator();
-		while (it.hasNext())
+		//Iterator it = startItems.iterator();
+		//while (it.hasNext())
+		for (StartItem item : startItems)
 		{
-			item = (StartItem) it.next();
+			//item = (StartItem) it.next();
 			if (item.isSold()) {
 				item.setStatus (StartItem.SOLD);
 			} else if (item.getBasePrice() > cashToSpend) {

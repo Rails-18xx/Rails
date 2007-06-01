@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.4 2007/05/31 20:49:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.5 2007/06/01 20:24:37 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -7,7 +7,6 @@ package rails.game.move;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -133,7 +132,7 @@ public class MoveSet {
      */
     public static boolean clear () {
         if (currentAction != null) currentAction.execute();
-        actionStack = new ArrayList<MoveSet>();
+        actionStack.clear();
         currentAction = null;
         lastIndex = -1;
         return true;
@@ -142,15 +141,20 @@ public class MoveSet {
     
     private void execute () {
         
-        for (Iterator it = moves.iterator(); it.hasNext(); ) {
-            ((Move)it.next()).execute();
+        //for (Iterator it = moves.iterator(); it.hasNext(); ) {
+        //    ((Move)it.next()).execute();
+    	for (Move move : moves) {
+    		move.execute();
         }
     }
     
     private void unexecute () {
 
-        for (Iterator it = moves.iterator(); it.hasNext(); ) {
-            ((Move)it.next()).undo();
+        //for (Iterator it = moves.iterator(); it.hasNext(); ) {
+        //    ((Move)it.next()).undo();
+    	// TODO Should not the move order be reversed?
+    	for (Move move : moves) {
+    		move.undo();
         }
     }
     
