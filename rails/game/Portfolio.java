@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.5 2007/05/31 20:49:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.6 2007/06/03 22:33:17 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -263,7 +263,7 @@ public class Portfolio
 		return (ShareModel) shareModelPerCompany.get(company);
 	}
 
-	public List getPrivateCompanies()
+	public List<PrivateCompanyI> getPrivateCompanies()
 	{
 		return privateCompanies;
 	}
@@ -293,23 +293,23 @@ public class Portfolio
 		return number;
 	}
 
-	public Map getCertsPerCompanyMap()
+	public Map<String, List<PublicCertificateI>> getCertsPerCompanyMap()
 	{
 		return certPerCompany;
 	}
 
-	public List getCertificatesPerCompany(String compName)
+	public List<PublicCertificateI> getCertificatesPerCompany(String compName)
 	{
 		if (certPerCompany.containsKey(compName))
 		{
-			return (List) certPerCompany.get(compName);
+			return certPerCompany.get(compName);
 		}
 		else
 		{
 			// TODO: This is bad. If we don't find the company name
 			// we should check to see if certPerCompany has been loaded
 			// or possibly throw a config error.
-			return new ArrayList();
+			return new ArrayList<PublicCertificateI>();
 		}
 	}
 
