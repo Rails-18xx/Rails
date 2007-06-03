@@ -8,7 +8,6 @@ import rails.game.model.CashModel;
 import rails.game.model.CertCountModel;
 import rails.game.model.ModelObject;
 import rails.game.model.MoneyModel;
-import rails.game.model.WorthModel;
 import rails.util.LocalText;
 
 
@@ -41,12 +40,13 @@ public class Player implements CashHolder, Comparable<Player>
 
 	private CashModel wallet = new CashModel(this);
 
-	private WorthModel worth = new WorthModel(this);
+	//private WorthModel worth = new WorthModel(this);
 	
 	private CertCountModel certCount = new CertCountModel (this);
 
 	private MoneyModel blockedCash;
 	private CalculatedMoneyModel freeCash; 
+	private CalculatedMoneyModel worth;
 
 	private boolean hasPriority = false;
 
@@ -123,6 +123,7 @@ public class Player implements CashHolder, Comparable<Player>
 		portfolio = new Portfolio(name, this);
 		freeCash = new CalculatedMoneyModel (this, "getFreeCash");
 		blockedCash = new MoneyModel (name+"_blockedCash");
+		worth = new CalculatedMoneyModel (this, "getWorth");
 	}
 
 	/**
@@ -303,15 +304,17 @@ public class Player implements CashHolder, Comparable<Player>
 	public int getWorth()
 	{
 		int worth = wallet.getCash();
-		Iterator it = portfolio.getCertificates().iterator();
-		while (it.hasNext())
+		//Iterator it = portfolio.getCertificates().iterator();
+		//while (it.hasNext())
+		for (PublicCertificateI cert : portfolio.getCertificates())
 		{
-			worth += ((PublicCertificateI) it.next()).getCertificatePrice();
+			worth += cert.getCertificatePrice();
 		}
-		it = portfolio.getPrivateCompanies().iterator();
-		while (it.hasNext())
+		//it = portfolio.getPrivateCompanies().iterator();
+		//while (it.hasNext())
+		for (PrivateCompanyI priv :  portfolio.getPrivateCompanies())
 		{
-			worth += ((PrivateCompanyI) it.next()).getBasePrice();
+			worth += priv.getBasePrice();
 		}
 		return worth;
 	}
@@ -321,7 +324,7 @@ public class Player implements CashHolder, Comparable<Player>
 	//	return Bank.format(getWorth());
 	//}
 
-	public WorthModel getWorthModel()
+	public CalculatedMoneyModel getWorthModel()
 	{
 		return worth;
 	}

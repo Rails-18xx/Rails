@@ -141,13 +141,14 @@ public class OperatingRound extends Round implements Observer
 			// Shortcut: order considered fixed at the OR start. This is not always
 			// true.
 			operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
-			PublicCompanyI company;
+			//PublicCompanyI company;
 			StockSpaceI space;
 			int key;//, stackPos;
 			int minorNo = 0;
-			for (int i = 0; i < companies.length; i++)
+			//for (int i = 0; i < companies.length; i++)
+			for (PublicCompanyI company : companies)
 			{
-				company = companies[i];
+				//company = companies[i];
 				if (!company.hasFloated())
 					continue;
 				// Key must put companies in reverse operating order, because sort

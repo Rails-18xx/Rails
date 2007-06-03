@@ -45,7 +45,8 @@ public class StockRound extends Round
 
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
-	protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound = new HashMap();
+	protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound 
+		= new HashMap<Player, HashMap<PublicCompanyI, Object>>();
 	/** HashMap per player */
 	// Not used (yet?)
 	protected HashMap playersThatBoughtThisRound = new HashMap();
@@ -129,9 +130,9 @@ public class StockRound extends Round
 		List<TradeableCertificate> buyableCerts 
 			= new ArrayList<TradeableCertificate>();
 
-		List certs;
+		List<PublicCertificateI> certs;
 		PublicCertificateI cert;
-		TradeableCertificate tCert;
+		//TradeableCertificate tCert;
 		PublicCompanyI comp;
 		int price;
 
@@ -143,21 +144,23 @@ public class StockRound extends Round
 			(PublicCompanyI) companyBoughtThisTurnWrapper.getState();
 		if (companyBoughtThisTurn == null)
 		{
-			String compName;
-			Map map = Bank.getIpo().getCertsPerCompanyMap();
+			//String compName;
+			Map<String, List<PublicCertificateI>> map 
+				= Bank.getIpo().getCertsPerCompanyMap();
 			//int lowestStartPrice = 999;
 			//int highestStartPrice = 0;
 			int shares;
 			int[] startPrices = stockMarket.getStartPrices();
 
-			for (Iterator it = map.keySet().iterator(); it.hasNext();)
+			//for (Iterator it = map.keySet().iterator(); it.hasNext();)
+			for (String compName : map.keySet())
 			{
-				compName = (String) it.next();
-				certs = (List) map.get(compName);
+				//compName = (String) it.next();
+				certs = map.get(compName);
 				if (certs == null || certs.isEmpty())
 					continue;
 				/* Only the top certificate is buyable from the IPO */
-				cert = (PublicCertificateI) certs.get(0);
+				cert = certs.get(0);
 				comp = cert.getCompany();
 				if (isSaleRecorded(currentPlayer, comp))
 					continue;
@@ -196,11 +199,12 @@ public class StockRound extends Round
 		}
 
 		/* Get the unique Pool certificates and check which ones can be bought */
-		for (Iterator it = Bank.getPool()
-				.getUniqueTradeableCertificates()
-				.iterator(); it.hasNext();)
+		//for (Iterator it = Bank.getPool()
+		//		.getUniqueTradeableCertificates()
+		//		.iterator(); it.hasNext();)
+		for (TradeableCertificate tCert : Bank.getPool().getUniqueTradeableCertificates())
 		{
-			tCert = (TradeableCertificate) it.next();
+			//tCert = (TradeableCertificate) it.next();
 			if (playerCash < tCert.getPrice())
 				continue;
 			comp = tCert.getCert().getCompany();
@@ -688,7 +692,7 @@ public class StockRound extends Round
 	private boolean isSaleRecorded(Player player, PublicCompanyI company)
 	{
 		return playersThatSoldThisRound.containsKey(currentPlayer)
-				&& ((HashMap) playersThatSoldThisRound.get(currentPlayer)).containsKey(company);
+				&& playersThatSoldThisRound.get(currentPlayer).containsKey(company);
 	}
 
 	/**
