@@ -164,4 +164,8 @@ public class Game
 	{
 		return name;
 	}
+	
+	public static Logger getLogger () {
+		return log;
+	}
 }

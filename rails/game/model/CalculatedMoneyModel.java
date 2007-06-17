@@ -42,6 +42,7 @@ public class CalculatedMoneyModel extends ModelObject {
 
 	@Override
 	public String getText() {
+		//log.debug("Calling getText from ", new Exception("HERE"));
 		int amount = calculate();
 		if (amount == 0 && option == SUPPRESS_ZERO)
 			return "";

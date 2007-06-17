@@ -9,13 +9,17 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 
+import rails.game.action.PossibleAction;
+
 public class ClickField extends JToggleButton
 {
 	private final Color buttonColour = new Color(255, 220, 150);
 	private final Insets buttonInsets = new Insets(0, 1, 0, 1);
 	
-	/** options canbe used to hold choices to me made after clicking this button */
-	private List<Object> options = new ArrayList<Object>();
+	/** PossibleAction object(s) linked to this field */
+	private List<PossibleAction> actions;
+	/** @deprecated */
+	private List<Object> options;
 
 	public ClickField(String text, String actionCommand, String toolTip,
 			ActionListener caller, ButtonGroup group)
@@ -31,16 +35,33 @@ public class ClickField extends JToggleButton
 		group.add(this);
 	}
 	
+	/** @deprecated */
 	public void addOption (Object o) {
-	    options.add(o);
+		if (options == null) options = new ArrayList<Object>(2);
+		options.add(o);
 	}
 	
+	/** @deprecated */
 	public List<Object> getOptions () {
 	    return options;
 	}
 	
+	/** @deprecated */
 	public void clearOptions () {
-	    options.clear();
+	    if (options != null) options.clear();
+	}
+
+	public void addPossibleAction (PossibleAction o) {
+		if (actions == null) actions = new ArrayList<PossibleAction>(2);
+	    actions.add(o);
+	}
+	
+	public List<PossibleAction> getPossibleActions () {
+	    return actions;
+	}
+	
+	public void clearPossibleActions () {
+	    if (actions != null) actions.clear();
 	}
 
 }

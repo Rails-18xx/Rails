@@ -22,8 +22,8 @@ public class MoneyModel extends IntegerState
 	
 	public void set (int value) {
 		
-	    super.set (value);
-	    
+		boolean forced = false;
+		
     	/* Set initialisation state only if it matters */ 
 	    if (option == SUPPRESS_INITIAL_ZERO 
 	    		&& initialised == null) {
@@ -31,6 +31,16 @@ public class MoneyModel extends IntegerState
 	    }
 	    if (initialised != null && !initialised.booleanValue()) {
 	    	initialised.set(true);
+	    	forced = true;
+	    }
+
+	    /* At the end, as update() is called from here.
+	     * Used setForced() to ensure clients are updated 
+	     * even at an initial zero revenue.  */
+	    if (forced) {
+	    	super.setForced(value);
+	    } else {
+	    	super.set (value);
 	    }
 	}
 
@@ -38,10 +48,10 @@ public class MoneyModel extends IntegerState
 	{
 	    int amount = intValue();
 	    if (amount == 0 
-	            && (option == SUPPRESS_ZERO
-	            	|| option == SUPPRESS_INITIAL_ZERO
-	            		&& initialised != null 
-	            		&& !initialised.booleanValue())) {
+            && (option == SUPPRESS_ZERO
+            	|| option == SUPPRESS_INITIAL_ZERO
+            		&& (initialised == null 
+            			|| !initialised.booleanValue()))) {
 	        return "";
 	    } else {
 	        return Bank.format(amount);

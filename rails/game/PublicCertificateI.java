@@ -60,6 +60,8 @@ public interface PublicCertificateI extends Certificate
 	 */
 	public void setCompany(PublicCompanyI companyI);
 
+	public String getTypeId ();
+	
 	/** Clone this certificate */
 	public PublicCertificateI copy();
 	

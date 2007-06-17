@@ -36,8 +36,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	protected int cityScoreFactor = 1;
 
 	protected boolean firstCanBeExchanged = false;
-	protected IntegerState numberBoughtFromIPO 
-		= new IntegerState (name+"TransBought", 0);
+	protected IntegerState numberBoughtFromIPO; 
 
 	private boolean real; // Only to determine if top-level attributes must be
 	// read.
@@ -217,6 +216,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 				}
 			}
 		}
+		
+		// Final initialisations
+		numberBoughtFromIPO	= new IntegerState (name+"_trainsBought", 0);
 	}
 
 	/**

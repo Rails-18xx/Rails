@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.6 2007/06/03 22:33:17 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.7 2007/06/17 22:03:49 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -43,6 +43,16 @@ public class Portfolio
 	/** Owned public company certificates, organised in a HashMap per company */
 	protected Map<String, List<PublicCertificateI>> certPerCompany 
 		= new HashMap<String, List<PublicCertificateI>>();
+	
+	/** Owned public company certificates, organised in a HashMap per
+	 * unique certificate type (company, share percentage, presidency).
+	 * The key is the certificate type id (see PublicCertificate),
+	 * the value is the number of certificates of that type. 
+	 */
+	protected Map<String, List<PublicCertificateI>> certsPerType 
+		= new HashMap<String, List<PublicCertificateI>>();
+
+	/** Share model per company */
 	protected Map<PublicCompanyI, ShareModel> shareModelPerCompany 
 		= new HashMap<PublicCompanyI, ShareModel>();
 
@@ -80,6 +90,15 @@ public class Portfolio
 	{
 		this.name = name;
 		this.owner = holder;
+		
+		if (owner instanceof PublicCompanyI) {
+			trainsModel.setOption(TrainsModel.FULL_LIST);
+			privatesOwnedModel.setOption(PrivatesModel.SPACE);
+		} else if (owner instanceof Bank) {
+			trainsModel.setOption(TrainsModel.ABBR_LIST);
+		} else if (owner instanceof Player) {
+			privatesOwnedModel.setOption(PrivatesModel.BREAK);
+		}
 	}
 
 	public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
@@ -164,9 +183,6 @@ public class Portfolio
 		//Bank.getPool().addCertificate(certificate);
 		//certificate.setPortfolio(Bank.getPool());
 
-		// PublicCertificate is for sale again
-		certificate.setAvailable(true);
-
 		// Move the money
 		new CashMove (Bank.getInstance(), from.owner, price);
 		//Bank.transferCash(Bank.getInstance(), from.owner, price);
@@ -186,6 +202,35 @@ public class Portfolio
 			if (from != null)
 				from.removePrivate((PrivateCompanyI) certificate);
 			to.addPrivate((PrivateCompanyI) certificate);
+		}
+		
+		/* Update player's worth */
+		if (from.owner instanceof Player) {
+			//((Player)from.owner).getWorthModel().update();
+			updatePlayerWorth ((Player)from.owner, from, certificate);
+		}
+		if (to.owner instanceof Player) {
+			//((Player)to.owner).getWorthModel().update();
+			updatePlayerWorth ((Player)to.owner, to, certificate);
+		}
+	}
+	
+	protected static void updatePlayerWorth (Player player, 
+			Portfolio portfolio, Certificate certificate) {
+		
+		PublicCompanyI company;
+		
+		/* Update player worth */
+		player.getWorthModel().update();
+		
+		/* Make sure that future price changes will update the worth too */
+		if (certificate instanceof PublicCertificateI) {
+			company = ((PublicCertificateI)certificate).getCompany();
+			if (portfolio.certPerCompany.containsKey(company.getName())) {
+				company.getCurrentPriceModel().addDependent(player.getWorthModel());
+			} else {
+				company.getCurrentPriceModel().removeDependent(player.getWorthModel());
+			}
 		}
 	}
 
@@ -223,6 +268,13 @@ public class Portfolio
 		    (certPerCompany.get(companyName)).add(0, certificate);
 		else
 		    (certPerCompany.get(companyName)).add(certificate);
+		
+		String certTypeId = certificate.getTypeId();
+		if (!certsPerType.containsKey(certTypeId)) {
+			certsPerType.put(certTypeId, new ArrayList<PublicCertificateI>());
+		}
+		certsPerType.get(certTypeId).add(certificate);
+		
 		certificate.setPortfolio(this);
 
 		getShareModel(certificate.getCompany()).addShare(certificate.getShare());
@@ -249,6 +301,14 @@ public class Portfolio
 		
 		List certs = (List) getCertificatesPerCompany(companyName);
 		certs.remove(certificate);
+		
+		String certTypeId = certificate.getTypeId();
+		if (certsPerType.containsKey(certTypeId)) {
+			certsPerType.get(certTypeId).remove(0);
+			if (certsPerType.get(certTypeId).isEmpty()) {
+				certsPerType.remove(certTypeId);
+			}
+		}
 
 		getShareModel(certificate.getCompany()).addShare(-certificate.getShare());
 	}
@@ -318,13 +378,15 @@ public class Portfolio
 	 * current price.
 	 * 
 	 * @return List of unique TradeableCertificate objects.
+	 * //@deprecated
 	 */
+	/*
 	public List<TradeableCertificate> getUniqueTradeableCertificates()
 	{
 
 		List<TradeableCertificate> uniqueCerts 
 			= new ArrayList<TradeableCertificate>();
-		PublicCertificateI /*cert,*/ cert2, prevCert = null;
+		PublicCertificateI cert, cert2, prevCert = null;
 		TradeableCertificate tCert2;
 		Iterator it2;
 
@@ -344,11 +406,6 @@ public class Portfolio
 					continue outer;
 				if (!cert.getCompany().equals(cert2.getCompany()))
 					continue;
-				/* From here on we are comparing certs of the same company */
-				/*
-				 * Exclude president share if there also is a non-president
-				 * share available
-				 */
 				if (cert.isPresidentShare())
 					continue outer;
 				if (cert2.isPresidentShare())
@@ -369,6 +426,7 @@ public class Portfolio
 		return uniqueCerts;
 
 	}
+*/
 
 	/*
 	 * public PublicCertificateI getNextAvailableCertificate() { for (int i = 0;
@@ -418,6 +476,26 @@ public class Portfolio
 			}
 		}
 		return null;
+	}
+	
+	public Map<String, List<PublicCertificateI>> getCertsPerType() {
+		return certsPerType;
+	}
+	
+	public List<PublicCertificateI> getCertsOfType (String certTypeId) {
+		if (certsPerType.containsKey(certTypeId)) {
+			return certsPerType.get(certTypeId);
+		} else {
+			return null;
+		}
+	}
+
+	public PublicCertificateI getCertOfType (String certTypeId) {
+		if (certsPerType.containsKey(certTypeId)) {
+			return certsPerType.get(certTypeId).get(0);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -474,7 +552,7 @@ public class Portfolio
 	 * @param company
 	 * @return
 	 */
-	public int ownsShare(PublicCompanyI company)
+	public int getShare(PublicCompanyI company)
 	{
 		int share = 0;
 		String name = company.getName();

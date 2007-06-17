@@ -274,6 +274,7 @@ public class GameManager implements ConfigurableComponentI
 
 	private void startOperatingRound(boolean operate)
 	{
+		log.debug("Operating round started with operate-flag="+operate);
 		playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
 		new OperatingRound(operate);
 	}
@@ -420,7 +421,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getPriorityPlayer()
 	{
-		return (Player) priorityPlayer.getState();
+		return (Player) priorityPlayer.getObject();
 	}
 
 	/**
@@ -428,7 +429,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getCurrentPlayer()
 	{
-		return (Player)currentPlayer.getState();
+		return (Player)currentPlayer.getObject();
 	}
 
 	/**

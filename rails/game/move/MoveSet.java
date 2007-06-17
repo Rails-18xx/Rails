@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.5 2007/06/01 20:24:37 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.6 2007/06/17 22:03:52 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -21,6 +21,7 @@ import rails.util.LocalText;
 public class MoveSet {
 
     private List<Move> moves = new ArrayList<Move>();
+    private boolean undoableByPlayer;
     
     private static MoveSet currentAction = null;
     private static List<MoveSet> actionStack = new ArrayList<MoveSet>();
@@ -28,12 +29,14 @@ public class MoveSet {
     
 	protected static Logger log = Logger.getLogger(MoveSet.class.getPackage().getName());
 
-    private MoveSet () {}
+    private MoveSet (boolean undoableByPlayer) {
+    	this.undoableByPlayer = undoableByPlayer;
+    }
     
-    public static boolean start () {
+    public static boolean start (boolean undoableByPlayer) {
         log.debug (">>> Start MoveSet");
         if (currentAction == null) {
-            currentAction = new MoveSet();
+            currentAction = new MoveSet(undoableByPlayer);
             while (lastIndex < actionStack.size()-1) {
                 actionStack.remove(actionStack.size()-1);
             }
@@ -113,12 +116,16 @@ public class MoveSet {
         }
     }
     
-    public static boolean isUndoable() {
-        return lastIndex >= 0;
+    public static boolean isUndoableByPlayer() {
+        return lastIndex >= 0 && actionStack.get(lastIndex).undoableByPlayer;
     }
     
     public static boolean isRedoable() {
         return lastIndex < actionStack.size()-1;
+    }
+    
+    public static boolean isUndoableByManager() {
+        return lastIndex >= 0;
     }
     
     public static boolean isOpen() {

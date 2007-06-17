@@ -89,7 +89,8 @@ public class StartItem
 		this.basePrice.set (basePrice);
 		this.president = president;
 		status = new IntegerState (name+"_status");
-		minimumBid = new MoneyModel(name+"_minimumBid");		
+		minimumBid = new MoneyModel(name+"_minimumBid");
+		minimumBid.setOption(MoneyModel.SUPPRESS_ZERO);
 	}
 
 	/**
@@ -122,6 +123,7 @@ public class StartItem
 		bids = new MoneyModel [numberOfPlayers];
 		for (int i=0; i<numberOfPlayers; i++) {
 			bids[i] = new MoneyModel(name+"_bidBy_"+players[i].getName());
+			bids[i].setOption(MoneyModel.SUPPRESS_ZERO);
 			
 		}
 		minimumBid.set(basePrice.intValue()+5);

@@ -357,8 +357,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT);
 
-                f = newPrivatesCost[i] = new Field(c.getPrivatesSpentThisTurnModel()
-                        .option(MoneyModel.SUPPRESS_ZERO));
+                f = newPrivatesCost[i] = new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT);
             }
@@ -366,22 +365,19 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());
             addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0);
 
-            f = tileCost[i] = new Field(c.getTilesCostThisTurnModel()
-                    .option(MoneyModel.SUPPRESS_ZERO));
+            f = tileCost[i] = new Field(c.getTilesCostThisTurnModel());
             addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT);
 
             f = tokens[i] = new Field(c.getTokensLaidThisTurnModel());
             addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0);
 
-            f = tokenCost[i] = new Field(c.getTokensCostThisTurnModel()
-                    .option(MoneyModel.SUPPRESS_ZERO));
+            f = tokenCost[i] = new Field(c.getTokensCostThisTurnModel());
             addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0);
 
             f = tokensLeft[i] = new Field(c.getBaseTokensModel());
             addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1, WIDE_RIGHT);
 
-            f = revenue[i] = new Field(c.getLastRevenueModel()
-                    .option(MoneyModel.SUPPRESS_INITIAL_ZERO));
+            f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
@@ -389,12 +385,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             f = decision[i] = new Field("");
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT);
 
-            f = trains[i] = new Field(c.getPortfolio().getTrainsModel().option(
-                    TrainsModel.FULL_LIST));
+            f = trains[i] = new Field(c.getPortfolio().getTrainsModel());
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0);
 
-            f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel()
-                    .option(MoneyModel.SUPPRESS_ZERO));
+            f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel());
             addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT);
 
             f = rightCompName[i] = new Caption(c.getName());
@@ -485,9 +479,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 GameUILoader.orWindow.requestFocus();
                 
                 //For debugging
-                Map a = possibleActions.getMap();
-                PossibleAction pa;
-                if (a.isEmpty()) log.debug ("No possible actions!!");
+                List<PossibleAction> as = possibleActions.getList();
+                //PossibleAction pa;
+                if (as.isEmpty()) {
+                	log.debug ("No possible actions!!");
+                } else {
+                	for (PossibleAction a : as) {
+	                    if (a instanceof LayTile) {
+	                        log.debug ("PossibleAction: "+((LayTile)a));
+	                    } else {
+	                        log.debug ("PossibleAction: "+a);
+	                    }
+                	}
+                }
+                /*
                 for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
                     for (Iterator it2 = possibleActions.getType((Class)it.next()).iterator(); it2.hasNext(); ) {
                         pa = (PossibleAction) it2.next();
@@ -498,6 +503,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 	                    }
                     }
                 }
+                */
                 
                 if (possibleActions.contains(LayTile.class)) {
                     log.debug ("Tiles can be laid");
@@ -537,21 +543,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 //tokenCost[orCompIndex].setText("");
 
                 //For debugging
-                Map a = possibleActions.getMap();
-                PossibleAction pa;
-                if (a.isEmpty()) log.debug ("No possible actions!!");
-                for (Iterator it = a.keySet().iterator(); it.hasNext(); ) {
-                    for (Iterator it2 = possibleActions.getType((Class)it.next()).iterator(); it2.hasNext(); ) {
-                        pa = (PossibleAction) it2.next();
-	                    if (pa instanceof LayToken) {
-	                        log.debug ("PossibleAction: "+((LayToken)pa));
+                List<PossibleAction> as = possibleActions.getList();
+                //PossibleAction pa;
+                if (as.isEmpty()) {
+                	log.debug ("No possible actions!!");
+                } else {
+                	for (PossibleAction a : as) {
+	                    if (a instanceof LayToken) {
+	                        log.debug ("PossibleAction: "+((LayToken)a));
 	                    } else {
-	                        log.debug ("PossibleAction: "+pa);
+	                        log.debug ("PossibleAction: "+a);
 	                    }
-                    }
+                	}
                 }
-                
-                if (possibleActions.contains(LayToken.class)) {
+ 
+               if (possibleActions.contains(LayToken.class)) {
                     log.debug ("Tokens can be laid");
 	                GameUILoader.orWindow.enableBaseTokenLaying(true);
 	                GameUILoader.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayToken.class));
@@ -637,7 +643,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button1.setEnabled(false);
             }
             
-		    enableUndo (MoveSet.isUndoable());
+		    enableUndo (MoveSet.isUndoableByManager());
 		    enableRedo (MoveSet.isRedoable());
 
             if (StatusWindow.useObserver) {
@@ -828,9 +834,6 @@ private void buyTrain()
         StringBuffer b;
         int cost;
         
-        prompts.add (prompt = "None"); // May not always be valid.
-        promptToTrain.put(prompt, null);
-        
 		for (Iterator it = oRound.getBuyableTrains().iterator(); it.hasNext();)
 		{
             bTrain = (BuyableTrain) it.next();
@@ -853,12 +856,12 @@ private void buyTrain()
             }
 			if (bTrain.mustPresidentAddCash())
 			{
-				b.append(LocalText.getText("YOU_MUST_ADD_CASH",
+				b.append(" ").append(LocalText.getText("YOU_MUST_ADD_CASH",
 				        Bank.format(bTrain.getPresidentCashToAdd())));
 			}
 			else if (bTrain.mayPresidentAddCash())
 			{
-				b.append(LocalText.getText("YOU_MAY_ADD_CASH",
+				b.append(" ").append(LocalText.getText("YOU_MAY_ADD_CASH",
 				        Bank.format(bTrain.getPresidentCashToAdd())));
             }
             prompt = b.toString();
@@ -866,13 +869,19 @@ private void buyTrain()
             promptToTrain.put(prompt, bTrain);
         }
 
-        String boughtTrain = (String) JOptionPane.showInputDialog(this,
-				LocalText.getText("BUY_WHICH_TRAIN"),
-				LocalText.getText("WHICH_TRAIN"),
-				JOptionPane.QUESTION_MESSAGE,
-				null,
-				prompts.toArray(),
-                prompts.get(1));
+		if (prompts.size() == 0) {
+			JOptionPane.showMessageDialog(this, 
+					LocalText.getText("CannotBuyTrain"));
+			return;
+		}
+
+		String boughtTrain = (String) JOptionPane.showInputDialog(this,
+			LocalText.getText("BUY_WHICH_TRAIN"),
+			LocalText.getText("WHICH_TRAIN"),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			prompts.toArray(),
+            prompts.get(0));
         
 		if (!Util.hasValue(boughtTrain))
 			return;
@@ -953,7 +962,7 @@ private void buyTrain()
 			{
 				JOptionPane.showMessageDialog(this, ReportBuffer.get());
 			}
-			else
+			else //// TODO NOTE: THE BELOW MUST BE MOVED TO OperatingRound !!!
 			{
 				if (seller == Bank.getIpo())
 				{

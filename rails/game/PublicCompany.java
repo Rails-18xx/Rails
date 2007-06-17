@@ -186,6 +186,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		this.portfolio = new Portfolio(name, this);
 		treasury = new CashModel(this);
 		lastRevenue = new MoneyModel (name+"_lastRevenue");
+		lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
 		baseTokensModel = new BaseTokensModel (this);
 
 	    hasStarted = new BooleanState (name+"_hasStarted", false);
@@ -197,11 +198,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 		
 		/* Spendings in the current operating turn */
 		privatesCostThisTurn = new MoneyModel (name+"_spentOnPrivates");
+		privatesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		tilesLaidThisTurn = new StringState (name+"_tilesLaid");
 		tilesCostThisTurn = new MoneyModel (name+"_spentOnTiles");
+		tilesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		tokensLaidThisTurn = new StringState (name+"_tokensLaid");
 		tokensCostThisTurn = new MoneyModel (name+"_spentOnTokens");
+		tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
+		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 }
 
 	/**
@@ -1194,8 +1199,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (!hasStarted() || buyer == getPresident() || certificates.size() < 2)
 			return;
 		Player pres = getPresident();
-		int presShare = pres.getPortfolio().ownsShare(this);
-		int buyerShare = buyer.getPortfolio().ownsShare(this);
+		int presShare = pres.getPortfolio().getShare(this);
+		int buyerShare = buyer.getPortfolio().getShare(this);
 		if (buyerShare > presShare)
 		{
 			pres.getPortfolio().swapPresidentCertificate(this,
@@ -1217,7 +1222,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (seller != getPresident())
 			return;
 
-		int presShare = seller.getPortfolio().ownsShare(this);
+		int presShare = seller.getPortfolio().getShare(this);
 		int presIndex = seller.getIndex();
 		Player player;
 		int share;
@@ -1226,7 +1231,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 				+ GameManager.getNumberOfPlayers(); i++)
 		{
 			player = GameManager.getPlayer(i);
-			share = player.getPortfolio().ownsShare(this);
+			share = player.getPortfolio().getShare(this);
 			if (share > presShare)
 			{
 				// Presidency must be transferred

@@ -122,8 +122,11 @@ public class Player implements CashHolder, Comparable<Player>
 		this.name = name;
 		portfolio = new Portfolio(name, this);
 		freeCash = new CalculatedMoneyModel (this, "getFreeCash");
+		wallet.addDependent(freeCash);
 		blockedCash = new MoneyModel (name+"_blockedCash");
+		blockedCash.setOption(MoneyModel.SUPPRESS_ZERO);
 		worth = new CalculatedMoneyModel (this, "getWorth");
+		wallet.addDependent(worth);
 	}
 
 	/**
@@ -191,7 +194,8 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Check if a player may buy the given number of shares from a given
-	 * company.
+	 * company, given the "hold limit" per company, that is the percentage
+	 * of shares of one company that a player may hold (typically 60%).
 	 * 
 	 * @param company
 	 *            The company from which to buy
@@ -202,9 +206,36 @@ public class Player implements CashHolder, Comparable<Player>
 	public boolean mayBuyCompanyShare(PublicCompanyI company, int number)
 	{
 	    // Check for per-company share limit
-		if (portfolio.ownsShare(company) + number * company.getShareUnit() > playerShareLimit
+		if (portfolio.getShare(company) + number * company.getShareUnit() > playerShareLimit
 		        && !company.getCurrentPrice().isNoHoldLimit()) return false;
 		return true;
+	}
+	
+	/**
+	 * Return the number of <i>additional</i> shares of a certain company 
+	 * and of a certain size that a player may buy, 
+	 * given the share "hold limit" per company, that is the percentage 
+	 * of shares of one company that a player may hold (typically 60%).
+	 * <p>If no hold limit applies, it is taken to be 100%.
+	 * @param company
+	 *            The company from which to buy
+	 * @param number
+	 *            The share unit (typically 10%).
+	 * @return The maximum number of such shares that would not
+	 * let the player overrun the per-company share hold limit.
+	 */
+	public int maxAllowedNumberOfSharesToBuy (PublicCompanyI company,
+			int shareSize) {
+		
+		int limit;
+		if (!company.hasStarted()) {
+			limit = playerShareLimit;
+		} else {
+			limit = company.getCurrentPrice().isNoHoldLimit() 
+				? 100 
+						: playerShareLimit;
+		}
+		return (limit - portfolio.getShare(company)) / shareSize;
 	}
 
 	/**
@@ -292,7 +323,6 @@ public class Player implements CashHolder, Comparable<Player>
 	public boolean addCash(int amount)
 	{
 		boolean result = wallet.addCash(amount);
-		freeCash.update();
 		return result;
 	}
 
