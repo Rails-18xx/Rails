@@ -39,12 +39,12 @@ public class State extends ModelObject implements StateI {
 		}
 	}
 	
-	public void set (Object object) {
+	public void set (Object object, boolean forced) {
 		if (object == null) {
 		    if (this.object != null) 
 		        new StateChange (this, object);
 		} else if (Util.isInstanceOf (object, clazz)) {
-		    if (!object.equals(this.object)) 
+		    if (!object.equals(this.object) || forced) 
 		        new StateChange (this, object);
 		} else {
 		    log.error("Incompatible object type "+object.getClass().getName()
@@ -52,8 +52,16 @@ public class State extends ModelObject implements StateI {
 					new Exception (""));
 		}
 	}
+	
+	public void set (Object object) {
+		set (object, false);
+	}
+	
+	public void setForced (Object object) {
+		set (object, true);
+	}
 
-	public Object getState() {
+	public Object getObject() {
 		return object;
 	}
 
@@ -61,7 +69,7 @@ public class State extends ModelObject implements StateI {
 	public void setState(Object object) {
 		this.object = object;
 		//log.debug (getClassName() + " "+name+" set to "+object);
-		notifyViewObjects();
+		update();
 	}
 	
 	public String getName() {

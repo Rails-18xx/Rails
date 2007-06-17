@@ -139,7 +139,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 * @return ArrayList containing the certificates (item 0 is the President's
 	 *         share).
 	 */
-	public List getCertificates();
+	public List<PublicCertificateI> getCertificates();
 
 	/**
 	 * Assign a predefined array of certificates to this company.
@@ -147,7 +147,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 * @param list
 	 *            ArrayList containing the certificates.
 	 */
-	public void setCertificates(List list);
+	public void setCertificates(List<PublicCertificateI> list);
 
 	/**
 	 * Add a certificate to the end of this company's list of certificates.

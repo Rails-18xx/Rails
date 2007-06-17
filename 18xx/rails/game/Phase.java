@@ -124,4 +124,8 @@ public class Phase implements PhaseI {
     public int getOffBoardRevenueStep() {
         return offBoardRevenueStep;
     }
+    
+    public String toString() {
+    	return name;
+    }
 }

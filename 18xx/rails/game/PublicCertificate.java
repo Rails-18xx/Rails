@@ -22,6 +22,9 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	protected boolean available;
 	/** Current holder of the certificate */
 	protected Portfolio portfolio;
+	
+	/** A key identifying the certificate's unique type */
+	protected String certTypeId;
 
 	protected static Logger log = Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
@@ -168,6 +171,12 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	public void setCompany(PublicCompanyI companyI)
 	{
 		company = companyI;
+		certTypeId = company.getName()+"_"+getShares()+"%";
+		if (president) certTypeId += "_P";
+	}
+	
+	public String getTypeId () {
+		return certTypeId;
 	}
 
 	protected Object clone()

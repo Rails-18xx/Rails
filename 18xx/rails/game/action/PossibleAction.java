@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.3 2007/05/31 20:49:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.4 2007/06/17 22:03:51 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -39,6 +39,15 @@ public abstract class PossibleAction {
     
     public int getPlayerIndex() {
     	return playerIndex;
+    }
+    
+    /** Set the name of the player who <b>executed</b> the action
+     * (as opposed to the player who was <b>allowed</b> to do the action,
+     * which is the one set in the constructor).
+     * @param playerName
+     */
+    public void setPlayerName (String playerName) {
+    	this.playerName = playerName;
     }
 
 }

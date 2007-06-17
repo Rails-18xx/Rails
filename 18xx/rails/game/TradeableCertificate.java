@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TradeableCertificate.java,v 1.1 2007/01/23 21:50:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TradeableCertificate.java,v 1.2 2007/06/17 22:03:50 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -17,6 +17,7 @@ public class TradeableCertificate {
     public TradeableCertificate (PublicCertificateI cert, int price) {
         this.cert = cert;
         this.price = price;
+        this.number = 1;
     }
     
      
@@ -30,6 +31,10 @@ public class TradeableCertificate {
     
     public int getNumber () {
         return number;
+    }
+    
+    public void addNumber () {
+    	number++;
     }
     
      

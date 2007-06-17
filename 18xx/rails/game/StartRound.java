@@ -177,7 +177,7 @@ public abstract class StartRound extends Round implements StartRoundI
 		
 		if (MoveSet.isOpen()) MoveSet.finish();
 		
-		if (MoveSet.isUndoable()) {
+		if (MoveSet.isUndoableByManager()) {
 			possibleActions.add (new NullAction (NullAction.UNDO));
 		}
 		if (MoveSet.isRedoable()) {
@@ -293,7 +293,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			return false;
 		}
 		
-		MoveSet.start();
+		MoveSet.start(true);
 		
 		assignItem(player, item, price, sharePrice);
 

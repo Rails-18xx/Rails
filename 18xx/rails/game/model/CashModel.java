@@ -21,13 +21,13 @@ public class CashModel extends ModelObject
 	public void setCash(int newCash)
 	{
 		cash = newCash;
-		notifyViewObjects();
+		update();
 	}
 
 	public boolean addCash(int addedCash)
 	{
 		cash += addedCash;
-		notifyViewObjects();
+		update();
 		
 		if(cash <= 0)
 			return false;

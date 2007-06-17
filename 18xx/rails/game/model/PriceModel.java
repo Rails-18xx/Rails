@@ -44,17 +44,17 @@ public class PriceModel extends ModelObject implements StateI
 	}
 	
 	// StateI required methods
-	public Object getState() {
+	public Object getObject() {
 		return stockPrice;
 	}
 
 	public void setState(Object object) {
 	    if (object == null) {
 			stockPrice = null;
-			notifyViewObjects();
+			update();
 		} else if (object instanceof StockSpaceI) {
 		    stockPrice = (StockSpaceI) object;
-			notifyViewObjects();
+			update();
 		} else {
 			new Exception ("Incompatible object type "+object.getClass().getName()
 					+ "passed to PriceModel "+name)

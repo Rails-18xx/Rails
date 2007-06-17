@@ -51,8 +51,8 @@ public class ExchangeForShare extends SpecialSRProperty
 		Portfolio portfolio = privateCompany.getPortfolio();
 		Player player = null;
 		String errMsg = null;
-		boolean ipoHasShare = Bank.getIpo().ownsShare(publicCompany) >= share;
-		boolean poolHasShare = Bank.getPool().ownsShare(publicCompany) >= share;
+		boolean ipoHasShare = Bank.getIpo().getShare(publicCompany) >= share;
+		boolean poolHasShare = Bank.getPool().getShare(publicCompany) >= share;
 
 		while (true)
 		{

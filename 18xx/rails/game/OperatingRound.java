@@ -122,18 +122,15 @@ public class OperatingRound extends Round implements Observer
 					.toArray(new PublicCompanyI[0]);
 		}
 		
-		// Private companies pay out
-		//Iterator it = Game.getCompanyManager()
-		//		.getAllPrivateCompanies()
-		//		.iterator();
-		//PrivateCompanyI priv;
-		//while (it.hasNext())
+		MoveSet.start(false);
+
 		for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies()) 
 		{
 			//priv = (PrivateCompanyI) it.next();
 			if (!priv.isClosed())
 				priv.payOut();
 		}
+		MoveSet.finish();
 		
 		if (operate) {
 		
@@ -170,12 +167,6 @@ public class OperatingRound extends Round implements Observer
 			operatingCompanyArray = (PublicCompanyI[]) operatingCompanies.values()
 					.toArray(new PublicCompanyI[0]);
 	
-			relativeORNumber++;
-			cumulativeORNumber++;
-			thisOrNumber = getCompositeORNumber();
-	
-			ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
-	
 			numberOfCompanies = operatingCompanyArray.length;
 	
 			//revenue = new int[numberOfCompanies];
@@ -184,7 +175,6 @@ public class OperatingRound extends Round implements Observer
 			//baseTokensLaid = new String[numberOfCompanies];
 			//baseTokenLayCost = new int[numberOfCompanies];
 			//trainBuyCost = new int[numberOfCompanies];
-	
 	
 			if (operatingCompanyArray.length > 0)
 			{
@@ -384,7 +374,7 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		/* End of validation, start of execution */
-	    MoveSet.start();
+	    MoveSet.start(true);
 	    
 		if (tile != null)
 		{
@@ -640,7 +630,7 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		/* End of validation, start of execution */
-	    MoveSet.start();
+	    MoveSet.start(true);
 	    
 		if (/*operatingCompany.layBaseToken(hex, station)*/
 		    hex.layBaseToken(operatingCompany, station)) {
@@ -763,7 +753,7 @@ public class OperatingRound extends Round implements Observer
 			return false;
 		}
 		
-		MoveSet.start();
+		MoveSet.start(true);
 
 		//revenue[operatingCompanyIndex] = amount;
 		operatingCompany.setLastRevenue (amount);
@@ -1213,7 +1203,7 @@ public class OperatingRound extends Round implements Observer
 	     * is called from the GUI.
 	     */
 	    log.debug ("Skip step "+stepObject.intValue());
-	    MoveSet.start();
+	    MoveSet.start(true);
 		nextStep();
 		MoveSet.finish();
 		//updateStatus ("Skip");
@@ -1408,7 +1398,7 @@ public class OperatingRound extends Round implements Observer
 		//CashHolder oldOwner = oldHolder.getOwner();
 
 		/* End of validation, start of execution */
-	    MoveSet.start();
+	    MoveSet.start(true);
 	    
 		if (exchangedTrain != null)
 		{
@@ -1574,7 +1564,7 @@ public class OperatingRound extends Round implements Observer
 			return false;
 		}
 
-		MoveSet.start();
+		MoveSet.start(true);
 		
 		operatingCompany.buyPrivate(privCo,
 				player.getPortfolio(),

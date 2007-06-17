@@ -46,7 +46,7 @@ public class StartRound_1830 extends StartRound
 		if (StartPacket.getStartPacket().areAllSold()) return false;
 		
 		//StartItem item;
-		StartItem auctionItem = (StartItem) auctionItemState.getState();
+		StartItem auctionItem = (StartItem) auctionItemState.getObject();
 		
 		while (possibleActions.isEmpty()) {
 			
@@ -140,10 +140,10 @@ public class StartRound_1830 extends StartRound
 			
 			if (possibleActions.isEmpty()) {
 				numPasses.add(1);
-				if (auctionItemState.getState() == null) {
+				if (auctionItemState.getObject() == null) {
 					setNextPlayer();
 				} else {
-					setNextBiddingPlayer ((StartItem)auctionItemState.getState());
+					setNextBiddingPlayer ((StartItem)auctionItemState.getObject());
 				}
 			}
 		}
@@ -167,7 +167,7 @@ public class StartRound_1830 extends StartRound
 		
 		StartItem item;
 		Player currentPlayer = getCurrentPlayer();
-		StartItem auctionItem = (StartItem) auctionItemState.getState();
+		StartItem auctionItem = (StartItem) auctionItemState.getObject();
 		
 		for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
 			item = (StartItem) it.next();
@@ -280,7 +280,7 @@ public class StartRound_1830 extends StartRound
 			return false;
 		}
 
-		MoveSet.start();
+		MoveSet.start(true);
 		
 		item.setBid(bidAmount, player);
 		if (previousBid > 0)
@@ -319,7 +319,7 @@ public class StartRound_1830 extends StartRound
 
 		String errMsg = null;
 		Player player = GameManager.getCurrentPlayer();
-		StartItem auctionItem = (StartItem) auctionItemState.getState();
+		StartItem auctionItem = (StartItem) auctionItemState.getObject();
 
 		while (true)
 		{
@@ -344,7 +344,7 @@ public class StartRound_1830 extends StartRound
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
 		
-		MoveSet.start();
+		MoveSet.start(true);
 		
 		numPasses.add (1);
 

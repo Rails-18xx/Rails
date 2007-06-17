@@ -1,6 +1,8 @@
 package rails.game.model;
 
+import java.util.HashSet;
 import java.util.Observable;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -14,9 +16,24 @@ public abstract class ModelObject extends Observable {
     
     protected int option = 0;
     
+    protected Set<ModelObject> dependents = null;
+    
 	protected static Logger log = Logger.getLogger(ModelObject.class.getPackage().getName());
+	
+	/** Add a dependent model object */
+	public void addDependent (ModelObject object) {
+		if (dependents == null) dependents = new HashSet<ModelObject>();
+		/* Safe if already contained */
+		dependents.add(object);
+	}
+	
+	/** Remove a dependent model object. */
+	public void removeDependent (ModelObject object) {
+		/* Also works if it is not actually contained */
+		dependents.remove(object);
+	}
 
-    protected void notifyViewObjects() {
+    private void notifyViewObjects() {
         setChanged();
         notifyObservers (getText());
         //log.debug ("'"+getNotificationObject()+"' sent from "+getClass().getName());
@@ -26,14 +43,10 @@ public abstract class ModelObject extends Observable {
     /**
      * Optional method, to make a subclass-dependent selection
      * of the way the "value" will be composed. The default value is 0.
-     * <p>The return value allows to glue the call to this method to any other one
-     * that returns this type (see usage in class Field).
-     * @param option Selection of the ModelObject's value.
-     * @return This object.
+     * @param option The selected 
      */
-    public ModelObject option (int option) {
+    public void setOption (int option) {
         this.option = option;
-        return this; // To facilitate usage (see class Field)
     }
     
     /**
@@ -42,7 +55,15 @@ public abstract class ModelObject extends Observable {
      * is just a reference to an outside object (e.g. Portfolio).  
      */
     public void update () {
+    	/* Notifuy the observers about the change */
         notifyViewObjects();
+        
+        /* Also update all model objects that depend on this one */
+        if (dependents != null) {
+        	for (ModelObject object : dependents) {
+        		object.update();
+        	}
+        }
     }
     
     /**

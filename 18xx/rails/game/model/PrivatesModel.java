@@ -18,13 +18,6 @@ public class PrivatesModel extends ModelObject
 		this.privatesList = privatesList;
 	}
 
-	public ModelObject option(int i)
-	{
-		if (i == BREAK || i == SPACE)
-			option = i;
-		return this;
-	}
-
 	public String getText()
 	{
 

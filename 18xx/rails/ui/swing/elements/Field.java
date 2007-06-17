@@ -84,6 +84,9 @@ public class Field extends JLabel implements ViewObject
 	{
 		if (StatusWindow.useObserver)
 		{
+			//if (modelObject instanceof CalculatedMoneyModel) {
+			//	Game.getLogger().debug("Field updated from ", new Exception("HERE"));
+			//}
 			if (o2 instanceof String)
 			{
 				setText((String) o2);

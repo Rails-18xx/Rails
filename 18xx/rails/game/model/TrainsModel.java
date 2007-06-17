@@ -16,13 +16,6 @@ public class TrainsModel extends ModelObject
 		this.portfolio = portfolio;
 	}
 
-	public ModelObject option(int i)
-	{
-		if (i == FULL_LIST || i == ABBR_LIST)
-			option = i;
-		return this;
-	}
-
 	public String getText()
 	{
 		if (option == FULL_LIST)

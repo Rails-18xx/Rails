@@ -20,22 +20,24 @@ public class ShareModel extends ModelObject
 		//this.markPresidency = (portfolio.getOwner() instanceof Player);
 	}
 
+	/*
 	public void setShare(int share)
 	{
 		this.share = share;
-		notifyViewObjects();
+		update();
 	}
+	*/
 
 	public void setShare()
 	{
-		this.share = portfolio.ownsShare(company);
-		notifyViewObjects();
+		this.share = portfolio.getShare(company);
+		update();
 	}
 
 	public void addShare(int addedShare)
 	{
 		share += addedShare;
-		notifyViewObjects();
+		update();
 	}
 
 	public int getShare()

@@ -62,9 +62,9 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	 */
 	public boolean addToken(PublicCompanyI company)
 	{
-	    log.debug (company.getName() + " token added to" + name);
+	    log.debug (company.getName() + " token added to " + name);
 		tokens.add(company);
-		notifyViewObjects();
+		update();
 		return true;
 	}
 
@@ -82,7 +82,7 @@ public class StockSpace extends ModelObject implements StockSpaceI
 		if (index >= 0)
 		{
 			tokens.remove(index);
-			notifyViewObjects();
+			update();
 			return true;
 		}
 		else

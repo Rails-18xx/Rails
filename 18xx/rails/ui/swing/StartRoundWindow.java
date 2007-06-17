@@ -63,11 +63,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
 
-	private JButton bidButton;
-	private JButton buyButton;
+	private ActionButton bidButton;
+	private ActionButton buyButton;
 	private JSpinner bidAmount;
 	private SpinnerNumberModel spinnerModel;
-	private JButton passButton;
+	private ActionButton passButton;
 
 	private int np; // Number of players
 	private int ni; // Number of start items
@@ -91,6 +91,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private int playerIndex = -1;
 	private int itemIndex = -1;
 
+    private PossibleActions possibleActions = PossibleActions.getInstance();
+    
 	private ButtonGroup itemGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
 	
@@ -119,7 +121,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		moveMenu.add(undoItem);
 
 		redoItem = new JMenuItem(LocalText.getText("REDO"));
-		//redoItem.setName(LocalText.getText("REDO"));
 		redoItem.setActionCommand(REDO_CMD);
 		redoItem.setMnemonic(KeyEvent.VK_R);
 		redoItem.addActionListener(this);
@@ -137,7 +138,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
 		buttonPanel = new JPanel();
 
-		buyButton = new JButton(LocalText.getText("BUY"));
+		buyButton = new ActionButton(LocalText.getText("BUY"));
 		buyButton.setActionCommand(BUY_CMD);
 		buyButton.setMnemonic(KeyEvent.VK_B);
 		buyButton.addActionListener(this);
@@ -145,7 +146,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		buttonPanel.add(buyButton);
 
 		if (includeBidding) {
-			bidButton = new JButton(LocalText.getText("BID") + ":");
+			bidButton = new ActionButton(LocalText.getText("BID") + ":");
 			bidButton.setActionCommand(BID_CMD);
 			bidButton.setMnemonic(KeyEvent.VK_D);
 			bidButton.addActionListener(this);
@@ -162,7 +163,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			buttonPanel.add(bidAmount);
 		}
 
-		passButton = new JButton(LocalText.getText("PASS"));
+		passButton = new ActionButton(LocalText.getText("PASS"));
 		passButton.setActionCommand(PASS_CMD);
 		passButton.setMnemonic(KeyEvent.VK_P);
 		passButton.addActionListener(this);
@@ -285,13 +286,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			addField(f, basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
 
 			if (includeBidding) {
-				f = minBid[i] = new Field(round.getMinimumBidModel(i).option(MoneyModel.SUPPRESS_ZERO));
+				f = minBid[i] = new Field(round.getMinimumBidModel(i));
 				addField(f, minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
 			}
 
 			for (int j = 0; j < np; j++)
 			{
-				f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j).option(MoneyModel.SUPPRESS_ZERO));
+				f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
 				addField(f,
 						bidPerPlayerXOffset + j,
 						bidPerPlayerYOffset + i,
@@ -312,8 +313,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 					WIDE_TOP + WIDE_RIGHT);
 			for (int i = 0; i < np; i++)
 			{
-				f = playerBids[i] = new Field(round.getBlockedCashModel(i)
-						.option(CalculatedMoneyModel.SUPPRESS_ZERO));
+				f = playerBids[i] = new Field(round.getBlockedCashModel(i));
 				addField(f,
 						playerBidsXOffset + i,
 						playerBidsYOffset,
@@ -388,7 +388,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			actionableItems[i] = null;
 		}
 		
-		List activeItems = PossibleActions.getInstance().getType (BuyOrBidStartItem.class);
+		List activeItems = possibleActions.getType (BuyOrBidStartItem.class);
 		
 		if (activeItems == null || activeItems.isEmpty()) {
 			//passButton.setText(LocalText.getText("CLOSE"));
@@ -463,7 +463,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		undoItem.setEnabled(false);
 		redoItem.setEnabled(false);
 		
-		List inactiveItems = PossibleActions.getInstance().getType (NullAction.class);
+		List inactiveItems = possibleActions.getType (NullAction.class);
 		if (inactiveItems != null) {
 			
 			NullAction na;
