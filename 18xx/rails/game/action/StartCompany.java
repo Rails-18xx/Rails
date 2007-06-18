@@ -1,7 +1,6 @@
 package rails.game.action;
 
 import rails.game.Bank;
-import rails.game.Portfolio;
 import rails.game.PublicCertificateI;
 
 public class StartCompany extends BuyCertificate {

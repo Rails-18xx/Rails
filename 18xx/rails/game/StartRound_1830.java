@@ -280,7 +280,7 @@ public class StartRound_1830 extends StartRound
 			return false;
 		}
 
-		MoveSet.start(true);
+		MoveSet.start(false);
 		
 		item.setBid(bidAmount, player);
 		if (previousBid > 0)
@@ -344,7 +344,7 @@ public class StartRound_1830 extends StartRound
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
 		
-		MoveSet.start(true);
+		MoveSet.start(false);
 		
 		numPasses.add (1);
 

@@ -4,10 +4,8 @@ package rails.game;
 import java.util.*;
 
 import rails.game.action.BuyCertificate;
-import rails.game.action.BuyOrBidStartItem;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
 import rails.game.move.DoubleMapChange;
@@ -601,7 +599,11 @@ public class StockRound extends Round
 				result = done (playerName);
 				break;
 			case NullAction.UNDO:
-				MoveSet.undo();
+				MoveSet.undo(false);
+				result = true;
+				break;
+			case NullAction.FORCED_UNDO:
+				MoveSet.undo(true);
 				result = true;
 				break;
 			case NullAction.REDO:
@@ -644,8 +646,11 @@ public class StockRound extends Round
 		if (this == GameManager.getInstance().getCurrentRound()) {
 			setPossibleActions();
 		}
-		if (MoveSet.isUndoableByManager()) {
+		if (MoveSet.isUndoableByPlayer()) {
 			possibleActions.add (new NullAction (NullAction.UNDO));
+		}
+		if (MoveSet.isUndoableByManager()) {
+			possibleActions.add (new NullAction (NullAction.FORCED_UNDO));
 		}
 		if (MoveSet.isRedoable()) {
 			possibleActions.add(new NullAction (NullAction.REDO));

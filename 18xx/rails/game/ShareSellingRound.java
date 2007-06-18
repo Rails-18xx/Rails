@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.3 2007/06/17 22:03:50 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.4 2007/06/18 19:53:43 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.move.MoveSet;

@@ -32,4 +32,8 @@ public class TrainsModel extends ModelObject
 		}
 	}
 
+	//public void update() {
+	//	log.debug("Update called, trains="+getText(), new Exception ("HERE"));
+	//	super.update();
+	//}
 }

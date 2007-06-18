@@ -163,7 +163,8 @@ public class Options extends JDialog implements ActionListener
 
 	private String[] getGameList()
 	{
-		File dataDir = new File("./data/");
+		log.debug("Working directory is "+System.getProperty("user.dir"));
+		File dataDir = new File("data/");
 		String[] files = dataDir.list();
 		if (files == null || files.length == 0)
 		{

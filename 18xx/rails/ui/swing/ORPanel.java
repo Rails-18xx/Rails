@@ -2,7 +2,6 @@ package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.model.*;
 import rails.game.move.MoveSet;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexMap;
@@ -42,6 +41,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     //private static final String LAY_TOKEN_CMD = "LayToken";
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
+    private static final String FORCED_UNDO_CMD = "Undo!";
     private static final String REDO_CMD = "Redo";
 
     private JPanel statusPanel;
@@ -651,7 +651,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             } else {
                 repaint();
             }
-        } else {
+        } else if (!(round instanceof ShareSellingRound)) {
             deRegisterObservers();
             setORCompanyTurn(-1);
         }
@@ -804,6 +804,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         } else if (command.equals(UNDO_CMD)) {
             log.debug ("UNDO!");
             oRound.undo();
+        } else if (command.equals(FORCED_UNDO_CMD)) {
+            log.debug ("UNDO!");
+            oRound.forcedUndo();
         } else if (command.equals(REDO_CMD)) {
             log.debug ("REDO!");
             oRound.redo();
@@ -1022,65 +1025,39 @@ private void buyTrain()
 
 	private void buyPrivate() {
 
-        int amount;
-
-        //Iterator it = Game.getCompanyManager().getAllPrivateCompanies()
-        //        .iterator();
-        List<String> privatesForSale 
-        	= new ArrayList<String>();
-        Map<String, BuyPrivate> privatesForSaleMap 
-        	= new HashMap<String, BuyPrivate>();
-        String privName;
-        //PrivateCompanyI priv;
+        int amount, index;
+        List<String> privatesForSale = new ArrayList<String>();
+        List<BuyPrivate> privates =  possibleActions.getType(BuyPrivate.class);
+        String chosenOption;
         int minPrice = 0, maxPrice = 0;
 
-        //while (it.hasNext()) {
-        //    priv = (PrivateCompanyI) it.next();
-        //    if (priv.getPortfolio().getOwner() instanceof Player) {
-        //        minPrice = (int) (priv.getBasePrice() * orComp
-        //                .getLowerPrivatePriceFactor());
-        //        maxPrice = (int) (priv.getBasePrice() * orComp
-        //                .getUpperPrivatePriceFactor());
-        //        privatesForSale.add(priv.getName() + " ("
-        //                + Bank.format(minPrice) + " - " + Bank.format(maxPrice)
-        //                + ")");
-        //    }
-        //}
-        BuyPrivate action;
-        for (Iterator it = possibleActions.getType(BuyPrivate.class).iterator(); it.hasNext(); ) {
-            action = (BuyPrivate) it.next();
-            privName = action.getPrivateCompany().getName();
-            privatesForSale.add(privName 
-                    + " (" + Bank.format(action.getMinimumPrice())
-                    + " - " + Bank.format(action.getMaximumPrice()) + ")");
-            privatesForSaleMap.put(privName, action);
+        for (BuyPrivate action : privates) {
+            privatesForSale.add(LocalText.getText("BuyPrivatePrompt", new String[] {
+            		action.getPrivateCompany().getName(),
+            		action.getPrivateCompany().getPortfolio().getName(),
+            		Bank.format(action.getMinimumPrice()),
+            		Bank.format(action.getMaximumPrice())
+            }));
         }
 
         if (privatesForSale.size() > 0) {
-            try {
-                privName = (String) JOptionPane.showInputDialog(this, LocalText
-                        .getText("BUY_WHICH_PRIVATE"), LocalText
-                        .getText("WHICH_PRIVATE"),
-                        JOptionPane.QUESTION_MESSAGE, null, privatesForSale
-                                .toArray(), privatesForSale.get(0));
-                privName = privName.split(" ")[0];
-                action = (BuyPrivate) privatesForSaleMap.get(privName);
+            chosenOption = (String) JOptionPane.showInputDialog(this, 
+            		LocalText.getText("BUY_WHICH_PRIVATE"), 
+            		LocalText.getText("WHICH_PRIVATE"),
+                    JOptionPane.QUESTION_MESSAGE, 
+                    null, 
+                    privatesForSale.toArray(), 
+                    privatesForSale.get(0));
+            if (chosenOption != null) {
+                index = privatesForSale.indexOf(chosenOption);
+                BuyPrivate action = privates.get(index);
                 minPrice = action.getMinimumPrice();
                 maxPrice = action.getMaximumPrice();
-                //priv = Game.getCompanyManager().getPrivateCompany(privName);
-                //minPrice = (int) (priv.getBasePrice() * orComp
-                //        .getLowerPrivatePriceFactor());
-                //maxPrice = (int) (priv.getBasePrice() * orComp
-                //        .getUpperPrivatePriceFactor());
                 String price = (String) JOptionPane.showInputDialog(this,
-                        //LocalText.getText("BUY") + " " + privName
-                        //        + LocalText.getText("FOR_WHAT_PRICE") + " ("
-                        //        + LocalText.getText("RANGE") + " "
-                        //        + Bank.format(minPrice) + " - "
-                        //        + Bank.format(maxPrice) + ")?",
                         LocalText.getText("WHICH_PRIVATE_PRICE", new String[] {
-                                privName,
-                                Bank.format(minPrice), Bank.format(maxPrice)}),
+                                chosenOption,
+                                Bank.format(minPrice), 
+                                Bank.format(maxPrice)}),
                         LocalText.getText("WHICH_PRICE"),
                         JOptionPane.QUESTION_MESSAGE);
                 try {
@@ -1089,17 +1066,13 @@ private void buyTrain()
                     amount = 0; // This will generally be refused.
                 }
 
-                if (!oRound
-                        .buyPrivate(orComp.getName(), privName, amount)) {
+                if (!oRound.buyPrivate(orComp.getName(), 
+                		chosenOption.split(" ")[0], // temporary 
+                		amount)) {
                     displayMessage();
                 } else {
-                    //newPrivatesCost[orCompIndex].setText(Bank.format(oRound
-                    //        .getLastPrivateBuyCost()));
                     GameUILoader.orWindow.updateMessage();
                 }
-            } catch (NullPointerException e) {
-                // Null Pointer means user hit cancel.
-                // Nothing to do.
             }
         }
 

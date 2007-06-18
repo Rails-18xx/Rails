@@ -16,34 +16,17 @@ public abstract class StartRound extends Round implements StartRoundI
 {
 
 	protected StartPacket startPacket = null;
-	//protected Map itemMap = null;
 	protected int[] itemIndex;
 	protected List<StartItem> itemsToSell = null;
 	protected State auctionItemState = new State ("AuctionItem", StartItem.class);
 	protected IntegerState numPasses = new IntegerState("StartRoundPasses");
 	protected int numPlayers;
 	protected String variant;
-	//protected int nextStep;
-	//protected int defaultStep;
 	
 	/** Should the UI present bidding into and facilities?
 	 * This value MUST be set in the actual StartRound constructor.
 	 */
 	protected boolean hasBidding; 
-
-	/*----- Start Round states -----*/
-	/** The current player must buy, bid or pass */
-	//public static final int BID_BUY_OR_PASS = 0;
-	/** The current player must set a par price */
-	//public static final int SET_PRICE = 1;
-	/** The current player must buy or pass */
-	//public static final int BUY_OR_PASS = 2;
-	/** The current player must buy (pass not allowed) */
-	//public static final int BUY = 3;
-	/** The current player must bid or pass */
-	//public static final int BID_OR_PASS = 4;
-	/** The start round is closed */
-	//public static final int CLOSED = 9;
 
 	/** A company in need for a par price. */
 	PublicCompanyI companyNeedingPrice = null;
@@ -117,7 +100,11 @@ public abstract class StartRound extends Round implements StartRoundI
 				result = pass (playerName);
 				break;
 			case NullAction.UNDO:
-				MoveSet.undo();
+				MoveSet.undo(false);
+				result = true;
+				break;
+			case NullAction.FORCED_UNDO:
+				MoveSet.undo(true);
 				result = true;
 				break;
 			case NullAction.REDO:
@@ -293,7 +280,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			return false;
 		}
 		
-		MoveSet.start(true);
+		MoveSet.start(false);
 		
 		assignItem(player, item, price, sharePrice);
 
@@ -386,15 +373,6 @@ public abstract class StartRound extends Round implements StartRoundI
 	protected abstract boolean pass(String playerName);
 
 	/*----- Setting up the UI for the next action -----*/
-	/**
-	 * Return the StartRound state, i.e. which action is next?
-	 * 
-	 * @return The next step number.
-	 */
-	//public int nextStep()
-	//{
-	//	return nextStep;
-	//}
 
 	/**
 	 * Get the currentPlayer.
@@ -435,13 +413,8 @@ public abstract class StartRound extends Round implements StartRoundI
 	 * 
 	 * @return An array of start items, possibly empry.
 	 */
-	//public abstract StartItem[] getBuyableItems();
 	
 	public abstract List<StartItem> getStartItems ();
-	
-	////public StartItem getAuctionedItem() {
-	//	return auctionItem;
-	//}
 	
 	protected abstract boolean setPossibleActions();
 
@@ -450,36 +423,17 @@ public abstract class StartRound extends Round implements StartRoundI
 	 * 
 	 * @return An array of start items, possibly empty.
 	 */
-	//public abstract StartItem[] getBiddableItems();
 
 	public StartPacket getStartPacket()
 	{
 		return startPacket;
 	}
 
-	//public List getSpecialProperties () {
-	//    return null;
-	//}
-
 	public boolean hasBidding() {
 		return hasBidding;
 	}
 	
-	//public int getItemIndex(int i) {
-	//	if (i >= 0 && i < itemIndex.length) {
-	//		return itemIndex[i];
-	//	} else {
-	//		return -1;
-	//	}
-	//}
-	
 	public ModelObject getBidModel (int privateIndex, int playerIndex) {
-		//log.debug("Asking BidModel for private="+privateIndex+", player="+playerIndex+", itemsToSell.size="+itemsToSell.size());
-		//if (itemsToSell.size() <= privateIndex) {
-		//	for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
-		//		log.debug("  Item="+((StartItem)it.next()).getName());
-		//	}
-		//}
 		return ((StartItem)itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
 	}
 	

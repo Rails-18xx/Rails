@@ -12,8 +12,6 @@ import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
-import rails.game.model.PrivatesModel;
-import rails.game.model.TrainsModel;
 import rails.ui.swing.StatusWindow;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
@@ -112,10 +110,10 @@ public class GameStatus extends JPanel implements ActionListener
 
 	// Current state
 	private int srPlayerIndex = -1;
-	private int compSellIndex = -1;
-	private int compBuyIPOIndex = -1;
-	private int compBuyPoolIndex = -1;
-	private List<TradeableCertificate> buyableCertificates, sellableCertificates;
+	//private int compSellIndex = -1;
+	//private int compBuyIPOIndex = -1;
+	//private int compBuyPoolIndex = -1;
+	//private List<TradeableCertificate> buyableCertificates, sellableCertificates;
 
 	private ButtonGroup buySellGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
@@ -640,8 +638,8 @@ public class GameStatus extends JPanel implements ActionListener
 			gbc = gb.getConstraints(source);
 			if (command.equals(SELL_CMD))
 			{
-				compSellIndex = gbc.gridy - certPerPlayerYOffset;
-				compBuyIPOIndex = compBuyPoolIndex = -1;
+				//compSellIndex = gbc.gridy - certPerPlayerYOffset;
+				//compBuyIPOIndex = compBuyPoolIndex = -1;
 
 				actions = ((ClickField)source).getPossibleActions();
 				List<String> options = new ArrayList<String>();
@@ -694,14 +692,14 @@ public class GameStatus extends JPanel implements ActionListener
 					|| command.equals(BUY_FROM_POOL_CMD)) {
 				if (command.equals(BUY_FROM_IPO_CMD))
 				{
-					compBuyIPOIndex = gbc.gridy - certInIPOYOffset;
-					compSellIndex = compBuyPoolIndex = -1;
+					//compBuyIPOIndex = gbc.gridy - certInIPOYOffset;
+					//compSellIndex = compBuyPoolIndex = -1;
 					//((StatusWindow) parent).enableBuyButton(true);
 				}
 				else if (command.equals(BUY_FROM_POOL_CMD))
 				{
-					compBuyPoolIndex = gbc.gridy - certInPoolYOffset;
-					compSellIndex = compBuyIPOIndex = -1;
+					//compBuyPoolIndex = gbc.gridy - certInPoolYOffset;
+					//compSellIndex = compBuyIPOIndex = -1;
 					//((StatusWindow) parent).enableBuyButton(true);
 				}
 				boolean startCompany = false;
@@ -792,7 +790,7 @@ public class GameStatus extends JPanel implements ActionListener
 		repaint();
 
 	}
-	
+	/*
 	public int getCompIndexToSell()
 	{
 		return compSellIndex;
@@ -807,6 +805,7 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		return compBuyPoolIndex;
 	}
+	*/
 
 	/*
 	public List<Object> getBuyOrSellOptions()
@@ -830,6 +829,7 @@ public class GameStatus extends JPanel implements ActionListener
 	}
 	*/
 
+	/*
 	public List<PossibleAction> getPossibleActions()
 	{
 		if (compBuyIPOIndex >= 0)
@@ -849,6 +849,8 @@ public class GameStatus extends JPanel implements ActionListener
 			return new ArrayList<PossibleAction>();
 		}
 	}
+	*/
+	
 	public void setSRPlayerTurn(int selectedPlayerIndex)
 	{
 		int i, j;
@@ -955,7 +957,7 @@ public class GameStatus extends JPanel implements ActionListener
 					+ (j == index ? " PD" : ""));
 		}
 	}
-
+/*
 	public void setBuyableCertificates(List<TradeableCertificate> certs)
 	{
 		buyableCertificates = certs;
@@ -965,7 +967,7 @@ public class GameStatus extends JPanel implements ActionListener
 	{
 		sellableCertificates = certs;
 	}
-
+*/
 	public String getSRPlayer()
 	{
 		if (srPlayerIndex >= 0)
@@ -979,7 +981,6 @@ public class GameStatus extends JPanel implements ActionListener
 
 		setPlayerCertButton(i, j, clickable);
 		if (clickable && o != null) {
-			certPerPlayerButton[i][j].addOption(o);
 			if (o instanceof PossibleAction) certPerPlayerButton[i][j].addPossibleAction((PossibleAction)o);
 		}
 	}
@@ -1001,7 +1002,6 @@ public class GameStatus extends JPanel implements ActionListener
 
 		setIPOCertButton(i, clickable);
 		if (clickable && o != null) {
-			certInIPOButton[i].addOption(o);
 			if (o instanceof PossibleAction) certInIPOButton[i].addPossibleAction((PossibleAction)o);
 		}
 	}
@@ -1025,7 +1025,6 @@ public class GameStatus extends JPanel implements ActionListener
 
 		setPoolCertButton(i, clickable);
 		if (clickable && o != null) {
-			certInPoolButton[i].addOption(o);
 			if (o instanceof PossibleAction) certInPoolButton[i].addPossibleAction((PossibleAction)o);
 		}
 	}

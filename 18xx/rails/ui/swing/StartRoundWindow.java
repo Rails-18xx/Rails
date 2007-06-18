@@ -5,8 +5,6 @@ import rails.game.action.BuyOrBidStartItem;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
-import rails.game.model.CalculatedMoneyModel;
-import rails.game.model.MoneyModel;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
