@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.1 2007/06/17 22:03:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.2 2007/06/18 19:53:43 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -74,8 +74,10 @@ public class BuyCertificate extends PossibleAction {
 	public String toString() {
 		StringBuffer text = new StringBuffer(); 
         text.append("BuyCertificate: ");
-        if (maximumNumber > 1) {
-        	text.append ("up to ").append(maximumNumber).append(" of");
+        if (numberBought > 1) {
+        	text.append (numberBought).append(" of ");
+        } else if (numberBought == 0 && maximumNumber > 1) {
+        	text.append ("up to ").append(maximumNumber).append(" of ");
         }
         text.append(certificate.getName())
         	.append(" from ").append(from.getName())

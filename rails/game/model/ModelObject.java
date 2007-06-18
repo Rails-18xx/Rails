@@ -55,7 +55,7 @@ public abstract class ModelObject extends Observable {
      * is just a reference to an outside object (e.g. Portfolio).  
      */
     public void update () {
-    	/* Notifuy the observers about the change */
+    	/* Notify the observers about the change */
         notifyViewObjects();
         
         /* Also update all model objects that depend on this one */

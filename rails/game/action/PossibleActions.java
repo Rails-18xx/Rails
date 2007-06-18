@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.5 2007/06/17 22:03:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.6 2007/06/18 19:53:43 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -6,9 +6,7 @@
 package rails.game.action;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import rails.util.Util;
 

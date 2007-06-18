@@ -5,12 +5,13 @@ public class NullAction extends PossibleAction {
 	public static final int DONE = 0;
 	public static final int PASS = 1;
 	public static final int UNDO = 2;
-	public static final int REDO = 3;
-	public static final int CLOSE = 4;
-	public static final int MAX_MODE = 4;
+	public static final int FORCED_UNDO = 3;
+	public static final int REDO = 4;
+	public static final int CLOSE = 5;
+	public static final int MAX_MODE = 5;
 	
 	private String[] name = new String[] 
-	      {"Done", "Pass", "Undo", "Redo", "Close"};
+	      {"Done", "Pass", "Undo", "Undo!", "Redo", "Close"};
 	
 	protected int mode = -1;
 	

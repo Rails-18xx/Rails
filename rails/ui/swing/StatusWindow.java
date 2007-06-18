@@ -7,16 +7,15 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import rails.game.*;
-import rails.game.action.BuyCertificate;
+import rails.game.action.ActionTaker;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.action.SellShares;
-import rails.game.action.StartCompany;
-import rails.game.move.MoveSet;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialSRProperty;
 import rails.ui.swing.elements.ActionButton;
+import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.LocalText;
 
 import java.util.Iterator;
@@ -32,6 +31,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
     protected static final String QUIT_CMD = "Quit";
     protected static final String SAVE_CMD = "Save";
     protected static final String UNDO_CMD = "Undo";
+    protected static final String FORCED_UNDO_CMD = "Undo!";
     protected static final String REDO_CMD = "Redo";
     protected static final String MARKET_CMD = "Market";
     protected static final String MAP_CMD = "Map";
@@ -46,10 +46,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	private GameStatus gameStatus;
 	private ActionButton /*buyButton, sellButton,*/ passButton, extraButton;
 	private Player player;
-	private PublicCompanyI[] companies;
-	private PublicCompanyI company;
-	private CompanyManagerI cm;
-	private Portfolio ipo, pool;
+	//private PublicCompanyI[] companies;
+	//private PublicCompanyI company;
+	//private CompanyManagerI cm;
+	//private Portfolio ipo, pool;
 	//private int compIndex;//, playerIndex;
 
 	/*----*/
@@ -72,7 +72,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	private JMenuBar menuBar;
 	private static JMenu fileMenu, optMenu, moveMenu;
-	private JMenuItem menuItem, undoItem, redoItem;
+	private JMenuItem menuItem;
+	private ActionMenuItem undoItem, forcedUndoItem, redoItem;
 
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
@@ -148,7 +149,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		menuBar.add(optMenu);
 
-		undoItem = new JMenuItem(LocalText.getText("UNDO"));
+		undoItem = new ActionMenuItem(LocalText.getText("UNDO"));
 		undoItem.setName(LocalText.getText("UNDO"));
 		undoItem.setActionCommand(UNDO_CMD);
 		undoItem.setMnemonic(KeyEvent.VK_U);
@@ -156,7 +157,15 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 		undoItem.setEnabled(false);
 		moveMenu.add(undoItem);
 
-		redoItem = new JMenuItem(LocalText.getText("REDO"));
+		forcedUndoItem = new ActionMenuItem(LocalText.getText("FORCED_UNDO"));
+		forcedUndoItem.setName(LocalText.getText("FORCED_UNDO"));
+		forcedUndoItem.setActionCommand(FORCED_UNDO_CMD);
+		forcedUndoItem.setMnemonic(KeyEvent.VK_F);
+		forcedUndoItem.addActionListener(this);
+		forcedUndoItem.setEnabled(false);
+		moveMenu.add(forcedUndoItem);
+
+		redoItem = new ActionMenuItem(LocalText.getText("REDO"));
 		redoItem.setName(LocalText.getText("REDO"));
 		redoItem.setActionCommand(REDO_CMD);
 		redoItem.setMnemonic(KeyEvent.VK_R);
@@ -171,11 +180,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 	public StatusWindow()
 	{
-		cm = Game.getCompanyManager();
-		companies = (PublicCompanyI[]) cm.getAllPublicCompanies()
-				.toArray(new PublicCompanyI[0]);
-		ipo = Bank.getIpo();
-		pool = Bank.getPool();
+		//cm = Game.getCompanyManager();
+		//companies = (PublicCompanyI[]) cm.getAllPublicCompanies()
+		//		.toArray(new PublicCompanyI[0]);
+		//ipo = Bank.getIpo();
+		//pool = Bank.getPool();
 
 		gameStatus = new GameStatus(this);
 		buttonPanel = new JPanel();
@@ -361,6 +370,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			// New
 			passButton.setEnabled(false);
 			undoItem.setEnabled(false);
+			forcedUndoItem.setEnabled(false);
 			redoItem.setEnabled(false);
 			
 			List inactiveItems = possibleActions.getType (NullAction.class);
@@ -376,20 +386,26 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 						passButton.setEnabled (true);
 						passButton.setActionCommand(PASS_CMD);
 						passButton.setMnemonic(KeyEvent.VK_P);
-						passButton.setSelectedAction(na);
+						passButton.setPossibleAction(na);
 						break;
 					case NullAction.DONE:
 						passButton.setText(LocalText.getText("Done"));
 						passButton.setEnabled (true);
 						passButton.setActionCommand(DONE_CMD);
 						passButton.setMnemonic(KeyEvent.VK_D);
-						passButton.setSelectedAction(na);
+						passButton.setPossibleAction(na);
 						break;
 					case NullAction.UNDO:
 						undoItem.setEnabled(true);
+						undoItem.setPossibleAction(na);
+						break;
+					case NullAction.FORCED_UNDO:
+						forcedUndoItem.setEnabled(true);
+						forcedUndoItem.setPossibleAction(na);
 						break;
 					case NullAction.REDO:
 						redoItem.setEnabled(true);
+						redoItem.setPossibleAction(na);
 						break;
 					}
 				}
@@ -475,7 +491,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent actor)
 	{
 		String command = actor.getActionCommand();
-		List<PossibleAction> actions = ((ActionButton)actor.getSource()).getActions();
+		List<PossibleAction> actions = ((ActionTaker)actor.getSource()).getPossibleActions();
 		PossibleAction executedAction = null;
 		if (actions != null && actions.size() > 0) {
 			executedAction = actions.get(0);
@@ -532,14 +548,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 
 		} else if (command.equals(UNDO_CMD))
 		{
-			if ((executedAction = getNullAction (UNDO_CMD)) != null) {
+			//if ((executedAction = getNullAction (UNDO_CMD)) != null) {
 				process (executedAction);
-			}
+			//}
+		} else if (command.equals(FORCED_UNDO_CMD))
+		{
+			//if ((executedAction = getNullAction (UNDO_CMD)) != null) {
+				process (executedAction);
+			//}
 		} else if (command.equals(REDO_CMD))
 		{
-			if ((executedAction = getNullAction (REDO_CMD)) != null) {
+			//if ((executedAction = getNullAction (REDO_CMD)) != null) {
 				process (executedAction);
-			}
+			//}
 		} 
 		
 	}
@@ -787,11 +808,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 			}
 			passButton.setEnabled(true);
 			passButton.setVisible(true);
-			passButton.addAction(action);
+			passButton.addPossibleAction(action);
 		} else {
 			passButton.setEnabled (false);
 			passButton.setVisible(false);
-			passButton.clearActions();
+			passButton.clearPossibleActions();
 		}
 	}
 

@@ -429,7 +429,7 @@ public class OperatingRound extends Round implements Observer
 		{
 			nextStep();
 		} else {
-			updateStatus("layTile");
+			setPossibleActions("layTile");
 		}
 		
 		/* End of execution */
@@ -684,7 +684,7 @@ public class OperatingRound extends Round implements Observer
 			{
 				nextStep();
 			} else {
-			    updateStatus("layBaseToken");
+			    setPossibleActions("layBaseToken");
 			}
 	
 		}
@@ -1428,7 +1428,7 @@ public class OperatingRound extends Round implements Observer
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
 		currentPhase = GameManager.getCurrentPhase();
 		
-		updateStatus("buyTrain");
+		setPossibleActions("buyTrain");
 
 		/* End of execution */
 		MoveSet.finish();
@@ -1573,7 +1573,7 @@ public class OperatingRound extends Round implements Observer
 		// We may have got an extra tile lay right
 		//setSpecialTileLays();
 		
-		updateStatus("buyPrivate");
+		setPossibleActions("buyPrivate");
 		
 		MoveSet.finish();
 
@@ -1691,7 +1691,7 @@ public class OperatingRound extends Round implements Observer
 	    stepObject.set(step);
 		
 		prepareStep();
-		updateStatus("setStep");
+		setPossibleActions("setStep");
 	}
 
 	public int getOperatingCompanyIndex()
@@ -1699,10 +1699,10 @@ public class OperatingRound extends Round implements Observer
 		return operatingCompanyIndex;
 	}
 	
-	protected void updateStatus (String fromWhere) {
+	protected void setPossibleActions (String fromWhere) {
 	    
 	    //log.debug  (">>> updateStatus called from "+fromWhere);
-	    updateStatus();
+	    setPossibleActions();
 	    
 	}
 	/**
@@ -1710,7 +1710,7 @@ public class OperatingRound extends Round implements Observer
 	 * (new method, intended to absorb code from several other methods). 
 	 *
 	 */
-	protected void updateStatus () {
+	protected void setPossibleActions () {
 	    
 		/* Create a new list of possible actions for the UI */
 		possibleActions.clear();
@@ -1740,27 +1740,42 @@ public class OperatingRound extends Round implements Observer
 		
 		// Can private companies be bought?
 		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {
-		    PrivateCompanyI privComp;
+			
+			// Create a list of players with the current one in front
+			int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+			Player player;
 		    int minPrice, maxPrice;
-		    for (Iterator it = Game.getCompanyManager().getPrivatesOwnedByPlayers().iterator();
-		    		it.hasNext(); ) {
-		        privComp = (PrivateCompanyI) it.next();
-		        minPrice = (int) (privComp.getBasePrice() * operatingCompany
-                        .getLowerPrivatePriceFactor());
-		        maxPrice = (int) (privComp.getBasePrice() * operatingCompany
-                        .getUpperPrivatePriceFactor());
-		        possibleActions.add (new BuyPrivate (privComp, minPrice, maxPrice));
-		    }
+			for (int i = currentPlayerIndex; 
+					 i < currentPlayerIndex + players.length;
+					 i++) {
+				player = players[i % players.length];
+			    //PrivateCompanyI privComp;
+			    //for (Iterator it = Game.getCompanyManager().getPrivatesOwnedByPlayers().iterator();
+			    //		it.hasNext(); ) {
+			    for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
+			    	
+			        //privComp = (PrivateCompanyI) it.next();
+			        minPrice = (int) (privComp.getBasePrice() * operatingCompany
+	                        .getLowerPrivatePriceFactor());
+			        maxPrice = (int) (privComp.getBasePrice() * operatingCompany
+	                        .getUpperPrivatePriceFactor());
+			        possibleActions.add (new BuyPrivate (privComp, minPrice, maxPrice));
+			    }
+			}
+		}
+		
+		for (PossibleAction pa : possibleActions.getList()) {
+			log.debug(operatingCompany.getName()+ " may: "+pa.toString());
 		}
 
 	}
 
 	/**
-	 * Get a list of private companies that are available for buying, i.e. which
-	 * are in the hands of players.
+	 * Get a list of private companies that are available for buying, 
+	 * i.e. which are in the hands of players.
 	 * 
-	 * @return An array of the buyable privates. TODO Check if privates can be
-	 *         bought at all.
+	 * @return An array of the buyable privates.
+	 * Privates owned by the current player appear first. 
 	 */
 	public PrivateCompanyI[] getBuyablePrivates()
 	{
@@ -1834,20 +1849,41 @@ public class OperatingRound extends Round implements Observer
 		    presidentMayHelp = true;
 		}
 		
-		/* Other company trains */
+		/* Other company trains, sorted by president (current player first) */
 		PublicCompanyI c;
 		BuyableTrain bt;
+		Player p;
+		List l;
+		int index;
+		// Set up a list per player of presided companies
+		List<List<PublicCompanyI>> companiesPerPlayer 
+				= new ArrayList<List<PublicCompanyI>>(players.length);
+		for (int i=0; i<players.length; i++) companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
+		List<PublicCompanyI> companies;
+		// Sort out which players preside over wich companies.
 		for (int j = 0; j < operatingCompanyArray.length; j++) {
 			c = operatingCompanyArray[j];
 			if (c == operatingCompany) continue;
-			trains = c.getPortfolio().getUniqueTrains();
-			for (Iterator it = trains.iterator(); it.hasNext();) {
-			    train = (TrainI) it.next();
-			    bt = new BuyableTrain (train, 0);
-			    if (presidentMayHelp && cash < train.getCost()) {
-			        bt.setPresidentMayAddCash(train.getCost() - cash);
-			    }
-			    buyableTrains.add (bt);
+			p = c.getPresident();
+			index = p.getIndex();
+			companiesPerPlayer.get(index).add(c);
+		}
+		// Scan trains per company per player, operating company president first
+		int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+		for (int i = currentPlayerIndex; 
+				 i < currentPlayerIndex + players.length; 
+				 i++) {
+			companies = companiesPerPlayer.get(i % players.length);
+			for (PublicCompanyI company : companies) {
+				trains = company.getPortfolio().getUniqueTrains();
+				for (Iterator it = trains.iterator(); it.hasNext();) {
+				    train = (TrainI) it.next();
+				    bt = new BuyableTrain (train, 0);
+				    if (presidentMayHelp && cash < train.getCost()) {
+				        bt.setPresidentMayAddCash(train.getCost() - cash);
+				    }
+				    buyableTrains.add (bt);
+				}
 			}
 		}
     
@@ -1955,17 +1991,21 @@ public class OperatingRound extends Round implements Observer
 	public void update (Observable observable, Object object) {
 	    if (observable == stepObject) {
 	        prepareStep();
-	        updateStatus();
+	        setPossibleActions();
 	    }
 	}
 	
 	public void undo() {
-	    MoveSet.undo();
-	    updateStatus("undo");
+	    MoveSet.undo(false);
+	    setPossibleActions("undo");
+	}
+	public void forcedUndo() {
+	    MoveSet.undo(true);
+	    setPossibleActions("forcedUndo");
 	}
 	public void redo() {
 	    MoveSet.redo();
-	    updateStatus("redo");
+	    setPossibleActions("redo");
 	}
 
 }

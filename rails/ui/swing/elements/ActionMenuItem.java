@@ -3,7 +3,7 @@ package rails.ui.swing.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
+import javax.swing.JMenuItem;
 
 import rails.game.action.ActionTaker;
 import rails.game.action.PossibleAction;
@@ -13,12 +13,12 @@ import rails.game.action.PossibleAction;
  * @author VosE
  * @see ClickField
  */
-public class ActionButton extends JButton implements ActionTaker {
+public class ActionMenuItem extends JMenuItem implements ActionTaker {
 
 	private List<PossibleAction> actions 
 		= new ArrayList<PossibleAction>(1);
 	
-	public ActionButton (String text) {
+	public ActionMenuItem (String text) {
 		super (text);
 	}
 

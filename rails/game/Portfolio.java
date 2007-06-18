@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.7 2007/06/17 22:03:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.8 2007/06/18 19:53:43 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -658,7 +658,7 @@ public class Portfolio
 		TrainTypeI type = train.getType();
 		if (trainsPerType.get(type) == null)
 			trainsPerType.put(type, new ArrayList<TrainI>());
-		((List<TrainI>) trainsPerType.get(train.getType())).add(train);
+		trainsPerType.get(train.getType()).add(train);
 		train.setHolder(this);
 		trainsModel.update();
 	}
@@ -667,7 +667,7 @@ public class Portfolio
 	{
 		trains.remove(train);
 		//TrainTypeI type = train.getType();
-		((List) trainsPerType.get(train.getType())).remove(train);
+		trainsPerType.get(train.getType()).remove(train);
 		train.setHolder(null);
 		trainsModel.update();
 

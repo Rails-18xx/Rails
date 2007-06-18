@@ -329,7 +329,7 @@ public class StartRound_1835 extends StartRound
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
 		
-		MoveSet.start(true);
+		MoveSet.start(false);
 
 		numPasses.add(1);
 		

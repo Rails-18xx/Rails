@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.6 2007/06/17 22:03:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.7 2007/06/18 19:53:44 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -81,7 +81,7 @@ public class MoveSet {
         move.execute();
         if (currentAction != null) {
             currentAction.moves.add (0, move); // Prepare for undo in reverse order!
-            log.debug ("Move added for " + move);
+            log.debug ("New " + move);
         	return true;
         } else {
             // Uncomment one of the next statements to detect un-undoable actions
@@ -92,8 +92,9 @@ public class MoveSet {
         }
     }
     
-    public static boolean undo () {
-        if (currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
+    public static boolean undo (boolean forced) {
+        if ((forced || isUndoableByPlayer())
+        		&& currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
             ReportBuffer.add(LocalText.getText("UNDO"));
             //log.debug ("MoveSet undo index is "+lastIndex);
             ((MoveSet) actionStack.get(lastIndex--)).unexecute();
