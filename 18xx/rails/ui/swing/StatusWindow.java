@@ -491,7 +491,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent actor)
 	{
 		String command = actor.getActionCommand();
-		List<PossibleAction> actions = ((ActionTaker)actor.getSource()).getPossibleActions();
+		List<PossibleAction> actions = null;
+		if (actor.getSource() instanceof ActionTaker) {
+			actions = ((ActionTaker)actor.getSource()).getPossibleActions();
+		}
 		PossibleAction executedAction = null;
 		if (actions != null && actions.size() > 0) {
 			executedAction = actions.get(0);
