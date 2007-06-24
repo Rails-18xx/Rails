@@ -30,6 +30,12 @@ public class ImageLoader
 	private static String tileRootDir = Config.get("tile.root_directory");
 	private static String preference = Config.get("tile.format_preference");
 	private static Logger log = Logger.getLogger(ImageLoader.class.getPackage().getName());
+	
+	static {
+		if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {
+			tileRootDir += "/";
+		}
+	}
 
 	/* cheat, using batik transcoder API. we only want the Image */
 	private static class BufferedImageTranscoder extends ImageTranscoder
@@ -119,7 +125,7 @@ public class ImageLoader
 			//{
 				//InputStream stream = tileURL.openStream();
 				//if (tileURL.openStream() != null)
-				InputStream stream = Util.getStreamForFile(tileRootDir+"/"+svgTileDir + fn);
+				InputStream stream = Util.getStreamForFile(tileRootDir+svgTileDir + fn);
 				if (stream != null)
 				{
 					BufferedImageTranscoder t = new BufferedImageTranscoder();
@@ -156,7 +162,7 @@ public class ImageLoader
 
 		try
 		{
-			InputStream str = Util.getStreamForFile(tileRootDir+"/"+gifTileDir + fn);
+			InputStream str = Util.getStreamForFile(tileRootDir+gifTileDir + fn);
 			if (str != null)
 			{
 				image = ImageIO.read(str);
