@@ -3,6 +3,7 @@ package rails.ui.swing;
 import rails.game.*;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
+import rails.game.action.NullAction;
 import rails.game.action.PossibleActions;
 import rails.game.special.*;
 import rails.ui.swing.hexmap.*;
@@ -73,7 +74,7 @@ public class ORWindow extends JFrame implements WindowListener
 		getContentPane().add(upgradePanel, BorderLayout.WEST);
 		addMouseListener(upgradePanel);
 
-		orPanel = new ORPanel();
+		orPanel = new ORPanel(this);
 		getContentPane().add(orPanel, BorderLayout.SOUTH);
 
 		setTitle("Rails: Map");
@@ -152,8 +153,6 @@ public class ORWindow extends JFrame implements WindowListener
 	    if (subStep == INACTIVE) return;
 	    
 	    String message = LocalText.getText(messageKey[subStep]);
-	    //List specialProperties = 
-	    //    ((OperatingRound)GameManager.getInstance().getCurrentRound()).getSpecialProperties();
 	    SpecialORProperty sp;
 	    
 	    /* Add any extra messages */
@@ -170,7 +169,6 @@ public class ORWindow extends JFrame implements WindowListener
 		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
 		        Map tileColours;
 		        MapHex hex;
-		        //sp = (SpecialORProperty) it.next();
 		        tileLay = (LayTile) it.next();
 		        log.debug ("TileLay object "+(++ii)+": "+tileLay);
 		        sp = tileLay.getSpecialProperty();
@@ -218,7 +216,7 @@ public class ORWindow extends JFrame implements WindowListener
 	        
 	    } else if (subStep == SELECT_HEX_FOR_TOKEN) {
 	        
-		    /* Compose prompt for tile laying */
+		    /* Compose prompt for token laying */
 		    LayToken tokenLay;
 		    MapHex location;
 		    StringBuffer normalTokenMessage = new StringBuffer(" ");
@@ -264,7 +262,6 @@ public class ORWindow extends JFrame implements WindowListener
 	        }
 	    }
 	    if (extraMessage.length() > 0) {
-	        //message += " <font color=\"red\">" + extraMessage + "</font>";
 	        message += "<br><font color=\"red\">" + extraMessage + "</font>";
 	    }
 
@@ -331,69 +328,82 @@ public class ORWindow extends JFrame implements WindowListener
 
 	public void processDone()
 	{
-		HexMap map = mapPanel.getMap();
-		GUIHex selectedHex = map.getSelectedHex();
 		if (baseTokenLayingEnabled)
 		{
-			if (selectedHex != null)
-			{
-			    LayToken allowance = map.getTokenAllowanceForHex(selectedHex.getHexModel());
-				if (selectedHex.getHexModel().getStations().size() == 1)
-				{
-					if (selectedHex.fixToken(0, allowance)) {
-						//setSubStep(INACTIVE);
-					} else {
-					    setSubStep (SELECT_HEX_FOR_TOKEN);
-					}
-					map.selectHex(null);
-				}
-				else
-				{
-					Object[] stations = selectedHex.getHexModel()
-							.getStations()
-							.toArray();
-					Station station = (Station) JOptionPane.showInputDialog(this,
-							"Which station to place the token in?",
-							"Which station?",
-							JOptionPane.PLAIN_MESSAGE,
-							null,
-							stations,
-							stations[0]);
-
-					try
-					{
-						if  (selectedHex.fixToken(selectedHex.getHexModel()
-								.getStations()
-								.indexOf(station), allowance)) {
-						} else {
-						    setSubStep (SELECT_HEX_FOR_TOKEN);
-						}
-					}
-					catch(ArrayIndexOutOfBoundsException e)
-					{
-						//Clicked on a hex that doesn't have a tile or a station in it.
-					    DisplayBuffer.add(LocalText.getText("NoStationNoToken"));
-					}
-				}
-			}
+            layBaseToken();
 		}
-		else
+		else if (tileLayingEnabled)
 		{
-			if (selectedHex != null)
-			{
-			    LayTile allowance = map.getTileAllowanceForHex(selectedHex.getHexModel());
-				if (!selectedHex.fixTile(tileLayingEnabled, allowance)) {
-				    selectedHex.removeTile();
-				    setSubStep (SELECT_HEX_FOR_TILE);
-				} else {
-					//setSubStep(INACTIVE);
-				}
-				map.selectHex(null);
-			}
+            layTile();
 		}
 
 		repaintUpgradePanel();
 	}
+    
+    private void layTile () {
+        
+        HexMap map = mapPanel.getMap();
+        GUIHex selectedHex = map.getSelectedHex();
+        
+        if (selectedHex != null && selectedHex.canFixTile())
+        {
+            LayTile allowance = map.getTileAllowanceForHex(selectedHex.getHexModel());
+            allowance.setChosenHex(selectedHex.getHexModel());
+            allowance.setOrientation(selectedHex.getProvisionalTileRotation());
+            allowance.setLaidTile(selectedHex.getProvisionalTile());
+            
+            if (orPanel.process(allowance)) {
+                selectedHex.fixTile();
+                updateStatus();
+            } else {
+                selectedHex.removeTile();
+                setSubStep (SELECT_HEX_FOR_TILE);
+            }
+            map.selectHex(null);
+        }
+    }
+    
+    private void layBaseToken () {
+        
+        HexMap map = mapPanel.getMap();
+        GUIHex selectedHex = map.getSelectedHex();
+        
+        if (selectedHex != null)
+        {
+            LayToken allowance = map.getTokenAllowanceForHex(selectedHex.getHexModel());
+            int station;
+            List<Station> stations = selectedHex.getHexModel().getStations();
+            
+            switch (stations.size()) {
+            case 0: // No stations
+                return;
+                
+            case 1:
+                station = 0;
+                break;
+                
+            default:
+                Station stationObject = (Station) JOptionPane.showInputDialog(this,
+                        "Which station to place the token in?",
+                        "Which station?",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        stations.toArray(),
+                        stations.get(0));
+                station = stations.indexOf(stationObject);
+            }
+            
+            allowance.setChosenHex(selectedHex.getHexModel());
+            allowance.setChosenStation(station);
+
+            if  (orPanel.process(allowance)) {
+                selectedHex.fixToken();
+                updateStatus();
+            } else {
+                setSubStep (SELECT_HEX_FOR_TOKEN);
+            }
+        }
+    }
 
 	public void processCancel()
 	{
@@ -403,16 +413,17 @@ public class ORWindow extends JFrame implements WindowListener
 		{
 			if (selectedHex != null)
 				selectedHex.removeToken();
-			orPanel.layBaseToken(null, 0);
+			//orPanel.layBaseToken(null, 0);
+            orPanel.process (new NullAction (NullAction.SKIP));
 		}
-		else
+		else if (tileLayingEnabled)
 		{
 			if (selectedHex != null)
 				selectedHex.removeTile();
-			if (tileLayingEnabled)
-				orPanel.layTile(null, null, 0);
+			orPanel.process (new NullAction (NullAction.SKIP));
 		}
 
+        updateStatus();
 		repaintUpgradePanel();
 	}
 

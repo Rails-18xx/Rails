@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.2 2007/05/31 20:49:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.3 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -15,7 +15,7 @@ import rails.game.special.SpecialTileLay;
 /**
  * @author Erik Vos
  */
-public class LayTile extends PossibleAction {
+public class LayTile extends PossibleORAction {
     
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
@@ -46,6 +46,9 @@ public class LayTile extends PossibleAction {
     
     /** The map hex on which the tile is laid */
     private MapHex chosenHex = null;
+    
+    /** The tile orientation */
+    private int orientation;
 
     /**
      * Allow laying a tile on a given location.
@@ -79,7 +82,17 @@ public class LayTile extends PossibleAction {
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
     }
-    /**
+    
+    
+    public int getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
+	}
+
+	/**
      * @return Returns the laidTile.
      */
     public TileI getLaidTile() {
@@ -139,6 +152,16 @@ public class LayTile extends PossibleAction {
         tileColours = map;
     }
     
+    public boolean equals (PossibleAction action) {
+        if (!(action instanceof LayTile)) return false;
+        LayTile a = (LayTile) action;
+        return a.location == location
+            && a.type == type
+            && a.tileColours == tileColours
+            && a.tiles == tiles
+            && a.specialProperty == specialProperty;
+    }
+
     public String toString () {
         StringBuffer b = new StringBuffer("TileLay");
         b.append(" type=").append(type);

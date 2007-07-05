@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.1 2007/05/30 20:16:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.2 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -106,6 +106,14 @@ public class BuyOrBidStartItem extends PossibleAction {
 			&& status == otherItem.status;
 	}
 	
+    public boolean equals (PossibleAction action) {
+        if (!(action instanceof BuyOrBidStartItem)) return false;
+        BuyOrBidStartItem a = (BuyOrBidStartItem) action;
+        return a.startItem == startItem
+            && a.itemIndex == itemIndex
+            && a.priceOrMinimumBid == priceOrMinimumBid
+            && a.status == status;
+    }
 
 	public String toString() {
         return "BuyOrBidStartItem "+ startItem.getName()

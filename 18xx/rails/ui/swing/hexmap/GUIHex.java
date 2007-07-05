@@ -8,8 +8,6 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.game.action.LayTile;
-import rails.game.action.LayToken;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
 import rails.ui.swing.GameUILoader;
@@ -42,12 +40,10 @@ public class GUIHex implements ViewObject
 
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
-	//protected int provisionalTileOrientation;
 
 	protected GUIToken provisionalGUIToken = null;
 	
 	protected double tileScale = NORMAL_SCALE;
-	//protected static JComponent map;
 
 	protected String toolTip = "";
 
@@ -584,15 +580,6 @@ public class GUIHex implements ViewObject
 	}
 
 	/**
-	 * @param name
-	 *            The name to set.
-	 */
-	public void setName(String name)
-	{
-		this.hexName = name;
-	}
-
-	/**
 	 * @return Returns the currentTile.
 	 */
 	public TileI getCurrentTile()
@@ -701,42 +688,22 @@ public class GUIHex implements ViewObject
 		setToolTip();
 	}
 
-	public boolean fixTile (boolean tileLayingEnabled, LayTile allowance)
-	{
-	    boolean canFixTile = true;
-	    
-		if (tileLayingEnabled && provisionalGUITile != null) {
-
-			// We must first check the Model before we can update the View.
-			OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
-		    canFixTile = or.layTile(or.getOperatingCompany().getName(),
-		            model, provisionalGUITile.getTile(),
-		            provisionalGUITile.getRotation(), allowance);
-
-		    if (canFixTile) {
-		        /*
-				currentGUITile = provisionalGUITile;
-				if (currentGUITile != null)
-				{
-					currentTile = currentGUITile.getTile();
-					currentTileId = currentTile.getId();
-					currentTileOrientation = provisionalTileOrientation;
-				}
-				*/
-		        GameUILoader.orWindow.getORPanel().layTile(model,
-						currentTile,
-						currentTileOrientation);
-			}
-			GameUILoader.orWindow.getORPanel().displayMessage();
-		}
-		setSelected(false);
-		setToolTip();
-		return canFixTile;
+	public boolean canFixTile () {
+		return provisionalGUITile != null;
 	}
-
-	public void dropToken()
-	{
-		// TO BE CREATED
+	
+	public TileI getProvisionalTile () {
+		return provisionalGUITile.getTile();
+	}
+	
+	public int getProvisionalTileRotation() {
+		return provisionalGUITile.getRotation();
+	}
+	
+	public void fixTile () {
+		
+		setSelected (false);
+		setToolTip();
 	}
 
 	public void removeToken()
@@ -746,21 +713,9 @@ public class GUIHex implements ViewObject
 		setToolTip();
 	}
 
-	public boolean fixToken(int station, LayToken allowance)
-	{
-		OperatingRound or = (OperatingRound)GameManager.getInstance().getCurrentRound();
-		boolean canFixToken = 
-		    or.layBaseToken(or.getOperatingCompany().getName(),
-	            model,
-				station, allowance);
-		if (canFixToken) {
-	        GameUILoader.orWindow.getORPanel().layBaseToken(model, station);
-	    }
-        GameUILoader.orWindow.getORPanel().displayMessage();
-		setSelected(false);
-		
-		return canFixToken;
-	}
+    public void fixToken () {
+        setSelected (false);
+    }
 
 	/** Needed to satisfy the ViewObject interface. Currently not used. */
 	public void deRegister()
@@ -773,11 +728,13 @@ public class GUIHex implements ViewObject
 	    return model;
 	}
 	
+    // Required to implement Observer pattern.
+    // Used by Undo/Redo
 	public void update (Observable observable, Object notificationObject) {
 	    
 	    if (notificationObject instanceof String) {
-	        /* The below code so far only deals with tile lay undo/redo.
-	         * Tokens still to do */ 
+	        // The below code so far only deals with tile lay undo/redo.
+	        // Tokens still to do  
 	        String[] elements = ((String)notificationObject).split("/");
 	        currentTileId = Integer.parseInt(elements[0]);
 	        currentTileOrientation = Integer.parseInt(elements[1]);
@@ -788,10 +745,6 @@ public class GUIHex implements ViewObject
 			GameUILoader.getMapPanel().getMap().repaint(getBounds());
 			
 	        provisionalGUITile = null;
-	        /*
-	        setSelected(false);
-	        setToolTip();
-	        */
 
 	        log.debug ("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
 			GameUILoader.orWindow.updateStatus();

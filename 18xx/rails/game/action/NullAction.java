@@ -8,10 +8,11 @@ public class NullAction extends PossibleAction {
 	public static final int FORCED_UNDO = 3;
 	public static final int REDO = 4;
 	public static final int CLOSE = 5;
-	public static final int MAX_MODE = 5;
+	public static final int SKIP = 6;
+	public static final int MAX_MODE = 6;
 	
 	private String[] name = new String[] 
-	      {"Done", "Pass", "Undo", "Undo!", "Redo", "Close"};
+	      {"Done", "Pass", "Undo", "Undo!", "Redo", "Close", "Skip"};
 	
 	protected int mode = -1;
 	
@@ -25,7 +26,13 @@ public class NullAction extends PossibleAction {
 		return mode;
 	}
 	
-	public String toString () {
+    public boolean equals (PossibleAction action) {
+        if (!(action instanceof NullAction)) return false;
+        NullAction a = (NullAction) action;
+        return a.mode == mode;
+    }
+
+    public String toString () {
 		return name[mode];
 	}
 }

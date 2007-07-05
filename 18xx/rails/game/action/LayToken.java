@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.1 2007/01/23 21:50:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.2 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -6,13 +6,12 @@
 package rails.game.action;
 
 import rails.game.MapHex;
-import rails.game.PublicCompanyI;
 import rails.game.special.SpecialTokenLay;
 
 /**
  * @author Erik Vos
  */
-public class LayToken extends PossibleAction {
+public class LayToken extends PossibleORAction {
     
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
@@ -24,27 +23,26 @@ public class LayToken extends PossibleAction {
     /*--- Preconditions ---*/
     
     /** Where to lay a tile (null means anywhere) */
-    private MapHex location = null; 
-    
-     /** Which company's token (null = any) */
-    private PublicCompanyI company = null;
+    MapHex location = null; 
     
     /** Special property that will be fulfilled by this tile lay.
      * If null, this is a normal tile lay. */
-    private SpecialTokenLay specialProperty = null;
+    SpecialTokenLay specialProperty = null;
     
     /*--- Postconditions ---*/
     
     /** The map hex on which the tile is laid */
-    private MapHex chosenHex = null;
+    MapHex chosenHex = null;
+    
+    /** The station (or city) on the hex where the token is laid */
+    int chosenStation = 0; // Default 
 
     /**
-     * Allow laying a tile on a given location.
+     * Allow laying a base token on a given location.
      */
-    public LayToken(MapHex location, PublicCompanyI company) {
+    public LayToken(MapHex location) {
         type = LOCATION_SPECIFIC;
         this.location = location;
-        this.company = company;
     }
     
      public LayToken (SpecialTokenLay specialProperty) {
@@ -65,6 +63,15 @@ public class LayToken extends PossibleAction {
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
     }
+    
+    public int getChosenStation() {
+        return chosenStation;
+    }
+
+    public void setChosenStation(int chosenStation) {
+        this.chosenStation = chosenStation;
+    }
+
     /**
      * @return Returns the specialProperty.
      */
@@ -76,12 +83,6 @@ public class LayToken extends PossibleAction {
      */
     public void setSpecialProperty(SpecialTokenLay specialProperty) {
         this.specialProperty = specialProperty;
-    }
-    /**
-     * @return Returns the tiles.
-     */
-    public PublicCompanyI getCompany() {
-        return company;
     }
 
    /**
@@ -95,6 +96,15 @@ public class LayToken extends PossibleAction {
         return type;
     }
     
+    public boolean equals (PossibleAction action) {
+        if (!(action instanceof LayToken)) return false;
+        LayToken a = (LayToken) action;
+        return a.location == location
+            && a.type == type
+            && a.company == company
+            && a.specialProperty == specialProperty;
+    }
+
     public String toString () {
         return "LayToken type="+type+" location="+location+" spec.prop="+specialProperty;
     }

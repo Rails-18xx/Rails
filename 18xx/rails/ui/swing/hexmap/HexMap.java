@@ -14,6 +14,7 @@ import rails.game.*;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 import rails.ui.swing.*;
+import rails.util.LocalText;
 
 
 /**
@@ -248,7 +249,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 		if (ORWindow.baseTokenLayingEnabled)
 		{
-			selectHex(clickedHex);
+            if (clickedHex.getHexModel().getStations().size() > 0) {
+                selectHex(clickedHex);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        LocalText.getText("NoStationNoToken"));
+            }
 
 			if (selectedHex != null)
 			{

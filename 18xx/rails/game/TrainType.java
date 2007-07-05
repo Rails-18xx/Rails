@@ -1,7 +1,6 @@
 package rails.game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.*;
@@ -417,10 +416,13 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		//this.rusted = true;
 		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
 	    rusted.set(true);
-		for (Iterator it = trains.iterator(); it.hasNext();)
-		{
-			((TrainI) it.next()).setRusted();
-		}
+        for (TrainI train : trains) {
+            train.setRusted();
+        }
+		//for (Iterator it = trains.iterator(); it.hasNext();)
+		//{
+		//	((TrainI) it.next()).setRusted();
+		//}
 	}
 
 	public boolean hasRusted()

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.8 2007/06/18 19:53:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.9 2007/07/05 17:57:54 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -702,11 +702,20 @@ public class Portfolio
 		to.addTrain(train);
 	}
 
+    /** @deprecated */
 	public TrainI[] getTrains()
 	{
 
 		return (TrainI[]) trains.toArray(new TrainI[0]);
 	}
+	
+	public int getNumberOfTrains() {
+		return trains.size();
+	}
+    
+    public List<TrainI> getTrainList () {
+        return trains;
+    }
 
 	public TrainI[] getTrainsPerType(TrainTypeI type)
 	{

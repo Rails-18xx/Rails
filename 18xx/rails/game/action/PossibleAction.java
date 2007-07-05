@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.4 2007/06/17 22:03:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.5 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -50,4 +50,5 @@ public abstract class PossibleAction {
     	this.playerName = playerName;
     }
 
+     public abstract boolean equals(PossibleAction pa);
 }
