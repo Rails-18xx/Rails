@@ -22,8 +22,6 @@ public class OperatingRound extends Round implements Observer
 {
 
 	/* Transient memory (per round only) */
-	//protected Player currentPlayer;
-	//protected int currentPlayerIndex;
     protected IntegerState stepObject;
 	protected boolean actionPossible = true;
 	protected String actionNotPossibleMessage = "";
@@ -33,6 +31,7 @@ public class OperatingRound extends Round implements Observer
 	protected int operatingCompanyIndex = 0;
 	protected PublicCompanyI operatingCompany;
 
+    // Non-persistent lists (are recreated after each user action)
 	protected List<SpecialPropertyI> currentSpecialProperties = null;
 	protected List<LayTile> currentSpecialTileLays 
 		= new ArrayList<LayTile>();
@@ -46,12 +45,15 @@ public class OperatingRound extends Round implements Observer
 		= new ArrayList<LayToken>();
 	protected List<LayToken> currentSpecialTokenLays 
 		= new ArrayList<LayToken>();
+    /** A List per player with owned companies that have excess trains */
+    protected Map<Player, List<PublicCompanyI>> excessTrainCompanies = null;
 
 	protected PhaseI currentPhase;
 	protected String thisOrNumber;
+    
+    protected PossibleAction selectedAction = null;
 	
-	protected BuyableTrain savedBuyableTrain = null;
-	protected int savedPrice = 0;
+	protected BuyTrain savedAction = null;
 	protected int cashToBeRaisedByPresident = 0;
 
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
@@ -77,6 +79,9 @@ public class OperatingRound extends Round implements Observer
 	public static final int STEP_FINAL = 5;
 	protected static int[] steps = new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN,
 			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_FINAL };
+    // side steps
+    public static final int STEP_DISCARD_TRAINS = -2;
+    
 	
 	/**
 	 * The constructor.
@@ -107,7 +112,6 @@ public class OperatingRound extends Round implements Observer
 
 		for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies()) 
 		{
-			//priv = (PrivateCompanyI) it.next();
 			if (!priv.isClosed())
 				priv.payOut();
 		}
@@ -149,9 +153,8 @@ public class OperatingRound extends Round implements Observer
 	
 			if (operatingCompanyArray.length > 0)
 			{
+                GameManager.getInstance().setRound(this);
 				operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-				operatingCompany.initTurn();
-				GameManager.getInstance().setRound(this);
 	
 				setStep (STEP_INITIAL);
 			}
@@ -215,27 +218,134 @@ public class OperatingRound extends Round implements Observer
 
 	/*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
-	/**
-	 * Validate and, if OK, process laying a tile. 
-	 * @param companyName
-	 *            The name of the company that lays the track.
-	 * @param hex The MapHex object where the tile is laid on.
-	 * @param tile An instance of the tile that has been laid.
-	 * @param orientation The orientation in which the tile has been laid.
-	 * Anunrotated tile has orientation 0. For any 60 degrees of clockwise
-	 * rotation, the orientation number increases by one.
-	 * @param allowance
-	 * A LayTile (PossibleActions) instance selected and used by the GUI
-	 * to enable the actual tile laying.
-	 */
-	public boolean layTile(String companyName, MapHex hex, TileI tile,
-			int orientation, LayTile allowance)
+    public boolean process (PossibleAction action) {
+        
+        log.debug ("Chosen OR action is "+action);
+        
+        boolean result = false;
+        String playerName = action.getPlayerName();
+        Player currentPlayer = getCurrentPlayer();
+        
+        /*--- Common OR checks ---*/
+        /* Check player */
+        if (!playerName.equals(currentPlayer.getName()))
+        {
+            DisplayBuffer.add (LocalText.getText("WrongPlayer", new String[] {
+                    playerName,
+                    currentPlayer.getName()
+            }));
+            return false;
+        }
+        /* Check operating company */
+        if (action instanceof PossibleORAction) {
+            PublicCompanyI company = ((PossibleORAction)action).getCompany(); 
+            if (company != operatingCompany)
+            {
+                DisplayBuffer.add (LocalText.getText("WrongCompany", new String[] {
+                        company.getName(),
+                        operatingCompany.getName()
+                        }));
+                return false;
+            }
+        }
+
+        /* Check if the action is allowed */
+        else if (!possibleActions.validate(action)) {
+            DisplayBuffer.add (LocalText.getText("ActionNotAllowed", action.toString()));
+            return false;
+        
+        }
+        
+        selectedAction = action;
+        
+        if (selectedAction instanceof LayTile) {
+        	
+        	result = layTile ((LayTile) selectedAction);
+
+        } else if (selectedAction instanceof LayToken) {
+                
+                result = layBaseToken ((LayToken) selectedAction);
+           
+        } else if (selectedAction instanceof SetDividend) {
+            
+            result = setRevenueAndDividend ((SetDividend) selectedAction);
+            
+        } else if (selectedAction instanceof BuyTrain) {
+        	
+        	result = buyTrain ((BuyTrain) selectedAction);
+            
+        } else if (selectedAction instanceof DiscardTrain) {
+            
+            result = discardTrain ((DiscardTrain) selectedAction);
+            
+        } else if (selectedAction instanceof BuyPrivate) {
+            
+            result = buyPrivate ((BuyPrivate) selectedAction);
+            
+        } else if (selectedAction instanceof NullAction) {
+            
+            NullAction nullAction = (NullAction) action;
+            switch (nullAction.getMode()) {
+            case NullAction.PASS:
+            case NullAction.DONE:
+                result = done ();
+                break;
+            case NullAction.UNDO:
+                MoveSet.undo(false);
+                result = true;
+                break;
+            case NullAction.FORCED_UNDO:
+                MoveSet.undo(true);
+                result = true;
+                break;
+            case NullAction.REDO:
+                MoveSet.redo();
+                result = true;
+                break;
+            case NullAction.SKIP:
+            	skip();
+            	result = true;
+            	break;
+            }
+        
+        } else {
+        
+            DisplayBuffer.add (LocalText.getText("UnexpectedAction",
+                    selectedAction.toString()));
+            return false;
+        }
+        
+        if (MoveSet.isOpen()) MoveSet.finish();
+        
+        if (this == GameManager.getInstance().getCurrentRound()) {
+            setPossibleActions();
+        }
+        if (MoveSet.isUndoableByPlayer()) {
+            possibleActions.add (new NullAction (NullAction.UNDO));
+        }
+        if (MoveSet.isUndoableByManager()) {
+            possibleActions.add (new NullAction (NullAction.FORCED_UNDO));
+        }
+        if (MoveSet.isRedoable()) {
+            possibleActions.add(new NullAction (NullAction.REDO));
+        }
+        
+        return result;
+    }
+    
+	public boolean layTile (LayTile action)
 	{
 
 		String errMsg = null;
 		int cost = 0;
 		SpecialTileLay stl = null;
 		boolean extra = false;
+		
+		PublicCompanyI company = action.getCompany();
+		String companyName = company.getName();
+		TileI tile = action.getLaidTile();
+		MapHex hex = action.getChosenHex();
+		int orientation = action.getOrientation();
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -274,8 +384,8 @@ public class OperatingRound extends Round implements Observer
 		     * (currently the set if tiles is always null, which means
 		     * that this check is redundant. This may change in the future.
 		     */  
-			if (allowance != null) {
-			    List tiles = allowance.getTiles();
+			if (action != null) {
+			    List tiles = action.getTiles();
 			    if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
 			        errMsg = LocalText.getText("TileMayNotBeLaidInHex", new String[] {
 			                tile.getName(),
@@ -283,7 +393,7 @@ public class OperatingRound extends Round implements Observer
 			        });
 			        break;
 			    }
-			    stl = allowance.getSpecialProperty();
+			    stl = action.getSpecialProperty();
 			    if (stl != null) extra = stl.isExtra();
 			}
 			
@@ -374,7 +484,7 @@ public class OperatingRound extends Round implements Observer
 			if (stl != null)
 			{
 				stl.setExercised();
-				currentSpecialTileLays.remove(allowance);
+				currentSpecialTileLays.remove(action);
 				log.debug ("This was a special tile lay, "+
 				        (extra?"":" not")+" extra");
 				
@@ -397,9 +507,6 @@ public class OperatingRound extends Round implements Observer
 			setPossibleActions("layTile");
 		}
 		
-		/* End of execution */
-		MoveSet.finish();
-
 		return true;
 	}
 	
@@ -442,419 +549,276 @@ public class OperatingRound extends Round implements Observer
 	    return true;
 	}
 
-	/**
-	 * A (perhaps temporary) method via which the cost of station token laying
-	 * can be accounted for.
-	 * 
-	 * @param companyName
-	 *            The name of the company that lays the token.
-	 * @param amountSpent
-	 *            The cost of laying the token, which is subtracted from the
-	 *            company treasury.
-	 * @return
-	 */
-	public boolean layBaseToken(String companyName, MapHex hex, int station,
-	        LayToken allowance)
-	{
+    public boolean layBaseToken(LayToken action)
+    {
 
-		String errMsg = null;
-		int cost = 0;
-		SpecialTokenLay stl = null;
-		boolean extra = false;
+        String errMsg = null;
+        int cost = 0;
+        SpecialTokenLay stl = null;
+        boolean extra = false;
+        
+        MapHex hex = action.getChosenHex();
+        int station = action.getChosenStation();
+        String companyName = operatingCompany.getName();
 
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
+        // Dummy loop to enable a quick jump out.
+        while (true)
+        {
 
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
-			// Must be correct step
-			if (getStep() != STEP_LAY_TOKEN)
-			{
-				errMsg = LocalText.getText("WrongActionNoTokenLay");
-				break;
-			}
+            // Checks
+            // Must be correct step
+            if (getStep() != STEP_LAY_TOKEN)
+            {
+                errMsg = LocalText.getText("WrongActionNoTokenLay");
+                break;
+            }
 
-			if (operatingCompany.getNumberOfFreeBaseTokens() == 0)
-			{
-				errMsg = LocalText.getText("HasNoTokensLeft", companyName);
-				break;
-			}
-			
-			if (!hex.hasTokenSlotsLeft(station)) {
-			    errMsg = LocalText.getText("CityHasNoEmptySlots");
-			    break;
-			}
-			
-			/* TODO: the below condition holds for 1830.
-			 * in some games, separate cities on one tile may hold 
-			 * tokens of the same company; this case is not yet covered.
-			 */
-			if (hex.hasTokenOfCompany(operatingCompany)) {
-			    errMsg = LocalText.getText("TileAlreadyHasToken", new String[] {
-			            hex.getName(),
-			            companyName});
-			    break;
-			}
-			
-			if (allowance != null) {
-			    MapHex location = allowance.getLocation();
-			    if (location != null && location != hex) {
-			        errMsg = LocalText.getText("TokenLayingHexMismatch", new String[] {
-			                hex.getName(),
-			                location.getName()});
-			        break;
-			    }
-			    stl = allowance.getSpecialProperty();
-			    if (stl != null) extra = stl.isExtra();
-			}
+            if (operatingCompany.getNumberOfFreeBaseTokens() == 0)
+            {
+                errMsg = LocalText.getText("HasNoTokensLeft", 
+                        companyName);
+                break;
+            }
+            
+            if (!hex.hasTokenSlotsLeft(station)) {
+                errMsg = LocalText.getText("CityHasNoEmptySlots");
+                break;
+            }
+            
+            /* TODO: the below condition holds for 1830.
+             * in some games, separate cities on one tile may hold 
+             * tokens of the same company; this case is not yet covered.
+             */
+            if (hex.hasTokenOfCompany(operatingCompany)) {
+                errMsg = LocalText.getText("TileAlreadyHasToken", new String[] {
+                        hex.getName(),
+                        companyName});
+                break;
+            }
+            
+            if (action != null) {
+                MapHex location = action.getLocation();
+                if (location != null && location != hex) {
+                    errMsg = LocalText.getText("TokenLayingHexMismatch", new String[] {
+                            hex.getName(),
+                            location.getName()});
+                    break;
+                }
+                stl = action.getSpecialProperty();
+                if (stl != null) extra = stl.isExtra();
+            }
 
-			cost = Game.getCompanyManager()
-					.getBaseTokenLayCostBySequence(operatingCompany.getNumberOfLaidBaseTokens());
-			if (stl != null && stl.isFree()) cost = 0;
+            cost = Game.getCompanyManager()
+                    .getBaseTokenLayCostBySequence(operatingCompany.getNumberOfLaidBaseTokens());
+            if (stl != null && stl.isFree()) cost = 0;
 
-			// Does the company have the money?
-			if (cost > operatingCompany.getCash())
-			{
-				errMsg = LocalText.getText("NotEnoughMoney", companyName);
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(LocalText.getText("CannotLayBaseTokenOn", new String[] {
-			        companyName,
-			        hex.getName(),
-			        Bank.format(cost),
-			        errMsg}));
-			return false;
-		}
+            // Does the company have the money?
+            if (cost > operatingCompany.getCash())
+            {
+                errMsg = LocalText.getText("NotEnoughMoney", companyName);
+                break;
+            }
+            break;
+        }
+        if (errMsg != null)
+        {
+            DisplayBuffer.add(LocalText.getText("CannotLayBaseTokenOn", new String[] {
+                    companyName,
+                    hex.getName(),
+                    Bank.format(cost),
+                    errMsg}));
+            return false;
+        }
 
-		/* End of validation, start of execution */
-	    MoveSet.start(true);
-	    
-		if (hex.layBaseToken(operatingCompany, station)) {
-		    /* TODO: the false return value must be impossible. */
+        /* End of validation, start of execution */
+        MoveSet.start(true);
+        
+        if (hex.layBaseToken(operatingCompany, station)) {
+            /* TODO: the false return value must be impossible. */
 
-		    operatingCompany.layBaseToken (hex, cost);
-	
-			if (cost > 0)
-			{
-			    new CashMove (operatingCompany, null, cost);
-				ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
-				        companyName,
-				        hex.getName(),
-				        Bank.format(cost)}));
-			}
-			else
-			{
-				ReportBuffer.add(LocalText.getText("LAYS_FREE_TOKEN_ON", new String[] {
-				        companyName,
-				        hex.getName()}));
-			}
-	
-			// Was a special property used?
-			if (stl != null)
-			{
-				stl.setExercised();
-				currentSpecialTokenLays.remove(allowance);
-				log.debug ("This was a special token lay, "+
-				        (extra?"":" not")+" extra");
-				
-			}
-			if (!extra)
-			{
-				currentNormalTokenLays.clear();
-				log.debug ("This was a normal token lay");
-			}
-			if (currentNormalTokenLays.isEmpty()) {
-			    log.debug ("No more normal token lays are allowed");
-			} else {
-			    log.debug ("A normal token lay is still allowed");
-			}
-			setSpecialTokenLays();
-			log.debug ("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
-			if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
-			{
-				nextStep();
-			} else {
-			    setPossibleActions("layBaseToken");
-			}
-	
-		}
-		MoveSet.finish();
+            operatingCompany.layBaseToken (hex, cost);
+    
+            if (cost > 0)
+            {
+                new CashMove (operatingCompany, null, cost);
+                ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
+                        companyName,
+                        hex.getName(),
+                        Bank.format(cost)}));
+            }
+            else
+            {
+                ReportBuffer.add(LocalText.getText("LAYS_FREE_TOKEN_ON", new String[] {
+                        companyName,
+                        hex.getName()}));
+            }
+    
+            // Was a special property used?
+            if (stl != null)
+            {
+                stl.setExercised();
+                currentSpecialTokenLays.remove(action);
+                log.debug ("This was a special token lay, "+
+                        (extra?"":" not")+" extra");
+                
+            }
+            if (!extra)
+            {
+                currentNormalTokenLays.clear();
+                log.debug ("This was a normal token lay");
+            }
+            if (currentNormalTokenLays.isEmpty()) {
+                log.debug ("No more normal token lays are allowed");
+            } else {
+                log.debug ("A normal token lay is still allowed");
+            }
+            setSpecialTokenLays();
+            log.debug ("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
+            if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
+            {
+                nextStep();
+            } else {
+                setPossibleActions("layBaseToken");
+            }
+    
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Set a given revenue. This may be a temporary method. We will have to
-	 * enter revenues manually as long as the program cannot yet do the
-	 * calculations.
-	 * <p>Note: This method is called with a zero amount if there is no revenue.
-	 * 
-	 * @param amount
-	 *            The revenue.
-	 * @return False if an error is found.
-	 */
-	public boolean setRevenue(String companyName, int amount)
-	{
+    public boolean setRevenueAndDividend (SetDividend action)
+    {
 
-		String errMsg = null;
+        String errMsg = null;
+        PublicCompanyI company;
+        String companyName;
+        int amount = 0;
+        int revenueAllocation = -1;
 
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
+        // Dummy loop to enable a quick jump out.
+        while (true)
+        {
 
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
-			// Must be correct step
-			if (getStep() != STEP_CALC_REVENUE)
-			{
-				errMsg = LocalText.getText("WrongActionNoRevenue");
-				break;
-			}
+            // Checks
+            // Must be correct company.
+            company = action.getCompany();
+            companyName = company.getName();
+            if (company != operatingCompany)
+            {
+                errMsg = LocalText.getText("WrongCompany", new String[] {
+                        companyName,
+                        operatingCompany.getName()});
+                break;
+            }
+            // Must be correct step
+            if (getStep() != STEP_CALC_REVENUE)
+            {
+                errMsg = LocalText.getText("WrongActionNoRevenue");
+                break;
+            }
 
-			// Amount must be non-negative multiple of 10
-			if (amount < 0)
-			{
-				errMsg = LocalText.getText("NegativeAmountNotAllowed",
-						String.valueOf(amount));
-				break;
-			}
-			if (amount % 10 != 0)
-			{
-				errMsg = LocalText.getText("AmountMustBeMultipleOf10",
-						String.valueOf(amount));
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(LocalText.getText("CannotProcessRevenue", new String[] {
-					String.valueOf(amount),
-					companyName,
-					errMsg
-			}));
-			return false;
-		}
-		
-		MoveSet.start(true);
+            // Amount must be non-negative multiple of 10
+            amount = action.getActualRevenue();
+            if (amount < 0)
+            {
+                errMsg = LocalText.getText("NegativeAmountNotAllowed",
+                        String.valueOf(amount));
+                break;
+            }
+            if (amount % 10 != 0)
+            {
+                errMsg = LocalText.getText("AmountMustBeMultipleOf10",
+                        String.valueOf(amount));
+                break;
+            }
+            
+            // Check chosen revenue distribution
+            if (amount > 0) {
+                // Check the allocation type index (see SetDividend for values)
+                revenueAllocation = action.getRevenueAllocation();
+                if (revenueAllocation < 0 || revenueAllocation >= SetDividend.NUM_OPTIONS) {
+                    errMsg = LocalText.getText("InvalidAllocationTypeIndex",
+                            String.valueOf(revenueAllocation));
+                    break;
+                }
+                
+                // Validate the chosen allocation type
+                int[] allowedAllocations = ((SetDividend)selectedAction).getAllowedAllocations();
+                boolean valid = false;
+                for (int aa : allowedAllocations) {
+                    if (revenueAllocation == aa) {
+                        valid = true;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    errMsg = LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
+                    break;
+                }
+            } else {
+                // If there is no revenue, use withhold.
+                revenueAllocation = SetDividend.WITHHOLD;
+            }
+            
+            break;
+        }
+        if (errMsg != null)
+        {
+            DisplayBuffer.add(LocalText.getText("CannotProcessRevenue", new String[] {
+                    String.valueOf(amount),
+                    companyName,
+                    errMsg
+            }));
+            return false;
+        }
+        
+        MoveSet.start(true);
+        
+        operatingCompany.setLastRevenue (amount);
+        operatingCompany.setLastRevenueAllocation(revenueAllocation);
+        ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
+                companyName,
+                Bank.format(amount)
+        }));
 
-		operatingCompany.setLastRevenue (amount);
-		ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
-				companyName,
-				Bank.format(amount)
-		}));
+        if (revenueAllocation == SetDividend.PAYOUT) {
+            
+            ReportBuffer.add(
+                    LocalText.getText("CompanyPaysOutFull", new String[] {
+                            companyName,
+                            Bank.format(amount)
+            }));
 
-		nextStep();
-		
-		/* NOTE: We don't close the MoveSet here! See Payout. */
+            operatingCompany.payOut(amount);
 
-		return true;
-	}
+        } else if (revenueAllocation == SetDividend.SPLIT) {
+            
+            ReportBuffer.add(
+                    LocalText.getText("CompanySplits", new String[] {
+                            companyName,
+                            Bank.format(amount)
+                    }));
+            
+            operatingCompany.splitRevenue(amount);
 
-	/**
-	 * A previously entered revenue is fully paid out as dividend.
-	 * <p>
-	 * Note: <b>setRevenue()</b> must have been called before this method.
-	 * 
-	 * @param companyName
-	 *            Name of the company paying dividend.
-	 * @return False if an error is found.
-	 */
-	public boolean fullPayout(String companyName)
-	{
+        } else if (revenueAllocation == SetDividend.WITHHOLD) {
+            
+            ReportBuffer.add(
+                    LocalText.getText("CompanyWithholds", new String[] {
+                            companyName,
+                            Bank.format(amount)
+                    }));
 
-		String errMsg = null;
-		int revenue = operatingCompany.getLastRevenue();
+            operatingCompany.withhold(amount);
 
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
+        }
+        
+        // We have done the payout step, so continue from there
+        nextStep(STEP_PAYOUT);
 
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
-			// Must be correct step
-			if (getStep() != STEP_PAYOUT)
-			{
-				errMsg = LocalText.getText("WrongActionNoDividend");
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(LocalText.getText("CannotPayOutRevenue", new String[] {
-					companyName,
-					Bank.format(revenue),
-					errMsg}));
-			return false;
-		}
-
-		ReportBuffer.add(LocalText.getText("CompanyPaysOutFull", new String[] {
-				companyName,
-				Bank.format(revenue)
-		}));
-
-		// MoveSet is already open
-		operatingCompany.payOut(revenue);
-		nextStep();
-		MoveSet.finish();
-
-		return true;
-	}
-
-	/**
-	 * A previously entered revenue is split, i.e. half of it is paid out as
-	 * dividend, the other half is retained.
-	 * <p>
-	 * Note: <b>setRevenue()</b> must have been called before this method.
-	 * 
-	 * @param companyName
-	 *            Name of the company splitting the dividend.
-	 * @return False if an error is found. TODO Check if split is allowed. TODO
-	 *         The actual payout. TODO Rounding up or down an odd revenue per
-	 *         share.
-	 */
-	public boolean splitPayout(String companyName)
-	{
-
-		String errMsg = null;
-		int revenue = operatingCompany.getLastRevenue();
-
-		// Dummy loop to enable quick jump out.
-		while (true)
-		{
-
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
-			// Must be correct step
-			if (getStep() != STEP_PAYOUT)
-			{
-				errMsg = LocalText.getText("WrongActionNoDividend");
-				break;
-			}
-			// Split must be allowed
-			if (splitRule == SPLIT_NOT_ALLOWED)
-			{
-				errMsg = LocalText.getText("SplitNotAllowed");
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(
-				LocalText.getText("CannotSplitRevenue", new String[] {
-					Bank.format(revenue),
-					errMsg
-				}));
-			return false;
-		}
-
-		ReportBuffer.add(
-				LocalText.getText("CompanySplits", companyName));
-		
-		// MoveSet is already open
-		operatingCompany.splitRevenue(revenue);
-		nextStep();
-		MoveSet.finish();
-
-		return true;
-	}
-
-	/**
-	 * A previously entered revenue is fully withheld.
-	 * <p>
-	 * Note: <b>setRevenue()</b> must have been called before this method.
-	 * 
-	 * @param companyName
-	 *            Name of the company withholding the dividend.
-	 * @return False if an error is found.
-	 */
-	public boolean withholdPayout(String companyName)
-	{
-
-		String errMsg = null;
-		int revenue = operatingCompany.getLastRevenue();
-
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
-
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
-			// Must be correct step
-			if (getStep() != STEP_PAYOUT)
-			{
-				errMsg = "WrongActionNoDividend";
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(
-					LocalText.getText("CannotWithholdRevenue", new String[] {
-							companyName,
-							String.valueOf(revenue),
-							errMsg
-					}));
-			return false;
-		}
-		ReportBuffer.add(
-				LocalText.getText("CompanyWithholds", new String[] {
-						companyName,
-						Bank.format(revenue)
-				}));
-
-		// MoveSet is already open
-		operatingCompany.withhold(revenue);
-
-		nextStep();
-		MoveSet.finish();
-
-		return true;
-	}
-
+        return true;
+    }
+    
 	/**
 	 * Internal method: change the OR state to the next step. If the currently
 	 * Operating Company is done, notify this.
@@ -862,10 +826,14 @@ public class OperatingRound extends Round implements Observer
 	 * @param company
 	 *            The current company.
 	 */
-	protected void nextStep()
+    protected void nextStep () {
+        nextStep (getStep());
+    }
+    
+    /** Take the next step after a given one (see nextStep()) */
+	protected void nextStep(int step)
 	{
 		// Cycle through the steps until we reach one where a user action is expected.
-		int step = getStep();
 		int stepIndex;
 		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
 		    if (steps[stepIndex] == step) break;
@@ -881,10 +849,11 @@ public class OperatingRound extends Round implements Observer
 
 			if (step == STEP_CALC_REVENUE) {
 			    
-			    if (operatingCompany.getPortfolio().getTrains().length == 0)
+			    if (operatingCompany.getPortfolio().getNumberOfTrains() == 0)
 				{
 					// No trains, then the revenue is zero.
 					operatingCompany.setLastRevenue(0);
+                    operatingCompany.setLastRevenueAllocation(SetDividend.UNKNOWN);
 					ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
 							operatingCompany.getName(),
 							Bank.format(0)
@@ -923,12 +892,17 @@ public class OperatingRound extends Round implements Observer
 
 	    
 		if (step >= steps.length) {
-			done(operatingCompany.getName());
+			done();
 		} else {
 		    setStep(step);
 		}
 		
 	}
+    
+    protected void initTurn() {
+        GameManager.setCurrentPlayer(operatingCompany.getPresident());
+        operatingCompany.initTurn();
+    }
 
 	/**
 	 * This method is only called at the start of each step
@@ -1030,7 +1004,7 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* For now, we allow one token of the currently operating company */
 	    if (operatingCompany.getNumberOfFreeBaseTokens() > 0) {
-	        currentNormalTokenLays.add (new LayToken (null, operatingCompany));
+	        currentNormalTokenLays.add (new LayToken ((MapHex)null));
 	    }
 	    
 	}
@@ -1075,7 +1049,7 @@ public class OperatingRound extends Round implements Observer
 		return currentSpecialProperties;
 	}
 
-	public void skip(String compName)
+	public void skip()
 	{
 	    /* TODO Should insert some validation here, as this method
 	     * is called from the GUI.
@@ -1093,29 +1067,22 @@ public class OperatingRound extends Round implements Observer
 	 *            Name of the company that finished operating.
 	 * @return False if an error is found.
 	 */
-	public boolean done(String companyName)
+	public boolean done()
 	{
 		String errMsg = null;
 
-		if (!companyName.equals(operatingCompany.getName()))
-		{
-			errMsg = LocalText.getText("WrongCompany", new String[] {
-			        companyName,
-			        operatingCompany.getName()});
-			return false;
-		}
-		
-		if(operatingCompany.getPortfolio().getTrains().length == 0
+		if(operatingCompany.getPortfolio().getNumberOfTrains() == 0
 		        && operatingCompany.mustOwnATrain())
 		{
 			//FIXME: Need to check for valid route before throwing an error.
-			errMsg = LocalText.getText("CompanyMustOwnATrain", companyName);
+			errMsg = LocalText.getText("CompanyMustOwnATrain", 
+			    operatingCompany.getName());
 			setStep(STEP_BUY_TRAIN);
 			DisplayBuffer.add(errMsg);
 			return false;
 		}
 		
-		MoveSet.clear();
+		MoveSet.start (false);
 
 		if (++operatingCompanyIndex >= operatingCompanyArray.length)
 		{
@@ -1129,41 +1096,29 @@ public class OperatingRound extends Round implements Observer
 		}
 
 		operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-		operatingCompany.initTurn();
+        
 		setStep (STEP_INITIAL);
 
 		return true;
 	}
 
-	/**
-	 */
-	public boolean buyTrain(String companyName, BuyableTrain bTrain, int price)
+	public boolean buyTrain (BuyTrain action)
 	{
 
-		return buyTrain(companyName, bTrain, price, null);
-	}
-
-	public boolean buyTrain(String companyName, BuyableTrain bTrain, int price,
-			TrainI exchangedTrain)
-	{
-
-	    TrainI train = null;
+	    TrainI train = action.getTrain();
+		PublicCompanyI company = action.getCompany();
+		String companyName = company.getName();
+		TrainI exchangedTrain = action.getExchangedTrain();
+	    
 		String errMsg = null;
-		int presidentCash = 0;
+		int presidentCash = action.getPresidentCashToAdd();
 		boolean presidentMustSellShares = false;
+		int price = action.getPricePaid();
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
 		{
 			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
 			// Must be correct step
 			if (getStep() != STEP_BUY_TRAIN)
 			{
@@ -1171,15 +1126,11 @@ public class OperatingRound extends Round implements Observer
 				break;
 			}
 
-			if (bTrain == null || (train = bTrain.getTrain()) == null)
+			if (train == null)
 			{
 				errMsg = LocalText.getText("NoTrainSpecified");
 				break;
 			}
-
-			// Zero price means face value.
-			if (price == 0)
-				price = train.getCost();
 
 			// Amount must be non-negative
 			if (price < 0)
@@ -1191,7 +1142,7 @@ public class OperatingRound extends Round implements Observer
 
 			// Does the company have room for another train?
 			int currentNumberOfTrains = operatingCompany.getPortfolio()
-					.getTrains().length;
+					.getNumberOfTrains();
 			int trainLimit = operatingCompany.getTrainLimit(PhaseManager.getInstance()
 					.getCurrentPhaseIndex());
 			if (currentNumberOfTrains >= trainLimit)
@@ -1203,21 +1154,21 @@ public class OperatingRound extends Round implements Observer
 			
 			/* Check if this is an emergency buy */
 			Player currentPlayer = operatingCompany.getPresident();
-			if (bTrain.mustPresidentAddCash()) {
+			if (action.mustPresidentAddCash()) {
 			    // From the Bank
-		        presidentCash = bTrain.getPresidentCashToAdd();
+		        presidentCash = action.getPresidentCashToAdd();
 			    if (currentPlayer.getCash() >= presidentCash) {
 			        new CashMove(currentPlayer, operatingCompany, presidentCash);
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
 			    }
-			} else if (bTrain.mayPresidentAddCash()) {
+			} else if (action.mayPresidentAddCash()) {
 			    // From another company
 			    presidentCash = price - operatingCompany.getCash();
-			    if (presidentCash > bTrain.getPresidentCashToAdd()) {
+			    if (presidentCash > action.getPresidentCashToAdd()) {
 			        errMsg = LocalText.getText("PresidentMayNotAddMoreThan", 
-			            Bank.format (bTrain.getPresidentCashToAdd()));
+			            Bank.format (action.getPresidentCashToAdd()));
 			        break;
 			    } else if (currentPlayer.getCash() >= presidentCash) {
 			        new CashMove(currentPlayer, operatingCompany, presidentCash);
@@ -1252,8 +1203,8 @@ public class OperatingRound extends Round implements Observer
 		}
 		
 		if (presidentMustSellShares) {
-		    savedBuyableTrain = bTrain;
-		    savedPrice = price;
+		    savedAction = action;
+		    //savedPrice = price;
 
 			GameManager.getInstance().startShareSellingRound (this, operatingCompany, 
 			        cashToBeRaisedByPresident);
@@ -1290,8 +1241,16 @@ public class OperatingRound extends Round implements Observer
 		operatingCompany.buyTrain(train, price);
 		if (oldHolder == Bank.getIpo()) train.getType().addToBoughtFromIPO();
 
+        // Check if the phase has changed.
+        PhaseI previousPhase = currentPhase;
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
 		currentPhase = GameManager.getCurrentPhase();
+        
+        // Check if any companies must discard trains
+        if (currentPhase != previousPhase
+                && checkForExcessTrains()) {
+            stepObject.set(STEP_DISCARD_TRAINS);
+        }
 		
 		setPossibleActions("buyTrain");
 
@@ -1300,200 +1259,213 @@ public class OperatingRound extends Round implements Observer
 		
 		return true;
 	}
+    
+    public boolean checkForExcessTrains() {
+        
+        excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
+        Player player;
+        for (PublicCompanyI comp : operatingCompanyArray) {
+            if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(currentPhase.getIndex()))
+            {
+                player = comp.getPresident();
+                if (!excessTrainCompanies.containsKey(player)) {
+                    excessTrainCompanies.put(player, new ArrayList<PublicCompanyI>(2));
+                }
+                excessTrainCompanies.get(player).add(comp);
+            }
+
+        }
+        return !excessTrainCompanies.isEmpty();
+   }
 	
 	public void resumeTrainBuying () {
 	    
-	    buyTrain (operatingCompany.getName(), savedBuyableTrain, savedPrice);
-	    savedBuyableTrain = null;
+       buyTrain (savedAction);
 	}
+    
+    public boolean discardTrain (DiscardTrain action) {
+        
+        TrainI train = action.getDiscardedTrain();
+        PublicCompanyI company = action.getCompany();
+        String companyName = company.getName();
+        
+        String errMsg = null;
 
-	/**
-	 * Let a public company buy a private company.
-	 * 
-	 * @param company
-	 *            Name of the company buying a private company.
-	 * @param privateName
-	 *            Name of teh private company.
-	 * @param price
-	 *            Price to be paid.
-	 * @return False if an error is found. TODO: Is private buying allowed at
-	 *         all? TODO: Is the rails.game phase correct?
-	 */
-	public boolean buyPrivate(String companyName, String privateName, int price)
-	{
+        // Dummy loop to enable a quick jump out.
+        while (true)
+        {
+            // Checks
+            // Must be correct step
+            if (getStep() != STEP_DISCARD_TRAINS)
+            {
+                errMsg = LocalText.getText("WrongActionNoDiscardTrain");
+                break;
+            }
 
-		String errMsg = null;
-		PrivateCompanyI privCo = null;
-		CashHolder owner = null;
-		Player player = null;
-		int basePrice;
+            if (train == null)
+            {
+                errMsg = LocalText.getText("NoTrainSpecified");
+                break;
+            }
 
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
+            // Does the company own such a train?
+            
+            if (!company.getPortfolio().getTrainList().contains(train))
+            {
+                errMsg = LocalText.getText("CompanyDoesNotOwnTrain", new String[] {
+                        company.getName(),
+                        train.getName()
+                });
+                break;
+            }
+            
+            break;
+        }
+        if (errMsg != null)
+        {
+            DisplayBuffer.add(LocalText.getText("CannotDiscardTrain", new String[] {
+                    companyName,
+                    train.getName(),
+                    errMsg}));
+            return false;
+        }
+        
+        /* End of validation, start of execution */
+        MoveSet.start(true);
+        
+        Bank.getPool().buyTrain(train, 0);
+        ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
+                companyName,
+                train.getName()
+        }));
 
-			// Checks
-			// Must be correct company.
-			if (!companyName.equals(operatingCompany.getName()))
-			{
-				errMsg = LocalText.getText("WrongCompany", new String[] {
-				        companyName,
-				        operatingCompany.getName()});
-				break;
-			}
+        // Check if any more companies must discard trains,
+        // otherwise continue train buying
+        if (!checkForExcessTrains()) {
+            stepObject.set(STEP_BUY_TRAIN);
+        }
+        
+        setPossibleActions("discardTrain");
 
-			// Does private exist?
-			if ((privCo = Game.getCompanyManager()
-					.getPrivateCompany(privateName)) == null)
-			{
-				errMsg = LocalText.getText("PrivateDoesNotExist", privateName);
-				break;
-			}
-			// Is private still open?
-			if (privCo.isClosed())
-			{
-				errMsg = LocalText.getText("PrivateIsAlreadyClosed", privateName);
-				break;
-			}
-			// Is private owned by a player?
-			owner = privCo.getPortfolio().getOwner();
-			if (!(owner instanceof Player))
-			{
-				errMsg = LocalText.getText("PrivateIsNotOwnedByAPlayer", privateName);
-				break;
-			}
-			player = (Player) owner;
-			basePrice = privCo.getBasePrice();
+        return true;
+    }
 
-			// Is private buying allowed?
-			if (!currentPhase.isPrivateSellingAllowed())
-			{
-				errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
-				break;
-			}
+    public boolean buyPrivate (BuyPrivate action)
+    {
 
-			// Price must be in the allowed range
-			if (price < basePrice
-					* operatingCompany.getLowerPrivatePriceFactor())
-			{
-				errMsg = LocalText.getText("PriceBelowLowerLimit", new String[] {
-				        Bank.format(price),
-				        Bank.format((int)(basePrice * operatingCompany.getLowerPrivatePriceFactor())),
-				        privateName
-				});
-				break;
-			}
-			if (price > basePrice
-					* operatingCompany.getUpperPrivatePriceFactor())
-			{
-				errMsg = LocalText.getText("PriceAboveUpperLimit", new String[] {
-				        Bank.format(price),
-				        Bank.format((int)(basePrice * operatingCompany.getUpperPrivatePriceFactor())),
-				        privateName
-				});
-				break;
-			}
-			// Does the company have the money?
-			if (price > operatingCompany.getCash())
-			{
-				errMsg = LocalText.getText("NotEnoughMoney", new String[] {
-				        companyName,
-				        Bank.format(operatingCompany.getCash()),
-				        Bank.format(price)
-				});
-				break;
-			}
-			break;
-		}
-		if (errMsg != null)
-		{
-		    if (owner != null) {
-		        DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFromFor", new String[] {
-		                privateName,
-		                owner.getName(),
-		                Bank.format(price),
-		                errMsg
-		        }));
-		    } else {
-		        DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFor", new String[] {
-		                privateName,
-		                Bank.format(price),
-		                errMsg
-		        }));
-		    }
-			return false;
-		}
+        String errMsg = null;
+        PublicCompanyI publicCompany = action.getCompany();
+        String publicCompanyName = publicCompany.getName();
+        PrivateCompanyI privateCompany = action.getPrivateCompany();
+        String privateCompanyName = privateCompany.getName();
+        int price = action.getPrice();
+        CashHolder owner = null;
+        Player player = null;
+        int basePrice;
 
-		MoveSet.start(true);
-		
-		operatingCompany.buyPrivate(privCo,
-				player.getPortfolio(),
-				price);
-		
-		setPossibleActions("buyPrivate");
-		
-		MoveSet.finish();
+        // Dummy loop to enable a quick jump out.
+        while (true)
+        {
 
-		return true;
+            // Checks
+            // Does private exist?
+            if ((privateCompany = Game.getCompanyManager()
+                    .getPrivateCompany(privateCompanyName)) == null)
+            {
+                errMsg = LocalText.getText("PrivateDoesNotExist", 
+                        privateCompanyName);
+                break;
+            }
+            // Is private still open?
+            if (privateCompany.isClosed())
+            {
+                errMsg = LocalText.getText("PrivateIsAlreadyClosed", 
+                        privateCompanyName);
+                break;
+            }
+            // Is private owned by a player?
+            owner = privateCompany.getPortfolio().getOwner();
+            if (!(owner instanceof Player))
+            {
+                errMsg = LocalText.getText("PrivateIsNotOwnedByAPlayer", 
+                        privateCompanyName);
+                break;
+            }
+            player = (Player) owner;
+            basePrice = privateCompany.getBasePrice();
 
-	}
+            // Is private buying allowed?
+            if (!currentPhase.isPrivateSellingAllowed())
+            {
+                errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
+                break;
+            }
 
-	/**
-	 * Close a private. For now, this is an action to be initiated separately
-	 * from the UI, but it will soon be coupled to the actual actions that
-	 * initiate private closing. By then, this method will probably no longer be
-	 * accessible from the UI, which why it is deprecated from its creation.
-	 * 
-	 * @param privateName
-	 *            name of the private to be closed.
-	 * @return False if an error occurs.
-	 * @deprecated Will probably move elsewhere and become not accessible to the
-	 *             UI.
-	 */
-	/*
-	public boolean closePrivate(String privateName)
-	{
-		String errMsg = null;
-		PrivateCompanyI privCo = null;
+            // Price must be in the allowed range
+            if (price < basePrice
+                    * operatingCompany.getLowerPrivatePriceFactor())
+            {
+                errMsg = LocalText.getText("PriceBelowLowerLimit", new String[] {
+                        Bank.format(price),
+                        Bank.format((int)(basePrice * operatingCompany.getLowerPrivatePriceFactor())),
+                        privateCompanyName
+                });
+                break;
+            }
+            if (price > basePrice
+                    * operatingCompany.getUpperPrivatePriceFactor())
+            {
+                errMsg = LocalText.getText("PriceAboveUpperLimit", new String[] {
+                        Bank.format(price),
+                        Bank.format((int)(basePrice * operatingCompany.getUpperPrivatePriceFactor())),
+                        privateCompanyName
+                });
+                break;
+            }
+            // Does the company have the money?
+            if (price > operatingCompany.getCash())
+            {
+                errMsg = LocalText.getText("NotEnoughMoney", new String[] {
+                        publicCompanyName,
+                        Bank.format(operatingCompany.getCash()),
+                        Bank.format(price)
+                });
+                break;
+            }
+            break;
+        }
+        if (errMsg != null)
+        {
+            if (owner != null) {
+                DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFromFor", new String[] {
+                        publicCompanyName,
+                        privateCompanyName,
+                        owner.getName(),
+                        Bank.format(price),
+                        errMsg
+                }));
+            } else {
+                DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFor", new String[] {
+                        publicCompanyName,
+                        privateCompanyName,
+                        Bank.format(price),
+                        errMsg
+                }));
+            }
+            return false;
+        }
 
-		// Dummy loop to enable a quick jump out.
-		while (true)
-		{
+        MoveSet.start(true);
+        
+        operatingCompany.buyPrivate(privateCompany,
+                player.getPortfolio(),
+                price);
+        
+        setPossibleActions("buyPrivate");
+        
+        return true;
 
-			// Checks
-			// Does private exist?
-			if ((privCo = Game.getCompanyManager()
-					.getPrivateCompany(privateName)) == null)
-			{
-				errMsg = LocalText.getText("PrivateDoesNotExist", privateName);
-				break;
-			}
-			// Is private still open?
-			if (privCo.isClosed())
-			{
-				errMsg = LocalText.getText("PrivateIsAlreadyClosed", privateName);
-				break;
-			}
-
-			break;
-		}
-		if (errMsg != null)
-		{
-			DisplayBuffer.add(LocalText.getText("CannotClosePrivate", new String[] {
-			        privateName,
-			        errMsg
-			}));
-			return false;
-		}
-
-		privCo.setClosed();
-		ReportBuffer.add(LocalText.getText("PRIVATE_IS_CLOSED", privateName));
-
-		return true;
-
-	}
-	*/
-	
+    }
 	/*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
 	/**
@@ -1538,6 +1510,8 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void setStep(int step)
 	{
+        if (step == STEP_INITIAL) initTurn();
+        
 	    if (stepObject == null) {
 	        stepObject = new IntegerState("ORStep");
 	        stepObject.addObserver(this);
@@ -1555,7 +1529,7 @@ public class OperatingRound extends Round implements Observer
 	
 	protected void setPossibleActions (String fromWhere) {
 	    
-	    //log.debug  (">>> updateStatus called from "+fromWhere);
+	    //log.debug  (">>> setPossibleActions called from "+fromWhere);
 	    setPossibleActions();
 	    
 	}
@@ -1568,6 +1542,7 @@ public class OperatingRound extends Round implements Observer
 	    
 		/* Create a new list of possible actions for the UI */
 		possibleActions.clear();
+        selectedAction = null;
 		
 		int step = getStep();
 
@@ -1580,6 +1555,7 @@ public class OperatingRound extends Round implements Observer
 
 			possibleActions.addAll (currentNormalTileLays);
 			possibleActions.addAll (currentSpecialTileLays);
+			possibleActions.add (new NullAction (NullAction.SKIP));
 		}
 		else if (step == STEP_LAY_TOKEN) 
 		{
@@ -1590,7 +1566,27 @@ public class OperatingRound extends Round implements Observer
 
 			possibleActions.addAll (currentNormalTokenLays);
 			possibleActions.addAll (currentSpecialTokenLays);
+			possibleActions.add (new NullAction (NullAction.SKIP));
 		}
+		else if (step == STEP_CALC_REVENUE)
+		{
+			if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
+				// No trains: the revenue is fixed at 0
+			} else {
+				possibleActions.add (new SetDividend (
+						operatingCompany.getLastRevenue(),
+						true,
+						new int[]{SetDividend.PAYOUT, SetDividend.WITHHOLD}));
+			}
+		}
+		else if (step == STEP_BUY_TRAIN)
+		{
+			setBuyableTrains();
+		}
+        else if (step == STEP_DISCARD_TRAINS)
+        {
+            setTrainsToDiscard();
+        }
 		
 		// Can private companies be bought?
 		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {
@@ -1609,60 +1605,48 @@ public class OperatingRound extends Round implements Observer
 	                        .getLowerPrivatePriceFactor());
 			        maxPrice = (int) (privComp.getBasePrice() * operatingCompany
 	                        .getUpperPrivatePriceFactor());
-			        possibleActions.add (new BuyPrivate (privComp, minPrice, maxPrice));
+			        possibleActions.add (new BuyPrivate (
+                            privComp, minPrice, maxPrice));
 			    }
 			}
 		}
+        
+        if (getStep() >= STEP_BUY_TRAIN 
+                && (!operatingCompany.mustOwnATrain()
+                        || operatingCompany.getPortfolio().getNumberOfTrains() > 0)) {
+            possibleActions.add(new NullAction (NullAction.DONE));
+        }
 		
 		for (PossibleAction pa : possibleActions.getList()) {
-			log.debug(operatingCompany.getName()+ " may: "+pa.toString());
+			try {
+				log.debug(operatingCompany.getName()+ " may: "+pa.toString());
+			} catch (Exception e) {
+				log.error("Error in toString() of "+pa.getClass(), e);
+			}
 		}
 
 	}
 
-	/**
-	 * Get a list of private companies that are available for buying, 
-	 * i.e. which are in the hands of players.
-	 * 
-	 * @return An array of the buyable privates.
-	 * Privates owned by the current player appear first. 
-	 */
-	public PrivateCompanyI[] getBuyablePrivates()
-	{
-		ArrayList<PrivateCompanyI> buyablePrivates 
-			= new ArrayList<PrivateCompanyI>();
-		PrivateCompanyI privCo;
-		Iterator it = Game.getCompanyManager()
-				.getAllPrivateCompanies()
-				.iterator();
-		while (it.hasNext())
-		{
-			if ((privCo = (PrivateCompanyI) it.next()).getPortfolio()
-					.getOwner() instanceof Player)
-				buyablePrivates.add(privCo);
-		}
-		return (PrivateCompanyI[]) buyablePrivates.toArray(new PrivateCompanyI[0]);
-	}
-	
 	/** 
 	 * Get a list of buyable trains for the currently operating company.
 	 * Omit trains that the company has no money for. If there is no cash to
 	 * buy any train from the Bank, prepare for emergency train buying.
 	 * @return List of all trains that could potentially be bought.
 	 */
-	public List<BuyableTrain> getBuyableTrains() {
+	public void setBuyableTrains() {
 	    
-	    if (operatingCompany == null) return null;
+	    if (operatingCompany == null) return;
 	    
 	    int cash = operatingCompany.getCash();
 	    int cost;
-	    List<BuyableTrain> buyableTrains = new ArrayList<BuyableTrain>();
 	    List trains;
 	    TrainI train;
-	    boolean hasTrains = operatingCompany.getPortfolio().getTrains().length > 0;
+	    boolean hasTrains = operatingCompany.getPortfolio().getNumberOfTrains() > 0;
 	    boolean presidentMayHelp = false;
 	    TrainI cheapestTrain = null;
 	    int costOfCheapestTrain = 0;
+	    Portfolio ipo = Bank.getIpo();
+	    Portfolio pool = Bank.getPool();
 	    
 	    /* New trains */
         trains =  TrainManager.get().getAvailableNewTrains();
@@ -1670,40 +1654,46 @@ public class OperatingRound extends Round implements Observer
             train = (TrainI) it.next();
             cost = train.getCost();
             if (cost <= cash) {
-                buyableTrains.add (new BuyableTrain (train, cost));
+            	possibleActions.add (new BuyTrain (train, ipo, cost));
             } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
                 cheapestTrain = train;
                 costOfCheapestTrain = cost;
             }
             if (train.canBeExchanged() && hasTrains) {
                 cost = train.getType().getFirstExchangeCost();
-                if (cost <= cash) buyableTrains.add (new BuyableTrain (train, cost).setForExchange());
+                if (cost <= cash) {
+                    List<TrainI> exchangeableTrains 
+                        = operatingCompany.getPortfolio().getUniqueTrains();
+                    possibleActions.add (new BuyTrain (train, ipo, cost)
+                            .setTrainsForExchange(exchangeableTrains));
+                }
             }
         }
         
         /* Used trains */
-        trains = Bank.getPool().getUniqueTrains();
+        trains = pool.getUniqueTrains();
 		for (Iterator it = trains.iterator(); it.hasNext();) {
 		    train = (TrainI) it.next();
 		    cost = train.getCost();
 		    if (cost <= cash) {
-		        buyableTrains.add (new BuyableTrain (train, cost));
+            	possibleActions.add (new BuyTrain (train, pool, cost));
 		    } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
                 cheapestTrain = train;
 		        costOfCheapestTrain = cost;
 		    }
 		}
-		if (!hasTrains && buyableTrains.isEmpty()) {
-		    buyableTrains.add (new BuyableTrain (cheapestTrain, costOfCheapestTrain)
-		            .setPresidentMustAddCash(costOfCheapestTrain - cash));
+		if (!hasTrains && possibleActions.getType(BuyTrain.class).isEmpty() 
+				&& cheapestTrain != null) {
+			possibleActions.add (new BuyTrain (cheapestTrain, pool, costOfCheapestTrain)
+            		.setPresidentMustAddCash(costOfCheapestTrain - cash));
 		    presidentMayHelp = true;
 		}
 		
 		/* Other company trains, sorted by president (current player first) */
 		PublicCompanyI c;
-		BuyableTrain bt;
+		BuyTrain bt;
 		Player p;
-		List l;
+		Portfolio pf;
 		int index;
 		// Set up a list per player of presided companies
 		List<List<PublicCompanyI>> companiesPerPlayer 
@@ -1725,48 +1715,41 @@ public class OperatingRound extends Round implements Observer
 				 i++) {
 			companies = companiesPerPlayer.get(i % players.length);
 			for (PublicCompanyI company : companies) {
-				trains = company.getPortfolio().getUniqueTrains();
+				pf = company.getPortfolio();
+				trains = pf.getUniqueTrains();
 				for (Iterator it = trains.iterator(); it.hasNext();) {
 				    train = (TrainI) it.next();
-				    bt = new BuyableTrain (train, 0);
+				    bt = new BuyTrain (train, pf, 0);
 				    if (presidentMayHelp && cash < train.getCost()) {
 				        bt.setPresidentMayAddCash(train.getCost() - cash);
 				    }
-				    buyableTrains.add (bt);
+				    possibleActions.add (bt);
 				}
 			}
 		}
+	}
     
-	    return buyableTrains;
-	}
-	
-	public boolean isOperatingCompanyAtTrainLimit() {
-	    
-	    return operatingCompany.getPortfolio().getTrains().length 
-	    		>= operatingCompany.getTrainLimit(currentPhase.getIndex());
-	}
-	
-	/**
-	 * Chech if revenue may be split.
-	 * 
-	 * @return True if revenue can be split.
-	 */
-	public boolean isSplitAllowed()
-	{
-		return (splitRule != SPLIT_NOT_ALLOWED);
-	}
-
-	/**
-	 * Get all possible token laying costs in a rails.game. This is a (perhaps
-	 * temporary) method to play without a map.
-	 * 
-	 * @author Erik Vos
-	 */
-	public int[] getTokenLayCosts()
-	{
-		// TODO Result is currently hardcoded, but can be made configurable.
-		return new int[] { 0, 40, 100 };
-	}
+    protected void setTrainsToDiscard() {
+        
+        // Scan the players in SR sequence, starting with the current player
+        Player player;
+        List<PublicCompanyI> list;
+        int currentPlayerIndex = GameManager.getCurrentPlayerIndex();
+        for (int i=currentPlayerIndex; i<currentPlayerIndex + players.length; i++) {
+            player = GameManager.getPlayer(i);
+            if (excessTrainCompanies.containsKey(player)) {
+                list = excessTrainCompanies.get(player);
+                for (PublicCompanyI comp : list) {
+                    possibleActions.add(new DiscardTrain(
+                            comp.getPortfolio().getUniqueTrains()));
+                    // We handle one company at at time.
+                    // We come back here until all excess trains have been discarded.
+                    GameManager.setCurrentPlayer(player);
+                    return;
+                }
+            }
+        }
+    }
 
 	/* TODO This is just a start of a possible approach to a Help system */
 	public String getHelp()

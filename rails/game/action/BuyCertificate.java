@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.2 2007/06/18 19:53:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.3 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -70,6 +70,15 @@ public class BuyCertificate extends PossibleAction {
 	public void setNumberBought(int numberBought) {
 		this.numberBought = numberBought;
 	}
+    
+    public boolean equals (PossibleAction action) {
+        if (!(action instanceof BuyCertificate)) return false;
+        BuyCertificate a = (BuyCertificate) action;
+        return a.certificate == certificate
+            && a.from == from
+            && a.price == price
+            && a.maximumNumber == maximumNumber;
+    }
 
 	public String toString() {
 		StringBuffer text = new StringBuffer(); 

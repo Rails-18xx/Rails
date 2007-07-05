@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
+import rails.game.action.SetDividend;
 import rails.game.model.BaseTokensModel;
 import rails.game.model.CashModel;
 import rails.game.model.ModelObject;
@@ -84,8 +85,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/** Has the company started? */
 	protected BooleanState hasStarted = null;
 
-	/** Revenue earned in the company's previous operating turn. */
+	/** Most recent revenue earned. */
 	protected MoneyModel lastRevenue = null;
+    
+    /** Most recent payout decision. */
+    protected StringState lastRevenueAllocation;
 
 	/** Is the company operational ("has it floated")? */
 	protected BooleanState hasFloated = null;
@@ -187,6 +191,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		treasury = new CashModel(this);
 		lastRevenue = new MoneyModel (name+"_lastRevenue");
 		lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
+        lastRevenueAllocation = new StringState (name+"_lastAllocation");
 		baseTokensModel = new BaseTokensModel (this);
 
 	    hasStarted = new BooleanState (name+"_hasStarted", false);
@@ -914,6 +919,23 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public ModelObject getLastRevenueModel () {
 	    return lastRevenue;
 	}
+    
+    /** Last revenue allocation (payout, split, withhold) */
+    public void setLastRevenueAllocation(int allocation) {
+        if (allocation >= 0 && allocation < SetDividend.NUM_OPTIONS) {
+            lastRevenueAllocation.set(LocalText.getText(SetDividend.getAllocationNameKey(allocation)));
+        } else {
+            lastRevenueAllocation.set("");
+        }
+    }
+    
+    public String getlastRevenueAllocationText () {
+        return lastRevenueAllocation.stringValue();
+    }
+    
+    public ModelObject getLastRevenueAllocationModel () {
+        return lastRevenueAllocation;
+    }
 
 	/**
 	 * Pay out a given amount of revenue (and store it). The amount is
@@ -1286,7 +1308,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	
 	public boolean mayBuyTrains () {
 	    
-	    return portfolio.getTrains().length < getTrainLimit(GameManager.getCurrentPhase().getIndex());
+	    return portfolio.getNumberOfTrains() < getTrainLimit(GameManager.getCurrentPhase().getIndex());
 	}
 	
 	/** Must be called in stead of Portfolio.buyTrain if side-effects can occur. */

@@ -180,6 +180,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	
 	public ModelObject getLastRevenueModel ();
 
+    public void setLastRevenueAllocation(int allocation);
+    public String getlastRevenueAllocationText ();
+    public ModelObject getLastRevenueAllocationModel ();
+    
 	public Player getPresident();
 
 	public int getFloatPercentage();

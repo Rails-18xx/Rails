@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.6 2007/06/18 19:53:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.7 2007/07/05 17:57:54 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -7,6 +7,8 @@ package rails.game.action;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import rails.util.Util;
 
@@ -24,6 +26,8 @@ public class PossibleActions {
     
     //private Map<Class, List<PossibleAction>> possibleActionMap;
     private List<PossibleAction> possibleActionList;
+
+    protected static Logger log = Logger.getLogger(PossibleActions.class.getPackage().getName());
 
     /**
      * This class can only be instantiated locally.
@@ -98,8 +102,13 @@ public class PossibleActions {
     public boolean validate (PossibleAction checkedAction) {
     	
     	for (PossibleAction action : possibleActionList) {
-    		if (action.equals(checkedAction)) return true;
+            //log.debug("Comparing "+action+" against "+checkedAction);
+    		if (action.equals(checkedAction)) {
+    		    //log.debug("...match found!");
+                return true;
+            }
     	}
+        //log.debug("...sorry, no match found");
     	return false;
     }
 
