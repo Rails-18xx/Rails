@@ -15,11 +15,14 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * This displays the Auction Window
  */
-public class StartRoundWindow extends JFrame implements ActionListener, KeyListener
+public class StartRoundWindow extends JFrame 
+implements ActionListener, KeyListener, ActionPerformer
 {
 
 	private static final int NARROW_GAP = 1;
@@ -29,14 +32,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private static final int WIDE_TOP = 4;
 	private static final int WIDE_BOTTOM = 8;
 	
-	protected static final String BUY_CMD = "Buy";
-	protected static final String BID_CMD = "Bid";
-	protected static final String PASS_CMD = "Pass";
-    protected static final String UNDO_CMD = "Undo";
-    protected static final String REDO_CMD = "Redo";
-    protected static final String CLOSE_CMD = "Close";
-
-	//private static StartRoundWindow startRoundPanel;
 	private JPanel statusPanel;
 	private JPanel buttonPanel;
 
@@ -72,15 +67,14 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private Player[] players;
 	private StartItem[] items;
 	private BuyOrBidStartItem[] actionableItems;
-	private BuyOrBidStartItem currentActiveItem;
 	private StartPacket packet;
 	private int[] crossIndex;
 	private StartRoundI round;
-	private StatusWindow statusWindow;
+	private GameUIManager gameUIManager;
 
-	private JMenuBar menuBar;
-	private static JMenu moveMenu;
-	private JMenuItem undoItem, redoItem;
+	//private JMenuBar menuBar;
+	//private static JMenu moveMenu;
+	//private JMenuItem undoItem, redoItem;
 
 	private StartItem si;
 	private JComponent f;
@@ -90,22 +84,26 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	private int itemIndex = -1;
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
+    private PossibleAction immediateAction = null;
     
 	private ButtonGroup itemGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
 	
 	private boolean includeBidding;
 
-	public StartRoundWindow(StartRound round, StatusWindow parent)
+    protected static Logger log = Logger.getLogger(StartRoundWindow.class.getPackage().getName());
+
+	public StartRoundWindow(StartRound round, GameUIManager parent)
 	{
 		super();
 		this.round = round;
 		includeBidding = round.hasBidding();
-		statusWindow = parent;
+		gameUIManager = parent;
 		//startRoundPanel = this;
 		setTitle(LocalText.getText("START_ROUND_TITLE"));
 		getContentPane().setLayout(new BorderLayout());
 
+        /*
 		menuBar = new JMenuBar();
 		moveMenu = new JMenu(LocalText.getText("MOVE"));
 		moveMenu.setMnemonic(KeyEvent.VK_M);
@@ -127,6 +125,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		
 		menuBar.add (moveMenu);
 		setJMenuBar(menuBar);
+        */
 		
 		statusPanel = new JPanel();
 		gb = new GridBagLayout();
@@ -137,7 +136,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		buttonPanel = new JPanel();
 
 		buyButton = new ActionButton(LocalText.getText("BUY"));
-		buyButton.setActionCommand(BUY_CMD);
 		buyButton.setMnemonic(KeyEvent.VK_B);
 		buyButton.addActionListener(this);
 		buyButton.setEnabled(false);
@@ -145,7 +143,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
 		if (includeBidding) {
 			bidButton = new ActionButton(LocalText.getText("BID") + ":");
-			bidButton.setActionCommand(BID_CMD);
 			bidButton.setMnemonic(KeyEvent.VK_D);
 			bidButton.addActionListener(this);
 			bidButton.setEnabled(false);
@@ -162,10 +159,9 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 
 		passButton = new ActionButton(LocalText.getText("PASS"));
-		passButton.setActionCommand(PASS_CMD);
 		passButton.setMnemonic(KeyEvent.VK_P);
 		passButton.addActionListener(this);
-		passButton.setEnabled(true);
+		passButton.setEnabled(false);
 		buttonPanel.add(passButton);
 
 		buttonPanel.setOpaque(true);
@@ -187,7 +183,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		}
 		
 		actionableItems = new BuyOrBidStartItem[ni];
-		currentActiveItem = null;
 
 		init();
 
@@ -200,12 +195,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		requestFocus();
 
-		ReportWindow.addLog();
-		
 		addKeyListener(this);
 
-		updateStatus(); //??
-		
 		pack();
 	}
 
@@ -372,95 +363,110 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 		statusPanel.add(comp, gbc);
 
 	}
+	
+	public void updateStatus (String from) {
+		log.debug("--StartRoundWindow updateStatus called from "+from);
+		updateStatus();
+	}
 
 	public void updateStatus()
 	{
 		StartItem item;
-		//StartItem auctionedItem = round.getAuctionedItem();
 		int i, j, status;
-		BuyOrBidStartItem activeItem;
 		
 		for (i = 0; i < ni; i++)
 		{
 			setItemNameButton(i, false);
 			actionableItems[i] = null;
 		}
+        // Unselect the selected private
+        dummyButton.setSelected(true);
+        
+        // For debugging
+        for (PossibleAction action : possibleActions.getList()) {
+            log.debug(action.getPlayerName()+" may: "+action);
+        }
 		
-		List activeItems = possibleActions.getType (BuyOrBidStartItem.class);
+		List<BuyOrBidStartItem> actions = possibleActions.getType (BuyOrBidStartItem.class);
 		
-		if (activeItems == null || activeItems.isEmpty()) {
-			//passButton.setText(LocalText.getText("CLOSE"));
-			//passButton.setEnabled(true);
-			//passButton.setActionCommand(CLOSE_CMD);
-			//passButton.setMnemonic(KeyEvent.VK_C);
-			closeWindow();
+		if (actions == null || actions.isEmpty()) {
+			close();
 			return;
 		}
 		
-		int nextPlayerIndex = ((PossibleAction)activeItems.get(0)).getPlayerIndex();
+		int nextPlayerIndex = ((PossibleAction)actions.get(0)).getPlayerIndex();
 		setSRPlayerTurn (nextPlayerIndex);
+		
+		boolean passAllowed = false;
+        boolean buyAllowed = false;
+        boolean bidAllowed = false;
 
-		for (Iterator it = activeItems.iterator(); it.hasNext(); )
+		for (BuyOrBidStartItem action : actions)
 		{
-			activeItem = (BuyOrBidStartItem) it.next();
-			j = activeItem.getItemIndex();
+			j = action.getItemIndex();
 			i = crossIndex[j];
-			actionableItems[i] = activeItem;
-			item = activeItem.getStartItem();
-			status = activeItem.getStatus();
-			
+			actionableItems[i] = action;
+			item = action.getStartItem();
+			status = action.getStatus();
+
 			if (status == StartItem.BUYABLE)
 			{
 				itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
-				itemNameButton[i].setActionCommand(BUY_CMD);
+                itemNameButton[i].setSelected(false);
+                itemNameButton[i].setEnabled(true);
+                itemNameButton[i].setPossibleAction(action);
 				setItemNameButton(i, true);
 				if (includeBidding) minBid[i].setText("");
+                passAllowed = true;
 			}
 			else if (status == StartItem.BIDDABLE)
 			{
 				itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBidding"));
-				itemNameButton[i].setActionCommand(BID_CMD);
+                itemNameButton[i].setSelected(false);
+                itemNameButton[i].setEnabled(true);
+                itemNameButton[i].setPossibleAction(action);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
+                passAllowed = true;
 			}
 			else if (status == StartItem.AUCTIONED) //??
 			{
-				currentActiveItem = activeItem;
-				
 				itemNameButton[i].setToolTipText(LocalText.getText("ThisItemIsAuctionedNow"));
-				itemNameButton[i].setActionCommand(BID_CMD);
-				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
 				itemIndex = i;
+                setItemNameButton (i, true);
 				itemNameButton[i].setSelected(true);
 				itemNameButton[i].setEnabled(false);
-				bidButton.setEnabled(true);
+ 				bidAllowed = true;
+                log.debug("BidAllowed*1="+bidAllowed);
+				bidButton.setPossibleAction(action);
 				bidAmount.setEnabled(true);
 				int minBid = items[itemIndex].getMinimumBid();
 				spinnerModel.setMinimum(new Integer(minBid));
 				spinnerModel.setValue(new Integer(minBid));
+                passAllowed = true;
 			}
 			else if (status == StartItem.NEEDS_SHARE_PRICE) {
 				
-				currentActiveItem = activeItem;
-				requestStartPrice();
-				if (!round.process (currentActiveItem)) {
-					JOptionPane.showMessageDialog(this,
-							ReportBuffer.get(),
-							LocalText.getText("ERROR"),
-							JOptionPane.OK_OPTION);
+				PossibleAction lastAction = gameUIManager.getLastAction();
+				if (lastAction instanceof NullAction 
+						&& (((NullAction)lastAction).getMode() == NullAction.UNDO
+								|| ((NullAction)lastAction).getMode() == NullAction.FORCED_UNDO)) {
+                    // If we come here via an Undo, we should not start
+                    // with a modal dialog, as that would prevent further Undos.
+                    // So there is an extra step: let the player press Buy first.
+                    setItemNameButton (i, true);
+					itemNameButton[i].setSelected(true);
+					itemNameButton[i].setEnabled(false);
+                    buyButton.setPossibleAction(action);
+					buyAllowed = true;
+
 				} else {
-					updateStatus();
-					break;
-				}
-				
+                    immediateAction = action;
+				}				
 			}
 		}
 
-		passButton.setEnabled(false);
-		undoItem.setEnabled(false);
-		redoItem.setEnabled(false);
-		
 		List inactiveItems = possibleActions.getType (NullAction.class);
 		if (inactiveItems != null) {
 			
@@ -471,27 +477,41 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 				switch (na.getMode()) {
 				case NullAction.PASS:
 					passButton.setText(LocalText.getText("PASS"));
-					passButton.setEnabled (true);
-					passButton.setActionCommand(PASS_CMD);
+					passAllowed = true;
+                    passButton.setPossibleAction(na);
 					passButton.setMnemonic(KeyEvent.VK_P);
-					break;
-				case NullAction.UNDO:
-					undoItem.setEnabled(true);
-					break;
-				case NullAction.REDO:
-					redoItem.setEnabled(true);
-					break;
-				case NullAction.CLOSE:
-					passButton.setText(LocalText.getText("CLOSE"));
-					passButton.setEnabled (true);
-					passButton.setActionCommand(CLOSE_CMD);
-					passButton.setMnemonic(KeyEvent.VK_C);
 					break;
 				}
 			}
 		}
 
+        buyButton.setEnabled(buyAllowed);
+        if (includeBidding) bidButton.setEnabled(bidAllowed);
+        passButton.setEnabled(passAllowed);
+        
+		pack();
+		requestFocus();
 	}
+    
+    public boolean processImmediateAction () {
+        
+        log.debug ("ImmediateAction="+immediateAction);
+        if (immediateAction != null) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            PossibleAction nextAction = immediateAction;
+            immediateAction = null;
+            if (nextAction instanceof BuyOrBidStartItem) {
+                BuyOrBidStartItem action = (BuyOrBidStartItem) nextAction;
+                immediateAction = null; // Don't repeat it!
+                if (action.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
+                    requestStartPrice(action);
+                    return process (action);
+                }
+            }
+        }
+        return true;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -501,25 +521,19 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 	public void actionPerformed(ActionEvent actor)
 	{
 		JComponent source = (JComponent) actor.getSource();
-		String command = actor.getActionCommand();
-		PossibleAction action;
-		if (actor.getActionCommand().equals(UNDO_CMD)) {
-			if ((action = getNullAction (UNDO_CMD)) != null) {
-				process (action);
-			}
-		} else if (actor.getActionCommand().equals(REDO_CMD)) {
-			if ((action = getNullAction (REDO_CMD)) != null) {
-				process (action);
-			}
-		} else if (source instanceof ClickField)
+
+        if (source instanceof ClickField)
 		{
 			gbc = gb.getConstraints(source);
 			itemIndex = gbc.gridy - bidPerPlayerYOffset;
-			currentActiveItem = actionableItems[itemIndex];
+			//BuyOrBidStartItem currentActiveItem = actionableItems[itemIndex];
+            BuyOrBidStartItem currentActiveItem 
+                = (BuyOrBidStartItem)((ClickField)source).getPossibleActions().get(0);
 						
 			if (currentActiveItem.getStatus() == StartItem.BUYABLE)
 			{
 				buyButton.setEnabled(true);
+				buyButton.setPossibleAction(currentActiveItem);
 				if (includeBidding) {
 					bidButton.setEnabled(false);
 					bidAmount.setEnabled(false);
@@ -531,6 +545,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 				buyButton.setEnabled(false);
 				if (includeBidding) {
 					bidButton.setEnabled(true);
+					bidButton.setPossibleAction(currentActiveItem);
 					bidAmount.setEnabled(true);
 					int minBid = items[itemIndex].getMinimumBid();
 					spinnerModel.setMinimum(new Integer(minBid));
@@ -538,125 +553,63 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 				}
 			}
 		}
-		else if (source instanceof JButton)
+		else if (source instanceof ActionButton)
 		{
-			if (command.equals(BUY_CMD))
+			PossibleAction activeItem = ((ActionButton)source).getPossibleActions().get(0);
+            if (activeItem instanceof BuyOrBidStartItem) {
+                BuyOrBidStartItem action = (BuyOrBidStartItem) activeItem;
+                switch (action.getStatus()) {
+                case StartItem.BUYABLE:
+    				/* Process the buy action */
+    				process (action);
+    				break;
+                case StartItem.BIDDABLE:
+                case StartItem.AUCTIONED:
+                    action.setActualBid (((Integer)spinnerModel.getValue()).intValue());
+    				process (action);
+                    break;
+                case StartItem.NEEDS_SHARE_PRICE:
+                    if (requestStartPrice(action))
+                        process (action);
+                    break;
+                }
+			}
+			else if (activeItem instanceof NullAction)
 			{
-				if (currentActiveItem.hasSharePriceToSet()) {
-					requestStartPrice();
-				}
-
-				/* Process the buy action */
-				if (!process (currentActiveItem)) {
-					JOptionPane.showMessageDialog(this,
-							ReportBuffer.get(),
-							LocalText.getText("ERROR"),
-							JOptionPane.OK_OPTION);
-				}
+				process (activeItem);
 			}
-			else if (command.equals(BID_CMD))
-			{
-				currentActiveItem.setActualBid(((Integer) bidAmount.getValue()).intValue());
-				process (currentActiveItem);
-				bidPerPlayer[itemIndex][playerIndex].setText(Bank.format(items[itemIndex].getBid()));
-			}
-			else if (command.equals(PASS_CMD))
-			{
-				if ((action = getNullAction (PASS_CMD)) != null) {
-					process (action);
-				}
-			}
-			else if (command.equals(CLOSE_CMD))
-			{
-				if ((action = getNullAction (CLOSE_CMD)) != null) {
-					process (action);
-				} else {
-					// Not included in possibleActions, still do it.
-					// (This will only happen if there are no active items)
-					// TODO See above, possibleActions should not be empty!?
-					process (new NullAction (NullAction.CLOSE));
-				}
-				closeWindow();
-				return;
-			}
-			buyButton.setEnabled(false);
-			if (includeBidding) {
-				bidButton.setEnabled(false);
-				bidAmount.setEnabled(false);
-			}
-			
-			// Unselect the selected private
-			dummyButton.setSelected(true);
 		}
 		
-		ReportWindow.addLog();
-		
 	    displayError();
-		updateStatus();
-		pack();
-
+	    
 	}
 	
-	private boolean process (PossibleAction action) {
-		return round.process(action);
+	public boolean process (PossibleAction action) {
+		return gameUIManager.processOnServer (action);
 	}
 	
-	private void requestStartPrice () {		
-		if (currentActiveItem.hasSharePriceToSet()) {
-			String compName = currentActiveItem.getCompanyToSetPriceFor();
+	private boolean requestStartPrice (BuyOrBidStartItem activeItem) {		
+		if (activeItem.hasSharePriceToSet()) {
+			String compName = activeItem.getCompanyToSetPriceFor();
 			StockMarketI stockMarket = Game.getStockMarket();
 			StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this,
 					LocalText.getText("WHICH_START_PRICE", compName),
 					LocalText.getText("WHICH_PRICE"),
-					JOptionPane.INFORMATION_MESSAGE,
+					JOptionPane.QUESTION_MESSAGE,
 					null,
 					stockMarket.getStartSpaces().toArray(),
 					stockMarket.getStartSpaces().get(0));
+			if (sp == null) {
+				return false;
+			}
 			int price = sp.getPrice();
-			currentActiveItem.setSharePrice(price);
+			activeItem.setSharePrice(price);
 		}
-
-	}
-	
-	public void closeWindow() {
-		statusWindow.resume(this);
-		this.dispose();
+		return true;
 	}
 	
 	public void close() {
 		this.dispose();
-	}
-	
-	private NullAction getNullAction (String command) {
-		
-		List nullActions = PossibleActions.getInstance().getType (NullAction.class);
-		NullAction action;
-		for (Iterator it = nullActions.iterator(); it.hasNext(); ) {
-			action = (NullAction)it.next();
-			switch (action.getMode()) {
-			case NullAction.PASS:
-				if (command.equals(PASS_CMD)) return action;
-				break;
-			//case NullAction.DONE:
-			//	if (command.equals(DONE_CMD)) return action;
-			//	break;
-			case NullAction.UNDO:
-				if (command.equals(UNDO_CMD)) return action;
-				break;
-			case NullAction.REDO:
-				if (command.equals(REDO_CMD)) return action;
-				break;
-			case NullAction.CLOSE:
-				if (command.equals(CLOSE_CMD)) return action;
-				break;
-			}
-		}
-		return null;
-	}
-
-	public int getItemIndex()
-	{
-		return itemIndex;
 	}
 
 	public void setSRPlayerTurn(int selectedPlayerIndex)
@@ -674,7 +627,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 			upperPlayerCaption[j].setHighlight(true);
 			lowerPlayerCaption[j].setHighlight(true);
 		}
-		//updateStatus();
 	}
 
 	public String getSRPlayer()

@@ -64,7 +64,8 @@ public class StockRound extends Round
 	static protected final int SELL_BUY_OR_BUY_SELL = 2;
 
 	/* Permanent memory */
-	static protected int stockRoundNumber = 0;
+	//static protected int stockRoundNumber = 0;
+    static IntegerState stockRoundNumber = new IntegerState ("StockRoundNumber", 0);
 	static protected StockMarketI stockMarket;
 	static protected Portfolio ipo;
 	static protected Portfolio pool;
@@ -100,10 +101,10 @@ public class StockRound extends Round
 
 	public void start()
 	{
-		stockRoundNumber++;
+		stockRoundNumber.add (1);
 
 		ReportBuffer.add("\n" + LocalText.getText("StartStockRound")
-				+ stockRoundNumber);
+				+ stockRoundNumber.intValue());
 
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 
@@ -112,24 +113,26 @@ public class StockRound extends Round
 		        currentPlayer.getName()
 		        }));
 		
-		setPossibleActions();
+		//setPossibleActions();
 	}
 
 	/*----- General methods -----*/
 
 	public int getStockRoundNumber()
 	{
-		return stockRoundNumber;
+		return stockRoundNumber.intValue();
 	}
 
 	public static int getLastStockRoundNumber()
 	{
-		return stockRoundNumber;
+		return stockRoundNumber.intValue();
 	}
 	
 	public boolean setPossibleActions() {
 		
 		boolean passAllowed = true;
+        
+        //log.debug("Called from ", new Exception("HERE"));
 		
 		possibleActions.clear();
 		
@@ -152,8 +155,8 @@ public class StockRound extends Round
 		for (PossibleAction pa : possibleActions.getList()) {
 			log.debug(currentPlayer.getName()+ " may: "+pa.toString());
 		}
-		
-		return true;
+        
+        return true;
 	}
 	
 	/**
@@ -643,20 +646,11 @@ public class StockRound extends Round
 		
 		if (MoveSet.isOpen()) MoveSet.finish();
 		
-		if (this == GameManager.getInstance().getCurrentRound()) {
-			setPossibleActions();
-		}
-		if (MoveSet.isUndoableByPlayer()) {
-			possibleActions.add (new NullAction (NullAction.UNDO));
-		}
-		if (MoveSet.isUndoableByManager()) {
-			possibleActions.add (new NullAction (NullAction.FORCED_UNDO));
-		}
-		if (MoveSet.isRedoable()) {
-			possibleActions.add(new NullAction (NullAction.REDO));
-		}
-		
-		return result;
+		//if (this == GameManager.getInstance().getCurrentRound()) {
+			//setPossibleActions();
+		//}
+
+        return result;
 	}
 	/**
 	 * Start a company by buying the President's share only
@@ -1376,7 +1370,7 @@ public class StockRound extends Round
 		{
 
 			// Check everything
-			if (stockRoundNumber == 1 && noSaleInFirstSR)
+			if (stockRoundNumber.intValue() == 1 && noSaleInFirstSR)
 			{
 				errMsg = LocalText.getText("FirstSRNoSell");
 				break;
@@ -1596,7 +1590,7 @@ public class StockRound extends Round
 			return false;
 		}
 
-		MoveSet.start (true);
+		MoveSet.start (false);
 		
 		if (hasActed.booleanValue())
 		{
@@ -1611,7 +1605,7 @@ public class StockRound extends Round
 		if (numPasses.intValue() >= numberOfPlayers)
 		{
 
-			ReportBuffer.add(LocalText.getText("END_SR", String.valueOf(stockRoundNumber)));
+			ReportBuffer.add(LocalText.getText("END_SR", String.valueOf(stockRoundNumber.intValue())));
 
 			/* Check if any companies are sold out. */
 			//Iterator it = companyMgr.getAllPublicCompanies().iterator();
@@ -1808,7 +1802,7 @@ public class StockRound extends Round
 	 */
 	public boolean mayCurrentPlayerSellAnything()
 	{
-		if (stockRoundNumber == 1 && noSaleInFirstSR)
+		if (stockRoundNumber.intValue() == 1 && noSaleInFirstSR)
 			return false;
 		
 		if (companyBoughtThisTurnWrapper.getObject() != null
@@ -1842,4 +1836,8 @@ public class StockRound extends Round
 	{
 		return LocalText.getText("SRHelpText");
 	}
+    
+    public String toString () {
+        return "StockRound "+getStockRoundNumber();
+    }
 }

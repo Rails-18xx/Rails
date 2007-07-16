@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/TrainMove.java,v 1.3 2007/06/18 19:53:44 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Attic/TrainMove.java,v 1.4 2007/07/16 20:40:28 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -51,7 +51,7 @@ public class TrainMove extends Move {
         if (from == null) log.error ("From is null");
         if (to == null) log.error ("To is null");        
         return "TrainMove: "+train.getName()
-        	+ " from " + from.getName()
+        	+ "-train from " + from.getName()
         	+ " to " + to.getName();
    }
 

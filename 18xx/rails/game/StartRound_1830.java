@@ -38,23 +38,20 @@ public class StartRound_1830 extends StartRound
 	}
 
 	public boolean setPossibleActions() {
-		
+log.debug("++StartRound PossibleActions called");		
 		boolean passAllowed = true;
 		
 		possibleActions.clear();
 		
 		if (StartPacket.getStartPacket().areAllSold()) return false;
 		
-		//StartItem item;
 		StartItem auctionItem = (StartItem) auctionItemState.getObject();
 		
 		while (possibleActions.isEmpty()) {
 			
 			Player currentPlayer = getCurrentPlayer();
 
-			//for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
 			for (StartItem item : itemsToSell) {
-				//item = (StartItem) it.next();
 				
 				if (item.isSold()) {
 					// Don't include
@@ -65,8 +62,7 @@ public class StartRound_1830 extends StartRound
 							>= auctionItem.getMinimumBid()) {
 						BuyOrBidStartItem possibleAction = new BuyOrBidStartItem (
 								auctionItem, 
-								auctionItem.getMinimumBid(), 
-								StartItem.AUCTIONED);
+								auctionItem.getMinimumBid());
 						possibleActions.add (possibleAction);
 						break; // No more actions
 					} else {
@@ -76,7 +72,7 @@ public class StartRound_1830 extends StartRound
 				} else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
 					/* This status is set in buy() if a share price is missing */
 					possibleActions.add(new BuyOrBidStartItem(
-							item, 0, StartItem.NEEDS_SHARE_PRICE));
+							item, 0));
 					passAllowed = false;
 					break; // No more actions
 				} else if (item == startPacket.getFirstUnsoldItem()) {
@@ -110,8 +106,7 @@ public class StartRound_1830 extends StartRound
 								>= item.getMinimumBid()) {
 							BuyOrBidStartItem possibleAction = new BuyOrBidStartItem (
 									item, 
-									item.getMinimumBid(), 
-									StartItem.AUCTIONED);
+									item.getMinimumBid());
 							possibleActions.add (possibleAction);
 						}
 						break; // No more possible actions!
@@ -120,8 +115,7 @@ public class StartRound_1830 extends StartRound
 						if (currentPlayer.getFreeCash() >= item.getBasePrice()) {
 							possibleActions.add (new BuyOrBidStartItem (
 									item, 
-									item.getBasePrice(), 
-									StartItem.BUYABLE));
+									item.getBasePrice()));
 						}
 					}
 				} else {
@@ -131,8 +125,7 @@ public class StartRound_1830 extends StartRound
 							>= item.getMinimumBid()) {
 						possibleActions.add (new BuyOrBidStartItem (
 								item, 
-								item.getMinimumBid(), 
-								StartItem.BIDDABLE));
+								item.getMinimumBid()));
 					}
 				}
 	
@@ -152,11 +145,6 @@ public class StartRound_1830 extends StartRound
 			possibleActions.add (new NullAction (NullAction.PASS));
 		}
 		
-		//for (Iterator it = possibleActions.getList().iterator();
-		//	it.hasNext(); ) {
-		//	log.debug("~Action: "+it.next().toString());
-		//}
-		//log.debug("numPasses="+numPasses.intValue());
 		return true;
 	}
 	
@@ -165,6 +153,7 @@ public class StartRound_1830 extends StartRound
 	 */
 	public List<StartItem> getStartItems () {
 		
+        /*
 		StartItem item;
 		Player currentPlayer = getCurrentPlayer();
 		StartItem auctionItem = (StartItem) auctionItemState.getObject();
@@ -179,7 +168,8 @@ public class StartRound_1830 extends StartRound
 				item.setStatus(item.equals(auctionItem)
 						? StartItem.AUCTIONED 
 						: StartItem.UNAVAILABLE);
-			} else {
+			} else if (item.getStatus() != StartItem.NEEDS_SHARE_PRICE){
+                // Note: NEEDS_SHARE_PRICE could occur after an Undo
 				item.setStatus(item == startPacket.getFirstUnsoldItem()
 						? StartItem.BUYABLE
 						: StartItem.BIDDABLE);
@@ -195,6 +185,7 @@ public class StartRound_1830 extends StartRound
 				item.setStatus(StartItem.UNAVAILABLE);
 			}
 		}
+        */
 		return itemsToSell;
 	}
 

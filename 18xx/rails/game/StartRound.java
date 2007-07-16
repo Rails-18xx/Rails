@@ -99,22 +99,6 @@ public abstract class StartRound extends Round implements StartRoundI
 			case NullAction.PASS:
 				result = pass (playerName);
 				break;
-			case NullAction.UNDO:
-				MoveSet.undo(false);
-				result = true;
-				break;
-			case NullAction.FORCED_UNDO:
-				MoveSet.undo(true);
-				result = true;
-				break;
-			case NullAction.REDO:
-				MoveSet.redo();
-				result = true;
-				break;
-			case NullAction.CLOSE:
-				numPasses.set(0);
-				GameManager.getInstance().nextRound(this);
-				break;
 			}
 		
 		} else if (action instanceof BuyOrBidStartItem) {
@@ -128,9 +112,11 @@ public abstract class StartRound extends Round implements StartRoundI
 			if (status == StartItem.BUYABLE) {
 				if (startItemAction.hasSharePriceToSet()
 						&& startItemAction.getSharePrice() == 0) {
-					/* We still need a share price for this item */
+					// We still need a share price for this item
 					startItemAction.getStartItem().setStatus(StartItem.NEEDS_SHARE_PRICE);
-					result = true;
+                    // We must set the priority player, though
+                    GameManager.setPriorityPlayer();
+                    result = true;
 				} else {
 					result = buy (playerName, startItemAction);
 				}
@@ -164,12 +150,7 @@ public abstract class StartRound extends Round implements StartRoundI
 		
 		if (MoveSet.isOpen()) MoveSet.finish();
 		
-		if (MoveSet.isUndoableByManager()) {
-			possibleActions.add (new NullAction (NullAction.UNDO));
-		}
-		if (MoveSet.isRedoable()) {
-			possibleActions.add(new NullAction (NullAction.REDO));
-		}
+        // NOTE: Undo/Redo are added in GameManager.process()
 		
 		return result;
 	}
@@ -212,34 +193,11 @@ public abstract class StartRound extends Round implements StartRoundI
 		while (true)
 		{
 
-			// Check player
-			if (!playerName.equals(player.getName()))
-			{
-				errMsg = LocalText.getText("WrongPlayer", playerName);
-				break;
-			}
-			// Check item
-			boolean validItem = false;
-			// TODO It seems this loop can't be turned into a for/in one
-			for (Iterator it = possibleActions.getType(BuyOrBidStartItem.class).iterator();
-					it.hasNext();) { 
-				BuyOrBidStartItem activeItem = (BuyOrBidStartItem) it.next();
-				if (boughtItem.equals(activeItem)) {
-					validItem = true;
-					break;
-				}
-				
-			}
-			if (!validItem)
-			{
-				errMsg = LocalText.getText("ActionNotAllowed", boughtItem.toString());
-				break;
-			}
-
 			// Is the item buyable?
 			if (status == StartItem.BUYABLE 
 					|| status == StartItem.NEEDS_SHARE_PRICE) {
 				price = item.getBasePrice();
+				if (item.getBid() > price) price = item.getBid();
 			} else {
 				errMsg = LocalText.getText("NotForSale");
 				break;
@@ -416,8 +374,6 @@ public abstract class StartRound extends Round implements StartRoundI
 	
 	public abstract List<StartItem> getStartItems ();
 	
-	protected abstract boolean setPossibleActions();
-
 	/**
 	 * Get a list of items that the current player may bid upon.
 	 * 

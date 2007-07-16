@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.7 2007/06/18 19:53:44 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.8 2007/07/16 20:40:28 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -22,6 +22,8 @@ public class MoveSet {
 
     private List<Move> moves = new ArrayList<Move>();
     private boolean undoableByPlayer;
+    /** If TRUE, undoing this move will also undo the previous one. */
+    private boolean linkedToPrevious = false;
     
     private static MoveSet currentAction = null;
     private static List<MoveSet> actionStack = new ArrayList<MoveSet>();
@@ -34,7 +36,7 @@ public class MoveSet {
     }
     
     public static boolean start (boolean undoableByPlayer) {
-        log.debug (">>> Start MoveSet");
+        log.debug (">>> Start MoveSet (index="+(lastIndex+1)+")");
         if (currentAction == null) {
             currentAction = new MoveSet(undoableByPlayer);
             while (lastIndex < actionStack.size()-1) {
@@ -48,7 +50,7 @@ public class MoveSet {
     }
     
     public static boolean finish () {
-        log.debug ("<<< Finish MoveSet");
+        log.debug ("<<< Finish MoveSet (index="+(lastIndex+1)+")");
         if (currentAction == null) {
             log.warn  ("No action open for finish");
             return false;
@@ -59,7 +61,6 @@ public class MoveSet {
         } else {
              actionStack.add (currentAction);
              lastIndex++;
-             log.debug ("MoveSet finish index is "+lastIndex);
              currentAction = null;
              return true;
        }
@@ -81,26 +82,41 @@ public class MoveSet {
         move.execute();
         if (currentAction != null) {
             currentAction.moves.add (0, move); // Prepare for undo in reverse order!
-            log.debug ("New " + move);
+            log.debug ("Done: " + move);
         	return true;
         } else {
             // Uncomment one of the next statements to detect un-undoable actions
             log.warn ("No MoveSet open for "+move);
+            //log.warn ("No MoveSet open for "+move, new Exception("TRACE"));
             //new Exception ("No MoveSet open for add: "+move).printStackTrace();
             
             return false;
         }
     }
     
+    public static void setLinkedToPrevious() {
+        if (currentAction != null) {
+            currentAction.linkedToPrevious = true;
+        } else {
+            log.warn ("No MoveSet open");
+        }
+    }
+    
     public static boolean undo (boolean forced) {
         if ((forced || isUndoableByPlayer())
         		&& currentAction == null && lastIndex >= 0 && lastIndex < actionStack.size()) {
-            ReportBuffer.add(LocalText.getText("UNDO"));
-            //log.debug ("MoveSet undo index is "+lastIndex);
-            ((MoveSet) actionStack.get(lastIndex--)).unexecute();
+            MoveSet undoAction;
+            do {
+                ReportBuffer.add(LocalText.getText("UNDO"));
+                //log.debug ("MoveSet undo index is "+lastIndex);
+                undoAction = (MoveSet) actionStack.get(lastIndex--);
+                undoAction.unexecute();
+            } while (undoAction.linkedToPrevious);
             return true;
         } else {
-            log.error ("Invalid undo: index="+lastIndex+" size="+actionStack.size());
+            log.error ("Invalid undo: index="+lastIndex+" size="+actionStack.size()
+                    + " currentAction="+currentAction
+                    + " forced="+forced+" byPlayer="+isUndoableByPlayer());
             return false;
         }
     }
@@ -153,6 +169,7 @@ public class MoveSet {
         //    ((Move)it.next()).execute();
     	for (Move move : moves) {
     		move.execute();
+            log.debug("Redone: "+move);
         }
     }
     
@@ -163,6 +180,7 @@ public class MoveSet {
     	// TODO Should not the move order be reversed?
     	for (Move move : moves) {
     		move.undo();
+            log.debug("Undone: "+move);
         }
     }
     

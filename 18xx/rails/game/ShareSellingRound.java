@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.4 2007/06/18 19:53:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.5 2007/07/16 20:40:18 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -12,6 +12,7 @@ import java.util.List;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.move.MoveSet;
+import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 
@@ -22,15 +23,15 @@ public class ShareSellingRound extends StockRound {
     
     Player sellingPlayer;
     PublicCompanyI companyNeedingTrain;
-    int cashToRaise;
+    IntegerState cashToRaise;
     
     public ShareSellingRound (PublicCompanyI compNeedingTrain, int cashToRaise) {
         
         this.companyNeedingTrain = compNeedingTrain;
-        this.cashToRaise = cashToRaise;
+        this.cashToRaise = new IntegerState ("CashToRaise", cashToRaise);
         sellingPlayer = compNeedingTrain.getPresident();
         currentPlayer = sellingPlayer;
-
+log.debug("Creating ShareSellingRound, cash to raise ="+cashToRaise);
 		GameManager.getInstance().setRound(this);
 		GameManager.setCurrentPlayerIndex(sellingPlayer.getIndex());
 		
@@ -39,7 +40,7 @@ public class ShareSellingRound extends StockRound {
     public void start() {
         log.info ("Share selling round started");
         currentPlayer = sellingPlayer;
-		setPossibleActions();
+		//setPossibleActions();
     }
     
     /*
@@ -66,7 +67,7 @@ public class ShareSellingRound extends StockRound {
 		
 		setSellableShares();
 		
-	    if (possibleActions.isEmpty() && cashToRaise > 0) {
+	    if (possibleActions.isEmpty() && cashToRaise.intValue() > 0) {
 	        GameManager.getInstance().registerBankruptcy();
 	        return false;
 	    }
@@ -110,23 +111,24 @@ public class ShareSellingRound extends StockRound {
 			
 			/* If the current Player is president, check if he can dump
 			 * the presidency onto someone else */
-			if (company.getPresident() == currentPlayer
-					&& company != companyNeedingTrain) {
+			if (company.getPresident() == currentPlayer) {
 				int presidentShare = company.getCertificates().get(0).getShare();
 				if (maxShareToSell > share - presidentShare) {
 					dumpAllowed = false;
-					int playerShare;
-					Player[] players = GameManager.getPlayers();
-					for (int i = 0; i < numberOfPlayers; i++)
-					{
-						if (players[i] == currentPlayer) continue;
-						playerShare = players[i].getPortfolio().getShare(company);
-						if (playerShare	>= presidentShare)
-						{
-							dumpAllowed = true;
-							break;
-						}
-					}
+                    if (company != companyNeedingTrain) {
+     					int playerShare;
+    					Player[] players = GameManager.getPlayers();
+    					for (int i = 0; i < numberOfPlayers; i++)
+    					{
+    						if (players[i] == currentPlayer) continue;
+    						playerShare = players[i].getPortfolio().getShare(company);
+    						if (playerShare	>= presidentShare)
+    						{
+    							dumpAllowed = true;
+    							break;
+    						}
+    					}
+                    }
 					if (!dumpAllowed) maxShareToSell = share - presidentShare;
 				}
 			}
@@ -169,11 +171,12 @@ public class ShareSellingRound extends StockRound {
 				if (number == 0) continue;
 				
 				// May not sell more than is needed to buy the train
-				while (number > 0 && ((number-1) * price) > cashToRaise) number--;
+				while (number > 0 && ((number-1) * price) > cashToRaise.intValue()) number--;
 
-				possibleActions.add (new SellShares (compName,
+				if (number > 0) {
+                    possibleActions.add (new SellShares (compName,
 						i, number, price));
-				
+                }
 			}
 		}
 	}
@@ -663,9 +666,9 @@ public class ShareSellingRound extends StockRound {
 			}
 		}
 
-		cashToRaise -= numberSold * price;
+		cashToRaise.add(-numberSold * price);
 
-		if (cashToRaise <= 0) {
+		if (cashToRaise.intValue() <= 0) {
 			GameManager.getInstance().finishShareSellingRound();
 		}
 
@@ -673,8 +676,11 @@ public class ShareSellingRound extends StockRound {
 	}
 
 	public int getRemainingCashToRaise () {
-	    return cashToRaise;
+	    return cashToRaise.intValue();
 	}
 
+    public String toString() {
+        return "ShareSellingRound";
+    }
 
 }

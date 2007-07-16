@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.5 2007/06/17 22:03:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.6 2007/07/16 20:40:28 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -31,7 +31,7 @@ public class StateChange extends Move {
 
     public boolean undo() {
         object.setState(oldValue);
-        log.debug("Undone: "+toString());
+        //log.debug("Undone: "+toString());
         return true;
     }
     

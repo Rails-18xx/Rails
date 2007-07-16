@@ -15,6 +15,7 @@ import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener
 {
+    private ORWindow orWindow;
 
 	private ArrayList upgrades;
 	private JPanel upgradePanel;
@@ -36,9 +37,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	
 	private HexMap hexMap;
 
-	public UpgradesPanel()
+	public UpgradesPanel(ORWindow orWindow)
 	{
 		super(BoxLayout.Y_AXIS);
+        
+        this.orWindow = orWindow;
 
 		setSize(preferredSize);
 		setVisible(true);
@@ -74,7 +77,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	public void populate()
 	{
-	    if (hexMap == null) hexMap = GameUILoader.getMapPanel().getMap();
+	    if (hexMap == null) hexMap = orWindow.getMapPanel().getMap();
 	    
 		try
 		{
@@ -104,7 +107,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		}
 		else if (upgrades.size() == 0)
 		{
-			GameUILoader.orWindow.setMessage(LocalText.getText("NoTiles"));
+			orWindow.setMessage(LocalText.getText("NoTiles"));
 		}
 		else
 		{
@@ -142,7 +145,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 
 	private BufferedImage getHexImage(int tileId)
 	{
-		return GameUILoader.getImageLoader().getTile(tileId);
+		return GameUIManager.getImageLoader().getTile(tileId);
 	}
 
 	public Dimension getPreferredSize()
@@ -201,23 +204,23 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 
-	    if (hexMap == null) hexMap = GameUILoader.getMapPanel().getMap();
+	    if (hexMap == null) hexMap = orWindow.getMapPanel().getMap();
 		//String command = e.getActionCommand();
 		Object source = e.getSource();
 
 		if (source == cancelButton /*command.equals("Cancel")*/)
 		{
-			GameUILoader.orWindow.processCancel();
+			orWindow.processCancel();
 		}
 		else if (source == doneButton /*command.equals("Done")*/)
 		{
 			if (hexMap.getSelectedHex() != null)
 			{
-				GameUILoader.orWindow.processDone();
+				orWindow.processDone();
 			}
 			else
 			{
-				GameUILoader.orWindow.processCancel();
+				orWindow.processCancel();
 			}
 
 		}
@@ -230,14 +233,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 		if (!(e.getSource() instanceof JLabel))
 			return;
 
-		HexMap map = GameUILoader.getMapPanel().getMap();
+		HexMap map = orWindow.getMapPanel().getMap();
 
 		int id = Integer.parseInt(((JLabel) e.getSource()).getText());
 		if (map.getSelectedHex().dropTile(id))
 		{
 			/* Lay tile */
 			map.repaint(map.getSelectedHex().getBounds());
-			GameUILoader.orWindow.setSubStep(ORWindow.ROTATE_OR_CONFIRM_TILE);
+			orWindow.setSubStep(ORWindow.ROTATE_OR_CONFIRM_TILE);
 		}
 		else
 		{
@@ -245,7 +248,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener
 			JOptionPane.showMessageDialog(this,
 					"This tile cannot be laid in a valid orientation.");
 			upgrades.remove(TileManager.get().getTile(id));
-			GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);
+			orWindow.setSubStep(ORWindow.SELECT_TILE);
 			showUpgrades();
 		}
 

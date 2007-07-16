@@ -244,8 +244,6 @@ public class StartPacket
 	 */
 	public boolean areAllSold()
 	{
-		//Iterator it = items.iterator();
-		//while (it.hasNext())
 		for (StartItem item : items)
 		{
 			if (!item.isSold())
