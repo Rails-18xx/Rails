@@ -1,5 +1,9 @@
 package rails.game;
 
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.move.MoveSet;
 import rails.game.state.State;
 import rails.util.*;
 
@@ -17,12 +21,8 @@ public class GameManager implements ConfigurableComponentI
 
 	protected static Player[] players;
 	protected static int numberOfPlayers;
-	//protected static int currentPlayerIndex = 0;
-	//protected static Player currentPlayer = null;
 	protected static State currentPlayer =
 		new State ("CurrentPlayer", Player.class);
-	//protected static int priorityPlayerIndex = 0;
-	//protected static Player priorityPlayer = null;
 	protected static State priorityPlayer = 
 	    new State ("PriorityPlayer", Player.class);
 
@@ -41,7 +41,8 @@ public class GameManager implements ConfigurableComponentI
 	 * been sold, it finishes by starting an Operating Round, which handles the
 	 * privates payout and then immediately starts a new Start Round.
 	 */
-	protected static RoundI currentRound = null;
+    protected static State currentRound 
+        = new State ("CurrentRound", Round.class);
 	protected static RoundI interruptedRound = null;
 
 	// protected Round insertingRound = null;
@@ -60,6 +61,9 @@ public class GameManager implements ConfigurableComponentI
 	protected static String name;
 
 	protected StartPacket startPacket;
+    
+    PossibleActions possibleActions = PossibleActions.getInstance();
+
 
 	/*----- Default variant -----*/
 	/* Others will always be configured per rails.game */
@@ -194,8 +198,7 @@ public class GameManager implements ConfigurableComponentI
 
 	public void setRound(RoundI round)
 	{
-
-		currentRound = round;
+		currentRound.set (round);
 	}
 
 	/**
@@ -283,14 +286,89 @@ public class GameManager implements ConfigurableComponentI
 			PublicCompanyI companyNeedingTrain, int cashToRaise)
 	{
 
-		interruptedRound = currentRound;
+		interruptedRound = getCurrentRound();
 		new ShareSellingRound(companyNeedingTrain, cashToRaise).start();
 	}
+    
+    /** The central server-side method that takes 
+     * a client-side initiated action and processes it.
+     * @param action A PossibleAction subclass object sent by the client.
+     * @return TRUE is the action was valid.
+     */
+    public boolean process (PossibleAction action) {
+        
+		// Check player
+		String actionPlayerName = action.getPlayerName();
+		String currentPlayerName = getCurrentPlayer().getName();
+		if (!actionPlayerName.equals(currentPlayerName))
+		{
+			DisplayBuffer.add (LocalText.getText("WrongPlayer", new String[] {
+					actionPlayerName,
+					currentPlayerName
+			}));
+			return false;
+		}
+		
+		// Check if the action is allowed
+		if (!possibleActions.validate(action)) {
+			DisplayBuffer.add (LocalText.getText("ActionNotAllowed", action.toString()));
+			return false;
+		}
+		
+		boolean result = false;
+    	
+        for (;;) {
+			
+			// Process undo/redo centrally
+			if (action instanceof NullAction) {
+				
+				NullAction nullAction = (NullAction) action;
+				switch (nullAction.getMode()) {
+				case NullAction.UNDO:
+					MoveSet.undo(false);
+					result = true;
+					break;
+				case NullAction.FORCED_UNDO:
+					MoveSet.undo(true);
+					result = true;
+					break;
+				case NullAction.REDO:
+					MoveSet.redo();
+					result = true;
+					break;
+				}
+				if (result) break;
+			
+			}
+			
+			// All other actions: process per round
+			result = getCurrentRound().process(action);
+			break;
+        }
+        
+        // Note: round may have changed!
+        getCurrentRound().setPossibleActions();
+
+        // Add the Undo/Redo possibleActions here.
+        if (MoveSet.isUndoableByPlayer()) {
+            possibleActions.add (new NullAction (NullAction.UNDO));
+        }
+        if (MoveSet.isUndoableByManager()) {
+            possibleActions.add (new NullAction (NullAction.FORCED_UNDO));
+        }
+        if (MoveSet.isRedoable()) {
+            possibleActions.add(new NullAction (NullAction.REDO));
+        }
+        
+        return result;
+        
+    }
 
 	public void finishShareSellingRound()
 	{
-		currentRound = interruptedRound;
-		((OperatingRound) currentRound).resumeTrainBuying();
+		//currentRound = interruptedRound;
+        setRound (interruptedRound);
+		((OperatingRound) getCurrentRound()).resumeTrainBuying();
 	}
 
 	public void registerBankruptcy()
@@ -308,7 +386,7 @@ public class GameManager implements ConfigurableComponentI
 	{
 		gameOver = true;
 		ReportBuffer.add(LocalText.getText("GameOver"));
-		currentRound = null;
+		currentRound.set (null);
 
 		logGameReport();
 	}
@@ -373,7 +451,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public RoundI getCurrentRound()
 	{
-		return currentRound;
+		return (RoundI) currentRound.getObject();
 	}
 
 	/**
@@ -585,7 +663,7 @@ public class GameManager implements ConfigurableComponentI
 
 	public String getHelp()
 	{
-		return currentRound.getHelp();
+		return getCurrentRound().getHelp();
 	}
 
 	public static boolean hasAnyParPrice() {

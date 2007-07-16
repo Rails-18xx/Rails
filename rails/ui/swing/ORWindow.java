@@ -4,7 +4,9 @@ import rails.game.*;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
+import rails.game.action.PossibleORAction;
 import rails.game.special.*;
 import rails.ui.swing.hexmap.*;
 import rails.util.LocalText;
@@ -24,9 +26,9 @@ import org.apache.log4j.Logger;
  * This Window displays the available operations that may be performed during an
  * Operating Round. This window also contains the Game Map.
  */
-public class ORWindow extends JFrame implements WindowListener
+public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 {
-
+    private GameUIManager gameUIManager;
 	private MapPanel mapPanel;
 	private ORPanel orPanel;
 	private UpgradesPanel upgradePanel;
@@ -56,9 +58,11 @@ public class ORWindow extends JFrame implements WindowListener
 
 	protected static Logger log = Logger.getLogger(ORWindow.class.getPackage().getName());
 
-	public ORWindow()
+	public ORWindow(GameUIManager gameUIManager)
 	{
 		super();
+        this.gameUIManager = gameUIManager;
+        
 		getContentPane().setLayout(new BorderLayout());
 
 		messagePanel = new MessagePanel();
@@ -67,10 +71,10 @@ public class ORWindow extends JFrame implements WindowListener
 		if (mapPanel == null)
 			mapPanel = new MapPanel();
 		else
-			mapPanel = GameUILoader.getMapPanel();
+			mapPanel = GameUIManager.getMapPanel();
 		getContentPane().add(mapPanel, BorderLayout.CENTER);
 
-		upgradePanel = new UpgradesPanel();
+		upgradePanel = new UpgradesPanel(this);
 		getContentPane().add(upgradePanel, BorderLayout.WEST);
 		addMouseListener(upgradePanel);
 
@@ -149,7 +153,7 @@ public class ORWindow extends JFrame implements WindowListener
 	    
 	    // For now, this only has an effect during tile and token laying.
 	    // Perhaps we need to centralise message updating here in a later stage.
-	    log.debug ("Calling updateMessage, subStep="+subStep);
+	    log.debug ("Calling updateMessage, subStep="+subStep/*, new Exception("TRACE")*/);
 	    if (subStep == INACTIVE) return;
 	    
 	    String message = LocalText.getText(messageKey[subStep]);
@@ -352,7 +356,7 @@ public class ORWindow extends JFrame implements WindowListener
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
             allowance.setLaidTile(selectedHex.getProvisionalTile());
             
-            if (orPanel.process(allowance)) {
+            if (process(allowance)) {
                 selectedHex.fixTile();
                 updateStatus();
             } else {
@@ -396,9 +400,10 @@ public class ORWindow extends JFrame implements WindowListener
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setChosenStation(station);
 
-            if  (orPanel.process(allowance)) {
+            if  (process(allowance)) {
                 selectedHex.fixToken();
                 updateStatus();
+                enableBaseTokenLaying(false);
             } else {
                 setSubStep (SELECT_HEX_FOR_TOKEN);
             }
@@ -414,18 +419,48 @@ public class ORWindow extends JFrame implements WindowListener
 			if (selectedHex != null)
 				selectedHex.removeToken();
 			//orPanel.layBaseToken(null, 0);
-            orPanel.process (new NullAction (NullAction.SKIP));
+            process (new NullAction (NullAction.SKIP));
+            enableBaseTokenLaying(false);
 		}
 		else if (tileLayingEnabled)
 		{
 			if (selectedHex != null)
 				selectedHex.removeTile();
-			orPanel.process (new NullAction (NullAction.SKIP));
+			process (new NullAction (NullAction.SKIP));
 		}
 
-        updateStatus();
+        //updateStatus();
 		repaintUpgradePanel();
 	}
+    
+    public boolean process (PossibleAction action) {
+
+        // Add the actor for safety checking in the server 
+        action.setPlayerName(orPanel.getORPlayer());
+        if (action instanceof PossibleORAction) {
+            ((PossibleORAction)action).setCompany(orPanel.getOperatingCompanies()[orPanel.getOrCompIndex()]);
+        }
+        // Process the action
+        boolean result = gameUIManager.processOnServer (action);
+        // Display any error message
+        displayMessage();
+        
+        return result;
+    }
+    
+    
+    // Not yet used
+    public boolean processImmediateAction () {
+        return true;
+    }
+
+    public void displayMessage() {
+        String[] message = DisplayBuffer.get();
+        if (message != null) {
+            JOptionPane.showMessageDialog(this, message);
+        }
+    }
+
 
 	public void enableTileLaying(boolean enabled)
 	{
@@ -493,21 +528,21 @@ public class ORWindow extends JFrame implements WindowListener
 	public void activate()
 	{
 		repaintUpgradePanel();
-		// orPanel.recreate(); Also done via next statement
+		orPanel.recreate();
 		orPanel.updateStatus();
 		setVisible(true);
 		requestFocus();
 	}
 
-	public static void updateORWindow()
+	public void updateORWindow()
 	{
 		if (GameManager.getInstance().getCurrentRound() instanceof StockRound)
 		{
-			GameUILoader.statusWindow.updateStatus();
+			//GameUIManager.statusWindow.updateStatus("ORWindow.updateORWindow");
 		}
 		else if (GameManager.getInstance().getCurrentRound() instanceof OperatingRound)
 		{
-			GameUILoader.orWindow.updateStatus();
+			updateStatus();
 
 		}
 	}
@@ -515,10 +550,11 @@ public class ORWindow extends JFrame implements WindowListener
 	public void updateStatus()
 	{
 		orPanel.updateStatus();
+		requestFocus();
 	}
-
+    
 	/**
-	 * Game-end settings
+	 * Round-end settings
 	 * 
 	 */
 	public void finish()

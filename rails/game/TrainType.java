@@ -56,10 +56,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	protected ArrayList<Train> trains = null;
 
-	//boolean available = false;
-	protected BooleanState available = new BooleanState ("TrainTypeAvailable", false);
-	//boolean rusted = false;
-	protected BooleanState rusted = new BooleanState ("TrainTypeRusted", false);
+	protected BooleanState available;
+	protected BooleanState rusted;
 
 	protected static Logger log = Logger.getLogger(TrainType.class.getPackage().getName());
 
@@ -217,7 +215,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		}
 		
 		// Final initialisations
-		numberBoughtFromIPO	= new IntegerState (name+"_trainsBought", 0);
+		numberBoughtFromIPO	= new IntegerState (name+"-trains_Bought", 0);
+        available = new BooleanState (name+"-trains_Available", false);
+        rusted = new BooleanState (name+"-trains_Rusted", false);
 	}
 
 	/**

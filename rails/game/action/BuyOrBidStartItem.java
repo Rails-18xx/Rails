@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.2 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.3 2007/07/16 20:40:21 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -18,11 +18,11 @@ public class BuyOrBidStartItem extends PossibleAction {
     private boolean sharePriceToSet = false;
     private String companyNeedingSharePrice = null;
     
-    /** Status of the start item (buyable? biddable?) for the
+    /* Status of the start item (buyable? biddable?) for the
      * <i>current</i> player, taking into account the amount of
      * cash of this player that is blocked by bids on other items.
      */
-    private int status;
+   // private int status;
     private int priceOrMinimumBid;
     private int itemIndex;
     
@@ -35,20 +35,24 @@ public class BuyOrBidStartItem extends PossibleAction {
      */
     public BuyOrBidStartItem(StartItem startItem, 
     		int priceOrMinimumBid, int status) {
-    	super();
+    	this (startItem, priceOrMinimumBid);
+        this.startItem.setStatus(status);
+    }
+
+    public BuyOrBidStartItem(StartItem startItem, 
+            int priceOrMinimumBid) {
+        super();
         this.startItem = startItem;
         this.itemIndex = startItem.getIndex();
         this.priceOrMinimumBid = priceOrMinimumBid;
-        this.status = status;
+        //this.status = status;
         
         PublicCompanyI company;
         if ((company = startItem.needsPriceSetting()) != null) {
-        	sharePriceToSet = true;
-        	companyNeedingSharePrice = company.getName();
+            sharePriceToSet = true;
+            companyNeedingSharePrice = company.getName();
         }
-        log.debug("For "+startItem.getName()+": companyNeedingSharePrice set to "+companyNeedingSharePrice);
     }
-
     
    /**
      * @return Returns the startItem.
@@ -98,13 +102,14 @@ public class BuyOrBidStartItem extends PossibleAction {
 	}
 	
 	public int getStatus() {
-		return status;
+		//return status;
+        return startItem.getStatus();
 	}
 	
-	public boolean equals (BuyOrBidStartItem otherItem) {
-		return startItem.getName().equals(otherItem.getStartItem().getName()) 
-			&& status == otherItem.status;
-	}
+	//public boolean equals (BuyOrBidStartItem otherItem) {
+	//	return startItem.getName().equals(otherItem.getStartItem().getName()) 
+	//		&& status == otherItem.status;
+	//}
 	
     public boolean equals (PossibleAction action) {
         if (!(action instanceof BuyOrBidStartItem)) return false;
@@ -112,11 +117,24 @@ public class BuyOrBidStartItem extends PossibleAction {
         return a.startItem == startItem
             && a.itemIndex == itemIndex
             && a.priceOrMinimumBid == priceOrMinimumBid
-            && a.status == status;
+            /*&& a.status == status*/;
     }
 
 	public String toString() {
-        return "BuyOrBidStartItem "+ startItem.getName()
-        	+ " status="+status;
+		StringBuffer b = new StringBuffer();
+		b.append ("BuyOrBidStartItem ").append(startItem.getName())
+         .append (" status=").append(startItem.getStatusName());
+        switch (getStatus()) {
+        case StartItem.BIDDABLE:
+			b.append(" bid=").append(actualBid);
+            break;
+        case StartItem.BUYABLE:
+			b.append (" price=").append(startItem.getBasePrice());
+            break;
+        case StartItem.NEEDS_SHARE_PRICE:
+			b.append(" startprice=").append(sharePrice);
+            break;
+		}
+		return b.toString();
     }
 }

@@ -2,6 +2,7 @@ package rails.game;
 
 import java.util.List;
 
+import rails.game.action.PossibleAction;
 import rails.game.special.SpecialPropertyI;
 
 /**
@@ -22,4 +23,8 @@ public interface RoundI
 	
 	public List<SpecialPropertyI> getSpecialProperties();
 	
+    public boolean process (PossibleAction action);
+    
+    public boolean setPossibleActions();
+    
 }

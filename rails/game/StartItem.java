@@ -27,8 +27,7 @@ public class StartItem
 	protected int index = nextIndex++;
 
 	// Bids
-	protected IntegerState lastBidderIndex 
-		= new IntegerState(name+"highestBidder", -1);
+	protected IntegerState lastBidderIndex;
 	protected static Player[] players;
 	protected static int numberOfPlayers;
 	protected MoneyModel[] bids;
@@ -49,6 +48,11 @@ public class StartItem
 	public static final int AUCTIONED = 3;
 	public static final int NEEDS_SHARE_PRICE = 4;
 	public static final int SOLD = 5;
+	
+	public static final String[] statusName = new String[] {
+		"Unavailable", "Biddable", "Buyable", "Auctioned", "NeedingSharePrice",
+		"Sold"
+	};
 
 	// For initialisation purposes only
 	protected String type = null;
@@ -91,6 +95,7 @@ public class StartItem
 		status = new IntegerState (name+"_status");
 		minimumBid = new MoneyModel(name+"_minimumBid");
 		minimumBid.setOption(MoneyModel.SUPPRESS_ZERO);
+		lastBidderIndex = new IntegerState(name+"_highestBidder", -1);
 	}
 
 	/**
@@ -480,6 +485,10 @@ public class StartItem
 	
 	public int getStatus() {
 		return status.intValue();
+	}
+	
+	public String getStatusName () {
+		return statusName[status.intValue()];
 	}
 
 	public void setStatus(int status) {

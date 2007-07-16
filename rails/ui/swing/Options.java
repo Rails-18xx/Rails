@@ -8,7 +8,7 @@ import javax.swing.plaf.basic.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.ui.swing.GameUILoader;
+import rails.ui.swing.GameUIManager;
 import rails.util.Config;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -38,6 +38,8 @@ public class Options extends JDialog implements ActionListener
 	JTextField[] playerNameFields;
 	BasicComboBoxRenderer renderer;
 	Dimension size, optSize;
+    
+    GameUIManager gameUIManager;
 	
 	protected static Logger log = Logger.getLogger(Options.class.getPackage().getName());
 
@@ -208,9 +210,11 @@ public class Options extends JDialog implements ActionListener
 		}
 	}
 
-	public Options()
+	public Options(GameUIManager gameUIManager)
 	{
 		super();
+        
+        this.gameUIManager = gameUIManager;
 
 		initialize();
 		populateGridBag();
@@ -275,7 +279,7 @@ public class Options extends JDialog implements ActionListener
 				}
 				GameManager.getInstance().startGame();
 
-				GameUILoader.gameUIInit();
+				gameUIManager.gameUIInit();
 			}
 			catch (NullPointerException e)
 			{

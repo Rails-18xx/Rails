@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.3 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.4 2007/07/16 20:40:20 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -163,7 +163,7 @@ public class LayTile extends PossibleORAction {
     }
 
     public String toString () {
-        StringBuffer b = new StringBuffer("TileLay");
+        StringBuffer b = new StringBuffer("LayTile");
         b.append(" type=").append(type);
         if (location != null) b.append(" location=").append(location);
         if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);

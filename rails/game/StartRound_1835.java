@@ -151,8 +151,7 @@ public class StartRound_1835 extends StartRound
 					/* Player does have the cash */
 					possibleActions.add(new BuyOrBidStartItem (
 							item,
-							item.getBasePrice(),
-							item.getStatus()));
+							item.getBasePrice()));
 					//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");
 				//} else {
 					//log.debug("For player "+currentPlayer.getName()+": item "+item.getName()+" is NOT buyable (price="+item.getBasePrice()+" cash="+cashToSpend+")");

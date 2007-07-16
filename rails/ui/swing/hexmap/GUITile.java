@@ -22,7 +22,7 @@ public class GUITile
 	protected static double baseRotation;
 	protected static boolean initialised = false;
 	protected MapHex hex = null;
-	protected static ImageLoader imageLoader = GameUILoader.getImageLoader();
+	protected static ImageLoader imageLoader = GameUIManager.getImageLoader();
 	protected AffineTransform af = new AffineTransform();
 	public static final double DEG60 = Math.PI / 3;
 

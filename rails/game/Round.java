@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.3 2007/05/31 20:49:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.4 2007/07/16 20:40:19 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -58,5 +58,17 @@ public class Round implements RoundI {
     public boolean process (PossibleAction action) {
     	return true;
     }
+    
+    /** Default version, does nothing.
+     * Subclasses should override this method with a real version.
+     * @return
+     */
+    public boolean setPossibleActions () {
+        return false;
+    }
 
+    public String toString () {
+        return getClass().getName().replaceAll(".*\\.", "");
+    }
+    
 }

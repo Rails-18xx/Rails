@@ -40,7 +40,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     //private static final String LAY_TOKEN_CMD = "LayToken";
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
-    private static final String FORCED_UNDO_CMD = "Undo!";
     private static final String REDO_CMD = "Redo";
     
     ORWindow orWindow;
@@ -432,27 +431,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
     
     public void updateStatus (PossibleAction actionToComplete) {
+        //log.debug("Called from ", new Exception ("HERE"));
         
-        /* End of rails.game checks */
-        if (GameManager.isGameOver()) {
-
-            JOptionPane.showMessageDialog(this, "GAME OVER", "",
-                    JOptionPane.OK_OPTION);
-            JOptionPane.showMessageDialog(this, GameManager.getInstance()
-                    .getGameReport(), "", JOptionPane.OK_OPTION);
-            /*
-             * All other wrapping up has already been done when calling
-             * getSellableCertificates, so we can just finish now.
-             */
-            GameUILoader.statusWindow.finish();
-            return;
-        } else if (Bank.isJustBroken()) {
-            /* The message must become configuration-depedent */
-            JOptionPane
-                    .showMessageDialog(this,
-                            "Bank is broken. The rails.game will be over after the current set of ORs.");
-        }
-
         round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
 
@@ -460,11 +440,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             setHighlightsOff();
             /* Reorder the companies if the round has changed */
-            if (round != previousRound)
-                recreate();
-            previousRound = round;
+            //if (round != previousRound)
+            //    recreate();
+            //previousRound = round;
 
             //For debugging : log all possible actions
+            /*
             List<PossibleAction> as = possibleActions.getList();
             if (as.isEmpty()) {
                 log.debug ("No possible actions!!");
@@ -477,6 +458,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     }
                 }
             }
+            */
             if (actionToComplete != null) {
                 log.debug("ExecutedAction: "+actionToComplete);
             }
@@ -504,7 +486,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 
                 log.debug ("Tiles can be laid");
                 orWindow.enableTileLaying(true);
-                GameUILoader.getMapPanel().setAllowedTileLays (possibleActions.getType(LayTile.class));
+                orWindow.getMapPanel().setAllowedTileLays (possibleActions.getType(LayTile.class));
 
                 if (privatesCanBeBought) {
 	                button2.setText(LocalText.getText("BUY_PRIVATE"));
@@ -527,13 +509,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 log.debug ("Tokens can be laid");
                 orWindow.enableBaseTokenLaying(true);
-                GameUILoader.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayToken.class));
+                orWindow.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayToken.class));
 
                 button1.setEnabled(false);
                 button1.setVisible(false);
                 button3.setEnabled(false);
 
-                orWindow.updateMessage();
+                //orWindow.updateMessage();
 
             } else if (possibleActions.contains(SetDividend.class)
                     && orStep == OperatingRound.STEP_CALC_REVENUE) {
@@ -673,11 +655,20 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             } else {
                 repaint();
             }
-        } else if (!(round instanceof ShareSellingRound)) {
-            deRegisterObservers();
+        }
+    }
+    
+    public void finish() {
+
+        button1.setEnabled(false);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
+
+        round = GameManager.getInstance().getCurrentRound();
+        if (!(round instanceof ShareSellingRound)) {
+            //deRegisterObservers();
             setORCompanyTurn(-1);
         }
-
     }
 
     public void actionPerformed(ActionEvent actor) {
@@ -715,7 +706,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 log.debug ("Set revenue amount is "+amount);
                 action.setActualRevenue(amount);
                 if (action.getRevenueAllocation() != SetDividend.UNKNOWN) {
-                    process (action);
+                    orWindow.process (action);
                 } else {
                     orStep = OperatingRound.STEP_PAYOUT;
                     retrieveStep = false;
@@ -723,7 +714,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 }
             } else {
                 // The revenue allocation has been selected
-                process (action);
+                orWindow.process (action);
             }
         } else if (command.equals(BUY_TRAIN_CMD)) {
             
@@ -735,34 +726,19 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         } else if (executedActionType == NullAction.class) {
             
-            process (executedAction);
+            orWindow.process (executedAction);
             
         }
 
         ReportWindow.addLog();
 
-        updateStatus(executedActionToComplete);
+        //updateStatus(executedActionToComplete);
 
         if (!(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)) {
-            ORWindow.updateORWindow();
+            orWindow.updateORWindow();
         }
     }
 
-    protected boolean process (PossibleAction action) {
-
-        // Add the actor for safety checking in the server 
-        action.setPlayerName(getORPlayer());
-        if (action instanceof PossibleORAction) {
-            ((PossibleORAction)action).setCompany(orComp);
-        }
-        // Process the action
-        boolean result = oRound.process(action);
-        // Display any error message
-        displayMessage();
-        
-        return result;
-    }
-    
 
     private void buyTrain()
 	{
@@ -897,7 +873,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 		    selectedTrain.setPricePaid(price);
 		    selectedTrain.setExchangedTrain(exchangedTrain);
 
-		    if (process (selectedTrain)) {
+		    if (orWindow.process (selectedTrain)) {
 		    	
                 // Check if any trains must be discarded
 				// Keep looping until all relevant companies have acted
@@ -932,7 +908,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                         
                         dt.setDiscardedTrain(discardedTrain);
                         
-                        process (dt);
+                        orWindow.process (dt);
                     }
                 }
 			}
@@ -991,7 +967,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 }
                 chosenAction.setPrice(amount);
 
-                if (process (chosenAction)) {
+                if (orWindow.process (chosenAction)) {
                     orWindow.updateMessage();
                 }
             }
@@ -1051,13 +1027,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         JOptionPane.showMessageDialog(this, text);
     }
 
-    public void displayMessage() {
-        String[] message = DisplayBuffer.get();
-        if (message != null) {
-            JOptionPane.showMessageDialog(this, message);
-        }
-    }
-
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(GameManager.getInstance().getHelp());
@@ -1069,13 +1038,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void keyTyped(KeyEvent e) {
-    }
-
-    public void finish() {
-
-        button1.setEnabled(false);
-        button2.setEnabled(false);
-        button3.setEnabled(false);
     }
 
     public PublicCompanyI[] getOperatingCompanies() {

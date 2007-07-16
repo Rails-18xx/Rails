@@ -258,16 +258,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 			if (selectedHex != null)
 			{
-				GameUILoader.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
+				GameUIManager.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
 			}
 			else
 			{
-				GameUILoader.orWindow.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
+				GameUIManager.orWindow.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
 			}
 		}
 		else if (ORWindow.tileLayingEnabled)
 		{
-			if (GameUILoader.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
+			if (GameUIManager.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
 					&& clickedHex == selectedHex)
 			{
 				selectedHex.rotateTile();
@@ -291,7 +291,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 					     */ 
 					{
 						selectHex(clickedHex);
-						GameUILoader.orWindow.setSubStep(ORWindow.SELECT_TILE);
+						GameUIManager.orWindow.setSubStep(ORWindow.SELECT_TILE);
 					}
 					else
 					{
@@ -303,8 +303,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 
 		// repaint();
-		GameUILoader.orWindow.repaintUpgradePanel();
-		GameUILoader.orWindow.repaintORPanel();
+		GameUIManager.orWindow.repaintUpgradePanel();
+		GameUIManager.orWindow.repaintORPanel();
 	}
 
 	/*

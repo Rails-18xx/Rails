@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
-import rails.ui.swing.GameUILoader;
+import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StatusWindow;
 import rails.ui.swing.elements.ViewObject;
 
@@ -742,12 +742,12 @@ public class GUIHex implements ViewObject
 	        currentGUITile.setRotation(currentTileOrientation);
 	        currentTile = currentGUITile.getTile();
 	        
-			GameUILoader.getMapPanel().getMap().repaint(getBounds());
+			GameUIManager.getMapPanel().getMap().repaint(getBounds());
 			
 	        provisionalGUITile = null;
 
 	        log.debug ("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
-			GameUILoader.orWindow.updateStatus();
+			GameUIManager.orWindow.updateStatus();
 	    }
 	}
 
