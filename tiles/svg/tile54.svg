@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg7076"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile54.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata7141">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs7139" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="579"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,9 +40,9 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
+     inkscape:zoom="3.3264706"
+     inkscape:cx="67.70763"
+     inkscape:cy="50.897289"
      inkscape:window-x="88"
      inkscape:window-y="88"
      inkscape:current-layer="svg7076" />
@@ -50,7 +51,7 @@
   <desc
      id="desc7080">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(5.418114e-3,0,0,-5.333139e-3,-1.175565e-3,0.939964)"
+     transform="matrix(5.4158598e-3,0,0,-6.1904762e-3,-9.6705274e-4,0.9999611)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g7084">
@@ -62,6 +63,7 @@
    transform="matrix(1,0,0,-1,111.17,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text7088">54</text>
+
 
 <path
    d="M 93.5,40.5 L 93.469,41.735 L 93.376,42.954 L 93.223,44.155 L 93.012,45.337 L 92.744,46.498 L 92.421,47.637 L 92.044,48.752 L 91.614,49.841 L 91.133,50.905 L 90.603,51.939 L 90.025,52.944 L 89.401,53.918 L 88.732,54.859 L 88.019,55.766 L 87.265,56.637 L 86.47,57.47 L 85.637,58.265 L 84.766,59.019 L 83.859,59.732 L 82.918,60.401 L 81.944,61.025 L 80.939,61.603 L 79.905,62.133 L 78.841,62.614 L 77.752,63.044 L 76.637,63.421 L 75.498,63.744 L 74.337,64.012 L 73.155,64.223 L 71.954,64.376 L 70.735,64.469 L 69.5,64.5 C 56.246,64.5 45.5,53.754 45.5,40.5 C 45.5,27.246 56.246,16.5 69.5,16.5 C 82.754,16.5 93.5,27.246 93.5,40.5 z "
@@ -132,6 +134,7 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text7122">60</text>
 
+
 <path
    d="M 93.5,120.5 L 93.469,121.73 L 93.376,122.95 L 93.223,124.15 L 93.012,125.34 L 92.744,126.5 L 92.421,127.64 L 92.044,128.75 L 91.614,129.84 L 91.133,130.9 L 90.603,131.94 L 90.025,132.94 L 89.401,133.92 L 88.732,134.86 L 88.019,135.77 L 87.265,136.64 L 86.47,137.47 L 85.637,138.26 L 84.766,139.02 L 83.859,139.73 L 82.918,140.4 L 81.944,141.03 L 80.939,141.6 L 79.905,142.13 L 78.841,142.61 L 77.752,143.04 L 76.637,143.42 L 75.498,143.74 L 74.337,144.01 L 73.155,144.22 L 71.954,144.38 L 70.735,144.47 L 69.5,144.5 C 56.246,144.5 45.5,133.75 45.5,120.5 C 45.5,107.25 56.246,96.5 69.5,96.5 C 82.754,96.5 93.5,107.25 93.5,120.5 z "
    style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
@@ -153,10 +156,12 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text7132">60</text>
 
+
 <text
    transform="matrix(1,0,0,-1,150.55,74.918)"
    style="font-size:16px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text7134">NY</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "

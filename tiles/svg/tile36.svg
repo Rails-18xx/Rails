@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg3926"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile36.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata3989">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs3987" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="579"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,9 +40,9 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
+     inkscape:zoom="2.8856517"
+     inkscape:cx="64.437746"
+     inkscape:cy="61.052729"
      inkscape:window-x="176"
      inkscape:window-y="176"
      inkscape:current-layer="svg3926" />
@@ -50,7 +51,7 @@
   <desc
      id="desc3930">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(5.418113e-3,0,0,-5.33314e-3,-2.13272e-5,0.959663)"
+     transform="matrix(5.4159283e-3,0,0,-6.1630838e-3,1.8075614e-4,0.9952846)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g3934">
@@ -62,6 +63,7 @@
    transform="matrix(1,0,0,-1,111.19,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text3938">36</text>
+
 
 <path
    d="M 121.5,124.5 L 121.47,125.73 L 121.38,126.95 L 121.22,128.15 L 121.01,129.34 L 120.74,130.5 L 120.42,131.64 L 120.04,132.75 L 119.61,133.84 L 119.13,134.9 L 118.6,135.94 L 118.03,136.94 L 117.4,137.92 L 116.73,138.86 L 116.02,139.77 L 115.26,140.64 L 114.47,141.47 L 113.64,142.26 L 112.77,143.02 L 111.86,143.73 L 110.92,144.4 L 109.94,145.03 L 108.94,145.6 L 107.9,146.13 L 106.84,146.61 L 105.75,147.04 L 104.64,147.42 L 103.5,147.74 L 102.34,148.01 L 101.15,148.22 L 99.954,148.38 L 98.735,148.47 L 97.5,148.5 C 84.246,148.5 73.5,137.75 73.5,124.5 C 73.5,111.25 84.246,100.5 97.5,100.5 C 110.75,100.5 121.5,111.25 121.5,124.5 z "
@@ -132,6 +134,7 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text3972">40</text>
 
+
 <path
    d="M 111.5,36.5 L 111.47,37.735 L 111.38,38.954 L 111.22,40.155 L 111.01,41.337 L 110.74,42.498 L 110.42,43.637 L 110.04,44.752 L 109.61,45.841 L 109.13,46.905 L 108.6,47.939 L 108.03,48.944 L 107.4,49.918 L 106.73,50.859 L 106.02,51.766 L 105.26,52.637 L 104.47,53.47 L 103.64,54.265 L 102.77,55.019 L 101.86,55.732 L 100.92,56.401 L 99.945,57.025 L 98.939,57.603 L 97.905,58.133 L 96.842,58.614 L 95.752,59.044 L 94.637,59.421 L 93.498,59.744 L 92.337,60.012 L 91.155,60.223 L 89.954,60.376 L 88.735,60.469 L 87.5,60.5 C 74.246,60.5 63.5,49.754 63.5,36.5 C 63.5,23.246 74.246,12.5 87.5,12.5 C 100.75,12.5 111.5,23.246 111.5,36.5 z "
    style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
@@ -152,6 +155,7 @@
    transform="matrix(1,0,0,-1,18.191,77.977)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text3982">40</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
