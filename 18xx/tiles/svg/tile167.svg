@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg4654"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile167.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata4733">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs4731" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="579"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,9 +40,9 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
+     inkscape:zoom="3.2446721"
+     inkscape:cx="64.933687"
+     inkscape:cy="99.921688"
      inkscape:window-x="44"
      inkscape:window-y="44"
      inkscape:current-layer="svg4654" />
@@ -50,7 +51,7 @@
   <desc
      id="desc4658">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(5.418114e-3,0,0,-5.333139e-3,-1.175565e-3,0.939964)"
+     transform="matrix(5.4159389e-3,0,0,-6.1593093e-3,-9.7436834e-4,0.9987657)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g4662">
@@ -62,6 +63,7 @@
    transform="matrix(1,0,0,-1,109.17,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text4666">167</text>
+
 
 <path
    d="M 150.5,100.5 L 150.47,101.73 L 150.38,102.95 L 150.22,104.15 L 150.01,105.34 L 149.74,106.5 L 149.42,107.64 L 149.04,108.75 L 148.61,109.84 L 148.13,110.9 L 147.6,111.94 L 147.03,112.94 L 146.4,113.92 L 145.73,114.86 L 145.02,115.77 L 144.26,116.64 L 143.47,117.47 L 142.64,118.26 L 141.77,119.02 L 140.86,119.73 L 139.92,120.4 L 138.94,121.03 L 137.94,121.6 L 136.9,122.13 L 135.84,122.61 L 134.75,123.04 L 133.64,123.42 L 132.5,123.74 L 131.34,124.01 L 130.15,124.22 L 128.95,124.38 L 127.73,124.47 L 126.5,124.5 C 113.25,124.5 102.5,113.75 102.5,100.5 C 102.5,87.246 113.25,76.5 126.5,76.5 C 139.75,76.5 150.5,87.246 150.5,100.5 z "
@@ -188,6 +190,7 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text4716">70</text>
 
+
 <path
    d="M 82.5,60.5 L 82.469,61.735 L 82.376,62.954 L 82.223,64.155 L 82.012,65.337 L 81.744,66.498 L 81.421,67.637 L 81.044,68.752 L 80.614,69.841 L 80.133,70.905 L 79.603,71.939 L 79.025,72.944 L 78.401,73.918 L 77.732,74.859 L 77.019,75.766 L 76.265,76.637 L 75.47,77.47 L 74.637,78.265 L 73.766,79.019 L 72.859,79.732 L 71.918,80.401 L 70.944,81.025 L 69.939,81.603 L 68.905,82.133 L 67.841,82.614 L 66.752,83.044 L 65.637,83.421 L 64.498,83.744 L 63.337,84.012 L 62.155,84.223 L 60.954,84.376 L 59.735,84.469 L 58.5,84.5 C 45.246,84.5 34.5,73.754 34.5,60.5 C 34.5,47.246 45.246,36.5 58.5,36.5 C 71.754,36.5 82.5,47.246 82.5,60.5 z "
    style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
@@ -208,6 +211,7 @@
    transform="matrix(1,0,0,-1,53.191,137.98)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text4726">70</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
