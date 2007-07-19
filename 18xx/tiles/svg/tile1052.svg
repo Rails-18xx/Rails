@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg10378"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile1052.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata10433">
     <rdf:RDF>
@@ -44,7 +45,8 @@
      inkscape:cy="360"
      inkscape:window-x="154"
      inkscape:window-y="154"
-     inkscape:current-layer="svg10378" />
+     inkscape:current-layer="svg10378"
+     borderlayer="true" />
   <title
      id="title10380">SVG drawing</title>
   <desc
@@ -69,6 +71,7 @@
    transform="matrix(1,0,0,-1,106.7,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10390">1052</text>
+
 
 <path
    d="M 162.5,80.5 L 162.47,81.735 L 162.38,82.954 L 162.22,84.155 L 162.01,85.337 L 161.74,86.498 L 161.42,87.637 L 161.04,88.752 L 160.61,89.841 L 160.13,90.905 L 159.6,91.939 L 159.03,92.944 L 158.4,93.918 L 157.73,94.859 L 157.02,95.766 L 156.26,96.637 L 155.47,97.47 L 154.64,98.265 L 153.77,99.019 L 152.86,99.732 L 151.92,100.4 L 150.94,101.03 L 149.94,101.6 L 148.9,102.13 L 147.84,102.61 L 146.75,103.04 L 145.64,103.42 L 144.5,103.74 L 143.34,104.01 L 142.15,104.22 L 140.95,104.38 L 139.73,104.47 L 138.5,104.5 C 125.25,104.5 114.5,93.754 114.5,80.5 C 114.5,67.246 125.25,56.5 138.5,56.5 C 151.75,56.5 162.5,67.246 162.5,80.5 z "
@@ -123,6 +126,7 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10416">40</text>
 
+
 <path
    d="M 70.5,80.5 L 70.469,81.735 L 70.376,82.954 L 70.223,84.155 L 70.012,85.337 L 69.744,86.498 L 69.421,87.637 L 69.044,88.752 L 68.614,89.841 L 68.133,90.905 L 67.603,91.939 L 67.025,92.944 L 66.401,93.918 L 65.732,94.859 L 65.019,95.766 L 64.265,96.637 L 63.47,97.47 L 62.637,98.265 L 61.766,99.019 L 60.859,99.732 L 59.918,100.4 L 58.944,101.03 L 57.939,101.6 L 56.905,102.13 L 55.841,102.61 L 54.752,103.04 L 53.637,103.42 L 52.498,103.74 L 51.337,104.01 L 50.155,104.22 L 48.954,104.38 L 47.735,104.47 L 46.5,104.5 C 33.246,104.5 22.5,93.754 22.5,80.5 C 22.5,67.246 33.246,56.5 46.5,56.5 C 59.754,56.5 70.5,67.246 70.5,80.5 z "
    style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
@@ -143,6 +147,7 @@
    transform="matrix(1,0,0,-1,53.191,137.98)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10426">40</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "

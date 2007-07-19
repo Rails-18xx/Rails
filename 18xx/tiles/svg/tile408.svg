@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg10461"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile408.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata10548">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs10546" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="579"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,9 +40,9 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
+     inkscape:zoom="3.734434"
+     inkscape:cx="71.618037"
+     inkscape:cy="66.302893"
      inkscape:window-x="110"
      inkscape:window-y="110"
      inkscape:current-layer="svg10461" />
@@ -50,7 +51,7 @@
   <desc
      id="desc10465">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(5.418114e-3,0,0,-5.333139e-3,-1.175565e-3,0.939964)"
+     transform="matrix(5.4159814e-3,0,0,-6.1425771e-3,-9.7830342e-4,0.9957515)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g10469">
@@ -62,6 +63,7 @@
    transform="matrix(1,0,0,-1,109.19,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10473">408</text>
+
 
 <polygon
    points="85.5,104.5 109.5,62.5 151.5,86.5 127.5,128.5 85.5,104.5 "
@@ -192,6 +194,7 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10531">30</text>
 
+
 <path
    d="M 90.5,65.5 L 90.469,66.735 L 90.376,67.954 L 90.223,69.155 L 90.012,70.337 L 89.744,71.498 L 89.421,72.637 L 89.044,73.752 L 88.614,74.841 L 88.133,75.905 L 87.603,76.939 L 87.025,77.944 L 86.401,78.918 L 85.732,79.859 L 85.019,80.766 L 84.265,81.637 L 83.47,82.47 L 82.637,83.265 L 81.766,84.019 L 80.859,84.732 L 79.918,85.401 L 78.944,86.025 L 77.939,86.603 L 76.905,87.133 L 75.841,87.614 L 74.752,88.044 L 73.637,88.421 L 72.498,88.744 L 71.337,89.012 L 70.155,89.223 L 68.954,89.376 L 67.735,89.469 L 66.5,89.5 C 53.246,89.5 42.5,78.754 42.5,65.5 C 42.5,52.246 53.246,41.5 66.5,41.5 C 79.754,41.5 90.5,52.246 90.5,65.5 z "
    style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
@@ -212,6 +215,7 @@
    transform="matrix(1,0,0,-1,53.191,137.98)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text10541">30</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
