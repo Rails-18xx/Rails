@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg5208"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile-113.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\workspace\18xx\tiles\svg"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata5253">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs5251" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="579"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,9 +40,9 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="335.00053"
+     inkscape:zoom="3.045"
+     inkscape:cx="71.618037"
+     inkscape:cy="39.151194"
      inkscape:window-x="110"
      inkscape:window-y="110"
      inkscape:current-layer="svg5208" />
@@ -50,7 +51,7 @@
   <desc
      id="desc5212">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(1.7361e-3,0,0,-1.7361e-3,-3.125e-2,1.1875)"
+     transform="matrix(1.7360175e-3,0,0,-1.833954e-3,-3.1224754e-2,1.2545687)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g5216">
@@ -65,6 +66,7 @@
    id="text5220"
    x="366.89853"
    y="-160.24263">-113</text>
+
 
 
 <path
@@ -139,6 +141,7 @@
    id="text5246"
    x="188.15903"
    y="-586.50488">30</text>
+
 
 
 <polygon

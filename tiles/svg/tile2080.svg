@@ -5,7 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg2230"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.45.1"
    sodipodi:docname="tile2080.svg"
-   sodipodi:docbase="C:\Documents and Settings\lentz\Desktop\TileDesigner"
-   version="1.0">
+   sodipodi:docbase="C:\Documents and Settings\Brett\workspace\18xx\tiles\svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata2293">
     <rdf:RDF>
@@ -31,7 +32,7 @@
   <defs
      id="defs2291" />
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="580"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,12 +40,13 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="360"
+     inkscape:zoom="2.4806076"
+     inkscape:cx="12.270879"
+     inkscape:cy="32.466844"
      inkscape:window-x="154"
-     inkscape:window-y="154"
-     inkscape:current-layer="svg2230" />
+     inkscape:window-y="153"
+     inkscape:current-layer="svg2230"
+     borderlayer="true" />
   <title
      id="title2232">SVG drawing</title>
   <desc
@@ -57,7 +59,7 @@
      style="fill:#ffffff;stroke:none"
      id="rect2236" />
   <g
-     transform="matrix(5.418114e-3,0,0,-5.739835e-3,-1.175565e-3,0.934679)"
+     transform="matrix(5.4170571e-3,0,0,-6.1483378e-3,-1.0778009e-3,1.0003409)"
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="g2238">
@@ -69,6 +71,7 @@
    transform="matrix(1,0,0,-1,106.72,7.9141)"
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text2242">2080</text>
+
 
 <polygon
    points="68.5,56.5 116.5,56.5 116.5,104.5 68.5,104.5 68.5,56.5 "
@@ -173,10 +176,12 @@
    style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text2284">50</text>
 
+
 <text
    transform="matrix(1,0,0,-1,18.184,74.824)"
    style="font-size:16px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
    id="text2286">S</text>
+
 
 <polygon
    points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
