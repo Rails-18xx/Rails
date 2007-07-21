@@ -23,8 +23,8 @@ public class GUIHex implements ViewObject
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
-	public static final double NORMAL_SCALE = 0.33;
-	public static final double SELECTED_SCALE = 0.27;
+	public static final double NORMAL_SCALE = 1;
+	public static final double SELECTED_SCALE = 0.8;
 
 	protected MapHex model;
 	protected GeneralPath innerHexagon;
@@ -289,19 +289,15 @@ public class GUIHex implements ViewObject
 		}
 
 		paintOverlay(g2);
-
-		//if (getHexModel().hasTokens())  // Not really needed!? Method no longer exists
-			paintToken(g2);
+		paintToken(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 		if (getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
 		{
 			g2.drawString("$" + getHexModel().getTileCost(),
-					rectBound.x
-							+ (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
-							* 3 / 5,
-					rectBound.y
-							+ ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
+					rectBound.x + (rectBound.width - fontMetrics.stringWidth(
+								Integer.toString(getHexModel().getTileCost())))	* 3 / 5,
+					rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
 		}
 
 		Map homes;
@@ -320,10 +316,8 @@ public class GUIHex implements ViewObject
 		    }
 		    String label = b.toString();
 			g2.drawString(label,
-					rectBound.x
-							+ (rectBound.width - fontMetrics.stringWidth(label)) * 1 / 2,
-					rectBound.y
-							+ ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
+					rectBound.x + (rectBound.width - fontMetrics.stringWidth(label)) * 1 / 2,
+					rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
 		}
 
 		if (getHexModel().isBlocked())
@@ -345,11 +339,9 @@ public class GUIHex implements ViewObject
 					if (getHexModel().equals(hex))
 					{
 						g2.drawString("(" + p.getName() + ")",
-								rectBound.x
-										+ (rectBound.width - fontMetrics.stringWidth("("
+								rectBound.x + (rectBound.width - fontMetrics.stringWidth("("
 												+ p.getName() + ")")) * 1 / 2,
-								rectBound.y
-										+ ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
+								rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
 					}
 				}
 			}
