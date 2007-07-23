@@ -1,5 +1,8 @@
 package rails.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import rails.game.move.TrainMove;
 
 public class Train implements TrainI
@@ -13,6 +16,10 @@ public class Train implements TrainI
 	protected int cityScoreFactor;
 	protected int townScoreFactor;
 	protected int townCountIndicator;
+	
+	protected String uniqueId;
+	protected static Map<String, TrainI> trainMap
+			= new HashMap<String, TrainI> (); 
 
 	protected Portfolio holder;
 	//protected boolean rusted = false;
@@ -22,7 +29,7 @@ public class Train implements TrainI
 	protected static final Portfolio unavailable = Bank.getUnavailable();
 	protected static final Portfolio ipo = Bank.getIpo();
 
-	public Train(TrainTypeI type)
+	public Train(TrainTypeI type, int index)
 	{
 
 		this.type = type;
@@ -36,7 +43,16 @@ public class Train implements TrainI
 		//rusted = new BooleanState (getName()+"Rusted", false);
 
 		unavailable.addTrain(this);
-
+		uniqueId = type.getName() + "_" + index;
+		trainMap.put (uniqueId, this);
+	}
+	
+	public static TrainI getByUniqueId (String id) {
+		return trainMap.get (id);
+	}
+	
+	public String getUniqueId () {
+		return uniqueId;
 	}
 
 	/**

@@ -203,13 +203,13 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 				 * We create one train, but will add one more each time a train
 				 * of this type is bought.
 				 */
-				trains.add(new Train(this));
+				trains.add(new Train(this, 0));
 			}
 			else
 			{
 				for (int i = 0; i < amount; i++)
 				{
-					trains.add(new Train(this));
+					trains.add(new Train(this, i));
 				}
 			}
 		}

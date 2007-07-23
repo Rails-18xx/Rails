@@ -1,5 +1,8 @@
 package rails.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import rails.util.LocalText;
@@ -25,6 +28,13 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	
 	/** A key identifying the certificate's unique type */
 	protected String certTypeId;
+	
+	/** A key identifying the certificate's unique ID */
+	protected String certId; 
+	
+	/** A map alllowing to find certificates by unique id */
+	protected static Map<String, PublicCertificateI> certMap
+		= new HashMap<String, PublicCertificateI> ();
 
 	protected static Logger log = Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
@@ -45,6 +55,18 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 		this.available = available;
 	}
 
+	public void setUniqueId (String name, int index) {
+		certId = name + "-" + index;
+		certMap.put (certId, this);
+	}
+	
+	public String getUniqueId () {
+		return certId;
+	}
+	
+	public static PublicCertificateI getByUniqueId(String certId) {
+		return certMap.get(certId);
+	}
 	/**
 	 * @return if Certificate is Available
 	 */

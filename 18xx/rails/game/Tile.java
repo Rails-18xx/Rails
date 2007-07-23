@@ -24,6 +24,7 @@ public class Tile implements TileI, StationHolderI
 	private int quantity;
 	private boolean unlimited = false;
 	public static final int UNLIMITED = -1;
+	
 	private ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
 	public Tile(Integer id)

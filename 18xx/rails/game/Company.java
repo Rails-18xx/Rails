@@ -40,9 +40,9 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 	{
 		this.name = name;
 		this.type = type;
-		closedObject = new BooleanState (name+"Closed", false);
+		closedObject = new BooleanState (name+"_Closed", false);
 	}
-
+	
 	/**
 	 * @return Number of Companies
 	 */

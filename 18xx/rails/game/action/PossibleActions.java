@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.7 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.8 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -24,8 +24,7 @@ public class PossibleActions {
     
     private static PossibleActions instance = new PossibleActions();
     
-    //private Map<Class, List<PossibleAction>> possibleActionMap;
-    private List<PossibleAction> possibleActionList;
+    private List<PossibleAction> possibleActions;
 
     protected static Logger log = Logger.getLogger(PossibleActions.class.getPackage().getName());
 
@@ -33,8 +32,8 @@ public class PossibleActions {
      * This class can only be instantiated locally.
      */
     private PossibleActions() {
-        //possibleActionMap = new HashMap<Class, List<PossibleAction>>();
-        possibleActionList = new ArrayList<PossibleAction>();
+        possibleActions = new ArrayList<PossibleAction>();
+
     }
     
     public static PossibleActions getInstance() {
@@ -42,36 +41,21 @@ public class PossibleActions {
     }
     
     public void clear() {
-        //possibleActionMap.clear();
-        possibleActionList.clear();
+        possibleActions.clear();
     }
 
     public void add (PossibleAction action) {
-        //Class clazz = action.getClass();
-        //if (!possibleActionMap.containsKey(clazz)) {
-        //    possibleActionMap.put(clazz, new ArrayList<PossibleAction>());
-        //}
-        //((List<PossibleAction>)possibleActionMap.get(clazz)).add (action);
-        possibleActionList.add(action);
+        possibleActions.add(action);
     }
     
     public void addAll (List<? extends PossibleAction> actions) {
-        //Object object;
-        //PossibleAction action;
         for (PossibleAction action : actions) {
-            //if ((object = it.next()) instanceof PossibleAction) {
-                add (action);
-            //} else {
-                // Error!
-            //}
+            add (action);
        }
-       // possibleActionList.addAll(actions);
     }
     
     public boolean contains (Class clazz) {
-        //return possibleActionMap.containsKey(clazz)
-        //	&& !((List)possibleActionMap.get(clazz)).isEmpty();
-    	for (PossibleAction action : possibleActionList) {
+    	for (PossibleAction action : possibleActions) {
     		if (Util.isInstanceOf(action, clazz)) return true;
     	}
     	return false;
@@ -80,35 +64,28 @@ public class PossibleActions {
     // The return type cannot be generified because of problems in ORPanel
     public List getType (Class clazz) {
     	List<PossibleAction> result = new ArrayList<PossibleAction>();
-    	for (PossibleAction action : possibleActionList) {
+    	for (PossibleAction action : possibleActions) {
     		if (Util.isInstanceOf(action, clazz)) result.add (action);
     	}
     	return result;
     }
     
-    //public Map<Class, List<PossibleAction>> getMap () {
-    //    return possibleActionMap;
-    //}
-    
     public List<PossibleAction> getList() {
-    	return possibleActionList;
+    	return possibleActions;
     }
     
     public boolean isEmpty() {
-    	return possibleActionList.isEmpty();
+    	return possibleActions.isEmpty();
     }
     
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate (PossibleAction checkedAction) {
     	
-    	for (PossibleAction action : possibleActionList) {
-            //log.debug("Comparing "+action+" against "+checkedAction);
+    	for (PossibleAction action : possibleActions) {
     		if (action.equals(checkedAction)) {
-    		    //log.debug("...match found!");
                 return true;
             }
     	}
-        //log.debug("...sorry, no match found");
     	return false;
     }
 

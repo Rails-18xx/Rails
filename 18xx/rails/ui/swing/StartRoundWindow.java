@@ -2,6 +2,7 @@ package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.BuyOrBidStartItem;
+import rails.game.action.GameAction;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
@@ -449,9 +450,9 @@ implements ActionListener, KeyListener, ActionPerformer
 			else if (status == StartItem.NEEDS_SHARE_PRICE) {
 				
 				PossibleAction lastAction = gameUIManager.getLastAction();
-				if (lastAction instanceof NullAction 
-						&& (((NullAction)lastAction).getMode() == NullAction.UNDO
-								|| ((NullAction)lastAction).getMode() == NullAction.FORCED_UNDO)) {
+				if (lastAction instanceof GameAction 
+						&& (((GameAction)lastAction).getMode() == GameAction.UNDO
+								|| ((GameAction)lastAction).getMode() == GameAction.FORCED_UNDO)) {
                     // If we come here via an Undo, we should not start
                     // with a modal dialog, as that would prevent further Undos.
                     // So there is an extra step: let the player press Buy first.

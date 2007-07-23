@@ -632,14 +632,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                         button3.setText(LocalText.getText("Done"));
                         button3.setActionCommand(DONE_CMD);
                         button3.setMnemonic(KeyEvent.VK_D);
-                        button3.setEnabled(true);
                         button3.setPossibleAction(action);
+                        button3.setEnabled(true);
                         break;
-                    case NullAction.UNDO:
+                    }
+                }
+            } else if (possibleActions.contains(GameAction.class)) {
+                
+                List<GameAction> actions = possibleActions.getType(GameAction.class);
+                for (GameAction action : actions) {
+                    switch (action.getMode()) {
+                    case GameAction.UNDO:
                         enableUndo = true;
                         undoButton.setPossibleAction(action);
                         break;
-                    case NullAction.REDO:
+                    case GameAction.REDO:
                         enableRedo = true;
                         redoButton.setPossibleAction(action);
                         break;
@@ -724,7 +731,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             buyPrivate();
 
-        } else if (executedActionType == NullAction.class) {
+        } else if (executedActionType == NullAction.class
+                || executedActionType == GameAction.class) {
             
             orWindow.process (executedAction);
             

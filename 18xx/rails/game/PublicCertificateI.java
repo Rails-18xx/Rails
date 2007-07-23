@@ -3,10 +3,12 @@ package rails.game;
 public interface PublicCertificateI extends Certificate
 {
 
-	/**
-	 * @return if company is available
-	 */
-	//public boolean isAvailable();
+	/** Set the certificate's unique ID, for use in deserializing */
+	public void setUniqueId (String name, int index);
+	
+	/** Set the certificate's unique ID */
+	public String getUniqueId ();
+
 
 	/**
 	 * @return if this certificate is a president's share

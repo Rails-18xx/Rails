@@ -1,14 +1,19 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.4 2007/07/16 20:40:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.5 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.*;
 
 import rails.game.MapHex;
+import rails.game.MapManager;
 import rails.game.TileI;
+import rails.game.TileManager;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 
 
@@ -27,25 +32,30 @@ public class LayTile extends PossibleORAction {
     /*--- Preconditions ---*/
     
     /** Where to lay a tile (null means anywhere) */
-    private MapHex location = null; 
+    transient private MapHex location = null;
+    private String locationName;
     
     /** Highest tile colour (empty means unspecified) */
     private Map<String, Integer> tileColours = null;
     
     /** Allowed tiles on a specific location (empty means unspecified) */
-    private List tiles = null;
+    transient private List<TileI> tiles = null;
+    private int[] tileIds;
     
     /** Special property that will be fulfilled by this tile lay.
      * If null, this is a normal tile lay. */
-    private SpecialTileLay specialProperty = null;
+    transient private SpecialTileLay specialProperty = null;
+    private int specialPropertyId;
     
     /*--- Postconditions ---*/
     
     /** The tile actually laid */
-    private TileI laidTile = null;
+    transient private TileI laidTile = null;
+    private int laidTileId;
     
     /** The map hex on which the tile is laid */
-    private MapHex chosenHex = null;
+    transient private MapHex chosenHex = null;
+    private String chosenHexName;
     
     /** The tile orientation */
     private int orientation;
@@ -53,10 +63,11 @@ public class LayTile extends PossibleORAction {
     /**
      * Allow laying a tile on a given location.
      */
-    public LayTile(MapHex location, List tiles) {
+    public LayTile(MapHex location, List<TileI> tiles) {
         type = LOCATION_SPECIFIC;
         this.location = location;
-        this.tiles = tiles;
+        if (location != null) this.locationName = location.getName();
+        setTiles (tiles);
     }
     
     public LayTile(Map<String, Integer> tileColours) {
@@ -67,7 +78,9 @@ public class LayTile extends PossibleORAction {
      public LayTile (SpecialTileLay specialProperty) {
         type = SPECIAL_PROPERTY;
         this.location = specialProperty.getLocation();
+        if (location != null) this.locationName = this.location.getName();
         this.specialProperty = specialProperty;
+        if (specialProperty != null) this.specialPropertyId = specialProperty.getUniqueId();
     }
 
     /**
@@ -81,6 +94,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
+        this.chosenHexName = chosenHex.getName();
     }
     
     
@@ -103,6 +117,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setLaidTile(TileI laidTile) {
         this.laidTile = laidTile;
+        this.laidTileId = laidTile.getId();
     }
     /**
      * @return Returns the specialProperty.
@@ -115,18 +130,23 @@ public class LayTile extends PossibleORAction {
      */
     public void setSpecialProperty(SpecialTileLay specialProperty) {
         this.specialProperty = specialProperty;
+        // TODO this.specialPropertyName = specialProperty.getUniqueId();
     }
     /**
      * @return Returns the tiles.
      */
-    public List getTiles() {
+    public List<TileI> getTiles() {
         return tiles;
     }
     /**
      * @param tiles The tiles to set.
      */
-    public void setTiles(List tiles) {
+    public void setTiles(List<TileI> tiles) {
         this.tiles = tiles;
+        this.tileIds = new int[tiles.size()];
+        for (int i=0; i<tiles.size(); i++) {
+            tileIds[i] = tiles.get(i).getId();
+        }
     }
     /**
      * @return Returns the location.
@@ -164,18 +184,50 @@ public class LayTile extends PossibleORAction {
 
     public String toString () {
         StringBuffer b = new StringBuffer("LayTile");
-        b.append(" type=").append(type);
-        if (location != null) b.append(" location=").append(location);
-        if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);
-        if (tileColours != null && !tileColours.isEmpty()) {
-            String key;
-            int value;
-            for (Iterator it = tileColours.keySet().iterator(); it.hasNext(); ) {
-                key = (String) it.next();
-                value = ((Integer)tileColours.get(key)).intValue();
-                b.append(" ").append(key).append(":").append(value);
-            }
+        if (laidTile == null) {
+	        b.append(" type=").append(type);
+	        if (location != null) b.append(" location=").append(location);
+	        if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);
+	        if (tileColours != null && !tileColours.isEmpty()) {
+	            String key;
+	            int value;
+	            for (Iterator it = tileColours.keySet().iterator(); it.hasNext(); ) {
+	                key = (String) it.next();
+	                value = ((Integer)tileColours.get(key)).intValue();
+	                b.append(" ").append(key).append(":").append(value);
+	            }
+	        }
+        } else {
+        	b.append(" tile=").append(laidTile.getName())
+        	 .append(" hex=").append(chosenHex.getName())
+        	 .append(" orientation=").append(orientation);
         }
         return b.toString();
     }
+    
+    /** Deserialize */
+	private void readObject (ObjectInputStream in) 
+	throws IOException, ClassNotFoundException {
+
+		in.defaultReadObject();
+		
+		location = MapManager.getInstance().getHex(locationName);
+		if (tileIds != null
+				&& tileIds.length > 0) {
+			tiles = new ArrayList<TileI>();
+			for (int i=0; i<tileIds.length; i++) {
+				tiles.add (TileManager.get().getTile(tileIds[i]));
+			}
+		}
+		if (specialPropertyId  > 0) {
+			specialProperty = (SpecialTileLay) SpecialProperty.getByUniqueId (specialPropertyId);
+		}
+		if (laidTileId != 0) {
+			laidTile = TileManager.get().getTile(laidTileId);
+		}
+		if (chosenHexName != null && chosenHexName.length() > 0) {
+			chosenHex = MapManager.getInstance().getHex(chosenHexName);
+		}
+	}
+
 }

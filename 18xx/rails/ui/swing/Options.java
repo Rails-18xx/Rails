@@ -125,7 +125,7 @@ public class Options extends JDialog implements ActionListener
 		quitButton.addActionListener(this);
 
 		//XXX: Until we can load/save a rails.game, we'll set this to disabled to reduce confusion.
-		loadButton.setEnabled(false);
+		loadButton.setEnabled(true);
 		
 		buttonPane.add(newButton);
 		buttonPane.add(loadButton);
@@ -292,10 +292,8 @@ public class Options extends JDialog implements ActionListener
 
 		if (arg0.getSource().equals(loadButton))
 		{
-			// We're not going to actually DO anything with the selected file
-			// until the infrastructure for saved games is built
-			JFileChooser fc = new JFileChooser();
-			fc.showOpenDialog(this.getContentPane());
+			setVisible (false);
+			gameUIManager.loadGame();
 		}
 
 		if (arg0.getSource().equals(quitButton))
