@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 
+import rails.ui.swing.hexmap.GUIHex;
 import rails.util.*;
 
 import org.apache.batik.transcoder.*;
@@ -29,6 +30,10 @@ public class ImageLoader {
 
     private static String tileRootDir = Config.get("tile.root_directory");
     private static String preference = Config.get("tile.format_preference");
+    
+    static {
+    	GUIHex.setScale (preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
+    }
 
     private static Logger log = Logger.getLogger(ImageLoader.class.getPackage()
 	    .getName());

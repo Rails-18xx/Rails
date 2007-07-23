@@ -6,7 +6,7 @@ public class PlayerManager
 {
 
 	private static Player[] players;
-	private ArrayList playerNames;
+	private List<String> playerNames;
 	//private Player boughtStockLast;
 
 	public static int getNumberOfPlayers()
@@ -26,7 +26,7 @@ public class PlayerManager
 		//Player.initPlayers(players);
 	}
 
-	public PlayerManager(ArrayList playerNames)
+	public PlayerManager(List<String> playerNames)
 	{
 		this.playerNames = playerNames;
 

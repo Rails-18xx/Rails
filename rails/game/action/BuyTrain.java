@@ -1,16 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.1 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.2 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.Bank;
 import rails.game.CashHolder;
 import rails.game.Portfolio;
+import rails.game.Train;
 import rails.game.TrainI;
+import rails.util.Util;
 
 /**
  * @author Erik Vos
@@ -18,10 +23,13 @@ import rails.game.TrainI;
 public class BuyTrain extends PossibleORAction {
 
 	// Initial settings
-    private TrainI train;
-    private Portfolio from;
+    transient private TrainI train;
+    private String trainUniqueId;
+    transient private Portfolio from;
+    private String fromName;
     private int fixedCost = 0;
-    private List<TrainI> trainsForExchange = null;
+    transient private List<TrainI> trainsForExchange = null;
+    private String[] trainsForExchangeUniqueIds;
     private boolean presidentMustAddCash = false;
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
@@ -29,17 +37,26 @@ public class BuyTrain extends PossibleORAction {
     // User settings
     private int pricePaid = 0;
     private int addedCash = 0;
-    private TrainI exchangedTrain = null;
+    transient private TrainI exchangedTrain = null;
+    private String exchangedTrainUniqueId;
     
     public BuyTrain (TrainI train, Portfolio from, int fixedCost) {
     	
         this.train = train;
+        this.trainUniqueId = train.getUniqueId();
         this.from = from;
+        this.fromName = from.getName();
         this.fixedCost = fixedCost;
     }
     
     public BuyTrain setTrainsForExchange (List<TrainI> trains) {
         trainsForExchange = trains;
+        if (trains != null) {
+        	trainsForExchangeUniqueIds = new String[trains.size()];
+	        for (int i=0; i<trains.size(); i++) {
+	            trainsForExchangeUniqueIds[i] = trains.get(i).getName(); // TODO: Must be replaced by unique Ids
+	        }
+        }
         return this;
     }
     
@@ -117,6 +134,7 @@ public class BuyTrain extends PossibleORAction {
 
 	public void setExchangedTrain(TrainI exchangedTrain) {
 		this.exchangedTrain = exchangedTrain;
+        if (exchangedTrain != null) this.exchangedTrainUniqueId = exchangedTrain.getName();// TODO: Must be replaced by unique Id
 	}
 
 	public String toString() {
@@ -140,5 +158,28 @@ public class BuyTrain extends PossibleORAction {
             && a.fixedCost == fixedCost
             && a.trainsForExchange == trainsForExchange;
     }
+    
+    /** Deserialize */
+	private void readObject (ObjectInputStream in) 
+	throws IOException, ClassNotFoundException {
+
+		in.defaultReadObject();
+		
+		train = Train.getByUniqueId(trainUniqueId);
+		log.debug("TrainUID="+trainUniqueId+" train="+train);
+		from = Portfolio.getByName(fromName);
+		if (trainsForExchangeUniqueIds != null
+				&& trainsForExchangeUniqueIds.length > 0) {
+			trainsForExchange = new ArrayList<TrainI>();
+			for (int i=0; i<trainsForExchangeUniqueIds.length; i++) {
+				trainsForExchange.add (Train.getByUniqueId(trainsForExchangeUniqueIds[i]));
+			}
+		}
+		if (Util.hasValue(exchangedTrainUniqueId)) {
+			exchangedTrain = Train.getByUniqueId(exchangedTrainUniqueId);
+		}
+	}
+
+
 
 }

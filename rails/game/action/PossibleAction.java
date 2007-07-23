@@ -1,9 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.5 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.6 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
@@ -16,11 +20,13 @@ import rails.game.Player;
  * @author Erik Vos
  */
 /* Or should this be an interface? We will see. */
-public abstract class PossibleAction {
+public abstract class PossibleAction implements Serializable {
 
 	protected String playerName;
 	protected int playerIndex;
-	
+
+    protected static final long serialVersionUID = 1L;
+
 	protected static Logger log = Logger.getLogger(PossibleAction.class.getPackage().getName());
 
     /**
@@ -29,8 +35,10 @@ public abstract class PossibleAction {
     public PossibleAction() {
     	
     	Player player = GameManager.getCurrentPlayer();
-    	playerName = player.getName();
-    	playerIndex = player.getIndex();
+    	if (player != null) {
+    		playerName = player.getName();
+    		playerIndex = player.getIndex();
+    	}
     }
     
     public String getPlayerName() {
@@ -49,6 +57,11 @@ public abstract class PossibleAction {
     public void setPlayerName (String playerName) {
     	this.playerName = playerName;
     }
-
+    
      public abstract boolean equals(PossibleAction pa);
+     
+     private void readObject(ObjectInputStream in) 
+     throws IOException, ClassNotFoundException {
+    	 in.defaultReadObject();
+     }
 }

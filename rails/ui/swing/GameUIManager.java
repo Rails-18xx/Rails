@@ -1,15 +1,26 @@
 package rails.ui.swing;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.JFileChooser;
+
 import org.apache.log4j.Logger;
 
 import rails.game.Bank;
+import rails.game.DisplayBuffer;
 import rails.game.Game;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
+import rails.game.Player;
 import rails.game.RoundI;
 import rails.game.StartRound;
 import rails.game.StockRound;
+import rails.game.action.GameAction;
 import rails.game.action.PossibleAction;
+import rails.util.Config;
+import rails.util.Util;
 
 /**
  * This class is called by main() and loads all of the UI components
@@ -32,10 +43,35 @@ public class GameUIManager
     private RoundI previousRound = null;
     private StartRound startRound;
 
+    protected static final String DEFAULT_SAVE_DIRECTORY = "save";
+    protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
+    protected static final String DEFAULT_SAVE_EXTENSION = "rails";
+    
+    protected String saveDirectory;
+    protected String savePattern;
+    protected String saveExtension;
+    protected String providedName = null;
+    protected SimpleDateFormat saveDateTimeFormat;
+    protected File lastFile, lastDirectory;
+    
     protected static Logger log = Logger.getLogger(GameUIManager.class.getPackage().getName());
 
     public GameUIManager()
    {
+        saveDirectory = Config.get("save.directory");
+        if (!Util.hasValue(saveDirectory)) {
+            saveDirectory = DEFAULT_SAVE_DIRECTORY;
+        }
+        savePattern = Config.get("save.filename.date_time_pattern");
+        if (!Util.hasValue(savePattern)) {
+            savePattern = DEFAULT_SAVE_PATTERN;
+        }
+        saveDateTimeFormat = new SimpleDateFormat(savePattern);
+        saveExtension = Config.get("save.filename.extension");
+        if (!Util.hasValue(saveExtension)) {
+            saveExtension = DEFAULT_SAVE_EXTENSION;
+        }
+        
       options = new Options(this);
       
    }
@@ -62,7 +98,12 @@ public class GameUIManager
     lastAction = action;
 
     log.debug ("==Passing to server: "+action);
-       boolean result = gameManager.process (action);
+
+    Player player = GameManager.getCurrentPlayer();
+    if (action != null && player != null) {
+    	action.setPlayerName(player.getName());
+    }
+    boolean result = gameManager.process (action);
     log.debug ("==Result from server: "+result);
        
        ReportWindow.addLog();
@@ -84,7 +125,7 @@ public class GameUIManager
        // and make sure that the right window is active.
        updateUI();
        
-       statusWindow.setUndoRedo();
+       statusWindow.setGameActions();
 
        if (result) {
            return activeWindow.processImmediateAction();
@@ -178,6 +219,62 @@ public class GameUIManager
        previousRound = currentRound;
 
    }
+   
+   public void saveGame (GameAction saveAction) {
+       
+       JFileChooser jfc = new JFileChooser();
+       String filename;
+       if (providedName != null) {
+           filename = providedName;
+       } else {
+           filename = saveDirectory + "/"
+           + Game.getName() + "_"
+           + saveDateTimeFormat.format (new Date())
+           + "." + saveExtension;
+       }
+       //log.debug("Proposed filename="+filename);
+       File proposedFile = new File (filename);
+       jfc.setSelectedFile(proposedFile);
+       if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
+           File selectedFile = jfc.getSelectedFile();
+           String filepath = selectedFile.getPath();
+           saveDirectory = selectedFile.getParent();
+           if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {
+               providedName = filepath;
+           }
+           saveAction.setFilepath(filepath);
+           processOnServer (saveAction);
+       }
+   }
+	
+   public void loadGame () {
+       
+	   JFileChooser jfc = new JFileChooser();
+       if (providedName != null) {
+           jfc.setSelectedFile(new File(providedName));
+       } else {
+           jfc.setCurrentDirectory(new File(saveDirectory));
+       }
+       
+       if (jfc.showOpenDialog(options.getContentPane()) == JFileChooser.APPROVE_OPTION) {
+           File selectedFile = jfc.getSelectedFile();
+           String filepath = selectedFile.getPath();
+           saveDirectory = selectedFile.getParent();
+           
+           GameAction loadAction = new GameAction (GameAction.LOAD);
+           loadAction.setFilepath(filepath);
+           //processOnServer (loadAction);
+           GameManager.load(loadAction);
+
+		   gameUIInit();
+		   processOnServer (null);
+		   DisplayBuffer.clear();
+		   updateUI();
+	       statusWindow.setGameActions();
+       }
+   }
+	
+
    
    public PossibleAction getLastAction () {
     return lastAction;

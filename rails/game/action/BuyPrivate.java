@@ -1,10 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.2 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.3 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import rails.game.Game;
 import rails.game.PrivateCompanyI;
 
 /**
@@ -13,7 +17,8 @@ import rails.game.PrivateCompanyI;
 public class BuyPrivate extends PossibleORAction {
     
     // Initial attributes
-    private PrivateCompanyI privateCompany;
+    transient private PrivateCompanyI privateCompany;
+    private String privateCompanyName;
     private int minimumPrice;
     private int maximumPrice;
     
@@ -27,6 +32,7 @@ public class BuyPrivate extends PossibleORAction {
             int minimumPrice, int maximumPrice) {
         
         this.privateCompany = privateCompany;
+        this.privateCompanyName = privateCompany.getName();
         this.minimumPrice = minimumPrice;
         this.maximumPrice = maximumPrice;
     }
@@ -72,5 +78,15 @@ public class BuyPrivate extends PossibleORAction {
         return "BuyPrivate "+ privateCompany.getName() 
         	+ " holder=" + privateCompany.getPortfolio().getName();
     }
+    
+    /** Deserialize */
+	private void readObject (ObjectInputStream in) 
+	throws IOException, ClassNotFoundException {
+
+		in.defaultReadObject();
+		
+		privateCompany = Game.getCompanyManager().getPrivateCompany(privateCompanyName);
+	}
+
 
 }

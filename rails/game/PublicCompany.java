@@ -230,6 +230,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 			
 		}
 		
+		// Give each certificate an unique Id
+		for (int i=0; i<certificates.size(); i++) {
+			certificates.get(i).setUniqueId (name, i);
+		}
+		
 		BaseToken token;
 		for (int i=0; i<numberOfBaseTokens; i++) {
 		    token = new BaseToken (this);

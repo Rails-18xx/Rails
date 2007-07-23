@@ -1,12 +1,19 @@
 package rails.game;
 
-import rails.game.action.NullAction;
+import rails.game.action.GameAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
+import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
 import rails.game.state.State;
 import rails.util.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -63,6 +70,8 @@ public class GameManager implements ConfigurableComponentI
 	protected StartPacket startPacket;
     
     PossibleActions possibleActions = PossibleActions.getInstance();
+    
+    List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
 
 
 	/*----- Default variant -----*/
@@ -296,72 +305,171 @@ public class GameManager implements ConfigurableComponentI
      * @return TRUE is the action was valid.
      */
     public boolean process (PossibleAction action) {
-        
-		// Check player
-		String actionPlayerName = action.getPlayerName();
-		String currentPlayerName = getCurrentPlayer().getName();
-		if (!actionPlayerName.equals(currentPlayerName))
-		{
-			DisplayBuffer.add (LocalText.getText("WrongPlayer", new String[] {
-					actionPlayerName,
-					currentPlayerName
-			}));
-			return false;
-		}
+
+		boolean result = true;
 		
-		// Check if the action is allowed
-		if (!possibleActions.validate(action)) {
-			DisplayBuffer.add (LocalText.getText("ActionNotAllowed", action.toString()));
-			return false;
-		}
-		
-		boolean result = false;
-    	
-        for (;;) {
-			
-			// Process undo/redo centrally
-			if (action instanceof NullAction) {
-				
-				NullAction nullAction = (NullAction) action;
-				switch (nullAction.getMode()) {
-				case NullAction.UNDO:
-					MoveSet.undo(false);
-					result = true;
-					break;
-				case NullAction.FORCED_UNDO:
-					MoveSet.undo(true);
-					result = true;
-					break;
-				case NullAction.REDO:
-					MoveSet.redo();
-					result = true;
-					break;
-				}
-				if (result) break;
-			
+    	// The action is null only immediately after Load.
+    	if (action != null) {
+    		
+    		result = false;
+    		
+			// Check player
+			String actionPlayerName = action.getPlayerName();
+			String currentPlayerName = getCurrentPlayer().getName();
+			if (!actionPlayerName.equals(currentPlayerName))
+			{
+				DisplayBuffer.add (LocalText.getText("WrongPlayer", new String[] {
+						actionPlayerName,
+						currentPlayerName
+				}));
+				return false;
 			}
 			
-			// All other actions: process per round
-			result = getCurrentRound().process(action);
-			break;
-        }
+			// Check if the action is allowed
+			if (!possibleActions.validate(action)) {
+				DisplayBuffer.add (LocalText.getText("ActionNotAllowed", action.toString()));
+				return false;
+			}
+			
+	    	
+	        for (;;) {
+				
+				// Process undo/redo centrally
+				if (action instanceof GameAction) {
+					
+					GameAction gameAction = (GameAction) action;
+					switch (gameAction.getMode()) {
+	                case GameAction.SAVE:
+	                    result = save (gameAction);
+	                    break;
+	                case GameAction.LOAD:
+	                    result = load (gameAction);
+	                    break;
+					case GameAction.UNDO:
+						MoveSet.undo(false);
+						result = true;
+						break;
+					case GameAction.FORCED_UNDO:
+						MoveSet.undo(true);
+						result = true;
+						break;
+					case GameAction.REDO:
+						MoveSet.redo();
+						result = true;
+						break;
+					}
+					if (result) break;
+				
+				}
+				
+				// All other actions: process per round
+				result = getCurrentRound().process(action);
+				break;
+	        }
+	        
+	        if (result && !(action instanceof GameAction)) {
+	            new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
+	            if (MoveSet.isOpen()) MoveSet.finish();
+	         } else {
+	            if (MoveSet.isOpen()) MoveSet.cancel();
+	         }
+    	}
         
         // Note: round may have changed!
         getCurrentRound().setPossibleActions();
 
         // Add the Undo/Redo possibleActions here.
         if (MoveSet.isUndoableByPlayer()) {
-            possibleActions.add (new NullAction (NullAction.UNDO));
+            possibleActions.add (new GameAction (GameAction.UNDO));
         }
         if (MoveSet.isUndoableByManager()) {
-            possibleActions.add (new NullAction (NullAction.FORCED_UNDO));
+            possibleActions.add (new GameAction (GameAction.FORCED_UNDO));
         }
         if (MoveSet.isRedoable()) {
-            possibleActions.add(new NullAction (NullAction.REDO));
+            possibleActions.add(new GameAction (GameAction.REDO));
         }
+        possibleActions.add(new GameAction (GameAction.SAVE));
         
         return result;
         
+    }
+    
+    public void processOnReload (PossibleAction action) {
+    	
+		// Check player
+		getCurrentRound().process(action);
+        new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
+        if (MoveSet.isOpen()) MoveSet.finish();
+        
+    }
+    
+    protected boolean save (GameAction saveAction) {
+        
+        String filepath = saveAction.getFilepath();
+        boolean result = false;
+        
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream (
+                    new FileOutputStream (new File (filepath)));
+            oos.writeObject(name);
+            oos.writeObject(variant);
+            oos.writeObject(numberOfPlayers);
+            for (int i=0; i<numberOfPlayers; i++) {
+                oos.writeObject(players[i].getName());
+            }
+            oos.writeObject(executedActions);
+            oos.close();
+            
+            result = true;
+        } catch (IOException e) {
+            log.error ("Save failed", e);
+            DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
+        }
+
+        return result;
+    }
+
+    public static boolean load (GameAction loadAction) {
+        
+        String filepath = loadAction.getFilepath();
+        boolean result = false;
+        
+        try {
+            ObjectInputStream ois = new ObjectInputStream (
+                    new FileInputStream (new File (filepath)));
+            name = (String) ois.readObject();
+            variant = (String) ois.readObject();
+            numberOfPlayers = (Integer) ois.readObject();
+            List<String> playerNames = new ArrayList<String>();
+            for (int i=0; i<numberOfPlayers; i++) {
+                playerNames.add((String)ois.readObject());
+            }
+            
+			Game.getPlayerManager(playerNames);
+			Game.initialise(name);
+			if (Util.hasValue(variant)) setVariant(variant);
+			Player.initPlayers(Game.getPlayerManager().getPlayersArray());
+
+            List<PossibleAction> executedActions = (List<PossibleAction>) ois.readObject();
+            ois.close();
+            
+            instance.startGame();
+            
+            for (PossibleAction action : executedActions) {
+            	instance.processOnReload (action);
+            }
+            
+            result = true;
+            
+        } catch (IOException e) {
+            log.error ("Save failed", e);
+            DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
+        } catch (ClassNotFoundException e) {
+            log.error ("Save failed", e);
+            DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
+        }
+
+        return result;
     }
 
 	public void finishShareSellingRound()

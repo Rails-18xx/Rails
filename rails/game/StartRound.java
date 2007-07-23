@@ -148,10 +148,6 @@ public abstract class StartRound extends Round implements StartRoundI
 			GameManager.getInstance().nextRound(this);
 		}
 		
-		if (MoveSet.isOpen()) MoveSet.finish();
-		
-        // NOTE: Undo/Redo are added in GameManager.process()
-		
 		return result;
 	}
 	

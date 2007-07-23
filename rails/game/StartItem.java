@@ -1,5 +1,8 @@
 package rails.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
@@ -66,6 +69,8 @@ public class StartItem
 	protected static Portfolio unavailable;
 	protected static CompanyManagerI compMgr;
 	protected static int nextIndex = 0;
+	
+	protected static Map<String, StartItem> startItemMap;
 
 	protected static Logger log = Logger.getLogger(StartItem.class.getPackage().getName());
 
@@ -96,6 +101,9 @@ public class StartItem
 		minimumBid = new MoneyModel(name+"_minimumBid");
 		minimumBid.setOption(MoneyModel.SUPPRESS_ZERO);
 		lastBidderIndex = new IntegerState(name+"_highestBidder", -1);
+		
+		if (startItemMap == null) startItemMap = new HashMap<String, StartItem>();
+		startItemMap.put (name, this);
 	}
 
 	/**
@@ -505,6 +513,10 @@ public class StartItem
 	
 	public ModelObject getMinimumBidModel () {
 		return (ModelObject) minimumBid;
+	}
+	
+	public static StartItem getByName (String name) {
+		return startItemMap.get(name);
 	}
 
 }

@@ -143,7 +143,7 @@ public class Game
 	/**
 	 * @return Returns the playerManager.
 	 */
-	public static PlayerManager getPlayerManager(ArrayList playerNames)
+	public static PlayerManager getPlayerManager(List<String> playerNames)
 	{
 		playerManager = new PlayerManager(playerNames);
 		return playerManager;

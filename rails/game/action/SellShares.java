@@ -1,27 +1,33 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.2 2007/06/18 19:53:43 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.3 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import rails.game.Bank;
 import rails.game.Game;
 import rails.game.PublicCompanyI;
+import rails.util.Util;
 
 /**
  * @author Erik Vos
  */
 public class SellShares extends PossibleAction {
     
-    private final String companyName;
-    private final PublicCompanyI company;
-    private final int shareUnit;
-    private final int shareUnits;
-    private final int share;
-    private final int price;
-    private final int maximumNumber;
+	// Server-side settings
+    private String companyName;
+    transient private  PublicCompanyI company;
+    private int shareUnit;
+    private int shareUnits;
+    private int share;
+    private int price;
+    private int maximumNumber;
     
+    // Client-side settings
     private int numberSold = 0;
 
     /**
@@ -97,4 +103,14 @@ public class SellShares extends PossibleAction {
         	+ " of " +share + "% " + companyName 
          	+ " at " + Bank.format(shareUnits * price) + " apiece";
     }
+
+    /** Deserialize */
+	private void readObject (ObjectInputStream in) 
+	throws IOException, ClassNotFoundException {
+
+		in.defaultReadObject();
+		
+		if (Util.hasValue(companyName))
+			company = Game.getCompanyManager().getPublicCompany(companyName);
+	}
 }

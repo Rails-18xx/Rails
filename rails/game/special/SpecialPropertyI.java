@@ -27,5 +27,7 @@ public interface SpecialPropertyI extends ConfigurableComponentI
 	public boolean isSRProperty();
 
 	public boolean isORProperty();
+	
+	public int getUniqueId();
 
 }

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.ActionTaker;
+import rails.game.action.GameAction;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
@@ -63,6 +64,7 @@ implements ActionListener, KeyListener, ActionPerformer
 	private JMenuBar menuBar;
 	private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu;
 	private JMenuItem menuItem;
+    private ActionMenuItem saveItem;
 	private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
 	/**
@@ -88,14 +90,14 @@ implements ActionListener, KeyListener, ActionPerformer
 		moveMenu.setMnemonic(KeyEvent.VK_M);
         moveMenu.setMnemonic(KeyEvent.VK_T);
 
-		menuItem = new JMenuItem(LocalText.getText("SAVE"));
-		menuItem.setActionCommand(SAVE_CMD);
-		menuItem.setMnemonic(KeyEvent.VK_S);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+		saveItem = new ActionMenuItem(LocalText.getText("SAVE"));
+		saveItem.setActionCommand(SAVE_CMD);
+		saveItem.setMnemonic(KeyEvent.VK_S);
+		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
-		menuItem.addActionListener(this);
-		menuItem.setEnabled(false); //XXX: Setting to disabled until we implement load/save
-		fileMenu.add(menuItem);
+		saveItem.addActionListener(this);
+		saveItem.setEnabled(true);
+		fileMenu.add(saveItem);
 
 		fileMenu.addSeparator();
 
@@ -235,29 +237,36 @@ implements ActionListener, KeyListener, ActionPerformer
 	{
 	}
     
-    public void setUndoRedo () {
+    public void setGameActions () {
         
         // Check the local Undo/Redo menu items, 
         // which must always be up-to-date.
         undoItem.setEnabled(false);
         forcedUndoItem.setEnabled(false);
         redoItem.setEnabled(false);
+        redoItem2.setEnabled(false);
+        // SAVE is always enabled
         
-        List<NullAction> nullActions = possibleActions.getType (NullAction.class);
-        if (nullActions != null) {
-             for (NullAction na : nullActions) {
+        List<GameAction> gameActions = possibleActions.getType (GameAction.class);
+        if (gameActions != null) {
+             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
-                case NullAction.UNDO:
+                case GameAction.SAVE:
+                    saveItem.setPossibleAction(na);
+                    break;
+                case GameAction.UNDO:
                     undoItem.setEnabled(true);
                     undoItem.setPossibleAction(na);
                     break;
-                case NullAction.FORCED_UNDO:
+                case GameAction.FORCED_UNDO:
                     forcedUndoItem.setEnabled(true);
                     forcedUndoItem.setPossibleAction(na);
                     break;
-                case NullAction.REDO:
+                case GameAction.REDO:
                     redoItem.setEnabled(true);
                     redoItem.setPossibleAction(na);
+                    redoItem2.setEnabled(true);
+                    redoItem2.setPossibleAction(na);
                     break;
                 }
             }
@@ -431,21 +440,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		}
 	}
 
-	/*
-	public void resume(JFrame previous)
-	{
-		this.requestFocus();
-		if (previous instanceof StartRoundWindow)
-		{
-			startRoundWindow.close();
-			startRoundWindow = null;
-		}
-
-		currentRound = gameManager.getCurrentRound();
-		updateStatus("StatusWindow.resume");
-	}
-	*/
-
 	public void actionPerformed(ActionEvent actor)
 	{
 		String command = actor.getActionCommand();
@@ -489,13 +483,9 @@ implements ActionListener, KeyListener, ActionPerformer
 				extraButton.setVisible(false);
 			}
 		}
-		else if (command.equals(QUIT_CMD))
+		else if (command.equals(QUIT_CMD)) {
 			System.exit(0);
-		// We're not going to actually DO anything with the selected file
-		// until the infrastructure for saved games is built
-		else if (command.equals(SAVE_CMD))
-			new JFileChooser().showSaveDialog(this);
-		else if (command.equals(REPORT_CMD))
+        } else if (command.equals(REPORT_CMD))
 		{
 			gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
 			return;
@@ -509,11 +499,15 @@ implements ActionListener, KeyListener, ActionPerformer
 			GameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (executedAction == null) {
             ;
-		} else if (executedAction instanceof NullAction) {
-		    switch (((NullAction)executedAction).getMode()) {
-            case NullAction.UNDO:
-            case NullAction.FORCED_UNDO:
-            case NullAction.REDO:
+		} else if (executedAction instanceof GameAction) {
+		    switch (((GameAction)executedAction).getMode()) {
+            case GameAction.SAVE:
+                gameUIManager.saveGame ((GameAction)executedAction);
+                break;
+                
+            case GameAction.UNDO:
+            case GameAction.FORCED_UNDO:
+            case GameAction.REDO:
                 process (executedAction);
             }
         }
@@ -527,9 +521,6 @@ implements ActionListener, KeyListener, ActionPerformer
 			return false;
 		}
 		
-		player = GameManager.getCurrentPlayer();
-		executedAction.setPlayerName(player.getName());
-
 		gameUIManager.processOnServer (executedAction);
 
 		//ReportWindow.addLog();
@@ -544,7 +535,7 @@ implements ActionListener, KeyListener, ActionPerformer
         // No such actions here
         return true;
     }
-	
+    
     public void displayError() {
     	String[] message = DisplayBuffer.get();
     	if (message != null) {

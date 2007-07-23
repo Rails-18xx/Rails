@@ -1,12 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.3 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.4 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import rails.game.Bank;
 import rails.game.Portfolio;
+import rails.game.PublicCertificate;
 import rails.game.PublicCertificateI;
 
 /**
@@ -14,11 +18,15 @@ import rails.game.PublicCertificateI;
  */
 public class BuyCertificate extends PossibleAction {
     
-    protected PublicCertificateI certificate;
-    protected Portfolio from;
+    // Server-side settings
+    transient protected PublicCertificateI certificate;
+    protected String certUniqueId;
+    transient protected Portfolio from;
+    protected String fromName;
     protected int price;
     protected int maximumNumber;
     
+    // CLient-side settings
     protected int numberBought = 0;
 
     /**
@@ -27,7 +35,9 @@ public class BuyCertificate extends PossibleAction {
     public BuyCertificate(PublicCertificateI certificate, Portfolio from,
     		int price, int maximumNumber) {
         this.certificate = certificate;
+        this.certUniqueId = certificate.getUniqueId(); // TODO: Must be replaced by a unique Id!
         this.from = from;
+        this.fromName = from.getName();
         this.price = price;
         this.maximumNumber = maximumNumber;
     }
@@ -42,6 +52,9 @@ public class BuyCertificate extends PossibleAction {
     		int price) {
     	this (certificate, from, price,	1);
     }
+    
+    /** Required for deserialization */
+    private BuyCertificate() {}
 
     /**
      * @return Returns the maximumNumber.
@@ -93,4 +106,13 @@ public class BuyCertificate extends PossibleAction {
         	.append(" price=").append(Bank.format(certificate.getShares() * price));
         return text.toString();
     }
+	
+	private void readObject (ObjectInputStream in) 
+			throws IOException, ClassNotFoundException {
+		
+		in.defaultReadObject();
+		certificate = PublicCertificate.getByUniqueId (certUniqueId);
+		from = Portfolio.getByName(fromName);
+		
+	}
 }

@@ -1,11 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.2 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.3 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import rails.game.MapHex;
+import rails.game.MapManager;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 
 /**
@@ -23,19 +28,22 @@ public class LayToken extends PossibleORAction {
     /*--- Preconditions ---*/
     
     /** Where to lay a tile (null means anywhere) */
-    MapHex location = null; 
+    transient protected MapHex location = null;
+    protected String locationName;
     
     /** Special property that will be fulfilled by this tile lay.
      * If null, this is a normal tile lay. */
-    SpecialTokenLay specialProperty = null;
+    transient protected SpecialTokenLay specialProperty = null;
+    protected int specialPropertyId; 
     
     /*--- Postconditions ---*/
     
     /** The map hex on which the tile is laid */
-    MapHex chosenHex = null;
+    transient protected MapHex chosenHex = null;
+    protected String chosenHexName;
     
     /** The station (or city) on the hex where the token is laid */
-    int chosenStation = 0; // Default 
+    protected int chosenStation = 0; // Default 
 
     /**
      * Allow laying a base token on a given location.
@@ -43,12 +51,15 @@ public class LayToken extends PossibleORAction {
     public LayToken(MapHex location) {
         type = LOCATION_SPECIFIC;
         this.location = location;
+        if (location != null) this.locationName = location.getName();
     }
     
      public LayToken (SpecialTokenLay specialProperty) {
         type = SPECIAL_PROPERTY;
         this.location = specialProperty.getLocation();
+        if (location != null) this.locationName = location.getName();
         this.specialProperty = specialProperty;
+        this.specialPropertyId = specialProperty.getUniqueId();
     }
 
     /**
@@ -62,6 +73,7 @@ public class LayToken extends PossibleORAction {
      */
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
+        this.chosenHexName = chosenHex.getName();
     }
     
     public int getChosenStation() {
@@ -83,6 +95,7 @@ public class LayToken extends PossibleORAction {
      */
     public void setSpecialProperty(SpecialTokenLay specialProperty) {
         this.specialProperty = specialProperty;
+        // TODO this.specialPropertyUniqueId = specialProperty.getUniqueId();
     }
 
    /**
@@ -106,6 +119,30 @@ public class LayToken extends PossibleORAction {
     }
 
     public String toString () {
-        return "LayToken type="+type+" location="+location+" spec.prop="+specialProperty;
+        StringBuffer b = new StringBuffer  ("LayToken ");
+        if (chosenHex == null) {
+        	b.append("type=").append(type)
+        	 .append(" location=").append(location)
+        	 .append(" spec.prop=").append(specialProperty);
+        } else {
+        	b.append("hex=").append(chosenHex.getName())
+        	 .append(" station=").append(chosenStation);
+        }
+        return b.toString();
     }
+
+    /** Deserialize */
+	private void readObject (ObjectInputStream in) 
+	throws IOException, ClassNotFoundException {
+
+		in.defaultReadObject();
+		
+		location = MapManager.getInstance().getHex(locationName);
+		if (specialPropertyId  > 0) {
+			specialProperty = (SpecialTokenLay) SpecialProperty.getByUniqueId (specialPropertyId);
+		}
+		if (chosenHexName != null && chosenHexName.length() > 0) {
+			chosenHex = MapManager.getInstance().getHex(chosenHexName);
+		}
+	}
 }

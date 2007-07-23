@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.9 2007/07/05 17:57:54 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.10 2007/07/23 19:59:15 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -76,6 +76,10 @@ public class Portfolio
 	// protected boolean paysToCompany = false;
 	/** Name of portfolio */
 	protected String name;
+	
+	/** A map allowing finding portfolios by name, for use in deserialization */
+	protected static Map<String, Portfolio> portfolioMap
+			= new HashMap<String, Portfolio> ();
 
 	// public Portfolio(String name, CashHolder holder, boolean paysToCompany)
 	// {
@@ -90,6 +94,7 @@ public class Portfolio
 	{
 		this.name = name;
 		this.owner = holder;
+		portfolioMap.put(name, this);
 		
 		if (owner instanceof PublicCompanyI) {
 			trainsModel.setOption(TrainsModel.FULL_LIST);
@@ -99,6 +104,10 @@ public class Portfolio
 		} else if (owner instanceof Player) {
 			privatesOwnedModel.setOption(PrivatesModel.BREAK);
 		}
+	}
+	
+	public static Portfolio getByName (String name) {
+		return portfolioMap.get(name);
 	}
 
 	public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,

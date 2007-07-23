@@ -225,7 +225,7 @@ public class OperatingRound extends Round implements Observer
 
     public boolean process (PossibleAction action) {
         
-        log.debug ("Chosen OR action is "+action);
+        //log.debug ("Chosen OR action is "+action);
         
         boolean result = false;
         String playerName = action.getPlayerName();
@@ -292,9 +292,6 @@ public class OperatingRound extends Round implements Observer
             return false;
         }
         
-        if (MoveSet.isOpen()) MoveSet.finish();
-        
-        // NOTE: Undo/Redo are added in GameManager.process()
         return result;
     }
     
@@ -485,7 +482,8 @@ public class OperatingRound extends Round implements Observer
 	
 	protected boolean checkNormalTileLay (TileI tile, boolean update) {
 	    
-	    if (currentNormalTileLays.isEmpty()) return false;
+	    //if (currentNormalTileLays.isEmpty()) return false;
+        if (tileLaysPerColour.isEmpty()) return false;
 	    String colour = tile.getColour();
 
 	    Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
@@ -871,7 +869,7 @@ public class OperatingRound extends Round implements Observer
 
 	/**
 	 * This method is only called at the start of each step
-	 * (unlike updateStatus(), which is called aftereach user action)
+	 * (unlike updateStatus(), which is called after each user action)
 	 */
 	protected void prepareStep()
 	{
@@ -1129,7 +1127,6 @@ public class OperatingRound extends Round implements Observer
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
-log.debug("+++(1)Setting cash to be raised by president to "+cashToBeRaisedByPresident);
                 }
 			} else if (action.mayPresidentAddCash()) {
 			    // From another company
@@ -1143,7 +1140,6 @@ log.debug("+++(1)Setting cash to be raised by president to "+cashToBeRaisedByPre
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
-log.debug("+++(2)Setting cash to be raised by president to "+cashToBeRaisedByPresident);
 			    }
 			    
 			} else {

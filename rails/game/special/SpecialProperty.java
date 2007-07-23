@@ -1,5 +1,8 @@
 package rails.game.special;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import rails.game.*;
 import rails.game.state.BooleanState;
 
@@ -14,6 +17,25 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
 	protected boolean usableIfOwnedByCompany = false;
+	
+	protected int uniqueId;
+	
+	protected static Map<Integer, SpecialPropertyI> spMap
+			= new HashMap<Integer, SpecialPropertyI> ();
+	protected static int lastIndex = 0;
+	
+	public SpecialProperty () {
+		uniqueId = ++lastIndex;
+		spMap.put(uniqueId, this);
+	}
+	
+	public int getUniqueId () {
+		return uniqueId;
+	}
+	
+	public static SpecialPropertyI getByUniqueId (int i) {
+		return spMap.get(i);
+	}
 
 	public void setCompany(PrivateCompanyI company)
 	{

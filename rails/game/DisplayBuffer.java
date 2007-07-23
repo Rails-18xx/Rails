@@ -49,5 +49,9 @@ public final class DisplayBuffer
 			return null;
 		}
 	}
+	
+	public static void clear() {
+		displayBuffer.clear();
+	}
 
 }

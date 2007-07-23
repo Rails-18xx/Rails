@@ -30,7 +30,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
      * Currently this is always the previous revenue.
      * In the future, this could be the calculated revenue.
      */
-    int presetRevenue;
+    private int presetRevenue;
     
     /** Is the user allowed to set the revenue?
      * Currently, this will aways be true, except if
@@ -39,20 +39,20 @@ public class SetDividend extends PossibleORAction implements Cloneable {
      * some influence on it (e.g., in 1844, the user may
      * opt for less that maximum revenue is some cases). 
      */
-    boolean mayUserSetRevenue;
+    private boolean mayUserSetRevenue;
     
     /** The revenue as set (or accepted, or just seen) by the user. */
-    int actualRevenue;
+    private int actualRevenue;
     
     /** 
      * The revenue allocations that the user may select from.
      * If only one value is provided, the user has no option
      * (e.g. minor companies always split in most games). 
      */ 
-    int[] allowedRevenueAllocations;
+    private int[] allowedRevenueAllocations;
     
     /** The revenue destination selected by the user (if he has a choice at all). */
-    int revenueAllocation;
+    private int revenueAllocation;
     
 
     public SetDividend(int presetRevenue,

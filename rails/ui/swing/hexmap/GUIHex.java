@@ -23,8 +23,13 @@ public class GUIHex implements ViewObject
 {
 
 	public static final double SQRT3 = Math.sqrt(3.0);
-	public static final double NORMAL_SCALE = 1;
-	public static final double SELECTED_SCALE = 0.8;
+	public static double NORMAL_SCALE = 1.0;
+	public static double SELECTED_SCALE = 0.8;
+	
+	public static void setScale (double scale) {
+		NORMAL_SCALE = scale;
+		SELECTED_SCALE = 0.8 * scale;
+	}
 
 	protected MapHex model;
 	protected GeneralPath innerHexagon;

@@ -1,9 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.3 2007/07/16 20:40:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.4 2007/07/23 19:59:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
  */
 package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import rails.game.PublicCompanyI;
 import rails.game.StartItem;
@@ -14,7 +17,8 @@ import rails.game.StartItem;
 public class BuyOrBidStartItem extends PossibleAction {
     
 	/* Server-provided fields */
-    private StartItem startItem;
+    transient private StartItem startItem;
+    private String startItemName;
     private boolean sharePriceToSet = false;
     private String companyNeedingSharePrice = null;
     
@@ -43,6 +47,7 @@ public class BuyOrBidStartItem extends PossibleAction {
             int priceOrMinimumBid) {
         super();
         this.startItem = startItem;
+        this.startItemName = startItem.getName();
         this.itemIndex = startItem.getIndex();
         this.priceOrMinimumBid = priceOrMinimumBid;
         //this.status = status;
@@ -106,11 +111,6 @@ public class BuyOrBidStartItem extends PossibleAction {
         return startItem.getStatus();
 	}
 	
-	//public boolean equals (BuyOrBidStartItem otherItem) {
-	//	return startItem.getName().equals(otherItem.getStartItem().getName()) 
-	//		&& status == otherItem.status;
-	//}
-	
     public boolean equals (PossibleAction action) {
         if (!(action instanceof BuyOrBidStartItem)) return false;
         BuyOrBidStartItem a = (BuyOrBidStartItem) action;
@@ -137,4 +137,13 @@ public class BuyOrBidStartItem extends PossibleAction {
 		}
 		return b.toString();
     }
+	
+	private void readObject (ObjectInputStream in) 
+			throws IOException, ClassNotFoundException {
+		
+		in.defaultReadObject();
+		
+		startItem = StartItem.getByName (startItemName);
+		
+	}
 }

@@ -40,6 +40,8 @@ public interface TrainI
 	public TrainTypeI getType();
 
 	public String getName();
+	
+	public String getUniqueId ();
 
 	public Portfolio getHolder();
 

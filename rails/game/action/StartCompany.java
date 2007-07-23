@@ -5,7 +5,7 @@ import rails.game.PublicCertificateI;
 
 public class StartCompany extends BuyCertificate {
 	
-	int[] startPrices;
+	private int[] startPrices;
 
 	public StartCompany(PublicCertificateI certificate,
 			int[] prices, int maximumNumber) {
@@ -32,10 +32,17 @@ public class StartCompany extends BuyCertificate {
 	public String toString() {
 		StringBuffer text = new StringBuffer(); 
         text.append("StartCompany: ")
-        	.append(certificate.getName())
-        	.append(" prices=");
-        for (int i=0; i<startPrices.length; i++) {
-        	text.append(Bank.format(startPrices[i]));
+        	.append(certificate.getName());
+        if (price > 0) {
+            text.append(" price=").append(Bank.format(price));
+            if (numberBought > 1) {
+                text.append(" number=").append(numberBought);
+            }
+        } else {
+            text.append(" prices=");
+            for (int i=0; i<startPrices.length; i++) {
+            	text.append(Bank.format(startPrices[i]));
+            }
         }
         return text.toString();
     }
