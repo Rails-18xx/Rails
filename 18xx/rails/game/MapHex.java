@@ -66,7 +66,7 @@ public class MapHex extends ModelObject
 	protected int number;
 	protected String tileFileName;
 	protected int preprintedTileId;
-	protected int preprintedTileOrientation;
+	//protected int preprintedTileOrientation;
 	protected TileI currentTile;
 	protected int currentTileRotation;
 	protected int tileCost;
@@ -191,12 +191,12 @@ public class MapHex extends ModelObject
 			preprintedTileId = -999;
 		}
 
-		preprintedTileOrientation = XmlUtils.extractIntegerAttribute(nnp,
+		currentTileRotation = XmlUtils.extractIntegerAttribute(nnp,
 				"orientation",
 				0);
 
 		currentTile = TileManager.get().getTile(preprintedTileId);
-		currentTileRotation = preprintedTileOrientation;
+		//currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
 		//preferredCity = XmlUtils.extractIntegerAttribute(nnp,
@@ -360,10 +360,12 @@ public class MapHex extends ModelObject
 	/**
 	 * @return Returns the preprintedTileOrientation.
 	 */
+	/*
 	public int getPreprintedTileOrientation()
 	{
 		return preprintedTileOrientation;
 	}
+	*/
 
 	public void setNeighbor(int orientation, MapHex neighbour)
 	{
