@@ -145,9 +145,11 @@ public class GUIHex implements ViewObject
 		this.model = model;
 		currentTile = model.getCurrentTile();
 		hexName = model.getName();
-		currentTileId = model.getPreprintedTileId();
-		currentTileOrientation = model.getPreprintedTileOrientation();
-		currentGUITile = new GUITile(currentTileId, model);
+		//currentTileId = model.getPreprintedTileId();
+		//currentTileOrientation = model.getPreprintedTileOrientation();
+        currentTileId = model.getCurrentTile().getId();
+        currentTileOrientation = model.getCurrentTileRotation();
+    	currentGUITile = new GUITile(currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		setToolTip();
 		
