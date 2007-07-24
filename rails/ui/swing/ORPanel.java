@@ -689,7 +689,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         String command = actor.getActionCommand();
         List<PossibleAction> executedActions = null;
         PossibleAction executedAction = null;
-        PossibleAction executedActionToComplete = null;
         Class executedActionType = null;
         
         if (source instanceof ActionTaker) {
@@ -717,7 +716,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 } else {
                     orStep = OperatingRound.STEP_PAYOUT;
                     retrieveStep = false;
-                    executedActionToComplete = action;
+                    updateStatus(action);
                 }
             } else {
                 // The revenue allocation has been selected
