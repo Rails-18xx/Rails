@@ -228,8 +228,8 @@ public class OperatingRound extends Round implements Observer
         //log.debug ("Chosen OR action is "+action);
         
         boolean result = false;
-        String playerName = action.getPlayerName();
-        Player currentPlayer = getCurrentPlayer();
+        //String playerName = action.getPlayerName();
+        //Player currentPlayer = getCurrentPlayer();
         
         /*--- Common OR checks ---*/
         /* Check operating company */
@@ -796,6 +796,7 @@ public class OperatingRound extends Round implements Observer
     /** Take the next step after a given one (see nextStep()) */
 	protected void nextStep(int step)
 	{
+        log.debug("+++Next step after "+step);
 		// Cycle through the steps until we reach one where a user action is expected.
 		int stepIndex;
 		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
@@ -874,7 +875,7 @@ public class OperatingRound extends Round implements Observer
 	protected void prepareStep()
 	{
 	    int step = stepObject.intValue();
-	    log.debug ("Prepare step "+step);
+	    log.debug ("+++Preparing step "+step/*, new Exception("TRACE")*/);
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
@@ -1014,13 +1015,9 @@ public class OperatingRound extends Round implements Observer
 
 	public void skip()
 	{
-	    /* TODO Should insert some validation here, as this method
-	     * is called from the GUI.
-	     */
 	    log.debug ("Skip step "+stepObject.intValue());
 	    MoveSet.start(true);
 		nextStep();
-		MoveSet.finish();
 	}
 
 	/**
@@ -1478,15 +1475,16 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void setStep(int step)
 	{
+        log.debug("+++Setting step to "+step);
         if (step == STEP_INITIAL) initTurn();
         
 	    if (stepObject == null) {
-	        stepObject = new IntegerState("ORStep");
+	        stepObject = new IntegerState("ORStep", -1);
 	        stepObject.addObserver(this);
 	    }
 	    stepObject.set(step);
 		
-		prepareStep();
+		//prepareStep(); NOT NEEDED BECAUSE stepObject notifies via update()
 		//setPossibleActions("setStep");
 	}
 

@@ -581,7 +581,7 @@ implements ActionListener, KeyListener, ActionPerformer
 			}
 		}
 		
-	    displayError();
+	    //displayError();
 	    
 	}
 	
@@ -638,7 +638,7 @@ implements ActionListener, KeyListener, ActionPerformer
 			return "";
 	}
 	
-    public void displayError() {
+    public void displayMessage() {
     	String[] message = DisplayBuffer.get();
     	if (message != null) {
     		JOptionPane.showMessageDialog(this, message);

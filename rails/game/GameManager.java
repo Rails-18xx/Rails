@@ -456,6 +456,7 @@ public class GameManager implements ConfigurableComponentI
             instance.startGame();
             
             for (PossibleAction action : executedActions) {
+                log.debug("Loaded action: "+action);
             	instance.processOnReload (action);
             }
             

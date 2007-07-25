@@ -524,7 +524,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		gameUIManager.processOnServer (executedAction);
 
 		//ReportWindow.addLog();
-		displayError();
+		//displayError();
 
         //updateStatus("StatusWindow.process");
         
@@ -536,7 +536,7 @@ implements ActionListener, KeyListener, ActionPerformer
         return true;
     }
     
-    public void displayError() {
+    public void displayMessage() {
     	String[] message = DisplayBuffer.get();
     	if (message != null) {
     		JOptionPane.showMessageDialog(this, message);

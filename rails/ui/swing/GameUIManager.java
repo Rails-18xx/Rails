@@ -105,6 +105,7 @@ public class GameUIManager
     }
     boolean result = gameManager.process (action);
     log.debug ("==Result from server: "+result);
+    activeWindow.displayMessage();
        
        ReportWindow.addLog();
        
@@ -265,10 +266,10 @@ public class GameUIManager
            loadAction.setFilepath(filepath);
            //processOnServer (loadAction);
            GameManager.load(loadAction);
+           DisplayBuffer.clear();
 
 		   gameUIInit();
 		   processOnServer (null);
-		   DisplayBuffer.clear();
 		   updateUI();
 	       statusWindow.setGameActions();
        }
