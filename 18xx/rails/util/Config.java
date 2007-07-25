@@ -61,13 +61,11 @@ public final class Config {
 			
 		} catch (FileNotFoundException FNFE) {
 			if (required) {
-				System.err.println("Exception whilst loading properties file "+filename);
-				FNFE.printStackTrace(System.err);
+				System.err.println("File not found: "+filename);
 			}
 
 		} catch (Exception e) {
-			System.err.println("Exception whilst loading properties file "+filename);
-			e.printStackTrace(System.err);
+			System.err.println(e +" whilst loading properties file " + filename);
 		}
 	}
 }
