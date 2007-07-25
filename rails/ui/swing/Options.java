@@ -70,7 +70,7 @@ public class Options extends JDialog implements ActionListener
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setTitle("Rails: New Game");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		renderer.setPreferredSize(size);
 
@@ -95,9 +95,6 @@ public class Options extends JDialog implements ActionListener
 			playersPane.add(playerNameFields[i]);
 		}
 
-		//playerNameFields[0].setText("0");
-		//playerNameFields[1].setText("1");
-		//playerNameFields[2].setText("2");
 		/* Prefill with any configured player names.
 		 * This can be useful to speed up testing purposes.
 		 */
