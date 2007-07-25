@@ -529,7 +529,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	{
 		repaintUpgradePanel();
 		orPanel.recreate();
-		orPanel.updateStatus();
+		//orPanel.updateStatus();
 		setVisible(true);
 		requestFocus();
 	}

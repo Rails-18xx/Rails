@@ -10,5 +10,5 @@ public interface ActionPerformer {
     
     public boolean processImmediateAction();
 
-
+    public void displayMessage ();
 }
