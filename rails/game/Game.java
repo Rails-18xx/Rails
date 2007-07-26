@@ -13,7 +13,8 @@ import java.util.*;
 
 public class Game
 {
-	public static final String version = "1.0.1";
+	public static final String version = "1.0.3";
+	public static final String jarName = "./rails-" + version + ".jar";
 
 	/**
 	 * Game is a singleton class.

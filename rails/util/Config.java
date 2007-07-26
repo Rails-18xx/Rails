@@ -1,10 +1,9 @@
 package rails.util;
 
 import java.util.*;
-//import org.apache.commons.logging.*;
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 
 /**
  * This is a simple utility class with a collection of static functions to load a property object from a property file, to retrieve a particular value from the property file etc.
