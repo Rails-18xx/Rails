@@ -9,16 +9,9 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.game.action.ActionTaker;
-import rails.game.action.GameAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.SellShares;
-import rails.game.special.ExchangeForShare;
-import rails.game.special.SpecialSRProperty;
-import rails.ui.swing.elements.ActionButton;
-import rails.ui.swing.elements.ActionMenuItem;
+import rails.game.action.*;
+import rails.game.special.*;
+import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
 import java.util.Iterator;
@@ -32,7 +25,7 @@ import java.util.List;
 public class StatusWindow extends JFrame 
 implements ActionListener, KeyListener, ActionPerformer
 {
-    protected static final String QUIT_CMD = "Quit";
+	protected static final String QUIT_CMD = "Quit";
     protected static final String SAVE_CMD = "Save";
     protected static final String UNDO_CMD = "Undo";
     protected static final String FORCED_UNDO_CMD = "Undo!";
@@ -49,9 +42,7 @@ implements ActionListener, KeyListener, ActionPerformer
 	private JPanel buttonPanel;
 	private GameStatus gameStatus;
 	private ActionButton passButton, extraButton;
-	private Player player;
 
-	/*----*/
 	private GameManager gameManager;
     private GameUIManager gameUIManager;
 	private RoundI currentRound;
@@ -123,6 +114,8 @@ implements ActionListener, KeyListener, ActionPerformer
 		menuItem.setName(MARKET_CMD);
 		menuItem.setActionCommand(MARKET_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_K);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
+				ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
@@ -130,13 +123,15 @@ implements ActionListener, KeyListener, ActionPerformer
 		menuItem.setName(MAP_CMD);
 		menuItem.setActionCommand(MAP_CMD);
 		menuItem.setMnemonic(KeyEvent.VK_M);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
+				ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
 		menuItem = new JCheckBoxMenuItem(LocalText.getText("REPORT"));
 		menuItem.setName(LocalText.getText("REPORT"));
 		menuItem.setActionCommand(REPORT_CMD);
-		menuItem.setMnemonic(KeyEvent.VK_L);
+		menuItem.setMnemonic(KeyEvent.VK_R);
 		menuItem.addActionListener(this);
 		optMenu.add(menuItem);
 
@@ -146,6 +141,8 @@ implements ActionListener, KeyListener, ActionPerformer
 		undoItem.setName(LocalText.getText("UNDO"));
 		undoItem.setActionCommand(UNDO_CMD);
 		undoItem.setMnemonic(KeyEvent.VK_U);
+		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+				ActionEvent.CTRL_MASK));
 		undoItem.addActionListener(this);
 		undoItem.setEnabled(false);
 		moveMenu.add(undoItem);
@@ -154,6 +151,8 @@ implements ActionListener, KeyListener, ActionPerformer
 		redoItem.setName(LocalText.getText("REDO"));
 		redoItem.setActionCommand(REDO_CMD);
 		redoItem.setMnemonic(KeyEvent.VK_R);
+		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				ActionEvent.CTRL_MASK));
 		redoItem.addActionListener(this);
 		redoItem.setEnabled(false);
 		moveMenu.add(redoItem);
@@ -292,7 +291,9 @@ implements ActionListener, KeyListener, ActionPerformer
     
 	public void updateStatus()
 	{
-        if (!(currentRound instanceof StockRound)) return;
+        if (!(currentRound instanceof StockRound)) {
+			return;
+		}
         
         gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
         gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
@@ -338,7 +339,6 @@ implements ActionListener, KeyListener, ActionPerformer
 
 
 		/* Any special properties in force? */
-		player = GameManager.getCurrentPlayer();
 		java.util.List specialProperties = stockRound.getSpecialProperties();
 		if (specialProperties != null && specialProperties.size() > 0)
 		{
@@ -615,7 +615,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		passButton.setEnabled(true);
 		passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
 		extraButton.setVisible(false);
-		gameUIManager.orWindow.finish();
+		GameUIManager.orWindow.finish();
 
 		toFront();
 
