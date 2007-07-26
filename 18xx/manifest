@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: test.GameTest
-
+Class-Path: ./my.properties ./LocalisedText.properties ./lib/log4j-1.2/log4j-1.2.14.jar ./lib/batik-1.6/lib/batik-transcoder.jar ./lib/batik-1.6/batik.jar ./lib/batik-1.6/lib/batik-util.jar ./lib/batik-1.6/lib/batik-script.jar ./lib/batik-1.6/lib/batik-bridge.jar ./lib/batik-1.6/lib/batik-ext.jar ./lib/batik-1.6/lib/batik-awt-util.jar ./lib/batik-1.6/lib/batik-dom.jar ./lib/batik-1.6/lib/batik-gvt.jar
+Main-Class: rails.test.GameTest
