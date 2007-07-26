@@ -87,8 +87,8 @@ implements ActionListener, KeyListener, ActionPerformer
 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		optMenu.setMnemonic(KeyEvent.VK_O);
-		moveMenu.setMnemonic(KeyEvent.VK_M);
-        moveMenu.setMnemonic(KeyEvent.VK_T);
+		moveMenu.setMnemonic(KeyEvent.VK_V);
+        moderatorMenu.setMnemonic(KeyEvent.VK_M);
 
 		saveItem = new ActionMenuItem(LocalText.getText("SAVE"));
 		saveItem.setActionCommand(SAVE_CMD);
@@ -96,7 +96,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
 		saveItem.addActionListener(this);
-		saveItem.setEnabled(true);
+		saveItem.setEnabled(false); //XXX: Setting to disabled until this is fully implemented.
 		fileMenu.add(saveItem);
 
 		fileMenu.addSeparator();
@@ -217,14 +217,8 @@ implements ActionListener, KeyListener, ActionPerformer
 		pane.add(buttonPanel, BorderLayout.CENTER);
 		pane.setOpaque(true);
 		setContentPane(pane);
-		// refreshStatus();
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		/*----*/
-		//gameManager = GameManager.getInstance();
-        
-		//updateStatus("StatusWindow.StatusWindow");
 
 		gameStatus.addKeyListener(this);
 		buttonPanel.addKeyListener(this);
@@ -307,7 +301,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		{
 			passButton.setEnabled(false);
 			int cash = ((ShareSellingRound) currentRound).getRemainingCashToRaise();
-			//if (sellableCertificates.isEmpty())
 			if (!possibleActions.contains(SellShares.class))
 			{
 				JOptionPane.showMessageDialog(this,
@@ -451,7 +444,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		if (actions != null && actions.size() > 0) {
 			executedAction = actions.get(0);
 		}
-        //log.debug("actor="+actor+" command="+command+" executedAction="+executedAction);
 		
 		if (command.equals(BUY_CMD))
 		{
@@ -522,12 +514,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		}
 		
 		gameUIManager.processOnServer (executedAction);
-
-		//ReportWindow.addLog();
-		//displayError();
-
-        //updateStatus("StatusWindow.process");
-        
         return true;
 	}
     
@@ -621,10 +607,6 @@ implements ActionListener, KeyListener, ActionPerformer
 	 */
 	public void finish()
 	{
-
-		/* Complete the log */
-		//ReportWindow.addLog();
-
 		setVisible(true);
 		gameUIManager.reportWindow.setVisible(true);
 		gameUIManager.stockChart.setVisible(true);
