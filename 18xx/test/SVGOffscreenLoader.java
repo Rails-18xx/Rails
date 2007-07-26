@@ -1,4 +1,4 @@
-package rails.test;
+package test;
 
 import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;

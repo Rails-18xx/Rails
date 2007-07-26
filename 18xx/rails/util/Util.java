@@ -70,7 +70,7 @@ public final class Util
 		else
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails-" + Game.version + ".jar");
+			File jarFile = new File(Game.jarName);
 			//JarFile jf = new JarFile(jarFile);
 			JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
 			for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())

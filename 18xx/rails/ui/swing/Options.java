@@ -162,18 +162,17 @@ public class Options extends JDialog implements ActionListener
 
 	private String[] getGameList()
 	{
+		System.out.println("Working directory is "+System.getProperty("user.dir"));
 		log.debug("Working directory is "+System.getProperty("user.dir"));
 		File dataDir = new File("data/");
 		String[] files = dataDir.list();
 		if (files == null || files.length == 0)
 		{
 			// Search in the jar
-			File jarFile = new File("./Rails-" + Game.version + ".jar");
+			File jarFile = new File(Game.jarName);
 			try
 			{
-				//JarFile jf = new JarFile(jarFile);
 				JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
-				//String jeName;
 				Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
 				Matcher m;
 				List<String> games = new ArrayList<String>();
