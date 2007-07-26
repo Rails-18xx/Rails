@@ -70,7 +70,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener
         choiceButtons = new JRadioButton[numOptions];
 
 		this.getContentPane().setLayout(new GridBagLayout());
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		optionsPane.setLayout(new GridBagLayout());
 		//optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
