@@ -29,5 +29,7 @@ public interface SpecialPropertyI extends ConfigurableComponentI
 	public boolean isORProperty();
 	
 	public int getUniqueId();
+    
+    public String toMenu();
 
 }

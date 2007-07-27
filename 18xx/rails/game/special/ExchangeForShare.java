@@ -3,6 +3,7 @@ package rails.game.special;
 import org.w3c.dom.*;
 
 import rails.game.*;
+import rails.game.move.MoveSet;
 import rails.util.LocalText;
 import rails.util.Util;
 import rails.util.XmlUtils;
@@ -38,8 +39,8 @@ public class ExchangeForShare extends SpecialSRProperty
 	public boolean isExecutionable()
 	{
 
-		return GameManager.getCurrentPhase().isPrivateSellingAllowed()
-				&& privateCompany.getPortfolio().getOwner() instanceof Player;
+		return /*GameManager.getCurrentPhase().isPrivateSellingAllowed()
+				&&*/ privateCompany.getPortfolio().getOwner() instanceof Player;
 	}
 
 	public boolean execute()
@@ -95,6 +96,8 @@ public class ExchangeForShare extends SpecialSRProperty
 				}));
 			return false;
 		}
+        
+        MoveSet.start(true);
 
 		Certificate cert = ipoHasShare ? Bank.getIpo()
 				.findCertificate(publicCompany, false) : Bank.getPool()
@@ -135,4 +138,19 @@ public class ExchangeForShare extends SpecialSRProperty
 	{
 		return share;
 	}
+    
+    public String toString() {
+        return "Swap "+privateCompany.getName()
+            +" for "+share+"% share of "
+            +publicCompanyName;
+    }
+    
+    public String toMenu() {
+        return LocalText.getText("SwapPrivateForCertificate",
+                new String[] {
+                privateCompany.getName(),
+                String.valueOf(share),
+                publicCompanyName
+        });
+    }
 }

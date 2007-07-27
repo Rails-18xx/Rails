@@ -365,10 +365,12 @@ implements ActionListener, KeyListener, ActionPerformer
 
 	}
 	
+    /*
 	public void updateStatus (String from) {
-		log.debug("--StartRoundWindow updateStatus called from "+from);
+		//log.debug("--StartRoundWindow updateStatus called from "+from);
 		updateStatus();
 	}
+    */
 
 	public void updateStatus()
 	{

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.6 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.7 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -24,6 +24,8 @@ public abstract class PossibleAction implements Serializable {
 
 	protected String playerName;
 	protected int playerIndex;
+    
+    protected boolean acted = false;
 
     protected static final long serialVersionUID = 1L;
 
@@ -58,7 +60,15 @@ public abstract class PossibleAction implements Serializable {
     	this.playerName = playerName;
     }
     
-     public abstract boolean equals(PossibleAction pa);
+     public boolean hasActed() {
+        return acted;
+    }
+
+    public void setActed() {
+        this.acted = true;
+    }
+
+    public abstract boolean equals(PossibleAction pa);
      
      private void readObject(ObjectInputStream in) 
      throws IOException, ClassNotFoundException {

@@ -8,9 +8,12 @@ import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
+import rails.game.action.UseSpecialProperty;
 import rails.game.move.DoubleMapChange;
 import rails.game.move.MoveSet;
+import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialSRProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
@@ -48,7 +51,7 @@ public class StockRound extends Round
 	protected Map<String, StockSpaceI> sellPrices 
 		= new HashMap<String, StockSpaceI>();
 
-	protected List<SpecialPropertyI> currentSpecialProperties = null;
+	//protected List<SpecialPropertyI> currentSpecialProperties = null;
 
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
@@ -139,10 +142,14 @@ public class StockRound extends Round
 		setBuyableCerts();
 		
 		setSellableShares();
+        
+        setSpecialActions();
 		
+        /*
 		if (possibleActions.isEmpty()) {
 			numPasses.add(1);
 		}
+		*/
 		
 		if (passAllowed) {
 			if (hasActed.booleanValue()) {
@@ -391,6 +398,15 @@ public class StockRound extends Round
 			}
 		}
 	}
+    
+    protected void setSpecialActions () {
+        
+        List<SpecialSRProperty> sps = currentPlayer.getPortfolio()
+                .getSpecialProperties(SpecialSRProperty.class, false);
+        for (SpecialPropertyI sp : sps) {
+            possibleActions.add(new UseSpecialProperty (sp));
+        }
+    }
 	
 	/*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
@@ -432,6 +448,10 @@ public class StockRound extends Round
 		} else if (action instanceof SellShares) {
 			
 			result = sellShares ((SellShares)action);
+            
+        } else if (action instanceof UseSpecialProperty) {
+            
+            result = useSpecialProperty ((UseSpecialProperty)action);
 			
 		} else {
 		
@@ -814,8 +834,8 @@ public class StockRound extends Round
 		}
 		((Map) playersThatSoldThisRound.get(player)).put(company, null);
 		*/
-	    new DoubleMapChange (playersThatSoldThisRound,
-	            player, company, null);
+	    new DoubleMapChange<Player, PublicCompanyI, Object> 
+            (playersThatSoldThisRound, player, company, null);
 	}
 
 	private boolean isSaleRecorded(Player player, PublicCompanyI company)
@@ -1052,6 +1072,23 @@ public class StockRound extends Round
 
 		return true;
 	}
+    
+    public boolean useSpecialProperty (UseSpecialProperty action) {
+        
+        SpecialPropertyI sp = action.getSpecialProperty();
+        
+        // TODO This should work for all subclasses, but not all have execute() yet.
+        if (sp instanceof ExchangeForShare) {
+            
+            boolean result =((ExchangeForShare)sp).execute();
+            if (result) hasActed.set(true);
+            return result;
+            
+        } else {
+            return false;
+        }
+    }
+    
 	/**
 	 * The current Player passes or is done.
 	 * 
@@ -1142,7 +1179,7 @@ public class StockRound extends Round
 		initPlayer();
 	}
 
-	protected void initPlayer()
+ 	protected void initPlayer()
 	{
 
 		currentPlayer = GameManager.getCurrentPlayer();
@@ -1150,10 +1187,13 @@ public class StockRound extends Round
 		hasSoldThisTurnBeforeBuying.set(false);
 		hasActed.set(false);
 
+        // The remainder is deprecated
+        /*
 		currentSpecialProperties = currentPlayer.getPortfolio()
 				.getSpecialProperties(rails.game.special.SpecialSRProperty.class, false);
 		log.debug ("Player "+currentPlayer.getName()
 		        +", spec#="+currentSpecialProperties.size());
+                */
 	}
 
 	/**
@@ -1200,80 +1240,6 @@ public class StockRound extends Round
 	{
 		return GameManager.getCurrentPlayerIndex();
 	}
-
-	public List<SpecialPropertyI> getSpecialProperties()
-	{
-		return currentSpecialProperties;
-	}
-
-	/*
-	 * Check if a public company can be started by the player that has the turn.
-	 * 
-	 * @param companyName
-	 *            Name of the company to be checked.
-	 * @return True of false. TODO Check for unstarted companies that may not
-	 *         yet be started. TODO Check if current player has enough money to
-	 *         start at the lowest price.
-	 */
-	/*
-	public boolean isCompanyStartable(String companyName)
-	{
-
-		return !companyMgr.getPublicCompany(companyName).hasStarted();
-	}
-	*/
-
-	/*
-	 * Check if a company can be bought by the current player from a given
-	 * Portfolio.
-	 * 
-	 * @param companyName
-	 *            Name of the company to be checked.
-	 * @param source
-	 *            The portfolio that is checked for presence of company shares.
-	 *            TODO Buying from company treasuries if just IPO is specified.
-	 *            TODO Add checks that the current player may buy and has the
-	 *            money. TODO Presidencies in the Pool (rare!)
-	 */
-	/*
-	public boolean isCompanyBuyable(String companyName, Portfolio source)
-	{
-
-		PublicCompanyI company = companyMgr.getPublicCompany(companyName);
-		if (!company.hasStarted())
-			return false;
-		if (source.findCertificate(company, false) == null)
-			return false;
-		return true;
-	}
-	*/
-
-	/**=
-	 * Check if the current player can sell shares of a company.
-	 * 
-	 * @param companyName
-	 *            Name of the company to be checked
-	 * @return True if the company can be sold. TODO Make Bank Pool share limit
-	 *         configurable.
-	 */
-	/*
-	public boolean isCompanySellable(String companyName)
-	{
-
-		if (stockRoundNumber == 1 && noSaleInFirstSR)
-			return false;
-		PublicCompanyI company = companyMgr.getPublicCompany(companyName);
-		if (!company.hasStockPrice())
-			return false;
-		if (noSaleIfNotOperated && !company.hasOperated())
-			return false;
-		if (currentPlayer.getPortfolio().getShare(company) == 0)
-			return false;
-		if (pool.getShare(company) >= Bank.getPoolShareLimit())
-			return false;
-		return true;
-	}
-	*/
 
 	/**
 	 * Can the current player do any selling?

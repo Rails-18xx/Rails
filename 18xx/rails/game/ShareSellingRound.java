@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.5 2007/07/16 20:40:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.6 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -68,6 +68,9 @@ log.debug("Creating ShareSellingRound, cash to raise ="+cashToRaise);
 		setSellableShares();
 		
 	    if (possibleActions.isEmpty() && cashToRaise.intValue() > 0) {
+			DisplayBuffer.add (LocalText.getText("YouAreBankrupt", 
+					Bank.format(cashToRaise.intValue())));
+
 	        GameManager.getInstance().registerBankruptcy();
 	        return false;
 	    }

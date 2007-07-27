@@ -6,7 +6,6 @@ import rails.game.action.LayToken;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
-import rails.game.action.PossibleORAction;
 import rails.game.special.*;
 import rails.ui.swing.hexmap.*;
 import rails.util.LocalText;
@@ -437,9 +436,6 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 
         // Add the actor for safety checking in the server 
         action.setPlayerName(orPanel.getORPlayer());
-        if (action instanceof PossibleORAction) {
-            ((PossibleORAction)action).setCompany(orPanel.getOperatingCompanies()[orPanel.getOrCompIndex()]);
-        }
         // Process the action
         boolean result = gameUIManager.processOnServer (action);
         // Display any error message

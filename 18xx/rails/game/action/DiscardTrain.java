@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.2 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.3 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.PublicCompanyI;
 import rails.game.Train;
 import rails.game.TrainI;
 
@@ -18,22 +19,25 @@ import rails.game.TrainI;
  */
 public class DiscardTrain extends PossibleORAction {
 
-	// Initial settings
+	// Server settings
     transient private List<TrainI> ownedTrains = null;
     private String[] ownedTrainsUniqueIds;
     
-    // User settings
+    // Client settings
     transient private TrainI discardedTrain = null;
     private String discardedTrainUniqueId;
     
     
-    public DiscardTrain (List<TrainI> trains) {
+    public DiscardTrain (PublicCompanyI company, List<TrainI> trains) {
     	
+        super();
         this.ownedTrains = trains;
         this.ownedTrainsUniqueIds = new String[trains.size()];
         for (int i=0; i<trains.size(); i++) {
             ownedTrainsUniqueIds[i] = trains.get(i).getName(); // TODO: Must be replaced by unique id
         }
+        this.company = company;
+        this.companyName = company.getName();
     }
     
     public List<TrainI> getOwnedTrains() {

@@ -225,7 +225,7 @@ public class ConvertTilesXML
 		//int intId;
 		try
 		{
-			int intId = Integer.parseInt(id);
+			Integer.parseInt(id);
 		}
 		catch (NumberFormatException e)
 		{

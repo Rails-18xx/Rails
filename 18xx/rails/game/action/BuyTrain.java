@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.3 2007/07/25 20:51:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.4 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -140,7 +140,8 @@ public class BuyTrain extends PossibleORAction {
 	public String toString() {
 		
 		StringBuffer b = new StringBuffer();
-		b.append ("Buy ").append(train.getName());
+		b.append (company.getName());
+		b.append (": buy ").append(train.getName());
 		b.append("-train from ").append(from.getName());
 		b.append (" for ").append(Bank.format(fixedCost));
 		if (isForExchange()) b.append (" (exchanged)");

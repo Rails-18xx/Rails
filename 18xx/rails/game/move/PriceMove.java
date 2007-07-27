@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceMove.java,v 1.2 2007/05/20 20:10:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceMove.java,v 1.3 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -45,7 +45,7 @@ public class PriceMove extends Move {
     public Object getObject() {return price;}
     
     public String toString () {
-        return "PriceMove: "+price.getCompany().getName()
+        return "PriceMove: "+price.getName()
             +" from "+from+" to "+to;
     }
 

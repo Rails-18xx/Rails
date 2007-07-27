@@ -21,6 +21,7 @@ public interface RoundI
 	
 	public String getHelp();
 	
+    /** @deprecated */
 	public List<SpecialPropertyI> getSpecialProperties();
 	
     public boolean process (PossibleAction action);

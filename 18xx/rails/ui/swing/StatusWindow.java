@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 public class StatusWindow extends JFrame 
 implements ActionListener, KeyListener, ActionPerformer
 {
-	protected static final String QUIT_CMD = "Quit";
+    protected static final String QUIT_CMD = "Quit";
     protected static final String SAVE_CMD = "Save";
     protected static final String UNDO_CMD = "Undo";
     protected static final String FORCED_UNDO_CMD = "Undo!";
@@ -37,26 +37,27 @@ implements ActionListener, KeyListener, ActionPerformer
     protected static final String SELL_CMD = "Sell";
     protected static final String DONE_CMD = "Done";
     protected static final String PASS_CMD = "Pass";
-    protected static final String SWAP_CMD = "Swap";
+    //protected static final String SWAP_CMD = "Swap";
     
 	private JPanel buttonPanel;
 	private GameStatus gameStatus;
-	private ActionButton passButton, extraButton;
+	private ActionButton passButton;
 
 	private GameManager gameManager;
     private GameUIManager gameUIManager;
 	private RoundI currentRound;
-	private StockRound stockRound;
+	//private StockRound stockRound;
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
 	JPanel pane = new JPanel(new BorderLayout());
 
 	private JMenuBar menuBar;
-	private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu;
+	private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu, specialMenu;
 	private JMenuItem menuItem;
     private ActionMenuItem saveItem;
 	private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
+    private List<ActionMenuItem> specialActionItems = new ArrayList<ActionMenuItem>();
 
 	/**
 	 * Selector for the pattern to be used in keeping the individual UI fields
@@ -75,11 +76,13 @@ implements ActionListener, KeyListener, ActionPerformer
 		optMenu = new JMenu(LocalText.getText("OPTIONS"));
 		moveMenu = new JMenu(LocalText.getText("MOVE"));
         moderatorMenu = new JMenu(LocalText.getText("MODERATOR"));
+        specialMenu = new JMenu(LocalText.getText("SPECIAL"));
 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		optMenu.setMnemonic(KeyEvent.VK_O);
 		moveMenu.setMnemonic(KeyEvent.VK_V);
         moderatorMenu.setMnemonic(KeyEvent.VK_M);
+        specialMenu.setMnemonic(KeyEvent.VK_S);
 
 		saveItem = new ActionMenuItem(LocalText.getText("SAVE"));
 		saveItem.setActionCommand(SAVE_CMD);
@@ -87,7 +90,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				ActionEvent.ALT_MASK));
 		saveItem.addActionListener(this);
-		saveItem.setEnabled(false); //XXX: Setting to disabled until this is fully implemented.
+		saveItem.setEnabled(true);
 		fileMenu.add(saveItem);
 
 		fileMenu.addSeparator();
@@ -176,6 +179,9 @@ implements ActionListener, KeyListener, ActionPerformer
         moderatorMenu.add(redoItem2);
         
 		menuBar.add (moderatorMenu);
+        
+        specialMenu.setBackground(Color.ORANGE); // Normally not seen because menu is not opaque
+        menuBar.add (specialMenu);
 
 		setJMenuBar(menuBar);
 	}
@@ -187,19 +193,14 @@ implements ActionListener, KeyListener, ActionPerformer
 		gameStatus = new GameStatus(this);
 		buttonPanel = new JPanel();
 
-		extraButton = new ActionButton(""); // Normally invisible, for special
-										// properties.
-		extraButton.setVisible(false);
 		passButton = new ActionButton(LocalText.getText("PASS"));
 
 		passButton.setMnemonic(KeyEvent.VK_P);
 
-		buttonPanel.add(extraButton);
 		buttonPanel.add(passButton);
 
 		passButton.setActionCommand(DONE_CMD);
 
-		extraButton.addActionListener(this);
 		passButton.addActionListener(this);
 
 		setSize(800, 300);
@@ -274,7 +275,7 @@ implements ActionListener, KeyListener, ActionPerformer
             disableCheckBoxMenuItem(MAP_CMD);
             disableCheckBoxMenuItem(MARKET_CMD);
         } else if (round instanceof StockRound) {
-            stockRound = (StockRound) currentRound;
+            //stockRound = (StockRound) currentRound;
             enableCheckBoxMenuItem(MARKET_CMD);
             disableCheckBoxMenuItem(MAP_CMD);
         } else if (round instanceof OperatingRound) {
@@ -284,10 +285,12 @@ implements ActionListener, KeyListener, ActionPerformer
     }
 
 
+    /*
 	public void updateStatus (String from) {
-		log.debug("--StatusWindow.updateStatus called from "+from+", current round is "+currentRound);
+		//log.debug("--StatusWindow.updateStatus called from "+from+", current round is "+currentRound);
 		updateStatus();
 	}
+    */
     
 	public void updateStatus()
 	{
@@ -338,14 +341,16 @@ implements ActionListener, KeyListener, ActionPerformer
 		}
 
 
-		/* Any special properties in force? */
+		/* Any special properties in force? *
+		//player = GameManager.getCurrentPlayer();
+        /*
 		java.util.List specialProperties = stockRound.getSpecialProperties();
 		if (specialProperties != null && specialProperties.size() > 0)
 		{
 			/*
 			 * Assume there will only one special property at a time
 			 * (because we have only one extra button)
-			 */
+			 *
 			SpecialSRProperty sp = (SpecialSRProperty) specialProperties.get(0);
 			if (sp instanceof ExchangeForShare)
 			{
@@ -363,8 +368,29 @@ implements ActionListener, KeyListener, ActionPerformer
 			extraButton.setEnabled(false);
 			extraButton.setVisible(false);
 		}
-		
-		// New
+        */
+
+        // New special action handling 
+        List<UseSpecialProperty> sps = possibleActions.getType(UseSpecialProperty.class);
+        for (ActionMenuItem item : specialActionItems) {
+            item.removeActionListener(this);
+        }
+        specialMenu.removeAll();
+        specialActionItems.clear();
+        for (UseSpecialProperty sp : sps) {
+            ActionMenuItem item = new ActionMenuItem (sp.toMenu());
+            item.addActionListener(this);
+            item.setEnabled(false);
+            item.addPossibleAction(sp);
+            item.setEnabled(true);
+            specialActionItems.add(item);
+            specialMenu.add(item);
+        }
+        boolean enabled = specialActionItems.size() > 0;
+        specialMenu.setOpaque(enabled);
+        specialMenu.setEnabled(enabled);
+        specialMenu.repaint();
+        
 		passButton.setEnabled(false);
 		
 		List inactiveItems = possibleActions.getType (NullAction.class);
@@ -392,6 +418,7 @@ implements ActionListener, KeyListener, ActionPerformer
 				}
 			}
 		}
+        
 		pack();
 
 		toFront();
@@ -462,19 +489,11 @@ implements ActionListener, KeyListener, ActionPerformer
 			process (executedAction);
 			
 		}
-		else if (command.equals(SWAP_CMD))
-		{
-			/* Execute a special property (i.e. swap M&H for NYC) */
-			SpecialSRProperty sp = (SpecialSRProperty) stockRound.getSpecialProperties()
-					.get(0);
-			if (sp instanceof ExchangeForShare)
-			{
-				((ExchangeForShare) sp).execute();
-				extraButton.setText("");
-				extraButton.setEnabled(false);
-				extraButton.setVisible(false);
-			}
-		}
+        else if (executedAction instanceof UseSpecialProperty) 
+        {
+            process (executedAction);
+            
+        }
 		else if (command.equals(QUIT_CMD)) {
 			System.exit(0);
         } else if (command.equals(REPORT_CMD))
@@ -614,7 +633,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		/* Disable all buttons */
 		passButton.setEnabled(true);
 		passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
-		extraButton.setVisible(false);
 		GameUIManager.orWindow.finish();
 
 		toFront();

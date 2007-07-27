@@ -233,7 +233,8 @@ public class OperatingRound extends Round implements Observer
         
         /*--- Common OR checks ---*/
         /* Check operating company */
-        if (action instanceof PossibleORAction) {
+        if (action instanceof PossibleORAction
+                && !(action instanceof DiscardTrain)) {
             PublicCompanyI company = ((PossibleORAction)action).getCompany(); 
             if (company != operatingCompany)
             {
@@ -796,7 +797,7 @@ public class OperatingRound extends Round implements Observer
     /** Take the next step after a given one (see nextStep()) */
 	protected void nextStep(int step)
 	{
-        log.debug("+++Next step after "+step);
+        //log.debug("+++Next step after "+step);
 		// Cycle through the steps until we reach one where a user action is expected.
 		int stepIndex;
 		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
@@ -875,7 +876,7 @@ public class OperatingRound extends Round implements Observer
 	protected void prepareStep()
 	{
 	    int step = stepObject.intValue();
-	    log.debug ("+++Preparing step "+step/*, new Exception("TRACE")*/);
+	    //log.debug ("+++Preparing step "+step/*, new Exception("TRACE")*/);
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
@@ -892,6 +893,7 @@ public class OperatingRound extends Round implements Observer
 		
 	}
 	
+    /*
 	protected void setSpecialProperties (Class clazz) {
 		currentSpecialProperties = operatingCompany.getPortfolio()
 			.getSpecialProperties(clazz, false);
@@ -899,7 +901,17 @@ public class OperatingRound extends Round implements Observer
 		    .getSpecialProperties(clazz, false));
 
 	}
+    */
 	
+    protected <T extends SpecialPropertyI> List<T> getSpecialProperties (Class<T> clazz) {
+        List<T> specialProperties = new ArrayList<T>();
+        specialProperties.addAll(operatingCompany.getPortfolio()
+            .getSpecialProperties(clazz, false));
+        specialProperties.addAll (operatingCompany.getPresident().getPortfolio()
+            .getSpecialProperties(clazz, false));
+        return specialProperties;
+    }
+    
 	
 	/**
 	 * Create a List of allowed normal tile lays (see LayTile class).
@@ -942,15 +954,16 @@ public class OperatingRound extends Round implements Observer
 		 */
 		if (operatingCompany.getType().getName().equals("Minor")) return;
 		
-		setSpecialProperties(rails.game.special.SpecialTileLay.class);
-		if (currentSpecialProperties != null && !currentSpecialProperties.isEmpty())
-		{
-			Iterator it = currentSpecialProperties.iterator();
-			while (it.hasNext())
+		//setSpecialProperties(rails.game.special.SpecialTileLay.class);
+		//if (currentSpecialProperties != null && !currentSpecialProperties.isEmpty())
+		//{
+			//Iterator it = currentSpecialProperties.iterator();
+			//while (it.hasNext())
+        for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class))
 			{
-				Object o = it.next();
-				log.debug ("Spec.prop: "+o);
-				SpecialTileLay stl = (SpecialTileLay) o;
+				//Object o = it.next();
+				//log.debug ("Spec.prop: "+o);
+				//SpecialTileLay stl = (SpecialTileLay) o;
 				if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
 				    /* If the special tile lay is not extra, it is only 
 				     * allowed if normal tile lays are also (still) allowed */
@@ -958,7 +971,7 @@ public class OperatingRound extends Round implements Observer
 					currentSpecialTileLays.add (new LayTile (stl));
 				}
 			}
-		}
+		//}
 	}
 	
 	protected void setNormalTokenLays () {
@@ -990,13 +1003,14 @@ public class OperatingRound extends Round implements Observer
 		 */
 		if (operatingCompany.getType().getName().equals("Minor")) return;
 
-		setSpecialProperties(rails.game.special.SpecialTokenLay.class);
-		if (currentSpecialProperties != null)
-		{
-			Iterator it = currentSpecialProperties.iterator();
-			while (it.hasNext())
+		//setSpecialProperties(rails.game.special.SpecialTokenLay.class);
+		//if (currentSpecialProperties != null)
+		//{
+			//Iterator it = currentSpecialProperties.iterator();
+			//while (it.hasNext())
+        for (SpecialTokenLay stl : getSpecialProperties (SpecialTokenLay.class))
 			{
-				SpecialTokenLay stl = (SpecialTokenLay) it.next();
+				//SpecialTokenLay stl = (SpecialTokenLay) it.next();
 				log.debug ("Spec.prop:"+stl);
 				if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
 				    /* If the special tile lay is not extra, it is only 
@@ -1005,7 +1019,7 @@ public class OperatingRound extends Round implements Observer
 					currentSpecialTokenLays.add (new LayToken (stl));
 				}
 			}
-		}
+		//}
 	}
 
 	public List<SpecialPropertyI> getSpecialProperties()
@@ -1310,7 +1324,7 @@ public class OperatingRound extends Round implements Observer
             stepObject.set(STEP_BUY_TRAIN);
         }
         
-        setPossibleActions("discardTrain");
+        setPossibleActions();
 
         return true;
     }
@@ -1475,7 +1489,7 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void setStep(int step)
 	{
-        log.debug("+++Setting step to "+step);
+        //log.debug("+++Setting step to "+step);
         if (step == STEP_INITIAL) initTurn();
         
 	    if (stepObject == null) {
@@ -1493,12 +1507,15 @@ public class OperatingRound extends Round implements Observer
 		return operatingCompanyIndexObject.intValue();
 	}
 	
+	/*
 	void setPossibleActions (String fromWhere) {
 	    
 	    //log.debug  (">>> setPossibleActions called from "+fromWhere);
 	    setPossibleActions();
 	    
 	}
+	*/
+	
 	/**
 	 * To be called after each change, to re-establish the currently allowed actions.
 	 * (new method, intended to absorb code from several other methods). 
@@ -1712,7 +1729,7 @@ public class OperatingRound extends Round implements Observer
             if (excessTrainCompanies.containsKey(player)) {
                 list = excessTrainCompanies.get(player);
                 for (PublicCompanyI comp : list) {
-                    possibleActions.add(new DiscardTrain(
+                    possibleActions.add(new DiscardTrain(comp, 
                             comp.getPortfolio().getUniqueTrains()));
                     // We handle one company at at time.
                     // We come back here until all excess trains have been discarded.
