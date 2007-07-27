@@ -38,7 +38,7 @@ public class StartRound_1830 extends StartRound
 	}
 
 	public boolean setPossibleActions() {
-log.debug("++StartRound PossibleActions called");		
+
 		boolean passAllowed = true;
 		
 		possibleActions.clear();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.10 2007/07/23 19:59:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.11 2007/07/27 22:05:14 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -711,13 +711,6 @@ public class Portfolio
 		to.addTrain(train);
 	}
 
-    /** @deprecated */
-	public TrainI[] getTrains()
-	{
-
-		return (TrainI[]) trains.toArray(new TrainI[0]);
-	}
-	
 	public int getNumberOfTrains() {
 		return trains.size();
 	}
@@ -817,10 +810,10 @@ public class Portfolio
 		}
 	}
 
-	public List<SpecialPropertyI> getSpecialProperties
-		(Class clazz, boolean includeExercised)
+	public <T extends SpecialPropertyI> List<T> getSpecialProperties
+		(Class<T> clazz, boolean includeExercised)
 	{
-		List<SpecialPropertyI> result = new ArrayList<SpecialPropertyI>();
+		List<T> result = new ArrayList<T>();
 		if (specialProperties != null && specialProperties.size() > 0)
 		{
 			//Iterator it = specialProperties.iterator();
@@ -835,7 +828,7 @@ public class Portfolio
 				        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
 				             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
 				    log.debug ("Adding SP: "+sp);
-					result.add(sp);
+					result.add((T)sp);
 				}
 			}
 		}

@@ -105,7 +105,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private PublicCompanyI[] companies;
 
-    private RoundI round, previousRound;
+    private RoundI round;
 
     private OperatingRound oRound;
 
@@ -124,7 +124,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private PublicCompanyI orComp = null;
 
-    private String orCompName = "";
+    //private String orCompName = "";
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
@@ -798,7 +798,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
 		if (prompts.size() == 0) {
 			JOptionPane.showMessageDialog(this, 
-					LocalText.getText("CannotBuyTrain"));
+					LocalText.getText("CannotBuyAnyTrain"));
 			return;
 		}
 
@@ -1006,7 +1006,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         this.orCompIndex = orCompIndex;
         orComp = orCompIndex >= 0 ? companies[orCompIndex] : null;
-        orCompName = orComp != null ? orComp.getName() : "";
+        //orCompName = orComp != null ? orComp.getName() : "";
 
         if ((j = this.orCompIndex) >= 0) {
             // Give a new company the turn.

@@ -311,6 +311,7 @@ public class GameManager implements ConfigurableComponentI
     	// The action is null only immediately after Load.
     	if (action != null) {
     		
+            action.setActed();
     		result = false;
     		
 			// Check player
@@ -456,7 +457,7 @@ public class GameManager implements ConfigurableComponentI
             instance.startGame();
             
             for (PossibleAction action : executedActions) {
-                log.debug("Loaded action: "+action);
+                log.debug("---Loaded action: "+action);
             	instance.processOnReload (action);
             }
             
@@ -483,8 +484,10 @@ public class GameManager implements ConfigurableComponentI
 	public void registerBankruptcy()
 	{
 		endedByBankruptcy = true;
-		ReportBuffer.add(LocalText.getText("PlayerIsBankrupt",
-				currentPlayer.getName()));
+		String message = LocalText.getText("PlayerIsBankrupt",
+				getCurrentPlayer().getName());
+		ReportBuffer.add(message);
+		DisplayBuffer.add (message);
 		if (gameEndsWithBankruptcy)
 		{
 			finishGame();

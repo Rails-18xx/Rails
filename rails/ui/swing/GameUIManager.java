@@ -197,7 +197,7 @@ public class GameUIManager
            activeWindow = startRoundWindow;
            
  
-           startRoundWindow.updateStatus("StatusWindow.updateUI");
+           startRoundWindow.updateStatus();
            startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
            
        }
@@ -207,7 +207,7 @@ public class GameUIManager
 
            //stockRound = (StockRound) currentRound;
            
-           statusWindow.updateStatus ("GameUIManager.updateUI");
+           statusWindow.updateStatus ();
            
       }
        else if (currentRound instanceof OperatingRound)

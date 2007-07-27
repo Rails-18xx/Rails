@@ -11,8 +11,7 @@ public abstract class SpecialProperty implements SpecialPropertyI
 
 	protected PrivateCompanyI privateCompany;
 	protected int closingValue = 0;
-	protected BooleanState exercised = new BooleanState("SpecialPropertyExercised", 
-	        false);
+	protected BooleanState exercised; 
 	protected boolean isSRProperty = false;
 	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
@@ -25,6 +24,8 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	protected static int lastIndex = 0;
 	
 	public SpecialProperty () {
+        exercised = new BooleanState("SpecialPropertyExercised", 
+                false);
 		uniqueId = ++lastIndex;
 		spMap.put(uniqueId, this);
 	}
@@ -101,4 +102,10 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	public String toString () {
 	    return getClass().getName() + " of private " + privateCompany.getName();
 	}
+    
+    /** Default menu item text, should be by all special properties
+     * that can appear as a menu item */
+    public String toMenu() {
+        return toString();
+    }
 }

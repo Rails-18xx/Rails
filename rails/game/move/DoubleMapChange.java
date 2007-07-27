@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.3 2007/06/01 20:24:37 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.4 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
@@ -14,14 +14,14 @@ import java.util.Map;
  * An Undo will remove the second key, but not the first key.
  * @author Erik Vos
  */
-public class DoubleMapChange extends Move {
+public class DoubleMapChange<K1, K2, V> extends Move {
     
-    protected Map map;
-    protected Object firstKey;
-    protected Object secondKey;
-    protected Object value;
+    protected HashMap<K1, HashMap<K2, V>> map;
+    protected K1 firstKey;
+    protected K2 secondKey;
+    protected V value;
     
-    public DoubleMapChange (Map map, Object firstKey, Object secondKey, Object value) {
+    public DoubleMapChange (HashMap<K1, HashMap<K2, V>> map, K1 firstKey, K2 secondKey, V value) {
         
         this.map = map;
         this.firstKey = firstKey;
@@ -33,10 +33,9 @@ public class DoubleMapChange extends Move {
 
 	public boolean execute() {
         
-        if (map == null) map = new HashMap();
-        // I've failed to make the below warning-free
-        if (!map.containsKey(firstKey)) map.put(firstKey, new HashMap());
-        ((Map)map.get(firstKey)).put(secondKey, value);
+        if (map == null) map = new HashMap<K1, HashMap<K2,V>>();
+        if (!map.containsKey(firstKey)) map.put(firstKey, new HashMap<K2,V>());
+        map.get(firstKey).put(secondKey, value);
         
         return true;
     }

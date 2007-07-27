@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.4 2007/07/16 20:40:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.5 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -66,7 +66,7 @@ public class Round implements RoundI {
     public boolean setPossibleActions () {
         return false;
     }
-
+    
     public String toString () {
         return getClass().getName().replaceAll(".*\\.", "");
     }

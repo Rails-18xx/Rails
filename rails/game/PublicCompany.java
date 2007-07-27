@@ -703,7 +703,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 		if (hasStockPrice)
 		{
 		    if (parPrice == null) {
-		        parPrice = new PriceModel (this, name+"ParPrice");
+		        parPrice = new PriceModel (this, name+"_ParPrice");
 		    }
 		    if (space != null) {
 		        parPrice.setPrice(space);
@@ -736,7 +736,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void setCurrentPrice(StockSpaceI price)
 	{
 	    if (currentPrice == null) {
-	        currentPrice = new PriceModel (this, name+"CurrentPrice");
+	        currentPrice = new PriceModel (this, name+"_CurrentPrice");
 	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
 	    }
 	    if (price != null) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.8 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.9 2007/07/27 22:05:14 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -61,11 +61,10 @@ public class PossibleActions {
     	return false;
     }
     
-    // The return type cannot be generified because of problems in ORPanel
-    public List getType (Class clazz) {
-    	List<PossibleAction> result = new ArrayList<PossibleAction>();
+    public <T extends PossibleAction> List<T> getType (Class<T> clazz) {
+    	List<T> result = new ArrayList<T>();
     	for (PossibleAction action : possibleActions) {
-    		if (Util.isInstanceOf(action, clazz)) result.add (action);
+    		if (Util.isInstanceOf(action, clazz)) result.add ((T)action);
     	}
     	return result;
     }
