@@ -281,7 +281,8 @@ public class Options extends JDialog implements ActionListener
 			{
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(this,
-						"Unable to load selected rails.game.");
+						"Unable to load selected rails.game. Exiting...");
+				System.exit(-1);
 			}
 
 		}
