@@ -40,6 +40,10 @@ public class Options extends JDialog implements ActionListener
 	Dimension size, optSize;
     
     GameUIManager gameUIManager;
+    
+    Map<String, String> gameNotes = new HashMap<String, String>();
+    Map<String, String> gameDescs = new HashMap<String, String>();
+    List<String> games = new ArrayList<String>();
 	
 	protected static Logger log = Logger.getLogger(Options.class.getPackage().getName());
 
@@ -197,12 +201,19 @@ public class Options extends JDialog implements ActionListener
 
 	private void populateGameList(String[] gameNames, JComboBox gameNameBox)
 	{
+		String gameText;
 		Arrays.sort(gameNames);
 		for (int i = 0; i < gameNames.length; i++)
 		{
 			if (!gameNames[i].equalsIgnoreCase("CVS")
-					&& !gameNames[i].startsWith("."))
-				gameNameBox.addItem(gameNames[i]);
+					&& !gameNames[i].startsWith(".")) {
+				gameText = gameNames[i];
+				if (!games.isEmpty() && !games.contains(gameText)) continue;
+				if (gameNotes.containsKey(gameNames[i])) {
+					gameText += " " + gameNotes.get(gameNames[i]);
+				}
+				gameNameBox.addItem(gameText);
+			}
 		}
 	}
 
@@ -212,11 +223,30 @@ public class Options extends JDialog implements ActionListener
         
         this.gameUIManager = gameUIManager;
 
+        readGameNotes();
 		initialize();
 		populateGridBag();
 
 		this.pack();
 		this.setVisible(true);
+	}
+	
+	private void readGameNotes() {
+		
+		String gameList = Config.get("games");
+		String gameNote, gameDesc;
+		if (!Util.hasValue(gameList)) return;
+		for (String gameName : gameList.split(",")) {
+			games.add (gameName);
+			gameNote = Config.get("game."+gameName+".note");
+			if (Util.hasValue(gameNote)) {
+				gameNotes.put(gameName, gameNote);
+			}
+			gameDesc = Config.get("game."+gameName+".description");
+			if (Util.hasValue(gameDesc)) {
+				gameDescs.put(gameName, gameDesc);
+			}
+		}
 	}
 
 	public void actionPerformed(ActionEvent arg0)
@@ -252,7 +282,7 @@ public class Options extends JDialog implements ActionListener
 			{
 				this.setVisible(false);
 
-				String gameName = gameNameBox.getSelectedItem().toString();
+				String gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
 				Game.getPlayerManager(playerNames);
 				Game.initialise(gameName);
 				Player.initPlayers(Game.getPlayerManager().getPlayersArray());
@@ -299,4 +329,5 @@ public class Options extends JDialog implements ActionListener
 		}
 
 	}
+	
 }
