@@ -15,6 +15,7 @@ public final class Config {
 	/** Default property file name. */
 	/* It will be reset from GameTest. */
 	private static String myConfigFile = "my.properties";
+	private static String gamesConfigFile = "games.properties";
 	
 	/** One Properties object for all properties */
 	private static Properties prop = new Properties();
@@ -37,6 +38,7 @@ public final class Config {
 		if (prop.isEmpty() || !loaded) {
 			/* List the property files to read here */
 			load(myConfigFile, false);
+			load(gamesConfigFile, false);
 			loaded = true;
 		}
 		if (prop.containsKey(key)) return prop.getProperty(key).trim();
