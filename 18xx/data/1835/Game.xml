@@ -2,9 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1835"/>
-    <Variant name="Standard"/>
-		<Variant name="Clemens"/>
-		<Variant name="Snake"/>
+		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
     <EndOfGame>

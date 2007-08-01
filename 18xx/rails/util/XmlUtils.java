@@ -2,6 +2,8 @@ package rails.util;
 
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -10,7 +12,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType;
+
 import rails.game.ConfigurationException;
+import rails.game.Game;
+import rails.game.GameManager;
 
 /**
  * Booch utility class providing helper functions for working with XML.
@@ -22,6 +28,96 @@ public final class XmlUtils {
      */
     private XmlUtils(){
     }
+    
+    
+    /**
+     * Extract all attributes of an Element into a HashMap.
+     * This includes conditional values, embedded in (possibly nested)
+     * &lt;IfOption&gt; subnodes.
+     * <p>
+     * The generic XML construct being parsed here must look like:<p>
+     * <code>
+     * &lt;AnyElement attr1="value1" attr2="value2" ...&gt;
+     *   &lt;IfOption name="optname1" value="optvalue1"&gt;
+     *     &lt;IfOption name="optname2" value="optvalue2"&gt;
+     *       &lt;Attributes attr3="value3" attr4="value4"/&gt;
+     *     &lt;/IfOption&gt;
+     *   &lt;/IfOption&gt;
+     * &lt;/AnyElement&gt;
+     * </code>
+     * <p>
+     * For variant names, the fixed option name "variant" is used.
+     * @param element
+     * @return
+     */
+    public static Map<String, String> getAllAttributes (Element element) 
+    throws ConfigurationException {
+        
+        Map<String, String> attributes = new HashMap<String, String>();
+        
+        NamedNodeMap nnp = element.getAttributes();
+        Node attribute;
+        String name, value;
+        for (int i=0; i<nnp.getLength(); i++) {
+            attribute = nnp.item(i);
+            name = attribute.getNodeName();
+            value = attribute.getNodeValue();
+            attributes.put(name, value);
+        }
+        
+        addConditionalAttributes (element, attributes);
+        
+        return attributes;
+    }
+    
+    private static void addConditionalAttributes (Element element,
+            Map<String, String> attributes) 
+    throws ConfigurationException {
+        
+        String name, value;
+        NodeList children;
+        Node child, attribute;
+
+        // Check the element's subnodes.
+        // Finally, process any surviving Attributes nodes.
+        children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++)
+        {
+        	child = children.item(i);
+        	if (child.getNodeType() != Node.ELEMENT_NODE) continue; 
+            Element subElement = (Element) child;
+            NamedNodeMap nnp = subElement.getAttributes();
+            
+            if (subElement.getNodeName().equalsIgnoreCase("Attributes")) {
+	            for (int j=0; j<nnp.getLength(); j++) {
+	                attribute = nnp.item(j);
+	                name = attribute.getNodeName();
+	                value = attribute.getNodeValue();
+	                attributes.put(name, value);
+	            }
+            } else if (subElement.getNodeName().equalsIgnoreCase("IfOption")) {
+	            name = extractStringAttribute (nnp, "name");
+	            value = extractStringAttribute (nnp, "value");
+	            if (name == null) {
+	                throw new ConfigurationException ("No name attribute found in IfConfig");
+	            }
+	            if (value == null) {
+	                throw new ConfigurationException ("No value attribute found in IfConfig");
+	            }
+	            // Check if the option has been chosen; if not, skip the rest
+	            String optionValue = GameManager.getGameOption(name);
+	            if (optionValue == null) {
+	                throw new ConfigurationException ("GameOption "+name+"="+value+" but no assigned value found");
+	            }
+	            if (optionValue.equalsIgnoreCase(value)) {
+	                addConditionalAttributes (subElement, attributes);
+	            }
+            }
+        }
+        
+    }
+    
+    
     /**
      * Extracts the String value of a given attribute from a NodeNameMap. 
      * Returns null if no such attribute can be found.

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.8 2007/07/16 20:40:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.9 2007/08/01 21:07:09 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -20,6 +20,7 @@ import rails.util.LocalText;
  */
 public class MoveSet {
 
+	private static boolean enabled = false;
     private List<Move> moves = new ArrayList<Move>();
     private boolean undoableByPlayer;
     /** If TRUE, undoing this move will also undo the previous one. */
@@ -33,6 +34,12 @@ public class MoveSet {
 
     private MoveSet (boolean undoableByPlayer) {
     	this.undoableByPlayer = undoableByPlayer;
+    }
+    
+    /** Start making moves undoable. Will be called once, 
+     * after all initialisations are complete. */
+    public static void enable() {
+    	enabled = true;
     }
     
     public static boolean start (boolean undoableByPlayer) {
@@ -80,6 +87,8 @@ public class MoveSet {
     public static boolean add (Move move) {
 
         move.execute();
+        if (!enabled) return true;
+        
         if (currentAction != null) {
             currentAction.moves.add (0, move); // Prepare for undo in reverse order!
             log.debug ("Done: " + move);
@@ -87,9 +96,6 @@ public class MoveSet {
         } else {
             // Uncomment one of the next statements to detect un-undoable actions
             log.warn ("No MoveSet open for "+move);
-            //log.warn ("No MoveSet open for "+move, new Exception("TRACE"));
-            //new Exception ("No MoveSet open for add: "+move).printStackTrace();
-            
             return false;
         }
     }

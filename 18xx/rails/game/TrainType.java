@@ -1,6 +1,7 @@
 package rails.game;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.*;
@@ -81,24 +82,28 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 		if (real)
 		{
-			NamedNodeMap attr = el.getAttributes();
-
+			//NamedNodeMap attr = el.getAttributes();
+            Map<String, String> attributes = XmlUtils.getAllAttributes(el);
+            
 			// Name
-			name = XmlUtils.extractStringAttribute(attr, "name");
+			//name = XmlUtils.extractStringAttribute(attr, "name");
+            name = attributes.get("name");
 			if (name == null)
 			{
 				throw new ConfigurationException(LocalText.getText("NoNameSpecified"));
 			}
 
 			// Cost
-			cost = XmlUtils.extractIntegerAttribute(attr, "cost");
+			//cost = XmlUtils.extractIntegerAttribute(attr, "cost");
+            cost = Util.parseInt(attributes.get("cost"));
 			if (cost == 0)
 			{
 				throw new ConfigurationException(LocalText.getText("InvalidCost"));
 			}
 
 			// Amount
-			amount = XmlUtils.extractIntegerAttribute(attr, "amount");
+			//amount = XmlUtils.extractIntegerAttribute(attr, "amount");
+            amount = Util.parseInt(attributes.get("amount"));
 			if (amount == -1)
 			{
 				infiniteAmount = true;
@@ -109,31 +114,35 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Major stops
-			majorStops = XmlUtils.extractIntegerAttribute(attr, "majorStops");
+			//majorStops = XmlUtils.extractIntegerAttribute(attr, "majorStops");
+            majorStops = Util.parseInt(attributes.get("majorStops"));
 			if (majorStops == 0)
 			{
 				throw new ConfigurationException(LocalText.getText("InvalidStops"));
 			}
 
 			// Minor stops
-			minorStops = XmlUtils.extractIntegerAttribute(attr, "minorStops", 0);
+			//minorStops = XmlUtils.extractIntegerAttribute(attr, "minorStops", 0);
+            minorStops = Util.parseInt(attributes.get("minorStops"));
 
 			// Phase started
-			startedPhaseName = XmlUtils.extractStringAttribute(attr,
-					"startPhase",
-					"");
+			//startedPhaseName = XmlUtils.extractStringAttribute(attr,
+			//		"startPhase",
+			//		"");
+            startedPhaseName = attributes.get("startPhase");
+            if (startedPhaseName == null) startedPhaseName = "";
 
 			// Train type rusted
-			rustedTrainTypeName = XmlUtils.extractStringAttribute(attr,
-					"rustedTrain");
-
+			//rustedTrainTypeName = XmlUtils.extractStringAttribute(attr,
+			//		"rustedTrain");
+            rustedTrainTypeName = attributes.get("rustedTrain");
+            
 			// Other train type released for buying
-			releasedTrainTypeName = XmlUtils.extractStringAttribute(attr,
-					"releasedTrain");
+			//releasedTrainTypeName = XmlUtils.extractStringAttribute(attr,
+			//		"releasedTrain");
+            releasedTrainTypeName = attributes.get("releasedTrain");
 
-			// To be added: ExchangeFirst parsing
-
-		}
+        }
 		else
 		{
 			name = "";

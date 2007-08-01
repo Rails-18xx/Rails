@@ -50,7 +50,8 @@ public abstract class StartRound extends Round implements StartRoundI
 	{
 
 		this.startPacket = startPacket;
-		this.variant = GameManager.getVariant();
+		this.variant = GameManager.getGameOption(GameManager.VARIANT_KEY);
+        if (variant == null) variant = "";
 		numPlayers = GameManager.getNumberOfPlayers();
 
 		//itemMap = new HashMap();

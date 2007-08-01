@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.8 2007/07/27 22:08:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.9 2007/08/01 21:07:10 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -27,7 +27,7 @@ public abstract class PossibleAction implements Serializable {
     
     protected boolean acted = false;
 
-    protected static final long serialVersionUID = 2L;
+    public static final long serialVersionUID = 2L;
 
 	protected static Logger log = Logger.getLogger(PossibleAction.class.getPackage().getName());
 

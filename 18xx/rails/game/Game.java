@@ -30,6 +30,8 @@ public class Game
 	protected static Bank bank;
 	protected static ArrayList companyList;
 	protected static String name;
+	protected static Element componentManagerElement;
+	protected static String gameFilename;
 
 	protected static Logger log = Logger.getLogger(Game.class.getPackage().getName());
 
@@ -49,25 +51,41 @@ public class Game
 	{
 
 	}
-
-	public static void initialise(String name)
-	{
+	
+	public static void prepare(String name) {
+		
 		Game.name = name;
 		ReportBuffer.add(LocalText.getText("GameIs", name));
-		log.info("========== Start of rails.game " + name + " ==========");
-		String file = "data/" + name + "/Game.xml";
+
+		gameFilename = "data/" + name + "/Game.xml";
 		try
 		{
 			// Have the ComponentManager work through the other rails.game files
-			Element elem = XmlUtils.findElementInFile(file,
+			componentManagerElement = XmlUtils.findElementInFile(gameFilename,
 					ComponentManager.ELEMENT_ID);
-			if (elem == null) {
-				throw new ConfigurationException ("No Game XML element found in file "+file);
+			if (componentManagerElement == null) {
+				throw new ConfigurationException ("No Game XML element found in file "+gameFilename);
 			}
 
-			ComponentManager.configureInstance(name, elem);
+			ComponentManager.configureInstance(name, componentManagerElement);
 
 			componentManager = ComponentManager.getInstance();
+			
+		}
+		catch (Exception e)
+		{
+			log.fatal (LocalText.getText("GameSetupFailed", gameFilename), e);
+		}
+	}
+
+	public static void initialise()
+	{
+		log.info("========== Start of rails.game " + name + " ==========");
+
+		try
+		{
+			// Have the ComponentManager work through the other rails.game files
+			componentManager.finishPreparation();
 
 			bank = (Bank) componentManager.findComponent("Bank");
 			companyManager = (CompanyManagerI) componentManager.findComponent(CompanyManagerI.COMPONENT_NAME);
@@ -85,7 +103,7 @@ public class Game
 		}
 		catch (Exception e)
 		{
-			log.fatal (LocalText.getText("GameSetupFailed", file), e);
+			log.fatal (LocalText.getText("GameSetupFailed", gameFilename), e);
 		}
 		
 		//We need to do this assignment after we've loaded all the XML data. 
