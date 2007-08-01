@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import rails.game.ConfigurationException;
 import rails.game.Game;
 
 
@@ -83,4 +84,16 @@ public final class Util
 			return null;
 		}
 	}
+    
+    public static int parseInt (String value) 
+    throws ConfigurationException {
+        
+        if (!hasValue(value)) return 0;
+        
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            throw new ConfigurationException ("Invalid integer value: "+value, e);
+        }
+    }
 }

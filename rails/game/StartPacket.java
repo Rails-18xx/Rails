@@ -28,7 +28,7 @@ public class StartPacket
 	/** The name of the class that implements the Start Round for this packet. */
 	private String roundClassName;
 	/** The start round variant name */
-	private String variant;
+	//private String variant;
 	/** The start items in this packet. */
 	private List<StartItem> items = new ArrayList<StartItem>();
 
@@ -48,7 +48,8 @@ public class StartPacket
 	{
 		this.name = Util.hasValue(name) ? name : DEFAULT_NAME;
 		this.roundClassName = roundClassName;
-		this.variant = GameManager.getVariant();
+		//this.variant = GameManager.getVariant();
+        //this.variant = GameManager.getGameOption(GameManager.VARIANT_KEY);
 		packets.put(name, this);
 	}
 
@@ -262,10 +263,12 @@ public class StartPacket
 		return roundClassName;
 	}
 
+    /*
 	public String getVariant()
 	{
 		return variant;
 	}
+    */
 	
 	public int getNumberOfItems () {
 		return items.size();

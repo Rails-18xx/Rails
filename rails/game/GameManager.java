@@ -25,6 +25,13 @@ import org.w3c.dom.*;
  */
 public class GameManager implements ConfigurableComponentI
 {
+    /** Version ID of the Save file header, as written in save() */
+    private static final long saveFileHeaderVersionID = 2L;
+    /** Overall save file version ID, taking into account the
+     * version ID of the action package.
+     */
+    public static final long saveFileVersionID 
+            = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
 
 	protected static Player[] players;
 	protected static int numberOfPlayers;
@@ -76,20 +83,31 @@ public class GameManager implements ConfigurableComponentI
 
 	/*----- Default variant -----*/
 	/* Others will always be configured per rails.game */
-	public static final String STANDARD = "Standard";
+	//public static final String STANDARD = "Standard";
 
 	/** Start round variant, can be used where applicable */
-	protected static String variant = STANDARD;
+	//protected static String variant = STANDARD;
 
 	/** A Map of variant names */
-	protected static List<String> lVariants = new ArrayList<String>();
+	//protected static List<String> lVariants = new ArrayList<String>();
 	//protected static Map mVariants = new HashMap();
+    
+	/** A List of available game options */
+	protected static List<GameOption> availableGameOptions = new ArrayList<GameOption>();
+    /** A Map of selected game options (variant included via "variant" keyword) */
+    protected static Map<String, String> selectedGameOptions = new HashMap<String, String>();
+    
+    /* Some standard tags for conditional attributes */
+    public static final String VARIANT_KEY = "Variant";
+    public static final String OPTION_TAG = "GameOption";
+    public static final String IF_OPTION_TAG = "IfOption";
+    public static final String ATTRIBUTES_TAG = "Attributes";
 
 	protected static Logger log = Logger.getLogger(GameManager.class.getPackage().getName());
 
 	static
 	{
-		addVariant(STANDARD);
+		//addVariant(STANDARD);
 	}
 
 	/**
@@ -112,7 +130,8 @@ public class GameManager implements ConfigurableComponentI
 		name = XmlUtils.extractStringAttribute(nnp, "name");
 
 		/* Get any variant names */
-		NodeList nl = el.getElementsByTagName("Variant");
+        /*
+		NodeList nl = el.getElementsByTagName(VARIANT_TAG);
 		String varName;
 		for (int i = 0; i < nl.getLength(); i++)
 		{
@@ -122,6 +141,28 @@ public class GameManager implements ConfigurableComponentI
 			if (varName != null)
 				addVariant(varName);
 		}
+        */
+
+		// Get any available game options
+        NodeList nl = el.getElementsByTagName(OPTION_TAG);
+		GameOption option;
+		String optionName, optionType, optionValues, optionDefault;
+		for (int i = 0; i < nl.getLength(); i++)
+		{
+			element = (Element) nl.item(i);
+			Map<String, String> attrs = XmlUtils.getAllAttributes(element);
+			optionName = attrs.get("name");
+			if (optionName == null) throw new ConfigurationException ("GameOption without name");
+			option = new GameOption (optionName);
+			availableGameOptions.add (option);
+			optionType = attrs.get("type");
+			if (optionType != null) option.setType (optionType);
+			optionValues = attrs.get("values");
+			if (optionValues != null) option.setAllowedValues(optionValues.split(","));
+			optionDefault = attrs.get("default");
+			if (optionDefault != null) option.setDefaultValue(optionDefault);
+		}
+		
 
 		/* Max. % of shares of one company that a player may hold */
 		element = (Element) el.getElementsByTagName("PlayerShareLimit").item(0);
@@ -149,7 +190,7 @@ public class GameManager implements ConfigurableComponentI
 			Element el2;
 			nl = element.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++)
-			{
+		{
 				if (!(nl.item(i) instanceof Element))
 					continue;
 				el2 = (Element) nl.item(i);
@@ -195,6 +236,9 @@ public class GameManager implements ConfigurableComponentI
 		{
 			startStockRound();
 		}
+		
+		// Initialisation is complete. Undoability starts here.
+		MoveSet.enable();
 	}
 
 	/**
@@ -412,8 +456,9 @@ public class GameManager implements ConfigurableComponentI
         try {
             ObjectOutputStream oos = new ObjectOutputStream (
                     new FileOutputStream (new File (filepath)));
+            oos.writeObject(saveFileVersionID);
             oos.writeObject(name);
-            oos.writeObject(variant);
+            oos.writeObject(selectedGameOptions);
             oos.writeObject(numberOfPlayers);
             for (int i=0; i<numberOfPlayers; i++) {
                 oos.writeObject(players[i].getName());
@@ -438,8 +483,13 @@ public class GameManager implements ConfigurableComponentI
         try {
             ObjectInputStream ois = new ObjectInputStream (
                     new FileInputStream (new File (filepath)));
+            long versionID = (Long) ois.readObject();
+            if (versionID != saveFileVersionID) {
+                throw new Exception ("Save version "+versionID
+                        +" is incompatible with current version "+saveFileVersionID);
+            }
             name = (String) ois.readObject();
-            variant = (String) ois.readObject();
+            selectedGameOptions = (Map<String, String>) ois.readObject();
             numberOfPlayers = (Integer) ois.readObject();
             List<String> playerNames = new ArrayList<String>();
             for (int i=0; i<numberOfPlayers; i++) {
@@ -447,8 +497,9 @@ public class GameManager implements ConfigurableComponentI
             }
             
 			Game.getPlayerManager(playerNames);
-			Game.initialise(name);
-			if (Util.hasValue(variant)) setVariant(variant);
+			Game.prepare(name);
+			Game.initialise();
+			//if (Util.hasValue(variant)) setVariant(variant);
 			Player.initPlayers(Game.getPlayerManager().getPlayersArray());
 
             List<PossibleAction> executedActions = (List<PossibleAction>) ois.readObject();
@@ -463,10 +514,7 @@ public class GameManager implements ConfigurableComponentI
             
             result = true;
             
-        } catch (IOException e) {
-            log.error ("Save failed", e);
-            DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             log.error ("Save failed", e);
             DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
         }
@@ -665,10 +713,12 @@ public class GameManager implements ConfigurableComponentI
 	/**
 	 * @return List of variants
 	 */
+    /*
 	public static List<String> getVariants()
 	{
 		return lVariants;
 	}
+    */
 
 	public static String getName()
 	{
@@ -692,6 +742,7 @@ public class GameManager implements ConfigurableComponentI
 		}
 	}
 
+    /*
 	protected static void addVariant(String name)
 	{
 		if (!lVariants.contains(name))
@@ -705,12 +756,28 @@ public class GameManager implements ConfigurableComponentI
 	{
 		return variant;
 	}
+    */
+    
+    public static void setGameOption (String name, String value) {
+        selectedGameOptions.put(name, value);
+        //if (name.equalsIgnoreCase("Variant")) variant = value;
+    }
+    
+    public static String getGameOption (String name) {
+        return selectedGameOptions.get(name);
+    }
+    
+    public static List<GameOption> getAvailableOptions () {
+    	return availableGameOptions;
+    }
 
+    /*
 	public static void setVariant(String variant)
 	{
 		if (existVariant(variant))
 		{
 			GameManager.variant = variant;
+            selectedGameOptions.put(VARIANT_KEY, name);
 			ReportBuffer.add(LocalText.getText("VariantIs",  variant));
 			log.info ("Game variant is "+variant);
 		} else {
@@ -718,12 +785,14 @@ public class GameManager implements ConfigurableComponentI
 		}
 	}
 
+
 	public static boolean existVariant(String variant)
 	{
 		//return mVariants.containsKey(variant);
 		return lVariants.contains(variant);
 	}
-
+    */
+    
 	private Object instantiate(String className)
 	{
 		try

@@ -2,6 +2,17 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1830"/>
+		<!-- GAME OPTIONS must have:
+			- a name, which must also exist as an entry in LocalText.properties,
+			- optionally 'type="toggle"', which has the effect that the
+			  selection uses a checkbox instead of a dropdown list.
+			  In this case, 'values' must be absent 
+			  (the allowed values are fixed to "yes,no").
+			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
+			- optionally, a default value (only affects a toggle;
+			  in a dropdown the first item is always the default).
+		-->
+		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
     <EndOfGame>
@@ -43,8 +54,17 @@
 		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
 			rustedTrain="2"/>
 		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
-		<Train name="6" majorStops="6" cost="630" amount="2" startPhase="6" 
-			rustedTrain="3" releasedTrain="D"/>
+		<!--Train name="6" majorStops="6" cost="630" amount="2" startPhase="6" 
+			rustedTrain="3" releasedTrain="D"/-->
+	    <Train name="6" majorStops="6" cost="630" startPhase="6" 
+				rustedTrain="3" releasedTrain="D">
+			<IfOption name="WithOptional6Train" value="yes">
+				<Attributes amount="3"/>
+			</IfOption>
+			<IfOption name="WithOptional6Train" value="no">
+				<Attributes amount="2"/>
+			</IfOption>
+		</Train>
 		<Train name="D" majorStops="99" cost="1100" amount="6" startPhase="D" 
 			rustedTrain="4">
 			<ExchangeFirst cost="800"/>

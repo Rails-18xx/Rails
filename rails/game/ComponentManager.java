@@ -36,6 +36,8 @@ public class ComponentManager
 
 	/** The name of the XML attribute for the component's configuration file. */
 	public static final String COMPONENT_FILE_TAG = "file";
+	
+	private NodeList components; 
 
 	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
 
@@ -55,89 +57,116 @@ public class ComponentManager
 		{
 			throw new ConfigurationException(LocalText.getText("ComponentManagerNotReconfigured"));
 		}
-		instance = new ComponentManager(gameName, element);
+		new ComponentManager(gameName, element);
 	}
 
 	private ComponentManager(String gameName, Element element)
 			throws ConfigurationException
 	{
+		instance = this;
+		
 		ComponentManager.gameName = gameName;
-		NodeList children = element.getElementsByTagName(COMPONENT_ELEMENT_ID);
-		for (int i = 0; i < children.getLength(); i++)
+		components = element.getElementsByTagName(COMPONENT_ELEMENT_ID);
+		for (int i = 0; i < components.getLength(); i++)
 		{
-			Element compElement = (Element) children.item(i);
-			NamedNodeMap nnp = compElement.getAttributes();
-
-			// Extract the attributes of the Component
-			String name = XmlUtils.extractStringAttribute(nnp,
-					COMPONENT_NAME_TAG);
-			if (name == null)
-			{
-				throw new ConfigurationException(LocalText.getText("UnnamedComponent"));
+			Element compElement = (Element) components.item(i);
+			String compName = compElement.getAttribute("name");
+			log.debug("Found component "+compName);
+			if (compName.equalsIgnoreCase("GameManager")) {
+				configureComponent (compElement);
+				break;
 			}
-			String clazz = XmlUtils.extractStringAttribute(nnp,
-					COMPONENT_CLASS_TAG);
-			if (name == null)
-			{
-				throw new ConfigurationException(
-				        LocalText.getText("ComponentHasNoClass", name));
-			}
-			String file = XmlUtils.extractStringAttribute(nnp,
-					COMPONENT_FILE_TAG);
-			String filePath = "data/" + gameName + "/" + file;
-
-			// Only one component per name.
-			if (mComponentMap.get(name) != null)
-			{
-				throw new ConfigurationException(LocalText.getText("ComponentConfiguredTwice", name));
-			}
-
-			// Now construct the component
-			ConfigurableComponentI component;
-			try
-			{
-				Class compClass;
-				compClass = Class.forName(clazz);
-				Constructor compCons = compClass.getConstructor(new Class[0]);
-				component = (ConfigurableComponentI) compCons.newInstance(new Object[0]);
-			}
-			catch (Exception ex)
-			{
-				// Not great to catch Exception, but there are MANY things that
-				// could go wrong
-				// here, and they all just mean that the configuration and code
-				// do not between
-				// them make a well-formed system. Debugging aided by chaining
-				// the caught exception.
-				throw new ConfigurationException(
-				        LocalText.getText("ComponentHasNoClass", clazz), ex);
-				
-			}
-
-			// Configure the component, from a file, or the embedded XML.
-			Element configElement = compElement;
-			if (file != null)
-			{
-				configElement = XmlUtils.findElementInFile(filePath, name);
-			}
-
-			try
-			{
-				component.configureFromXML(configElement);
-			}
-			catch (ConfigurationException e)
-			{
-				// Temporarily allow components to be incompletely configured.
-				log.warn(LocalText.getText("AcceptingConfigFailure"), e);
-			}
-
-			// Add it to the map of known components.
-			mComponentMap.put(name, component);
-			log.debug (LocalText.getText("ComponentInitAs", new String[] {
-			        name,
-			        clazz
-			}));
 		}
+	}
+	
+	public synchronized void finishPreparation ()
+	throws ConfigurationException {
+		
+		for (int i = 0; i < components.getLength(); i++)
+		{
+			Element compElement = (Element) components.item(i);
+			String compName = compElement.getAttribute("name");
+			if (compName.equalsIgnoreCase("GameManager")) continue;
+			log.debug("Found component "+compName);
+			configureComponent (compElement);
+		}
+	}
+	
+	private static void configureComponent (Element compElement) 
+	throws ConfigurationException {
+		
+		NamedNodeMap nnp = compElement.getAttributes();
+
+		// Extract the attributes of the Component
+		String name = XmlUtils.extractStringAttribute(nnp,
+				COMPONENT_NAME_TAG);
+		if (name == null)
+		{
+			throw new ConfigurationException(LocalText.getText("UnnamedComponent"));
+		}
+		String clazz = XmlUtils.extractStringAttribute(nnp,
+				COMPONENT_CLASS_TAG);
+		if (name == null)
+		{
+			throw new ConfigurationException(
+			        LocalText.getText("ComponentHasNoClass", name));
+		}
+		String file = XmlUtils.extractStringAttribute(nnp,
+				COMPONENT_FILE_TAG);
+		String filePath = "data/" + gameName + "/" + file;
+
+		// Only one component per name.
+		if (instance.mComponentMap.get(name) != null)
+		{
+			throw new ConfigurationException(LocalText.getText("ComponentConfiguredTwice", name));
+		}
+
+		// Now construct the component
+		ConfigurableComponentI component;
+		try
+		{
+			Class compClass;
+			compClass = Class.forName(clazz);
+			Constructor compCons = compClass.getConstructor(new Class[0]);
+			component = (ConfigurableComponentI) compCons.newInstance(new Object[0]);
+		}
+		catch (Exception ex)
+		{
+			// Not great to catch Exception, but there are MANY things that
+			// could go wrong
+			// here, and they all just mean that the configuration and code
+			// do not between
+			// them make a well-formed system. Debugging aided by chaining
+			// the caught exception.
+			throw new ConfigurationException(
+			        LocalText.getText("ComponentHasNoClass", clazz), ex);
+			
+		}
+
+		// Configure the component, from a file, or the embedded XML.
+		Element configElement = compElement;
+		if (file != null)
+		{
+			configElement = XmlUtils.findElementInFile(filePath, name);
+		}
+
+		try
+		{
+			component.configureFromXML(configElement);
+		}
+		catch (ConfigurationException e)
+		{
+			// Temporarily allow components to be incompletely configured.
+			log.warn(LocalText.getText("AcceptingConfigFailure"), e);
+		}
+
+		// Add it to the map of known components.
+		instance.mComponentMap.put(name, component);
+		log.debug (LocalText.getText("ComponentInitAs", new String[] {
+		        name,
+		        clazz
+		}));
+
 	}
 
 	/**
@@ -152,7 +181,6 @@ public class ComponentManager
 		return (ConfigurableComponentI) mComponentMap.get(componentName);
 	}
 
-	/** Remember our singleton instance. */
 	private Map<String, ConfigurableComponentI> mComponentMap 
 		= new HashMap<String, ConfigurableComponentI>();
 
