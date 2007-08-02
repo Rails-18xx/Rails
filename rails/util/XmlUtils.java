@@ -247,7 +247,7 @@ public final class XmlUtils {
      * @throws ConfigurationException if there is any problem opening and parsing the file, or
      * if the file does not contain a top level element with the given name.
      */
-    public static Element findElementInFile(String fileName, List directories, String elementName) throws ConfigurationException
+    public static Element findElementInFile(String filename, List directories, String elementName) throws ConfigurationException
     {
         Document doc = null;
         try {
@@ -258,7 +258,7 @@ public final class XmlUtils {
             DocumentBuilder db = dbf.newDocumentBuilder();
             
             // Step 3: parse the input file to get a Document object
-            doc = db.parse(Util.getStreamForFile(fileName, directories));
+            doc = db.parse(ResourceLoader.getInputStream(filename, directories));
             /*
             File theFile = new File(fileName);
             
@@ -286,18 +286,18 @@ public final class XmlUtils {
             }
             */
          } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName
+            throw new ConfigurationException("Could not read/parse " + filename
                     + " to find element " + elementName, e);
         } catch (SAXException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName
+            throw new ConfigurationException("Could not read/parse " + filename
                     + " to find element " + elementName, e);
         } catch (IOException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName
+            throw new ConfigurationException("Could not read/parse " + filename
                     + " to find element " + elementName, e);
         }
         
         if (doc == null) {
-            throw new ConfigurationException ("Cannot find file "+ fileName);
+            throw new ConfigurationException ("Cannot find file "+ filename);
         }
     
         // Now find the named Element
@@ -312,6 +312,6 @@ public final class XmlUtils {
                 return (Element) childNode;
             }
         }
-        throw new ConfigurationException("Could not find " + elementName + " in " + fileName);
+        throw new ConfigurationException("Could not find " + elementName + " in " + filename);
     }
 }

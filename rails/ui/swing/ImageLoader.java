@@ -1,7 +1,6 @@
  package rails.ui.swing;
 
 import java.awt.image.*;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 
@@ -105,7 +104,7 @@ public class ImageLoader {
 		BufferedImage image = null;
 
 		try {
-			InputStream stream = Util.getStreamForFile(fn, directories);
+			InputStream stream = ResourceLoader.getInputStream(fn, directories);
 			if (stream != null) {
 				BufferedImageTranscoder t = new BufferedImageTranscoder();
 				t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(
@@ -133,7 +132,7 @@ public class ImageLoader {
 
 		try {
 
-			InputStream str = Util.getStreamForFile(fn, directories);
+			InputStream str = ResourceLoader.getInputStream(fn, directories);
 			if (str != null) {
 				image = ImageIO.read(str);
 			}
