@@ -37,9 +37,7 @@ public class ComponentManager
 	public static final String COMPONENT_FILE_TAG = "file";
 	
 	private NodeList components; 
-
 	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
-	
 	protected static List <String> directories = new ArrayList<String>();
 
 	public static ComponentManager getInstance() throws ConfigurationException

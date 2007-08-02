@@ -14,11 +14,6 @@ import rails.util.*;
 
 import java.util.*;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.*;
 
 /**
  * The Options dialog window displays the first window presented to the user.

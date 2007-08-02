@@ -1,12 +1,6 @@
 package rails.util;
 
-
-import java.io.InputStream;
-import java.util.*;
 import rails.game.ConfigurationException;
-
-import rails.game.ConfigurationException;
-import rails.game.Game;
 
 public final class Util
 {
@@ -47,19 +41,6 @@ public final class Util
 	
 	public static String getClassShortName (Object object) {
 	    return object.getClass().getName().replaceAll(".*\\.", "");
-	}
-
-	/**
-	 * Open an input stream from a file, which may exist as a physical file or
-	 * in a JAR file. The name must be valid for both options.
-	 * 
-	 * @author Erik Vos
-	 * @deprecated
-	 */
-	public static InputStream getStreamForFile(String filename, List directories)
-	{
-		InputStream is = ResourceLoader.getInputStream(filename, directories);
-		return is;
 	}
 
     public static int parseInt (String value) 
