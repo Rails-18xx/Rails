@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
- * Round. Currently everything is hardcoded à la 1830.
+ * Round. Currently everything is hardcoded ï¿½ la 1830.
  */
 public class GameManager implements ConfigurableComponentI
 {
