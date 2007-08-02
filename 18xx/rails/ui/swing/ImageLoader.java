@@ -1,6 +1,7 @@
-package rails.ui.swing;
+ package rails.ui.swing;
 
 import java.awt.image.*;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 
@@ -24,10 +25,11 @@ public class ImageLoader {
 
 	private static int svgWidth = 60;
 	private static int svgHeight = 55;
-	private static String svgTileDir = "tiles/svg/";
-	private static String gifTileDir = "tiles/images/";
+	private static String svgTileDir = "tiles/svg";
+	private static String gifTileDir = "tiles/images";
 	private static String tileRootDir = Config.get("tile.root_directory");
 	private static String preference = Config.get("tile.format_preference");
+	private static ArrayList <String> directories = new ArrayList<String>();
 
 	static {
 		GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
@@ -63,7 +65,16 @@ public class ImageLoader {
 
 	private void loadTile(int tileID) {
 		BufferedImage image = null;
+/*
+		Image img = ResourceLoader.getImage("tile" + tileID, directories, svgWidth, svgHeight);
+		
+		try {
+			image = ResourceLoader.toBufferedImage(img);
+		} catch (NullPointerException e) {
+			log.error("Unable to load tile" +tileID + ": " + e);
+		}
 
+*/
 		if (preference.equalsIgnoreCase("gif")) {
 
 			image = getGIFTile(tileID);
@@ -94,8 +105,7 @@ public class ImageLoader {
 		BufferedImage image = null;
 
 		try {
-			InputStream stream = Util.getStreamForFile(tileRootDir + svgTileDir
-					+ fn);
+			InputStream stream = Util.getStreamForFile(fn, directories);
 			if (stream != null) {
 				BufferedImageTranscoder t = new BufferedImageTranscoder();
 				t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(
@@ -106,9 +116,6 @@ public class ImageLoader {
 				t.transcode(input, null);
 				image = t.getImage();
 			}
-		} catch (FileNotFoundException e) {
-			log.warn("SVG Tile ID: " + tileID + " not found.");
-			return null;
 		} catch (Exception e) {
 			log.error("SVG transcoding for tile id " + tileID + " failed with "
 					+ e);
@@ -125,14 +132,11 @@ public class ImageLoader {
 		BufferedImage image = null;
 
 		try {
-			InputStream str = Util.getStreamForFile(tileRootDir + gifTileDir
-					+ fn);
+
+			InputStream str = Util.getStreamForFile(fn, directories);
 			if (str != null) {
 				image = ImageIO.read(str);
 			}
-		} catch (FileNotFoundException e) {
-			log.warn("GIF Tile ID: " + tileID + " not found.");
-			return null;
 		} catch (Exception e) {
 			log.error("Error loading file: " + fn + "\nLoad failed with " + e);
 			return null;
@@ -150,6 +154,9 @@ public class ImageLoader {
 
 	public ImageLoader() {
 		tileMap = new HashMap<String, BufferedImage>();
+		directories.add(tileRootDir + svgTileDir);
+		directories.add(tileRootDir + gifTileDir);
+		directories.add(tileRootDir);
 	}
 
 }

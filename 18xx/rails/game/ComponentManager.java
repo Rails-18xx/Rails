@@ -1,8 +1,7 @@
 package rails.game;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
@@ -40,6 +39,8 @@ public class ComponentManager
 	private NodeList components; 
 
 	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
+	
+	protected static List <String> directories = new ArrayList<String>();
 
 	public static ComponentManager getInstance() throws ConfigurationException
 	{
@@ -113,8 +114,7 @@ public class ComponentManager
 		}
 		String file = XmlUtils.extractStringAttribute(nnp,
 				COMPONENT_FILE_TAG);
-		String filePath = "data/" + gameName + "/" + file;
-
+		
 		// Only one component per name.
 		if (instance.mComponentMap.get(name) != null)
 		{
@@ -147,7 +147,8 @@ public class ComponentManager
 		Element configElement = compElement;
 		if (file != null)
 		{
-			configElement = XmlUtils.findElementInFile(filePath, name);
+			directories.add("data/" + gameName);
+			configElement = XmlUtils.findElementInFile(file, directories, name);
 		}
 
 		try

@@ -2,20 +2,14 @@ package rails.util;
 
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType;
-
 import rails.game.ConfigurationException;
-import rails.game.Game;
 import rails.game.GameManager;
 
 /**
@@ -253,7 +247,7 @@ public final class XmlUtils {
      * @throws ConfigurationException if there is any problem opening and parsing the file, or
      * if the file does not contain a top level element with the given name.
      */
-    public static Element findElementInFile(String fileName, String elementName) throws ConfigurationException
+    public static Element findElementInFile(String fileName, List directories, String elementName) throws ConfigurationException
     {
         Document doc = null;
         try {
@@ -264,7 +258,7 @@ public final class XmlUtils {
             DocumentBuilder db = dbf.newDocumentBuilder();
             
             // Step 3: parse the input file to get a Document object
-            doc = db.parse(Util.getStreamForFile(fileName));
+            doc = db.parse(Util.getStreamForFile(fileName, directories));
             /*
             File theFile = new File(fileName);
             

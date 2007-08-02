@@ -14,7 +14,6 @@ import java.util.*;
 public class Game
 {
 	public static final String version = "1.0.3";
-	public static final String jarName = "./rails-" + version + ".jar";
 
 	/**
 	 * Game is a singleton class.
@@ -31,10 +30,12 @@ public class Game
 	protected static ArrayList companyList;
 	protected static String name;
 	protected static Element componentManagerElement;
-	protected static String gameFilename;
+	protected static String gameFilename = "Game.xml";
+	protected static List <String> directories = new ArrayList<String>();
 
 	protected static Logger log = Logger.getLogger(Game.class.getPackage().getName());
 
+	//FIXME: Use game.properties info instead.
 	public static String[] getGames()
 	{
 		File dataDir = new File("./data/");
@@ -49,19 +50,20 @@ public class Game
 	 */
 	protected Game()
 	{
-
+		directories.add("data");
 	}
 	
 	public static void prepare(String name) {
 		
 		Game.name = name;
 		ReportBuffer.add(LocalText.getText("GameIs", name));
+		
+		directories.add("data/" + name);
 
-		gameFilename = "data/" + name + "/Game.xml";
 		try
 		{
 			// Have the ComponentManager work through the other rails.game files
-			componentManagerElement = XmlUtils.findElementInFile(gameFilename,
+			componentManagerElement = XmlUtils.findElementInFile(gameFilename, directories,
 					ComponentManager.ELEMENT_ID);
 			if (componentManagerElement == null) {
 				throw new ConfigurationException ("No Game XML element found in file "+gameFilename);

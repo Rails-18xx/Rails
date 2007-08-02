@@ -1,16 +1,12 @@
 package rails.util;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.util.*;
+import rails.game.ConfigurationException;
 
 import rails.game.ConfigurationException;
 import rails.game.Game;
-
 
 public final class Util
 {
@@ -58,33 +54,14 @@ public final class Util
 	 * in a JAR file. The name must be valid for both options.
 	 * 
 	 * @author Erik Vos
+	 * @deprecated
 	 */
-	public static InputStream getStreamForFile(String fileName)
-			throws IOException
+	public static InputStream getStreamForFile(String filename, List directories)
 	{
-
-		File file = new File(fileName);
-		if (file.exists())
-		{
-			return new FileInputStream(file);
-		}
-		else
-		{
-			// Search in the jar
-			File jarFile = new File(Game.jarName);
-			//JarFile jf = new JarFile(jarFile);
-			JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
-			for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
-			{
-				if (fileName.equals(je.getName()))
-				{
-					return jis;
-				}
-			}
-			return null;
-		}
+		InputStream is = ResourceLoader.getInputStream(filename, directories);
+		return is;
 	}
-    
+
     public static int parseInt (String value) 
     throws ConfigurationException {
         

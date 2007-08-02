@@ -9,15 +9,12 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.ui.swing.GameUIManager;
-import rails.util.Config;
-import rails.util.LocalText;
-import rails.util.Util;
+import rails.util.*;
 
 
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarEntry;
-//import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,7 +113,7 @@ public class Options extends JDialog implements ActionListener
 			}
 		}
 
-		populateGameList(getGameList(), gameNameBox);
+		populateGameList(games.toArray(), gameNameBox);
 
 		optionsPane.add(new JLabel("Game Options"));
 		optionsPane.add(new JLabel(""));
@@ -170,50 +167,14 @@ public class Options extends JDialog implements ActionListener
 		this.getContentPane().add(buttonPane, gc);
 	}
 
-	private String[] getGameList()
+	private void populateGameList(Object[] gameNames, JComboBox gameNameBox)
 	{
-		System.out.println("Working directory is "+System.getProperty("user.dir"));
-		log.debug("Working directory is "+System.getProperty("user.dir"));
-		File dataDir = new File("data/");
-		String[] files = dataDir.list();
-		if (files == null || files.length == 0)
-		{
-			// Search in the jar
-			File jarFile = new File(Game.jarName);
-			try
-			{
-				JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
-				Pattern p = Pattern.compile("data/(\\w+)/Game.xml");
-				Matcher m;
-				List<String> games = new ArrayList<String>();
-				for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry())
-				{
-					m = p.matcher(je.getName());
-					if (m.matches())
-					{
-						// Found a rails.game
-						games.add(m.group(1));
-					}
-				}
-				files = (String[]) games.toArray(new String[0]);
-			}
-			catch (IOException e)
-			{
-			    log.debug ("While opening jar file: " + jarFile, e);
-			}
-		}
-		return files;
-	}
-
-	private void populateGameList(String[] gameNames, JComboBox gameNameBox)
-	{
-		String gameText;
 		Arrays.sort(gameNames);
 		for (int i = 0; i < gameNames.length; i++)
 		{
-			if (!gameNames[i].equalsIgnoreCase("CVS")
-					&& !gameNames[i].startsWith(".")) {
-				gameText = gameNames[i];
+			if(gameNames[i] instanceof String)
+			{
+				String gameText = (String) gameNames[i];
 				if (!games.isEmpty() && !games.contains(gameText)) continue;
 				if (gameNotes.containsKey(gameNames[i])) {
 					gameText += " " + gameNotes.get(gameNames[i]);
@@ -229,7 +190,7 @@ public class Options extends JDialog implements ActionListener
         
         this.gameUIManager = gameUIManager;
 
-        readGameNotes();
+        getGameList();
 		initialize();
 		populateGridBag();
 
@@ -237,7 +198,7 @@ public class Options extends JDialog implements ActionListener
 		this.setVisible(true);
 	}
 	
-	private void readGameNotes() {
+	private void getGameList() {
 		
 		String gameList = Config.get("games");
 		String gameNote, gameDesc;
