@@ -24,7 +24,7 @@ public class Options extends JDialog implements ActionListener
 
 	GridBagConstraints gc;
 	JPanel optionsPane, playersPane, buttonPane;
-	JButton newButton, loadButton, quitButton, okButton;
+	JButton newButton, loadButton, quitButton, optionButton;
 	JComboBox[] playerBoxes;
 	JComboBox gameNameBox;
 	JTextField[] playerNameFields;
@@ -53,13 +53,15 @@ public class Options extends JDialog implements ActionListener
 		playersPane = new JPanel();
 		buttonPane = new JPanel();
 
-		newButton = new JButton("New Game");
-		loadButton = new JButton("Load Game");
-		quitButton = new JButton("Quit");
+		newButton = new JButton(LocalText.getText("NewGame"));
+		loadButton = new JButton(LocalText.getText("LoadGame"));
+		quitButton = new JButton(LocalText.getText("QUIT"));
+        optionButton = new JButton(LocalText.getText("OPTIONS"));
 
 		newButton.setMnemonic(KeyEvent.VK_N);
 		loadButton.setMnemonic(KeyEvent.VK_L);
 		quitButton.setMnemonic(KeyEvent.VK_Q);
+        optionButton.setMnemonic(KeyEvent.VK_O);
 
 		renderer = new BasicComboBoxRenderer();
 		size = new Dimension(50, 30);
@@ -69,7 +71,6 @@ public class Options extends JDialog implements ActionListener
 		playerBoxes = new JComboBox[Player.MAX_PLAYERS];
 		playerNameFields = new JTextField[Player.MAX_PLAYERS];
 
-		this.getContentPane().setLayout(new GridBagLayout());
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setTitle("Rails: New Game");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -122,10 +123,12 @@ public class Options extends JDialog implements ActionListener
 		newButton.addActionListener(this);
 		loadButton.addActionListener(this);
 		quitButton.addActionListener(this);
+        optionButton.addActionListener(this);
 
 		//XXX: Until we can load/save a rails.game, we'll set this to disabled to reduce confusion.
 		loadButton.setEnabled(true);
 		
+        buttonPane.add(optionButton);
 		buttonPane.add(newButton);
 		buttonPane.add(loadButton);
 		buttonPane.add(quitButton);
@@ -211,92 +214,105 @@ public class Options extends JDialog implements ActionListener
 		}
 	}
 
-	public void actionPerformed(ActionEvent arg0)
+	public void actionPerformed(ActionEvent arg0) 
 	{
-        if (optionsStep == 1) {
-            actionPerformed1 (arg0);
-        } else if (optionsStep == 2) {
-            actionPerformed2 (arg0);
-        }
-        if (optionsStep == 3) {
-            finishSetup();
-        }
-    }
-    
-    private void actionPerformed1 (ActionEvent arg0) {
-        
-		if (arg0.getSource().equals(newButton))
+
+		if (arg0.getSource().equals(newButton) 
+    			|| arg0.getSource().equals(optionButton))
 		{
-			ArrayList<String> playerNames = new ArrayList<String>();
+    		if (optionsStep == 1) {
+    			
+    			try
+    			{
+					ArrayList<String> playerNames = new ArrayList<String>();
+		
+					for (int i = 0; i < playerBoxes.length; i++)
+					{
+						if (playerBoxes[i].getSelectedItem()
+								.toString()
+								.equalsIgnoreCase("Human")
+								&& !playerNameFields[i].getText().equals(""))
+						{
+							playerNames.add(playerNameFields[i].getText());
+						}
+					}
+		
+					if (playerNames.size() < Player.MIN_PLAYERS
+							|| playerNames.size() > Player.MAX_PLAYERS)
+					{
+						if (JOptionPane.showConfirmDialog(this,
+								"Not enough players. Continue Anyway?",
+								"Are you sure?",
+								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+						{
+							return;
+						}
+					}
+					gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
+					Game.getPlayerManager(playerNames);
+					Game.prepare(gameName);  // Required to get the game options
+					
+					optionButton.setEnabled(false);
+					loadButton.setEnabled(false);
+	                 // Request game options (new)
+	                availableOptions = GameManager.getAvailableOptions();
+	    		}
+    			catch (NullPointerException e)
+    			{
+    				e.printStackTrace();
+    				JOptionPane.showMessageDialog(this,
+    						"Unable to load selected rails.game. Exiting...");
+    				System.exit(-1);
+    			}
+    		}
 
-			for (int i = 0; i < playerBoxes.length; i++)
-			{
-				if (playerBoxes[i].getSelectedItem()
-						.toString()
-						.equalsIgnoreCase("Human")
-						&& !playerNameFields[i].getText().equals(""))
-				{
-					playerNames.add(playerNameFields[i].getText());
-				}
-			}
-
-			if (playerNames.size() < Player.MIN_PLAYERS
-					|| playerNames.size() > Player.MAX_PLAYERS)
-			{
-				if (JOptionPane.showConfirmDialog(this,
-						"Not enough players. Continue Anyway?",
-						"Are you sure?",
-						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-				{
-					return;
-				}
-			}
-
-			try
-			{
-				this.setVisible(false);
-
-				gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
-				Game.getPlayerManager(playerNames);
-				Game.prepare(gameName);
+			if (arg0.getSource().equals(optionButton)) {
+                requestGameOptions();
+                optionsStep = 2;
+                
+			} else if (arg0.getSource().equals(newButton)) {
 				
-                // Request variant (deprecated)
-                /*
-				List<String> variants = GameManager.getVariants();
-				if (variants != null && variants.size() > 1) {
-				    String variant = (String) JOptionPane.showInputDialog (
-				            this,
-				            LocalText.getText("WHICH_VARIANT", gameName),
-				            "", 
-				            JOptionPane.PLAIN_MESSAGE,
-				            null,
-				            (String[])variants.toArray(new String[0]),
-				            (String)variants.get(0));
-				    if (variant != null) {
-				    	GameManager.setVariant(variant);
-				    } else {
-				    	JOptionPane.showMessageDialog(this, "Null variant selected!??");
-				    }
+				if (optionsStep == 2){
+
+		            GameOption option;
+		            JCheckBox checkbox;
+		            JComboBox dropdown;
+		            String value;
+		            
+		            for (int i=0; i<availableOptions.size(); i++) {
+		                option = availableOptions.get(i);
+		                if (option.isBoolean()) {
+		                    checkbox = (JCheckBox) optionComponents.get(i);
+		                    value = checkbox.isSelected() ? "yes" : "no";
+		                } else {
+		                    dropdown = (JComboBox) optionComponents.get(i);
+		                    value = (String)dropdown.getSelectedItem();
+		                }
+		                GameManager.setGameOption(option.getName(), value);
+		                log.info("Game option "+option.getName()+" set to "+value);
+		            }
+				} else if (optionsStep == 1) {
+					
+					// No options selected: take the defaults
+		            GameOption option;
+		            String value;
+					
+		            for (int i=0; i<availableOptions.size(); i++) {
+		                option = availableOptions.get(i);
+	                    value = option.getDefaultValue();
+		                GameManager.setGameOption(option.getName(), value);
+		                log.info("Game option "+option.getName()+" set to "+value);
+		            }
+
 				}
-                */
-                
-                // Request game options (new)
-                availableOptions = GameManager.getAvailableOptions();
-                if (availableOptions != null && !availableOptions.isEmpty()) {
-                    requestGameOptions();
-                    optionsStep = 2;
-                } else {
-                    optionsStep = 3;
-                }
-                
+		            
+	            optionsStep = 3;
 			}
-			catch (NullPointerException e)
-			{
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this,
-						"Unable to load selected rails.game. Exiting...");
-				System.exit(-1);
-			}
+                
+	        if (optionsStep == 3) {
+	        	setVisible(false);
+	            finishSetup();
+	        }
 
 		}
 
@@ -325,80 +341,43 @@ public class Options extends JDialog implements ActionListener
     
     private void requestGameOptions () {
         
-        getContentPane().removeAll();
-        //getContentPane().setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        //new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
-        Box box = new Box (BoxLayout.Y_AXIS);
-        
-        optionsStep = 2;
         optionComponents = new ArrayList<JComponent>();
-        
-        for (GameOption option : availableOptions) {
-            JPanel panel = new JPanel();
-            if (option.isBoolean()) {
-                JCheckBox checkbox = new JCheckBox (LocalText.getText(option.getName()));
-                if (option.getDefaultValue().equalsIgnoreCase("yes")) {
-                    checkbox.setSelected(true);
-                }
-                panel.add(checkbox);
-                optionComponents.add(checkbox);
-            } else {
-                panel.add (new JLabel (LocalText.getText("Select",
-                        LocalText.getText(option.getName()))));
-                JComboBox dropdown = new JComboBox();
-                for (String value : option.getAllowedValues()) {
-                    dropdown.addItem(value);
-                }
-                panel.add(dropdown);
-                optionComponents.add(dropdown);
-            }
-            panel.setBorder(BorderFactory.createLoweredBevelBorder());
-            //getContentPane().add(panel);
-            box.add(panel);
+ 
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout (panel, BoxLayout.Y_AXIS));
+
+        availableOptions = GameManager.getAvailableOptions();
+        if (availableOptions != null && !availableOptions.isEmpty()) {
+	        for (GameOption option : availableOptions) {
+	            if (option.isBoolean()) {
+	                JCheckBox checkbox = new JCheckBox (LocalText.getText(option.getName()));
+	                if (option.getDefaultValue().equalsIgnoreCase("yes")) {
+	                    checkbox.setSelected(true);
+	                }
+	                panel.add(checkbox);
+	                optionComponents.add(checkbox);
+	            } else {
+	                panel.add (new JLabel (LocalText.getText("Select",
+	                        LocalText.getText(option.getName()))));
+	                JComboBox dropdown = new JComboBox();
+	                for (String value : option.getAllowedValues()) {
+	                    dropdown.addItem(value);
+	                }
+	                panel.add(dropdown);
+	                optionComponents.add(dropdown);
+	            }
+	        }
+        } else {
+        	JLabel label = new JLabel (LocalText.getText("NoGameOptions"));
+        	panel.add(label);
         }
-        JPanel buttonPanel = new JPanel();
-        okButton = new JButton(LocalText.getText(("OK")));
-        okButton.addActionListener(this);
-        buttonPanel.add(okButton);
-        //getContentPane().add(buttonPanel);
-        box.add (buttonPanel);
-        getContentPane().add (box);
-        
+
+        panel.setBorder(BorderFactory.createLoweredBevelBorder());
+        gc.gridy++;
+        getContentPane().add(panel, gc);
+         
         pack();
-        setLocation(200,200);
-        setVisible(true);
     }
 	
-    private void actionPerformed2 (ActionEvent arg0) {
- 
-        log.debug("actionPerformed2 entered");
-        if (arg0.getSource().equals(okButton)) {
-            
-            log.debug("OK button pressed");
-            
-            setVisible (false);
-            
-            GameOption option;
-            JCheckBox checkbox;
-            JComboBox dropdown;
-            String value;
-            
-            for (int i=0; i<availableOptions.size(); i++) {
-                option = availableOptions.get(i);
-                if (option.isBoolean()) {
-                    checkbox = (JCheckBox) optionComponents.get(i);
-                    value = checkbox.isSelected() ? "yes" : "no";
-                } else {
-                    dropdown = (JComboBox) optionComponents.get(i);
-                    value = (String)dropdown.getSelectedItem();
-                }
-                GameManager.setGameOption(option.getName(), value);
-                log.info("Game option "+option.getName()+" set to "+value);
-            }
-            
-        }
-        optionsStep = 3;
-    }
-        
 
 }
