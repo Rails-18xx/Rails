@@ -13,6 +13,7 @@
 			  in a dropdown the first item is always the default).
 		-->
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
+		<GameOption name="UnlimitedDTrains" type="toggle" default="no"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
     <EndOfGame>
@@ -65,8 +66,14 @@
 				<Attributes amount="2"/>
 			</IfOption>
 		</Train>
-		<Train name="D" majorStops="99" cost="1100" amount="6" startPhase="D" 
+		<Train name="D" majorStops="99" cost="1100" startPhase="D" 
 			rustedTrain="4">
+			<IfOption name="UnlimitedDTrains" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedDTrains" value="no">
+				<Attributes amount="6"/>
+			</IfOption>
 			<ExchangeFirst cost="800"/>
 		</Train>
 	</Component>

@@ -63,8 +63,12 @@ public class GameOption {
     public String getDefaultValue () {
         if (defaultValue != null) {
             return defaultValue;
+        } else  if (isBoolean) {
+            return "no";
+        } else if (allowedValues != null && !allowedValues.isEmpty()) {
+        	return allowedValues.get(0);
         } else {
-            return "";
+        	return "";
         }
     }
 
