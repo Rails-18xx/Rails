@@ -248,7 +248,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	            	.append("extra, ")
 	            	.append(((SpecialTokenLay)sp).isFree()?"":"not ")
 	            	.append("free)");
-			        } else if ((location = tokenLay.getLocation()) != null) {
+			    } else if ((location = tokenLay.getLocation()) != null) {
 	                if (normalTokenMessage.length() > 1) {
 	                    normalTokenMessage.append(" ")
 	                    	.append(LocalText.getText("OR"))

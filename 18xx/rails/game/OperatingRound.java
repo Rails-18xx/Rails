@@ -981,7 +981,7 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* For now, we allow one token of the currently operating company */
 	    if (operatingCompany.getNumberOfFreeBaseTokens() > 0) {
-	        currentNormalTokenLays.add (new LayToken ((MapHex)null));
+	        currentNormalTokenLays.add (new LayToken ((List<MapHex>)null));
 	    }
 	    
 	}

@@ -7,7 +7,7 @@ import org.w3c.dom.*;
 
 import rails.util.*;
 
-public class Tile implements TileI, StationHolderI
+public class Tile implements TileI, StationHolderI, TokenHolderI
 {
 
 	private int id;
@@ -19,6 +19,7 @@ public class Tile implements TileI, StationHolderI
 	private List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Station> stations = new ArrayList<Station>();
+    private List<TokenI> tokens;
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
@@ -372,6 +373,24 @@ public class Tile implements TileI, StationHolderI
 		return quantity;
 	}
 	
+    // For non-Station-related tokens
+    public boolean addToken (TokenI token) {
+        return token != null && tokens.add(token);
+    }
+    
+    public boolean removeToken (TokenI token) {
+        return token != null && tokens.remove(token);
+    }
+
+    public List<TokenI> getTokens() {
+        return tokens;
+    }
+
+    public boolean hasTokens() {
+        return ! tokens.isEmpty();
+    }
+    
+
 	protected class Upgrade {
 	    
 	    /** The upgrade tile */
@@ -418,7 +437,7 @@ public class Tile implements TileI, StationHolderI
 	    
 	    private void convertHexString () {
 	        
-	        boolean allowed = !hexes.startsWith("!");
+	        boolean allowed = !hexes.startsWith("-");
 	        if (!allowed) hexes = hexes.substring(1);
 	        String[] hexArray = hexes.split(",");
 	        MapHex hex;

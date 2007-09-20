@@ -9,39 +9,54 @@
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
-	<Trains number="4,4,3,2"/>
+		<Trains number="4,4,3,2"/>
 	</CompanyType>
 	<Company name="Tusc" type="Private" basePrice="20" revenue="5"/>
-	<Company name="S&amp;NA" type="Private" basePrice="40" revenue="10"/>
-	<Company name="B&amp;SLC" type="Private" basePrice="70" revenue="15"/>
+	<Company name="S&amp;NA" type="Private" basePrice="40" revenue="10">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" 
+				when="anyTimeDuringORTurn" 
+				class="rails.game.special.SpecialTokenLay">
+				<SpecialTokenLay class="rails.game.BonusToken" value="10" 
+					location="E6,G4,G6,H3,H5" connected="yes" extra="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B&amp;SLC" type="Private" basePrice="70" revenue="15">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" 
+				class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay tile="445" location="G2,M2,N5,O4,P5" 
+					connected="no" free="yes" extra="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
 	<Company name="M&amp;C" type="Private" basePrice="100" revenue="20"/>
 	<Company name="NDY" type="Private" basePrice="120" revenue="20"/>
-  
-	<Company name="WRA" type="Public" fgColour="000000" bgColour="FF8000">
-    <Home hex="L5"/>
-    <Destination hex="J7"/>
+	<Company name="WRA" type="Public" tokens="4" fgColour="000000" bgColour="FF8000">
+		<Home hex="L5"/>
+		<Destination hex="J7"/>
 	</Company>
-	<Company name="TAG" type="Public" fgColour="FFFFFF" bgColour="800080">
-    <Home hex="E6"/>
-    <Destination hex="G4"/>
+	<Company name="TAG" type="Public" tokens="2" fgColour="FFFFFF" bgColour="800080">
+		<Home hex="E6"/>
+		<Destination hex="G4"/>
 	</Company>
-	<Company name="M&amp;O" type="Public" fgColour="000000" bgColour="00FF00">
-    <Home hex="Q2"/>
-    <Destination hex="K2"/>
+	<Company name="M&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="00FF00">
+		<Home hex="Q2"/>
+		<Destination hex="K2"/>
 	</Company>
-	<Company name="ATN" type="Public" fgColour="000000" bgColour="808080">
-    <Home hex="F1"/>
-    <Destination hex="L1"/>
+	<Company name="ATN" type="Public" tokens="3" fgColour="000000" bgColour="808080">
+		<Home hex="F1"/>
+		<Destination hex="L1"/>
 	</Company>
-	<Company name="AB&amp;C" type="Public" fgColour="000000" bgColour="FFFF00">
-    <Home hex="G6"/>
-    <Destination hex="G4"/>
+	<Company name="AB&amp;C" type="Public" tokens="2" fgColour="000000" bgColour="FFFF00">
+		<Home hex="G6"/>
+		<Destination hex="G4"/>
 	</Company>
-	<Company name="L&amp;N" type="Public" fgColour="000000" bgColour="FF0000">
-    <Home hex="A4"/>
-    <Destination hex="G4"/>
+	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000" bgColour="FF0000">
+		<Home hex="A4"/>
+		<Destination hex="G4"/>
 	</Company>
-  
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Item name="Tusc" type="Private" basePrice="20"/>
 		<Item name="S&amp;NA" type="Private" basePrice="40"/>

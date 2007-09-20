@@ -25,9 +25,10 @@ import org.apache.log4j.Logger;
 public class StartRoundWindow extends JFrame 
 implements ActionListener, KeyListener, ActionPerformer
 {
-
+    // Gap sizes between screen cells, in pixels
 	private static final int NARROW_GAP = 1;
 	private static final int WIDE_GAP = 3;
+    // Bits for specifying where to apply wide gaps
 	private static final int WIDE_LEFT = 1;
 	private static final int WIDE_RIGHT = 2;
 	private static final int WIDE_TOP = 4;
