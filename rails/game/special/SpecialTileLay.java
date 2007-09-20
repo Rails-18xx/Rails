@@ -1,6 +1,9 @@
 package rails.game.special;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.*;
 
 import rails.game.*;
@@ -11,13 +14,14 @@ import rails.util.XmlUtils;
 public class SpecialTileLay extends SpecialORProperty
 {
 
-	String locationCode = null;
-	MapHex location = null;
+	String locationCodes = null;
+	List<MapHex> locations = null;
 	boolean extra = false;
 	boolean free = false;
 
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
+		super.configureFromXML (element);
 
 		NodeList nl = element.getElementsByTagName("SpecialTileLay");
 		if (nl == null || nl.getLength() == 0)
@@ -27,13 +31,19 @@ public class SpecialTileLay extends SpecialORProperty
 		Element stlEl = (Element) nl.item(0);
 
 		NamedNodeMap nnp = stlEl.getAttributes();
-		locationCode = XmlUtils.extractStringAttribute(nnp, "location");
-		if (!Util.hasValue(locationCode))
+		locationCodes = XmlUtils.extractStringAttribute(nnp, "location");
+		if (!Util.hasValue(locationCodes))
 			throw new ConfigurationException("SpecialTileLay: location missing");
-		location = MapManager.getInstance().getHex(locationCode);
-		if (location == null)
-			throw new ConfigurationException("Location " + locationCode
-					+ " does not exist");
+        MapManager mmgr = MapManager.getInstance();
+        MapHex hex;
+        locations = new ArrayList<MapHex>();
+        for (String hexName : locationCodes.split(",")) {
+            hex = mmgr.getHex(hexName);
+            if (hex == null)
+                throw new ConfigurationException("Location " + hexName
+                        + " does not exist");
+            locations.add (hex);
+        }
 
 		extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
 		free = XmlUtils.extractBooleanAttribute(nnp,
@@ -54,13 +64,23 @@ public class SpecialTileLay extends SpecialORProperty
 		return free;
 	}
 
-	public MapHex getLocation()
-	{
-		return location;
-	}
+    /** @deprecated */
+    public MapHex getLocation()
+    {
+        if (locations != null) {
+            return locations.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    public List<MapHex> getLocations () {
+        return locations;
+    }
+    
 	
 	public String toString() {
-	    return "SpecialTileLay comp="+privateCompany.getName()+" hex="+locationCode+" extra="+extra+" cost="+free;
+	    return "SpecialTileLay comp="+privateCompany.getName()+" hex="+locationCodes+" extra="+extra+" cost="+free;
 	}
 
 }

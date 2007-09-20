@@ -3,8 +3,13 @@ package rails.game.special;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+
 import rails.game.*;
 import rails.game.state.BooleanState;
+import rails.util.Util;
+import rails.util.XmlUtils;
 
 public abstract class SpecialProperty implements SpecialPropertyI
 {
@@ -16,6 +21,10 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
 	protected boolean usableIfOwnedByCompany = false;
+	protected boolean closeIfExercised = false;
+	
+	protected String conditionText = "";
+	protected String whenText = "";
 	
 	protected int uniqueId;
 	
@@ -28,6 +37,24 @@ public abstract class SpecialProperty implements SpecialPropertyI
                 false);
 		uniqueId = ++lastIndex;
 		spMap.put(uniqueId, this);
+	}
+	
+	public void configureFromXML(Element element) throws ConfigurationException {
+		
+		NamedNodeMap nnp = element.getAttributes();
+		closeIfExercised = XmlUtils.extractBooleanAttribute (
+			nnp, "closeIfExercised", closeIfExercised);
+		
+		conditionText = XmlUtils.extractStringAttribute(nnp, "condition");
+		if (!Util.hasValue(conditionText))
+			throw new ConfigurationException("Missing condition in private special property");
+		setUsableIfOwnedByPlayer(conditionText.matches("(?i).*ifOwnedByPlayer.*"));
+		setUsableIfOwnedByCompany(conditionText.matches("(?i).*ifOwnedByCompany.*"));
+		
+		whenText = XmlUtils.extractStringAttribute(nnp, "when");
+		if (!Util.hasValue(whenText))
+			throw new ConfigurationException("Missing condition in private special property");
+		// to be interpreted...
 	}
 	
 	public int getUniqueId () {
@@ -82,6 +109,10 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	public boolean isExercised()
 	{
 		return exercised.booleanValue();
+	}
+
+	public boolean closesIfExercised() {
+		return closeIfExercised;
 	}
 
 	public int getClosingValue()

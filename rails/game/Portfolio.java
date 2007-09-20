@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.11 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.12 2007/09/20 19:49:26 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -782,25 +782,15 @@ public class Portfolio
 		{
 		    log.debug ("Updating special properties of "+getName());
 			specialProperties.clear();
-			//Iterator it = privateCompanies.iterator();
-			//Iterator it2;
-			//PrivateCompanyI priv;
 			List<SpecialPropertyI> sps;
-			//SpecialPropertyI sp;
-			//Class clazz;
-			//List list;
-			//while (it.hasNext())
+
 			for (PrivateCompanyI priv : privateCompanies)
 			{
-				//priv = (PrivateCompanyI) it.next();
 				sps = priv.getSpecialProperties();
 				if (sps == null)
 					continue;
-				//it2 = sps.iterator();
-				//while (it2.hasNext())
 				for (SpecialPropertyI sp : sps)
 				{
-					//sp = (SpecialPropertyI) it2.next();
 					if (sp.isExercised())
 						continue;
 					log.debug ("For "+name+" found spec.prop "+sp);

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.5 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.6 2007/09/20 19:49:27 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -24,7 +24,7 @@ public class LayTile extends PossibleORAction {
     
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
-    public final static int LOCATION_SPECIFIC = 1; // Valis hex and allowed tiles 
+    public final static int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles 
     public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
     
     protected int type = 0;
@@ -32,8 +32,8 @@ public class LayTile extends PossibleORAction {
     /*--- Preconditions ---*/
     
     /** Where to lay a tile (null means anywhere) */
-    transient private MapHex location = null;
-    private String locationName;
+    transient private List<MapHex> locations = null;
+    private String locationNames;
     
     /** Highest tile colour (empty means unspecified) */
     private Map<String, Integer> tileColours = null;
@@ -63,10 +63,10 @@ public class LayTile extends PossibleORAction {
     /**
      * Allow laying a tile on a given location.
      */
-    public LayTile(MapHex location, List<TileI> tiles) {
+    public LayTile(List<MapHex> locations, List<TileI> tiles) {
         type = LOCATION_SPECIFIC;
-        this.location = location;
-        if (location != null) this.locationName = location.getName();
+        this.locations = locations;
+        if (locations != null) buildLocationNameString();
         setTiles (tiles);
     }
     
@@ -77,8 +77,8 @@ public class LayTile extends PossibleORAction {
     
      public LayTile (SpecialTileLay specialProperty) {
         type = SPECIAL_PROPERTY;
-        this.location = specialProperty.getLocation();
-        if (location != null) this.locationName = this.location.getName();
+        this.locations = specialProperty.getLocations();
+        if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
         if (specialProperty != null) this.specialPropertyId = specialProperty.getUniqueId();
     }
@@ -149,11 +149,21 @@ public class LayTile extends PossibleORAction {
         }
     }
     /**
-     * @return Returns the location.
-     */
-    public MapHex getLocation() {
-        return location;
-    }
+     * @deprecated
+      * @return Returns the location.
+      */
+     public MapHex getLocation() {
+         if (locations != null) {
+             return locations.get(0);
+         } else {
+             return null;
+         }
+     }
+     
+     public List<MapHex> getLocations() {
+         return locations;
+     }
+     
     
     public int getType () {
         return type;
@@ -175,7 +185,8 @@ public class LayTile extends PossibleORAction {
     public boolean equals (PossibleAction action) {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
-        return a.location == location
+        return (a.locationNames == null && locationNames == null
+                || a.locationNames.equals(locationNames))
             && a.type == type
             && a.tileColours == tileColours
             && a.tiles == tiles
@@ -186,7 +197,7 @@ public class LayTile extends PossibleORAction {
         StringBuffer b = new StringBuffer("LayTile");
         if (laidTile == null) {
 	        b.append(" type=").append(type);
-	        if (location != null) b.append(" location=").append(location);
+	        if (locations != null) b.append(" location=").append(locationNames);
 	        if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);
 	        if (tileColours != null && !tileColours.isEmpty()) {
 	            String key;
@@ -211,8 +222,13 @@ public class LayTile extends PossibleORAction {
 
 		in.defaultReadObject();
 		
-		location = MapManager.getInstance().getHex(locationName);
-		if (tileIds != null
+        MapManager mmgr = MapManager.getInstance();
+        locations = new ArrayList<MapHex>();
+        for (String hexName : locationNames.split(",")) {
+            locations.add(mmgr.getHex(hexName));
+        }
+
+        if (tileIds != null
 				&& tileIds.length > 0) {
 			tiles = new ArrayList<TileI>();
 			for (int i=0; i<tileIds.length; i++) {
@@ -230,4 +246,12 @@ public class LayTile extends PossibleORAction {
 		}
 	}
 
+    private void buildLocationNameString () {
+        StringBuffer b = new StringBuffer();
+        for (MapHex hex : locations) {
+            if (b.length() > 0) b.append(",");
+            b.append(hex.getName());
+        }
+        locationNames = b.toString();
+    }
 }

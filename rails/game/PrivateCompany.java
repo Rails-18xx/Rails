@@ -24,6 +24,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	protected List<SpecialPropertyI> specialProperties = null;
 	protected String auctionType;
 	protected int closingPhase;
+	protected boolean closeIfAllExercised = false; // Not yet used
 
 	protected List<MapHex> blockedHexes = null;
 
@@ -76,18 +77,18 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					.item(0);
 			if (spsEl != null)
 			{
+				nnp2 = spsEl.getAttributes();
+				closeIfAllExercised = XmlUtils.extractBooleanAttribute (
+						nnp2, "closeIfAllExercised", closeIfAllExercised);
+				
 				specialProperties = new ArrayList<SpecialPropertyI>();
 				NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
 				Element spEl;
-				String condition, className;
+				String className;
 				for (int i = 0; i < spsNl.getLength(); i++)
 				{
 					spEl = (Element) spsNl.item(i);
 					nnp2 = spEl.getAttributes();
-					condition = XmlUtils.extractStringAttribute(nnp2,
-							"condition");
-					if (!Util.hasValue(condition))
-						throw new ConfigurationException("Missing condition in private special property");
 					className = XmlUtils.extractStringAttribute(nnp2, "class");
 					if (!Util.hasValue(className))
 						throw new ConfigurationException("Missing class in private special property");
@@ -95,8 +96,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					SpecialPropertyI sp = (SpecialPropertyI) Class.forName(className)
 							.newInstance();
 					sp.setCompany(this);
-					sp.setUsableIfOwnedByPlayer(condition.matches("(?i).*ifOwnedByPlayer.*"));
-					sp.setUsableIfOwnedByCompany(condition.matches("(?i).*ifOwnedByCompany.*"));
 					specialProperties.add(sp);
 					sp.configureFromXML(spEl);
 

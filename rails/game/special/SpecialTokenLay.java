@@ -1,6 +1,9 @@
 package rails.game.special;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.*;
 
 import rails.game.*;
@@ -10,14 +13,20 @@ import rails.util.XmlUtils;
 
 public class SpecialTokenLay extends SpecialORProperty
 {
-    /** TODO This is now largely a copy of SpecialTileLay -- need be worked on? */
-	String locationCode = null;
-	MapHex location = null;
+	String locationCodes = null;
+	//MapHex location = null;
+    List<MapHex> locations = null;
 	boolean extra = false;
 	boolean free = false;
+	Class tokenClass;
+	TokenI token = null;
+    int numberAvailable = 1;
+    int numberUsed = 0;
 
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
+		
+		super.configureFromXML (element);
 
 		NodeList nl = element.getElementsByTagName("SpecialTokenLay");
 		if (nl == null || nl.getLength() == 0)
@@ -27,13 +36,19 @@ public class SpecialTokenLay extends SpecialORProperty
 		Element stlEl = (Element) nl.item(0);
 
 		NamedNodeMap nnp = stlEl.getAttributes();
-		locationCode = XmlUtils.extractStringAttribute(nnp, "location");
-		if (!Util.hasValue(locationCode))
+		locationCodes = XmlUtils.extractStringAttribute(nnp, "location");
+		if (!Util.hasValue(locationCodes))
 			throw new ConfigurationException("SpecialTokenLay: location missing");
-		location = MapManager.getInstance().getHex(locationCode);
-		if (location == null)
-			throw new ConfigurationException("Location " + locationCode
-					+ " does not exist");
+        MapManager mmgr = MapManager.getInstance();
+        MapHex hex;
+        locations = new ArrayList<MapHex>();
+        for (String hexName : locationCodes.split(",")) {
+            hex = mmgr.getHex(hexName);
+            if (hex == null)
+                throw new ConfigurationException("Location " + hexName
+                        + " does not exist");
+            locations.add (hex);
+        }
 
 		extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
 		free = XmlUtils.extractBooleanAttribute(nnp,
@@ -42,7 +57,34 @@ public class SpecialTokenLay extends SpecialORProperty
 		closingValue = XmlUtils.extractIntegerAttribute(nnp,
 				"closingValue",
 				closingValue);
+		
+		String tokenClassName = XmlUtils.extractStringAttribute(
+				nnp, "class", "rails.game.BaseToken");
+		try {
+			tokenClass = Class.forName(tokenClassName);
+			if (tokenClass == BonusToken.class) {
+                BonusToken bToken = (BonusToken) tokenClass.newInstance();
+                token = bToken;
+				int value = XmlUtils.extractIntegerAttribute(
+						nnp, "value");
+				if (value <= 0) {
+					throw new ConfigurationException ("Missing or invalid value "+value);
+				}
+                bToken.setValue(value);
+                
+                numberAvailable = XmlUtils.extractIntegerAttribute(
+                        nnp, "number", numberAvailable);
+			}
+		} catch (ClassNotFoundException e) {
+			throw new ConfigurationException ("Unknown class "+tokenClassName, e);
+		} catch (Exception e) {
+			throw new ConfigurationException ("Cannot instantiate class "+tokenClassName, e);
+		}
 	}
+    
+    public int getNumberLeft () {
+        return numberAvailable - numberUsed;
+    }
 
 	public boolean isExtra()
 	{
@@ -54,12 +96,21 @@ public class SpecialTokenLay extends SpecialORProperty
 		return free;
 	}
 
+    /** @deprecated */
 	public MapHex getLocation()
 	{
-		return location;
+        if (locations != null) {
+            return locations.get(0);
+        } else {
+            return null;
+        }
 	}
+    
+    public List<MapHex> getLocations () {
+        return locations;
+    }
 	
 	public String toString() {
-	    return "SpecialTokenLay comp="+privateCompany.getName()+" hex="+locationCode+" extra="+extra+" cost="+free;
+	    return "SpecialTokenLay comp="+privateCompany.getName()+" hex="+locationCodes+" extra="+extra+" cost="+free;
 	}
 }

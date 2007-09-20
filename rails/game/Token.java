@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.1 2007/01/23 21:50:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.2 2007/09/20 19:49:26 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
@@ -11,6 +11,7 @@ package rails.game;
 public abstract class Token implements TokenI {
 
     TokenHolderI holder = null; 
+    String description = "";
     /**
      * 
      */
