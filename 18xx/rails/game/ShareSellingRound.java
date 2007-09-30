@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.6 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.7 2007/09/30 12:55:18 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -120,11 +120,11 @@ log.debug("Creating ShareSellingRound, cash to raise ="+cashToRaise);
 					dumpAllowed = false;
                     if (company != companyNeedingTrain) {
      					int playerShare;
-    					Player[] players = GameManager.getPlayers();
-    					for (int i = 0; i < numberOfPlayers; i++)
+    					List<Player> players = GameManager.getPlayers();
+    					for (Player player : players)
     					{
-    						if (players[i] == currentPlayer) continue;
-    						playerShare = players[i].getPortfolio().getShare(company);
+    						if (player == currentPlayer) continue;
+    						playerShare = player.getPortfolio().getShare(company);
     						if (playerShare	>= presidentShare)
     						{
     							dumpAllowed = true;

@@ -70,23 +70,25 @@ public class Player implements CashHolder, Comparable<Player>
 	 * players. To be called when all Players have been added.
 	 * 
 	 */
-	public static void initPlayers(Player[] players)
+	public static void initPlayers(List<Player> players)
 	{
-		Player player;
-		int numberOfPlayers = players.length;
+		//Player player;
+		int numberOfPlayers = players.size();
 		int startCash = playerStartCash[numberOfPlayers];
 
 		// Give each player the initial cash amount
-		for (int i = 0; i < numberOfPlayers; i++)
+		//for (int i = 0; i < numberOfPlayers; i++)
+		int index = 0;
+		for (Player player : players)
 		{
-			player = (Player) players[i];
-			player.index = i;
+			//player = (Player) players[i];
+			player.index = index++;
 			Bank.transferCash(null, player, startCash);
 			//ReportBuffer.add("Player " + player.getName() + " receives "
 			//		+ Bank.format(startCash) + ". Bank now has "
 			//		+ Bank.getInstance().getFormattedCash());
 			ReportBuffer.add(LocalText.getText("PlayerIs", new String[] {
-					String.valueOf(i+1),
+					String.valueOf(index),
 					player.getName()
 			}));
 		}

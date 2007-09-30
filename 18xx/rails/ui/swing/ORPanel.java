@@ -152,7 +152,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         initButtonPanel();
         gbc = new GridBagConstraints();
 
-        players = Game.getPlayerManager().getPlayersArray();
+        players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
         //np = GameManager.getNumberOfPlayers();
 
         if (round instanceof OperatingRound) {

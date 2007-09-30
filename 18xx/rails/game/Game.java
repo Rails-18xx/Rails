@@ -3,11 +3,13 @@ package rails.game;
 import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 
+import rails.game.action.PossibleAction;
 import rails.util.LocalText;
 import rails.util.XmlUtils;
 
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.*;
 
 
@@ -21,78 +23,80 @@ public class Game
 	protected static Game instance;
 
 	/** The component Manager */
-	protected static ComponentManager componentManager;
-	protected static GameManager gameManager;
-	protected static CompanyManagerI companyManager;
-	protected static PlayerManager playerManager;
-	protected static StockMarketI stockMarket;
-	protected static Bank bank;
-	protected static ArrayList companyList;
-	protected static String name;
-	protected static Element componentManagerElement;
-	protected static String gameFilename = "Game.xml";
-	protected static List <String> directories = new ArrayList<String>();
+	protected /*static*/ ComponentManager componentManager;
+	protected /*static*/ GameManager gameManager;
+	protected /*static*/ CompanyManagerI companyManager;
+	protected /*static*/ PlayerManager playerManager;
+	protected /*static*/ StockMarketI stockMarket;
+	protected /*static*/ Bank bank;
+	protected /*static*/ ArrayList companyList;
+	protected /*static*/ String name;
+	protected /*static*/ Element componentManagerElement;
+	protected static String GAME_XML_FILE = "Game.xml";
+	protected /*static*/ List<String> directories = new ArrayList<String>();
+    protected Map<String, String> gameOptions;
 
 	protected static Logger log = Logger.getLogger(Game.class.getPackage().getName());
 
-	//FIXME: Use game.properties info instead.
-	public static String[] getGames()
-	{
-		File dataDir = new File("./data/");
-		return dataDir.list();
-	}
-
-	/**
-	 * Protected constructor.
-	 * 
-	 * @param name
-	 *            Name of the rails.game (e.g. "1830").
-	 */
-	protected Game()
-	{
+    // The new Game entry point
+    public Game (String name, List<String> players, 
+            Map<String, String> options) {
+        
+        instance = this;
+    	
+    	//Game.name = name;
+        this.name = name;
+        this.gameOptions = options;
+        
 		directories.add("data");
-	}
-	
-	public static void prepare(String name) {
-		
-		Game.name = name;
-		ReportBuffer.add(LocalText.getText("GameIs", name));
-		
 		directories.add("data/" + name);
 
+		playerManager = new PlayerManager(players);
+		//GameManager.setGameOptions(options);
+    }
+    
+    public void start() {
+        gameManager.startGame();
+    }
+	
+	public boolean setup() {
+		
+		ReportBuffer.add(LocalText.getText("GameIs", name));
+		
 		try
 		{
 			// Have the ComponentManager work through the other rails.game files
-			componentManagerElement = XmlUtils.findElementInFile(gameFilename, directories,
+			componentManagerElement = XmlUtils.findElementInFile(GAME_XML_FILE, directories,
 					ComponentManager.ELEMENT_ID);
 			if (componentManagerElement == null) {
-				throw new ConfigurationException ("No Game XML element found in file "+gameFilename);
+				throw new ConfigurationException ("No Game XML element found in file "+GAME_XML_FILE);
 			}
 
 			ComponentManager.configureInstance(name, componentManagerElement);
 
 			componentManager = ComponentManager.getInstance();
 			
-		}
-		catch (Exception e)
-		{
-			log.fatal (LocalText.getText("GameSetupFailed", gameFilename), e);
-		}
-	}
+			log.info("========== Start of rails.game " + name + " ==========");
 
-	public static void initialise()
-	{
-		log.info("========== Start of rails.game " + name + " ==========");
-
-		try
-		{
 			// Have the ComponentManager work through the other rails.game files
 			componentManager.finishPreparation();
 
 			bank = (Bank) componentManager.findComponent("Bank");
+            if (bank == null) {
+                throw new ConfigurationException ("No Bank XML element found in file "+GAME_XML_FILE);
+            }
 			companyManager = (CompanyManagerI) componentManager.findComponent(CompanyManagerI.COMPONENT_NAME);
+            if (companyManager == null) {
+                throw new ConfigurationException ("No CompanyManager XML element found in file "+GAME_XML_FILE);
+            }
 			stockMarket = (StockMarketI) componentManager.findComponent(StockMarketI.COMPONENT_NAME);
+            if (stockMarket == null) {
+                throw new ConfigurationException ("No StockMarket XML element found in file "+GAME_XML_FILE);
+            }
 			gameManager = (GameManager) componentManager.findComponent("GameManager");
+            if (gameManager == null) {
+                throw new ConfigurationException ("No GameManager XML element found in file "+GAME_XML_FILE);
+            }
 
 			/*
 			 * Initialisations that involve relations between components can
@@ -105,38 +109,87 @@ public class Game
 		}
 		catch (Exception e)
 		{
-			log.fatal (LocalText.getText("GameSetupFailed", gameFilename), e);
+            String message = LocalText.getText("GameSetupFailed", GAME_XML_FILE);
+			log.fatal (message, e);
+            DisplayBuffer.add(message + ":\n " + e.getMessage());
+            return false;
 		}
 		
 		//We need to do this assignment after we've loaded all the XML data. 
 		MapManager.assignHomesAndDestinations();
 		
+        Player.initPlayers(playerManager.getPlayers());
+        
+        return true;
 	}
+    
+    public static boolean load (String filepath) {
+        
+        boolean result = false;
+        
+        log.debug ("Loading game from file "+filepath);
+        
+        try {
+            ObjectInputStream ois = new ObjectInputStream (
+                    new FileInputStream (new File (filepath)));
+            long versionID = (Long) ois.readObject();
+            long saveFileVersionID = GameManager.saveFileVersionID;
+            if (versionID != saveFileVersionID) {
+                throw new Exception ("Save version "+versionID
+                        +" is incompatible with current version "+saveFileVersionID);
+            }
+            //name = (String) ois.readObject();
+            String name = (String) ois.readObject();
+            Map<String, String> selectedGameOptions = (Map<String, String>) ois.readObject();
+            //int numberOfPlayers = (Integer) ois.readObject();
+            //List<String> playerNames = new ArrayList<String>();
+            //for (int i=0; i<numberOfPlayers; i++) {
+            //    playerNames.add((String)ois.readObject());
+            //}
+            List<String> playerNames = (List<String>) ois.readObject();
 
-	/**
-	 * Public instance creator and getter.
-	 * 
-	 * @param name
-	 *            Name of the rails.game (e.g. "1830").
-	 * @return The instance.
-	 */
-	public static Game getInstance()
-	{
-		if (instance == null)
-		{
-			instance = new Game();
-		}
-		return instance;
-	}
-	
+            Game game = new Game (name, playerNames, selectedGameOptions);
+            
+            if (!game.setup()) {
+                throw new ConfigurationException ("Error in setting up "+name);
+            }
+
+            List<PossibleAction> executedActions = (List<PossibleAction>) ois.readObject();
+            ois.close();
+            log.debug("Number of loaded actions: "+executedActions.size());
+            
+            game.start();
+            
+            log.debug ("Starting to execute loaded actions");
+            
+            instance.gameManager.processOnReload(executedActions);
+            
+            result = true;
+            
+        } catch (Exception e) {
+            log.error ("Load failed", e);
+            DisplayBuffer.add (LocalText.getText("LoadFailed", e.getMessage()));
+        }
+
+        return result;
+    }
+
 	/*----- Getters -----*/
+    
+    public static String getGameOption (String optionName) {
+        return instance.gameOptions.get(optionName);
+    }
+    
+    public static Map<String, String> getGameOptions () {
+        return instance.gameOptions;
+    }
 
 	/**
 	 * @return The company manager
 	 */
 	public static CompanyManagerI getCompanyManager()
 	{
-		return companyManager;
+		return instance.companyManager;
 	}
 
 	/**
@@ -144,7 +197,7 @@ public class Game
 	 */
 	public static StockMarketI getStockMarket()
 	{
-		return stockMarket;
+		return instance.stockMarket;
 	}
 
 	/**
@@ -152,22 +205,13 @@ public class Game
 	 */
 	public static ComponentManager getComponentManager()
 	{
-		return componentManager;
+		return instance.componentManager;
 	}
 
 	/* Do the Bank properly later */
 	public static Bank getBank()
 	{
-		return bank;
-	}
-
-	/**
-	 * @return Returns the playerManager.
-	 */
-	public static PlayerManager getPlayerManager(List<String> playerNames)
-	{
-		playerManager = new PlayerManager(playerNames);
-		return playerManager;
+		return instance.bank;
 	}
 
 	/**
@@ -175,7 +219,7 @@ public class Game
 	 */
 	public static PlayerManager getPlayerManager()
 	{
-		return playerManager;
+		return instance.playerManager;
 	}
 
 	/**
@@ -183,7 +227,7 @@ public class Game
 	 */
 	public static String getName()
 	{
-		return name;
+		return instance.name;
 	}
 	
 	public static Logger getLogger () {

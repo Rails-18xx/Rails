@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.4 2007/09/20 19:49:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.5 2007/09/30 12:55:19 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -14,6 +14,7 @@ import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
+import rails.util.Util;
 
 /**
  * @author Erik Vos
@@ -155,8 +156,10 @@ public class LayToken extends PossibleORAction {
 		
         MapManager mmgr = MapManager.getInstance();
         locations = new ArrayList<MapHex>();
-        for (String hexName : locationNames.split(",")) {
-            locations.add(mmgr.getHex(hexName));
+        if (Util.hasValue(locationNames)) {
+            for (String hexName : locationNames.split(",")) {
+                locations.add(mmgr.getHex(hexName));
+            }
         }
 
 		if (specialPropertyId  > 0) {

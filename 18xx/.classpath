@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-transcoder.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-dom.jar"/>
@@ -30,5 +29,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-squiggle.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-svgpp.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-ttf2svg.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Rails/18xx/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

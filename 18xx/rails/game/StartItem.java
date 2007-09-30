@@ -1,6 +1,7 @@
 package rails.game;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -31,7 +32,7 @@ public class StartItem
 
 	// Bids
 	protected IntegerState lastBidderIndex;
-	protected static Player[] players;
+	protected static List<Player> players;
 	protected static int numberOfPlayers;
 	protected MoneyModel[] bids;
 	protected MoneyModel minimumBid;
@@ -130,12 +131,12 @@ public class StartItem
 	public void init()
 	{
 		if (players == null) {
-			players = Game.getPlayerManager().getPlayersArray();
-			numberOfPlayers = players.length;
+			players = Game.getPlayerManager().getPlayers();
+			numberOfPlayers = players.size();
 		}
 		bids = new MoneyModel [numberOfPlayers];
 		for (int i=0; i<numberOfPlayers; i++) {
-			bids[i] = new MoneyModel(name+"_bidBy_"+players[i].getName());
+			bids[i] = new MoneyModel(name+"_bidBy_"+players.get(i).getName());
 			bids[i].setOption(MoneyModel.SUPPRESS_ZERO);
 			
 		}
@@ -369,7 +370,7 @@ public class StartItem
 		if (index < 0) {
 			return null;
 		} else {
-			return players[lastBidderIndex.intValue()];
+			return players.get(lastBidderIndex.intValue());
 		}
 	}
 
@@ -438,7 +439,7 @@ public class StartItem
 		for (int i=0; i<numberOfPlayers; i++) {
 			// Unblock any bid money
 			if (bids[i].intValue() > 0) {
-				players[i].unblockCash(bids[i].intValue());
+				players.get(i).unblockCash(bids[i].intValue());
 				if (index != i) bids[i].set(0);
 			}
 		}
