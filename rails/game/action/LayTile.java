@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.6 2007/09/20 19:49:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.7 2007/09/30 12:55:19 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -15,6 +15,7 @@ import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
+import rails.util.Util;
 
 
 /**
@@ -224,8 +225,10 @@ public class LayTile extends PossibleORAction {
 		
         MapManager mmgr = MapManager.getInstance();
         locations = new ArrayList<MapHex>();
-        for (String hexName : locationNames.split(",")) {
-            locations.add(mmgr.getHex(hexName));
+        if (Util.hasValue(locationNames) ) {
+            for (String hexName : locationNames.split(",")) {
+                locations.add(mmgr.getHex(hexName));
+            }
         }
 
         if (tileIds != null

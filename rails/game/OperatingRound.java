@@ -60,7 +60,8 @@ public class OperatingRound extends Round implements Observer
 	protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
 
 	/* Permanent memory */
-	static protected Player[] players;
+	static protected List<Player> players;
+	static protected int numberOfPlayers = 0;
 	static protected PublicCompanyI[] companies;
 	static protected int numberOfCompanies = 0;
 	static protected int relativeORNumber = 0;
@@ -104,7 +105,8 @@ public class OperatingRound extends Round implements Observer
 
 		if (players == null)
 		{
-			players = Game.getPlayerManager().getPlayersArray();
+			players = Game.getPlayerManager().getPlayers();
+			numberOfPlayers = players.size();
 		}
 		if (companies == null)
 		{
@@ -1584,9 +1586,9 @@ public class OperatingRound extends Round implements Observer
 			Player player;
 		    int minPrice, maxPrice;
 			for (int i = currentPlayerIndex; 
-					 i < currentPlayerIndex + players.length;
+					 i < currentPlayerIndex + numberOfPlayers;
 					 i++) {
-				player = players[i % players.length];
+				player = players.get(i % numberOfPlayers);
 			    for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
 			    	
 			        minPrice = (int) (privComp.getBasePrice() * operatingCompany
@@ -1686,8 +1688,8 @@ public class OperatingRound extends Round implements Observer
 		int index;
 		// Set up a list per player of presided companies
 		List<List<PublicCompanyI>> companiesPerPlayer 
-				= new ArrayList<List<PublicCompanyI>>(players.length);
-		for (int i=0; i<players.length; i++) companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
+				= new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
+		for (int i=0; i<numberOfPlayers; i++) companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
 		List<PublicCompanyI> companies;
 		// Sort out which players preside over wich companies.
 		for (int j = 0; j < operatingCompanyArray.length; j++) {
@@ -1700,9 +1702,9 @@ public class OperatingRound extends Round implements Observer
 		// Scan trains per company per player, operating company president first
 		int currentPlayerIndex = operatingCompany.getPresident().getIndex();
 		for (int i = currentPlayerIndex; 
-				 i < currentPlayerIndex + players.length; 
+				 i < currentPlayerIndex + numberOfPlayers; 
 				 i++) {
-			companies = companiesPerPlayer.get(i % players.length);
+			companies = companiesPerPlayer.get(i % numberOfPlayers);
 			for (PublicCompanyI company : companies) {
 				pf = company.getPortfolio();
 				trains = pf.getUniqueTrains();
@@ -1724,7 +1726,7 @@ public class OperatingRound extends Round implements Observer
         Player player;
         List<PublicCompanyI> list;
         int currentPlayerIndex = GameManager.getCurrentPlayerIndex();
-        for (int i=currentPlayerIndex; i<currentPlayerIndex + players.length; i++) {
+        for (int i=currentPlayerIndex; i<currentPlayerIndex + numberOfPlayers; i++) {
             player = GameManager.getPlayer(i);
             if (excessTrainCompanies.containsKey(player)) {
                 list = excessTrainCompanies.get(player);

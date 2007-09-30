@@ -135,7 +135,7 @@ public class GameStatus extends JPanel implements ActionListener
 		setBorder(BorderFactory.createEtchedBorder());
 		setOpaque(false);
 
-		players = Game.getPlayerManager().getPlayersArray();
+		players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
 		np = GameManager.getNumberOfPlayers();
 		cm = Game.getCompanyManager();
 		companies = (PublicCompanyI[]) cm.getAllPublicCompanies()

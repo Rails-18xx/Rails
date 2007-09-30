@@ -9,10 +9,8 @@ import rails.game.state.State;
 import rails.util.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.*;
 
@@ -21,32 +19,33 @@ import org.w3c.dom.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
- * Round. Currently everything is hardcoded � la 1830.
+ * Round. Currently everything is hardcoded &agrave; la 1830.
  */
 public class GameManager implements ConfigurableComponentI
 {
     /** Version ID of the Save file header, as written in save() */
-    private static final long saveFileHeaderVersionID = 2L;
+    private static final long saveFileHeaderVersionID = 3L;
     /** Overall save file version ID, taking into account the
      * version ID of the action package.
      */
     public static final long saveFileVersionID 
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
 
-	protected static Player[] players;
-	protected static int numberOfPlayers;
-	protected static State currentPlayer =
+	protected /*static*/ List<Player> players;
+	protected /*static*/ List<String> playerNames;
+	protected /*static*/ int numberOfPlayers;
+	protected /*static*/ State currentPlayer =
 		new State ("CurrentPlayer", Player.class);
-	protected static State priorityPlayer = 
+	protected /*static*/ State priorityPlayer = 
 	    new State ("PriorityPlayer", Player.class);
 
-	protected static int playerShareLimit = 60;
-	protected static int currentNumberOfOperatingRounds = 1;
+	protected /*static*/ int playerShareLimit = 60;
+	protected /*static*/ int currentNumberOfOperatingRounds = 1;
 
-	protected static boolean companiesCanBuyPrivates = false;
-	protected static boolean gameEndsWithBankruptcy = false;
-	protected static int gameEndsWhenBankHasLessOrEqual = 0;
-	protected static boolean gameEndsAfterSetOfORs = true;
+	protected /*static*/ boolean companiesCanBuyPrivates = false;
+	protected /*static*/ boolean gameEndsWithBankruptcy = false;
+	protected /*static*/ int gameEndsWhenBankHasLessOrEqual = 0;
+	protected /*static*/ boolean gameEndsAfterSetOfORs = true;
 
 	/**
 	 * Current round should not be set here but from within the Round classes.
@@ -55,9 +54,9 @@ public class GameManager implements ConfigurableComponentI
 	 * been sold, it finishes by starting an Operating Round, which handles the
 	 * privates payout and then immediately starts a new Start Round.
 	 */
-    protected static State currentRound 
+    protected /*static*/ State currentRound 
         = new State ("CurrentRound", Round.class);
-	protected static RoundI interruptedRound = null;
+	protected /*static*/ RoundI interruptedRound = null;
 
 	// protected Round insertingRound = null;
 	// protected Round insertedRound = null;
@@ -65,14 +64,14 @@ public class GameManager implements ConfigurableComponentI
 	protected int numOfORs;
 
 	//protected static PhaseI currentPhase = null;
-	protected static boolean gameOver = false;
-	protected static boolean endedByBankruptcy = false;
-	protected static boolean hasAnyParPrice = false;
-	protected static boolean canAnyCompBuyPrivates = false;
+	protected /*static*/ boolean gameOver = false;
+	protected /*static*/ boolean endedByBankruptcy = false;
+	protected /*static*/ boolean hasAnyParPrice = false;
+	protected /*static*/ boolean canAnyCompBuyPrivates = false;
 
 	protected static GameManager instance;
 
-	protected static String name;
+	protected /*static*/ String name;
 
 	protected StartPacket startPacket;
     
@@ -80,22 +79,10 @@ public class GameManager implements ConfigurableComponentI
     
     List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
 
-
-	/*----- Default variant -----*/
-	/* Others will always be configured per rails.game */
-	//public static final String STANDARD = "Standard";
-
-	/** Start round variant, can be used where applicable */
-	//protected static String variant = STANDARD;
-
-	/** A Map of variant names */
-	//protected static List<String> lVariants = new ArrayList<String>();
-	//protected static Map mVariants = new HashMap();
-    
 	/** A List of available game options */
-	protected static List<GameOption> availableGameOptions = new ArrayList<GameOption>();
+	protected /*static*/ List<GameOption> availableGameOptions = new ArrayList<GameOption>();
     /** A Map of selected game options (variant included via "variant" keyword) */
-    protected static Map<String, String> selectedGameOptions = new HashMap<String, String>();
+    //protected /*static*/ Map<String, String> selectedGameOptions = new HashMap<String, String>();
     
     /* Some standard tags for conditional attributes */
     public static final String VARIANT_KEY = "Variant";
@@ -104,11 +91,6 @@ public class GameManager implements ConfigurableComponentI
     public static final String ATTRIBUTES_TAG = "Attributes";
 
 	protected static Logger log = Logger.getLogger(GameManager.class.getPackage().getName());
-
-	static
-	{
-		//addVariant(STANDARD);
-	}
 
 	/**
 	 * Private constructor.
@@ -128,20 +110,6 @@ public class GameManager implements ConfigurableComponentI
 		Element element = (Element) el.getElementsByTagName("Game").item(0);
 		NamedNodeMap nnp = element.getAttributes();
 		name = XmlUtils.extractStringAttribute(nnp, "name");
-
-		/* Get any variant names */
-        /*
-		NodeList nl = el.getElementsByTagName(VARIANT_TAG);
-		String varName;
-		for (int i = 0; i < nl.getLength(); i++)
-		{
-			element = (Element) nl.item(i);
-			nnp = element.getAttributes();
-			varName = XmlUtils.extractStringAttribute(nnp, "name");
-			if (varName != null)
-				addVariant(varName);
-		}
-        */
 
 		// Get any available game options
         NodeList nl = el.getElementsByTagName(OPTION_TAG);
@@ -220,10 +188,11 @@ public class GameManager implements ConfigurableComponentI
 
 	public void startGame()
 	{
-		players = Game.getPlayerManager().getPlayersArray();
-		numberOfPlayers = players.length;
+		players = Game.getPlayerManager().getPlayers();
+		playerNames = Game.getPlayerManager().getPlayerNames();
+		numberOfPlayers = players.size();
 		//setPriorityPlayer (players[0]);
-		priorityPlayer.setState(players[0]);
+		priorityPlayer.setState(players.get(0));
 
 		if (startPacket == null)
 			startPacket = StartPacket.getStartPacket("Initial");
@@ -387,9 +356,9 @@ public class GameManager implements ConfigurableComponentI
 	                case GameAction.SAVE:
 	                    result = save (gameAction);
 	                    break;
-	                case GameAction.LOAD:
-	                    result = load (gameAction);
-	                    break;
+                    // Unused & unusable:
+	                //case GameAction.LOAD:
+	                //    break;
 					case GameAction.UNDO:
 						MoveSet.undo(false);
 						result = true;
@@ -439,13 +408,13 @@ public class GameManager implements ConfigurableComponentI
         
     }
     
-    public void processOnReload (PossibleAction action) {
-    	
-		// Check player
-		getCurrentRound().process(action);
-        new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
-        if (MoveSet.isOpen()) MoveSet.finish();
+    public void processOnReload (List<PossibleAction> actions) {
         
+        for (PossibleAction action : actions) {
+            getCurrentRound().process(action);
+            new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
+            if (MoveSet.isOpen()) MoveSet.finish();
+        }
     }
     
     protected boolean save (GameAction saveAction) {
@@ -458,63 +427,13 @@ public class GameManager implements ConfigurableComponentI
                     new FileOutputStream (new File (filepath)));
             oos.writeObject(saveFileVersionID);
             oos.writeObject(name);
-            oos.writeObject(selectedGameOptions);
-            oos.writeObject(numberOfPlayers);
-            for (int i=0; i<numberOfPlayers; i++) {
-                oos.writeObject(players[i].getName());
-            }
+            oos.writeObject(Game.getGameOptions());
+            oos.writeObject(playerNames);
             oos.writeObject(executedActions);
             oos.close();
             
             result = true;
         } catch (IOException e) {
-            log.error ("Save failed", e);
-            DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
-        }
-
-        return result;
-    }
-
-    public static boolean load (GameAction loadAction) {
-        
-        String filepath = loadAction.getFilepath();
-        boolean result = false;
-        
-        try {
-            ObjectInputStream ois = new ObjectInputStream (
-                    new FileInputStream (new File (filepath)));
-            long versionID = (Long) ois.readObject();
-            if (versionID != saveFileVersionID) {
-                throw new Exception ("Save version "+versionID
-                        +" is incompatible with current version "+saveFileVersionID);
-            }
-            name = (String) ois.readObject();
-            selectedGameOptions = (Map<String, String>) ois.readObject();
-            numberOfPlayers = (Integer) ois.readObject();
-            List<String> playerNames = new ArrayList<String>();
-            for (int i=0; i<numberOfPlayers; i++) {
-                playerNames.add((String)ois.readObject());
-            }
-            
-			Game.getPlayerManager(playerNames);
-			Game.prepare(name);
-			Game.initialise();
-			//if (Util.hasValue(variant)) setVariant(variant);
-			Player.initPlayers(Game.getPlayerManager().getPlayersArray());
-
-            List<PossibleAction> executedActions = (List<PossibleAction>) ois.readObject();
-            ois.close();
-            
-            instance.startGame();
-            
-            for (PossibleAction action : executedActions) {
-                log.debug("---Loaded action: "+action);
-            	instance.processOnReload (action);
-            }
-            
-            result = true;
-            
-        } catch (Exception e) {
             log.error ("Save failed", e);
             DisplayBuffer.add (LocalText.getText("SaveFailed", e.getMessage()));
         }
@@ -558,7 +477,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static boolean isGameOver()
 	{
-		return gameOver;
+		return instance.gameOver;
 	}
 
 	public void logGameReport()
@@ -579,9 +498,9 @@ public class GameManager implements ConfigurableComponentI
 
 		/* Sort players by total worth */
 		List<Player> rankedPlayers = new ArrayList<Player>();
-		for (int ip = 0; ip < players.length; ip++)
+		for (Player player : players)
 		{
-			rankedPlayers.add(players[ip]);
+			rankedPlayers.add(player);
 		}
 		Collections.sort(rankedPlayers);
 
@@ -591,12 +510,9 @@ public class GameManager implements ConfigurableComponentI
 
 		/* Report final ranking */
 		b.append("\n\nThe final ranking is:");
-		//Player p;
 		int i = 0;
-		//for (Iterator it = rankedPlayers.iterator(); it.hasNext();)
 		for (Player p : rankedPlayers)
 		{
-			//p = (Player) it.next();
 			b.append("\n" + (++i) + ". " + Bank.format(p.getWorth()) + " "
 					+ p.getName());
 		}
@@ -628,13 +544,13 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static void setCurrentPlayerIndex(int currentPlayerIndex)
 	{
-		currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
-		currentPlayer.set (players[currentPlayerIndex]);
+		currentPlayerIndex = currentPlayerIndex % instance.numberOfPlayers;
+        instance.currentPlayer.set (instance.players.get(currentPlayerIndex));
 	}
 
 	public static void setCurrentPlayer(Player player)
 	{
-		currentPlayer.set(player);
+        instance.currentPlayer.set(player);
 	}
 
 	/**
@@ -643,13 +559,13 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static void setPriorityPlayer()
 	{
-		int priorityPlayerIndex = (getCurrentPlayer().getIndex() + 1) % numberOfPlayers;
-		setPriorityPlayer (players[priorityPlayerIndex]);
+		int priorityPlayerIndex = (getCurrentPlayer().getIndex() + 1) % instance.numberOfPlayers;
+		setPriorityPlayer (instance.players.get(priorityPlayerIndex));
 
 	}
 	
 	public static void setPriorityPlayer(Player player) {
-	    priorityPlayer.set(player);
+        instance.priorityPlayer.set(player);
 	    log.debug ("Priority player set to "
 	    		+player.getIndex()+" "+player.getName());
 	}
@@ -659,7 +575,7 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getPriorityPlayer()
 	{
-		return (Player) priorityPlayer.getObject();
+		return (Player) instance.priorityPlayer.getObject();
 	}
 
 	/**
@@ -667,20 +583,20 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getCurrentPlayer()
 	{
-		return (Player)currentPlayer.getObject();
+		return (Player)instance.currentPlayer.getObject();
 	}
 
 	/**
 	 * @return Returns the players.
 	 */
-	public static Player[] getPlayers()
+	public static List<Player> getPlayers()
 	{
-		return players;
+		return instance.players;
 	}
 
 	public static int getNumberOfPlayers()
 	{
-		return numberOfPlayers;
+		return instance.numberOfPlayers;
 	}
 
 	/**
@@ -692,13 +608,13 @@ public class GameManager implements ConfigurableComponentI
 	 */
 	public static Player getPlayer(int index)
 	{
-		return players[index % players.length];
+		return instance.players.get(index % instance.numberOfPlayers);
 	}
 
 	public static void setNextPlayer()
 	{
 		int currentPlayerIndex = getCurrentPlayerIndex();
-		currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
+		currentPlayerIndex = ++currentPlayerIndex % instance.numberOfPlayers;
 		setCurrentPlayerIndex (currentPlayerIndex);
 	}
 
@@ -710,19 +626,9 @@ public class GameManager implements ConfigurableComponentI
 		return startPacket;
 	}
 
-	/**
-	 * @return List of variants
-	 */
-    /*
-	public static List<String> getVariants()
-	{
-		return lVariants;
-	}
-    */
-
 	public static String getName()
 	{
-		return name;
+		return instance.name;
 	}
 
 	/**
@@ -742,57 +648,10 @@ public class GameManager implements ConfigurableComponentI
 		}
 	}
 
-    /*
-	protected static void addVariant(String name)
-	{
-		if (!lVariants.contains(name))
-		{
-			lVariants.add(name);
-			//mVariants.put(name, null);
-		}
-	}
-
-	public static String getVariant()
-	{
-		return variant;
-	}
-    */
-    
-    public static void setGameOption (String name, String value) {
-        selectedGameOptions.put(name, value);
-        //if (name.equalsIgnoreCase("Variant")) variant = value;
-    }
-    
-    public static String getGameOption (String name) {
-        return selectedGameOptions.get(name);
-    }
-    
     public static List<GameOption> getAvailableOptions () {
-    	return availableGameOptions;
+    	return instance.availableGameOptions;
     }
 
-    /*
-	public static void setVariant(String variant)
-	{
-		if (existVariant(variant))
-		{
-			GameManager.variant = variant;
-            selectedGameOptions.put(VARIANT_KEY, name);
-			ReportBuffer.add(LocalText.getText("VariantIs",  variant));
-			log.info ("Game variant is "+variant);
-		} else {
-			log.error ("Unknown variant selected: "+variant);
-		}
-	}
-
-
-	public static boolean existVariant(String variant)
-	{
-		//return mVariants.containsKey(variant);
-		return lVariants.contains(variant);
-	}
-    */
-    
 	private Object instantiate(String className)
 	{
 		try
@@ -834,12 +693,12 @@ public class GameManager implements ConfigurableComponentI
 
 	public static void setCompaniesCanBuyPrivates()
 	{
-		companiesCanBuyPrivates = true;
+        instance.companiesCanBuyPrivates = true;
 	}
 
 	public static boolean getCompaniesCanBuyPrivates()
 	{
-		return companiesCanBuyPrivates;
+		return instance.companiesCanBuyPrivates;
 	}
 
 	public String getHelp()
@@ -848,19 +707,19 @@ public class GameManager implements ConfigurableComponentI
 	}
 
 	public static boolean hasAnyParPrice() {
-		return hasAnyParPrice;
+		return instance.hasAnyParPrice;
 	}
 
 	public static void setHasAnyParPrice(boolean hasAnyParPrice) {
-		GameManager.hasAnyParPrice = hasAnyParPrice;
+        instance.hasAnyParPrice = hasAnyParPrice;
 	}
 
 	public static boolean canAnyCompBuyPrivates() {
-		return canAnyCompBuyPrivates;
+		return instance.canAnyCompBuyPrivates;
 	}
 
 	public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
-		GameManager.canAnyCompBuyPrivates = canAnyCompBuyPrivates;
+        instance.canAnyCompBuyPrivates = canAnyCompBuyPrivates;
 	}
 	
 	

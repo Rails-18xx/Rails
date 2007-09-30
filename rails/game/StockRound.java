@@ -88,7 +88,7 @@ public class StockRound extends Round
 	{
 
 		if (numberOfPlayers == 0)
-			numberOfPlayers = GameManager.getPlayers().length;
+			numberOfPlayers = GameManager.getPlayers().size();
 		if (gameMgr == null)
 			gameMgr = GameManager.getInstance();
 		if (stockMarket == null)
@@ -340,11 +340,12 @@ public class StockRound extends Round
 				if (maxShareToSell > share - presidentShare) {
 					dumpAllowed = false;
 					int playerShare;
-					Player[] players = GameManager.getPlayers();
-					for (int i = 0; i < numberOfPlayers; i++)
+					//Player[] players = GameManager.getPlayers();
+					//for (int i = 0; i < numberOfPlayers; i++)
+					for (Player player : GameManager.getPlayers())
 					{
-						if (players[i] == currentPlayer) continue;
-						playerShare = players[i].getPortfolio().getShare(company);
+						if (player == currentPlayer) continue;
+						playerShare = player.getPortfolio().getShare(company);
 						if (playerShare	>= presidentShare)
 						{
 							dumpAllowed = true;

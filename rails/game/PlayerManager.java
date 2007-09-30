@@ -5,98 +5,49 @@ import java.util.*;
 public class PlayerManager
 {
 
-	private static Player[] players;
+	int numberOfPlayers;
+	private List<Player> players;
 	private List<String> playerNames;
-	//private Player boughtStockLast;
-
-	public static int getNumberOfPlayers()
-	{
-		return players.length;
-	}
-
-	private void initPlayers()
-	{
-		players = new Player[playerNames.size()];
-
-		for (int i = 0; i < playerNames.size(); i++)
-		{
-			players[i] = new Player(playerNames.get(i).toString());
-		}
-
-		//Player.initPlayers(players);
-	}
+	private Map <String, Player> playerMap;
 
 	public PlayerManager(List<String> playerNames)
 	{
+		Player player;
+		
 		this.playerNames = playerNames;
+		numberOfPlayers = playerNames.size();
 
-		initPlayers();
-	}
+		players = new ArrayList<Player>(numberOfPlayers);
+		playerMap = new HashMap<String, Player>(numberOfPlayers);
 
-	/**
-	 * @return Returns the playerNames.
-	 */
-	/*
-	public ArrayList getPlayerNames()
-	{
-		return playerNames;
+		for (String playerName : playerNames)
+		{
+			player = new Player (playerName);
+			players.add (player);
+			playerMap.put(playerName, player);
+		}
+
 	}
-	*/
 
 	/**
 	 * @return Returns an array of all players.
 	 */
-	public Player[] getPlayersArray()
+	public List<Player> getPlayers()
 	{
 		return players;
 	}
 
-	/*
-	public ArrayList getPlayersArrayList()
-	{
-		ArrayList playersList = new ArrayList();
-
-		for (int i = 0; i < players.length; i++)
-		{
-			playersList.add(players[i]);
-		}
-
-		return playersList;
-	}
-	*/
-
 	public Player getPlayerByName(String name)
 	{
-		//Player player;
-
-		for (int i = 0; i < players.length; i++)
-		{
-			if (players[i].getName().equalsIgnoreCase(name))
-			{
-				return players[i];
-			}
-		}
-		return null;
+		return playerMap.get(name);
+	}
+	
+	public List<String> getPlayerNames() {
+		return playerNames;
+	}
+	
+	public Player getPlayerByIndex (int index) {
+		return players.get(index);
 	}
 
-	/**
-	 * @return Returns the boughtStockLast.
-	 */
-	/*
-	public Player getBoughtStockLast()
-	{
-		return boughtStockLast;
-	}
-	/*
-
-	/**
-	 * @param boughtStockLast
-	 *            The boughtStockLast to set.
-	 */
-	/*
-	public void setBoughtStockLast(Player boughtStockLast)
-	{
-		this.boughtStockLast = boughtStockLast;
-	}
-	*/
 }

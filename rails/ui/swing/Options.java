@@ -33,11 +33,13 @@ public class Options extends JDialog implements ActionListener
     
     GameUIManager gameUIManager;
     
-    Map<String, String> gameNotes = new HashMap<String, String>();
-    Map<String, String> gameDescs = new HashMap<String, String>();
-    List<String> games = new ArrayList<String>();
+    Map<String, String> gameNotes;// = new HashMap<String, String>();
+    Map<String, String> gameDescs;// = new HashMap<String, String>();
+    List<String> games;// = new ArrayList<String>();
     List<GameOption> availableOptions;
     List<JComponent> optionComponents;
+    Map<String, String> selectedOptions = new HashMap<String, String>();
+    List<String> playerNames = new ArrayList<String>();
     
     String gameName;
     
@@ -109,7 +111,7 @@ public class Options extends JDialog implements ActionListener
 			}
 		}
 
-		populateGameList(games.toArray(), gameNameBox);
+		populateGameList(games, gameNameBox);
 
 		optionsPane.add(new JLabel("Game Options"));
 		optionsPane.add(new JLabel(""));
@@ -165,20 +167,12 @@ public class Options extends JDialog implements ActionListener
 		this.getContentPane().add(buttonPane, gc);
 	}
 
-	private void populateGameList(Object[] gameNames, JComboBox gameNameBox)
+	private void populateGameList(List<String> gameNames, JComboBox gameNameBox)
 	{
-		Arrays.sort(gameNames);
-		for (int i = 0; i < gameNames.length; i++)
+        for (String gameName : gameNames)
 		{
-			if(gameNames[i] instanceof String)
-			{
-				String gameText = (String) gameNames[i];
-				if (!games.isEmpty() && !games.contains(gameText)) continue;
-				if (gameNotes.containsKey(gameNames[i])) {
-					gameText += " " + gameNotes.get(gameNames[i]);
-				}
+				String gameText = gameName + " - " + GamesInfo2.getNote(gameName);
 				gameNameBox.addItem(gameText);
-			}
 		}
 	}
 
@@ -188,7 +182,8 @@ public class Options extends JDialog implements ActionListener
         
         this.gameUIManager = gameUIManager;
 
-        getGameList();
+        //getGameList();
+        games = GamesInfo2.getGameNames();
 		initialize();
 		populateGridBag();
 
@@ -196,24 +191,6 @@ public class Options extends JDialog implements ActionListener
 		this.setVisible(true);
 	}
 	
-	private void getGameList() {
-		
-		String gameList = Config.get("games");
-		String gameNote, gameDesc;
-		if (!Util.hasValue(gameList)) return;
-		for (String gameName : gameList.split(",")) {
-			games.add (gameName);
-			gameNote = Config.get("game."+gameName+".note");
-			if (Util.hasValue(gameNote)) {
-				gameNotes.put(gameName, gameNote);
-			}
-			gameDesc = Config.get("game."+gameName+".description");
-			if (Util.hasValue(gameDesc)) {
-				gameDescs.put(gameName, gameDesc);
-			}
-		}
-	}
-
 	public void actionPerformed(ActionEvent arg0) 
 	{
 
@@ -224,7 +201,6 @@ public class Options extends JDialog implements ActionListener
     			
     			try
     			{
-					ArrayList<String> playerNames = new ArrayList<String>();
 		
 					for (int i = 0; i < playerBoxes.length; i++)
 					{
@@ -249,13 +225,11 @@ public class Options extends JDialog implements ActionListener
 						}
 					}
 					gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
-					Game.getPlayerManager(playerNames);
-					Game.prepare(gameName);  // Required to get the game options
 					
 					optionButton.setEnabled(false);
 					loadButton.setEnabled(false);
 	                 // Request game options (new)
-	                availableOptions = GameManager.getAvailableOptions();
+	                availableOptions = GamesInfo2.getOptions(gameName);
 	    		}
     			catch (NullPointerException e)
     			{
@@ -288,7 +262,7 @@ public class Options extends JDialog implements ActionListener
 		                    dropdown = (JComboBox) optionComponents.get(i);
 		                    value = (String)dropdown.getSelectedItem();
 		                }
-		                GameManager.setGameOption(option.getName(), value);
+		                selectedOptions.put(option.getName(), value);
 		                log.info("Game option "+option.getName()+" set to "+value);
 		            }
 				} else if (optionsStep == 1) {
@@ -300,7 +274,7 @@ public class Options extends JDialog implements ActionListener
 		            for (int i=0; i<availableOptions.size(); i++) {
 		                option = availableOptions.get(i);
 	                    value = option.getDefaultValue();
-		                GameManager.setGameOption(option.getName(), value);
+		                selectedOptions.put(option.getName(), value);
 		                log.info("Game option "+option.getName()+" set to "+value);
 		            }
 
@@ -311,7 +285,7 @@ public class Options extends JDialog implements ActionListener
                 
 	        if (optionsStep == 3) {
 	        	setVisible(false);
-	            finishSetup();
+	            if (!finishSetup()) setVisible(true);
 	        }
 
 		}
@@ -319,7 +293,7 @@ public class Options extends JDialog implements ActionListener
 		if (arg0.getSource().equals(loadButton))
 		{
 			setVisible (false);
-			gameUIManager.loadGame();
+			if (!gameUIManager.loadGame()) setVisible(true);
 		}
 
 		if (arg0.getSource().equals(quitButton))
@@ -329,13 +303,27 @@ public class Options extends JDialog implements ActionListener
 
 	}
     
-    private void finishSetup() {
+    private boolean finishSetup() {
         
-		Game.initialise();
-		Player.initPlayers(Game.getPlayerManager().getPlayersArray());
-        GameManager.getInstance().startGame();
+        Game game = new Game (gameName, playerNames, selectedOptions);
+        if (!game.setup()) {
+            JOptionPane.showMessageDialog(this, DisplayBuffer.get(),
+                    "", JOptionPane.ERROR_MESSAGE);
+            
+            // Should want to return false and continue,
+            // but as of now the game engine cannot be restarted
+            // once we have passed setup(), so we can only quit.
+            System.exit (-1);
 
-        gameUIManager.gameUIInit();
+            // To satisfy the compiler, and perhaps for the future:
+            return false;
+            
+        } else {
+            game.start();
+
+            gameUIManager.gameUIInit();
+            return true;
+        }
 
     }
     
@@ -346,7 +334,8 @@ public class Options extends JDialog implements ActionListener
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout (panel, BoxLayout.Y_AXIS));
 
-        availableOptions = GameManager.getAvailableOptions();
+        availableOptions = GamesInfo2.getOptions(gameName);
+        selectedOptions.clear();
         if (availableOptions != null && !availableOptions.isEmpty()) {
 	        for (GameOption option : availableOptions) {
 	            if (option.isBoolean()) {

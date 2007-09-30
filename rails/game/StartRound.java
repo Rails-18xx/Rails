@@ -50,7 +50,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	{
 
 		this.startPacket = startPacket;
-		this.variant = GameManager.getGameOption(GameManager.VARIANT_KEY);
+		this.variant = Game.getGameOption(GameManager.VARIANT_KEY);
         if (variant == null) variant = "";
 		numPlayers = GameManager.getNumberOfPlayers();
 
@@ -395,12 +395,12 @@ public abstract class StartRound extends Round implements StartRoundI
 	}
 	
 	public ModelObject getFreeCashModel (int playerIndex) {
-		return Game.getPlayerManager().getPlayersArray()[playerIndex]
+		return Game.getPlayerManager().getPlayerByIndex(playerIndex)
 		        .getFreeCashModel();
 	}
 
 	public ModelObject getBlockedCashModel (int playerIndex) {
-		return Game.getPlayerManager().getPlayersArray()[playerIndex]
+		return Game.getPlayerManager().getPlayerByIndex(playerIndex)
 		        .getBlockedCashModel();
 	}
 

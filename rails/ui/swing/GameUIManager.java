@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
@@ -153,7 +154,6 @@ public class GameUIManager
                if (startRoundWindow != null) {
                    startRoundWindow.close();
                    startRoundWindow = null;
-                   log.debug("~~~~Closing StartRoundWindow");
                }
            } else if (previousRound instanceof OperatingRound) {
                log.debug("Finishing Operating Round UI");
@@ -168,9 +168,6 @@ public class GameUIManager
                startRound = (StartRound) currentRound;
                if (startRoundWindow == null) {
                    startRoundWindow = new StartRoundWindow(startRound, this);
-                   log.debug("~~~~Creating new StartRoundWindow");
-               } else {
-                   log.debug("~~~~NOT creating new StartRoundWindow");
                }
                
                stockChart.setVisible(false);
@@ -248,7 +245,7 @@ public class GameUIManager
        }
    }
 	
-   public void loadGame () {
+   public boolean loadGame () {
        
 	   JFileChooser jfc = new JFileChooser();
        if (providedName != null) {
@@ -262,10 +259,11 @@ public class GameUIManager
            String filepath = selectedFile.getPath();
            saveDirectory = selectedFile.getParent();
            
-           GameAction loadAction = new GameAction (GameAction.LOAD);
-           loadAction.setFilepath(filepath);
-           //processOnServer (loadAction);
-           GameManager.load(loadAction);
+           if (!Game.load(filepath)) {
+               JOptionPane.showMessageDialog(options,
+                       DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
+               return false;
+           }
            DisplayBuffer.clear();
 
 		   gameUIInit();
@@ -273,6 +271,8 @@ public class GameUIManager
 		   updateUI();
 	       statusWindow.setGameActions();
        }
+       
+       return true;
    }
 	
 

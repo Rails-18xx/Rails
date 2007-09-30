@@ -10,7 +10,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import rails.game.ConfigurationException;
-import rails.game.GameManager;
+import rails.game.Game;
 
 /**
  * Booch utility class providing helper functions for working with XML.
@@ -99,7 +99,7 @@ public final class XmlUtils {
 	                throw new ConfigurationException ("No value attribute found in IfConfig");
 	            }
 	            // Check if the option has been chosen; if not, skip the rest
-	            String optionValue = GameManager.getGameOption(name);
+	            String optionValue = Game.getGameOption(name);
 	            if (optionValue == null) {
 	                throw new ConfigurationException ("GameOption "+name+"="+value+" but no assigned value found");
 	            }
@@ -314,4 +314,64 @@ public final class XmlUtils {
         }
         throw new ConfigurationException("Could not find " + elementName + " in " + filename);
     }
+    
+    /**
+     * Return all child Elements with a given name of an Element.
+     * @param element
+     * @param tagName
+     * @return
+     * @throws ConfigurationException
+     */
+    public static List<Element> getChildren (Element element, 
+            String tagName) throws ConfigurationException {
+        
+        NodeList children = element.getElementsByTagName(tagName);
+        List<Element> list = new ArrayList<Element>();
+        Element el;
+        
+        for (int i = 0; i < children.getLength(); i++)
+        {
+            el = (Element) children.item(i);
+            list.add (el);
+        }
+        
+        return list;
+    }
+
+    /**
+     * Return the (first) child Element with a given name from an Element.
+     * @param element
+     * @param tagName
+     * @return
+     * @throws ConfigurationException
+     */
+    public static Element getChild (Element element, 
+            String tagName) throws ConfigurationException {
+        
+        NodeList children = element.getElementsByTagName(tagName);
+        
+        if (children.getLength() > 0) {
+            return (Element) children.item(0);
+        } else {
+            return null;
+        }
+    }
+    
+    public static String getText (Element element) 
+    throws ConfigurationException {
+        
+        StringBuffer b = new StringBuffer();
+        NodeList children = element.getChildNodes();
+        if (children.getLength() == 0) return "";
+        Node item;
+
+        for (int i=0; i<children.getLength(); i++) {
+            item = children.item(i);
+            if (item instanceof Text) b.append(item.getNodeValue());
+        }
+        
+        return b.toString();
+    }
+    
+
 }
