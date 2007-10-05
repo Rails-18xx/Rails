@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.7 2007/10/05 22:02:31 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;

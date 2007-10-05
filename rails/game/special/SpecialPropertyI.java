@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.4 2007/10/05 22:02:25 evos Exp $ */
 package rails.game.special;
 
 import rails.game.ConfigurableComponentI;

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.18 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 
@@ -115,8 +116,6 @@ public class OperatingRound extends Round implements Observer
 					.toArray(new PublicCompanyI[0]);
 		}
 		
-		//MoveSet.start(false);
-
 		for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies()) 
 		{
 			if (!priv.isClosed())
@@ -227,11 +226,7 @@ public class OperatingRound extends Round implements Observer
 
     public boolean process (PossibleAction action) {
         
-        //log.debug ("Chosen OR action is "+action);
-        
         boolean result = false;
-        //String playerName = action.getPlayerName();
-        //Player currentPlayer = getCurrentPlayer();
         
         /*--- Common OR checks ---*/
         /* Check operating company */
@@ -799,7 +794,6 @@ public class OperatingRound extends Round implements Observer
     /** Take the next step after a given one (see nextStep()) */
 	protected void nextStep(int step)
 	{
-        //log.debug("+++Next step after "+step);
 		// Cycle through the steps until we reach one where a user action is expected.
 		int stepIndex;
 		for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
@@ -878,7 +872,7 @@ public class OperatingRound extends Round implements Observer
 	protected void prepareStep()
 	{
 	    int step = stepObject.intValue();
-	    //log.debug ("+++Preparing step "+step/*, new Exception("TRACE")*/);
+
 		currentPhase = PhaseManager.getInstance().getCurrentPhase();
 		
 		if (step == STEP_LAY_TRACK)
@@ -894,16 +888,6 @@ public class OperatingRound extends Round implements Observer
 		}
 		
 	}
-	
-    /*
-	protected void setSpecialProperties (Class clazz) {
-		currentSpecialProperties = operatingCompany.getPortfolio()
-			.getSpecialProperties(clazz, false);
-		currentSpecialProperties.addAll (operatingCompany.getPresident().getPortfolio()
-		    .getSpecialProperties(clazz, false));
-
-	}
-    */
 	
     protected <T extends SpecialPropertyI> List<T> getSpecialProperties (Class<T> clazz) {
         List<T> specialProperties = new ArrayList<T>();
@@ -956,24 +940,15 @@ public class OperatingRound extends Round implements Observer
 		 */
 		if (operatingCompany.getType().getName().equals("Minor")) return;
 		
-		//setSpecialProperties(rails.game.special.SpecialTileLay.class);
-		//if (currentSpecialProperties != null && !currentSpecialProperties.isEmpty())
-		//{
-			//Iterator it = currentSpecialProperties.iterator();
-			//while (it.hasNext())
         for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class))
-			{
-				//Object o = it.next();
-				//log.debug ("Spec.prop: "+o);
-				//SpecialTileLay stl = (SpecialTileLay) o;
-				if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
-				    /* If the special tile lay is not extra, it is only 
-				     * allowed if normal tile lays are also (still) allowed */
-					specialPropertyPerHex.put(stl.getLocation(), stl);
-					currentSpecialTileLays.add (new LayTile (stl));
-				}
+		{
+			if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
+			    /* If the special tile lay is not extra, it is only 
+			     * allowed if normal tile lays are also (still) allowed */
+				specialPropertyPerHex.put(stl.getLocation(), stl);
+				currentSpecialTileLays.add (new LayTile (stl));
 			}
-		//}
+		}
 	}
 	
 	protected void setNormalTokenLays () {
@@ -1005,23 +980,16 @@ public class OperatingRound extends Round implements Observer
 		 */
 		if (operatingCompany.getType().getName().equals("Minor")) return;
 
-		//setSpecialProperties(rails.game.special.SpecialTokenLay.class);
-		//if (currentSpecialProperties != null)
-		//{
-			//Iterator it = currentSpecialProperties.iterator();
-			//while (it.hasNext())
         for (SpecialTokenLay stl : getSpecialProperties (SpecialTokenLay.class))
-			{
-				//SpecialTokenLay stl = (SpecialTokenLay) it.next();
-				log.debug ("Spec.prop:"+stl);
-				if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
-				    /* If the special tile lay is not extra, it is only 
-				     * allowed if normal tile lays are also (still) allowed */
-					specialPropertyPerHex.put(stl.getLocation(), stl);
-					currentSpecialTokenLays.add (new LayToken (stl));
-				}
+		{
+			log.debug ("Spec.prop:"+stl);
+			if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
+			    /* If the special tile lay is not extra, it is only 
+			     * allowed if normal tile lays are also (still) allowed */
+				specialPropertyPerHex.put(stl.getLocation(), stl);
+				currentSpecialTokenLays.add (new LayToken (stl));
 			}
-		//}
+		}
 	}
 
 	public List<SpecialPropertyI> getSpecialProperties()
@@ -1065,8 +1033,6 @@ public class OperatingRound extends Round implements Observer
 			// OR done. Inform GameManager.
 			ReportBuffer.add(
 					LocalText.getText("EndOfOperatingRound", getCompositeORNumber()));
-			//stepObject.deleteObserver(this);
-			//stepObject = null;
 			GameManager.getInstance().nextRound(this);
 			return true;
 		}
@@ -1186,7 +1152,6 @@ public class OperatingRound extends Round implements Observer
         
 		if (presidentMustSellShares) {
 		    savedAction = action;
-		    //savedPrice = price;
 
 			GameManager.getInstance().startShareSellingRound (this, operatingCompany, 
 			        cashToBeRaisedByPresident);
@@ -1231,10 +1196,6 @@ public class OperatingRound extends Round implements Observer
         }
 		
 		//setPossibleActions("buyTrain");
-
-		/* End of execution */
-		//MoveSet.finish();
-		
 		return true;
 	}
     
@@ -1243,7 +1204,6 @@ public class OperatingRound extends Round implements Observer
         excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
         Player player;
         for (PublicCompanyI comp : operatingCompanyArray) {
-//log.debug("+++ "+comp.getName()+" has "+comp.getPortfolio().getNumberOfTrains()+"trains");
             if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(currentPhase.getIndex()))
             {
                 player = comp.getPresident();
@@ -1442,8 +1402,6 @@ public class OperatingRound extends Round implements Observer
                 player.getPortfolio(),
                 price);
         
-       // setPossibleActions("buyPrivate");
-        
         return true;
 
     }
@@ -1500,23 +1458,12 @@ public class OperatingRound extends Round implements Observer
 	    }
 	    stepObject.set(step);
 		
-		//prepareStep(); NOT NEEDED BECAUSE stepObject notifies via update()
-		//setPossibleActions("setStep");
 	}
 
 	public int getOperatingCompanyIndex()
 	{
 		return operatingCompanyIndexObject.intValue();
 	}
-	
-	/*
-	void setPossibleActions (String fromWhere) {
-	    
-	    //log.debug  (">>> setPossibleActions called from "+fromWhere);
-	    setPossibleActions();
-	    
-	}
-	*/
 	
 	/**
 	 * To be called after each change, to re-establish the currently allowed actions.
@@ -1815,7 +1762,6 @@ public class OperatingRound extends Round implements Observer
 	public void update (Observable observable, Object object) {
 	    if (observable == stepObject) {
 	        prepareStep();
-	        //setPossibleActions();
 	    }
 	}
     public String toString() {

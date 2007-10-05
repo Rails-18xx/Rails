@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.7 2007/10/05 22:02:31 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -145,8 +146,6 @@ public class GUIHex implements ViewObject
 		this.model = model;
 		currentTile = model.getCurrentTile();
 		hexName = model.getName();
-		//currentTileId = model.getPreprintedTileId();
-		//currentTileOrientation = model.getPreprintedTileOrientation();
         currentTileId = model.getCurrentTile().getId();
         currentTileOrientation = model.getCurrentTileRotation();
     	currentGUITile = new GUITile(currentTileId, model);

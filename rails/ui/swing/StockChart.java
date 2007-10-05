@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.2 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -28,7 +29,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		super();
 
 		initialize();
-		//populateGridBag();
 		populateStockPanel();
 
 		stockPanel.setBackground(Color.LIGHT_GRAY);
@@ -42,7 +42,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 	{
 		setTitle("Rails: Stock Chart");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		//getContentPane().setLayout(new GridBagLayout());
 		getContentPane().setLayout(new BorderLayout());
 		
 		stockPanel = new JPanel();
@@ -57,17 +56,13 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		gc = new GridBagConstraints();
 
 		market = Game.getStockMarket().getStockChart();
-//	}
 
-//	private void populateGridBag()
-//	{
 		gc.gridx = 0;
 		gc.gridy = 0;
 		gc.weightx = 1.0;
 		gc.weighty = 1.0;
 		gc.gridwidth = 2;
 		gc.fill = GridBagConstraints.BOTH;
-		//getContentPane().add(stockPanel, gc);
 		getContentPane().add(stockPanel, BorderLayout.CENTER);
 		getContentPane().add(horLabels, BorderLayout.NORTH);
 		getContentPane().add(verLabels, BorderLayout.WEST);
@@ -84,8 +79,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 		{
 		    l = new JLabel(""+(i+1), JLabel.CENTER);
 		    l.setAlignmentX(Component.CENTER_ALIGNMENT);
-		    //l.setMinimumSize(new Dimension(20,40));
-		    //l.setPreferredSize(new Dimension(20,40));
+
 		    verLabels.add(Box.createRigidArea(new Dimension(1,i == 0 ? 1 : 12)));
 		    verLabels.add(Box.createVerticalGlue());
 		    verLabels.add(l);
@@ -94,22 +88,16 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 			    if (i == 0) {
 			        l = new JLabel(Character.toString((char)('A'+j)), JLabel.CENTER);
 			        l.setAlignmentX(Component.CENTER_ALIGNMENT);
-			        //l.setHorizontalTextPosition(JLabel.CENTER);
-			        //l.setMinimumSize(new Dimension(40,20));
-			        //l.setPreferredSize(new Dimension(40,20));
+
 			        horLabels.add(Box.createRigidArea(new Dimension(j == 0 ? 12 : 12, 1)));
 			        horLabels.add(Box.createHorizontalGlue());
 			        horLabels.add(l);
 			    }
-		        //setupChartSpace(i, j);
-		        //stockPanel.add(layeredPane);
 			    stockPanel.add (new GUIStockSpace (i, j, market[i][j]));
 			}
 		}
 		verLabels.add(Box.createVerticalGlue());
-		//verLabels.validate();
 		horLabels.add(Box.createHorizontalGlue());
-		//horLabels.validate();
 	}
 
 

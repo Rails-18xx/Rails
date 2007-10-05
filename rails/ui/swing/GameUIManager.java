@@ -142,7 +142,7 @@ public class GameUIManager
 
        log.debug("Current round="+currentRound+", previous round="+previousRound);
        // Process consequences of a round type change to the UI
-       //if (previousRound != currentRound) {
+
        if (previousRound == null || !previousRound.equals(currentRound)) {
            
            // Finish the previous round UI aspects
@@ -230,7 +230,7 @@ public class GameUIManager
            + saveDateTimeFormat.format (new Date())
            + "." + saveExtension;
        }
-       //log.debug("Proposed filename="+filename);
+
        File proposedFile = new File (filename);
        jfc.setSelectedFile(proposedFile);
        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {

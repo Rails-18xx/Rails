@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.5 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -67,14 +68,6 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	public static PublicCertificateI getByUniqueId(String certId) {
 		return certMap.get(certId);
 	}
-	/**
-	 * @return if Certificate is Available
-	 */
-	//public boolean isAvailable()
-	//{
-	//	return available;
-	//}
-
 	/**
 	 * @return Portfolio this certificate belongs to.
 	 */

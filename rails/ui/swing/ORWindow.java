@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.9 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -156,7 +157,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	    if (subStep == INACTIVE) return;
 	    
 	    String message = LocalText.getText(messageKey[subStep]);
-	    SpecialORProperty sp;
+	    SpecialProperty sp;
 	    
 	    /* Add any extra messages */
 	    String extraMessage = "";
@@ -462,7 +463,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	{
 		GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
 
-		if (/*!tileLayingEnabled &&*/ enabled)
+		if (enabled)
 		{
 			/* Start tile laying step */
 			setSubStep(SELECT_HEX_FOR_TILE);
@@ -525,7 +526,6 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	{
 		repaintUpgradePanel();
 		orPanel.recreate();
-		//orPanel.updateStatus();
 		setVisible(true);
 		requestFocus();
 	}

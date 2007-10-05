@@ -54,22 +54,16 @@ public abstract class StartRound extends Round implements StartRoundI
         if (variant == null) variant = "";
 		numPlayers = GameManager.getNumberOfPlayers();
 
-		//itemMap = new HashMap();
 		itemsToSell = new ArrayList<StartItem>();
 		itemIndex = new int[startPacket.getItems().size()];
 		int index = 0;
 		
-		//Iterator it = startPacket.getItems().iterator();
-		//StartItem item;
-		//while (it.hasNext())
 		for (StartItem item : startPacket.getItems())
 		{
-			//item = (StartItem) it.next();
 			
 			// New: we only include items that have not yet been sold
 			// at the start of the current StartRound
 			if (!item.isSold()) {
-				//itemMap.put(item.getName(), item);
 				itemsToSell.add(item);
 				itemIndex[index++] = item.getIndex();
 			}

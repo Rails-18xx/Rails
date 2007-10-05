@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Player;
@@ -10,23 +11,13 @@ public class ShareModel extends ModelObject
 	private int share;
 	private Portfolio portfolio;
 	private PublicCompanyI company;
-	//private boolean markPresidency = false;
 
 	public ShareModel(Portfolio portfolio, PublicCompanyI company)
 	{
 		this.portfolio = portfolio;
 		this.company = company;
 		this.share = 0;
-		//this.markPresidency = (portfolio.getOwner() instanceof Player);
 	}
-
-	/*
-	public void setShare(int share)
-	{
-		this.share = share;
-		update();
-	}
-	*/
 
 	public void setShare()
 	{

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.4 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.5 2007/10/05 22:02:29 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -167,7 +167,6 @@ public class BuyTrain extends PossibleORAction {
 		in.defaultReadObject();
 		
 		train = Train.getByUniqueId(trainUniqueId);
-		//log.debug("TrainUID="+trainUniqueId+" train="+train);
 		from = Portfolio.getByName(fromName);
 		if (trainsForExchangeUniqueIds != null
 				&& trainsForExchangeUniqueIds.length > 0) {

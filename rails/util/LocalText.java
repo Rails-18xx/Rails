@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.4 2007/10/05 22:02:26 evos Exp $*/
 package rails.util;
 
 import java.text.MessageFormat;
@@ -78,7 +79,6 @@ public class LocalText extends ResourceBundle {
 			try {
 				throw new Exception("Invalid resource key '" + key + "'");
 			} catch (Exception e) {
-				// System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 		}

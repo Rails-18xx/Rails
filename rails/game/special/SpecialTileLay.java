@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.3 2007/10/05 22:02:25 evos Exp $ */
 package rails.game.special;
 
 
@@ -11,7 +12,7 @@ import rails.util.Util;
 import rails.util.XmlUtils;
 
 
-public class SpecialTileLay extends SpecialORProperty
+public class SpecialTileLay extends SpecialProperty
 {
 
 	String locationCodes = null;
@@ -52,6 +53,10 @@ public class SpecialTileLay extends SpecialORProperty
 		closingValue = XmlUtils.extractIntegerAttribute(nnp,
 				"closingValue",
 				closingValue);
+	}
+	
+	public boolean isExecutionable () {
+		return true;
 	}
 
 	public boolean isExtra()

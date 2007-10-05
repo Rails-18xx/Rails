@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.16 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -31,21 +32,21 @@ public class GameManager implements ConfigurableComponentI
     public static final long saveFileVersionID 
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
 
-	protected /*static*/ List<Player> players;
-	protected /*static*/ List<String> playerNames;
-	protected /*static*/ int numberOfPlayers;
-	protected /*static*/ State currentPlayer =
+	protected List<Player> players;
+	protected List<String> playerNames;
+	protected int numberOfPlayers;
+	protected State currentPlayer =
 		new State ("CurrentPlayer", Player.class);
-	protected /*static*/ State priorityPlayer = 
+	protected State priorityPlayer = 
 	    new State ("PriorityPlayer", Player.class);
 
-	protected /*static*/ int playerShareLimit = 60;
-	protected /*static*/ int currentNumberOfOperatingRounds = 1;
+	protected int playerShareLimit = 60;
+	protected int currentNumberOfOperatingRounds = 1;
 
-	protected /*static*/ boolean companiesCanBuyPrivates = false;
-	protected /*static*/ boolean gameEndsWithBankruptcy = false;
-	protected /*static*/ int gameEndsWhenBankHasLessOrEqual = 0;
-	protected /*static*/ boolean gameEndsAfterSetOfORs = true;
+	protected boolean companiesCanBuyPrivates = false;
+	protected boolean gameEndsWithBankruptcy = false;
+	protected int gameEndsWhenBankHasLessOrEqual = 0;
+	protected boolean gameEndsAfterSetOfORs = true;
 
 	/**
 	 * Current round should not be set here but from within the Round classes.
@@ -54,24 +55,21 @@ public class GameManager implements ConfigurableComponentI
 	 * been sold, it finishes by starting an Operating Round, which handles the
 	 * privates payout and then immediately starts a new Start Round.
 	 */
-    protected /*static*/ State currentRound 
+    protected State currentRound 
         = new State ("CurrentRound", Round.class);
-	protected /*static*/ RoundI interruptedRound = null;
+	protected RoundI interruptedRound = null;
 
-	// protected Round insertingRound = null;
-	// protected Round insertedRound = null;
 	protected int orNumber;
 	protected int numOfORs;
 
-	//protected static PhaseI currentPhase = null;
-	protected /*static*/ boolean gameOver = false;
-	protected /*static*/ boolean endedByBankruptcy = false;
-	protected /*static*/ boolean hasAnyParPrice = false;
-	protected /*static*/ boolean canAnyCompBuyPrivates = false;
+	protected boolean gameOver = false;
+	protected boolean endedByBankruptcy = false;
+	protected boolean hasAnyParPrice = false;
+	protected boolean canAnyCompBuyPrivates = false;
 
 	protected static GameManager instance;
 
-	protected /*static*/ String name;
+	protected String name;
 
 	protected StartPacket startPacket;
     
@@ -80,9 +78,7 @@ public class GameManager implements ConfigurableComponentI
     List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
 
 	/** A List of available game options */
-	protected /*static*/ List<GameOption> availableGameOptions = new ArrayList<GameOption>();
-    /** A Map of selected game options (variant included via "variant" keyword) */
-    //protected /*static*/ Map<String, String> selectedGameOptions = new HashMap<String, String>();
+	protected List<GameOption> availableGameOptions = new ArrayList<GameOption>();
     
     /* Some standard tags for conditional attributes */
     public static final String VARIANT_KEY = "Variant";
@@ -191,7 +187,6 @@ public class GameManager implements ConfigurableComponentI
 		players = Game.getPlayerManager().getPlayers();
 		playerNames = Game.getPlayerManager().getPlayerNames();
 		numberOfPlayers = players.size();
-		//setPriorityPlayer (players[0]);
 		priorityPlayer.setState(players.get(0));
 
 		if (startPacket == null)
@@ -356,9 +351,6 @@ public class GameManager implements ConfigurableComponentI
 	                case GameAction.SAVE:
 	                    result = save (gameAction);
 	                    break;
-                    // Unused & unusable:
-	                //case GameAction.LOAD:
-	                //    break;
 					case GameAction.UNDO:
 						MoveSet.undo(false);
 						result = true;

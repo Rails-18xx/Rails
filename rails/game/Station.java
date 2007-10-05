@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.3 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -135,30 +136,6 @@ public class Station implements TokenHolderI, Cloneable
 		return value;
 	}
 
-	/*
-	public boolean addToken(TokenHolderI company)
-	{
-	    if (tokens.size() + 1 <= baseSlots)
-		{
-			if (!tokens.contains(company))
-			{
-				tokens.add(company);
-				return true;
-			}
-			else
-			{
-				Log.error("Unable to add token to this station.\nThis company already has a token at this location.");
-				return false;
-			}
-		}
-		else
-		{
-			Log.error("Unable to add token to this station. No more open slots.");
-			return false;
-		}
-	}
-	*/
-	
 	/** Stub */
 	public boolean addToken (TokenI token) {
 	    
@@ -184,20 +161,6 @@ public class Station implements TokenHolderI, Cloneable
 	    return tokens.size() < baseSlots;
 	}
 
-	/*
-	public boolean removeToken(TokenHolderI company)
-	{
-		int index = tokens.indexOf(company);
-		if (index >= 0)
-		{
-			tokens.remove(index);
-			return true;
-		}
-		else
-			return false;
-	}
-	*/
-	
 	/** Stub */
 	public boolean removeToken (TokenI token) {
 	    

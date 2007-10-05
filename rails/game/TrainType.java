@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.12 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -82,11 +83,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 		if (real)
 		{
-			//NamedNodeMap attr = el.getAttributes();
             Map<String, String> attributes = XmlUtils.getAllAttributes(el);
             
 			// Name
-			//name = XmlUtils.extractStringAttribute(attr, "name");
             name = attributes.get("name");
 			if (name == null)
 			{
@@ -94,7 +93,6 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Cost
-			//cost = XmlUtils.extractIntegerAttribute(attr, "cost");
             cost = Util.parseInt(attributes.get("cost"));
 			if (cost == 0)
 			{
@@ -102,7 +100,6 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Amount
-			//amount = XmlUtils.extractIntegerAttribute(attr, "amount");
             amount = Util.parseInt(attributes.get("amount"));
 			if (amount == -1)
 			{
@@ -114,7 +111,6 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Major stops
-			//majorStops = XmlUtils.extractIntegerAttribute(attr, "majorStops");
             majorStops = Util.parseInt(attributes.get("majorStops"));
 			if (majorStops == 0)
 			{
@@ -122,24 +118,16 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Minor stops
-			//minorStops = XmlUtils.extractIntegerAttribute(attr, "minorStops", 0);
             minorStops = Util.parseInt(attributes.get("minorStops"));
 
 			// Phase started
-			//startedPhaseName = XmlUtils.extractStringAttribute(attr,
-			//		"startPhase",
-			//		"");
             startedPhaseName = attributes.get("startPhase");
             if (startedPhaseName == null) startedPhaseName = "";
 
 			// Train type rusted
-			//rustedTrainTypeName = XmlUtils.extractStringAttribute(attr,
-			//		"rustedTrain");
             rustedTrainTypeName = attributes.get("rustedTrain");
             
 			// Other train type released for buying
-			//releasedTrainTypeName = XmlUtils.extractStringAttribute(attr,
-			//		"releasedTrain");
             releasedTrainTypeName = attributes.get("releasedTrain");
 
         }
@@ -399,16 +387,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	public void setAvailable()
 	{
 		available.set(true);
-		//MoveSet.add(new StateChange (available, availableValue));
 
-		//for (Iterator it = trains.iterator(); it.hasNext();)
 		for (TrainI train : trains) 
 		{
-			/*Portfolio.transferTrain(((TrainI) it.next()),
-					Bank.getUnavailable(),
-					Bank.getIpo());
-			*/
-			//new TrainMove ((TrainI) it.next(), 
 			new TrainMove (train, 
 					Bank.getUnavailable(),
 					Bank.getIpo());
@@ -422,16 +403,10 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	public void setRusted()
 	{
-		//this.rusted = true;
-		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
 	    rusted.set(true);
         for (TrainI train : trains) {
             train.setRusted();
         }
-		//for (Iterator it = trains.iterator(); it.hasNext();)
-		//{
-		//	((TrainI) it.next()).setRusted();
-		//}
 	}
 
 	public boolean hasRusted()

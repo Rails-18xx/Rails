@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.4 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.5 2007/10/05 22:02:29 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -26,7 +26,6 @@ public class BuyOrBidStartItem extends PossibleAction {
      * <i>current</i> player, taking into account the amount of
      * cash of this player that is blocked by bids on other items.
      */
-   // private int status;
     private int priceOrMinimumBid;
     private int itemIndex;
     
@@ -50,7 +49,6 @@ public class BuyOrBidStartItem extends PossibleAction {
         this.startItemName = startItem.getName();
         this.itemIndex = startItem.getIndex();
         this.priceOrMinimumBid = priceOrMinimumBid;
-        //this.status = status;
         
         PublicCompanyI company;
         if ((company = startItem.needsPriceSetting()) != null) {
@@ -107,7 +105,6 @@ public class BuyOrBidStartItem extends PossibleAction {
 	}
 	
 	public int getStatus() {
-		//return status;
         return startItem.getStatus();
 	}
 	
@@ -116,8 +113,7 @@ public class BuyOrBidStartItem extends PossibleAction {
         BuyOrBidStartItem a = (BuyOrBidStartItem) action;
         return a.startItem == startItem
             && a.itemIndex == itemIndex
-            && a.priceOrMinimumBid == priceOrMinimumBid
-            /*&& a.status == status*/;
+            && a.priceOrMinimumBid == priceOrMinimumBid;
     }
 
 	public String toString() {

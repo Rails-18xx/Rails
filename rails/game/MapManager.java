@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -106,11 +107,9 @@ public class MapManager implements ConfigurableComponentI
 		}
 
 		hexes = new MapHex[1 + maxX][1 + maxY];
-		//Iterator it = mHexes.keySet().iterator();
-		//while (it.hasNext())
+
 		for (String hexName : mHexes.keySet())
 		{
-			//hex = (MapHex) mHexes.get((String) it.next());
 			hex = (MapHex) mHexes.get(hexName);
 			hexes[hex.getX()][hex.getY()] = hex;
 		}
@@ -220,7 +219,6 @@ public class MapManager implements ConfigurableComponentI
 	{
 	    PublicCompanyI company;
 	    MapHex hex;
-	    //Station station;
 	    
 	    for (Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
 	    		it.hasNext(); ) {
@@ -232,30 +230,5 @@ public class MapManager implements ConfigurableComponentI
 	            hex.addDestination(company);
 	        }
 	    }
-	    /*
-		for (int i = 0; i < hexes.length; i++)
-		{
-			for (int j = 0; j < hexes[i].length; j++)
-			{
-				try
-				{
-					hexes[i][j].assignHome();
-				}
-				catch (NullPointerException e)
-				{
-					//No home in this hex
-				}
-				
-				try
-				{
-					hexes[i][j].assignDestination();
-				}
-				catch (NullPointerException e)
-				{
-					//No Destination in this hex.
-				}
-			}
-		}
-		*/
 	}
 }

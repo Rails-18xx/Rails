@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ActionButton.java,v 1.3 2007/10/05 22:02:30 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.util.ArrayList;

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.6 2007/10/05 22:02:25 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -17,14 +18,14 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	protected PrivateCompanyI privateCompany;
 	protected int closingValue = 0;
 	protected BooleanState exercised; 
-	protected boolean isSRProperty = false;
-	protected boolean isORProperty = false;
 	protected boolean usableIfOwnedByPlayer = false;
 	protected boolean usableIfOwnedByCompany = false;
 	protected boolean closeIfExercised = false;
 	
 	protected String conditionText = "";
 	protected String whenText = "";
+	protected boolean isORProperty = false;
+	protected boolean isSRProperty = false;
 	
 	protected int uniqueId;
 	

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.6 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -27,8 +28,6 @@ public class StartPacket
 	private String name; // For identification if there is more than one.
 	/** The name of the class that implements the Start Round for this packet. */
 	private String roundClassName;
-	/** The start round variant name */
-	//private String variant;
 	/** The start items in this packet. */
 	private List<StartItem> items = new ArrayList<StartItem>();
 
@@ -48,8 +47,6 @@ public class StartPacket
 	{
 		this.name = Util.hasValue(name) ? name : DEFAULT_NAME;
 		this.roundClassName = roundClassName;
-		//this.variant = GameManager.getVariant();
-        //this.variant = GameManager.getGameOption(GameManager.VARIANT_KEY);
 		packets.put(name, this);
 	}
 
@@ -65,8 +62,6 @@ public class StartPacket
 	public void configureFromXML(Element element) throws ConfigurationException
 	{
 		NodeList children = element.getElementsByTagName("Item");
-		//Portfolio ipo = Bank.getIpo();
-		//Portfolio unavailable = Bank.getUnavailable();
 
 		for (int i = 0; i < children.getLength(); i++)
 		{
@@ -128,15 +123,8 @@ public class StartPacket
 	 */
 	protected static void init()
 	{
-		//Iterator it = packets.values().iterator();
-		//StartPacket sp;
-		//Iterator it2;
-		//while (it.hasNext())
 		for (StartPacket sp : packets.values())
 		{
-			//sp = (StartPacket) it.next();
-			//it2 = sp.items.iterator();
-			//while (it2.hasNext())
 			for (StartItem item : sp.items)
 			{
 				item.init();
@@ -207,9 +195,6 @@ public class StartPacket
 	 */
 	public StartItem getFirstUnsoldItem()
 	{
-		//StartItem result;
-		//Iterator it = items.iterator();
-		//while (it.hasNext())
 		for (StartItem item : items)
 		{
 			if (!item.isSold()) return item;
@@ -225,9 +210,6 @@ public class StartPacket
 	public List getUnsoldItems()
 	{
 		List<StartItem> unsoldItems = new ArrayList<StartItem>();
-		//Iterator it = items.iterator();
-		//StartItem u;
-		//while (it.hasNext())
 		for (StartItem item : items)
 		{
 			if (!(item.isSold()))
@@ -263,13 +245,6 @@ public class StartPacket
 		return roundClassName;
 	}
 
-    /*
-	public String getVariant()
-	{
-		return variant;
-	}
-    */
-	
 	public int getNumberOfItems () {
 		return items.size();
 	}

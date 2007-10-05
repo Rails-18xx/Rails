@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.4 2007/10/05 22:02:25 evos Exp $ */
 package rails.game.special;
 
 import org.w3c.dom.*;
@@ -10,7 +11,7 @@ import rails.util.XmlUtils;
 
 
 
-public class ExchangeForShare extends SpecialSRProperty
+public class ExchangeForShare extends SpecialProperty
 {
 
 	/** The public company of which a share can be obtained. */
@@ -39,8 +40,7 @@ public class ExchangeForShare extends SpecialSRProperty
 	public boolean isExecutionable()
 	{
 
-		return /*GameManager.getCurrentPhase().isPrivateSellingAllowed()
-				&&*/ privateCompany.getPortfolio().getOwner() instanceof Player;
+		return privateCompany.getPortfolio().getOwner() instanceof Player;
 	}
 
 	public boolean execute()

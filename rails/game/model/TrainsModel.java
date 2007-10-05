@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Portfolio;
@@ -31,9 +32,4 @@ public class TrainsModel extends ModelObject
 			return "";
 		}
 	}
-
-	//public void update() {
-	//	log.debug("Update called, trains="+getText(), new Exception ("HERE"));
-	//	super.update();
-	//}
 }

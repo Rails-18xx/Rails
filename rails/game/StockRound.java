@@ -12,8 +12,8 @@ import rails.game.action.UseSpecialProperty;
 import rails.game.move.DoubleMapChange;
 import rails.game.move.MoveSet;
 import rails.game.special.ExchangeForShare;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
-import rails.game.special.SpecialSRProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
@@ -51,8 +51,6 @@ public class StockRound extends Round
 	protected Map<String, StockSpaceI> sellPrices 
 		= new HashMap<String, StockSpaceI>();
 
-	//protected List<SpecialPropertyI> currentSpecialProperties = null;
-
 	/* Transient data needed for rule enforcing */
 	/** HashMap per player containing a HashMap per company */
 	protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound 
@@ -67,7 +65,6 @@ public class StockRound extends Round
 	static protected final int SELL_BUY_OR_BUY_SELL = 2;
 
 	/* Permanent memory */
-	//static protected int stockRoundNumber = 0;
     static IntegerState stockRoundNumber = new IntegerState ("StockRoundNumber", 0);
 	static protected StockMarketI stockMarket;
 	static protected Portfolio ipo;
@@ -115,8 +112,6 @@ public class StockRound extends Round
 		ReportBuffer.add(LocalText.getText("HasPriority", new String[] {
 		        currentPlayer.getName()
 		        }));
-		
-		//setPossibleActions();
 	}
 
 	/*----- General methods -----*/
@@ -135,8 +130,6 @@ public class StockRound extends Round
 		
 		boolean passAllowed = true;
         
-        //log.debug("Called from ", new Exception("HERE"));
-		
 		possibleActions.clear();
 		
 		setBuyableCerts();
@@ -144,12 +137,6 @@ public class StockRound extends Round
 		setSellableShares();
         
         setSpecialActions();
-		
-        /*
-		if (possibleActions.isEmpty()) {
-			numPasses.add(1);
-		}
-		*/
 		
 		if (passAllowed) {
 			if (hasActed.booleanValue()) {
@@ -179,7 +166,6 @@ public class StockRound extends Round
 
 		List<PublicCertificateI> certs;
 		PublicCertificateI cert;
-		//TradeableCertificate tCert;
 		PublicCompanyI comp;
 		StockSpaceI stockSpace;
 		Portfolio from;
@@ -340,8 +326,6 @@ public class StockRound extends Round
 				if (maxShareToSell > share - presidentShare) {
 					dumpAllowed = false;
 					int playerShare;
-					//Player[] players = GameManager.getPlayers();
-					//for (int i = 0; i < numberOfPlayers; i++)
 					for (Player player : GameManager.getPlayers())
 					{
 						if (player == currentPlayer) continue;
@@ -402,8 +386,8 @@ public class StockRound extends Round
     
     protected void setSpecialActions () {
         
-        List<SpecialSRProperty> sps = currentPlayer.getPortfolio()
-                .getSpecialProperties(SpecialSRProperty.class, false);
+        List<SpecialProperty> sps = currentPlayer.getPortfolio()
+                .getSpecialProperties(SpecialProperty.class, false);
         for (SpecialPropertyI sp : sps) {
             possibleActions.add(new UseSpecialProperty (sp));
         }
@@ -430,8 +414,6 @@ public class StockRound extends Round
 		} else if (action instanceof StartCompany) {
 			
 			StartCompany startCompanyAction = (StartCompany) action;
-			
-			//log.debug ("Item details: status="+status+" bid="+startItemAction.getActualBid());
 			
 				result = startCompany (playerName, 
 						startCompanyAction.getCertificate().getCompany().getName(),
@@ -621,7 +603,6 @@ public class StockRound extends Round
 
 		//companyBoughtThisTurn = company;
 		companyBoughtThisTurnWrapper.set((Object)company);
-		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		hasActed.set (true);
 		setPriority();
 
@@ -812,10 +793,7 @@ public class StockRound extends Round
 			currentPlayer.buy(cert, price * cert.getShares());
 		}
 
-		//companyBoughtThisTurn = company;
-		//MoveSet.add (new StateChange (companyBoughtThisTurnWrapper, company));
 		companyBoughtThisTurnWrapper.set (company);
-		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		hasActed.set(true);
 		setPriority();
 
@@ -828,13 +806,6 @@ public class StockRound extends Round
 
 	private void recordSale(Player player, PublicCompanyI company)
 	{
-	    /*
-		if (!playersThatSoldThisRound.containsKey(player))
-		{
-			playersThatSoldThisRound.put(player, new HashMap());
-		}
-		((Map) playersThatSoldThisRound.get(player)).put(company, null);
-		*/
 	    new DoubleMapChange<Player, PublicCompanyI, Object> 
             (playersThatSoldThisRound, player, company, null);
 	}
@@ -849,7 +820,6 @@ public class StockRound extends Round
 	// NOTE: Don't forget to keep ShareSellingRound.sellShares() in sync
 	{
 
-		//currentPlayer = GameManager.getCurrentPlayer();
 		Portfolio portfolio = currentPlayer.getPortfolio();
 		String playerName = currentPlayer.getName();
 		String errMsg = null;
@@ -859,7 +829,6 @@ public class StockRound extends Round
 		PublicCertificateI presCert = null;
 		List<PublicCertificateI> certsToSell 
 			= new ArrayList<PublicCertificateI>();
-		//List certsToSwap = new ArrayList();
 		Player dumpedPlayer = null;
 		int presSharesToSell = 0;
 		int numberToSell = action.getNumberSold();
@@ -1065,9 +1034,7 @@ public class StockRound extends Round
 		recordSale(currentPlayer, company);
 
 		if (companyBoughtThisTurnWrapper.getObject() == null)
-			//MoveSet.add (new StateChange (hasSoldThisTurnBeforeBuying, Boolean.TRUE));
 		    hasSoldThisTurnBeforeBuying.set (true);
-		//MoveSet.add (new StateChange (hasPassed, Boolean.FALSE));
 		hasActed.set (true);
 		setPriority();
 
@@ -1126,12 +1093,8 @@ public class StockRound extends Round
 			ReportBuffer.add(LocalText.getText("END_SR", String.valueOf(stockRoundNumber.intValue())));
 
 			/* Check if any companies are sold out. */
-			//Iterator it = companyMgr.getAllPublicCompanies().iterator();
-			//PublicCompanyI company;
-			//while (it.hasNext())
 			for (PublicCompanyI company : companyMgr.getAllPublicCompanies())
 			{
-				//company = (PublicCompanyI) it.next();
 				if (company.hasStockPrice() && company.isSoldOut())
 				{
 					StockSpaceI oldSpace = company.getCurrentPrice();
@@ -1188,13 +1151,6 @@ public class StockRound extends Round
 		hasSoldThisTurnBeforeBuying.set(false);
 		hasActed.set(false);
 
-        // The remainder is deprecated
-        /*
-		currentSpecialProperties = currentPlayer.getPortfolio()
-				.getSpecialProperties(rails.game.special.SpecialSRProperty.class, false);
-		log.debug ("Player "+currentPlayer.getName()
-		        +", spec#="+currentSpecialProperties.size());
-                */
 	}
 
 	/**
@@ -1215,16 +1171,6 @@ public class StockRound extends Round
 	{
 		return GameManager.getPriorityPlayer();
 	}
-
-	/**
-	 * @return The index of the player that has the Priority Deal.
-	 */
-	/*
-	public static int getPriorityPlayerIndex()
-	{
-		return GameManager.priorityPlayerIndex;
-	}
-	*/
 
 	/**
 	 * @return The player that has the turn.

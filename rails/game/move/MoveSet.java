@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.9 2007/08/01 21:07:09 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.10 2007/10/05 22:02:29 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -171,8 +171,6 @@ public class MoveSet {
     
     private void execute () {
         
-        //for (Iterator it = moves.iterator(); it.hasNext(); ) {
-        //    ((Move)it.next()).execute();
     	for (Move move : moves) {
     		move.execute();
             log.debug("Redone: "+move);
@@ -181,9 +179,7 @@ public class MoveSet {
     
     private void unexecute () {
 
-        //for (Iterator it = moves.iterator(); it.hasNext(); ) {
-        //    ((Move)it.next()).undo();
-    	// TODO Should not the move order be reversed?
+     	// TODO Should not the move order be reversed?
     	for (Move move : moves) {
     		move.undo();
             log.debug("Undone: "+move);

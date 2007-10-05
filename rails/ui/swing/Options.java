@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/Attic/Options.java,v 1.16 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -33,9 +34,9 @@ public class Options extends JDialog implements ActionListener
     
     GameUIManager gameUIManager;
     
-    Map<String, String> gameNotes;// = new HashMap<String, String>();
-    Map<String, String> gameDescs;// = new HashMap<String, String>();
-    List<String> games;// = new ArrayList<String>();
+    Map<String, String> gameNotes;
+    Map<String, String> gameDescs;
+    List<String> games;
     List<GameOption> availableOptions;
     List<JComponent> optionComponents;
     Map<String, String> selectedOptions = new HashMap<String, String>();
@@ -153,7 +154,6 @@ public class Options extends JDialog implements ActionListener
 		gc.weightx = 0.5;
 		gc.weighty = 0.5;
 		gc.gridwidth = 1;
-		// gc.ipadx = 50;
 		gc.ipady = 50;
 		this.getContentPane().add(optionsPane, gc);
 
@@ -171,7 +171,7 @@ public class Options extends JDialog implements ActionListener
 	{
         for (String gameName : gameNames)
 		{
-				String gameText = gameName + " - " + GamesInfo2.getNote(gameName);
+				String gameText = gameName + " - " + GamesInfo.getNote(gameName);
 				gameNameBox.addItem(gameText);
 		}
 	}
@@ -182,8 +182,7 @@ public class Options extends JDialog implements ActionListener
         
         this.gameUIManager = gameUIManager;
 
-        //getGameList();
-        games = GamesInfo2.getGameNames();
+        games = GamesInfo.getGameNames();
 		initialize();
 		populateGridBag();
 
@@ -229,7 +228,7 @@ public class Options extends JDialog implements ActionListener
 					optionButton.setEnabled(false);
 					loadButton.setEnabled(false);
 	                 // Request game options (new)
-	                availableOptions = GamesInfo2.getOptions(gameName);
+	                availableOptions = GamesInfo.getOptions(gameName);
 	    		}
     			catch (NullPointerException e)
     			{
@@ -334,7 +333,7 @@ public class Options extends JDialog implements ActionListener
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout (panel, BoxLayout.Y_AXIS));
 
-        availableOptions = GamesInfo2.getOptions(gameName);
+        availableOptions = GamesInfo.getOptions(gameName);
         selectedOptions.clear();
         if (availableOptions != null && !availableOptions.isEmpty()) {
 	        for (GameOption option : availableOptions) {
