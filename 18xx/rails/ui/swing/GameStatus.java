@@ -78,7 +78,6 @@ public class GameStatus extends JPanel implements ActionListener
 	private int playerWorthXOffset, playerWorthYOffset;
 	private Field playerCertCount[];
 	private int playerCertCountXOffset, playerCertCountYOffset;
-	//private Field certLimit;
 	private int certLimitXOffset, certLimitYOffset;
 	private Field bankCash;
 	private int bankCashXOffset, bankCashYOffset;
@@ -88,7 +87,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private int newTrainsXOffset, newTrainsYOffset;
 	private Field futureTrains;
 	private int futureTrainsXOffset, futureTrainsYOffset;
-	private int rightCompCaptionXOffset;//, rightCompCaptionYOffset;
+	private int rightCompCaptionXOffset;
 
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
@@ -129,7 +128,6 @@ public class GameStatus extends JPanel implements ActionListener
 		UIManager.put("ToggleButton.select", buttonHighlight);
 
 		gbc = new GridBagConstraints();
-		// updateStatus();
 		setSize(800, 300);
 		setLocation(0, 450);
 		setBorder(BorderFactory.createEtchedBorder());
@@ -199,7 +197,6 @@ public class GameStatus extends JPanel implements ActionListener
 			compPrivatesYOffset = lastY;
 		}
 		rightCompCaptionXOffset = ++lastX;
-		//rightCompCaptionYOffset = lastY;
 		
 		playerCashXOffset = certPerPlayerXOffset;
 		playerCashYOffset = (lastY += nc);

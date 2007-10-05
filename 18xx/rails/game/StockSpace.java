@@ -108,17 +108,6 @@ public class StockSpace extends ModelObject implements StockSpaceI
 	public int getStackPosition(PublicCompanyI company)
 	{
 		return tokens.indexOf(company);
-		//int pos = -1;
-		//Iterator it = tokens.iterator();
-		//while (it.hasNext())
-		//for (PublicCompanyI comp : tokens)
-		//{
-			//pos++;
-			//if ((PublicCompanyI) it.next() == company)
-			//	return pos;
-			//if (comp == company) break;
-		//}
-		//return pos;
 	}
 
 	/*----- Fixed start prices (e.g. 1835, to show in small print) -----*/

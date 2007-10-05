@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -22,9 +23,6 @@ public class Train implements TrainI
 			= new HashMap<String, TrainI> (); 
 
 	protected Portfolio holder;
-	//protected boolean rusted = false;
-	//protected BooleanState rusted; // Does not seem to be used
-	// protected boolean canBeExchanged = false;
 
 	protected static final Portfolio unavailable = Bank.getUnavailable();
 	protected static final Portfolio ipo = Bank.getIpo();
@@ -39,8 +37,6 @@ public class Train implements TrainI
 		this.cityScoreFactor = type.getCityScoreFactor();
 		this.townScoreFactor = type.getTownScoreFactor();
 		this.townCountIndicator = type.getTownCountIndicator();
-
-		//rusted = new BooleanState (getName()+"Rusted", false);
 
 		unavailable.addTrain(this);
 		uniqueId = type.getName() + "_" + index;
@@ -136,10 +132,6 @@ public class Train implements TrainI
 
 	public void setRusted()
 	{
-		//rusted = true;
-		//MoveSet.add (new StateChange (rusted, Boolean.TRUE));
-	    //rusted.set (true);
-		//Portfolio.transferTrain(this, holder, Bank.getScrapHeap());
 		new TrainMove (this, holder, Bank.getScrapHeap());
 	}
 

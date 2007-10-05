@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -74,10 +75,6 @@ implements ActionListener, KeyListener, ActionPerformer
 	private StartRoundI round;
 	private GameUIManager gameUIManager;
 
-	//private JMenuBar menuBar;
-	//private static JMenu moveMenu;
-	//private JMenuItem undoItem, redoItem;
-
 	private StartItem si;
 	private JComponent f;
 
@@ -101,34 +98,9 @@ implements ActionListener, KeyListener, ActionPerformer
 		this.round = round;
 		includeBidding = round.hasBidding();
 		gameUIManager = parent;
-		//startRoundPanel = this;
 		setTitle(LocalText.getText("START_ROUND_TITLE"));
 		getContentPane().setLayout(new BorderLayout());
 
-        /*
-		menuBar = new JMenuBar();
-		moveMenu = new JMenu(LocalText.getText("MOVE"));
-		moveMenu.setMnemonic(KeyEvent.VK_M);
-
-		undoItem = new JMenuItem(LocalText.getText("UNDO"));
-		//undoItem.setName(LocalText.getText("UNDO"));
-		undoItem.setActionCommand(UNDO_CMD);
-		undoItem.setMnemonic(KeyEvent.VK_U);
-		undoItem.addActionListener(this);
-		undoItem.setEnabled(false);
-		moveMenu.add(undoItem);
-
-		redoItem = new JMenuItem(LocalText.getText("REDO"));
-		redoItem.setActionCommand(REDO_CMD);
-		redoItem.setMnemonic(KeyEvent.VK_R);
-		redoItem.addActionListener(this);
-		redoItem.setEnabled(false);
-		moveMenu.add(redoItem);
-		
-		menuBar.add (moveMenu);
-		setJMenuBar(menuBar);
-        */
-		
 		statusPanel = new JPanel();
 		gb = new GridBagLayout();
 		statusPanel.setLayout(gb);
@@ -366,13 +338,6 @@ implements ActionListener, KeyListener, ActionPerformer
 
 	}
 	
-    /*
-	public void updateStatus (String from) {
-		//log.debug("--StartRoundWindow updateStatus called from "+from);
-		updateStatus();
-	}
-    */
-
 	public void updateStatus()
 	{
 		StartItem item;
@@ -530,7 +495,6 @@ implements ActionListener, KeyListener, ActionPerformer
 		{
 			gbc = gb.getConstraints(source);
 			itemIndex = gbc.gridy - bidPerPlayerYOffset;
-			//BuyOrBidStartItem currentActiveItem = actionableItems[itemIndex];
             BuyOrBidStartItem currentActiveItem 
                 = (BuyOrBidStartItem)((ClickField)source).getPossibleActions().get(0);
 						
@@ -583,8 +547,6 @@ implements ActionListener, KeyListener, ActionPerformer
 				process (activeItem);
 			}
 		}
-		
-	    //displayError();
 	    
 	}
 	

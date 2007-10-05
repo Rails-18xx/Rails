@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TokenHolderI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -10,23 +11,6 @@ import java.util.*;
 public interface TokenHolderI
 {
 
-	/**
-	 * Add a token to our pile.
-	 * 
-	 * @param company
-	 * @deprecated
-	 */
-	//public boolean addToken(TokenHolderI company);
-
-	/**
-	 * Remove a token from the pile.
-	 * 
-	 * @param company
-	 *            The company object to remove.
-	 * @return False if the token was not found.
-	 * @deprecated
-	 */
-	//public boolean removeToken(TokenHolderI company);
 
 	/** Add a token. 
 	 * Subclasses may override this method to implement side effects.

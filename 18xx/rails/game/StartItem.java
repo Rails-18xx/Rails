@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.8 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -36,7 +37,6 @@ public class StartItem
 	protected static int numberOfPlayers;
 	protected MoneyModel[] bids;
 	protected MoneyModel minimumBid;
-	//protected int buyPrice = 0;
 	
 	// Status info for the UI ==> MOVED TO BuyOrBidStartItem
 	// TODO REDUNDANT??

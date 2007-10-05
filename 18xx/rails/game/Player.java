@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.9 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 
@@ -40,8 +41,6 @@ public class Player implements CashHolder, Comparable<Player>
 
 	private CashModel wallet = new CashModel(this);
 
-	//private WorthModel worth = new WorthModel(this);
-	
 	private CertCountModel certCount = new CertCountModel (this);
 
 	private MoneyModel blockedCash;
@@ -72,21 +71,15 @@ public class Player implements CashHolder, Comparable<Player>
 	 */
 	public static void initPlayers(List<Player> players)
 	{
-		//Player player;
 		int numberOfPlayers = players.size();
 		int startCash = playerStartCash[numberOfPlayers];
 
 		// Give each player the initial cash amount
-		//for (int i = 0; i < numberOfPlayers; i++)
 		int index = 0;
 		for (Player player : players)
 		{
-			//player = (Player) players[i];
 			player.index = index++;
 			Bank.transferCash(null, player, startCash);
-			//ReportBuffer.add("Player " + player.getName() + " receives "
-			//		+ Bank.format(startCash) + ". Bank now has "
-			//		+ Bank.getInstance().getFormattedCash());
 			ReportBuffer.add(LocalText.getText("PlayerIs", new String[] {
 					String.valueOf(index),
 					player.getName()
@@ -163,7 +156,6 @@ public class Player implements CashHolder, Comparable<Player>
 			throw e;
 		}
 
-		//Game.getPlayerManager().setBoughtStockLast(this);
 		hasBoughtStockThisTurn = true;
 	}
 
@@ -336,25 +328,17 @@ public class Player implements CashHolder, Comparable<Player>
 	public int getWorth()
 	{
 		int worth = wallet.getCash();
-		//Iterator it = portfolio.getCertificates().iterator();
-		//while (it.hasNext())
+
 		for (PublicCertificateI cert : portfolio.getCertificates())
 		{
 			worth += cert.getCertificatePrice();
 		}
-		//it = portfolio.getPrivateCompanies().iterator();
-		//while (it.hasNext())
 		for (PrivateCompanyI priv :  portfolio.getPrivateCompanies())
 		{
 			worth += priv.getBasePrice();
 		}
 		return worth;
 	}
-
-	//public String getFormattedWorth()
-	//{
-	//	return Bank.format(getWorth());
-	//}
 
 	public CalculatedMoneyModel getWorthModel()
 	{
@@ -427,17 +411,6 @@ public class Player implements CashHolder, Comparable<Player>
 			return true;
 		}
 	}
-
-	/**
-	 * Unblock all blocked cash.
-	 * 
-	 * @return Always true.
-	 */
-	//public boolean unblockCash()
-	//{
-	//	blockedCash.set (0);
-	//	return true;
-	//}
 
 	/**
 	 * Return the unblocked cash (available for bidding)

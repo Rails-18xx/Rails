@@ -1,5 +1,5 @@
 <!-- Supported games -->
-<Games>
+<GamesList>
 	<Game name="1830">
 		<Note>Fully playable</Note>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
@@ -44,4 +44,4 @@ Variant selection effects on SR and OR have not been implemented yet.
 		<Option name="UnlimitedDTrains" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
-</Games>
+</GamesList>

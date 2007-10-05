@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.3 2007/10/05 22:02:25 evos Exp $ */
 package rails.game.special;
 
 
@@ -11,13 +12,13 @@ import rails.util.Util;
 import rails.util.XmlUtils;
 
 
-public class SpecialTokenLay extends SpecialORProperty
+public class SpecialTokenLay extends SpecialProperty
 {
 	String locationCodes = null;
-	//MapHex location = null;
     List<MapHex> locations = null;
 	boolean extra = false;
 	boolean free = false;
+	boolean connected = false;
 	Class tokenClass;
 	TokenI token = null;
     int numberAvailable = 1;
@@ -54,6 +55,7 @@ public class SpecialTokenLay extends SpecialORProperty
 		free = XmlUtils.extractBooleanAttribute(nnp,
 				"free",
 				free);
+		connected = XmlUtils.extractBooleanAttribute(nnp, "connected", connected);
 		closingValue = XmlUtils.extractIntegerAttribute(nnp,
 				"closingValue",
 				closingValue);
@@ -80,6 +82,10 @@ public class SpecialTokenLay extends SpecialORProperty
 		} catch (Exception e) {
 			throw new ConfigurationException ("Cannot instantiate class "+tokenClassName, e);
 		}
+	}
+	
+	public boolean isExecutionable() {
+		return true;
 	}
     
     public int getNumberLeft () {

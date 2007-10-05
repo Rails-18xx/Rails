@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/PrivatesModel.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
 package rails.game.model;
 
 import java.util.List;
@@ -22,12 +23,8 @@ public class PrivatesModel extends ModelObject
 	{
 
 		StringBuffer buf = new StringBuffer("<html>");
-		//Iterator it = privatesList.iterator();
-		//PrivateCompanyI priv;
-		//while (it.hasNext())
 		for (PrivateCompanyI priv : privatesList)
 		{
-			//priv = (PrivateCompanyI) it.next();
 			if (buf.length() > 6)
 				buf.append(option == BREAK ? "<br>" : "&nbsp;");
 			buf.append(priv.getName());

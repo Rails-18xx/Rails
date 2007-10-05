@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.2 2007/10/05 22:02:30 evos Exp $*/
 package rails.ui.swing.elements;
 
 
@@ -110,7 +111,6 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 		PublicCompanyI co;
 		GUIToken token;
 
-		//for (int k = 0; k < tokenList.size(); k++)
 		for (int k = tokenList.size()-1; k >=0 ; k--)
 		{
 			co = (PublicCompanyI) tokenList.get(k);

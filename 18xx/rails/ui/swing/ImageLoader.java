@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.10 2007/10/05 22:02:29 evos Exp $*/
  package rails.ui.swing;
 
 import java.awt.image.*;
@@ -64,16 +65,7 @@ public class ImageLoader {
 
 	private void loadTile(int tileID) {
 		BufferedImage image = null;
-/*
-		Image img = ResourceLoader.getImage("tile" + tileID, directories, svgWidth, svgHeight);
-		
-		try {
-			image = ResourceLoader.toBufferedImage(img);
-		} catch (NullPointerException e) {
-			log.error("Unable to load tile" +tileID + ": " + e);
-		}
 
-*/
 		if (preference.equalsIgnoreCase("gif")) {
 
 			image = getGIFTile(tileID);

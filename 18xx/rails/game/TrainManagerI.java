@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -14,12 +15,6 @@ public interface TrainManagerI
 	 * ComponentManager.
 	 */
 	static final String COMPONENT_NAME = "TrainManager";
-
-	// public static String makeAbbreviatedList (Portfolio holder);
-
-	// public String makeFullList (TrainI[] trains);
-
-	// public String makeFullList (Portfolio holder);
 
 	public List getAvailableNewTrains();
 

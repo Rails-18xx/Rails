@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -37,7 +38,6 @@ implements ActionListener, KeyListener, ActionPerformer
     protected static final String SELL_CMD = "Sell";
     protected static final String DONE_CMD = "Done";
     protected static final String PASS_CMD = "Pass";
-    //protected static final String SWAP_CMD = "Swap";
     
 	private JPanel buttonPanel;
 	private GameStatus gameStatus;
@@ -46,7 +46,6 @@ implements ActionListener, KeyListener, ActionPerformer
 	private GameManager gameManager;
     private GameUIManager gameUIManager;
 	private RoundI currentRound;
-	//private StockRound stockRound;
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
@@ -284,14 +283,6 @@ implements ActionListener, KeyListener, ActionPerformer
         }
     }
 
-
-    /*
-	public void updateStatus (String from) {
-		//log.debug("--StatusWindow.updateStatus called from "+from+", current round is "+currentRound);
-		updateStatus();
-	}
-    */
-    
 	public void updateStatus()
 	{
         if (!(currentRound instanceof StockRound)) {
@@ -340,37 +331,7 @@ implements ActionListener, KeyListener, ActionPerformer
 			passButton.setEnabled(true);
 		}
 
-
-		/* Any special properties in force? *
-		//player = GameManager.getCurrentPlayer();
-        /*
-		java.util.List specialProperties = stockRound.getSpecialProperties();
-		if (specialProperties != null && specialProperties.size() > 0)
-		{
-			/*
-			 * Assume there will only one special property at a time
-			 * (because we have only one extra button)
-			 *
-			SpecialSRProperty sp = (SpecialSRProperty) specialProperties.get(0);
-			if (sp instanceof ExchangeForShare)
-			{
-				extraButton.setText(((ExchangeForShare) sp).getPrivateCompany()
-						.getName()
-						+ "/"
-						+ ((ExchangeForShare) sp).getPublicCompanyName());
-				extraButton.setActionCommand(SWAP_CMD);
-				extraButton.setVisible(true);
-				extraButton.setEnabled(true);
-			}
-		}
-		else
-		{
-			extraButton.setEnabled(false);
-			extraButton.setVisible(false);
-		}
-        */
-
-        // New special action handling 
+		// New special action handling 
         List<UseSpecialProperty> sps = possibleActions.getType(UseSpecialProperty.class);
         for (ActionMenuItem item : specialActionItems) {
             item.removeActionListener(this);

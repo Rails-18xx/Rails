@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -142,8 +143,6 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 		TileI upgradeTile;
 		Upgrade upgrade;
 		String hexes;
-		//String[] hexArray;
-		//MapHex hex;
 		
 		for (int i = 0; i < upgnl.getLength(); i++)
 		{
@@ -274,11 +273,8 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	public List<TileI> getUpgrades(MapHex hex)
 	{
 	    List<TileI> upgr = new ArrayList<TileI>();
-	    //Upgrade upgrade;
 	    TileI tile;
-	    //for (Iterator it = upgrades.iterator(); it.hasNext(); ) {
 	    for (Upgrade upgrade : upgrades) {
-	        //upgrade = (Upgrade) it.next();
 	        tile = upgrade.getTile();
 	        if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add (tile);
 	    }
@@ -287,25 +283,16 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 
 	public String getUpgradesString(MapHex hex)
 	{
-		/*
-		 * Iterator it = getUpgrades (hex).iterator(); StringBuffer b = new
-		 * StringBuffer(); while (it.hasNext()) { if (b.length() > 0)
-		 * b.append(","); b.append (((TileI)it.next()).getName()); } return
-		 * b.toString();
-		 */
 		return upgradesString;
 	}
 
 	public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase)
 	{
 		List<TileI> valid = new ArrayList<TileI>();
-		//Iterator it = upgrades.iterator();
-		//Upgrade upgrade;
 		TileI tile;
-		//while (it.hasNext())
+
 		for (Upgrade upgrade : upgrades)
 		{
-			//upgrade = (Upgrade) it.next();
 			tile = (TileI) upgrade.getTile();
 			if (phase.isTileColourAllowed(tile.getColour())
 					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
@@ -345,19 +332,6 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 		tilesLaid.remove(hex);
 		return true;
 	}
-
-	/**
-	 * Find the index of the tile laid on a certain hex. If the argument is
-	 * null, the first free tile index is returned.
-	 * 
-	 * @param hex
-	 * @return
-	 */
-	/*
-	 * private int findTile(MapHex hex) { if (tiles == null || tiles.length ==
-	 * 0) return -1; for (int i=0; i<tiles.length; i++) { if (tiles[i] == hex)
-	 * return i; } return -1; }
-	 */
 
 	/** Return the number of free tiles */
 	public int countFreeTiles()

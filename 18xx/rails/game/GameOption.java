@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;

@@ -1,3 +1,5 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CashHolder.java,v 1.3 2007/10/05 22:02:27 evos Exp $
+ */
 package rails.game;
 
 import rails.game.model.ModelObject;
@@ -10,12 +12,6 @@ public interface CashHolder {
 	 */
 	public abstract int getCash();
 	
-	/**
-	 * Returns the amount of cash, formatted
-	 * @return
-	 */
-	//public abstract String getFormattedCash();
-
 	public ModelObject getCashModel ();
 
 	/**

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.9 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -153,39 +154,6 @@ public class StartRound_1830 extends StartRound
 	 */
 	public List<StartItem> getStartItems () {
 		
-        /*
-		StartItem item;
-		Player currentPlayer = getCurrentPlayer();
-		StartItem auctionItem = (StartItem) auctionItemState.getObject();
-		
-		for (Iterator it = itemsToSell.iterator(); it.hasNext(); ) {
-			item = (StartItem) it.next();
-			
-			if (item.isSold()) {
-				item.setStatus (StartItem.SOLD);
-			} else if (auctionItem != null) {
-				// There is just one tradeable item: the one up for auctioning
-				item.setStatus(item.equals(auctionItem)
-						? StartItem.AUCTIONED 
-						: StartItem.UNAVAILABLE);
-			} else if (item.getStatus() != StartItem.NEEDS_SHARE_PRICE){
-                // Note: NEEDS_SHARE_PRICE could occur after an Undo
-				item.setStatus(item == startPacket.getFirstUnsoldItem()
-						? StartItem.BUYABLE
-						: StartItem.BIDDABLE);
-			}
-
-			if (item.getStatus() == StartItem.BUYABLE
-					&& currentPlayer.getFreeCash() < item.getBasePrice()) {
-				item.setStatus(StartItem.UNAVAILABLE);
-			} else if ((item.getStatus() == StartItem.BIDDABLE
-					|| item.getStatus() == StartItem.AUCTIONED)
-					&& currentPlayer.getFreeCash() + item.getBid(currentPlayer)
-						< item.getMinimumBid()) {
-				item.setStatus(StartItem.UNAVAILABLE);
-			}
-		}
-        */
 		return itemsToSell;
 	}
 

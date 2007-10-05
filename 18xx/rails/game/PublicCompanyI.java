@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.6 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 
@@ -259,16 +260,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public ModelObject getTokensLaidThisTurnModel ();
 	public ModelObject getTokensCostThisTurnModel ();
 	
-	//public int getNextBaseTokenIndex ();
-	//public boolean layBaseToken (MapHex hex, int station);
 	public boolean layHomeBaseTokens();
-	//public int getNumCityTokens();
-	//public int getMaxCityTokens();
-	//public boolean addToken(TokenHolderI hex);
 	public BaseToken getFreeToken();
 	public boolean addToken (TokenI token);
 	public boolean removeToken (TokenI token);
-	//public boolean hasTokensLeft();
 	public int getNumberOfBaseTokens ();
 	public int getNumberOfFreeBaseTokens ();
 	public int getNumberOfLaidBaseTokens();

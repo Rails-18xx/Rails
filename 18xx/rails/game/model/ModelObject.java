@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
 package rails.game.model;
 
 import java.util.HashSet;
@@ -36,7 +37,6 @@ public abstract class ModelObject extends Observable {
     private void notifyViewObjects() {
         setChanged();
         notifyObservers (getText());
-        //log.debug ("'"+getNotificationObject()+"' sent from "+getClass().getName());
         clearChanged();
     }
     

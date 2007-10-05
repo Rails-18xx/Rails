@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.5 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 
@@ -491,34 +492,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	}
 
 	/**
-	 * @param companiesStarted
-	 *            The companiesStarted to set.
-	 */
-	/*
-	public void setCompaniesStarted(PublicCompany companyStarted)
-	{
-		companiesStarted.add(companyStarted);
-	}
-	*/
-
-	/**
 	 * @return Returns the ipoPile.
 	 */
 	public ArrayList getIpoPile()
 	{
 		return ipoPile;
 	}
-
-	/**
-	 * @param ipoPile
-	 *            The ipoPile to set.
-	 */
-	/*
-	public void addShareToPile(PublicCertificate stock)
-	{
-		ipoPile.add(stock);
-	}
-	*/
 
 	public PublicCertificate removeShareFromPile(PublicCertificate stock)
 	{

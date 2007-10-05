@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.6 2007/10/05 22:02:26 evos Exp $*/
 package rails.util;
 
 import java.util.*;

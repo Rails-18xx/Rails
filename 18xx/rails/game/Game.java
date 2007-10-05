@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.9 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -23,17 +24,17 @@ public class Game
 	protected static Game instance;
 
 	/** The component Manager */
-	protected /*static*/ ComponentManager componentManager;
-	protected /*static*/ GameManager gameManager;
-	protected /*static*/ CompanyManagerI companyManager;
-	protected /*static*/ PlayerManager playerManager;
-	protected /*static*/ StockMarketI stockMarket;
-	protected /*static*/ Bank bank;
-	protected /*static*/ ArrayList companyList;
-	protected /*static*/ String name;
-	protected /*static*/ Element componentManagerElement;
+	protected ComponentManager componentManager;
+	protected GameManager gameManager;
+	protected CompanyManagerI companyManager;
+	protected PlayerManager playerManager;
+	protected StockMarketI stockMarket;
+	protected Bank bank;
+	protected ArrayList companyList;
+	protected String name;
+	protected Element componentManagerElement;
 	protected static String GAME_XML_FILE = "Game.xml";
-	protected /*static*/ List<String> directories = new ArrayList<String>();
+	protected List<String> directories = new ArrayList<String>();
     protected Map<String, String> gameOptions;
 
 	protected static Logger log = Logger.getLogger(Game.class.getPackage().getName());
@@ -44,7 +45,6 @@ public class Game
         
         instance = this;
     	
-    	//Game.name = name;
         this.name = name;
         this.gameOptions = options;
         
@@ -52,7 +52,6 @@ public class Game
 		directories.add("data/" + name);
 
 		playerManager = new PlayerManager(players);
-		//GameManager.setGameOptions(options);
     }
     
     public void start() {
@@ -138,14 +137,8 @@ public class Game
                 throw new Exception ("Save version "+versionID
                         +" is incompatible with current version "+saveFileVersionID);
             }
-            //name = (String) ois.readObject();
             String name = (String) ois.readObject();
             Map<String, String> selectedGameOptions = (Map<String, String>) ois.readObject();
-            //int numberOfPlayers = (Integer) ois.readObject();
-            //List<String> playerNames = new ArrayList<String>();
-            //for (int i=0; i<numberOfPlayers; i++) {
-            //    playerNames.add((String)ois.readObject());
-            //}
             List<String> playerNames = (List<String>) ois.readObject();
 
             Game game = new Game (name, playerNames, selectedGameOptions);

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 	protected static HashMap<String, Phase> phaseMap;
 
 	protected static int numberOfPhases = 0;
-	//protected static int currentIndex = 0;
 	protected static State currentPhase = new State ("CurrentPhase", Phase.class);
 
 	public PhaseManager()
@@ -73,12 +73,6 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 	{
 		return getCurrentPhase().getIndex();
 	}
-
-	//public void setNextPhase()
-	//{
-	//	if (currentIndex < numberOfPhases - 1)
-	//		++currentIndex;
-	//}
 
 	public void setPhase(String name)
 	{

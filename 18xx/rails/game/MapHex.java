@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.7 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 
@@ -66,15 +67,9 @@ public class MapHex extends ModelObject
 	protected int number;
 	protected String tileFileName;
 	protected int preprintedTileId;
-	//protected int preprintedTileOrientation;
 	protected TileI currentTile;
 	protected int currentTileRotation;
 	protected int tileCost;
-	//protected int preferredCity;
-	//protected PublicCompany companyHome = new PublicCompany();
-	//protected PublicCompany companyDestination = new PublicCompany();
-	//protected String companyHomeName;
-	//protected String companyDestinationName;
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
@@ -92,7 +87,6 @@ public class MapHex extends ModelObject
 	protected String impassable = null;
 
 	protected List<Station> stations;
-	//protected boolean hasTokens;
 
 	protected boolean isBlocked = false;
 	
@@ -196,15 +190,8 @@ public class MapHex extends ModelObject
 				0);
 
 		currentTile = TileManager.get().getTile(preprintedTileId);
-		//currentTileRotation = preprintedTileOrientation;
 		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
 		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
-		//preferredCity = XmlUtils.extractIntegerAttribute(nnp,
-		//		"preferredCity",
-		//		0);
-		//companyHomeName = XmlUtils.extractStringAttribute(nnp, "home");
-		//companyDestinationName = XmlUtils.extractStringAttribute(nnp,
-		//		"destination");
 
 		// We need completely new objects, not just references to the Tile's
 		// stations.
@@ -357,16 +344,6 @@ public class MapHex extends ModelObject
 		return tileFileName;
 	}
 
-	/**
-	 * @return Returns the preprintedTileOrientation.
-	 */
-	/*
-	public int getPreprintedTileOrientation()
-	{
-		return preprintedTileOrientation;
-	}
-	*/
-
 	public void setNeighbor(int orientation, MapHex neighbour)
 	{
 		orientation %= 6;
@@ -434,16 +411,6 @@ public class MapHex extends ModelObject
 		return tileCost;
 	}
 
-	//public CompanyI getCompanyHome()
-	//{
-	//	return companyHome;
-	//}
-
-	//public CompanyI getCompanyDestination()
-	//{
-	//	return companyDestination;
-	//}
-
 	/** Prepare a tile upgrade.
 	 * The actual tile replacement is done in replaceTile(), via a TileMove object.
 	 */
@@ -459,9 +426,7 @@ public class MapHex extends ModelObject
 	    TokenI token;
 	    
 	    /* Clone the stations of the new tile. */
-	    //for (int i=0; i<newTileStations.size(); i++) {
 	    for (Station station : newTileStations) {
-	        //newStation = new Station (this, (Station) newTileStations.get(i));
 	    	newStation = new Station (this, station);
 		    newHexStations.add (newStation);
 	    }
@@ -530,11 +495,6 @@ public class MapHex extends ModelObject
 
 	}
 
-	//public int getPreferredHomeCity()
-	//{
-	//	return preferredCity;
-	//}
-
 	public boolean layBaseToken(PublicCompanyI company)
 	{
 		return layBaseToken(company, null);
@@ -553,17 +513,7 @@ public class MapHex extends ModelObject
 	        return false;
 	    }
 	    if (station == null) station = (Station)stations.get(0);
-	    /*
-		if (station.addToken(company))
-		{
-			company.addToken(this);
-			hasTokens = true;
-			return true;
-		}
-		else
-			return false;
-		*/
-	    
+
 	    BaseToken token = company.getFreeToken();
 	    if (token == null) {
 	        log.error ("Company "+company.getName()+" has no free token");

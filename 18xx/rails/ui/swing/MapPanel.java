@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.3 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -57,12 +58,6 @@ public class MapPanel extends JPanel
 		setLocation(25, 25);
 	}
 
-	/*
-	public void setSpecialTileLays(ArrayList specials)
-	{
-		map.setSpecials(specials);
-	}
-	*/
 	public void setAllowedTileLays (List<LayTile> allowedTileLays) {
 	    map.setAllowedTileLays (allowedTileLays);
 	}

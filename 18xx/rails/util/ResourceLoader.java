@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $*/
 package rails.util;
 
 import javax.swing.text.*;
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
  * Class ResourceLoader is an utility class to load a resource from a filename
  * and a list of directory.
  * 
- * @version $Id: ResourceLoader.java,v 1.1 2007/08/02 00:11:53 wakko666 Exp $
+ * @version $Id: ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $
  * @author Romain Dolbeau
  * @author David Ripton
  */
@@ -26,7 +27,7 @@ public final class ResourceLoader {
 	 * Class ColossusClassLoader allows for class loading outside the CLASSPATH,
 	 * i.e. from the various variant directories.
 	 * 
-	 * @version $Id: ResourceLoader.java,v 1.1 2007/08/02 00:11:53 wakko666 Exp $
+	 * @version $Id: ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $
 	 * @author Romain Dolbeau
 	 */
 	private static class RailsClassLoader extends ClassLoader {

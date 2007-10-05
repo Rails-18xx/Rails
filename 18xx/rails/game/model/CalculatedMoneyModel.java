@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CalculatedMoneyModel.java,v 1.3 2007/10/05 22:02:30 evos Exp $*/
 package rails.game.model;
 
 import java.lang.reflect.Method;
@@ -42,7 +43,6 @@ public class CalculatedMoneyModel extends ModelObject {
 
 	@Override
 	public String getText() {
-		//log.debug("Calling getText from ", new Exception("HERE"));
 		int amount = calculate();
 		if (amount == 0 && option == SUPPRESS_ZERO)
 			return "";

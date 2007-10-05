@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.12 2007/09/20 19:49:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.13 2007/10/05 22:02:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -72,21 +72,12 @@ public class Portfolio
 	/** Who owns the portfolio */
 	protected CashHolder owner;
 
-	/** Who receives the dividends (may differ from owner if that is the Bank) */
-	// protected boolean paysToCompany = false;
 	/** Name of portfolio */
 	protected String name;
 	
 	/** A map allowing finding portfolios by name, for use in deserialization */
 	protected static Map<String, Portfolio> portfolioMap
 			= new HashMap<String, Portfolio> ();
-
-	// public Portfolio(String name, CashHolder holder, boolean paysToCompany)
-	// {
-	// this.name = name;
-	// this.owner = holder;
-	// this.paysToCompany = paysToCompany;
-	// }
 
 	protected static Logger log = Logger.getLogger(Portfolio.class.getPackage().getName());
 
@@ -127,11 +118,9 @@ public class Portfolio
 		}
 
 		// Move the private certificate
-		//transferCertificate(privateCompany, from, this);
 		new CertificateMove (from, this, privateCompany);
 
 		// Move the money
-		//Bank.transferCash(owner, from.owner, price);
 		if (price > 0) new CashMove (owner, from.owner, price);
 	}
 
@@ -188,13 +177,9 @@ public class Portfolio
 
 		// Move the certificate
 		new CertificateMove (from, Bank.getPool(), certificate);
-		//from.removeCertificate(certificate);
-		//Bank.getPool().addCertificate(certificate);
-		//certificate.setPortfolio(Bank.getPool());
 
 		// Move the money
 		new CashMove (Bank.getInstance(), from.owner, price);
-		//Bank.transferCash(Bank.getInstance(), from.owner, price);
 	}
 
 	public static void transferCertificate(Certificate certificate,
@@ -215,11 +200,9 @@ public class Portfolio
 		
 		/* Update player's worth */
 		if (from.owner instanceof Player) {
-			//((Player)from.owner).getWorthModel().update();
 			updatePlayerWorth ((Player)from.owner, from, certificate);
 		}
 		if (to.owner instanceof Player) {
-			//((Player)to.owner).getWorthModel().update();
 			updatePlayerWorth ((Player)to.owner, to, certificate);
 		}
 	}
@@ -347,12 +330,10 @@ public class Portfolio
 	{
 
 		int number = privateCompanies.size(); // May not hold for all games
-		//PublicCertificateI cert;
 		PublicCompanyI comp;
-		//for (Iterator it = certificates.iterator(); it.hasNext();)
+
 		for (PublicCertificateI cert : certificates)
 		{
-			//cert = (PublicCertificateI) it.next();
 			comp = cert.getCompany();
 			if (!comp.hasFloated()
 					|| !comp.hasStockPrice()
@@ -382,67 +363,6 @@ public class Portfolio
 		}
 	}
 
-	/**
-	 * Get a list of unique (i.e. unequal) certificates in this Portfolio at the
-	 * current price.
-	 * 
-	 * @return List of unique TradeableCertificate objects.
-	 * //@deprecated
-	 */
-	/*
-	public List<TradeableCertificate> getUniqueTradeableCertificates()
-	{
-
-		List<TradeableCertificate> uniqueCerts 
-			= new ArrayList<TradeableCertificate>();
-		PublicCertificateI cert, cert2, prevCert = null;
-		TradeableCertificate tCert2;
-		Iterator it2;
-
-		outer: 
-		//for (Iterator it = certificates.iterator(); it.hasNext();)
-		for (PublicCertificateI cert : certificates)
-		{
-			//cert = (PublicCertificateI) it.next();
-			if (cert.equals(prevCert))
-				continue;
-			prevCert = cert;
-			for (it2 = uniqueCerts.iterator(); it2.hasNext();)
-			{
-				tCert2 = (TradeableCertificate) it2.next();
-				cert2 = tCert2.getCert();
-				if (cert.equals(cert2))
-					continue outer;
-				if (!cert.getCompany().equals(cert2.getCompany()))
-					continue;
-				if (cert.isPresidentShare())
-					continue outer;
-				if (cert2.isPresidentShare())
-					it2.remove();
-
-			}
-			try
-			{
-			StockSpaceI currentPrice = cert.getCompany().getCurrentPrice();
-			int price = currentPrice != null ? currentPrice.getPrice() : 0;
-			uniqueCerts.add(new TradeableCertificate(cert, price * cert.getShares()));
-			}
-			catch(NullPointerException e)
-			{
-				log.error ("Null Pointer in Portfolio.java", e);
-			}
-		}
-		return uniqueCerts;
-
-	}
-*/
-
-	/*
-	 * public PublicCertificateI getNextAvailableCertificate() { for (int i = 0;
-	 * i < certificates.size(); i++) { if (((PublicCertificateI)
-	 * certificates.get(i)).isAvailable()) { return (PublicCertificateI)
-	 * certificates.get(i); } } return null; }
-	 */
 	/**
 	 * Find a certificate for a given company.
 	 * 
@@ -510,20 +430,6 @@ public class Portfolio
 	/**
 	 * @return
 	 */
-	// public CashHolder getBeneficiary(PublicCompanyI company)
-	// {
-	// if (paysToCompany)
-	// {
-	// return (CashHolder) company;
-	// }
-	// else
-	// {
-	// return owner;
-	// }
-	// }
-	/**
-	 * @return
-	 */
 	public CashHolder getOwner()
 	{
 		return owner;
@@ -536,16 +442,6 @@ public class Portfolio
 	{
 		this.owner = owner;
 	}
-
-	/**
-	 * @return
-	 */
-	/*
-	public Map<String, List<PublicCertificateI>> getCertPerCompany()
-	{
-		return certPerCompany;
-	}
-	/*
 
 	/**
 	 * @return
@@ -634,7 +530,6 @@ public class Portfolio
 			for (int i = 0; i < shares; i++)
 			{
 				swapCert = other.findCertificate(company, 1, false);
-				//Portfolio.transferCertificate(swapCert, other, this);
 				new CertificateMove (other, this, swapCert);
 				swapped.add(swapCert);
 
@@ -643,7 +538,6 @@ public class Portfolio
 		else if (other.ownsCertificates(company, shares, false) >= 1)
 		{
 			swapCert = other.findCertificate(company, 2, false);
-			//Portfolio.transferCertificate(swapCert, other, this);
 			new CertificateMove(other, this, swapCert);
 			swapped.add(swapCert);
 		}
@@ -651,7 +545,6 @@ public class Portfolio
 		{
 			return null;
 		}
-		//Portfolio.transferCertificate(cert, this, other);
 		new CertificateMove (this, other, cert);
 
 		// Make sure the old President is no longer marked as such
@@ -675,16 +568,9 @@ public class Portfolio
 	public void removeTrain(TrainI train)
 	{
 		trains.remove(train);
-		//TrainTypeI type = train.getType();
 		trainsPerType.get(train.getType()).remove(train);
 		train.setHolder(null);
 		trainsModel.update();
-
-		/*
-		 * List list = (List)trainsPerType.get(train.getType()); Iterator it =
-		 * list.iterator(); while (it.hasNext()) { if ((TrainI)it.next() ==
-		 * train) { list.remove(train); break; } }
-		 */
 	}
 
 	public void buyTrain(TrainI train, int price)
@@ -696,7 +582,6 @@ public class Portfolio
 
 	public void discardTrain(TrainI train)
 	{
-		//transferTrain(train, this, Bank.getPool());
 		new TrainMove (train, this, Bank.getPool());
 		ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
 				name,
@@ -806,12 +691,8 @@ public class Portfolio
 		List<T> result = new ArrayList<T>();
 		if (specialProperties != null && specialProperties.size() > 0)
 		{
-			//Iterator it = specialProperties.iterator();
-			//SpecialProperty sp;
-			//while (it.hasNext())
 			for (SpecialPropertyI sp : specialProperties)
 			{
-				//sp = (SpecialProperty) it.next();
 				if ((clazz == null || Util.isInstanceOf(sp, clazz))
 				        && sp.isExecutionable() 
 				        && (!sp.isExercised() || includeExercised)

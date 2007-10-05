@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.4 2007/10/05 22:02:30 evos Exp $*/
 package rails.ui.swing.elements;
 
 
@@ -84,9 +85,6 @@ public class Field extends JLabel implements ViewObject
 	{
 		if (StatusWindow.useObserver)
 		{
-			//if (modelObject instanceof CalculatedMoneyModel) {
-			//	Game.getLogger().debug("Field updated from ", new Exception("HERE"));
-			//}
 			if (o2 instanceof String)
 			{
 				setText((String) o2);

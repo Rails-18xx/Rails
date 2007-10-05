@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRoundI.java,v 1.4 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -9,8 +10,6 @@ public interface StartRoundI extends RoundI
 {
 
 	public void start(StartPacket startPacket);
-
-	//public int nextStep();
 
 	public List<StartItem> getStartItems ();
 

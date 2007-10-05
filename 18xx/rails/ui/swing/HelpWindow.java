@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/HelpWindow.java,v 1.3 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -19,8 +20,6 @@ public class HelpWindow extends JFrame implements WindowListener
 	private JPanel messagePanel;
 	private static HelpWindow helpWindow;
 
-	//private static StringBuffer buffer = new StringBuffer("<html></html>");
-	
 	public static void displayHelp (String text) { 
 	    
 	    if (helpWindow == null) helpWindow = new HelpWindow();
@@ -35,7 +34,6 @@ public class HelpWindow extends JFrame implements WindowListener
 		message.setBackground(new Color(255, 255, 210));
 		message.setOpaque(true);
 		message.setEditable(false);
-		//message.setVerticalAlignment(SwingConstants.TOP);
 		messagePanel = new JPanel(new GridBagLayout());
 		messageScroller = new JScrollPane(message,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

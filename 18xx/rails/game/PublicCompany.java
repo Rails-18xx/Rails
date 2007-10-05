@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.11 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 
@@ -62,21 +63,16 @@ public class PublicCompany extends Company implements PublicCompanyI
 	/** Sequence number in the array of public companies - may not be useful */
 	protected int publicNumber = -1; // For internal use
 
-	/** @deprecated */
-	//protected ArrayList baseTokenedHexes;
 	protected List<BaseToken> allBaseTokens;
 	protected List<BaseToken> freeBaseTokens;
 	protected List<BaseToken> laidBaseTokens;
-	//protected boolean hasPlayedTokens = false;
 	protected int numberOfBaseTokens = 0;
-	//protected int maxCityTokens = 0;
 	protected BaseTokensModel baseTokensModel; // Create after cloning
 	
 	/** Initial (par) share price, represented by a stock market location object */
 	protected PriceModel parPrice = null;
 
 	/** Current share price, represented by a stock market location object */
-	// protected StockSpaceI currentPrice = null;
 	protected PriceModel currentPrice = null;
 
 	/** Company treasury, holding cash */
@@ -587,8 +583,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public void start(StockSpaceI startSpace)
 	{
-		//this.hasStarted = true;
-	    //MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
 	    hasStarted.set (true);
 		setParPrice(startSpace);
 		// The current price is set via the Stock Market
@@ -617,8 +611,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void start()
 	{
-		//this.hasStarted = true;
-	    //MoveSet.add (new StateChange (hasStarted, Boolean.TRUE));
 	    hasStarted.set(true);
 		if (hasStockPrice && parPrice.getPrice() != null) {
 			//setCurrentPrice (parPrice.getPrice());
@@ -642,8 +634,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 
 		int cash = 0;
-		//hasFloated = true;
-		//MoveSet.add (new StateChange (hasFloated, Boolean.TRUE));
 		hasFloated.set (true);
 		if (hasStockPrice)
 		{
@@ -662,7 +652,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			cash = fixedPrice;
 		}
-		//Bank.transferCash(null, this, cash);
 		new CashMove (Bank.getInstance(), this, cash);
 		ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
 				name,
@@ -737,11 +726,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 	    if (currentPrice == null) {
 	        currentPrice = new PriceModel (this, name+"_CurrentPrice");
-	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] created as "+currentPrice.hashCode());
 	    }
 	    if (price != null) {
 	        currentPrice.setPrice(price);
-	        //log.debug ("+"+name+" currentPrice["+currentPrice.hashCode()+"] set to "+price);
 	    }
 	}
 
@@ -844,7 +831,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 			certificates.add(cert);
 			cert.setCompany(this);
 			// TODO Questionable if it should be put in IPO or in Unavailable.
-			// Bank.getIpo().addCertificate(cert);
 		}
 	}
 
@@ -953,8 +939,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void payOut(int amount)
 	{
 
-		//setLastRevenue(amount);
-
 		distributePayout(amount);
 
 		// Move the token
@@ -977,7 +961,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 			// For now, hardcode the rule that payout is rounded up.
 			int withheld = ((int) amount / (2 * getNumberOfShares()))
 					* getNumberOfShares();
-			//Bank.transferCash(null, this, withheld);
 			new CashMove (null, this, withheld);
 			ReportBuffer.add(name + " receives " + Bank.format(withheld));
 	
@@ -1001,15 +984,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	    if (amount == 0) return;
 	    
-		//Iterator it = certificates.iterator();
-		//PublicCertificateI cert;
 		int part;
-		//CashHolder recipient;
 		Map<CashHolder, Integer> split = new HashMap<CashHolder, Integer>();
-		//while (it.hasNext())
+
 		for (PublicCertificateI cert : certificates)
 		{
-			//cert = ((PublicCertificateI) it.next());
 			CashHolder recipient = getBeneficiary(cert);
 			part = amount * cert.getShares() * shareUnit / 100;
 			// For reporting, we want to add up the amounts per recipient
@@ -1020,16 +999,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 			split.put(recipient, new Integer(part));
 		}
 		// Report and add the cash
-		//it = split.keySet().iterator();
-		//while (it.hasNext())
 		for (CashHolder recipient : split.keySet())
 		{
-			//recipient = (CashHolder) it.next();
 			if (recipient instanceof Bank)
 				continue;
 			part = ((Integer) split.get(recipient)).intValue();
 			ReportBuffer.add(recipient.getName() + " receives " + Bank.format(part));
-			//Bank.transferCash(null, recipient, part);
 			new CashMove (null, recipient, part);
 		}
 
@@ -1056,10 +1031,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void withhold(int amount)
 	{
-
-		//setLastRevenue(amount);
-		
-		//Bank.transferCash(null, this, amount);
 		if (amount > 0) new CashMove (null, this, amount);
 		// Move the token
 		if (hasStockPrice)
@@ -1074,9 +1045,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean isSoldOut()
 	{
-		//Iterator it = certificates.iterator();
-		//PublicCertificateI cert;
-		//while (it.hasNext())
 		for (PublicCertificateI cert : certificates)
 		{
 			if (cert.getPortfolio().getOwner() instanceof Bank)
@@ -1125,7 +1093,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 				.getShareUnit())))
 		{
 			company.start(startSpace);
-			// company.setClosed(false);
 			int price = startSpace.getPrice()
 					* (cert.getShare() / company.getShareUnit());
 			player.buyShare(cert, price);
@@ -1135,21 +1102,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		else
 			return false;
 	}
-
-	/*
-	public PublicCertificateI getNextAvailableCertificate()
-	{
-		for (int i = 0; i < certificates.size(); i++)
-		{
-			if (((PublicCertificateI) certificates.get(i)).isAvailable())
-			{
-				return (PublicCertificateI) certificates.get(i);
-			}
-		}
-		return null;
-	}
-	*/
-
 	/**
 	 * @return Returns the lowerPrivatePriceFactor.
 	 */
@@ -1276,8 +1228,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void checkFlotation()
 	{
 		if (hasStarted() && !hasFloated()
-				&& percentageOwnedByPlayers() >= floatPerc
-				/*&& currentPrice.getPrice() != null*/)
+				&& percentageOwnedByPlayers() >= floatPerc)
 		{
 			// Float company (limit and capitalisation to be made configurable)
 			setFloated();
@@ -1348,14 +1299,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    
 	    String tileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
 				+ MapHex.getOrientationName(orientation);
-		//String oldTilesLaid = tilesLaidThisTurn.getText(); 
-		//String newTilesLaid = Util.appendWithDelimiter(oldTilesLaid, tileLaid, " ");
-		//MoveSet.add (new StateChange (tilesLaidThisTurn, newTilesLaid));
 	    tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 
-	    //int spentBefore = ((Integer)tilesCostThisTurn.getState()).intValue();
-	    //int spentTotal = spentBefore + cost;
-	    //MoveSet.add (new StateChange (tilesCostThisTurn, new Integer (spentTotal)));
 	    if (cost > 0) tilesCostThisTurn.add(cost);
 	}
 	

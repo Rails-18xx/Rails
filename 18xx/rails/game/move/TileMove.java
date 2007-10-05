@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.4 2007/05/31 20:49:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/TileMove.java,v 1.5 2007/10/05 22:02:29 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -41,7 +41,6 @@ public class TileMove extends Move {
     public boolean execute() {
 
         hex.replaceTile (oldTile, newTile, newTileOrientation, newStations);
-        //log.debug ("-Done: "+toString());
         return true;
     }
 

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -97,8 +98,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private ActionButton undoButton;
     private ActionButton redoButton;
 
-    //private int np = 0; // Number of players
-
     private int nc = 0; // Number of companies
 
     private Player[] players;
@@ -108,8 +107,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private RoundI round;
 
     private OperatingRound oRound;
-
-    //private Player p;
 
     private PublicCompanyI c;
 
@@ -123,8 +120,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
-
-    //private String orCompName = "";
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
@@ -153,7 +148,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         gbc = new GridBagConstraints();
 
         players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
-        //np = GameManager.getNumberOfPlayers();
 
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -431,7 +425,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
     
     public void updateStatus (PossibleAction actionToComplete) {
-        //log.debug("Called from ", new Exception ("HERE"));
         
         round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
@@ -439,26 +432,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             oRound = (OperatingRound) round;
 
             setHighlightsOff();
-            /* Reorder the companies if the round has changed */
-            //if (round != previousRound)
-            //    recreate();
-            //previousRound = round;
 
-            //For debugging : log all possible actions
-            /*
-            List<PossibleAction> as = possibleActions.getList();
-            if (as.isEmpty()) {
-                log.debug ("No possible actions!!");
-            } else {
-                for (PossibleAction a : as) {
-                    if (a instanceof LayTile) {
-                        log.debug ("PossibleAction: "+((LayTile)a));
-                    } else {
-                        log.debug ("PossibleAction: "+a);
-                    }
-                }
-            }
-            */
             if (actionToComplete != null) {
                 log.debug("ExecutedAction: "+actionToComplete);
             }
@@ -514,8 +488,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 button1.setEnabled(false);
                 button1.setVisible(false);
                 button3.setEnabled(false);
-
-                //orWindow.updateMessage();
 
             } else if (possibleActions.contains(SetDividend.class)
                     && orStep == OperatingRound.STEP_CALC_REVENUE) {
@@ -738,8 +710,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
 
         ReportWindow.addLog();
-
-        //updateStatus(executedActionToComplete);
 
         if (!(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)) {
             orWindow.updateORWindow();
@@ -1006,7 +976,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         this.orCompIndex = orCompIndex;
         orComp = orCompIndex >= 0 ? companies[orCompIndex] : null;
-        //orCompName = orComp != null ? orComp.getName() : "";
 
         if ((j = this.orCompIndex) >= 0) {
             // Give a new company the turn.

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.8 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 
@@ -186,9 +187,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		{
 			super.setClosed();
 			unblockHexes();
-			//Portfolio.transferCertificate(this,
-			//		portfolio,
-			//		Bank.getUnavailable());
 			new CertificateMove (getPortfolio(), Bank.getScrapHeap(), 
 			        (Certificate)this);
 			ReportBuffer.add(LocalText.getText("PrivateCloses", name));
@@ -224,11 +222,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	{
 		if (blockedHexes != null)
 		{
-			//Iterator it = blockedHexes.iterator();
-			//while (it.hasNext())
 			for (MapHex hex : blockedHexes)
 			{
-				//((MapHex) it.next()).setBlocked(false);
 				hex.setBlocked(false);
 			}
 		}
@@ -243,7 +238,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 							Bank.format(revenue),
 							name
 					}));
-			//Bank.transferCash(null, portfolio.getOwner(), revenue);
 			new CashMove (null, portfolio.getOwner(), revenue);
 		}
 	}

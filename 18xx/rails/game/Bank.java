@@ -104,7 +104,6 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	{
 		NamedNodeMap nnp;
 		int number, startCash, certLimit;
-		//int maxNumber = 0;
 		Element node;
 
 		// Parse the Bank element

@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.5 2007/10/05 22:02:27 evos Exp $ */
 package rails.game;
 
 public interface PublicCertificateI extends Certificate

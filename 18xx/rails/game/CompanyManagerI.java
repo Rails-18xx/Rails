@@ -1,3 +1,4 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.4 2007/10/05 22:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -34,27 +35,6 @@ public interface CompanyManagerI
 	PublicCompanyI getPublicCompany(String name);
 
 	/**
-	 * Gives a list of Strings, the names of all registered Private Companies.
-	 * 
-	 * @return a List of the all the Private Company names
-	 */
-	//List getAllPrivateNames();
-
-	/**
-	 * Gives a list of Strings, the names of all registered Public Companies.
-	 * 
-	 * @return a List of the all the Public Company names
-	 */
-	//List getAllPublicNames();
-
-	/**
-	 * Gives a list of all the registered Companies.
-	 * 
-	 * @return a list of all the registered Companies
-	 */
-	//List getAllCompanies();
-
-	/**
 	 * Gives a list of all the registered Private Companies.
 	 * 
 	 * @return a list of all the registered Private Companies
@@ -67,15 +47,6 @@ public interface CompanyManagerI
 	 * @return a list of all the registered Private Companies
 	 */
 	List<PublicCompanyI> getAllPublicCompanies();
-
-	/**
-	 * Gives a list of all the registered Companies of a given type.
-	 * 
-	 * @param The
-	 *            company type name.
-	 * @return a list of all the registered Companies of a goven type.
-	 */
-	//List getCompaniesByType(String type);
 
 	/**
 	 * Find a company by type and name
