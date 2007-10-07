@@ -1,9 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import org.w3c.dom.Element;
 
 import rails.util.LocalText;
+import rails.util.Tag;
 
 /**
  * Objects of this class represent a particular type of company, of which
@@ -46,7 +47,7 @@ public class CompanyType implements CompanyTypeI
 	   /**
 	    * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	    */
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 
 		/* Create a dummy company implementing this company type */
@@ -59,7 +60,7 @@ public class CompanyType implements CompanyTypeI
 			throw new ConfigurationException(LocalText.getText("ClassCannotBeInstantiated", className), e);
 		}
 		dummyCompany.init("", this);
-		dummyCompany.configureFromXML(element);
+		dummyCompany.configureFromXML(tag);
 
 		/*
 		 * Must be rewritten to a new tag String capitalMode =
@@ -69,7 +70,7 @@ public class CompanyType implements CompanyTypeI
 
 	}
 
-	public CompanyI createCompany(String name, Element element)
+	public CompanyI createCompany(String name, Tag tag)
 			throws ConfigurationException
 	{
 		CompanyI newCompany = null;
@@ -80,7 +81,7 @@ public class CompanyType implements CompanyTypeI
 			    throw new ConfigurationException ("Cannot clone company " + name);
 			}
 			newCompany.init(name, this);
-			newCompany.configureFromXML(element);
+			newCompany.configureFromXML(tag);
 		}
 		catch (CloneNotSupportedException e)
 		{

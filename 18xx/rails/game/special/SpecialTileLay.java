@@ -1,16 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.3 2007/10/05 22:02:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.4 2007/10/07 20:14:53 evos Exp $ */
 package rails.game.special;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.*;
-
 import rails.game.*;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
-
 
 public class SpecialTileLay extends SpecialProperty
 {
@@ -20,19 +17,17 @@ public class SpecialTileLay extends SpecialProperty
 	boolean extra = false;
 	boolean free = false;
 
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		super.configureFromXML (element);
+		super.configureFromXML (tag);
 
-		NodeList nl = element.getElementsByTagName("SpecialTileLay");
-		if (nl == null || nl.getLength() == 0)
+		Tag tileLayTag = tag.getChild("SpecialTileLay");
+		if (tileLayTag == null)
 		{
 			throw new ConfigurationException("<SpecialTileLay> tag missing");
 		}
-		Element stlEl = (Element) nl.item(0);
 
-		NamedNodeMap nnp = stlEl.getAttributes();
-		locationCodes = XmlUtils.extractStringAttribute(nnp, "location");
+		locationCodes = tileLayTag.getAttributeAsString("location");
 		if (!Util.hasValue(locationCodes))
 			throw new ConfigurationException("SpecialTileLay: location missing");
         MapManager mmgr = MapManager.getInstance();
@@ -46,13 +41,9 @@ public class SpecialTileLay extends SpecialProperty
             locations.add (hex);
         }
 
-		extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
-		free = XmlUtils.extractBooleanAttribute(nnp,
-				"free",
-				free);
-		closingValue = XmlUtils.extractIntegerAttribute(nnp,
-				"closingValue",
-				closingValue);
+		extra = tileLayTag.getAttributeAsBoolean("extra", extra);
+		free = tileLayTag.getAttributeAsBoolean("free", free);
+		closingValue = tileLayTag.getAttributeAsInteger("closingValue",	closingValue);
 	}
 	
 	public boolean isExecutionable () {

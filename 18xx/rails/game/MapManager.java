@@ -1,10 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.4 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.*;
-import org.w3c.dom.*;
 
-import rails.util.XmlUtils;
+import rails.util.Tag;
 
 /**
  * MapManager configures the map layout from XML
@@ -43,16 +42,15 @@ public class MapManager implements ConfigurableComponentI
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element el) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NamedNodeMap nnp = el.getAttributes();
-		mapUIClassName = XmlUtils.extractStringAttribute(nnp, "mapClass");
+		mapUIClassName = tag.getAttributeAsString("mapClass");
 		if (mapUIClassName == null)
 		{
 			throw new ConfigurationException("Map class name missing");
 		}
 
-		String attr = XmlUtils.extractStringAttribute(nnp, "tileOrientation");
+		String attr = tag.getAttributeAsString("tileOrientation");
 		if (attr == null)
 			throw new ConfigurationException("Map orientation undefined");
 		if (attr.equals("EW"))
@@ -71,7 +69,7 @@ public class MapManager implements ConfigurableComponentI
 					+ attr);
 		}
 
-		attr = XmlUtils.extractStringAttribute(nnp, "letterOrientation");
+		attr = tag.getAttributeAsString("letterOrientation");
 		if (attr.equals("horizontal"))
 		{
 			lettersGoHorizontal = true;
@@ -87,20 +85,18 @@ public class MapManager implements ConfigurableComponentI
 		}
 		MapHex.setLettersGoHorizontal(lettersGoHorizontal);
 
-		attr = XmlUtils.extractStringAttribute(nnp, "even");
+		attr = tag.getAttributeAsString("even");
 		letterAHasEvenNumbers = ((int) (attr.toUpperCase().charAt(0) - 'A')) % 2 == 0;
 		MapHex.setLetterAHasEvenNumbers(letterAHasEvenNumbers);
 
-		NodeList children = el.getElementsByTagName("Hex");
-		Element mapElement;
+		List<Tag> hexTags = tag.getChildren("Hex");
 		MapHex hex;
 		int maxX = 0;
 		int maxY = 0;
-		for (int i = 0; i < children.getLength(); i++)
+		for (Tag hexTag : hexTags)
 		{
-			mapElement = (Element) children.item(i);
 			hex = new MapHex();
-			hex.configureFromXML(mapElement);
+			hex.configureFromXML(hexTag);
 			mHexes.put(hex.getName(), hex);
 			maxX = Math.max(maxX, hex.getX());
 			maxY = Math.max(maxY, hex.getY());

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.4 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.5 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  * Interface for CompanyManager objects. A company manager is a factory which
  * vends Company objects.
  */
-public interface CompanyManagerI
+public interface CompanyManagerI extends ConfigurableComponentI
 {
 
 	/**

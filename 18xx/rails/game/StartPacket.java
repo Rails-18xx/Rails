@@ -1,11 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.6 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 import org.w3c.dom.*;
 
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
 
 /**
  * A Start Packet comprises a number of Start Items. The typical start packet
@@ -59,28 +59,22 @@ public class StartPacket
 	 * @throws ConfigurationException
 	 *             if anything goes wrong.
 	 */
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NodeList children = element.getElementsByTagName("Item");
+		List<Tag> itemTags = tag.getChildren("Item");
 
-		for (int i = 0; i < children.getLength(); i++)
+		for (Tag itemTag : itemTags)
 		{
-			Element itemEl = (Element) children.item(i);
-			NamedNodeMap nnp = itemEl.getAttributes();
 			// Extract the attributes of the Start Packet Item (certificate)
-			String itemName = XmlUtils.extractStringAttribute(nnp, "name");
+			String itemName = itemTag.getAttributeAsString("name");
 			if (itemName == null)
 				throw new ConfigurationException("No item name");
-			String itemType = XmlUtils.extractStringAttribute(nnp, "type");
+			String itemType = itemTag.getAttributeAsString("type");
 			if (itemType == null)
 				throw new ConfigurationException("No item type");
-			boolean president = Util.hasValue(XmlUtils.extractStringAttribute(nnp,
-					"president",
-					""));
+			boolean president = Util.hasValue(itemTag.getAttributeAsString("president",	""));
 
-			int basePrice = XmlUtils.extractIntegerAttribute(nnp,
-					"basePrice",
-					0);
+			int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
 			StartItem item = (new StartItem(itemName,
 					itemType,
 					basePrice,
@@ -88,29 +82,29 @@ public class StartPacket
 			items.add(item);
 
 			// Optional attributes
-			int row = XmlUtils.extractIntegerAttribute(nnp, "row", 0);
+			int row = itemTag.getAttributeAsInteger("row", 0);
 			if (row > 0)
 				item.setRow(row);
-			int column = XmlUtils.extractIntegerAttribute(nnp, "column", 0);
+			int column = itemTag.getAttributeAsInteger("column", 0);
 			if (column > 0)
 				item.setColumn(column);
 
 			// Check if there is another certificate
-			NodeList children2 = itemEl.getElementsByTagName("SubItem");
-			if (children2.getLength() > 0)
+			List<Tag> subItemTags = itemTag.getChildren("SubItem");
+			if (subItemTags != null)
 			{
-				NamedNodeMap nnp2 = ((Element) children2.item(0)).getAttributes();
-				String itemName2 = XmlUtils.extractStringAttribute(nnp2, "name");
-				if (itemName2 == null)
-					throw new ConfigurationException("No item name");
-				String itemType2 = XmlUtils.extractStringAttribute(nnp2, "type");
-				if (itemType2 == null)
-					throw new ConfigurationException("No item type");
-				boolean president2 = Util.hasValue(XmlUtils.extractStringAttribute(nnp2,
-						"president",
-						""));
-
-				item.setSecondary(itemName2, itemType2, president2);
+				for (Tag subItemTag : subItemTags) {
+					
+					String itemName2 = subItemTag.getAttributeAsString("name");
+					if (itemName2 == null)
+						throw new ConfigurationException("No item name");
+					String itemType2 = subItemTag.getAttributeAsString("type");
+					if (itemType2 == null)
+						throw new ConfigurationException("No item type");
+					boolean president2 = Util.hasValue(subItemTag.getAttributeAsString("president",	""));
+		
+					item.setSecondary(itemName2, itemType2, president2);
+				}
 
 			}
 		}

@@ -1,10 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.4 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.5 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rails.util.XmlUtils;
+import rails.util.Tag;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -30,7 +30,8 @@ public class Phase implements PhaseI {
         this.name = name;
     }
     
-	public void configureFromXML(Element el) throws ConfigurationException {
+	public void configureFromXML(Tag tag) throws ConfigurationException
+	{
 	    
 	    NamedNodeMap attributes;
 	    String colourList;
@@ -38,10 +39,9 @@ public class Phase implements PhaseI {
 	    tileColours = new HashMap<String, Integer>();
 	    
 	    // Allowed tile colours
-        NodeList nl = el.getElementsByTagName("Tiles");
-        if (nl != null && nl.getLength() > 0) {
-            attributes = nl.item(0).getAttributes();
-            colourList = XmlUtils.extractStringAttribute(attributes, "colour", previousTileColours);
+        Tag tilesTag = tag.getChild("Tiles");
+        if (tilesTag != null) {
+            colourList = tilesTag.getAttributeAsString("colour", previousTileColours);
         } else {
             colourList = previousTileColours;
         }
@@ -51,36 +51,31 @@ public class Phase implements PhaseI {
         }
 
         // Private-related properties
-        nl = el.getElementsByTagName("Privates");
-        if (nl != null && nl.getLength() > 0) {
-            attributes = nl.item(0).getAttributes();
+        Tag privatesTag = tag.getChild("Privates");
+        if (privatesTag != null) {
             privateSellingAllowed = previousPrivateSellingAllowed = 
-                XmlUtils.extractBooleanAttribute
-            		(attributes, "sellingAllowed", previousPrivateSellingAllowed);
-            privatesClose = XmlUtils.extractBooleanAttribute
-        		(attributes, "close", false);
+            	privatesTag.getAttributeAsBoolean(
+            			"sellingAllowed", previousPrivateSellingAllowed);
+            privatesClose = privatesTag.getAttributeAsBoolean("close", false);
         } else {
             privateSellingAllowed = previousPrivateSellingAllowed;
         }
 
         // Operating rounds
-        nl = el.getElementsByTagName("OperatingRounds");
-        if (nl != null && nl.getLength() > 0) {
-            attributes = nl.item(0).getAttributes();
+        Tag orTag = tag.getChild("OperatingRounds");
+        if (orTag != null) {
             numberOfOperatingRounds = previousNumberOfOperatingRounds =
-                XmlUtils.extractIntegerAttribute
-            		(attributes, "number", previousNumberOfOperatingRounds);
+            	orTag.getAttributeAsInteger(
+            			"number", previousNumberOfOperatingRounds);
         } else {
             numberOfOperatingRounds = previousNumberOfOperatingRounds;
         }
         
         // Off-board revenue steps
-        nl = el.getElementsByTagName("OffBoardRevenue");
-        if (nl != null && nl.getLength() > 0) {
-            attributes = nl.item(0).getAttributes();
+        Tag offBoardTag = tag.getChild("OffBoardRevenue");
+        if (offBoardTag != null) {
             offBoardRevenueStep = previousOffBoardRevenueStep =
-                XmlUtils.extractIntegerAttribute
-            		(attributes, "step", previousOffBoardRevenueStep);
+            	offBoardTag.getAttributeAsInteger("step", previousOffBoardRevenueStep);
         } else {
             offBoardRevenueStep = previousOffBoardRevenueStep;
         }

@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
-
-import org.w3c.dom.Element;
 
 /**
  * To be implemented by any Company object.
  */
-public interface CompanyI {
+public interface CompanyI extends ConfigurableComponentI {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -19,7 +17,7 @@ public interface CompanyI {
 
 	void init (String name, CompanyTypeI type);
 	
-	void configureFromXML (Element element) throws ConfigurationException;
+	//void configureFromXML (Element element) throws ConfigurationException;
 
     /**
      * Returns the name of the Company

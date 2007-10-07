@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.11 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.12 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 
@@ -17,8 +17,8 @@ import rails.game.move.CashMove;
 import rails.game.state.BooleanState;
 import rails.game.state.StringState;
 import rails.util.LocalText;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
 
 
 /**
@@ -256,251 +256,200 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * To configure all public companies from the &lt;PublicCompany&gt; XML
 	 * element
 	 */
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NamedNodeMap nnp = element.getAttributes();
-		NamedNodeMap nnp2;
-
 		/* Configure public company features */
-		fgHexColour = XmlUtils
-				.extractStringAttribute(nnp, "fgColour", "FFFFFF");
+		fgHexColour = tag.getAttributeAsString("fgColour", "FFFFFF");
 		fgColour = new Color(Integer.parseInt(fgHexColour, 16));
 
-		bgHexColour = XmlUtils
-				.extractStringAttribute(nnp, "bgColour", "000000");
+		bgHexColour = tag.getAttributeAsString("bgColour", "000000");
 		bgColour = new Color(Integer.parseInt(bgHexColour, 16));
 
-		floatPerc = XmlUtils.extractIntegerAttribute(nnp, "floatPerc",
-				floatPerc);
+		floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
 
-		startSpace = XmlUtils.extractStringAttribute(nnp, "startspace");
+		startSpace = tag.getAttributeAsString("startspace");
 
-		fixedPrice = XmlUtils.extractIntegerAttribute(nnp, "price", 0);
+		fixedPrice = tag.getAttributeAsInteger("price", 0);
 
-		numberOfBaseTokens = XmlUtils.extractIntegerAttribute(nnp, "tokens", 0);
+		numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 0);
 
-		if (element != null)
-		{
-			NodeList properties = element.getChildNodes();
-
-			for (int j = 0; j < properties.getLength(); j++)
-			{
-
-				String propName = properties.item(j).getNodeName();
-				if (propName == null || propName.equals("#text"))
-					continue;
-				if (propName.equalsIgnoreCase("ShareUnit"))
-				{
-					shareUnit = XmlUtils.extractIntegerAttribute(properties
-							.item(j).getAttributes(), "percentage", shareUnit);
-				}
-				else if (propName.equalsIgnoreCase("Home"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-				    String homeName = XmlUtils.extractStringAttribute(nnp2,
-						"hex");
-				    MapHex hex = MapManager.getInstance().getHex(homeName);
-				    if (hex != null) {
-				        homeHex = hex;
-				        List stations = hex.getStations();
-				        int homeCity = XmlUtils.extractIntegerAttribute(nnp2,
-				                "city", 1);
-				        if (stations != null && stations.size() > 0) {
-				            homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
-				        }
-				    } else {
-				        throw new ConfigurationException ("Invalid home hex "
-				                + homeName + " for company "+name);
-				    }
-				}
-				else if (propName.equalsIgnoreCase("Destination"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-				    String destName = XmlUtils.extractStringAttribute(nnp2,
-						"hex");
-				    MapHex hex = MapManager.getInstance().getHex(destName);
-				    if (hex != null) {
-				        destinationHex = hex;
-				    } else {
-				        throw new ConfigurationException ("Invalid destination hex "
-				                + destName + " for company "+name);
-				    }
-				}
-				else if (propName.equalsIgnoreCase("CanBuyPrivates"))
-				{
-					canBuyPrivates = true;
-					GameManager.setCanAnyCompBuyPrivates(true);
-					GameManager.setCompaniesCanBuyPrivates();
-					nnp2 = properties.item(j).getAttributes();
-					String lower = XmlUtils.extractStringAttribute(nnp2,
-							"lowerPriceFactor");
-					if (!Util.hasValue(lower))
-						throw new ConfigurationException(
-								"Lower private price factor missing");
-					lowerPrivatePriceFactor = Float.parseFloat(lower);
-					String upper = XmlUtils.extractStringAttribute(nnp2,
-							"upperPriceFactor");
-					if (!Util.hasValue(upper))
-						throw new ConfigurationException(
-								"Upper private price factor missing");
-					upperPrivatePriceFactor = Float.parseFloat(upper);
-
-				}
-				else if (propName.equalsIgnoreCase("PoolPaysOut"))
-				{
-					poolPaysOut = true;
-				}
-				else if (propName.equalsIgnoreCase("IPOPaysOut"))
-				{
-					ipoPaysOut = true;
-				}
-				else if (propName.equalsIgnoreCase("Float") && floatPerc == 0)
-				{
-					nnp2 = properties.item(j).getAttributes();
-					floatPerc = XmlUtils.extractIntegerAttribute(nnp2,
-							"percentage", floatPerc);
-				}
-				else if (propName.equalsIgnoreCase("StockPrice"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					hasStockPrice = XmlUtils.extractBooleanAttribute(nnp2,
-							"market", true);
-					hasParPrice = XmlUtils.extractBooleanAttribute(nnp2, "par",
-							hasStockPrice);
-				}
-				else if (propName.equalsIgnoreCase("Payout"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					String split = XmlUtils.extractStringAttribute(nnp2,
-							"split", "no");
-					splitAlways = split.equalsIgnoreCase("always");
-					splitAllowed = split.equalsIgnoreCase("allowed");
-				}
-				else if (propName.equalsIgnoreCase("Trains"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					String numbers = XmlUtils.extractStringAttribute(nnp2,
-							"number", "4,4,3,2");
-					String[] numberArray = numbers.split(",");
-					trainLimit = new int[numberArray.length];
-					for (int i = 0; i < numberArray.length; i++)
-					{
-						try
-						{
-							trainLimit[i] = Integer.parseInt(numberArray[i]);
-						}
-						catch (NumberFormatException e)
-						{
-							throw new ConfigurationException(
-									"Invalid train limit " + numberArray[i], e);
-						}
-					}
-					mustOwnATrain = XmlUtils.extractBooleanAttribute(nnp2,
-							"mandatory", mustOwnATrain);
-				}
-				else if (propName.equalsIgnoreCase("FirstTrainCloses"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					String typeName = XmlUtils.extractStringAttribute(nnp2,
-							"type", "Private");
-					if (typeName.equalsIgnoreCase("Private"))
-					{
-						privateToCloseOnFirstTrainName = XmlUtils
-								.extractStringAttribute(nnp2, "name");
-					}
-					else
-					{
-						throw new ConfigurationException(
-								"Only Privates can be closed on first train buy");
-					}
-				}
-				else if (propName.equalsIgnoreCase("Capitalisation"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					String capType = XmlUtils.extractStringAttribute(nnp2,
-							"type", "full");
-					if (capType.equalsIgnoreCase("full"))
-					{
-						setCapitalisation (CAPITALISE_FULL);
-					} else if (capType.equalsIgnoreCase("incremental")) {
-						setCapitalisation (CAPITALISE_INCREMENTAL);
-					}
-					else
-					{
-						throw new ConfigurationException(
-								"Invalid capitalisation type: "+capType);
-					}
-				} else if (propName.equalsIgnoreCase("NumberOfTileLays")) {
-					
-				    nnp2 = properties.item(j).getAttributes();
-					String colourString = XmlUtils.extractStringAttribute(nnp2, "colour");
-				    if (colourString == null) throw new ConfigurationException ("No colour entry for NumberOfTileLays");
-					String phaseString = XmlUtils.extractStringAttribute(nnp2, "phase");
-				    if (phaseString == null) throw new ConfigurationException ("No phase entry for NumberOfTileLays");
-					int number = XmlUtils.extractIntegerAttribute(nnp2, "number");
-					Integer lays = new Integer (number);
-					
-					String[] colours = colourString.split(",");
-					HashMap<String, Integer> phaseMap;
-					/** TODO: should not be necessary to specify all phases separately */
-					String[] phases = phaseString.split(",");
-					for (int i=0; i<colours.length; i++){
-					    if (numberOfTileLays == null) numberOfTileLays 
-					    	= new HashMap<String, HashMap<String, Integer>>();
-					    numberOfTileLays.put(colours[i], 
-					    		(phaseMap = new HashMap<String, Integer>()));
-					    for (int k=0; k<phases.length; k++) {
-					        phaseMap.put(phases[k], lays);
-					    }
-					}
-				}
-			}
-
-			if (hasParPrice) GameManager.setHasAnyParPrice(true);
-
-			NodeList typeElements = element.getElementsByTagName("Certificate");
-			if (typeElements.getLength() > 0)
-			{
-				int shareTotal = 0;
-				boolean gotPresident = false;
-				PublicCertificateI certificate;
-				certificates = new ArrayList<PublicCertificateI>(); // Throw away the per-type specification
-
-				for (int j = 0; j < typeElements.getLength(); j++)
-				{
-					Element certElement = (Element) typeElements.item(j);
-					nnp2 = certElement.getAttributes();
-
-					int shares = XmlUtils.extractIntegerAttribute(nnp2,
-							"shares", 1);
-
-					boolean president = "President".equals(XmlUtils
-							.extractStringAttribute(nnp2, "type", ""));
-					int number = XmlUtils.extractIntegerAttribute(nnp2,
-							"number", 1);
-
-					if (president)
-					{
-						if (number > 1 || gotPresident)
-							throw new ConfigurationException("Company type "
-									+ name
-									+ " cannot have multiple President shares");
-						gotPresident = true;
-					}
-
-					for (int k = 0; k < number; k++)
-					{
-						certificate = new PublicCertificate(shares, president);
-						addCertificate(certificate);
-						shareTotal += shares * shareUnit;
-					}
-				}
-				if (shareTotal != 100)
-					throw new ConfigurationException("Company type " + name
-							+ " total shares is not 100%");
-			}
-
+		Tag shareUnitTag = tag.getChild("ShareUnit");
+		if (shareUnitTag != null) {
+			shareUnit = shareUnitTag.getAttributeAsInteger("percentage", shareUnit);
 		}
+		
+		Tag homeBaseTag = tag.getChild("Home");
+		if (homeBaseTag != null) {
+		    String homeHexName = homeBaseTag.getAttributeAsString("hex");
+			MapHex hex = MapManager.getInstance().getHex(homeHexName);
+		    if (hex != null) {
+		        homeHex = hex;
+		        List stations = hex.getStations();
+		        int homeCity = homeBaseTag.getAttributeAsInteger("city", 1);
+		        if (stations != null && stations.size() > 0) {
+		            homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
+		        }
+		    } else {
+		        throw new ConfigurationException ("Invalid home hex "
+		                + homeHexName + " for company "+name);
+		    }
+		}
+		
+		Tag destinationTag = tag.getChild("Destination");
+		if (destinationTag != null) {
+		    String destHexName = destinationTag.getAttributeAsString("hex");
+			MapHex hex = MapManager.getInstance().getHex(destHexName);
+		    if (hex != null) {
+		        destinationHex = hex;
+		    } else {
+		        throw new ConfigurationException ("Invalid destination hex "
+		                + destHexName + " for company "+name);
+		    }
+		}
+		
+		Tag privateBuyTag = tag.getChild("CanBuyPrivates");
+		if (privateBuyTag != null) {
+			canBuyPrivates = true;
+			GameManager.setCanAnyCompBuyPrivates(true);
+			GameManager.setCompaniesCanBuyPrivates();
+			
+			String lower = privateBuyTag.getAttributeAsString("lowerPriceFactor");
+			if (!Util.hasValue(lower))
+					throw new ConfigurationException(
+							"Lower private price factor missing");
+			lowerPrivatePriceFactor = Float.parseFloat(lower);
+			
+			String upper = privateBuyTag.getAttributeAsString("upperPriceFactor");
+			if (!Util.hasValue(upper))
+					throw new ConfigurationException(
+							"Upper private price factor missing");
+			upperPrivatePriceFactor = Float.parseFloat(upper);
+		}
+
+		poolPaysOut = tag.getChild("PoolPaysOut") != null;
+		
+		ipoPaysOut = tag.getChild("IPOPaysOut") != null;
+		
+		Tag floatTag = tag.getChild("Float");
+		if (floatTag != null) {
+			floatPerc = floatTag.getAttributeAsInteger("percentage", floatPerc);
+		}
+		
+		Tag priceTag = tag.getChild("StockPrice");
+		if (priceTag != null) {
+			hasStockPrice = priceTag.getAttributeAsBoolean("market", true);
+			hasParPrice = priceTag.getAttributeAsBoolean("par",	hasStockPrice);
+		}
+		
+		Tag payoutTag = tag.getChild("Payout");
+		if (payoutTag != null) {
+			String split = payoutTag.getAttributeAsString("split", "no");
+			splitAlways = split.equalsIgnoreCase("always");
+			splitAllowed = split.equalsIgnoreCase("allowed");
+		}
+	
+		Tag trainsTag = tag.getChild("Trains");
+		if (trainsTag != null)
+		{
+			trainLimit = trainsTag.getAttributeAsIntegerArray("number");
+			mustOwnATrain = trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
+		}
+		
+		Tag firstTrainTag = tag.getChild("FirstTrainCloses");
+		if (firstTrainTag != null)
+		{
+			String typeName = firstTrainTag.getAttributeAsString("type", "Private");
+			if (typeName.equalsIgnoreCase("Private"))
+			{
+				privateToCloseOnFirstTrainName = firstTrainTag.getAttributeAsString("name");
+			}
+			else
+			{
+				throw new ConfigurationException(
+						"Only Privates can be closed on first train buy");
+			}
+		}
+		
+		Tag capitalisationTag = tag.getChild("Capitalisation");
+		if (capitalisationTag != null)
+		{
+			String capType = capitalisationTag.getAttributeAsString("type", "full");
+			if (capType.equalsIgnoreCase("full"))
+			{
+				setCapitalisation (CAPITALISE_FULL);
+			} else if (capType.equalsIgnoreCase("incremental")) {
+				setCapitalisation (CAPITALISE_INCREMENTAL);
+			}
+			else
+			{
+				throw new ConfigurationException(
+						"Invalid capitalisation type: "+capType);
+			}
+		}
+		
+		Tag tileLaysTag = tag.getChild("NumberOfTileLays");
+		if (tileLaysTag != null) {
+				
+			String colourString = tileLaysTag.getAttributeAsString("colour");
+		    if (colourString == null) throw new ConfigurationException ("No colour entry for NumberOfTileLays");
+			String phaseString = tileLaysTag.getAttributeAsString("phase");
+		    if (phaseString == null) throw new ConfigurationException ("No phase entry for NumberOfTileLays");
+			int number = tileLaysTag.getAttributeAsInteger("number");
+			Integer lays = new Integer (number);
+			
+			String[] colours = colourString.split(",");
+			HashMap<String, Integer> phaseMap;
+			/** TODO: should not be necessary to specify all phases separately */
+			String[] phases = phaseString.split(",");
+			for (int i=0; i<colours.length; i++){
+			    if (numberOfTileLays == null) numberOfTileLays 
+			    	= new HashMap<String, HashMap<String, Integer>>();
+			    numberOfTileLays.put(colours[i], 
+			    		(phaseMap = new HashMap<String, Integer>()));
+			    for (int k=0; k<phases.length; k++) {
+			        phaseMap.put(phases[k], lays);
+			    }
+			}
+		}
+
+		if (hasParPrice) GameManager.setHasAnyParPrice(true);
+
+		List<Tag> certificateTags = tag.getChildren("Certificate");
+		if (certificateTags != null)
+		{
+			int shareTotal = 0;
+			boolean gotPresident = false;
+			PublicCertificateI certificate;
+			certificates = new ArrayList<PublicCertificateI>(); // Throw away the per-type specification
+
+			for (Tag certificateTag : certificateTags)
+			{
+				int shares = certificateTag.getAttributeAsInteger("shares", 1);
+
+				boolean president = "President".equals(certificateTag.getAttributeAsString("type", ""));
+				int number = certificateTag.getAttributeAsInteger("number", 1);
+
+				if (president)
+				{
+					if (number > 1 || gotPresident)
+						throw new ConfigurationException("Company type "
+								+ name
+								+ " cannot have multiple President shares");
+					gotPresident = true;
+				}
+
+				for (int k = 0; k < number; k++)
+				{
+					certificate = new PublicCertificate(shares, president);
+					addCertificate(certificate);
+					shareTotal += shares * shareUnit;
+				}
+			}
+			if (shareTotal != 100)
+				throw new ConfigurationException("Company type " + name
+						+ " total shares is not 100%");
+		}
+
 	}
 
 	/**

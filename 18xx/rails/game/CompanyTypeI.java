@@ -1,12 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
-import org.w3c.dom.Element;
+import rails.util.Tag;
 
 /**
  * The interface for StockSpaceType.
  */
-public interface CompanyTypeI {
+public interface CompanyTypeI extends ConfigurableComponentI {
 
 	/*--- Constants ---*/
 	/** The name of the XML tag used to configure a company type. */
@@ -24,9 +24,9 @@ public interface CompanyTypeI {
 	/** The name of the XML tag for the "AllClose" tag. */
 	public static final String ALL_CLOSE_TAG = "AllClose";
 
-	public void configureFromXML(Element el) throws ConfigurationException;
+	//public void configureFromXML(Element el) throws ConfigurationException;
 	
-	public CompanyI createCompany (String name, Element element) 
+	public CompanyI createCompany (String name, Tag tag) 
 	throws ConfigurationException; 
 
 	/**

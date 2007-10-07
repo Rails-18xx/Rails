@@ -1,16 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.3 2007/10/05 22:02:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.4 2007/10/07 20:14:53 evos Exp $ */
 package rails.game.special;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.*;
-
 import rails.game.*;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
-
 
 public class SpecialTokenLay extends SpecialProperty
 {
@@ -24,20 +21,18 @@ public class SpecialTokenLay extends SpecialProperty
     int numberAvailable = 1;
     int numberUsed = 0;
 
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 		
-		super.configureFromXML (element);
+		super.configureFromXML (tag);
 
-		NodeList nl = element.getElementsByTagName("SpecialTokenLay");
-		if (nl == null || nl.getLength() == 0)
+		Tag tokenLayTag = tag.getChild("SpecialTokenLay");
+		if (tokenLayTag == null)
 		{
 			throw new ConfigurationException("<SpecialTokenLay> tag missing");
 		}
-		Element stlEl = (Element) nl.item(0);
 
-		NamedNodeMap nnp = stlEl.getAttributes();
-		locationCodes = XmlUtils.extractStringAttribute(nnp, "location");
+		locationCodes = tokenLayTag.getAttributeAsString("location");
 		if (!Util.hasValue(locationCodes))
 			throw new ConfigurationException("SpecialTokenLay: location missing");
         MapManager mmgr = MapManager.getInstance();
@@ -51,31 +46,26 @@ public class SpecialTokenLay extends SpecialProperty
             locations.add (hex);
         }
 
-		extra = XmlUtils.extractBooleanAttribute(nnp, "extra", extra);
-		free = XmlUtils.extractBooleanAttribute(nnp,
-				"free",
-				free);
-		connected = XmlUtils.extractBooleanAttribute(nnp, "connected", connected);
-		closingValue = XmlUtils.extractIntegerAttribute(nnp,
-				"closingValue",
-				closingValue);
+		extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
+		free = tokenLayTag.getAttributeAsBoolean("free", free);
+		connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
+		closingValue = tokenLayTag.getAttributeAsInteger("closingValue", closingValue);
 		
-		String tokenClassName = XmlUtils.extractStringAttribute(
-				nnp, "class", "rails.game.BaseToken");
+		String tokenClassName = tokenLayTag.getAttributeAsString(
+				"class", "rails.game.BaseToken");
 		try {
 			tokenClass = Class.forName(tokenClassName);
 			if (tokenClass == BonusToken.class) {
                 BonusToken bToken = (BonusToken) tokenClass.newInstance();
                 token = bToken;
-				int value = XmlUtils.extractIntegerAttribute(
-						nnp, "value");
+				int value = tokenLayTag.getAttributeAsInteger("value");
 				if (value <= 0) {
 					throw new ConfigurationException ("Missing or invalid value "+value);
 				}
                 bToken.setValue(value);
                 
-                numberAvailable = XmlUtils.extractIntegerAttribute(
-                        nnp, "number", numberAvailable);
+                numberAvailable = tokenLayTag.getAttributeAsInteger(
+                		"number", numberAvailable);
 			}
 		} catch (ClassNotFoundException e) {
 			throw new ConfigurationException ("Unknown class "+tokenClassName, e);

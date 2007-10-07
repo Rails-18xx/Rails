@@ -1,15 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.4 2007/10/05 22:02:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.5 2007/10/07 20:14:53 evos Exp $ */
 package rails.game.special;
-
-import org.w3c.dom.*;
 
 import rails.game.*;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
-
-
 
 public class ExchangeForShare extends SpecialProperty
 {
@@ -20,21 +16,19 @@ public class ExchangeForShare extends SpecialProperty
 	/** The share size */
 	int share;
 
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 
-		NodeList nl = element.getElementsByTagName("ExchangeForShare");
-		if (nl == null || nl.getLength() == 0)
+		Tag swapTag = tag.getChild("ExchangeForShare");
+		if (swapTag == null)
 		{
 			throw new ConfigurationException("<ExchangeForShare> tag missing");
 		}
-		Element exchEl = (Element) nl.item(0);
 
-		NamedNodeMap nnp = exchEl.getAttributes();
-		publicCompanyName = XmlUtils.extractStringAttribute(nnp, "company");
+		publicCompanyName = swapTag.getAttributeAsString("company");
 		if (!Util.hasValue(publicCompanyName))
 			throw new ConfigurationException("ExchangeForShare: company name missing");
-		share = XmlUtils.extractIntegerAttribute(nnp, "share", 10);
+		share = swapTag.getAttributeAsInteger("share", 10);
 	}
 
 	public boolean isExecutionable()

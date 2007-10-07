@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.8 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.9 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 
@@ -10,8 +10,8 @@ import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
 
 
 public class PrivateCompany extends Company implements PrivateCompanyI
@@ -38,35 +38,26 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NamedNodeMap nnp = element.getAttributes();
-		NamedNodeMap nnp2;
-
 		/* Configure private company features */
 		try
 		{
-			basePrice = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
-					"basePrice",
-					"0"));
-			revenue = Integer.parseInt(XmlUtils.extractStringAttribute(nnp,
-					"revenue",
-					"0"));
+			basePrice = tag.getAttributeAsInteger("basePrice", 0);
+			revenue = tag.getAttributeAsInteger("revenue", 0);
 
 			// Blocked hexes (until bought by a company)
-			Element blEl = (Element) element.getElementsByTagName("Blocking")
-					.item(0);
-			if (blEl != null)
+			Tag blockedTag = tag.getChild("Blocking");
+			if (blockedTag != null)
 			{
-				String[] hexes = XmlUtils.extractStringAttribute(blEl.getAttributes(),
-						"hex")
-						.split(",");
+				String[] hexes = blockedTag.getAttributeAsString("hex").split(",");
 				if (hexes != null && hexes.length > 0)
 				{
 					blockedHexes = new ArrayList<MapHex>();
-					for (int i = 0; i < hexes.length; i++)
+					//for (int i = 0; i < hexes.length; i++)
+					for (String hexName : hexes)
 					{
-						MapHex hex = MapManager.getInstance().getHex(hexes[i]);
+						MapHex hex = MapManager.getInstance().getHex(hexName);
 						blockedHexes.add(hex);
 						hex.setBlocked(true);
 					}
@@ -74,23 +65,17 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 			}
 
 			// Special properties
-			Element spsEl = (Element) element.getElementsByTagName("SpecialProperties")
-					.item(0);
-			if (spsEl != null)
+			Tag spsTag = tag.getChild("SpecialProperties");
+			if (spsTag != null)
 			{
-				nnp2 = spsEl.getAttributes();
-				closeIfAllExercised = XmlUtils.extractBooleanAttribute (
-						nnp2, "closeIfAllExercised", closeIfAllExercised);
+				closeIfAllExercised = spsTag.getAttributeAsBoolean("closeIfAllExercised", closeIfAllExercised);
 				
 				specialProperties = new ArrayList<SpecialPropertyI>();
-				NodeList spsNl = spsEl.getElementsByTagName("SpecialProperty");
-				Element spEl;
+				List<Tag> spTags = spsTag.getChildren("SpecialProperty");
 				String className;
-				for (int i = 0; i < spsNl.getLength(); i++)
+				for (Tag spTag : spTags)
 				{
-					spEl = (Element) spsNl.item(i);
-					nnp2 = spEl.getAttributes();
-					className = XmlUtils.extractStringAttribute(nnp2, "class");
+					className = spTag.getAttributeAsString("class");
 					if (!Util.hasValue(className))
 						throw new ConfigurationException("Missing class in private special property");
 
@@ -98,7 +83,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 							.newInstance();
 					sp.setCompany(this);
 					specialProperties.add(sp);
-					sp.configureFromXML(spEl);
+					sp.configureFromXML(spTag);
 
 				}
 			}
@@ -114,7 +99,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		 * Complete configuration by adding features from the Private
 		 * CompanyType
 		 */
-		Element typeElement = element;
+		/* Probably unused
+		Element typeElement = tag;
 		if (typeElement != null)
 		{
 			NodeList properties = typeElement.getChildNodes();
@@ -136,6 +122,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 
 			}
 		}
+		*/
 	}
 
 	/**

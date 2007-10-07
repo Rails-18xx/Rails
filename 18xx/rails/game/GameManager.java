@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.16 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.17 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -16,7 +16,6 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -100,83 +99,69 @@ public class GameManager implements ConfigurableComponentI
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element el) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 		/* Get the rails.game name as configured */
-		Element element = (Element) el.getElementsByTagName("Game").item(0);
-		NamedNodeMap nnp = element.getAttributes();
-		name = XmlUtils.extractStringAttribute(nnp, "name");
+		Tag gameTag = tag.getChild("Game");
+		if (gameTag == null) throw new ConfigurationException ("No Game tag specified in GameManager tag");
+		name = gameTag.getAttributeAsString("name");
+		if (name == null) throw new ConfigurationException ("No name specified in Game tag");
 
 		// Get any available game options
-        NodeList nl = el.getElementsByTagName(OPTION_TAG);
 		GameOption option;
 		String optionName, optionType, optionValues, optionDefault;
-		for (int i = 0; i < nl.getLength(); i++)
-		{
-			element = (Element) nl.item(i);
-			Map<String, String> attrs = XmlUtils.getAllAttributes(element);
-			optionName = attrs.get("name");
-			if (optionName == null) throw new ConfigurationException ("GameOption without name");
-			option = new GameOption (optionName);
-			availableGameOptions.add (option);
-			optionType = attrs.get("type");
-			if (optionType != null) option.setType (optionType);
-			optionValues = attrs.get("values");
-			if (optionValues != null) option.setAllowedValues(optionValues.split(","));
-			optionDefault = attrs.get("default");
-			if (optionDefault != null) option.setDefaultValue(optionDefault);
+		List<Tag> optionTags = tag.getChildren(OPTION_TAG);
+		if (optionTags != null) {
+			for (Tag optionTag : optionTags)
+			{
+				optionName = optionTag.getAttributeAsString("name");
+				if (optionName == null) throw new ConfigurationException ("GameOption without name");
+				option = new GameOption (optionName);
+				availableGameOptions.add (option);
+				optionType = optionTag.getAttributeAsString("type");
+				if (optionType != null) option.setType (optionType);
+				optionValues = optionTag.getAttributeAsString("values");
+				if (optionValues != null) option.setAllowedValues(optionValues.split(","));
+				optionDefault = optionTag.getAttributeAsString("default");
+				if (optionDefault != null) option.setDefaultValue(optionDefault);
+			}
 		}
-		
 
 		/* Max. % of shares of one company that a player may hold */
-		element = (Element) el.getElementsByTagName("PlayerShareLimit").item(0);
-		if (element != null)
+		Tag shareLimitTag = tag.getChild("PlayerShareLimit");
+		if (shareLimitTag != null)
 		{
-			nnp = element.getAttributes();
-			Player.setShareLimit(XmlUtils.extractIntegerAttribute(nnp,
-					"percentage"));
+			Player.setShareLimit(shareLimitTag.getAttributeAsInteger("percentage"));
 		}
 
 		/* Max. % of shares of one company that the bank pool may hold */
-		element = (Element) el.getElementsByTagName("BankPoolShareLimit")
-				.item(0);
-		if (element != null)
+		Tag poolLimitTag = tag.getChild("BankPoolShareLimit");
+		if (poolLimitTag != null)
 		{
-			nnp = element.getAttributes();
-			Bank.setPoolShareLimit(XmlUtils.extractIntegerAttribute(nnp,
-					"percentage"));
+			Bank.setPoolShareLimit(poolLimitTag.getAttributeAsInteger("percentage"));
 		}
 
 		/* End of rails.game criteria */
-		element = (Element) el.getElementsByTagName("EndOfGame").item(0);
-		if (element != null)
+		Tag endOfGameTag = tag.getChild("EndOfGame");
+		if (endOfGameTag != null)
 		{
-			Element el2;
-			nl = element.getChildNodes();
-			for (int i = 0; i < nl.getLength(); i++)
-		{
-				if (!(nl.item(i) instanceof Element))
-					continue;
-				el2 = (Element) nl.item(i);
-				if (el2.getNodeName().equals("Bankruptcy"))
+			if (endOfGameTag.getChild("Bankruptcy") != null)
+			{
+				gameEndsWithBankruptcy = true;
+			}
+			Tag bankBreaksTag = endOfGameTag.getChild("BankBreaks");
+			if (bankBreaksTag != null)
+			{
+				gameEndsWhenBankHasLessOrEqual = bankBreaksTag.getAttributeAsInteger("limit",
+						gameEndsWhenBankHasLessOrEqual);
+				String attr = bankBreaksTag.getAttributeAsString("finish");
+				if (attr.equalsIgnoreCase("SetOfORs"))
 				{
-					gameEndsWithBankruptcy = true;
+					gameEndsAfterSetOfORs = true;
 				}
-				else if (el2.getNodeName().equals("BankBreaks"))
+				else if (attr.equalsIgnoreCase("CurrentOR"))
 				{
-					nnp = el2.getAttributes();
-					gameEndsWhenBankHasLessOrEqual = XmlUtils.extractIntegerAttribute(nnp,
-							"limit",
-							gameEndsWhenBankHasLessOrEqual);
-					String attr = XmlUtils.extractStringAttribute(nnp, "finish");
-					if (attr.equalsIgnoreCase("SetOfORs"))
-					{
-						gameEndsAfterSetOfORs = true;
-					}
-					else if (attr.equalsIgnoreCase("CurrentOR"))
-					{
-						gameEndsAfterSetOfORs = false;
-					}
+					gameEndsAfterSetOfORs = false;
 				}
 			}
 		}

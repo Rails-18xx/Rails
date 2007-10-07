@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -37,7 +37,7 @@ public class ComponentManager
 	/** The name of the XML attribute for the component's configuration file. */
 	public static final String COMPONENT_FILE_TAG = "file";
 	
-	private NodeList components; 
+	private List<Tag> componentTags;
 	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
 	protected static List <String> directories = new ArrayList<String>();
 
@@ -50,30 +50,27 @@ public class ComponentManager
 		throw new ConfigurationException(LocalText.getText("ComponentManagerNotYetConfigured"));
 	}
 
-	public static synchronized void configureInstance(String gameName,
-			Element element) throws ConfigurationException
+	public static synchronized void configureInstance(String gameName, Tag tag) 
+	throws ConfigurationException
 	{
 		if (instance != null)
 		{
 			throw new ConfigurationException(LocalText.getText("ComponentManagerNotReconfigured"));
 		}
-		new ComponentManager(gameName, element);
+		new ComponentManager(gameName, tag);
 	}
 
-	private ComponentManager(String gameName, Element element)
-			throws ConfigurationException
-	{
+	private ComponentManager(String gameName, Tag tag)
+	throws ConfigurationException {
 		instance = this;
-		
+
 		ComponentManager.gameName = gameName;
-		components = element.getElementsByTagName(COMPONENT_ELEMENT_ID);
-		for (int i = 0; i < components.getLength(); i++)
-		{
-			Element compElement = (Element) components.item(i);
-			String compName = compElement.getAttribute("name");
-			log.debug("Found component "+compName);
+		componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
+		for (Tag component : componentTags) {
+			String compName = component.getAttributeAsString("name");
+			log.debug("Found component " + compName);
 			if (compName.equalsIgnoreCase("GameManager")) {
-				configureComponent (compElement);
+				configureComponent(component);
 				break;
 			}
 		}
@@ -82,37 +79,31 @@ public class ComponentManager
 	public synchronized void finishPreparation ()
 	throws ConfigurationException {
 		
-		for (int i = 0; i < components.getLength(); i++)
+		for (Tag component : componentTags)
 		{
-			Element compElement = (Element) components.item(i);
-			String compName = compElement.getAttribute("name");
+			String compName = component.getAttributeAsString("name");
 			if (compName.equalsIgnoreCase("GameManager")) continue;
 			log.debug("Found component "+compName);
-			configureComponent (compElement);
+			configureComponent (component);
 		}
 	}
-	
-	private static void configureComponent (Element compElement) 
+
+	private static void configureComponent (Tag componentTag) 
 	throws ConfigurationException {
 		
-		NamedNodeMap nnp = compElement.getAttributes();
-
 		// Extract the attributes of the Component
-		String name = XmlUtils.extractStringAttribute(nnp,
-				COMPONENT_NAME_TAG);
+		String name = componentTag.getAttributeAsString(COMPONENT_NAME_TAG);
 		if (name == null)
 		{
 			throw new ConfigurationException(LocalText.getText("UnnamedComponent"));
 		}
-		String clazz = XmlUtils.extractStringAttribute(nnp,
-				COMPONENT_CLASS_TAG);
+		String clazz = componentTag.getAttributeAsString(COMPONENT_CLASS_TAG);
 		if (name == null)
 		{
 			throw new ConfigurationException(
 			        LocalText.getText("ComponentHasNoClass", name));
 		}
-		String file = XmlUtils.extractStringAttribute(nnp,
-				COMPONENT_FILE_TAG);
+		String file = componentTag.getAttributeAsString(COMPONENT_FILE_TAG);
 		
 		// Only one component per name.
 		if (instance.mComponentMap.get(name) != null)
@@ -143,11 +134,11 @@ public class ComponentManager
 		}
 
 		// Configure the component, from a file, or the embedded XML.
-		Element configElement = compElement;
+		Tag configElement = componentTag;
 		if (file != null)
 		{
 			directories.add("data/" + gameName);
-			configElement = XmlUtils.findElementInFile(file, directories, name);
+			configElement = Tag.findTopTagInFile(file, directories, name);
 		}
 
 		try

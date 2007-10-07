@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.6 2007/10/05 22:02:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.7 2007/10/07 20:14:53 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -9,8 +9,9 @@ import org.w3c.dom.NamedNodeMap;
 
 import rails.game.*;
 import rails.game.state.BooleanState;
+import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
+
 
 public abstract class SpecialProperty implements SpecialPropertyI
 {
@@ -40,19 +41,18 @@ public abstract class SpecialProperty implements SpecialPropertyI
 		spMap.put(uniqueId, this);
 	}
 	
-	public void configureFromXML(Element element) throws ConfigurationException {
+	public void configureFromXML(Tag tag) throws ConfigurationException {
 		
-		NamedNodeMap nnp = element.getAttributes();
-		closeIfExercised = XmlUtils.extractBooleanAttribute (
-			nnp, "closeIfExercised", closeIfExercised);
+		closeIfExercised = tag.getAttributeAsBoolean(
+				"closeIfExercised", closeIfExercised);
 		
-		conditionText = XmlUtils.extractStringAttribute(nnp, "condition");
+		conditionText = tag.getAttributeAsString("condition");
 		if (!Util.hasValue(conditionText))
 			throw new ConfigurationException("Missing condition in private special property");
 		setUsableIfOwnedByPlayer(conditionText.matches("(?i).*ifOwnedByPlayer.*"));
 		setUsableIfOwnedByCompany(conditionText.matches("(?i).*ifOwnedByCompany.*"));
 		
-		whenText = XmlUtils.extractStringAttribute(nnp, "when");
+		whenText = tag.getAttributeAsString("when");
 		if (!Util.hasValue(whenText))
 			throw new ConfigurationException("Missing condition in private special property");
 		// to be interpreted...
