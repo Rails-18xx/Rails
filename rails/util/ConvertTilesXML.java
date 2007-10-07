@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.5 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.6 2007/10/07 20:14:53 evos Exp $*/
 package rails.util;
 
 import java.io.*;
@@ -164,8 +164,8 @@ public class ConvertTilesXML {
     private ConvertTilesXML() throws ConfigurationException {
 
 	directories.add("tiles");
-	Element inputTopElement = XmlUtils.findElementInFile(inputFilePath, 
-		directories, "tiles");
+	Element inputTopElement = Tag.findTopTagInFile(inputFilePath, 
+		directories, "tiles").getElement();
 
 	try {
 	    DocumentBuilderFactory factory = DocumentBuilderFactory

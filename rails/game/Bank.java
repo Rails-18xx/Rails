@@ -4,7 +4,6 @@ package rails.game;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.*;
 
 import rails.game.model.CashModel;
 import rails.game.model.ModelObject;
@@ -15,6 +14,8 @@ public class Bank implements CashHolder, ConfigurableComponentI
 
 	/** Default limit of shares in the bank pool */
 	private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
+	private static final int DEFAULT_BANK_AMOUNT = 12000;
+	private static final String DEFAULT_MONEY_FORMAT = "$@";
 
 	/** The Bank's amont of cash */
 	private static CashModel money;
@@ -42,7 +43,7 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	 * '@' is replaced by the numeric amount, the rest is copied.
 	 */
 	private static String moneyFormat = null;
-	private static final String DEFAULT_MONEY_FORMAT = "$@";
+	
 	static {
 		String configFormat = Config.get("money_format");
 		if (Util.hasValue(configFormat)
@@ -100,11 +101,9 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element element) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NamedNodeMap nnp;
 		int number, startCash, certLimit;
-		Element node;
 
 		// Parse the Bank element
 		
@@ -112,56 +111,38 @@ public class Bank implements CashHolder, ConfigurableComponentI
 		if (moneyFormat == null) {
 			/* Only use the rails.game-specific format if it has not been overridden
 			 * in the configuration file (see static block above) */
-			node = (Element) element.getElementsByTagName("Money").item(0);
-			if (node != null)
+			Tag moneyTag = tag.getChild("Money");
+			if (moneyTag != null)
 			{
-				nnp = node.getAttributes();
-				moneyFormat = XmlUtils.extractStringAttribute(nnp, "format");
+				moneyFormat = moneyTag.getAttributeAsString("format");
 			}
 		}
 		/* Make sure that we have a format */
 		if (!Util.hasValue(moneyFormat)) moneyFormat = DEFAULT_MONEY_FORMAT;
 
-		node = (Element) element.getElementsByTagName("Bank").item(0);
-		if (node != null)
+		Tag bankTag = tag.getChild("Bank");
+		if (bankTag != null)
 		{
-			nnp = node.getAttributes();
-			money.setCash(XmlUtils.extractIntegerAttribute(nnp, "amount", 12000));
+			money.setCash(bankTag.getAttributeAsInteger("amount", DEFAULT_BANK_AMOUNT));
 		}
 		ReportBuffer.add(LocalText.getText("BankSizeIs", format(money.getCash())));
 
-		NodeList players = element.getElementsByTagName("Players");
-		for (int i = 0; i < players.getLength(); i++)
+		List<Tag> playerTags = tag.getChildren("Players");
+		int minPlayers = 99;
+		int maxPlayers = 0;
+		for (Tag playerTag : playerTags)
 		{
-			nnp = ((Element) players.item(i)).getAttributes();
-			number = XmlUtils.extractIntegerAttribute(nnp, "number");
-			startCash = XmlUtils.extractIntegerAttribute(nnp, "cash");
-			certLimit = XmlUtils.extractIntegerAttribute(nnp, "certLimit");
+			number = playerTag.getAttributeAsInteger("number");
+			startCash = playerTag.getAttributeAsInteger("cash");
+			certLimit = playerTag.getAttributeAsInteger("certLimit");
 
 			Player.setLimits(number, startCash, certLimit);
 
-			if (i == 0)
-			{
-				Player.MIN_PLAYERS = number;
-				log.debug("MIN_PLAYERS: " + Player.MIN_PLAYERS);
-			}
-
-			if (i == players.getLength() - 1)
-			{
-				Player.MAX_PLAYERS = number;
-				log.debug("MAX_PLAYERS: " + Player.MAX_PLAYERS);
-			}
+			minPlayers = Math.min(minPlayers, number);
+			maxPlayers = Math.max(maxPlayers, number);
 		}
-
-		node = (Element) element.getElementsByTagName("PoolLimit").item(0);
-		if (node != null)
-		{
-			nnp = node.getAttributes();
-			poolShareLimit = XmlUtils.extractIntegerAttribute(nnp,
-					"percentage",
-					DEFAULT_POOL_SHARE_LIMIT);
-		}
-
+		Player.MIN_PLAYERS = minPlayers;
+		Player.MAX_PLAYERS = maxPlayers;
 	}
 
 	/**

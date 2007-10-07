@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.4 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.5 2007/10/07 20:14:53 evos Exp $*/
 package rails.util;
 
 import java.io.*;
@@ -63,8 +63,8 @@ public class MakeGameTileSets {
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
 	directories.add("tiles");
-	Element inputTopElement = XmlUtils.findElementInFile(tilesFilePath,
-		directories, "Tiles");
+	Element inputTopElement = Tag.findTopTagInFile(tilesFilePath,
+		directories, "Tiles").getElement();
 
 	Map<String, Element> tileMap = new HashMap<String, Element>();
 	Element tileSpec;
@@ -91,8 +91,7 @@ public class MakeGameTileSets {
 	
 	// Open and read the tile set for this rails.game
 	String tileSetPath = "TileSet.xml";
-	Element tileSet = XmlUtils
-		.findElementInFile(tileSetPath, directories, "TileManager");
+	Element tileSet = Tag.findTopTagInFile(tileSetPath, directories, "TileManager").getElement();
 	if (tileSet == null)
 	    return;
 	NodeList tiles = tileSet.getElementsByTagName("Tile");
@@ -100,7 +99,7 @@ public class MakeGameTileSets {
 
 	// Also open and read the map tiles.
 	String mapPath = "Map.xml";
-	Element mapHexes = XmlUtils.findElementInFile(mapPath, directories, "Map");
+	Element mapHexes = Tag.findTopTagInFile(mapPath, directories, "Map").getElement();
 	NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
 	String tilesPath = "data/" + gameName + "/Tiles.xml";

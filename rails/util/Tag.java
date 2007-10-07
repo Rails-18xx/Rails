@@ -1,15 +1,22 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.2 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.3 2007/10/07 20:14:53 evos Exp $*/
 package rails.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 import rails.game.ConfigurationException;
@@ -35,6 +42,14 @@ public class Tag {
     
     public Tag (Element element) {
         this.element = element;
+    }
+    
+    public Map<String, List<Tag>> getChildren ()  
+    throws ConfigurationException {
+        
+        if (!parsed) parse (element);
+        
+    	return children;
     }
 
     /**
@@ -125,6 +140,34 @@ public class Tag {
     	return getAttributeAsInteger (name, 0);
     }
     
+ 	public int[] getAttributeAsIntegerArray (String name, int[] defaultArray) 
+ 	throws ConfigurationException {
+ 	    
+ 		String valueString = getAttributeAsString (name);
+ 		if (!Util.hasValue(valueString)) return defaultArray;
+ 		
+	    String[] values = valueString.split(",");
+ 	    int[] result = new int[values.length];
+ 	    int i = 0;
+ 	    try {
+	 	    for (i=0; i<values.length; i++) {
+	 	        result[i] = Integer.parseInt(values[i]);
+	 	    }
+ 	    } catch (NumberFormatException e) {
+ 	        throw new ConfigurationException ("Invalid integer '"+values[i]
+ 	                  +"' in attribute '"+name+"'");
+ 	    }
+ 	    return result;
+ 	    
+ 	}
+
+ 	public int[] getAttributeAsIntegerArray (String name) 
+ 	throws ConfigurationException {
+ 		
+ 		return getAttributeAsIntegerArray (name, new int[0]);
+ 	}
+ 	    
+    
     public boolean getAttributeAsBoolean (String name, boolean defaultValue) 
     throws ConfigurationException {
     	
@@ -211,21 +254,23 @@ public class Tag {
                         attributes.put(name, value);
                     }
                 } else if (childTagName.equalsIgnoreCase("IfOption")) {
-                    name = XmlUtils.extractStringAttribute (nnp, "name");
-                    value = XmlUtils.extractStringAttribute (nnp, "value");
-                    if (name == null) {
+                    Node nameAttr = nnp.getNamedItem("name");
+                    if (nameAttr == null) 
                         throw new ConfigurationException ("IfOption has no optionName attribute");
-                    }
-                    if (value == null) {
+                    name = nameAttr.getNodeValue();        
+
+                    Node valueAttr = nnp.getNamedItem("value");
+                    if (valueAttr == null) 
                         throw new ConfigurationException ("IfOption has no optionValue attribute");
-                    }
+                    value = valueAttr.getNodeValue();        
+
                     // Check if the option has been chosen; if not, skip the rest
                     String optionValue = Game.getGameOption(name);
                     if (optionValue == null) {
                         throw new ConfigurationException ("GameOption "+name+"="+value+" but no assigned value found");
                     }
                     if (optionValue.equalsIgnoreCase(value)) {
-                        parse (childElement);
+                        parseSubTags (childElement);
                     }
                 } else {
                     if (!children.containsKey(childTagName)) {
@@ -243,5 +288,64 @@ public class Tag {
         parsing = false;
     }
     
+     /**
+      * Opens and parses an xml file. Searches the root level of the file for an element
+      * with the supplied name.
+      * @param fileName the name of the file to open
+      * @param tagName the name of the top-level tag to find
+      * @return the named element in the named file
+      * @throws ConfigurationException if there is any problem opening and parsing the file, or
+      * if the file does not contain a top level element with the given name.
+      */
+     public static Tag findTopTagInFile(String filename, List directories, String tagName) 
+     throws ConfigurationException
+     {
+         Document doc = null;
+         try {
+             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
+             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+             dbf.setNamespaceAware(true);
+             // Step 2: create a DocumentBuilder
+             DocumentBuilder db = dbf.newDocumentBuilder();
+             
+             // Step 3: parse the input file to get a Document object
+             doc = db.parse(ResourceLoader.getInputStream(filename, directories));
+         } catch (ParserConfigurationException e) {
+             throw new ConfigurationException("Could not read/parse " + filename
+                     + " to find element " + tagName, e);
+         } catch (SAXException e) {
+             throw new ConfigurationException("Could not read/parse " + filename
+                     + " to find element " + tagName, e);
+         } catch (IOException e) {
+             throw new ConfigurationException("Could not read/parse " + filename
+                     + " to find element " + tagName, e);
+         }
+         
+         if (doc == null) {
+             throw new ConfigurationException ("Cannot find file "+ filename);
+         }
      
+         // Now find the named Element
+         NodeList nodeList = doc.getChildNodes();
+         for ( int iNode = 0; ( iNode < nodeList.getLength() ) ; iNode++)
+         {
+             Node childNode = nodeList.item(iNode);
+             if (    (childNode != null) 
+                  && (childNode.getNodeName().equals(tagName))
+                  && (childNode.getNodeType() == Node.ELEMENT_NODE))
+             {
+                 return new Tag ((Element) childNode);
+             }
+         }
+         throw new ConfigurationException("Could not find " + tagName + " in " + filename);
+     }
+     
+
+     /** @deprecated
+      * This is a stop-gap, needed until all XML parsing code has been converted to use Tag.
+      * @return
+      */
+     public Element getElement () {
+    	 return element;
+     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.5 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.6 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 
@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.w3c.dom.*;
 
 import rails.game.move.PriceTokenMove;
 import rails.util.*;
@@ -57,92 +56,58 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element topElement)
-			throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-
 		/* Read and configure the stock market space types */
-		NodeList types = topElement.getElementsByTagName(StockSpaceTypeI.ELEMENT_ID);
-		NodeList typeFlags;
+		List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
 
-		for (int i = 0; i < types.getLength(); i++)
+		for (Tag typeTag : typeTags)
 		{
-			Element typeElement = (Element) types.item(i);
-			NamedNodeMap nnp = typeElement.getAttributes();
-
 			/* Extract the attributes of the Stock space type */
-			String name = XmlUtils.extractStringAttribute(nnp,
-					StockSpaceTypeI.NAME_TAG);
+			String name = typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
 			if (name == null)
 			{
 				throw new ConfigurationException(LocalText.getText("UnnamedStockSpaceType"));
 			}
-			String colour = XmlUtils.extractStringAttribute(nnp,
-					StockSpaceTypeI.COLOUR_TAG);
+			String colour = typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
 
 			/* Check for duplicates */
 			if (stockSpaceTypes.get(name) != null)
 			{
-				throw new ConfigurationException(LocalText.getText("StockSpaceType1")
-						+ name + LocalText.getText("ConfiguredTwice2"));
+				throw new ConfigurationException(LocalText.getText("StockSpaceTypeConfiguredTwice", name));
 			}
 
 			/* Create the type */
 			StockSpaceTypeI type = new StockSpaceType(name, colour);
 			stockSpaceTypes.put(name, type);
 
-			// Loop through the stock space type flags
-			typeFlags = typeElement.getChildNodes();
-
-			for (int j = 0; j < typeFlags.getLength(); j++)
-			{
-
-				String flagName = typeFlags.item(j).getLocalName();
-				if (flagName == null)
-					continue;
-
-				if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_BUY_LIMIT_TAG))
-				{
-					type.setNoBuyLimit(true);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_CERT_LIMIT_TAG))
-				{
-					type.setNoCertLimit(true);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceTypeI.NO_HOLD_LIMIT_TAG))
-				{
-					type.setNoHoldLimit(true);
-				}
-			}
+			// Check the stock space type flags
+			type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
+			type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
+			type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
 		}
 
 		/* Read and configure the stock market spaces */
-		NodeList spaces = topElement.getElementsByTagName(StockSpaceI.ELEMENT_ID);
-		NodeList spaceFlags;
+		List<Tag> spaceTags = tag.getChildren(StockSpaceI.ELEMENT_ID);
 		StockSpaceTypeI type;
 		int row, col;
-		for (int i = 0; i < spaces.getLength(); i++)
+		for (Tag spaceTag : spaceTags)
 		{
-			Element spaceElement = (Element) spaces.item(i);
-			NamedNodeMap nnp = spaceElement.getAttributes();
 			type = null;
 
 			// Extract the attributes of the Stock space
-			String name = XmlUtils.extractStringAttribute(nnp,
-					StockSpaceI.NAME_TAG);
+			String name = spaceTag.getAttributeAsString(StockSpaceI.NAME_TAG);
 			if (name == null)
 			{
 				throw new ConfigurationException(LocalText.getText("UnnamedStockSpace"));
 			}
-			String price = XmlUtils.extractStringAttribute(nnp,
-					StockSpaceI.PRICE_TAG);
+			String price = spaceTag.getAttributeAsString(StockSpaceI.PRICE_TAG);
 			if (price == null)
 			{
 				throw new ConfigurationException(
 				        LocalText.getText("StockSpaceHasNoPrice", name));
 			}
-			String typeName = XmlUtils.extractStringAttribute(nnp,
-					StockSpaceI.TYPE_TAG);
+			String typeName = spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
 			if (typeName != null
 					&& (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null)
 			{
@@ -169,37 +134,14 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 				numCols = col;
 
 			// Loop through the stock space flags
-			spaceFlags = spaceElement.getChildNodes();
-
-			for (int j = 0; j < spaceFlags.getLength(); j++)
-			{
-
-				String flagName = spaceFlags.item(j).getLocalName();
-				if (flagName == null)
-					continue;
-
-				if (flagName.equalsIgnoreCase(StockSpaceI.START_SPACE_TAG))
-				{
+			if (spaceTag.getChild(StockSpaceI.START_SPACE_TAG) != null) {
 					space.setStart(true);
 					startSpaces.add(space);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceI.CLOSES_COMPANY_TAG))
-				{
-					space.setClosesCompany(true);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceI.GAME_OVER_TAG))
-				{
-					space.setEndsGame(true);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceI.BELOW_LEDGE_TAG))
-				{
-					space.setBelowLedge(true);
-				}
-				else if (flagName.equalsIgnoreCase(StockSpaceI.LEFT_OF_LEDGE_TAG))
-				{
-					space.setLeftOfLedge(true);
-				}
 			}
+			space.setClosesCompany(spaceTag.getChild(StockSpaceI.CLOSES_COMPANY_TAG) != null);
+			space.setEndsGame(spaceTag.getChild(StockSpaceI.GAME_OVER_TAG) != null);
+			space.setBelowLedge(spaceTag.getChild(StockSpaceI.BELOW_LEDGE_TAG) != null);
+			space.setLeftOfLedge(spaceTag.getChild(StockSpaceI.LEFT_OF_LEDGE_TAG) != null);
 
 		}
 
@@ -218,10 +160,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			stockChart[space.getRow()][space.getColumn()] = space;
 		}
 
-		if (topElement.getElementsByTagName("UpOrDownRight").getLength() > 0)
-		{
-			upOrDownRight = true;
-		}
+		upOrDownRight = tag.getChild("UpOrDownRight") != null;
 
 	}
 

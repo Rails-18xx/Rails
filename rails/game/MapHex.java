@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.7 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.8 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 
@@ -6,13 +6,11 @@ import java.util.*;
 import java.util.regex.*;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.*;
 
 import rails.game.model.ModelObject;
 import rails.game.move.TileMove;
 import rails.game.move.TokenMove;
-import rails.util.Util;
-import rails.util.XmlUtils;
+import rails.util.Tag;
 
 
 /**
@@ -102,12 +100,11 @@ public class MapHex extends ModelObject
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element el) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		NamedNodeMap nnp = el.getAttributes();
 		Pattern namePattern = Pattern.compile("(\\D)(\\d+)");
 
-		name = XmlUtils.extractStringAttribute(nnp, "name");
+		name = tag.getAttributeAsString("name");
 		Matcher m = namePattern.matcher(name);
 		if (!m.matches())
 		{
@@ -168,30 +165,15 @@ public class MapHex extends ModelObject
 			}
 		}
 
-		String sTileId = XmlUtils.extractStringAttribute(nnp, "tile");
-		if (sTileId != null)
-		{
-			try
-			{
-				preprintedTileId = Integer.parseInt(sTileId);
-			}
-			catch (NumberFormatException e)
-			{
-				throw new ConfigurationException("Invalid tile ID: " + sTileId);
-			}
-		}
-		else
-		{
-			preprintedTileId = -999;
-		}
+		preprintedTileId = tag.getAttributeAsInteger("tile", -999);
 
-		currentTileRotation = XmlUtils.extractIntegerAttribute(nnp,
+		currentTileRotation = tag.getAttributeAsInteger(
 				"orientation",
 				0);
 
 		currentTile = TileManager.get().getTile(preprintedTileId);
-		impassable = XmlUtils.extractStringAttribute(nnp, "impassable");
-		tileCost = XmlUtils.extractIntegerAttribute(nnp, "cost", 0);
+		impassable = tag.getAttributeAsString("impassable");
+		tileCost = tag.getAttributeAsInteger("cost", 0);
 
 		// We need completely new objects, not just references to the Tile's
 		// stations.
@@ -203,20 +185,8 @@ public class MapHex extends ModelObject
 			stations.add(new Station(this, s));  // Clone it
 		}
 
-		// Off-board renevue values
-		String valueString = XmlUtils.extractStringAttribute(nnp, "value");
-		if (Util.hasValue (valueString)) {
-		    String[] values = valueString.split(",");
-		    offBoardValues = new int[values.length];
-		    for (int i=0; i<values.length; i++) {
-		        try {
-		            offBoardValues[i] = Integer.parseInt(values[i]);
-		        } catch (NumberFormatException e) {
-		            throw new ConfigurationException 
-		            	("Invalid off-board value "+values[i]+" for hex "+name, e);
-		        }
-		    }
-		}
+		// Off-board revenue values
+		offBoardValues = tag.getAttributeAsIntegerArray("value", null);
 
 	}
 
@@ -654,7 +624,7 @@ public class MapHex extends ModelObject
 	}
 	
 	public boolean hasOffBoardValues () {
-	    return offBoardValues != null;
+	    return offBoardValues != null && offBoardValues.length > 0;
 	}
 	
 	public int[] getOffBoardValues () {

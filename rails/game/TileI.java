@@ -1,15 +1,17 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.2 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import org.w3c.dom.Element;
 
+import rails.util.Tag;
+
 public interface TileI
 {
 
-	public void configureFromXML(Element se, Element te)
-			throws ConfigurationException;
+	public void configureFromXML(Tag se, Tag te)
+	throws ConfigurationException;
 
 	public String getColour();
 

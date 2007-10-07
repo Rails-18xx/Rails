@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Attic/XmlUtils.java,v 1.6 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Attic/XmlUtils2.java,v 1.1 2007/10/07 20:14:53 evos Exp $*/
 package rails.util;
 
 
@@ -16,12 +16,12 @@ import rails.game.Game;
 /**
  * Booch utility class providing helper functions for working with XML.
  */
-public final class XmlUtils {
+public final class XmlUtils2 {
 
     /**
      * No-args private constructor, to prevent (meaningless) construction of one of these. 
      */
-    private XmlUtils(){
+    private XmlUtils2(){
     }
     
     

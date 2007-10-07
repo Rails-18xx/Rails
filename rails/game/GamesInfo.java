@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
 
 import rails.util.Tag;
 import rails.util.Util;
-import rails.util.XmlUtils;
 
 /**
  * @author Erik Vos
@@ -70,8 +69,8 @@ public class GamesInfo {
         directories.add (DATA_DIR);
         try {
             // Find the <Games> tag
-            Tag gamesTag = new Tag(XmlUtils.findElementInFile(
-            		myGamesXmlFile, directories, GAMES_TAG));
+            Tag gamesTag = Tag.findTopTagInFile(
+            		myGamesXmlFile, directories, GAMES_TAG);
             
             // Get all <Game> tags
             List<Tag> gameList = gamesTag.getChildren(GAME_TAG);

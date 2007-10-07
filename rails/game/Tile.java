@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -44,11 +44,11 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	 * @param te
 	 *            &lt;Tile&gt; element from Tiles.xml
 	 */
-	public void configureFromXML(Element se, Element te)
-			throws ConfigurationException
+	public void configureFromXML(Tag setTag, Tag defTag)
+	throws ConfigurationException
 	{
 
-	    if (te == null) {
+	    if (defTag == null) {
 	        throw new ConfigurationException (
 	                LocalText.getText("TileMissing", String.valueOf(id)));
 	    }
@@ -58,11 +58,9 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 		 * and fixed preprinted track.
 		 */
 
-		NamedNodeMap teAttr = te.getAttributes();
+		name = defTag.getAttributeAsString("name", name);
 
-		name = XmlUtils.extractStringAttribute(teAttr, "name", name);
-
-		colour = XmlUtils.extractStringAttribute(teAttr, "colour");
+		colour = defTag.getAttributeAsString("colour");
 		if (colour == null)
 			throw new ConfigurationException(
 			        LocalText.getText("TileColorMissing", String.valueOf(id)));
@@ -70,128 +68,125 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 		upgradeable = !colour.equals("red") && !colour.equals("fixed");
 
 		/* Tracks (only number per side, no cities yet) */
-		NodeList trackElements = te.getElementsByTagName("Track");
-		Element trackElement;
-		Track track;
-		int from, to;
-		String fromStr, toStr;
-		NamedNodeMap nnp;
-		for (int i = 0; i < trackElements.getLength(); i++)
-		{
-			trackElement = (Element) trackElements.item(i);
-			nnp = trackElement.getAttributes();
-			fromStr = XmlUtils.extractStringAttribute(nnp, "from");
-			toStr = XmlUtils.extractStringAttribute(nnp, "to");
-			if (fromStr == null || toStr == null)
+		List<Tag> trackTags = defTag.getChildren("Track");
+		if (trackTags != null) {
+			Track track;
+			int from, to;
+			String fromStr, toStr;
+			for (Tag trackTag : trackTags)
 			{
-				throw new ConfigurationException(
-				        LocalText.getText("FromOrToMissing", String.valueOf(id)));
+				fromStr = trackTag.getAttributeAsString("from");
+				toStr = trackTag.getAttributeAsString("to");
+				if (fromStr == null || toStr == null)
+				{
+					throw new ConfigurationException(
+					        LocalText.getText("FromOrToMissing", String.valueOf(id)));
+				}
+	
+				from = getPointNumber(fromStr);
+				to = getPointNumber(toStr);
+				track = new Track(from, to);
+				tracks.add(track);
+				if (from >= 0)
+					tracksPerSide[from].add(track);
+				if (to >= 0)
+					tracksPerSide[to].add(track);
 			}
-
-			from = getPointNumber(fromStr);
-			to = getPointNumber(toStr);
-			track = new Track(from, to);
-			tracks.add(track);
-			if (from >= 0)
-				tracksPerSide[from].add(track);
-			if (to >= 0)
-				tracksPerSide[to].add(track);
 		}
 
 		/* Stations */
-		NodeList stationElements = te.getElementsByTagName("Station");
-		Element stationElement;
-		String sid, type;
-		int value, slots;
-		Station station;
-		for (int i = 0; i < stationElements.getLength(); i++)
-		{
-			stationElement = (Element) stationElements.item(i);
-			nnp = stationElement.getAttributes();
-			sid = XmlUtils.extractStringAttribute(nnp, "id");
-			if (sid == null)
-				throw new ConfigurationException(
-				        LocalText.getText("TileStationHasNoID", String.valueOf(id)));
-			type = XmlUtils.extractStringAttribute(nnp, "type");
-			if (type == null)
-				throw new ConfigurationException(
-				        LocalText.getText("TileStationHasNoType", String.valueOf(id)));
-			if (!Station.isTypeValid(type)) {
-			    throw new ConfigurationException(
-			            LocalText.getText("TileStationHasInvalidType",
-			                    new String[] {String.valueOf(id), type}));
+		List<Tag> stationTags = defTag.getChildren("Station");
+		if (stationTags != null) {
+			String sid, type;
+			int value, slots;
+			Station station;
+			for (Tag stationTag : stationTags)
+			{
+				sid = stationTag.getAttributeAsString("id");
+				if (sid == null)
+					throw new ConfigurationException(
+					        LocalText.getText("TileStationHasNoID", String.valueOf(id)));
+				type = stationTag.getAttributeAsString("type");
+				if (type == null)
+					throw new ConfigurationException(
+					        LocalText.getText("TileStationHasNoType", String.valueOf(id)));
+				if (!Station.isTypeValid(type)) {
+				    throw new ConfigurationException(
+				            LocalText.getText("TileStationHasInvalidType",
+				                    new String[] {String.valueOf(id), type}));
+				}
+				value = stationTag.getAttributeAsInteger("value", 0);
+				slots = stationTag.getAttributeAsInteger("slots", 0);
+				station = new Station(this, sid, type, value, slots);
+				stations.add(station);
 			}
-			value = XmlUtils.extractIntegerAttribute(nnp, "value", 0);
-			slots = XmlUtils.extractIntegerAttribute(nnp, "slots", 0);
-			station = new Station(this, sid, type, value, slots);
-			stations.add(station);
 		}
 
 		/* Amount */
-		NamedNodeMap seAttr = se.getAttributes();
-		quantity = XmlUtils.extractIntegerAttribute(seAttr, "quantity", 0);
+		quantity = setTag.getAttributeAsInteger("quantity", 0);
 		/* Value '99' and '-1' mean 'unlimited' */
 		unlimited = (quantity == 99 || quantity == UNLIMITED);
 		if (unlimited)
 			quantity = UNLIMITED;
 
 		/* Upgrades */
-		NodeList upgnl = se.getElementsByTagName("Upgrade");
-		String ids;
-		int id;
-		String[] idArray;
-		TileI upgradeTile;
-		Upgrade upgrade;
-		String hexes;
+		List<Tag> upgradeTags = setTag.getChildren("Upgrade");
 		
-		for (int i = 0; i < upgnl.getLength(); i++)
-		{
-			trackElement = (Element) trackElements.item(i);
-			nnp = ((Element) upgnl.item(i)).getAttributes();
-			ids = XmlUtils.extractStringAttribute(nnp, "id");
-			upgradesString = ids; // TEMPORARY
-			List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
+		if (upgradeTags != null) {
+			String ids;
+			int id;
+			String[] idArray;
+			TileI upgradeTile;
+			Upgrade upgrade;
+			String hexes;
 			
-			if (ids != null)
+			for (Tag upgradeTag : upgradeTags)
 			{
-				idArray = ids.split(",");
-				for (int j = 0; j < idArray.length; j++)
+				ids = upgradeTag.getAttributeAsString("id");
+				upgradesString = ids; // TEMPORARY
+				List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
+				
+				if (ids != null)
 				{
-					try
+					idArray = ids.split(",");
+					for (int j = 0; j < idArray.length; j++)
 					{
-						id = Integer.parseInt(idArray[j]);
-						upgradeTile = TileManager.get().getTile(id);
-						if (upgradeTile != null)
+						try
 						{
-							upgrade = new Upgrade (upgradeTile);
-							upgrades.add(upgrade);
-							newUpgrades.add(upgrade);
+							id = Integer.parseInt(idArray[j]);
+							upgradeTile = TileManager.get().getTile(id);
+							if (upgradeTile != null)
+							{
+								upgrade = new Upgrade (upgradeTile);
+								upgrades.add(upgrade);
+								newUpgrades.add(upgrade);
+							}
+							else
+							{
+								throw new ConfigurationException(LocalText.getText("UpgradeNotFound",
+								        new String[] {name, String.valueOf(id)}));
+							}
 						}
-						else
+						catch (NumberFormatException e)
 						{
-							throw new ConfigurationException(LocalText.getText("UpgradeNotFound",
-							        new String[] {name, String.valueOf(id)}));
+							throw new ConfigurationException(LocalText.getText("NonNumericUpgrade",
+							        new String[] {name, idArray[j]}),
+									e);
 						}
+	
 					}
-					catch (NumberFormatException e)
-					{
-						throw new ConfigurationException(LocalText.getText("NonNumericUpgrade",
-						        new String[] {name, idArray[j]}),
-								e);
-					}
-
+	
 				}
-
-			}
-
-			// Process any included or excluded hexes for the current set of upgrades
-			hexes = XmlUtils.extractStringAttribute(nnp, "hex");
-			if (hexes != null) 
-			{
-	            for (Iterator it = newUpgrades.iterator(); it.hasNext(); ) {
-	                ((Upgrade)it.next()).setHexes(hexes);
-	            }
-			    
+	
+				// Process any included or excluded hexes for the current set of upgrades
+				hexes = upgradeTag.getAttributeAsString("hex");
+				if (hexes != null) 
+				{
+		            for (Iterator it = newUpgrades.iterator(); it.hasNext(); ) {
+		                ((Upgrade)it.next()).setHexes(hexes);
+		            }
+				    
+				}
 			}
 		}
 

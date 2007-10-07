@@ -1,12 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.9 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.10 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.*;
 
 import rails.game.action.PossibleAction;
 import rails.util.LocalText;
-import rails.util.XmlUtils;
+import rails.util.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +31,8 @@ public class Game
 	protected Bank bank;
 	protected ArrayList companyList;
 	protected String name;
-	protected Element componentManagerElement;
+	//protected Element componentManagerElement;
+	protected Tag componentManagerTag;
 	protected static String GAME_XML_FILE = "Game.xml";
 	protected List<String> directories = new ArrayList<String>();
     protected Map<String, String> gameOptions;
@@ -65,13 +65,15 @@ public class Game
 		try
 		{
 			// Have the ComponentManager work through the other rails.game files
-			componentManagerElement = XmlUtils.findElementInFile(GAME_XML_FILE, directories,
+			//componentManagerTag = XmlUtils.findElementInFile(GAME_XML_FILE, directories,
+			//		ComponentManager.ELEMENT_ID);
+			componentManagerTag = Tag.findTopTagInFile(GAME_XML_FILE, directories,
 					ComponentManager.ELEMENT_ID);
-			if (componentManagerElement == null) {
+			if (componentManagerTag == null) {
 				throw new ConfigurationException ("No Game XML element found in file "+GAME_XML_FILE);
 			}
 
-			ComponentManager.configureInstance(name, componentManagerElement);
+			ComponentManager.configureInstance(name, componentManagerTag);
 
 			componentManager = ComponentManager.getInstance();
 			

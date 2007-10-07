@@ -1,16 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
+import java.util.List;
 
 import rails.game.state.State;
-import rails.util.XmlUtils;
-
+import rails.util.Tag;
 
 public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 {
@@ -33,31 +29,28 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 		return instance;
 	}
 
-	public void configureFromXML(Element el) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-
 		/*
 		 * Phase class name is now fixed but can be made configurable, if
 		 * needed.
 		 */
-		NodeList phases = el.getElementsByTagName("Phase");
-		numberOfPhases = phases.getLength();
+		List<Tag> phaseTags = tag.getChildren("Phase");
+		numberOfPhases = phaseTags.size();
 		phaseList = new ArrayList<Phase>();
 		phaseMap = new HashMap<String, Phase>();
 		Phase phase;
-		Element pe;
 		String name;
 
-		for (int i = 0; i < phases.getLength(); i++)
+		int n = 0;
+		for (Tag phaseTag : phaseTags)
 		{
-			pe = (Element) phases.item(i);
-			NamedNodeMap phaseAttr = pe.getAttributes();
-			name = XmlUtils.extractStringAttribute(phaseAttr, "name", ""
-					+ (i + 1));
-			phase = new Phase(i, name);
+			name = phaseTag.getAttributeAsString("name", ""
+					+ (n + 1));
+			phase = new Phase(n++, name);
 			phaseList.add(phase);
 			phaseMap.put(name, phase);
-			phase.configureFromXML(pe);
+			phase.configureFromXML(phaseTag);
 		}
 		PhaseI initialPhase = (PhaseI) phaseList.get(0);
 		setPhase (initialPhase);

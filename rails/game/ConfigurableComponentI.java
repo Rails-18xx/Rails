@@ -1,7 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
-import org.w3c.dom.Element;
+import rails.util.Tag;
 
 /**
  * Interaface for rails.game components which can be configured from an XML element.
@@ -17,6 +17,6 @@ public interface ConfigurableComponentI
 	 *            the XML element containing the configuration
 	 * @throws ConfigurationException
 	 */
-	void configureFromXML(Element el) throws ConfigurationException;
+	void configureFromXML(Tag tag) throws ConfigurationException;
 
 }

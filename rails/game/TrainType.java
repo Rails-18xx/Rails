@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.12 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.13 2007/10/07 20:14:54 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -78,29 +78,27 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	/**
 	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
 	 */
-	public void configureFromXML(Element el) throws ConfigurationException
+	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 
 		if (real)
 		{
-            Map<String, String> attributes = XmlUtils.getAllAttributes(el);
-            
 			// Name
-            name = attributes.get("name");
+            name = tag.getAttributeAsString("name");
 			if (name == null)
 			{
 				throw new ConfigurationException(LocalText.getText("NoNameSpecified"));
 			}
 
 			// Cost
-            cost = Util.parseInt(attributes.get("cost"));
+            cost = tag.getAttributeAsInteger("cost");
 			if (cost == 0)
 			{
 				throw new ConfigurationException(LocalText.getText("InvalidCost"));
 			}
 
 			// Amount
-            amount = Util.parseInt(attributes.get("amount"));
+            amount = tag.getAttributeAsInteger("amount");
 			if (amount == -1)
 			{
 				infiniteAmount = true;
@@ -111,24 +109,23 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			}
 
 			// Major stops
-            majorStops = Util.parseInt(attributes.get("majorStops"));
+            majorStops = tag.getAttributeAsInteger("majorStops");
 			if (majorStops == 0)
 			{
 				throw new ConfigurationException(LocalText.getText("InvalidStops"));
 			}
 
 			// Minor stops
-            minorStops = Util.parseInt(attributes.get("minorStops"));
+            minorStops = tag.getAttributeAsInteger("minorStops");
 
 			// Phase started
-            startedPhaseName = attributes.get("startPhase");
-            if (startedPhaseName == null) startedPhaseName = "";
+            startedPhaseName = tag.getAttributeAsString("startPhase", "");
 
 			// Train type rusted
-            rustedTrainTypeName = attributes.get("rustedTrain");
+            rustedTrainTypeName = tag.getAttributeAsString("rustedTrain");
             
 			// Other train type released for buying
-            releasedTrainTypeName = attributes.get("releasedTrain");
+            releasedTrainTypeName = tag.getAttributeAsString("releasedTrain");
 
         }
 		else
@@ -138,47 +135,32 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		}
 
 		// Reach
-		NodeList nl = el.getElementsByTagName("Reach");
-		if (nl != null && nl.getLength() > 0)
+		Tag reachTag = tag.getChild("Reach");
+		if (reachTag != null)
 		{
-			NamedNodeMap reachAttr = nl.item(0).getAttributes();
-
 			// Reach basis
-			reachBasis = XmlUtils.extractStringAttribute(reachAttr,
-					"base",
-					reachBasis);
+			reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
 			// Are towns counted (only relevant is reachBasis = "stops")
-			countTowns = XmlUtils.extractStringAttribute(reachAttr,
-					"countTowns",
-					countTowns);
+			countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
 		}
 
 		// Score
-		nl = el.getElementsByTagName("Score");
-		if (nl != null && nl.getLength() > 0)
+		Tag scoreTag = tag.getChild("Score");
+		if (scoreTag != null)
 		{
-			NamedNodeMap scoreAttr = nl.item(0).getAttributes();
-
 			// Reach basis
-			scoreTowns = XmlUtils.extractStringAttribute(scoreAttr,
-					"scoreTowns",
-					scoreTowns);
+			scoreTowns = scoreTag.getAttributeAsString("scoreTowns", scoreTowns);
 
 			// Are towns counted (only relevant is reachBasis = "stops")
-			scoreCities = XmlUtils.extractStringAttribute(scoreAttr,
-					"scoreCities",
-					scoreCities);
+			scoreCities = scoreTag.getAttributeAsString("scoreCities", scoreCities);
 		}
 
 		// Exchangeable
-		nl = el.getElementsByTagName("ExchangeFirst");
-		if (nl != null && nl.getLength() > 0)
+		Tag swapTag = tag.getChild("ExchangeFirst");
+		if (swapTag != null)
 		{
-			NamedNodeMap exch = nl.item(0).getAttributes();
-			firstExchangeCost = XmlUtils.extractIntegerAttribute(exch,
-					"cost",
-					0);
+			firstExchangeCost = swapTag.getAttributeAsInteger("cost", 0);
 			firstCanBeExchanged = (firstExchangeCost > 0);
 		}
 
