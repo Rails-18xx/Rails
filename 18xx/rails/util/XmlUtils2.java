@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Attic/XmlUtils2.java,v 1.1 2007/10/07 20:14:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Attic/XmlUtils2.java,v 1.2 2007/10/09 21:45:59 wakko666 Exp $*/
 package rails.util;
 
 
@@ -260,32 +260,6 @@ public final class XmlUtils2 {
             
             // Step 3: parse the input file to get a Document object
             doc = db.parse(ResourceLoader.getInputStream(filename, directories));
-            /*
-            File theFile = new File(fileName);
-            
-            if (theFile.exists()) {
-                // Step 3: parse the input file to get a Document object
-                doc = db.parse(theFile);
-            } else {
-                // File not found, then look into the jar file
-                File jarFile = new File ("./Rails.jar");
-                try {
-                    JarFile jf = new JarFile (jarFile);
-                    JarInputStream jis = new JarInputStream (new FileInputStream(jarFile));
-                    String jeName;
-                    for (JarEntry je = jis.getNextJarEntry(); je != null; je = jis.getNextJarEntry()) {
-                        if (fileName.equals(je.getName())) {
-                            // Step 3: parse the input file to get a Document object
-                            doc = db.parse(jis);
-                            break;
-                        }
-                    }
-                } catch (IOException e) {
-                    throw new ConfigurationException ("Error while opening file " + fileName, e);
-                }
-               
-            }
-            */
          } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Could not read/parse " + filename
                     + " to find element " + elementName, e);
