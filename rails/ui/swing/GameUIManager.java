@@ -34,7 +34,7 @@ public class GameUIManager
    public static ORWindow orWindow;
    public static MapPanel mapPanel;
    private StartRoundWindow startRoundWindow;
-   public Options options;
+   public GameSetupWindow gameSetupWindow;
    public static ImageLoader imageLoader;
    
     private GameManager gameManager;
@@ -73,7 +73,7 @@ public class GameUIManager
             saveExtension = DEFAULT_SAVE_EXTENSION;
         }
         
-      options = new Options(this);
+      gameSetupWindow = new GameSetupWindow(this);
       
    }
    
@@ -254,13 +254,13 @@ public class GameUIManager
            jfc.setCurrentDirectory(new File(saveDirectory));
        }
        
-       if (jfc.showOpenDialog(options.getContentPane()) == JFileChooser.APPROVE_OPTION) {
+       if (jfc.showOpenDialog(gameSetupWindow.getContentPane()) == JFileChooser.APPROVE_OPTION) {
            File selectedFile = jfc.getSelectedFile();
            String filepath = selectedFile.getPath();
            saveDirectory = selectedFile.getParent();
            
            if (!Game.load(filepath)) {
-               JOptionPane.showMessageDialog(options,
+               JOptionPane.showMessageDialog(gameSetupWindow,
                        DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
                return false;
            }
