@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.1 2007/10/09 21:47:06 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.2 2007/10/09 21:54:34 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -210,23 +210,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		}
 	}
 
-	private void finishSetup() {
-
-		Game game = new Game(gameName, playerNames, selectedOptions);
-		if (!game.setup()) {
-			JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
-					JOptionPane.ERROR_MESSAGE);
-
-			// Should want to return false and continue,
-			// but as of now the game engine cannot be restarted
-			// once we have passed setup(), so we can only quit.
-			System.exit(-1);
-		} else {
-			game.start();
-			gameUIManager.gameUIInit();
-		}
-	}
-
 	private void toggleOptions() {
 		if (optionsPane.isVisible()) {
 			optionsPane.setVisible(false);
@@ -325,7 +308,20 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			}
 		}
 
-		finishSetup();
+		Game game = new Game(gameName, playerNames, selectedOptions);
+		if (!game.setup()) {
+			JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
+					JOptionPane.ERROR_MESSAGE);
+
+			// Should want to return false and continue,
+			// but as of now the game engine cannot be restarted
+			// once we have passed setup(), so we can only quit.
+			System.exit(-1);
+		} else {
+			game.start();
+			gameUIManager.gameUIInit();
+		}
+		
 		this.setVisible(false); // XXX: At some point we should destroy this
 								// XXX: object rather than just making it invisible
 	}
