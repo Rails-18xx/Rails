@@ -2,6 +2,9 @@
 <GamesList>
 	<Game name="1830">
 		<Note>Fully playable</Note>
+		<Description>Limitation: 
+The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
+		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedDTrains" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
