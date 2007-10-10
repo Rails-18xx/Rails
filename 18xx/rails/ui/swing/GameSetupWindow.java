@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.4 2007/10/10 18:43:42 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.5 2007/10/10 22:51:41 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -40,6 +40,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 	List<GameOption> availableOptions = new ArrayList<GameOption>();
 
 	String gameName;
+	
+	//Used by the player selection combo box.
+	static final int NONE_PLAYER = 0;
+	static final int HUMAN_PLAYER = 1;
+	static final int AI_PLAYER = 2;
 
 	protected static Logger log = Logger.getLogger(GameSetupWindow.class
 			.getPackage().getName());
@@ -243,8 +248,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		try {
 
 			for (int i = 0; i < playerBoxes.length; i++) {
-				if (playerBoxes[i].getSelectedItem().toString()
-						.equalsIgnoreCase("Human")
+				if (playerBoxes[i] != null && 
+						playerBoxes[i].getSelectedIndex() == HUMAN_PLAYER
 						&& !playerNameFields[i].getText().equals("")) {
 					playerNames.add(playerNameFields[i].getText());
 				}
