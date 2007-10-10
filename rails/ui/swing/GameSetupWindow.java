@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.2 2007/10/09 21:54:34 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.3 2007/10/10 00:16:21 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -25,11 +25,10 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 	GridBagConstraints gc;
 	JPanel gameListPane, playersPane, buttonPane, optionsPane;
 	JButton newButton, loadButton, quitButton, optionButton;
-	JComboBox[] playerBoxes;
-	JComboBox gameNameBox;
-	JTextField[] playerNameFields;
-	BasicComboBoxRenderer renderer;
-	Dimension size, optSize;
+	
+	JComboBox gameNameBox = new JComboBox();
+	JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
+	JTextField[] playerNameFields = new JTextField[Player.MAX_PLAYERS];
 
 	GameUIManager gameUIManager;
 
@@ -48,12 +47,12 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
 	public GameSetupWindow(GameUIManager gameUIManager) {
 		super();
-	
+
 		this.gameUIManager = gameUIManager;
-	
+
 		initialize();
 		populateGridBag();
-	
+
 		this.pack();
 		this.setVisible(true);
 	}
@@ -76,51 +75,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		quitButton.setMnemonic(KeyEvent.VK_Q);
 		optionButton.setMnemonic(KeyEvent.VK_O);
 
-		renderer = new BasicComboBoxRenderer();
-		size = new Dimension(50, 30);
-		optSize = new Dimension(50, 50);
-		gameNameBox = new JComboBox();
-
-		playerBoxes = new JComboBox[Player.MAX_PLAYERS];
-		playerNameFields = new JTextField[Player.MAX_PLAYERS];
-
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setTitle("Rails: New Game");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		renderer.setPreferredSize(size);
-
-		playersPane.add(new JLabel("Players:"));
-		playersPane.add(new JLabel(""));
-		playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS + 1, 0));
-		playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
-
-		for (int i = 0; i < playerBoxes.length; i++) {
-			playerBoxes[i] = new JComboBox();
-			playerBoxes[i].setRenderer(renderer);
-			playerBoxes[i].addItem("None");
-			playerBoxes[i].addItem("Human");
-			playerBoxes[i].addItem("AI eventually goes here.");
-			playerBoxes[i].setSelectedIndex(1);
-			playersPane.add(playerBoxes[i]);
-			playerBoxes[i].setPreferredSize(size);
-
-			playerNameFields[i] = new JTextField();
-			playerNameFields[i].setPreferredSize(size);
-			playersPane.add(playerNameFields[i]);
-		}
-
-		/*
-		 * Prefill with any configured player names. This can be useful to speed
-		 * up testing purposes.
-		 */
-		String testPlayerList = Config.get("default_players");
-		if (Util.hasValue(testPlayerList)) {
-			String[] testPlayers = testPlayerList.split(",");
-			for (int i = 0; i < testPlayers.length; i++) {
-				playerNameFields[i].setText(testPlayers[i]);
-			}
-		}
 
 		populateGameList(GamesInfo.getGameNames(), gameNameBox);
 
@@ -128,7 +85,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		gameListPane.add(gameNameBox);
 		gameListPane.setLayout(new GridLayout(2, 2));
 		gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
-		gameListPane.setPreferredSize(optSize);
+		gameListPane.setPreferredSize(new Dimension(1, 1));
 
 		newButton.addActionListener(this);
 		loadButton.addActionListener(this);
@@ -144,10 +101,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
 		optionsPane.setLayout(new FlowLayout());
 		optionsPane.setVisible(false);
-		
-		//Assure that these values are sensibly defaulted;
+
+		// Assure that these values are sensibly defaulted;
 		gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
 		availableOptions = GamesInfo.getOptions(gameName);
+
+		// This needs to happen after we have a default game selection.
+		fillPlayersPane();
 	}
 
 	private void populateGridBag() {
@@ -199,14 +159,22 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			startNewGame();
 		} else if (arg0.getSource().equals(optionButton)) {
 			toggleOptions();
-		} else if (arg0.getSource().equals(loadButton) && gameUIManager.loadGame()) {
+		} else if (arg0.getSource().equals(loadButton)
+				&& gameUIManager.loadGame()) {
 			setVisible(false);
 		} else if (arg0.getSource().equals(quitButton)) {
 			System.exit(0);
-		} else if (arg0.getSource().equals(gameNameBox) && optionsPane.isVisible()) {
-			// XXX: Kludgy and slightly inefficient.
-			toggleOptions();
-			toggleOptions();
+		} else if (arg0.getSource().equals(gameNameBox)) {
+			//Game has changed, update the name variable.
+			gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
+			
+			fillPlayersPane();
+			
+			if (optionsPane.isVisible()) {
+				// XXX: Kludgy and slightly inefficient.
+				toggleOptions();
+				toggleOptions();
+			}
 		}
 	}
 
@@ -216,7 +184,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			optionsPane.removeAll();
 			optionComponents.clear();
 		} else {
-			gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
 			availableOptions = GamesInfo.getOptions(gameName);
 
 			if (availableOptions != null && !availableOptions.isEmpty()) {
@@ -248,7 +215,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			optionsPane.setVisible(true);
 		}
 	}
-	
+
 	private void startNewGame() {
 		try {
 
@@ -291,8 +258,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 					value = (String) dropdown.getSelectedItem();
 				}
 				selectedOptions.put(option.getName(), value);
-				log.info("Game option " + option.getName() + " set to "
-						+ value);
+				log
+						.info("Game option " + option.getName() + " set to "
+								+ value);
 			}
 		} else {
 			// No options selected: take the defaults
@@ -303,8 +271,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 				option = availableOptions.get(i);
 				value = option.getDefaultValue();
 				selectedOptions.put(option.getName(), value);
-				log.info("Game option " + option.getName() + " set to "
-						+ value);
+				log
+						.info("Game option " + option.getName() + " set to "
+								+ value);
 			}
 		}
 
@@ -321,8 +290,59 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			game.start();
 			gameUIManager.gameUIInit();
 		}
-		
+
 		this.setVisible(false); // XXX: At some point we should destroy this
-								// XXX: object rather than just making it invisible
+		// XXX: object rather than just making it invisible
+	}
+
+	private void fillPlayersPane() {
+		playersPane.setVisible(false);
+		
+		int maxPlayers = GamesInfo.getMaxPlayers(gameName);
+
+		String[] playerList = new String[maxPlayers];
+		String[] testPlayers = Config.get("default_players").split(",");
+		
+		//Remember names that have already been filled-in...
+		for (int i = 0; i < playerNameFields.length; i++) {
+			if (playerNameFields[i] != null && playerNameFields[i].getText().length() > 0) {
+				playerList[i] = playerNameFields[i].getText();
+			} else if (i < testPlayers.length && testPlayers[i].length() > 0) {
+				playerList[i] = testPlayers[i];
+			}
+		}
+		
+		playersPane.removeAll();
+
+		playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS + 1, 0));
+		playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
+		playersPane.add(new JLabel("Players:"));
+		playersPane.add(new JLabel(""));
+		
+		for (int i = 0; i < GamesInfo.getMaxPlayers(gameName); i++) {
+			playerBoxes[i] = new JComboBox();
+			playerBoxes[i].addItem("None");
+			playerBoxes[i].addItem("Human");
+			
+			/*
+			 * Prefill with any configured player names. This can be useful to speed
+			 * up testing purposes.
+			 */
+			if (testPlayers.length > 0 && i < playerList.length) {
+				playerNameFields[i] = new JTextField(playerList[i]);
+			} else {
+				playerNameFields[i] = new JTextField();
+			}
+			
+			if (playerNameFields[i].getText().length() > 0) { 
+				playerBoxes[i].setSelectedIndex(1);
+			} else {
+				playerBoxes[i].setSelectedIndex(0);
+			}
+			
+			playersPane.add(playerBoxes[i]);
+			playersPane.add(playerNameFields[i]);
+		}
+		playersPane.setVisible(true);
 	}
 }
