@@ -1,10 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.3 2007/10/10 00:16:21 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.4 2007/10/10 18:43:42 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.plaf.basic.*;
 
 import org.apache.log4j.Logger;
 
@@ -58,8 +57,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 	}
 
 	private void initialize() {
-		gc = new GridBagConstraints();
-
 		gameListPane = new JPanel();
 		playersPane = new JPanel();
 		buttonPane = new JPanel();
@@ -85,7 +82,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		gameListPane.add(gameNameBox);
 		gameListPane.setLayout(new GridLayout(2, 2));
 		gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
-		gameListPane.setPreferredSize(new Dimension(1, 1));
 
 		newButton.addActionListener(this);
 		loadButton.addActionListener(this);
@@ -106,44 +102,65 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
 		availableOptions = GamesInfo.getOptions(gameName);
 
-		// This needs to happen after we have a default game selection.
+		// This needs to happen after we have a valid gameName.
 		fillPlayersPane();
 	}
 
 	private void populateGridBag() {
+		gc = new GridBagConstraints();
 		gc.gridx = 0;
 		gc.gridy = 0;
-		gc.weightx = 1.0;
-		gc.weighty = 1.0;
+		gc.weightx = 0;
+		gc.weighty = 0;
 		gc.gridwidth = 1;
-		gc.fill = GridBagConstraints.BOTH;
+		gc.gridheight = 1;
+		gc.ipadx = 0;		
+		gc.ipady = 0;
+		gc.anchor = GridBagConstraints.CENTER;
+		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.insets = new Insets(0,0,0,0);
 		this.getContentPane().add(playersPane, gc);
 
+		gc = new GridBagConstraints();
 		gc.gridx = 0;
 		gc.gridy = 1;
-		gc.fill = 1;
-		gc.weightx = 0.5;
-		gc.weighty = 0.5;
+		gc.weightx = 0;
+		gc.weighty = 0;
 		gc.gridwidth = 1;
-		gc.ipady = 50;
+		gc.gridheight = 1;
+		gc.ipadx = 0;
+		gc.ipady = 0;
+		gc.anchor = GridBagConstraints.CENTER;
+		gc.fill = GridBagConstraints.BOTH;
+		gc.insets = new Insets(0,0,0,0);
 		this.getContentPane().add(gameListPane, gc);
 
+		gc = new GridBagConstraints();
 		gc.gridx = 0;
 		gc.gridy = 2;
-		gc.weightx = 0.0;
-		gc.weighty = 0.0;
+		gc.weightx = 0;
+		gc.weighty = 0;
 		gc.gridwidth = 1;
+		gc.gridheight = 1;
+		gc.ipadx = 0;
 		gc.ipady = 0;
-		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.anchor = GridBagConstraints.CENTER;
+		gc.fill = GridBagConstraints.BOTH;
+		gc.insets = new Insets(0,0,0,0);
 		this.getContentPane().add(optionsPane, gc);
 
+		gc = new GridBagConstraints();
 		gc.gridx = 0;
 		gc.gridy = 3;
-		gc.weightx = 0.0;
-		gc.weighty = 0.0;
+		gc.weightx = 0;
+		gc.weighty = 0;
 		gc.gridwidth = 1;
+		gc.gridheight = 1;
+		gc.ipadx = 0;
 		gc.ipady = 0;
+		gc.anchor = GridBagConstraints.CENTER;
 		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.insets = new Insets(0,0,0,0);
 		this.getContentPane().add(buttonPane, gc);
 	}
 
@@ -159,6 +176,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			startNewGame();
 		} else if (arg0.getSource().equals(optionButton)) {
 			toggleOptions();
+			this.pack();
 		} else if (arg0.getSource().equals(loadButton)
 				&& gameUIManager.loadGame()) {
 			setVisible(false);
@@ -175,6 +193,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 				toggleOptions();
 				toggleOptions();
 			}
+			
+			this.pack();
 		}
 	}
 
@@ -185,8 +205,10 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			optionComponents.clear();
 		} else {
 			availableOptions = GamesInfo.getOptions(gameName);
-
+			
 			if (availableOptions != null && !availableOptions.isEmpty()) {
+				optionsPane.setLayout(new GridLayout((availableOptions.size()),1));
+				
 				for (GameOption option : availableOptions) {
 					if (option.isBoolean()) {
 						JCheckBox checkbox = new JCheckBox(LocalText
@@ -197,6 +219,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 						optionsPane.add(checkbox);
 						optionComponents.add(checkbox);
 					} else {
+						optionsPane.setLayout(new GridLayout((availableOptions.size()+1),1));
 						optionsPane.add(new JLabel(LocalText.getText("Select",
 								LocalText.getText(option.getName()))));
 						JComboBox dropdown = new JComboBox();
@@ -314,7 +337,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		
 		playersPane.removeAll();
 
-		playersPane.setLayout(new GridLayout(Player.MAX_PLAYERS + 1, 0));
+		playersPane.setLayout(new GridLayout(maxPlayers + 1, 0));
 		playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
 		playersPane.add(new JLabel("Players:"));
 		playersPane.add(new JLabel(""));
