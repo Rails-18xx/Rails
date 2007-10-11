@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.5 2007/10/10 22:51:41 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.6 2007/10/11 00:02:42 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -23,7 +23,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
 	GridBagConstraints gc;
 	JPanel gameListPane, playersPane, buttonPane, optionsPane;
-	JButton newButton, loadButton, quitButton, optionButton;
+	JButton newButton, loadButton, quitButton, optionButton, infoButton;
 	
 	JComboBox gameNameBox = new JComboBox();
 	JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -71,11 +71,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		loadButton = new JButton(LocalText.getText("LoadGame"));
 		quitButton = new JButton(LocalText.getText("QUIT"));
 		optionButton = new JButton(LocalText.getText("OPTIONS"));
+		infoButton = new JButton(LocalText.getText("INFO"));
 
 		newButton.setMnemonic(KeyEvent.VK_N);
 		loadButton.setMnemonic(KeyEvent.VK_L);
 		quitButton.setMnemonic(KeyEvent.VK_Q);
 		optionButton.setMnemonic(KeyEvent.VK_O);
+		infoButton.setMnemonic(KeyEvent.VK_G);
 
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setTitle("Rails: New Game");
@@ -92,12 +94,16 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		loadButton.addActionListener(this);
 		quitButton.addActionListener(this);
 		optionButton.addActionListener(this);
+		infoButton.addActionListener(this);
 		gameNameBox.addActionListener(this);
 
 		buttonPane.add(newButton);
 		buttonPane.add(loadButton);
 		buttonPane.add(optionButton);
+		buttonPane.add(infoButton);
 		buttonPane.add(quitButton);
+		
+		buttonPane.setLayout(new GridLayout(3,2));
 		buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
 		optionsPane.setLayout(new FlowLayout());
@@ -185,6 +191,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		} else if (arg0.getSource().equals(loadButton)
 				&& gameUIManager.loadGame()) {
 			setVisible(false);
+		} else if (arg0.getSource().equals(infoButton)){
+			JOptionPane.showMessageDialog(this, 
+					GamesInfo.getDescription(gameName), 
+					"Information about " + gameName, 
+					JOptionPane.INFORMATION_MESSAGE);
 		} else if (arg0.getSource().equals(quitButton)) {
 			System.exit(0);
 		} else if (arg0.getSource().equals(gameNameBox)) {
@@ -200,6 +211,25 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			}
 			
 			this.pack();
+		} else if (arg0.getSource() instanceof JComboBox) {
+			JComboBox comboBox = (JComboBox) arg0.getSource();
+			String[] boxName = comboBox.getName().split("=");
+			
+			if(boxName[0].equalsIgnoreCase("P")) {
+				switch(comboBox.getSelectedIndex()){
+					case NONE_PLAYER:
+						playerNameFields[Integer.parseInt(boxName[1])].setText("");
+						playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
+						break;
+					case HUMAN_PLAYER:
+						playerNameFields[Integer.parseInt(boxName[1])].setEnabled(true);
+						break;
+					case AI_PLAYER:
+						playerNameFields[Integer.parseInt(boxName[1])].setText("");
+						playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
+						break;
+				}
+			}
 		}
 	}
 
@@ -320,7 +350,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		}
 
 		this.setVisible(false); // XXX: At some point we should destroy this
-		// XXX: object rather than just making it invisible
+								// XXX: object rather than just making it invisible
 	}
 
 	private void fillPlayersPane() {
@@ -351,6 +381,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			playerBoxes[i] = new JComboBox();
 			playerBoxes[i].addItem("None");
 			playerBoxes[i].addItem("Human");
+			playerBoxes[i].addActionListener(this);
+			playerBoxes[i].setName("P=" + Integer.toString(i));
 			
 			/*
 			 * Prefill with any configured player names. This can be useful to speed
@@ -363,9 +395,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			}
 			
 			if (playerNameFields[i].getText().length() > 0) { 
-				playerBoxes[i].setSelectedIndex(1);
+				playerBoxes[i].setSelectedIndex(HUMAN_PLAYER);
 			} else {
-				playerBoxes[i].setSelectedIndex(0);
+				playerBoxes[i].setSelectedIndex(NONE_PLAYER);
 			}
 			
 			playersPane.add(playerBoxes[i]);
