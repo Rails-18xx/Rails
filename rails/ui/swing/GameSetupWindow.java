@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.6 2007/10/11 00:02:42 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.7 2007/10/11 22:31:05 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- * The Options dialog window displays the first window presented to the user.
+ * The Game Setup Window displays the first window presented to the user.
  * This window contains all of the options available for starting a new
  * rails.game.
  */
@@ -238,6 +238,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			optionsPane.setVisible(false);
 			optionsPane.removeAll();
 			optionComponents.clear();
+			optionButton.setText(LocalText.getText("OPTIONS"));
 		} else {
 			availableOptions = GamesInfo.getOptions(gameName);
 			
@@ -271,6 +272,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 			}
 
 			optionsPane.setVisible(true);
+			optionButton.setText(LocalText.getText("HIDE_OPTIONS"));
 		}
 	}
 
