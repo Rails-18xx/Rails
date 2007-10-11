@@ -1,10 +1,10 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Hex name="A2" tile="0"/>
-	<Hex name="A4" tile="-912" orientation="2" revenue="40,50"/><!--Nashville-->
-	<Hex name="B1" tile="-901" revenue="40,30"/><!--Corinth-->
+	<Hex name="A4" tile="-912" orientation="2" value="40,50"/><!--Nashville-->
+	<Hex name="B1" tile="-901" value="40,30"/><!--Corinth-->
 	<Hex name="B3" tile="0" impassable="D3"/>
 	<Hex name="B5" tile="0"/>
-	<Hex name="B7" tile="-901" orientation="2" revenue="30,50"/><!--Chattanooga-->
+	<Hex name="B7" tile="-901" orientation="2" value="30,50"/><!--Chattanooga-->
 	<Hex name="C2" tile="-1" cost="20"/><!--Florence-->
 	<Hex name="C4" tile="-10" cost="20"/><!-- Decatur-->
 	<Hex name="C6" tile="-1" cost="20"/><!-- Stevenson-->
