@@ -89,11 +89,11 @@
 		<Track from="city1" gauge="normal" to="side5"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
-	<Tile colour="yellow" id="1441" name="Birmingham">
+	<Tile colour="yellow" id="1441" name="441">
 		<Station id="city1" position="0" slots="1" type="City" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
-	<Tile colour="yellow" id="445" name="LumberTerminal">
+	<Tile colour="yellow" id="445" name="445">
 		<Station id="city1" position="0" type="Town" value="20"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 		<Track from="city1" gauge="normal" to="side3"/>
@@ -174,14 +174,14 @@
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side4"/>
 	</Tile>
-	<Tile colour="green" id="1442" name="Birmingham">
+	<Tile colour="green" id="1442" name="442">
 		<Station id="city1" position="0" slots="2" type="City" value="30"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="green" id="1443" name="Montgomery">
+	<Tile colour="green" id="1443" name="443">
 		<Station id="city1" position="0" slots="2" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
@@ -254,7 +254,7 @@
 		<Track from="side5" gauge="normal" to="side0"/>
 		<Track from="side4" gauge="normal" to="side0"/>
 	</Tile>
-	<Tile colour="brown" id="1444" name="B'ham/Montg.">
+	<Tile colour="brown" id="1444" name="444">
 		<Station id="city1" position="0" slots="2" type="City" value="50"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
@@ -262,7 +262,7 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="gray" id="446" name="Birmingham">
+	<Tile colour="gray" id="446" name="446">
 		<Station id="city1" position="0" slots="3" type="City" value="70"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
