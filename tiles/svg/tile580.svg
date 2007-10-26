@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   baseProfile="full"
+   id="body"
+   width="100"
+   height="100"
+   viewBox="0 0 1 1"
+   preserveAspectRatio="none"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:docbase="/home/blentz/Desktop/18EU_Tiles"
+   sodipodi:docname="tile580.svg">
+  <metadata
+     id="metadata446">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs444" />
+  <sodipodi:namedview
+     inkscape:window-height="592"
+     inkscape:window-width="822"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     width="100px"
+     height="100px"
+     inkscape:zoom="2.4036312"
+     inkscape:cx="65.540897"
+     inkscape:cy="40.844327"
+     inkscape:window-x="50"
+     inkscape:window-y="265"
+     inkscape:current-layer="body" />
+  <title
+     id="title387">SVG drawing</title>
+  <desc
+     id="desc389">This was produced by version 4.2 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
+  <g
+     id="content"
+     transform="matrix(5.4034222e-3,0,0,-6.1621102e-3,1.8344415e-4,0.9997977)"
+     xml:space="preserve"
+     stroke-miterlimit="10.433"
+     fill-rule="even-odd"
+     font-style="normal"
+     font-variant="normal"
+     font-weight="normal"
+     font-stretch="normal"
+     font-size-adjust="none"
+     letter-spacing="normal"
+     word-spacing="normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1">
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   id="polygon393"
+   style="fill:#5eac38;fill-rule:nonzero;stroke:#5eac38;stroke-width:0;stroke-linejoin:round" />
+<path
+   d="M 139.5,120.5 L 139.47,121.73 L 139.38,122.95 L 139.22,124.15 L 139.01,125.34 L 138.74,126.5 L 138.42,127.64 L 138.04,128.75 L 137.61,129.84 L 137.13,130.9 L 136.6,131.94 L 136.03,132.94 L 135.4,133.92 L 134.73,134.86 L 134.02,135.77 L 133.26,136.64 L 132.47,137.47 L 131.64,138.26 L 130.77,139.02 L 129.86,139.73 L 128.92,140.4 L 127.94,141.03 L 126.94,141.6 L 125.9,142.13 L 124.84,142.61 L 123.75,143.04 L 122.64,143.42 L 121.5,143.74 L 120.34,144.01 L 119.15,144.22 L 117.95,144.38 L 116.73,144.47 L 115.5,144.5 C 102.25,144.5 91.5,133.75 91.5,120.5 C 91.5,107.25 102.25,96.5 115.5,96.5 C 128.75,96.5 139.5,107.25 139.5,120.5 z "
+   id="path395"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,120.5 L 139.47,121.73 L 139.38,122.95 L 139.22,124.15 L 139.01,125.34 L 138.74,126.5 L 138.42,127.64 L 138.04,128.75 L 137.61,129.84 L 137.13,130.9 L 136.6,131.94 L 136.03,132.94 L 135.4,133.92 L 134.73,134.86 L 134.02,135.77 L 133.26,136.64 L 132.47,137.47 L 131.64,138.26 L 130.77,139.02 L 129.86,139.73 L 128.92,140.4 L 127.94,141.03 L 126.94,141.6 L 125.9,142.13 L 124.84,142.61 L 123.75,143.04 L 122.64,143.42 L 121.5,143.74 L 120.34,144.01 L 119.15,144.22 L 117.95,144.38 L 116.73,144.47 L 115.5,144.5 C 102.25,144.5 91.5,133.75 91.5,120.5 C 91.5,107.25 102.25,96.5 115.5,96.5 C 128.75,96.5 139.5,107.25 139.5,120.5 z "
+   id="path397"
+   style="stroke:#ffffff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,40.5 L 139.47,41.735 L 139.38,42.954 L 139.22,44.155 L 139.01,45.337 L 138.74,46.498 L 138.42,47.637 L 138.04,48.752 L 137.61,49.841 L 137.13,50.905 L 136.6,51.939 L 136.03,52.944 L 135.4,53.918 L 134.73,54.859 L 134.02,55.766 L 133.26,56.637 L 132.47,57.47 L 131.64,58.265 L 130.77,59.019 L 129.86,59.732 L 128.92,60.401 L 127.94,61.025 L 126.94,61.603 L 125.9,62.133 L 124.84,62.614 L 123.75,63.044 L 122.64,63.421 L 121.5,63.744 L 120.34,64.012 L 119.15,64.223 L 117.95,64.376 L 116.73,64.469 L 115.5,64.5 C 102.25,64.5 91.5,53.754 91.5,40.5 C 91.5,27.246 102.25,16.5 115.5,16.5 C 128.75,16.5 139.5,27.246 139.5,40.5 z "
+   id="path399"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,40.5 L 139.47,41.735 L 139.38,42.954 L 139.22,44.155 L 139.01,45.337 L 138.74,46.498 L 138.42,47.637 L 138.04,48.752 L 137.61,49.841 L 137.13,50.905 L 136.6,51.939 L 136.03,52.944 L 135.4,53.918 L 134.73,54.859 L 134.02,55.766 L 133.26,56.637 L 132.47,57.47 L 131.64,58.265 L 130.77,59.019 L 129.86,59.732 L 128.92,60.401 L 127.94,61.025 L 126.94,61.603 L 125.9,62.133 L 124.84,62.614 L 123.75,63.044 L 122.64,63.421 L 121.5,63.744 L 120.34,64.012 L 119.15,64.223 L 117.95,64.376 L 116.73,64.469 L 115.5,64.5 C 102.25,64.5 91.5,53.754 91.5,40.5 C 91.5,27.246 102.25,16.5 115.5,16.5 C 128.75,16.5 139.5,27.246 139.5,40.5 z "
+   id="path401"
+   style="stroke:#ffffff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 92.5,160.5 L 92.5,160.5 C 92.5,144.04 101.3,128.82 115.57,120.62"
+   id="path403"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 115.5,120.5 L 115.57,120.62 C 122.54,116.61 130.45,114.5 138.5,114.5 C 146.54,114.5 154.45,116.61 161.43,120.62"
+   id="path405"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 161.5,40.5 L 161.43,40.379 C 154.45,44.387 146.54,46.5 138.5,46.5 C 130.45,46.5 122.54,44.387 115.57,40.379"
+   id="path407"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 115.5,40.5 L 115.57,40.379 C 101.3,32.176 92.5,16.961 92.5,0.5"
+   id="path409"
+   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 92.5,160.5 L 92.5,160.5 C 92.5,144.04 101.3,128.82 115.57,120.62"
+   id="path411"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 115.5,120.5 L 115.57,120.62 C 122.54,116.61 130.45,114.5 138.5,114.5 C 146.54,114.5 154.45,116.61 161.43,120.62"
+   id="path413"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 161.5,40.5 L 161.43,40.379 C 154.45,44.387 146.54,46.5 138.5,46.5 C 130.45,46.5 122.54,44.387 115.57,40.379"
+   id="path415"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 115.5,40.5 L 115.57,40.379 C 101.3,32.176 92.5,16.961 92.5,0.5"
+   id="path417"
+   style="stroke-width:12;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,120.5 L 139.47,121.73 L 139.38,122.95 L 139.22,124.15 L 139.01,125.34 L 138.74,126.5 L 138.42,127.64 L 138.04,128.75 L 137.61,129.84 L 137.13,130.9 L 136.6,131.94 L 136.03,132.94 L 135.4,133.92 L 134.73,134.86 L 134.02,135.77 L 133.26,136.64 L 132.47,137.47 L 131.64,138.26 L 130.77,139.02 L 129.86,139.73 L 128.92,140.4 L 127.94,141.03 L 126.94,141.6 L 125.9,142.13 L 124.84,142.61 L 123.75,143.04 L 122.64,143.42 L 121.5,143.74 L 120.34,144.01 L 119.15,144.22 L 117.95,144.38 L 116.73,144.47 L 115.5,144.5 C 102.25,144.5 91.5,133.75 91.5,120.5 C 91.5,107.25 102.25,96.5 115.5,96.5 C 128.75,96.5 139.5,107.25 139.5,120.5 z "
+   id="path419"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,120.5 L 139.47,121.73 L 139.38,122.95 L 139.22,124.15 L 139.01,125.34 L 138.74,126.5 L 138.42,127.64 L 138.04,128.75 L 137.61,129.84 L 137.13,130.9 L 136.6,131.94 L 136.03,132.94 L 135.4,133.92 L 134.73,134.86 L 134.02,135.77 L 133.26,136.64 L 132.47,137.47 L 131.64,138.26 L 130.77,139.02 L 129.86,139.73 L 128.92,140.4 L 127.94,141.03 L 126.94,141.6 L 125.9,142.13 L 124.84,142.61 L 123.75,143.04 L 122.64,143.42 L 121.5,143.74 L 120.34,144.01 L 119.15,144.22 L 117.95,144.38 L 116.73,144.47 L 115.5,144.5 C 102.25,144.5 91.5,133.75 91.5,120.5 C 91.5,107.25 102.25,96.5 115.5,96.5 C 128.75,96.5 139.5,107.25 139.5,120.5 z "
+   id="path421"
+   style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 169.99,80.5 L 169.98,80.708 L 169.94,80.913 L 169.89,81.115 L 169.82,81.314 L 169.72,81.509 L 169.61,81.701 L 169.47,81.889 L 169.32,82.072 L 169.15,82.251 L 168.96,82.425 L 168.76,82.594 L 168.54,82.758 L 168.3,82.917 L 168.05,83.069 L 167.78,83.216 L 167.5,83.356 L 167.21,83.49 L 166.9,83.617 L 166.58,83.737 L 166.25,83.849 L 165.9,83.954 L 165.55,84.052 L 165.18,84.141 L 164.8,84.222 L 164.42,84.294 L 164.02,84.357 L 163.62,84.412 L 163.21,84.457 L 162.79,84.493 L 162.37,84.518 L 161.94,84.534 L 161.5,84.539 C 156.81,84.539 153.01,82.73 153.01,80.5 C 153.01,78.27 156.81,76.461 161.5,76.461 C 166.19,76.461 169.99,78.27 169.99,80.5 z "
+   id="path423"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 169.99,80.5 L 169.98,80.708 L 169.94,80.913 L 169.89,81.115 L 169.82,81.314 L 169.72,81.509 L 169.61,81.701 L 169.47,81.889 L 169.32,82.072 L 169.15,82.251 L 168.96,82.425 L 168.76,82.594 L 168.54,82.758 L 168.3,82.917 L 168.05,83.069 L 167.78,83.216 L 167.5,83.356 L 167.21,83.49 L 166.9,83.617 L 166.58,83.737 L 166.25,83.849 L 165.9,83.954 L 165.55,84.052 L 165.18,84.141 L 164.8,84.222 L 164.42,84.294 L 164.02,84.357 L 163.62,84.412 L 163.21,84.457 L 162.79,84.493 L 162.37,84.518 L 161.94,84.534 L 161.5,84.539 C 156.81,84.539 153.01,82.73 153.01,80.5 C 153.01,78.27 156.81,76.461 161.5,76.461 C 166.19,76.461 169.99,78.27 169.99,80.5 z "
+   id="path425"
+   style="stroke-width:0.84906;stroke-linecap:round;stroke-linejoin:round" />
+<text
+   transform="matrix(0.4,0,0,-0.4,156.2,77.977)"
+   font-size="20px"
+   id="text427"
+   style="font-size:20px;fill:#000000;stroke:none;font-family:Helvetica, sans-serif">60</text>
+
+<path
+   d="M 139.5,40.5 L 139.47,41.735 L 139.38,42.954 L 139.22,44.155 L 139.01,45.337 L 138.74,46.498 L 138.42,47.637 L 138.04,48.752 L 137.61,49.841 L 137.13,50.905 L 136.6,51.939 L 136.03,52.944 L 135.4,53.918 L 134.73,54.859 L 134.02,55.766 L 133.26,56.637 L 132.47,57.47 L 131.64,58.265 L 130.77,59.019 L 129.86,59.732 L 128.92,60.401 L 127.94,61.025 L 126.94,61.603 L 125.9,62.133 L 124.84,62.614 L 123.75,63.044 L 122.64,63.421 L 121.5,63.744 L 120.34,64.012 L 119.15,64.223 L 117.95,64.376 L 116.73,64.469 L 115.5,64.5 C 102.25,64.5 91.5,53.754 91.5,40.5 C 91.5,27.246 102.25,16.5 115.5,16.5 C 128.75,16.5 139.5,27.246 139.5,40.5 z "
+   id="path429"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 139.5,40.5 L 139.47,41.735 L 139.38,42.954 L 139.22,44.155 L 139.01,45.337 L 138.74,46.498 L 138.42,47.637 L 138.04,48.752 L 137.61,49.841 L 137.13,50.905 L 136.6,51.939 L 136.03,52.944 L 135.4,53.918 L 134.73,54.859 L 134.02,55.766 L 133.26,56.637 L 132.47,57.47 L 131.64,58.265 L 130.77,59.019 L 129.86,59.732 L 128.92,60.401 L 127.94,61.025 L 126.94,61.603 L 125.9,62.133 L 124.84,62.614 L 123.75,63.044 L 122.64,63.421 L 121.5,63.744 L 120.34,64.012 L 119.15,64.223 L 117.95,64.376 L 116.73,64.469 L 115.5,64.5 C 102.25,64.5 91.5,53.754 91.5,40.5 C 91.5,27.246 102.25,16.5 115.5,16.5 C 128.75,16.5 139.5,27.246 139.5,40.5 z "
+   id="path431"
+   style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 169.99,80.5 L 169.98,80.708 L 169.94,80.913 L 169.89,81.115 L 169.82,81.314 L 169.72,81.509 L 169.61,81.701 L 169.47,81.889 L 169.32,82.072 L 169.15,82.251 L 168.96,82.425 L 168.76,82.594 L 168.54,82.758 L 168.3,82.917 L 168.05,83.069 L 167.78,83.216 L 167.5,83.356 L 167.21,83.49 L 166.9,83.617 L 166.58,83.737 L 166.25,83.849 L 165.9,83.954 L 165.55,84.052 L 165.18,84.141 L 164.8,84.222 L 164.42,84.294 L 164.02,84.357 L 163.62,84.412 L 163.21,84.457 L 162.79,84.493 L 162.37,84.518 L 161.94,84.534 L 161.5,84.539 C 156.81,84.539 153.01,82.73 153.01,80.5 C 153.01,78.27 156.81,76.461 161.5,76.461 C 166.19,76.461 169.99,78.27 169.99,80.5 z "
+   id="path433"
+   style="fill:#ffffff;fill-rule:nonzero;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" />
+<path
+   d="M 169.99,80.5 L 169.98,80.708 L 169.94,80.913 L 169.89,81.115 L 169.82,81.314 L 169.72,81.509 L 169.61,81.701 L 169.47,81.889 L 169.32,82.072 L 169.15,82.251 L 168.96,82.425 L 168.76,82.594 L 168.54,82.758 L 168.3,82.917 L 168.05,83.069 L 167.78,83.216 L 167.5,83.356 L 167.21,83.49 L 166.9,83.617 L 166.58,83.737 L 166.25,83.849 L 165.9,83.954 L 165.55,84.052 L 165.18,84.141 L 164.8,84.222 L 164.42,84.294 L 164.02,84.357 L 163.62,84.412 L 163.21,84.457 L 162.79,84.493 L 162.37,84.518 L 161.94,84.534 L 161.5,84.539 C 156.81,84.539 153.01,82.73 153.01,80.5 C 153.01,78.27 156.81,76.461 161.5,76.461 C 166.19,76.461 169.99,78.27 169.99,80.5 z "
+   id="path435"
+   style="stroke-width:0.84906;stroke-linecap:round;stroke-linejoin:round" />
+<text
+   transform="matrix(0.4,0,0,-0.4,156.2,77.977)"
+   font-size="20px"
+   id="text437"
+   style="font-size:20px;fill:#000000;stroke:none;font-family:Helvetica, sans-serif">60</text>
+
+<text
+   transform="matrix(0.8,0,0,-0.8,18.188,74.918)"
+   font-size="20px"
+   id="text439"
+   style="font-size:20px;fill:#000000;stroke:none;font-family:Helvetica, sans-serif">P</text>
+
+<polygon
+   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+   id="polygon441"
+   style="stroke-width:1;stroke-linejoin:round" />
+</g></svg>
