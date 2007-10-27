@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.6 2007/10/27 15:26:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.7 2007/10/27 17:36:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -129,7 +129,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 JLabel hexLabel = new JLabel(hexIcon);
                 hexLabel.setName(tile.getName());
-                hexLabel.setText("" + tile.getId());
+                hexLabel.setText("" + tile.getExternalId());
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
                 hexLabel.setBorder(border);

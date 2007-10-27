@@ -13620,8 +13620,6 @@ object TTilesWrapper
         item
           JunType = jtDoubleCity
           Revenue = 50
-        end
-        item
         end>
     end
     item

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.9 2007/10/27 15:26:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.10 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 
@@ -441,8 +441,8 @@ public class MapHex extends ModelObject
 	        List<Station> newStations) {
 	    
 	    if (oldTile != currentTile) {
-	        new Exception ("ERROR! Hex "+name+" wants to replace tile #"+oldTile.getName()
-	                +" but has tile #"+currentTile.getName()+"!")
+	        new Exception ("ERROR! Hex "+name+" wants to replace tile #"+oldTile.getId()
+	                +" but has tile #"+currentTile.getId()+"!")
 	            .printStackTrace();
 	    }
 		if (currentTile != null) {
@@ -614,7 +614,7 @@ public class MapHex extends ModelObject
 			if (currentTile.isUpgradeable()) {
 			    return true;
 			} else {
-			    log.debug ("Hex "+name+" tile "+currentTile.getName()
+			    log.debug ("Hex "+name+" tile #"+currentTile.getId()
 			            +" is not upgradable now");
 			    return false;
 			}

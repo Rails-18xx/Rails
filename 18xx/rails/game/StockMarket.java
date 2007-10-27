@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.6 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.7 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 
@@ -61,30 +61,32 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		/* Read and configure the stock market space types */
 		List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
 
-		for (Tag typeTag : typeTags)
-		{
-			/* Extract the attributes of the Stock space type */
-			String name = typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
-			if (name == null)
+		if (typeTags != null) {
+			for (Tag typeTag : typeTags)
 			{
-				throw new ConfigurationException(LocalText.getText("UnnamedStockSpaceType"));
+				/* Extract the attributes of the Stock space type */
+				String name = typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
+				if (name == null)
+				{
+					throw new ConfigurationException(LocalText.getText("UnnamedStockSpaceType"));
+				}
+				String colour = typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
+	
+				/* Check for duplicates */
+				if (stockSpaceTypes.get(name) != null)
+				{
+					throw new ConfigurationException(LocalText.getText("StockSpaceTypeConfiguredTwice", name));
+				}
+	
+				/* Create the type */
+				StockSpaceTypeI type = new StockSpaceType(name, colour);
+				stockSpaceTypes.put(name, type);
+	
+				// Check the stock space type flags
+				type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
+				type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
+				type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
 			}
-			String colour = typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
-
-			/* Check for duplicates */
-			if (stockSpaceTypes.get(name) != null)
-			{
-				throw new ConfigurationException(LocalText.getText("StockSpaceTypeConfiguredTwice", name));
-			}
-
-			/* Create the type */
-			StockSpaceTypeI type = new StockSpaceType(name, colour);
-			stockSpaceTypes.put(name, type);
-
-			// Check the stock space type flags
-			type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
-			type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
-			type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
 		}
 
 		/* Read and configure the stock market spaces */

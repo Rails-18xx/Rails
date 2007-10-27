@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.8 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,7 +11,19 @@ import rails.util.*;
 public class Tile implements TileI, StationHolderI, TokenHolderI
 {
 
+	/** The 'internal id', identifying the tile in the XML files */
 	private int id;
+	/** The 'external id', which is shown in the UI. 
+	 * Usually equal to the internal id,
+	 * but different in case of duplicates.
+	 */
+	private int externalId;
+	/** The 'picture id', identofying the picture number to be loaded.
+	 * Usually equal to the internal id,
+	 * but different in case of graphical variants
+	 * (such as the 18EU tiles 80-83).
+	 */
+	private int pictureId; 
 	private String name;
 	private String colour; // May become a separate class TileType
 	private boolean upgradeable;
@@ -32,6 +44,7 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	public Tile(Integer id)
 	{
 		this.id = id.intValue();
+		externalId = pictureId = id;
 		name = "" + this.id;
 
 		for (int i = 0; i < 6; i++)
@@ -52,12 +65,7 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	        throw new ConfigurationException (
 	                LocalText.getText("TileMissing", String.valueOf(id)));
 	    }
-		/*
-		 * EV 23oct05: There is a lot to read and configure here, for now we
-		 * only read the tracks to determine the impassable hexsides of offmap
-		 * and fixed preprinted track.
-		 */
-
+	    
 		name = defTag.getAttributeAsString("name", name);
 
 		colour = defTag.getAttributeAsString("colour");
@@ -66,6 +74,12 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 			        LocalText.getText("TileColorMissing", String.valueOf(id)));
 
 		upgradeable = !colour.equals("red") && !colour.equals("fixed");
+
+		/*
+		 * EV 23oct05: There is a lot to read and configure here, for now we
+		 * only read the tracks to determine the impassable hexsides of offmap
+		 * and fixed preprinted track.
+		 */
 
 		/* Tracks (only number per side, no cities yet) */
 		List<Tag> trackTags = defTag.getChildren("Track");
@@ -122,7 +136,11 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 			}
 		}
 
-		/* Amount */
+		/* External (printed) id */
+	    externalId = setTag.getAttributeAsInteger("extId", externalId);
+	    /* Picture id */
+	    pictureId = setTag.getAttributeAsInteger("pic", pictureId);
+		/* Quantity */
 		quantity = setTag.getAttributeAsInteger("quantity", 0);
 		/* Value '99' and '-1' mean 'unlimited' */
 		unlimited = (quantity == 99 || quantity == UNLIMITED);
@@ -206,6 +224,14 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	public int getId()
 	{
 		return id;
+	}
+
+	public int getExternalId() {
+		return externalId;
+	}
+
+	public int getPictureId() {
+		return pictureId;
 	}
 
 	/**

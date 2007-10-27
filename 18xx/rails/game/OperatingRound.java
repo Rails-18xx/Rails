@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.19 2007/10/27 15:26:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.20 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 
@@ -331,12 +331,12 @@ public class OperatingRound extends Round implements Observer
 
 			if (!tile.isLayableNow())
 			{
-				errMsg = LocalText.getText("TileNotYetAvailable", tile.getName());
+				errMsg = LocalText.getText("TileNotYetAvailable", tile.getExternalId());
 				break;
 			}
 			if (tile.countFreeTiles() == 0)
 			{
-				errMsg = LocalText.getText("TileNotAvailable", tile.getName());
+				errMsg = LocalText.getText("TileNotAvailable", tile.getExternalId());
 				break;
 			}
 
@@ -348,7 +348,7 @@ public class OperatingRound extends Round implements Observer
 			    List tiles = action.getTiles();
 			    if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
 			        errMsg = LocalText.getText("TileMayNotBeLaidInHex", new String[] {
-			                tile.getName(),
+			                String.valueOf(tile.getExternalId()),
 			                hex.getName()
 			        });
 			        break;
@@ -406,7 +406,7 @@ public class OperatingRound extends Round implements Observer
 		{
 			DisplayBuffer.add(LocalText.getText("CannotLayTileOn", new String[] {
 			        companyName,
-			        tile.getName(),
+			        String.valueOf(tile.getExternalId()),
 			        hex.getName(),
 			        Bank.format(cost),
 			        errMsg
@@ -428,13 +428,13 @@ public class OperatingRound extends Round implements Observer
 			if (cost > 0) {
 			    ReportBuffer.add(LocalText.getText("LaysTileAt", new String[] {
 			            companyName,
-			            tile.getName(),
+			            String.valueOf(tile.getExternalId()),
 			            hex.getName()
 			    }));
 			} else {
 			    ReportBuffer.add(LocalText.getText("LaysTileAtFor", new String[] {
 			            companyName,
-			            tile.getName(),
+			            String.valueOf(tile.getExternalId()),
 			            hex.getName(),
 			            Bank.format(cost)
 			    }));

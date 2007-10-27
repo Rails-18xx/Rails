@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.12 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.13 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 
@@ -1246,7 +1246,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	
 	public void layTile (MapHex hex, TileI tile, int orientation, int cost) {
 	    
-	    String tileLaid = "#" + tile.getName() + "/" + hex.getName() + "/"
+	    String tileLaid = "#" + tile.getExternalId() + "/" + hex.getName() + "/"
 				+ MapHex.getOrientationName(orientation);
 	    tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 

@@ -3283,11 +3283,10 @@
 	</Tile>
 	<Tile colour="brown" id="582" name="582">
 		<Station id="city1" position="0" slots="2" type="City" value="50"/>
-		<Station id="city2" position="0" type=""/>
-		<Track from="city2" gauge="normal" to="side3"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side3"/>
+		<Track from="city1" gauge="normal" to="side5"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile>
 	<Tile colour="brown" id="583" name="583">
 		<Station id="city1" position="002" slots="2" type="City" value="80"/>
