@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.4 2007/10/07 20:14:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.5 2007/10/27 15:26:35 evos Exp $ */
 package rails.game.special;
 
 
@@ -14,6 +14,9 @@ public class SpecialTileLay extends SpecialProperty
 
 	String locationCodes = null;
 	List<MapHex> locations = null;
+	int tileNumber;
+	TileI tile = null;
+    String name;
 	boolean extra = false;
 	boolean free = false;
 
@@ -40,6 +43,13 @@ public class SpecialTileLay extends SpecialProperty
                         + " does not exist");
             locations.add (hex);
         }
+        
+        tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
+        if (tileNumber > 0) {
+        	tile = TileManager.get().getTile(tileNumber);
+        }
+        
+        name = tileLayTag.getAttributeAsString("name");
 
 		extra = tileLayTag.getAttributeAsBoolean("extra", extra);
 		free = tileLayTag.getAttributeAsBoolean("free", free);
@@ -74,7 +84,22 @@ public class SpecialTileLay extends SpecialProperty
         return locations;
     }
     
+    public String getLocationNameString () {
+    	return locationCodes;
+    }
 	
+    public int getTileNumber() {
+    	return tileNumber;
+    }
+    
+    public TileI getTile () {
+    	return tile;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
 	public String toString() {
 	    return "SpecialTileLay comp="+privateCompany.getName()+" hex="+locationCodes+" extra="+extra+" cost="+free;
 	}

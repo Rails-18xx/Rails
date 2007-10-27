@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.14 2007/10/27 15:26:34 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -473,7 +473,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 	button2.setVisible(false);
                 }
 
-            } else if (possibleActions.contains(LayToken.class)) {
+            } else if (possibleActions.contains(LayBaseToken.class)) {
  
                 orWindow.requestFocus();
                 orWindow.enableTileLaying(false);
@@ -481,9 +481,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
                 tokenCaption.setHighlight(true);
 
-                log.debug ("Tokens can be laid");
+                log.debug ("BaseTokens can be laid");
                 orWindow.enableBaseTokenLaying(true);
-                orWindow.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayToken.class));
+                orWindow.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayBaseToken.class));
 
                 button1.setEnabled(false);
                 button1.setVisible(false);
@@ -679,7 +679,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         if (executedActionType == SetDividend.class) {
             SetDividend action = (SetDividend) executedAction;
-             if (command.equals(SET_REVENUE_CMD)) {
+            if (command.equals(SET_REVENUE_CMD)) {
                 amount = ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
                 log.debug ("Set revenue amount is "+amount);
                 action.setActualRevenue(amount);
@@ -689,6 +689,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     orStep = OperatingRound.STEP_PAYOUT;
                     retrieveStep = false;
                     updateStatus(action);
+                    
+                    // Locally update revenue if we don't inform the server yet.
+                    revenue[orCompIndex].setText(Bank.format(amount));
                 }
             } else {
                 // The revenue allocation has been selected

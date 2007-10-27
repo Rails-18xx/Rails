@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.18 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.19 2007/10/27 15:26:34 evos Exp $ */
 package rails.game;
 
 
@@ -41,12 +41,12 @@ public class OperatingRound extends Round implements Observer
 		= new ArrayList<LayTile>();
 	protected Map<String, Integer> tileLaysPerColour 
 		= new HashMap<String, Integer>();
-	protected Map<MapHex, SpecialPropertyI> specialPropertyPerHex 
-		= new HashMap<MapHex, SpecialPropertyI>();
-	protected List<LayToken> currentNormalTokenLays 
-		= new ArrayList<LayToken>();
-	protected List<LayToken> currentSpecialTokenLays 
-		= new ArrayList<LayToken>();
+	//protected Map<MapHex, SpecialPropertyI> specialPropertyPerHex 
+	//	= new HashMap<MapHex, SpecialPropertyI>();
+	protected List<LayBaseToken> currentNormalTokenLays 
+		= new ArrayList<LayBaseToken>();
+	protected List<LayBaseToken> currentSpecialTokenLays 
+		= new ArrayList<LayBaseToken>();
     /** A List per player with owned companies that have excess trains */
     protected Map<Player, List<PublicCompanyI>> excessTrainCompanies = null;
 
@@ -249,9 +249,9 @@ public class OperatingRound extends Round implements Observer
         	
         	result = layTile ((LayTile) selectedAction);
 
-        } else if (selectedAction instanceof LayToken) {
+        } else if (selectedAction instanceof LayBaseToken) {
                 
-                result = layBaseToken ((LayToken) selectedAction);
+                result = layBaseToken ((LayBaseToken) selectedAction);
            
         } else if (selectedAction instanceof SetDividend) {
             
@@ -510,7 +510,7 @@ public class OperatingRound extends Round implements Observer
 	    return true;
 	}
 
-    public boolean layBaseToken(LayToken action)
+    public boolean layBaseToken(LayBaseToken action)
     {
 
         String errMsg = null;
@@ -934,7 +934,7 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* Special-property tile lays */
 		currentSpecialTileLays.clear();
-		specialPropertyPerHex.clear();
+		//specialPropertyPerHex.clear();
 		/* In 1835, this only applies to major companies.
 		 * TODO: For now, hardcode this, but it must become configurable later.
 		 */
@@ -945,7 +945,9 @@ public class OperatingRound extends Round implements Observer
 			if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
 			    /* If the special tile lay is not extra, it is only 
 			     * allowed if normal tile lays are also (still) allowed */
-				specialPropertyPerHex.put(stl.getLocation(), stl);
+                //for (MapHex hex : stl.getLocations()) {
+                    //specialPropertyPerHex.put(hex, stl);
+                //}
 				currentSpecialTileLays.add (new LayTile (stl));
 			}
 		}
@@ -958,7 +960,7 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* For now, we allow one token of the currently operating company */
 	    if (operatingCompany.getNumberOfFreeBaseTokens() > 0) {
-	        currentNormalTokenLays.add (new LayToken ((List<MapHex>)null));
+	        currentNormalTokenLays.add (new LayBaseToken ((List<MapHex>)null));
 	    }
 	    
 	}
@@ -973,7 +975,7 @@ public class OperatingRound extends Round implements Observer
 	    
 	    /* Special-property tile lays */
 		currentSpecialTokenLays.clear();
-		specialPropertyPerHex.clear();
+		//specialPropertyPerHex.clear();
 
 		/* In 1835, this only applies to major companies.
 		 * TODO: For now, hardcode this, but it must become configurable later.
@@ -983,14 +985,31 @@ public class OperatingRound extends Round implements Observer
         for (SpecialTokenLay stl : getSpecialProperties (SpecialTokenLay.class))
 		{
 			log.debug ("Spec.prop:"+stl);
-			if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
+			if (stl.getTokenClass().equals(BaseToken.class)
+                    && (stl.isExtra() || !currentNormalTokenLays.isEmpty())) {
 			    /* If the special tile lay is not extra, it is only 
 			     * allowed if normal tile lays are also (still) allowed */
-				specialPropertyPerHex.put(stl.getLocation(), stl);
-				currentSpecialTokenLays.add (new LayToken (stl));
+				//specialPropertyPerHex.put(stl.getLocation(), stl);
+				currentSpecialTokenLays.add (new LayBaseToken (stl));
 			}
 		}
 	}
+    
+    /** TODO Should be merged with setSpecialTokenLays() in the future.
+     * Assumptions: 
+     * 1. Bonus tokens can  be laid anytime during the OR.
+     * 2. Bonus token laying is always extra.
+     * TODO This assumptions will be made configurable conditions. 
+     * */ 
+    protected void setBonusTokenLays () {
+        
+        for (SpecialTokenLay stl : getSpecialProperties (SpecialTokenLay.class))
+        {
+            if (stl.getTokenClass().equals(BonusToken.class)) {
+                possibleActions.add(new LayBonusToken (stl));
+            }
+        }
+    }
 
 	public List<SpecialPropertyI> getSpecialProperties()
 	{
@@ -1524,6 +1543,8 @@ public class OperatingRound extends Round implements Observer
         {
             setTrainsToDiscard();
         }
+        
+        setBonusTokenLays();
 		
 		// Can private companies be bought?
 		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {

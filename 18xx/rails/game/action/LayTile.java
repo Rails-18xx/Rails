@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.7 2007/09/30 12:55:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.8 2007/10/27 15:26:35 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -81,7 +81,14 @@ public class LayTile extends PossibleORAction {
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
-        if (specialProperty != null) this.specialPropertyId = specialProperty.getUniqueId();
+        if (specialProperty != null) {
+        	this.specialPropertyId = specialProperty.getUniqueId();
+        	TileI tile = specialProperty.getTile();
+        	if (tile != null) {
+        		tiles = new ArrayList<TileI>();
+        		tiles.add (tile);
+        	}
+        }
     }
 
     /**

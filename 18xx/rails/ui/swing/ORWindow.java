@@ -1,15 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.9 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.10 2007/10/27 15:26:34 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.LayTile;
-import rails.game.action.LayToken;
+import rails.game.action.LayBaseToken;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.special.*;
 import rails.ui.swing.hexmap.*;
 import rails.util.LocalText;
+import rails.util.Util;
 
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,8 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	private ORPanel orPanel;
 	private UpgradesPanel upgradePanel;
 	private MessagePanel messagePanel;
+	private JMenuBar menuBar;
+	private JMenu specialMenu;
 
 	/* Substeps in tile and token laying */
 	public static final int INACTIVE = 0;
@@ -80,6 +83,12 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 
 		orPanel = new ORPanel(this);
 		getContentPane().add(orPanel, BorderLayout.SOUTH);
+		
+		menuBar = new JMenuBar();
+		specialMenu = new JMenu (LocalText.getText("SPECIAL"));
+		specialMenu.setEnabled(false);
+		menuBar.add(specialMenu);
+		setJMenuBar (menuBar);
 
 		setTitle("Rails: Map");
 		setLocation(10, 10);
@@ -164,15 +173,16 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	    if (subStep == SELECT_HEX_FOR_TILE) {
 		    /* Compose prompt for tile laying */
 		    LayTile tileLay;
+		    int tileNumber;
 		    StringBuffer normalTileMessage = new StringBuffer(" ");
 		    StringBuffer extraTileMessage = new StringBuffer(" ");
+		    StringBuffer specialTiles = new StringBuffer("#");
 		    
 		    List tileLays = possibleActions.getType(LayTile.class);
 		    log.debug ("There are "+tileLays.size()+" TileLay objects");
 		    int ii=0;
 		    for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
 		        Map tileColours;
-		        MapHex hex;
 		        tileLay = (LayTile) it.next();
 		        log.debug ("TileLay object "+(++ii)+": "+tileLay);
 		        sp = tileLay.getSpecialProperty();
@@ -184,18 +194,28 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		         * The last option is only a stopgap as we can't yet determine connectivity.  
 		         */
 		        if (sp != null && sp instanceof SpecialTileLay) {
-		            hex = ((SpecialTileLay)sp).getLocation();
+                    SpecialTileLay stl = (SpecialTileLay) sp;
 		            if (extraTileMessage.length() > 1) extraTileMessage.append(", ");
-		            extraTileMessage.append (hex.getName())
+		            extraTileMessage.append (stl.getLocationNameString())
 		            	.append(" (") 
-		            	.append(((SpecialTileLay)sp).isExtra() ? "" : "not ")
+		            	.append(stl.isExtra() ? "" : "not ")
 		            	.append("extra");
-		            if (hex.getTileCost() > 0) {
-		                extraTileMessage.append (", ")
-		                	.append(((SpecialTileLay)sp).isFree()?"":"not ")
-			            	.append(" free");
+		            for (MapHex hex : stl.getLocations()) {
+			            if (hex.getTileCost() > 0) {
+			                extraTileMessage.append (", ")
+			                	.append(stl.isFree()?"":"not ")
+				            	.append(" free");
+			                break;
+			            }
 		            }
 		            extraTileMessage.append(")");
+		            if ((tileNumber = stl.getTileNumber()) > 0) {
+		            	if (specialTiles.length() > 1) specialTiles.append(", ");
+		            	specialTiles.append(tileNumber);
+                        if (Util.hasValue(stl.getName())) {
+                            specialTiles.insert(0, stl.getName() + " ");
+                        }
+		            }
 		        } else if ((tileColours = tileLay.getTileColours()) != null) {
 		            String colour;
 		            int number;
@@ -211,7 +231,10 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		            }
 		        }
 		    }
-		    if (extraTileMessage.length() > 1) {
+		    if (specialTiles.length() > 1) {
+		    	extraMessage += LocalText.getText("SpecialTile", new String[] {
+		    			specialTiles.toString(), extraTileMessage.toString()});
+		    } else if (extraTileMessage.length() > 1) {
 		        extraMessage += LocalText.getText("ExtraTile", extraTileMessage);
 		    }
 	        if (normalTileMessage.length() > 1) {
@@ -221,17 +244,18 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 	    } else if (subStep == SELECT_HEX_FOR_TOKEN) {
 	        
 		    /* Compose prompt for token laying */
-		    LayToken tokenLay;
-		    MapHex location;
+		    LayBaseToken tokenLay;
+		    //MapHex location;
+		    String locations;
 		    StringBuffer normalTokenMessage = new StringBuffer(" ");
 		    StringBuffer extraTokenMessage = new StringBuffer(" ");
 		    
-		    List tokenLays = possibleActions.getType(LayToken.class);
+		    List tokenLays = possibleActions.getType(LayBaseToken.class);
 		    log.debug ("There are "+tokenLays.size()+" TokenLay objects");
 		    int ii=0;
 		    for (Iterator it = tokenLays.iterator(); it.hasNext(); ) {
 
-		        tokenLay = (LayToken) it.next();
+		        tokenLay = (LayBaseToken) it.next();
 		        log.debug ("TokenLay object "+(++ii)+": "+tokenLay);
 		        sp = tokenLay.getSpecialProperty();
 		        /* A LayToken object contais either:
@@ -243,19 +267,19 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		         */
 		        if (sp != null && sp instanceof SpecialTokenLay) {
 		            if (extraTokenMessage.length() > 1) extraTokenMessage.append(", ");
-		            extraTokenMessage.append (((SpecialTokenLay)sp).getLocation().getName())
+		            extraTokenMessage.append (((SpecialTokenLay)sp).getLocationCodeString())
 	            	.append(" (") 
 	            	.append(((SpecialTokenLay)sp).isExtra() ? "" : "not ")
 	            	.append("extra, ")
 	            	.append(((SpecialTokenLay)sp).isFree()?"":"not ")
 	            	.append("free)");
-			    } else if ((location = tokenLay.getLocation()) != null) {
+			    } else if ((locations = tokenLay.getLocationNameString()) != null) {
 	                if (normalTokenMessage.length() > 1) {
 	                    normalTokenMessage.append(" ")
 	                    	.append(LocalText.getText("OR"))
 	                    	        .append(" ");
 	                }
-	                normalTokenMessage.append(location.getName());
+	                normalTokenMessage.append(locations);
 		        }
 		    }
 		    if (extraTokenMessage.length() > 1) {
@@ -351,7 +375,8 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
         
         if (selectedHex != null && selectedHex.canFixTile())
         {
-            LayTile allowance = map.getTileAllowanceForHex(selectedHex.getHexModel());
+            List<LayTile> allowances = map.getTileAllowancesForHex(selectedHex.getHexModel());
+            LayTile allowance = allowances.get(0); // TODO Wrong if we have an additional special property (18AL Lumber Terminal)
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
             allowance.setLaidTile(selectedHex.getProvisionalTile());
@@ -374,7 +399,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
         
         if (selectedHex != null)
         {
-            LayToken allowance = map.getTokenAllowanceForHex(selectedHex.getHexModel());
+            LayBaseToken allowance = map.getTokenAllowanceForHex(selectedHex.getHexModel());
             int station;
             List<Station> stations = selectedHex.getHexModel().getStations();
             
