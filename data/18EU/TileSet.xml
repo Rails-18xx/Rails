@@ -15,6 +15,12 @@
 	<Tile id="-902"/>
 	<Tile id="-903"/>
 	<Tile id="-939"/>
+	<Tile id="-3005"><!--Berlin/Vienna-->
+		<Upgrade id="581"/>
+	</Tile>
+	<Tile id="-3006"><!--Paris-->
+		<Upgrade id="580"/>
+	</Tile>
 
 	<!-- Yellow tiles -->
 	<Tile id="3" quantity="8">
@@ -52,16 +58,16 @@
 	<Tile id="15" quantity="4">
 		<Upgrade id="611" />
 	</Tile>
-	<Tile id="80" quantity="4">
+	<Tile id="80" pic="3080" quantity="4">
 		<Upgrade id="545,546" />
 	</Tile>
-	<Tile id="81" quantity="4">
+	<Tile id="81" pic="3081" quantity="4">
 		<Upgrade id="546" />
 	</Tile>
-	<Tile id="82" quantity="4">
+	<Tile id="82" pic="3082" quantity="4">
 		<Upgrade id="544,545,546" />
 	</Tile>
-	<Tile id="83" quantity="4">
+	<Tile id="83" pic="3083" quantity="4">
 		<Upgrade id="544,545,546" />
 	</Tile>
 	<Tile id="141" quantity="5">
