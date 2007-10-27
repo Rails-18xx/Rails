@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.13 2007/10/05 22:02:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.14 2007/10/27 15:26:34 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -62,12 +62,12 @@ public class Portfolio
 		= new HashMap<TrainTypeI, List<TrainI>>();
 	protected TrainsModel trainsModel = new TrainsModel(this);
 
-	/**
+	/*
 	 * Special properties. It is easier to maintain a map of these that to have
 	 * to search through the privates on each and every action.
 	 */
-	protected List<SpecialPropertyI> specialProperties 
-		= new ArrayList<SpecialPropertyI>();
+	//protected List<SpecialPropertyI> specialProperties 
+	//	= new ArrayList<SpecialPropertyI>();
 
 	/** Who owns the portfolio */
 	protected CashHolder owner;
@@ -234,7 +234,6 @@ public class Portfolio
 		if (privateCompany.getSpecialProperties() != null)
 		{
 		    log.debug (privateCompany.getName()+" has special properties!");
-			updateSpecialProperties();
 		} else {
 		    log.debug (privateCompany.getName()+" has no special properties");
 		}
@@ -277,10 +276,6 @@ public class Portfolio
 	    boolean removed = privateCompanies.remove(privateCompany);
 		if (removed) {
 			privatesOwnedModel.update();
-			if (privateCompany.getSpecialProperties() != null)
-			{
-				updateSpecialProperties();
-			}
 		}
 		return removed;
 	}
@@ -660,49 +655,34 @@ public class Portfolio
 		return getTrainOfType(TrainManager.get().getTypeByName(name));
 	}
 
-	public void updateSpecialProperties()
-	{
-
-		if (owner instanceof Player || owner instanceof PublicCompanyI)
-		{
-		    log.debug ("Updating special properties of "+getName());
-			specialProperties.clear();
-			List<SpecialPropertyI> sps;
-
-			for (PrivateCompanyI priv : privateCompanies)
-			{
-				sps = priv.getSpecialProperties();
-				if (sps == null)
-					continue;
-				for (SpecialPropertyI sp : sps)
-				{
-					if (sp.isExercised())
-						continue;
-					log.debug ("For "+name+" found spec.prop "+sp);
-					specialProperties.add(sp);
-				}
-			}
-		}
-	}
-
 	public <T extends SpecialPropertyI> List<T> getSpecialProperties
 		(Class<T> clazz, boolean includeExercised)
 	{
 		List<T> result = new ArrayList<T>();
-		if (specialProperties != null && specialProperties.size() > 0)
-		{
-			for (SpecialPropertyI sp : specialProperties)
-			{
-				if ((clazz == null || Util.isInstanceOf(sp, clazz))
-				        && sp.isExecutionable() 
-				        && (!sp.isExercised() || includeExercised)
-				        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
-				             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-				    log.debug ("Adding SP: "+sp);
-					result.add((T)sp);
-				}
-			}
-		}
+        List<SpecialPropertyI> sps;
+
+        if (owner instanceof Player || owner instanceof PublicCompanyI) {
+            
+            for (PrivateCompanyI priv : privateCompanies)
+            {
+                sps = priv.getSpecialProperties();
+                if (sps == null)
+                    continue;
+    
+                for (SpecialPropertyI sp : sps)
+        		{
+        			if ((clazz == null || Util.isInstanceOf(sp, clazz))
+        			        && sp.isExecutionable() 
+        			        && (!sp.isExercised() || includeExercised)
+        			        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
+        			             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
+        			    log.debug ("Adding SP: "+sp);
+        				result.add((T)sp);
+        			}
+        		}
+            }
+        }
+
 		return result;
 	}
 

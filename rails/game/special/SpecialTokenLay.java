@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.4 2007/10/07 20:14:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.5 2007/10/27 15:26:35 evos Exp $ */
 package rails.game.special;
 
 
@@ -58,11 +58,7 @@ public class SpecialTokenLay extends SpecialProperty
 			if (tokenClass == BonusToken.class) {
                 BonusToken bToken = (BonusToken) tokenClass.newInstance();
                 token = bToken;
-				int value = tokenLayTag.getAttributeAsInteger("value");
-				if (value <= 0) {
-					throw new ConfigurationException ("Missing or invalid value "+value);
-				}
-                bToken.setValue(value);
+                bToken.configureFromXML(tokenLayTag);
                 
                 numberAvailable = tokenLayTag.getAttributeAsInteger(
                 		"number", numberAvailable);
@@ -105,8 +101,19 @@ public class SpecialTokenLay extends SpecialProperty
     public List<MapHex> getLocations () {
         return locations;
     }
+    
+    public String getLocationCodeString() {
+    	return locationCodes;
+    }
 	
-	public String toString() {
-	    return "SpecialTokenLay comp="+privateCompany.getName()+" hex="+locationCodes+" extra="+extra+" cost="+free;
+	public Class getTokenClass() {
+        return tokenClass;
+    }
+
+    public String toString() {
+	    return "SpecialTokenLay comp="+privateCompany.getName()
+            +" type="+tokenClass.getSimpleName() 
+            +": "+ (token != null ? token.toString() : "")
+            +" hex="+locationCodes+" extra="+extra+" cost="+free;
 	}
 }

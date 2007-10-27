@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.7 2007/10/05 22:02:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.8 2007/10/27 15:26:35 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.LayTile;
-import rails.game.action.LayToken;
+import rails.game.action.LayBaseToken;
 import rails.ui.swing.*;
 import rails.util.LocalText;
 
@@ -56,10 +56,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	/** A list of all allowed token lays */
 	/* (may be redundant) */
-	protected List<LayToken> allowedTokenLays = null;
+	protected List<LayBaseToken> allowedTokenLays = null;
 
 	/** A Map linking tile allowed tiles to each map hex */
-	protected Map<MapHex, LayToken> allowedTokensPerHex = null;
+	protected Map<MapHex, LayBaseToken> allowedTokensPerHex = null;
 
 	public void setupHexes() {
 		setupHexesGUI();
@@ -187,23 +187,26 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 	}
 
-	public LayTile getTileAllowanceForHex(MapHex hex) {
+	public List<LayTile> getTileAllowancesForHex(MapHex hex) {
+		
+		List<LayTile> lays = new ArrayList<LayTile>();
 		if (allowedTilesPerHex.containsKey(hex)) {
-			return (LayTile) allowedTilesPerHex.get(hex);
-		} else if (allowedTilesPerHex.containsKey(null)) {
-			return (LayTile) allowedTilesPerHex.get(null);
-		} else {
-			return null;
+			lays.add (allowedTilesPerHex.get(hex));
 		}
+		if (allowedTilesPerHex.containsKey(null)) {
+			lays.add(allowedTilesPerHex.get(null));
+		}
+		
+		return lays;
 	}
 
-	public void setAllowedTokenLays(List<LayToken> allowedTokenLays) {
+	public void setAllowedTokenLays(List<LayBaseToken> allowedTokenLays) {
 
 		this.allowedTokenLays = allowedTokenLays;
-		allowedTokensPerHex = new HashMap<MapHex, LayToken>();
+		allowedTokensPerHex = new HashMap<MapHex, LayBaseToken>();
 
 		/* Build the per-hex allowances map */
-		for (LayToken allowance : this.allowedTokenLays) {
+		for (LayBaseToken allowance : this.allowedTokenLays) {
 			List<MapHex> locations = allowance.getLocations();
 			if (locations == null) {
 				/*
@@ -220,11 +223,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		}
 	}
 
-	public LayToken getTokenAllowanceForHex(MapHex hex) {
+	public LayBaseToken getTokenAllowanceForHex(MapHex hex) {
 		if (allowedTokensPerHex.containsKey(hex)) {
-			return (LayToken) allowedTokensPerHex.get(hex);
+			return (LayBaseToken) allowedTokensPerHex.get(hex);
 		} else if (allowedTokensPerHex.containsKey(null)) {
-			return (LayToken) allowedTokensPerHex.get(null);
+			return (LayBaseToken) allowedTokensPerHex.get(null);
 		} else {
 			return null;
 		}

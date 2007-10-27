@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.7 2007/10/07 20:14:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.8 2007/10/27 15:26:35 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -104,7 +104,6 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	public void setExercised()
 	{
 		exercised.set (true);
-		privateCompany.getPortfolio().updateSpecialProperties();
 	}
 
 	public boolean isExercised()

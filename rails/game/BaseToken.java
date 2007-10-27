@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BaseToken.java,v 1.1 2007/01/23 21:50:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BaseToken.java,v 1.2 2007/10/27 15:26:34 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
@@ -42,6 +42,10 @@ public class BaseToken extends Token {
     
     public PublicCompanyI getCompany () {
         return company;
+    }
+    
+    public String toString () {
+    	return getName();
     }
     
 }

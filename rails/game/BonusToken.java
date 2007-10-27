@@ -1,9 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.1 2007/09/20 19:49:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.2 2007/10/27 15:26:34 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
  */
 package rails.game;
+
+import rails.util.Tag;
+import rails.util.Util;
 
 /**
  * A BaseToken object represents a token that a operating public company can
@@ -30,12 +33,23 @@ public class BonusToken extends Token {
         setHolder (null);
     }
     
-    public void setName (String name) {
-    	this.name = name;
-    }
-    
-    public void setValue(int value) {
-    	this.value = value;
+    public void configureFromXML(Tag tag) throws ConfigurationException
+    {
+        Tag bonusTokenTag = tag.getChild("BonusToken");
+        if (bonusTokenTag == null)
+        {
+            throw new ConfigurationException("<BonusToken> tag missing");
+        }
+        value = bonusTokenTag.getAttributeAsInteger("value");
+        if (value <= 0) {
+            throw new ConfigurationException ("Missing or invalid value "+value);
+        }
+
+        name = bonusTokenTag.getAttributeAsString("name");
+        if (!Util.hasValue(name)) {
+            throw new ConfigurationException ("Bonus token must have a name");
+        }
+        description = name + " +" + Bank.format(value)+" bonus token";
     }
     
     public boolean isPlaced () {
@@ -43,14 +57,15 @@ public class BonusToken extends Token {
     }
     
     public String getName() {
-        if (description.equals("")) {
-        	description = name + " " + Bank.format(value)+" bonus token";
-        }
         return description; 
     }
     
     public int getValue () {
         return value;
+    }
+    
+    public String toString() {
+    	return description; 
     }
     
 }

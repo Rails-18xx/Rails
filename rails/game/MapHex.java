@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.8 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.9 2007/10/27 15:26:34 evos Exp $ */
 package rails.game;
 
 
@@ -450,8 +450,8 @@ public class MapHex extends ModelObject
 		}
 		
 		log.debug ("On hex "+name+" replacing tile "
-		        +currentTile.getName()+"/"+currentTileRotation
-		        +" by "+newTile.getName()+"/"+newTileOrientation);
+		        +currentTile.getId()+"/"+currentTileRotation
+		        +" by "+newTile.getId()+"/"+newTileOrientation);
 		
 		newTile.lay(this);
 
@@ -655,10 +655,10 @@ public class MapHex extends ModelObject
 	
 	/**
 	 * The string sent to the GUIHex as it is notified.
-	 * Format is tile/orientation. 
+	 * Format is tileId/orientation.
 	 * @TODO include tokens??
 	 */
 	public String getText() {
-	    return currentTile.getName() + "/" + currentTileRotation; 
+	    return currentTile.getId() + "/" + currentTileRotation; 
 	}
 }

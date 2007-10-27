@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.3 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.4 2007/10/27 15:26:34 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.LayTile;
-import rails.game.action.LayToken;
+import rails.game.action.LayBaseToken;
 import rails.ui.swing.hexmap.*;
 
 import java.awt.*;
@@ -62,7 +62,7 @@ public class MapPanel extends JPanel
 	    map.setAllowedTileLays (allowedTileLays);
 	}
 
-	public void setAllowedTokenLays (List<LayToken> allowedTokenLays) {
+	public void setAllowedTokenLays (List<LayBaseToken> allowedTokenLays) {
 	    map.setAllowedTokenLays (allowedTokenLays);
 	}
 
