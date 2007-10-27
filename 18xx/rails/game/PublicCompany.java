@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.13 2007/10/27 17:36:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.14 2007/10/27 22:43:42 evos Exp $ */
 package rails.game;
 
 
@@ -45,13 +45,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected Color fgColour;
 
 	/** Hexadecimal representation (RRGGBB) of the foreground colour. */
-	protected String fgHexColour;
+	protected String fgHexColour = "FFFFFF";
 
 	/** Background colour of the company tokens */
 	protected Color bgColour;
 
 	/** Hexadecimal representation (RRGGBB) of the background colour. */
-	protected String bgHexColour;
+	protected String bgHexColour = "000000";
 	
 	/** Home hex & city **/
 	protected MapHex homeHex = null;
@@ -208,6 +208,14 @@ public class PublicCompany extends Company implements PublicCompanyI
 		tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
 		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		
+		PublicCompanyI dummyCompany = (PublicCompanyI)type.getDummyCompany();
+		if (dummyCompany != null) {
+			fgHexColour = dummyCompany.getHexFgColour(); 
+			bgHexColour = dummyCompany.getHexBgColour();
+		}
+		
+
 }
 
 	/**
@@ -259,10 +267,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
 		/* Configure public company features */
-		fgHexColour = tag.getAttributeAsString("fgColour", "FFFFFF");
+		fgHexColour = tag.getAttributeAsString("fgColour", fgHexColour);
 		fgColour = new Color(Integer.parseInt(fgHexColour, 16));
 
-		bgHexColour = tag.getAttributeAsString("bgColour", "000000");
+		bgHexColour = tag.getAttributeAsString("bgColour", bgHexColour);
 		bgColour = new Color(Integer.parseInt(bgHexColour, 16));
 
 		floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
