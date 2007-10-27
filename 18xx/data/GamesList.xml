@@ -40,6 +40,15 @@ Variant selection effects on SR and OR have not been implemented yet.
 		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
 		<Players minimum="3" maximum="5"/>
 	</Game>
+	<Game name="18EU">
+		<Note>Hardly playable</Note>
+		<Description>Just the map, companies and tiles are there.
+None of the specific 18EU game mechanisms have been implemented yet.
+The start round is provisionally configured as the 1835 standard initial round,
+with all minors on one row (i.e., all available from the start)
+</Description>
+		<Players minimum="2" maximum="6"/>
+	</Game>
 	<Game name="18Kaas">
 		<Note>Fully playable</Note>
 		<Description>Not extensively tested</Description>
