@@ -2,6 +2,7 @@
 	<!-- Preprinted tiles-->
 	<Tile id="0"><!-- Empty space -->
 		<Upgrade id="7,8,9"/>
+		<!--Upgrade id="445" hex="G2,M2,N5,O4,P5"/-->
 	</Tile>
 	<Tile id="-1"><!-- 1 town -->
 		<Upgrade id="3,4,58"/>

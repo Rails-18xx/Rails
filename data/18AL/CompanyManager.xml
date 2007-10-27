@@ -17,8 +17,10 @@
 			<SpecialProperty condition="ifOwnedByCompany" 
 				when="anyTimeDuringORTurn" 
 				class="rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="rails.game.BonusToken" value="10" 
-					location="E6,G4,G6,H3,H5" connected="yes" extra="yes"/>
+				<SpecialTokenLay class="rails.game.BonusToken" 
+						location="E6,G4,G6,H3,H5" connected="yes" extra="yes">
+					<BonusToken name="Coalfield" value="10"/>
+				</SpecialTokenLay>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -26,7 +28,7 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" 
 				class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay tile="445" location="G2,M2,N5,O4,P5" 
+				<SpecialTileLay tile="445" name="Lumber Terminal" location="G2,M2,N5,O4,P5" 
 					connected="no" free="yes" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
