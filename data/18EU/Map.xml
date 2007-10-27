@@ -1,7 +1,7 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
 	<!-- Hex name="" tile="" orientation="" revenue="" impassable="" label="" cost="" value="" port="yes/no" -->
-	<Hex name="A4" port="yes" value="10" tile="-901" />
-	<Hex name="B7" value="30,50" tile="-939" /><!--Hamburg -->
+	<Hex name="A4" port="yes" value="10" tile="-901" orientation="1"/>
+	<Hex name="B7" value="30,50" tile="-939" orientation="1"/><!--Hamburg -->
 	<Hex name="C4" label="Y" tile="-10" /><!-- Amsterdam -->
 	<Hex name="C6" tile="-1" /><!--Bremen -->
 	<Hex name="C8" tile="0" />
@@ -14,10 +14,10 @@
 	<Hex name="E4" tile="-1" /><!-- Utrecht -->
 	<Hex name="E6" tile="0" />
 	<Hex name="E8" tile="0" />
-	<Hex name="E10" value="30" label="B" tile="-3005" /><!-- Berlin -->
+	<Hex name="E10" value="30" label="B" tile="-3005" orientation="1"/><!-- Berlin -->
 	<Hex name="E12" tile="-1" /><!-- Thorn -->
-	<Hex name="E14" value="20,30" tile="-901" /><!-- Warsaw -->
-	<Hex name="F1" value="40,70" tile="-902" /><!-- London -->
+	<Hex name="E14" value="20,30" tile="-901" orientation="2"/><!-- Warsaw -->
+	<Hex name="F1" value="40,70" tile="-902" orientation="1"/><!-- London -->
 	<Hex name="F3" tile="-1" /><!-- Antwerp -->
 	<Hex name="F5" tile="-10" /><!-- Dortmund -->
 	<Hex name="F7" tile="-1" /><!-- Hannover -->
@@ -87,7 +87,7 @@
 	<Hex name="P5" cost="120" label="M" tile="0" /><!-- Simplon -->
 	<Hex name="P7" cost="60" tile="0" />
 	<Hex name="P9" cost="120" label="M" tile="0" /><!-- Arlberg -->
-	<Hex name="P11" cost="60" label="M" tile="8" /><!-- Semmering -->
+	<Hex name="P11" cost="60" label="M" tile="8" orientation="1"/><!-- Semmering -->
 	<Hex name="P13" label="Y" tile="0" /><!-- Budapest -->
 	<Hex name="Q2" label="Y" tile="-10" /><!-- Lyon -->
 	<Hex name="Q4" cost="120" label="M" tile="0" /><!-- Lotschberg -->
@@ -95,12 +95,12 @@
 	<Hex name="Q8" cost="120" label="M" tile="0" /><!-- Brenner -->
 	<Hex name="Q10" tile="0" />
 	<Hex name="Q12" tile="0" />
-	<Hex name="Q14" value="30,50" tile="-901" /><!-- Bucharest -->
+	<Hex name="Q14" value="30,50" tile="-901" orientation="3"/><!-- Bucharest -->
 	<Hex name="R1" tile="0" />
 	<Hex name="R3" cost="120" label="M" tile="0" /><!-- Frejus -->
 	<Hex name="R5" label="Y" tile="-10" /><!-- Milan -->
 	<Hex name="R7" cost="120" label="M" tile="0" /><!-- Albula -->
-	<Hex name="R9" tile="-10" /><!-- Trieste -->
+	<Hex name="R9" tile="-10" orientation="4"/><!-- Trieste -->
 	<Hex name="R11" tile="0" />
 	<Hex name="S2" tile="-10" /><!-- Marseille -->
 	<Hex name="S4" tile="-10" /><!-- Turin -->
@@ -111,11 +111,11 @@
 	<Hex name="T3" cost="60" tile="-1" /><!-- Nice -->
 	<Hex name="T5" tile="-10" /><!-- Genoa -->
 	<Hex name="T7" tile="-1" /><!-- Bologna -->
-	<Hex name="T9" port="yes" value="10" tile="-901" />
-	<Hex name="U2" port="yes" value="10" tile="-901" />
+	<Hex name="T9" port="yes" value="10" tile="-901" orientation="4"/>
+	<Hex name="U2" port="yes" value="10" tile="-901" orientation="4"/>
 	<Hex name="U4" tile="0" />
 	<Hex name="U6" tile="-1" /><!-- Florence -->
 	<Hex name="U8" tile="0" />
-	<Hex name="V5" port="yes" value="10" tile="-901" />
-	<Hex name="V7" label="V" value="30,50" tile="-903" /><!-- Rome -->
+	<Hex name="V5" port="yes" value="10" tile="-901" orientation="4"/>
+	<Hex name="V7" label="V" value="30,50" tile="-903" orientation="4"/><!-- Rome -->
 </Map>
