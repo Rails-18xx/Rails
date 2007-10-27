@@ -18712,10 +18712,6 @@
 					<position>tp3CornerA</position>
 				</revenue>
 			</junction>
-			<junction>
-				<junType>jtNone</junType>
-				<position>tpCenter</position>
-			</junction>
 		</junctions>
 		<connections>
 			<connection>

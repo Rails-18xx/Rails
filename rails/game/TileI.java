@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.4 2007/10/27 15:26:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.5 2007/10/27 17:36:04 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -19,6 +19,8 @@ public interface TileI
 	 * @return Returns the id.
 	 */
 	public int getId();
+	public int getExternalId();
+	public int getPictureId();
 
 	/**
 	 * @return Returns the name.

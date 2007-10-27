@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.8 2007/10/27 15:26:35 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.9 2007/10/27 17:36:08 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -217,7 +217,7 @@ public class LayTile extends PossibleORAction {
 	            }
 	        }
         } else {
-        	b.append(" tile=").append(laidTile.getName())
+        	b.append(" tile=").append(laidTile.getId())
         	 .append(" hex=").append(chosenHex.getName())
         	 .append(" orientation=").append(orientation);
         }
