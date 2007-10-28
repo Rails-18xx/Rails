@@ -52,7 +52,7 @@
   <Company name="11" longname="S&#252;dbahn" type="Minor" basePrice="100">
     <Home hex="N11"/>
   </Company>
-  <Company name="12" longname="HIJSM" type="Minor" basePrice="100">
+  <Company name="12" longname="HSM" type="Minor" basePrice="100">
     <Home hex="C4"/>
   </Company>
   <Company name="13" longname="Ludwigsbahn" type="Minor" basePrice="100">
