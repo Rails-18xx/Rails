@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.3 2007/10/05 22:02:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.4 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
@@ -39,7 +39,7 @@ public class NSHexMap extends HexMap
 				mh = hexArray[i][j];
 				if (mh != null)
 				{
-					GUIHex hex = new GUIHex((int) Math.round(cx + 3 * i * scale),
+					GUIHex hex = new GUIHex(this, (int) Math.round(cx + 3 * i * scale),
 							(int) Math.round(cy + (2 * j + (i & 1))
 									* GUIHex.SQRT3 * scale),
 							scale,

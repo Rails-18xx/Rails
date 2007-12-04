@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.7 2007/10/05 22:02:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.8 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -37,6 +38,7 @@ public class GUIHex implements ViewObject
 	protected static final Color highlightColor = Color.red;
 	protected Point center;
 
+    protected HexMap hexMap; // Containing this hex
 	protected String hexName;
 	protected int currentTileId;
 	protected int originalTileId;
@@ -46,6 +48,8 @@ public class GUIHex implements ViewObject
 
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
+	
+	protected List<TokenI> offStationTokens;
 
 	protected GUIToken provisionalGUIToken = null;
 	
@@ -77,8 +81,10 @@ public class GUIHex implements ViewObject
 
 	protected static Logger log = Logger.getLogger(GUIHex.class.getPackage().getName());
 
-	public GUIHex(double cx, double cy, int scale, double xCoord, double yCoord)
+	public GUIHex(HexMap hexMap, double cx, double cy, int scale, double xCoord, double yCoord)
 	{
+        this.hexMap = hexMap; 
+        
 		if (MapManager.getTileOrientation() == MapHex.EW)
 		{
 			len = scale;
@@ -295,12 +301,13 @@ public class GUIHex implements ViewObject
 		}
 
 		paintOverlay(g2);
-		paintToken(g2);
+		paintStationTokens(g2);
+		paintOffStationTokens(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
 		if (getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
 		{
-			g2.drawString("$" + getHexModel().getTileCost(),
+			g2.drawString(Bank.format(getHexModel().getTileCost()),
 					rectBound.x + (rectBound.width - fontMetrics.stringWidth(
 								Integer.toString(getHexModel().getTileCost())))	* 3 / 5,
 					rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
@@ -367,7 +374,7 @@ public class GUIHex implements ViewObject
 		}
 	}
 
-	private void paintToken(Graphics2D g2)
+	private void paintStationTokens(Graphics2D g2)
 	{
 		if (getHexModel().getStations().size() > 1)
 		{
@@ -376,13 +383,13 @@ public class GUIHex implements ViewObject
 		}
 
 		int numTokens = getHexModel().getTokens(0).size();
-		ArrayList tokens = (ArrayList) getHexModel().getTokens(0);
+		List<TokenI> tokens = getHexModel().getTokens(0);
 
 		for (int i = 0; i < tokens.size(); i++)
 		{
-			PublicCompany co = (PublicCompany) ((BaseToken)tokens.get(i)).getCompany();
+			PublicCompanyI co = (PublicCompanyI) ((BaseToken)tokens.get(i)).getCompany();
 			Point origin = getTokenOrigin(numTokens, i, 1, 0);
-			drawToken(g2, co, origin);
+			drawBaseToken(g2, co, origin);
 		}
 	}
 
@@ -392,7 +399,7 @@ public class GUIHex implements ViewObject
 		int numTokens;
 		ArrayList tokens;
 		Point origin;
-		PublicCompany co;
+		PublicCompanyI co;
 
 		for (int i = 0; i < numStations; i++)
 		{
@@ -402,19 +409,59 @@ public class GUIHex implements ViewObject
 			for (int j = 0; j < tokens.size(); j++)
 			{
 				origin = getTokenOrigin(numTokens, j, numStations, i);
-				co = (PublicCompany) ((BaseToken)tokens.get(j)).getCompany();
-				drawToken(g2, co, origin);
+				co = ((BaseToken)tokens.get(j)).getCompany();
+				drawBaseToken(g2, co, origin);
 			}
 		}
 	}
 
-	private void drawToken(Graphics2D g2, PublicCompany co, Point origin)
+	private static int[] offStationTokenX = new int[] {-20, 0}; // Unclear why x=-10,y=-10 puts it at the center.
+	private static int[] offStationTokenY = new int[] {-20, 0};
+	
+	private void paintOffStationTokens(Graphics2D g2)
+	{
+		List<TokenI> tokens = getHexModel().getTokens();
+		if (tokens == null) return;
+		
+		int i = 0;
+		for (TokenI token : tokens) {
+			
+			Point origin = new Point (center.x + offStationTokenX[i], center.y + offStationTokenY[i]);
+			if (token instanceof BaseToken) {
+				
+				PublicCompanyI co = (PublicCompanyI) ((BaseToken)token).getCompany();
+				drawBaseToken (g2, co, origin);
+				
+			} else if (token instanceof BonusToken) {
+				
+				drawBonusToken(g2, (BonusToken) token, origin);
+			}
+			if (++i > 1) break;
+		}
+	}
+
+	private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point origin)
 	{
 		Dimension size = new Dimension(40, 40);
 
 		GUIToken token = new GUIToken(co.getFgColour(),
 				co.getBgColour(),
 				co.getName(),
+				origin.x,
+				origin.y,
+				15);
+		token.setBounds(origin.x, origin.y, size.width, size.height);
+
+		token.drawToken(g2);
+	}
+
+	private void drawBonusToken(Graphics2D g2, BonusToken bt, Point origin)
+	{
+		Dimension size = new Dimension(40, 40);
+
+		GUIToken token = new GUIToken(Color.BLACK,
+				Color.WHITE,
+				"+"+bt.getValue(),
 				origin.x,
 				origin.y,
 				15);
@@ -714,7 +761,7 @@ public class GUIHex implements ViewObject
     public void fixToken () {
         setSelected (false);
     }
-
+    
 	/** Needed to satisfy the ViewObject interface. Currently not used. */
 	public void deRegister()
 	{
@@ -740,12 +787,12 @@ public class GUIHex implements ViewObject
 	        currentGUITile.setRotation(currentTileOrientation);
 	        currentTile = currentGUITile.getTile();
 	        
-			GameUIManager.getMapPanel().getMap().repaint(getBounds());
+			hexMap.repaint(getBounds());
 			
 	        provisionalGUITile = null;
 
 	        log.debug ("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
-			GameUIManager.orWindow.updateStatus();
+			GameUIManager.instance.orWindow.updateStatus();
 	    }
 	}
 

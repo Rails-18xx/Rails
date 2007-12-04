@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.4 2007/10/27 15:26:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.5 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.action.LayTile;
 import rails.game.action.LayBaseToken;
+import rails.game.action.LayToken;
 import rails.ui.swing.hexmap.*;
 
 import java.awt.*;
@@ -25,11 +26,14 @@ public class MapPanel extends JPanel
 	private MapManager mmgr;
 	private HexMap map;
 	private JScrollPane scrollPane;
+	private ORUIManager orUIManager;
 
 	protected static Logger log = Logger.getLogger(MapPanel.class.getPackage().getName());
 
-	public MapPanel()
+	public MapPanel(ORUIManager orUIManager)
 	{
+		this.orUIManager = orUIManager;
+		
 		Scale.set(15);
 		setLayout(new BorderLayout());
 
@@ -38,6 +42,7 @@ public class MapPanel extends JPanel
 		{
 			map = (HexMap) Class.forName(mmgr.getMapUIClassName())
 					.newInstance();
+			map.setORUIManager (orUIManager);
 		}
 		catch (Exception e)
 		{
@@ -62,7 +67,7 @@ public class MapPanel extends JPanel
 	    map.setAllowedTileLays (allowedTileLays);
 	}
 
-	public void setAllowedTokenLays (List<LayBaseToken> allowedTokenLays) {
+	public <T extends LayToken>void setAllowedTokenLays (List<T> allowedTokenLays) {
 	    map.setAllowedTokenLays (allowedTokenLays);
 	}
 

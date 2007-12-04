@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.9 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.10 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 
@@ -9,6 +9,7 @@ import org.w3c.dom.*;
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
 import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialTokenLay;
 import rails.util.LocalText;
 import rails.util.Tag;
 import rails.util.Util;
@@ -84,6 +85,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					sp.setCompany(this);
 					specialProperties.add(sp);
 					sp.configureFromXML(spTag);
+					
+					if (sp instanceof SpecialTokenLay 
+							&& ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
+						GameManager.setBonusTokensExist(true);
+					}
 
 				}
 			}

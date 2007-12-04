@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.3 2007/10/05 22:02:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.4 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
 
 import rails.game.*;
+import rails.ui.swing.ORUIManager;
 
 
 /**
@@ -36,7 +37,7 @@ public class EWHexMap extends HexMap
 				mh = hexArray[i][j];
 				if (mh != null)
 				{
-					GUIHex hex = new GUIHex((cx + scale
+					GUIHex hex = new GUIHex(this, (cx + scale
 							* ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
 							(cy + j * 1.5 * scale),
 							scale,

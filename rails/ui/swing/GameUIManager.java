@@ -28,11 +28,13 @@ import rails.util.Util;
  */
 public class GameUIManager
 {
+	public static GameUIManager instance = null;
+	
    public StockChart stockChart;
    public StatusWindow statusWindow;
    public ReportWindow reportWindow;
-   public static ORWindow orWindow;
-   public static MapPanel mapPanel;
+   public ORUIManager orUIManager;  
+   public /*static*/ ORWindow orWindow;  //TEMPORARY
    private StartRoundWindow startRoundWindow;
    public GameSetupWindow gameSetupWindow;
    public static ImageLoader imageLoader;
@@ -59,6 +61,8 @@ public class GameUIManager
 
     public GameUIManager()
    {
+    	instance = this;
+    	
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
             saveDirectory = DEFAULT_SAVE_DIRECTORY;
@@ -79,16 +83,15 @@ public class GameUIManager
    
    public void gameUIInit()
    {
-       gameManager = GameManager.getInstance();
+      gameManager = GameManager.getInstance();
 	  imageLoader = new ImageLoader();
       stockChart = new StockChart();
       reportWindow = new ReportWindow();
       orWindow = new ORWindow(this);
-      mapPanel = orWindow.getMapPanel();
+      orUIManager = orWindow.getORUIManager();
+      //mapPanel = orWindow.getMapPanel();
       statusWindow = new StatusWindow(this);
       
-      orWindow.setVisible(false);
-
       updateUI();
 
    }
@@ -106,7 +109,7 @@ public class GameUIManager
     }
     boolean result = gameManager.process (action);
     log.debug ("==Result from server: "+result);
-    activeWindow.displayMessage();
+    activeWindow.displayServerMessage();
        
        ReportWindow.addLog();
        
@@ -157,9 +160,8 @@ public class GameUIManager
                }
            } else if (previousRound instanceof OperatingRound) {
                log.debug("Finishing Operating Round UI");
-               orWindow.finish();
-               orWindow.setVisible(false);
-           }
+               orUIManager.finish();
+          }
            
            // Start the new round UI aspects
            if (currentRound instanceof StartRound) {
@@ -182,7 +184,7 @@ public class GameUIManager
                
                log.debug("Entering Operating Round UI");
                stockChart.setVisible(false);
-               orWindow.activate();
+               orUIManager.initOR((OperatingRound)currentRound);
            }
        }
  
@@ -209,9 +211,9 @@ public class GameUIManager
       }
        else if (currentRound instanceof OperatingRound)
        {
-           activeWindow = orWindow;
+           activeWindow = orUIManager.getORWindow();
 
-           orWindow.updateStatus();
+           orUIManager.updateStatus();
        }
 
        previousRound = currentRound;
@@ -268,7 +270,7 @@ public class GameUIManager
 
 		   gameUIInit();
 		   processOnServer (null);
-		   updateUI();
+		   //updateUI();
 	       statusWindow.setGameActions();
        }
        
@@ -282,11 +284,12 @@ public class GameUIManager
    }
    
 
-   
+   /*
    public static MapPanel getMapPanel()
    {
-	   return mapPanel;
+	   return instance.mapPanel;
    }
+   */
    
    public static ImageLoader getImageLoader()
    {

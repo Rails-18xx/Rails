@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.2 2007/10/27 15:26:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.3 2007/12/04 20:25:20 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
@@ -57,7 +57,7 @@ public class BonusToken extends Token {
     }
     
     public String getName() {
-        return description; 
+        return name; 
     }
     
     public int getValue () {

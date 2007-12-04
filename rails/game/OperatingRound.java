@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.20 2007/10/27 17:36:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.21 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 
@@ -84,6 +84,14 @@ public class OperatingRound extends Round implements Observer
 			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_FINAL };
     // side steps
     public static final int STEP_DISCARD_TRAINS = -2;
+    public static final String[] stepNames = new String[] {
+        "LayTrack",
+        "LayToken",
+        "EnterRevenue",
+        "Payout",
+        "BuyTrain",
+        "Final"
+    };
     
 	
 	/**
@@ -253,6 +261,10 @@ public class OperatingRound extends Round implements Observer
                 
                 result = layBaseToken ((LayBaseToken) selectedAction);
            
+        } else if (selectedAction instanceof LayBonusToken) {
+            
+            result = layBonusToken ((LayBonusToken) selectedAction);
+       
         } else if (selectedAction instanceof SetDividend) {
             
             result = setRevenueAndDividend ((SetDividend) selectedAction);
@@ -558,11 +570,13 @@ public class OperatingRound extends Round implements Observer
             }
             
             if (action != null) {
-                MapHex location = action.getLocation();
-                if (location != null && location != hex) {
+                List<MapHex> locations = action.getLocations();
+                if (locations != null && locations.size() > 0
+                		&& !locations.contains(hex)
+                		&& !locations.contains(null)) {
                     errMsg = LocalText.getText("TokenLayingHexMismatch", new String[] {
                             hex.getName(),
-                            location.getName()});
+                            action.getLocationNameString()});
                     break;
                 }
                 stl = action.getSpecialProperty();
@@ -641,6 +655,116 @@ public class OperatingRound extends Round implements Observer
             } else {
                 //setPossibleActions("layBaseToken");
             }
+    
+        }
+
+        return true;
+    }
+
+    public boolean layBonusToken(LayBonusToken action)
+    {
+
+        String errMsg = null;
+        int cost = 0;
+        SpecialTokenLay stl = null;
+        boolean extra = false;
+        
+        MapHex hex = action.getChosenHex();
+        BonusToken token = action.getToken();
+
+        // Dummy loop to enable a quick jump out.
+        while (true)
+        {
+
+            // Checks
+            MapHex location = action.getChosenHex();
+            if (location != hex) {
+                errMsg = LocalText.getText("TokenLayingHexMismatch", new String[] {
+                        hex.getName(),
+                        location.getName()});
+                break;
+            }
+            stl = action.getSpecialProperty();
+            if (stl != null) extra = stl.isExtra();
+
+            cost = 0; // Let's assume for now that bonus tokens are always free
+            if (stl != null && stl.isFree()) cost = 0;
+
+            // Does the company have the money?
+            if (cost > operatingCompany.getCash())
+            {
+                errMsg = LocalText.getText("NotEnoughMoney", operatingCompany.getName());
+                break;
+            }
+            break;
+        }
+        if (errMsg != null)
+        {
+            DisplayBuffer.add(LocalText.getText("CannotLayBonusTokenOn", new String[] {
+                    token.getName(),
+                    hex.getName(),
+                    Bank.format(cost),
+                    errMsg}));
+            return false;
+        }
+
+        /* End of validation, start of execution */
+        MoveSet.start(true);
+        
+        if (hex.layBonusToken(token)) {
+            /* TODO: the false return value must be impossible. */
+
+            operatingCompany.layBonusToken (hex, cost, token);
+    
+            // Assume cost = 0
+            //if (cost > 0)
+            //{
+                //new CashMove (operatingCompany, null, cost);
+                //ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
+                //		token.getName(),
+                //        hex.getName(),
+                //        Bank.format(cost)}));
+            //}
+            // else
+            //{
+                ReportBuffer.add(LocalText.getText("LaysBonusTokenOn", new String[] {
+                		operatingCompany.getName(),
+                		token.getName(),
+                		Bank.format(token.getValue()),
+                        hex.getName()}));
+            //}
+    
+            // Was a special property used?
+            if (stl != null)
+            {
+                stl.setExercised();
+                currentSpecialTokenLays.remove(action);
+                log.debug ("This was a special token lay, "+
+                        (extra?"":" not")+" extra");
+                
+            }
+            
+            // Assume that bonus token lays never change the OR step.
+            /*
+            if (!extra)
+            {
+                currentNormalTokenLays.clear();
+                log.debug ("This was a normal token lay");
+            }
+            if (currentNormalTokenLays.isEmpty()) {
+                log.debug ("No more normal token lays are allowed");
+            } else {
+                log.debug ("A normal token lay is still allowed");
+            }
+            setSpecialTokenLays();
+            log.debug ("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
+            if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
+            {
+                nextStep();
+            } else {
+                //setPossibleActions("layBaseToken");
+            }
+            */
     
         }
 
@@ -1006,7 +1130,7 @@ public class OperatingRound extends Round implements Observer
         for (SpecialTokenLay stl : getSpecialProperties (SpecialTokenLay.class))
         {
             if (stl.getTokenClass().equals(BonusToken.class)) {
-                possibleActions.add(new LayBonusToken (stl));
+                possibleActions.add(new LayBonusToken (stl, (BonusToken) stl.getToken()));
             }
         }
     }

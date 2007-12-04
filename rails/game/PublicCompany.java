@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.14 2007/10/27 22:43:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.15 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 
@@ -80,6 +80,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Has the company started? */
 	protected BooleanState hasStarted = null;
+	
+	/** Total bonus tokens amount */
+	protected MoneyModel bonusTokensValue = null;
 
 	/** Most recent revenue earned. */
 	protected MoneyModel lastRevenue = null;
@@ -208,6 +211,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 		tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
 		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		bonusTokensValue = new MoneyModel (name+"_bonusValue");
+		bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO + MoneyModel.ADD_PLUS);
 		
 		PublicCompanyI dummyCompany = (PublicCompanyI)type.getDummyCompany();
 		if (dummyCompany != null) {
@@ -1286,6 +1291,17 @@ public class PublicCompany extends Company implements PublicCompanyI
 	
 	public BaseTokensModel getBaseTokensModel() {
 	    return baseTokensModel;
+	}
+	
+	public void layBonusToken (MapHex hex, int cost, BonusToken token) {
+		// TODO for now we only add the bonus value.
+		// We must be prepared though, that tokens may be removed later.
+		bonusTokensValue.add(token.getValue());
+		
+	}
+	
+	public MoneyModel getBonusTokensModel () {
+		return bonusTokensValue;
 	}
 	
 	public boolean layHomeBaseTokens () {

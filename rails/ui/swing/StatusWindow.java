@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.14 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -179,7 +179,7 @@ implements ActionListener, KeyListener, ActionPerformer
         
 		menuBar.add (moderatorMenu);
         
-        specialMenu.setBackground(Color.ORANGE); // Normally not seen because menu is not opaque
+        specialMenu.setBackground(Color.YELLOW); // Normally not seen because menu is not opaque
         menuBar.add (specialMenu);
 
 		setJMenuBar(menuBar);
@@ -468,7 +468,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		}
 		else if (command.equals(MAP_CMD))
 		{
-			GameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+			gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (executedAction == null) {
             ;
 		} else if (executedAction instanceof GameAction) {
@@ -502,7 +502,7 @@ implements ActionListener, KeyListener, ActionPerformer
         return true;
     }
     
-    public void displayMessage() {
+    public void displayServerMessage() {
     	String[] message = DisplayBuffer.get();
     	if (message != null) {
     		JOptionPane.showMessageDialog(this, message);
@@ -594,7 +594,7 @@ implements ActionListener, KeyListener, ActionPerformer
 		/* Disable all buttons */
 		passButton.setEnabled(true);
 		passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
-		GameUIManager.orWindow.finish();
+		gameUIManager.orWindow.finish();
 
 		toFront();
 

@@ -1,14 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/MoneyModel.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/MoneyModel.java,v 1.6 2007/12/04 20:25:20 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Bank;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
+import rails.util.Util;
 
 public class MoneyModel extends IntegerState
 {
     public static final int SUPPRESS_ZERO = 1;
     public static final int SUPPRESS_INITIAL_ZERO = 2;
+    public static final int ADD_PLUS = 4;
     private BooleanState initialised;
 
 	public MoneyModel(String name)
@@ -26,7 +28,7 @@ public class MoneyModel extends IntegerState
 		boolean forced = false;
 		
     	/* Set initialisation state only if it matters */ 
-	    if (option == SUPPRESS_INITIAL_ZERO 
+	    if (Util.bitSet(option, SUPPRESS_INITIAL_ZERO) 
 	    		&& initialised == null) {
 		    initialised = new BooleanState (name+"_initialised", false);
 	    }
@@ -49,11 +51,13 @@ public class MoneyModel extends IntegerState
 	{
 	    int amount = intValue();
 	    if (amount == 0 
-            && (option == SUPPRESS_ZERO
-            	|| option == SUPPRESS_INITIAL_ZERO
+            && (Util.bitSet (option, SUPPRESS_ZERO)
+            	|| Util.bitSet (option, SUPPRESS_INITIAL_ZERO)
             		&& (initialised == null 
             			|| !initialised.booleanValue()))) {
 	        return "";
+	    } else if (Util.bitSet(option, ADD_PLUS)){
+	        return "+" + Bank.format(amount);
 	    } else {
 	        return Bank.format(amount);
 	    }

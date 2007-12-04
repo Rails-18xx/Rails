@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.1 2007/10/27 15:26:35 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.2 2007/12/04 20:25:20 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -10,8 +10,10 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.BonusToken;
 import rails.game.MapHex;
 import rails.game.MapManager;
+import rails.game.TokenI;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.util.Util;
@@ -19,54 +21,21 @@ import rails.util.Util;
 /**
  * @author Erik Vos
  */
-public class LayBonusToken extends PossibleORAction {
+public class LayBonusToken extends LayToken {
+	
+	BonusToken token = null;
     
     /*--- Preconditions ---*/
     
-    /** Where to lay a token (null means anywhere) */
-    transient protected List<MapHex> locations = null;
-    protected String locationNames;
-    
-    /** Special property that will be fulfilled by this token lay.*/
-    transient protected SpecialTokenLay specialProperty = null;
-    protected int specialPropertyId; 
-    
     /*--- Postconditions ---*/
     
-    /** The map hex on which the token is laid */
-    transient protected MapHex chosenHex = null;
-    protected String chosenHexName;
-    
-     public LayBonusToken (SpecialTokenLay specialProperty) {
-        this.locations = specialProperty.getLocations();
-        if (locations != null) buildLocationNameString();
-        this.specialProperty = specialProperty;
-        this.specialPropertyId = specialProperty.getUniqueId();
-    }
-
-    /**
-     * @return Returns the chosenHex.
-     */
-    public MapHex getChosenHex() {
-        return chosenHex;
-    }
-    /**
-     * @param chosenHex The chosenHex to set.
-     */
-    public void setChosenHex(MapHex chosenHex) {
-        this.chosenHex = chosenHex;
-        this.chosenHexName = chosenHex.getName();
+    public LayBonusToken (SpecialTokenLay specialProperty, BonusToken token) {
+        super (specialProperty);
+        this.token = token;
     }
     
-    /**
-     * @return Returns the specialProperty.
-     */
-    public SpecialTokenLay getSpecialProperty() {
-        return specialProperty;
-    }
-
-    public List<MapHex> getLocations() {
-        return locations;
+    public BonusToken getToken() {
+    	return token;
     }
     
     public boolean equals (PossibleAction action) {
@@ -111,13 +80,5 @@ public class LayBonusToken extends PossibleORAction {
 		}
 	}
     
-    private void buildLocationNameString () {
-        StringBuffer b = new StringBuffer();
-        for (MapHex hex : locations) {
-            if (b.length() > 0) b.append(",");
-            b.append(hex.getName());
-        }
-        locationNames = b.toString();
-    }
     
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.10 2007/10/27 17:36:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.11 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 
@@ -39,7 +39,7 @@ import rails.util.Tag;
  * clockwise.
  */
 public class MapHex extends ModelObject 
-	implements ConfigurableComponentI, StationHolderI
+	implements ConfigurableComponentI, StationHolderI, TokenHolderI
 {
 
 	public static final int EW = 0;
@@ -90,6 +90,9 @@ public class MapHex extends ModelObject
 	
 	protected Map<PublicCompanyI, Station> homes;
 	protected List<PublicCompanyI> destinations;
+	
+	/** Tokens that are not bound to a Station (City), such as Bonus tokens */
+	protected List<TokenI> offStationTokens;
 
 	protected static Logger log = Logger.getLogger(MapHex.class.getPackage().getName());
 
@@ -494,6 +497,44 @@ public class MapHex extends ModelObject
 	    }
 	}
 	
+	public boolean layBonusToken(BonusToken token)
+	{
+	    if (token == null) {
+	        log.error ("No token specified");
+	        return false;
+	    } else {
+	        new TokenMove (token, token.getHolder(), this);
+	        return true;
+	    }
+	}
+	
+	public boolean addToken (TokenI token) {
+	    
+		if (offStationTokens == null) offStationTokens = new ArrayList<TokenI>();
+	    if (offStationTokens.contains(token)) {
+	        return false;
+	    } else {
+		    token.setHolder(this);
+	        return offStationTokens.add(token);
+	    }
+	}
+
+	public List<TokenI> getTokens()
+	{
+		return offStationTokens;
+	}
+
+	public boolean hasTokens()
+	{
+		return offStationTokens.size() > 0;
+	}
+	
+	public boolean removeToken (TokenI token) {
+	    
+	    return offStationTokens.remove(token);
+	}
+
+	
 	public boolean hasTokenSlotsLeft (int station) {
 	    if (station < stations.size()) {
 		    return hasTokenSlotsLeft ((Station)stations.get(station));
@@ -506,6 +547,13 @@ public class MapHex extends ModelObject
 	public boolean hasTokenSlotsLeft (Station station) {
 	    return station != null && station.hasTokenSlotsLeft();
 	}
+    
+    public boolean hasTokenSlotsLeft () {
+        for (Station station : stations) {
+            if (hasTokenSlotsLeft (station)) return true;
+        }
+        return false;
+    }
 	
 	/** Check if the tile already has a token of a company in any station */
 	public boolean hasTokenOfCompany (PublicCompanyI company) {
@@ -537,6 +585,7 @@ public class MapHex extends ModelObject
 	 * 
 	 * To get ArrayList of tokens from stations, use explicit station number
 	 */
+	/*
 	public List getTokens()
 	{
 		if (stations.size() > 1)
@@ -551,6 +600,7 @@ public class MapHex extends ModelObject
 		else
 			return getTokens(0);
 	}
+	*/
 
 	public List<TokenI> getTokens(int stationNumber)
 	{
