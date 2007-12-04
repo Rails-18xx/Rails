@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.14 2007/10/27 15:26:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.15 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.special.SpecialTokenLay;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.*;
@@ -31,23 +32,26 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private static final int WIDE_BOTTOM = 8;
     
-    private static final String BUY_PRIVATE_CMD = "BuyPrivate";
-    private static final String BUY_TRAIN_CMD = "BuyTrain";
+    public static final String BUY_PRIVATE_CMD = "BuyPrivate";
+    public static final String BUY_TRAIN_CMD = "BuyTrain";
     private static final String WITHHOLD_CMD = "Withhold";
     private static final String SPLIT_CMD = "Split";
-    private static final String PAYOUT_CMD = "Payout";
-    private static final String SET_REVENUE_CMD = "SetRevenue";
+    public static final String PAYOUT_CMD = "Payout";
+    public static final String SET_REVENUE_CMD = "SetRevenue";
     private static final String LAY_TILE_CMD = "LayTile";
-    //private static final String LAY_TOKEN_CMD = "LayToken";
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
     
     ORWindow orWindow;
+    ORUIManager orUIManager;
 
     private JPanel statusPanel;
 
     private JPanel buttonPanel;
+
+    private JMenuBar menuBar;
+	private JMenu specialMenu;
 
     private GridBagLayout gb;
 
@@ -73,6 +77,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private Field tokens[];
     private Field tokenCost[];
     private Field tokensLeft[];
+    private Field tokenBonus[];
     private int tokensXOffset, tokensYOffset;
     private Field revenue[];
     private Spinner revenueSelect[];
@@ -83,8 +88,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private Field newTrainCost[];
 
     private boolean privatesCanBeBought = false;
-
-    private boolean privatesCanBeBoughtNow = false;
+    private boolean bonusTokensExist = false;
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
             privatesCaption;
@@ -123,17 +127,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
-    // Temporary fixtures: must OperatingRound be accessed at the start of updateStatus()?
-    // This will disappear once all info is paseed via PossibleAction objects.
-    private int orStep = 0;
-    private boolean retrieveStep = true;
-    
 	protected static Logger log = Logger.getLogger(ORPanel.class.getPackage().getName());
 
-    public ORPanel(ORWindow parent) {
+    public ORPanel(ORWindow parent,ORUIManager orUIManager) {
         super();
         
         orWindow = parent;
+        this.orUIManager = orUIManager;
         
         statusPanel = new JPanel();
         gb = new GridBagLayout();
@@ -143,6 +143,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         round = GameManager.getInstance().getCurrentRound();
         privatesCanBeBought = GameManager.getCompaniesCanBuyPrivates();
+        bonusTokensExist = GameManager.doBonusTokensExist();
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -157,31 +158,42 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         initFields();
 
         setLayout(new BorderLayout());
-        add(statusPanel, BorderLayout.NORTH);
+        add(statusPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        setVisible(true);
+		menuBar = new JMenuBar();
+		specialMenu = new JMenu (LocalText.getText("SPECIAL"));
+        specialMenu.setBackground(Color.YELLOW); // Normally not seen because menu is not opaque
+		specialMenu.setEnabled(false);
+		menuBar.add(specialMenu);
+		add(menuBar, BorderLayout.NORTH);
 
-        updateStatus();
+        setVisible(true);
 
         addKeyListener(this);
     }
 
-    public void recreate() {
+    public void recreate(OperatingRound or) {
         log.debug ("ORPanel.recreate() called"/*, new Exception("TRACE")*/);
-        round = GameManager.getInstance().getCurrentRound();
-        if (round instanceof OperatingRound) {
-            companies = ((OperatingRound) round).getOperatingCompanies();
-            nc = companies.length;
 
-            // Remove old fields. Don't forget to deregister the Observers
-            deRegisterObservers();
-            statusPanel.removeAll();
+        companies = (or).getOperatingCompanies();
+        nc = companies.length;
 
-            // Create new fields
-            initFields();
+        // Remove old fields. Don't forget to deregister the Observers
+        deRegisterObservers();
+        statusPanel.removeAll();
+
+        // Create new fields
+        initFields();
+        repaint();
+    }
+    
+    public void redisplay() {
+        if (StatusWindow.useObserver) {
+            revalidate();
+        } else {
             repaint();
-         }
+        }
     }
 
     private void deRegisterObservers() {
@@ -248,6 +260,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         tokens = new Field[nc];
         tokenCost = new Field[nc];
         tokensLeft = new Field[nc];
+        if (bonusTokensExist) tokenBonus = new Field[nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
         decision = new Field[nc];
@@ -299,12 +312,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         tokensXOffset = currentXOffset += lastXWidth;
         tokensYOffset = leftCompNameYOffset;
+        lastXWidth = bonusTokensExist ? 4 : 3;
         addField(tokenCaption = new Caption("Tokens"), tokensXOffset, 0,
-                lastXWidth = 3, 1, WIDE_RIGHT);
+                lastXWidth, 1, WIDE_RIGHT);
         addField(new Caption("laid"), tokensXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("cost"), tokensXOffset+1, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("left"), tokensXOffset+2, 1, 1, 1, WIDE_BOTTOM
-                + WIDE_RIGHT);
+                + (bonusTokensExist ? 0 : WIDE_RIGHT));
+        if (bonusTokensExist) {
+        	addField(new Caption("bonus"), tokensXOffset+3, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
+        }
 
         revXOffset = currentXOffset += lastXWidth;
         revYOffset = leftCompNameYOffset;
@@ -368,7 +385,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0);
 
             f = tokensLeft[i] = new Field(c.getBaseTokensModel());
-            addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1, bonusTokensExist ? 0 : WIDE_RIGHT);
+
+            if (bonusTokensExist) {
+            	f = tokenBonus[i] = new Field(c.getBonusTokensModel());
+            	addField(f, tokensXOffset + 3, tokensYOffset + i, 1, 1, WIDE_RIGHT);
+            }
 
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0);
@@ -418,225 +440,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void updateStatus() {
-        
-        updateStatus (null);
-        
-    }
-    
-    public void updateStatus (PossibleAction actionToComplete) {
-        
-        round = GameManager.getInstance().getCurrentRound();
-        if (round instanceof OperatingRound) {
-
-            oRound = (OperatingRound) round;
-
-            setHighlightsOff();
-
-            if (actionToComplete != null) {
-                log.debug("ExecutedAction: "+actionToComplete);
-            }
-            // End of possible action debug listing 
-
-            if (retrieveStep) orStep = oRound.getStep();
-            if (oRound.getOperatingCompanyIndex() != orCompIndex) {
-                setORCompanyTurn(oRound.getOperatingCompanyIndex());
-            }
-
-            president[orCompIndex].setHighlight(true);
-
-            privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
-            
-            button1.clearPossibleActions();
-            button2.clearPossibleActions();
-            button3.clearPossibleActions();
-            button3.setEnabled(false);
- 
-            if (possibleActions.contains(LayTile.class)) {
-                tileCaption.setHighlight(true);
-                button1.setVisible(false);
-
-                orWindow.requestFocus();
-                
-                log.debug ("Tiles can be laid");
-                orWindow.enableTileLaying(true);
-                orWindow.getMapPanel().setAllowedTileLays (possibleActions.getType(LayTile.class));
-
-                if (privatesCanBeBought) {
-	                button2.setText(LocalText.getText("BUY_PRIVATE"));
-	                button2.setActionCommand(BUY_PRIVATE_CMD);
-	                button2.setMnemonic(KeyEvent.VK_V);
-	                button2.setEnabled(privatesCanBeBoughtNow);
-	                button2.setVisible(privatesCanBeBoughtNow);
-	                privatesCaption.setHighlight(privatesCanBeBoughtNow);
-                } else {
-                	button2.setVisible(false);
-                }
-
-            } else if (possibleActions.contains(LayBaseToken.class)) {
- 
-                orWindow.requestFocus();
-                orWindow.enableTileLaying(false);
-                orWindow.enableBaseTokenLaying(true);
-
-                tokenCaption.setHighlight(true);
-
-                log.debug ("BaseTokens can be laid");
-                orWindow.enableBaseTokenLaying(true);
-                orWindow.getMapPanel().setAllowedTokenLays (possibleActions.getType(LayBaseToken.class));
-
-                button1.setEnabled(false);
-                button1.setVisible(false);
-                button3.setEnabled(false);
-
-            } else if (possibleActions.contains(SetDividend.class)
-                    && orStep == OperatingRound.STEP_CALC_REVENUE) {
-                
-                SetDividend action = (SetDividend) possibleActions.getType(SetDividend.class).get(0);
-                
-                revenueCaption.setHighlight(true);
-                revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
-                setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
-                        true);
-
-                button1.setText(LocalText.getText("SET_REVENUE"));
-                button1.setActionCommand(SET_REVENUE_CMD);
-                button1.setPossibleAction(action);
-                button1.setMnemonic(KeyEvent.VK_R);
-                button1.setEnabled(true);
-                button1.setVisible(true);
-                orWindow.setMessage(LocalText.getText("EnterRevenue"));
-                orStep = OperatingRound.STEP_PAYOUT;
-                    
-            } else if (possibleActions.contains(SetDividend.class)
-                    && orStep == OperatingRound.STEP_PAYOUT) {
-                
-                setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
-                        false);
-                
-                SetDividend action;
-                if (actionToComplete != null) {
-                    action = (SetDividend) actionToComplete;
-                } else {
-                    action = (SetDividend) possibleActions.getType(SetDividend.class).get(0);
-                }
-                SetDividend clonedAction;
-                log.debug("Payout action before cloning: "+action);
-                
-                if (action.isAllocationAllowed(SetDividend.WITHHOLD)) {
-                    button1.setText(LocalText.getText("WITHHOLD"));
-                    button1.setActionCommand(WITHHOLD_CMD);
-                    clonedAction = (SetDividend) action.clone();
-                    clonedAction.setRevenueAllocation(SetDividend.WITHHOLD);
-                    button1.setPossibleAction(clonedAction);
-                    button1.setMnemonic(KeyEvent.VK_W);
-                    button1.setEnabled(true);
-                    button1.setVisible(true);
-                } else {
-                    button1.setVisible(false);
-                }
-
-                if (action.isAllocationAllowed(SetDividend.SPLIT)) {
-                    button2.setText(LocalText.getText("SPLIT"));
-                    button2.setActionCommand(SPLIT_CMD);
-                    clonedAction = (SetDividend) action.clone();
-                    clonedAction.setRevenueAllocation(SetDividend.SPLIT);
-                    button2.setPossibleAction(clonedAction);
-                    button2.setMnemonic(KeyEvent.VK_S);
-                    button2.setEnabled(true);
-                    button2.setVisible(true);
-                } else {
-                    button2.setVisible(false);
-                }
-
-                if (action.isAllocationAllowed(SetDividend.PAYOUT)) {
-                    button3.setText(LocalText.getText("PAYOUT"));
-                    button3.setActionCommand(PAYOUT_CMD);
-                    clonedAction = (SetDividend) action.clone();
-                    clonedAction.setRevenueAllocation(SetDividend.PAYOUT);
-                    button3.setPossibleAction(clonedAction);
-                    button3.setMnemonic(KeyEvent.VK_P);
-                    button3.setEnabled(true);
-                } else {
-                    button3.setVisible(false);
-                }
-
-                orWindow.setMessage(LocalText.getText("SelectPayout"));
-
-            } else if (possibleActions.contains(BuyTrain.class)) {
-            	
-                trainCaption.setHighlight(true);
-
-                button1.setText(LocalText.getText("BUY_TRAIN"));
-                button1.setActionCommand(BUY_TRAIN_CMD);
-                button1.setMnemonic(KeyEvent.VK_T);
-                button1.setEnabled(oRound.getOperatingCompany().mayBuyTrains());
-                button1.setVisible(true);
-
-                if (privatesCanBeBought) {
-	                button2.setText(LocalText.getText("BUY_PRIVATE"));
-	                button2.setActionCommand(BUY_PRIVATE_CMD);
-	                button2.setMnemonic(KeyEvent.VK_V);
-	                button2.setEnabled(privatesCanBeBoughtNow);
-	                button2.setVisible(privatesCanBeBoughtNow);
-	                privatesCaption.setHighlight(privatesCanBeBoughtNow);
-                } else {
-                    button2.setVisible(false);
-                }
-
-                orWindow.setMessage(LocalText.getText("BuyTrain"));
-
-            } else if (possibleActions.contains(DiscardTrain.class)) {
-                
-            } else if (orStep == OperatingRound.STEP_FINAL) {
-                button1.setEnabled(false);
-            }
-            
-            boolean enableUndo = false;
-            boolean enableRedo = false;
-            
-            if (possibleActions.contains(NullAction.class)) {
-                
-                List<NullAction> actions = possibleActions.getType(NullAction.class);
-                for (NullAction action : actions) {
-                    switch (action.getMode()) {
-                    case NullAction.DONE:
-                        button3.setText(LocalText.getText("Done"));
-                        button3.setActionCommand(DONE_CMD);
-                        button3.setMnemonic(KeyEvent.VK_D);
-                        button3.setPossibleAction(action);
-                        button3.setEnabled(true);
-                        break;
-                    }
-                }
-            } else if (possibleActions.contains(GameAction.class)) {
-                
-                List<GameAction> actions = possibleActions.getType(GameAction.class);
-                for (GameAction action : actions) {
-                    switch (action.getMode()) {
-                    case GameAction.UNDO:
-                        enableUndo = true;
-                        undoButton.setPossibleAction(action);
-                        break;
-                    case GameAction.REDO:
-                        enableRedo = true;
-                        redoButton.setPossibleAction(action);
-                        break;
-                    }
-                }
-            }
-            
-            undoButton.setEnabled (enableUndo);
-            redoButton.setEnabled (enableRedo);
-
-            if (StatusWindow.useObserver) {
-                revalidate();
-            } else {
-                repaint();
-            }
-        }
-    }
-    
     public void finish() {
 
         button1.setEnabled(false);
@@ -645,16 +448,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         round = GameManager.getInstance().getCurrentRound();
         if (!(round instanceof ShareSellingRound)) {
-            //deRegisterObservers();
-            setORCompanyTurn(-1);
+            orUIManager.setORCompanyTurn(-1);
         }
     }
 
     public void actionPerformed(ActionEvent actor) {
-        if (!(round instanceof OperatingRound))
-            return;
-        oRound = (OperatingRound) round;
-        retrieveStep = true;
 
         // What kind action has been taken? 
         JComponent source = (JComponent) actor.getSource();
@@ -673,290 +471,24 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 	            executedActionType = executedAction.getClass();
 	            log.debug("Action taken is "+executedAction.toString());
             }
+            
+            orUIManager.processAction (command, executedActions);
+        } else {
+        	orUIManager.processAction (command, null);
         }
         
-        int amount;
-
-        if (executedActionType == SetDividend.class) {
-            SetDividend action = (SetDividend) executedAction;
-            if (command.equals(SET_REVENUE_CMD)) {
-                amount = ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
-                log.debug ("Set revenue amount is "+amount);
-                action.setActualRevenue(amount);
-                if (action.getRevenueAllocation() != SetDividend.UNKNOWN) {
-                    orWindow.process (action);
-                } else {
-                    orStep = OperatingRound.STEP_PAYOUT;
-                    retrieveStep = false;
-                    updateStatus(action);
-                    
-                    // Locally update revenue if we don't inform the server yet.
-                    revenue[orCompIndex].setText(Bank.format(amount));
-                }
-            } else {
-                // The revenue allocation has been selected
-                orWindow.process (action);
-            }
-        } else if (command.equals(BUY_TRAIN_CMD)) {
-            
-            buyTrain();
-
-        } else if (command.equals(BUY_PRIVATE_CMD)) {
-
-            buyPrivate();
-
-        } else if (executedActionType == NullAction.class
-                || executedActionType == GameAction.class) {
-            
-            orWindow.process (executedAction);
-            
-        }
-
-        ReportWindow.addLog();
-
-        if (!(GameManager.getInstance().getCurrentRound() instanceof OperatingRound)) {
-            orWindow.updateORWindow();
-        }
     }
-
-
-    private void buyTrain()
-	{
-
-        List<String> prompts = new ArrayList<String>();
-        Map<String, BuyTrain> promptToTrain = new HashMap<String, BuyTrain>();
-        TrainI train;
-
-        BuyTrain selectedTrain;
-        String prompt;
-        StringBuffer b;
-        int cost;
-        Portfolio from;
-        
-        List<BuyTrain> buyableTrains = possibleActions.getType(BuyTrain.class);
-        for (BuyTrain bTrain : buyableTrains)
-		{
-            train = bTrain.getTrain();
-            cost = bTrain.getFixedCost();
-            from = bTrain.getFromPortfolio();
-            
-            /* Create a prompt per buying option */
-            b = new StringBuffer();
-            
-			b.append(LocalText.getText("BUY_TRAIN_FROM", new String[] {
-					        train.getName(),
-                            from.getName()}));
-			if (bTrain.isForExchange())
-			{
-				b.append(" (").append(LocalText.getText("EXCHANGED")).append(")");
-            }
-			if (cost > 0)
-			{
-				b.append(" ").append(LocalText.getText("AT_PRICE",Bank.format(cost)));
-            }
-			if (bTrain.mustPresidentAddCash())
-			{
-				b.append(" ").append(LocalText.getText("YOU_MUST_ADD_CASH",
-				        Bank.format(bTrain.getPresidentCashToAdd())));
-			}
-			else if (bTrain.mayPresidentAddCash())
-			{
-				b.append(" ").append(LocalText.getText("YOU_MAY_ADD_CASH",
-				        Bank.format(bTrain.getPresidentCashToAdd())));
-            }
-            prompt = b.toString();
-            prompts.add(prompt);
-            promptToTrain.put(prompt, bTrain);
-        }
-
-		if (prompts.size() == 0) {
-			JOptionPane.showMessageDialog(this, 
-					LocalText.getText("CannotBuyAnyTrain"));
-			return;
-		}
-
-        String boughtTrain;
- 		boughtTrain = (String) JOptionPane.showInputDialog(this,
-			LocalText.getText("BUY_WHICH_TRAIN"),
-			LocalText.getText("WHICH_TRAIN"),
-			JOptionPane.QUESTION_MESSAGE,
-			null,
-			prompts.toArray(),
-            prompts.get(0));
-		if (!Util.hasValue(boughtTrain))
-			return;
-        
-        selectedTrain = (BuyTrain) promptToTrain.get(boughtTrain);
-		if (selectedTrain == null)
-			return;
-        
-        train = selectedTrain.getTrain();
-        Portfolio seller = selectedTrain.getFromPortfolio();
-        int price = selectedTrain.getFixedCost();
-
-        if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
-            prompt = LocalText.getText ("WHICH_TRAIN_PRICE",
-                    new String [] {orComp.getName(), train.getName(), seller.getName()});
-            String response;
-            for (;;) {
-            	response = JOptionPane.showInputDialog(this,
-                    prompt, LocalText.getText("WHICH_PRICE"),
-                    JOptionPane.QUESTION_MESSAGE);
-	            if (response == null) return; // Cancel
-	            try {
-	                price = Integer.parseInt(response);
-	            } catch (NumberFormatException e) {
-	                // Price stays 0, this is handled below
-	            }
-	            if (price > 0) break; // Got a good (or bad, but valid) price.
-	            
-            	if (!prompt.startsWith("Please")) {
-            	    prompt = LocalText.getText("ENTER_PRICE_OR_CANCEL")
-            	        + "\n" + prompt;
-            	}
-            }
-        }
-
-        TrainI exchangedTrain = null;
-		if (train != null && selectedTrain.isForExchange())
-		{
-            List<TrainI> oldTrains = selectedTrain.getTrainsForExchange();
-            List<String> oldTrainOptions = new ArrayList<String>(oldTrains.size());
-            String[] options = new String[oldTrains.size() + 1];
-            options[0] = LocalText.getText("None");
-			for (int j = 0; j < oldTrains.size(); j++)
-			{
-                options[j + 1] = LocalText.getText("N_Train", oldTrains.get(j).getName());
-                oldTrainOptions.add(options[j+1]);
-            }
-			String exchangedTrainName = (String) JOptionPane.showInputDialog(this,
-					LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                    Bank.format(price)),
-					LocalText.getText("WHICH_TRAIN_EXCHANGE"),
-					JOptionPane.QUESTION_MESSAGE,
-					null,
-					options,
-					options[1]);
-            int index = oldTrainOptions.indexOf(exchangedTrainName);
-            if (index >= 0)
-			{
-				exchangedTrain = oldTrains.get(index);
-            }
-
-        }
-
-		if (train != null)
-		{
-		    // Remember the old off-board revenue step
-		    int oldOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
-
-		    selectedTrain.setPricePaid(price);
-		    selectedTrain.setExchangedTrain(exchangedTrain);
-
-		    if (orWindow.process (selectedTrain)) {
-		    	
-                // Check if any trains must be discarded
-				// Keep looping until all relevant companies have acted
-                while (possibleActions.contains(DiscardTrain.class))
-				{
-                    // We expect one company at a time
-                    DiscardTrain dt = (DiscardTrain)possibleActions.getType(DiscardTrain.class).get(0);
-                        
-                    PublicCompanyI c = dt.getCompany();
-                    String playerName = dt.getPlayerName();
-                    List<TrainI> trains = dt.getOwnedTrains();
-                    List<String> trainOptions = new ArrayList<String>(trains.size());
-                    String[] options = new String[trains.size()];
-
-                    for (int i=0; i<options.length; i++) {
-                        options[i] = LocalText.getText("N_Train", trains.get(i).getName());
-                        trainOptions.add(options[i]);
-                    }
-					String discardedTrainName = (String) JOptionPane.showInputDialog (this,
-					        LocalText.getText("HAS_TOO_MANY_TRAINS", new String[] {
-                                    playerName,
-                                    c.getName()
-                            }),
-							LocalText.getText("WhichTrainToDiscard"),
-                            JOptionPane.QUESTION_MESSAGE,
-							null,
-							options,
-							options[0]);
-					if (discardedTrainName != null)
-					{
-                        TrainI discardedTrain = trains.get(trainOptions.indexOf(discardedTrainName));
-                        
-                        dt.setDiscardedTrain(discardedTrain);
-                        
-                        orWindow.process (dt);
-                    }
-                }
-			}
-		    
-		    int newOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
-		    if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
-		        HexMap.updateOffBoardToolTips();
-		    }
-
-		}
-
-    }    
-
-	private void buyPrivate() {
-
-        int amount, index;
-        List<String> privatesForSale = new ArrayList<String>();
-        List<BuyPrivate> privates =  possibleActions.getType(BuyPrivate.class);
-        String chosenOption;
-        BuyPrivate chosenAction = null;
-        int minPrice = 0, maxPrice = 0;
-
-        for (BuyPrivate action : privates) {
-            privatesForSale.add(LocalText.getText("BuyPrivatePrompt", new String[] {
-            		action.getPrivateCompany().getName(),
-            		action.getPrivateCompany().getPortfolio().getName(),
-            		Bank.format(action.getMinimumPrice()),
-            		Bank.format(action.getMaximumPrice())
-            }));
-        }
-
-        if (privatesForSale.size() > 0) {
-            chosenOption = (String) JOptionPane.showInputDialog(this, 
-            		LocalText.getText("BUY_WHICH_PRIVATE"), 
-            		LocalText.getText("WHICH_PRIVATE"),
-                    JOptionPane.QUESTION_MESSAGE, 
-                    null, 
-                    privatesForSale.toArray(), 
-                    privatesForSale.get(0));
-            if (chosenOption != null) {
-                index = privatesForSale.indexOf(chosenOption);
-                chosenAction = privates.get(index);
-                minPrice = chosenAction.getMinimumPrice();
-                maxPrice = chosenAction.getMaximumPrice();
-                String price = (String) JOptionPane.showInputDialog(this,
-                        LocalText.getText("WHICH_PRIVATE_PRICE", new String[] {
-                                chosenOption,
-                                Bank.format(minPrice), 
-                                Bank.format(maxPrice)}),
-                        LocalText.getText("WHICH_PRICE"),
-                        JOptionPane.QUESTION_MESSAGE);
-                try {
-                    amount = Integer.parseInt(price);
-                } catch (NumberFormatException e) {
-                    amount = 0; // This will generally be refused.
-                }
-                chosenAction.setPrice(amount);
-
-                if (orWindow.process (chosenAction)) {
-                    orWindow.updateMessage();
-                }
-            }
-        }
+    
+    public int getRevenue (int orCompIndex) {
+    	return ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
 
     }
+    
+    public void setRevenue (int orCompIndex, int amount) {
+        revenue[orCompIndex].setText(Bank.format(amount));
+    }
 
-
-    private void setHighlightsOff() {
+    public void setHighlightsOff() {
         tileCaption.setHighlight(false);
         tokenCaption.setHighlight(false);
         revenueCaption.setHighlight(false);
@@ -966,24 +498,189 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             president[orCompIndex].setHighlight(false);
     }
 
-    public int getOrCompIndex() {
-        return orCompIndex;
-    }
-
-    public void setORCompanyTurn(int orCompIndex) {
+    
+    public void resetORCompanyTurn (int orCompIndex) {
+        
         int j;
 
         if ((j = this.orCompIndex) >= 0) {
             setSelect(revenue[j], revenueSelect[j], false);
         }
-
+    }
+    
+    public void initORCompanyTurn (int orCompIndex) {
+        
         this.orCompIndex = orCompIndex;
-        orComp = orCompIndex >= 0 ? companies[orCompIndex] : null;
+        president[orCompIndex].setHighlight(true);
+        
+        button1.clearPossibleActions();
+        button2.clearPossibleActions();
+        button3.clearPossibleActions();
+        button3.setEnabled(false);
+    }
+    
+    public void initTileLayingStep() {
+        
+        tileCaption.setHighlight(true);
+        button1.setVisible(false);
+    }
+    
+    public void initTokenLayingStep() {
+        
+        tokenCaption.setHighlight(true);
+        button1.setEnabled(false);
+        button1.setVisible(false);
+        button3.setEnabled(false);
+    }
+    
+    public void initRevenueEntryStep(int orCompIndex, SetDividend action) {
+        
+        revenueCaption.setHighlight(true);
+        revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
+                true);
 
-        if ((j = this.orCompIndex) >= 0) {
-            // Give a new company the turn.
-            this.playerIndex = companies[orCompIndex].getPresident().getIndex();
+        button1.setText(LocalText.getText("SET_REVENUE"));
+        button1.setActionCommand(SET_REVENUE_CMD);
+        button1.setPossibleAction(action);
+        button1.setMnemonic(KeyEvent.VK_R);
+        button1.setEnabled(true);
+        button1.setVisible(true);
+    }
+    
+    public void initPayoutStep (int orCompIndex,
+            SetDividend action,
+            boolean withhold, boolean split, boolean payout) {
+        
+        SetDividend clonedAction;
+        
+        setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
+                false);
+
+        if (withhold) {
+            button1.setText(LocalText.getText("WITHHOLD"));
+            button1.setActionCommand(WITHHOLD_CMD);
+            clonedAction = (SetDividend) action.clone();
+            clonedAction.setRevenueAllocation(SetDividend.WITHHOLD);
+            button1.setPossibleAction(clonedAction);
+            button1.setMnemonic(KeyEvent.VK_W);
+            button1.setEnabled(true);
+            button1.setVisible(true);
+        } else {
+            button1.setVisible(false);
         }
+
+        if (split) {
+            button2.setText(LocalText.getText("SPLIT"));
+            button2.setActionCommand(SPLIT_CMD);
+            clonedAction = (SetDividend) action.clone();
+            clonedAction.setRevenueAllocation(SetDividend.SPLIT);
+            button2.setPossibleAction(clonedAction);
+            button2.setMnemonic(KeyEvent.VK_S);
+            button2.setEnabled(true);
+            button2.setVisible(true);
+        } else {
+            button2.setVisible(false);
+        }
+
+        if (payout) {
+            button3.setText(LocalText.getText("PAYOUT"));
+            button3.setActionCommand(PAYOUT_CMD);
+            clonedAction = (SetDividend) action.clone();
+            clonedAction.setRevenueAllocation(SetDividend.PAYOUT);
+            button3.setPossibleAction(clonedAction);
+            button3.setMnemonic(KeyEvent.VK_P);
+            button3.setEnabled(true);
+        } else {
+            button3.setVisible(false);
+        }
+    }
+    
+    public void initTrainBuying (boolean enabled) {
+        
+        trainCaption.setHighlight(true);
+
+        button1.setText(LocalText.getText("BUY_TRAIN"));
+        button1.setActionCommand(BUY_TRAIN_CMD);
+        button1.setMnemonic(KeyEvent.VK_T);
+        button1.setEnabled(enabled);
+        button1.setVisible(true);
+    }
+    
+    public void initPrivateBuying (boolean enabled) {
+        
+        if (privatesCanBeBought) {
+            button2.setText(LocalText.getText("BUY_PRIVATE"));
+            button2.setActionCommand(BUY_PRIVATE_CMD);
+            button2.setMnemonic(KeyEvent.VK_V);
+            button2.setEnabled(enabled);
+            button2.setVisible(enabled);
+            privatesCaption.setHighlight(enabled);
+        } else {
+            button2.setVisible(false);
+        }
+    }
+    
+    public void initSpecialActions (List<? extends PossibleAction> specialActions) {
+        
+        specialMenu.removeAll();
+        specialMenu.setEnabled(false);
+        if (specialActions == null || specialActions.isEmpty()) {
+            specialMenu.setEnabled(false);
+        } else {
+            // Bonus tokens can be laid anytime, so we must also handle
+            // these outside the token laying step.
+            for (PossibleAction action : specialActions) {
+            	if (action instanceof LayBonusToken) {
+            		LayBonusToken btAction = (LayBonusToken) action;
+            		SpecialTokenLay stl = (SpecialTokenLay) btAction.getSpecialProperty();
+    		        BonusToken token = (BonusToken)stl.getToken();
+    		        String text = LocalText.getText("LayBonusToken", new String[] {
+    		                token.toString(),
+    		                stl.getLocationCodeString()
+    		        });
+    		        ActionMenuItem item = new ActionMenuItem (text);
+    		        item.addActionListener(this);
+    		        item.addPossibleAction(btAction);
+    		        specialMenu.add(item);
+            	}
+            }
+            specialMenu.setEnabled(true);
+        }
+        specialMenu.setOpaque(specialMenu.isEnabled());
+    }
+    
+    public void enableDone (NullAction action) {
+        
+        button3.setText(LocalText.getText("Done"));
+        button3.setActionCommand(DONE_CMD);
+        button3.setMnemonic(KeyEvent.VK_D);
+        button3.setPossibleAction(action);
+        button3.setEnabled(true);
+    }
+    
+    public void enableUndo (GameAction action) {
+        undoButton.setEnabled(action != null);
+        if (action != null) undoButton.setPossibleAction(action);
+    }
+    
+    public void enableRedo (GameAction action) {
+        redoButton.setEnabled (action != null);
+        if (action != null) redoButton.setPossibleAction(action);
+    }
+    
+    public void finishORCompanyTurn (int orCompIndex) {
+        
+        president[orCompIndex].setHighlight(false);
+        
+        button1.setEnabled(false);
+        
+        orCompIndex = -1;
+    }
+    
+    // TEMPORARY
+    public PublicCompanyI getORComp() {
+        return orComp;
     }
 
     public String getORPlayer() {
@@ -991,10 +688,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             return players[playerIndex].getName();
         else
             return "";
-    }
-
-    public RoundI getRound() {
-        return round;
     }
 
     private void setSelect(JComponent f, JComponent s, boolean active) {

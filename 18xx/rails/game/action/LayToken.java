@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.5 2007/09/30 12:55:19 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.6 2007/12/04 20:25:20 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -19,14 +19,7 @@ import rails.util.Util;
 /**
  * @author Erik Vos
  */
-public class LayToken extends PossibleORAction {
-    
-    /* LayTile types */
-    public final static int GENERIC = 0; // Stop-gap only
-    public final static int LOCATION_SPECIFIC = 1; // Valid hex 
-    public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
-    
-    protected int type = 0;
+public abstract class LayToken extends PossibleORAction {
     
     /*--- Preconditions ---*/
     
@@ -45,14 +38,10 @@ public class LayToken extends PossibleORAction {
     transient protected MapHex chosenHex = null;
     protected String chosenHexName;
     
-    /** The station (or city) on the hex where the token is laid */
-    protected int chosenStation = 0; // Default 
-
     /**
      * Allow laying a base token on a given location.
      */
     public LayToken(List<MapHex> locations) {
-        type = LOCATION_SPECIFIC;
         this.locations = locations;
         if (locations != null) {
             this.locations = locations;
@@ -62,7 +51,6 @@ public class LayToken extends PossibleORAction {
     }
     
      public LayToken (SpecialTokenLay specialProperty) {
-        type = SPECIAL_PROPERTY;
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
@@ -83,14 +71,6 @@ public class LayToken extends PossibleORAction {
         this.chosenHexName = chosenHex.getName();
     }
     
-    public int getChosenStation() {
-        return chosenStation;
-    }
-
-    public void setChosenStation(int chosenStation) {
-        this.chosenStation = chosenStation;
-    }
-
     /**
      * @return Returns the specialProperty.
      */
@@ -121,55 +101,9 @@ public class LayToken extends PossibleORAction {
         return locations;
     }
     
-    public int getType () {
-        return type;
+    public String getLocationNameString() {
+        return locationNames;
     }
-    
-    public boolean equals (PossibleAction action) {
-        if (!(action instanceof LayToken)) return false;
-        LayToken a = (LayToken) action;
-        return (a.locationNames == null && locationNames == null
-                || a.locationNames.equals(locationNames))
-            && a.type == type
-            && a.company == company
-            && a.specialProperty == specialProperty;
-    }
-
-    public String toString () {
-        StringBuffer b = new StringBuffer  ("LayToken ");
-        if (chosenHex == null) {
-        	b.append("type=").append(type)
-        	 .append(" location=").append(locationNames)
-        	 .append(" spec.prop=").append(specialProperty);
-        } else {
-        	b.append("hex=").append(chosenHex.getName())
-        	 .append(" station=").append(chosenStation);
-        }
-        return b.toString();
-    }
-
-    /** Deserialize */
-	private void readObject (ObjectInputStream in) 
-	throws IOException, ClassNotFoundException {
-
-		in.defaultReadObject();
-		
-        MapManager mmgr = MapManager.getInstance();
-        locations = new ArrayList<MapHex>();
-        if (Util.hasValue(locationNames)) {
-            for (String hexName : locationNames.split(",")) {
-                locations.add(mmgr.getHex(hexName));
-            }
-        }
-
-		if (specialPropertyId  > 0) {
-			specialProperty = (SpecialTokenLay) SpecialProperty.getByUniqueId (specialPropertyId);
-		}
-		if (chosenHexName != null && chosenHexName.length() > 0) {
-			chosenHex = MapManager.getInstance().getHex(chosenHexName);
-		}
-	}
-    
     private void buildLocationNameString () {
         StringBuffer b = new StringBuffer();
         for (MapHex hex : locations) {

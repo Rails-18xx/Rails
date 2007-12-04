@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.17 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.18 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -65,6 +65,7 @@ public class GameManager implements ConfigurableComponentI
 	protected boolean endedByBankruptcy = false;
 	protected boolean hasAnyParPrice = false;
 	protected boolean canAnyCompBuyPrivates = false;
+	protected boolean bonusTokensExist = false;
 
 	protected static GameManager instance;
 
@@ -385,10 +386,17 @@ public class GameManager implements ConfigurableComponentI
         
     }
     
-    public void processOnReload (List<PossibleAction> actions) {
+    public void processOnReload (List<PossibleAction> actions) 
+    throws Exception {
         
         for (PossibleAction action : actions) {
-            getCurrentRound().process(action);
+            try {
+                getCurrentRound().process(action);
+            } catch (Exception e) {
+                log.debug("Error while reprocessing "+action.toString(), e);
+                throw new Exception ("Reload failure", e);
+                
+            }
             new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
             if (MoveSet.isOpen()) MoveSet.finish();
         }
@@ -697,6 +705,14 @@ public class GameManager implements ConfigurableComponentI
 
 	public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
         instance.canAnyCompBuyPrivates = canAnyCompBuyPrivates;
+	}
+
+	public static boolean doBonusTokensExist() {
+		return instance.bonusTokensExist;
+	}
+
+	public static void setBonusTokensExist(boolean bonusTokensExist) {
+		instance.bonusTokensExist = bonusTokensExist;
 	}
 	
 	

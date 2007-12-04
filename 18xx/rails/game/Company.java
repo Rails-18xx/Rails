@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.4 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.5 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -42,6 +42,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		this.name = name;
 		this.type = type;
 		closedObject = new BooleanState (name+"_Closed", false);
+		
 	}
 	
 	/**

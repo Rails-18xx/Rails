@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.13 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.14 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -603,7 +603,7 @@ implements ActionListener, KeyListener, ActionPerformer
 			return "";
 	}
 	
-    public void displayMessage() {
+    public void displayServerMessage() {
     	String[] message = DisplayBuffer.get();
     	if (message != null) {
     		JOptionPane.showMessageDialog(this, message);

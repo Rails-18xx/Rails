@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.7 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.8 2007/12/04 20:25:19 evos Exp $*/
 package rails.util;
 
 import rails.game.ConfigurationException;
@@ -54,5 +54,10 @@ public final class Util
         } catch (Exception e) {
             throw new ConfigurationException ("Invalid integer value: "+value, e);
         }
+    }
+    
+    public static boolean bitSet (int value, int bitmask) {
+    	
+    	return (value & bitmask) > 0;
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.8 2007/10/27 15:26:35 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.9 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -12,8 +12,10 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
+import rails.game.action.LayBonusToken;
 import rails.game.action.LayTile;
 import rails.game.action.LayBaseToken;
+import rails.game.action.LayToken;
 import rails.ui.swing.*;
 import rails.util.LocalText;
 
@@ -26,6 +28,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	protected static Logger log = Logger.getLogger(HexMap.class.getPackage()
 			.getName());
+	
+	protected ORUIManager orUIManager;
 
 	// Abstract Methods
 	protected abstract void setupHexesGUI();
@@ -56,10 +60,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
 	/** A list of all allowed token lays */
 	/* (may be redundant) */
-	protected List<LayBaseToken> allowedTokenLays = null;
+	protected List<LayToken> allowedTokenLays = null;
 
 	/** A Map linking tile allowed tiles to each map hex */
-	protected Map<MapHex, LayBaseToken> allowedTokensPerHex = null;
+	protected Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
+    
+    protected boolean bonusTokenLayingEnabled = false; 
+    
+    public void setORUIManager (ORUIManager orUIManager) {
+    	this.orUIManager = orUIManager;
+    }
 
 	public void setupHexes() {
 		setupHexesGUI();
@@ -200,13 +210,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		return lays;
 	}
 
-	public void setAllowedTokenLays(List<LayBaseToken> allowedTokenLays) {
+	public <T extends LayToken> void setAllowedTokenLays(List<T> allowedTokenLays) {
 
-		this.allowedTokenLays = allowedTokenLays;
-		allowedTokensPerHex = new HashMap<MapHex, LayBaseToken>();
+		this.allowedTokenLays = (List<LayToken>) allowedTokenLays;
+		allowedTokensPerHex = new HashMap<MapHex, List<LayToken>>();
+        bonusTokenLayingEnabled = false;
 
 		/* Build the per-hex allowances map */
-		for (LayBaseToken allowance : this.allowedTokenLays) {
+		for (LayToken allowance : this.allowedTokenLays) {
 			List<MapHex> locations = allowance.getLocations();
 			if (locations == null) {
 				/*
@@ -214,45 +225,91 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				 * intended to be a temporary fixture, to be replaced by a
 				 * detailed allowed-tiles-per-hex specification later.
 				 */
-				allowedTokensPerHex.put(null, allowance);
+                // For now, allow all hexes having non-filled city stations
+                if (allowance instanceof LayBaseToken) {
+                    MapHex hex;
+                    for (GUIHex guiHex : hexes) {
+                        hex = guiHex.getHexModel();
+                        if (hex.hasTokenSlotsLeft()) {
+                            allowTokenOnHex(hex, allowance);
+                        }
+                    }
+                } else {
+                    allowTokenOnHex(null, allowance);
+                }
 			} else {
 				for (MapHex location : locations) {
-					allowedTokensPerHex.put(location, allowance);
+                    allowTokenOnHex(location, allowance);
 				}
 			}
+            if (allowance instanceof LayBonusToken) {
+                bonusTokenLayingEnabled = true;
+            }
 		}
 	}
+    
+    private void allowTokenOnHex (MapHex hex, LayToken allowance) {
+        if (!allowedTokensPerHex.containsKey(hex)) {
+            allowedTokensPerHex.put(hex, new ArrayList<LayToken>());
+        }
+        allowedTokensPerHex.get(hex).add (allowance);
+    }
 
-	public LayBaseToken getTokenAllowanceForHex(MapHex hex) {
-		if (allowedTokensPerHex.containsKey(hex)) {
-			return (LayBaseToken) allowedTokensPerHex.get(hex);
-		} else if (allowedTokensPerHex.containsKey(null)) {
-			return (LayBaseToken) allowedTokensPerHex.get(null);
-		} else {
-			return null;
+	public List<LayToken> getTokenAllowanceForHex(MapHex hex) {
+        List<LayToken> allowances = new ArrayList<LayToken>(2); 
+		if (hex != null && allowedTokensPerHex.containsKey(hex)) {
+			allowances.addAll (allowedTokensPerHex.get(hex));
 		}
+        if (allowedTokensPerHex.containsKey(null)) {
+            allowances.addAll (allowedTokensPerHex.get(null));
+		}
+        return allowances;
 	}
+    
+    public List<LayBaseToken> getBaseTokenAllowanceForHex (MapHex hex) {
+        List<LayBaseToken> allowances = new ArrayList<LayBaseToken>(2); 
+        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+            if (allowance instanceof LayBaseToken) {
+                allowances.add((LayBaseToken)allowance);
+            }
+        }
+        return allowances;
+    }
+
+    public List<LayBonusToken> getBonusTokenAllowanceForHex (MapHex hex) {
+        List<LayBonusToken> allowances = new ArrayList<LayBonusToken>(2); 
+        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+            if (allowance instanceof LayBonusToken) {
+                allowances.add((LayBonusToken)allowance);
+            }
+        }
+        return allowances;
+    }
 
 	public void mouseClicked(MouseEvent arg0) {
 		Point point = arg0.getPoint();
 		GUIHex clickedHex = getHexContainingPoint(point);
 
-		if (ORWindow.baseTokenLayingEnabled) {
-			if (clickedHex.getHexModel().getStations().size() > 0) {
+		orUIManager.hexClicked(clickedHex, selectedHex);
+		/*
+		if (ORWindow.tokenLayingEnabled) {
+			List<LayToken> allowances = getTokenAllowanceForHex(clickedHex.getHexModel());
+
+			if (allowances.size() > 0) {
+                log.debug("Hex "+clickedHex.getName()+" clicked, allowances:");
+                for (LayToken allowance : allowances) {
+                    log.debug (allowance.toString());
+                }
 				selectHex(clickedHex);
+				orUIManager.setSubStep(ORUIManager.SELECT_TOKEN);
 			} else {
 				JOptionPane.showMessageDialog(this, LocalText
-						.getText("NoStationNoToken"));
+						.getText("NoTokenPossible", clickedHex.getName()));
+				orUIManager.setSubStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
 			}
 
-			if (selectedHex != null) {
-				GameUIManager.orWindow.setSubStep(ORWindow.CONFIRM_TOKEN);
-			} else {
-				GameUIManager.orWindow
-						.setSubStep(ORWindow.SELECT_HEX_FOR_TOKEN);
-			}
 		} else if (ORWindow.tileLayingEnabled) {
-			if (GameUIManager.orWindow.getSubStep() == ORWindow.ROTATE_OR_CONFIRM_TILE
+			if (orUIManager.getSubStep() == ORUIManager.ROTATE_OR_CONFIRM_TILE
 					&& clickedHex == selectedHex) {
 				selectedHex.rotateTile();
 				repaint(selectedHex.getBounds());
@@ -270,10 +327,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 					/*
 					 * Direct call to Model to be replaced later by use of
 					 * allowedTilesPerHex. Would not work yet.
-					 */
+					 *//*
 					{
 						selectHex(clickedHex);
-						GameUIManager.orWindow.setSubStep(ORWindow.SELECT_TILE);
+						orUIManager.setSubStep(ORUIManager.SELECT_TILE);
 					} else {
 						JOptionPane.showMessageDialog(this,
 								"This hex cannot be upgraded now");
@@ -282,8 +339,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
 			}
 		}
 
-		GameUIManager.orWindow.repaintUpgradePanel();
-		GameUIManager.orWindow.repaintORPanel();
+		//??GameUIManager.orWindow.repaintUpgradePanel();
+		GameUIManager.instance.orWindow.repaintORPanel();
+		*/
 	}
 
 	/*

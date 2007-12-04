@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.4 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 import rails.util.Tag;
@@ -42,5 +42,5 @@ public interface CompanyTypeI extends ConfigurableComponentI {
 	public void setCapitalisation (int mode);
 	public void setCapitalisation (String mode);
 	public int getCapitalisation ();
-
+	public CompanyI getDummyCompany ();
 }

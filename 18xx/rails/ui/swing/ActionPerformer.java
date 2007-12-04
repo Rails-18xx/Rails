@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ActionPerformer.java,v 1.3 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ActionPerformer.java,v 1.4 2007/12/04 20:25:19 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.action.PossibleAction;
@@ -11,5 +11,5 @@ public interface ActionPerformer {
     
     public boolean processImmediateAction();
 
-    public void displayMessage ();
+    public void displayServerMessage ();
 }

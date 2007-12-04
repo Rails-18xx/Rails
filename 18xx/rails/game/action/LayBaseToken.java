@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.1 2007/10/27 15:26:35 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.2 2007/12/04 20:25:20 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -19,7 +19,7 @@ import rails.util.Util;
 /**
  * @author Erik Vos
  */
-public class LayBaseToken extends PossibleORAction {
+public class LayBaseToken extends LayToken {
     
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
@@ -30,20 +30,7 @@ public class LayBaseToken extends PossibleORAction {
     
     /*--- Preconditions ---*/
     
-    /** Where to lay a token (null means anywhere) */
-    transient protected List<MapHex> locations = null;
-    protected String locationNames;
-    
-    /** Special property that will be fulfilled by this token lay.
-     * If null, this is a normal token lay. */
-    transient protected SpecialTokenLay specialProperty = null;
-    protected int specialPropertyId; 
-    
     /*--- Postconditions ---*/
-    
-    /** The map hex on which the token is laid */
-    transient protected MapHex chosenHex = null;
-    protected String chosenHexName;
     
     /** The station (or city) on the hex where the token is laid */
     protected int chosenStation = 0; // Default 
@@ -52,37 +39,15 @@ public class LayBaseToken extends PossibleORAction {
      * Allow laying a base token on a given location.
      */
     public LayBaseToken(List<MapHex> locations) {
+        super (locations);
         type = LOCATION_SPECIFIC;
-        this.locations = locations;
-        if (locations != null) {
-            this.locations = locations;
-            buildLocationNameString();
-        }
-        
     }
     
-     public LayBaseToken (SpecialTokenLay specialProperty) {
+    public LayBaseToken (SpecialTokenLay specialProperty) {
+        super (specialProperty);
         type = SPECIAL_PROPERTY;
-        this.locations = specialProperty.getLocations();
-        if (locations != null) buildLocationNameString();
-        this.specialProperty = specialProperty;
-        this.specialPropertyId = specialProperty.getUniqueId();
     }
 
-    /**
-     * @return Returns the chosenHex.
-     */
-    public MapHex getChosenHex() {
-        return chosenHex;
-    }
-    /**
-     * @param chosenHex The chosenHex to set.
-     */
-    public void setChosenHex(MapHex chosenHex) {
-        this.chosenHex = chosenHex;
-        this.chosenHexName = chosenHex.getName();
-    }
-    
     public int getChosenStation() {
         return chosenStation;
     }
@@ -91,40 +56,6 @@ public class LayBaseToken extends PossibleORAction {
         this.chosenStation = chosenStation;
     }
 
-    /**
-     * @return Returns the specialProperty.
-     */
-    public SpecialTokenLay getSpecialProperty() {
-        return specialProperty;
-    }
-    /**
-     * @param specialProperty The specialProperty to set.
-     */
-    public void setSpecialProperty(SpecialTokenLay specialProperty) {
-        this.specialProperty = specialProperty;
-        // TODO this.specialPropertyUniqueId = specialProperty.getUniqueId();
-    }
-
-   /**
-    * @deprecated
-     * @return Returns the location.
-     */
-    public MapHex getLocation() {
-        if (locations != null && locations.size() > 0) {
-            return locations.get(0);
-        } else {
-            return null;
-        }
-    }
-    
-    public List<MapHex> getLocations() {
-        return locations;
-    }
-    
-    public String getLocationNameString() {
-    	return locationNames;
-    }
-    
     public int getType () {
         return type;
     }
@@ -140,7 +71,7 @@ public class LayBaseToken extends PossibleORAction {
     }
 
     public String toString () {
-        StringBuffer b = new StringBuffer  ("LayToken ");
+        StringBuffer b = new StringBuffer  ("LayBaseToken ");
         if (chosenHex == null) {
         	b.append("type=").append(type)
         	 .append(" location=").append(locationNames)
@@ -173,14 +104,5 @@ public class LayBaseToken extends PossibleORAction {
 			chosenHex = MapManager.getInstance().getHex(chosenHexName);
 		}
 	}
-    
-    private void buildLocationNameString () {
-        StringBuffer b = new StringBuffer();
-        for (MapHex hex : locations) {
-            if (b.length() > 0) b.append(",");
-            b.append(hex.getName());
-        }
-        locationNames = b.toString();
-    }
     
 }

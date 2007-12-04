@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.4 2007/12/04 20:25:20 evos Exp $ */
 package rails.game;
 
 import org.w3c.dom.Element;
@@ -134,5 +134,9 @@ public class CompanyType implements CompanyTypeI
 	public int getCapitalisation()
 	{
 		return capitalisation;
+	}
+	
+	public CompanyI getDummyCompany () {
+		return dummyCompany;
 	}
 }
