@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.8 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 		phaseList = new ArrayList<Phase>();
 		phaseMap = new HashMap<String, Phase>();
 		Phase phase;
+        Phase previousPhase = null;
 		String name;
 
 		int n = 0;
@@ -47,10 +48,11 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 		{
 			name = phaseTag.getAttributeAsString("name", ""
 					+ (n + 1));
-			phase = new Phase(n++, name);
+			phase = new Phase(n++, name, previousPhase);
 			phaseList.add(phase);
 			phaseMap.put(name, phase);
 			phase.configureFromXML(phaseTag);
+            previousPhase = phase;
 		}
 		PhaseI initialPhase = (PhaseI) phaseList.get(0);
 		setPhase (initialPhase);
@@ -76,6 +78,10 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 		if (phase != null)
 		{
 			currentPhase.set (phase);
+
+            // TODO Redundant, should be replaced by phase.activate()
+            // as soon as privates closing is included there.
+            // Please consider Undo/Redo as well
 			GameManager.initialiseNewPhase(phase);
 		}
 	}

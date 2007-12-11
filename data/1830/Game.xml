@@ -13,7 +13,7 @@
 			  in a dropdown the first item is always the default).
 		-->
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
-		<GameOption name="UnlimitedDTrains" type="toggle" default="no"/>
+		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
 		<EndOfGame>
@@ -72,10 +72,10 @@
 		</Train>
 		<Train name="D" majorStops="99" cost="1100" startPhase="D" 
 			rustedTrain="4">
-			<IfOption name="UnlimitedDTrains" value="yes">
+			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes amount="-1"/>
 			</IfOption>
-			<IfOption name="UnlimitedDTrains" value="no">
+			<IfOption name="UnlimitedTopTrains" value="no">
 				<Attributes amount="6"/>
 			</IfOption>
 			<ExchangeFirst cost="800"/>
@@ -84,10 +84,12 @@
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per Train
 			but could as well be moved here. To be sorted out when we do 18US. -->
+		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
+			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>

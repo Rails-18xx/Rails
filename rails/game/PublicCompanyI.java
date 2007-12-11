@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.7 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.8 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 
@@ -271,6 +271,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public BaseTokensModel getBaseTokensModel();
 	public MoneyModel getBonusTokensModel ();
 	public void layBonusToken (MapHex hex, int cost, BonusToken token);
+    public void removeBonusToken (BonusToken token);
 	
     public MapHex getHomeHex();
     public void setHomeHex(MapHex homeHex);

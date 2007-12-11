@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.15 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.16 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 
@@ -213,6 +213,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
 		bonusTokensValue = new MoneyModel (name+"_bonusValue");
 		bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO + MoneyModel.ADD_PLUS);
+		if (hasStockPrice)
+		{
+		        parPrice = new PriceModel (this, name+"_ParPrice");
+		        currentPrice = new PriceModel (this, name+"_CurrentPrice");
+	    }
 		
 		PublicCompanyI dummyCompany = (PublicCompanyI)type.getDummyCompany();
 		if (dummyCompany != null) {
@@ -653,9 +658,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		if (hasStockPrice)
 		{
-		    if (parPrice == null) {
-		        parPrice = new PriceModel (this, name+"_ParPrice");
-		    }
 		    if (space != null) {
 		        parPrice.setPrice(space);
 		    }
@@ -686,9 +688,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void setCurrentPrice(StockSpaceI price)
 	{
-	    if (currentPrice == null) {
-	        currentPrice = new PriceModel (this, name+"_CurrentPrice");
-	    }
 	    if (price != null) {
 	        currentPrice.setPrice(price);
 	    }
@@ -1299,6 +1298,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 		bonusTokensValue.add(token.getValue());
 		
 	}
+    
+    public void removeBonusToken (BonusToken token) {
+        bonusTokensValue.add(-token.getValue());
+    }
 	
 	public MoneyModel getBonusTokensModel () {
 		return bonusTokensValue;
@@ -1424,8 +1427,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			((PublicCompanyI) clone).setCertificates(certificates);
 		}
-		((PublicCompanyI) clone).setParPrice(null);
-		((PublicCompanyI) clone).setCurrentPrice(null);
 		
 		return clone;
 	}

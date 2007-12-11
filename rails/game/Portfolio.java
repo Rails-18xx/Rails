@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.14 2007/10/27 15:26:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.15 2007/12/11 20:58:33 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -28,6 +28,7 @@ import rails.util.Util;
  * @author Erik
  */
 public class Portfolio
+implements TokenHolderI
 {
 
 	/** Owned private companies */
@@ -62,6 +63,10 @@ public class Portfolio
 		= new HashMap<TrainTypeI, List<TrainI>>();
 	protected TrainsModel trainsModel = new TrainsModel(this);
 
+    /** Owned tokens */
+    // TODO Currently only used to discard expired Bonus tokens.
+    protected List<TokenI> tokens = new ArrayList<TokenI>();
+    
 	/*
 	 * Special properties. It is easier to maintain a map of these that to have
 	 * to search through the privates on each and every action.
@@ -690,5 +695,40 @@ public class Portfolio
 	{
 		return privatesOwnedModel;
 	}
+    
+    public boolean addToken (TokenI token) {
+        return tokens.add(token);
+    }
+    
+    public boolean removeToken (TokenI token) {
+        return tokens.remove(token);
+    }
+
+    public List<TokenI> getTokens() {
+        return tokens;
+    }
+
+    public boolean hasTokens() {
+        return tokens != null && !tokens.isEmpty();
+    }
+    
+    public void rustObsoleteTrains () {
+    	
+    	List<TrainI> trainsToRust = new ArrayList<TrainI>();
+        for (TrainI train : trains) {
+            if (train.isObsolete()) {
+            	trainsToRust.add(train);
+            }
+        }
+        // Need to separate selection and execution,
+        // otherwise we get a ConcurrentModificationException on trains.
+        for (TrainI train : trainsToRust) {
+            log.debug("Obsolete train " + train.getUniqueId()
+                    + " (owned by " + name
+                    + ") rusted");
+            train.setRusted();
+        }
+        trainsModel.update();
+    }
 
 }

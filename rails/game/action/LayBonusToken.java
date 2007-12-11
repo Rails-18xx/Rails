@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.2 2007/12/04 20:25:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.3 2007/12/11 20:58:34 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -13,6 +13,7 @@ import java.util.List;
 import rails.game.BonusToken;
 import rails.game.MapHex;
 import rails.game.MapManager;
+import rails.game.Token;
 import rails.game.TokenI;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
@@ -23,7 +24,8 @@ import rails.util.Util;
  */
 public class LayBonusToken extends LayToken {
 	
-	BonusToken token = null;
+	transient BonusToken token = null;
+    String tokenId = null;
     
     /*--- Preconditions ---*/
     
@@ -32,6 +34,7 @@ public class LayBonusToken extends LayToken {
     public LayBonusToken (SpecialTokenLay specialProperty, BonusToken token) {
         super (specialProperty);
         this.token = token;
+        this.tokenId = token.getUniqueId();
     }
     
     public BonusToken getToken() {
@@ -72,6 +75,9 @@ public class LayBonusToken extends LayToken {
             }
         }
 
+        if (tokenId != null) {
+            token = (BonusToken) Token.getByUniqueId(tokenId);
+        }
 		if (specialPropertyId  > 0) {
 			specialProperty = (SpecialTokenLay) SpecialProperty.getByUniqueId (specialPropertyId);
 		}

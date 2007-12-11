@@ -1,8 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import rails.util.LocalText;
 
 public class GameOption {
 	
@@ -11,9 +15,14 @@ public class GameOption {
     private String type;
     private String defaultValue = null;
     private List<String> allowedValues = null;
+    private String[] parm = null;
+    
+    private static Map<String, GameOption> optionsMap 
+        = new HashMap<String, GameOption>();
 
     public GameOption (String name) {
         this.name = name;
+        optionsMap.put(name, this);
     }
     
     public void setType (String type) {
@@ -30,12 +39,24 @@ public class GameOption {
     	return name;
     }
     
+    public String getLocalisedName () {
+        return LocalText.getText(name, parm);
+    }
+    
     public String getType() {
     	return type;
     }
     
     public boolean isBoolean () {
     	return isBoolean;
+    }
+    
+    public void setParameters(String[] parameters) {
+        parm = parameters.clone();
+    }
+    
+    public String[] getParameters() {
+        return parm;
     }
     
     public void setAllowedValues (List<String> values) {
@@ -71,6 +92,10 @@ public class GameOption {
         } else {
         	return "";
         }
+    }
+    
+    public static GameOption getByName (String name) {
+        return optionsMap.get(name);
     }
 
 }

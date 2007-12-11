@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.18 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.19 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -111,6 +111,7 @@ public class GameManager implements ConfigurableComponentI
 		// Get any available game options
 		GameOption option;
 		String optionName, optionType, optionValues, optionDefault;
+        String optionNameParameters;
 		List<Tag> optionTags = tag.getChildren(OPTION_TAG);
 		if (optionTags != null) {
 			for (Tag optionTag : optionTags)
@@ -119,6 +120,10 @@ public class GameManager implements ConfigurableComponentI
 				if (optionName == null) throw new ConfigurationException ("GameOption without name");
 				option = new GameOption (optionName);
 				availableGameOptions.add (option);
+                optionNameParameters = optionTag.getAttributeAsString("parm");
+                if (optionNameParameters != null ) {
+                    option.setParameters(optionNameParameters.split(","));
+                }
 				optionType = optionTag.getAttributeAsString("type");
 				if (optionType != null) option.setType (optionType);
 				optionValues = optionTag.getAttributeAsString("values");
@@ -624,9 +629,14 @@ public class GameManager implements ConfigurableComponentI
 		return PhaseManager.getInstance().getCurrentPhase();
 	}
 
+    // TODO Should be removed 
 	public static void initialiseNewPhase(PhaseI phase)
 	{
 		ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
+
+        phase.activate();
+
+        // TODO The below should be merged into activate() 
 		if (phase.doPrivatesClose())
 		{
 			Game.getCompanyManager().closeAllPrivates();

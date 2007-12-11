@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.8 2007/10/27 17:36:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.9 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.w3c.dom.*;
 
 import rails.util.*;
 
-public class Tile implements TileI, StationHolderI, TokenHolderI
+public class Tile implements TileI, StationHolderI
 {
 
 	/** The 'internal id', identifying the tile in the XML files */
@@ -32,7 +32,7 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 	private List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Station> stations = new ArrayList<Station>();
-    private List<TokenI> tokens;
+    //private List<TokenI> tokens;
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
@@ -368,6 +368,7 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
 		return quantity;
 	}
 	
+    /*
     // For non-Station-related tokens
     public boolean addToken (TokenI token) {
         return token != null && tokens.add(token);
@@ -384,6 +385,7 @@ public class Tile implements TileI, StationHolderI, TokenHolderI
     public boolean hasTokens() {
         return ! tokens.isEmpty();
     }
+    */
     
 
 	protected class Upgrade {

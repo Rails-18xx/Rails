@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.3 2007/10/07 20:14:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.4 2007/12/11 20:58:34 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -21,6 +22,8 @@ import org.xml.sax.SAXException;
 
 import rails.game.ConfigurationException;
 import rails.game.Game;
+import rails.game.GameOption;
+import rails.game.GamesInfo;
 
 /** 
  * Each object of this class both contains and represents 
@@ -40,6 +43,8 @@ public class Tag {
     private boolean parsed = false;
     private boolean parsing = false;
     
+    protected static Logger log = Logger.getLogger(Tag.class.getPackage().getName());
+
     public Tag (Element element) {
         this.element = element;
     }
@@ -267,7 +272,10 @@ public class Tag {
                     // Check if the option has been chosen; if not, skip the rest
                     String optionValue = Game.getGameOption(name);
                     if (optionValue == null) {
-                        throw new ConfigurationException ("GameOption "+name+"="+value+" but no assigned value found");
+                        //throw new ConfigurationException ("GameOption "+name+"="+value+" but no assigned value found");
+                        log.warn ("GameOption "+name+"="+value+" but no assigned value found");
+                        // Take the default value
+                        optionValue = GameOption.getByName(name).getDefaultValue();
                     }
                     if (optionValue.equalsIgnoreCase(value)) {
                         parseSubTags (childElement);

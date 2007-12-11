@@ -5,23 +5,27 @@
 		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
-    <EndOfGame>
-      <BankBreaks limit="0" finish="currentOR"/><!-- "Runs out"; when "broken", -1 is the limit -->
-    </EndOfGame>
+		<EndOfGame>
+			<BankBreaks limit="0" finish="currentOR"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
 	</Component>
-    <Component name="Bank" class="rails.game.Bank">
-      <Bank amount="12000"/>
-      <Players number="3" cash="600" certLimit="19"/>
-      <Players number="4" cash="475" certLimit="15"/>
-      <Players number="5" cash="390" certLimit="12"/>
-      <Players number="6" cash="340" certLimit="11"/>
-      <Players number="7" cash="310" certLimit="9"/>
-      <Money format="@M"/>
-    </Component>
-	<Component name="TileManager" class="rails.game.TileManager" file="TileSet.xml"/>
+	<Component name="Bank" class="rails.game.Bank">
+		<Bank amount="12000"/>
+		<Players number="3" cash="600" certLimit="19"/>
+		<Players number="4" cash="475" certLimit="15"/>
+		<Players number="5" cash="390" certLimit="12"/>
+		<Players number="6" cash="340" certLimit="11"/>
+		<Players number="7" cash="310" certLimit="9"/>
+		<Money format="@M"/>
+	</Component>
+	<Component name="TileManager" class="rails.game.TileManager"
+		file="TileSet.xml"/>
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-    <Component name="CompanyManager" class="rails.game.CompanyManager" file="CompanyManager.xml"/>
-    <Component name="StockMarket" class="rails.game.StockMarket" file="StockMarket.xml"/>
+	<Component name="CompanyManager" class="rails.game.CompanyManager"
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="rails.game.StockMarket"
+		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
@@ -31,39 +35,39 @@
 		<Train name="2+2" majorStops="2" minorStops="2" cost="120" amount="4"/>
 		<Train name="3" majorStops="3" cost="180" amount="4" startPhase="3"/>
 		<Train name="3+3" majorStops="3" minorStops="3" cost="270" amount="3"/>
-		<Train name="4" majorStops="4" cost="360" amount="3" startPhase="4" 
+		<Train name="4" majorStops="4" cost="360" amount="3" startPhase="4"
 			rustedTrain="2"/>
 		<Train name="4+4" majorStops="4" minorStops="4" cost="440" amount="1"
 			rustedTrain="2+2"/>
 		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
 		<Train name="5+5" majorStops="5" minorStops="5" cost="600" amount="1"/>
-		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6" 
+		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
 			rustedTrain="3"/>
 		<Train name="6+6" majorStops="6" minorStops="6" cost="720" amount="4"
 			rustedTrain="3+3"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<Phase name="2" >
+		<Phase name="2">
 			<Tiles colour="yellow"/>
-      <OperatingRounds number="1"/>
+			<OperatingRounds number="1"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
-      <OperatingRounds number="2"/>
-      <OffBoardRevenue step="2"/>
+			<OperatingRounds number="2"/>
+			<OffBoardRevenue step="2"/>
+			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-      <OperatingRounds number="3"/>
-      <Privates close="yes"/>
-      <OffBoardRevenue step="3"/>
+			<OperatingRounds number="3"/>
+			<Privates close="yes"/>
+			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>
 		</Phase>
 	</Component>
 </ComponentManager>
-

@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.6 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.7 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import rails.game.move.TrainMove;
+import rails.game.state.BooleanState;
 
 public class Train implements TrainI
 {
@@ -23,6 +24,7 @@ public class Train implements TrainI
 			= new HashMap<String, TrainI> (); 
 
 	protected Portfolio holder;
+    protected BooleanState obsolete;
 
 	protected static final Portfolio unavailable = Bank.getUnavailable();
 	protected static final Portfolio ipo = Bank.getIpo();
@@ -41,6 +43,8 @@ public class Train implements TrainI
 		unavailable.addTrain(this);
 		uniqueId = type.getName() + "_" + index;
 		trainMap.put (uniqueId, this);
+        
+        obsolete = new BooleanState(uniqueId, false);
 	}
 	
 	public static TrainI getByUniqueId (String id) {
@@ -122,7 +126,10 @@ public class Train implements TrainI
 		return holder.getOwner();
 	}
 
-	/**
+    public boolean isObsolete () {
+        return obsolete.booleanValue();
+    }
+    /**
 	 * Move the train to another Portfolio.
 	 */
 	public void setHolder(Portfolio newHolder)
@@ -134,6 +141,10 @@ public class Train implements TrainI
 	{
 		new TrainMove (this, holder, Bank.getScrapHeap());
 	}
+    
+    public void setObsolete () {
+        obsolete.set(true);
+    }
 
 	public boolean canBeExchanged()
 	{

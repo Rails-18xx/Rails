@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TokenHolderI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TokenHolderI.java,v 1.3 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -29,7 +29,7 @@ public interface TokenHolderI
 	/**
 	 * @return ArrayList of all tokens we have.
 	 */
-	public List getTokens();
+	public List<TokenI> getTokens();
 
 	/**
 	 * Do we have any tokens?

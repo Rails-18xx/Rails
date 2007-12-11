@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.3 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 public interface TrainI
@@ -48,9 +48,13 @@ public interface TrainI
 
 	public CashHolder getOwner();
 
+    public boolean isObsolete ();
+
 	public void setHolder(Portfolio newHolder);
 
 	public void setRusted();
+    
+    public void setObsolete ();
 
 	public boolean canBeExchanged();
 
