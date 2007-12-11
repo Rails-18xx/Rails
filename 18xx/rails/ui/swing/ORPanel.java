@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.15 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.16 2007/12/11 20:58:34 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -516,6 +516,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button1.clearPossibleActions();
         button2.clearPossibleActions();
         button3.clearPossibleActions();
+        button1.setEnabled(false);
+        button2.setEnabled(false);
         button3.setEnabled(false);
     }
     

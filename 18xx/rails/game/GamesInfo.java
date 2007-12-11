@@ -139,6 +139,11 @@ public class GamesInfo {
 	        	}
 	        	GameOption option = new GameOption (optionName);
 	            gameOptions.add(option);
+                
+                String optionNameParameters = optionTag.getAttributeAsString("parm");
+                if (optionNameParameters != null) {
+                    option.setParameters(optionNameParameters.split(","));
+                }
 	        	
 	        	// Option type (optional).
 	        	// "toggle" means this is a boolean option,

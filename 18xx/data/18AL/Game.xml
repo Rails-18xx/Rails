@@ -2,6 +2,8 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18AL"/>
+		<GameOption name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
+		<GameOption name="Obsolete4Trains" type="toggle" default="yes"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
 		<EndOfGame>
@@ -32,13 +34,26 @@
 		<Train name="2" majorStops="2" cost="100" amount="5"/>
 		<Train name="3" majorStops="3" cost="180" amount="4" startPhase="3"/>
 		<Train name="4" majorStops="4" cost="300" amount="3" startPhase="4" 
-			rustedTrain="2"/>
+			rustedTrain="2" >
+			<IfOption name="Obsolete4Trains" value="yes">
+				<Attributes obsoleting="yes"/>
+			</IfOption>
+			<IfOption name="Obsolete4Trains" value="no">
+				<Attributes obsoleting="no"/>
+			</IfOption>
+		</Train>/>
 		<Train name="5" majorStops="5" cost="450" amount="2" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="630" amount="1" startPhase="6" 
 			rustedTrain="3"/>
 		<Train name="7" majorStops="7" cost="700" amount="1" startPhase="7" 
 			rustedTrain="4"/>
-		<Train name="4D" majorStops="4" cost="800" amount="5" startPhase="4D">
+		<Train name="4D" majorStops="4" cost="800" startPhase="4D">
+			<IfOption name="UnlimitedTopTrains" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedTopTrains" value="no">
+				<Attributes amount="5"/>
+			</IfOption>
 			<Reach countTowns="no"/>
 			<Score cities="double"/>
 			<ExchangeFirst cost="800"/>
@@ -48,6 +63,7 @@
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="1"/>
+			<Trains onePerTurn="yes" tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -56,6 +72,7 @@
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green"/>
+			<Trains onePerTurn="no"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>

@@ -630,7 +630,7 @@ public class ORUIManager {
 
         if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
             prompt = LocalText.getText ("WHICH_TRAIN_PRICE",
-                    new String [] {orPanel.getORComp().getName(), train.getName(), seller.getName()});
+                    new String [] {orComp.getName(), train.getName(), seller.getName()});
             String response;
             for (;;) {
                 response = JOptionPane.showInputDialog(orWindow,
@@ -857,7 +857,8 @@ public class ORUIManager {
         // End of possible action debug listing 
 
         orStep = oRound.getStep();
-        log.debug("OR step="+orStep+" "+OperatingRound.stepNames[orStep]);
+        log.debug("OR step="+orStep+" "
+                +(orStep >= 0 ? OperatingRound.stepNames[orStep] : ""));
         
         if (oRound.getOperatingCompanyIndex() != orCompIndex) {
             if (orCompIndex >= 0) orPanel.finishORCompanyTurn(orCompIndex);
@@ -931,7 +932,7 @@ public class ORUIManager {
         } else if (possibleActions.contains(DiscardTrain.class)) {
             
         } else if (orStep == OperatingRound.STEP_FINAL) {
-
+            // Does not occur???
             orPanel.finishORCompanyTurn(orCompIndex);
         }
         

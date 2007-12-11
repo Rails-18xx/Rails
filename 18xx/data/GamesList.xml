@@ -6,7 +6,7 @@
 The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
-		<Option name="UnlimitedDTrains" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1835">
@@ -37,6 +37,8 @@ Variant selection effects on SR and OR have not been implemented yet.
 	</Game>
 	<Game name="18AL">
 		<Note>Partly playable</Note>
+		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
+		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
 		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
 		<Players minimum="3" maximum="5"/>
 	</Game>
@@ -53,7 +55,7 @@ with all minors on one row (i.e., all available from the start)
 		<Note>Fully playable</Note>
 		<Description>Not extensively tested</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
-		<Option name="UnlimitedDTrains" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 </GamesList>

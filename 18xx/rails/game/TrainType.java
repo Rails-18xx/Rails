@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.13 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.14 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -38,6 +38,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	protected boolean firstCanBeExchanged = false;
 	protected IntegerState numberBoughtFromIPO; 
+    
+    protected boolean obsoleting = false;
 
 	private boolean real; // Only to determine if top-level attributes must be
 	// read.
@@ -126,6 +128,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
             
 			// Other train type released for buying
             releasedTrainTypeName = tag.getAttributeAsString("releasedTrain");
+            
+            // Can run as obsolete train
+            obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
         }
 		else
@@ -336,6 +341,10 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		return rustedTrainTypeName;
 	}
+    
+    public boolean isObsoleting() {
+        return obsoleting;
+    }
 
 	/**
 	 * @param releasedTrainType
@@ -383,11 +392,22 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		return infiniteAmount;
 	}
 
-	public void setRusted()
+	public void setRusted(Portfolio lastBuyingCompany)
 	{
 	    rusted.set(true);
         for (TrainI train : trains) {
-            train.setRusted();
+            if (obsoleting && train.getHolder() != lastBuyingCompany) {
+                log.debug("Train " + train.getUniqueId()
+                        + " (owned by " +train.getHolder().getName()
+                        + ") obsoleted");
+                train.setObsolete();
+                train.getHolder().getTrainsModel().update();
+            } else {
+                log.debug("Train " + train.getUniqueId()
+                        + " (owned by " +train.getHolder().getName()
+                        + ") rusted");
+                train.setRusted();
+            }
         }
 	}
 

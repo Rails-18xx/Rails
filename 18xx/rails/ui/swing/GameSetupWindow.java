@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.7 2007/10/11 22:31:05 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.8 2007/12/11 20:58:34 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -247,8 +247,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 				
 				for (GameOption option : availableOptions) {
 					if (option.isBoolean()) {
-						JCheckBox checkbox = new JCheckBox(LocalText
-								.getText(option.getName()));
+						JCheckBox checkbox = new JCheckBox(option.getLocalisedName());
 						if (option.getDefaultValue().equalsIgnoreCase("yes")) {
 							checkbox.setSelected(true);
 						}
@@ -257,7 +256,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 					} else {
 						optionsPane.setLayout(new GridLayout((availableOptions.size()+1),1));
 						optionsPane.add(new JLabel(LocalText.getText("Select",
-								LocalText.getText(option.getName()))));
+								option.getLocalisedName())));
 						JComboBox dropdown = new JComboBox();
 						for (String value : option.getAllowedValues()) {
 							dropdown.addItem(value);

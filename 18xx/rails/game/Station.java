@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.3 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -161,7 +161,6 @@ public class Station implements TokenHolderI, Cloneable
 	    return tokens.size() < baseSlots;
 	}
 
-	/** Stub */
 	public boolean removeToken (TokenI token) {
 	    
 	    return tokens.remove(token);

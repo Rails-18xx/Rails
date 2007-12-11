@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.3 2007/12/04 20:25:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.4 2007/12/11 20:58:33 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
  */
 package rails.game;
 
+import rails.game.move.TokenMove;
 import rails.util.Tag;
 import rails.util.Util;
 
@@ -20,10 +21,15 @@ import rails.util.Util;
  * 
  * @author Erik Vos
  */
-public class BonusToken extends Token {
+public class BonusToken 
+extends Token 
+implements Closeable {
     
     int value;
     String name;
+    String removingObjectDesc = null;
+    Object removingObject = null;
+    PublicCompanyI user = null; 
 
     /**
      * Create a BonusToken.
@@ -50,10 +56,42 @@ public class BonusToken extends Token {
             throw new ConfigurationException ("Bonus token must have a name");
         }
         description = name + " +" + Bank.format(value)+" bonus token";
+        
+        removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
+    }
+    
+    public void close () {
+        new TokenMove (this, holder, Bank.getScrapHeap());
+        user.removeBonusToken(this);
+    }
+    
+    public void setHolder (TokenHolderI newHolder) {
+        super.setHolder(newHolder);
+        
+        // Prepare for removal, is requested
+        if (removingObjectDesc != null 
+                && removingObject == null) {
+            String[] spec = removingObjectDesc.split(":");
+            if (spec[0].equalsIgnoreCase("Phase")) {
+                removingObject = PhaseManager.getPhaseNyName(spec[1]);
+            }
+        }
+        
+        // If the token is placed, prepare its removal when required
+        if (newHolder instanceof MapHex
+                && removingObject != null) {
+            if (removingObject instanceof Phase) {
+                ((Phase)removingObject).addObjectToClose(this);
+            }
+        }
+    }
+    
+    public void setUser (PublicCompanyI user) {
+        this.user = user;
     }
     
     public boolean isPlaced () {
-        return (holder instanceof Tile);
+        return (holder instanceof MapHex);
     }
     
     public String getName() {

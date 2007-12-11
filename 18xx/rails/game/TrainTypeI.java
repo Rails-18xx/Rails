@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.4 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.5 2007/12/11 20:58:33 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI
@@ -78,7 +78,9 @@ public interface TrainTypeI
 	 */
 	public boolean isAvailable();
 
-	public boolean hasInfiniteAmount();
+    public boolean isObsoleting();
+
+        public boolean hasInfiniteAmount();
 
 	/**
 	 * @param available
@@ -86,7 +88,7 @@ public interface TrainTypeI
 	 */
 	public void setAvailable();
 
-	public void setRusted();
+	public void setRusted(Portfolio lastBuyingCompany);
 
 	public boolean hasRusted();
 
