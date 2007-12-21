@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.8 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.9 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
@@ -226,7 +226,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
 	public boolean hasParPrice();
 
-	public int percentageOwnedByPlayers();
+	//public int percentageOwnedByPlayers();
 
 	public boolean isSplitAllowed();
 

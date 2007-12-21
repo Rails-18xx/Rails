@@ -1,14 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TokenHolderI.java,v 1.3 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TokenHolderI.java,v 1.4 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.*;
+
+import rails.game.move.MoveableHolderI;
 
 /**
  * Interface for implementing a TokenHolder
  * 
  * A TokenHolder is any object that can have a token played upon it.
  */
-public interface TokenHolderI
+public interface TokenHolderI extends MoveableHolderI
 {
 
 

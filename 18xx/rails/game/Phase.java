@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.6 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.7 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -9,9 +9,6 @@ import java.util.Map;
 import rails.util.Tag;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
 
 public class Phase implements PhaseI {
     

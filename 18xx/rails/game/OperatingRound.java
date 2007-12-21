@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.22 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.23 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
@@ -101,7 +101,7 @@ public class OperatingRound extends Round implements Observer
 	 * @param operate If false, only the privates pay out.
 	 * This applies if the Start Packet has not yet been sold completely.
 	 */
-	public OperatingRound(boolean operate)
+	public OperatingRound()
 	{
 		relativeORNumber++;
 		cumulativeORNumber++;
@@ -131,6 +131,10 @@ public class OperatingRound extends Round implements Observer
 			if (!priv.isClosed())
 				priv.payOut();
 		}
+        
+    }
+    
+    public void start (boolean operate) {
 		
 		if (operate) {
 		
@@ -296,6 +300,10 @@ public class OperatingRound extends Round implements Observer
             	result = true;
             	break;
             }
+            
+        } else if (processGameSpecificAction(action)) {
+            
+            result = true;
         
         } else {
         
@@ -305,6 +313,11 @@ public class OperatingRound extends Round implements Observer
         }
         
         return result;
+    }
+    
+    /** Stub, to be overridden in game-specific subclasses. */ 
+    public boolean processGameSpecificAction (PossibleAction action) {
+        return false;
     }
     
 	public boolean layTile (LayTile action)
@@ -1141,6 +1154,11 @@ public class OperatingRound extends Round implements Observer
             }
         }
     }
+    
+    /** Stub, can be overridden by subclasses */
+    protected void setGameSpecificPossibleActions () {
+    	
+    }
 
 	public List<SpecialPropertyI> getSpecialProperties()
 	{
@@ -1679,6 +1697,8 @@ public class OperatingRound extends Round implements Observer
         }
         
         setBonusTokenLays();
+        
+        setGameSpecificPossibleActions();
 		
 		// Can private companies be bought?
 		if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {

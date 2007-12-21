@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.11 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.12 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
@@ -8,8 +8,8 @@ import java.util.regex.*;
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
+import rails.game.move.Moveable;
 import rails.game.move.TileMove;
-import rails.game.move.TokenMove;
 import rails.util.Tag;
 
 
@@ -492,7 +492,8 @@ public class MapHex extends ModelObject
 	        log.error ("Company "+company.getName()+" has no free token");
 	        return false;
 	    } else {
-	        new TokenMove (token, company, station);
+	        //new TokenMove (token, company, station);
+	        token.moveTo(station);
 	        return true;
 	    }
 	}
@@ -503,7 +504,8 @@ public class MapHex extends ModelObject
 	        log.error ("No token specified");
 	        return false;
 	    } else {
-	        new TokenMove (token, token.getHolder(), this);
+	        //new TokenMove (token, token.getHolder(), this);
+	        token.moveTo(this);
 	        return true;
 	    }
 	}
@@ -533,6 +535,22 @@ public class MapHex extends ModelObject
 	    
 	    return offStationTokens.remove(token);
 	}
+	
+    public boolean addObject (Moveable object) {
+        if (object instanceof TokenI) {
+            return addToken ((TokenI)object);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeObject (Moveable object) {
+        if (object instanceof TokenI) {
+            return removeToken ((TokenI)object);
+        } else {
+            return false;
+        }
+    }
 
 	
 	public boolean hasTokenSlotsLeft (int station) {
@@ -624,7 +642,7 @@ public class MapHex extends ModelObject
 	    homes.put (company, station);
 	}
 	
-	public Map getHomes () {
+	public Map<PublicCompanyI, Station> getHomes () {
 	    return homes;
 	}
 	

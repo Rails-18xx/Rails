@@ -1,7 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.4 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
-
-import org.w3c.dom.Element;
 
 import rails.util.LocalText;
 import rails.util.Tag;

@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.3 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.4 2007/12/21 21:18:12 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
-
-import rails.game.Game;
 
 /**
  * This class draws a company's token.

@@ -1,10 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.9 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.10 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 import java.util.regex.*;
-
-import org.w3c.dom.*;
 
 import rails.util.*;
 

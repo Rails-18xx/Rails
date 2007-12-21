@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.7 2007/10/27 17:36:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
@@ -39,9 +39,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 										 * stockmarket squares
 										 */
 
-	ArrayList ipoPile;
+	ArrayList<PublicCertificate> ipoPile;
 
-	ArrayList companiesStarted;
+	//ArrayList companiesStarted;
 
 	public StockMarket()
 	{
@@ -427,25 +427,29 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	/**
 	 * @return Returns the companiesStarted.
 	 */
+	/*
 	public ArrayList getCompaniesStarted()
 	{
 		return companiesStarted;
 	}
+	*/
 
 	/**
 	 * @return Returns the ipoPile.
 	 */
+	/*
 	public ArrayList getIpoPile()
 	{
 		return ipoPile;
 	}
+	*/
 
 	public PublicCertificate removeShareFromPile(PublicCertificate stock)
 	{
 		if (ipoPile.contains(stock))
 		{
 			int index = ipoPile.lastIndexOf(stock);
-			stock = (PublicCertificate) ipoPile.get(index);
+			stock = ipoPile.get(index);
 			ipoPile.remove(index);
 			return stock;
 		}

@@ -1,22 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.11 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.12 2007/12/21 21:18:12 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.LayTile;
-import rails.game.action.LayBaseToken;
 import rails.game.action.LayToken;
-import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
-import rails.game.special.*;
-import rails.ui.swing.hexmap.*;
 import rails.util.LocalText;
-import rails.util.Util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,7 +43,13 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		super();
         this.gameUIManager = gameUIManager;
         
-        orUIManager = new ORUIManager(this);
+        Class orUIManagerClass = gameUIManager.getGameManager().getORUIManagerClass();
+        try {
+        	orUIManager = (ORUIManager) orUIManagerClass.newInstance();
+        } catch (Exception e) {
+        	log.fatal("Cannot instantiate class "+orUIManagerClass.getName());
+        	System.exit(1);
+        }
         
 		getContentPane().setLayout(new BorderLayout());
 
@@ -67,7 +66,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		orPanel = new ORPanel(this, orUIManager);
 		getContentPane().add(orPanel, BorderLayout.SOUTH);
 		
-        orUIManager.init();
+        orUIManager.init(this);
         
 		setTitle("Rails: Map");
 		setLocation(10, 10);

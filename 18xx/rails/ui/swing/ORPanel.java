@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.16 2007/12/11 20:58:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.17 2007/12/21 21:18:12 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.special.SpecialTokenLay;
 import rails.ui.swing.elements.*;
-import rails.ui.swing.hexmap.HexMap;
 import rails.util.*;
 
 import java.awt.*;
@@ -110,8 +108,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private RoundI round;
 
-    private OperatingRound oRound;
-
     private PublicCompanyI c;
 
     private JComponent f;
@@ -125,8 +121,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private PublicCompanyI orComp = null;
 
-    private PossibleActions possibleActions = PossibleActions.getInstance();
-    
 	protected static Logger log = Logger.getLogger(ORPanel.class.getPackage().getName());
 
     public ORPanel(ORWindow parent,ORUIManager orUIManager) {
@@ -459,7 +453,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         String command = actor.getActionCommand();
         List<PossibleAction> executedActions = null;
         PossibleAction executedAction = null;
-        Class executedActionType = null;
         
         if (source instanceof ActionTaker) {
             executedActions = ((ActionTaker)source).getPossibleActions();
@@ -468,7 +461,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 	            executedAction = executedActions.get(0);
 	            // In all cases, the actions in the list must be
 	            // instances of the same class
-	            executedActionType = executedAction.getClass();
 	            log.debug("Action taken is "+executedAction.toString());
             }
             
@@ -623,33 +615,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         }
     }
     
-    public void initSpecialActions (List<? extends PossibleAction> specialActions) {
+    public void initSpecialActions () {
         
         specialMenu.removeAll();
         specialMenu.setEnabled(false);
-        if (specialActions == null || specialActions.isEmpty()) {
-            specialMenu.setEnabled(false);
-        } else {
-            // Bonus tokens can be laid anytime, so we must also handle
-            // these outside the token laying step.
-            for (PossibleAction action : specialActions) {
-            	if (action instanceof LayBonusToken) {
-            		LayBonusToken btAction = (LayBonusToken) action;
-            		SpecialTokenLay stl = (SpecialTokenLay) btAction.getSpecialProperty();
-    		        BonusToken token = (BonusToken)stl.getToken();
-    		        String text = LocalText.getText("LayBonusToken", new String[] {
-    		                token.toString(),
-    		                stl.getLocationCodeString()
-    		        });
-    		        ActionMenuItem item = new ActionMenuItem (text);
-    		        item.addActionListener(this);
-    		        item.addPossibleAction(btAction);
-    		        specialMenu.add(item);
-            	}
-            }
-            specialMenu.setEnabled(true);
-        }
-        specialMenu.setOpaque(specialMenu.isEnabled());
+        specialMenu.setOpaque(false);
+    }
+    
+    public void addSpecialAction (PossibleAction action, String text) {
+        
+        ActionMenuItem item = new ActionMenuItem (text);
+    	item.addActionListener(this);
+    	item.addPossibleAction(action);
+    	specialMenu.add(item);
+        specialMenu.setEnabled(true);
+        specialMenu.setOpaque(true);
     }
     
     public void enableDone (NullAction action) {

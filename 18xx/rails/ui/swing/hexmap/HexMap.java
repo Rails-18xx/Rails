@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.9 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.10 2007/12/21 21:18:13 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -17,7 +17,6 @@ import rails.game.action.LayTile;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayToken;
 import rails.ui.swing.*;
-import rails.util.LocalText;
 
 /**
  * Base class that stores common info for HexMap independant of Hex

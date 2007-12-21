@@ -1,8 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.7 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.*;
-import org.w3c.dom.*;
 
 import rails.util.Tag;
 import rails.util.Util;

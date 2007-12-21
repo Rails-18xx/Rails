@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.16 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.17 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
 import java.awt.Color;
 import java.util.*;
 
-import org.w3c.dom.*;
 
 import rails.game.action.SetDividend;
 import rails.game.model.BaseTokensModel;
@@ -14,6 +13,7 @@ import rails.game.model.ModelObject;
 import rails.game.model.MoneyModel;
 import rails.game.model.PriceModel;
 import rails.game.move.CashMove;
+import rails.game.move.Moveable;
 import rails.game.state.BooleanState;
 import rails.game.state.StringState;
 import rails.util.LocalText;
@@ -613,7 +613,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 			{
 				capFactor = percentageOwnedByPlayers() / shareUnit;
 			}
-			cash = capFactor * getCurrentPrice().getPrice();
+			int price = (hasParPrice ? getParPrice() : getCurrentPrice()).getPrice();
+			cash = capFactor * price;
 		}
 		else
 		{
@@ -1189,7 +1190,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	public void checkFlotation()
 	{
 		if (hasStarted() && !hasFloated()
-				&& percentageOwnedByPlayers() >= floatPerc)
+				&& Bank.getIpo().getShare(this) <= 100 - floatPerc)
 		{
 			// Float company (limit and capitalisation to be made configurable)
 			setFloated();
@@ -1386,6 +1387,25 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    return result;
 	    
 	}
+	
+	public boolean addObject (Moveable object) {
+	    if (object instanceof TokenI) {
+	        return addToken ((TokenI)object);
+	    } else {
+	        return false;
+	    }
+	}
+
+    public boolean removeObject (Moveable object) {
+        if (object instanceof BaseToken) {
+            return removeToken ((TokenI)object);
+        } else if (object instanceof BonusToken) {
+            removeBonusToken ((BonusToken)object);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 	public int getNumberOfTileLays (String tileColour) {
 	    

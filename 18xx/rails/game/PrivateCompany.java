@@ -1,13 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.10 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.11 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
 import java.util.*;
 
-import org.w3c.dom.*;
-
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
+import rails.game.move.Moveable;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.util.LocalText;
@@ -101,34 +100,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 					+ name, e);
 		}
 
-		/*
-		 * Complete configuration by adding features from the Private
-		 * CompanyType
-		 */
-		/* Probably unused
-		Element typeElement = tag;
-		if (typeElement != null)
-		{
-			NodeList properties = typeElement.getChildNodes();
-
-			for (int j = 0; j < properties.getLength(); j++)
-			{
-
-				String propName = properties.item(j).getLocalName();
-				if (propName == null)
-					continue;
-
-				if (propName.equalsIgnoreCase("AllClose"))
-				{
-					nnp2 = properties.item(j).getAttributes();
-					closingPhase = XmlUtils.extractIntegerAttribute(nnp2,
-							"phase",
-							0);
-				}
-
-			}
-		}
-		*/
 	}
 
 	/**
@@ -256,12 +227,48 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		return clone;
 	}
 
-	public List<SpecialPropertyI> getSpecialProperties()
-	{
-		return specialProperties;
-	}
+    /** 
+     * Stub to satisfy MoveableHolderI.
+     * Special properties are never added after completing
+     * the initial setup.
+     */
+    public boolean addObject (Moveable object) {
+        return false;
+    }
+    
+    /** Remove a special property.
+     * Only used to transfer a persistent special property
+     * to a Portfolio, where it becomes independent of the private.
+     * @param token The special property object to remove.
+     * @return True if successful.
+     */
+    public boolean removeObject (Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return specialProperties.remove((SpecialPropertyI)object);
+        } else {
+            return false;
+        }
+    }
 
-	public List getBlockedHexes()
+    /**
+     * @return ArrayList of all special properties we have.
+     */
+    public List<SpecialPropertyI> getSpecialProperties()
+    {
+        return specialProperties;
+    }
+
+    /**
+     * Do we have any special properties?
+     * 
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+        return specialProperties != null 
+            && !specialProperties.isEmpty();
+    }
+    
+	public List<MapHex> getBlockedHexes()
 	{
 		return blockedHexes;
 	}

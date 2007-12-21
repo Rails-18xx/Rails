@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.10 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.11 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ public class Game
 	protected PlayerManager playerManager;
 	protected StockMarketI stockMarket;
 	protected Bank bank;
-	protected ArrayList companyList;
+	//protected ArrayList companyList;
 	protected String name;
 	//protected Element componentManagerElement;
 	protected Tag componentManagerTag;

@@ -296,4 +296,8 @@ public class GameUIManager
 	   return imageLoader;
    }
    
+   public GameManager getGameManager () {
+	   return gameManager;
+   }
+   
 }
