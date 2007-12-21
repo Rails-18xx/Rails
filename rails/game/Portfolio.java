@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.15 2007/12/11 20:58:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.16 2007/12/21 21:18:12 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -17,8 +17,8 @@ import rails.game.model.ShareModel;
 import rails.game.model.TrainsModel;
 import rails.game.move.CashMove;
 import rails.game.move.CertificateMove;
-import rails.game.move.TrainMove;
-//import rails.game.special.SpecialProperty;
+import rails.game.move.Moveable;
+import rails.game.move.MoveableHolderI;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -28,7 +28,7 @@ import rails.util.Util;
  * @author Erik
  */
 public class Portfolio
-implements TokenHolderI
+implements TokenHolderI, MoveableHolderI
 {
 
 	/** Owned private companies */
@@ -67,13 +67,13 @@ implements TokenHolderI
     // TODO Currently only used to discard expired Bonus tokens.
     protected List<TokenI> tokens = new ArrayList<TokenI>();
     
-	/*
-	 * Special properties. It is easier to maintain a map of these that to have
-	 * to search through the privates on each and every action.
-	 */
-	//protected List<SpecialPropertyI> specialProperties 
-	//	= new ArrayList<SpecialPropertyI>();
-
+    /** Private-independent special properties. 
+     * When moved here, a special property no longer depends
+     * on the private company being alive.
+     * Example: 18AL named train tokens.
+     */
+    protected List<SpecialPropertyI> specialProperties;
+    
 	/** Who owns the portfolio */
 	protected CashHolder owner;
 
@@ -127,6 +127,25 @@ implements TokenHolderI
 
 		// Move the money
 		if (price > 0) new CashMove (owner, from.owner, price);
+        
+        // Move any special abilities, if configured so
+		List<SpecialPropertyI> sps = privateCompany.getSpecialProperties();
+		if (sps != null) {
+			// Need intermediate List to avoid ConcurrentModificationException
+			List<SpecialPropertyI> spsToMove = new ArrayList<SpecialPropertyI>(2);
+	        for (SpecialPropertyI sp : sps) {
+	            if (sp.getTransferText().equalsIgnoreCase("toCompany")
+	                    && owner instanceof PublicCompanyI
+	             || sp.getTransferText().equalsIgnoreCase("toPlayer")
+	                    && owner instanceof Player) {
+	            	spsToMove.add (sp);
+	            }
+	        }
+	        for (SpecialPropertyI sp : spsToMove) {
+	            log.debug("Moving SP "+sp+" to "+name);
+	        	sp.moveTo(this);
+	        }
+		}
 	}
 
 	public void buyCertificate(PublicCertificateI certificate, Portfolio from,
@@ -576,18 +595,24 @@ implements TokenHolderI
 	public void buyTrain(TrainI train, int price)
 	{
 		CashHolder oldOwner = train.getOwner();
-		new TrainMove (train, train.getHolder(), this);
+		//new TrainMove (train, train.getHolder(), this);
+        train.moveTo(this);
 		if (price > 0) new CashMove (owner, oldOwner, price);
 	}
 
 	public void discardTrain(TrainI train)
 	{
-		new TrainMove (train, this, Bank.getPool());
+		//new TrainMove (train, this, Bank.getPool());
+        train.moveTo(Bank.getPool());
 		ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
 				name,
 				train.getName()
 		}));
 	}
+    
+    public void updateTrainsModel() {
+        trainsModel.update();
+    }
 
 	/** Should only be called from Move methods now */
 	public static void transferTrain(TrainI train, Portfolio from, Portfolio to)
@@ -659,6 +684,80 @@ implements TokenHolderI
 
 		return getTrainOfType(TrainManager.get().getTypeByName(name));
 	}
+    
+    /** 
+     * Add a special property.
+     * Used to make special properties independent of the
+     * private company that originally held it.
+     * @param property The special property object to add.
+     * @return True if successful.
+     */
+    public boolean addSpecialProperty (SpecialPropertyI property) {
+        if (specialProperties == null) {
+            specialProperties
+                = new ArrayList<SpecialPropertyI>(2);
+         }
+        return specialProperties.add(property);
+    }
+    
+    /** Remove a special property.
+     * Not currently used.
+     * @param property The special property object to remove.
+     * @return True if successful.
+     */
+    public boolean removeSpecialProperty (SpecialPropertyI property) {
+        if (specialProperties != null) {
+            return specialProperties.remove(property);
+        } else {
+            return false;
+        }
+    }
+
+    /** 
+     * Add an object.
+     * @param object The object to add.
+     * @return True if successful.
+     */
+    public boolean addObject (Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return addSpecialProperty ((SpecialPropertyI)object);
+        } else {
+            return false;
+        }
+    }
+    
+    /** Remove an object.
+     * Not currently used.
+     * @param object The object to remove.
+     * @return True if successful.
+     */
+    public boolean removeObject (Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return removeSpecialProperty ((SpecialPropertyI)object);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return ArrayList of all special properties we have.
+     */
+    public List<SpecialPropertyI> getSpecialProperties()
+    {
+        return specialProperties;
+    }
+
+    /**
+     * Do we have any special properties?
+     * 
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+        return specialProperties != null 
+            && !specialProperties.isEmpty();
+    }
+    
+
 
 	public <T extends SpecialPropertyI> List<T> getSpecialProperties
 		(Class<T> clazz, boolean includeExercised)
@@ -681,11 +780,27 @@ implements TokenHolderI
         			        && (!sp.isExercised() || includeExercised)
         			        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
         			             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-        			    log.debug ("Adding SP: "+sp);
+        			    log.debug ("Adding private SP: "+sp);
         				result.add((T)sp);
         			}
         		}
             }
+            
+            // Private-independent special properties
+            if (specialProperties != null) {
+	            for (SpecialPropertyI sp : specialProperties)
+	            {
+	                if ((clazz == null || Util.isInstanceOf(sp, clazz))
+	                        && sp.isExecutionable() 
+	                        && (!sp.isExercised() || includeExercised)
+	                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
+	                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
+	                    log.debug ("Adding persistent SP: "+sp);
+	                    result.add((T)sp);
+	                }
+	            }
+            }
+            
         }
 
 		return result;

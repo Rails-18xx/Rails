@@ -1,20 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.6 2007/12/04 20:25:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.7 2007/12/21 21:18:13 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.MapHex;
-import rails.game.MapManager;
-import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
-import rails.util.Util;
 
 /**
  * @author Erik Vos

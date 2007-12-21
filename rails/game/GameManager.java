@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.19 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.20 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -7,6 +7,7 @@ import rails.game.action.PossibleActions;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
 import rails.game.state.State;
+import rails.ui.swing.ORUIManager;
 import rails.util.*;
 
 import java.io.File;
@@ -30,6 +31,9 @@ public class GameManager implements ConfigurableComponentI
      */
     public static final long saveFileVersionID 
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
+    
+    protected Class operatingRoundClass = OperatingRound.class;
+    protected Class orUIManagerClass = ORUIManager.class;
 
 	protected List<Player> players;
 	protected List<String> playerNames;
@@ -132,6 +136,17 @@ public class GameManager implements ConfigurableComponentI
 				if (optionDefault != null) option.setDefaultValue(optionDefault);
 			}
 		}
+        
+        // OperatingRound class
+        Tag orTag = tag.getChild("OperatingRound");
+        if (orTag != null) {
+            String orClassName = orTag.getAttributeAsString("class", "OperatingRound");
+            try {
+                operatingRoundClass = Class.forName(orClassName);
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException ("Cannot find class "+orClassName, e);
+            }
+        }
 
 		/* Max. % of shares of one company that a player may hold */
 		Tag shareLimitTag = tag.getChild("PlayerShareLimit");
@@ -171,6 +186,18 @@ public class GameManager implements ConfigurableComponentI
 				}
 			}
 		}
+
+		
+        // ORUIManager class
+        Tag orMgrTag = tag.getChild("ORUIManager");
+        if (orMgrTag != null) {
+            String orMgrClassName = orMgrTag.getAttributeAsString("class", "OperatingRound");
+            try {
+                orUIManagerClass = Class.forName(orMgrClassName);
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException ("Cannot find class "+orMgrClassName, e);
+            }
+        }
 	}
 
 	public void startGame()
@@ -287,7 +314,15 @@ public class GameManager implements ConfigurableComponentI
 	{
 		log.debug("Operating round started with operate-flag="+operate);
 		playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
-		new OperatingRound(operate);
+        
+		//new OperatingRound().start(operate);
+        try {
+            OperatingRound or = (OperatingRound)operatingRoundClass.newInstance();
+            or.start(operate);
+        } catch (Exception e) {
+            log.fatal ("Cannot instantiate class "+operatingRoundClass.getName(), e);
+            System.exit(1);
+        }
 	}
 
 	public void startShareSellingRound(OperatingRound or,
@@ -723,6 +758,10 @@ public class GameManager implements ConfigurableComponentI
 
 	public static void setBonusTokensExist(boolean bonusTokensExist) {
 		instance.bonusTokensExist = bonusTokensExist;
+	}
+	
+	public Class getORUIManagerClass() {
+		return orUIManagerClass;
 	}
 	
 	

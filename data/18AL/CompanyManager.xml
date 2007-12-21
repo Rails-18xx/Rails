@@ -33,7 +33,18 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M&amp;C" type="Private" basePrice="100" revenue="20"/>
+	<Company name="M&amp;C" type="Private" basePrice="100" revenue="20">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringORTurn"
+				class="rails.game.specific._18AL.NameTrains"
+				transfer="toCompany">
+				<NameTrains class="rails.game.specific._18AL.NamedTrainToken">
+					<NamedTrainToken name="RELee" longName="&quot;Robert E. Lee&quot; (Bir-Atl)" value="20" ifRouteIncludes="G4,G8"/>
+					<NamedTrainToken name="PanAm" longName="&quot;Pan American&quot; (Nas-Mob)" value="40" ifRouteIncludes="A4,Q2"/>
+				</NameTrains>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>/>
 	<Company name="NDY" type="Private" basePrice="120" revenue="20"/>
 	<Company name="WRA" type="Public" tokens="4" fgColour="000000" bgColour="FF8000">
 		<Home hex="L5"/>

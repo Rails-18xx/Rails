@@ -1,13 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.8 2007/10/27 15:26:35 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.9 2007/12/21 21:18:12 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-
 import rails.game.*;
+import rails.game.move.MoveableHolderI;
 import rails.game.state.BooleanState;
 import rails.util.Tag;
 import rails.util.Util;
@@ -25,6 +23,7 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	
 	protected String conditionText = "";
 	protected String whenText = "";
+    protected String transferText = "";
 	protected boolean isORProperty = false;
 	protected boolean isSRProperty = false;
 	
@@ -56,6 +55,8 @@ public abstract class SpecialProperty implements SpecialPropertyI
 		if (!Util.hasValue(whenText))
 			throw new ConfigurationException("Missing condition in private special property");
 		// to be interpreted...
+        
+        transferText = tag.getAttributeAsString("transfer", "");
 	}
 	
 	public int getUniqueId () {
@@ -129,9 +130,19 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	{
 		return isORProperty;
 	}
+    
+    public String getTransferText() {
+        return transferText;
+    }
+
+    /** Stub for moving the special property to another holder.
+     * Must be overridden by subsclasses that actually can be moved.
+     */
+    public void moveTo (MoveableHolderI newHolder) {
+    }
 
 	public String toString () {
-	    return getClass().getName() + " of private " + privateCompany.getName();
+	    return getClass().getSimpleName() + " of private " + privateCompany.getName();
 	}
     
     /** Default menu item text, should be by all special properties

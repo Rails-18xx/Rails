@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.3 2007/12/11 20:58:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.4 2007/12/21 21:18:12 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
@@ -7,6 +7,9 @@ package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 
 /**
  * @author Erik Vos
@@ -41,6 +44,17 @@ public abstract class Token implements TokenI {
     
     public TokenHolderI getHolder () {
         return holder;
+    }
+    
+    public void moveTo (MoveableHolderI newHolder) {
+        if (newHolder instanceof TokenHolderI) {
+            new ObjectMove (this, holder, newHolder);
+        }
+    }
+    
+    public boolean equals (TokenI otherToken) {
+        return otherToken != null
+            &&  uniqueId.equals(otherToken.getUniqueId());
     }
     
     /**

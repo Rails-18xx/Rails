@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.4 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.5 2007/12/21 21:18:13 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
 
 import rails.game.*;
-import rails.ui.swing.ORUIManager;
-
 
 /**
  * Class EWHexMap displays a basic hex map with EW exit orientation.

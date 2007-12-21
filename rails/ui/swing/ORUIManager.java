@@ -16,9 +16,8 @@ import rails.util.Util;
 
 public class ORUIManager {
 	
-	private GameUIManager gameUIManager;
-	private ORWindow orWindow;
-	private ORPanel orPanel;
+	protected ORWindow orWindow;
+	protected ORPanel orPanel;
 	private UpgradesPanel upgradePanel;
 	private MapPanel mapPanel;
 	private HexMap map;
@@ -28,21 +27,16 @@ public class ORUIManager {
     private PublicCompanyI[] companies;
     private PublicCompanyI orComp;
     private int orCompIndex;
-    private int playerIndex;
     
-    private boolean retrieveStep;
 	private int orStep;
 	private int localStep;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
-    private boolean privatesCanBeBought;
     private boolean privatesCanBeBoughtNow;
-    private boolean bonusTokensExist;
     public List<PossibleAction> mapRelatedActions = new ArrayList<PossibleAction>();
 
     private boolean tileLayingEnabled = false; 
 	public List<LayTile> allowedTileLays = new ArrayList<LayTile>();
-	private int selectedTileId;
 	public List<TileI> tileUpgrades;
 	
 	private boolean tokenLayingEnabled = false;
@@ -74,22 +68,20 @@ public class ORUIManager {
 
 	protected static Logger log = Logger.getLogger(ORUIManager.class.getPackage().getName());
 
-	public ORUIManager (ORWindow orWindow) {
+	public ORUIManager () {
 		
-		this.orWindow = orWindow; 
-        gameUIManager = orWindow.getGameUIManager();
     }
     
-    public void init() {
+    public void init(ORWindow orWindow) {
         
-	    orPanel = orWindow.getORPanel();
+		this.orWindow = orWindow; 
+
+        orPanel = orWindow.getORPanel();
 	    mapPanel = orWindow.getMapPanel();
 	    upgradePanel = orWindow.getUpgradePanel();
 	    map = mapPanel.getMap();
 	    messagePanel = orWindow.getMessagePanel();
 	    
-        privatesCanBeBought = GameManager.getCompaniesCanBuyPrivates();
-        bonusTokensExist = GameManager.doBonusTokensExist();
 	}
 	
 	public void initOR (OperatingRound or) {
@@ -301,7 +293,9 @@ public class ORUIManager {
 
     public void processAction (String command, List<PossibleAction> actions) {
     	
-    	if (actions != null && actions.size() > 0) {
+            
+    	if (actions != null && actions.size() > 0
+                && !processGameSpecificActions (actions)) {
     		
     		Class actionType = actions.get(0).getClass();
     		
@@ -329,6 +323,14 @@ public class ORUIManager {
     	}
     	
         ReportWindow.addLog();
+    }
+    
+    /** Stub, can be overridden in subclasses */
+    protected boolean processGameSpecificActions (
+            List<PossibleAction> actions) {
+        
+        return false;
+        
     }
     
     private void setDividend (String command, SetDividend action) {
@@ -970,18 +972,33 @@ public class ORUIManager {
         orPanel.enableUndo(undoAction);
         orPanel.enableRedo(redoAction);
         
+        orPanel.initSpecialActions();
+
         // Bonus tokens can be laid anytime, so we must also handle
         // these outside the token laying step.
         if (possibleActions.contains(LayBonusToken.class)
                 && !possibleActions.contains(LayBaseToken.class)) {
             
         	List<LayBonusToken> bonusTokenActions = possibleActions.getType(LayBonusToken.class);
-        	orPanel.initSpecialActions(bonusTokenActions);
-        } else {
-            orPanel.initSpecialActions(null);
+            for (LayBonusToken btAction : bonusTokenActions) {
+                SpecialTokenLay stl = (SpecialTokenLay) btAction.getSpecialProperty();
+                BonusToken token = (BonusToken)stl.getToken();
+                String text = LocalText.getText("LayBonusToken", new String[] {
+                        token.toString(),
+                        stl.getLocationCodeString()
+                });
+                orPanel.addSpecialAction(btAction, text);
+            }
         }
+        
+        checkForGameSpecificActions ();
 
         orPanel.redisplay();
+    }
+    
+    /** Stub, can be overridden by game-specific subclasses */
+    protected void checkForGameSpecificActions () {
+    	
     }
     
     public void setORCompanyTurn(int orCompIndex) {
@@ -993,7 +1010,6 @@ public class ORUIManager {
 
         if (orCompIndex >= 0) {
             // Give a new company the turn.
-            this.playerIndex = companies[orCompIndex].getPresident().getIndex();
         }
     }
     

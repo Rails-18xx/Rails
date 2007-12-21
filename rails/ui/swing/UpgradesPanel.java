@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.8 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.9 2007/12/21 21:18:12 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -284,8 +284,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             setSelectedToken();
         } else {
 
-	        HexMap map = orUIManager.getMapPanel().getMap();
-	
 	        int id = Integer.parseInt(((JLabel) e.getSource()).getText());
 	        
 	        orUIManager.tileSelected(id);

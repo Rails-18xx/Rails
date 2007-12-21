@@ -1,10 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.4 2007/10/05 22:02:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
 package rails.game.special;
 
 import rails.game.ConfigurableComponentI;
 import rails.game.PrivateCompanyI;
+import rails.game.move.Moveable;
+import rails.game.move.MoveableHolderI;
 
-public interface SpecialPropertyI extends ConfigurableComponentI
+public interface SpecialPropertyI 
+extends ConfigurableComponentI, Moveable
 {
 
 	public void setCompany(PrivateCompanyI company);
@@ -29,8 +32,14 @@ public interface SpecialPropertyI extends ConfigurableComponentI
 
 	public boolean isORProperty();
 	
+    public String getTransferText();
+    
 	public int getUniqueId();
     
     public String toMenu();
+    
+    public String getName();
+    
+    public void moveTo (MoveableHolderI newHolder);
 
 }

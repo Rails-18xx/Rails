@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 public interface TrainI
 {
+    public void init (TrainTypeI type, int index);
 
 	/**
 	 * @return Returns the cost.
@@ -51,11 +52,15 @@ public interface TrainI
     public boolean isObsolete ();
 
 	public void setHolder(Portfolio newHolder);
+    
+    public void moveTo (Portfolio to);
 
 	public void setRusted();
     
     public void setObsolete ();
 
 	public boolean canBeExchanged();
+
+    public String toDisplay();
 
 }

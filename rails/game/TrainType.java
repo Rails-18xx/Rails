@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.14 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.15 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.*;
 
 import rails.game.move.TrainMove;
 import rails.game.state.BooleanState;
@@ -19,6 +17,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	public final static int TOWN_COUNT_MAJOR = 2;
 	public final static int TOWN_COUNT_MINOR = 1;
 	public final static int NO_TOWN_COUNT = 0;
+
+    protected String trainClassName = "rails.game.Train";
+    protected Class trainClass;
 
 	protected String name;
 	protected int amount;
@@ -58,7 +59,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	private String releasedTrainTypeName = null;
 	protected TrainTypeI releasedTrainType = null;
 
-	protected ArrayList<Train> trains = null;
+	protected ArrayList<TrainI> trains = null;
 
 	protected BooleanState available;
 	protected BooleanState rusted;
@@ -73,8 +74,6 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	public TrainType(boolean real)
 	{
 		this.real = real;
-		if (real)
-			trains = new ArrayList<Train>();
 	}
 
 	/**
@@ -82,9 +81,17 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	 */
 	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
+	    trainClassName = tag.getAttributeAsString("class", trainClassName);
+	    try {
+            trainClass = Class.forName(trainClassName);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException ("Class "+trainClassName+"not found", e);
+        }
 
 		if (real)
 		{
+            trains = new ArrayList<TrainI>();
+            
 			// Name
             name = tag.getAttributeAsString("name");
 			if (name == null)
@@ -179,21 +186,40 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
 			townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
 			// Actually we should meticulously check all values....
+			
+			//log.debug("Train type "+name+": class "+trainClassName);
 
 			// Now create the trains of this type
+            TrainI train;
 			if (infiniteAmount)
 			{
 				/*
 				 * We create one train, but will add one more each time a train
 				 * of this type is bought.
 				 */
-				trains.add(new Train(this, 0));
+                try {
+                    train = (TrainI) trainClass.newInstance();
+                } catch (InstantiationException e) {
+                    throw new ConfigurationException("Cannot instantiate class "+trainClassName, e);
+                } catch (IllegalAccessException e) {
+                    throw new ConfigurationException("Cannot access class "+trainClassName+"constructor", e);
+                }
+                train.init(this, 0);
+				trains.add(train);
 			}
 			else
 			{
 				for (int i = 0; i < amount; i++)
 				{
-					trains.add(new Train(this, i));
+	                try {
+	                    train = (TrainI) trainClass.newInstance();
+	                } catch (InstantiationException e) {
+	                    throw new ConfigurationException("Cannot instantiate class "+trainClassName, e);
+	                } catch (IllegalAccessException e) {
+	                    throw new ConfigurationException("Cannot access class "+trainClassName+"constructor", e);
+	                }
+                    train.init(this, i);
+                    trains.add(train);
 				}
 			}
 		}
@@ -207,10 +233,12 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	/**
 	 * @return Returns the amount.
 	 */
+	/*
 	public int getAmount()
 	{
 		return amount;
 	}
+	*/
 
 	/**
 	 * @return Returns the cityScoreFactor.

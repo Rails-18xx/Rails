@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.8 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.9 2007/12/21 21:18:13 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -313,13 +313,13 @@ public class GUIHex implements ViewObject
 					rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
 		}
 
-		Map homes;
+		Map<PublicCompanyI, Station> homes;
 		if ((homes = getHexModel().getHomes()) != null)
 		{
 		    StringBuffer b = new StringBuffer();
-		    for (Iterator it = homes.keySet().iterator(); it.hasNext(); ) {
+		    for (Iterator<PublicCompanyI> it = homes.keySet().iterator(); it.hasNext(); ) {
 		        
-		        PublicCompanyI co = (PublicCompanyI) it.next();
+		        PublicCompanyI co = it.next();
 
 				if (!co.hasStarted() && !co.hasFloated())
 				{
@@ -335,19 +335,21 @@ public class GUIHex implements ViewObject
 
 		if (getHexModel().isBlocked())
 		{
-			ArrayList privates = (ArrayList) Game.getCompanyManager()
+			List<PrivateCompanyI> privates = Game.getCompanyManager()
 					.getAllPrivateCompanies();
-			Iterator pIT = privates.iterator();
+			//Iterator pIT = privates.iterator();
 
-			while (pIT.hasNext())
+			//while (pIT.hasNext())
+			for (PrivateCompanyI p : privates) 
 			{
-				PrivateCompany p = (PrivateCompany) pIT.next();
-				ArrayList blocked = (ArrayList) p.getBlockedHexes();
-				Iterator bIT = blocked.iterator();
+				//PrivateCompany p = (PrivateCompany) pIT.next();
+				List<MapHex> blocked = p.getBlockedHexes();
+				//Iterator bIT = blocked.iterator();
 
-				while (bIT.hasNext())
+				//while (bIT.hasNext())
+				for (MapHex hex : blocked)
 				{
-					MapHex hex = (MapHex) bIT.next();
+					//MapHex hex = (MapHex) bIT.next();
 
 					if (getHexModel().equals(hex))
 					{
@@ -397,14 +399,14 @@ public class GUIHex implements ViewObject
 	{
 		int numStations = getHexModel().getStations().size();
 		int numTokens;
-		ArrayList tokens;
+		List<TokenI> tokens;
 		Point origin;
 		PublicCompanyI co;
 
 		for (int i = 0; i < numStations; i++)
 		{
-			numTokens = getHexModel().getTokens(i).size();
-			tokens = (ArrayList) getHexModel().getTokens(i);
+			tokens = getHexModel().getTokens(i);
+            numTokens = tokens.size();
 
 			for (int j = 0; j < tokens.size(); j++)
 			{

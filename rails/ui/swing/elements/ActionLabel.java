@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ActionLabel.java,v 1.1 2007/12/04 20:25:20 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ActionLabel.java,v 1.2 2007/12/21 21:18:13 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import rails.game.action.ActionTaker;

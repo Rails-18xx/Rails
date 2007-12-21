@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.6 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.7 2007/12/21 21:18:12 evos Exp $ */
 package rails.game.special;
 
 
@@ -113,6 +113,10 @@ public class SpecialTokenLay extends SpecialProperty
 	public TokenI getToken() {
 		return token;
 	}
+    
+    public String getName() {
+        return toString();
+    }
 
     public String toString() {
 	    return "SpecialTokenLay comp="+privateCompany.getName()

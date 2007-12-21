@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
+import rails.game.move.Moveable;
 import rails.util.Util;
 
 
@@ -136,7 +137,6 @@ public class Station implements TokenHolderI, Cloneable
 		return value;
 	}
 
-	/** Stub */
 	public boolean addToken (TokenI token) {
 	    
 	    if (tokens.contains(token)) {
@@ -146,6 +146,22 @@ public class Station implements TokenHolderI, Cloneable
 	        return tokens.add(token);
 	    }
 	}
+	
+	public boolean addObject (Moveable object) {
+	    if (object instanceof TokenI) {
+	        return addToken ((TokenI)object);
+	    } else {
+	        return false;
+	    }
+	}
+
+    public boolean removeObject (Moveable object) {
+        if (object instanceof TokenI) {
+            return removeToken ((TokenI)object);
+        } else {
+            return false;
+        }
+    }
 
 	public List<TokenI> getTokens()
 	{

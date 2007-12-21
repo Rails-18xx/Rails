@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.7 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -29,8 +29,11 @@ public class Train implements TrainI
 	protected static final Portfolio unavailable = Bank.getUnavailable();
 	protected static final Portfolio ipo = Bank.getIpo();
 
-	public Train(TrainTypeI type, int index)
-	{
+	public Train() {
+    }
+    
+    public void init (TrainTypeI type, int index)
+ 	{
 
 		this.type = type;
 		this.majorStops = type.getMajorStops();
@@ -136,6 +139,10 @@ public class Train implements TrainI
 	{
 		holder = newHolder;
 	}
+    
+    public void moveTo (Portfolio to) {
+        new TrainMove (this, holder, to);
+    }
 
 	public void setRusted()
 	{
@@ -150,5 +157,9 @@ public class Train implements TrainI
 	{
 		return type.nextCanBeExchanged();
 	}
+    
+    public String toDisplay() {
+        return getName();
+    }
 
 }

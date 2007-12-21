@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.9 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.10 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 
@@ -53,7 +53,8 @@ public class Player implements CashHolder, Comparable<Player>
 
 	private Portfolio portfolio = null;
 
-	private ArrayList companiesSoldThisTurn = new ArrayList();
+	private ArrayList<PublicCompanyI> companiesSoldThisTurn 
+	    = new ArrayList<PublicCompanyI>();
 
 	public static void setLimits(int number, int cash, int certLimit)
 	{

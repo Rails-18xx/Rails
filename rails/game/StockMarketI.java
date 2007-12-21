@@ -1,8 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.4 2007/12/21 21:18:12 evos Exp $ */
 package rails.game;
 
 import java.util.List;
-import org.w3c.dom.Element;
 
 public interface StockMarketI
 {

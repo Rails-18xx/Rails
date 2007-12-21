@@ -1,11 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.4 2007/12/11 20:58:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.5 2007/12/21 21:18:12 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
  */
 package rails.game;
 
-import rails.game.move.TokenMove;
+import rails.game.move.ObjectMove;
 import rails.util.Tag;
 import rails.util.Util;
 
@@ -61,7 +61,8 @@ implements Closeable {
     }
     
     public void close () {
-        new TokenMove (this, holder, Bank.getScrapHeap());
+        //new TokenMove (this, holder, Bank.getScrapHeap());
+        new ObjectMove (this, holder, Bank.getScrapHeap());
         user.removeBonusToken(this);
     }
     

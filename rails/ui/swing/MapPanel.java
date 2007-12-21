@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.5 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.6 2007/12/21 21:18:12 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.LayTile;
-import rails.game.action.LayBaseToken;
 import rails.game.action.LayToken;
 import rails.ui.swing.hexmap.*;
 
@@ -26,14 +25,11 @@ public class MapPanel extends JPanel
 	private MapManager mmgr;
 	private HexMap map;
 	private JScrollPane scrollPane;
-	private ORUIManager orUIManager;
 
 	protected static Logger log = Logger.getLogger(MapPanel.class.getPackage().getName());
 
 	public MapPanel(ORUIManager orUIManager)
 	{
-		this.orUIManager = orUIManager;
-		
 		Scale.set(15);
 		setLayout(new BorderLayout());
 

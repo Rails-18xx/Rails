@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.5 2007/10/07 20:14:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.6 2007/12/21 21:18:12 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -132,6 +132,10 @@ public class ExchangeForShare extends SpecialProperty
 	{
 		return share;
 	}
+    
+    public String getName() {
+        return toString();
+    }
     
     public String toString() {
         return "Swap "+privateCompany.getName()

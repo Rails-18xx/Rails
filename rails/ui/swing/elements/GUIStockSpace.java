@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.2 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.3 2007/12/21 21:18:13 evos Exp $*/
 package rails.ui.swing.elements;
 
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
@@ -33,7 +32,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 
 	Dimension size = new Dimension(40, 40);
 
-	List tokenList;
+	List<PublicCompanyI> tokenList;
 
 	private static final Color BROWN = new Color(144, 72, 0);
 	private static final Color LIGHT_GRAY = new Color(200, 200, 200);
@@ -95,13 +94,13 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 			return;
 		if (model.hasTokens())
 		{
-			tokenList = (ArrayList) model.getTokens();
+			tokenList = model.getTokens();
 
 			placeToken(tokenList);
 		}
 	}
 
-	private void placeToken(List tokenList)
+	private void placeToken(List<PublicCompanyI> tokenList)
 	{
 
 		Point origin = new Point(16, 0);

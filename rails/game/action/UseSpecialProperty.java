@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.1 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.2 2007/12/21 21:18:13 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -20,14 +20,15 @@ public class UseSpecialProperty extends PossibleORAction {
     /*--- Preconditions ---*/
     
     /** The special property that could be used */
-    transient private SpecialPropertyI specialProperty = null;
+    transient protected SpecialPropertyI specialProperty = null;
     private int specialPropertyId;
     
     /*--- Postconditions ---*/
     
      public UseSpecialProperty (SpecialPropertyI specialProperty) {
-        this.specialProperty = specialProperty;
-        if (specialProperty != null) this.specialPropertyId = specialProperty.getUniqueId();
+         super();
+         this.specialProperty = specialProperty;
+         if (specialProperty != null) this.specialPropertyId = specialProperty.getUniqueId();
     }
 
     /**
