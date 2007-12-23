@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.9 2007/12/23 16:30:37 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rails.game.move.TrainMove;
+import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 
 public class Train implements TrainI
@@ -140,13 +141,14 @@ public class Train implements TrainI
 		holder = newHolder;
 	}
     
-    public void moveTo (Portfolio to) {
-        new TrainMove (this, holder, to);
+    public void moveTo (MoveableHolderI to) {
+        //new TrainMove (this, holder, to);
+    	new ObjectMove (this, holder, to);
     }
 
 	public void setRusted()
 	{
-		new TrainMove (this, holder, Bank.getScrapHeap());
+		new ObjectMove (this, holder, Bank.getScrapHeap());
 	}
     
     public void setObsolete () {

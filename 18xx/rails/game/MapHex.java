@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.12 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.13 2007/12/23 16:30:37 evos Exp $ */
 package rails.game;
 
 
@@ -646,6 +646,11 @@ public class MapHex extends ModelObject
 	    return homes;
 	}
 	
+	public boolean isHome (PublicCompanyI company) {
+		boolean result = homes != null && homes.get(company) != null;
+		return result;
+	}
+	
 	public void addDestination (PublicCompanyI company) {
 	    if (destinations == null) destinations = new ArrayList<PublicCompanyI>();
 	    destinations.add (company);
@@ -653,6 +658,10 @@ public class MapHex extends ModelObject
 	
 	public List getDestinations () {
 	    return destinations;
+	}
+	
+	public boolean isDestination (PublicCompanyI company) {
+		return destinations != null && destinations.contains(company);
 	}
 
 	/**

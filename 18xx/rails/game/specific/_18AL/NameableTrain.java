@@ -1,10 +1,10 @@
 package rails.game.specific._18AL;
 
-import rails.game.Portfolio;
 import rails.game.Train;
 import rails.game.TrainTypeI;
+import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 import rails.game.move.StateChange;
-import rails.game.move.TrainMove;
 import rails.game.state.State;
 
 public class NameableTrain extends Train {
@@ -30,12 +30,13 @@ public class NameableTrain extends Train {
     }
     
     @Override
-    public void moveTo (Portfolio to) {
+    public void moveTo (MoveableHolderI to) {
         if (holder != to) {
             if (getNameToken() != null) {
                 setNameToken(null);
             }
-            new TrainMove (this, holder, to);
+            //new TrainMove (this, holder, to);
+            new ObjectMove (this, holder, to);
         }
     }
 
