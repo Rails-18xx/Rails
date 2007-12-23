@@ -435,11 +435,13 @@ public class ORUIManager {
 	public void tileSelected (int tileId) {
 		
 		GUIHex hex = map.getSelectedHex();
+		TileI tile = TileManager.get().getTile(tileId);
 
 		// Check if the new tile must be connected to some other track
 		boolean mustConnect
+			= tile.getColour().equalsIgnoreCase(Tile.YELLOW)
 			// Does not apply to the current company's home hex(es)
-			= !hex.getHexModel().isHome(orComp)
+			&& !hex.getHexModel().isHome(orComp)
 			// Does not apply to special tile lays
 			&& !isUnconnectedTileLayTarget(hex);
 		
@@ -451,7 +453,7 @@ public class ORUIManager {
             /* Tile cannot be laid in a valid orientation: refuse it */
             JOptionPane.showMessageDialog(map,
                     "This tile cannot be laid in a valid orientation.");
-            tileUpgrades.remove(TileManager.get().getTile(tileId));
+            tileUpgrades.remove(tile);
             setLocalStep(ORUIManager.SELECT_TILE);
             upgradePanel.showUpgrades();
         }
