@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.10 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.11 2007/12/23 16:49:41 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -36,6 +36,11 @@ public class Tile implements TileI, StationHolderI
 	private int quantity;
 	private boolean unlimited = false;
 	public static final int UNLIMITED = -1;
+	
+	public static final String YELLOW = "yellow";
+	public static final String GREEN = "green";
+	public static final String BROWN = "brown";
+	public static final String GREY = "grey";
 	
 	private ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
