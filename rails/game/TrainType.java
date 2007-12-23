@@ -1,11 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.15 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.16 2007/12/23 16:30:37 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.TrainMove;
+import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.*;
@@ -409,7 +409,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 		for (TrainI train : trains) 
 		{
-			new TrainMove (train, 
+			new ObjectMove (train, 
 					Bank.getUnavailable(),
 					Bank.getIpo());
 		}

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.16 2007/12/21 21:18:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.17 2007/12/23 16:30:37 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -16,7 +16,6 @@ import rails.game.model.PrivatesModel;
 import rails.game.model.ShareModel;
 import rails.game.model.TrainsModel;
 import rails.game.move.CashMove;
-import rails.game.move.CertificateMove;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolderI;
 import rails.game.special.SpecialPropertyI;
@@ -123,7 +122,8 @@ implements TokenHolderI, MoveableHolderI
 		}
 
 		// Move the private certificate
-		new CertificateMove (from, this, privateCompany);
+		//new CertificateMove (from, this, privateCompany);
+		privateCompany.moveTo(this);
 
 		// Move the money
 		if (price > 0) new CashMove (owner, from.owner, price);
@@ -153,7 +153,8 @@ implements TokenHolderI, MoveableHolderI
 	{
 
 		// Move the certificate
-	    new CertificateMove (from, this, certificate);
+	    //new CertificateMove (from, this, certificate);
+		certificate.moveTo(this);
 
 
 		// PublicCertificate is no longer for sale.
@@ -200,7 +201,8 @@ implements TokenHolderI, MoveableHolderI
 		}));
 
 		// Move the certificate
-		new CertificateMove (from, Bank.getPool(), certificate);
+		//new CertificateMove (from, Bank.getPool(), certificate);
+		certificate.moveTo(Bank.getPool());
 
 		// Move the money
 		new CashMove (Bank.getInstance(), from.owner, price);
@@ -549,7 +551,8 @@ implements TokenHolderI, MoveableHolderI
 			for (int i = 0; i < shares; i++)
 			{
 				swapCert = other.findCertificate(company, 1, false);
-				new CertificateMove (other, this, swapCert);
+				//new CertificateMove (other, this, swapCert);
+				swapCert.moveTo(this);
 				swapped.add(swapCert);
 
 			}
@@ -557,14 +560,16 @@ implements TokenHolderI, MoveableHolderI
 		else if (other.ownsCertificates(company, shares, false) >= 1)
 		{
 			swapCert = other.findCertificate(company, 2, false);
-			new CertificateMove(other, this, swapCert);
+			//new CertificateMove(other, this, swapCert);
+			swapCert.moveTo(this);
 			swapped.add(swapCert);
 		}
 		else
 		{
 			return null;
 		}
-		new CertificateMove (this, other, cert);
+		//new CertificateMove (this, other, cert);
+		cert.moveTo(other);
 
 		// Make sure the old President is no longer marked as such
 		getShareModel(company).setShare();
@@ -613,13 +618,6 @@ implements TokenHolderI, MoveableHolderI
     public void updateTrainsModel() {
         trainsModel.update();
     }
-
-	/** Should only be called from Move methods now */
-	public static void transferTrain(TrainI train, Portfolio from, Portfolio to)
-	{
-		from.removeTrain(train);
-		to.addTrain(train);
-	}
 
 	public int getNumberOfTrains() {
 		return trains.size();
@@ -719,7 +717,16 @@ implements TokenHolderI, MoveableHolderI
      * @return True if successful.
      */
     public boolean addObject (Moveable object) {
-        if (object instanceof SpecialPropertyI) {
+    	if (object instanceof PublicCertificateI) {
+    		addCertificate ((PublicCertificateI)object);
+    		return true;
+    	} else if (object instanceof PrivateCompanyI) {
+    		addPrivate ((PrivateCompanyI) object);
+    		return true;
+    	} else if (object instanceof TrainI) {
+    		addTrain ((TrainI)object);
+    		return true;
+    	} else if (object instanceof SpecialPropertyI) {
             return addSpecialProperty ((SpecialPropertyI)object);
         } else {
             return false;
@@ -732,7 +739,16 @@ implements TokenHolderI, MoveableHolderI
      * @return True if successful.
      */
     public boolean removeObject (Moveable object) {
-        if (object instanceof SpecialPropertyI) {
+    	if (object instanceof PublicCertificateI) {
+    		removeCertificate ((PublicCertificateI)object);
+    		return true;
+    	} else if (object instanceof PrivateCompanyI) {
+    		removePrivate ((PrivateCompanyI) object);
+    		return true;
+    	} else if (object instanceof TrainI) {
+    		removeTrain ((TrainI)object);
+    		return true;
+    	} else if (object instanceof SpecialPropertyI) {
             return removeSpecialProperty ((SpecialPropertyI)object);
         } else {
             return false;

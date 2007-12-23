@@ -434,9 +434,18 @@ public class ORUIManager {
 	
 	public void tileSelected (int tileId) {
 		
-        if (map.getSelectedHex().dropTile(tileId)) {
+		GUIHex hex = map.getSelectedHex();
+
+		// Check if the new tile must be connected to some other track
+		boolean mustConnect
+			// Does not apply to the current company's home hex(es)
+			= !hex.getHexModel().isHome(orComp)
+			// Does not apply to special tile lays
+			&& !isUnconnectedTileLayTarget(hex);
+		
+        if (hex.dropTile(tileId, mustConnect)) {
             /* Lay tile */
-            map.repaint(map.getSelectedHex().getBounds());
+            map.repaint(hex.getBounds());
             setLocalStep(ORUIManager.ROTATE_OR_CONFIRM_TILE);
         } else {
             /* Tile cannot be laid in a valid orientation: refuse it */
@@ -449,6 +458,19 @@ public class ORUIManager {
 
 	}
 	
+	protected boolean isUnconnectedTileLayTarget(GUIHex hex) {
+		
+		MapHex mapHex = hex.getHexModel();
+		for (LayTile action : possibleActions.getType(LayTile.class)) {
+			if (action.getType() == LayTile.SPECIAL_PROPERTY
+					&& action.getSpecialProperty().getLocations().contains(mapHex)) {
+				//log.debug(hex.getName()+" is a special property target");
+				return true;
+			}
+		}
+		//log.debug(hex.getName()+" is NOT a special property target");
+		return false;
+	}
 	
 	
 	public void tokenSelected (LayToken tokenAllowance) {
@@ -859,6 +881,9 @@ public class ORUIManager {
         // End of possible action debug listing 
 
         orStep = oRound.getStep();
+        orComp = oRound.getOperatingCompany();
+        log.debug("Or comp index = "+orCompIndex);
+        log.debug("OR company = "+orComp.getName());
         log.debug("OR step="+orStep+" "
                 +(orStep >= 0 ? OperatingRound.stepNames[orStep] : ""));
         

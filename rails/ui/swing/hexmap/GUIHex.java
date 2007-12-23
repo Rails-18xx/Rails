@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.9 2007/12/21 21:18:13 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.10 2007/12/23 16:30:37 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -48,6 +48,7 @@ public class GUIHex implements ViewObject
 
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
+	protected boolean upgradeMustConnect;
 	
 	protected List<TokenI> offStationTokens;
 
@@ -613,7 +614,7 @@ public class GUIHex implements ViewObject
 	{
 		if (provisionalGUITile != null)
 		{
-			provisionalGUITile.rotate(1, currentGUITile);
+			provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
 		}
 	}
 
@@ -708,11 +709,13 @@ public class GUIHex implements ViewObject
 		toolTip = tt.toString();
 	}
 
-	public boolean dropTile(int tileId)
+	public boolean dropTile(int tileId, boolean upgradeMustConnect)
 	{
+		this.upgradeMustConnect = upgradeMustConnect;
+		
 		provisionalGUITile = new GUITile(tileId, model);
 		/* Check if we can find a valid orientation of this tile */
-		if (provisionalGUITile.rotate(0, currentGUITile))
+		if (provisionalGUITile.rotate(0, currentGUITile, upgradeMustConnect))
 		{
 			/* If so, accept it */
 			provisionalGUITile.setScale(SELECTED_SCALE);

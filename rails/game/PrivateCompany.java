@@ -1,12 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.11 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.12 2007/12/23 16:30:37 evos Exp $ */
 package rails.game;
 
 
 import java.util.*;
 
 import rails.game.move.CashMove;
-import rails.game.move.CertificateMove;
 import rails.game.move.Moveable;
+import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.util.LocalText;
@@ -101,6 +102,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		}
 
 	}
+	
+	public void moveTo (MoveableHolderI newHolder) {
+		new ObjectMove (this, portfolio, newHolder);
+	}
 
 	/**
 	 * @return Private Company Number
@@ -151,8 +156,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI
 		{
 			super.setClosed();
 			unblockHexes();
-			new CertificateMove (getPortfolio(), Bank.getScrapHeap(), 
-			        (Certificate)this);
+			//new CertificateMove (getPortfolio(), Bank.getScrapHeap(), 
+			//        (Certificate)this);
+			moveTo (Bank.getScrapHeap());
 			ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 		}
 	}

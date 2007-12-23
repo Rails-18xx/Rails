@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.6 2007/12/23 16:30:37 evos Exp $ */
 package rails.game;
 
-public interface TrainI
+import rails.game.move.Moveable;
+
+public interface TrainI extends Moveable
 {
     public void init (TrainTypeI type, int index);
 
@@ -53,7 +55,7 @@ public interface TrainI
 
 	public void setHolder(Portfolio newHolder);
     
-    public void moveTo (Portfolio to);
+   //public void moveTo (Portfolio to);
 
 	public void setRusted();
     
