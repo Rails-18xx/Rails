@@ -2,8 +2,9 @@
 <GamesList>
 	<Game name="1830">
 		<Note>Fully playable</Note>
-		<Description>Limitation: 
+		<Description>Limitations: 
 The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
+Privates cannot be traded between players.
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
@@ -36,10 +37,12 @@ Variant selection effects on SR and OR have not been implemented yet.
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18AL">
-		<Note>Partly playable</Note>
+		<Note>Fully playable</Note>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
-		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
+		<Description>Limitation: 
+Privates cannot be traded between players.
+		</Description>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="18EU">
