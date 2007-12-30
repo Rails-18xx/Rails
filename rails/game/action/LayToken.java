@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.7 2007/12/21 21:18:13 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.8 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -32,6 +32,8 @@ public abstract class LayToken extends PossibleORAction {
     transient protected MapHex chosenHex = null;
     protected String chosenHexName;
     
+    public static final long serialVersionUID = 1L;
+
     /**
      * Allow laying a base token on a given location.
      */

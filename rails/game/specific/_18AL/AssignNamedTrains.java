@@ -26,7 +26,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
     transient private List<NameableTrain> postTrainPerToken;
     private String[] postTrainIds;    
 
-    public static final long serialVersionUID = PossibleAction.serialVersionUID;
+    public static final long serialVersionUID = 1L;
 
 	public AssignNamedTrains (NameTrains namedTrainsSpecialProperty,
             List<TrainI> trains) {

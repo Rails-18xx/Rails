@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.17 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.18 2007/12/30 14:25:13 evos Exp $ */
 package rails.game;
 
 
@@ -344,10 +344,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 			upperPrivatePriceFactor = Float.parseFloat(upper);
 		}
 
-		poolPaysOut = tag.getChild("PoolPaysOut") != null;
+		// TODO Normally set in the default train type. May be wrong place.
+		// Ridiculous to reparse with each train type.
+		poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
 		
-		ipoPaysOut = tag.getChild("IPOPaysOut") != null;
-		
+		ipoPaysOut = ipoPaysOut || tag.getChild("IPOPaysOut") != null;
+
 		Tag floatTag = tag.getChild("Float");
 		if (floatTag != null) {
 			floatPerc = floatTag.getAttributeAsInteger("percentage", floatPerc);
@@ -982,6 +984,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	            || holder == Bank.getPool() && poolPaysOut) {
 	        beneficiary = this;
 	    }
+	    //log.debug("Cert "+cert.getName()+"owned by "+holder.getName()+" benefits "+beneficiary.getName()
+	    //		+" (IPO:"+ipoPaysOut+" Pool:"+poolPaysOut+")");
 	    return beneficiary;
 	}
 

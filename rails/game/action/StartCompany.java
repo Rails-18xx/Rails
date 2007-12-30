@@ -7,7 +7,9 @@ public class StartCompany extends BuyCertificate {
 	
 	private int[] startPrices;
 
-	public StartCompany(PublicCertificateI certificate,
+    public static final long serialVersionUID = 1L;
+
+    public StartCompany(PublicCertificateI certificate,
 			int[] prices, int maximumNumber) {
 		super (certificate, Bank.getIpo(), 0, maximumNumber);
 		this.startPrices = prices.clone();

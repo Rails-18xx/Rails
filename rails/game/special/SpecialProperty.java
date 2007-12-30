@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.9 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.10 2007/12/30 14:25:13 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -34,8 +34,6 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	protected static int lastIndex = 0;
 	
 	public SpecialProperty () {
-        exercised = new BooleanState("SpecialPropertyExercised", 
-                false);
 		uniqueId = ++lastIndex;
 		spMap.put(uniqueId, this);
 	}
@@ -70,6 +68,8 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	public void setCompany(PrivateCompanyI company)
 	{
 		this.privateCompany = company;
+        exercised = new BooleanState(company.getName()+"_SP_"+uniqueId+"_Exercised", 
+                false);
 	}
 
 	public PrivateCompanyI getCompany()
@@ -105,6 +105,9 @@ public abstract class SpecialProperty implements SpecialPropertyI
 	public void setExercised()
 	{
 		exercised.set (true);
+		if (this.closeIfExercised) {
+			privateCompany.setClosed();
+		}
 	}
 
 	public boolean isExercised()

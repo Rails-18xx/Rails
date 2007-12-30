@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.5 2007/10/05 22:02:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.6 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -29,6 +29,8 @@ public class BuyCertificate extends PossibleAction {
     // Client-side settings
     protected int numberBought = 0;
 
+    public static final long serialVersionUID = 1L;
+    
     /**
      * Common constructor.
      */

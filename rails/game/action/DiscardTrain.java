@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.4 2007/12/11 20:58:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.5 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -27,6 +27,7 @@ public class DiscardTrain extends PossibleORAction {
     transient private TrainI discardedTrain = null;
     private String discardedTrainUniqueId;
     
+    public static final long serialVersionUID = 1L;
     
     public DiscardTrain (PublicCompanyI company, List<TrainI> trains) {
     	

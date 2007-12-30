@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.9 2007/10/27 17:36:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.10 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -60,6 +60,8 @@ public class LayTile extends PossibleORAction {
     
     /** The tile orientation */
     private int orientation;
+
+    public static final long serialVersionUID = 1L;
 
     /**
      * Allow laying a tile on a given location.

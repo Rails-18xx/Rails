@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/GameAction.java,v 1.2 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/GameAction.java,v 1.3 2007/12/30 14:25:12 evos Exp $*/
 package rails.game.action;
 
 /* THIS CLASS NEED NOT BE SERIALIZED */
@@ -20,7 +20,9 @@ public class GameAction extends PossibleAction {
     // Client-side settings
     protected String filepath; // Only applies to SAVE and LOAD
 	
-	public GameAction (int mode) {
+    public static final long serialVersionUID = 1L;
+
+    public GameAction (int mode) {
 		super();
 		if (mode < 0 || mode > MAX_MODE) mode = 0; // For safety
 		this.mode =  mode;

@@ -54,6 +54,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     /** The revenue destination selected by the user (if he has a choice at all). */
     private int revenueAllocation;
     
+    public static final long serialVersionUID = 1L;
 
     public SetDividend(int presetRevenue,
             boolean mayUserSetRevenue, int[] allowedAllocations) {
