@@ -291,6 +291,11 @@ public class ORUIManager {
     }
     
 
+    /**
+     * Processes button presses and menu selection actions 
+     * @param command
+     * @param actions
+     */
     public void processAction (String command, List<PossibleAction> actions) {
     	
             
@@ -586,6 +591,7 @@ public class ORUIManager {
         List<String> prompts = new ArrayList<String>();
         Map<String, BuyTrain> promptToTrain = new HashMap<String, BuyTrain>();
         TrainI train;
+        String usingPrivates = "";
 
         BuyTrain selectedTrain;
         String prompt;
@@ -614,6 +620,11 @@ public class ORUIManager {
             {
                 b.append(" ").append(LocalText.getText("AT_PRICE",Bank.format(cost)));
             }
+            if (bTrain.hasSpecialProperty()) {
+            	String priv = ((SpecialTrainBuy)bTrain.getSpecialProperty()).getCompany().getName();
+            	b.append(" ").append(LocalText.getText("USING_SP", priv));
+            	usingPrivates += ", "+priv;
+            }
             if (bTrain.mustPresidentAddCash())
             {
                 b.append(" ").append(LocalText.getText("YOU_MUST_ADD_CASH",
@@ -634,6 +645,15 @@ public class ORUIManager {
                     LocalText.getText("CannotBuyAnyTrain"));
             return;
         }
+
+        StringBuffer msgbuf = new StringBuffer(LocalText.getText("SelectTrain"));
+        if (usingPrivates.length() > 0) {
+        	msgbuf.append("<br><font color=\"red\">");
+        	msgbuf.append (LocalText.getText("SelectCheapTrain", usingPrivates.substring(2)));
+        	msgbuf.append("</font>");
+        }
+        setMessage (msgbuf.toString());
+
 
         String boughtTrain;
         boughtTrain = (String) JOptionPane.showInputDialog(orWindow,
@@ -676,7 +696,7 @@ public class ORUIManager {
                 }
             }
         }
-
+        
         TrainI exchangedTrain = null;
         if (train != null && selectedTrain.isForExchange())
         {
@@ -1113,8 +1133,8 @@ public class ORUIManager {
 
 	}
 
-	public void setMessage (String messageKey) {
-		messagePanel.setMessage(messageKey);
+	public void setMessage (String message) {
+		messagePanel.setMessage(message);
 	}
 	
 	public void setLocalAction (boolean value) {

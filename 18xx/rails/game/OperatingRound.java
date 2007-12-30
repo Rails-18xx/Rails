@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.23 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.24 2007/12/30 14:25:13 evos Exp $ */
 package rails.game;
 
 
@@ -732,23 +732,11 @@ public class OperatingRound extends Round implements Observer
             operatingCompany.layBonusToken (hex, cost, token);
             token.setUser(operatingCompany);
     
-            // Assume cost = 0
-            //if (cost > 0)
-            //{
-                //new CashMove (operatingCompany, null, cost);
-                //ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON", new String[] {
-                //		token.getName(),
-                //        hex.getName(),
-                //        Bank.format(cost)}));
-            //}
-            // else
-            //{
-                ReportBuffer.add(LocalText.getText("LaysBonusTokenOn", new String[] {
-                		operatingCompany.getName(),
-                		token.getName(),
-                		Bank.format(token.getValue()),
-                        hex.getName()}));
-            //}
+            ReportBuffer.add(LocalText.getText("LaysBonusTokenOn", new String[] {
+            		operatingCompany.getName(),
+            		token.getName(),
+            		Bank.format(token.getValue()),
+                    hex.getName()}));
     
             // Was a special property used?
             if (stl != null)
@@ -760,28 +748,6 @@ public class OperatingRound extends Round implements Observer
                 
             }
             
-            // Assume that bonus token lays never change the OR step.
-            /*
-            if (!extra)
-            {
-                currentNormalTokenLays.clear();
-                log.debug ("This was a normal token lay");
-            }
-            if (currentNormalTokenLays.isEmpty()) {
-                log.debug ("No more normal token lays are allowed");
-            } else {
-                log.debug ("A normal token lay is still allowed");
-            }
-            setSpecialTokenLays();
-            log.debug ("There are now "+currentSpecialTokenLays.size()+" special token lay objects");
-            if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty())
-            {
-                nextStep();
-            } else {
-                //setPossibleActions("layBaseToken");
-            }
-            */
-    
         }
 
         return true;
@@ -1221,6 +1187,7 @@ public class OperatingRound extends Round implements Observer
 		PublicCompanyI company = action.getCompany();
 		String companyName = company.getName();
 		TrainI exchangedTrain = action.getExchangedTrain();
+		SpecialTrainBuy stb = null;
 	    
 		String errMsg = null;
 		int presidentCash = action.getPresidentCashToAdd();
@@ -1301,6 +1268,9 @@ public class OperatingRound extends Round implements Observer
 					break;
 				}
 			}
+			
+		    stb = action.getSpecialProperty();
+		    // TODO Note: this is not yet validated
 
 			break;
 		}
@@ -1341,7 +1311,7 @@ public class OperatingRound extends Round implements Observer
 			        oldHolder.getName(),
 			        Bank.format(price)}));
 		}
-		else
+		else if (stb == null) 
 		{
 			ReportBuffer.add(LocalText.getText("BuysTrain", new String[] {
 			        companyName,
@@ -1349,12 +1319,27 @@ public class OperatingRound extends Round implements Observer
 			        oldHolder.getName(),
 					Bank.format(price)}));
 		}
+		else 
+		{
+			ReportBuffer.add(LocalText.getText("BuysTrainUsingSP", new String[] {
+			        companyName,
+			        train.getName(),
+			        oldHolder.getName(),
+					Bank.format(price),
+					stb.getCompany().getName()}));
+		}
 
 		operatingCompany.buyTrain(train, price);
 		if (oldHolder == Bank.getIpo()) train.getType().addToBoughtFromIPO();
         if (oldHolder.getOwner() instanceof Bank) {
             trainsBoughtThisTurn.add(train.getType());
         }
+        
+	    if (stb != null) {
+	    	stb.setExercised();
+			log.debug ("This was a special train buy");
+	    }
+
 
         // Check if the phase has changed.
 		TrainManager.get().checkTrainAvailability(train, oldHolder);
@@ -1791,6 +1776,20 @@ public class OperatingRound extends Round implements Observer
                                 .setTrainsForExchange(exchangeableTrains));
                     }
                 }
+                
+                // Can a special property be used?
+                // N.B. Assume that this never occurs in combination with
+                // a train exchange, otherwise the below code must be duplicated above. 
+                for (SpecialTrainBuy stb : getSpecialProperties (SpecialTrainBuy.class))
+                {
+                	int reducedPrice = stb.getPrice(cost);
+                	if (reducedPrice > cash) continue;
+                	BuyTrain bt = new BuyTrain (train, ipo, reducedPrice);
+                	bt.setSpecialProperty(stb);
+                    possibleActions.add(bt);
+                }
+
+                
             }
             
             /* Used trains */

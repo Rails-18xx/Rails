@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.5 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.6 2007/12/30 14:25:12 evos Exp $*/
 package rails.game.action;
 
 public class NullAction extends PossibleAction {
@@ -13,7 +13,9 @@ public class NullAction extends PossibleAction {
 	
 	protected int mode = -1;
 	
-	public NullAction (int mode) {
+    public static final long serialVersionUID = 2L;
+
+    public NullAction (int mode) {
 		super();
 		if (mode < 0 || mode > MAX_MODE) mode = 0; // For safety
 		this.mode =  mode;

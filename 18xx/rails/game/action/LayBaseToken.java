@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.2 2007/12/04 20:25:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.3 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -34,6 +34,8 @@ public class LayBaseToken extends LayToken {
     
     /** The station (or city) on the hex where the token is laid */
     protected int chosenStation = 0; // Default 
+
+    public static final long serialVersionUID = 1L;
 
     /**
      * Allow laying a base token on a given location.

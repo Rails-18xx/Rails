@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.5 2007/10/05 22:02:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.6 2007/12/30 14:25:12 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -15,6 +15,10 @@ import rails.game.CashHolder;
 import rails.game.Portfolio;
 import rails.game.Train;
 import rails.game.TrainI;
+import rails.game.special.SpecialProperty;
+import rails.game.special.SpecialTileLay;
+import rails.game.special.SpecialTokenLay;
+import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;
 
 /**
@@ -34,12 +38,17 @@ public class BuyTrain extends PossibleORAction {
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
     
+    transient private SpecialTrainBuy specialProperty = null;
+    private int specialPropertyId = 0;
+    
     // User settings
     private int pricePaid = 0;
     private int addedCash = 0;
     transient private TrainI exchangedTrain = null;
     private String exchangedTrainUniqueId;
     
+    public static final long serialVersionUID = 2L;
+
     public BuyTrain (TrainI train, Portfolio from, int fixedCost) {
     	
         this.train = train;
@@ -70,6 +79,24 @@ public class BuyTrain extends PossibleORAction {
         presidentMayAddCash = true;
         presidentCashToAdd = amount;
         return this;
+    }
+    
+    /**
+     * @return Returns the specialProperty.
+     */
+    public SpecialTrainBuy getSpecialProperty() {
+        return specialProperty;
+    }
+    /**
+     * @param specialProperty The specialProperty to set.
+     */
+    public void setSpecialProperty(SpecialTrainBuy specialProperty) {
+        this.specialProperty = specialProperty;
+        this.specialPropertyId = specialProperty.getUniqueId();
+    }
+    
+    public boolean hasSpecialProperty() {
+    	return specialProperty != null;
     }
     
     public TrainI getTrain() {
@@ -144,6 +171,9 @@ public class BuyTrain extends PossibleORAction {
 		b.append (": buy ").append(train.getName());
 		b.append("-train from ").append(from.getName());
 		b.append (" for ").append(Bank.format(fixedCost));
+		if (specialProperty != null) {
+			b.append(" using ").append(specialProperty.getCompany().getName());
+		}
 		if (isForExchange()) b.append (" (exchanged)");
 		if (presidentMustAddCash) b.append(" must add cash ").append(Bank.format(presidentCashToAdd));
 		else if (presidentMayAddCash) b.append(" may add cash up to ").append(Bank.format(presidentCashToAdd));
@@ -175,6 +205,11 @@ public class BuyTrain extends PossibleORAction {
 				trainsForExchange.add (Train.getByUniqueId(trainsForExchangeUniqueIds[i]));
 			}
 		}
+		
+		if (specialPropertyId  > 0) {
+			specialProperty = (SpecialTrainBuy) SpecialProperty.getByUniqueId (specialPropertyId);
+		}
+
 		if (Util.hasValue(exchangedTrainUniqueId)) {
 			exchangedTrain = Train.getByUniqueId(exchangedTrainUniqueId);
 		}

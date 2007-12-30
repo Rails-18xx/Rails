@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.2 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.3 2007/12/30 14:25:13 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -21,7 +21,7 @@ public class MessagePanel extends JPanel
 		setLines(1);
 		setBorder(BorderFactory.createLoweredBevelBorder());
 
-		message = new JLabel("A message to you.....");
+		message = new JLabel("");
 		message.setBackground(background);
 		message.setVerticalAlignment(SwingConstants.CENTER);
 		message.setHorizontalAlignment(SwingConstants.CENTER);
