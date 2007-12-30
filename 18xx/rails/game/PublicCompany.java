@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.18 2007/12/30 14:25:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.19 2007/12/30 15:27:26 evos Exp $ */
 package rails.game;
 
 
@@ -178,97 +178,6 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		super();
 	}
-
-	/** Initialisation, to be called directly after instantiation (cloning)*/
-	public void init(String name, CompanyTypeI type)
-	{
-		super.init(name, type);
-		if (!name.equals(""))
-			this.publicNumber = numberOfPublicCompanies++;
-
-		this.portfolio = new Portfolio(name, this);
-		treasury = new CashModel(this);
-		lastRevenue = new MoneyModel (name+"_lastRevenue");
-		lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
-        lastRevenueAllocation = new StringState (name+"_lastAllocation");
-		baseTokensModel = new BaseTokensModel (this);
-
-	    hasStarted = new BooleanState (name+"_hasStarted", false);
-	    hasFloated = new BooleanState (name+"_hasFloated", false);
-		
-		allBaseTokens = new ArrayList<BaseToken>();
-		freeBaseTokens = new ArrayList<BaseToken>();
-		laidBaseTokens = new ArrayList<BaseToken>();
-		
-		/* Spendings in the current operating turn */
-		privatesCostThisTurn = new MoneyModel (name+"_spentOnPrivates");
-		privatesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-		tilesLaidThisTurn = new StringState (name+"_tilesLaid");
-		tilesCostThisTurn = new MoneyModel (name+"_spentOnTiles");
-		tilesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-		tokensLaidThisTurn = new StringState (name+"_tokensLaid");
-		tokensCostThisTurn = new MoneyModel (name+"_spentOnTokens");
-		tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
-		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-		bonusTokensValue = new MoneyModel (name+"_bonusValue");
-		bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO + MoneyModel.ADD_PLUS);
-		if (hasStockPrice)
-		{
-		        parPrice = new PriceModel (this, name+"_ParPrice");
-		        currentPrice = new PriceModel (this, name+"_CurrentPrice");
-	    }
-		
-		PublicCompanyI dummyCompany = (PublicCompanyI)type.getDummyCompany();
-		if (dummyCompany != null) {
-			fgHexColour = dummyCompany.getHexFgColour(); 
-			bgHexColour = dummyCompany.getHexBgColour();
-		}
-		
-
-}
-
-	/**
-	 * Final initialisation, after all XML has been processed.
-	 */
-	public void init2() throws ConfigurationException
-	{
-		if (hasStockPrice && Util.hasValue(startSpace))
-		{
-			parPrice.setPrice(
-			        StockMarket.getInstance().getStockSpace(startSpace));
-			if (parPrice.getPrice() == null)
-				throw new ConfigurationException("Invalid start space "
-						+ startSpace + "for company " + name);
-			currentPrice.setPrice(parPrice.getPrice());
-			
-		}
-		
-		// Give each certificate an unique Id
-		for (int i=0; i<certificates.size(); i++) {
-			certificates.get(i).setUniqueId (name, i);
-		}
-		
-		BaseToken token;
-		for (int i=0; i<numberOfBaseTokens; i++) {
-		    token = new BaseToken (this);
-		    allBaseTokens.add (token);
-		    freeBaseTokens.add (token);
-		}
-
-	}
-
-	/** Reset turn objects */
-	public void initTurn() {
-	    
-	    privatesCostThisTurn.set(0);
-	    tilesLaidThisTurn.set("");
-	    tilesCostThisTurn.set(0);
-	    tokensLaidThisTurn.set("");
-	    tokensCostThisTurn.set(0);
-	    trainsCostThisTurn.set(0);
-	}
-	    
 
 	/**
 	 * To configure all public companies from the &lt;PublicCompany&gt; XML
@@ -471,6 +380,97 @@ public class PublicCompany extends Company implements PublicCompanyI
 		}
 
 	}
+
+	/** Initialisation, to be called directly after instantiation (cloning)*/
+	public void init(String name, CompanyTypeI type)
+	{
+		super.init(name, type);
+		if (!name.equals(""))
+			this.publicNumber = numberOfPublicCompanies++;
+
+		this.portfolio = new Portfolio(name, this);
+		treasury = new CashModel(this);
+		lastRevenue = new MoneyModel (name+"_lastRevenue");
+		lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
+        lastRevenueAllocation = new StringState (name+"_lastAllocation");
+		baseTokensModel = new BaseTokensModel (this);
+
+	    hasStarted = new BooleanState (name+"_hasStarted", false);
+	    hasFloated = new BooleanState (name+"_hasFloated", false);
+		
+		allBaseTokens = new ArrayList<BaseToken>();
+		freeBaseTokens = new ArrayList<BaseToken>();
+		laidBaseTokens = new ArrayList<BaseToken>();
+		
+		/* Spendings in the current operating turn */
+		privatesCostThisTurn = new MoneyModel (name+"_spentOnPrivates");
+		privatesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		tilesLaidThisTurn = new StringState (name+"_tilesLaid");
+		tilesCostThisTurn = new MoneyModel (name+"_spentOnTiles");
+		tilesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		tokensLaidThisTurn = new StringState (name+"_tokensLaid");
+		tokensCostThisTurn = new MoneyModel (name+"_spentOnTokens");
+		tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		trainsCostThisTurn = new MoneyModel (name+"_spentOnTrains");
+		trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+		bonusTokensValue = new MoneyModel (name+"_bonusValue");
+		bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO + MoneyModel.ADD_PLUS);
+		if (hasStockPrice)
+		{
+		        parPrice = new PriceModel (this, name+"_ParPrice");
+		        currentPrice = new PriceModel (this, name+"_CurrentPrice");
+	    }
+		
+		PublicCompanyI dummyCompany = (PublicCompanyI)type.getDummyCompany();
+		if (dummyCompany != null) {
+			fgHexColour = dummyCompany.getHexFgColour(); 
+			bgHexColour = dummyCompany.getHexBgColour();
+		}
+		
+
+}
+
+	/**
+	 * Final initialisation, after all XML has been processed.
+	 */
+	public void init2() throws ConfigurationException
+	{
+		if (hasStockPrice && Util.hasValue(startSpace))
+		{
+			parPrice.setPrice(
+			        StockMarket.getInstance().getStockSpace(startSpace));
+			if (parPrice.getPrice() == null)
+				throw new ConfigurationException("Invalid start space "
+						+ startSpace + "for company " + name);
+			currentPrice.setPrice(parPrice.getPrice());
+			
+		}
+		
+		// Give each certificate an unique Id
+		for (int i=0; i<certificates.size(); i++) {
+			certificates.get(i).setUniqueId (name, i);
+		}
+		
+		BaseToken token;
+		for (int i=0; i<numberOfBaseTokens; i++) {
+		    token = new BaseToken (this);
+		    allBaseTokens.add (token);
+		    freeBaseTokens.add (token);
+		}
+
+	}
+
+	/** Reset turn objects */
+	public void initTurn() {
+	    
+	    privatesCostThisTurn.set(0);
+	    tilesLaidThisTurn.set("");
+	    tilesCostThisTurn.set(0);
+	    tokensLaidThisTurn.set("");
+	    tokensCostThisTurn.set(0);
+	    trainsCostThisTurn.set(0);
+	}
+	    
 
 	/**
 	 * Return the company token background colour.
