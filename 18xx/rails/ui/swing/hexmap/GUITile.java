@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.6 2007/12/23 16:30:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.7 2007/12/31 20:04:00 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -77,10 +77,11 @@ public class GUITile {
 		int prevTileRotation = previousGUITile.getRotation();
 		MapHex nHex;
 
-		boolean connected = !mustConnect;
+		boolean connected;
 
 		/* Loop through all possible rotations */
 		for (i = initial; i < 6; i++) {
+			connected = !mustConnect;
 			tempRot = (rotation + i) % 6;
 			/* Loop through all hex sides */
 			for (j = 0; j < 6; j++) {
@@ -92,7 +93,7 @@ public class GUITile {
 					if (!hex.hasNeighbour(j))
 						break;
 					// If the tile must be connected (i.e. not laid on the 
-					// operating company home hex, and not a speciual tile lay),
+					// operating company home hex, and not a special tile lay),
 					// the neighbour must have a track against this side.
 					if (mustConnect) {
 						nHex = hex.getNeighbor(j);
