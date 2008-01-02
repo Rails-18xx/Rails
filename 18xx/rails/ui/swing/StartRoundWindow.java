@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.14 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.15 2008/01/02 14:13:39 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -386,7 +386,6 @@ implements ActionListener, KeyListener, ActionPerformer
                 itemNameButton[i].setPossibleAction(action);
 				setItemNameButton(i, true);
 				if (includeBidding) minBid[i].setText("");
-                passAllowed = true;
 			}
 			else if (status == StartItem.BIDDABLE)
 			{
@@ -396,7 +395,6 @@ implements ActionListener, KeyListener, ActionPerformer
                 itemNameButton[i].setPossibleAction(action);
 				setItemNameButton(i, true);
 				minBid[i].setText(Bank.format(item.getMinimumBid()));
-                passAllowed = true;
 			}
 			else if (status == StartItem.AUCTIONED) //??
 			{
@@ -407,13 +405,11 @@ implements ActionListener, KeyListener, ActionPerformer
 				itemNameButton[i].setSelected(true);
 				itemNameButton[i].setEnabled(false);
  				bidAllowed = true;
-                log.debug("BidAllowed*1="+bidAllowed);
 				bidButton.setPossibleAction(action);
 				bidAmount.setEnabled(true);
 				int minBid = items[itemIndex].getMinimumBid();
 				spinnerModel.setMinimum(new Integer(minBid));
 				spinnerModel.setValue(new Integer(minBid));
-                passAllowed = true;
 			}
 			else if (status == StartItem.NEEDS_SHARE_PRICE) {
 				
@@ -435,6 +431,8 @@ implements ActionListener, KeyListener, ActionPerformer
 				}				
 			}
 		}
+		
+		passAllowed = false;
 
 		List inactiveItems = possibleActions.getType (NullAction.class);
 		if (inactiveItems != null) {
@@ -528,15 +526,19 @@ implements ActionListener, KeyListener, ActionPerformer
                 BuyOrBidStartItem action = (BuyOrBidStartItem) activeItem;
                 switch (action.getStatus()) {
                 case StartItem.BUYABLE:
-    				/* Process the buy action */
-    				process (action);
+                	if (action.hasSharePriceToSet()) {
+                        if (requestStartPrice(action))
+                            process (action);
+                	} else {
+                		process (action);
+                	}
     				break;
                 case StartItem.BIDDABLE:
                 case StartItem.AUCTIONED:
                     action.setActualBid (((Integer)spinnerModel.getValue()).intValue());
     				process (action);
                     break;
-                case StartItem.NEEDS_SHARE_PRICE:
+                case StartItem.NEEDS_SHARE_PRICE: // TODO NOW REDUNDANT?
                     if (requestStartPrice(action))
                         process (action);
                     break;
