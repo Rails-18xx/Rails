@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.9 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.10 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 
@@ -192,7 +192,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
 	public Portfolio getPortfolio();
 
-	public void payOut(int amount);
+	public void payout(int amount);
 
 	public void splitRevenue(int amount);
 

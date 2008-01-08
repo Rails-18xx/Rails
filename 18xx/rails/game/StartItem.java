@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.8 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.9 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class StartItem
 	public static final int BIDDABLE = 1;
 	public static final int BUYABLE = 2;
 	public static final int AUCTIONED = 3;
-	public static final int NEEDS_SHARE_PRICE = 4;
+	public static final int NEEDS_SHARE_PRICE = 4; // TODO No longer used (may not be true after bidding), needs code cleanup
 	public static final int SOLD = 5;
 	
 	public static final String[] statusName = new String[] {

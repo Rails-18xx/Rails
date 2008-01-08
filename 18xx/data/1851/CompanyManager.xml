@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="50"/>
+		<Float percentage="50" price="up" initialTokenCost="100"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains number="4,4,3,2"/>
+		<HomeBase lay="whenFloated"/>
+		<Payout split="allowed" mustExceedPriceToMove="yes"/>
+	</CompanyType>
+	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5"/>
+	<Company name="M&amp;C" type="Private" basePrice="50" revenue="10"/>
+	<Company name="ET&amp;WNC" type="Private" basePrice="80" revenue="15"/>
+	<Company name="O&amp;W" type="Private" basePrice="210" revenue="20"/>
+	<Company name="CNO&amp;TP" type="Private" basePrice="240" revenue="25"/>
+
+	<Company name="GM&amp;O" type="Public" tokens="4" fgColour="000000" 
+		bgColour="FF0000">
+		<Home hex="G7"/>
+	</Company>
+	<Company name="IC" type="Public" tokens="4" fgColour="000000" 
+		bgColour="FFFFCC">
+		<Home hex="A5"/>
+	</Company>
+	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000" 
+		bgColour="4444FF">
+		<Home hex="B16" city="2"/>
+	</Company>
+	<Company name="Dixie" type="Public" tokens="4" fgColour="000000" 
+		bgColour="FFFF00">
+		<Home hex="H16"/>
+	</Company>
+	<Company name="SR" type="Public" tokens="4" fgColour="000000" 
+		bgColour="DDFFDD">
+		<Home hex="F20"/>
+	</Company>
+	<Company name="TC" type="Public" tokens="4" fgColour="000000" 
+		bgColour="DDDDDD">
+		<Home hex="F12"/>
+	</Company>
+
+	<StartPacket roundClass="rails.game.specific._1851.StartRound_1851">
+		<Item name="L&amp;O" type="Private" basePrice="200">
+			<SubItem name="L&amp;N" type="Public" president="yes"/>
+		</Item>
+		<Item name="M&amp;C" type="Private" basePrice="50"/>
+		<Item name="ET&amp;WNC" type="Private" basePrice="80"/>
+		<IfOption name="numberOfPlayers" value="4">
+			<Item name="O&amp;W" type="Private" basePrice="210">
+				<SubItem name="L&amp;N" type="Public"/>
+			</Item>
+		</IfOption>
+		<IfOption name="numberOfPlayers" value="5">
+			<Item name="O&amp;W" type="Private" basePrice="210">
+				<SubItem name="L&amp;N" type="Public"/>
+			</Item>
+			<Item name="CNO&amp;TP" type="Private" basePrice="240">
+				<SubItem name="L&amp;N" type="Public"/>
+			</Item>
+		</IfOption>
+	</StartPacket>
+	<StockRoundRules>
+		<!-- Will probably move later to a GameManager XML-->
+		<NoSaleIfNotOperated/>
+	</StockRoundRules>
+	<BaseTokens>
+		<!-- Not sure if this belongs here -->
+		<LayCost method="sequence" cost="0"/>
+	</BaseTokens>
+</CompanyManager>

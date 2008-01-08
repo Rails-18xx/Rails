@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.19 2007/12/30 15:27:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.20 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 
@@ -37,6 +37,13 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected static final int DEFAULT_SHARE_UNIT = 10;
 
 	protected static int numberOfPublicCompanies = 0;
+	
+	// Home base token lay times
+	protected static final int START_OF_FIRST_OR = 0;
+	protected static final int WHEN_FLOATED = 1;
+	protected static final String[] tokenLayTimeNames 
+		= new String[] {"firstOR", "whenFloated"};
+	protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
 	/**
 	 * Foreground (i.e. text) colour of the company tokens (if pictures are not
@@ -67,6 +74,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected List<BaseToken> freeBaseTokens;
 	protected List<BaseToken> laidBaseTokens;
 	protected int numberOfBaseTokens = 0;
+	protected int initialTokenCost = 0;
 	protected BaseTokensModel baseTokensModel; // Create after cloning
 	
 	/** Initial (par) share price, represented by a stock market location object */
@@ -118,8 +126,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected float upperPrivatePriceFactor;
 
 	protected boolean ipoPaysOut = false;
-
 	protected boolean poolPaysOut = false;
+	protected boolean treasuryPaysOut = false;
+	protected boolean canHoldOwnShares = false;
+	protected int maxPercOfOwnShares = 0;
 
 	/** The certificates of this company (minimum 1) */
 	protected ArrayList<PublicCertificateI> certificates;
@@ -132,6 +142,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** At what percentage sold does the company float */
 	protected int floatPerc = 0;
+	/** Share price movement on floating (1851: up) */
+	protected boolean sharePriceUpOnFloating = false;
 
 	/** Does the company have a stock price (minors often don't) */
 	protected boolean hasStockPrice = true;
@@ -143,6 +155,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Is the revenue always split (typical for non-share minors) */
 	protected boolean splitAlways = false;
+	
+	/** Must payout exceed stock price to move token right? */
+	protected boolean payoutMustExceedPriceToMove = false;
 	
 	/** A map per tile colour. 
 	 * Each entry contains a map per phase,
@@ -262,6 +277,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 		Tag floatTag = tag.getChild("Float");
 		if (floatTag != null) {
 			floatPerc = floatTag.getAttributeAsInteger("percentage", floatPerc);
+			String sharePriceAttr = floatTag.getAttributeAsString("price");
+			if (Util.hasValue(sharePriceAttr)) {
+				sharePriceUpOnFloating = sharePriceAttr.equalsIgnoreCase("up");
+			}
+			initialTokenCost = floatTag.getAttributeAsInteger("initialTokenCost", 0);
 		}
 		
 		Tag priceTag = tag.getChild("StockPrice");
@@ -275,6 +295,17 @@ public class PublicCompany extends Company implements PublicCompanyI
 			String split = payoutTag.getAttributeAsString("split", "no");
 			splitAlways = split.equalsIgnoreCase("always");
 			splitAllowed = split.equalsIgnoreCase("allowed");
+			
+			payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+		}
+		
+		Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
+		if (ownSharesTag != null) {
+			canHoldOwnShares = true;
+			treasuryPaysOut = true;
+			GameManager.setCanAnyCompanyHoldShares(true);
+			
+			maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc", maxPercOfOwnShares);
 		}
 	
 		Tag trainsTag = tag.getChild("Trains");
@@ -378,6 +409,19 @@ public class PublicCompany extends Company implements PublicCompanyI
 				throw new ConfigurationException("Company type " + name
 						+ " total shares is not 100%");
 		}
+		
+		Tag tokenLayTimeTag = tag.getChild("HomeBase");
+		if (tokenLayTimeTag != null) {
+			String layTimeString = tokenLayTimeTag.getAttributeAsString("lay");
+			if (Util.hasValue(layTimeString)) {
+				for (int i=0; i<tokenLayTimeNames.length; i++) {
+					if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
+						homeBaseTokensLayTime = i;
+						break;
+					}
+				}
+			}
+		}
 
 	}
 
@@ -462,6 +506,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/** Reset turn objects */
 	public void initTurn() {
+		
+		if (!hasLaidHomeBaseTokens()) layHomeBaseTokens(); 
 	    
 	    privatesCostThisTurn.set(0);
 	    tilesLaidThisTurn.set("");
@@ -622,11 +668,32 @@ public class PublicCompany extends Company implements PublicCompanyI
 		{
 			cash = fixedPrice;
 		}
+		
+		if (initialTokenCost > 0) cash -= initialTokenCost;
+		
 		new CashMove (Bank.getInstance(), this, cash);
 		ReportBuffer.add(LocalText.getText("FLOATS", new String[] {
 				name,
 				Bank.format(cash)
 		}));
+		
+		if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
+			List<Certificate> moving = new ArrayList<Certificate>();
+			for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(name)) {
+				moving.add(ipoCert);
+			}
+			for (Certificate ipoCert : moving) {
+				ipoCert.moveTo(portfolio);
+			}
+		}
+		
+		if (sharePriceUpOnFloating) {
+			Game.getStockMarket().moveUp(this);
+		}
+		
+		if (homeBaseTokensLayTime == WHEN_FLOATED) {
+			layHomeBaseTokens();
+		}
 	}
 
 	/**
@@ -900,15 +967,18 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * @param The
 	 *            revenue amount.
 	 */
+    /*
 	public void payOut(int amount)
 	{
 
 		distributePayout(amount);
 
 		// Move the token
-		if (hasStockPrice)
+		if (hasStockPrice 
+				&& (!payoutMustExceedPriceToMove || amount >= currentPrice.getPrice().getPrice()))
 			Game.getStockMarket().payOut(this);
 	}
+	/*
 
 	/**
 	 * Split a dividend. TODO Optional rounding down the payout
@@ -930,12 +1000,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 	
 			// Payout the remainder
 			int payed = amount - withheld;
-			distributePayout(payed);
+			payout(payed);
 		}
 
-		// Move the token
-		if (hasStockPrice)
-			Game.getStockMarket().payOut(this);
 	}
 
 	/**
@@ -943,7 +1010,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * 
 	 * @param amount
 	 */
-	protected void distributePayout(int amount)
+	public void payout(int amount)
 	{
 
 	    if (amount == 0) return;
@@ -970,6 +1037,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 			part = ((Integer) split.get(recipient)).intValue();
 			ReportBuffer.add(recipient.getName() + " receives " + Bank.format(part));
 			new CashMove (null, recipient, part);
+		}
+
+		// Move the token
+		if (hasStockPrice 
+				&& (!payoutMustExceedPriceToMove || amount >= currentPrice.getPrice().getPrice())) {
+			Game.getStockMarket().payOut(this);
 		}
 
 	}
@@ -1005,15 +1078,21 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	/**
 	 * Is the company completely sold out?
-	 * 
-	 * @return true if no certs are held by the Bank.
-	 * @TODO: This rule does not apply to all games (1870). Needs be sorted out.
+	 * This method should return true only if the share price 
+	 * should move up at the end of a stock round.
+	 * Since 1851 (jan 2008) interpreted as: no share is owned 
+	 * either by the Bank or by the company's own Treasury.
+	 * @return true if the share price can move up.
 	 */
 	public boolean isSoldOut()
 	{
+	CashHolder owner;
+	
 		for (PublicCertificateI cert : certificates)
 		{
-			if (cert.getPortfolio().getOwner() instanceof Bank)
+			owner = cert.getPortfolio().getOwner();
+			if (owner instanceof Bank
+					|| owner == cert.getCompany())
 			{
 				return false;
 			}
@@ -1215,6 +1294,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public void setCapitalisation(int capitalisation)
 	{
+		log.debug("Capitalisation="+capitalisation);
 		this.capitalisation = capitalisation;
 	}
 
@@ -1312,10 +1392,16 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return bonusTokensValue;
 	}
 	
+	public boolean hasLaidHomeBaseTokens () {
+		return laidBaseTokens.size() > 0;
+	}
+	
 	public boolean layHomeBaseTokens () {
 	    
-	    // Assume for now that companies have only one home base.
+	    // TODO Assume for now that companies have only one home base.
 	    // This is not true in 1841!
+		// TODO This does not yet cover cases where the user
+		// has a choice, such in 1830 Erie.
 		return homeHex.layBaseToken(this, homeStation);
 	}
 	

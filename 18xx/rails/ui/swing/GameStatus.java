@@ -56,6 +56,9 @@ public class GameStatus extends JPanel implements ActionListener
 	private Field certInPool[];
 	private ClickField certInPoolButton[];
 	private int certInPoolXOffset, certInPoolYOffset;
+	private Field certInTreasury[];
+	private ClickField certInTreasuryButton[];
+	private int certInTreasuryXOffset, certInTreasuryYOffset;
 	private Field parPrice[];
 	private int parPriceXOffset, parPriceYOffset;
 	private Field currPrice[];
@@ -86,7 +89,7 @@ public class GameStatus extends JPanel implements ActionListener
 	private Field newTrains;
 	private int newTrainsXOffset, newTrainsYOffset;
 	private Field futureTrains;
-	private int futureTrainsXOffset, futureTrainsYOffset;
+	private int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
 	private int rightCompCaptionXOffset;
 
 	private Caption[] upperPlayerCaption;
@@ -97,11 +100,14 @@ public class GameStatus extends JPanel implements ActionListener
 	private Player[] players;
 	private PublicCompanyI[] companies;
 	private CompanyManagerI cm;
+	private Portfolio ipo, pool;
 	
     private PossibleActions possibleActions = PossibleActions.getInstance();
     
     private boolean hasParPrices = false;
 	private boolean compCanBuyPrivates = false;
+	private boolean compCanHoldOwnShares = false;
+	private boolean compCanHoldForeignShares = false; // NOT YET USED
 
 	private PublicCompanyI c;
 	private JComponent f;
@@ -116,7 +122,7 @@ public class GameStatus extends JPanel implements ActionListener
 		= new HashMap<PublicCompanyI, Integer>();
 	private Map<Player, Integer> playerIndex 
 		= new HashMap<Player, Integer>();
-
+	
 	public GameStatus(JFrame parent)
 	{
 		super();
@@ -142,7 +148,11 @@ public class GameStatus extends JPanel implements ActionListener
 		
 		hasParPrices = GameManager.hasAnyParPrice();
 		compCanBuyPrivates = GameManager.canAnyCompBuyPrivates();
-
+		compCanHoldOwnShares = GameManager.canAnyCompanyHoldShares();
+		
+		ipo = Bank.getIpo();
+		pool = Bank.getPool();
+		
 		init();
 
 	}
@@ -156,6 +166,10 @@ public class GameStatus extends JPanel implements ActionListener
 		certInIPOButton = new ClickField[nc];
 		certInPool = new Field[nc];
 		certInPoolButton = new ClickField[nc];
+		if (compCanHoldOwnShares) {
+			certInTreasury = new Field[nc];
+			certInTreasuryButton = new ClickField[nc];
+		}
 		parPrice = new Field[nc];
 		currPrice = new Field[nc];
 		compCash = new Field[nc];
@@ -178,6 +192,10 @@ public class GameStatus extends JPanel implements ActionListener
 		certInIPOYOffset = lastY;
 		certInPoolXOffset = ++lastX;
 		certInPoolYOffset = lastY;
+		if (compCanHoldOwnShares) {
+			certInTreasuryXOffset = ++lastX;
+			certInTreasuryYOffset = lastY;
+		}
 		if (hasParPrices) {
 			parPriceXOffset = ++lastX;
 			parPriceYOffset = lastY;
@@ -210,12 +228,13 @@ public class GameStatus extends JPanel implements ActionListener
 		certLimitYOffset = playerCertCountYOffset;
 		bankCashXOffset = certInPoolXOffset;
 		bankCashYOffset = playerPrivatesYOffset;
-		poolTrainsXOffset = bankCashXOffset + 1;
+		poolTrainsXOffset = bankCashXOffset + 2;
 		poolTrainsYOffset = playerPrivatesYOffset;
-		newTrainsXOffset = compCashXOffset;
+		newTrainsXOffset = poolTrainsXOffset + 1;
 		newTrainsYOffset = playerPrivatesYOffset;
-		futureTrainsXOffset = compRevenueXOffset;
+		futureTrainsXOffset = newTrainsXOffset + 1;
 		futureTrainsYOffset = playerPrivatesYOffset;
+		futureTrainsWidth = rightCompCaptionXOffset - futureTrainsXOffset;
 
 		addField(new Caption(LocalText.getText("COMPANY")),
 				0,
@@ -253,6 +272,16 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				1,
 				WIDE_RIGHT + WIDE_BOTTOM);
+		
+		if (compCanHoldOwnShares) {
+			addField (new Caption (LocalText.getText("TREASURY_SHARES")),
+					certInTreasuryXOffset,
+					0,
+					1,
+					2,
+					WIDE_RIGHT + WIDE_BOTTOM);
+		}
+
 		if (this.hasParPrices) {
 			addField(new Caption(LocalText.getText("PRICES")),
 					parPriceXOffset,
@@ -388,6 +417,29 @@ public class GameStatus extends JPanel implements ActionListener
 					1,
 					WIDE_RIGHT);
 			certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
+
+			if (compCanHoldOwnShares) {
+				f = certInTreasury[i] = new Field(c.getPortfolio().getShareModel(c));
+				addField(f,
+						certInTreasuryXOffset,
+						certInTreasuryYOffset + i,
+						1,
+						1,
+						WIDE_RIGHT);
+				f = certInTreasuryButton[i] = new ClickField(certInTreasury[i].getText(),
+						BUY_FROM_POOL_CMD,
+						LocalText.getText("ClickToSelectForBuying"),
+						this,
+						buySellGroup);
+				f.setVisible(false);
+				addField(f,
+						certInTreasuryXOffset,
+						certInTreasuryYOffset + i,
+						1,
+						1,
+						WIDE_RIGHT);
+				certInTreasury[i].setPreferredSize(certInTreasuryButton[i].getPreferredSize());/* sic */
+			}
 
 			if (this.hasParPrices) {
 				f = parPrice[i] = new Field(c.getParPriceModel());
@@ -525,7 +577,7 @@ public class GameStatus extends JPanel implements ActionListener
 				1,
 				2,
 				WIDE_TOP + WIDE_LEFT);
-		addField(new Caption("Cash"),
+		addField(new Caption(LocalText.getText("CASH")),
 				bankCashXOffset,
 				bankCashYOffset - 1,
 				1,
@@ -534,23 +586,30 @@ public class GameStatus extends JPanel implements ActionListener
 		bankCash = new Field(Bank.getInstance().getCashModel());
 		addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0);
 
-		addField(new Caption("Used trains"),
+		// Trains
+		addField(new Caption(LocalText.getText("TRAINS")),
+				poolTrainsXOffset - 1,
+				poolTrainsYOffset - 1,
+				1,
+				2,
+				WIDE_TOP + WIDE_LEFT);
+		addField(new Caption(LocalText.getText("USED")),
 				poolTrainsXOffset,
 				poolTrainsYOffset - 1,
-				hasParPrices ? 2 : 1,
 				1,
-				WIDE_TOP + WIDE_RIGHT);
+				1,
+				WIDE_TOP);
 		poolTrains = new Field(Bank.getPool()
 				.getTrainsModel());
 		addField(poolTrains,
 				poolTrainsXOffset,
 				poolTrainsYOffset,
-				hasParPrices ? 2 : 1,
 				1,
-				WIDE_RIGHT);
+				1,
+				0);
 
 		// New trains
-		addField(new Caption("New tr."),
+		addField(new Caption(LocalText.getText("NEW")),
 				newTrainsXOffset,
 				newTrainsYOffset - 1,
 				1,
@@ -563,20 +622,20 @@ public class GameStatus extends JPanel implements ActionListener
 		dummyButton = new ClickField("", "", "", this, buySellGroup);
 
 		// Future trains
-		addField(new Caption("Future trains"),
+		addField(new Caption(LocalText.getText("Future")),
 				futureTrainsXOffset,
 				futureTrainsYOffset - 1,
-				this.compCanBuyPrivates ? 3 : 2,
+				futureTrainsWidth,
 				1,
-				WIDE_LEFT + WIDE_TOP);
+				WIDE_TOP);
 		futureTrains = new Field(Bank.getUnavailable()
 				.getTrainsModel());
 		addField(futureTrains,
 				futureTrainsXOffset,
 				futureTrainsYOffset,
-				this.compCanBuyPrivates ? 3 : 2,
+				futureTrainsWidth,
 				1,
-				WIDE_LEFT);
+				0);
 
 		dummyButton = new ClickField("", "", "", this, buySellGroup);
 
@@ -771,7 +830,7 @@ public class GameStatus extends JPanel implements ActionListener
 
 	}
 
-    public void setSRPlayerTurn(int selectedPlayerIndex)
+    public void initSRPlayerTurn(int selectedPlayerIndex)
 	{
 		int i, j;
 
@@ -790,6 +849,7 @@ public class GameStatus extends JPanel implements ActionListener
 		{
 			setIPOCertButton(i, false);
 			setPoolCertButton(i, false);
+			if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
 		}
 
 		this.srPlayerIndex = selectedPlayerIndex;
@@ -800,6 +860,7 @@ public class GameStatus extends JPanel implements ActionListener
 			lowerPlayerCaption[j].setHighlight(true);
 
 			PublicCertificateI cert;
+			Portfolio holder;
 			int index;
 
 			List<BuyCertificate> buyableCerts = possibleActions.getType(BuyCertificate.class);
@@ -809,13 +870,18 @@ public class GameStatus extends JPanel implements ActionListener
 					//tCert = (TradeableCertificate) it.next();
 					cert = bCert.getCertificate();
 					index = cert.getCompany().getPublicNumber();
-					if (cert.getPortfolio() == Bank.getIpo())
+					holder = cert.getPortfolio();
+					if (holder == ipo)
 					{
 						setIPOCertButton(index, true, bCert);
 					}
-					else
+					else if (holder == pool)
 					{
 						setPoolCertButton(index, true, bCert);
+					}
+					else if (compCanHoldOwnShares)
+					{
+						setTreasuryCertButton(index, true, bCert);
 					}
 				}
 			}
@@ -924,6 +990,29 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 		certInPool[i].setVisible(!clickable);
 		certInPoolButton[i].setVisible(clickable);
+	}
+
+	private void setTreasuryCertButton(int i, boolean clickable, Object o)
+	{
+
+		setTreasuryCertButton(i, clickable);
+		if (clickable && o != null) {
+			if (o instanceof PossibleAction) certInTreasuryButton[i].addPossibleAction((PossibleAction)o);
+		}
+	}
+
+	private void setTreasuryCertButton(int i, boolean clickable)
+	{
+		if (clickable)
+		{
+			certInTreasuryButton[i].setText(certInTreasury[i].getText());
+		}
+		else
+		{
+			certInTreasuryButton[i].clearPossibleActions();
+		}
+		certInTreasury[i].setVisible(!clickable);
+		certInTreasuryButton[i].setVisible(clickable);
 	}
 
 }

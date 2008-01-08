@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.11 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.12 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -47,6 +47,8 @@ public class Game
     	
         this.name = name;
         this.gameOptions = options;
+        
+        gameOptions.put(GameOption.NUMBER_OF_PLAYERS, String.valueOf(players.size()));
         
 		directories.add("data");
 		directories.add("data/" + name);

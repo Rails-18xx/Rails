@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.24 2007/12/30 14:25:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.25 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 
@@ -856,7 +856,7 @@ public class OperatingRound extends Round implements Observer
                             Bank.format(amount)
             }));
 
-            operatingCompany.payOut(amount);
+            operatingCompany.payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
             
@@ -1666,10 +1666,15 @@ public class OperatingRound extends Round implements Observer
 			if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
 				// No trains: the revenue is fixed at 0
 			} else {
+				int[] allowedRevenueActions 
+					= operatingCompany.isSplitAllowed()
+						? new int[]{SetDividend.PAYOUT, SetDividend.SPLIT, SetDividend.WITHHOLD}
+						: new int[]{SetDividend.PAYOUT, SetDividend.WITHHOLD};
+ 
 				possibleActions.add (new SetDividend (
 						operatingCompany.getLastRevenue(),
 						true,
-						new int[]{SetDividend.PAYOUT, SetDividend.WITHHOLD}));
+						allowedRevenueActions));
 			}
 		}
 		else if (step == STEP_BUY_TRAIN)

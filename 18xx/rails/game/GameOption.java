@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.4 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.5 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ public class GameOption {
     
     private static Map<String, GameOption> optionsMap 
         = new HashMap<String, GameOption>();
+    
+    public static final String NUMBER_OF_PLAYERS = "numberOfPlayers";
 
     public GameOption (String name) {
         this.name = name;
