@@ -253,8 +253,6 @@ public class StockRound extends Round
 			stockSpace = comp.getCurrentPrice(); 
 			price = stockSpace.getPrice();
 			
-			if (isSaleRecorded(currentPlayer, comp))
-				continue;
 			if (companyBoughtThisTurn != null)
 			{
 				// If a cert was bought before, only brown zone ones can be
@@ -282,6 +280,30 @@ public class StockRound extends Round
 
 			if (number > 0) {
 				possibleActions.add(new BuyCertificate (cert, from, price, number));
+			}
+		}
+		
+		// Get any shares in company treasuries that can be bought
+		if (GameManager.canAnyCompanyHoldShares()) {
+			
+			for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+				certs = company.getPortfolio().getCertificatesPerCompany(company.getName());
+				if (certs == null || certs.isEmpty()) continue;
+				cert = certs.get(0);
+				if (isSaleRecorded(currentPlayer, company))
+					continue;
+				if (!currentPlayer.mayBuyCompanyShare(company, 1))
+					continue;
+				if (currentPlayer.maxAllowedNumberOfSharesToBuy
+						(company, certs.get(0).getShare()) < 1)
+					continue;
+				stockSpace = company.getCurrentPrice(); 
+				if (!stockSpace.isNoCertLimit() 
+						&& !currentPlayer.mayBuyCertificate(company, 1))
+				continue;
+				if (cert.getCertificatePrice() <= playerCash) {
+					possibleActions.add(new BuyCertificate (cert, company.getPortfolio()));
+				}
 			}
 		}
 	}
@@ -798,7 +820,7 @@ public class StockRound extends Round
 		setPriority();
 
 		// Check if the company has floated
-		if (from == ipo)
+		if (!company.hasFloated())
 			company.checkFlotation();
 
 		return true;

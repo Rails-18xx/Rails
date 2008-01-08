@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.1 2007/12/21 21:18:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.2 2008/01/08 20:23:55 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package rails.game.move;
+
+import java.util.List;
 
 /**
  * @author Erik Vos
@@ -37,7 +39,6 @@ public class ObjectMove extends Move {
         
         MoveSet.add (this);
     }
-
 
     public boolean execute() {
 

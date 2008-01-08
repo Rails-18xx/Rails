@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="rails.game.GameManager">
+		<Game name="1851"/>
+		<PlayerShareLimit percentage="60"/>
+		<BankPoolLimit percentage="50"/>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="OR"/>
+			<!-- 0 = "Runs out"; -1 = "broken" -->
+		</EndOfGame>
+	</Component>
+	<Component name="Bank" class="rails.game.Bank">
+		<Bank amount="8040"/>
+		<Players number="3" cash="400" certLimit="10"/>
+		<Players number="4" cash="430" certLimit="12"/>
+		<Players number="5" cash="500" certLimit="15"/>
+		<Money format="$@"/>
+	</Component>
+	<Component name="TileManager" class="rails.game.TileManager" 
+		file="TileSet.xml"/>
+	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="rails.game.StockMarket" 
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<!-- Alternative values: 
+				base="hexes" for H-trains as in 1826, 1849 etc.
+				countTowns="no" for all trains in 1841, 18EU, etc.,
+				  where towns score but do not count against the train length.
+				  Otherwise, towns are counted as minor or major stops,
+				  depending on the presence or absence of a "minorStops" value.
+			-->
+			<Score towns="yes"/>
+			<!-- Alternative values:
+				towns="no" for trains that ignore towns (e.g. 1826 TGV).
+				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
+			-->
+		</Defaults>
+		<Train name="2" majorStops="2" cost="100" amount="5"/>
+		<Train name="3" majorStops="3" cost="200" amount="4" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" amount="3" startPhase="4" 
+			rustedTrain="2"/>
+		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
+			rustedTrain="3"/>
+		<Train name="8" majorStops="8" cost="800" amount="4" startPhase="8" 
+			rustedTrain="4"/>
+	</Component>
+	<Component name="PhaseManager" class="rails.game.PhaseManager">
+		<!-- Note: released and rusted trains are now specified per Train
+			but could as well be moved here. To be sorted out when we do 18US. -->
+		<!-- Each Phase's defaults are the previous one's values -->
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+			<Privates sellingAllowed="no"/>
+			<OperatingRounds number="1"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+			<Privates close="yes"/>
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="6">
+			<Tiles colour="yellow,green,brown"/>
+			<OffBoardRevenue step="3"/>
+		</Phase>
+		<Phase name="8">
+			<Tiles colour="yellow,green,brown,grey"/>
+		</Phase>
+	</Component>
+</ComponentManager>

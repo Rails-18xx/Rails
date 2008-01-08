@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.14 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.15 2008/01/08 20:23:56 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -289,7 +289,7 @@ implements ActionListener, KeyListener, ActionPerformer
 			return;
 		}
         
-        gameStatus.setSRPlayerTurn(GameManager.getCurrentPlayerIndex());
+        gameStatus.initSRPlayerTurn(GameManager.getCurrentPlayerIndex());
         gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
         
 		if ((currentRound instanceof ShareSellingRound))
@@ -556,7 +556,7 @@ implements ActionListener, KeyListener, ActionPerformer
 	}
     
     public void finishRound() {
-        gameStatus.setSRPlayerTurn(-1);
+        gameStatus.initSRPlayerTurn(-1);
         passButton.setEnabled(false);
     }
     

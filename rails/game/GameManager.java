@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.20 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.21 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -69,6 +69,7 @@ public class GameManager implements ConfigurableComponentI
 	protected boolean endedByBankruptcy = false;
 	protected boolean hasAnyParPrice = false;
 	protected boolean canAnyCompBuyPrivates = false;
+	protected boolean canAnyCompanyHoldShares = false;
 	protected boolean bonusTokensExist = false;
 
 	protected static GameManager instance;
@@ -313,7 +314,7 @@ public class GameManager implements ConfigurableComponentI
 	private void startOperatingRound(boolean operate)
 	{
 		log.debug("Operating round started with operate-flag="+operate);
-		playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
+		//playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
         
 		//new OperatingRound().start(operate);
         try {
@@ -695,6 +696,7 @@ public class GameManager implements ConfigurableComponentI
 		}
 	}
 
+	/*
 	private void playHomeTokens()
 	{
 		// TODO: Need to check whether player gets to choose placement of token
@@ -712,7 +714,7 @@ public class GameManager implements ConfigurableComponentI
 			    // If the home token has not been placed yet, do it.
 				/* TODO: in reality, the home token placement time
 				 * is rails.game-dependent, so it should be configured. (EV)
-				 */
+				 *//*
 			    if (company.getNumberOfLaidBaseTokens() == 0) {
 			        company.layHomeBaseTokens();
 			    }
@@ -720,6 +722,7 @@ public class GameManager implements ConfigurableComponentI
 			}
 		}
 	}
+	*/
 
 	public static void setCompaniesCanBuyPrivates()
 	{
@@ -742,6 +745,14 @@ public class GameManager implements ConfigurableComponentI
 
 	public static void setHasAnyParPrice(boolean hasAnyParPrice) {
         instance.hasAnyParPrice = hasAnyParPrice;
+	}
+	
+	public static boolean canAnyCompanyHoldShares() {
+		return instance.canAnyCompanyHoldShares;
+	}
+
+	public static void setCanAnyCompanyHoldShares(boolean canAnyCompanyHoldShares) {
+		instance.canAnyCompanyHoldShares = canAnyCompanyHoldShares;
 	}
 
 	public static boolean canAnyCompBuyPrivates() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.9 2008/01/08 20:23:55 evos Exp $ */
 package rails.game;
 
 
@@ -240,7 +240,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		moveUp(company);
 	}
 
-	protected void moveUp(PublicCompanyI company)
+	public void moveUp(PublicCompanyI company)
 	{
 		StockSpaceI oldsquare = company.getCurrentPrice();
 		StockSpaceI newsquare = oldsquare;
