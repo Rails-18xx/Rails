@@ -24,10 +24,12 @@
 	<Tile id="3" quantity="3" />
 	<Tile id="4" quantity="3" />
 	<Tile id="5" quantity="3">
-		<Upgrade id="14,15" />
+		<Upgrade id="14,15" hex="-L5"/>
+		<Upgrade id="1443" hex="L5"/>
 	</Tile>
 	<Tile id="6" quantity="3">
-		<Upgrade id="14,15" />
+		<Upgrade id="14,15" hex="-L5"/>
+		<Upgrade id="1443" hex="L5"/>
 	</Tile>
 	<Tile id="7" quantity="5">
 		<Upgrade id="26,27,28,29" />
@@ -39,7 +41,8 @@
 		<Upgrade id="19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="57" quantity="4">
-		<Upgrade id="14,15" />
+		<Upgrade id="14,15" hex="-L5"/>
+		<Upgrade id="1443" hex="L5"/>
 	</Tile>
 	<Tile id="58" quantity="3" />
 	<Tile id="1441" quantity="1"><!--Missing!-->
