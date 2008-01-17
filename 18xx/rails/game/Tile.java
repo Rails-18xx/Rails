@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.11 2007/12/23 16:49:41 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.12 2008/01/17 21:13:48 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class Tile implements TileI, StationHolderI
 	 * but different in case of duplicates.
 	 */
 	private int externalId;
-	/** The 'picture id', identofying the picture number to be loaded.
+	/** The 'picture id', identifying the picture number to be loaded.
 	 * Usually equal to the internal id,
 	 * but different in case of graphical variants
 	 * (such as the 18EU tiles 80-83).
@@ -70,7 +70,7 @@ public class Tile implements TileI, StationHolderI
 	    }
 	    
 		name = defTag.getAttributeAsString("name", name);
-
+		
 		colour = defTag.getAttributeAsString("colour");
 		if (colour == null)
 			throw new ConfigurationException(
@@ -267,6 +267,12 @@ public class Tile implements TileI, StationHolderI
 			sideNumber += 6;
 		return (tracksPerSide[sideNumber % 6].size() > 0);
 	}
+	
+	public List<Track> getTracksPerSide (int sideNumber) {
+        while (sideNumber < 0)
+            sideNumber += 6;
+	    return tracksPerSide[sideNumber % 6];
+	}
 
 	/**
 	 * Is a tile upgradeable at any time (regardles the phase)?
@@ -371,26 +377,6 @@ public class Tile implements TileI, StationHolderI
 		return quantity;
 	}
 	
-    /*
-    // For non-Station-related tokens
-    public boolean addToken (TokenI token) {
-        return token != null && tokens.add(token);
-    }
-    
-    public boolean removeToken (TokenI token) {
-        return token != null && tokens.remove(token);
-    }
-
-    public List<TokenI> getTokens() {
-        return tokens;
-    }
-
-    public boolean hasTokens() {
-        return ! tokens.isEmpty();
-    }
-    */
-    
-
 	protected class Upgrade {
 	    
 	    /** The upgrade tile */

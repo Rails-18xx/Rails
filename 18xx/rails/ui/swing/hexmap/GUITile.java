@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.7 2007/12/31 20:04:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.8 2008/01/17 21:13:49 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -6,6 +6,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.ui.swing.*;
@@ -36,6 +39,8 @@ public class GUITile {
 	protected AffineTransform af = new AffineTransform();
 
 	public static final double DEG60 = Math.PI / 3;
+
+	protected static Logger log = Logger.getLogger(GUITile.class.getPackage().getName());
 
 	public GUITile(int tileId, MapHex hex) {
 		this.tileId = tileId;
@@ -72,7 +77,7 @@ public class GUITile {
 	 */
 	public boolean rotate(int initial, GUITile previousGUITile,
 			boolean mustConnect) {
-		int i, j, tempRot;
+		int i, j, tempRot, tempTileSide, prevTileSide;
 		TileI prevTile = previousGUITile.getTile();
 		int prevTileRotation = previousGUITile.getRotation();
 		MapHex nHex;
@@ -80,34 +85,66 @@ public class GUITile {
 		boolean connected;
 
 		/* Loop through all possible rotations */
-		for (i = initial; i < 6; i++) {
+rot:	for (i = initial; i < 6; i++) {
 			connected = !mustConnect;
 			tempRot = (rotation + i) % 6;
 			/* Loop through all hex sides */
 			for (j = 0; j < 6; j++) {
-				/*
-				 * If the tile has tracks against that side, but there is no
-				 * neighbour, forbid this rotation.
-				 */
-				if (tile.hasTracks(j - tempRot)) {
-					if (!hex.hasNeighbour(j))
-						break;
+			    tempTileSide = (6 + j - tempRot) % 6;
+			    prevTileSide = (6 + j - prevTileRotation) % 6;
+			    
+				if (tile.hasTracks(tempTileSide)) {
+					// If the tile has tracks against that side, but there is no
+					// neighbour, forbid this rotation.
+					if (!hex.hasNeighbour(j)) {
+						continue rot;
+					}
 					// If the tile must be connected (i.e. not laid on the 
 					// operating company home hex, and not a special tile lay),
-					// the neighbour must have a track against this side.
+					// at least one neighbour must have a track against 
+					// a side of this tile that also has a track.
 					if (mustConnect) {
 						nHex = hex.getNeighbor(j);
 						if (nHex.getCurrentTile().hasTracks(j+3 - nHex.getCurrentTileRotation())) {
 							connected = true;
 						}
 					}
+					// If the previous tile has tracks against this side too,
+					// these must all be preserved.
+					if (prevTile.hasTracks(j - prevTileRotation)) {
+					    List<Track> newTracks = tile.getTracksPerSide(tempTileSide);
+			old:	    for (Track oldTrack : prevTile.getTracksPerSide(prevTileSide)) {
+			                if (oldTrack.getComparableEndPoint(prevTileSide) >= 0) {
+			                    // Old track ending in another side
+    					        for (Track newTrack : newTracks) {
+    					            if ((tempRot + newTrack.getComparableEndPoint(tempTileSide))%6
+    					                    == (prevTileRotation+oldTrack.getComparableEndPoint(prevTileSide))%6) {
+    					                // OK, this old track is preserved
+    					                continue old;
+    					            }
+    					        }
+			                } else {
+			                    // Old track ending in a station
+                                for (Track newTrack : newTracks) {
+                                    if (newTrack.getComparableEndPoint(tempTileSide)
+                                            == oldTrack.getComparableEndPoint(prevTileSide)) {
+                                        // OK, this old track is preserved
+                                        continue old;
+                                    }
+                                }
+			                }
+					        // Found an unpreserved track - stop checking
+					        continue rot;
+					    }
+					}
 					
 				// If the previous tile has tracks against that side, but
 				// the new one has not, forbid this rotation (not preserving
 				// existing track).
 				} else {
-					if (prevTile.hasTracks(j - prevTileRotation))
-						break;
+					if (prevTile.hasTracks(j - prevTileRotation)) {
+						continue rot;
+					}
 					// TODO: Add a check for preserving station connections
 					// on multi-station tiles.
 				}
