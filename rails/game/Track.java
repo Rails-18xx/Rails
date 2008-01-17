@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Track.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Track.java,v 1.3 2008/01/17 21:13:48 evos Exp $ */
 package rails.game;
 
 /**
@@ -12,11 +12,19 @@ public class Track
 
 	int startPoint;
 	int endPoint;
+	
+	// TEMPORARY, because we can't yet handle OO cities correctly.
+	int comparableStartPoint;
+	int comparableEndPoint;
 
 	public Track(int startPoint, int endPoint)
 	{
 		this.startPoint = startPoint;
 		this.endPoint = endPoint;
+		
+		// TEMPORARY
+		this.comparableStartPoint = Math.max(startPoint, -1);
+		this.comparableEndPoint = Math.max(endPoint, -1);
 	}
 
 	public boolean hasPoint(int point)
@@ -27,6 +35,17 @@ public class Track
 	public int[] points()
 	{
 		return new int[] { startPoint, endPoint };
+	}
+	
+	public int getComparableEndPoint (int comparableStartPoint) {
+	    
+	    if (comparableStartPoint == this.comparableStartPoint) {
+	        return this.comparableEndPoint;
+	    } else if (comparableStartPoint == this.comparableEndPoint) {
+	        return this.comparableStartPoint;
+	    } else {
+	        return -99;
+	    }
 	}
 
 }

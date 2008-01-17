@@ -1,5 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TileManagerI.java,v 1.2 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TileManagerI.java,v 1.3 2008/01/17 21:13:48 evos Exp $ */
 package rails.game;
+
+import java.util.List;
 
 /**
  * Interface for CompanyManager objects. A company manager is a factory which
@@ -14,5 +16,6 @@ public interface TileManagerI
 	static final String COMPONENT_NAME = "TileManager";
 
 	public TileI getTile(int id);
+    public List<Integer> getTileIds();
 
 }

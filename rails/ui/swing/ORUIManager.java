@@ -22,6 +22,7 @@ public class ORUIManager {
 	private MapPanel mapPanel;
 	private HexMap map;
 	private MessagePanel messagePanel;
+	private RemainingTilesWindow remainingTiles;
 	
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
@@ -325,6 +326,10 @@ public class ORUIManager {
         } else if (command.equals(ORPanel.BUY_PRIVATE_CMD)) {
 
             buyPrivate();
+            
+    	} else if (command.equals(ORPanel.REM_TILES_CMD)) {
+    	    
+    	    displayRemainingTiles();
     	}
     	
         ReportWindow.addLog();
@@ -1154,6 +1159,16 @@ public class ORUIManager {
 	// TEMPORARY
 	public HexMap getMap() {
 		return map;
+	}
+	
+	private void displayRemainingTiles() {
+	    
+	    //JOptionPane.showMessageDialog(orWindow, "Remaining Tiles to come here");
+		if (remainingTiles == null) {
+			remainingTiles = new RemainingTilesWindow (orWindow);
+		} else {
+			remainingTiles.refresh();
+		}
 	}
 
 }

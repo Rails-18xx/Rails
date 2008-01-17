@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.6 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.7 2008/01/17 21:13:48 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -26,6 +26,7 @@ public interface TileI
 	public String getName();
 
 	public boolean hasTracks(int sideNumber);
+    public List<Track> getTracksPerSide (int sideNumber);
 
 	public boolean isUpgradeable();
 

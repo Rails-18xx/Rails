@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.17 2007/12/21 21:18:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.18 2008/01/17 21:13:48 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -40,6 +40,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
+    public static final String REM_TILES_CMD = "RemainingTiles";
     
     ORWindow orWindow;
     ORUIManager orUIManager;
@@ -49,6 +50,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JPanel buttonPanel;
 
     private JMenuBar menuBar;
+    private JMenu infoMenu;
+    private JMenuItem remainingTilesMenuItem;
 	private JMenu specialMenu;
 
     private GridBagLayout gb;
@@ -156,6 +159,15 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         add(buttonPanel, BorderLayout.SOUTH);
 
 		menuBar = new JMenuBar();
+		
+		infoMenu = new JMenu (LocalText.getText("Info"));
+		infoMenu.setEnabled(true);
+		remainingTilesMenuItem = new JMenuItem(LocalText.getText("RemainingTiles"));
+		remainingTilesMenuItem.addActionListener(this);
+		remainingTilesMenuItem.setActionCommand(REM_TILES_CMD);
+		infoMenu.add(remainingTilesMenuItem);
+		menuBar.add(infoMenu);
+		
 		specialMenu = new JMenu (LocalText.getText("SPECIAL"));
         specialMenu.setBackground(Color.YELLOW); // Normally not seen because menu is not opaque
 		specialMenu.setEnabled(false);
