@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.7 2007/10/05 22:02:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.8 2008/01/18 19:58:13 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
@@ -12,11 +12,11 @@ public class State extends ModelObject implements StateI {
 	
     protected String name;
 	protected Object object = null;
-	protected Class clazz = null;
+	protected Class<?> clazz = null;
 	
 	protected static Logger log = Logger.getLogger(State.class.getPackage().getName());
 
-	public State (String name, Class clazz) {
+	public State (String name, Class<?> clazz) {
 	    this.name = name;
 		if (clazz == null) {
 			new Exception ("NULL class not allowed in creating State wrapper")

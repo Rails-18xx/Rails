@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.7 2008/01/17 21:13:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.8 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public interface TileI
 
 	public boolean hasStations();
 
-	public List getStations();
+	public List<Station> getStations();
 	
 	public int getNumStations();
 

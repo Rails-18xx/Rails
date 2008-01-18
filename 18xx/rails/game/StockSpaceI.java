@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.2 2007/10/05 22:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.3 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -119,7 +119,7 @@ public interface StockSpaceI // extends TokenHolderI
 
 	public void addFixedStartPrice(PublicCompanyI company);
 
-	public List getFixedStartPrices();
+	public List<PublicCompanyI> getFixedStartPrices();
 
 	/**
 	 * @return
@@ -148,5 +148,7 @@ public interface StockSpaceI // extends TokenHolderI
 
 	public boolean addToken(PublicCompanyI company);
 	public boolean removeToken(PublicCompanyI company);
-
+    public boolean hasTokens();
+    public List<PublicCompanyI> getTokens();
+	
 }

@@ -160,25 +160,18 @@ public class Bank implements CashHolder, ConfigurableComponentI
 	public static void initIpo()
 	{
 		// Add privates
-		List privates = Game.getCompanyManager().getAllPrivateCompanies();
-		Iterator it = privates.iterator();
-		while (it.hasNext())
+		List<PrivateCompanyI> privates = Game.getCompanyManager().getAllPrivateCompanies();
+		for (PrivateCompanyI priv : privates)
 		{
-			ipo.addPrivate((PrivateCompanyI) it.next());
+		    ipo.addPrivate (priv);
 		}
 
 		// Add public companies
-		List companies = Game.getCompanyManager().getAllPublicCompanies();
-		it = companies.iterator();
-		PublicCompanyI comp;
-		PublicCertificateI cert;
-		while (it.hasNext())
+		List<PublicCompanyI> companies = Game.getCompanyManager().getAllPublicCompanies();
+		for (PublicCompanyI comp : companies)
 		{
-			comp = (PublicCompanyI) it.next();
-			Iterator it2 = (comp).getCertificates().iterator();
-			while (it2.hasNext())
+		    for (PublicCertificateI cert : comp.getCertificates())
 			{
-				cert = (PublicCertificateI) it2.next();
 				ipo.addCertificate(cert);
 				/** TODO in some games not all certs are buyable at the start */  
 			}

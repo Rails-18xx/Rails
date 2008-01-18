@@ -167,18 +167,16 @@ public class ORUIManager {
         String extraMessage = "";
         if (localStep == ORUIManager.SELECT_HEX_FOR_TILE) {
             /* Compose prompt for tile laying */
-            LayTile tileLay;
             int tileNumber;
             StringBuffer normalTileMessage = new StringBuffer(" ");
             StringBuffer extraTileMessage = new StringBuffer(" ");
             StringBuffer specialTiles = new StringBuffer("#");
             
-            List tileLays = possibleActions.getType(LayTile.class);
+            List<LayTile> tileLays = possibleActions.getType(LayTile.class);
             log.debug ("There are "+tileLays.size()+" TileLay objects");
             int ii=0;
-            for (Iterator it = tileLays.iterator(); it.hasNext(); ) {
-                Map tileColours;
-                tileLay = (LayTile) it.next();
+            for (LayTile tileLay : tileLays) {
+                Map<String, Integer> tileColours;
                 log.debug ("TileLay object "+(++ii)+": "+tileLay);
                 sp = tileLay.getSpecialProperty();
                 /* A LayTile object contais either:
@@ -212,11 +210,9 @@ public class ORUIManager {
                         }
                     }
                 } else if ((tileColours = tileLay.getTileColours()) != null) {
-                    String colour;
                     int number;
-                    for (Iterator it2 = tileColours.keySet().iterator(); it2.hasNext(); ) {
-                        colour = (String) it2.next();
-                        number = ((Integer)tileColours.get(colour)).intValue();
+                    for (String colour : tileColours.keySet()) {
+                        number = tileColours.get(colour);
                         if (normalTileMessage.length() > 1) {
                             normalTileMessage.append(" ")
                                 .append(LocalText.getText("OR"))
@@ -239,17 +235,15 @@ public class ORUIManager {
         } else if (localStep == ORUIManager.SELECT_HEX_FOR_TOKEN) {
             
             /* Compose prompt for token laying */
-            LayBaseToken tokenLay;
             String locations;
             StringBuffer normalTokenMessage = new StringBuffer(" ");
             StringBuffer extraTokenMessage = new StringBuffer(" ");
             
-            List tokenLays = possibleActions.getType(LayBaseToken.class);
+            List<LayBaseToken> tokenLays = possibleActions.getType(LayBaseToken.class);
             log.debug ("There are "+tokenLays.size()+" TokenLay objects");
             int ii=0;
-            for (Iterator it = tokenLays.iterator(); it.hasNext(); ) {
+            for (LayBaseToken tokenLay : tokenLays) {
 
-                tokenLay = (LayBaseToken) it.next();
                 log.debug ("TokenLay object "+(++ii)+": "+tokenLay);
                 sp = tokenLay.getSpecialProperty();
                 /* A LayToken object contais either:
@@ -303,7 +297,7 @@ public class ORUIManager {
     	if (actions != null && actions.size() > 0
                 && !processGameSpecificActions (actions)) {
     		
-    		Class actionType = actions.get(0).getClass();
+    		Class<? extends PossibleAction> actionType = actions.get(0).getClass();
     		
     		if (actionType == SetDividend.class) {
     			
@@ -1163,11 +1157,10 @@ public class ORUIManager {
 	
 	private void displayRemainingTiles() {
 	    
-	    //JOptionPane.showMessageDialog(orWindow, "Remaining Tiles to come here");
 		if (remainingTiles == null) {
 			remainingTiles = new RemainingTilesWindow (orWindow);
 		} else {
-			remainingTiles.refresh();
+			remainingTiles.activate();
 		}
 	}
 

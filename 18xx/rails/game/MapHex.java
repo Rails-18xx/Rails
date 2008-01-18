@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.13 2007/12/23 16:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.14 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 
@@ -184,7 +184,7 @@ public class MapHex extends ModelObject
 		for (int i = 0; i < currentTile.getStations().size(); i++)
 		{
 			// sid, type, value, slots
-			Station s = (Station) currentTile.getStations().get(i);
+			Station s = currentTile.getStations().get(i);
 			stations.add(new Station(this, s));  // Clone it
 		}
 
@@ -392,11 +392,10 @@ public class MapHex extends ModelObject
 	    /* Create a new set of stations, each with the tokens that will end up there,
 	     * and save both the old and the new set.
 	     */
-		List<Station> newTileStations = (ArrayList<Station>) newTile.getStations();
+		List<Station> newTileStations = newTile.getStations();
 		List<Station> newHexStations = new ArrayList<Station>();
 	    
 		Station oldStation, newStation;
-	    TokenI token;
 	    
 	    /* Clone the stations of the new tile. */
 	    for (Station station : newTileStations) {
@@ -422,8 +421,7 @@ public class MapHex extends ModelObject
 
 	        newStation = (Station) newHexStations.get(j);
 
-		    for (Iterator it = oldStation.getTokens().iterator(); it.hasNext(); ) {
-		        token = (TokenI) it.next();
+		    for (TokenI token : oldStation.getTokens()) {
 		        newStation.addToken(token);
 		    }
 		    
@@ -576,8 +574,8 @@ public class MapHex extends ModelObject
 	/** Check if the tile already has a token of a company in any station */
 	public boolean hasTokenOfCompany (PublicCompanyI company) {
 	    
-	    for (Iterator it = stations.iterator(); it.hasNext(); ) {
-	        if (hasTokenOfCompany (company, (Station)it.next())) return true;
+	    for (Station station : stations) {
+            if (hasTokenOfCompany (company, station)) return true;
 	    }
 	    return false;
 	}
@@ -585,8 +583,8 @@ public class MapHex extends ModelObject
 	/** Check if the tile already has a token of a company in one station */
 	public boolean hasTokenOfCompany (PublicCompanyI company, Station station) {
 	    
-	    for (Iterator it = station.getTokens().iterator(); it.hasNext(); ) {
-	        if (((BaseToken)it.next()).getCompany() == company) return true;
+	    for (TokenI token : station.getTokens()) {
+            if (((BaseToken)token).getCompany() == company) return true;
 	    }
 	    return false;
 	}
@@ -656,7 +654,7 @@ public class MapHex extends ModelObject
 	    destinations.add (company);
 	}
 	
-	public List getDestinations () {
+	public List<PublicCompanyI> getDestinations () {
 	    return destinations;
 	}
 	

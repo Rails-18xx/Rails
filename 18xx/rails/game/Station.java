@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.5 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.6 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -51,7 +51,7 @@ public class Station implements TokenHolderI, Cloneable
 	private static final String[] types = {
 	        CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION
 	};
-	private static final List validTypes = Arrays.asList(types);
+	private static final List<String> validTypes = Arrays.asList(types);
 	
 	/** Check validity of a Station type */
 	public static boolean isTypeValid (String type) {

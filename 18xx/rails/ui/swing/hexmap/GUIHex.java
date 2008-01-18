@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.10 2007/12/23 16:30:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.11 2008/01/18 19:58:16 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -663,11 +663,8 @@ public class GUIHex implements ViewObject
 		tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
 		if (currentTile.hasStations())
 		{
-			Iterator it = currentTile.getStations().iterator();
-			Station st;
-			while (it.hasNext())
+		    for (Station st : currentTile.getStations())
 			{
-				st = (Station) it.next();
 				tt.append("<br>  ").append(st.getType()).append(": value ");
 				if (model.hasOffBoardValues()) {
 				    tt.append(model.getCurrentOffBoardValue()).append(" [");
@@ -701,9 +698,9 @@ public class GUIHex implements ViewObject
 
 		if (getHexModel().getDestinations() != null) {
 			tt.append("<br><b>Destination</b>:");
-			for (Iterator it = getHexModel().getDestinations().iterator(); it.hasNext(); ) {
+			for (PublicCompanyI dest : getHexModel().getDestinations()) {
 			    tt.append (" ");
-				tt.append(((PublicCompanyI)it.next()).getName());
+                tt.append(dest.getName());
 			}
 		}
 		toolTip = tt.toString();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.15 2008/01/02 14:13:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.16 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -10,7 +10,6 @@ import rails.game.action.PossibleActions;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
-import java.util.Iterator;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
@@ -434,13 +433,10 @@ implements ActionListener, KeyListener, ActionPerformer
 		
 		passAllowed = false;
 
-		List inactiveItems = possibleActions.getType (NullAction.class);
+		List<NullAction> inactiveItems = possibleActions.getType (NullAction.class);
 		if (inactiveItems != null) {
 			
-			NullAction na;
-			for (Iterator it = inactiveItems.iterator();
-					it.hasNext(); ) {
-				na = (NullAction) it.next();
+		    for (NullAction na : inactiveItems) {
 				switch (na.getMode()) {
 				case NullAction.PASS:
 					passButton.setText(LocalText.getText("PASS"));

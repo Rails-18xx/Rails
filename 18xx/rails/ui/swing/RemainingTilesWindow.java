@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.1 2008/01/17 21:13:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.2 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
-import rails.game.action.LayTile;
-import rails.game.action.LayToken;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
+import rails.game.model.ModelObject;
+import rails.ui.swing.elements.Field;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.util.LocalText;
 
@@ -29,10 +27,8 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 {
     private GameUIManager gameUIManager;
     private ORUIManager orUIManager;
-	private ORWindow orWindow;
-	private GridLayout gridLayout;
 
-	private List<JLabel> labels = new ArrayList<JLabel>();
+	private List<Field> labels = new ArrayList<Field>();
 	private List<TileI> shownTiles = new ArrayList<TileI>();
 	
 	private final static int COLUMNS = 10;
@@ -42,12 +38,10 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 	public RemainingTilesWindow(ORWindow orWindow)
 	{
 		super();
-        this.orWindow = orWindow;
         
-		getContentPane().setLayout(gridLayout = new GridLayout(0, COLUMNS, 5, 5));
+		getContentPane().setLayout(new GridLayout(0, COLUMNS, 5, 5));
 
 		setTitle("Rails: Remaining Tiles");
-		//setLocation(10, 10);
 		setVisible(false);
 		setSize(800, 600);
 		addWindowListener(this);
@@ -64,11 +58,9 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 
 		TileManagerI tmgr = TileManager.get();
 		TileI tile;
-	    int i, externalId, count;
-	    JLabel label;
+	    Field label;
 	    BufferedImage hexImage;
 	    ImageIcon hexIcon;
-	    String initialText;
 	    
 	    // Build the grid with tiles in the sequence as
 	    // these have been defined in Tiles.xml
@@ -79,18 +71,17 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 	        if (tileId <= 0) continue;
 	        
 	        tile = tmgr.getTile(tileId);
-	        externalId = tile.getExternalId();
 	        
             hexImage = GameUIManager.getImageLoader().getTile(tileId);
             hexIcon = new ImageIcon(hexImage);
             hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                    (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE),
                     (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE*0.8),
+                    (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE*0.8),
                     Image.SCALE_SMOOTH));
             
-	        label = new JLabel (makeCaption(tile), hexIcon, JLabel.CENTER);
-	        label.setVerticalTextPosition(JLabel.BOTTOM);
-	        label.setHorizontalTextPosition(JLabel.CENTER);
+	        label = new Field ((ModelObject)tile, hexIcon, Field.CENTER);
+	        label.setVerticalTextPosition(Field.BOTTOM);
+	        label.setHorizontalTextPosition(Field.CENTER);
 	        label.setVisible(true);
 	        
 	        getContentPane().add(label);
@@ -98,28 +89,6 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 	        labels.add(label);
 	        
 	    }
-	    
-	}
-	
-	private String makeCaption (TileI tile) {
-		
-        int count = tile.countFreeTiles();
-        String text = "#" + tile.getExternalId() + ": ";
-        if (count == -1) {
-        	text += "+";	
-        } else {
-        	text += count;
-        }
-        return text;
-	}
-	
-	public void refresh() {
-		
-		for (int i=0; i<shownTiles.size(); i++) {
-			labels.get(i).setText(makeCaption(shownTiles.get(i)));
-		}
-		
-		setVisible(true);
 	    
 	}
 	
@@ -165,10 +134,8 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
 	{
 	}
 
-	public void activate(OperatingRound or)
+	public void activate()
 	{
-		refresh();
-		pack();
 		setVisible(true);
 		requestFocus();
 	}

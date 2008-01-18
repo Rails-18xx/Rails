@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.7 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.8 2008/01/18 19:58:16 evos Exp $ */
 package rails.game.special;
 
 
@@ -16,7 +16,7 @@ public class SpecialTokenLay extends SpecialProperty
 	boolean extra = false;
 	boolean free = false;
 	boolean connected = false;
-	Class tokenClass;
+	Class<? extends Token> tokenClass;
 	TokenI token = null;
     int numberAvailable = 1;
     int numberUsed = 0;
@@ -54,7 +54,7 @@ public class SpecialTokenLay extends SpecialProperty
 		String tokenClassName = tokenLayTag.getAttributeAsString(
 				"class", "rails.game.BaseToken");
 		try {
-			tokenClass = Class.forName(tokenClassName);
+			tokenClass = Class.forName(tokenClassName).asSubclass(Token.class);
 			if (tokenClass == BonusToken.class) {
                 BonusToken bToken = (BonusToken) tokenClass.newInstance();
                 token = bToken;
@@ -106,7 +106,7 @@ public class SpecialTokenLay extends SpecialProperty
     	return locationCodes;
     }
 	
-	public Class getTokenClass() {
+	public Class<? extends Token> getTokenClass() {
         return tokenClass;
     }
 	

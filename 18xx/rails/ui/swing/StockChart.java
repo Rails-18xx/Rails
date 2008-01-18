@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.2 2007/10/05 22:02:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.3 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -22,7 +22,7 @@ public class StockChart extends JFrame implements WindowListener, KeyListener
 
 	private GridLayout stockGrid;
 	private GridBagConstraints gc;
-	private StockSpace[][] market;
+	private StockSpaceI[][] market;
 
 	public StockChart()
 	{

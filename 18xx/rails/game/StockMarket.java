@@ -1,10 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.9 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.10 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import rails.game.move.PriceTokenMove;
@@ -17,8 +16,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 		= new HashMap<String, StockSpaceTypeI>();
 	protected HashMap<String, StockSpaceI> stockChartSpaces 
 		= new HashMap<String, StockSpaceI>();
-	protected StockSpace stockChart[][];
-	protected StockSpace currentSquare;
+	protected StockSpaceI stockChart[][];
+	protected StockSpaceI currentSquare;
 	protected int numRows = 0;
 	protected int numCols = 0;
 	protected ArrayList<StockSpaceI> startSpaces 
@@ -153,12 +152,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 			startPrices[i] = ((StockSpaceI) startSpaces.get(i)).getPrice();
 		}
 
-		stockChart = new StockSpace[numRows][numCols];
-		Iterator it = stockChartSpaces.values().iterator();
-		StockSpace space;
-		while (it.hasNext())
+		stockChart = new StockSpaceI[numRows][numCols];
+		for (StockSpaceI space : stockChartSpaces.values())
 		{
-			space = (StockSpace) it.next();
 			stockChart[space.getRow()][space.getColumn()] = space;
 		}
 
@@ -173,14 +169,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	public void init()
 	{
 
-		Iterator it = Game.getCompanyManager()
-				.getAllPublicCompanies()
-				.iterator();
-		PublicCompanyI comp;
-		//StockSpaceI space;
-		while (it.hasNext())
+	    for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies())
 		{
-			comp = (PublicCompanyI) it.next();
 			if (!comp.hasStarted() && comp.getParPrice() != null)
 			{
 				comp.getParPrice().addFixedStartPrice(comp);
@@ -192,12 +182,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	/**
 	 * @return
 	 */
-	public StockSpace[][] getStockChart()
+	public StockSpaceI[][] getStockChart()
 	{
 		return stockChart;
 	}
 
-	public StockSpace getStockSpace(int row, int col)
+	public StockSpaceI getStockSpace(int row, int col)
 	{
 		if (row >= 0 && row < numRows && col >= 0 && col < numCols)
 		{
@@ -386,7 +376,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 	/**
 	 * @return
 	 */
-	public List getStartSpaces()
+	public List<StockSpaceI> getStartSpaces()
 	{
 		return startSpaces;
 	}
@@ -403,11 +393,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI
 
 	public StockSpaceI getStartSpace(int price)
 	{
-		Iterator it = startSpaces.iterator();
-		StockSpaceI square;
-		while (it.hasNext())
+	    for (StockSpaceI square : startSpaces)
 		{
-			square = ((StockSpaceI) it.next());
 			if (square.getPrice() == price)
 				return square;
 		}

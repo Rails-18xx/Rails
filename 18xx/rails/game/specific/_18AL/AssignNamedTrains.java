@@ -8,7 +8,6 @@ import java.util.List;
 import rails.game.Token;
 import rails.game.Train;
 import rails.game.TrainI;
-import rails.game.action.PossibleAction;
 import rails.game.action.UseSpecialProperty;
 import rails.game.specific._18AL.NamedTrainToken;
 import rails.game.specific._18AL.NameTrains;

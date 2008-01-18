@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.9 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -200,7 +200,7 @@ public class StartPacket
 	 * 
 	 * @return A List of all unsold items.
 	 */
-	public List getUnsoldItems()
+	public List<StartItem> getUnsoldItems()
 	{
 		List<StartItem> unsoldItems = new ArrayList<StartItem>();
 		for (StartItem item : items)

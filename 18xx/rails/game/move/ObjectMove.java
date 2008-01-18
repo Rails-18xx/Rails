@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.2 2008/01/08 20:23:55 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.3 2008/01/18 19:58:15 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
  */
 package rails.game.move;
-
-import java.util.List;
 
 /**
  * @author Erik Vos

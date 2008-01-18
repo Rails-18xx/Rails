@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.4 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.5 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -213,12 +213,9 @@ public class MapManager implements ConfigurableComponentI
 	 */
 	protected static void assignHomesAndDestinations()
 	{
-	    PublicCompanyI company;
 	    MapHex hex;
 	    
-	    for (Iterator it = Game.getCompanyManager().getAllPublicCompanies().iterator();
-	    		it.hasNext(); ) {
-	        company = (PublicCompanyI) it.next();
+	    for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
 	        if ((hex = company.getHomeHex()) != null) {
 	            hex.addHome(company, company.getHomeStation());
 	        }

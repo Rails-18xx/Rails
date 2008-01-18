@@ -56,8 +56,6 @@ public class StockRound extends Round
 	protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound 
 		= new HashMap<Player, HashMap<PublicCompanyI, Object>>();
 	/** HashMap per player */
-	// Not used (yet?)
-	protected HashMap playersThatBoughtThisRound = new HashMap();
 
 	/* Rule constants */
 	static protected final int SELL_BUY_SELL = 0;
@@ -902,11 +900,11 @@ public class StockRound extends Round
 			}
 
 			// Find the certificates to sell
-			Iterator it = portfolio.getCertificatesPerCompany(companyName)
+			Iterator<PublicCertificateI> it = portfolio.getCertificatesPerCompany(companyName)
 					.iterator();
 			while (numberToSell > 0 && it.hasNext())
 			{
-				cert = (PublicCertificateI) it.next();
+				cert = it.next();
 				if (cert.isPresidentShare())
 				{
 					// Remember the president's certificate in case we need it
@@ -1023,7 +1021,7 @@ public class StockRound extends Round
 		}
 
 		// Transfer the sold certificates
-		Iterator it = certsToSell.iterator();
+		Iterator<PublicCertificateI> it = certsToSell.iterator();
 		while (it.hasNext())
 		{
 			cert = (PublicCertificateI) it.next();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.20 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.21 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 
@@ -226,7 +226,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			MapHex hex = MapManager.getInstance().getHex(homeHexName);
 		    if (hex != null) {
 		        homeHex = hex;
-		        List stations = hex.getStations();
+		        List<Station> stations = hex.getStations();
 		        int homeCity = homeBaseTag.getAttributeAsInteger("city", 1);
 		        if (stations != null && stations.size() > 0) {
 		            homeStation = (Station) stations.get(Math.min(homeCity, stations.size()) - 1);
@@ -851,16 +851,15 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 * @param list
 	 *            ArrayList containing the certificates.
 	 */
-	public void setCertificates(List list)
+	public void setCertificates(List<PublicCertificateI> list)
 	{
 		certificates = new ArrayList<PublicCertificateI>();
-		Iterator it = list.iterator();
-		PublicCertificateI cert;
-		while (it.hasNext())
+		PublicCertificateI cert2;
+		for (PublicCertificateI cert : list)
 		{
-			cert = ((PublicCertificateI) it.next()).copy();
-			certificates.add(cert);
-			cert.setCompany(this);
+		    cert2 = cert.copy();
+			certificates.add(cert2);
+			cert2.setCompany(this);
 			// TODO Questionable if it should be put in IPO or in Unavailable.
 		}
 	}
@@ -1180,13 +1179,9 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	public int percentageOwnedByPlayers()
 	{
-
 		int share = 0;
-		Iterator it = certificates.iterator();
-		PublicCertificateI cert;
-		while (it.hasNext())
+		for (PublicCertificateI cert : certificates)
 		{
-			cert = (PublicCertificateI) it.next();
 			if (cert.getPortfolio().getOwner() instanceof Player)
 			{
 				share += cert.getShare();
@@ -1501,7 +1496,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	    
 	    if (numberOfTileLays == null) return 1;
 	    
-	    Map phaseMap = (Map) numberOfTileLays.get(tileColour);
+	    Map<String, Integer> phaseMap = numberOfTileLays.get(tileColour);
 	    if (phaseMap == null) return 1;
 	    
 	    PhaseI phase = PhaseManager.getInstance().getCurrentPhase();

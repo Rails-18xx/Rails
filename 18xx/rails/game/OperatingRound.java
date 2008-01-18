@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.25 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.26 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 
@@ -372,7 +372,7 @@ public class OperatingRound extends Round implements Observer
 		     * that this check is redundant. This may change in the future.
 		     */  
 			if (action != null) {
-			    List tiles = action.getTiles();
+			    List<TileI> tiles = action.getTiles();
 			    if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
 			        errMsg = LocalText.getText("TileMayNotBeLaidInHex", new String[] {
 			                String.valueOf(tile.getExternalId()),
@@ -1017,10 +1017,8 @@ public class OperatingRound extends Round implements Observer
 	protected void getNormalTileLays() {
 	    
 	    tileLaysPerColour = new HashMap<String, Integer> (currentPhase.getTileColours()); //Clone it.
-	    String colour;
 	    int allowedNumber;
-	    for (Iterator it = tileLaysPerColour.keySet().iterator(); it.hasNext(); ) {
-	        colour = (String) it.next();
+	    for (String colour : tileLaysPerColour.keySet()) {
 	        allowedNumber = operatingCompany.getNumberOfTileLays(colour);
 	        // Replace the null map value with the allowed number of lays
 	        tileLaysPerColour.put(colour, new Integer (allowedNumber));
@@ -1742,8 +1740,8 @@ public class OperatingRound extends Round implements Observer
 	    
 	    int cash = operatingCompany.getCash();
 	    int cost;
-	    List trains;
-	    TrainI train;
+	    List<TrainI> trains;
+	    //TrainI train;
 	    boolean hasTrains = operatingCompany.getPortfolio().getNumberOfTrains() > 0;
 	    boolean presidentMayHelp = false;
 	    TrainI cheapestTrain = null;
@@ -1759,8 +1757,7 @@ public class OperatingRound extends Round implements Observer
 	    
     	    /* New trains */
             trains =  TrainManager.get().getAvailableNewTrains();
-            for (Iterator it = trains.iterator(); it.hasNext(); ) {
-                train = (TrainI) it.next();
+            for (TrainI train : trains) {
                 if (!mayBuyMoreOfEachType 
                         && trainsBoughtThisTurn.contains(train.getType())) {
                     continue;
@@ -1799,8 +1796,7 @@ public class OperatingRound extends Round implements Observer
             
             /* Used trains */
             trains = pool.getUniqueTrains();
-    		for (Iterator it = trains.iterator(); it.hasNext();) {
-    		    train = (TrainI) it.next();
+            for (TrainI train : trains) {
                 if (!mayBuyMoreOfEachType 
                         && trainsBoughtThisTurn.contains(train.getType())) {
                     continue;
@@ -1850,8 +1846,8 @@ public class OperatingRound extends Round implements Observer
     			for (PublicCompanyI company : companies) {
     				pf = company.getPortfolio();
     				trains = pf.getUniqueTrains();
-    				for (Iterator it = trains.iterator(); it.hasNext();) {
-    				    train = (TrainI) it.next();
+
+    				for (TrainI train : trains) {
                         if (train.isObsolete()) continue;
     				    bt = new BuyTrain (train, pf, 0);
     				    if (presidentMayHelp && cash < train.getCost()) {
