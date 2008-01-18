@@ -1,12 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.12 2008/01/17 21:13:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.13 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 import java.util.regex.*;
 
+import rails.game.model.ModelObject;
 import rails.util.*;
 
-public class Tile implements TileI, StationHolderI
+public class Tile extends ModelObject implements TileI, StationHolderI
 {
 
 	/** The 'internal id', identifying the tile in the XML files */
@@ -203,8 +204,8 @@ public class Tile implements TileI, StationHolderI
 				hexes = upgradeTag.getAttributeAsString("hex");
 				if (hexes != null) 
 				{
-		            for (Iterator it = newUpgrades.iterator(); it.hasNext(); ) {
-		                ((Upgrade)it.next()).setHexes(hexes);
+				    for (Upgrade newUpgrade : newUpgrades) {
+		                newUpgrade.setHexes(hexes);
 		            }
 				    
 				}
@@ -339,7 +340,7 @@ public class Tile implements TileI, StationHolderI
 		return stations.size() > 0;
 	}
 
-	public List getStations()
+	public List<Station> getStations()
 	{
 		return stations;
 	}
@@ -353,6 +354,7 @@ public class Tile implements TileI, StationHolderI
 	{
 
 		tilesLaid.add(hex);
+		update();
 		return true;
 	}
 
@@ -360,6 +362,7 @@ public class Tile implements TileI, StationHolderI
 	{
 
 		tilesLaid.remove(hex);
+		update();
 		return true;
 	}
 
@@ -370,6 +373,13 @@ public class Tile implements TileI, StationHolderI
 			return UNLIMITED;
 		else
 			return quantity - tilesLaid.size();
+	}
+	
+	/** Return a caption for the Remaining Tiles window */ 
+	public String getText () {
+	    
+	    String count = unlimited ? "+" : String.valueOf(countFreeTiles());
+	    return "#" + externalId + ": " + count;
 	}
 
 	public int getQuantity()

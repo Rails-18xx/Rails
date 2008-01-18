@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.9 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.10 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -189,9 +189,7 @@ public class StartRound_1830 extends StartRound
 			}
 			// Check item
 			boolean validItem = false;
-			for (Iterator it = possibleActions.getType(BuyOrBidStartItem.class).iterator();
-					it.hasNext();) { 
-				BuyOrBidStartItem activeItem = (BuyOrBidStartItem) it.next();
+			for (BuyOrBidStartItem activeItem : possibleActions.getType(BuyOrBidStartItem.class)) {
 				if (bidItem.equals(activeItem)) {
 					validItem = true;
 					break;

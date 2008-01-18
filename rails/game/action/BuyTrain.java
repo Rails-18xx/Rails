@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.6 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.7 2008/01/18 19:58:15 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -16,8 +16,6 @@ import rails.game.Portfolio;
 import rails.game.Train;
 import rails.game.TrainI;
 import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialTileLay;
-import rails.game.special.SpecialTokenLay;
 import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;
 

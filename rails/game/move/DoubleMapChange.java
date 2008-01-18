@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.4 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.5 2008/01/18 19:58:15 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
@@ -6,7 +6,6 @@
 package rails.game.move;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This Move class handles adding an entry to a 2-D Map
@@ -43,7 +42,7 @@ public class DoubleMapChange<K1, K2, V> extends Move {
     public boolean undo() {
         
         if (map.containsKey(firstKey)) {
-            ((Map)map.get(firstKey)).remove(secondKey);
+            (map.get(firstKey)).remove(secondKey);
         }
 
         return true;

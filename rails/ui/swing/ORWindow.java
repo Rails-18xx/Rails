@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.12 2007/12/21 21:18:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.13 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -43,9 +43,9 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer
 		super();
         this.gameUIManager = gameUIManager;
         
-        Class orUIManagerClass = gameUIManager.getGameManager().getORUIManagerClass();
+        Class<? extends ORUIManager> orUIManagerClass = gameUIManager.getGameManager().getORUIManagerClass();
         try {
-        	orUIManager = (ORUIManager) orUIManagerClass.newInstance();
+        	orUIManager = orUIManagerClass.newInstance();
         } catch (Exception e) {
         	log.fatal("Cannot instantiate class "+orUIManagerClass.getName());
         	System.exit(1);

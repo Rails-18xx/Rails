@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.9 2007/12/21 21:18:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.10 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -153,17 +153,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         } else if (orUIManager.tileUpgrades.size() == 0) {
             orUIManager.setMessage(LocalText.getText("NoTiles"));
         } else {
-            Iterator it = orUIManager.tileUpgrades.iterator();
-
-            while (it.hasNext()) {
-                TileI tile = (TileI) it.next();
+            for (TileI tile : orUIManager.tileUpgrades) {
                 BufferedImage hexImage = getHexImage(tile.getId());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
 
                 // Cheap n' Easy rescaling.
                 hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE),
-                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE),
+                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE*0.8),
+                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE*0.8),
                         Image.SCALE_SMOOTH));
 
                 JLabel hexLabel = new JLabel(hexIcon);

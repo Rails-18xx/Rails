@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.6 2007/10/07 20:14:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.7 2008/01/18 19:58:15 evos Exp $*/
 package rails.util;
 
 import java.io.*;
@@ -266,10 +266,8 @@ public class ConvertTilesXML {
 	    convertConnection(inputConnection, outputTile);
 	}
 
-	Iterator it = unresolvedTrack.keySet().iterator();
 	String end1, end2;
-	while (it.hasNext()) {
-	    String key = (String) it.next();
+	for (String key : unresolvedTrack.keySet()) {
 	    List<Element> list = unresolvedTrack.get(key);
 	    Element[] ends = (Element[]) list.toArray(new Element[0]);
 	    if (ends.length <= 1) {

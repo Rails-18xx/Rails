@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.15 2008/01/08 20:23:56 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.16 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -15,7 +15,6 @@ import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -354,13 +353,10 @@ implements ActionListener, KeyListener, ActionPerformer
         
 		passButton.setEnabled(false);
 		
-		List inactiveItems = possibleActions.getType (NullAction.class);
+		List<NullAction> inactiveItems = possibleActions.getType (NullAction.class);
 		if (inactiveItems != null) {
 			
-			NullAction na;
-			for (Iterator it = inactiveItems.iterator();
-					it.hasNext(); ) {
-				na = (NullAction) it.next();
+		    for (NullAction na : inactiveItems) {
 				switch (na.getMode()) {
 				case NullAction.PASS:
 					passButton.setText(LocalText.getText("PASS"));

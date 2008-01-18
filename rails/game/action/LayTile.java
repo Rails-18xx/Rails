@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.10 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.11 2008/01/18 19:58:16 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -210,11 +210,9 @@ public class LayTile extends PossibleORAction {
 	        if (locations != null) b.append(" location=").append(locationNames);
 	        if (specialProperty != null) b.append(" spec.prop=").append(specialProperty);
 	        if (tileColours != null && !tileColours.isEmpty()) {
-	            String key;
 	            int value;
-	            for (Iterator it = tileColours.keySet().iterator(); it.hasNext(); ) {
-	                key = (String) it.next();
-	                value = ((Integer)tileColours.get(key)).intValue();
+	            for (String key : tileColours.keySet()) {
+	                value = tileColours.get(key);
 	                b.append(" ").append(key).append(":").append(value);
 	            }
 	        }

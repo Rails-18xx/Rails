@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.16 2007/12/23 16:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.17 2008/01/18 19:58:14 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	public final static int NO_TOWN_COUNT = 0;
 
     protected String trainClassName = "rails.game.Train";
-    protected Class trainClass;
+    protected Class<? extends Train> trainClass;
 
 	protected String name;
 	protected int amount;
@@ -83,7 +83,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 	    trainClassName = tag.getAttributeAsString("class", trainClassName);
 	    try {
-            trainClass = Class.forName(trainClassName);
+            trainClass = Class.forName(trainClassName).asSubclass(Train.class);
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException ("Class "+trainClassName+"not found", e);
         }

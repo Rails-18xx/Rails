@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.8 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.9 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -112,10 +112,10 @@ public class ComponentManager
 		ConfigurableComponentI component;
 		try
 		{
-			Class compClass;
-			compClass = Class.forName(clazz);
-			Constructor compCons = compClass.getConstructor(new Class[0]);
-			component = (ConfigurableComponentI) compCons.newInstance(new Object[0]);
+			Class<? extends ConfigurableComponentI> compClass;
+			compClass = Class.forName(clazz).asSubclass(ConfigurableComponentI.class);
+			Constructor<? extends ConfigurableComponentI> compCons = compClass.getConstructor(new Class[0]);
+			component = compCons.newInstance(new Object[0]);
 		}
 		catch (Exception ex)
 		{

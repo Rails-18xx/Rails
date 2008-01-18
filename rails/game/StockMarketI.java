@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.5 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.6 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -14,11 +14,11 @@ public interface StockMarketI
 
 	public void init();
 
-	public StockSpace[][] getStockChart();
+	public StockSpaceI[][] getStockChart();
 
-	public StockSpace getStockSpace(int row, int col);
+	public StockSpaceI getStockSpace(int row, int col);
 
-	public StockSpace getStockSpace(String name);
+	public StockSpaceI getStockSpace(String name);
 
 	public void start (PublicCompanyI company, StockSpaceI price);
 	
@@ -35,7 +35,7 @@ public interface StockMarketI
 
 	public int getNumberOfRows();
 
-	public List getStartSpaces();
+	public List<StockSpaceI> getStartSpaces();
 
 	public int[] getStartPrices();
 

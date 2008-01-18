@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.3 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.4 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public interface TrainManagerI
 	 */
 	static final String COMPONENT_NAME = "TrainManager";
 
-	public List getAvailableNewTrains();
+	public List<TrainI> getAvailableNewTrains();
 
 	public TrainTypeI getTypeByName(String name);
 

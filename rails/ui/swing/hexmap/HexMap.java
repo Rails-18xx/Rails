@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.10 2007/12/21 21:18:13 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.11 2008/01/18 19:58:16 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -110,9 +110,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 				return;
 			}
 
-			Iterator it = hexes.iterator();
-			while (it.hasNext()) {
-				GUIHex hex = (GUIHex) it.next();
+			for (GUIHex hex : hexes) {
 				Rectangle hexrect = hex.getBounds();
 
 				if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,

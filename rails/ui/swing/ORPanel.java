@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.18 2008/01/17 21:13:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.19 2008/01/18 19:58:15 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -115,7 +115,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private JComponent f;
 
-    private List<JComponent> observers = new ArrayList<JComponent>();
+    private List<ViewObject> observers = new ArrayList<ViewObject>();
 
     // Current state
     private int playerIndex = -1;
@@ -205,8 +205,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private void deRegisterObservers() {
         log.debug ("Deregistering observers");
         if (StatusWindow.useObserver) {
-            for (Iterator it = observers.iterator(); it.hasNext();) {
-                ((ViewObject) it.next()).deRegister();
+            for (ViewObject vo : observers) {
+                vo.deRegister();
             }
         }
     }
@@ -442,7 +442,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         if (StatusWindow.useObserver && comp instanceof ViewObject
                 && ((ViewObject) comp).getModel() != null) {
-            observers.add(comp);
+            observers.add((ViewObject)comp);
         }
     }
 

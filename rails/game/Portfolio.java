@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.17 2007/12/23 16:30:37 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.18 2008/01/18 19:58:14 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -312,7 +312,7 @@ implements TokenHolderI, MoveableHolderI
 
 		String companyName = certificate.getCompany().getName();
 		
-		List certs = (List) getCertificatesPerCompany(companyName);
+		List<PublicCertificateI> certs = getCertificatesPerCompany(companyName);
 		certs.remove(certificate);
 		
 		String certTypeId = certificate.getTypeId();
@@ -410,11 +410,8 @@ implements TokenHolderI, MoveableHolderI
 		{
 			return null;
 		}
-		Iterator it = ((List) certPerCompany.get(companyName)).iterator();
-		PublicCertificateI cert;
-		while (it.hasNext())
+		for (PublicCertificateI cert : certPerCompany.get(companyName))
 		{
-			cert = (PublicCertificateI) it.next();
 			if (cert.getCompany() == company)
 			{
 				if (company.getShareUnit() == 100 || president
@@ -482,13 +479,10 @@ implements TokenHolderI, MoveableHolderI
 	{
 		int share = 0;
 		String name = company.getName();
-		PublicCertificateI cert;
 		if (certPerCompany.containsKey(name))
 		{
-			Iterator it = ((List) certPerCompany.get(name)).iterator();
-			while (it.hasNext())
+		    for (PublicCertificateI cert : certPerCompany.get(name))
 			{
-				cert = (PublicCertificateI) it.next();
 				share += cert.getShare();
 			}
 		}
@@ -500,13 +494,10 @@ implements TokenHolderI, MoveableHolderI
 	{
 		int certs = 0;
 		String name = company.getName();
-		PublicCertificateI cert;
 		if (certPerCompany.containsKey(name))
 		{
-			Iterator it = ((List) certPerCompany.get(name)).iterator();
-			while (it.hasNext())
+		    for (PublicCertificateI cert : certPerCompany.get(name))
 			{
-				cert = (PublicCertificateI) it.next();
 				if (president)
 				{
 					if (cert.isPresidentShare())
@@ -631,9 +622,8 @@ implements TokenHolderI, MoveableHolderI
 	{
 
 		List<TrainI> trainsFound = new ArrayList<TrainI>();
-		for (Iterator it = trains.iterator(); it.hasNext();)
+		for (TrainI train : trains)
 		{
-			TrainI train = (TrainI) it.next();
 			if (train.getType() == type)
 				trainsFound.add(train);
 		}
@@ -653,9 +643,8 @@ implements TokenHolderI, MoveableHolderI
 		List<TrainI> trainsFound = new ArrayList<TrainI>();
 		Map<TrainTypeI, Object> trainTypesFound 
 			= new HashMap<TrainTypeI, Object>();
-		for (Iterator it = trains.iterator(); it.hasNext();)
+		for (TrainI train : trains)
 		{
-			TrainI train = (TrainI) it.next();
 			if (!trainTypesFound.containsKey(train.getType()))
 			{
 				trainsFound.add(train);
@@ -668,9 +657,8 @@ implements TokenHolderI, MoveableHolderI
 
 	public TrainI getTrainOfType(TrainTypeI type)
 	{
-		for (Iterator it = trains.iterator(); it.hasNext();)
+	    for (TrainI train : trains)
 		{
-			TrainI train = (TrainI) it.next();
 			if (train.getType() == type)
 				return train;
 		}

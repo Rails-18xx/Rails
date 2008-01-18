@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.9 2007/07/27 22:05:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.10 2008/01/18 19:58:15 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -54,7 +54,7 @@ public class PossibleActions {
        }
     }
     
-    public boolean contains (Class clazz) {
+    public boolean contains (Class<? extends PossibleAction> clazz) {
     	for (PossibleAction action : possibleActions) {
     		if (Util.isInstanceOf(action, clazz)) return true;
     	}

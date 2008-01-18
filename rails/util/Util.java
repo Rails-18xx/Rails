@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.8 2007/12/04 20:25:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.9 2008/01/18 19:58:15 evos Exp $*/
 package rails.util;
 
 import rails.game.ConfigurationException;
@@ -28,9 +28,9 @@ public final class Util
 	}
 
 	/** Check if an object is an instance of a class - at runtime! */
-	public static boolean isInstanceOf(Object o, Class clazz)
+	public static boolean isInstanceOf(Object o, Class<?> clazz)
 	{
-		Class c = o.getClass();
+		Class<?> c = o.getClass();
 		while (c != null)
 		{
 			if (c == clazz)

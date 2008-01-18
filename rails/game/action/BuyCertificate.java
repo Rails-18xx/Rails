@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.6 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.7 2008/01/18 19:58:16 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -56,7 +56,7 @@ public class BuyCertificate extends PossibleAction {
     }
     
     /** Required for deserialization */
-    private BuyCertificate() {}
+    public BuyCertificate() {}
 
     /**
      * @return Returns the maximumNumber.

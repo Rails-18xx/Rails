@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.21 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.22 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -32,8 +32,8 @@ public class GameManager implements ConfigurableComponentI
     public static final long saveFileVersionID 
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
     
-    protected Class operatingRoundClass = OperatingRound.class;
-    protected Class orUIManagerClass = ORUIManager.class;
+    protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
+    protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
 
 	protected List<Player> players;
 	protected List<String> playerNames;
@@ -143,7 +143,7 @@ public class GameManager implements ConfigurableComponentI
         if (orTag != null) {
             String orClassName = orTag.getAttributeAsString("class", "OperatingRound");
             try {
-                operatingRoundClass = Class.forName(orClassName);
+                operatingRoundClass = Class.forName(orClassName).asSubclass(OperatingRound.class);
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException ("Cannot find class "+orClassName, e);
             }
@@ -194,7 +194,7 @@ public class GameManager implements ConfigurableComponentI
         if (orMgrTag != null) {
             String orMgrClassName = orMgrTag.getAttributeAsString("class", "OperatingRound");
             try {
-                orUIManagerClass = Class.forName(orMgrClassName);
+                orUIManagerClass = Class.forName(orMgrClassName).asSubclass(ORUIManager.class);
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException ("Cannot find class "+orMgrClassName, e);
             }
@@ -771,7 +771,7 @@ public class GameManager implements ConfigurableComponentI
 		instance.bonusTokensExist = bonusTokensExist;
 	}
 	
-	public Class getORUIManagerClass() {
+	public Class<? extends ORUIManager> getORUIManagerClass() {
 		return orUIManagerClass;
 	}
 	

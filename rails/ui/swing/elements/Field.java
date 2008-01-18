@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.4 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.5 2008/01/18 19:58:16 evos Exp $*/
 package rails.ui.swing.elements;
 
 
@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.util.Observable;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -45,6 +46,12 @@ public class Field extends JLabel implements ViewObject
 	{
 		this(modelObject);
 		this.pull = pull;
+	}
+	
+	public Field (ModelObject modelObject, ImageIcon icon, int position) {
+	    this (modelObject);
+	    setIcon (icon);
+	    setHorizontalAlignment (position);
 	}
 
 	public ModelObject getModel()

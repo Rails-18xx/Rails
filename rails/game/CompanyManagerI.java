@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.5 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.6 2008/01/18 19:58:15 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -62,12 +62,12 @@ public interface CompanyManagerI extends ConfigurableComponentI
 	/** Post XML parsing initialisations */
 	public void initCompanies() throws ConfigurationException;
 
-	   public List getCompaniesWithExcessTrains ();
+	   public List<PublicCompanyI> getCompaniesWithExcessTrains ();
 	   
 	   public int getBaseTokenLayCostBySequence (int index);
 
 		public void closeAllPrivates();
 		
-		public List getPrivatesOwnedByPlayers ();
+		public List<PrivateCompanyI> getPrivatesOwnedByPlayers ();
 
 }

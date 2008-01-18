@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.3 2007/12/21 21:18:13 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.4 2008/01/18 19:58:16 evos Exp $*/
 package rails.ui.swing.elements;
 
 
@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 import org.apache.log4j.Logger;
 
 import rails.game.PublicCompanyI;
-import rails.game.StockSpace;
+import rails.game.StockSpaceI;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
 import rails.ui.swing.StatusWindow;
@@ -25,7 +25,7 @@ import rails.ui.swing.StatusWindow;
 public class GUIStockSpace extends JLayeredPane implements ViewObject
 {
 
-	StockSpace model;
+	StockSpaceI model;
 	JLabel priceLabel;
 
 	int depth = 0;
@@ -40,7 +40,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 
 	protected static Logger log = Logger.getLogger(GUIStockSpace.class.getPackage().getName());
 
-	public GUIStockSpace(int x, int y, StockSpace model)
+	public GUIStockSpace(int x, int y, StockSpaceI model)
 	{
 
 		this.model = model;
@@ -60,7 +60,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 			priceLabel.setBackground(stringToColor(model.getColour()));
 			priceLabel.setVerticalTextPosition(SwingConstants.TOP);
 
-			model.addObserver(this);
+			((ModelObject)model).addObserver(this);
 			if (model.isStart())
 			{
 				priceLabel.setBorder(BorderFactory.createLineBorder(Color.red,
@@ -131,7 +131,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 	 */
 	public ModelObject getModel()
 	{
-		return model;
+		return (ModelObject) model;
 	}
 
 	/*
@@ -142,7 +142,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject
 	public void deRegister()
 	{
 		if (model != null && StatusWindow.useObserver)
-			model.deleteObserver(this);
+			((ModelObject)model).deleteObserver(this);
 
 	}
 

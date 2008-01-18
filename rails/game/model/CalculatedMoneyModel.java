@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CalculatedMoneyModel.java,v 1.3 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CalculatedMoneyModel.java,v 1.4 2008/01/18 19:58:15 evos Exp $*/
 package rails.game.model;
 
 import java.lang.reflect.Method;
@@ -29,7 +29,7 @@ public class CalculatedMoneyModel extends ModelObject {
 	
 	protected int calculate() {
 		
-		Class objectClass = object.getClass();
+		Class<?> objectClass = object.getClass();
 		Integer amount;
 		try {
 			Method method = objectClass.getMethod(methodName, (Class[])null);

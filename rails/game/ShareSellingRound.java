@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.8 2007/10/05 22:02:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.9 2008/01/18 19:58:15 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -223,11 +223,11 @@ public class ShareSellingRound extends StockRound {
 			}
 
 			// Find the certificates to sell
-			Iterator it = portfolio.getCertificatesPerCompany(companyName)
+			Iterator<PublicCertificateI> it = portfolio.getCertificatesPerCompany(companyName)
 					.iterator();
 			while (numberToSell > 0 && it.hasNext())
 			{
-				cert = (PublicCertificateI) it.next();
+				cert = it.next();
 				if (cert.isPresidentShare())
 				{
 					// Remember the president's certificate in case we need it
@@ -350,12 +350,10 @@ public class ShareSellingRound extends StockRound {
 		}
 
 		// Transfer the sold certificates
-		Iterator it = certsToSell.iterator();
-		while (it.hasNext())
+		for (PublicCertificateI cert2 : certsToSell)
 		{
-			cert = (PublicCertificateI) it.next();
-			if (cert != null)
-				pool.buyCertificate(cert, portfolio, cert.getShares() * price);
+			if (cert2 != null)
+				pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
 		}
 		stockMarket.sell(company, numberSold);
 
