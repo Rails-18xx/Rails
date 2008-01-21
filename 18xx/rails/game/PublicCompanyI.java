@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.10 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.11 2008/01/21 22:57:28 evos Exp $ */
 package rails.game;
 
 
@@ -60,6 +60,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 * @return
 	 */
 	public boolean canBuyPrivates();
+	
+    public boolean mustHaveOperatedToSellShares ();
+
 
 	/**
 	 * Start the company.
@@ -95,11 +98,15 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 */
 	public boolean hasOperated();
 
+	public void setOperated (boolean value);
+    
 	/**
 	 * Start the company and set its initial (par) price.
 	 * 
 	 * @param spaceI
 	 */
+	
+
 	public void setParPrice(StockSpaceI parPrice);
 
 	/**

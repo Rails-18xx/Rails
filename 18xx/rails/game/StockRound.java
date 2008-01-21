@@ -71,7 +71,7 @@ public class StockRound extends Round
 	static protected GameManager gameMgr;
 
 	/* Rules */
-	static protected int sequenceRule = SELL_BUY_SELL; // Currently fixed
+	protected int sequenceRule;
 	static protected boolean buySellInSameRound = true;
 	static protected boolean noSaleInFirstSR = false;
 	static protected boolean noSaleIfNotOperated = false;
@@ -95,6 +95,8 @@ public class StockRound extends Round
 		if (companyMgr == null)
 			companyMgr = Game.getCompanyManager();
 		GameManager.getInstance().setRound(this);
+		
+		sequenceRule = gameMgr.getStockRoundSequenceRule();
 	}
 
 	public void start()
@@ -331,6 +333,10 @@ public class StockRound extends Round
 			
 			// Can't sell shares that have no price
 			if (!company.hasStarted()) continue;
+			
+			// In some games, can't sell shares if not operated
+			if (company.mustHaveOperatedToSellShares()
+			        && !company.hasOperated()) continue;
 			
 			share = maxShareToSell = playerPortfolio.getShare(company);
 			if (maxShareToSell == 0) continue;
@@ -1207,7 +1213,7 @@ public class StockRound extends Round
 	{
 		return GameManager.getCurrentPlayerIndex();
 	}
-
+	
 	/**
 	 * Can the current player do any selling?
 	 * 

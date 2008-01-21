@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.4 2008/01/18 19:58:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.5 2008/01/21 22:57:29 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -29,5 +29,7 @@ public interface TrainManagerI
 	public void resetAvailabilityChanged();
 
 	public boolean hasPhaseChanged();
+
+    public boolean buyAtFaceValueBetweenDifferentPresidents();
 
 }

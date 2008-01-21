@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.22 2008/01/18 19:58:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.23 2008/01/21 22:57:29 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -32,6 +32,7 @@ public class GameManager implements ConfigurableComponentI
     public static final long saveFileVersionID 
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
     
+    protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
 
@@ -44,6 +45,7 @@ public class GameManager implements ConfigurableComponentI
 	    new State ("PriorityPlayer", Player.class);
 
 	protected int playerShareLimit = 60;
+	protected int treasuryShareLimit = 50; // For some games
 	protected int currentNumberOfOperatingRounds = 1;
 
 	protected boolean companiesCanBuyPrivates = false;
@@ -71,6 +73,7 @@ public class GameManager implements ConfigurableComponentI
 	protected boolean canAnyCompBuyPrivates = false;
 	protected boolean canAnyCompanyHoldShares = false;
 	protected boolean bonusTokensExist = false;
+	protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
 	protected static GameManager instance;
 
@@ -137,11 +140,32 @@ public class GameManager implements ConfigurableComponentI
 				if (optionDefault != null) option.setDefaultValue(optionDefault);
 			}
 		}
+		
+		// StockRound class and other properties
+		Tag srTag = tag.getChild("StockRound");
+		if (srTag != null) {
+            String srClassName = srTag.getAttributeAsString("class", "rails.game.StockRound");
+            try {
+                stockRoundClass = Class.forName(srClassName).asSubclass(StockRound.class);
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException ("Cannot find class "+srClassName, e);
+            }
+            String stockRoundSequenceRuleString = srTag.getAttributeAsString("sequence");
+            if (Util.hasValue(stockRoundSequenceRuleString)) {
+                if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
+                    stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
+                } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuy")) {
+                    stockRoundSequenceRule = StockRound.SELL_BUY;
+                } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuyOrBuySell")) {
+                    stockRoundSequenceRule = StockRound.SELL_BUY_OR_BUY_SELL;
+                }
+            }
+		}
         
         // OperatingRound class
         Tag orTag = tag.getChild("OperatingRound");
         if (orTag != null) {
-            String orClassName = orTag.getAttributeAsString("class", "OperatingRound");
+            String orClassName = orTag.getAttributeAsString("class", "rails.game.OperatingRound");
             try {
                 operatingRoundClass = Class.forName(orClassName).asSubclass(OperatingRound.class);
             } catch (ClassNotFoundException e) {
@@ -162,6 +186,13 @@ public class GameManager implements ConfigurableComponentI
 		{
 			Bank.setPoolShareLimit(poolLimitTag.getAttributeAsInteger("percentage"));
 		}
+
+        /* Max. % of own shares that a company treasury may hold */
+        Tag treasuryLimitTag = tag.getChild("TreasuryShareLimit");
+        if (treasuryLimitTag != null)
+        {
+            treasuryShareLimit = treasuryLimitTag.getAttributeAsInteger("percentage", treasuryShareLimit);
+        }
 
 		/* End of rails.game criteria */
 		Tag endOfGameTag = tag.getChild("EndOfGame");
@@ -774,6 +805,16 @@ public class GameManager implements ConfigurableComponentI
 	public Class<? extends ORUIManager> getORUIManagerClass() {
 		return orUIManagerClass;
 	}
+
+    public int getStockRoundSequenceRule() {
+        return stockRoundSequenceRule;
+    }
+
+    public int getTreasuryShareLimit() {
+        return treasuryShareLimit;
+    }
+	
+	
 	
 	
 }

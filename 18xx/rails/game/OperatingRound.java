@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.26 2008/01/18 19:58:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.27 2008/01/21 22:57:29 evos Exp $ */
 package rails.game;
 
 
@@ -1159,6 +1159,8 @@ public class OperatingRound extends Round implements Observer
 		}
 		
 		MoveSet.start (false);
+		
+		operatingCompany.setOperated (true);
 
 		if (operatingCompanyIndex >= operatingCompanyArray.length - 1)
 		{
@@ -1738,6 +1740,8 @@ public class OperatingRound extends Round implements Observer
 	    
 	    if (operatingCompany == null) return;
 	    
+	    TrainManagerI trainMgr = TrainManager.get();
+	    
 	    int cash = operatingCompany.getCash();
 	    int cost;
 	    List<TrainI> trains;
@@ -1756,7 +1760,7 @@ public class OperatingRound extends Round implements Observer
                 currentPhase.canBuyMoreTrainsPerTypePerTurn();
 	    
     	    /* New trains */
-            trains =  TrainManager.get().getAvailableNewTrains();
+            trains =  trainMgr.getAvailableNewTrains();
             for (TrainI train : trains) {
                 if (!mayBuyMoreOfEachType 
                         && trainsBoughtThisTurn.contains(train.getType())) {
@@ -1849,7 +1853,12 @@ public class OperatingRound extends Round implements Observer
 
     				for (TrainI train : trains) {
                         if (train.isObsolete()) continue;
-    				    bt = new BuyTrain (train, pf, 0);
+                        if (i != currentPlayerIndex
+                                && trainMgr.buyAtFaceValueBetweenDifferentPresidents()) {
+                            bt = new BuyTrain (train, pf, train.getCost());
+                        } else {
+                            bt = new BuyTrain (train, pf, 0);
+                        }
     				    if (presidentMayHelp && cash < train.getCost()) {
     				        bt.setPresidentMayAddCash(train.getCost() - cash);
     				    }

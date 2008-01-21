@@ -26,6 +26,15 @@ Variant selection effects on SR and OR have not been implemented yet.
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
+	<Game name="1851">
+		<Note>Almost playable</Note>
+		<Description>Not yet done:
+- Random assignment of private companies (players should do this off-line and enter the result)
+- Two yellow tiles from phase 3 on.
+- Treasury certificate trading.
+		</Description>
+		<Players minimum="3" maximum="5"/>
+	</Game>
 	<Game name="1856">
 		<Note>Partly playable</Note>
 		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
