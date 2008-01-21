@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.21 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.22 2008/01/21 22:57:28 evos Exp $ */
 package rails.game;
 
 
@@ -102,7 +102,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected BooleanState hasFloated = null;
 	
 	/** Has the company already operated? */
-	protected boolean hasOperated = false;
+	protected BooleanState hasOperated = null;
 
 	/** Is the company closed (or bankrupt)? */
 	protected boolean closed = false;
@@ -130,6 +130,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected boolean treasuryPaysOut = false;
 	protected boolean canHoldOwnShares = false;
 	protected int maxPercOfOwnShares = 0;
+	protected boolean mustHaveOperatedToSellShares = false;
 
 	/** The certificates of this company (minimum 1) */
 	protected ArrayList<PublicCertificateI> certificates;
@@ -422,7 +423,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 				}
 			}
 		}
-
+		
+		Tag sellSharesTag = tag.getChild("SellShares");
+		if (sellSharesTag != null) {
+		    mustHaveOperatedToSellShares = 
+		        sellSharesTag.getAttributeAsBoolean("mustHaveOperated", mustHaveOperatedToSellShares);
+		}
 	}
 
 	/** Initialisation, to be called directly after instantiation (cloning)*/
@@ -441,6 +447,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 
 	    hasStarted = new BooleanState (name+"_hasStarted", false);
 	    hasFloated = new BooleanState (name+"_hasFloated", false);
+	    hasOperated = new BooleanState (name+"_hasOperated", false);
 		
 		allBaseTokens = new ArrayList<BaseToken>();
 		freeBaseTokens = new ArrayList<BaseToken>();
@@ -595,6 +602,10 @@ public class PublicCompany extends Company implements PublicCompanyI
 	{
 		return canBuyStock;
 	}
+	
+	public boolean mustHaveOperatedToSellShares () {
+	    return mustHaveOperatedToSellShares;
+	}
 
 	public void start(StockSpaceI startSpace)
 	{
@@ -659,6 +670,7 @@ public class PublicCompany extends Company implements PublicCompanyI
 			}
 			else if (capitalisation == CAPITALISE_INCREMENTAL)
 			{
+			    // TODO Should be: 100% - percentage still in IPO
 				capFactor = percentageOwnedByPlayers() / shareUnit;
 			}
 			int price = (hasParPrice ? getParPrice() : getCurrentPrice()).getPrice();
@@ -713,7 +725,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 	 */
 	public boolean hasOperated()
 	{
-		return hasOperated;
+		return hasOperated.booleanValue();
+	}
+	
+	public void setOperated (boolean value) {
+	    hasOperated.set(value);
 	}
 
 	/**

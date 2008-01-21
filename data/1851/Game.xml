@@ -4,6 +4,8 @@
 		<Game name="1851"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
+		<TreasuryShareLimit percentage="50"/>
+		<StockRound sequence="SellBuy"/>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="OR"/>
@@ -49,6 +51,9 @@
 			rustedTrain="3"/>
 		<Train name="8" majorStops="8" cost="800" amount="4" startPhase="8" 
 			rustedTrain="4"/>
+		<TrainBuyingRules>
+			<FaceValueIfDifferentPresidents/>
+		</TrainBuyingRules>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per Train
