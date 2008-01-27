@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.11 2008/01/18 19:58:16 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.12 2008/01/27 23:27:53 wakko666 Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -23,360 +23,305 @@ import rails.ui.swing.*;
  * orientations.
  */
 public abstract class HexMap extends JComponent implements MouseListener,
-		MouseMotionListener {
+	MouseMotionListener {
 
-	protected static Logger log = Logger.getLogger(HexMap.class.getPackage()
-			.getName());
-	
-	protected ORUIManager orUIManager;
+    protected static Logger log = Logger.getLogger(HexMap.class.getPackage()
+	    .getName());
 
-	// Abstract Methods
-	protected abstract void setupHexesGUI();
+    protected ORUIManager orUIManager;
 
-	// GUI hexes need to be recreated for each object, since scale varies.
-	protected GUIHex[][] h;
+    // Abstract Methods
+    protected abstract void setupHexesGUI();
 
-	MapHex[][] hexArray;
+    // GUI hexes need to be recreated for each object, since scale varies.
+    protected GUIHex[][] h;
 
-	protected static ArrayList<GUIHex> hexes;
+    MapHex[][] hexArray;
+    protected static ArrayList<GUIHex> hexes;
+    protected int scale = 2 * Scale.get();
+    protected int cx;
+    protected int cy;
+    protected static GUIHex selectedHex = null;
+    protected Dimension preferredSize;
 
-	protected int scale = 2 * Scale.get();
+    /** A list of all allowed tile lays */
+    /* (may be redundant) */
+    protected List<LayTile> allowedTileLays = null;
 
-	protected int cx;
+    /** A Map linking tile allowed tiles to each map hex */
+    protected Map<MapHex, LayTile> allowedTilesPerHex = null;
 
-	protected int cy;
+    /** A list of all allowed token lays */
+    /* (may be redundant) */
+    protected List<LayToken> allowedTokenLays = null;
 
-	protected static GUIHex selectedHex = null;
+    /** A Map linking tile allowed tiles to each map hex */
+    protected Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
 
-	protected Dimension preferredSize;
+    protected boolean bonusTokenLayingEnabled = false;
 
-	/** A list of all allowed tile lays */
-	/* (may be redundant) */
-	protected List<LayTile> allowedTileLays = null;
-
-	/** A Map linking tile allowed tiles to each map hex */
-	protected Map<MapHex, LayTile> allowedTilesPerHex = null;
-
-	/** A list of all allowed token lays */
-	/* (may be redundant) */
-	protected List<LayToken> allowedTokenLays = null;
-
-	/** A Map linking tile allowed tiles to each map hex */
-	protected Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
-    
-    protected boolean bonusTokenLayingEnabled = false; 
-    
-    public void setORUIManager (ORUIManager orUIManager) {
-    	this.orUIManager = orUIManager;
+    public void setORUIManager(ORUIManager orUIManager) {
+	this.orUIManager = orUIManager;
     }
 
-	public void setupHexes() {
-		setupHexesGUI();
-		addMouseListener(this);
-		addMouseMotionListener(this);
-	}
-
-	/**
-	 * Return the GUIBattleHex that contains the given point, or null if none
-	 * does.
-	 */
-	GUIHex getHexContainingPoint(Point2D.Double point) {
-		for (GUIHex hex : hexes) {
-			if (hex.contains(point)) {
-				return hex;
-			}
-		}
-
-		return null;
-	}
-
-	GUIHex getHexContainingPoint(Point point) {
-		for (GUIHex hex : hexes) {
-			if (hex.contains(point)) {
-				return hex;
-			}
-		}
-
-		return null;
-	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		try {
-			// Abort if called too early.
-			Rectangle rectClip = g.getClipBounds();
-			if (rectClip == null) {
-				return;
-			}
-
-			for (GUIHex hex : hexes) {
-				Rectangle hexrect = hex.getBounds();
-
-				if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
-						hexrect.height)) {
-					hex.paint(g);
-				}
-			}
-		} catch (NullPointerException ex) {
-			// If we try to paint before something is loaded, just retry
-			// later.
-		}
-	}
-
-	public Dimension getMinimumSize() {
-		Dimension dim = new Dimension();
-		Rectangle r = ((GUIHex) h[h.length][h[0].length]).getBounds();
-		dim.height = r.height + 40;
-		dim.width = r.width + 100;
-		return dim;
-	}
-
-	public Dimension getPreferredSize() {
-		return preferredSize;
-	}
-
-	public void selectHex(GUIHex clickedHex) {
-		log.debug("selecthex called for hex "
-				+ (clickedHex != null ? clickedHex.getName() : "null")
-				+ ", selected was "
-				+ (selectedHex != null ? selectedHex.getName() : "null"));
-
-		if (selectedHex == clickedHex)
-			return;
-		if (selectedHex != null) {
-			selectedHex.setSelected(false);
-			repaint(selectedHex.getBounds());
-			log.debug("Hex " + selectedHex.getName()
-					+ " deselected and repainted");
-		}
-
-		if (clickedHex != null) {
-			clickedHex.setSelected(true);
-			repaint(clickedHex.getBounds());
-			log
-					.debug("Hex " + clickedHex.getName()
-							+ " selected and repainted");
-		}
-		selectedHex = clickedHex;
-
-	}
-
-	public GUIHex getSelectedHex() {
-		return selectedHex;
-	}
-
-	public boolean isAHexSelected() // Not used
-	{
-		return selectedHex != null;
-	}
-
-	public void setAllowedTileLays(List<LayTile> allowedTileLays) {
-
-		this.allowedTileLays = allowedTileLays;
-		allowedTilesPerHex = new HashMap<MapHex, LayTile>();
-
-		/* Build the per-hex allowances map */
-		for (LayTile allowance : this.allowedTileLays) {
-			List<MapHex> locations = allowance.getLocations();
-			if (locations == null) {
-				/*
-				 * The location may be null, which means: anywhere. This is
-				 * intended to be a temporary fixture, to be replaced by a
-				 * detailed allowed-tiles-per-hex specification later.
-				 */
-				allowedTilesPerHex.put(null, allowance);
-			} else {
-				for (MapHex location : locations) {
-					allowedTilesPerHex.put(location, allowance);
-				}
-			}
-		}
-	}
-
-	public List<LayTile> getTileAllowancesForHex(MapHex hex) {
-		
-		List<LayTile> lays = new ArrayList<LayTile>();
-		if (allowedTilesPerHex.containsKey(hex)) {
-			lays.add (allowedTilesPerHex.get(hex));
-		}
-		if (allowedTilesPerHex.containsKey(null)) {
-			lays.add(allowedTilesPerHex.get(null));
-		}
-		
-		return lays;
-	}
-
-	public <T extends LayToken> void setAllowedTokenLays(List<T> allowedTokenLays) {
-
-		this.allowedTokenLays = (List<LayToken>) allowedTokenLays;
-		allowedTokensPerHex = new HashMap<MapHex, List<LayToken>>();
-        bonusTokenLayingEnabled = false;
-
-		/* Build the per-hex allowances map */
-		for (LayToken allowance : this.allowedTokenLays) {
-			List<MapHex> locations = allowance.getLocations();
-			if (locations == null) {
-				/*
-				 * The location may be null, which means: anywhere. This is
-				 * intended to be a temporary fixture, to be replaced by a
-				 * detailed allowed-tiles-per-hex specification later.
-				 */
-                // For now, allow all hexes having non-filled city stations
-                if (allowance instanceof LayBaseToken) {
-                    MapHex hex;
-                    for (GUIHex guiHex : hexes) {
-                        hex = guiHex.getHexModel();
-                        if (hex.hasTokenSlotsLeft()) {
-                            allowTokenOnHex(hex, allowance);
-                        }
-                    }
-                } else {
-                    allowTokenOnHex(null, allowance);
-                }
-			} else {
-				for (MapHex location : locations) {
-                    allowTokenOnHex(location, allowance);
-				}
-			}
-            if (allowance instanceof LayBonusToken) {
-                bonusTokenLayingEnabled = true;
-            }
-		}
-	}
-    
-    private void allowTokenOnHex (MapHex hex, LayToken allowance) {
-        if (!allowedTokensPerHex.containsKey(hex)) {
-            allowedTokensPerHex.put(hex, new ArrayList<LayToken>());
-        }
-        allowedTokensPerHex.get(hex).add (allowance);
+    public void setupHexes() {
+	setupHexesGUI();
+	addMouseListener(this);
+	addMouseMotionListener(this);
     }
 
-	public List<LayToken> getTokenAllowanceForHex(MapHex hex) {
-        List<LayToken> allowances = new ArrayList<LayToken>(2); 
-		if (hex != null && allowedTokensPerHex.containsKey(hex)) {
-			allowances.addAll (allowedTokensPerHex.get(hex));
-		}
-        if (allowedTokensPerHex.containsKey(null)) {
-            allowances.addAll (allowedTokensPerHex.get(null));
-		}
-        return allowances;
+    /**
+         * Return the GUIBattleHex that contains the given point, or null if
+         * none does.
+         */
+    GUIHex getHexContainingPoint(Point2D.Double point) {
+	for (GUIHex hex : hexes) {
+	    if (hex.contains(point)) {
+		return hex;
+	    }
 	}
-    
-    public List<LayBaseToken> getBaseTokenAllowanceForHex (MapHex hex) {
-        List<LayBaseToken> allowances = new ArrayList<LayBaseToken>(2); 
-        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
-            if (allowance instanceof LayBaseToken) {
-                allowances.add((LayBaseToken)allowance);
-            }
-        }
-        return allowances;
+
+	return null;
     }
 
-    public List<LayBonusToken> getBonusTokenAllowanceForHex (MapHex hex) {
-        List<LayBonusToken> allowances = new ArrayList<LayBonusToken>(2); 
-        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
-            if (allowance instanceof LayBonusToken) {
-                allowances.add((LayBonusToken)allowance);
-            }
-        }
-        return allowances;
+    GUIHex getHexContainingPoint(Point point) {
+	for (GUIHex hex : hexes) {
+	    if (hex.contains(point)) {
+		return hex;
+	    }
+	}
+
+	return null;
     }
 
-	public void mouseClicked(MouseEvent arg0) {
-		Point point = arg0.getPoint();
-		GUIHex clickedHex = getHexContainingPoint(point);
+    public void paintComponent(Graphics g) {
+	super.paintComponent(g);
 
-		orUIManager.hexClicked(clickedHex, selectedHex);
+	try {
+	    // Abort if called too early.
+	    Rectangle rectClip = g.getClipBounds();
+	    if (rectClip == null) {
+		return;
+	    }
+
+	    for (GUIHex hex : hexes) {
+		Rectangle hexrect = hex.getBounds();
+
+		if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+			hexrect.height)) {
+		    hex.paint(g);
+		}
+	    }
+	} catch (NullPointerException ex) {
+	    // If we try to paint before something is loaded, just retry
+	    // later.
+	}
+    }
+
+    public Dimension getMinimumSize() {
+	Dimension dim = new Dimension();
+	Rectangle r = ((GUIHex) h[h.length][h[0].length]).getBounds();
+	dim.height = r.height + 40;
+	dim.width = r.width + 100;
+	return dim;
+    }
+
+    public Dimension getPreferredSize() {
+	return preferredSize;
+    }
+
+    public void selectHex(GUIHex clickedHex) {
+	log.debug("selecthex called for hex "
+		+ (clickedHex != null ? clickedHex.getName() : "null")
+		+ ", selected was "
+		+ (selectedHex != null ? selectedHex.getName() : "null"));
+
+	if (selectedHex == clickedHex)
+	    return;
+	if (selectedHex != null) {
+	    selectedHex.setSelected(false);
+	    repaint(selectedHex.getBounds());
+	    log.debug("Hex " + selectedHex.getName()
+		    + " deselected and repainted");
+	}
+
+	if (clickedHex != null) {
+	    clickedHex.setSelected(true);
+	    repaint(clickedHex.getBounds());
+	    log
+		    .debug("Hex " + clickedHex.getName()
+			    + " selected and repainted");
+	}
+	selectedHex = clickedHex;
+
+    }
+
+    public GUIHex getSelectedHex() {
+	return selectedHex;
+    }
+
+    public boolean isAHexSelected() // Not used
+    {
+	return selectedHex != null;
+    }
+
+    public void setAllowedTileLays(List<LayTile> allowedTileLays) {
+
+	this.allowedTileLays = allowedTileLays;
+	allowedTilesPerHex = new HashMap<MapHex, LayTile>();
+
+	/* Build the per-hex allowances map */
+	for (LayTile allowance : this.allowedTileLays) {
+	    List<MapHex> locations = allowance.getLocations();
+	    if (locations == null) {
 		/*
-		if (ORWindow.tokenLayingEnabled) {
-			List<LayToken> allowances = getTokenAllowanceForHex(clickedHex.getHexModel());
-
-			if (allowances.size() > 0) {
-                log.debug("Hex "+clickedHex.getName()+" clicked, allowances:");
-                for (LayToken allowance : allowances) {
-                    log.debug (allowance.toString());
-                }
-				selectHex(clickedHex);
-				orUIManager.setSubStep(ORUIManager.SELECT_TOKEN);
-			} else {
-				JOptionPane.showMessageDialog(this, LocalText
-						.getText("NoTokenPossible", clickedHex.getName()));
-				orUIManager.setSubStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
-			}
-
-		} else if (ORWindow.tileLayingEnabled) {
-			if (orUIManager.getSubStep() == ORUIManager.ROTATE_OR_CONFIRM_TILE
-					&& clickedHex == selectedHex) {
-				selectedHex.rotateTile();
-				repaint(selectedHex.getBounds());
-
-				return; // No further actions, in particular no upgrades panel
-				// repaint!
-			} else {
-
-				if (selectedHex != null && clickedHex != selectedHex) {
-					selectedHex.removeTile();
-					selectHex(null);
-				}
-				if (clickedHex != null) {
-					if (clickedHex.getHexModel().isUpgradeableNow())
-					/*
-					 * Direct call to Model to be replaced later by use of
-					 * allowedTilesPerHex. Would not work yet.
-					 *//*
-					{
-						selectHex(clickedHex);
-						orUIManager.setSubStep(ORUIManager.SELECT_TILE);
-					} else {
-						JOptionPane.showMessageDialog(this,
-								"This hex cannot be upgraded now");
-					}
-				}
-			}
+                 * The location may be null, which means: anywhere. This is
+                 * intended to be a temporary fixture, to be replaced by a
+                 * detailed allowed-tiles-per-hex specification later.
+                 */
+		allowedTilesPerHex.put(null, allowance);
+	    } else {
+		for (MapHex location : locations) {
+		    allowedTilesPerHex.put(location, allowance);
 		}
+	    }
+	}
+    }
 
-		//??GameUIManager.orWindow.repaintUpgradePanel();
-		GameUIManager.instance.orWindow.repaintORPanel();
-		*/
+    public List<LayTile> getTileAllowancesForHex(MapHex hex) {
+
+	List<LayTile> lays = new ArrayList<LayTile>();
+	if (allowedTilesPerHex.containsKey(hex)) {
+	    lays.add(allowedTilesPerHex.get(hex));
+	}
+	if (allowedTilesPerHex.containsKey(null)) {
+	    lays.add(allowedTilesPerHex.get(null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-	 */
-	public void mouseDragged(MouseEvent arg0) {
-	}
+	return lays;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-	 */
-	public void mouseMoved(MouseEvent arg0) {
-		Point point = arg0.getPoint();
-		GUIHex hex = getHexContainingPoint(point);
-		setToolTipText(hex != null ? hex.getToolTip() : "");
-	}
+    @SuppressWarnings("unchecked")
+    public <T extends LayToken> void setAllowedTokenLays(
+	    List<T> allowedTokenLays) {
 
-	public void mouseEntered(MouseEvent arg0) {
-	}
+	this.allowedTokenLays = (List<LayToken>) allowedTokenLays;
+	allowedTokensPerHex = new HashMap<MapHex, List<LayToken>>();
+	bonusTokenLayingEnabled = false;
 
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-	public void mousePressed(MouseEvent arg0) {
-	}
-
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
-	public static void updateOffBoardToolTips() {
-		for (GUIHex hex : hexes) {
-			if (hex.getHexModel().hasOffBoardValues()) {
-				hex.setToolTip();
+	/* Build the per-hex allowances map */
+	for (LayToken allowance : this.allowedTokenLays) {
+	    List<MapHex> locations = allowance.getLocations();
+	    if (locations == null) {
+		/*
+                 * The location may be null, which means: anywhere. This is
+                 * intended to be a temporary fixture, to be replaced by a
+                 * detailed allowed-tiles-per-hex specification later.
+                 */
+		// For now, allow all hexes having non-filled city stations
+		if (allowance instanceof LayBaseToken) {
+		    MapHex hex;
+		    for (GUIHex guiHex : hexes) {
+			hex = guiHex.getHexModel();
+			if (hex.hasTokenSlotsLeft()) {
+			    allowTokenOnHex(hex, allowance);
 			}
+		    }
+		} else {
+		    allowTokenOnHex(null, allowance);
 		}
+	    } else {
+		for (MapHex location : locations) {
+		    allowTokenOnHex(location, allowance);
+		}
+	    }
+	    if (allowance instanceof LayBonusToken) {
+		bonusTokenLayingEnabled = true;
+	    }
 	}
+    }
+
+    private void allowTokenOnHex(MapHex hex, LayToken allowance) {
+	if (!allowedTokensPerHex.containsKey(hex)) {
+	    allowedTokensPerHex.put(hex, new ArrayList<LayToken>());
+	}
+	allowedTokensPerHex.get(hex).add(allowance);
+    }
+
+    public List<LayToken> getTokenAllowanceForHex(MapHex hex) {
+	List<LayToken> allowances = new ArrayList<LayToken>(2);
+	if (hex != null && allowedTokensPerHex.containsKey(hex)) {
+	    allowances.addAll(allowedTokensPerHex.get(hex));
+	}
+	if (allowedTokensPerHex.containsKey(null)) {
+	    allowances.addAll(allowedTokensPerHex.get(null));
+	}
+	return allowances;
+    }
+
+    public List<LayBaseToken> getBaseTokenAllowanceForHex(MapHex hex) {
+	List<LayBaseToken> allowances = new ArrayList<LayBaseToken>(2);
+	for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+	    if (allowance instanceof LayBaseToken) {
+		allowances.add((LayBaseToken) allowance);
+	    }
+	}
+	return allowances;
+    }
+
+    public List<LayBonusToken> getBonusTokenAllowanceForHex(MapHex hex) {
+	List<LayBonusToken> allowances = new ArrayList<LayBonusToken>(2);
+	for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+	    if (allowance instanceof LayBonusToken) {
+		allowances.add((LayBonusToken) allowance);
+	    }
+	}
+	return allowances;
+    }
+
+    public void mouseClicked(MouseEvent arg0) {
+	Point point = arg0.getPoint();
+	GUIHex clickedHex = getHexContainingPoint(point);
+
+	orUIManager.hexClicked(clickedHex, selectedHex);
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+         */
+    public void mouseDragged(MouseEvent arg0) {
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+         */
+    public void mouseMoved(MouseEvent arg0) {
+	Point point = arg0.getPoint();
+	GUIHex hex = getHexContainingPoint(point);
+	setToolTipText(hex != null ? hex.getToolTip() : "");
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+    }
+
+    public void mousePressed(MouseEvent arg0) {
+    }
+
+    public void mouseReleased(MouseEvent arg0) {
+    }
+
+    public static void updateOffBoardToolTips() {
+	for (GUIHex hex : hexes) {
+	    if (hex.getHexModel().hasOffBoardValues()) {
+		hex.setToolTip();
+	    }
+	}
+    }
 }

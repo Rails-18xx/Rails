@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.3 2008/01/27 23:27:55 wakko666 Exp $*/
 package rails.util;
 
 import javax.swing.text.*;
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
  * Class ResourceLoader is an utility class to load a resource from a filename
  * and a list of directory.
  * 
- * @version $Id: ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $
+ * @version $Id: ResourceLoader.java,v 1.3 2008/01/27 23:27:55 wakko666 Exp $
  * @author Romain Dolbeau
  * @author David Ripton
  */
@@ -27,7 +27,7 @@ public final class ResourceLoader {
 	 * Class ColossusClassLoader allows for class loading outside the CLASSPATH,
 	 * i.e. from the various variant directories.
 	 * 
-	 * @version $Id: ResourceLoader.java,v 1.2 2007/10/05 22:02:26 evos Exp $
+	 * @version $Id: ResourceLoader.java,v 1.3 2008/01/27 23:27:55 wakko666 Exp $
 	 * @author Romain Dolbeau
 	 */
 	private static class RailsClassLoader extends ClassLoader {
@@ -44,7 +44,7 @@ public final class ResourceLoader {
 			super();
 		}
 
-		public Class findClass(String className) throws ClassNotFoundException {
+		public Class<?> findClass(String className) throws ClassNotFoundException {
 			try {
 				int index = className.lastIndexOf(".");
 				String shortClassName = className.substring(index + 1);
@@ -89,8 +89,8 @@ public final class ResourceLoader {
 			.getClassLoader();
 	private static final RailsClassLoader cl = new RailsClassLoader(baseCL);
 
-	private static final Map fileCache = Collections
-			.synchronizedMap(new HashMap());
+	private static final Map <String, Object> fileCache = Collections
+			.synchronizedMap(new HashMap<String, Object>());
 
 	private final static String sep = "~";
 
