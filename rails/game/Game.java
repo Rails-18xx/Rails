@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.13 2008/01/27 15:23:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.14 2008/01/27 23:27:55 wakko666 Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -132,6 +132,7 @@ public class Game
         return true;
 	}
     
+    @SuppressWarnings("unchecked")
     public static boolean load (String filepath) {
         
         boolean result = false;

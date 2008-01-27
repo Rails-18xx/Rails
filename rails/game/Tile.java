@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.13 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.14 2008/01/27 23:27:55 wakko666 Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -31,7 +31,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	private List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Station> stations = new ArrayList<Station>();
-    //private List<TokenI> tokens;
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
@@ -61,6 +60,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	 * @param te
 	 *            &lt;Tile&gt; element from Tiles.xml
 	 */
+	@SuppressWarnings("unchecked")
 	public void configureFromXML(Tag setTag, Tag defTag)
 	throws ConfigurationException
 	{
@@ -269,6 +269,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 		return (tracksPerSide[sideNumber % 6].size() > 0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Track> getTracksPerSide (int sideNumber) {
         while (sideNumber < 0)
             sideNumber += 6;

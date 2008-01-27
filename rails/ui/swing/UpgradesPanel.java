@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.10 2008/01/18 19:58:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.11 2008/01/27 23:27:54 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -19,10 +19,8 @@ import rails.ui.swing.hexmap.*;
 import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
-    //private ORWindow orWindow;
+    private static final long serialVersionUID = 1L;
     private ORUIManager orUIManager;
-
-    //private List<TileI> tileUpgrades;
     private List<ActionLabel> tokenLabels;
     private int selectedTokenIndex;
     private List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
@@ -31,27 +29,18 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     static private Color selectedLabelBgColour = new Color(255, 220, 150);
 
     private JPanel upgradePanel;
-
     private JScrollPane scrollPane;
-
     private Dimension preferredSize = new Dimension(100, 200);
-
     private Border border = new EtchedBorder();
-
     private final String INIT_CANCEL_TEXT = "NoTile";
-
     private final String INIT_DONE_TEXT = "LayTile";
-
     private boolean tokenMode = false;
-
     private JButton cancelButton = new JButton(
             LocalText.getText(INIT_CANCEL_TEXT));
-
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
-
     private HexMap hexMap;
-
-	protected static Logger log = Logger.getLogger(UpgradesPanel.class.getPackage().getName());
+    
+    protected static Logger log = Logger.getLogger(UpgradesPanel.class.getPackage().getName());
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);

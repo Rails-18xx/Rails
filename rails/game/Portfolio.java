@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.19 2008/01/27 15:23:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.20 2008/01/27 23:27:55 wakko666 Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -763,6 +763,7 @@ implements TokenHolderI, MoveableHolderI
     
 
 
+	@SuppressWarnings("unchecked")
 	public <T extends SpecialPropertyI> List<T> getSpecialProperties
 		(Class<T> clazz, boolean includeExercised)
 	{

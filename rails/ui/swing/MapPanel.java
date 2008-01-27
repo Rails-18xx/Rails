@@ -1,6 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.6 2007/12/21 21:18:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.7 2008/01/27 23:27:54 wakko666 Exp $*/
 package rails.ui.swing;
-
 
 import javax.swing.*;
 
@@ -15,73 +14,65 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-
 /**
  * MapWindow class displays the Map Window. It's shocking, I know.
  */
-public class MapPanel extends JPanel 
-{
+public class MapPanel extends JPanel {
 
-	private MapManager mmgr;
-	private HexMap map;
-	private JScrollPane scrollPane;
+    private static final long serialVersionUID = 1L;
+    private MapManager mmgr;
+    private HexMap map;
+    private JScrollPane scrollPane;
 
-	protected static Logger log = Logger.getLogger(MapPanel.class.getPackage().getName());
+    protected static Logger log = Logger.getLogger(MapPanel.class.getPackage()
+	    .getName());
 
-	public MapPanel(ORUIManager orUIManager)
-	{
-		Scale.set(15);
-		setLayout(new BorderLayout());
+    public MapPanel(ORUIManager orUIManager) {
+	Scale.set(15);
+	setLayout(new BorderLayout());
 
-		mmgr = MapManager.getInstance();
-		try
-		{
-			map = (HexMap) Class.forName(mmgr.getMapUIClassName())
-					.newInstance();
-			map.setORUIManager (orUIManager);
-		}
-		catch (Exception e)
-		{
-			log.fatal ("Map class instantiation error:", e);
-			e.printStackTrace();
-			return;
-		}
-
-		ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-
-		scrollPane = new JScrollPane(map);
-		scrollPane.setSize(map.getPreferredSize());
-
-		add(scrollPane, BorderLayout.CENTER);
-
-		setSize(map.getPreferredSize().width,
-				map.getPreferredSize().height);
-		setLocation(25, 25);
+	mmgr = MapManager.getInstance();
+	try {
+	    map = (HexMap) Class.forName(mmgr.getMapUIClassName())
+		    .newInstance();
+	    map.setORUIManager(orUIManager);
+	} catch (Exception e) {
+	    log.fatal("Map class instantiation error:", e);
+	    e.printStackTrace();
+	    return;
 	}
 
-	public void setAllowedTileLays (List<LayTile> allowedTileLays) {
-	    map.setAllowedTileLays (allowedTileLays);
-	}
+	ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-	public <T extends LayToken>void setAllowedTokenLays (List<T> allowedTokenLays) {
-	    map.setAllowedTokenLays (allowedTokenLays);
-	}
+	scrollPane = new JScrollPane(map);
+	scrollPane.setSize(map.getPreferredSize());
 
-	public void keyPressed(KeyEvent e)
-	{
-		if (e.getKeyCode() == KeyEvent.VK_F1)
-		{
-			HelpWindow.displayHelp(GameManager.getInstance().getHelp());
-			e.consume();
-		}
-	}
+	add(scrollPane, BorderLayout.CENTER);
 
-	public void keyReleased(KeyEvent e)
-	{
-	}
+	setSize(map.getPreferredSize().width, map.getPreferredSize().height);
+	setLocation(25, 25);
+    }
 
-	public HexMap getMap()
-	{
-		return map;
+    public void setAllowedTileLays(List<LayTile> allowedTileLays) {
+	map.setAllowedTileLays(allowedTileLays);
+    }
+
+    public <T extends LayToken> void setAllowedTokenLays(
+	    List<T> allowedTokenLays) {
+	map.setAllowedTokenLays(allowedTokenLays);
+    }
+
+    public void keyPressed(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_F1) {
+	    HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+	    e.consume();
 	}
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+
+    public HexMap getMap() {
+	return map;
+    }
 }
