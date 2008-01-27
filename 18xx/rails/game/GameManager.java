@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.23 2008/01/21 22:57:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.24 2008/01/27 15:23:42 evos Exp $ */
 package rails.game;
 
 import rails.game.action.GameAction;
@@ -364,6 +364,14 @@ public class GameManager implements ConfigurableComponentI
 		interruptedRound = getCurrentRound();
 		new ShareSellingRound(companyNeedingTrain, cashToRaise).start();
 	}
+	
+	public void startTreasuryShareTradingRound (
+	        OperatingRound or,
+	        PublicCompanyI companyTradingShares) {
+	    
+	    interruptedRound = getCurrentRound();
+	    new TreasuryShareRound(companyTradingShares).start();
+	}
     
     /** The central server-side method that takes 
      * a client-side initiated action and processes it.
@@ -440,6 +448,7 @@ public class GameManager implements ConfigurableComponentI
     	}
         
         // Note: round may have changed!
+    	log.debug("Calling setPossibleActions for round "+getCurrentRound().toString());
         getCurrentRound().setPossibleActions();
 
         // Add the Undo/Redo possibleActions here.
@@ -503,6 +512,11 @@ public class GameManager implements ConfigurableComponentI
 		//currentRound = interruptedRound;
         setRound (interruptedRound);
 		((OperatingRound) getCurrentRound()).resumeTrainBuying();
+	}
+	
+	public void finishTreasuryShareRound () {
+	    setRound (interruptedRound);
+        ((OperatingRound) getCurrentRound()).nextStep();
 	}
 
 	public void registerBankruptcy()

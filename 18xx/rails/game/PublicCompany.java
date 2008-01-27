@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.22 2008/01/21 22:57:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.23 2008/01/27 15:23:42 evos Exp $ */
 package rails.game;
 
 
@@ -130,7 +130,8 @@ public class PublicCompany extends Company implements PublicCompanyI
 	protected boolean treasuryPaysOut = false;
 	protected boolean canHoldOwnShares = false;
 	protected int maxPercOfOwnShares = 0;
-	protected boolean mustHaveOperatedToSellShares = false;
+	protected boolean mayTradeShares = false;
+	protected boolean mustHaveOperatedToTradeShares = false;
 
 	/** The certificates of this company (minimum 1) */
 	protected ArrayList<PublicCertificateI> certificates;
@@ -424,10 +425,11 @@ public class PublicCompany extends Company implements PublicCompanyI
 			}
 		}
 		
-		Tag sellSharesTag = tag.getChild("SellShares");
+		Tag sellSharesTag = tag.getChild("TradeShares");
 		if (sellSharesTag != null) {
-		    mustHaveOperatedToSellShares = 
-		        sellSharesTag.getAttributeAsBoolean("mustHaveOperated", mustHaveOperatedToSellShares);
+		    mayTradeShares = true;
+		    mustHaveOperatedToTradeShares = 
+		        sellSharesTag.getAttributeAsBoolean("mustHaveOperated", mustHaveOperatedToTradeShares);
 		}
 	}
 
@@ -603,8 +605,12 @@ public class PublicCompany extends Company implements PublicCompanyI
 		return canBuyStock;
 	}
 	
-	public boolean mustHaveOperatedToSellShares () {
-	    return mustHaveOperatedToSellShares;
+	public boolean mayTradeShares () {
+	    return mayTradeShares;
+	}
+	
+	public boolean mustHaveOperatedToTradeShares () {
+	    return mustHaveOperatedToTradeShares;
 	}
 
 	public void start(StockSpaceI startSpace)

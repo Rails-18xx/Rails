@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.16 2008/01/18 19:58:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.17 2008/01/27 15:23:44 evos Exp $*/
 package rails.ui.swing;
 
 
@@ -288,12 +288,21 @@ implements ActionListener, KeyListener, ActionPerformer
 			return;
 		}
         
-        gameStatus.initSRPlayerTurn(GameManager.getCurrentPlayerIndex());
-        gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
-        
-		if ((currentRound instanceof ShareSellingRound))
+        if (currentRound instanceof TreasuryShareRound) {
+        	
+            setTitle(LocalText.getText("TRADE_TREASURY_SHARES_TITLE"));
+        	gameStatus.initTurn (-1);
+        	passButton.setEnabled(true);
+        	
+        } else if ((currentRound instanceof ShareSellingRound))
 		{
-			passButton.setEnabled(false);
+            setTitle(LocalText.getText("EMERGENCY_SHARE_SELLING_TITLE",
+                    (((TreasuryShareRound)currentRound).getOperatingCompany().getName())));
+	        gameStatus.initTurn(GameManager.getCurrentPlayerIndex());
+	        gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
+	        
+
+	        passButton.setEnabled(false);
 			int cash = ((ShareSellingRound) currentRound).getRemainingCashToRaise();
 			if (!possibleActions.contains(SellShares.class))
 			{
@@ -327,6 +336,10 @@ implements ActionListener, KeyListener, ActionPerformer
 		}
 		else
 		{
+	        setTitle(LocalText.getText("GAME_STATUS_TITLE"));
+	        gameStatus.initTurn(GameManager.getCurrentPlayerIndex());
+	        gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
+	        
 			passButton.setEnabled(true);
 		}
 
@@ -552,7 +565,7 @@ implements ActionListener, KeyListener, ActionPerformer
 	}
     
     public void finishRound() {
-        gameStatus.initSRPlayerTurn(-1);
+        gameStatus.initTurn(-1);
         passButton.setEnabled(false);
     }
     

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.27 2008/01/21 22:57:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.28 2008/01/27 15:23:42 evos Exp $ */
 package rails.game;
 
 
@@ -81,9 +81,10 @@ public class OperatingRound extends Round implements Observer
 	public static final int STEP_CALC_REVENUE = 2;
 	public static final int STEP_PAYOUT = 3;
 	public static final int STEP_BUY_TRAIN = 4;
-	public static final int STEP_FINAL = 5;
+	public static final int STEP_TRADE_SHARES = 5;
+	public static final int STEP_FINAL = 6;
 	protected static int[] steps = new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN,
-			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_FINAL };
+			STEP_CALC_REVENUE, STEP_PAYOUT, STEP_BUY_TRAIN, STEP_TRADE_SHARES, STEP_FINAL };
     // side steps
     public static final int STEP_DISCARD_TRAINS = -2;
     public static final String[] stepNames = new String[] {
@@ -92,6 +93,7 @@ public class OperatingRound extends Round implements Observer
         "EnterRevenue",
         "Payout",
         "BuyTrain",
+        "TradeShares",
         "Final"
     };
     
@@ -911,6 +913,7 @@ public class OperatingRound extends Round implements Observer
 		while (++stepIndex < steps.length)
 		{
 		    step = steps[stepIndex];
+		    log.debug ("Step "+stepNames[step]);
 		    
 			if (step == STEP_LAY_TOKEN
 					&& operatingCompany.getNumberOfFreeBaseTokens() == 0) {
@@ -955,14 +958,30 @@ public class OperatingRound extends Round implements Observer
 					continue;
 				}
 			}
+			
+			if (step == STEP_TRADE_SHARES) {
+			    
+			    // Is company allowed to trade trasury shares?
+			    log.debug ("+++ "+operatingCompany.getName()+" may trade shares:"+operatingCompany.mayTradeShares()
+			            +" has operated: "+operatingCompany.hasOperated());
+			    if (!operatingCompany.mayTradeShares()
+			            || !operatingCompany.hasOperated()) {
+			        continue;
+			    }
+
+			    GameManager.getInstance().startTreasuryShareTradingRound (this, operatingCompany);
+
+			}
 
 			// No reason found to skip this step
 			break;
 		}
 
 	    
-		if (step >= steps.length) {
-			done();
+		//if (step >= steps.length) {
+		//done();
+		if (step == STEP_FINAL) {
+		    finishTurn();
 		} else {
 		    setStep(step);
 		}
@@ -1147,18 +1166,41 @@ public class OperatingRound extends Round implements Observer
 	{
 		String errMsg = null;
 
-		if(operatingCompany.getPortfolio().getNumberOfTrains() == 0
-		        && operatingCompany.mustOwnATrain())
-		{
-			//FIXME: Need to check for valid route before throwing an error.
-			errMsg = LocalText.getText("CompanyMustOwnATrain", 
-			    operatingCompany.getName());
-			setStep(STEP_BUY_TRAIN);
-			DisplayBuffer.add(errMsg);
-			return false;
+		int step = getStep();
+		
+		if (step == STEP_BUY_TRAIN) {
+		    
+    		if(operatingCompany.getPortfolio().getNumberOfTrains() == 0
+    		        && operatingCompany.mustOwnATrain())
+    		{
+    			//FIXME: Need to check for valid route before throwing an error.
+    			errMsg = LocalText.getText("CompanyMustOwnATrain", 
+    			    operatingCompany.getName());
+    			setStep(STEP_BUY_TRAIN);
+    			DisplayBuffer.add(errMsg);
+    			return false;
+    		}
+    		
+		} else {
+		    
+            errMsg = LocalText.getText("InvalidDoneAction");
+                DisplayBuffer.add(errMsg);
+                return false;
+		    
 		}
 		
 		MoveSet.start (false);
+		
+		nextStep();
+		
+		if (getStep() == STEP_FINAL) {
+		    finishTurn();
+		}
+		
+		return true;
+	}
+	
+	protected void finishTurn() {
 		
 		operatingCompany.setOperated (true);
 
@@ -1168,7 +1210,7 @@ public class OperatingRound extends Round implements Observer
 			ReportBuffer.add(
 					LocalText.getText("EndOfOperatingRound", getCompositeORNumber()));
 			GameManager.getInstance().nextRound(this);
-			return true;
+			return;
 		}
 
         operatingCompanyIndexObject.add(1);
@@ -1176,8 +1218,6 @@ public class OperatingRound extends Round implements Observer
         operatingCompany = operatingCompanyArray[operatingCompanyIndex];
         
 		setStep (STEP_INITIAL);
-
-		return true;
 	}
 
 	public boolean buyTrain (BuyTrain action)

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.6 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyOrBidStartItem.java,v 1.7 2008/01/27 15:23:44 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -107,6 +107,7 @@ public class BuyOrBidStartItem extends PossibleAction {
 	}
 	
 	public int getStatus() {
+		//if (startItem == null) return 0;//BAD
         return startItem.getStatus();
 	}
 	
@@ -120,8 +121,9 @@ public class BuyOrBidStartItem extends PossibleAction {
 
 	public String toString() {
 		StringBuffer b = new StringBuffer();
-		b.append ("BuyOrBidStartItem ").append(startItem.getName())
-         .append (" status=").append(startItem.getStatusName());
+		b.append ("BuyOrBidStartItem ").append(startItemName)
+         .append (" status=").append(startItem.getStatusName())
+		;
         switch (getStatus()) {
         case StartItem.BIDDABLE:
 			b.append(" bid=").append(actualBid);

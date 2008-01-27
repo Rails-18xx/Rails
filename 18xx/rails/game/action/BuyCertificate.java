@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.7 2008/01/18 19:58:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.8 2008/01/27 15:23:44 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.Bank;
+import rails.game.CashHolder;
 import rails.game.Portfolio;
 import rails.game.PublicCertificate;
 import rails.game.PublicCertificateI;
@@ -57,6 +58,14 @@ public class BuyCertificate extends PossibleAction {
     
     /** Required for deserialization */
     public BuyCertificate() {}
+    
+    public Portfolio getFromPortfolio () {
+        return from;
+    }
+    
+    public String getFromName() {
+        return fromName;
+    }
 
     /**
      * @return Returns the maximumNumber.

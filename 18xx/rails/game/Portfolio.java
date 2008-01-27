@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.18 2008/01/18 19:58:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.19 2008/01/27 15:23:42 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -402,7 +402,7 @@ implements TokenHolderI, MoveableHolderI
 	}
 
 	/** Find a certificate for a given company. */
-	public PublicCertificateI findCertificate(PublicCompanyI company, int unit,
+	public PublicCertificateI findCertificate(PublicCompanyI company, int shares,
 			boolean president)
 	{
 		String companyName = company.getName();
@@ -416,7 +416,7 @@ implements TokenHolderI, MoveableHolderI
 			{
 				if (company.getShareUnit() == 100 || president
 						&& cert.isPresidentShare() || !president
-						&& !cert.isPresidentShare() && cert.getShares() == unit)
+						&& !cert.isPresidentShare() && cert.getShares() == shares)
 				{
 					return cert;
 				}
