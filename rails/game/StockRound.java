@@ -335,7 +335,7 @@ public class StockRound extends Round
 			if (!company.hasStarted()) continue;
 			
 			// In some games, can't sell shares if not operated
-			if (company.mustHaveOperatedToSellShares()
+			if (company.mustHaveOperatedToTradeShares()
 			        && !company.hasOperated()) continue;
 			
 			share = maxShareToSell = playerPortfolio.getShare(company);
@@ -447,12 +447,13 @@ public class StockRound extends Round
 				
 		} else if (action instanceof BuyCertificate) {
 			
-			BuyCertificate buyAction = (BuyCertificate) action;
-			result = buyShare (playerName,
-					buyAction.getCertificate().getPortfolio(),
-					buyAction.getCertificate().getCompany().getName(),
-					buyAction.getCertificate().getShares(),
-					1);
+			//BuyCertificate buyAction = (BuyCertificate) action;
+			//result = buyShare (playerName,
+			//		buyAction.getCertificate().getPortfolio(),
+			//		buyAction.getCertificate().getCompany().getName(),
+			//		buyAction.getCertificate().getShares(),
+			//		1);
+		    result = buyShares (playerName, (BuyCertificate) action);
 			
 		} else if (action instanceof SellShares) {
 			
@@ -636,49 +637,26 @@ public class StockRound extends Round
 	}
 
 	/**
-	 * Buy one or more single-share certificates (more is sometimes possible)
-	 * 
-	 * @param player
-	 *            The player buying shares.
-	 * @param portfolio
-	 *            The portfolio from which to buy shares.
-	 * @param company
-	 *            The company of which to buy shares.
-	 * @param shares
-	 *            The number of shares to buy.
-	 * @return True if the certificates bould be bought. False indicates an
-	 *         error.
-	 */
-	public boolean buyShare(String playerName, Portfolio from,
-			String companyName, int shares)
-	{
-		return buyShare(playerName, from, companyName, shares, 1);
-	}
-
-	/**
 	 * Buying one or more single or double-share certificates (more is sometimes
 	 * possible)
 	 * 
 	 * @param player
 	 *            The player that wants to buy shares.
-	 * @param portfolio
-	 *            The portfolio from which to buy shares.
-	 * @param company
-	 *            The company of which to buy shares.
-	 * @param shares
-	 *            The number of shares to buy.
-	 * @param unit
-	 *            The number of share units in each certificate to buy (e.g.
-	 *            value is 2 for 20% Badische or 10% Preussische non-president
-	 *            certificates in 1835).
+	 * @param action
+	 *     The executed BuyCertificates action
 	 * @return True if the certificates could be bought. False indicates an
-	 *         error. TODO Usage of 'unit' argument.
+	 *         error. 
 	 */
-	public boolean buyShare(String playerName, Portfolio from,
-			String companyName, int shares, int unit)
-	{
+	public boolean buyShares (String playerName, BuyCertificate action) {
 
-		String errMsg = null;
+		PublicCertificateI cert = action.getCertificate();
+        Portfolio from = cert.getPortfolio();
+        String companyName = cert.getCompany().getName();
+        int number = action.getNumberBought();
+        int shares = number * cert.getShares();
+        int shareUnit = cert.getShare();
+
+        String errMsg = null;
 		int price = 0;
 		PublicCompanyI company = null;
 
@@ -753,7 +731,7 @@ public class StockRound extends Round
 
 			// Check if it is allowed to buy more than one certificate (if
 			// requested)
-			if (shares > 1 && !currentSpace.isNoBuyLimit())
+			if (number > 1 && !currentSpace.isNoBuyLimit())
 			{
 				errMsg = LocalText.getText("CantBuyMoreThanOne", companyName);
 				break;
@@ -805,18 +783,33 @@ public class StockRound extends Round
 
 		// All seems OK, now buy the shares.
 		MoveSet.start(true);
-		PublicCertificateI cert;
-		for (int i = 0; i < shares; i++)
+
+        if (number == 1) {
+	        ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
+	                playerName,
+	                String.valueOf(shareUnit),
+	                companyName,
+	                from.getName(),
+	                Bank.format(shares * price)}));
+        } else {
+	        ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
+	                playerName,
+	                String.valueOf(number),
+	                String.valueOf(shareUnit),
+	                String.valueOf(number * shareUnit),
+	                companyName,
+	                from.getName(),
+	                Bank.format(shares * price)}));
+        }
+
+		PublicCertificateI cert2;
+		for (int i = 0; i < number; i++)
 		{
-			cert = from.findCertificate(company, false);
-			ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
-			        playerName,
-			        String.valueOf(shares),
-			        String.valueOf(cert.getShare()),
-			        companyName,
-			        from.getName(),
-			        Bank.format(shares * price)}));
-			currentPlayer.buy(cert, price * cert.getShares());
+			cert2 = from.findCertificate(company, cert.getShares(), false);
+			if (cert2 == null) {
+				log.error ("Cannot find "+companyName+" "+shareUnit+"% share in "+from.getName());
+			}
+			currentPlayer.buy(cert2, price * shares);
 		}
 
 		companyBoughtThisTurnWrapper.set (company);
@@ -1002,12 +995,21 @@ public class StockRound extends Round
 
 		MoveSet.start(true);
 
-		ReportBuffer.add (LocalText.getText("SELL_SHARES_LOG", new String[]{
+		if (numberToSell == 1) {
+			ReportBuffer.add (LocalText.getText("SELL_SHARE_LOG", new String[]{
 		        playerName,
-		        String.valueOf(numberToSell),
-		        String.valueOf((numberToSell * company.getShareUnit())),
+		        String.valueOf(company.getShareUnit()),
 		        companyName,
 		        Bank.format(numberToSell * price)}));
+		} else {
+			ReportBuffer.add (LocalText.getText("SELL_SHARES_LOG", new String[]{
+		        playerName,
+		        String.valueOf(numberToSell),
+		        String.valueOf(company.getShareUnit()),
+		        String.valueOf(numberToSell * company.getShareUnit()),
+		        companyName,
+		        Bank.format(numberToSell * price)}));
+		}
 
 		// Check if the presidency has changed
 		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.1 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.2 2008/01/27 15:23:44 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.*;
@@ -55,6 +55,7 @@ public class StartRound_1851 extends StartRound
 	
 	public boolean setPossibleActions() {
 		
+		BuyOrBidStartItem action;
 		List<StartItem> startItems = startPacket.getItems();
 		
 		possibleActions.clear();
@@ -63,9 +64,10 @@ public class StartRound_1851 extends StartRound
 		{
 			if (!item.isSold()) {
 				item.setStatus (StartItem.BUYABLE);
-				possibleActions.add(new BuyOrBidStartItem (
+				possibleActions.add(action = new BuyOrBidStartItem (
 						item,
 						item.getBasePrice()));
+				log.debug(GameManager.getCurrentPlayer().getName()+" may: "+action.toString());
 			}
 
 		}

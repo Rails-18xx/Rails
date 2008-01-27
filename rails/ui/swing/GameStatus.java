@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
@@ -94,6 +96,7 @@ public class GameStatus extends JPanel implements ActionListener
 
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
+	private Caption treasurySharesCaption;
 
 	private int np; // Number of players
 	private int nc; // NUmber of companies
@@ -112,8 +115,10 @@ public class GameStatus extends JPanel implements ActionListener
 	private PublicCompanyI c;
 	private JComponent f;
 
-	// Current state
-	private int srPlayerIndex = -1;
+	// Current actor.
+	// Players: 0, 1, 2, ...
+	// Company (from treasury): -1.
+	private int actorIndex = -2;
 
 	private ButtonGroup buySellGroup = new ButtonGroup();
 	private ClickField dummyButton; // To be selected if none else is.
@@ -123,7 +128,9 @@ public class GameStatus extends JPanel implements ActionListener
 	private Map<Player, Integer> playerIndex 
 		= new HashMap<Player, Integer>();
 	
-	public GameStatus(JFrame parent)
+    protected static Logger log = Logger.getLogger(GameStatus.class.getPackage().getName());
+
+    public GameStatus(JFrame parent)
 	{
 		super();
 		gameStatus = this;
@@ -274,7 +281,8 @@ public class GameStatus extends JPanel implements ActionListener
 				WIDE_RIGHT + WIDE_BOTTOM);
 		
 		if (compCanHoldOwnShares) {
-			addField (new Caption (LocalText.getText("TREASURY_SHARES")),
+			addField (treasurySharesCaption = 
+			    new Caption (LocalText.getText("TREASURY_SHARES")),
 					certInTreasuryXOffset,
 					0,
 					1,
@@ -676,15 +684,22 @@ public class GameStatus extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent actor)
 	{
 		JComponent source = (JComponent) actor.getSource();
-		String command = actor.getActionCommand();
+		String command = actor.getActionCommand(); // Fall-back only
 		List<PossibleAction> actions;
 		
 		if (source instanceof ClickField)
 		{
 			gbc = gb.getConstraints(source);
-			if (command.equals(SELL_CMD))
+	        actions = ((ClickField)source).getPossibleActions();
+
+	        // Assume that we will have either sell or buy actions
+	        // under one ClickField, not both. This seems guaranteed.
+	        
+	        
+	        //if (command.equals(SELL_CMD))
+	        if (actions != null && actions.size() > 0
+	                && actions.get(0) instanceof SellShares)
 			{
-				actions = ((ClickField)source).getPossibleActions();
 				List<String> options = new ArrayList<String>();
 				List<SellShares> sellActions = new ArrayList<SellShares>();
 				List<Integer> sellAmounts = new ArrayList<Integer>();
@@ -730,12 +745,13 @@ public class GameStatus extends JPanel implements ActionListener
 					((StatusWindow) parent).process (chosenAction);
 				}
 			}
-			else if (command.equals(BUY_FROM_IPO_CMD)
-					|| command.equals(BUY_FROM_POOL_CMD)) {
-
+			//else if (command.equals(BUY_FROM_IPO_CMD)
+			//		|| command.equals(BUY_FROM_POOL_CMD)) {
+	        else if (actions != null && actions.size() > 0
+	                    && actions.get(0) instanceof BuyCertificate)
+	        {
                 boolean startCompany = false;
 				
-				actions = ((ClickField)source).getPossibleActions();
 				List<String> options = new ArrayList<String>();
 				List<BuyCertificate> buyActions = new ArrayList<BuyCertificate>();
 				List<Integer> buyAmounts = new ArrayList<Integer>();
@@ -779,7 +795,7 @@ public class GameStatus extends JPanel implements ActionListener
 									String.valueOf(cert.getShare()),
 									cert.getCompany().getName(),
 									cert.getPortfolio().getName(),
-									Bank.format(cert.getShares() * buy.getPrice())
+									Bank.format(i * cert.getShares() * buy.getPrice())
 							}));
 							buyActions.add (buy);
 							buyAmounts.add (i);
@@ -824,19 +840,22 @@ public class GameStatus extends JPanel implements ActionListener
 					chosenAction.setNumberBought(buyAmounts.get(index));
 					((StatusWindow) parent).process (chosenAction);
 				}
+			} else {
+			    log.error ("No SR action found - command is "+command);
 			}
 		}
 		repaint();
 
 	}
 
-    public void initSRPlayerTurn(int selectedPlayerIndex)
+    public void initTurn(int actorIndex)
 	{
 		int i, j;
 
 		dummyButton.setSelected(true);
 
-		if ((j = this.srPlayerIndex) >= 0)
+		// Reset previous highlights
+		if ((j = this.actorIndex) >= 0)
 		{
 			upperPlayerCaption[j].setHighlight(false);
 			lowerPlayerCaption[j].setHighlight(false);
@@ -844,6 +863,8 @@ public class GameStatus extends JPanel implements ActionListener
 			{
 				setPlayerCertButton(i, j, false);
 			}
+		} else if (j == -1 && compCanHoldOwnShares) {
+		    treasurySharesCaption.setHighlight(false);
 		}
 		for (i = 0; i < nc; i++)
 		{
@@ -852,12 +873,17 @@ public class GameStatus extends JPanel implements ActionListener
 			if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
 		}
 
-		this.srPlayerIndex = selectedPlayerIndex;
+		this.actorIndex = actorIndex;
 
-		if ((j = this.srPlayerIndex) >= 0)
+		// Set new highlights
+		if ((j = this.actorIndex) >= -1)
 		{
-			upperPlayerCaption[j].setHighlight(true);
-			lowerPlayerCaption[j].setHighlight(true);
+		    if (j >= 0) {
+		        upperPlayerCaption[j].setHighlight(true);
+		        lowerPlayerCaption[j].setHighlight(true);
+		    } else if (j == -1) {
+		        treasurySharesCaption.setHighlight(true);
+		    }
 
 			PublicCertificateI cert;
 			Portfolio holder;
@@ -870,7 +896,8 @@ public class GameStatus extends JPanel implements ActionListener
 					//tCert = (TradeableCertificate) it.next();
 					cert = bCert.getCertificate();
 					index = cert.getCompany().getPublicNumber();
-					holder = cert.getPortfolio();
+					//holder = cert.getPortfolio();
+					holder = bCert.getFromPortfolio();
 					if (holder == ipo)
 					{
 						setIPOCertButton(index, true, bCert);
@@ -893,14 +920,18 @@ public class GameStatus extends JPanel implements ActionListener
 				{
 					company = share.getCompany();
 					index = company.getPublicNumber();
-					setPlayerCertButton(index, j, true, share);
+					if (j >= 0) {
+					    setPlayerCertButton(index, j, true, share);
+					} else if (j == -1) {
+					    setTreasuryCertButton(index, true, share);
+					}
 				}
 			}
 			
 			List<NullAction> nullActions = possibleActions.getType(NullAction.class);
 			if (nullActions != null) {
 				for (NullAction na : nullActions) {
-					((StatusWindow) parent).setPassButton(na);
+			        ((StatusWindow) parent).setPassButton(na);
 				}
 			}
 			
@@ -919,8 +950,8 @@ public class GameStatus extends JPanel implements ActionListener
 
 	public String getSRPlayer()
 	{
-		if (srPlayerIndex >= 0)
-			return players[srPlayerIndex].getName();
+		if (actorIndex >= 0)
+			return players[actorIndex].getName();
 		else
 			return "";
 	}

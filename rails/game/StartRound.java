@@ -22,6 +22,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	protected IntegerState numPasses = new IntegerState("StartRoundPasses");
 	protected int numPlayers;
 	protected String variant;
+	protected GameManager gameMgr;
 	
 	/** Should the UI present bidding into and facilities?
 	 * This value MUST be set in the actual StartRound constructor.
@@ -71,7 +72,8 @@ public abstract class StartRound extends Round implements StartRoundI
 		numPasses.set(0);
 		auctionItemState.set(null);
 
-		GameManager.getInstance().setRound(this);
+		gameMgr = GameManager.getInstance();
+		gameMgr.setRound(this);
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 		
 		ReportBuffer.add("");

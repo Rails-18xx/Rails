@@ -2,9 +2,15 @@
 <GamesList>
 	<Game name="1830">
 		<Note>Fully playable</Note>
-		<Description>Limitations: 
-The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
-Privates cannot be traded between players.
+		<Description>1830 - The Game of Railroads and Robber Barons
+(c) 1986 The Avalon Hill Game Company
+Designed by Francis Tresham and Bruce Shelley
+			
+Limitations: 
+- The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
+- Privates cannot be traded between players.
+- Token handling and track preservation on OO tiles do not yet work correctly. 
+  This also implies, that the Erie home base cannot yet be selected. 
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
@@ -12,62 +18,107 @@ Privates cannot be traded between players.
 	</Game>
 	<Game name="1835">
 		<Note>Partly playable</Note>
-		<Description>Rules not yet implemented:
-- Sequential availability of companies. All companies are buyable from the start, including the Prussian.
-- Prussian formation.
-- Distance-based token cost.
-- ... etc.
+		<Description>1835 (Germany)
+Designed by Michael Meier-Bachl
+Published 1990 by Hans im Glück Verlag
+
+Initial version.
+Rules not yet implemented include:
+	- Sequential availability of companies. All companies are buyable from the start, including the Prussian.
+	- Prussian formation.
+	- Distance-based token cost.
+	- ... etc.
+
 For the start packet sale, three variants have been implemented:
-- Standard
-- Clemens
-- Snake
+	- Standard
+	- Clemens
+	- Snake
+
 Variant selection effects on SR and OR have not been implemented yet.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
 	<Game name="1851">
-		<Note>Almost playable</Note>
-		<Description>Not yet done:
-- Random assignment of private companies (players should do this off-line and enter the result)
-- Two yellow tiles from phase 3 on.
-- Treasury certificate trading.
+		<Note>Fully playable</Note>
+		<Description>1851 - The Railroads come to Kentucky &amp; Tennessee
+(c) Mark Derrick and Chris Lawson
+
+Limitation:
+- No random assignment of private companies (players should do this off-line and enter the result)
 		</Description>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="1856">
 		<Note>Partly playable</Note>
-		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
+		<Description>1856 - Railroading in Upper Canada
+(c) 1992, 1995 Mayfair Games, Inc.
+Designed by Bill Dixon
+
+Aspects not present in 1830 have not been implemented yet.
+		</Description>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1870">
 		<Note>Partly playable</Note>
-		<Description>Aspects not present in 1830 have not been implemented yet.</Description>
+		<Description>1870 - Railroading across the Trans Mississippi
+(c) 1992, 1995 Mayfair Games, Inc.
+Designed by Bill Dixon
+
+Aspects not present in 1830 have not been implemented yet.
+		</Description>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18AL">
 		<Note>Fully playable</Note>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
-		<Description>Limitation: 
-Privates cannot be traded between players.
+		<Description>18AL  - The Railroads come to Alabama
+(c) 2000, 2004 Mark Derrick and John David Galt
+Designed by Mark Derrick
+
+Both the original and the final version (without/with delayed 4-train obsolescence) have been implemented.
+
+Limitation: 
+- Privates cannot be traded between players.
 		</Description>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="18EU">
 		<Note>Hardly playable</Note>
-		<Description>Just the map, companies and tiles are there.
+		<Description>1830 - A century of railroading in Europe
+(c) 1997-2004 David G.D. Hecht
+Published 2004 by Deep Thought Games, LLC
+ 
+So far, only the map, companies and tiles exist.
 None of the specific 18EU game mechanisms have been implemented yet.
 The start round is provisionally configured as the 1835 standard initial round,
 with all minors on one row (i.e., all available from the start)
-</Description>
+		</Description>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18Kaas">
 		<Note>Fully playable</Note>
-		<Description>Not extensively tested</Description>
+		<Description>18Kaas (Netherlands)
+(c) 1992 ERJO GAMES
+
+Should work, but has not been extensively tested
+		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
+	<Credits>Rails is a computer implementation of a number of railroad board games,
+that are collectively known as the "18xx" railway game system.		
+Rails is a Sourceforge project.
+Project founder: Brett Lentz.
+Developers: Erik Vos and Brett Lentz.
+
+The 18xx railway game system was originated by Francis Tresham and Hartland Trefoil Ltd.
+
+All rights reserved by the respective owners of the original games 
+(see the Game Notes per game for specific acknowledgements).
+No challenge to their status is intended. 
+Rails is intended as a play aid for owners of each respective boardgame.
+	</Credits>
 </GamesList>

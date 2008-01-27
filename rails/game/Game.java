@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.12 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.13 2008/01/27 15:23:42 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -50,6 +50,12 @@ public class Game
         
         gameOptions.put(GameOption.NUMBER_OF_PLAYERS, String.valueOf(players.size()));
         
+        for (String playerName : players) {
+        	log.debug("Player: "+playerName);
+        }
+        for (String optionName : gameOptions.keySet()) {
+        	log.debug("Option: "+optionName+"="+gameOptions.get(optionName));
+        }
 		directories.add("data");
 		directories.add("data/" + name);
 

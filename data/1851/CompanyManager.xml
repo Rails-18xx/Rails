@@ -14,7 +14,7 @@
 		<HomeBase lay="whenFloated"/>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
 	    <NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/>
-		<SellShares mustHaveOperated="yes"/>
+		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
 	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5"/>
 	<Company name="M&amp;C" type="Private" basePrice="50" revenue="10"/>

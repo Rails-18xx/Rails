@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.1 2008/01/21 22:57:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.2 2008/01/27 15:23:42 evos Exp $
  * 
  * Created on 21-May-2006
  * Change Log:
@@ -11,12 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
-import rails.game.action.StartCompany;
 import rails.game.move.MoveSet;
 import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 
@@ -62,10 +61,16 @@ public class TreasuryShareRound extends StockRound {
 		
 		possibleActions.clear();
 		
-		if (operatingCompany.hasOperated()) return true;
+		if (!operatingCompany.hasOperated()) return true;
 		
 		if (!hasSold.booleanValue()) setBuyableCerts();
 		if (!hasBought.booleanValue()) setSellableCerts();
+		
+		if (possibleActions.isEmpty()) {
+		    // TODO Finish the round before it started...
+		}
+		
+		possibleActions.add(new NullAction(NullAction.DONE));
 		
 		for (PossibleAction pa : possibleActions.getList()) {
 			log.debug(operatingCompany.getName()+ " may: "+pa.toString());
@@ -237,22 +242,167 @@ public class TreasuryShareRound extends StockRound {
 		}
 	}
 
+    /**
+     * Buying one or more single or double-share certificates (more is sometimes
+     * possible)
+     * 
+     * @param player
+     *            The player that wants to buy shares.
+     * @param action
+     *            The executed action
+     * @return True if the certificates could be bought. False indicates an
+     *         error. 
+     */
+     public boolean buyShares (String playerName, BuyCertificate action) {
+
+    	PublicCertificateI cert = action.getCertificate();
+        Portfolio from = cert.getPortfolio();
+        String companyName = cert.getCompany().getName();
+        int number = action.getNumberBought();
+        int shares = number * cert.getShares();
+        int shareUnit = cert.getShare();
+
+        String errMsg = null;
+        int price = 0;
+        PublicCompanyI company = null;
+        Portfolio portfolio = null;
+
+        currentPlayer = GameManager.getCurrentPlayer();
+
+        // Dummy loop to allow a quick jump out
+        while (true)
+        {
+
+            // Check everything
+            // Only the player that has the turn may act
+            if (!playerName.equals(currentPlayer.getName()))
+            {
+                errMsg = LocalText.getText("WrongPlayer", playerName);
+                break;
+            }
+
+            // Check company
+            company = companyMgr.getPublicCompany(companyName);
+            if (company == null)
+            {
+                errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
+                break;
+            }
+            if (company != operatingCompany) {
+                errMsg = LocalText.getText ("WrongCompany", new String[] {
+                        companyName,
+                        operatingCompany.getName()
+                });
+                
+            }
+
+            // The company must have floated
+            if (!company.hasFloated()) {
+                errMsg = LocalText.getText("NotYetFloated", companyName);
+                break;
+            }
+            if (company.mustHaveOperatedToTradeShares()
+                    && !company.hasOperated()) {
+                errMsg = LocalText.getText("NotYetOperated", companyName);
+                break;
+            }
+            
+            // Company may not buy after sell
+            if (hasSold.booleanValue()) {
+                errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
+                break;
+            }
+
+            // Check if that many shares are available
+            if (shares > from.getShare(company))
+            {
+                errMsg = LocalText.getText("NotAvailable", new String[] {
+                                companyName,
+                                from.getName()});
+                break;
+            }
+
+            portfolio = operatingCompany.getPortfolio();
+            
+            // Check if company would exceed the per-company share limit
+            if (portfolio.getShare(company) + shares * company.getShareUnit() > gameMgr.getTreasuryShareLimit())
+            {
+                errMsg = LocalText.getText("TreasuryOverHoldLimit", 
+                        String.valueOf(gameMgr.getTreasuryShareLimit()));
+                break;
+            }
+
+            StockSpaceI currentSpace;
+            // TODO NEVER A PAR PRICE ?
+            currentSpace = company.getCurrentPrice();
+
+            price = currentSpace.getPrice();
+
+            // Check if the Player has the money.
+            if (operatingCompany.getCash() < shares * price)
+            {
+                errMsg = LocalText.getText("NoMoney");
+                break;
+            }
+
+            break;
+        }
+
+        if (errMsg != null)
+        {
+            DisplayBuffer.add(LocalText.getText("CantBuy", new String[] {
+                    companyName,
+                    String.valueOf(shares),
+                    companyName,
+                    from.getName(),
+                    errMsg
+                    }));
+            return false;
+        }
+
+        // All seems OK, now buy the shares.
+        if (number == 1) {
+	        ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
+	                companyName,
+	                String.valueOf(shareUnit),
+	                companyName,
+	                from.getName(),
+	                Bank.format(shares * price)}));
+        } else {
+	        ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
+	                companyName,
+	                String.valueOf(number),
+	                String.valueOf(shareUnit),
+	                String.valueOf(number * shareUnit),
+	                companyName,
+	                from.getName(),
+	                Bank.format(shares * price)}));
+        }
+
+        MoveSet.start(true);
+        PublicCertificateI cert2;
+        for (int i = 0; i < number; i++)
+        {
+            cert2 = from.findCertificate(company, cert.getShares(), false);
+			portfolio.buyCertificate((PublicCertificateI) cert2, from, shares * price);
+        }
+
+        hasBought.set(true);
+
+        return true;
+    }
+
 	public boolean sellShares (SellShares action)
 	{
-		Portfolio portfolio = currentPlayer.getPortfolio();
-		String playerName = currentPlayer.getName();
+		Portfolio portfolio = operatingCompany.getPortfolio();
 		String errMsg = null;
 		String companyName = action.getCompanyName();
-		PublicCompanyI company = companyMgr.getPublicCompany(action.getCompanyName());
+		PublicCompanyI company = companyMgr.getPublicCompany(companyName);
 		PublicCertificateI cert = null;
-		PublicCertificateI presCert = null;
 		List<PublicCertificateI> certsToSell 
 			= new ArrayList<PublicCertificateI>();
-		Player dumpedPlayer = null;
-		int presSharesToSell = 0;
 		int numberToSell = action.getNumberSold();
 		int shareUnits = action.getShareUnits();
-		int currentIndex = GameManager.getCurrentPlayerIndex();
 
 		// Dummy loop to allow a quick jump out
 		while (true)
@@ -271,8 +421,32 @@ public class TreasuryShareRound extends StockRound {
 				errMsg = LocalText.getText("NoCompany");
 				break;
 			}
+			if (company != operatingCompany) {
+			    errMsg = LocalText.getText ("WrongCompany", new String[] {
+			            companyName,
+			            operatingCompany.getName()
+			    });
+			    break;
+			}
+			
+			// The company must have floated
+			if (!company.hasFloated()) {
+			    errMsg = LocalText.getText("NotYetFloated", companyName);
+			    break;
+			}
+			if (company.mustHaveOperatedToTradeShares()
+			        && !company.hasOperated()) {
+			    errMsg = LocalText.getText("NotYetOperated", companyName);
+			    break;
+			}
 
-			// The player must have the share(s)
+            // Company may not sell after buying
+            if (hasSold.booleanValue()) {
+                errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
+                break;
+            }
+
+			// The company must have the share(s)
 			if (portfolio.getShare(company) < numberToSell)
 			{
 				errMsg = LocalText.getText("NoShareOwned");
@@ -292,14 +466,7 @@ public class TreasuryShareRound extends StockRound {
 			while (numberToSell > 0 && it.hasNext())
 			{
 				cert = it.next();
-				if (cert.isPresidentShare())
-				{
-					// Remember the president's certificate in case we need it
-					if (cert.isPresidentShare())
-						presCert = cert;
-					continue;
-				}
-				else if (shareUnits != cert.getShares())
+				if (shareUnits != cert.getShares())
 				{
 					// Wrong number of share units
 					continue;
@@ -308,51 +475,11 @@ public class TreasuryShareRound extends StockRound {
 				certsToSell.add(cert);
 				numberToSell--;
 			}
-			if (numberToSell == 0)
-				presCert = null;
 
-			if (numberToSell > 0 && presCert != null
-					&& numberToSell <= presCert.getShares())
-			{
-				// Not allowed to dump the company that needs the train
-				if (company == operatingCompany)
-				{
-				    errMsg = LocalText.getText("CannotDumpTrainBuyingPresidency");
-				    break;
-				}
-				// More to sell and we are President: see if we can dump it.
-				Player otherPlayer;
-				for (int i = currentIndex + 1; i < currentIndex
-						+ numberOfPlayers; i++)
-				{
-					otherPlayer = GameManager.getPlayer(i);
-					if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare())
-					{
-						// Check if he has the right kind of share
-						if (numberToSell > 1
-								|| otherPlayer.getPortfolio()
-										.ownsCertificates(company, 1, false) >= 1)
-						{
-							// The poor sod.
-							dumpedPlayer = otherPlayer;
-							presSharesToSell = numberToSell;
-							numberToSell = 0;
-							break;
-						}
-					}
-				}
-			}
 			// Check if we could sell them all
 			if (numberToSell > 0)
 			{
-				if (presCert != null)
-				{
-					errMsg = LocalText.getText("NoDumping");
-				}
-				else
-				{
-					errMsg = LocalText.getText("NotEnoughShares");
-				}
+				errMsg = LocalText.getText("NotEnoughShares");
 				break;
 			}
 
@@ -363,7 +490,7 @@ public class TreasuryShareRound extends StockRound {
 		if (errMsg != null)
 		{
 			DisplayBuffer.add(LocalText.getText("CantSell", new String[] {
-					playerName,
+			        companyName,
 					String.valueOf(numberSold),
 					companyName,
 					errMsg
@@ -390,28 +517,11 @@ public class TreasuryShareRound extends StockRound {
 		MoveSet.start(true);
 
 		ReportBuffer.add (LocalText.getText("SELL_SHARES_LOG", new String[]{
-		        playerName,
+		        companyName,
 		        String.valueOf(numberSold),
 		        String.valueOf((numberSold * company.getShareUnit())),
 		        companyName,
 		        Bank.format(numberSold * price)}));
-
-		// Check if the presidency has changed
-		if (presCert != null && dumpedPlayer != null && presSharesToSell > 0)
-		{
-			ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[] {
-					        dumpedPlayer.getName(),
-					        companyName
-					}));
-			// First swap the certificates
-			Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-			List<PublicCertificateI> swapped = portfolio.swapPresidentCertificate(company,
-					dumpedPortfolio);
-			for (int i = 0; i < presSharesToSell; i++)
-			{
-				certsToSell.add(swapped.get(i));
-			}
-		}
 
 		// Transfer the sold certificates
 		for (PublicCertificateI cert2 : certsToSell)
@@ -420,28 +530,40 @@ public class TreasuryShareRound extends StockRound {
 				pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
 		}
 		stockMarket.sell(company, numberSold);
-
-		// Check if we still have the presidency
-		if (currentPlayer == company.getPresident())
-		{
-			Player otherPlayer;
-			for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++)
-			{
-				otherPlayer = GameManager.getPlayer(i);
-				if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company))
-				{
-					portfolio.swapPresidentCertificate(company,
-							otherPlayer.getPortfolio());
-					ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[]{
-									otherPlayer.getName(),
-									company.getName()
-							}));
-					break;
-				}
-			}
-		}
+		
+		hasSold.set(true);
 
 		return true;
+	}
+	
+   /**
+     * The current Player passes or is done.
+     * 
+     * @param player
+     *            Name of the passing player.
+     * @return False if an error is found.
+     */
+    public boolean done(String playerName)
+    {
+
+        currentPlayer = GameManager.getCurrentPlayer();
+
+        if (!playerName.equals(currentPlayer.getName()))
+        {
+            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
+            return false;
+        }
+
+        MoveSet.start (false);
+        
+        // Inform GameManager
+        gameMgr.finishTreasuryShareRound();
+
+        return true;
+    }
+	
+	public PublicCompanyI getOperatingCompany () {
+	    return this.operatingCompany;
 	}
 
     public String toString() {

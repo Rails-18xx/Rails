@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.11 2008/01/21 22:57:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.12 2008/01/27 15:23:42 evos Exp $ */
 package rails.game;
 
 
@@ -61,7 +61,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 */
 	public boolean canBuyPrivates();
 	
-    public boolean mustHaveOperatedToSellShares ();
+    public boolean mustHaveOperatedToTradeShares ();
+    public boolean mayTradeShares ();
 
 
 	/**

@@ -27,6 +27,7 @@ public class GamesInfo {
     private static final String DESCR_TAG = "Description";
     private static final String OPTION_TAG = "Option";
     private static final String PLAYERS_TAG = "Players";
+    private static final String CREDITS_TAG = "Credits";
 
     private static final String GAME_NAME_ATTR = "name";
     private static final String MIN_ATTR = "minimum";
@@ -45,6 +46,8 @@ public class GamesInfo {
     private Map<String, List<GameOption>> options
         = new HashMap<String, List<GameOption>>();
     
+    private String credits;
+    
     private static GamesInfo instance = new GamesInfo();
     
     private GamesInfo () {
@@ -61,8 +64,6 @@ public class GamesInfo {
 		   myGamesXmlFile = GAMES_XML;
 	   }
 	   
-
-        
         List<String> directories = new ArrayList<String>();
         directories.add (DATA_DIR);
         try {
@@ -76,6 +77,12 @@ public class GamesInfo {
             for (Tag gameTag : gameList) {
                 
                 fillGameInfo (gameTag);
+            }
+            
+            // Credits
+            Tag creditsTag = gamesTag.getChild(CREDITS_TAG);
+            if (creditsTag != null) {
+            	credits = creditsTag.getText();
             }
             
         } catch (ConfigurationException e) {
@@ -188,6 +195,10 @@ public class GamesInfo {
     
     public static List<GameOption> getOptions (String name) {
         return instance.options.get(name);
+    }
+    
+    public static String getCredits() {
+    	return instance.credits;
     }
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.8 2007/12/11 20:58:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.9 2008/01/27 15:23:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -24,6 +24,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 	GridBagConstraints gc;
 	JPanel gameListPane, playersPane, buttonPane, optionsPane;
 	JButton newButton, loadButton, quitButton, optionButton, infoButton;
+	JButton creditsButton; 
 	
 	JComboBox gameNameBox = new JComboBox();
 	JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -72,12 +73,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		quitButton = new JButton(LocalText.getText("QUIT"));
 		optionButton = new JButton(LocalText.getText("OPTIONS"));
 		infoButton = new JButton(LocalText.getText("INFO"));
+		creditsButton = new JButton (LocalText.getText("CREDITS"));
 
 		newButton.setMnemonic(KeyEvent.VK_N);
 		loadButton.setMnemonic(KeyEvent.VK_L);
 		quitButton.setMnemonic(KeyEvent.VK_Q);
 		optionButton.setMnemonic(KeyEvent.VK_O);
 		infoButton.setMnemonic(KeyEvent.VK_G);
+		creditsButton.setMnemonic(KeyEvent.VK_C);
 
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setTitle("Rails: New Game");
@@ -95,6 +98,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		quitButton.addActionListener(this);
 		optionButton.addActionListener(this);
 		infoButton.addActionListener(this);
+		creditsButton.addActionListener(this);
 		gameNameBox.addActionListener(this);
 
 		buttonPane.add(newButton);
@@ -102,6 +106,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 		buttonPane.add(optionButton);
 		buttonPane.add(infoButton);
 		buttonPane.add(quitButton);
+		buttonPane.add(creditsButton);
 		
 		buttonPane.setLayout(new GridLayout(3,2));
 		buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -198,6 +203,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 					JOptionPane.INFORMATION_MESSAGE);
 		} else if (arg0.getSource().equals(quitButton)) {
 			System.exit(0);
+		} else if (arg0.getSource().equals(creditsButton)){
+			JOptionPane.showMessageDialog(this, 
+					GamesInfo.getCredits(), 
+					LocalText.getText("CREDITS"), 
+					JOptionPane.INFORMATION_MESSAGE);
 		} else if (arg0.getSource().equals(gameNameBox)) {
 			//Game has changed, update the name variable.
 			gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
