@@ -19,49 +19,49 @@
 	<Trains number="4,4,3,2"/>
   </CompanyType>
   
-  <Company name="1" longname="CdF du Nord" type="Minor" basePrice="80">
+  <Company name="1" longname="CdF du Nord" type="Minor">
     <Home hex="J1"/>
   </Company>
-  <Company name="2" longname="Etat Belge" type="Minor" basePrice="80">
+  <Company name="2" longname="Etat Belge" type="Minor">
     <Home hex="H3"/>
   </Company>
-  <Company name="3" longname="PLM" type="Minor" basePrice="80">
+  <Company name="3" longname="PLM" type="Minor">
     <Home hex="J1"/>
   </Company>
-  <Company name="4" longname="Leipzig-Dresden" type="Minor" basePrice="80">
+  <Company name="4" longname="Leipzig-Dresden" type="Minor">
     <Home hex="G10"/>
   </Company>
-  <Company name="5" longname="Adriatica" type="Minor" basePrice="80">
+  <Company name="5" longname="Adriatica" type="Minor">
     <Home hex="S8"/>
   </Company>
-  <Company name="6" longname="KF Nordbahn" type="Minor" basePrice="80">
+  <Company name="6" longname="KF Nordbahn" type="Minor">
     <Home hex="N11"/>
   </Company>
-  <Company name="7" longname="Berlin-Potsdam" type="Minor" basePrice="80">
+  <Company name="7" longname="Berlin-Potsdam" type="Minor">
     <Home hex="E10"/>
   </Company>
-  <Company name="8" longname="Hungarian" type="Minor" basePrice="80">
+  <Company name="8" longname="Hungarian" type="Minor">
     <Home hex="P13"/>
   </Company>
-  <Company name="9" longname="Berlin-Stettin" type="Minor" basePrice="80">
+  <Company name="9" longname="Berlin-Stettin" type="Minor">
     <Home hex="E10"/>
   </Company>
-  <Company name="10" longname="Alta Italia" type="Minor" basePrice="80">
+  <Company name="10" longname="Alta Italia" type="Minor">
     <Home hex="R5"/>
   </Company>
-  <Company name="11" longname="S&#252;dbahn" type="Minor" basePrice="80">
+  <Company name="11" longname="S&#252;dbahn" type="Minor">
     <Home hex="N11"/>
   </Company>
-  <Company name="12" longname="HSM" type="Minor" basePrice="80">
+  <Company name="12" longname="HSM" type="Minor">
     <Home hex="C4"/>
   </Company>
-  <Company name="13" longname="Ludwigsbahn" type="Minor" basePrice="80">
+  <Company name="13" longname="Ludwigsbahn" type="Minor">
     <Home hex="L7"/>
   </Company>
-  <Company name="14" longname="Strasbourg-B&#226;le" type="Minor" basePrice="80">
+  <Company name="14" longname="Strasbourg-B&#226;le" type="Minor">
     <Home hex="M4"/>
   </Company>
-  <Company name="15" longname="Grand Central" type="Minor" basePrice="80">
+  <Company name="15" longname="Grand Central" type="Minor">
     <Home hex="Q2"/>
   </Company>
 
@@ -82,22 +82,23 @@
   <Company name="DR" longname="Deutsche Reichsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="000000">
   </Company>
   
-  <StartPacket roundClass="rails.game.StartRound_1835">
-    <Item name="1"   type="Minor" basePrice="80" row="1"/>
-    <Item name="2"   type="Minor" basePrice="80" row="1"/>
-    <Item name="3"   type="Minor" basePrice="80" row="1"/>
-    <Item name="4"   type="Minor" basePrice="80" row="1"/>
-    <Item name="5"   type="Minor" basePrice="80" row="1"/>
-    <Item name="6"   type="Minor" basePrice="80" row="1"/>
-    <Item name="7"   type="Minor" basePrice="80" row="1"/>
-    <Item name="8"   type="Minor" basePrice="80" row="1"/>
-    <Item name="9"   type="Minor" basePrice="80" row="1"/>
-    <Item name="10"   type="Minor" basePrice="80" row="1"/>
-    <Item name="11"   type="Minor" basePrice="80" row="1"/>
-    <Item name="12"   type="Minor" basePrice="80" row="1"/>
-    <Item name="13"   type="Minor" basePrice="80" row="1"/>
-    <Item name="14"   type="Minor" basePrice="80" row="1"/>
-    <Item name="15"   type="Minor" basePrice="80" row="1"/>
+  <StartPacket roundClass="rails.game.specific._18EU.StartRound_18EU">
+	<Bidding initial="0" minimum="5" increment="5"/>
+    <Item name="1"   type="Minor" basePrice="100"/>
+    <Item name="2"   type="Minor" basePrice="100"/>
+    <Item name="3"   type="Minor" basePrice="100"/>
+    <Item name="4"   type="Minor" basePrice="100"/>
+    <Item name="5"   type="Minor" basePrice="100"/>
+    <Item name="6"   type="Minor" basePrice="100"/>
+    <Item name="7"   type="Minor" basePrice="100"/>
+    <Item name="8"   type="Minor" basePrice="100"/>
+    <Item name="9"   type="Minor" basePrice="100"/>
+    <Item name="10"   type="Minor" basePrice="100"/>
+    <Item name="11"   type="Minor" basePrice="100"/>
+    <Item name="12"   type="Minor" basePrice="100"/>
+    <Item name="13"   type="Minor" basePrice="100"/>
+    <Item name="14"   type="Minor" basePrice="100"/>
+    <Item name="15"   type="Minor" basePrice="100"/>
   </StartPacket>
   <StockRoundRules>
 		<!-- Will probably move later to a GameManager XML-->
