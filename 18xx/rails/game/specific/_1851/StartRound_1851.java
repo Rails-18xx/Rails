@@ -1,10 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.2 2008/01/27 15:23:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.3 2008/02/13 20:04:07 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.*;
 
 import rails.game.*;
-import rails.game.action.BuyOrBidStartItem;
+import rails.game.action.BidStartItem;
+import rails.game.action.BuyStartItem;
+import rails.game.action.StartItemAction;
 import rails.util.LocalText;
 
 
@@ -55,7 +57,7 @@ public class StartRound_1851 extends StartRound
 	
 	public boolean setPossibleActions() {
 		
-		BuyOrBidStartItem action;
+		StartItemAction action;
 		List<StartItem> startItems = startPacket.getItems();
 		
 		possibleActions.clear();
@@ -64,9 +66,10 @@ public class StartRound_1851 extends StartRound
 		{
 			if (!item.isSold()) {
 				item.setStatus (StartItem.BUYABLE);
-				possibleActions.add(action = new BuyOrBidStartItem (
+				possibleActions.add(action = new BuyStartItem (
 						item,
-						item.getBasePrice()));
+						item.getBasePrice(),
+						false));
 				log.debug(GameManager.getCurrentPlayer().getName()+" may: "+action.toString());
 			}
 
@@ -99,7 +102,7 @@ public class StartRound_1851 extends StartRound
 
 	/*----- MoveSet methods -----*/
 
-	public boolean bid(String playerName, BuyOrBidStartItem item)
+	public boolean bid(String playerName, BidStartItem item)
 	{
 
 		DisplayBuffer.add(LocalText.getText("InvalidAction"));
