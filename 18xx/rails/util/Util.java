@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.9 2008/01/18 19:58:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.10 2008/02/13 20:06:56 evos Exp $*/
 package rails.util;
 
 import rails.game.ConfigurationException;
 
 public final class Util
 {
+	
 	/**
 	 * No-args private constructor, to prevent (meaningless) construction of one
 	 * of these.
@@ -59,5 +60,15 @@ public final class Util
     public static boolean bitSet (int value, int bitmask) {
     	
     	return (value & bitmask) > 0;
+    }
+    
+    public static int setBit (int value, int bitmask, boolean set) {
+    	
+    	if (set) {
+    		return bitmask | value; 
+    	} else {
+    		System.out.println("Reset bit "+value+": from "+bitmask+" to "+(bitmask&~value));
+    		return bitmask & ~value;
+    	}
     }
 }
