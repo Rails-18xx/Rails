@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.10 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.11 2008/02/13 19:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
-import rails.game.action.BuyOrBidStartItem;
+import rails.game.action.BidStartItem;
+import rails.game.action.BuyStartItem;
+import rails.game.action.StartItemAction;
 import rails.game.action.NullAction;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
@@ -14,6 +16,7 @@ import rails.util.LocalText;
  */
 public class StartRound_1830 extends StartRound
 {
+	int bidIncrement; 
 
 	/**
 	 * Constructor, only to be used in dynamic instantiation.
@@ -33,7 +36,7 @@ public class StartRound_1830 extends StartRound
 	public void start(StartPacket startPacket)
 	{
 		super.start(startPacket);
-		
+		bidIncrement = startPacket.getModulus();
 		setPossibleActions();
 		
 	}
@@ -61,9 +64,11 @@ public class StartRound_1830 extends StartRound
 					if (currentPlayer.getFreeCash() 
 							+ auctionItem.getBid(currentPlayer)
 							>= auctionItem.getMinimumBid()) {
-						BuyOrBidStartItem possibleAction = new BuyOrBidStartItem (
+						BidStartItem possibleAction = new BidStartItem (
 								auctionItem, 
-								auctionItem.getMinimumBid());
+								auctionItem.getMinimumBid(),
+								startPacket.getModulus(),
+								true);
 						possibleActions.add (possibleAction);
 						break; // No more actions
 					} else {
@@ -72,8 +77,8 @@ public class StartRound_1830 extends StartRound
 					}
 				} else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
 					/* This status is set in buy() if a share price is missing */
-					possibleActions.add(new BuyOrBidStartItem(
-							item, 0));
+					possibleActions.add(new BuyStartItem (
+							item, 0, false, true));
 					passAllowed = false;
 					break; // No more actions
 				} else if (item == startPacket.getFirstUnsoldItem()) {
@@ -83,9 +88,10 @@ public class StartRound_1830 extends StartRound
 						PublicCompanyI comp = item.needsPriceSetting();
 						if (comp != null) {
 							setPlayer (item.getBidder());
-							BuyOrBidStartItem newItem = 
-								new BuyOrBidStartItem (item, item.getBasePrice(), StartItem.NEEDS_SHARE_PRICE);
-							newItem.setActualBid(item.getBid());
+							item.setStatus(StartItem.NEEDS_SHARE_PRICE);
+							BuyStartItem newItem = 
+								new BuyStartItem (item, item.getBasePrice(), 
+								        true, true);
 							possibleActions.add(newItem);
 							break; // No more actions possible!
 						} else {
@@ -105,18 +111,21 @@ public class StartRound_1830 extends StartRound
 						if (currentPlayer.getFreeCash() 
 								+ item.getBid(currentPlayer)
 								>= item.getMinimumBid()) {
-							BuyOrBidStartItem possibleAction = new BuyOrBidStartItem (
+							BidStartItem possibleAction = new BidStartItem (
 									item, 
-									item.getMinimumBid());
+									item.getMinimumBid(),
+									startPacket.getModulus(),
+									true);
 							possibleActions.add (possibleAction);
 						}
 						break; // No more possible actions!
 					} else {
 						item.setStatus(StartItem.BUYABLE);
 						if (currentPlayer.getFreeCash() >= item.getBasePrice()) {
-							possibleActions.add (new BuyOrBidStartItem (
+							possibleActions.add (new BuyStartItem (
 									item, 
-									item.getBasePrice()));
+									item.getBasePrice(),
+									false));
 						}
 					}
 				} else {
@@ -124,9 +133,12 @@ public class StartRound_1830 extends StartRound
 					if (currentPlayer.getFreeCash() 
 							+ item.getBid(currentPlayer)
 							>= item.getMinimumBid()) {
-						possibleActions.add (new BuyOrBidStartItem (
+						BidStartItem possibleAction = new BidStartItem (
 								item, 
-								item.getMinimumBid()));
+								item.getMinimumBid(),
+								startPacket.getModulus(),
+								false);
+						possibleActions.add (possibleAction);
 					}
 				}
 	
@@ -169,7 +181,7 @@ public class StartRound_1830 extends StartRound
 	 * @param amount
 	 *            The bid amount.
 	 */
-	protected boolean bid(String playerName, BuyOrBidStartItem bidItem)
+	protected boolean bid(String playerName, BidStartItem bidItem)
 	{
 
 		StartItem item = bidItem.getStartItem();
@@ -189,7 +201,7 @@ public class StartRound_1830 extends StartRound
 			}
 			// Check item
 			boolean validItem = false;
-			for (BuyOrBidStartItem activeItem : possibleActions.getType(BuyOrBidStartItem.class)) {
+			for (StartItemAction activeItem : possibleActions.getType(StartItemAction.class)) {
 				if (bidItem.equals(activeItem)) {
 					validItem = true;
 					break;
@@ -216,6 +228,17 @@ public class StartRound_1830 extends StartRound
 				errMsg = LocalText.getText("BidTooLow", ""+item.getMinimumBid());
 				break;
 			}
+			
+			// Bid must be a multiple of the modulus
+			if (bidAmount % startPacket.getModulus() != 0) {
+				errMsg = LocalText.getText("BidMustBeMultipleOf", new String[] {
+						String.valueOf(bidAmount),
+						String.valueOf(startPacket.getMinimumIncrement())}
+				);
+				break;
+			}
+			
+			// Has the buyer enough cash?
 			previousBid = item.getBid(player);
 			int available = player.getFreeCash() + previousBid;
 			if (bidAmount > available)
@@ -252,7 +275,7 @@ public class StartRound_1830 extends StartRound
 
 		if (bidItem.getStatus() != StartItem.AUCTIONED)
 		{
-			GameManager.setNextPlayer();
+			/*GameManager.*/;setNextPlayer();
 		}
 		else
 		{

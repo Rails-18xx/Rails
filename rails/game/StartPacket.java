@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.9 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.10 2008/02/13 19:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import rails.util.Tag;
 import rails.util.Util;
@@ -29,9 +31,17 @@ public class StartPacket
 	private String roundClassName;
 	/** The start items in this packet. */
 	private List<StartItem> items = new ArrayList<StartItem>();
+	/** The minimum initial bidding increment above the share price */
+	private int minimumInitialIncrement = 5;
+	/** The minimum increment between subsequent bids */
+	private int minimumIncrement = 5;
+	/** The modulus of all bids (i.e. of which value the bid must be a multiple) */
+	private int modulus = 5;
 
 	/** Default name */
 	public static final String DEFAULT_NAME = "Initial";
+	
+    protected static Logger log = Logger.getLogger(StartPacket.class.getPackage().getName());
 
 	/**
 	 * Constructor. Only takes the packet and class named. Actual initialisation
@@ -60,7 +70,13 @@ public class StartPacket
 	 */
 	public void configureFromXML(Tag tag) throws ConfigurationException
 	{
-		List<Tag> itemTags = tag.getChildren("Item");
+		Tag biddingTag = tag.getChild("Bidding");
+		if (biddingTag != null) {
+			minimumInitialIncrement = biddingTag.getAttributeAsInteger("ïnitial", minimumInitialIncrement);
+			minimumIncrement = biddingTag.getAttributeAsInteger("minimum", minimumIncrement);
+			modulus = biddingTag.getAttributeAsInteger("increment", modulus);
+		}
+	    List<Tag> itemTags = tag.getChildren("Item");
 
 		for (Tag itemTag : itemTags)
 		{
@@ -241,5 +257,19 @@ public class StartPacket
 	public int getNumberOfItems () {
 		return items.size();
 	}
+
+	public int getMinimumIncrement() {
+		return minimumIncrement;
+	}
+
+	public int getMinimumInitialIncrement() {
+		return minimumInitialIncrement;
+	}
+
+	public int getModulus() {
+		return modulus;
+	}
+	
+	
 
 }

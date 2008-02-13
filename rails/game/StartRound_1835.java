@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.8 2007/10/05 22:02:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.9 2008/02/13 19:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
-import rails.game.action.BuyOrBidStartItem;
+import rails.game.action.BidStartItem;
+import rails.game.action.BuyStartItem;
+import rails.game.action.StartItemAction;
 import rails.game.action.NullAction;
 import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
@@ -127,9 +129,10 @@ public class StartRound_1835 extends StartRound
 				
 				if (item.getBasePrice() <= cashToSpend) {
 					/* Player does have the cash */
-					possibleActions.add(new BuyOrBidStartItem (
+					possibleActions.add(new BuyStartItem (
 							item,
-							item.getBasePrice()));
+							item.getBasePrice(),
+							false));
 				}
 			}
 
@@ -197,7 +200,7 @@ public class StartRound_1835 extends StartRound
 
 	/*----- MoveSet methods -----*/
 
-	public boolean bid(String playerName, BuyOrBidStartItem item)
+	public boolean bid(String playerName, BidStartItem item)
 	{
 
 		DisplayBuffer.add(LocalText.getText("InvalidAction"));

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.9 2008/01/08 20:23:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.10 2008/02/13 19:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -140,6 +140,8 @@ public class StartItem
 			bids[i].setOption(MoneyModel.SUPPRESS_ZERO);
 			
 		}
+		//TODO Leave this for now, but it should be done
+		// in the game-specific StartRound class
 		minimumBid.set(basePrice.intValue()+5);
 
 		if (ipo == null)
@@ -311,9 +313,20 @@ public class StartItem
 	public void setBid(int amount, Player bidder)
 	{
 		int index = bidder.getIndex();
-		lastBidderIndex.set(index);
-		bids[index].set(amount);
-		minimumBid.set(amount + 5);
+        bids[index].set(amount);
+        
+        // Take care for negative values, meaning "has passed"
+        // (used in 18EU)
+        if (amount > 0) {
+            lastBidderIndex.set(index);
+            minimumBid.set(amount + 5);
+        } else if (amount == 0) {
+        	// Used in 18EU to force making the "bid" 
+        	// (in fact: buy price) visible
+        	bids[index].resetOption(MoneyModel.SUPPRESS_ZERO);
+        	bids[index].update();
+        }
+
 	}
 
 	/**
@@ -354,7 +367,7 @@ public class StartItem
 	{
 		int bidders = 0;
 		for (int i=0; i<numberOfPlayers; i++) {
-			if (bids[i].intValue() != 0) bidders++;
+			if (bids[i].intValue() > 0) bidders++;
 		}
 		return bidders;
 	}
@@ -382,6 +395,10 @@ public class StartItem
 	public int getMinimumBid()
 	{
 		return minimumBid.intValue();
+	}
+	
+	public void setMinimumBid (int value) {
+	    minimumBid.set(value);
 	}
 
 	/**
@@ -518,6 +535,16 @@ public class StartItem
 	
 	public static StartItem getByName (String name) {
 		return startItemMap.get(name);
+	}
+	
+	public String getType() {
+	    return type;
+	}
+	
+	public boolean equals (StartItem item) {
+log.debug("Item "+item.getType()+"/"+item.getName()+" is compared with "+type+"/"+name);
+	    return this.name.equals(item.getName())
+	        && this.type.equals(item.getType());
 	}
 
 }
