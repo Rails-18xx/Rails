@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/MoneyModel.java,v 1.6 2007/12/04 20:25:20 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/MoneyModel.java,v 1.7 2008/02/13 20:03:19 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Bank;
@@ -11,6 +11,7 @@ public class MoneyModel extends IntegerState
     public static final int SUPPRESS_ZERO = 1;
     public static final int SUPPRESS_INITIAL_ZERO = 2;
     public static final int ADD_PLUS = 4;
+    public static final int ALLOW_NEGATIVE = 8;
     private BooleanState initialised;
 
 	public MoneyModel(String name)
@@ -55,6 +56,8 @@ public class MoneyModel extends IntegerState
             	|| Util.bitSet (option, SUPPRESS_INITIAL_ZERO)
             		&& (initialised == null 
             			|| !initialised.booleanValue()))) {
+	        return "";
+	    } else if (amount < 0 && !Util.bitSet(option, ALLOW_NEGATIVE)) {
 	        return "";
 	    } else if (Util.bitSet(option, ADD_PLUS)){
 	        return "+" + Bank.format(amount);
