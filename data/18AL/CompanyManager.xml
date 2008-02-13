@@ -78,6 +78,7 @@
 		<Destination hex="G4"/>
 	</Company>
 	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Tusc" type="Private" basePrice="20"/>
 		<Item name="S&amp;NA" type="Private" basePrice="40"/>
 		<Item name="B&amp;SLC" type="Private" basePrice="70"/>

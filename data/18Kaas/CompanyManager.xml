@@ -73,6 +73,7 @@
     <Home hex="B17"/>
 	</Company>
 	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>
 		<Item name="D&amp;H" type="Private" basePrice="70"/>
