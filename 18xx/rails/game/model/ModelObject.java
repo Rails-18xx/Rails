@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.6 2008/02/13 20:02:35 evos Exp $*/
 package rails.game.model;
 
 import java.util.HashSet;
@@ -6,6 +6,8 @@ import java.util.Observable;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import rails.util.Util;
 
 /**
  * A generic superclass for all Model values that need be displayed
@@ -47,6 +49,11 @@ public abstract class ModelObject extends Observable {
      */
     public void setOption (int option) {
         this.option = option;
+    }
+    
+    public void resetOption (int option) {
+    	log.debug("Resetting option "+option);
+    	this.option = Util.setBit (option, this.option, false);
     }
     
     /**
