@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.8 2008/01/27 15:23:44 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.9 2008/02/14 20:28:27 evos Exp $
+ *
  * Created on 17-Sep-2006
  * Change Log:
  */
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.Bank;
-import rails.game.CashHolder;
 import rails.game.Portfolio;
 import rails.game.PublicCertificate;
 import rails.game.PublicCertificateI;
@@ -18,7 +17,7 @@ import rails.game.PublicCertificateI;
  * @author Erik Vos
  */
 public class BuyCertificate extends PossibleAction {
-    
+
     // Server-side settings
     transient protected PublicCertificateI certificate;
     protected String certUniqueId;
@@ -26,12 +25,12 @@ public class BuyCertificate extends PossibleAction {
     protected String fromName;
     protected int price;
     protected int maximumNumber;
-    
+
     // Client-side settings
     protected int numberBought = 0;
 
     public static final long serialVersionUID = 1L;
-    
+
     /**
      * Common constructor.
      */
@@ -44,7 +43,7 @@ public class BuyCertificate extends PossibleAction {
         this.price = price;
         this.maximumNumber = maximumNumber;
     }
-    
+
     /** Buy a certificate from some portfolio at the current price */
     public BuyCertificate (PublicCertificateI certificate, Portfolio from) {
     	this (certificate, from, certificate.getCertificatePrice(),	1);
@@ -55,14 +54,14 @@ public class BuyCertificate extends PossibleAction {
     		int price) {
     	this (certificate, from, price,	1);
     }
-    
+
     /** Required for deserialization */
     public BuyCertificate() {}
-    
+
     public Portfolio getFromPortfolio () {
         return from;
     }
-    
+
     public String getFromName() {
         return fromName;
     }
@@ -79,14 +78,14 @@ public class BuyCertificate extends PossibleAction {
     public int getPrice() {
         return price;
     }
-    
+
     /**
      * @return Returns the certificate.
      */
     public PublicCertificateI getCertificate() {
         return certificate;
     }
-    
+
     public int getNumberBought() {
 		return numberBought;
 	}
@@ -94,7 +93,8 @@ public class BuyCertificate extends PossibleAction {
 	public void setNumberBought(int numberBought) {
 		this.numberBought = numberBought;
 	}
-    
+
+    @Override
     public boolean equals (PossibleAction action) {
         if (!(action instanceof BuyCertificate)) return false;
         BuyCertificate a = (BuyCertificate) action;
@@ -104,8 +104,9 @@ public class BuyCertificate extends PossibleAction {
             && a.maximumNumber == maximumNumber;
     }
 
-	public String toString() {
-		StringBuffer text = new StringBuffer(); 
+	@Override
+    public String toString() {
+		StringBuffer text = new StringBuffer();
         text.append("BuyCertificate: ");
         if (numberBought > 1) {
         	text.append (numberBought).append(" of ");
@@ -117,13 +118,13 @@ public class BuyCertificate extends PossibleAction {
         	.append(" price=").append(Bank.format(certificate.getShares() * price));
         return text.toString();
     }
-	
-	private void readObject (ObjectInputStream in) 
+
+	private void readObject (ObjectInputStream in)
 			throws IOException, ClassNotFoundException {
-		
+
 		in.defaultReadObject();
 		certificate = PublicCertificate.getByUniqueId (certUniqueId);
 		from = Portfolio.getByName(fromName);
-		
+
 	}
 }

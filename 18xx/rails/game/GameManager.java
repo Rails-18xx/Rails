@@ -1,5 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.24 2008/01/27 15:23:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.25 2008/02/14 20:28:28 evos Exp $ */
 package rails.game;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import rails.game.action.GameAction;
 import rails.game.action.PossibleAction;
@@ -9,14 +19,6 @@ import rails.game.move.MoveSet;
 import rails.game.state.State;
 import rails.ui.swing.ORUIManager;
 import rails.util.*;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.*;
-
-import org.apache.log4j.Logger;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -29,9 +31,9 @@ public class GameManager implements ConfigurableComponentI
     /** Overall save file version ID, taking into account the
      * version ID of the action package.
      */
-    public static final long saveFileVersionID 
+    public static final long saveFileVersionID
             = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
-    
+
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
@@ -41,12 +43,13 @@ public class GameManager implements ConfigurableComponentI
 	protected int numberOfPlayers;
 	protected State currentPlayer =
 		new State ("CurrentPlayer", Player.class);
-	protected State priorityPlayer = 
+	protected State priorityPlayer =
 	    new State ("PriorityPlayer", Player.class);
 
 	protected int playerShareLimit = 60;
 	protected int treasuryShareLimit = 50; // For some games
 	protected int currentNumberOfOperatingRounds = 1;
+	protected boolean skipFirstStockRound = false;
 
 	protected boolean companiesCanBuyPrivates = false;
 	protected boolean gameEndsWithBankruptcy = false;
@@ -60,7 +63,7 @@ public class GameManager implements ConfigurableComponentI
 	 * been sold, it finishes by starting an Operating Round, which handles the
 	 * privates payout and then immediately starts a new Start Round.
 	 */
-    protected State currentRound 
+    protected State currentRound
         = new State ("CurrentRound", Round.class);
 	protected RoundI interruptedRound = null;
 
@@ -80,14 +83,14 @@ public class GameManager implements ConfigurableComponentI
 	protected String name;
 
 	protected StartPacket startPacket;
-    
+
     PossibleActions possibleActions = PossibleActions.getInstance();
-    
+
     List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
 
 	/** A List of available game options */
 	protected List<GameOption> availableGameOptions = new ArrayList<GameOption>();
-    
+
     /* Some standard tags for conditional attributes */
     public static final String VARIANT_KEY = "Variant";
     public static final String OPTION_TAG = "GameOption";
@@ -98,7 +101,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * Private constructor.
-	 * 
+	 *
 	 */
 	public GameManager()
 	{
@@ -140,7 +143,7 @@ public class GameManager implements ConfigurableComponentI
 				if (optionDefault != null) option.setDefaultValue(optionDefault);
 			}
 		}
-		
+
 		// StockRound class and other properties
 		Tag srTag = tag.getChild("StockRound");
 		if (srTag != null) {
@@ -160,8 +163,10 @@ public class GameManager implements ConfigurableComponentI
                     stockRoundSequenceRule = StockRound.SELL_BUY_OR_BUY_SELL;
                 }
             }
+            
+            skipFirstStockRound = srTag.getAttributeAsBoolean("skipFirst", skipFirstStockRound);
 		}
-        
+
         // OperatingRound class
         Tag orTag = tag.getChild("OperatingRound");
         if (orTag != null) {
@@ -219,7 +224,7 @@ public class GameManager implements ConfigurableComponentI
 			}
 		}
 
-		
+
         // ORUIManager class
         Tag orMgrTag = tag.getChild("ORUIManager");
         if (orMgrTag != null) {
@@ -250,7 +255,7 @@ public class GameManager implements ConfigurableComponentI
 		{
 			startStockRound();
 		}
-		
+
 		// Initialisation is complete. Undoability starts here.
 		MoveSet.enable();
 	}
@@ -270,7 +275,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * Should be called by each Round when it finishes.
-	 * 
+	 *
 	 * @param round
 	 *            The object that represents the finishing round.
 	 */
@@ -282,6 +287,18 @@ public class GameManager implements ConfigurableComponentI
 			{
 				startOperatingRound(false);
 			}
+			else if (skipFirstStockRound) {
+			    PhaseI currentPhase = PhaseManager.getInstance().getCurrentPhase();
+				numOfORs = currentPhase.getNumberOfOperatingRounds();
+				log.info ("Phase=" + currentPhase.getName() + " ORs="
+						+ numOfORs);
+
+				// Create a new OperatingRound (never more than one Stock Round)
+				OperatingRound.resetRelativeORNumber();
+
+				orNumber = 1;
+				startOperatingRound (true);
+			} 
 			else
 			{
 				startStockRound();
@@ -296,9 +313,9 @@ public class GameManager implements ConfigurableComponentI
 
 			// Create a new OperatingRound (never more than one Stock Round)
 			OperatingRound.resetRelativeORNumber();
+			orNumber = 1;
 			startOperatingRound(true);
 
-			orNumber = 1;
 		}
 		else if (round instanceof OperatingRound)
 		{
@@ -339,17 +356,23 @@ public class GameManager implements ConfigurableComponentI
 
 	private void startStockRound()
 	{
-		new StockRound().start();
+        try {
+            StockRound sr = stockRoundClass.asSubclass(StockRound.class).newInstance();
+            sr.start();
+        } catch (Exception e) {
+            log.fatal ("Cannot instantiate class "+operatingRoundClass.getName(), e);
+            System.exit(1);
+        }
 	}
 
 	private void startOperatingRound(boolean operate)
 	{
 		log.debug("Operating round started with operate-flag="+operate);
 		//playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
-        
+
 		//new OperatingRound().start(operate);
         try {
-            OperatingRound or = (OperatingRound)operatingRoundClass.newInstance();
+            OperatingRound or = operatingRoundClass.newInstance();
             or.start(operate);
         } catch (Exception e) {
             log.fatal ("Cannot instantiate class "+operatingRoundClass.getName(), e);
@@ -364,16 +387,16 @@ public class GameManager implements ConfigurableComponentI
 		interruptedRound = getCurrentRound();
 		new ShareSellingRound(companyNeedingTrain, cashToRaise).start();
 	}
-	
+
 	public void startTreasuryShareTradingRound (
 	        OperatingRound or,
 	        PublicCompanyI companyTradingShares) {
-	    
+
 	    interruptedRound = getCurrentRound();
 	    new TreasuryShareRound(companyTradingShares).start();
 	}
-    
-    /** The central server-side method that takes 
+
+    /** The central server-side method that takes
      * a client-side initiated action and processes it.
      * @param action A PossibleAction subclass object sent by the client.
      * @return TRUE is the action was valid.
@@ -381,13 +404,13 @@ public class GameManager implements ConfigurableComponentI
     public boolean process (PossibleAction action) {
 
 		boolean result = true;
-		
+
     	// The action is null only immediately after Load.
     	if (action != null) {
-    		
+
             action.setActed();
     		result = false;
-    		
+
 			// Check player
 			String actionPlayerName = action.getPlayerName();
 			String currentPlayerName = getCurrentPlayer().getName();
@@ -399,19 +422,19 @@ public class GameManager implements ConfigurableComponentI
 				}));
 				return false;
 			}
-			
+
 			// Check if the action is allowed
 			if (!possibleActions.validate(action)) {
 				DisplayBuffer.add (LocalText.getText("ActionNotAllowed", action.toString()));
 				return false;
 			}
-			
-	    	
+
+
 	        for (;;) {
-				
+
 				// Process undo/redo centrally
 				if (action instanceof GameAction) {
-					
+
 					GameAction gameAction = (GameAction) action;
 					switch (gameAction.getMode()) {
 	                case GameAction.SAVE:
@@ -431,14 +454,14 @@ public class GameManager implements ConfigurableComponentI
 						break;
 					}
 					if (result) break;
-				
+
 				}
-				
+
 				// All other actions: process per round
 				result = getCurrentRound().process(action);
 				break;
 	        }
-	        
+
 	        if (result && !(action instanceof GameAction)) {
 	            new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
 	            if (MoveSet.isOpen()) MoveSet.finish();
@@ -446,7 +469,7 @@ public class GameManager implements ConfigurableComponentI
 	            if (MoveSet.isOpen()) MoveSet.cancel();
 	         }
     	}
-        
+
         // Note: round may have changed!
     	log.debug("Calling setPossibleActions for round "+getCurrentRound().toString());
         getCurrentRound().setPossibleActions();
@@ -462,32 +485,32 @@ public class GameManager implements ConfigurableComponentI
             possibleActions.add(new GameAction (GameAction.REDO));
         }
         possibleActions.add(new GameAction (GameAction.SAVE));
-        
+
         return result;
-        
+
     }
-    
-    public void processOnReload (List<PossibleAction> actions) 
+
+    public void processOnReload (List<PossibleAction> actions)
     throws Exception {
-        
+
         for (PossibleAction action : actions) {
             try {
                 getCurrentRound().process(action);
             } catch (Exception e) {
                 log.debug("Error while reprocessing "+action.toString(), e);
                 throw new Exception ("Reload failure", e);
-                
+
             }
             new AddToList<PossibleAction> (executedActions, action, "ExecutedActions");
             if (MoveSet.isOpen()) MoveSet.finish();
         }
     }
-    
+
     protected boolean save (GameAction saveAction) {
-        
+
         String filepath = saveAction.getFilepath();
         boolean result = false;
-        
+
         try {
             ObjectOutputStream oos = new ObjectOutputStream (
                     new FileOutputStream (new File (filepath)));
@@ -497,7 +520,7 @@ public class GameManager implements ConfigurableComponentI
             oos.writeObject(playerNames);
             oos.writeObject(executedActions);
             oos.close();
-            
+
             result = true;
         } catch (IOException e) {
             log.error ("Save failed", e);
@@ -513,7 +536,7 @@ public class GameManager implements ConfigurableComponentI
         setRound (interruptedRound);
 		((OperatingRound) getCurrentRound()).resumeTrainBuying();
 	}
-	
+
 	public void finishTreasuryShareRound () {
 	    setRound (interruptedRound);
         ((OperatingRound) getCurrentRound()).nextStep();
@@ -543,7 +566,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * To be called by the UI to check if the rails.game is over.
-	 * 
+	 *
 	 * @return
 	 */
 	public static boolean isGameOver()
@@ -559,7 +582,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * Create a HTML-formatted rails.game status report.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getGameReport()
@@ -576,7 +599,7 @@ public class GameManager implements ConfigurableComponentI
 		Collections.sort(rankedPlayers);
 
 		/* Report winner */
-		Player winner = (Player) rankedPlayers.get(0);
+		Player winner = rankedPlayers.get(0);
 		b.append("The winner is " + winner.getName() + "!");
 
 		/* Report final ranking */
@@ -594,7 +617,7 @@ public class GameManager implements ConfigurableComponentI
 	/**
 	 * Should be called whenever a Phase changes. The effect on the number of
 	 * ORs is delayed until a StockRound finishes.
-	 * 
+	 *
 	 */
 	public RoundI getCurrentRound()
 	{
@@ -626,7 +649,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * Set priority deal to the player after the current player.
-	 * 
+	 *
 	 */
 	public static void setPriorityPlayer()
 	{
@@ -634,7 +657,7 @@ public class GameManager implements ConfigurableComponentI
 		setPriorityPlayer (instance.players.get(priorityPlayerIndex));
 
 	}
-	
+
 	public static void setPriorityPlayer(Player player) {
         instance.priorityPlayer.set(player);
 	    log.debug ("Priority player set to "
@@ -672,7 +695,7 @@ public class GameManager implements ConfigurableComponentI
 
 	/**
 	 * Return a player by its index in the list, modulo the number of players.
-	 * 
+	 *
 	 * @param index
 	 *            The player index.
 	 * @return A player object.
@@ -710,14 +733,14 @@ public class GameManager implements ConfigurableComponentI
 		return PhaseManager.getInstance().getCurrentPhase();
 	}
 
-    // TODO Should be removed 
+    // TODO Should be removed
 	public static void initialiseNewPhase(PhaseI phase)
 	{
 		ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
 
         phase.activate();
 
-        // TODO The below should be merged into activate() 
+        // TODO The below should be merged into activate()
 		if (phase.doPrivatesClose())
 		{
 			Game.getCompanyManager().closeAllPrivates();
@@ -763,7 +786,7 @@ public class GameManager implements ConfigurableComponentI
 			    if (company.getNumberOfLaidBaseTokens() == 0) {
 			        company.layHomeBaseTokens();
 			    }
-			    
+
 			}
 		}
 	}
@@ -791,7 +814,7 @@ public class GameManager implements ConfigurableComponentI
 	public static void setHasAnyParPrice(boolean hasAnyParPrice) {
         instance.hasAnyParPrice = hasAnyParPrice;
 	}
-	
+
 	public static boolean canAnyCompanyHoldShares() {
 		return instance.canAnyCompanyHoldShares;
 	}
@@ -815,7 +838,7 @@ public class GameManager implements ConfigurableComponentI
 	public static void setBonusTokensExist(boolean bonusTokensExist) {
 		instance.bonusTokensExist = bonusTokensExist;
 	}
-	
+
 	public Class<? extends ORUIManager> getORUIManagerClass() {
 		return orUIManagerClass;
 	}
@@ -827,8 +850,8 @@ public class GameManager implements ConfigurableComponentI
     public int getTreasuryShareLimit() {
         return treasuryShareLimit;
     }
-	
-	
-	
-	
+
+
+
+
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.18 2008/02/13 20:05:42 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.19 2008/02/14 20:28:31 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -10,7 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -34,6 +37,7 @@ import rails.game.StartRound;
 import rails.game.StartRoundI;
 import rails.game.StockMarketI;
 import rails.game.StockSpace;
+import rails.game.StockSpaceI;
 import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
 import rails.game.action.GameAction;
@@ -409,7 +413,6 @@ implements ActionListener, KeyListener, ActionPerformer
         boolean buyAllowed = false;
         boolean bidAllowed = false;
 
-        int type;
         boolean selected = false;
 
         BuyStartItem buyAction;
@@ -435,7 +438,7 @@ implements ActionListener, KeyListener, ActionPerformer
 				    }
 	                itemNameButton[i].setSelected(selected);
 	                itemNameButton[i].setEnabled(!selected);
-					setItemNameButton(i, !selected);
+					setItemNameButton(i, selected);
 					if (includeBidding && showBasePrices) minBid[i].setText("");
 					buyAllowed = selected;
 
@@ -614,13 +617,29 @@ implements ActionListener, KeyListener, ActionPerformer
 		if (activeItem.hasSharePriceToSet()) {
 			String compName = activeItem.getCompanyToSetPriceFor();
 			StockMarketI stockMarket = Game.getStockMarket();
+
+			// Get a sorted prices List
+			// TODO: should be included in BuyStartItem
+			List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
+			Map<Integer, StockSpaceI> spacePerPrice = new HashMap<Integer, StockSpaceI>();
+			int[] prices = new int[startSpaces.size()];
+			StockSpaceI[] options = new StockSpaceI[startSpaces.size()];
+			for (int i=0; i<startSpaces.size(); i++) {
+                prices[i] = startSpaces.get(i).getPrice();
+			    spacePerPrice.put(prices[i], startSpaces.get(i));
+			}
+			Arrays.sort (prices);
+            for (int i=0; i<startSpaces.size(); i++) {
+                options[i] = spacePerPrice.get(prices[i]);
+            }
+
 			StockSpace sp = (StockSpace) JOptionPane.showInputDialog(this,
 					LocalText.getText("WHICH_START_PRICE", compName),
 					LocalText.getText("WHICH_PRICE"),
 					JOptionPane.QUESTION_MESSAGE,
 					null,
-					stockMarket.getStartSpaces().toArray(),
-					stockMarket.getStartSpaces().get(0));
+					options,
+					options[0]);
 			if (sp == null) {
 				return false;
 			}
