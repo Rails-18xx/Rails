@@ -73,7 +73,7 @@
 	<Hex name="G18" tile="0" cost="60"/>
 	<Hex name="G20" tile="-1"/>
 	<Hex name="H1" tile="0"/>
-	<Hex name="H3" tile="0" cost="40"/>
+	<Hex name="H3" tile="-1" cost="40"/>
 	<Hex name="H5" tile="0" cost="40"/>
 	<Hex name="H7" tile="0" cost="60"/>
 	<Hex name="H9" tile="0"/>
