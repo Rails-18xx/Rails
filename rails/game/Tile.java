@@ -1,18 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.14 2008/01/27 23:27:55 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.15 2008/02/14 20:22:50 evos Exp $ */
 package rails.game;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import rails.game.model.ModelObject;
-import rails.util.*;
+import rails.util.LocalText;
+import rails.util.Tag;
 
 public class Tile extends ModelObject implements TileI, StationHolderI
 {
 
 	/** The 'internal id', identifying the tile in the XML files */
-	private int id;
-	/** The 'external id', which is shown in the UI. 
+	private final int id;
+	/** The 'external id', which is shown in the UI.
 	 * Usually equal to the internal id,
 	 * but different in case of duplicates.
 	 */
@@ -22,27 +25,27 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	 * but different in case of graphical variants
 	 * (such as the 18EU tiles 80-83).
 	 */
-	private int pictureId; 
+	private int pictureId;
 	private String name;
 	private String colour; // May become a separate class TileType
 	private boolean upgradeable;
-	private List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
+	private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
 	private String upgradesString = "";
-	private List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
-	private List<Track> tracks = new ArrayList<Track>();
-	private List<Station> stations = new ArrayList<Station>();
+	private final List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
+	private final List<Track> tracks = new ArrayList<Track>();
+	private final List<Station> stations = new ArrayList<Station>();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
 	private boolean unlimited = false;
 	public static final int UNLIMITED = -1;
-	
+
 	public static final String YELLOW = "yellow";
 	public static final String GREEN = "green";
 	public static final String BROWN = "brown";
 	public static final String GREY = "grey";
-	
-	private ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
+
+	private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
 	public Tile(Integer id)
 	{
@@ -69,9 +72,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	        throw new ConfigurationException (
 	                LocalText.getText("TileMissing", String.valueOf(id)));
 	    }
-	    
+
 		name = defTag.getAttributeAsString("name", name);
-		
+
 		colour = defTag.getAttributeAsString("colour");
 		if (colour == null)
 			throw new ConfigurationException(
@@ -100,7 +103,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 					throw new ConfigurationException(
 					        LocalText.getText("FromOrToMissing", String.valueOf(id)));
 				}
-	
+
 				from = getPointNumber(fromStr);
 				to = getPointNumber(toStr);
 				track = new Track(from, to);
@@ -153,7 +156,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 
 		/* Upgrades */
 		List<Tag> upgradeTags = setTag.getChildren("Upgrade");
-		
+
 		if (upgradeTags != null) {
 			String ids;
 			int id;
@@ -161,13 +164,13 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 			TileI upgradeTile;
 			Upgrade upgrade;
 			String hexes;
-			
+
 			for (Tag upgradeTag : upgradeTags)
 			{
 				ids = upgradeTag.getAttributeAsString("id");
 				upgradesString = ids; // TEMPORARY
 				List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
-				
+
 				if (ids != null)
 				{
 					idArray = ids.split(",");
@@ -195,19 +198,19 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 							        new String[] {name, idArray[j]}),
 									e);
 						}
-	
+
 					}
-	
+
 				}
-	
+
 				// Process any included or excluded hexes for the current set of upgrades
 				hexes = upgradeTag.getAttributeAsString("hex");
-				if (hexes != null) 
+				if (hexes != null)
 				{
 				    for (Upgrade newUpgrade : newUpgrades) {
 		                newUpgrade.setHexes(hexes);
 		            }
-				    
+
 				}
 			}
 		}
@@ -268,7 +271,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 			sideNumber += 6;
 		return (tracksPerSide[sideNumber % 6].size() > 0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Track> getTracksPerSide (int sideNumber) {
         while (sideNumber < 0)
@@ -286,7 +289,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 
 	/**
 	 * Is the tile layable now (in the current phase)?
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isLayableNow()
@@ -297,7 +300,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	/**
 	 * Get the valid upgrades if this tile on a certain hex (restrictions per
 	 * hex have not yet been implemented).
-	 * 
+	 *
 	 * @param hex
 	 *            The MapHex to be upgraded.
 	 * @return A List of valid upgrade TileI objects.
@@ -325,7 +328,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 
 		for (Upgrade upgrade : upgrades)
 		{
-			tile = (TileI) upgrade.getTile();
+			tile = upgrade.getTile();
 			if (phase.isTileColourAllowed(tile.getColour())
 					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
 					&& upgrade.isAllowedForHex(hex))
@@ -375,10 +378,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 		else
 			return quantity - tilesLaid.size();
 	}
-	
-	/** Return a caption for the Remaining Tiles window */ 
-	public String getText () {
-	    
+
+	/** Return a caption for the Remaining Tiles window */
+	@Override
+    public String getText () {
+
 	    String count = unlimited ? "+" : String.valueOf(countFreeTiles());
 	    return "#" + externalId + ": " + count;
 	}
@@ -387,34 +391,34 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	{
 		return quantity;
 	}
-	
+
 	protected class Upgrade {
-	    
+
 	    /** The upgrade tile */
 	    TileI tile;
-	    
+
 	    /** Hexes where the upgrade can be executed */
 	    List<MapHex> allowedHexes = null;
-	    /** Hexes where the upgrade cannot be executed 
-	     * Only one of allowedHexes and disallowedHexes should be used 
+	    /** Hexes where the upgrade cannot be executed
+	     * Only one of allowedHexes and disallowedHexes should be used
 	     * */
 	    List<MapHex> disallowedHexes = null;
-	    
+
 	    /** A temporary String holding the in/excluded hexes.
 	     * This will be processed at the first usage, because Tiles
 	     * are initialised before the Map.
 	     * @author Erik Vos
 	     */
 	    String hexes = null;
-	    
+
 	    protected Upgrade (TileI tile) {
 	        this.tile = tile;
 	    }
-	    
+
 	    protected boolean isAllowedForHex (MapHex hex) {
-	        
+
 	        if (hexes != null) convertHexString();
-	        
+
 	        if (allowedHexes != null) {
 	            return allowedHexes.contains(hex);
 	        } else if (disallowedHexes != null) {
@@ -423,17 +427,17 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	            return true;
 	        }
 	    }
-	    
+
 	    protected TileI getTile() {
 	        return tile;
 	    }
-	    
+
 	    protected void setHexes (String hexes) {
 	        this.hexes = hexes;
 	    }
-	    
+
 	    private void convertHexString () {
-	        
+
 	        boolean allowed = !hexes.startsWith("-");
 	        if (!allowed) hexes = hexes.substring(1);
 	        String[] hexArray = hexes.split(",");

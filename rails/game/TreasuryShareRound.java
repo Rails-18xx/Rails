@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.2 2008/01/27 15:23:42 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.3 2008/02/14 20:22:21 evos Exp $
+ *
  * Created on 21-May-2006
  * Change Log:
  */
@@ -23,15 +23,15 @@ import rails.util.LocalText;
  * @author Erik Vos
  */
 public class TreasuryShareRound extends StockRound {
-    
+
     Player sellingPlayer;
     PublicCompanyI operatingCompany;
     GameManager gameMgr;
-    private BooleanState hasBought;
-    private BooleanState hasSold;
-    
+    private final BooleanState hasBought;
+    private final BooleanState hasSold;
+
     public TreasuryShareRound (PublicCompanyI operatingCompany) {
-        
+
         this.operatingCompany = operatingCompany;
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
@@ -41,50 +41,55 @@ public class TreasuryShareRound extends StockRound {
         gameMgr = GameManager.getInstance();
         gameMgr.setRound(this);
 		GameManager.setCurrentPlayerIndex(sellingPlayer.getIndex());
-		
+
 }
-    
+
+    @Override
     public void start() {
         log.info ("Treasury share trading round started");
         currentPlayer = sellingPlayer;
     }
-    
- 	public boolean mayCurrentPlayerSellAnything() {
-	    return false;
-	}
-	
-	public boolean mayCurrentPlayerBuyAnything() {
+
+ 	@Override
+    public boolean mayCurrentPlayerSellAnything() {
 	    return false;
 	}
 
-	public boolean setPossibleActions() {
-		
+	@Override
+    public boolean mayCurrentPlayerBuyAnything() {
+	    return false;
+	}
+
+	@Override
+    public boolean setPossibleActions() {
+
 		possibleActions.clear();
-		
+
 		if (!operatingCompany.hasOperated()) return true;
-		
+
 		if (!hasSold.booleanValue()) setBuyableCerts();
 		if (!hasBought.booleanValue()) setSellableCerts();
-		
+
 		if (possibleActions.isEmpty()) {
 		    // TODO Finish the round before it started...
 		}
-		
+
 		possibleActions.add(new NullAction(NullAction.DONE));
-		
+
 		for (PossibleAction pa : possibleActions.getList()) {
 			log.debug(operatingCompany.getName()+ " may: "+pa.toString());
 		}
-		
+
 		return true;
 	}
 
     /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
-     * 
+     *
      * @return List of buyable certificates.
      */
+    @Override
     public void setBuyableCerts()
     {
         List<PublicCertificateI> certs;
@@ -99,7 +104,7 @@ public class TreasuryShareRound extends StockRound {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = Bank.getPool();
-        Map<String, List<PublicCertificateI>> map 
+        Map<String, List<PublicCertificateI>> map
             = from.getCertsPerCompanyMap();
 
         for (String compName : map.keySet())
@@ -107,10 +112,10 @@ public class TreasuryShareRound extends StockRound {
             certs = map.get(compName);
             if (certs == null || certs.isEmpty())
                 continue;
-            
+
             cert = certs.get(0);
             comp = cert.getCompany();
-            
+
             // TODO For now, only consider own certificates.
             // This will have to be revisited with 1841.
             if (comp != operatingCompany) continue;
@@ -125,9 +130,9 @@ public class TreasuryShareRound extends StockRound {
             number = Math.min(certs.size(), maxBuyable);
             if (number == 0) continue;
 
-            stockSpace = comp.getCurrentPrice(); 
+            stockSpace = comp.getCurrentPrice();
             price = stockSpace.getPrice();
-            
+
             // Does the company have enough cash?
             while (number > 0 && cash < number * price) number--;
 
@@ -135,7 +140,7 @@ public class TreasuryShareRound extends StockRound {
                 possibleActions.add(new BuyCertificate (cert, from, price, number));
             }
         }
-        
+
     }
 
 	/**
@@ -151,25 +156,25 @@ public class TreasuryShareRound extends StockRound {
 		String compName;
 		int price;
 		int number;
-		int share, maxShareToSell;
-		boolean dumpAllowed;
+		int maxShareToSell;
+
 		Portfolio companyPortfolio = operatingCompany.getPortfolio();
-		
+
 		/* First check of which companies the player owns stock,
 		 * and what maximum percentage he is allowed to sell.
-		 */ 
+		 */
 		for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
-			
+
 			// Can't sell shares that have no price
 			if (!company.hasStarted()) continue;
-			
-			share = maxShareToSell = companyPortfolio.getShare(company);
+
+			maxShareToSell = companyPortfolio.getShare(company);
 			if (maxShareToSell == 0) continue;
 
 			/* May not sell more than the Pool can accept */
 			maxShareToSell = Math.min(maxShareToSell, Bank.getPoolShareLimit() - pool.getShare(company));
 			if (maxShareToSell == 0) continue;
-			
+
 			// If the current Player is president, check if he can dump
 			// the presidency onto someone else
 			/* DISABLED, companies cannot yet have another company as a President.
@@ -196,15 +201,15 @@ public class TreasuryShareRound extends StockRound {
 				}
 			}
 			*/
-			
+
 			/* Check what share units the player actually owns.
-			 * In some games (e.g. 1835) companies may have different 
+			 * In some games (e.g. 1835) companies may have different
 			 * ordinary shares: 5% and 10%, or 10% and 20%.
 			 * The president's share counts as a multiple of the lowest
 			 * ordinary share unit type.
 			 */
 			// Take care for max. 4 share units per share
-			int[] shareCountPerUnit = new int[5]; 
+			int[] shareCountPerUnit = new int[5];
 			compName = company.getName();
 			for (PublicCertificateI c : companyPortfolio.getCertificatesPerCompany(compName)) {
 				if (c.isPresidentShare()) {
@@ -215,25 +220,25 @@ public class TreasuryShareRound extends StockRound {
 			}
 			// TODO The above ignores that a dumped player must be
 			// able to exchange the president's share.
-			
+
 			/* Check the price.
 			 * If a cert was sold before this turn,
 			 * the original price is still valid */
 			if (sellPrices.containsKey(compName))
 			{
-				price = ((StockSpaceI) sellPrices.get(compName)).getPrice();
+				price = (sellPrices.get(compName)).getPrice();
 			} else {
 				price = company.getCurrentPrice().getPrice();
 			}
 
-			
+
 			for (int i=1; i<=4; i++) {
 				number = shareCountPerUnit[i];
 				if (number == 0) continue;
-				number = Math.min (number, 
+				number = Math.min (number,
 						maxShareToSell / (i * company.getShareUnit()));
 				if (number == 0) continue;
-				
+
 				if (number > 0) {
                     possibleActions.add (new SellShares (compName,
 						i, number, price));
@@ -245,15 +250,16 @@ public class TreasuryShareRound extends StockRound {
     /**
      * Buying one or more single or double-share certificates (more is sometimes
      * possible)
-     * 
+     *
      * @param player
      *            The player that wants to buy shares.
      * @param action
      *            The executed action
      * @return True if the certificates could be bought. False indicates an
-     *         error. 
+     *         error.
      */
-     public boolean buyShares (String playerName, BuyCertificate action) {
+     @Override
+    public boolean buyShares (String playerName, BuyCertificate action) {
 
     	PublicCertificateI cert = action.getCertificate();
         Portfolio from = cert.getPortfolio();
@@ -293,7 +299,7 @@ public class TreasuryShareRound extends StockRound {
                         companyName,
                         operatingCompany.getName()
                 });
-                
+
             }
 
             // The company must have floated
@@ -306,7 +312,7 @@ public class TreasuryShareRound extends StockRound {
                 errMsg = LocalText.getText("NotYetOperated", companyName);
                 break;
             }
-            
+
             // Company may not buy after sell
             if (hasSold.booleanValue()) {
                 errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
@@ -323,11 +329,11 @@ public class TreasuryShareRound extends StockRound {
             }
 
             portfolio = operatingCompany.getPortfolio();
-            
+
             // Check if company would exceed the per-company share limit
             if (portfolio.getShare(company) + shares * company.getShareUnit() > gameMgr.getTreasuryShareLimit())
             {
-                errMsg = LocalText.getText("TreasuryOverHoldLimit", 
+                errMsg = LocalText.getText("TreasuryOverHoldLimit",
                         String.valueOf(gameMgr.getTreasuryShareLimit()));
                 break;
             }
@@ -384,7 +390,7 @@ public class TreasuryShareRound extends StockRound {
         for (int i = 0; i < number; i++)
         {
             cert2 = from.findCertificate(company, cert.getShares(), false);
-			portfolio.buyCertificate((PublicCertificateI) cert2, from, shares * price);
+			portfolio.buyCertificate(cert2, from, shares * price);
         }
 
         hasBought.set(true);
@@ -392,14 +398,15 @@ public class TreasuryShareRound extends StockRound {
         return true;
     }
 
-	public boolean sellShares (SellShares action)
+	@Override
+    public boolean sellShares (SellShares action)
 	{
 		Portfolio portfolio = operatingCompany.getPortfolio();
 		String errMsg = null;
 		String companyName = action.getCompanyName();
 		PublicCompanyI company = companyMgr.getPublicCompany(companyName);
 		PublicCertificateI cert = null;
-		List<PublicCertificateI> certsToSell 
+		List<PublicCertificateI> certsToSell
 			= new ArrayList<PublicCertificateI>();
 		int numberToSell = action.getNumberSold();
 		int shareUnits = action.getShareUnits();
@@ -428,7 +435,7 @@ public class TreasuryShareRound extends StockRound {
 			    });
 			    break;
 			}
-			
+
 			// The company must have floated
 			if (!company.hasFloated()) {
 			    errMsg = LocalText.getText("NotYetFloated", companyName);
@@ -505,7 +512,7 @@ public class TreasuryShareRound extends StockRound {
 		// Get the sell price (does not change within a turn)
 		if (sellPrices.containsKey(companyName))
 		{
-			price = ((StockSpaceI) sellPrices.get(companyName)).getPrice();
+			price = (sellPrices.get(companyName)).getPrice();
 		}
 		else
 		{
@@ -530,19 +537,20 @@ public class TreasuryShareRound extends StockRound {
 				pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
 		}
 		stockMarket.sell(company, numberSold);
-		
+
 		hasSold.set(true);
 
 		return true;
 	}
-	
+
    /**
      * The current Player passes or is done.
-     * 
+     *
      * @param player
      *            Name of the passing player.
      * @return False if an error is found.
      */
+    @Override
     public boolean done(String playerName)
     {
 
@@ -555,17 +563,18 @@ public class TreasuryShareRound extends StockRound {
         }
 
         MoveSet.start (false);
-        
+
         // Inform GameManager
         gameMgr.finishTreasuryShareRound();
 
         return true;
     }
-	
+
 	public PublicCompanyI getOperatingCompany () {
 	    return this.operatingCompany;
 	}
 
+    @Override
     public String toString() {
         return "TreasuryShareRound";
     }

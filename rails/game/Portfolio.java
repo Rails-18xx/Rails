@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.20 2008/01/27 23:27:55 wakko666 Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.21 2008/02/14 20:25:13 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -31,54 +31,54 @@ implements TokenHolderI, MoveableHolderI
 {
 
 	/** Owned private companies */
-	protected List<PrivateCompanyI> privateCompanies 
+	protected List<PrivateCompanyI> privateCompanies
 		= new ArrayList<PrivateCompanyI>();
-	protected PrivatesModel privatesOwnedModel 
+	protected PrivatesModel privatesOwnedModel
 		= new PrivatesModel(privateCompanies);
 
 	/** Owned public company certificates */
-	protected List<PublicCertificateI> certificates 
+	protected List<PublicCertificateI> certificates
 		= new ArrayList<PublicCertificateI>();
 
 	/** Owned public company certificates, organised in a HashMap per company */
-	protected Map<String, List<PublicCertificateI>> certPerCompany 
+	protected Map<String, List<PublicCertificateI>> certPerCompany
 		= new HashMap<String, List<PublicCertificateI>>();
-	
+
 	/** Owned public company certificates, organised in a HashMap per
 	 * unique certificate type (company, share percentage, presidency).
 	 * The key is the certificate type id (see PublicCertificate),
-	 * the value is the number of certificates of that type. 
+	 * the value is the number of certificates of that type.
 	 */
-	protected Map<String, List<PublicCertificateI>> certsPerType 
+	protected Map<String, List<PublicCertificateI>> certsPerType
 		= new HashMap<String, List<PublicCertificateI>>();
 
 	/** Share model per company */
-	protected Map<PublicCompanyI, ShareModel> shareModelPerCompany 
+	protected Map<PublicCompanyI, ShareModel> shareModelPerCompany
 		= new HashMap<PublicCompanyI, ShareModel>();
 
 	/** Owned trains */
 	protected List<TrainI> trains = new ArrayList<TrainI>();
-	protected Map<TrainTypeI, List<TrainI>> trainsPerType 
+	protected Map<TrainTypeI, List<TrainI>> trainsPerType
 		= new HashMap<TrainTypeI, List<TrainI>>();
 	protected TrainsModel trainsModel = new TrainsModel(this);
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
     protected List<TokenI> tokens = new ArrayList<TokenI>();
-    
-    /** Private-independent special properties. 
+
+    /** Private-independent special properties.
      * When moved here, a special property no longer depends
      * on the private company being alive.
      * Example: 18AL named train tokens.
      */
     protected List<SpecialPropertyI> specialProperties;
-    
+
 	/** Who owns the portfolio */
 	protected CashHolder owner;
 
 	/** Name of portfolio */
 	protected String name;
-	
+
 	/** A map allowing finding portfolios by name, for use in deserialization */
 	protected static Map<String, Portfolio> portfolioMap
 			= new HashMap<String, Portfolio> ();
@@ -90,7 +90,7 @@ implements TokenHolderI, MoveableHolderI
 		this.name = name;
 		this.owner = holder;
 		portfolioMap.put(name, this);
-		
+
 		if (owner instanceof PublicCompanyI) {
 			trainsModel.setOption(TrainsModel.FULL_LIST);
 			privatesOwnedModel.setOption(PrivatesModel.SPACE);
@@ -100,7 +100,7 @@ implements TokenHolderI, MoveableHolderI
 			privatesOwnedModel.setOption(PrivatesModel.BREAK);
 		}
 	}
-	
+
 	public static Portfolio getByName (String name) {
 		return portfolioMap.get(name);
 	}
@@ -110,7 +110,7 @@ implements TokenHolderI, MoveableHolderI
 	{
 
 		if (from != Bank.getIpo())
-		/* The initial buy is reported from StartRound. 
+		/* The initial buy is reported from StartRound.
 		 * This message should also move to elsewhere. */
 		{
 			ReportBuffer.add(LocalText.getText("BuysPrivateFromFor", new String[] {
@@ -127,7 +127,7 @@ implements TokenHolderI, MoveableHolderI
 
 		// Move the money
 		if (price > 0) new CashMove (owner, from.owner, price);
-        
+
         // Move any special abilities, if configured so
 		List<SpecialPropertyI> sps = privateCompany.getSpecialProperties();
 		if (sps != null) {
@@ -176,7 +176,7 @@ implements TokenHolderI, MoveableHolderI
 					&& from == Bank.getIpo()
 					&& comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL)
 			{
-				recipient = (CashHolder) comp;
+				recipient = comp;
 			}
 			else
 			{
@@ -223,7 +223,7 @@ implements TokenHolderI, MoveableHolderI
 				from.removePrivate((PrivateCompanyI) certificate);
 			to.addPrivate((PrivateCompanyI) certificate);
 		}
-		
+
 		/* Update player's worth */
 		if (from.owner instanceof Player) {
 			updatePlayerWorth ((Player)from.owner, from, certificate);
@@ -232,15 +232,15 @@ implements TokenHolderI, MoveableHolderI
 			updatePlayerWorth ((Player)to.owner, to, certificate);
 		}
 	}
-	
-	protected static void updatePlayerWorth (Player player, 
+
+	protected static void updatePlayerWorth (Player player,
 			Portfolio portfolio, Certificate certificate) {
-		
+
 		PublicCompanyI company;
-		
+
 		/* Update player worth */
 		player.getWorthModel().update();
-		
+
 		/* Make sure that future price changes will update the worth too */
 		if (certificate instanceof PublicCertificateI) {
 			company = ((PublicCertificateI)certificate).getCompany();
@@ -270,12 +270,12 @@ implements TokenHolderI, MoveableHolderI
 	{
 	    // When undoing a company start, put the President back at the top.
 	    boolean atTop = certificate.isPresidentShare() && this == Bank.getIpo();
-	    
+
 	    if (atTop)
 	        certificates.add(0, certificate);
-	    else 
+	    else
 	        certificates.add(certificate);
-	        
+
 		String companyName = certificate.getCompany().getName();
 		if (!certPerCompany.containsKey(companyName))
 		{
@@ -285,13 +285,13 @@ implements TokenHolderI, MoveableHolderI
 		    (certPerCompany.get(companyName)).add(0, certificate);
 		else
 		    (certPerCompany.get(companyName)).add(certificate);
-		
+
 		String certTypeId = certificate.getTypeId();
 		if (!certsPerType.containsKey(certTypeId)) {
 			certsPerType.put(certTypeId, new ArrayList<PublicCertificateI>());
 		}
 		certsPerType.get(certTypeId).add(certificate);
-		
+
 		certificate.setPortfolio(this);
 
 		getShareModel(certificate.getCompany()).addShare(certificate.getShare());
@@ -311,10 +311,10 @@ implements TokenHolderI, MoveableHolderI
 	    certificates.remove(certificate);
 
 		String companyName = certificate.getCompany().getName();
-		
+
 		List<PublicCertificateI> certs = getCertificatesPerCompany(companyName);
 		certs.remove(certificate);
-		
+
 		String certTypeId = certificate.getTypeId();
 		if (certsPerType.containsKey(certTypeId)) {
 			certsPerType.get(certTypeId).remove(0);
@@ -333,7 +333,7 @@ implements TokenHolderI, MoveableHolderI
 		{
 			shareModelPerCompany.put(company, new ShareModel(this, company));
 		}
-		return (ShareModel) shareModelPerCompany.get(company);
+		return shareModelPerCompany.get(company);
 	}
 
 	public List<PrivateCompanyI> getPrivateCompanies()
@@ -386,7 +386,7 @@ implements TokenHolderI, MoveableHolderI
 
 	/**
 	 * Find a certificate for a given company.
-	 * 
+	 *
 	 * @param company
 	 *            The public company for which a certificate is found.
 	 * @param president
@@ -424,11 +424,11 @@ implements TokenHolderI, MoveableHolderI
 		}
 		return null;
 	}
-	
+
 	public Map<String, List<PublicCertificateI>> getCertsPerType() {
 		return certsPerType;
 	}
-	
+
 	public List<PublicCertificateI> getCertsOfType (String certTypeId) {
 		if (certsPerType.containsKey(certTypeId)) {
 			return certsPerType.get(certTypeId);
@@ -471,7 +471,7 @@ implements TokenHolderI, MoveableHolderI
 
 	/**
 	 * Returns percentage that a portfolio contains of one company.
-	 * 
+	 *
 	 * @param company
 	 * @return
 	 */
@@ -515,7 +515,7 @@ implements TokenHolderI, MoveableHolderI
 	/**
 	 * Swap this Portfolio's President certificate for common shares in another
 	 * Portfolio.
-	 * 
+	 *
 	 * @param company
 	 *            The company whose Presidency is handed over.
 	 * @param other
@@ -526,7 +526,7 @@ implements TokenHolderI, MoveableHolderI
 			(PublicCompanyI company, Portfolio other)
 	{
 
-		List<PublicCertificateI> swapped 
+		List<PublicCertificateI> swapped
 			= new ArrayList<PublicCertificateI>();
 		PublicCertificateI swapCert;
 
@@ -605,7 +605,7 @@ implements TokenHolderI, MoveableHolderI
 				train.getName()
 		}));
 	}
-    
+
     public void updateTrainsModel() {
         trainsModel.update();
     }
@@ -613,7 +613,7 @@ implements TokenHolderI, MoveableHolderI
 	public int getNumberOfTrains() {
 		return trains.size();
 	}
-    
+
     public List<TrainI> getTrainList () {
         return trains;
     }
@@ -628,7 +628,7 @@ implements TokenHolderI, MoveableHolderI
 				trainsFound.add(train);
 		}
 
-		return (TrainI[]) trainsFound.toArray(new TrainI[0]);
+		return trainsFound.toArray(new TrainI[0]);
 	}
 
 	public ModelObject getTrainsModel()
@@ -641,7 +641,7 @@ implements TokenHolderI, MoveableHolderI
 	{
 
 		List<TrainI> trainsFound = new ArrayList<TrainI>();
-		Map<TrainTypeI, Object> trainTypesFound 
+		Map<TrainTypeI, Object> trainTypesFound
 			= new HashMap<TrainTypeI, Object>();
 		for (TrainI train : trains)
 		{
@@ -670,8 +670,8 @@ implements TokenHolderI, MoveableHolderI
 
 		return getTrainOfType(TrainManager.get().getTypeByName(name));
 	}
-    
-    /** 
+
+    /**
      * Add a special property.
      * Used to make special properties independent of the
      * private company that originally held it.
@@ -685,7 +685,7 @@ implements TokenHolderI, MoveableHolderI
          }
         return specialProperties.add(property);
     }
-    
+
     /** Remove a special property.
      * Not currently used.
      * @param property The special property object to remove.
@@ -699,7 +699,7 @@ implements TokenHolderI, MoveableHolderI
         }
     }
 
-    /** 
+    /**
      * Add an object.
      * @param object The object to add.
      * @return True if successful.
@@ -720,7 +720,7 @@ implements TokenHolderI, MoveableHolderI
             return false;
         }
     }
-    
+
     /** Remove an object.
      * Not currently used.
      * @param object The object to remove.
@@ -753,14 +753,14 @@ implements TokenHolderI, MoveableHolderI
 
     /**
      * Do we have any special properties?
-     * 
+     *
      * @return Boolean
      */
     public boolean hasSpecialProperties() {
-        return specialProperties != null 
+        return specialProperties != null
             && !specialProperties.isEmpty();
     }
-    
+
 
 
 	@SuppressWarnings("unchecked")
@@ -771,17 +771,17 @@ implements TokenHolderI, MoveableHolderI
         List<SpecialPropertyI> sps;
 
         if (owner instanceof Player || owner instanceof PublicCompanyI) {
-            
+
             for (PrivateCompanyI priv : privateCompanies)
             {
                 sps = priv.getSpecialProperties();
                 if (sps == null)
                     continue;
-    
+
                 for (SpecialPropertyI sp : sps)
         		{
         			if ((clazz == null || Util.isInstanceOf(sp, clazz))
-        			        && sp.isExecutionable() 
+        			        && sp.isExecutionable()
         			        && (!sp.isExercised() || includeExercised)
         			        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
         			             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
@@ -790,13 +790,13 @@ implements TokenHolderI, MoveableHolderI
         			}
         		}
             }
-            
+
             // Private-independent special properties
             if (specialProperties != null) {
 	            for (SpecialPropertyI sp : specialProperties)
 	            {
 	                if ((clazz == null || Util.isInstanceOf(sp, clazz))
-	                        && sp.isExecutionable() 
+	                        && sp.isExecutionable()
 	                        && (!sp.isExercised() || includeExercised)
 	                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
 	                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
@@ -805,7 +805,7 @@ implements TokenHolderI, MoveableHolderI
 	                }
 	            }
             }
-            
+
         }
 
 		return result;
@@ -815,11 +815,11 @@ implements TokenHolderI, MoveableHolderI
 	{
 		return privatesOwnedModel;
 	}
-    
+
     public boolean addToken (TokenI token) {
         return tokens.add(token);
     }
-    
+
     public boolean removeToken (TokenI token) {
         return tokens.remove(token);
     }
@@ -831,9 +831,9 @@ implements TokenHolderI, MoveableHolderI
     public boolean hasTokens() {
         return tokens != null && !tokens.isEmpty();
     }
-    
+
     public void rustObsoleteTrains () {
-    	
+
     	List<TrainI> trainsToRust = new ArrayList<TrainI>();
         for (TrainI train : trains) {
             if (train.isObsolete()) {

@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.9 2008/02/13 19:59:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.10 2008/02/14 20:27:08 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
-import rails.game.action.StartItemAction;
 import rails.game.action.NullAction;
 import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
@@ -25,7 +24,7 @@ public class StartRound_1835 extends StartRound
 	private static IntegerState startRoundNumber
 		= new IntegerState ("StartRoundNumber" , 0);
 
-	private int numberOfPlayers = GameManager.getNumberOfPlayers();
+	private final int numberOfPlayers = GameManager.getNumberOfPlayers();
 
 	/* Additional variants */
 	public static final String CLEMENS_VARIANT = "Clemens";
@@ -42,17 +41,18 @@ public class StartRound_1835 extends StartRound
 
 	/**
 	 * Start the 1835-style start round.
-	 * 
+	 *
 	 * @param startPacket
 	 *            The startpacket to be sold in this start round.
 	 */
-	public void start(StartPacket startPacket)
+	@Override
+    public void start(StartPacket startPacket)
 	{
 		super.start(startPacket);
 		startRoundNumber.add(1);
 
 		if (!setPossibleActions()) {
-			/* If nobody can do anything, keep executing 
+			/* If nobody can do anything, keep executing
 			 * Operating and Start rounds until someone has got
 			 * enough money to buy one of the remaining items.
 			 * The game mechanism ensures that this will
@@ -60,35 +60,36 @@ public class StartRound_1835 extends StartRound
 			 */
 			GameManager.getInstance().nextRound(this);
 		}
-		
+
 	}
 
 	/**
 	 * Get a list of items that may be bought immediately.
 	 * <p>
 	 * In an 1835-style auction this method will usually return several items.
-	 * 
+	 *
 	 * @return An array of start items that can be bought.
 	 */
 	//public StartItem[] getBuyableItems() {return null;}
-	
-	public boolean setPossibleActions() {
-		
+
+	@Override
+    public boolean setPossibleActions() {
+
 		List<StartItem> startItems = startPacket.getItems();
 		List<StartItem> buyableItems = new ArrayList<StartItem>();
 		int row;
 		boolean buyable;
 		int items = 0;
 		int minRow = 0;
-		
+
 		/* First, mark which items are buyable.
 		 * Once buyable, they always remain so until bought,
 		 * so there is no need to check is an item is still buyable.
-		 */ 
+		 */
 		for (StartItem item : startItems)
 		{
 			buyable = false;
-			
+
 			if (item.isSold()) {
 				// Already sold: skip
 			} else if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
@@ -116,17 +117,17 @@ public class StartRound_1835 extends StartRound
 			}
 		}
 		possibleActions.clear();
-		
-		/* Repeat until we have found a player with enough money 
-		 * to buy some item */ 
+
+		/* Repeat until we have found a player with enough money
+		 * to buy some item */
 		while (possibleActions.isEmpty()) {
-		
+
 			Player currentPlayer = getCurrentPlayer();
 			int cashToSpend = currentPlayer.getCash();
-			
+
 			for (StartItem item : buyableItems)
 			{
-				
+
 				if (item.getBasePrice() <= cashToSpend) {
 					/* Player does have the cash */
 					possibleActions.add(new BuyStartItem (
@@ -150,14 +151,15 @@ public class StartRound_1835 extends StartRound
 				setNextPlayer();
 			}
 		}
-		
+
 		/* Pass is always allowed */
 		possibleActions.add (new NullAction (NullAction.PASS));
-		
+
 		return true;
 	}
-	
-	public List<StartItem> getStartItems()
+
+	@Override
+    public List<StartItem> getStartItems()
 	{
 		Player currentPlayer = GameManager.getCurrentPlayer();
 		int cashToSpend = currentPlayer.getCash();
@@ -165,7 +167,7 @@ public class StartRound_1835 extends StartRound
 		int row;
 		int minRow = 0;
 		int items = 0;
-		
+
 		for (StartItem item : startItems)
 		{
 			if (item.isSold()) {
@@ -194,13 +196,14 @@ public class StartRound_1835 extends StartRound
 				}
 			}
 		}
-		
+
 		return startItems;
 	}
 
 	/*----- MoveSet methods -----*/
 
-	public boolean bid(String playerName, BidStartItem item)
+	@Override
+    public boolean bid(String playerName, BidStartItem item)
 	{
 
 		DisplayBuffer.add(LocalText.getText("InvalidAction"));
@@ -209,26 +212,27 @@ public class StartRound_1835 extends StartRound
 
 	/**
 	 * Set the next player turn.
-	 * 
+	 *
 	 */
-	protected void setNextPlayer()
+	@Override
+    protected void setNextPlayer()
 	{
 
 		/* Select the player that has the turn.*/
-		
+
 		if (startRoundNumber.intValue() == 1) {
-			/* Some variants have a reversed player order in the first 
+			/* Some variants have a reversed player order in the first
 			 * or second cycle of the first round
 			 * (a cycle spans one turn of all players).
-			 * In such a case we need to keep track of 
-			 * the number of player turns.  
+			 * In such a case we need to keep track of
+			 * the number of player turns.
 			 */
 			turn.add (1);
 			int turnNumber = turn.intValue();
 			int cycleNumber = turnNumber / numberOfPlayers;
 			int turnIndex = turnNumber % numberOfPlayers;
 			int newIndex;
-		
+
 			if (variant.equalsIgnoreCase(CLEMENS_VARIANT))
 			{
 				/* Reverse ordee in the first cycle only */
@@ -253,9 +257,9 @@ public class StartRound_1835 extends StartRound
 					+" turn="+turnNumber
 					+" newIndex="+newIndex
 						+"]");
-			
+
 		} else {
-			
+
 			/* In any subsequent Round, the normal order applies. */
 			Player oldPlayer = GameManager.getCurrentPlayer();
 			super.setNextPlayer();
@@ -269,11 +273,12 @@ public class StartRound_1835 extends StartRound
 
 	/**
 	 * Process a player's pass.
-	 * 
+	 *
 	 * @param playerName
 	 *            The name of the current player (for checking purposes).
 	 */
-	public boolean pass(String playerName)
+	@Override
+    public boolean pass(String playerName)
 	{
 
 		String errMsg = null;
@@ -301,11 +306,11 @@ public class StartRound_1835 extends StartRound
 		}
 
 		ReportBuffer.add(LocalText.getText("PASSES", playerName));
-		
+
 		MoveSet.start(false);
 
 		numPasses.add(1);
-		
+
 		if (numPasses.intValue() >= numPlayers)
 		{
 			// All players have passed.
@@ -319,7 +324,8 @@ public class StartRound_1835 extends StartRound
 		return true;
 	}
 
-	public String getHelp() {
+	@Override
+    public String getHelp() {
 	    return "1835 Start Round help text";
 	}
 
