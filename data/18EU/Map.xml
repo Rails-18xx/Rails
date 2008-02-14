@@ -88,7 +88,7 @@
 	<Hex name="P7" cost="60" tile="0" />
 	<Hex name="P9" cost="120" label="M" tile="0" /><!-- Arlberg -->
 	<Hex name="P11" cost="60" label="M" tile="8" orientation="1"/><!-- Semmering -->
-	<Hex name="P13" label="Y" tile="0" /><!-- Budapest -->
+	<Hex name="P13" label="Y" tile="-10" /><!-- Budapest -->
 	<Hex name="Q2" label="Y" tile="-10" /><!-- Lyon -->
 	<Hex name="Q4" cost="120" label="M" tile="0" /><!-- Lotschberg -->
 	<Hex name="Q6" cost="120" label="M" tile="0" /><!-- Gotthard -->
