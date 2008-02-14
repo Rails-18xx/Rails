@@ -8,7 +8,7 @@
 	</Tile>
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="57" hex="F5,G4,I6,K10,R9,S2,S4,T5" />
-		<Upgrade id="201,202" hex="C4,H3,G10,M4,P13,Q2,R5" />
+		<Upgrade id="201,202" hex="C4,G10,H3,L7,M4,P13,Q2,R5,S8" />
 	</Tile>
 	<Tile id="-3"/>
 	<Tile id="-901"/>
