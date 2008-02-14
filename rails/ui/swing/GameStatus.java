@@ -768,6 +768,7 @@ public class GameStatus extends JPanel implements ActionListener
 						
 						startCompany = true;
 						int[] startPrices = ((StartCompany)buy).getStartPrices();
+						Arrays.sort(startPrices);
 						PublicCompanyI company = cert.getCompany();
 						companyName = company.getName();
 						for (int i=0; i<startPrices.length; i++) {
