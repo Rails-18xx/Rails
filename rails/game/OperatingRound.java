@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.29 2008/02/14 20:24:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.30 2008/02/15 22:50:46 evos Exp $ */
 package rails.game;
 
 
@@ -149,7 +149,7 @@ public class OperatingRound extends Round implements Observer
 			int minorNo = 0;
 			for (PublicCompanyI company : companies)
 			{
-				if (!company.hasFloated())
+				if (!company.hasFloated() || company.isClosed())
 					continue;
 				// Key must put companies in reverse operating order, because sort
 				// is ascending.

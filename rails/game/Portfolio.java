@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.21 2008/02/14 20:25:13 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.22 2008/02/15 22:50:46 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -7,7 +7,10 @@
 package rails.game;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -158,7 +161,7 @@ implements TokenHolderI, MoveableHolderI
 
 
 		// PublicCertificate is no longer for sale.
-		// Erik: this is not the intended use of available (which is now
+		// TODO this is not the intended use of available (which is now
 		// redundant).
 		certificate.setAvailable(false);
 
@@ -206,6 +209,27 @@ implements TokenHolderI, MoveableHolderI
 
 		// Move the money
 		new CashMove (Bank.getInstance(), from.owner, price);
+	}
+
+	public void transferAssetsFrom (Portfolio otherPortfolio) {
+
+	    // Move trains
+	    List<TrainI> trains = new ArrayList<TrainI>();
+	    for (TrainI train : otherPortfolio.getTrainList()) {
+	        trains.add(train);
+	    }
+        for (TrainI train : trains) {
+            train.moveTo(this);
+        }
+
+        // Move treasury certificates
+        List<PublicCertificateI> certs = new ArrayList<PublicCertificateI>();
+        for (PublicCertificateI cert : otherPortfolio.getCertificates()) {
+	        certs.add (cert);
+	    }
+        for (PublicCertificateI cert : certs) {
+            cert.moveTo(this);
+        }
 	}
 
 	public static void transferCertificate(Certificate certificate,

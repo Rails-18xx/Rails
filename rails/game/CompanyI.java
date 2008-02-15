@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.3 2007/10/07 20:14:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.4 2008/02/15 22:50:46 evos Exp $ */
 package rails.game;
 
 /**
@@ -16,7 +16,7 @@ public interface CompanyI extends ConfigurableComponentI {
     public static final String COMPANY_TYPE_TAG = "type";
 
 	void init (String name, CompanyTypeI type);
-	
+
 	//void configureFromXML (Element element) throws ConfigurationException;
 
     /**
@@ -24,20 +24,22 @@ public interface CompanyI extends ConfigurableComponentI {
      * @return the name of the Company
      */
     String getName();
-    
+    public String getLongName();
+
+
     /**
      * Returns the CompanyType of the Company
      * @return the type of the Company
      */
     CompanyTypeI getType();
-    
+
 
 	/**
      * Returns the type name of the Company
 	 * @return type name
 	 */
 	public String getTypeName();
-	
+
 	/**
 	 * @return Company Value
 	 */
@@ -53,7 +55,7 @@ public interface CompanyI extends ConfigurableComponentI {
 	 * @return Company number
 	 */
 	int getCompanyNumber();
-	
+
 	/**
 	 * @return true if Company is closed.
 	 */
@@ -64,17 +66,17 @@ public interface CompanyI extends ConfigurableComponentI {
 	void setClosed();
 
 	/**
-	 * @return 
+	 * @return
 	 */
 	public int getCertLimitCount();
 	/**
 	 * @param i
 	 */
 	public void setCertLimitCount(int i);
-	
+
 	public abstract Object clone() throws CloneNotSupportedException;
 
-	
+
 	// Overriding some standard methods with something more useful.
 	public String toString();
 	public boolean equals(CompanyI company);
