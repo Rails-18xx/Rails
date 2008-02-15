@@ -1,11 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.10 2008/02/13 20:06:56 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.11 2008/02/15 22:49:53 evos Exp $*/
 package rails.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rails.game.ConfigurationException;
+import rails.game.move.Moveable;
+import rails.game.move.MoveableHolderI;
 
 public final class Util
 {
-	
+
 	/**
 	 * No-args private constructor, to prevent (meaningless) construction of one
 	 * of these.
@@ -40,35 +45,57 @@ public final class Util
 		}
 		return false;
 	}
-	
+
 	public static String getClassShortName (Object object) {
 	    return object.getClass().getName().replaceAll(".*\\.", "");
 	}
 
-    public static int parseInt (String value) 
+    public static int parseInt (String value)
     throws ConfigurationException {
-        
+
         if (!hasValue(value)) return 0;
-        
+
         try {
             return Integer.parseInt(value);
         } catch (Exception e) {
             throw new ConfigurationException ("Invalid integer value: "+value, e);
         }
     }
-    
+
     public static boolean bitSet (int value, int bitmask) {
-    	
+
     	return (value & bitmask) > 0;
     }
-    
+
     public static int setBit (int value, int bitmask, boolean set) {
-    	
+
     	if (set) {
-    		return bitmask | value; 
+    		return bitmask | value;
     	} else {
     		System.out.println("Reset bit "+value+": from "+bitmask+" to "+(bitmask&~value));
     		return bitmask & ~value;
     	}
+    }
+
+    /** Safely move objects from one holder to another,
+     * avoiding ConcurrentModificationExceptions.
+     * @param from
+     * @param to
+     * @param objects
+     */
+    public static <T extends Moveable> void moveObjects (
+            List<T> objects,
+            MoveableHolderI to) {
+
+        if (objects == null || objects.isEmpty()) return;
+
+        List<T> list = new ArrayList<T>();
+        for (T object : objects) {
+            list.add(object);
+        }
+        for (T object : list) {
+            object.moveTo(to);
+        }
+
     }
 }
