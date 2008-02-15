@@ -18,10 +18,10 @@ import rails.game.ReportBuffer;
 import rails.game.StockRound;
 import rails.game.StockSpaceI;
 import rails.game.action.BuyCertificate;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
+import rails.game.action.StartCompany;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
+import rails.util.Util;
 
 /**
  * Implements a basic Stock Round.
@@ -35,35 +35,7 @@ import rails.util.LocalText;
 public class StockRound_18EU extends StockRound
 {
 
-	@Override
-    public boolean setPossibleActions() {
-
-		boolean passAllowed = true;
-
-		possibleActions.clear();
-
-		setBuyableCerts();
-
-		setSellableShares();
-
-        setSpecialActions();
-
-		if (passAllowed) {
-			if (hasActed.booleanValue()) {
-				possibleActions.add (new NullAction (NullAction.DONE));
-			} else {
-				possibleActions.add (new NullAction (NullAction.PASS));
-			}
-		}
-
-		for (PossibleAction pa : possibleActions.getList()) {
-			log.debug(currentPlayer.getName()+ " may: "+pa.toString());
-		}
-
-        return true;
-	}
-
-	   /**
+   /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
      *
@@ -253,29 +225,32 @@ public class StockRound_18EU extends StockRound
 	 * @return True if the company could be started. False indicates an error.
 	 */
 	@Override
-    public boolean startCompany(String playerName, String companyName,
-			int price, int shares)
+    public boolean startCompany(String playerName,
+            StartCompany action)
 	{
+        PublicCompanyI company = action.getCertificate().getCompany();
+        int price = action.getPrice();
+        int shares = action.getNumberBought();
 
 		String errMsg = null;
 		StockSpaceI startSpace = null;
 		int numberOfCertsToBuy = 0;
 		PublicCertificateI cert = null;
-		PublicCompanyI company = null;
+		String companyName = company.getName();
+		PublicCompanyI minor = null;
+		StartCompany_18EU startAction = null;
+
 
 		currentPlayer = GameManager.getCurrentPlayer();
 
 		// Dummy loop to allow a quick jump out
 		while (true)
 		{
-
-			// Check everything
-			// Only the player that has the turn may buy
-			if (!playerName.equals(currentPlayer.getName()))
-			{
-				errMsg = LocalText.getText("WrongPlayer", playerName);
-				break;
-			}
+		    if (!(action instanceof StartCompany_18EU)) {
+		        errMsg = LocalText.getText("InvalidAction");
+		        break;
+		    }
+		    startAction = (StartCompany_18EU) action;
 
 			// The player may not have bought this turn.
 			if (companyBoughtThisTurnWrapper.getObject() != null)
@@ -341,6 +316,18 @@ public class StockRound_18EU extends StockRound
 				break;
 			}
 
+			// Check if the player owns the merged minor
+			minor = startAction.getChosenMinor();
+			if (currentPlayer.getPortfolio().getCertificatesPerCompany(minor.getName())== null) {
+			    errMsg = LocalText.getText("PlayerDoesNotOwn",
+			            new String[] {
+			                currentPlayer.getName(),
+			                minor.getName()
+			    });
+			    break;
+			}
+			numberOfCertsToBuy++;
+
 			break;
 		}
 
@@ -359,38 +346,83 @@ public class StockRound_18EU extends StockRound
 		// All is OK, now start the company
 		company.start(startSpace);
 
-		// Transfer the President's certificate
-		currentPlayer.getPortfolio().buyCertificate(cert,
-				ipo,
-				cert.getCertificatePrice());
+        // TODO must get obtained from XML
+        int tokensCost = 100;
 
-		// If more than one certificate is bought at the same time, transfer
-		// these too.
-		for (int i = 1; i < numberOfCertsToBuy; i++)
-		{
-			cert = ipo.findCertificate(company, false);
-			currentPlayer.getPortfolio().buyCertificate(cert,
-					ipo,
-					cert.getCertificatePrice());
-		}
+        // Transfer the President's certificate
+		//currentPlayer.getPortfolio().buyCertificate(cert,
+		//		ipo,
+		//		cert.getCertificatePrice());
+		cert.moveTo(currentPlayer.getPortfolio());
+
+		Bank.transferCash(currentPlayer, company, shares * price);
+		Bank.transferCash(company, null, tokensCost);
+
+		// Get the extra certificate for the minor, for free
+		PublicCertificateI cert2 = ipo.findCertificate(company, false);
+		cert2.moveTo(currentPlayer.getPortfolio());
+
+		// Move the remaining certificates to the company treasury
+		//for (PublicCertificateI cert3 : ipo.getCertificatesPerCompany(company.getName())) {
+		//    cert3.moveTo(company.getPortfolio());
+		//}
+		Util.moveObjects(ipo.getCertificatesPerCompany(company.getName()),
+		        company.getPortfolio());
+
+		// Transfer the minor assets into the started company
+        int minorCash = minor.getCash();
+        int minorTrains = minor.getPortfolio().getTrainList().size();
+		company.transferAssetsFrom (minor);
+
+		minor.setClosed();
+
+		// TODO: Must check for excess trains (though impossible here)
 
 		ReportBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
 		        playerName,
 		        companyName,
-		        String.valueOf(price),
+		        Bank.format(price),
+                Bank.format (shares * price),
 		        String.valueOf(shares),
 		        String.valueOf(cert.getShare()),
-		        Bank.format (shares * price)
+		        company.getName()
+		        }));
+		ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+		        new String[] {
+		            currentPlayer.getName(),
+		            minor.getName(),
+		            company.getName(),
+		            Bank.format(minorCash),
+		            String.valueOf(minorTrains)
+		        }));
+		ReportBuffer.add(LocalText.getText("GetShareForMinor",
+		        new String[] {
+		            currentPlayer.getName(),
+		            String.valueOf(cert2.getShare()),
+		            company.getName(),
+		            minor.getName()
+		        }));
+		ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
+		        new String[] {
+		            String.valueOf(company.getPortfolio().getShare(company)),
+		            company.getName()
+		        }));
+		ReportBuffer.add(LocalText.getText("PaysForTokens",
+		        new String[] {
+		            company.getName(),
+		            Bank.format(100),
+		            String.valueOf(company.getNumberOfBaseTokens())
 		        }));
 
-		company.checkFlotation();
-
-		//companyBoughtThisTurn = company;
 		companyBoughtThisTurnWrapper.set(company);
 		hasActed.set (true);
 		setPriority();
 
 		return true;
+	}
+	
+	protected void checkFlotation (PublicCompanyI company) {
+		company.checkFlotation(false);
 	}
 
     @Override

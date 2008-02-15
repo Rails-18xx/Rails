@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.20 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.21 2008/02/15 22:50:47 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -344,6 +344,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
 	for (int i = 0; i < nc; i++) {
 	    c = companies[i];
+	    
 	    f = leftCompName[i] = new Caption(c.getName());
 	    f.setBackground(c.getBgColour());
 	    f.setForeground(c.getFgColour());

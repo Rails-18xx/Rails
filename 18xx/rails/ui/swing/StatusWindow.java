@@ -1,20 +1,47 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.18 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.19 2008/02/15 22:50:47 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
-import rails.game.*;
-import rails.game.action.*;
-import rails.ui.swing.elements.*;
+import rails.game.Bank;
+import rails.game.DisplayBuffer;
+import rails.game.Game;
+import rails.game.GameManager;
+import rails.game.OperatingRound;
+import rails.game.RoundI;
+import rails.game.ShareSellingRound;
+import rails.game.StartRound;
+import rails.game.StockRound;
+import rails.game.TreasuryShareRound;
+import rails.game.action.ActionTaker;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.SellShares;
+import rails.game.action.UseSpecialProperty;
+import rails.ui.swing.elements.ActionButton;
+import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.LocalText;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the Window used for displaying nearly all of the rails.game status.
@@ -188,8 +215,19 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public StatusWindow(GameUIManager gameUIManager) {
 	this.gameUIManager = gameUIManager;
+	this.gameManager = gameUIManager.getGameManager();
 
-	gameStatus = new GameStatus(this);
+	Class<? extends GameStatus> gameStatusClass
+	    = gameManager.getGameStatusClass();
+	//gameStatus = new GameStatus(this);
+	try {
+	    gameStatus = gameStatusClass.newInstance();
+	} catch (Exception e) {
+        log.fatal("Cannot instantiate class " + gameStatusClass.getName());
+        System.exit(1);
+	}
+	gameStatus.init (this);
+
 	buttonPanel = new JPanel();
 
 	passButton = new ActionButton(LocalText.getText("PASS"));

@@ -308,7 +308,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			    }
 			}
 			if (comp.hasStarted() && !comp.hasFloated()) {
-				comp.checkFlotation();
+				comp.checkFlotation(true);
 			}
 
 		}

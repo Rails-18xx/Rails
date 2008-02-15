@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.5 2007/12/04 20:25:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.6 2008/02/15 22:50:47 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -11,6 +11,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 
 	protected static int numberOfCompanies = 0;
 	protected String name;
+	protected String longName;
 	protected CompanyTypeI type;
 	protected int companyNumber; // For internal use
 	protected Portfolio portfolio = null;
@@ -42,9 +43,9 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		this.name = name;
 		this.type = type;
 		closedObject = new BooleanState (name+"_Closed", false);
-		
+
 	}
-	
+
 	/**
 	 * @return Number of Companies
 	 */
@@ -101,7 +102,11 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return name;
 	}
 
-	/**
+	public String getLongName() {
+        return longName;
+    }
+
+    /**
 	 * @return
 	 */
 	public int getCertLimitCount()
@@ -141,15 +146,16 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		value = i;
 	}
 
-	public Object clone() throws CloneNotSupportedException
+	@Override
+    public Object clone() throws CloneNotSupportedException
 	{
 		return super.clone();
 	}
 
-	/** 
+	/**
 	 * Stub method implemented to comply with TokenHolderI interface.
 	 * Always returns false.
-	 * 
+	 *
 	 * Use addToken(MapHex hex) method instead.
 	 */
 	public boolean addToken(CompanyI company)
@@ -157,7 +163,8 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 		return false;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return getTypeName() + ": " + getCompanyNumber() + ". " + getName()
 				+ " $" + this.getValue();
@@ -169,9 +176,9 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 				&& this.name.equals(company.getName())
 				&& this.type.equals(company.getType()))
 			return true;
-		
+
 		return false;
 	}
-	
+
 
 }

@@ -1,7 +1,12 @@
 package rails.game;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
@@ -444,9 +449,7 @@ public class StockRound extends Round
 
 			StartCompany startCompanyAction = (StartCompany) action;
 
-				result = startCompany (playerName,
-						startCompanyAction.getCertificate().getCompany().getName(),
-						startCompanyAction.getPrice());
+				result = startCompany (playerName, startCompanyAction);
 
 		} else if (action instanceof BuyCertificate) {
 
@@ -475,18 +478,6 @@ public class StockRound extends Round
         return result;
 	}
 	/**
-	 * Start a company by buying the President's share only
-	 *
-	 * @param company
-	 *            The company to start.
-	 * @return True if the company could be started.
-	 */
-	public boolean startCompany(String playerName, String companyName, int price)
-	{
-		return startCompany(playerName, companyName, price, 1);
-	}
-
-	/**
 	 * Start a company by buying one or more shares (more applies to e.g. 1841)
 	 *
 	 * @param player
@@ -499,15 +490,18 @@ public class StockRound extends Round
 	 *            The number of shares to buy (can be more than 1 in e.g. 1841).
 	 * @return True if the company could be started. False indicates an error.
 	 */
-	public boolean startCompany(String playerName, String companyName,
-			int price, int shares)
+	public boolean startCompany(String playerName,
+	            StartCompany action)
 	{
+	    PublicCompanyI company = action.getCertificate().getCompany();
+	    int price = action.getPrice();
+	    int shares = action.getNumberBought();
 
 		String errMsg = null;
 		StockSpaceI startSpace = null;
 		int numberOfCertsToBuy = 0;
 		PublicCertificateI cert = null;
-		PublicCompanyI company = null;
+		String companyName = company.getName();
 
 		currentPlayer = GameManager.getCurrentPlayer();
 
@@ -531,7 +525,6 @@ public class StockRound extends Round
 			}
 
 			// Check company
-			company = companyMgr.getPublicCompany(companyName);
 			if (company == null)
 			{
 				errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
@@ -623,13 +616,14 @@ public class StockRound extends Round
 		ReportBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
 		        playerName,
 		        companyName,
-		        String.valueOf(price),
+		        Bank.format(price),
+                Bank.format (shares * price),
 		        String.valueOf(shares),
 		        String.valueOf(cert.getShare()),
-		        Bank.format (shares * price)
+		        LocalText.getText("BANK")
 		        }));
 
-		company.checkFlotation();
+		checkFlotation(company);
 
 		//companyBoughtThisTurn = company;
 		companyBoughtThisTurnWrapper.set(company);
@@ -821,9 +815,13 @@ public class StockRound extends Round
 
 		// Check if the company has floated
 		if (!company.hasFloated())
-			company.checkFlotation();
+			checkFlotation(company);
 
 		return true;
+	}
+	
+	protected void checkFlotation (PublicCompanyI company) {
+		company.checkFlotation(true);
 	}
 
 	protected void recordSale(Player player, PublicCompanyI company)

@@ -11,6 +11,8 @@
   <CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
     <PoolPaysOut/>
     <Float percentage="50"/>
+	<TreasuryCanHoldOwnShares maxPerc="50"/>
+	<HomeBase lay="whenStarted"/>
     <StockPrice par="no"/>
     <ShareUnit percentage="10"/>
     <Certificate type="President" shares="2"/>

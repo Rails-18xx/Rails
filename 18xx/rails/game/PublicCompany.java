@@ -1,8 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.25 2008/02/14 20:28:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.26 2008/02/15 22:50:46 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import rails.game.action.SetDividend;
 import rails.game.model.BaseTokensModel;
@@ -234,6 +237,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * element
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        longName = tag.getAttributeAsString("longname", name);
+
         /* Configure public company features */
         fgHexColour = tag.getAttributeAsString("fgColour", fgHexColour);
         fgColour = new Color(Integer.parseInt(fgHexColour, 16));
@@ -691,6 +697,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
+    public void transferAssetsFrom (PublicCompanyI otherCompany) {
+
+        Bank.transferCash(otherCompany, this, otherCompany.getCash());
+        portfolio.transferAssetsFrom (otherCompany.getPortfolio());
+    }
+
     /**
      * @return Returns true is the company has started.
      */
@@ -701,40 +713,50 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Float the company, put its initial cash in the treasury.
      */
-    public void setFloated() {
+    public void setFloated(boolean moveCash) {
 
-        int cash = 0;
         hasFloated.set(true);
-        if (hasStockPrice) {
-            int capFactor = 0;
-            if (capitalisation == CAPITALISE_FULL) {
-                capFactor = 100 / shareUnit;
-            } else if (capitalisation == CAPITALISE_INCREMENTAL) {
-                // TODO Should be: 100% - percentage still in IPO
-                capFactor = percentageOwnedByPlayers() / shareUnit;
-            }
-            int price = (hasParPrice ? getParPrice() : getCurrentPrice()).getPrice();
-            cash = capFactor * price;
+
+        // In 18EU, cash has already been moved
+        if (moveCash) {
+        
+	        int cash = 0;
+	        if (hasStockPrice) {
+	            int capFactor = 0;
+	            if (capitalisation == CAPITALISE_FULL) {
+	                capFactor = 100 / shareUnit;
+	            } else if (capitalisation == CAPITALISE_INCREMENTAL) {
+	                // TODO Should be: 100% - percentage still in IPO
+	                capFactor = percentageOwnedByPlayers() / shareUnit;
+	            }
+	            int price = (hasParPrice ? getParPrice() : getCurrentPrice()).getPrice();
+	            cash = capFactor * price;
+	        } else {
+	            cash = fixedPrice;
+	        }
+	
+	        if (initialTokenCost > 0)
+	            cash -= initialTokenCost;
+	
+	        new CashMove(Bank.getInstance(), this, cash);
+	        ReportBuffer.add(LocalText.getText("FloatsWithCash", 
+	        		new String[] { 
+	        		name,
+	                Bank.format(cash) 
+	                }));
+	
+	        if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
+	            List<Certificate> moving = new ArrayList<Certificate>();
+	            for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
+	                    name)) {
+	                moving.add(ipoCert);
+	            }
+	            for (Certificate ipoCert : moving) {
+	                ipoCert.moveTo(portfolio);
+	            }
+	        }
         } else {
-            cash = fixedPrice;
-        }
-
-        if (initialTokenCost > 0)
-            cash -= initialTokenCost;
-
-        new CashMove(Bank.getInstance(), this, cash);
-        ReportBuffer.add(LocalText.getText("FLOATS", new String[] { name,
-                Bank.format(cash) }));
-
-        if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
-            List<Certificate> moving = new ArrayList<Certificate>();
-            for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
-                    name)) {
-                moving.add(ipoCert);
-            }
-            for (Certificate ipoCert : moving) {
-                ipoCert.moveTo(portfolio);
-            }
+        	ReportBuffer.add(LocalText.getText("Floats", name));
         }
 
         if (sharePriceUpOnFloating) {
@@ -773,6 +795,17 @@ public class PublicCompany extends Company implements PublicCompanyI {
         hasOperated.set(value);
     }
 
+    @Override
+    public void setClosed() {
+        super.setClosed();
+        for (PublicCertificateI cert : certificates) {
+            cert.moveTo(Bank.getScrapHeap());
+        }
+        lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
+        setLastRevenue(0);
+        treasury.setOption(CashModel.SUPPRESS_ZERO);
+        treasury.update();
+    }
     /**
      * Set the company par price.
      * <p>
@@ -946,10 +979,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public Player getPresident() {
         if (hasStarted()) {
-            return (Player) (certificates.get(0)).getPortfolio().getOwner();
-        } else {
-            return null;
+        	CashHolder owner = certificates.get(0).getPortfolio().getOwner();
+        	if (owner instanceof Player) return (Player) owner;
         }
+        return null;
+    }
+    
+    public boolean isAvailable () {
+    	Portfolio presLoc = certificates.get(0).getPortfolio();
+    	return presLoc != Bank.getUnavailable() 
+    			&& presLoc != Bank.getScrapHeap();
     }
 
     /**
@@ -1221,7 +1260,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (!hasStarted() || buyer == getPresident() || certificates.size() < 2)
             return;
-        Player pres = getPresident();
+        Player pres = (Player) getPresident();
         int presShare = pres.getPortfolio().getShare(this);
         int buyerShare = buyer.getPortfolio().getShare(this);
         if (buyerShare > presShare) {
@@ -1259,12 +1298,17 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
-    public void checkFlotation() {
+    /** Only usable if the float percentage is fixed.
+     * Games where the percentage varies must check this
+     * in StockRound and possibly StartRound.
+     */
+    public void checkFlotation(boolean moveCash) {
         if (hasStarted() && !hasFloated()
-                && Bank.getIpo().getShare(this) <= 100 - floatPerc) {
+                && (Bank.getIpo().getShare(this)
+                		+ portfolio.getShare(this)) <= 100 - floatPerc) {
             // Float company (limit and capitalisation to be made
             // configurable)
-            setFloated();
+            setFloated(moveCash);
         }
     }
 

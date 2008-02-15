@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.25 2008/02/14 20:28:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.26 2008/02/15 22:50:47 evos Exp $ */
 package rails.game;
 
 import java.io.File;
@@ -17,8 +17,11 @@ import rails.game.action.PossibleActions;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
 import rails.game.state.State;
+import rails.ui.swing.GameStatus;
 import rails.ui.swing.ORUIManager;
-import rails.util.*;
+import rails.util.LocalText;
+import rails.util.Tag;
+import rails.util.Util;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -37,6 +40,7 @@ public class GameManager implements ConfigurableComponentI
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
+    protected Class<? extends GameStatus> gameStatusClass = GameStatus.class;
 
 	protected List<Player> players;
 	protected List<String> playerNames;
@@ -163,7 +167,7 @@ public class GameManager implements ConfigurableComponentI
                     stockRoundSequenceRule = StockRound.SELL_BUY_OR_BUY_SELL;
                 }
             }
-            
+
             skipFirstStockRound = srTag.getAttributeAsBoolean("skipFirst", skipFirstStockRound);
 		}
 
@@ -228,11 +232,22 @@ public class GameManager implements ConfigurableComponentI
         // ORUIManager class
         Tag orMgrTag = tag.getChild("ORUIManager");
         if (orMgrTag != null) {
-            String orMgrClassName = orMgrTag.getAttributeAsString("class", "OperatingRound");
+            String orMgrClassName = orMgrTag.getAttributeAsString("class", "ORUIManager");
             try {
                 orUIManagerClass = Class.forName(orMgrClassName).asSubclass(ORUIManager.class);
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException ("Cannot find class "+orMgrClassName, e);
+            }
+        }
+
+        // GameStatus class
+        Tag gameStatusTag = tag.getChild("GameStatus");
+        if (gameStatusTag != null) {
+            String gameStatusClassName = gameStatusTag.getAttributeAsString("class", "GameStatus");
+            try {
+                gameStatusClass = Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException ("Cannot find class "+gameStatusClassName, e);
             }
         }
 	}
@@ -298,7 +313,7 @@ public class GameManager implements ConfigurableComponentI
 
 				orNumber = 1;
 				startOperatingRound (true);
-			} 
+			}
 			else
 			{
 				startStockRound();
@@ -842,6 +857,10 @@ public class GameManager implements ConfigurableComponentI
 	public Class<? extends ORUIManager> getORUIManagerClass() {
 		return orUIManagerClass;
 	}
+
+    public Class<? extends GameStatus> getGameStatusClass() {
+        return gameStatusClass;
+    }
 
     public int getStockRoundSequenceRule() {
         return stockRoundSequenceRule;
