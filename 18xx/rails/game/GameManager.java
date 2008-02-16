@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.26 2008/02/15 22:50:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.27 2008/02/16 19:50:00 evos Exp $ */
 package rails.game;
 
 import java.io.File;
@@ -511,6 +511,7 @@ public class GameManager implements ConfigurableComponentI
         for (PossibleAction action : actions) {
             try {
                 getCurrentRound().process(action);
+                getCurrentRound().setPossibleActions();
             } catch (Exception e) {
                 log.debug("Error while reprocessing "+action.toString(), e);
                 throw new Exception ("Reload failure", e);

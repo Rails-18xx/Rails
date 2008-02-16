@@ -240,7 +240,6 @@ public class StockRound_18EU extends StockRound
 		PublicCompanyI minor = null;
 		StartCompany_18EU startAction = null;
 
-
 		currentPlayer = GameManager.getCurrentPlayer();
 
 		// Dummy loop to allow a quick jump out
@@ -344,6 +343,7 @@ public class StockRound_18EU extends StockRound
 		MoveSet.start(true);
 
 		// All is OK, now start the company
+		company.setHomeHex(minor.getHomeHex());
 		company.start(startSpace);
 
         // TODO must get obtained from XML

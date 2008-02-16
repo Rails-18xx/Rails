@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.26 2008/02/15 22:50:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.27 2008/02/16 19:50:00 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -83,6 +83,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int numberOfBaseTokens = 0;
 
     protected int initialTokenCost = 0;
+	/** An array of base token laying costs, per successive token */
+	protected int[] baseTokenLayCost;
+	
 
     protected BaseTokensModel baseTokensModel; // Create after cloning
 
@@ -456,6 +459,20 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 throw new ConfigurationException("Company type " + name
                         + " total shares is not 100%");
         }
+        
+		// BaseToken 
+		Tag baseTokenTag = tag.getChild("BaseTokens");
+		// Cost of laying a token
+		Tag layCostTag = baseTokenTag.getChild("LayCost");
+		String costMethod = layCostTag.getAttributeAsString("method");
+		// Must validate the cost method!
+
+		baseTokenLayCost = layCostTag.getAttributeAsIntegerArray("cost");
+
+		/* Cost of buying a token (mutually exclusive with laying cost) */
+		Tag buyCostTag = tag.getChild("BuyCost");
+		// We don't have this yet - ignore for now.
+
 
         Tag tokenLayTimeTag = tag.getChild("HomeBase");
         if (tokenLayTimeTag != null) {

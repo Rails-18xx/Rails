@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.19 2008/02/14 20:28:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.20 2008/02/16 19:50:00 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -438,7 +438,7 @@ implements ActionListener, KeyListener, ActionPerformer
 				    }
 	                itemNameButton[i].setSelected(selected);
 	                itemNameButton[i].setEnabled(!selected);
-					setItemNameButton(i, selected);
+					setItemNameButton(i, true);
 					if (includeBidding && showBasePrices) minBid[i].setText("");
 					buyAllowed = selected;
 
