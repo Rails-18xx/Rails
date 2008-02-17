@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.1 2008/02/13 20:04:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.2 2008/02/17 22:24:56 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.List;
@@ -7,6 +7,7 @@ import rails.game.Bank;
 import rails.game.DisplayBuffer;
 import rails.game.GameManager;
 import rails.game.Player;
+import rails.game.PublicCertificateI;
 import rails.game.ReportBuffer;
 import rails.game.StartItem;
 import rails.game.StartPacket;
@@ -190,6 +191,7 @@ public class StartRound_18EU extends StartRound
         MoveSet.start(false);
 
         assignItem(player, item, price, 0);
+        ((PublicCertificateI)item.getPrimary()).getCompany().start();
         setNextSelectingPlayer();
         setStep(SELECT_STEP);
 
