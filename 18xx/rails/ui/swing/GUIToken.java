@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.5 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.6 2008/02/17 22:25:32 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -20,7 +20,8 @@ public class GUIToken extends JPanel {
     public static final int DEFAULT_X_COORD = 1;
     public static final int DEFAULT_Y_COORD = 1;
 
-    private static Font tokenFont = new Font("Helvetica", Font.BOLD, 8);
+    private static Font smallTokenFont = new Font("Helvetica", Font.BOLD, 8);
+    private static Font tokenFont = new Font("Helvetica", Font.BOLD, 10);
 
     public void paintComponent(Graphics g) {
 	clear(g);
@@ -40,8 +41,9 @@ public class GUIToken extends JPanel {
 	g2d.setColor(bgColor);
 	g2d.fill(circle);
 
+	Font font = name.length() > 3 ? smallTokenFont : tokenFont;
 	g2d.setFont(new Font("Helvetica", Font.BOLD,
-		(int) (tokenFont.getSize() * tokenScale)));
+		(int) (font.getSize() * tokenScale)));
 	g2d.setColor(fgColor);
 	// g2d.drawString(name, 3, 14);
 	g2d.drawString(name, (int) (circle.x + 2 * tokenScale),
