@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.21 2008/02/15 22:50:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.22 2008/02/17 22:25:56 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -471,6 +471,12 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 		// In all cases, the actions in the list must be
 		// instances of the same class
 		log.debug("Action taken is " + executedAction.toString());
+	    }
+	    
+	    if (executedAction instanceof SetDividend) {
+	    	// Hide the spinner here, because we might not return
+	    	// via InitPayoutStep, where this would otherwise be done.
+	    	setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
 	    }
 
 	    orUIManager.processAction(command, executedActions);
