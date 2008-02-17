@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.30 2008/02/15 22:50:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.31 2008/02/17 22:18:06 evos Exp $ */
 package rails.game;
 
 
@@ -602,8 +602,7 @@ public class OperatingRound extends Round implements Observer
                 if (stl != null) extra = stl.isExtra();
             }
 
-            cost = Game.getCompanyManager()
-                    .getBaseTokenLayCostBySequence(operatingCompany.getNumberOfLaidBaseTokens());
+            cost = operatingCompany.getBaseTokenLayCost();
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
