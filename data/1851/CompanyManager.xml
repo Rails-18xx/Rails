@@ -6,12 +6,15 @@
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
 		<TreasuryCanHoldOwnShares maxPerc="50"/>
-		<Float percentage="50" price="up" initialTokenCost="100"/>
+		<Float percentage="50" price="up"/>
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<Trains number="4,4,3,2"/>
-		<HomeBase lay="whenFloated"/>
+		<BaseTokens>
+			<BuyCost initialTokenCost="100"/>
+		    <HomeBase lay="whenFloated"/>
+		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
 	    <NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/>
 		<TradeShares mustHaveOperated="yes"/>
