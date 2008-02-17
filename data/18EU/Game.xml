@@ -51,6 +51,7 @@
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="2"/>
+			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
