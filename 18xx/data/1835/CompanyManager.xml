@@ -6,6 +6,9 @@
     <ShareUnit percentage="100"/>
     <Certificate type="President" shares="1"/>
 	<StockPrice market="no"/>
+	<BaseTokens>
+		<LayCost method="distance" cost="20"/>
+	</BaseTokens>
 	<Payout split="always"/>
 	<Trains number="2,2,1" mandatory="no"/>
   </CompanyType>

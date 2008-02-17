@@ -9,6 +9,9 @@
     <ShareUnit percentage="10"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="8"/>
+	<BaseTokens>
+		<LayCost method="sequence" cost="0,40,100"/>
+	</BaseTokens>
 	<Trains number="4,4,3,2"/>
   </CompanyType>
   
@@ -84,8 +87,4 @@
 		<!-- Will probably move later to a GameManager XML-->
 		<NoSaleInFirstSR/>
 	</StockRoundRules>
-	<BaseTokens>
-		<!-- Not sure if this belongs here -->
-		<LayCost method="sequence" cost="0,40,100"/>
-	</BaseTokens>
 </CompanyManager>
