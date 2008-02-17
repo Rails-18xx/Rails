@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.13 2008/02/15 22:50:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.14 2008/02/17 22:21:00 evos Exp $ */
 package rails.game;
 
 
@@ -144,6 +144,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	 * @return
 	 */
 	public int getPublicNumber();
+
+	   public int getBaseTokenLayCost ();
 
 	/**
 	 * Get a list of this company's certificates.

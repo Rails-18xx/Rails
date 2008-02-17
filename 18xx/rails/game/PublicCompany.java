@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.27 2008/02/16 19:50:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.28 2008/02/17 22:21:00 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -39,12 +39,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected static int numberOfPublicCompanies = 0;
 
     // Home base token lay times
-    protected static final int START_OF_FIRST_OR = 0;
-
+    protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;
+    protected static final int START_OF_FIRST_OR = 2;
 
     protected static final String[] tokenLayTimeNames = new String[] {
-            "firstOR", "whenFloated" };
+            "whenStarted", "whenFloated", "firstOR" };
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
@@ -82,9 +82,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected int numberOfBaseTokens = 0;
 
-    protected int initialTokenCost = 0;
+    protected int baseTokensBuyCost = 0;
 	/** An array of base token laying costs, per successive token */
 	protected int[] baseTokenLayCost;
+	protected String baseTokenLayCostMethod = "sequential";
 	
 
     protected BaseTokensModel baseTokensModel; // Create after cloning
@@ -118,12 +119,24 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Has the company already operated? */
     protected BooleanState hasOperated = null;
 
+    /**
+     * A map per tile colour. Each entry contains a map per phase, of which each
+     * value is an Integer defining the number of allowed tile lays. Only
+     * numbers deviating from 1 need be specified, the default is always 1.
+     */
+    protected Map<String, HashMap<String, Integer>> extraTileLays = null;
+    /**
+     * A map per tile colour, holding the number of turns that the tile lay number applies.
+     * The default number is always 1. 
+     */
+    protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
+    /** Copy of turnsWithExtraTileLaysInit, per company */
+    protected Map<String, IntegerState> turnsWithExtraTileLays = null;
     /** Number of tiles laid. Only used where
      * more tiles can be laid in
      * the company's first OR turn.
      */
     protected IntegerState extraTiles = null;
-    protected int turnsWithExtraTiles = 0;
 
     /** Is the company closed (or bankrupt)? */
     protected boolean closed = false;
@@ -198,12 +211,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Must payout exceed stock price to move token right? */
     protected boolean payoutMustExceedPriceToMove = false;
 
-    /**
-     * A map per tile colour. Each entry contains a map per phase, of which each
-     * value is an Integer defining the number of allowed tile lays. Only
-     * numbers deviating from 1 need be specified, the default is always 1.
-     */
-    protected Map<String, HashMap<String, Integer>> numberOfTileLays = null;
 
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
@@ -256,7 +263,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
-        numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 0);
+        numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
@@ -326,8 +333,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (Util.hasValue(sharePriceAttr)) {
                 sharePriceUpOnFloating = sharePriceAttr.equalsIgnoreCase("up");
             }
-            initialTokenCost = floatTag.getAttributeAsInteger(
-                    "initialTokenCost", 0);
         }
 
         Tag priceTag = tag.getChild("StockPrice");
@@ -390,37 +395,47 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
-        Tag tileLaysTag = tag.getChild("NumberOfTileLays");
+        Tag tileLaysTag = tag.getChild("TileLays");
         if (tileLaysTag != null) {
+        	
+        	for (Tag numberTag : tileLaysTag.getChildren("Number")) {
 
-            String colourString = tileLaysTag.getAttributeAsString("colour");
-            if (colourString == null)
-                throw new ConfigurationException(
-                        "No colour entry for NumberOfTileLays");
-            String phaseString = tileLaysTag.getAttributeAsString("phase");
-            if (phaseString == null)
-                throw new ConfigurationException(
-                        "No phase entry for NumberOfTileLays");
-            int number = tileLaysTag.getAttributeAsInteger("number");
-            Integer lays = new Integer(number);
-
-            String[] colours = colourString.split(",");
-            HashMap<String, Integer> phaseMap;
-            /**
-             * TODO: should not be necessary to specify all phases separately
-             */
-            String[] phases = phaseString.split(",");
-            for (int i = 0; i < colours.length; i++) {
-                if (numberOfTileLays == null)
-                    numberOfTileLays = new HashMap<String, HashMap<String, Integer>>();
-                numberOfTileLays.put(colours[i],
-                        (phaseMap = new HashMap<String, Integer>()));
-                for (int k = 0; k < phases.length; k++) {
-                    phaseMap.put(phases[k], lays);
-                }
-            }
-
-            turnsWithExtraTiles = tileLaysTag.getAttributeAsInteger("occurrences", 0);
+	            String colourString = numberTag.getAttributeAsString("colour");
+	            if (colourString == null)
+	                throw new ConfigurationException(
+	                        "No colour entry for NumberOfTileLays");
+	            String phaseString = numberTag.getAttributeAsString("phase");
+	            if (phaseString == null)
+	                throw new ConfigurationException(
+	                        "No phase entry for NumberOfTileLays");
+	            int number = numberTag.getAttributeAsInteger("number");
+	            Integer lays = new Integer(number);
+	            
+	            int validForTurns = numberTag.getAttributeAsInteger("occurrences", 0);
+	
+	            String[] colours = colourString.split(",");
+	            HashMap<String, Integer> phaseMap;
+	            /**
+	             * TODO: should not be necessary to specify all phases separately
+	             */
+	            String[] phases = phaseString.split(",");
+	            for (int i = 0; i < colours.length; i++) {
+	                if (extraTileLays == null)
+	                    extraTileLays = new HashMap<String, HashMap<String, Integer>>();
+	                extraTileLays.put(colours[i],
+	                        (phaseMap = new HashMap<String, Integer>()));
+	                for (int k = 0; k < phases.length; k++) {
+	                    phaseMap.put(phases[k], lays);
+	                }
+		            //phaseMap.put("turns", validForTurns);
+	                if (validForTurns > 0) {
+	                	if (turnsWithExtraTileLaysInit == null) {
+	                		turnsWithExtraTileLaysInit = new HashMap<String, Integer>();
+	                	}
+	                	turnsWithExtraTileLaysInit.put (colours[i], validForTurns);
+	                }
+	            }
+        	}
         }
 
         if (hasParPrice)
@@ -462,30 +477,40 @@ public class PublicCompany extends Company implements PublicCompanyI {
         
 		// BaseToken 
 		Tag baseTokenTag = tag.getChild("BaseTokens");
-		// Cost of laying a token
-		Tag layCostTag = baseTokenTag.getChild("LayCost");
-		String costMethod = layCostTag.getAttributeAsString("method");
-		// Must validate the cost method!
+		if (baseTokenTag != null) {
+			
+			// Cost of laying a token
+			Tag layCostTag = baseTokenTag.getChild("LayCost");
+			if (layCostTag != null) {
+				baseTokenLayCostMethod = layCostTag.getAttributeAsString("method", baseTokenLayCostMethod);
+				// Must validate the cost method!
+	
+				baseTokenLayCost = layCostTag.getAttributeAsIntegerArray("cost");
+			}
+	
+			/* Cost of buying a token (mutually exclusive with laying cost) */
+			Tag buyCostTag = baseTokenTag.getChild("BuyCost");
+			if (buyCostTag != null) {
+				baseTokensBuyCost = floatTag.getAttributeAsInteger(
+	                "initialTokenCost", 0);
+			}
 
-		baseTokenLayCost = layCostTag.getAttributeAsIntegerArray("cost");
-
-		/* Cost of buying a token (mutually exclusive with laying cost) */
-		Tag buyCostTag = tag.getChild("BuyCost");
-		// We don't have this yet - ignore for now.
-
-
-        Tag tokenLayTimeTag = tag.getChild("HomeBase");
-        if (tokenLayTimeTag != null) {
-            String layTimeString = tokenLayTimeTag.getAttributeAsString("lay");
-            if (Util.hasValue(layTimeString)) {
-                for (int i = 0; i < tokenLayTimeNames.length; i++) {
-                    if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
-                        homeBaseTokensLayTime = i;
-                        break;
-                    }
-                }
-            }
-        }
+	        Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
+	        if (tokenLayTimeTag != null) {
+	        	// When is the home base laid?
+	        	// Note: if not before, home tokens are in any case laid 
+	        	// at the start of the first OR  
+	            String layTimeString = tokenLayTimeTag.getAttributeAsString("lay");
+	            if (Util.hasValue(layTimeString)) {
+	                for (int i = 0; i < tokenLayTimeNames.length; i++) {
+	                    if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
+	                        homeBaseTokensLayTime = i;
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+		}
 
         Tag sellSharesTag = tag.getChild("TradeShares");
         if (sellSharesTag != null) {
@@ -513,10 +538,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         hasFloated = new BooleanState(name + "_hasFloated", false);
         hasOperated = new BooleanState(name + "_hasOperated", false);
 
-        if (turnsWithExtraTiles > 0) {
-            extraTiles = new IntegerState (name+"_extraTileTurns", turnsWithExtraTiles);
-        }
-
         allBaseTokens = new ArrayList<TokenI>();
         freeBaseTokens = new ArrayList<TokenI>();
         laidBaseTokens = new ArrayList<TokenI>();
@@ -538,6 +559,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasStockPrice) {
             parPrice = new PriceModel(this, name + "_ParPrice");
             currentPrice = new PriceModel(this, name + "_CurrentPrice");
+        }
+        
+        if (turnsWithExtraTileLaysInit != null) {
+        	turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+        	for (String colour : turnsWithExtraTileLaysInit.keySet()) {
+        		turnsWithExtraTileLays.put(colour, 
+        				new IntegerState (name+"_"+colour+"_ExtraTileTurns",
+        						turnsWithExtraTileLaysInit.get(colour)));
+        	}
         }
 
         PublicCompanyI dummyCompany = (PublicCompanyI) type.getDummyCompany();
@@ -690,7 +720,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     privateToCloseOnFirstTrainName);
         }
 
-    }
+        if (homeBaseTokensLayTime == WHEN_STARTED) {
+            layHomeBaseTokens();
+        }
+   }
 
     public void start(int price) {
         StockSpaceI startSpace = StockMarket.getInstance().getStartSpace(price);
@@ -712,6 +745,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
             // The current price is set via the Stock Market
             StockMarket.getInstance().start(this, parPrice.getPrice());
         }
+
+        if (homeBaseTokensLayTime == WHEN_STARTED) {
+            layHomeBaseTokens();
+        }
+
     }
 
     public void transferAssetsFrom (PublicCompanyI otherCompany) {
@@ -752,8 +790,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 	            cash = fixedPrice;
 	        }
 	
-	        if (initialTokenCost > 0)
-	            cash -= initialTokenCost;
+	        if (baseTokensBuyCost > 0)
+	            cash -= baseTokensBuyCost;
 	
 	        new CashMove(Bank.getInstance(), this, cash);
 	        ReportBuffer.add(LocalText.getText("FloatsWithCash", 
@@ -787,6 +825,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (initialTrain != null) {
             TrainI train = Bank.getIpo().getTrainOfType(initialTrain);
             buyTrain(train, 0);
+    		TrainManager.get().checkTrainAvailability(train, Bank.getIpo());
         }
     }
 
@@ -822,6 +861,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         setLastRevenue(0);
         treasury.setOption(CashModel.SUPPRESS_ZERO);
         treasury.update();
+
+        Util.moveObjects(laidBaseTokens, this);
     }
     /**
      * Set the company par price.
@@ -1414,6 +1455,35 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (cost > 0)
             tokensCostThisTurn.add(cost);
     }
+    
+	/**
+	 * Calculate the cost of laying a token. Currently hardcoded for the
+	 * "sequence" method. The other token layong costing methods will be
+	 * implemented later.
+	 * 
+	 * @param index
+	 *            The sequence number of the token that the company is laying.
+	 * @return The cost of laying that token.
+	 */
+	public int getBaseTokenLayCost()
+	{
+
+		if (baseTokenLayCost == null) return 0;
+		
+		int index = getNumberOfLaidBaseTokens();
+		
+		if (index >= baseTokenLayCost.length)
+		{
+			index = baseTokenLayCost.length - 1;
+		}
+		else if (index < 0)
+		{
+			index = 0;
+		}
+		return baseTokenLayCost[index];
+	}
+
+
 
     public ModelObject getTokensLaidThisTurnModel() {
         return tokensLaidThisTurn;
@@ -1452,6 +1522,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // This is not true in 1841!
         // TODO This does not yet cover cases where the user
         // has a choice, such in 1830 Erie.
+    	if (hasLaidHomeBaseTokens()) return true;
+    	
         return homeHex.layBaseToken(this, homeStation);
     }
 
@@ -1545,21 +1617,31 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int getNumberOfTileLays(String tileColour) {
 
-        if (numberOfTileLays == null)
+        if (extraTileLays == null)
             return 1;
 
-        Map<String, Integer> phaseMap = numberOfTileLays.get(tileColour);
-        if (phaseMap == null)
+        Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
+        if (phaseMap == null || phaseMap.isEmpty())
             return 1;
 
         PhaseI phase = PhaseManager.getInstance().getCurrentPhase();
-        int i = phaseMap.get(phase.getName());
-        if (i == 0)
+        Integer ii = phaseMap.get(phase.getName());
+        if (ii == null)
             return 1;
 
-        if (i > 1 && extraTiles != null && extraTiles.intValue() == 0)
-            return 1;
-
+        int i = ii;
+        if (i > 1) {
+        	if (extraTiles == null
+        				&& turnsWithExtraTileLays != null) {
+        			extraTiles = turnsWithExtraTileLays.get(tileColour);
+       		}
+        	if (extraTiles != null) {
+        		if (extraTiles.intValue() == 0)	{
+        			extraTiles = null;
+        			return 1;
+        		}
+        	}
+        }
         return i;
     }
 
