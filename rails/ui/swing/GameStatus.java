@@ -70,70 +70,70 @@ public class GameStatus extends JPanel implements ActionListener
 	private Color buttonHighlight = new Color(255, 160, 80);
 
 	// Grid elements per function
-	private Field certPerPlayer[][];
-	private ClickField certPerPlayerButton[][];
-	private int certPerPlayerXOffset, certPerPlayerYOffset;
-	private Field certInIPO[];
-	private ClickField certInIPOButton[];
-	private int certInIPOXOffset, certInIPOYOffset;
-	private Field certInPool[];
-	private ClickField certInPoolButton[];
-	private int certInPoolXOffset, certInPoolYOffset;
-	private Field certInTreasury[];
-	private ClickField certInTreasuryButton[];
-	private int certInTreasuryXOffset, certInTreasuryYOffset;
-	private Field parPrice[];
-	private int parPriceXOffset, parPriceYOffset;
-	private Field currPrice[];
-	private int currPriceXOffset, currPriceYOffset;
-	private Field compCash[];
-	private int compCashXOffset, compCashYOffset;
-	private Field compRevenue[];
-	private int compRevenueXOffset, compRevenueYOffset;
-	private Field compTrains[];
-	private int compTrainsXOffset, compTrainsYOffset;
-	private Field compTokens[];
-	private int compTokensXOffset, compTokensYOffset;
-	private Field compPrivates[];
-	private int compPrivatesXOffset, compPrivatesYOffset;
-	private Field playerCash[];
-	private int playerCashXOffset, playerCashYOffset;
-	private Field playerPrivates[];
-	private int playerPrivatesXOffset, playerPrivatesYOffset;
-	private Field playerWorth[];
-	private int playerWorthXOffset, playerWorthYOffset;
-	private Field playerCertCount[];
-	private int playerCertCountXOffset, playerCertCountYOffset;
-	private int certLimitXOffset, certLimitYOffset;
-	private Field bankCash;
-	private int bankCashXOffset, bankCashYOffset;
-	private Field poolTrains;
-	private int poolTrainsXOffset, poolTrainsYOffset;
-	private Field newTrains;
-	private int newTrainsXOffset, newTrainsYOffset;
-	private Field futureTrains;
-	private int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
-	private int rightCompCaptionXOffset;
+	protected Field certPerPlayer[][];
+	protected ClickField certPerPlayerButton[][];
+	protected int certPerPlayerXOffset, certPerPlayerYOffset;
+	protected Field certInIPO[];
+	protected ClickField certInIPOButton[];
+	protected int certInIPOXOffset, certInIPOYOffset;
+	protected Field certInPool[];
+	protected ClickField certInPoolButton[];
+	protected int certInPoolXOffset, certInPoolYOffset;
+	protected Field certInTreasury[];
+	protected ClickField certInTreasuryButton[];
+	protected int certInTreasuryXOffset, certInTreasuryYOffset;
+	protected Field parPrice[];
+	protected int parPriceXOffset, parPriceYOffset;
+	protected Field currPrice[];
+	protected int currPriceXOffset, currPriceYOffset;
+	protected Field compCash[];
+	protected int compCashXOffset, compCashYOffset;
+	protected Field compRevenue[];
+	protected int compRevenueXOffset, compRevenueYOffset;
+	protected Field compTrains[];
+	protected int compTrainsXOffset, compTrainsYOffset;
+	protected Field compTokens[];
+	protected int compTokensXOffset, compTokensYOffset;
+	protected Field compPrivates[];
+	protected int compPrivatesXOffset, compPrivatesYOffset;
+	protected Field playerCash[];
+	protected int playerCashXOffset, playerCashYOffset;
+	protected Field playerPrivates[];
+	protected int playerPrivatesXOffset, playerPrivatesYOffset;
+	protected Field playerWorth[];
+	protected int playerWorthXOffset, playerWorthYOffset;
+	protected Field playerCertCount[];
+	protected int playerCertCountXOffset, playerCertCountYOffset;
+	protected int certLimitXOffset, certLimitYOffset;
+	protected Field bankCash;
+	protected int bankCashXOffset, bankCashYOffset;
+	protected Field poolTrains;
+	protected int poolTrainsXOffset, poolTrainsYOffset;
+	protected Field newTrains;
+	protected int newTrainsXOffset, newTrainsYOffset;
+	protected Field futureTrains;
+	protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
+	protected int rightCompCaptionXOffset;
 
 	private Caption[] upperPlayerCaption;
 	private Caption[] lowerPlayerCaption;
 	private Caption treasurySharesCaption;
 
-	private int np; // Number of players
-	private GridBagLayout gb;
+	protected int np; // Number of players
+	protected GridBagLayout gb;
 
-    private int nc; // NUmber of companies
-	private Player[] players;
-	private PublicCompanyI[] companies;
-	private CompanyManagerI cm;
-	private Portfolio ipo, pool;
+    protected int nc; // NUmber of companies
+	protected Player[] players;
+	protected PublicCompanyI[] companies;
+	protected CompanyManagerI cm;
+	protected Portfolio ipo, pool;
 
-    private PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    private boolean hasParPrices = false;
-	private boolean compCanBuyPrivates = false;
-	private boolean compCanHoldOwnShares = false;
-	private boolean compCanHoldForeignShares = false; // NOT YET USED
+    protected boolean hasParPrices = false;
+	protected boolean compCanBuyPrivates = false;
+	protected boolean compCanHoldOwnShares = false;
+	protected boolean compCanHoldForeignShares = false; // NOT YET USED
 
 	private PublicCompanyI c;
 	private JComponent f;
@@ -141,14 +141,14 @@ public class GameStatus extends JPanel implements ActionListener
 	// Current actor.
 	// Players: 0, 1, 2, ...
 	// Company (from treasury): -1.
-	private int actorIndex = -2;
+	protected int actorIndex = -2;
 
-	private ButtonGroup buySellGroup = new ButtonGroup();
-	private ClickField dummyButton; // To be selected if none else is.
+	protected ButtonGroup buySellGroup = new ButtonGroup();
+	protected ClickField dummyButton; // To be selected if none else is.
 
-	private Map<PublicCompanyI, Integer> companyIndex
+	protected Map<PublicCompanyI, Integer> companyIndex
 		= new HashMap<PublicCompanyI, Integer>();
-	private Map<Player, Integer> playerIndex
+	protected Map<Player, Integer> playerIndex
 		= new HashMap<Player, Integer>();
 
     protected static Logger log = Logger.getLogger(GameStatus.class.getPackage().getName());
@@ -716,11 +716,14 @@ public class GameStatus extends JPanel implements ActionListener
 
 	        // Assume that we will have either sell or buy actions
 	        // under one ClickField, not both. This seems guaranteed.
+log.debug("Action is "+actions.get(0).toString());
 
+	        if (actions == null || actions.size() == 0) {
 
-	        if (actions != null && actions.size() > 0
-	                && actions.get(0) instanceof SellShares)
-			{
+	            log.warn("No ClickField action found");
+
+	        } else if (actions.get(0) instanceof SellShares) {
+
 				List<String> options = new ArrayList<String>();
 				List<SellShares> sellActions = new ArrayList<SellShares>();
 				List<Integer> sellAmounts = new ArrayList<Integer>();
@@ -765,8 +768,7 @@ public class GameStatus extends JPanel implements ActionListener
 					((SellShares)chosenAction).setNumberSold(sellAmounts.get(index));
 				}
 			}
-	        else if (actions != null && actions.size() > 0
-	                    && actions.get(0) instanceof BuyCertificate)
+	        else if (actions.get(0) instanceof BuyCertificate)
 	        {
                 boolean startCompany = false;
 
@@ -858,11 +860,15 @@ public class GameStatus extends JPanel implements ActionListener
 					((BuyCertificate)chosenAction).setNumberBought(buyAmounts.get(index));
 				}
 			} else {
-			    log.error ("No SR action found - command is "+command);
+
+			    chosenAction = processGameSpecificActions (actor, actions.get(0));
+
 			}
+		} else {
+		    log.warn ("Action from unknown source: "+source.toString());
 		}
 
-		chosenAction = processGameSpecificActions (actor, chosenAction);
+		chosenAction = processGameSpecificFollowUpActions (actor, chosenAction);
 
 		if (chosenAction != null) ((StatusWindow)parent).process (chosenAction);
 
@@ -876,6 +882,12 @@ public class GameStatus extends JPanel implements ActionListener
 	        PossibleAction chosenAction) {
 	    return chosenAction;
 	}
+
+    protected PossibleAction processGameSpecificFollowUpActions (
+            ActionEvent actor,
+            PossibleAction chosenAction) {
+        return chosenAction;
+    }
 
     public void initTurn(int actorIndex)
 	{
@@ -957,6 +969,8 @@ public class GameStatus extends JPanel implements ActionListener
 				}
 			}
 
+            initGameSpecificActions();
+
 			List<NullAction> nullActions = possibleActions.getType(NullAction.class);
 			if (nullActions != null) {
 				for (NullAction na : nullActions) {
@@ -968,6 +982,11 @@ public class GameStatus extends JPanel implements ActionListener
 
 		repaint();
 	}
+
+    /** Stub, can be overridden by game-specific subclasses */
+    protected void initGameSpecificActions() {
+
+    }
 
 	public void setPriorityPlayer (int index) {
 
@@ -985,7 +1004,7 @@ public class GameStatus extends JPanel implements ActionListener
 			return "";
 	}
 
-	private void setPlayerCertButton(int i, int j, boolean clickable, Object o)
+	protected void setPlayerCertButton(int i, int j, boolean clickable, Object o)
 	{
 
 		setPlayerCertButton(i, j, clickable);
@@ -994,7 +1013,7 @@ public class GameStatus extends JPanel implements ActionListener
 		}
 	}
 
-	private void setPlayerCertButton(int i, int j, boolean clickable)
+	protected void setPlayerCertButton(int i, int j, boolean clickable)
 	{
 		if (clickable)
 		{
