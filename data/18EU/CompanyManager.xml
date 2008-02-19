@@ -17,7 +17,7 @@
   <CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
     <PoolPaysOut/>
     <Float percentage="50"/>
-	<TreasuryCanHoldOwnShares maxPerc="50"/>
+	<TreasuryCanHoldOwnShares maxPerc="80"/>
 	<HomeBase lay="whenStarted"/>
     <StockPrice par="no"/>
     <ShareUnit percentage="10"/>
@@ -29,6 +29,7 @@
 		<HomeBase lay="whenStarted"/>
 	</BaseTokens>
 	<Trains number="4,4,3,2"/>
+	<TradeShares mustHaveOperated="yes"/>
   </CompanyType>
   
   <Company name="1" longname="CdF du Nord" type="Minor">
