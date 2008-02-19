@@ -2,11 +2,14 @@ package rails.ui.swing.gamespecific._18EU;
 
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import rails.game.PublicCompanyI;
+import rails.game.TrainI;
+import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.game.specific._18EU.StartCompany_18EU;
 import rails.ui.swing.GameStatus;
@@ -20,61 +23,169 @@ import rails.util.LocalText;
  */
 public class GameStatus_18EU extends GameStatus
 {
-	/** Stub allowing game-specific extensions */
+    @Override
+    protected void initGameSpecificActions () {
+
+        PublicCompanyI mergingCompany;
+        int index;
+
+        List<MergeCompanies> mergers = possibleActions.getType(MergeCompanies.class);
+        if (mergers != null) {
+            for (MergeCompanies merger : mergers)
+            {
+                mergingCompany = merger.getMergingCompany();
+                index = mergingCompany.getPublicNumber();
+                setPlayerCertButton(index, actorIndex, true, merger);
+            }
+        }
+    }
+
+
+	/** Start a company - specific procedure for 18EU */
 	@Override
     protected PossibleAction processGameSpecificActions (
 	        ActionEvent actor,
 	        PossibleAction chosenAction) {
 
-	    if (chosenAction instanceof StartCompany_18EU) {
+	    if (chosenAction instanceof MergeCompanies) {
 
-	        StartCompany_18EU action = (StartCompany_18EU) chosenAction;
-	        List<PublicCompanyI> minors =
-	            ((StartCompany_18EU)chosenAction).getMinorsToMerge();
+	        log.debug("Merge action: "+chosenAction.toString());
 
-	        if (minors == null || minors.isEmpty()) {
-	            // Do nothing
-	        } else if (minors.size() == 1) {
-	            PublicCompanyI minor = minors.get(0);
-	            int answer = JOptionPane.showConfirmDialog(
-	                    parent,
-	                    LocalText.getText("MergeMinorConfirm",
-	                            new String[] {
-	                                minor.getName(),
-	                                action.getCertificate().getCompany().getName()
-	                    }),
-	                    LocalText.getText("PleaseConfirm"),
-	                    JOptionPane.OK_CANCEL_OPTION,
-	                    JOptionPane.QUESTION_MESSAGE);
-	            if (answer == JOptionPane.OK_OPTION) {
-	                action.setChosenMinor(minor);
-	                chosenAction = action;
-	            } else {
-	            	chosenAction = null;
-	            }
-	        } else {
-	            String[] options = new String[minors.size()];
-	            int i = 0;
-	            for (PublicCompanyI minor : minors) {
-	                options[i++] = "Minor " + minor.getName()+ " " + minor.getLongName();
-	            }
-	            int choice = new RadioButtonDialog(
-	                    this,
-	                    LocalText.getText("PleaseSelect"),
-	                    LocalText.getText("SelectMinorToMerge",
-	                            action.getCertificate().getCompany().getName()),
-	                    options,
-	                    -1)
-	                .getSelectedOption();
-	            if (choice >= 0) {
-	                action.setChosenMinor(minors.get(choice));
-	                chosenAction = action;
-	            } else {
-	            	chosenAction = null;
-	            }
+	        MergeCompanies action = (MergeCompanies) chosenAction;
+	        PublicCompanyI minor = action.getMergingCompany();
+	        List<PublicCompanyI> targets = action.getTargetCompanies();
+
+	        if (minor == null || targets == null || targets.isEmpty()) {
+	            log.error("Bad "+action.toString());
+	            return null;
 	        }
+
+            String[] options = new String[targets.size()];
+            int i = 0;
+            for (PublicCompanyI target : targets) {
+                options[i++] = target.getName()+ " " + target.getLongName();
+            }
+            int choice = new RadioButtonDialog(
+                    this,
+                    LocalText.getText("PleaseSelect"),
+                    LocalText.getText("SelectCompanyToMergeMinorInto",
+                            minor.getName()),
+                    options,
+                    -1)
+                .getSelectedOption();
+            if (choice < 0) return null;
+
+            PublicCompanyI major = targets.get(choice);
+            action.setSelectedTargetCompany(major);
+
+            boolean replaceToken =
+                JOptionPane.showConfirmDialog(this,
+                        LocalText.getText("WantToReplaceToken",
+                            new String[] {
+                                minor.getName(),
+                                major.getName()
+                        }),
+                        LocalText.getText("PleaseSelect"),
+                        JOptionPane.YES_NO_OPTION)
+                    == JOptionPane.YES_OPTION;
+            action.setReplaceToken(replaceToken);
+
+            List<TrainI> trains = action.getMinorTrains();
+            trains.addAll(action.getMajorTrains().get(choice));
+            int trainLimit = action.getMajorTrainLimit();
+            List<TrainI> discardedTrains = new ArrayList<TrainI>();
+
+            while (trains.size() > trainLimit) {
+
+                List<String> trainOptions = new ArrayList<String>(trains.size());
+                options = new String[trains.size()];
+
+                for (int j=0; j<options.length; j++) {
+                    options[j] = LocalText.getText("N_Train", trains.get(j).getName());
+                    trainOptions.add(options[j]);
+                }
+                String discardedTrainName = (String) JOptionPane.showInputDialog (this,
+                        LocalText.getText("HasTooManyTrains", new String[] {
+                                major.getName(),
+                                String.valueOf(trains.size()),
+                                String.valueOf(trainLimit)
+                        }),
+                        LocalText.getText("WhichTrainToDiscard"),
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+                if (discardedTrainName != null)
+                {
+                    TrainI train = trains.get(trainOptions.indexOf(discardedTrainName));
+                    discardedTrains.add(train);
+                    trains.remove(train);
+                }
+
+            }
+            if (!discardedTrains.isEmpty()) {
+                action.setDiscardedTrains(discardedTrains);
+            }
 	    }
 	    return chosenAction;
 	}
+
+	  /** Start a company - specific procedure for 18EU */
+    @Override
+    protected PossibleAction processGameSpecificFollowUpActions (
+            ActionEvent actor,
+            PossibleAction chosenAction) {
+
+        if (chosenAction instanceof StartCompany_18EU) {
+
+            StartCompany_18EU action = (StartCompany_18EU) chosenAction;
+            List<PublicCompanyI> minors =
+                ((StartCompany_18EU)chosenAction).getMinorsToMerge();
+
+            if (minors == null || minors.isEmpty()) {
+                // Do nothing
+            } else if (minors.size() == 1) {
+                PublicCompanyI minor = minors.get(0);
+                int answer = JOptionPane.showConfirmDialog(
+                        parent,
+                        LocalText.getText("MergeMinorConfirm",
+                                new String[] {
+                                    minor.getName(),
+                                    action.getCertificate().getCompany().getName()
+                        }),
+                        LocalText.getText("PleaseConfirm"),
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.OK_OPTION) {
+                    action.setChosenMinor(minor);
+                    chosenAction = action;
+                } else {
+                    chosenAction = null;
+                }
+            } else {
+                String[] options = new String[minors.size()];
+                int i = 0;
+                for (PublicCompanyI minor : minors) {
+                    options[i++] = "Minor " + minor.getName()+ " " + minor.getLongName();
+                }
+                int choice = new RadioButtonDialog(
+                        this,
+                        LocalText.getText("PleaseSelect"),
+                        LocalText.getText("SelectMinorToMerge",
+                                action.getCertificate().getCompany().getName()),
+                        options,
+                        -1)
+                    .getSelectedOption();
+                if (choice >= 0) {
+                    action.setChosenMinor(minors.get(choice));
+                    chosenAction = action;
+                } else {
+                    chosenAction = null;
+                }
+            }
+        }
+        return chosenAction;
+    }
+
 
 }
