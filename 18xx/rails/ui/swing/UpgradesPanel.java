@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.12 2008/02/19 20:06:20 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.13 2008/02/19 20:31:58 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
