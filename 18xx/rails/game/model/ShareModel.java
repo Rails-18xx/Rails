@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.5 2007/10/05 22:02:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.6 2008/02/19 20:14:44 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Player;
@@ -36,13 +36,19 @@ public class ShareModel extends ModelObject
 		return share;
 	}
 
-	public String getText()
+	@Override
+    public String getText()
 	{
 		if (share == 0)
 			return "";
-		return share + "%"
-			+ ((portfolio.getOwner() instanceof Player)
-			        && company.getPresident() == portfolio.getOwner() ? "P" : "");
+		StringBuffer b = new StringBuffer();
+		b.append (share).append("%");
+		if (portfolio.getOwner() instanceof Player
+			        && company.getPresident() == portfolio.getOwner()) {
+		    b.append("P");
+		    if (!company.hasFloated()) b.append("U");
+		}
+		return b.toString();
 	}
 
 }
