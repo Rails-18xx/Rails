@@ -8,17 +8,8 @@ import java.util.Map;
 
 import rails.game.Bank;
 import rails.game.DisplayBuffer;
-import rails.game.GameManager;
-import rails.game.PhaseManager;
-import rails.game.PhaseManagerI;
-import rails.game.Portfolio;
-import rails.game.PublicCertificateI;
-import rails.game.PublicCompanyI;
-import rails.game.ReportBuffer;
-import rails.game.StockRound;
-import rails.game.StockSpaceI;
-import rails.game.action.BuyCertificate;
-import rails.game.action.StartCompany;
+import rails.game.*;
+import rails.game.action.*;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -210,6 +201,38 @@ public class StockRound_18EU extends StockRound
         }
     }
 
+    /**
+     * An 18EU extension to StockRound.setSellableShares()
+     * that adds any mergeable Minor companies.
+     */
+    @Override
+    protected void setGameSpecificActions()
+    {
+        if (!mayCurrentPlayerBuyAnything())
+            return;
+
+        List<PublicCompanyI> comps = Game.getCompanyManager().getAllPublicCompanies();
+        List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
+        List<PublicCompanyI> targetCompanies = new ArrayList<PublicCompanyI>();
+        String type;
+
+        for (PublicCompanyI comp : comps) {
+            type = comp.getTypeName();
+            if (type.equals("Major")
+                    && comp.hasStarted() && !comp.hasOperated()) {
+                targetCompanies.add(comp);
+            } else if (type.equals("Minor")
+                    && comp.getPresident() == currentPlayer) {
+                minors.add(comp);
+            }
+        }
+        if (minors.isEmpty() || targetCompanies.isEmpty()) return;
+
+        for (PublicCompanyI minor : minors) {
+            possibleActions.add(new MergeCompanies (
+                    minor, targetCompanies));
+        }
+    }
 
 	/**
 	 * Start a company by buying one or more shares (more applies to e.g. 1841)
@@ -420,8 +443,84 @@ public class StockRound_18EU extends StockRound
 
 		return true;
 	}
-	
-	protected void checkFlotation (PublicCompanyI company) {
+
+    @Override
+    protected boolean processGameSpecificAction (PossibleAction action) {
+
+        log.debug("GameSpecificAction: "+action.toString());
+
+        boolean result = false;
+
+        if (action instanceof MergeCompanies) {
+
+            result = mergeCompanies ((MergeCompanies) action);
+
+        }
+
+        return result;
+    }
+
+    private boolean mergeCompanies (MergeCompanies action) {
+
+        PublicCompanyI minor = action.getMergingCompany();
+        PublicCompanyI major = action.getSelectedTargetCompany();
+
+        // TODO Validation to be added?
+
+        MoveSet.start(true);
+
+        // Get the extra certificate for the minor, for free
+        PublicCertificateI cert = major.getPortfolio().findCertificate(major, false);
+        cert.moveTo(currentPlayer.getPortfolio());
+
+        // Transfer the minor assets into the started company
+        int minorCash = minor.getCash();
+        int minorTrains = minor.getPortfolio().getTrainList().size();
+        major.transferAssetsFrom (minor);
+
+        minor.setClosed();
+        
+        if (action.getReplaceToken()) {
+            if (minor.getHomeHex().layBaseToken(major, 0)) {
+                major.layBaseToken (minor.getHomeHex(), 0);
+            }
+        }
+        
+        List<TrainI> discardedTrains = action.getDiscardedTrains();
+        if (discardedTrains != null && !discardedTrains.isEmpty()) {
+        	Util.moveObjects(discardedTrains, Bank.getPool());
+        }
+        
+        checkFlotation(major);
+
+        ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+                new String[] {
+                    currentPlayer.getName(),
+                    minor.getName(),
+                    major.getName(),
+                    Bank.format(minorCash),
+                    String.valueOf(minorTrains)
+                }));
+        ReportBuffer.add(LocalText.getText("GetShareForMinor",
+                new String[] {
+                    currentPlayer.getName(),
+                    String.valueOf(cert.getShare()),
+                    major.getName(),
+                    minor.getName()
+                }));
+
+        hasActed.set (true);
+        companyBoughtThisTurnWrapper.set (major);
+        setPriority();
+
+
+
+        return true;
+
+    }
+
+	@Override
+    protected void checkFlotation (PublicCompanyI company) {
 		company.checkFlotation(false);
 	}
 
