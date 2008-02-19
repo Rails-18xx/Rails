@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.11 2008/02/13 19:59:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.12 2008/02/19 02:21:00 wakko666 Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -142,6 +142,14 @@ public class StartRound_1830 extends StartRound
 					}
 				}
 	
+			}
+			
+			/*
+			* it is possible that the last unsold item was sold in the above loop.
+			* go to next round if that happened
+			*/
+			if (StartPacket.getStartPacket().areAllSold()) {
+			    return false;
 			}
 			
 			if (possibleActions.isEmpty()) {
