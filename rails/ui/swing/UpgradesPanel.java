@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.11 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.12 2008/02/19 20:06:20 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private List<ActionLabel> tokenLabels;
     private int selectedTokenIndex;
     private List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
-    
+
     static private Color defaultLabelBgColour = new JLabel("").getBackground();
     static private Color selectedLabelBgColour = new Color(255, 220, 150);
 
@@ -39,12 +39,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             LocalText.getText(INIT_CANCEL_TEXT));
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
     private HexMap hexMap;
-    
+
     protected static Logger log = Logger.getLogger(UpgradesPanel.class.getPackage().getName());
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);
-        
+
         this.orUIManager = orUIManager;
 
         setSize(preferredSize);
@@ -80,7 +80,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         MapHex hex = uiHex.getHexModel();
         orUIManager.tileUpgrades = new ArrayList<TileI>();
         List<TileI> tiles;
-        
+
         for (LayTile layTile: hexMap.getTileAllowancesForHex(hex)) {
         	tiles = layTile.getTiles();
         	if (tiles == null) {
@@ -135,9 +135,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 upgradePanel.add(tokenLabel);
             }
-            
+
             setSelectedToken ();
-            
+
         } else if (orUIManager.tileUpgrades == null) {
         } else if (orUIManager.tileUpgrades.size() == 0) {
             orUIManager.setMessage(LocalText.getText("NoTiles"));
@@ -152,7 +152,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                         (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE*0.8),
                         Image.SCALE_SMOOTH));
 
-                JLabel hexLabel = new JLabel(hexIcon);
+                HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
                 hexLabel.setName(tile.getName());
                 hexLabel.setText("" + tile.getExternalId());
                 hexLabel.setOpaque(true);
@@ -166,10 +166,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
-        
+
         repaint();
     }
-    
+
     public void clear () {
     	upgradePanel.removeAll();
         upgradePanel.add(doneButton);
@@ -181,12 +181,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     	log.debug("Selected token index from "+selectedTokenIndex+" to "+index);
     	selectedTokenIndex = index;
     }
-    
+
     public void setSelectedToken () {
         if (tokenLabels == null || tokenLabels.isEmpty()) return;
         int index = -1;
         for (ActionLabel tokenLabel : tokenLabels) {
-            tokenLabel.setBackground(++index == selectedTokenIndex 
+            tokenLabel.setBackground(++index == selectedTokenIndex
                     ? selectedLabelBgColour
                     : defaultLabelBgColour);
         }
@@ -195,10 +195,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         return GameUIManager.getImageLoader().getTile(tileId);
     }
 
+    @Override
     public Dimension getPreferredSize() {
         return preferredSize;
     }
 
+    @Override
     public void setPreferredSize(Dimension preferredSize) {
         this.preferredSize = preferredSize;
     }
@@ -206,7 +208,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     public void setTileUpgrades(List<TileI> upgrades) {
         this.orUIManager.tileUpgrades = upgrades;
     }
-    
+
     public void addUpgrades (List<TileI> upgrades) {
         this.orUIManager.tileUpgrades.addAll(upgrades);
     }
@@ -221,13 +223,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         possibleTokenLays.clear();
         selectedTokenIndex = -1;
     }
-    
+
     public <T extends LayToken> void setPossibleTokenLays (List<T> actions) {
         possibleTokenLays.clear();
         selectedTokenIndex = -1;
         if (actions != null) possibleTokenLays.addAll(actions);
     }
-    
+
     public void setCancelText(String text) {
         cancelButton.setText(LocalText.getText(text));
     }
@@ -256,10 +258,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void mouseClicked(MouseEvent e) {
-    	
+
     	Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
-        
+
         if (tokenMode) {
         	if (tokenLabels.contains(source)) {
         		orUIManager.tokenSelected((LayToken)((ActionLabel)source).getPossibleActions().get(0));
@@ -270,8 +272,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             setSelectedToken();
         } else {
 
-	        int id = Integer.parseInt(((JLabel) e.getSource()).getText());
-	        
+	        int id = ((HexLabel) e.getSource()).getInternalId();
+
 	        orUIManager.tileSelected(id);
         }
 
@@ -292,5 +294,20 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     public void finish() {
         setDoneEnabled(false);
         setCancelEnabled(false);
+    }
+
+    /** JLabel extension to allow attaching the internal hex ID */
+    private class HexLabel extends JLabel {
+
+        int internalId;
+
+        HexLabel (ImageIcon hexIcon, int internalId) {
+            super (hexIcon);
+            this.internalId = internalId;
+        }
+
+        int getInternalId () {
+            return internalId;
+        }
     }
 }
