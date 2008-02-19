@@ -144,6 +144,8 @@ public class StockRound extends Round
 
         setSpecialActions();
 
+        setGameSpecificActions();
+
 		if (passAllowed) {
 			if (hasActed.booleanValue()) {
 				possibleActions.add (new NullAction (NullAction.DONE));
@@ -157,6 +159,11 @@ public class StockRound extends Round
 		}
 
         return true;
+	}
+
+	/** Stub, can be overridden in subclasses */
+	protected void setGameSpecificActions() {
+
 	}
 
 	/**
@@ -469,6 +476,8 @@ public class StockRound extends Round
 
             result = useSpecialProperty ((UseSpecialProperty)action);
 
+        } else if ((result = processGameSpecificAction(action))) {
+
 		} else {
 
 			DisplayBuffer.add (LocalText.getText("UnexpectedAction",
@@ -477,6 +486,12 @@ public class StockRound extends Round
 
         return result;
 	}
+
+	protected boolean processGameSpecificAction (PossibleAction action) {
+
+	    return false;
+	}
+
 	/**
 	 * Start a company by buying one or more shares (more applies to e.g. 1841)
 	 *
@@ -819,7 +834,7 @@ public class StockRound extends Round
 
 		return true;
 	}
-	
+
 	protected void checkFlotation (PublicCompanyI company) {
 		company.checkFlotation(true);
 	}
