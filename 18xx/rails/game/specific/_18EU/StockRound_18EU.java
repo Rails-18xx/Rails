@@ -1,15 +1,11 @@
 package rails.game.specific._18EU;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import rails.game.Bank;
-import rails.game.DisplayBuffer;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.move.CashMove;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -378,8 +374,8 @@ public class StockRound_18EU extends StockRound
 		//		cert.getCertificatePrice());
 		cert.moveTo(currentPlayer.getPortfolio());
 
-		Bank.transferCash(currentPlayer, company, shares * price);
-		Bank.transferCash(company, null, tokensCost);
+		new CashMove (currentPlayer, company, shares * price);
+		new CashMove (company, null, tokensCost);
 
 		// Get the extra certificate for the minor, for free
 		PublicCertificateI cert2 = ipo.findCertificate(company, false);
@@ -479,18 +475,18 @@ public class StockRound_18EU extends StockRound
         major.transferAssetsFrom (minor);
 
         minor.setClosed();
-        
+
         if (action.getReplaceToken()) {
             if (minor.getHomeHex().layBaseToken(major, 0)) {
                 major.layBaseToken (minor.getHomeHex(), 0);
             }
         }
-        
+
         List<TrainI> discardedTrains = action.getDiscardedTrains();
         if (discardedTrains != null && !discardedTrains.isEmpty()) {
         	Util.moveObjects(discardedTrains, Bank.getPool());
         }
-        
+
         checkFlotation(major);
 
         ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
