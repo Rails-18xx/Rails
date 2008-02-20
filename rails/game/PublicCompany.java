@@ -1,26 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.29 2008/02/19 20:12:51 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.30 2008/02/20 22:16:37 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import rails.game.action.SetDividend;
-import rails.game.model.BaseTokensModel;
-import rails.game.model.CashModel;
-import rails.game.model.ModelObject;
-import rails.game.model.MoneyModel;
-import rails.game.model.PriceModel;
+import rails.game.model.*;
 import rails.game.move.CashMove;
 import rails.game.move.Moveable;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
-import rails.game.state.StringState;
-import rails.util.LocalText;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.game.state.*;
+import rails.util.*;
 
 /**
  * This class provides an implementation of a (perhaps only basic) public
@@ -754,7 +743,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public void transferAssetsFrom (PublicCompanyI otherCompany) {
 
-        Bank.transferCash(otherCompany, this, otherCompany.getCash());
+        new CashMove (otherCompany, this, otherCompany.getCash());
         portfolio.transferAssetsFrom (otherCompany.getPortfolio());
     }
 
