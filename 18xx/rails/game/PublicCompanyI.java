@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.15 2008/02/19 20:13:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.16 2008/02/23 20:54:38 evos Exp $ */
 package rails.game;
 
 
@@ -259,7 +259,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
 	public int getTrainLimit (int phaseIndex);
     public int getCurrentTrainLimit();
-	public boolean mayBuyTrains ();
+	//public boolean mayBuyTrains ();
+    public int getNumberOfTrains();
 
 	public void initTurn();
 

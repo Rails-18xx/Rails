@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.30 2008/02/20 22:16:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.31 2008/02/23 20:54:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1390,9 +1390,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return getTrainLimit(GameManager.getCurrentPhase().getIndex());
     }
 
+    /*
     public boolean mayBuyTrains() {
 
         return portfolio.getNumberOfTrains() < getCurrentTrainLimit();
+    }
+    */
+    public int getNumberOfTrains() {
+    	return portfolio.getNumberOfTrains();
     }
 
     /**
