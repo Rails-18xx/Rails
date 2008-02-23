@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.7 2008/01/18 19:58:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.8 2008/02/23 20:54:39 evos Exp $
  * 
  * Created on 20-May-2006
  * Change Log:
@@ -44,6 +44,7 @@ public class BuyTrain extends PossibleORAction {
     private int addedCash = 0;
     transient private TrainI exchangedTrain = null;
     private String exchangedTrainUniqueId;
+    private boolean forcedExchange = false;
     
     public static final long serialVersionUID = 2L;
 
@@ -77,6 +78,11 @@ public class BuyTrain extends PossibleORAction {
         presidentMayAddCash = true;
         presidentCashToAdd = amount;
         return this;
+    }
+    
+    public BuyTrain setForcedExchange (boolean value) {
+    	forcedExchange = value;
+    	return this;
     }
     
     /**
@@ -115,6 +121,10 @@ public class BuyTrain extends PossibleORAction {
     
     public List<TrainI> getTrainsForExchange () {
         return trainsForExchange;
+    }
+    
+    public boolean isForcedExchange() {
+    	return forcedExchange;
     }
     
     public boolean mustPresidentAddCash () {
@@ -172,7 +182,9 @@ public class BuyTrain extends PossibleORAction {
 		if (specialProperty != null) {
 			b.append(" using ").append(specialProperty.getCompany().getName());
 		}
-		if (isForExchange()) b.append (" (exchanged)");
+		if (isForExchange()) {
+			b.append (forcedExchange ? " (forced exchange)" : " (exchanged)");
+		}
 		if (presidentMustAddCash) b.append(" must add cash ").append(Bank.format(presidentCashToAdd));
 		else if (presidentMayAddCash) b.append(" may add cash up to ").append(Bank.format(presidentCashToAdd));
 		

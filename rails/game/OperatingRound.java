@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.31 2008/02/17 22:18:06 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.32 2008/02/23 20:54:38 evos Exp $ */
 package rails.game;
 
 
@@ -1262,11 +1262,8 @@ public class OperatingRound extends Round implements Observer
 			}
 
 			// Does the company have room for another train?
-			int currentNumberOfTrains = operatingCompany.getPortfolio()
-					.getNumberOfTrains();
-			int trainLimit = operatingCompany.getTrainLimit(PhaseManager.getInstance()
-					.getCurrentPhaseIndex());
-			if (currentNumberOfTrains >= trainLimit)
+			int trainLimit = operatingCompany.getCurrentTrainLimit();
+			if (!canBuyTrain())
 			{
 				errMsg = LocalText.getText("WouldExceedTrainLimit",
 				        String.valueOf(trainLimit));
@@ -1433,7 +1430,8 @@ public class OperatingRound extends Round implements Observer
         {
             // Checks
             // Must be correct step
-            if (getStep() != STEP_DISCARD_TRAINS)
+            if (getStep() != STEP_BUY_TRAIN
+                    && getStep() != STEP_DISCARD_TRAINS)
             {
                 errMsg = LocalText.getText("WrongActionNoDiscardTrain");
                 break;
@@ -1470,7 +1468,7 @@ public class OperatingRound extends Round implements Observer
         /* End of validation, start of execution */
         MoveSet.start(true);
         //
-        MoveSet.setLinkedToPrevious();
+        if (action.isForced()) MoveSet.setLinkedToPrevious();
 
         Bank.getPool().buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain", new String[] {
@@ -1793,13 +1791,18 @@ public class OperatingRound extends Round implements Observer
 	    List<TrainI> trains;
 	    //TrainI train;
 	    boolean hasTrains = operatingCompany.getPortfolio().getNumberOfTrains() > 0;
+	    boolean atTrainLimit  = operatingCompany.getNumberOfTrains() 
+				>= operatingCompany.getCurrentTrainLimit();
+		boolean canBuyTrainNow = canBuyTrain();
+		log.debug("+++CanBuyTrainNow="+canBuyTrainNow);
 	    boolean presidentMayHelp = false;
 	    TrainI cheapestTrain = null;
 	    int costOfCheapestTrain = 0;
 	    Portfolio ipo = Bank.getIpo();
 	    Portfolio pool = Bank.getPool();
-
+	    
         // First check if any more trains may be bought from the Bank
+	    // Postpone train limit checking, because an exchange might be possible
         if (currentPhase.canBuyMoreTrainsPerTurn()
                 || trainsBoughtThisTurn.isEmpty()) {
             boolean mayBuyMoreOfEachType =
@@ -1814,20 +1817,25 @@ public class OperatingRound extends Round implements Observer
                 }
                 cost = train.getCost();
                 if (cost <= cash) {
-                	possibleActions.add (new BuyTrain (train, ipo, cost));
+                	if (canBuyTrainNow) possibleActions.add (new BuyTrain (train, ipo, cost));
                 } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
                     cheapestTrain = train;
                     costOfCheapestTrain = cost;
                 }
+                // Even at train limit, exchange is allowed (per 1856)
                 if (train.canBeExchanged() && hasTrains) {
                     cost = train.getType().getFirstExchangeCost();
                     if (cost <= cash) {
                         List<TrainI> exchangeableTrains
                             = operatingCompany.getPortfolio().getUniqueTrains();
-                        possibleActions.add (new BuyTrain (train, ipo, cost)
-                                .setTrainsForExchange(exchangeableTrains));
+                        BuyTrain action = new BuyTrain (train, ipo, cost);
+                        action.setTrainsForExchange(exchangeableTrains);
+                        if (atTrainLimit) action.setForcedExchange(true); 
+                        possibleActions.add (action);
                     }
                 }
+                
+                if (!canBuyTrainNow) return;
 
                 // Can a special property be used?
                 // N.B. Assume that this never occurs in combination with
@@ -1843,6 +1851,7 @@ public class OperatingRound extends Round implements Observer
 
 
             }
+            if (!canBuyTrainNow) return;
 
             /* Used trains */
             trains = pool.getUniqueTrains();
@@ -1866,6 +1875,8 @@ public class OperatingRound extends Round implements Observer
     		    presidentMayHelp = true;
     		}
         }
+        
+        if (!canBuyTrainNow) return;
 
 		/* Other company trains, sorted by president (current player first) */
         if (currentPhase.isTrainTradingAllowed()) {
@@ -1913,6 +1924,15 @@ public class OperatingRound extends Round implements Observer
     			}
             }
 		}
+	}
+	
+	/** Returns whether or not the company is allowed to buy a train,
+	 * considering its train limit.
+	 * @return
+	 */
+	protected boolean canBuyTrain() {
+		return operatingCompany.getNumberOfTrains() 
+			< operatingCompany.getCurrentTrainLimit();
 	}
 
     protected void setTrainsToDiscard() {

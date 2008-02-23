@@ -15,7 +15,7 @@ import rails.util.LocalText;
 import rails.util.Util;
 
 public class ORUIManager {
-	
+
 	protected ORWindow orWindow;
 	protected ORPanel orPanel;
 	private UpgradesPanel upgradePanel;
@@ -23,12 +23,12 @@ public class ORUIManager {
 	private HexMap map;
 	private MessagePanel messagePanel;
 	private RemainingTilesWindow remainingTiles;
-	
+
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
     private PublicCompanyI orComp;
     private int orCompIndex;
-    
+
 	private int orStep;
 	private int localStep;
 
@@ -36,18 +36,18 @@ public class ORUIManager {
     private boolean privatesCanBeBoughtNow;
     public List<PossibleAction> mapRelatedActions = new ArrayList<PossibleAction>();
 
-    private boolean tileLayingEnabled = false; 
+    private boolean tileLayingEnabled = false;
 	public List<LayTile> allowedTileLays = new ArrayList<LayTile>();
 	public List<TileI> tileUpgrades;
-	
+
 	private boolean tokenLayingEnabled = false;
 	public List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
 	private int selectedTokenIndex;
 	private LayToken selectedTokenAllowance;
-	
+
 	/** Will be set true if a cancelled action does not need to be reported to the server,
 	 * because it does not change the OR turn step.
-	 * For instance, if a bonus token lay is locally initiated but cancelled. */ 
+	 * For instance, if a bonus token lay is locally initiated but cancelled. */
 	protected boolean localAction = false;
 
 	/* Local substeps */
@@ -70,38 +70,38 @@ public class ORUIManager {
 	protected static Logger log = Logger.getLogger(ORUIManager.class.getPackage().getName());
 
 	public ORUIManager () {
-		
+
     }
-    
+
     public void init(ORWindow orWindow) {
-        
-		this.orWindow = orWindow; 
+
+		this.orWindow = orWindow;
 
         orPanel = orWindow.getORPanel();
 	    mapPanel = orWindow.getMapPanel();
 	    upgradePanel = orWindow.getUpgradePanel();
 	    map = mapPanel.getMap();
 	    messagePanel = orWindow.getMessagePanel();
-	    
+
 	}
-	
+
 	public void initOR (OperatingRound or) {
 		oRound = or;
         companies = (oRound).getOperatingCompanies();
 		orWindow.activate(oRound);
 	}
-	
+
 	public void finish() {
         orWindow.finish();
         orWindow.setVisible(false);
 
 	}
-	
+
 	public <T extends PossibleAction> void setMapRelatedActions (List<T> actions) {
-		
+
 		GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
 		int nextSubStep = ORUIManager.INACTIVE;
-		
+
 		allowedTileLays.clear();
 		allowedTokenLays.clear();
 		for (T action : actions) {
@@ -111,7 +111,7 @@ public class ORUIManager {
 				allowedTokenLays.add((LayToken) action);
 			}
 		}
-		
+
 		if (allowedTileLays.size() > 0) {
 			nextSubStep = ORUIManager.SELECT_HEX_FOR_TILE;
 			mapPanel.setAllowedTileLays(allowedTileLays);
@@ -127,7 +127,7 @@ public class ORUIManager {
 				}
 			}
 		}
-			
+
 		if (allowedTokenLays.size() > 0) {
 			nextSubStep = ORUIManager.SELECT_HEX_FOR_TOKEN;
 			mapPanel.setAllowedTokenLays(allowedTokenLays);
@@ -143,7 +143,7 @@ public class ORUIManager {
 				}
 			}
 		}
-		
+
 		setLocalStep (nextSubStep);
 		tileLayingEnabled = allowedTileLays.size() > 0;
 		tokenLayingEnabled = allowedTokenLays.size() > 0;
@@ -152,17 +152,17 @@ public class ORUIManager {
 
 		setLocalAction(false);
 	}
-	
+
     public void updateMessage() {
-        
+
         // For now, this only has an effect during tile and token laying.
         // Perhaps we need to centralise message updating here in a later stage.
         log.debug ("Calling updateMessage, subStep="+localStep/*, new Exception("TRACE")*/);
         if (localStep == ORUIManager.INACTIVE) return;
-        
+
         String message = LocalText.getText(ORUIManager.messageKey[localStep]);
         SpecialProperty sp;
-        
+
         /* Add any extra messages */
         String extraMessage = "";
         if (localStep == ORUIManager.SELECT_HEX_FOR_TILE) {
@@ -171,7 +171,7 @@ public class ORUIManager {
             StringBuffer normalTileMessage = new StringBuffer(" ");
             StringBuffer extraTileMessage = new StringBuffer(" ");
             StringBuffer specialTiles = new StringBuffer("#");
-            
+
             List<LayTile> tileLays = possibleActions.getType(LayTile.class);
             log.debug ("There are "+tileLays.size()+" TileLay objects");
             int ii=0;
@@ -184,13 +184,13 @@ public class ORUIManager {
                  * 2. a location (perhaps a list of?) where a specified
                  * set of tiles may be laid, or
                  * 3. a map specifying how many tiles of any colour may be laid "anywhere".
-                 * The last option is only a stopgap as we can't yet determine connectivity.  
+                 * The last option is only a stopgap as we can't yet determine connectivity.
                  */
                 if (sp != null && sp instanceof SpecialTileLay) {
                     SpecialTileLay stl = (SpecialTileLay) sp;
                     if (extraTileMessage.length() > 1) extraTileMessage.append(", ");
                     extraTileMessage.append (stl.getLocationNameString())
-                        .append(" (") 
+                        .append(" (")
                         .append(stl.isExtra() ? "" : "not ")
                         .append("extra");
                     for (MapHex hex : stl.getLocations()) {
@@ -231,14 +231,14 @@ public class ORUIManager {
             if (normalTileMessage.length() > 1) {
                 message += " "+LocalText.getText("TileColours", normalTileMessage);
             }
-            
+
         } else if (localStep == ORUIManager.SELECT_HEX_FOR_TOKEN) {
-            
+
             /* Compose prompt for token laying */
             String locations;
             StringBuffer normalTokenMessage = new StringBuffer(" ");
             StringBuffer extraTokenMessage = new StringBuffer(" ");
-            
+
             List<LayBaseToken> tokenLays = possibleActions.getType(LayBaseToken.class);
             log.debug ("There are "+tokenLays.size()+" TokenLay objects");
             int ii=0;
@@ -251,12 +251,12 @@ public class ORUIManager {
                  * 2. a location (perhaps a list of?) where a token of a specified
                  * company (the currently operating one) may be laid, or
                  * 3. null location and the currently operating company.
-                 * The last option is only a stopgap as we can't yet determine connectivity.  
+                 * The last option is only a stopgap as we can't yet determine connectivity.
                  */
                 if (sp != null && sp instanceof SpecialTokenLay) {
                     if (extraTokenMessage.length() > 1) extraTokenMessage.append(", ");
                     extraTokenMessage.append (((SpecialTokenLay)sp).getLocationCodeString())
-                    .append(" (") 
+                    .append(" (")
                     .append(((SpecialTokenLay)sp).isExtra() ? "" : "not ")
                     .append("extra, ")
                     .append(((SpecialTokenLay)sp).isFree()?"":"not ")
@@ -282,64 +282,64 @@ public class ORUIManager {
         }
 
         setMessage(message);
-        
+
     }
-    
+
 
     /**
-     * Processes button presses and menu selection actions 
+     * Processes button presses and menu selection actions
      * @param command
      * @param actions
      */
     public void processAction (String command, List<PossibleAction> actions) {
-    	
-            
+
+
     	if (actions != null && actions.size() > 0
                 && !processGameSpecificActions (actions)) {
-    		
+
     		Class<? extends PossibleAction> actionType = actions.get(0).getClass();
-    		
+
     		if (actionType == SetDividend.class) {
-    			
+
     			setDividend (command, (SetDividend)actions.get(0));
-    			
+
     		} else if (actionType == LayBonusToken.class) {
-    			
+
     			prepareBonusToken ((LayBonusToken) actions.get(0));
-    			
+
     		} else if (actionType == NullAction.class
                 || actionType == GameAction.class) {
-            
+
             	orWindow.process (actions.get(0));
     		}
 
     	} else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
-            
+
             buyTrain();
 
         } else if (command.equals(ORPanel.BUY_PRIVATE_CMD)) {
 
             buyPrivate();
-            
+
     	} else if (command.equals(ORPanel.REM_TILES_CMD)) {
-    	    
+
     	    displayRemainingTiles();
     	}
-    	
+
         ReportWindow.addLog();
     }
-    
+
     /** Stub, can be overridden in subclasses */
     protected boolean processGameSpecificActions (
             List<PossibleAction> actions) {
-        
+
         return false;
-        
+
     }
-    
+
     private void setDividend (String command, SetDividend action) {
-    	
-    	
+
+
         int amount;
 
             if (command.equals(ORPanel.SET_REVENUE_CMD)) {
@@ -353,7 +353,7 @@ public class ORUIManager {
                     log.debug("Allocation is unknown, asking for it");
                     setLocalStep (SELECT_PAYOUT);
                     updateStatus(action);
-                    
+
                     // Locally update revenue if we don't inform the server yet.
                     orPanel.setRevenue (orCompIndex, amount);
                 }
@@ -362,15 +362,15 @@ public class ORUIManager {
                 orWindow.process (action);
             }
     }
-    
+
     private void prepareBonusToken (LayBonusToken action) {
-    	
-        	
+
+
         	log.debug("+++ SpecialTokenLay "+action.toString());
             orWindow.requestFocus();
 
             List<LayToken> actions = new ArrayList<LayToken>();
-            actions.add((LayToken) action);
+            actions.add(action);
             setMapRelatedActions (actions);
             allowedTokenLays = actions;
             setLocalAction (true);
@@ -382,10 +382,10 @@ public class ORUIManager {
             orPanel.initTokenLayingStep();
 
     }
- 
-	
+
+
 	public void hexClicked (GUIHex clickedHex, GUIHex selectedHex) {
-		
+
 		if (tokenLayingEnabled) {
 			List<LayToken> allowances = map.getTokenAllowanceForHex(clickedHex.getHexModel());
 
@@ -409,7 +409,7 @@ public class ORUIManager {
 				map.repaint(selectedHex.getBounds());
 
 				return;
-				
+
 			} else {
 
 				if (selectedHex != null && clickedHex != selectedHex) {
@@ -435,9 +435,9 @@ public class ORUIManager {
 
 		orWindow.repaintORPanel();
 	}
-	
+
 	public void tileSelected (int tileId) {
-		
+
 		GUIHex hex = map.getSelectedHex();
 		TileI tile = TileManager.get().getTile(tileId);
 
@@ -448,7 +448,7 @@ public class ORUIManager {
 			&& !hex.getHexModel().isHome(orComp)
 			// Does not apply to special tile lays
 			&& !isUnconnectedTileLayTarget(hex);
-		
+
         if (hex.dropTile(tileId, mustConnect)) {
             /* Lay tile */
             map.repaint(hex.getBounds());
@@ -463,9 +463,9 @@ public class ORUIManager {
         }
 
 	}
-	
+
 	protected boolean isUnconnectedTileLayTarget(GUIHex hex) {
-		
+
 		MapHex mapHex = hex.getHexModel();
 		for (LayTile action : possibleActions.getType(LayTile.class)) {
 			if (action.getType() == LayTile.SPECIAL_PROPERTY
@@ -477,10 +477,10 @@ public class ORUIManager {
 		//log.debug(hex.getName()+" is NOT a special property target");
 		return false;
 	}
-	
-	
+
+
 	public void tokenSelected (LayToken tokenAllowance) {
-		
+
 		if (tokenAllowance != null && allowedTokenLays.contains(tokenAllowance)) {
 			selectedTokenAllowance = tokenAllowance;
 			selectedTokenIndex = allowedTokenLays.indexOf(tokenAllowance);
@@ -490,11 +490,11 @@ public class ORUIManager {
 		}
 		upgradePanel.setSelectedTokenIndex (selectedTokenIndex);
 	}
-	
+
     private void layTile () {
-        
+
         GUIHex selectedHex = map.getSelectedHex();
-        
+
         if (selectedHex != null && selectedHex.canFixTile())
         {
             List<LayTile> allowances = map.getTileAllowancesForHex(selectedHex.getHexModel());
@@ -502,7 +502,7 @@ public class ORUIManager {
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
             allowance.setLaidTile(selectedHex.getProvisionalTile());
-            
+
             if (orWindow.process(allowance)) {
                 selectedHex.fixTile();
                 //updateStatus();
@@ -513,12 +513,12 @@ public class ORUIManager {
             map.selectHex(null);
         }
     }
-    
-	
+
+
     public void layBaseToken () {
-        
+
         GUIHex selectedHex = map.getSelectedHex();
-        
+
         if (selectedHex != null)
         {
             List<LayBaseToken> allowances = map.getBaseTokenAllowanceForHex(selectedHex.getHexModel());
@@ -526,15 +526,15 @@ public class ORUIManager {
             LayBaseToken allowance = allowances.get(0);
             int station;
             List<Station> stations = selectedHex.getHexModel().getStations();
-            
+
             switch (stations.size()) {
             case 0: // No stations
                 return;
-                
+
             case 1:
                 station = 0;
                 break;
-                
+
             default:
                 Station stationObject = (Station) JOptionPane.showInputDialog(orWindow,
                         "Which station to place the token in?",
@@ -545,7 +545,7 @@ public class ORUIManager {
                         stations.get(0));
                 station = stations.indexOf(stationObject);
             }
-            
+
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setChosenStation(station);
 
@@ -558,22 +558,22 @@ public class ORUIManager {
         }
     }
 
-	/** Lay Token finished.	
-	 * 
+	/** Lay Token finished.
+	 *
 	 * @param action The LayBonusToken action object of the laid token.
 	 */
 	public void layBonusToken (PossibleAction action) {
-		
+
 		// Assumption for now: always BonusToken
 		// We might use it later for BaseTokens too.
-		
+
         HexMap map = mapPanel.getMap();
         GUIHex selectedHex = map.getSelectedHex();
-        
+
         if (selectedHex != null)
         {
             LayToken executedAction = (LayToken) action;
-            
+
             executedAction.setChosenHex(selectedHex.getHexModel());
 
             if  (orWindow.process(executedAction)) {
@@ -583,31 +583,34 @@ public class ORUIManager {
             }
         }
 	}
-    
+
     public void buyTrain()
     {
 
         List<String> prompts = new ArrayList<String>();
-        Map<String, BuyTrain> promptToTrain = new HashMap<String, BuyTrain>();
+        Map<String, PossibleAction> promptToTrain
+            = new HashMap<String, PossibleAction>();
         TrainI train;
         String usingPrivates = "";
 
-        BuyTrain selectedTrain;
+        PossibleAction selectedAction;
+        BuyTrain buyAction;
+
         String prompt;
         StringBuffer b;
         int cost;
         Portfolio from;
-        
+
         List<BuyTrain> buyableTrains = possibleActions.getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains)
         {
             train = bTrain.getTrain();
             cost = bTrain.getFixedCost();
             from = bTrain.getFromPortfolio();
-            
+
             /* Create a prompt per buying option */
             b = new StringBuffer();
-            
+
             b.append(LocalText.getText("BUY_TRAIN_FROM", new String[] {
                             train.getName(),
                             from.getName()}));
@@ -620,7 +623,7 @@ public class ORUIManager {
                 b.append(" ").append(LocalText.getText("AT_PRICE",Bank.format(cost)));
             }
             if (bTrain.hasSpecialProperty()) {
-            	String priv = ((SpecialTrainBuy)bTrain.getSpecialProperty()).getCompany().getName();
+            	String priv = (bTrain.getSpecialProperty()).getCompany().getName();
             	b.append(" ").append(LocalText.getText("USING_SP", priv));
             	usingPrivates += ", "+priv;
             }
@@ -639,8 +642,29 @@ public class ORUIManager {
             promptToTrain.put(prompt, bTrain);
         }
 
+        // Add any trains that can be voluntarily discarded
+        // (as in 18EU)
+        /*
+        List<DiscardTrain> discardableTrains = possibleActions.getType(DiscardTrain.class);
+        for (DiscardTrain dTrain : discardableTrains)
+        {
+            // We only cover voluntary discards here
+            if (dTrain.isForced()) continue;
+            train = dTrain.getOwnedTrains().get(0);
+
+            // Create a prompt per buying option 
+            b = new StringBuffer();
+
+            b.append(LocalText.getText("DiscardTrain",
+                            train.getName()));
+            prompt = b.toString();
+            prompts.add(prompt);
+            promptToTrain.put(prompt, dTrain);
+        }
+        */
+
         if (prompts.size() == 0) {
-            JOptionPane.showMessageDialog(orWindow, 
+            JOptionPane.showMessageDialog(orWindow,
                     LocalText.getText("CannotBuyAnyTrain"));
             return;
         }
@@ -653,25 +677,32 @@ public class ORUIManager {
         }
         setMessage (msgbuf.toString());
 
-
-        String boughtTrain;
-        boughtTrain = (String) JOptionPane.showInputDialog(orWindow,
+        String selectedActionText
+                = (String) JOptionPane.showInputDialog(orWindow,
             LocalText.getText("BUY_WHICH_TRAIN"),
             LocalText.getText("WHICH_TRAIN"),
             JOptionPane.QUESTION_MESSAGE,
             null,
             prompts.toArray(),
             prompts.get(0));
-        if (!Util.hasValue(boughtTrain))
+        if (!Util.hasValue(selectedActionText))
             return;
-        
-        selectedTrain = (BuyTrain) promptToTrain.get(boughtTrain);
-        if (selectedTrain == null)
+
+        selectedAction = promptToTrain.get(selectedActionText);
+        if (selectedAction == null)
             return;
-        
-        train = selectedTrain.getTrain();
-        Portfolio seller = selectedTrain.getFromPortfolio();
-        int price = selectedTrain.getFixedCost();
+
+        if (selectedAction instanceof DiscardTrain) {
+            TrainI discardedTrain = ((DiscardTrain)selectedAction).getOwnedTrains().get(0);
+            ((DiscardTrain)selectedAction).setDiscardedTrain(discardedTrain);
+            orWindow.process(selectedAction);
+            return;
+        }
+
+        buyAction = (BuyTrain) selectedAction;
+        train = buyAction.getTrain();
+        Portfolio seller = buyAction.getFromPortfolio();
+        int price = buyAction.getFixedCost();
 
         if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
             prompt = LocalText.getText ("WHICH_TRAIN_PRICE",
@@ -688,25 +719,28 @@ public class ORUIManager {
                     // Price stays 0, this is handled below
                 }
                 if (price > 0) break; // Got a good (or bad, but valid) price.
-                
+
                 if (!prompt.startsWith("Please")) {
                     prompt = LocalText.getText("ENTER_PRICE_OR_CANCEL")
                         + "\n" + prompt;
                 }
             }
         }
-        
+
         TrainI exchangedTrain = null;
-        if (train != null && selectedTrain.isForExchange())
+        if (train != null && buyAction.isForExchange())
         {
-            List<TrainI> oldTrains = selectedTrain.getTrainsForExchange();
+            List<TrainI> oldTrains = buyAction.getTrainsForExchange();
             List<String> oldTrainOptions = new ArrayList<String>(oldTrains.size());
             String[] options = new String[oldTrains.size() + 1];
-            options[0] = LocalText.getText("None");
+            int jj = 0;
+            if (!buyAction.isForcedExchange()) {
+            	options[jj++] = LocalText.getText("None");
+            }
             for (int j = 0; j < oldTrains.size(); j++)
             {
-                options[j + 1] = LocalText.getText("N_Train", oldTrains.get(j).getName());
-                oldTrainOptions.add(options[j+1]);
+                options[jj + j] = LocalText.getText("N_Train", oldTrains.get(j).getName());
+                oldTrainOptions.add(options[jj+j]);
             }
             String exchangedTrainName = (String) JOptionPane.showInputDialog(orWindow,
                     LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
@@ -715,7 +749,7 @@ public class ORUIManager {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
-                    options[1]);
+                    options[0]);
             int index = oldTrainOptions.indexOf(exchangedTrainName);
             if (index >= 0)
             {
@@ -729,18 +763,26 @@ public class ORUIManager {
             // Remember the old off-board revenue step
             int oldOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
 
-            selectedTrain.setPricePaid(price);
-            selectedTrain.setExchangedTrain(exchangedTrain);
+            buyAction.setPricePaid(price);
+            buyAction.setExchangedTrain(exchangedTrain);
 
-            if (orWindow.process (selectedTrain)) {
-                
+            if (orWindow.process (selectedAction)) {
+
                 // Check if any trains must be discarded
                 // Keep looping until all relevant companies have acted
                 while (possibleActions.contains(DiscardTrain.class))
                 {
-                    // We expect one company at a time
-                    DiscardTrain dt = (DiscardTrain)possibleActions.getType(DiscardTrain.class).get(0);
-                        
+                    // Check if there are any forced discards;
+                    // otherwise, nothing to do here
+                    DiscardTrain dt = null;
+                    for (DiscardTrain dtx : possibleActions.getType(DiscardTrain.class)) {
+                        if (dtx.isForced()) {
+                            dt = dtx;
+                            break;
+                        }
+                    }
+                    if (dt == null) break;
+
                     PublicCompanyI c = dt.getCompany();
                     String playerName = dt.getPlayerName();
                     List<TrainI> trains = dt.getOwnedTrains();
@@ -764,14 +806,14 @@ public class ORUIManager {
                     if (discardedTrainName != null)
                     {
                         TrainI discardedTrain = trains.get(trainOptions.indexOf(discardedTrainName));
-                        
+
                         dt.setDiscardedTrain(discardedTrain);
-                        
+
                         orWindow.process (dt);
                     }
                 }
             }
-            
+
             int newOffBoardRevenueStep = PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
             if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
                 HexMap.updateOffBoardToolTips();
@@ -779,10 +821,10 @@ public class ORUIManager {
 
         }
 
-    }    
+    }
 
 
- 
+
     public void buyPrivate() {
 
         int amount, index;
@@ -802,22 +844,22 @@ public class ORUIManager {
         }
 
         if (privatesForSale.size() > 0) {
-            chosenOption = (String) JOptionPane.showInputDialog(orWindow, 
-                    LocalText.getText("BUY_WHICH_PRIVATE"), 
+            chosenOption = (String) JOptionPane.showInputDialog(orWindow,
+                    LocalText.getText("BUY_WHICH_PRIVATE"),
                     LocalText.getText("WHICH_PRIVATE"),
-                    JOptionPane.QUESTION_MESSAGE, 
-                    null, 
-                    privatesForSale.toArray(), 
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    privatesForSale.toArray(),
                     privatesForSale.get(0));
             if (chosenOption != null) {
                 index = privatesForSale.indexOf(chosenOption);
                 chosenAction = privates.get(index);
                 minPrice = chosenAction.getMinimumPrice();
                 maxPrice = chosenAction.getMaximumPrice();
-                String price = (String) JOptionPane.showInputDialog(orWindow,
+                String price = JOptionPane.showInputDialog(orWindow,
                         LocalText.getText("WHICH_PRIVATE_PRICE", new String[] {
                                 chosenOption,
-                                Bank.format(minPrice), 
+                                Bank.format(minPrice),
                                 Bank.format(maxPrice)}),
                         LocalText.getText("WHICH_PRICE"),
                         JOptionPane.QUESTION_MESSAGE);
@@ -840,7 +882,7 @@ public class ORUIManager {
 	public void executeUpgrade()
 	{
         GUIHex selectedHex = map.getSelectedHex();
-        
+
         if (tileLayingEnabled)
 		{
             if (selectedHex == null) {
@@ -860,11 +902,11 @@ public class ORUIManager {
             } else if (selectedTokenAllowance instanceof LayBaseToken) {
                 layBaseToken();
             } else {
-                layBonusToken((LayBonusToken)selectedTokenAllowance);
+                layBonusToken(selectedTokenAllowance);
             }
 		}
 	}
-    
+
 	public void cancelUpgrade()
 	{
 		GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
@@ -883,23 +925,23 @@ public class ORUIManager {
 		}
 
 	}
-	
+
     public void updateStatus() {
-        
+
         updateStatus (null);
-        
+
     }
-    
+
     public void updateStatus (PossibleAction actionToComplete) {
-        
+
         mapRelatedActions.clear();
-        
+
         orPanel.setHighlightsOff();
 
         if (actionToComplete != null) {
             log.debug("ExecutedAction: "+actionToComplete);
         }
-        // End of possible action debug listing 
+        // End of possible action debug listing
 
         orStep = oRound.getStep();
         orComp = oRound.getOperatingCompany();
@@ -907,32 +949,32 @@ public class ORUIManager {
         log.debug("OR company = "+orComp.getName());
         log.debug("OR step="+orStep+" "
                 +(orStep >= 0 ? OperatingRound.stepNames[orStep] : ""));
-        
+
         if (oRound.getOperatingCompanyIndex() != orCompIndex) {
             if (orCompIndex >= 0) orPanel.finishORCompanyTurn(orCompIndex);
             setORCompanyTurn(oRound.getOperatingCompanyIndex());
         }
-        
+
         orPanel.initORCompanyTurn(orCompIndex);
-        
+
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
-        
-        
+
+
         if (possibleActions.contains(LayTile.class)) {
-            
+
             orPanel.initTileLayingStep();
-            
+
             orWindow.requestFocus();
-            
+
             log.debug ("Tiles can be laid");
             mapRelatedActions.addAll(possibleActions.getType(LayTile.class));
-            
+
             orPanel.initPrivateBuying(privatesCanBeBoughtNow);
-            
+
         } else if (possibleActions.contains(LayBaseToken.class)) {
-            
+
             orWindow.requestFocus();
-            
+
             // Include bonus tokens
             List<LayToken> possibleTokenLays = possibleActions.getType(LayToken.class);
             mapRelatedActions.addAll(possibleTokenLays);
@@ -944,16 +986,16 @@ public class ORUIManager {
 
         } else if (possibleActions.contains(SetDividend.class)
                 && localStep == SELECT_PAYOUT) {
-            
+
             SetDividend action;
             if (actionToComplete != null) {
                 action = (SetDividend) actionToComplete;
             } else {
-                action = (SetDividend) possibleActions.getType(SetDividend.class).get(0);
+                action = possibleActions.getType(SetDividend.class).get(0);
             }
 
             log.debug("Payout action before cloning: "+action);
-            
+
             orPanel.initPayoutStep(orCompIndex,
                     action,
                     action.isAllocationAllowed(SetDividend.WITHHOLD),
@@ -963,34 +1005,34 @@ public class ORUIManager {
             setMessage(LocalText.getText("SelectPayout"));
 
         } else if (possibleActions.contains(SetDividend.class)) {
-            
-            SetDividend action = (SetDividend) possibleActions.getType(SetDividend.class).get(0);
-            
+
+            SetDividend action = possibleActions.getType(SetDividend.class).get(0);
+
             orPanel.initRevenueEntryStep(orCompIndex, action);
             setMessage(LocalText.getText("EnterRevenue"));
-                
-        } else if (possibleActions.contains(BuyTrain.class)) {
-            
-            orPanel.initTrainBuying(oRound.getOperatingCompany().mayBuyTrains());
+
+        } else if (possibleActions.contains(BuyTrain.class)
+                || possibleActions.contains(DiscardTrain.class)) {
+
+            //orPanel.initTrainBuying(oRound.getOperatingCompany().mayBuyTrains());
+            orPanel.initTrainBuying(true);
 
             orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
             setMessage(LocalText.getText("BuyTrain"));
 
-        } else if (possibleActions.contains(DiscardTrain.class)) {
-            
         } else if (orStep == OperatingRound.STEP_FINAL) {
             // Does not occur???
             orPanel.finishORCompanyTurn(orCompIndex);
         }
-        
+
         setMapRelatedActions (mapRelatedActions);
-        
+
         GameAction undoAction = null;
         GameAction redoAction = null;
-        
+
         if (possibleActions.contains(NullAction.class)) {
-            
+
             List<NullAction> actions = possibleActions.getType(NullAction.class);
             for (NullAction action : actions) {
                 switch (action.getMode()) {
@@ -1000,9 +1042,9 @@ public class ORUIManager {
                 }
             }
         }
-        
+
         if (possibleActions.contains(GameAction.class)) {
-            
+
             List<GameAction> actions = possibleActions.getType(GameAction.class);
             for (GameAction action : actions) {
                 switch (action.getMode()) {
@@ -1017,17 +1059,17 @@ public class ORUIManager {
         }
         orPanel.enableUndo(undoAction);
         orPanel.enableRedo(redoAction);
-        
+
         orPanel.initSpecialActions();
 
         // Bonus tokens can be laid anytime, so we must also handle
         // these outside the token laying step.
         if (possibleActions.contains(LayBonusToken.class)
                 && !possibleActions.contains(LayBaseToken.class)) {
-            
+
         	List<LayBonusToken> bonusTokenActions = possibleActions.getType(LayBonusToken.class);
             for (LayBonusToken btAction : bonusTokenActions) {
-                SpecialTokenLay stl = (SpecialTokenLay) btAction.getSpecialProperty();
+                SpecialTokenLay stl = btAction.getSpecialProperty();
                 BonusToken token = (BonusToken)stl.getToken();
                 String text = LocalText.getText("LayBonusToken", new String[] {
                         token.toString(),
@@ -1036,17 +1078,17 @@ public class ORUIManager {
                 orPanel.addSpecialAction(btAction, text);
             }
         }
-        
+
         checkForGameSpecificActions ();
 
         orPanel.redisplay();
     }
-    
+
     /** Stub, can be overridden by game-specific subclasses */
     protected void checkForGameSpecificActions () {
-    	
+
     }
-    
+
     public void setORCompanyTurn(int orCompIndex) {
 
         orPanel.resetORCompanyTurn(orCompIndex);
@@ -1058,14 +1100,14 @@ public class ORUIManager {
             // Give a new company the turn.
         }
     }
-    
 
-	
+
+
 	public void setLocalStep(int localStep)
 	{
         log.debug ("Setting upgrade step to "+localStep+" "+ORUIManager.messageKey[localStep]);
 		this.localStep = localStep;
-		
+
 		updateMessage();
 		updateUpgradesPanel();
 	}
@@ -1135,28 +1177,28 @@ public class ORUIManager {
 	public void setMessage (String message) {
 		messagePanel.setMessage(message);
 	}
-	
+
 	public void setLocalAction (boolean value) {
 		localAction = value;
 	}
-	
+
 	// TEMPORARY
 	public ORWindow getORWindow () {
 		return orWindow;
 	}
-	
+
 	// TEMPORARY
 	public MapPanel getMapPanel() {
 		return orWindow.getMapPanel();
 	}
-	
+
 	// TEMPORARY
 	public HexMap getMap() {
 		return map;
 	}
-	
+
 	private void displayRemainingTiles() {
-	    
+
 		if (remainingTiles == null) {
 			remainingTiles = new RemainingTilesWindow (orWindow);
 		} else {

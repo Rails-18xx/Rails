@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.17 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.18 2008/02/23 20:54:38 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -8,7 +8,8 @@ import org.apache.log4j.Logger;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.util.*;
+import rails.util.LocalText;
+import rails.util.Tag;
 
 
 public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
@@ -38,8 +39,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	protected int cityScoreFactor = 1;
 
 	protected boolean firstCanBeExchanged = false;
-	protected IntegerState numberBoughtFromIPO; 
-    
+	protected IntegerState numberBoughtFromIPO;
+
     protected boolean obsoleting = false;
 
 	private boolean real; // Only to determine if top-level attributes must be
@@ -63,6 +64,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 	protected BooleanState available;
 	protected BooleanState rusted;
+
+	/** In some cases, trains start their life in the Pool */
+	protected String initialPortfolio = "IPO";
 
 	protected static Logger log = Logger.getLogger(TrainType.class.getPackage().getName());
 
@@ -91,7 +95,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		if (real)
 		{
             trains = new ArrayList<TrainI>();
-            
+
 			// Name
             name = tag.getAttributeAsString("name");
 			if (name == null)
@@ -132,13 +136,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 
 			// Train type rusted
             rustedTrainTypeName = tag.getAttributeAsString("rustedTrain");
-            
+
 			// Other train type released for buying
             releasedTrainTypeName = tag.getAttributeAsString("releasedTrain");
-            
+
             // Can run as obsolete train
             obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
+            // From where is this type initially available
+            initialPortfolio = tag.getAttributeAsString("initialPortfolio", initialPortfolio);
         }
 		else
 		{
@@ -186,7 +192,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 			cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
 			townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
 			// Actually we should meticulously check all values....
-			
+
 			//log.debug("Train type "+name+": class "+trainClassName);
 
 			// Now create the trains of this type
@@ -198,7 +204,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 				 * of this type is bought.
 				 */
                 try {
-                    train = (TrainI) trainClass.newInstance();
+                    train = trainClass.newInstance();
                 } catch (InstantiationException e) {
                     throw new ConfigurationException("Cannot instantiate class "+trainClassName, e);
                 } catch (IllegalAccessException e) {
@@ -212,7 +218,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 				for (int i = 0; i < amount; i++)
 				{
 	                try {
-	                    train = (TrainI) trainClass.newInstance();
+	                    train = trainClass.newInstance();
 	                } catch (InstantiationException e) {
 	                    throw new ConfigurationException("Cannot instantiate class "+trainClassName, e);
 	                } catch (IllegalAccessException e) {
@@ -223,7 +229,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 				}
 			}
 		}
-		
+
 		// Final initialisations
 		numberBoughtFromIPO	= new IntegerState (name+"-trains_Bought", 0);
         available = new BooleanState (name+"-trains_Available", false);
@@ -369,7 +375,7 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		return rustedTrainTypeName;
 	}
-    
+
     public boolean isObsoleting() {
         return obsoleting;
     }
@@ -407,11 +413,17 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 	{
 		available.set(true);
 
-		for (TrainI train : trains) 
+		Portfolio to =
+		    (initialPortfolio.equalsIgnoreCase("Pool")
+		            ? Bank.getPool()
+		            : Bank.getIpo()
+		    );
+
+		for (TrainI train : trains)
 		{
-			new ObjectMove (train, 
+			new ObjectMove (train,
 					Bank.getUnavailable(),
-					Bank.getIpo());
+					to);
 		}
 	}
 
@@ -444,7 +456,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable
 		return rusted.booleanValue();
 	}
 
-	public Object clone()
+	@Override
+    public Object clone()
 	{
 
 		Object clone = null;
