@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.12 2008/01/27 23:27:53 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.13 2008/02/28 21:39:37 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -222,10 +222,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 		if (allowance instanceof LayBaseToken) {
 		    MapHex hex;
 		    for (GUIHex guiHex : hexes) {
-			hex = guiHex.getHexModel();
-			if (hex.hasTokenSlotsLeft()) {
-			    allowTokenOnHex(hex, allowance);
-			}
+				hex = guiHex.getHexModel();
+				if (hex.hasTokenSlotsLeft()) {
+				    allowTokenOnHex(hex, allowance);
+				}
 		    }
 		} else {
 		    allowTokenOnHex(null, allowance);
