@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.11 2008/01/18 19:58:16 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.12 2008/02/28 21:37:28 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -11,9 +11,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.model.ModelObject;
-import rails.ui.swing.GUIToken;
-import rails.ui.swing.GameUIManager;
-import rails.ui.swing.StatusWindow;
+import rails.ui.swing.*;
 import rails.ui.swing.elements.ViewObject;
 
 
@@ -27,7 +25,7 @@ public class GUIHex implements ViewObject
 	public static final double SQRT3 = Math.sqrt(3.0);
 	public static double NORMAL_SCALE = 1.0;
 	public static double SELECTED_SCALE = 0.8;
-	
+
 	public static void setScale (double scale) {
 		NORMAL_SCALE = scale;
 		SELECTED_SCALE = 0.8 * scale;
@@ -49,11 +47,11 @@ public class GUIHex implements ViewObject
 	protected GUITile currentGUITile = null;
 	protected GUITile provisionalGUITile = null;
 	protected boolean upgradeMustConnect;
-	
+
 	protected List<TokenI> offStationTokens;
 
 	protected GUIToken provisionalGUIToken = null;
-	
+
 	protected double tileScale = NORMAL_SCALE;
 
 	protected String toolTip = "";
@@ -61,7 +59,7 @@ public class GUIHex implements ViewObject
 	/**
 	 * Stores the neighbouring views. This parallels the neighors field in
 	 * MapHex, just on the view side.
-	 * 
+	 *
 	 * @todo check if we can avoid this
 	 */
 	private GUIHex[] neighbors = new GUIHex[6];
@@ -72,6 +70,7 @@ public class GUIHex implements ViewObject
 	double len;
 	GeneralPath hexagon;
 	Rectangle rectBound;
+	int baseRotation = 0;
 
 	/** Globally turns antialiasing on or off for all hexes. */
 	static boolean antialias = true;
@@ -84,8 +83,8 @@ public class GUIHex implements ViewObject
 
 	public GUIHex(HexMap hexMap, double cx, double cy, int scale, double xCoord, double yCoord)
 	{
-        this.hexMap = hexMap; 
-        
+        this.hexMap = hexMap;
+
 		if (MapManager.getTileOrientation() == MapHex.EW)
 		{
 			len = scale;
@@ -101,6 +100,8 @@ public class GUIHex implements ViewObject
 			yVertex[4] = cy - 1 * scale;
 			xVertex[5] = cx;
 			yVertex[5] = cy;
+
+			baseRotation = 30; // degrees
 		}
 		else
 		{
@@ -117,6 +118,8 @@ public class GUIHex implements ViewObject
 			yVertex[4] = cy + 2 * SQRT3 * scale;
 			xVertex[5] = cx - 1 * scale;
 			yVertex[5] = cy + SQRT3 * scale;
+
+			baseRotation = 0;
 		}
 
 		hexagon = makePolygon(6, xVertex, yVertex, true);
@@ -158,7 +161,7 @@ public class GUIHex implements ViewObject
     	currentGUITile = new GUITile(currentTileId, model);
 		currentGUITile.setRotation(currentTileOrientation);
 		setToolTip();
-		
+
 		if (StatusWindow.useObserver) {
 			model.addObserver(this);
 		}
@@ -314,12 +317,12 @@ public class GUIHex implements ViewObject
 					rectBound.y + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
 		}
 
-		Map<PublicCompanyI, Station> homes;
+		Map<PublicCompanyI, City> homes;
 		if ((homes = getHexModel().getHomes()) != null)
 		{
 		    StringBuffer b = new StringBuffer();
 		    for (Iterator<PublicCompanyI> it = homes.keySet().iterator(); it.hasNext(); ) {
-		        
+
 		        PublicCompanyI co = it.next();
 
 				if (!co.hasStarted() && !co.hasFloated())
@@ -341,7 +344,7 @@ public class GUIHex implements ViewObject
 			//Iterator pIT = privates.iterator();
 
 			//while (pIT.hasNext())
-			for (PrivateCompanyI p : privates) 
+			for (PrivateCompanyI p : privates)
 			{
 				//PrivateCompany p = (PrivateCompany) pIT.next();
 				List<MapHex> blocked = p.getBlockedHexes();
@@ -379,26 +382,26 @@ public class GUIHex implements ViewObject
 
 	private void paintStationTokens(Graphics2D g2)
 	{
-		if (getHexModel().getStations().size() > 1)
+		if (getHexModel().getCities().size() > 1)
 		{
 			paintSplitStations(g2);
 			return;
 		}
 
-		int numTokens = getHexModel().getTokens(0).size();
-		List<TokenI> tokens = getHexModel().getTokens(0);
+		int numTokens = getHexModel().getTokens(1).size();
+		List<TokenI> tokens = getHexModel().getTokens(1);
 
 		for (int i = 0; i < tokens.size(); i++)
 		{
-			PublicCompanyI co = (PublicCompanyI) ((BaseToken)tokens.get(i)).getCompany();
-			Point origin = getTokenOrigin(numTokens, i, 1, 0);
+			PublicCompanyI co = ((BaseToken)tokens.get(i)).getCompany();
+			Point origin = getTokenOrigin2(numTokens, i, 1, 0);
 			drawBaseToken(g2, co, origin);
 		}
 	}
 
 	private void paintSplitStations(Graphics2D g2)
 	{
-		int numStations = getHexModel().getStations().size();
+		int numStations = getHexModel().getCities().size();
 		int numTokens;
 		List<TokenI> tokens;
 		Point origin;
@@ -406,12 +409,12 @@ public class GUIHex implements ViewObject
 
 		for (int i = 0; i < numStations; i++)
 		{
-			tokens = getHexModel().getTokens(i);
+			tokens = getHexModel().getTokens(i+1);
             numTokens = tokens.size();
 
 			for (int j = 0; j < tokens.size(); j++)
 			{
-				origin = getTokenOrigin(numTokens, j, numStations, i);
+				origin = getTokenOrigin2(numTokens, j, numStations, i);
 				co = ((BaseToken)tokens.get(j)).getCompany();
 				drawBaseToken(g2, co, origin);
 			}
@@ -420,23 +423,23 @@ public class GUIHex implements ViewObject
 
 	private static int[] offStationTokenX = new int[] {-20, 0}; // Unclear why x=-10,y=-10 puts it at the center.
 	private static int[] offStationTokenY = new int[] {-20, 0};
-	
+
 	private void paintOffStationTokens(Graphics2D g2)
 	{
 		List<TokenI> tokens = getHexModel().getTokens();
 		if (tokens == null) return;
-		
+
 		int i = 0;
 		for (TokenI token : tokens) {
-			
+
 			Point origin = new Point (center.x + offStationTokenX[i], center.y + offStationTokenY[i]);
 			if (token instanceof BaseToken) {
-				
-				PublicCompanyI co = (PublicCompanyI) ((BaseToken)token).getCompany();
+
+				PublicCompanyI co = ((BaseToken)token).getCompany();
 				drawBaseToken (g2, co, origin);
-				
+
 			} else if (token instanceof BonusToken) {
-				
+
 				drawBonusToken(g2, (BonusToken) token, origin);
 			}
 			if (++i > 1) break;
@@ -475,7 +478,7 @@ public class GUIHex implements ViewObject
 
 	/*
 	 * Beware! Here be dragons! And nested switch/case statements! The horror!
-	 * 
+	 *
 	 * NOTE: CurrentFoo starts at 0 TotalFoo starts at 1
 	 */
 	private Point getTokenOrigin(int numTokens, int currentToken,
@@ -605,6 +608,25 @@ public class GUIHex implements ViewObject
 
 			// Known cases: 3 single token stations,
 			// 2 double token station and a single token station
+
+			    // Only do the 3 single token stations case now.
+			    // Coordinates sort of work for 18EU B/V tiles
+			    switch (currentStation) {
+			    case 0:
+			        p.x = center.x - 14;
+			        p.y = center.y + 8;
+			        return p;
+			    case 1:
+			        p.x = center.x - 16;
+			        p.y = center.y - 18;
+			        return p;
+			    case 2:
+			        p.x = center.x + 3;
+			        p.y = center.y - 9;
+			        return p;
+			    default:
+			        return center;
+			    }
 			default:
 				return center;
 		}
@@ -617,6 +639,64 @@ public class GUIHex implements ViewObject
 			provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
 		}
 	}
+	
+    private Point getTokenOrigin2(int numTokens, int currentToken,
+            int numStations, int stationNumber)
+    {
+        Point p = new Point(center.x - 8, center.y - 8);
+
+        int cityNumber = stationNumber + 1;
+        Station station = model.getCity(cityNumber).getRelatedStation();
+
+        // Find the correct position on the tile
+        double x = 0;
+        double y = 0;
+        double xx, yy;
+        int positionCode = station.getPosition();
+        if (positionCode != 0) {
+            y = 14;
+            double r = Math.toRadians(30 * (positionCode / 50));
+            xx = x * Math.cos(r) + y * Math.sin(r);
+            yy = y * Math.cos(r) - x * Math.sin(r);
+            x = xx;
+            y = yy;
+        }
+
+        // Correct for the number of base slots and the token number
+        switch (station.getBaseSlots()) {
+        case 2:
+            x += -8 + 16 * currentToken;
+            break;
+        case 3:
+            if (currentToken < 2) {
+                x += -8 + 16 * currentToken;
+                y += 8;
+            } else {
+                y -= 8;
+            }
+            break;
+        case 4:
+            x += -8 + 16 * currentToken % 2;
+            y += 8 - 16 * currentToken / 2;
+        }
+
+        // Correct for the tile base and actual rotations
+        int rotation = model.getCurrentTileRotation();
+        double r = Math.toRadians(baseRotation
+                + 60 * rotation);
+        xx = x * Math.cos(r) + y * Math.sin(r);
+        yy = y * Math.cos(r) - x * Math.sin(r);
+        x = xx;
+        y = yy;
+
+        p.x += x;
+        p.y -= y;
+
+        //log.debug("New origin for hex "+getName()+" tile #"+model.getCurrentTile().getId()
+        //        + " city "+cityNumber+" pos="+positionCode+" token "+currentToken+": x="+x+" y="+y);
+
+        return p;
+    }
 
 	// Added by Erik Vos
 	/**
@@ -661,11 +741,21 @@ public class GUIHex implements ViewObject
 				.append(model.getY())
 				.append(")</small>");
 		tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
+		// TEMPORARY
+		tt.append("<small> rot="+currentTileOrientation+"</small>");
 		if (currentTile.hasStations())
 		{
-		    for (Station st : currentTile.getStations())
+		    //for (Station st : currentTile.getStations())
+		    Station st;
+		    int cityNumber;
+		    for (City city : model.getCities())
 			{
-				tt.append("<br>  ").append(st.getType()).append(": value ");
+		        cityNumber = city.getNumber();
+		        st = city.getRelatedStation();
+				tt.append("<br>  ").append(st.getType())
+				  .append(" ").append(cityNumber) //.append("/").append(st.getNumber())
+				  .append(" (").append(model.getConnectionString(cityNumber))
+				  .append("): value ");
 				if (model.hasOffBoardValues()) {
 				    tt.append(model.getCurrentOffBoardValue()).append(" [");
 				    int[] values = model.getOffBoardValues();
@@ -677,10 +767,22 @@ public class GUIHex implements ViewObject
 				} else {
 				    tt.append(st.getValue());
 				}
-				if (st.getValue() > 0 && st.getBaseSlots() > 0)
+				if (st.getBaseSlots() > 0)
 				{
 					tt.append(", ").append(st.getBaseSlots()).append(" slots");
+					List<TokenI> tokens = model.getTokens(cityNumber);
+					if (tokens.size() > 0) {
+    					tt.append(" (");
+    					int oldsize = tt.length();
+    					for (TokenI token : tokens) {
+    					    if (tt.length() > oldsize) tt.append(",");
+    					    tt.append(token.getName());
+    					}
+    					tt.append(")");
+					}
 				}
+				// TEMPORARY
+				tt.append(" <small>pos="+st.getPosition()+"</small>");
 			}
 		}
 		String upgrades = currentTile.getUpgradesString(model);
@@ -704,12 +806,13 @@ public class GUIHex implements ViewObject
 			}
 		}
 		toolTip = tt.toString();
+		//log.debug("---Tooltip for hex "+getName()+": "+toolTip);
 	}
 
 	public boolean dropTile(int tileId, boolean upgradeMustConnect)
 	{
 		this.upgradeMustConnect = upgradeMustConnect;
-		
+
 		provisionalGUITile = new GUITile(tileId, model);
 		/* Check if we can find a valid orientation of this tile */
 		if (provisionalGUITile.rotate(0, currentGUITile, upgradeMustConnect))
@@ -738,17 +841,17 @@ public class GUIHex implements ViewObject
 	public boolean canFixTile () {
 		return provisionalGUITile != null;
 	}
-	
+
 	public TileI getProvisionalTile () {
 		return provisionalGUITile.getTile();
 	}
-	
+
 	public int getProvisionalTileRotation() {
 		return provisionalGUITile.getRotation();
 	}
-	
+
 	public void fixTile () {
-		
+
 		setSelected (false);
 		setToolTip();
 	}
@@ -762,39 +865,42 @@ public class GUIHex implements ViewObject
 
     public void fixToken () {
         setSelected (false);
+        setToolTip();
     }
-    
+
 	/** Needed to satisfy the ViewObject interface. Currently not used. */
 	public void deRegister()
 	{
 		if (model != null && StatusWindow.useObserver)
 			model.deleteObserver(this);
 	}
-	
+
 	public ModelObject getModel() {
 	    return model;
 	}
-	
+
     // Required to implement Observer pattern.
     // Used by Undo/Redo
 	public void update (Observable observable, Object notificationObject) {
-	    
+
 	    if (notificationObject instanceof String) {
 	        // The below code so far only deals with tile lay undo/redo.
-	        // Tokens still to do  
+	        // Tokens still to do
 	        String[] elements = ((String)notificationObject).split("/");
 	        currentTileId = Integer.parseInt(elements[0]);
 	        currentTileOrientation = Integer.parseInt(elements[1]);
 	        currentGUITile = new GUITile(currentTileId, model);
 	        currentGUITile.setRotation(currentTileOrientation);
 	        currentTile = currentGUITile.getTile();
-	        
+
 			hexMap.repaint(getBounds());
-			
+
 	        provisionalGUITile = null;
 
 	        log.debug ("GUIHex "+model.getName()+" updated: new tile "+currentTileId+"/"+currentTileOrientation);
 			GameUIManager.instance.orWindow.updateStatus();
+	    } else {
+	    	hexMap.repaint(getBounds());
 	    }
 	}
 
