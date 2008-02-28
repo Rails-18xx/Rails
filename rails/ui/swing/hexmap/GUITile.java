@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.8 2008/01/17 21:13:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.9 2008/02/28 21:39:10 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -6,7 +6,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -77,7 +79,7 @@ public class GUITile {
 	 */
 	public boolean rotate(int initial, GUITile previousGUITile,
 			boolean mustConnect) {
-		int i, j, tempRot, tempTileSide, prevTileSide;
+		int i, j, k, l, tempRot, tempTileSide, prevTileSide;
 		TileI prevTile = previousGUITile.getTile();
 		int prevTileRotation = previousGUITile.getRotation();
 		MapHex nHex;
@@ -88,6 +90,9 @@ public class GUITile {
 rot:	for (i = initial; i < 6; i++) {
 			connected = !mustConnect;
 			tempRot = (rotation + i) % 6;
+		    Map<Integer, Integer> oldCities = new HashMap<Integer, Integer>(4);
+		    Map<Integer, Integer> newCities = new HashMap<Integer, Integer>(4);
+		    
 			/* Loop through all hex sides */
 			for (j = 0; j < 6; j++) {
 			    tempTileSide = (6 + j - tempRot) % 6;
@@ -111,30 +116,36 @@ rot:	for (i = initial; i < 6; i++) {
 					}
 					// If the previous tile has tracks against this side too,
 					// these must all be preserved.
-					if (prevTile.hasTracks(j - prevTileRotation)) {
+					if (prevTile.hasTracks(prevTileSide)) {
 					    List<Track> newTracks = tile.getTracksPerSide(tempTileSide);
 			old:	    for (Track oldTrack : prevTile.getTracksPerSide(prevTileSide)) {
-			                if (oldTrack.getComparableEndPoint(prevTileSide) >= 0) {
+			                if (oldTrack.getEndPoint(prevTileSide) >= 0) {
 			                    // Old track ending in another side
     					        for (Track newTrack : newTracks) {
-    					            if ((tempRot + newTrack.getComparableEndPoint(tempTileSide))%6
-    					                    == (prevTileRotation+oldTrack.getComparableEndPoint(prevTileSide))%6) {
+    					            if ((tempRot + newTrack.getEndPoint(tempTileSide))%6
+    					                    == (prevTileRotation+oldTrack.getEndPoint(prevTileSide))%6) {
     					                // OK, this old track is preserved
     					                continue old;
     					            }
     					        }
+    					        // Found an unpreserved track - stop checking
+    					        continue rot;
 			                } else {
 			                    // Old track ending in a station
+			                	// All old tracks ending the same/different stations
+			                	// must keep doing so.
+			                	/*
                                 for (Track newTrack : newTracks) {
-                                    if (newTrack.getComparableEndPoint(tempTileSide)
-                                            == oldTrack.getComparableEndPoint(prevTileSide)) {
+                                    if (newTrack.getEndPoint(tempTileSide) < 0
+                                            == oldTrack.getEndPoint(prevTileSide) < 0) {
                                         // OK, this old track is preserved
                                         continue old;
                                     }
                                 }
+                                */
+			                	log.debug("["+i+","+j+"] Found "+oldTrack.getEndPoint(prevTileSide));
+			                	oldCities.put(prevTileSide, oldTrack.getEndPoint(prevTileSide));
 			                }
-					        // Found an unpreserved track - stop checking
-					        continue rot;
 					    }
 					}
 					
@@ -142,13 +153,54 @@ rot:	for (i = initial; i < 6; i++) {
 				// the new one has not, forbid this rotation (not preserving
 				// existing track).
 				} else {
-					if (prevTile.hasTracks(j - prevTileRotation)) {
+					if (prevTile.hasTracks(prevTileSide)) {
 						continue rot;
 					}
 					// TODO: Add a check for preserving station connections
 					// on multi-station tiles.
 				}
 			}
+			
+			// Finish the city connection check
+			log.debug("*1*");
+			if (!oldCities.isEmpty()) {
+				log.debug("*2*");
+				int endPoint, kk, ll, kkk, lll;
+				for (k = 0; k < 6; k++) {
+				    tempTileSide = (6 + k - tempRot) % 6;
+					for (Track newTrack : tile.getTracksPerSide(tempTileSide)) {
+						endPoint = newTrack.getEndPoint(tempTileSide);
+						if (endPoint < 0) newCities.put(tempTileSide, endPoint);
+					}
+				}
+				// For each pair of old city connections ending in
+				// the same/different cities, a similar new pair must exist
+				for (k=0; k<5; k++) {
+				    kk = (6 + k - tempRot) % 6;
+				    kkk = (6 + k - prevTileRotation) % 6;
+					if (oldCities.get(kkk) == null) continue;
+					for (l=k+1; l<6; l++) {
+					    ll = (6 + l - tempRot) % 6;
+					    lll = (6 + l - prevTileRotation) % 6;
+						if (oldCities.get(lll) == null) continue;
+						// If new tile is missing a connection, skip
+						log.debug("Found "+oldCities.get(kk)+" & "+oldCities.get(ll));
+						log.debug("Check "+newCities.get(kk)+" & "+newCities.get(ll));
+						if (newCities.get(kk) == null
+								|| newCities.get(ll) == null) continue rot;
+						// If connected cities do not correspond, skip
+						log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
+							+" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
+						if ((oldCities.get(kkk).equals(oldCities.get(lll)))
+								!= (newCities.get(kk).equals(newCities.get(ll)))) {
+							log.debug("No match!");
+							continue rot;
+						}
+					}
+				}
+				
+			}
+			
 			if (j == 6 && connected) {
 				/*
 				 * If we have successfully checked all hex sides, we have found
