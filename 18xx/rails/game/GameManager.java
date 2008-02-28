@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.27 2008/02/16 19:50:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.28 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 import java.io.File;
@@ -486,7 +486,7 @@ public class GameManager implements ConfigurableComponentI
     	}
 
         // Note: round may have changed!
-    	log.debug("Calling setPossibleActions for round "+getCurrentRound().toString());
+    	//log.debug("Calling setPossibleActions for round "+getCurrentRound().toString());
         getCurrentRound().setPossibleActions();
 
         // Add the Undo/Redo possibleActions here.

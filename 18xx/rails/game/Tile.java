@@ -1,8 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.15 2008/02/14 20:22:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.16 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +31,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
 	private String upgradesString = "";
 	private final List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
+	private Map<Integer, List<Track>> tracksPerStation = null;
 	private final List<Track> tracks = new ArrayList<Track>();
 	private final List<Station> stations = new ArrayList<Station>();
 	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
@@ -88,6 +88,41 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 		 * and fixed preprinted track.
 		 */
 
+
+        /* Stations */
+        List<Tag> stationTags = defTag.getChildren("Station");
+        Map<String, Station> stationMap = new HashMap<String, Station>();
+        if (stationTags != null) {
+            tracksPerStation = new HashMap<Integer, List<Track>>();
+            String sid, type;
+            int number, value, slots, position;
+            Station station;
+            for (Tag stationTag : stationTags)
+            {
+                sid = stationTag.getAttributeAsString("id");
+                if (sid == null)
+                    throw new ConfigurationException(
+                            LocalText.getText("TileStationHasNoID", String.valueOf(id)));
+                number = -getPointNumber(sid);
+                type = stationTag.getAttributeAsString("type");
+                if (type == null)
+                    throw new ConfigurationException(
+                            LocalText.getText("TileStationHasNoType", String.valueOf(id)));
+                if (!Station.isTypeValid(type)) {
+                    throw new ConfigurationException(
+                            LocalText.getText("TileStationHasInvalidType",
+                                    new String[] {String.valueOf(id), type}));
+                }
+                value = stationTag.getAttributeAsInteger("value", 0);
+                //log.debug("Tile #"+id+" st."+number+" value="+value);
+                slots = stationTag.getAttributeAsInteger("slots", 0);
+                position = stationTag.getAttributeAsInteger("position", 0);
+                station = new Station(this, number, sid, type, value, slots, position);
+                stations.add(station);
+                stationMap.put(sid, station);
+            }
+        }
+
 		/* Tracks (only number per side, no cities yet) */
 		List<Tag> trackTags = defTag.getChildren("Track");
 		if (trackTags != null) {
@@ -108,40 +143,33 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 				to = getPointNumber(toStr);
 				track = new Track(from, to);
 				tracks.add(track);
-				if (from >= 0)
+				if (from >= 0) {
 					tracksPerSide[from].add(track);
-				if (to >= 0)
-					tracksPerSide[to].add(track);
-			}
-		}
-
-		/* Stations */
-		List<Tag> stationTags = defTag.getChildren("Station");
-		if (stationTags != null) {
-			String sid, type;
-			int value, slots;
-			Station station;
-			for (Tag stationTag : stationTags)
-			{
-				sid = stationTag.getAttributeAsString("id");
-				if (sid == null)
-					throw new ConfigurationException(
-					        LocalText.getText("TileStationHasNoID", String.valueOf(id)));
-				type = stationTag.getAttributeAsString("type");
-				if (type == null)
-					throw new ConfigurationException(
-					        LocalText.getText("TileStationHasNoType", String.valueOf(id)));
-				if (!Station.isTypeValid(type)) {
-				    throw new ConfigurationException(
-				            LocalText.getText("TileStationHasInvalidType",
-				                    new String[] {String.valueOf(id), type}));
+				} else {
+				    if (tracksPerStation.get(-from) == null) {
+				        tracksPerStation.put(-from, new ArrayList<Track>(4));
+				    }
+				    tracksPerStation.get(-from).add(track);
 				}
-				value = stationTag.getAttributeAsInteger("value", 0);
-				slots = stationTag.getAttributeAsInteger("slots", 0);
-				station = new Station(this, sid, type, value, slots);
-				stations.add(station);
+				if (to >= 0) {
+					tracksPerSide[to].add(track);
+				} else {
+                    if (tracksPerStation.get(-to) == null) {
+                        tracksPerStation.put(-to, new ArrayList<Track>(4));
+                    }
+                    tracksPerStation.get(-to).add(track);
+				}
 			}
 		}
+		/*
+		if (stations != null) {
+			for (Station station : stations) {
+				List<Track> tt = tracksPerStation.get(station);
+				if (tt == null) continue;
+				// TODO Put tracks into stations?
+			}
+		}
+		*/
 
 		/* External (printed) id */
 	    externalId = setTag.getAttributeAsInteger("extId", externalId);
@@ -349,6 +377,23 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 		return stations;
 	}
 
+	public Map<Integer, List<Track>> getTracksPerStationMap() {
+	    return tracksPerStation;
+	}
+
+	public List<Track> getTracksPerStation(int stationNumber) {
+	    /*
+		log.debug("--- tile "+id+" station "+stationId);
+		List<Track> tt = tracksPerStation.get(stationId);
+		if (tt != null) {
+			for (Track t : tt) {
+				log.debug("ST "+stationId+" "+t.toString());
+			}
+		}
+		*/
+	    return tracksPerStation.get(stationNumber);
+	}
+
 	public int getNumStations()
 	{
 		return stations.size();
@@ -359,6 +404,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 
 		tilesLaid.add(hex);
 		update();
+
 		return true;
 	}
 

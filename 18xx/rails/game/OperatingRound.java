@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.32 2008/02/23 20:54:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.33 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 
@@ -963,8 +963,6 @@ public class OperatingRound extends Round implements Observer
 			if (step == STEP_TRADE_SHARES) {
 
 			    // Is company allowed to trade trasury shares?
-			    log.debug ("+++ "+operatingCompany.getName()+" may trade shares:"+operatingCompany.mayTradeShares()
-			            +" has operated: "+operatingCompany.hasOperated());
 			    if (!operatingCompany.mayTradeShares()
 			            || !operatingCompany.hasOperated()) {
 			        continue;
@@ -1791,16 +1789,15 @@ public class OperatingRound extends Round implements Observer
 	    List<TrainI> trains;
 	    //TrainI train;
 	    boolean hasTrains = operatingCompany.getPortfolio().getNumberOfTrains() > 0;
-	    boolean atTrainLimit  = operatingCompany.getNumberOfTrains() 
+	    boolean atTrainLimit  = operatingCompany.getNumberOfTrains()
 				>= operatingCompany.getCurrentTrainLimit();
 		boolean canBuyTrainNow = canBuyTrain();
-		log.debug("+++CanBuyTrainNow="+canBuyTrainNow);
 	    boolean presidentMayHelp = false;
 	    TrainI cheapestTrain = null;
 	    int costOfCheapestTrain = 0;
 	    Portfolio ipo = Bank.getIpo();
 	    Portfolio pool = Bank.getPool();
-	    
+
         // First check if any more trains may be bought from the Bank
 	    // Postpone train limit checking, because an exchange might be possible
         if (currentPhase.canBuyMoreTrainsPerTurn()
@@ -1830,11 +1827,11 @@ public class OperatingRound extends Round implements Observer
                             = operatingCompany.getPortfolio().getUniqueTrains();
                         BuyTrain action = new BuyTrain (train, ipo, cost);
                         action.setTrainsForExchange(exchangeableTrains);
-                        if (atTrainLimit) action.setForcedExchange(true); 
+                        if (atTrainLimit) action.setForcedExchange(true);
                         possibleActions.add (action);
                     }
                 }
-                
+
                 if (!canBuyTrainNow) return;
 
                 // Can a special property be used?
@@ -1875,7 +1872,7 @@ public class OperatingRound extends Round implements Observer
     		    presidentMayHelp = true;
     		}
         }
-        
+
         if (!canBuyTrainNow) return;
 
 		/* Other company trains, sorted by president (current player first) */
@@ -1925,13 +1922,13 @@ public class OperatingRound extends Round implements Observer
             }
 		}
 	}
-	
+
 	/** Returns whether or not the company is allowed to buy a train,
 	 * considering its train limit.
 	 * @return
 	 */
 	protected boolean canBuyTrain() {
-		return operatingCompany.getNumberOfTrains() 
+		return operatingCompany.getNumberOfTrains()
 			< operatingCompany.getCurrentTrainLimit();
 	}
 

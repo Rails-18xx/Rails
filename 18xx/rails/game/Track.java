@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Track.java,v 1.3 2008/01/17 21:13:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Track.java,v 1.4 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 /**
@@ -37,6 +37,17 @@ public class Track
 		return new int[] { startPoint, endPoint };
 	}
 	
+	public int getEndPoint (int startPoint) {
+	    
+	    if (startPoint == this.startPoint) {
+	        return this.endPoint;
+	    } else if (startPoint == this.endPoint) {
+	        return this.startPoint;
+	    } else {
+	        return -99;
+	    }
+	}
+	
 	public int getComparableEndPoint (int comparableStartPoint) {
 	    
 	    if (comparableStartPoint == this.comparableStartPoint) {
@@ -46,6 +57,10 @@ public class Track
 	    } else {
 	        return -99;
 	    }
+	}
+	
+	public String toString () {
+		return ("Track "+startPoint+"/"+endPoint);
 	}
 
 }

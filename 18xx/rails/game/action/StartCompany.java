@@ -4,8 +4,9 @@ import rails.game.Bank;
 import rails.game.PublicCertificateI;
 
 public class StartCompany extends BuyCertificate {
-	
-	private int[] startPrices;
+
+    // Server parameters
+	protected int[] startPrices;
 
     public static final long serialVersionUID = 1L;
 
@@ -22,17 +23,18 @@ public class StartCompany extends BuyCertificate {
     public int[] getStartPrices() {
     	return startPrices;
     }
-    
+
     public boolean mustSelectAPrice() {
     	return startPrices.length > 1;
     }
-    
+
     public void setStartPrice (int startPrice) {
     	price = startPrice;
     }
-    
-	public String toString() {
-		StringBuffer text = new StringBuffer(); 
+
+	@Override
+    public String toString() {
+		StringBuffer text = new StringBuffer();
         text.append("StartCompany: ")
         	.append(certificate.getName());
         if (price > 0) {

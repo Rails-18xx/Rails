@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.5 2008/01/18 19:58:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.6 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public class MapManager implements ConfigurableComponentI
 		MapHex.setLettersGoHorizontal(lettersGoHorizontal);
 
 		attr = tag.getAttributeAsString("even");
-		letterAHasEvenNumbers = ((int) (attr.toUpperCase().charAt(0) - 'A')) % 2 == 0;
+		letterAHasEvenNumbers = ((attr.toUpperCase().charAt(0) - 'A')) % 2 == 0;
 		MapHex.setLetterAHasEvenNumbers(letterAHasEvenNumbers);
 
 		List<Tag> hexTags = tag.getChildren("Hex");
@@ -106,7 +106,7 @@ public class MapManager implements ConfigurableComponentI
 
 		for (String hexName : mHexes.keySet())
 		{
-			hex = (MapHex) mHexes.get(hexName);
+			hex = mHexes.get(hexName);
 			hexes[hex.getX()][hex.getY()] = hex;
 		}
 
@@ -202,26 +202,34 @@ public class MapManager implements ConfigurableComponentI
 
 	public MapHex getHex(String locationCode)
 	{
-		return (MapHex) mHexes.get(locationCode);
+		return mHexes.get(locationCode);
 	}
 
 	/**
 	 * Necessary mechanism for delaying assignment of companyDestination until
 	 * after all of the proper elements of the XML have been loaded.
-	 * 
+	 *
 	 * Called by Game.initialise()
 	 */
 	protected static void assignHomesAndDestinations()
 	{
 	    MapHex hex;
-	    
+
 	    for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
 	        if ((hex = company.getHomeHex()) != null) {
-	            hex.addHome(company, company.getHomeStation());
+	            hex.addHome(company, company.getHomeCityNumber());
 	        }
 	        if ((hex = company.getDestinationHex()) != null) {
 	            hex.addDestination(company);
 	        }
 	    }
+	}
+
+	public List<City> getCurrentStations() {
+	    List<City> stations = new ArrayList<City>();
+	    for (MapHex hex : mHexes.values()) {
+	        stations.addAll(hex.getCities());
+	    }
+	    return stations;
 	}
 }

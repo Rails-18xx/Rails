@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.23 2008/02/19 20:10:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.24 2008/02/28 21:43:49 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -145,7 +145,6 @@ implements TokenHolderI, MoveableHolderI
 	            }
 	        }
 	        for (SpecialPropertyI sp : spsToMove) {
-	            log.debug("Moving SP "+sp+" to "+name);
 	        	sp.moveTo(this);
 	        }
 		}

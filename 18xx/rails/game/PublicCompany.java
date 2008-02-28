@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.31 2008/02/23 20:54:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.32 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -54,8 +54,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Home hex & city * */
     protected MapHex homeHex = null;
-
-    protected Station homeStation = null;
+    protected int homeCityNumber = 1;
 
     /** Destination hex * */
     protected MapHex destinationHex = null;
@@ -266,12 +265,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             MapHex hex = MapManager.getInstance().getHex(homeHexName);
             if (hex != null) {
                 homeHex = hex;
-                List<Station> stations = hex.getStations();
-                int homeCity = homeBaseTag.getAttributeAsInteger("city", 1);
-                if (stations != null && stations.size() > 0) {
-                    homeStation = stations.get(Math.min(homeCity,
-                            stations.size()) - 1);
-                }
+                homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             } else {
                 throw new ConfigurationException("Invalid home hex "
                         + homeHexName + " for company " + name);
@@ -663,16 +657,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * @return Returns the homeStation.
      */
-    public Station getHomeStation() {
-        return homeStation;
+    public int getHomeCityNumber() {
+        return homeCityNumber;
     }
 
     /**
      * @param homeStation
      *            The homeStation to set.
      */
-    public void setHomeStation(Station homeStation) {
-        this.homeStation = homeStation;
+    public void setHomeCityNumber(int number) {
+        this.homeCityNumber = number;
     }
 
     /**
@@ -764,7 +758,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // Remove the "unfloated" indicator in GameStatus
         getPresident().getPortfolio().getShareModel(this).update();
 
-        // In 18EU, cash has already been moved
+        // In 18EU, before phase 5, cash has already been moved
         if (moveCash) {
 
 	        int cash = 0;
@@ -1524,8 +1518,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // TODO This does not yet cover cases where the user
         // has a choice, such in 1830 Erie.
     	if (hasLaidHomeBaseTokens()) return true;
-
-        return homeHex.layBaseToken(this, homeStation);
+    	log.debug(name+" lays home base on "+homeHex.getName()+" city "+homeCityNumber);
+        return homeHex.layBaseToken(this, homeCityNumber);
     }
 
     public BaseToken getFreeToken() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.9 2008/01/18 19:58:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.10 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -6,7 +6,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.util.*;
+import rails.util.LocalText;
+import rails.util.Tag;
 
 
 /**
@@ -33,7 +34,7 @@ public class ComponentManager
 
 	/** The name of the XML attribute for the component's configuration file. */
 	public static final String COMPONENT_FILE_TAG = "file";
-	
+
 	private List<Tag> componentTags;
 	protected static Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
 	protected static List <String> directories = new ArrayList<String>();
@@ -47,7 +48,7 @@ public class ComponentManager
 		throw new ConfigurationException(LocalText.getText("ComponentManagerNotYetConfigured"));
 	}
 
-	public static synchronized void configureInstance(String gameName, Tag tag) 
+	public static synchronized void configureInstance(String gameName, Tag tag)
 	throws ConfigurationException
 	{
 		if (instance != null)
@@ -72,10 +73,10 @@ public class ComponentManager
 			}
 		}
 	}
-	
+
 	public synchronized void finishPreparation ()
 	throws ConfigurationException {
-		
+
 		for (Tag component : componentTags)
 		{
 			String compName = component.getAttributeAsString("name");
@@ -85,9 +86,9 @@ public class ComponentManager
 		}
 	}
 
-	private static void configureComponent (Tag componentTag) 
+	private static void configureComponent (Tag componentTag)
 	throws ConfigurationException {
-		
+
 		// Extract the attributes of the Component
 		String name = componentTag.getAttributeAsString(COMPONENT_NAME_TAG);
 		if (name == null)
@@ -101,7 +102,7 @@ public class ComponentManager
 			        LocalText.getText("ComponentHasNoClass", name));
 		}
 		String file = componentTag.getAttributeAsString(COMPONENT_FILE_TAG);
-		
+
 		// Only one component per name.
 		if (instance.mComponentMap.get(name) != null)
 		{
@@ -127,7 +128,7 @@ public class ComponentManager
 			// the caught exception.
 			throw new ConfigurationException(
 			        LocalText.getText("ComponentHasNoClass", clazz), ex);
-			
+
 		}
 
 		// Configure the component, from a file, or the embedded XML.
@@ -159,23 +160,24 @@ public class ComponentManager
 
 	/**
 	 * Returns the configured parameter with the given name.
-	 * 
+	 *
 	 * @param componentName
 	 *            the of the component sought.
 	 * @return the component sought, or null if it has not been configured.
 	 */
 	public ConfigurableComponentI findComponent(String componentName)
 	{
-		return (ConfigurableComponentI) mComponentMap.get(componentName);
+		return mComponentMap.get(componentName);
 	}
 
-	private Map<String, ConfigurableComponentI> mComponentMap 
+	private Map<String, ConfigurableComponentI> mComponentMap
 		= new HashMap<String, ConfigurableComponentI>();
 
 	/** Remember our singleton instance. */
 	private static ComponentManager instance;
-	
+
 	public static String getGameName () {
 	    return gameName;
 	}
+
 }
