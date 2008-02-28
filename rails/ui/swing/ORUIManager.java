@@ -388,7 +388,6 @@ public class ORUIManager {
 
 		if (tokenLayingEnabled) {
 			List<LayToken> allowances = map.getTokenAllowanceForHex(clickedHex.getHexModel());
-
 			if (allowances.size() > 0) {
                 log.debug("Hex "+clickedHex.getName()+" clicked, allowances:");
                 for (LayToken allowance : allowances) {
@@ -525,25 +524,48 @@ public class ORUIManager {
             // Pick the first one (unknown if we will ever need more than one)
             LayBaseToken allowance = allowances.get(0);
             int station;
-            List<Station> stations = selectedHex.getHexModel().getStations();
+            List<City> stations = selectedHex.getHexModel().getCities();
 
             switch (stations.size()) {
             case 0: // No stations
                 return;
 
             case 1:
-                station = 0;
+                station = 1;
                 break;
 
             default:
-                Station stationObject = (Station) JOptionPane.showInputDialog(orWindow,
-                        "Which station to place the token in?",
-                        "Which station?",
+                // Check what connections each city has.
+                // Also remove any cities with no room.
+                List<String> prompts = new ArrayList<String>();
+                Map<String, City> promptToCityMap = new HashMap<String, City>();
+                String prompt;
+                for (City city : stations) {
+                    if (city.hasTokenSlotsLeft()) {
+                        prompt = LocalText.getText("SelectStationForTokenOption",
+                                new String[] {
+                                    String.valueOf(city.getNumber()),
+                                    ((MapHex)selectedHex.getModel()).getConnectionString(
+                                            selectedHex.getCurrentTile(),
+                                            ((MapHex)selectedHex.getModel()).getCurrentTileRotation(),
+                                            city.getNumber())
+                        });
+                        prompts.add(prompt);
+                        promptToCityMap.put(prompt, city);
+                    }
+                }
+                if (prompts.isEmpty()) {
+                    return;
+                }
+                String selected = (String) JOptionPane.showInputDialog(orWindow,
+                        LocalText.getText("SelectStationForToken"),
+                        LocalText.getText("WhichStation"),
                         JOptionPane.PLAIN_MESSAGE,
                         null,
-                        stations.toArray(),
-                        stations.get(0));
-                station = stations.indexOf(stationObject);
+                        prompts.toArray(),
+                        prompts.get(0));
+                if (selected == null) return;
+                station = promptToCityMap.get(selected).getNumber();
             }
 
             allowance.setChosenHex(selectedHex.getHexModel());
@@ -642,27 +664,6 @@ public class ORUIManager {
             promptToTrain.put(prompt, bTrain);
         }
 
-        // Add any trains that can be voluntarily discarded
-        // (as in 18EU)
-        /*
-        List<DiscardTrain> discardableTrains = possibleActions.getType(DiscardTrain.class);
-        for (DiscardTrain dTrain : discardableTrains)
-        {
-            // We only cover voluntary discards here
-            if (dTrain.isForced()) continue;
-            train = dTrain.getOwnedTrains().get(0);
-
-            // Create a prompt per buying option 
-            b = new StringBuffer();
-
-            b.append(LocalText.getText("DiscardTrain",
-                            train.getName()));
-            prompt = b.toString();
-            prompts.add(prompt);
-            promptToTrain.put(prompt, dTrain);
-        }
-        */
-
         if (prompts.size() == 0) {
             JOptionPane.showMessageDialog(orWindow,
                     LocalText.getText("CannotBuyAnyTrain"));
@@ -691,13 +692,6 @@ public class ORUIManager {
         selectedAction = promptToTrain.get(selectedActionText);
         if (selectedAction == null)
             return;
-
-        if (selectedAction instanceof DiscardTrain) {
-            TrainI discardedTrain = ((DiscardTrain)selectedAction).getOwnedTrains().get(0);
-            ((DiscardTrain)selectedAction).setDiscardedTrain(discardedTrain);
-            orWindow.process(selectedAction);
-            return;
-        }
 
         buyAction = (BuyTrain) selectedAction;
         train = buyAction.getTrain();
@@ -770,17 +764,14 @@ public class ORUIManager {
 
                 // Check if any trains must be discarded
                 // Keep looping until all relevant companies have acted
+
+                // TODO This must be split off from here, as in the future
+                // different clients may handle the discards of each company.
                 while (possibleActions.contains(DiscardTrain.class))
                 {
                     // Check if there are any forced discards;
                     // otherwise, nothing to do here
-                    DiscardTrain dt = null;
-                    for (DiscardTrain dtx : possibleActions.getType(DiscardTrain.class)) {
-                        if (dtx.isForced()) {
-                            dt = dtx;
-                            break;
-                        }
-                    }
+                    DiscardTrain dt = possibleActions.getType(DiscardTrain.class).get(0);
                     if (dt == null) break;
 
                     PublicCompanyI c = dt.getCompany();
@@ -1011,8 +1002,8 @@ public class ORUIManager {
             orPanel.initRevenueEntryStep(orCompIndex, action);
             setMessage(LocalText.getText("EnterRevenue"));
 
-        } else if (possibleActions.contains(BuyTrain.class)
-                || possibleActions.contains(DiscardTrain.class)) {
+        } else if (possibleActions.contains(BuyTrain.class)/*
+                || possibleActions.contains(DiscardTrain.class)*/) {
 
             //orPanel.initTrainBuying(oRound.getOperatingCompany().mayBuyTrains());
             orPanel.initTrainBuying(true);
@@ -1020,6 +1011,10 @@ public class ORUIManager {
             orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
             setMessage(LocalText.getText("BuyTrain"));
+
+        } else if (possibleActions.contains(DiscardTrain.class)) {
+
+            //discardTrain();
 
         } else if (orStep == OperatingRound.STEP_FINAL) {
             // Does not occur???
