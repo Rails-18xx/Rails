@@ -2,7 +2,9 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18EU"/>
-		<StockRound class="rails.game.specific._18EU.StockRound_18EU" skipFirst="yes"/>
+		<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
+			sequence="sellBuy"
+			skipFirst="yes"/>
 		<OperatingRound class="rails.game.specific._18EU.OperatingRound_18EU"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
