@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BaseToken.java,v 1.2 2007/10/27 15:26:34 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BaseToken.java,v 1.3 2008/02/28 21:43:49 evos Exp $
+ *
  * Created on Jan 1, 2007
  * Change Log:
  */
@@ -13,12 +13,12 @@ package rails.game;
  * as it most closely the function of such a token: to act as a base from which a
  * company can operate.
  * Other names used in various games and discussions are "railhead", "station",
- * "garrison", or just "token". 
- * 
+ * "garrison", or just "token".
+ *
  * @author Erik Vos
  */
 public class BaseToken extends Token {
-    
+
     PublicCompanyI company;
 
     /**
@@ -27,25 +27,26 @@ public class BaseToken extends Token {
     public BaseToken(PublicCompanyI company) {
         super();
         this.company = company;
-        
+
         /* Initially. a BaseToken is always owned by a company. */
         setHolder (company);
     }
-    
+
     public boolean isPlaced () {
-        return (holder instanceof Station);
+        return (holder instanceof City);
     }
-    
+
     public String getName() {
-        return company.getName() + " base token"; 
+        return company.getName();
     }
-    
+
     public PublicCompanyI getCompany () {
         return company;
     }
-    
+
+    @Override
     public String toString () {
     	return getName();
     }
-    
+
 }

@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.5 2007/12/21 21:18:12 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.6 2008/02/28 21:43:49 evos Exp $
+ *
  * Created on Jan 1, 2007
  * Change Log:
  */
@@ -17,19 +17,19 @@ import rails.util.Util;
  * as it most closely the function of such a token: to act as a base from which a
  * company can operate.
  * Other names used in various games and discussions are "railhead", "station",
- * "garrison", or just "token". 
- * 
+ * "garrison", or just "token".
+ *
  * @author Erik Vos
  */
-public class BonusToken 
-extends Token 
+public class BonusToken
+extends Token
 implements Closeable {
-    
+
     int value;
     String name;
     String removingObjectDesc = null;
     Object removingObject = null;
-    PublicCompanyI user = null; 
+    PublicCompanyI user = null;
 
     /**
      * Create a BonusToken.
@@ -38,7 +38,7 @@ implements Closeable {
         super();
         setHolder (null);
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException
     {
         Tag bonusTokenTag = tag.getChild("BonusToken");
@@ -56,28 +56,29 @@ implements Closeable {
             throw new ConfigurationException ("Bonus token must have a name");
         }
         description = name + " +" + Bank.format(value)+" bonus token";
-        
+
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
-    
+
     public void close () {
         //new TokenMove (this, holder, Bank.getScrapHeap());
         new ObjectMove (this, holder, Bank.getScrapHeap());
         user.removeBonusToken(this);
     }
-    
+
+    @Override
     public void setHolder (TokenHolderI newHolder) {
         super.setHolder(newHolder);
-        
+
         // Prepare for removal, is requested
-        if (removingObjectDesc != null 
+        if (removingObjectDesc != null
                 && removingObject == null) {
             String[] spec = removingObjectDesc.split(":");
             if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject = PhaseManager.getPhaseNyName(spec[1]);
+                removingObject = PhaseManager.getInstance().getPhaseNyName(spec[1]);
             }
         }
-        
+
         // If the token is placed, prepare its removal when required
         if (newHolder instanceof MapHex
                 && removingObject != null) {
@@ -86,25 +87,26 @@ implements Closeable {
             }
         }
     }
-    
+
     public void setUser (PublicCompanyI user) {
         this.user = user;
     }
-    
+
     public boolean isPlaced () {
         return (holder instanceof MapHex);
     }
-    
+
     public String getName() {
-        return name; 
+        return name;
     }
-    
+
     public int getValue () {
         return value;
     }
-    
+
+    @Override
     public String toString() {
-    	return description; 
+    	return description;
     }
-    
+
 }

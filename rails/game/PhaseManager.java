@@ -1,9 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.8 2007/12/11 20:58:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.9 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import rails.game.state.State;
 import rails.util.Tag;
@@ -12,11 +10,12 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 {
 
 	protected static PhaseManagerI instance = null;
-	protected static ArrayList<Phase> phaseList;
-	protected static HashMap<String, Phase> phaseMap;
 
-	protected static int numberOfPhases = 0;
-	protected static State currentPhase = new State ("CurrentPhase", Phase.class);
+	protected ArrayList<Phase> phaseList;
+	protected HashMap<String, Phase> phaseMap;
+
+	protected int numberOfPhases = 0;
+	protected State currentPhase = new State ("CurrentPhase", Phase.class);
 
 	public PhaseManager()
 	{
@@ -54,7 +53,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 			phase.configureFromXML(phaseTag);
             previousPhase = phase;
 		}
-		PhaseI initialPhase = (PhaseI) phaseList.get(0);
+		PhaseI initialPhase = phaseList.get(0);
 		setPhase (initialPhase);
 
 	}
@@ -73,7 +72,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 	{
 		setPhase (phaseMap.get(name));
 	}
-	
+
 	protected void setPhase (PhaseI phase) {
 		if (phase != null)
 		{
@@ -85,9 +84,16 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 			GameManager.initialiseNewPhase(phase);
 		}
 	}
-	
-	public static PhaseI getPhaseNyName (String name) {
+
+	public PhaseI getPhaseNyName (String name) {
 	    return phaseMap.get(name);
+	}
+
+
+	public boolean hasReachedPhase (String phaseName) {
+        return getCurrentPhase().getIndex()
+                < getPhaseNyName(phaseName).getIndex();
+
 	}
 
 }

@@ -1,14 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.16 2008/02/23 20:54:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.17 2008/02/28 21:43:49 evos Exp $ */
 package rails.game;
 
 
 import java.awt.Color;
 import java.util.List;
 
-import rails.game.model.BaseTokensModel;
-import rails.game.model.ModelObject;
-import rails.game.model.MoneyModel;
-import rails.game.model.PriceModel;
+import rails.game.model.*;
 
 /**
  * Interface to be used to access PublicCompany instances.
@@ -293,8 +290,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 
     public MapHex getHomeHex();
     public void setHomeHex(MapHex homeHex);
-    public Station getHomeStation();
-    public void setHomeStation(Station homeStation);
+    public int getHomeCityNumber();
+    public void setHomeCityNumber(int homeCityNumber);
     public MapHex getDestinationHex();
 
 	public int getNumberOfTileLays (String tileColour);
