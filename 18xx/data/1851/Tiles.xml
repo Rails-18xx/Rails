@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><Tiles><Tile colour="white" id="0" name="empty"/><Tile colour="fixed" id="-3" name="MF 3">
-		<Station id="city1" position="352" type="Town" value="10"/>
+		<Station id="city1" position="252" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile><Tile colour="white" id="-10" name="1 city">
