@@ -42,6 +42,29 @@ public class StockRound_18EU extends StockRound
         int price;
         int number;
 
+        // 18EU special: until phase 5, we can only
+        // start a company by trading in a Minor
+        PhaseManagerI pmgr = PhaseManager.getInstance();
+        boolean mustMergeMinor = pmgr.hasReachedPhase("5");
+        List<PublicCompanyI> minors = null;
+        List<City> freeStations = null;
+        if (mustMergeMinor) {
+            minors = new ArrayList<PublicCompanyI>();
+            for (PublicCertificateI c : getCurrentPlayer().getPortfolio().getCertificates()) {
+                if (c.getCompany().getTypeName().equalsIgnoreCase("Minor")) {
+                    minors.add (c.getCompany());
+                }
+            }
+        } else {
+            freeStations = new ArrayList<City>();
+            MapManager map = (MapManager) Game.getComponentManager().findComponent("Map");
+            for (City city : map.getCurrentStations()) {
+                if (city.getSlots() > city.getTokens().size()) {
+                    freeStations.add (city);
+                }
+            }
+        }
+
         int playerCash = currentPlayer.getCash();
 
         /* Get the next available IPO certificates */
@@ -72,22 +95,10 @@ public class StockRound_18EU extends StockRound
 
                 if (!comp.hasStarted())
                 {
-                    // 18EU special: until phase 5, we can only
-                    // start a company by trading in a Minor
-
-                    // Check for phase to be added
-                    PhaseManagerI pmgr = PhaseManager.getInstance();
-                    boolean mustMergeMinor = pmgr.getCurrentPhase().getIndex()
-                            < PhaseManager.getPhaseNyName("5").getIndex();
-
-                    List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
                     if (mustMergeMinor) {
-                        for (PublicCertificateI c : getCurrentPlayer().getPortfolio().getCertificates()) {
-                            if (c.getCompany().getTypeName().equalsIgnoreCase("Minor")) {
-                                minors.add (c.getCompany());
-                            }
-                        }
                         if (minors.isEmpty()) continue;
+                    } else {
+                        if (freeStations.isEmpty()) continue;
                     }
 
                     List<Integer> startPrices = new ArrayList<Integer>();
@@ -104,14 +115,13 @@ public class StockRound_18EU extends StockRound
                         for (int i=0; i<prices.length; i++) {
                             prices[i] = startPrices.get(i);
                         }
-                        possibleActions.add(new StartCompany_18EU (cert, prices, minors));
-                    }
-                }
-                else if (comp.hasParPrice())
-                {
-                    price = comp.getParPrice().getPrice() * cert.getShares();
-                    if (price <= playerCash) {
-                        possibleActions.add (new BuyCertificate (cert, from, price));
+                        StartCompany_18EU action = new StartCompany_18EU (cert, prices);
+                        if (mustMergeMinor) {
+                            action.setMinorsToMerge(minors);
+                        } else {
+                            action.setAvailableHomeStations(freeStations);
+                        }
+                        possibleActions.add(action);
                     }
                 }
                 else if (cert.getCertificatePrice() <= playerCash) {
@@ -336,7 +346,8 @@ public class StockRound_18EU extends StockRound
 
 			// Check if the player owns the merged minor
 			minor = startAction.getChosenMinor();
-			if (currentPlayer.getPortfolio().getCertificatesPerCompany(minor.getName())== null) {
+			if (minor != null
+			        && currentPlayer.getPortfolio().getCertificatesPerCompany(minor.getName())== null) {
 			    errMsg = LocalText.getText("PlayerDoesNotOwn",
 			            new String[] {
 			                currentPlayer.getName(),
@@ -362,11 +373,24 @@ public class StockRound_18EU extends StockRound
 		MoveSet.start(true);
 
 		// All is OK, now start the company
-		company.setHomeHex(minor.getHomeHex());
-		company.start(startSpace);
+		if (minor != null) {
+		    MapHex homeHex = minor.getHomeHex();
+		    int homeCityNumber = homeHex.getCityOfBaseToken(minor);
+		    company.setHomeHex(homeHex);
+		    company.setHomeCityNumber(homeCityNumber);
+		} else {
 
-        // TODO must get obtained from XML
-        int tokensCost = 100;
+		}
+		company.start(startSpace);
+        ReportBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
+                playerName,
+                companyName,
+                Bank.format(price),
+                Bank.format (shares * price),
+                String.valueOf(shares),
+                String.valueOf(cert.getShare()),
+                company.getName()
+                }));
 
         // Transfer the President's certificate
 		//currentPlayer.getPortfolio().buyCertificate(cert,
@@ -375,57 +399,47 @@ public class StockRound_18EU extends StockRound
 		cert.moveTo(currentPlayer.getPortfolio());
 
 		new CashMove (currentPlayer, company, shares * price);
-		new CashMove (company, null, tokensCost);
 
-		// Get the extra certificate for the minor, for free
-		PublicCertificateI cert2 = ipo.findCertificate(company, false);
-		cert2.moveTo(currentPlayer.getPortfolio());
+        if (minor != null) {
+            // Get the extra certificate for the minor, for free
+    		PublicCertificateI cert2 = ipo.findCertificate(company, false);
+    		cert2.moveTo(currentPlayer.getPortfolio());
+            // Transfer the minor assets into the started company
+            int minorCash = minor.getCash();
+            int minorTrains = minor.getPortfolio().getTrainList().size();
+            company.transferAssetsFrom (minor);
+            minor.setClosed();
+            ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+                    new String[] {
+                        currentPlayer.getName(),
+                        minor.getName(),
+                        company.getName(),
+                        Bank.format(minorCash),
+                        String.valueOf(minorTrains)
+                    }));
+            ReportBuffer.add(LocalText.getText("GetShareForMinor",
+                    new String[] {
+                        currentPlayer.getName(),
+                        String.valueOf(cert2.getShare()),
+                        company.getName(),
+                        minor.getName()
+                    }));
+    	}
 
 		// Move the remaining certificates to the company treasury
-		//for (PublicCertificateI cert3 : ipo.getCertificatesPerCompany(company.getName())) {
-		//    cert3.moveTo(company.getPortfolio());
-		//}
 		Util.moveObjects(ipo.getCertificatesPerCompany(company.getName()),
 		        company.getPortfolio());
 
-		// Transfer the minor assets into the started company
-        int minorCash = minor.getCash();
-        int minorTrains = minor.getPortfolio().getTrainList().size();
-		company.transferAssetsFrom (minor);
 
-		minor.setClosed();
-
-		// TODO: Must check for excess trains (though impossible here)
-
-		ReportBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
-		        playerName,
-		        companyName,
-		        Bank.format(price),
-                Bank.format (shares * price),
-		        String.valueOf(shares),
-		        String.valueOf(cert.getShare()),
-		        company.getName()
-		        }));
-		ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
-		        new String[] {
-		            currentPlayer.getName(),
-		            minor.getName(),
-		            company.getName(),
-		            Bank.format(minorCash),
-		            String.valueOf(minorTrains)
-		        }));
-		ReportBuffer.add(LocalText.getText("GetShareForMinor",
-		        new String[] {
-		            currentPlayer.getName(),
-		            String.valueOf(cert2.getShare()),
-		            company.getName(),
-		            minor.getName()
-		        }));
 		ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
 		        new String[] {
 		            String.valueOf(company.getPortfolio().getShare(company)),
 		            company.getName()
 		        }));
+
+		// TODO must get this amount from XML
+        int tokensCost = 100;
+        new CashMove (company, null, tokensCost);
 		ReportBuffer.add(LocalText.getText("PaysForTokens",
 		        new String[] {
 		            company.getName(),
@@ -474,11 +488,13 @@ public class StockRound_18EU extends StockRound
         int minorTrains = minor.getPortfolio().getTrainList().size();
         major.transferAssetsFrom (minor);
 
+        MapHex homeHex = minor.getHomeHex();
+        int homeCityNumber = homeHex.getCityOfBaseToken(minor);
         minor.setClosed();
 
         if (action.getReplaceToken()) {
-            if (minor.getHomeHex().layBaseToken(major, 0)) {
-                major.layBaseToken (minor.getHomeHex(), 0);
+            if (homeHex.layBaseToken(major, homeCityNumber)) {
+                major.layBaseToken (homeHex, homeCityNumber);
             }
         }
 
@@ -509,10 +525,7 @@ public class StockRound_18EU extends StockRound
         companyBoughtThisTurnWrapper.set (major);
         setPriority();
 
-
-
         return true;
-
     }
 
 	@Override
