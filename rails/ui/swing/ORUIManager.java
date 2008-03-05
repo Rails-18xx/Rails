@@ -365,8 +365,6 @@ public class ORUIManager {
 
     private void prepareBonusToken (LayBonusToken action) {
 
-
-        	log.debug("+++ SpecialTokenLay "+action.toString());
             orWindow.requestFocus();
 
             List<LayToken> actions = new ArrayList<LayToken>();
@@ -949,7 +947,7 @@ public class ORUIManager {
         orPanel.initORCompanyTurn(orCompIndex);
 
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
-
+        orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
         if (possibleActions.contains(LayTile.class)) {
 
@@ -959,8 +957,6 @@ public class ORUIManager {
 
             log.debug ("Tiles can be laid");
             mapRelatedActions.addAll(possibleActions.getType(LayTile.class));
-
-            orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
         } else if (possibleActions.contains(LayBaseToken.class)) {
 
@@ -1007,8 +1003,6 @@ public class ORUIManager {
 
             //orPanel.initTrainBuying(oRound.getOperatingCompany().mayBuyTrains());
             orPanel.initTrainBuying(true);
-
-            orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
             setMessage(LocalText.getText("BuyTrain"));
 

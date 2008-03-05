@@ -1,19 +1,18 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.9 2008/02/28 21:39:10 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.10 2008/03/05 19:55:16 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.RenderingHints;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.ui.swing.*;
+import rails.ui.swing.GameUIManager;
+import rails.ui.swing.ImageLoader;
 
 /**
  * This class represents the GUI version of a tile.
@@ -70,7 +69,7 @@ public class GUITile {
 	/**
 	 * Rotate right (clockwise) until a valid orientation is found. TODO:
 	 * Currently only impassable hex sides are taken into account.
-	 * 
+	 *
 	 * @param initial:
 	 *            First rotation to try. Should be 0 for the initial tile drop,
 	 *            and 1 at subsequent rotation attempts.
@@ -92,21 +91,21 @@ rot:	for (i = initial; i < 6; i++) {
 			tempRot = (rotation + i) % 6;
 		    Map<Integer, Integer> oldCities = new HashMap<Integer, Integer>(4);
 		    Map<Integer, Integer> newCities = new HashMap<Integer, Integer>(4);
-		    
+
 			/* Loop through all hex sides */
 			for (j = 0; j < 6; j++) {
 			    tempTileSide = (6 + j - tempRot) % 6;
 			    prevTileSide = (6 + j - prevTileRotation) % 6;
-			    
+
 				if (tile.hasTracks(tempTileSide)) {
 					// If the tile has tracks against that side, but there is no
 					// neighbour, forbid this rotation.
 					if (!hex.hasNeighbour(j)) {
 						continue rot;
 					}
-					// If the tile must be connected (i.e. not laid on the 
+					// If the tile must be connected (i.e. not laid on the
 					// operating company home hex, and not a special tile lay),
-					// at least one neighbour must have a track against 
+					// at least one neighbour must have a track against
 					// a side of this tile that also has a track.
 					if (mustConnect) {
 						nHex = hex.getNeighbor(j);
@@ -148,7 +147,7 @@ rot:	for (i = initial; i < 6; i++) {
 			                }
 					    }
 					}
-					
+
 				// If the previous tile has tracks against that side, but
 				// the new one has not, forbid this rotation (not preserving
 				// existing track).
@@ -160,7 +159,7 @@ rot:	for (i = initial; i < 6; i++) {
 					// on multi-station tiles.
 				}
 			}
-			
+
 			// Finish the city connection check
 			log.debug("*1*");
 			if (!oldCities.isEmpty()) {
@@ -189,18 +188,18 @@ rot:	for (i = initial; i < 6; i++) {
 						if (newCities.get(kk) == null
 								|| newCities.get(ll) == null) continue rot;
 						// If connected cities do not correspond, skip
-						log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
-							+" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
-						if ((oldCities.get(kkk).equals(oldCities.get(lll)))
-								!= (newCities.get(kk).equals(newCities.get(ll)))) {
-							log.debug("No match!");
-							continue rot;
-						}
+						//log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
+						//	+" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
+						//if ((oldCities.get(kkk).equals(oldCities.get(lll)))
+						//		!= (newCities.get(kk).equals(newCities.get(ll)))) {
+						//	log.debug("No match!");
+						//	continue rot;
+						//}
 					}
 				}
-				
+
 			}
-			
+
 			if (j == 6 && connected) {
 				/*
 				 * If we have successfully checked all hex sides, we have found

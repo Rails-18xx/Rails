@@ -1,54 +1,18 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.20 2008/02/16 19:50:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.21 2008/03/05 19:55:16 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.Bank;
-import rails.game.DisplayBuffer;
-import rails.game.Game;
-import rails.game.GameManager;
-import rails.game.Player;
-import rails.game.StartItem;
-import rails.game.StartPacket;
-import rails.game.StartRound;
-import rails.game.StartRoundI;
-import rails.game.StockMarketI;
-import rails.game.StockSpace;
-import rails.game.StockSpaceI;
-import rails.game.action.BidStartItem;
-import rails.game.action.BuyStartItem;
-import rails.game.action.GameAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.StartItemAction;
-import rails.ui.swing.elements.ActionButton;
-import rails.ui.swing.elements.Caption;
-import rails.ui.swing.elements.ClickField;
-import rails.ui.swing.elements.Field;
+import rails.game.*;
+import rails.game.action.*;
+import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
 
@@ -519,7 +483,6 @@ implements ActionListener, KeyListener, ActionPerformer
             immediateAction = null;
             if (nextAction instanceof StartItemAction) {
                 StartItemAction action = (StartItemAction) nextAction;
-                immediateAction = null; // Don't repeat it!
                 if (action instanceof BuyStartItem) {
                     requestStartPrice((BuyStartItem)action);
                     return process (action);

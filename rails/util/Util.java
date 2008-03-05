@@ -1,15 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.11 2008/02/15 22:49:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.12 2008/03/05 19:55:14 evos Exp $*/
 package rails.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import rails.game.Company;
 import rails.game.ConfigurationException;
+import rails.game.Game;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 
 public final class Util
 {
+	//protected static Logger log = Game.getLogger();
 
 	/**
 	 * No-args private constructor, to prevent (meaningless) construction of one

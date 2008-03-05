@@ -15,7 +15,6 @@
 	<Trains initial="2" number="2,2,1" mandatory="no"/>
   </CompanyType>
   <CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
-    <PoolPaysOut/>
     <Float percentage="50"/>
 	<TreasuryCanHoldOwnShares maxPerc="80"/>
 	<HomeBase lay="whenStarted"/>

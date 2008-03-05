@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="rails.game.specific._18EU.GameManager_18EU">
 		<Game name="18EU"/>
 		<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
 			sequence="sellBuy"
@@ -10,6 +10,7 @@
 		<BankPoolLimit percentage="50"/>
 		<TreasuryShareLimit percentage="80"/>
 		<GameStatus class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
+		<StatusWindow class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

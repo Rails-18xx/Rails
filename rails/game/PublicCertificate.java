@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.6 2007/12/23 16:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.7 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -79,6 +79,10 @@ public class PublicCertificate implements PublicCertificateI, Cloneable
 	 */
 	public Portfolio getPortfolio()
 	{
+		return portfolio;
+	}
+	
+	public MoveableHolderI getHolder() {
 		return portfolio;
 	}
 

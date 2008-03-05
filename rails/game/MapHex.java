@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.15 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.16 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 
@@ -74,6 +74,7 @@ public class MapHex extends ModelObject
 	protected TileI currentTile;
 	protected int currentTileRotation;
 	protected int tileCost;
+	protected String cityName;
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
 	protected MapHex[] neighbours = new MapHex[6];
@@ -201,6 +202,9 @@ public class MapHex extends ModelObject
 
 		// Off-board revenue values
 		offBoardValues = tag.getAttributeAsIntegerArray("value", null);
+
+		// City name
+		cityName = tag.getAttributeAsString("city", "");
 
 	}
 
@@ -400,6 +404,9 @@ public class MapHex extends ModelObject
 	 */
 	public void upgrade(TileI newTile, int newRotation)
 	{
+	    City newCity;
+	    String newTracks;
+
 	    if (currentTile.getNumStations() == newTile.getNumStations()) {
 	        // If the number of stations does not change,
 	        // reassign new Stations to existing cities,
@@ -430,7 +437,7 @@ public class MapHex extends ModelObject
                                     newRotation, newStation.getNumber()));
                     continue;
                 }
-	            for (Station newStation : newTile.getStations()) {
+station:        for (Station newStation : newTile.getStations()) {
 	                int[] newTrackEnds = getTrackEndPoints (
 	                        newTile, newRotation, newStation);
 	                for (int i=0; i<oldTrackEnds.length; i++) {
@@ -439,18 +446,23 @@ public class MapHex extends ModelObject
 	                            // Match found!
 	                            city.setRelatedStation(newStation);
 	                            city.setSlots(newStation.getBaseSlots());
+	                            newTracks = getConnectionString(newTile,
+                                        newRotation, newStation.getNumber());
+	                            city.setTrackEdges(newTracks);
 	                            log.debug("Assigned "+city.getUniqueId()
 	                                    +" from "+oldStation.getId()+" "
 	                                    +getConnectionString(currentTile,
 	                                            currentTileRotation, oldStation.getNumber())
 	                                    +" to "+newStation.getId()+" "
-	                                    +getConnectionString(newTile,
-	                                            newRotation, newStation.getNumber()));
+	                                    +newTracks);
+	                            break station;
+
 	                        }
 	                    }
 	                }
 
 	            }
+
 	        }
 	        new TileMove (this, currentTile, currentTileRotation, cities,
 	                newTile, newRotation, cities);
@@ -464,7 +476,7 @@ public class MapHex extends ModelObject
 	        List<City> newCities = new ArrayList<City>(4);
 	        Map<Integer, City> mNewCities = new HashMap<Integer, City>(4);
 	        Map<City, City> oldToNewCities = new HashMap<City, City>();
-	        List<Station> newStationsLinked = new ArrayList<Station>();
+	        Map<Station, City> newStationsToCities = new HashMap<Station, City>();
 	        // Tentatively number the new cities after the new stations
 	        //City city;
 	        //for (Station newStation : newTile.getStations()) {
@@ -479,41 +491,45 @@ public class MapHex extends ModelObject
                 Station oldStation = oldCity.getRelatedStation();
                 int[] oldTrackEnds = getTrackEndPoints(
                         currentTile, currentTileRotation, oldStation);
-                //log.debug("Old city #"+currentTile.getId()+" city "+oldCity.getNumber()+": "
-                //		+getConnectionString(currentTile, currentTileRotation, oldStation.getNumber()));
+                log.debug("Old city #"+currentTile.getId()+" city "+oldCity.getNumber()+": "
+                		+getConnectionString(currentTile, currentTileRotation, oldStation.getNumber()));
                 //for (City newCity : newCities) {
-                for (Station newStation : newTile.getStations()) {
-                    if (newStationsLinked.contains(newStation)) continue;
+station:        for (Station newStation : newTile.getStations()) {
                     //Station newStation = newCity.getRelatedStation();
                     int[] newTrackEnds = getTrackEndPoints (
                             newTile, newRotation, newStation);
-                    //log.debug("New station #"+newTile.getId()+" station "+newStation.getNumber()+": "
-                    //		+getConnectionString(newTile, newRotation, newStation.getNumber()));
+                    log.debug("New station #"+newTile.getId()+" station "+newStation.getNumber()+": "
+                    		+getConnectionString(newTile, newRotation, newStation.getNumber()));
                     for (int i=0; i<oldTrackEnds.length; i++) {
                         for (int j=0; j<newTrackEnds.length; j++) {
                             if (oldTrackEnds[i] == newTrackEnds[j]) {
                                 // Match found!
-                                if (!mNewCities.containsKey(cityNumber)) {
-                                    City newCity = new City (this, cityNumber, newStation);
+                                if (!newStationsToCities.containsKey(newStation)) {
+                                    newCity = new City (this, cityNumber, newStation);
                                     newCities.add(newCity);
                                     mNewCities.put(cityNumber, newCity);
-                                    oldToNewCities.put(oldCity, newCity);
-                                    newStationsLinked.add(newStation);
+                                    newStationsToCities.put(newStation, newCity);
                                     newCity.setSlots(newStation.getBaseSlots());
-                                    log.debug("Assigned from "
-                                            +oldCity.getUniqueId()+" #"
-                                            +currentTile.getId()+"/"
-                                            +currentTileRotation+" "
-                                            +oldStation.getId()+" "
-                                            +getConnectionString(currentTile,
-                                                    currentTileRotation, oldStation.getNumber())
-                                            +" to "+newCity.getUniqueId()+" #"
-                                            +newTile.getId()+"/"
-                                            +newRotation+" "
-                                            +newStation.getId()+" "
-                                            +getConnectionString(newTile,
-                                                    newRotation, newStation.getNumber()));
+                                } else {
+                                    newCity = newStationsToCities.get(newStation);
                                 }
+                                oldToNewCities.put(oldCity, newCity);
+                                newTracks = getConnectionString(newTile,
+                                        newRotation, newStation.getNumber());
+                                newCity.setTrackEdges(newTracks);
+                                log.debug("Assigned from "
+                                        +oldCity.getUniqueId()+" #"
+                                        +currentTile.getId()+"/"
+                                        +currentTileRotation+" "
+                                        +oldStation.getId()+" "
+                                        +getConnectionString(currentTile,
+                                                currentTileRotation, oldStation.getNumber())
+                                        +" to "+newCity.getUniqueId()+" #"
+                                        +newTile.getId()+"/"
+                                        +newRotation+" "
+                                        +newStation.getId()+" "
+                                        +newTracks);
+                                break station;
                             }
                         }
                     }
@@ -524,28 +540,30 @@ public class MapHex extends ModelObject
             // Check if there any new stations not corresponding
             // to an old city - create a new city for these stations.
             for (Station newStation : newTile.getStations()) {
-                if (newStationsLinked.contains(newStation)) continue;
+                if (newStationsToCities.containsKey(newStation)) continue;
                 int cityNumber;
                 for (cityNumber=1; mNewCities.containsKey(cityNumber); cityNumber++);
-                City newCity = new City (this, cityNumber, newStation);
+                newCity = new City (this, cityNumber, newStation);
                 newCities.add(newCity);
                 mNewCities.put(cityNumber, newCity);
-                newStationsLinked.add (newStation);
+                newStationsToCities.put (newStation, newCity);
                 newCity.setSlots(newStation.getBaseSlots());
+                newTracks = getConnectionString(newTile,
+                        newRotation, newStation.getNumber());
+                newCity.setTrackEdges(newTracks);
                 log.debug("New city added "
                         +newCity.getUniqueId()+" #"
                         +newTile.getId()+"/"
                         +newRotation+" "
                         +newStation.getId()+" "
-                        +getConnectionString(newTile,
-                                newRotation, newStation.getNumber()));
+                        +newTracks);
             }
 
 
             // Move the tokens
             for (City oldCity : cities) {
             	//log.debug("Old city "+oldCity.getNumber()+" has "+oldCity.getTokens().size()+" tokens");
-                City newCity = oldToNewCities.get(oldCity);
+                newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
                     for (TokenI token : oldCity.getTokens()) {
                         //token.moveTo(newCity);
@@ -554,6 +572,7 @@ public class MapHex extends ModelObject
                                 +" to "+newCity.getName());
                     }
                     Util.moveObjects(oldCity.getTokens(),newCity);
+                    // TODO: Need to add check for double tokens
                 } else {
                 	log.debug("No new city!?");
                 }
@@ -688,6 +707,7 @@ public class MapHex extends ModelObject
 
 
 	public boolean hasTokenSlotsLeft (int station) {
+	    if (station == 0) station = 1; // Temp. fix for old save files
 	    City city = mCities.get(station);
 	    if (city != null) {
 		    return city.hasTokenSlotsLeft();
@@ -773,7 +793,11 @@ public class MapHex extends ModelObject
 
 	public void addHome (PublicCompanyI company, int cityNumber) {
 	    if (homes == null) homes = new HashMap<PublicCompanyI, City>();
-	    homes.put (company, cities.get(cityNumber-1));
+	    if (cities.isEmpty()) {
+	        log.error("No cities for home station on hex "+name);
+	    } else {
+	        homes.put (company, cities.get(cityNumber-1));
+	    }
 	}
 
 	public Map<PublicCompanyI, City> getHomes () {
@@ -851,7 +875,11 @@ public class MapHex extends ModelObject
 	    }
 	}
 
-	public boolean equals(MapHex hex)
+	public String getCityName() {
+        return cityName;
+    }
+
+    public boolean equals(MapHex hex)
 	{
 		if (hex.getName().equals(getName()) && hex.row == row
 				&& hex.column == column)

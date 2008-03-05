@@ -1,13 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.9 2008/01/18 19:58:15 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.10 2008/03/05 19:55:14 evos Exp $
+ *
  * Created on 21-May-2006
  * Change Log:
  */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
@@ -20,13 +18,13 @@ import rails.util.LocalText;
  * @author Erik Vos
  */
 public class ShareSellingRound extends StockRound {
-    
+
     Player sellingPlayer;
     PublicCompanyI companyNeedingTrain;
     IntegerState cashToRaise;
-    
+
     public ShareSellingRound (PublicCompanyI compNeedingTrain, int cashToRaise) {
-        
+
         this.companyNeedingTrain = compNeedingTrain;
         this.cashToRaise = new IntegerState ("CashToRaise", cashToRaise);
         sellingPlayer = compNeedingTrain.getPresident();
@@ -34,50 +32,55 @@ public class ShareSellingRound extends StockRound {
         log.debug("Creating ShareSellingRound, cash to raise ="+cashToRaise);
 		GameManager.getInstance().setRound(this);
 		GameManager.setCurrentPlayerIndex(sellingPlayer.getIndex());
-		
+
 }
-    
+
+    @Override
     public void start() {
         log.info ("Share selling round started");
         currentPlayer = sellingPlayer;
     }
-    
- 	public boolean mayCurrentPlayerSellAnything() {
+
+ 	@Override
+    public boolean mayCurrentPlayerSellAnything() {
 	    return true;
 	}
-	
-	public boolean mayCurrentPlayerBuyAnything() {
+
+	@Override
+    public boolean mayCurrentPlayerBuyAnything() {
 	    return false;
 	}
 
-	public boolean setPossibleActions() {
-		
+	@Override
+    public boolean setPossibleActions() {
+
 		possibleActions.clear();
-		
+
 		setSellableShares();
-		
+
 	    if (possibleActions.isEmpty() && cashToRaise.intValue() > 0) {
-			DisplayBuffer.add (LocalText.getText("YouAreBankrupt", 
+			DisplayBuffer.add (LocalText.getText("YouAreBankrupt",
 					Bank.format(cashToRaise.intValue())));
 
 	        GameManager.getInstance().registerBankruptcy();
 	        return false;
 	    }
-		
+
 		for (PossibleAction pa : possibleActions.getList()) {
 			log.debug(currentPlayer.getName()+ " may: "+pa.toString());
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Create a list of certificates that a player may sell in a Stock Round,
 	 * taking all rules taken into account.
-	 * 
+	 *
 	 * @return List of sellable certificates.
 	 */
-	public void setSellableShares()
+	@Override
+    public void setSellableShares()
 	{
 		String compName;
 		int price;
@@ -85,22 +88,22 @@ public class ShareSellingRound extends StockRound {
 		int share, maxShareToSell;
 		boolean dumpAllowed;
 		Portfolio playerPortfolio = currentPlayer.getPortfolio();
-		
+
 		/* First check of which companies the player owns stock,
 		 * and what maximum percentage he is allowed to sell.
-		 */ 
+		 */
 		for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
-			
+
 			// Can't sell shares that have no price
 			if (!company.hasStarted()) continue;
-			
+
 			share = maxShareToSell = playerPortfolio.getShare(company);
 			if (maxShareToSell == 0) continue;
 
 			/* May not sell more than the Pool can accept */
 			maxShareToSell = Math.min(maxShareToSell, Bank.getPoolShareLimit() - pool.getShare(company));
 			if (maxShareToSell == 0) continue;
-			
+
 			/* If the current Player is president, check if he can dump
 			 * the presidency onto someone else */
 			if (company.getPresident() == currentPlayer) {
@@ -124,15 +127,15 @@ public class ShareSellingRound extends StockRound {
 					if (!dumpAllowed) maxShareToSell = share - presidentShare;
 				}
 			}
-			
+
 			/* Check what share units the player actually owns.
-			 * In some games (e.g. 1835) companies may have different 
+			 * In some games (e.g. 1835) companies may have different
 			 * ordinary shares: 5% and 10%, or 10% and 20%.
 			 * The president's share counts as a multiple of the lowest
 			 * ordinary share unit type.
 			 */
 			// Take care for max. 4 share units per share
-			int[] shareCountPerUnit = new int[5]; 
+			int[] shareCountPerUnit = new int[5];
 			compName = company.getName();
 			for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
 				if (c.isPresidentShare()) {
@@ -143,25 +146,25 @@ public class ShareSellingRound extends StockRound {
 			}
 			// TODO The above ignores that a dumped player must be
 			// able to exchange the president's share.
-			
+
 			/* Check the price.
 			 * If a cert was sold before this turn,
 			 * the original price is still valid */
 			if (sellPrices.containsKey(compName))
 			{
-				price = ((StockSpaceI) sellPrices.get(compName)).getPrice();
+				price = (sellPrices.get(compName)).getPrice();
 			} else {
 				price = company.getCurrentPrice().getPrice();
 			}
 
-			
+
 			for (int i=1; i<=4; i++) {
 				number = shareCountPerUnit[i];
 				if (number == 0) continue;
-				number = Math.min (number, 
+				number = Math.min (number,
 						maxShareToSell / (i * company.getShareUnit()));
 				if (number == 0) continue;
-				
+
 				// May not sell more than is needed to buy the train
 				while (number > 0 && ((number-1) * price) > cashToRaise.intValue()) number--;
 
@@ -173,7 +176,8 @@ public class ShareSellingRound extends StockRound {
 		}
 	}
 
-	public boolean sellShares (SellShares action)
+	@Override
+    public boolean sellShares (SellShares action)
 	{
 		Portfolio portfolio = currentPlayer.getPortfolio();
 		String playerName = currentPlayer.getName();
@@ -182,7 +186,7 @@ public class ShareSellingRound extends StockRound {
 		PublicCompanyI company = companyMgr.getPublicCompany(action.getCompanyName());
 		PublicCertificateI cert = null;
 		PublicCertificateI presCert = null;
-		List<PublicCertificateI> certsToSell 
+		List<PublicCertificateI> certsToSell
 			= new ArrayList<PublicCertificateI>();
 		Player dumpedPlayer = null;
 		int presSharesToSell = 0;
@@ -314,7 +318,7 @@ public class ShareSellingRound extends StockRound {
 		// Get the sell price (does not change within a turn)
 		if (sellPrices.containsKey(companyName))
 		{
-			price = ((StockSpaceI) sellPrices.get(companyName)).getPrice();
+			price = (sellPrices.get(companyName)).getPrice();
 		}
 		else
 		{
@@ -390,6 +394,11 @@ public class ShareSellingRound extends StockRound {
 	    return cashToRaise.intValue();
 	}
 
+    public PublicCompanyI getCompanyNeedingTrain() {
+        return companyNeedingTrain;
+    }
+
+    @Override
     public String toString() {
         return "ShareSellingRound";
     }

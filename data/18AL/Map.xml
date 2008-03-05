@@ -1,41 +1,41 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Hex name="A2" tile="0"/>
 	<Hex name="A4" tile="-912" orientation="2" value="40,50"/><!--Nashville-->
-	<Hex name="B1" tile="-901" value="40,30"/><!--Corinth-->
+	<Hex name="B1" tile="-901" value="40,30" city="Corinth"/>
 	<Hex name="B3" tile="0" impassable="D3"/>
 	<Hex name="B5" tile="0"/>
-	<Hex name="B7" tile="-901" orientation="2" value="30,50"/><!--Chattanooga-->
-	<Hex name="C2" tile="-1" cost="20"/><!--Florence-->
-	<Hex name="C4" tile="-10" cost="20"/><!-- Decatur-->
-	<Hex name="C6" tile="-1" cost="20"/><!-- Stevenson-->
+	<Hex name="B7" tile="-901" orientation="2" value="30,50" city="Chattanooga"/>
+	<Hex name="C2" tile="-1" cost="20"/ city="Florence"/>
+	<Hex name="C4" tile="-10" cost="20" city="Decatur"/>
+	<Hex name="C6" tile="-1" cost="20" city="Stevenson"/>
 	<Hex name="D1" tile="0"/>
 	<Hex name="D3" tile="0" cost="20"/>
 	<Hex name="D5" tile="0" cost="60"/>
-	<Hex name="D7" tile="-3" orientation="1"/><!--Rome-->
+	<Hex name="D7" tile="-3" orientation="1" city="Rome"/>
 	<Hex name="E2" tile="0"/>
 	<Hex name="E4" tile="0"/>
 	<Hex name="E6" tile="5" orientation="5">
 		<Coalfield/>
 	</Hex>
-	<Hex name="F1" tile="-112"/><!--Tupelo-->
+	<Hex name="F1" tile="-112" city="Tupelo"/>
 	<Hex name="F3" tile="0"/>
 	<Hex name="F5" tile="0"/>
 	<Hex name="F7" tile="0" cost="60"/>
 	<Hex name="G2" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
-	<Hex name="G4" tile="-10" cost="60"><!--Birmingham-->
+	<Hex name="G4" tile="-10" cost="60" city="Birmingham"/>
 		<Coalfield/>
 	</Hex>
-	<Hex name="G6" tile="-10"><!--Anniston-->
+	<Hex name="G6" tile="-10" city="Anniston"/>
 		<Coalfield/>
 	</Hex>
-	<Hex name="G8" tile="-902" orientation="2" value="40,70"/><!--Atlanta-->
+	<Hex name="G8" tile="-902" orientation="2" value="40,70" city="Atlanta"/>
 	<Hex name="H1" tile="0"/>
-	<Hex name="H3" tile="-10"><!--Tuscaloosa-->
+	<Hex name="H3" tile="-10" city="Tuscaloosa"/>
 		<Coalfield/>
 	</Hex>
-	<Hex name="H5" tile="-113"><!--Oxmoor-->
+	<Hex name="H5" tile="-113" city="Oxmoor"/>
 		<Coalfield/>
 	</Hex>
 	<Hex name="H7" tile="0"/>
@@ -46,21 +46,21 @@
 	<Hex name="J1" tile="0"/>
 	<Hex name="J3" tile="0"/>
 	<Hex name="J5" tile="0"/>
-	<Hex name="J7" tile="-10"/><!-- West Point-->
-	<Hex name="K2" tile="-10"/><!--York-->
-	<Hex name="K4" tile="6" orientation="2"/><!--Selma-->
+	<Hex name="J7" tile="-10"/ city="West Point"/>
+	<Hex name="K2" tile="-10"/ city="York"/>
+	<Hex name="K4" tile="6" orientation="2" city="Selma"/>
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="0"/>
-	<Hex name="L1" tile="-111" value="30,40"/><!--Meridian-->
+	<Hex name="L1" tile="-111" value="30,40" city="Meridian"/>
 	<Hex name="L3" tile="0" cost="20"/>
-	<Hex name="L5" tile="-10"/><!--Montgomery-->
+	<Hex name="L5" tile="-10" city="Montgomery"/>
 	<Hex name="L7" tile="0"/>
 	<Hex name="M2" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
 	<Hex name="M4" tile="0"/>
 	<Hex name="M6" tile="0"/>
-	<Hex name="M8" tile="-3" orientation="2"/><!--Phenix City-->
+	<Hex name="M8" tile="-3" orientation="2" city="Phenix City"/>
 	<Hex name="N1" tile="0"/>
 	<Hex name="N3" tile="0" cost="20"/>
 	<Hex name="N5" tile="0" cost="20">
@@ -71,13 +71,13 @@
 	<Hex name="O4" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
-	<Hex name="O6" tile="-1"/><!--Dothan-->
+	<Hex name="O6" tile="-1" city="Dothan"/>
 	<Hex name="P1" tile="0"/>
 	<Hex name="P3" tile="0"/>
 	<Hex name="P5" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
-	<Hex name="P7" tile="-902" orientation="4" value="30,40"/><!--Gulf-->
-	<Hex name="Q2" tile="-913" orientation="4" value="40,50"/><!--Mobile-->
+	<Hex name="P7" tile="-902" orientation="4" value="30,40" city="Gulf"/>
+	<Hex name="Q2" tile="-913" orientation="4" value="40,50" city="Mobile"/>
 	
 </Map>

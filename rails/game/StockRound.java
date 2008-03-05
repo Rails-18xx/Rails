@@ -122,8 +122,6 @@ public class StockRound extends Round
 
 		boolean passAllowed = true;
 
-		possibleActions.clear();
-
 		setBuyableCerts();
 
 		setSellableShares();
@@ -138,10 +136,6 @@ public class StockRound extends Round
 			} else {
 				possibleActions.add (new NullAction (NullAction.PASS));
 			}
-		}
-
-		for (PossibleAction pa : possibleActions.getList()) {
-			log.debug(currentPlayer.getName()+ " may: "+pa.toString());
 		}
 
         return true;
@@ -1148,19 +1142,22 @@ public class StockRound extends Round
 				}
 			}
 
-			// Inform GameManager
-			GameManager.getInstance().nextRound(this);
+			finishRound();
 
 		}
 		else
 		{
 
-			setNextPlayer();
-			sellPrices.clear();
+		    finishTurn();
 
 		}
 
 		return true;
+	}
+
+	protected void finishTurn() {
+        setNextPlayer();
+        sellPrices.clear();
 	}
 
 	/**
@@ -1190,6 +1187,11 @@ public class StockRound extends Round
 	protected void setPriority()
 	{
 		GameManager.setPriorityPlayer();
+	}
+
+	protected void finishRound() {
+        // Inform GameManager
+        GameManager.getInstance().nextRound(this);
 	}
 
 	/*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
@@ -1243,7 +1245,8 @@ public class StockRound extends Round
 	 * @return True if any buying is allowed.
 	 */
 	 public boolean mayCurrentPlayerBuyAnything() {
-		 return companyBoughtThisTurnWrapper.getObject() == null;
+		 return !currentPlayer.isOverLimits()
+		 && companyBoughtThisTurnWrapper.getObject() == null;
 	 }
 
 	public static void setNoSaleInFirstSR()

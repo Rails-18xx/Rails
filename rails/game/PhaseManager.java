@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.9 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.10 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -92,7 +92,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI
 
 	public boolean hasReachedPhase (String phaseName) {
         return getCurrentPhase().getIndex()
-                < getPhaseNyName(phaseName).getIndex();
+                >= getPhaseNyName(phaseName).getIndex();
 
 	}
 

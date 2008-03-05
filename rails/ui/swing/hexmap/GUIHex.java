@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.12 2008/02/28 21:37:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.13 2008/03/05 19:55:16 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -13,6 +13,7 @@ import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.ui.swing.*;
 import rails.ui.swing.elements.ViewObject;
+import rails.util.Util;
 
 
 /**
@@ -639,7 +640,7 @@ public class GUIHex implements ViewObject
 			provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
 		}
 	}
-	
+
     private Point getTokenOrigin2(int numTokens, int currentToken,
             int numStations, int stationNumber)
     {
@@ -733,13 +734,19 @@ public class GUIHex implements ViewObject
 	{
 		StringBuffer tt = new StringBuffer("<html>");
 		tt.append("<b>Hex</b>: ").append(hexName);
+		String name = model.getCityName();
+		if (Util.hasValue(name)) {
+		    tt.append(" (").append(name).append(")");
+		}
 		// The next line is a temporary development aid, that can be removed
 		// later.
+		/*
 		tt.append("  <small>(")
 				.append(model.getX())
 				.append(",")
 				.append(model.getY())
 				.append(")</small>");
+				*/
 		tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
 		// TEMPORARY
 		tt.append("<small> rot="+currentTileOrientation+"</small>");

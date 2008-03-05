@@ -1,20 +1,19 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.22 2008/02/17 22:25:56 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.23 2008/03/05 19:55:16 evos Exp $*/
 package rails.ui.swing;
-
-import rails.game.*;
-import rails.game.action.*;
-import rails.ui.swing.elements.*;
-import rails.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import java.util.*;
-import java.util.List;
+import rails.game.*;
+import rails.game.action.*;
+import rails.ui.swing.elements.*;
+import rails.util.LocalText;
 
 public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
@@ -344,7 +343,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
 	for (int i = 0; i < nc; i++) {
 	    c = companies[i];
-	    
+
 	    f = leftCompName[i] = new Caption(c.getName());
 	    f.setBackground(c.getBgColour());
 	    f.setForeground(c.getFgColour());
@@ -472,7 +471,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 		// instances of the same class
 		log.debug("Action taken is " + executedAction.toString());
 	    }
-	    
+
 	    if (executedAction instanceof SetDividend) {
 	    	// Hide the spinner here, because we might not return
 	    	// via InitPayoutStep, where this would otherwise be done.
@@ -496,23 +495,25 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void setHighlightsOff() {
-	tileCaption.setHighlight(false);
-	tokenCaption.setHighlight(false);
-	revenueCaption.setHighlight(false);
-	trainCaption.setHighlight(false);
-	if (privatesCanBeBought)
-	    privatesCaption.setHighlight(false);
-	if (orCompIndex >= 0)
-	    president[orCompIndex].setHighlight(false);
+    	tileCaption.setHighlight(false);
+    	tokenCaption.setHighlight(false);
+    	revenueCaption.setHighlight(false);
+    	trainCaption.setHighlight(false);
+    	if (privatesCanBeBought)
+    	    privatesCaption.setHighlight(false);
+    	//if (orCompIndex >= 0)
+    	//    president[orCompIndex].setHighlight(false);
+        //}
+    	for (int i=0; i<president.length; i++) {
+    	    president[i].setHighlight(false);
+    	}
     }
 
     public void resetORCompanyTurn(int orCompIndex) {
 
-	int j;
-
-	if ((j = this.orCompIndex) >= 0) {
-	    setSelect(revenue[j], revenueSelect[j], false);
-	}
+    	for (int i=0; i<nc; i++) {
+    	    setSelect(revenue[i], revenueSelect[i], false);
+    	}
     }
 
     public void initORCompanyTurn(int orCompIndex) {
@@ -616,9 +617,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     public void initPrivateBuying(boolean enabled) {
 
 	if (privatesCanBeBought) {
-	    button2.setText(LocalText.getText("BUY_PRIVATE"));
-	    button2.setActionCommand(BUY_PRIVATE_CMD);
-	    button2.setMnemonic(KeyEvent.VK_V);
+	    if (enabled) {
+	        button2.setText(LocalText.getText("BUY_PRIVATE"));
+	        button2.setActionCommand(BUY_PRIVATE_CMD);
+	        button2.setMnemonic(KeyEvent.VK_V);
+	    }
 	    button2.setEnabled(enabled);
 	    button2.setVisible(enabled);
 	    privatesCaption.setHighlight(enabled);
