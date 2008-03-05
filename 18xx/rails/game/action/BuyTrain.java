@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.8 2008/02/23 20:54:39 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.9 2008/03/05 19:55:14 evos Exp $
+ *
  * Created on 20-May-2006
  * Change Log:
  */
@@ -10,11 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.Bank;
-import rails.game.CashHolder;
-import rails.game.Portfolio;
-import rails.game.Train;
-import rails.game.TrainI;
+import rails.game.*;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;
@@ -35,28 +31,28 @@ public class BuyTrain extends PossibleORAction {
     private boolean presidentMustAddCash = false;
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
-    
+
     transient private SpecialTrainBuy specialProperty = null;
     private int specialPropertyId = 0;
-    
+
     // User settings
     private int pricePaid = 0;
     private int addedCash = 0;
     transient private TrainI exchangedTrain = null;
     private String exchangedTrainUniqueId;
     private boolean forcedExchange = false;
-    
+
     public static final long serialVersionUID = 2L;
 
     public BuyTrain (TrainI train, Portfolio from, int fixedCost) {
-    	
+
         this.train = train;
         this.trainUniqueId = train.getUniqueId();
         this.from = from;
         this.fromName = from.getName();
         this.fixedCost = fixedCost;
     }
-    
+
     public BuyTrain setTrainsForExchange (List<TrainI> trains) {
         trainsForExchange = trains;
         if (trains != null) {
@@ -67,24 +63,24 @@ public class BuyTrain extends PossibleORAction {
         }
         return this;
     }
-    
+
     public BuyTrain setPresidentMustAddCash (int amount) {
         presidentMustAddCash = true;
         presidentCashToAdd = amount;
         return this;
     }
-    
+
     public BuyTrain setPresidentMayAddCash (int amount) {
         presidentMayAddCash = true;
         presidentCashToAdd = amount;
         return this;
     }
-    
+
     public BuyTrain setForcedExchange (boolean value) {
     	forcedExchange = value;
     	return this;
     }
-    
+
     /**
      * @return Returns the specialProperty.
      */
@@ -98,55 +94,55 @@ public class BuyTrain extends PossibleORAction {
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
     }
-    
+
     public boolean hasSpecialProperty() {
     	return specialProperty != null;
     }
-    
+
     public TrainI getTrain() {
         return train;
     }
-    
+
     public Portfolio getFromPortfolio () {
     	return from;
     }
-    
+
     public int getFixedCost () {
         return fixedCost;
     }
-    
+
     public boolean isForExchange () {
         return trainsForExchange != null && !trainsForExchange.isEmpty();
     }
-    
+
     public List<TrainI> getTrainsForExchange () {
         return trainsForExchange;
     }
-    
+
     public boolean isForcedExchange() {
     	return forcedExchange;
     }
-    
+
     public boolean mustPresidentAddCash () {
         return presidentMustAddCash;
     }
-    
+
     public boolean mayPresidentAddCash () {
         return presidentMayAddCash;
     }
-    
+
     public int getPresidentCashToAdd () {
         return presidentCashToAdd;
     }
-    
+
     public Portfolio getHolder () {
         return train.getHolder();
     }
-    
+
     public CashHolder getOwner () {
         return train.getOwner();
     }
-    
+
     public int getAddedCash() {
 		return addedCash;
 	}
@@ -162,7 +158,7 @@ public class BuyTrain extends PossibleORAction {
 	public void setPricePaid(int pricePaid) {
 		this.pricePaid = pricePaid;
 	}
-	
+
 	public TrainI getExchangedTrain() {
 		return exchangedTrain;
 	}
@@ -172,13 +168,18 @@ public class BuyTrain extends PossibleORAction {
         if (exchangedTrain != null) this.exchangedTrainUniqueId = exchangedTrain.getName();// TODO: Must be replaced by unique Id
 	}
 
-	public String toString() {
-		
+	@Override
+    public String toString() {
+
 		StringBuffer b = new StringBuffer();
 		b.append (company.getName());
 		b.append (": buy ").append(train.getName());
 		b.append("-train from ").append(from.getName());
-		b.append (" for ").append(Bank.format(fixedCost));
+		if (fixedCost > 0) {
+		    b.append (" for ").append(Bank.format(fixedCost));
+		} else {
+		    b.append (" for any amount");
+		}
 		if (specialProperty != null) {
 			b.append(" using ").append(specialProperty.getCompany().getName());
 		}
@@ -187,10 +188,11 @@ public class BuyTrain extends PossibleORAction {
 		}
 		if (presidentMustAddCash) b.append(" must add cash ").append(Bank.format(presidentCashToAdd));
 		else if (presidentMayAddCash) b.append(" may add cash up to ").append(Bank.format(presidentCashToAdd));
-		
+
 		return b.toString();
     }
-    
+
+    @Override
     public boolean equals (PossibleAction action) {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
@@ -199,13 +201,13 @@ public class BuyTrain extends PossibleORAction {
             && a.fixedCost == fixedCost
             && a.trainsForExchange == trainsForExchange;
     }
-    
+
     /** Deserialize */
-	private void readObject (ObjectInputStream in) 
+	private void readObject (ObjectInputStream in)
 	throws IOException, ClassNotFoundException {
 
 		in.defaultReadObject();
-		
+
 		train = Train.getByUniqueId(trainUniqueId);
 		from = Portfolio.getByName(fromName);
 		if (trainsForExchangeUniqueIds != null
@@ -215,7 +217,7 @@ public class BuyTrain extends PossibleORAction {
 				trainsForExchange.add (Train.getByUniqueId(trainsForExchangeUniqueIds[i]));
 			}
 		}
-		
+
 		if (specialPropertyId  > 0) {
 			specialProperty = (SpecialTrainBuy) SpecialProperty.getByUniqueId (specialPropertyId);
 		}

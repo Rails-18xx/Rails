@@ -24,7 +24,7 @@ public class StartCompany_18EU extends StartCompany {
     protected transient PublicCompanyI chosenMinor = null;
     protected String chosenMinorName = null;
     // From phase 5: selected Home station
-    protected transient Station selectedHomeStation = null;
+    protected transient City selectedHomeStation = null;
     protected String selectedHomeStationName = null;
 
     public static final long serialVersionUID = 1L;
@@ -61,7 +61,12 @@ public class StartCompany_18EU extends StartCompany {
         }
     }
 
-	public List<PublicCompanyI> getMinorsToMerge() {
+
+	public List<City> getAvailableHomeStations() {
+        return availableHomeStations;
+    }
+
+    public List<PublicCompanyI> getMinorsToMerge() {
         return minorsToMerge;
     }
 
@@ -74,11 +79,11 @@ public class StartCompany_18EU extends StartCompany {
         this.chosenMinorName = chosenMinor.getName();
     }
 
-    public Station getSelectedHomeStation () {
+    public City getSelectedHomeStation () {
         return selectedHomeStation;
     }
 
-    public void setHomeStation (Station homeStation) {
+    public void setHomeStation (City homeStation) {
         selectedHomeStation = homeStation;
         selectedHomeStationName = homeStation.getName();
     }

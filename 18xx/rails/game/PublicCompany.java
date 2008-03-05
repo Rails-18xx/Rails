@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.32 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.33 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -737,7 +737,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public void transferAssetsFrom (PublicCompanyI otherCompany) {
 
-        new CashMove (otherCompany, this, otherCompany.getCash());
+        if (otherCompany.getCash() > 0) {
+        	new CashMove (otherCompany, this, otherCompany.getCash());
+        }
         portfolio.transferAssetsFrom (otherCompany.getPortfolio());
     }
 

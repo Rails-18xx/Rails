@@ -1,8 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.9 2007/12/23 16:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.10 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import rails.game.move.MoveableHolderI;
 import rails.game.move.ObjectMove;
@@ -29,6 +31,8 @@ public class Train implements TrainI
 
 	protected static final Portfolio unavailable = Bank.getUnavailable();
 	protected static final Portfolio ipo = Bank.getIpo();
+	
+	protected static Logger log = Logger.getLogger(Train.class.getPackage().getName());
 
 	public Train() {
     }
@@ -142,7 +146,7 @@ public class Train implements TrainI
 	}
     
     public void moveTo (MoveableHolderI to) {
-        //new TrainMove (this, holder, to);
+
     	new ObjectMove (this, holder, to);
     }
 

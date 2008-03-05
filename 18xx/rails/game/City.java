@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.1 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.2 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.game.move.Moveable;
+import rails.util.Util;
 
 
 /**
@@ -79,7 +80,7 @@ public class City implements TokenHolderI
         trackEdges = mapHex.getConnectionString(mapHex.getCurrentTile(),
         		mapHex.getCurrentTileRotation(), relatedStation.getNumber());
     }
-    
+
     public void setSlots (int slots) {
     	this.slots = slots;
     }
@@ -164,9 +165,29 @@ public class City implements TokenHolderI
 		this.tokens = tokens;
 	}
 
-	@Override
+	public String getTrackEdges() {
+        return trackEdges;
+    }
+
+    public void setTrackEdges(String trackEdges) {
+        this.trackEdges = trackEdges;
+    }
+
+    @Override
     public String toString()
 	{
-		return "City ID: " + number + ", Hex: " + mapHex.getName();
+        StringBuffer b = new StringBuffer();
+        b.append("Hex ").append(mapHex.getName());
+        String cityName = mapHex.getCityName();
+        b.append (" (");
+        if (Util.hasValue(cityName)) {
+            b.append(cityName);
+        }
+        if (mapHex.getCities().size() > 1) {
+            b.append(" ").append(trackEdges);
+        }
+        b.append(")");
+        return b.toString();
+		//return "City ID: " + number + ", Hex: " + mapHex.getName();
 	}
 }

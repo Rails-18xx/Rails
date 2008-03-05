@@ -1,27 +1,17 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.28 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.29 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.action.GameAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
+import rails.game.action.*;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
 import rails.game.state.State;
-import rails.ui.swing.GameStatus;
-import rails.ui.swing.ORUIManager;
-import rails.util.LocalText;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.ui.swing.*;
+import rails.util.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -41,6 +31,7 @@ public class GameManager implements ConfigurableComponentI
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
     protected Class<? extends GameStatus> gameStatusClass = GameStatus.class;
+    protected Class<? extends StatusWindow> statusWindowClass = StatusWindow.class;
 
 	protected List<Player> players;
 	protected List<String> playerNames;
@@ -250,6 +241,17 @@ public class GameManager implements ConfigurableComponentI
                 throw new ConfigurationException ("Cannot find class "+gameStatusClassName, e);
             }
         }
+
+        // StatusWindow class
+        Tag statusWindowTag = tag.getChild("StatusWindow");
+        if (statusWindowTag != null) {
+            String statusWindowClassName = statusWindowTag.getAttributeAsString("class", "StatusWindow");
+            try {
+                statusWindowClass = Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException ("Cannot find class "+statusWindowClassName, e);
+            }
+        }
 	}
 
 	public void startGame()
@@ -363,13 +365,13 @@ public class GameManager implements ConfigurableComponentI
 		}
 	}
 
-	private void startStartRound()
+	protected void startStartRound()
 	{
 		String startRoundClassName = startPacket.getRoundClassName();
 		((StartRound) instantiate(startRoundClassName)).start(startPacket);
 	}
 
-	private void startStockRound()
+	protected void startStockRound()
 	{
         try {
             StockRound sr = stockRoundClass.asSubclass(StockRound.class).newInstance();
@@ -380,7 +382,7 @@ public class GameManager implements ConfigurableComponentI
         }
 	}
 
-	private void startOperatingRound(boolean operate)
+	protected void startOperatingRound(boolean operate)
 	{
 		log.debug("Operating round started with operate-flag="+operate);
 		//playHomeTokens(); // TODO Not always at this moment, and not at all is StartPacket has not yet been sold
@@ -487,7 +489,12 @@ public class GameManager implements ConfigurableComponentI
 
         // Note: round may have changed!
     	//log.debug("Calling setPossibleActions for round "+getCurrentRound().toString());
+    	possibleActions.clear();
         getCurrentRound().setPossibleActions();
+
+        for (PossibleAction pa : possibleActions.getList()) {
+            log.debug(((Player)currentPlayer.getObject()).getName()+ " may: "+pa.toString());
+        }
 
         // Add the Undo/Redo possibleActions here.
         if (MoveSet.isUndoableByPlayer()) {
@@ -510,6 +517,7 @@ public class GameManager implements ConfigurableComponentI
 
         for (PossibleAction action : actions) {
             try {
+                log.debug("Action: "+action);
                 getCurrentRound().process(action);
                 getCurrentRound().setPossibleActions();
             } catch (Exception e) {
@@ -861,6 +869,10 @@ public class GameManager implements ConfigurableComponentI
 
     public Class<? extends GameStatus> getGameStatusClass() {
         return gameStatusClass;
+    }
+
+    public Class<? extends StatusWindow> getStatusWindowClass() {
+        return statusWindowClass;
     }
 
     public int getStockRoundSequenceRule() {

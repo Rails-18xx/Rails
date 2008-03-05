@@ -29,8 +29,8 @@
 		<Track from="side3" gauge="normal" to="city2"/>
 		<Track from="side0" gauge="normal" to="city1"/>
 	</Tile><Tile colour="yellow" id="-3006" name="Paris">
-		<Station id="city1" position="002" slots="1" type="City" value="30"/>
-		<Station id="city2" position="302" slots="1" type="City" value="30"/>
+		<Station id="city1" position="002" slots="1" type="City" value="40"/>
+		<Station id="city2" position="302" slots="1" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city2" gauge="normal" to="side2"/>
 	</Tile><Tile colour="yellow" id="3" name="3">

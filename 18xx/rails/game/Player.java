@@ -1,14 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.10 2007/12/21 21:18:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.11 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import rails.game.model.CalculatedMoneyModel;
-import rails.game.model.CashModel;
-import rails.game.model.CertCountModel;
-import rails.game.model.ModelObject;
-import rails.game.model.MoneyModel;
+import rails.game.model.*;
 import rails.util.LocalText;
 
 
@@ -44,7 +41,7 @@ public class Player implements CashHolder, Comparable<Player>
 	private CertCountModel certCount = new CertCountModel (this);
 
 	private MoneyModel blockedCash;
-	private CalculatedMoneyModel freeCash; 
+	private CalculatedMoneyModel freeCash;
 	private CalculatedMoneyModel worth;
 
 	private boolean hasPriority = false;
@@ -53,7 +50,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	private Portfolio portfolio = null;
 
-	private ArrayList<PublicCompanyI> companiesSoldThisTurn 
+	private ArrayList<PublicCompanyI> companiesSoldThisTurn
 	    = new ArrayList<PublicCompanyI>();
 
 	public static void setLimits(int number, int cash, int certLimit)
@@ -68,7 +65,7 @@ public class Player implements CashHolder, Comparable<Player>
 	/**
 	 * Initialises each Player's parameters which depend on the number of
 	 * players. To be called when all Players have been added.
-	 * 
+	 *
 	 */
 	public static void initPlayers(List<Player> players)
 	{
@@ -88,7 +85,7 @@ public class Player implements CashHolder, Comparable<Player>
 		}
 		ReportBuffer.add(LocalText.getText("PlayerCash",
 				Bank.format(startCash)));
-		ReportBuffer.add(LocalText.getText("BankHas", 
+		ReportBuffer.add(LocalText.getText("BankHas",
 				Bank.format(Bank.getInstance().getCash())));
 
 		// Set the sertificate limit
@@ -107,7 +104,7 @@ public class Player implements CashHolder, Comparable<Player>
 	{
 		playerShareLimit = percentage;
 	}
-	
+
 
 	public static int getShareLimit() {
 		return playerShareLimit;
@@ -172,9 +169,25 @@ public class Player implements CashHolder, Comparable<Player>
 		}
 	}
 
+	public boolean isOverLimits () {
+
+	    // Over the total certificate hold Limit?
+        if (portfolio.getNumberOfCountedCertificates() > playerCertificateLimit)
+            return true;
+
+        // Over the hold limit of any company?
+        for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
+            if (company.hasStarted()
+                    && company.hasStockPrice()
+                    && !mayBuyCompanyShare(company, 0)) return true;
+        }
+
+        return false;
+	}
+
 	/**
 	 * Check if a player may buy the given number of certificates.
-	 * 
+	 *
 	 * @param number
 	 *            Number of certificates to buy (usually 1 but not always so).
 	 * @return True if it is allowed.
@@ -191,7 +204,7 @@ public class Player implements CashHolder, Comparable<Player>
 	 * Check if a player may buy the given number of shares from a given
 	 * company, given the "hold limit" per company, that is the percentage
 	 * of shares of one company that a player may hold (typically 60%).
-	 * 
+	 *
 	 * @param company
 	 *            The company from which to buy
 	 * @param number
@@ -205,11 +218,11 @@ public class Player implements CashHolder, Comparable<Player>
 		        && !company.getCurrentPrice().isNoHoldLimit()) return false;
 		return true;
 	}
-	
+
 	/**
-	 * Return the number of <i>additional</i> shares of a certain company 
-	 * and of a certain size that a player may buy, 
-	 * given the share "hold limit" per company, that is the percentage 
+	 * Return the number of <i>additional</i> shares of a certain company
+	 * and of a certain size that a player may buy,
+	 * given the share "hold limit" per company, that is the percentage
 	 * of shares of one company that a player may hold (typically 60%).
 	 * <p>If no hold limit applies, it is taken to be 100%.
 	 * @param company
@@ -221,13 +234,13 @@ public class Player implements CashHolder, Comparable<Player>
 	 */
 	public int maxAllowedNumberOfSharesToBuy (PublicCompanyI company,
 			int shareSize) {
-		
+
 		int limit;
 		if (!company.hasStarted()) {
 			limit = playerShareLimit;
 		} else {
-			limit = company.getCurrentPrice().isNoHoldLimit() 
-				? 100 
+			limit = company.getCurrentPrice().isNoHoldLimit()
+				? 100
 						: playerShareLimit;
 		}
 		return (limit - portfolio.getShare(company)) / shareSize;
@@ -235,7 +248,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Front-end method for buying any kind of certificate from anyone.
-	 * 
+	 *
 	 * @param cert
 	 *            PrivateCompany or PublicCertificate.
 	 * @param from
@@ -323,7 +336,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Get the player's total worth.
-	 * 
+	 *
 	 * @return Total worth
 	 */
 	public int getWorth()
@@ -345,20 +358,21 @@ public class Player implements CashHolder, Comparable<Player>
 	{
 		return worth;
 	}
-	
+
 	public CertCountModel getCertCountModel () {
 	    return certCount;
 	}
-	
+
 	public CalculatedMoneyModel getFreeCashModel() {
 		return freeCash;
 	}
-	
+
 	public MoneyModel getBlockedCashModel () {
 		return blockedCash;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return name;
 	}
@@ -373,7 +387,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Block cash allocated by a bid.
-	 * 
+	 *
 	 * @param amount
 	 *            Amount of cash to be blocked.
 	 * @return false if the amount was not available.
@@ -394,7 +408,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Unblock cash.
-	 * 
+	 *
 	 * @param amount
 	 *            Amount to be unblocked.
 	 * @return false if the given amount was not blocked.
@@ -415,7 +429,7 @@ public class Player implements CashHolder, Comparable<Player>
 
 	/**
 	 * Return the unblocked cash (available for bidding)
-	 * 
+	 *
 	 * @return
 	 */
 	public int getFreeCash()
@@ -432,7 +446,7 @@ public class Player implements CashHolder, Comparable<Player>
 	{
 		return index;
 	}
-	
+
 	/**
 	 * Compare Players by their total worth, in descending order.
 	 * This method implements the Comparable interface.

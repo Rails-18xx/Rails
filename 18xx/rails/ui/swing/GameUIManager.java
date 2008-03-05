@@ -34,7 +34,7 @@ public class GameUIManager
    public StatusWindow statusWindow;
    public ReportWindow reportWindow;
    public ORUIManager orUIManager;  
-   public /*static*/ ORWindow orWindow;  //TEMPORARY
+   public ORWindow orWindow;  //TEMPORARY
    private StartRoundWindow startRoundWindow;
    public GameSetupWindow gameSetupWindow;
    public static ImageLoader imageLoader;
@@ -90,7 +90,19 @@ public class GameUIManager
       orWindow = new ORWindow(this);
       orUIManager = orWindow.getORUIManager();
       //mapPanel = orWindow.getMapPanel();
-      statusWindow = new StatusWindow(this);
+      //statusWindow = new StatusWindow(this);
+
+      Class<? extends StatusWindow> statusWindowClass 
+	  	= gameManager.getStatusWindowClass();
+      try {
+		  statusWindow = statusWindowClass.newInstance();
+		  statusWindow.init(this);
+	  } catch (Exception e) {
+		  log.fatal("Cannot instantiate class " + statusWindowClass.getName());
+		  System.exit(1);
+	  }
+
+
       
       updateUI();
 
@@ -276,20 +288,10 @@ public class GameUIManager
        
        return true;
    }
-	
-
    
    public PossibleAction getLastAction () {
     return lastAction;
    }
-   
-
-   /*
-   public static MapPanel getMapPanel()
-   {
-	   return instance.mapPanel;
-   }
-   */
    
    public static ImageLoader getImageLoader()
    {

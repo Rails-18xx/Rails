@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.3 2008/01/18 19:58:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.4 2008/03/05 19:55:14 evos Exp $
  * 
  * Created on 17-Jul-2006
  * Change Log:
@@ -29,7 +29,7 @@ public class ObjectMove extends Move {
      */
             
     public ObjectMove (Moveable moveableObject, MoveableHolderI from, MoveableHolderI to) {
-        
+
         this.moveableObject = moveableObject;
         this.from = from;
         this.to = to;

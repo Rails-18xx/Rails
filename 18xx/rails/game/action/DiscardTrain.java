@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.6 2008/02/23 20:54:39 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.7 2008/03/05 19:55:14 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -70,9 +70,12 @@ public class DiscardTrain extends PossibleORAction {
 
 		StringBuffer b = new StringBuffer();
         b.append("Discard train: ").append (company.getName());
-        b.append (" owns");
+        b.append (" has");
         for (TrainI train : ownedTrains) {
             b.append(" ").append(train.getName());
+        }
+        if (discardedTrain != null) {
+            b.append(" discards ").append(discardedTrain.getName());
         }
 		return b.toString();
     }
@@ -91,7 +94,9 @@ public class DiscardTrain extends PossibleORAction {
 
 		in.defaultReadObject();
 
-		discardedTrain = Train.getByUniqueId(discardedTrainUniqueId);
+		if (discardedTrainUniqueId != null) {
+		    discardedTrain = Train.getByUniqueId(discardedTrainUniqueId);
+		}
 
 		if (ownedTrainsUniqueIds != null
 				&& ownedTrainsUniqueIds.length > 0) {

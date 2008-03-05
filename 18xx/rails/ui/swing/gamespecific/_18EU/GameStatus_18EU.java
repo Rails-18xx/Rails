@@ -2,13 +2,12 @@ package rails.ui.swing.gamespecific._18EU;
 
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import rails.game.City;
 import rails.game.PublicCompanyI;
-import rails.game.TrainI;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.game.specific._18EU.StartCompany_18EU;
@@ -34,10 +33,13 @@ public class GameStatus_18EU extends GameStatus
             for (MergeCompanies merger : mergers)
             {
                 mergingCompany = merger.getMergingCompany();
-                index = mergingCompany.getPublicNumber();
-                setPlayerCertButton(index, actorIndex, true, merger);
+                if (mergingCompany != null) {
+	                index = mergingCompany.getPublicNumber();
+	                setPlayerCertButton(index, merger.getPlayerIndex(), true, merger);
+                }
             }
         }
+
     }
 
 
@@ -63,7 +65,11 @@ public class GameStatus_18EU extends GameStatus
             String[] options = new String[targets.size()];
             int i = 0;
             for (PublicCompanyI target : targets) {
-                options[i++] = target.getName()+ " " + target.getLongName();
+            	if (target != null) {
+            		options[i++] = target.getName()+ " " + target.getLongName();
+            	} else {
+            		options[i++] = LocalText.getText("CloseMinor", minor.getName());
+            	}
             }
             int choice = new RadioButtonDialog(
                     this,
@@ -78,18 +84,26 @@ public class GameStatus_18EU extends GameStatus
             PublicCompanyI major = targets.get(choice);
             action.setSelectedTargetCompany(major);
 
-            boolean replaceToken =
-                JOptionPane.showConfirmDialog(this,
-                        LocalText.getText("WantToReplaceToken",
-                            new String[] {
-                                minor.getName(),
-                                major.getName()
-                        }),
-                        LocalText.getText("PleaseSelect"),
-                        JOptionPane.YES_NO_OPTION)
-                    == JOptionPane.YES_OPTION;
-            action.setReplaceToken(replaceToken);
+            if (major != null) {
+	            boolean replaceToken =
+	                JOptionPane.showConfirmDialog(this,
+	                        LocalText.getText("WantToReplaceToken",
+	                            new String[] {
+	                                minor.getName(),
+	                                major.getName()
+	                        }),
+	                        LocalText.getText("PleaseSelect"),
+	                        JOptionPane.YES_NO_OPTION)
+	                    == JOptionPane.YES_OPTION;
+	            action.setReplaceToken(replaceToken);
+            } else {
+            	return chosenAction;
+            }
 
+
+
+            // TODO MOVE THIS TO A LATER STEP - MAY BE ANOTHER PLAYER!!!
+            /*
             List<TrainI> trains = action.getMinorTrains();
             trains.addAll(action.getMajorTrains().get(choice));
             int trainLimit = action.getMajorTrainLimit();
@@ -126,6 +140,7 @@ public class GameStatus_18EU extends GameStatus
             if (!discardedTrains.isEmpty()) {
                 action.setDiscardedTrains(discardedTrains);
             }
+            */
 	    }
 	    return chosenAction;
 	}
@@ -183,6 +198,26 @@ public class GameStatus_18EU extends GameStatus
                     chosenAction = null;
                 }
             }
+
+            List<City> cities = action.getAvailableHomeStations();
+            if (cities != null && !cities.isEmpty()) {
+                String[] options = new String[cities.size()];
+                for (int i=0; i<options.length; i++) {
+                    options[i] = cities.get(i).toString();
+                }
+                int index = new RadioButtonDialog (this,
+                        LocalText.getText("PleaseSelect"),
+                        LocalText.getText("SelectHomeStation",
+                                action.getCertificate().getCompany().getName()),
+                        options,
+                        -1)
+                    .getSelectedOption();
+                if (index >= 0) {
+                    action.setHomeStation(cities.get(index));
+                } else {
+                    return null;
+                }
+}
         }
         return chosenAction;
     }

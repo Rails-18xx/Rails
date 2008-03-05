@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.33 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.34 2008/03/05 19:55:14 evos Exp $ */
 package rails.game;
 
 
@@ -65,7 +65,6 @@ public class OperatingRound extends Round implements Observer
 	/* Permanent memory */
 	static protected List<Player> players;
 	static protected int numberOfPlayers = 0;
-	static protected PublicCompanyI[] companies;
 	static protected int numberOfCompanies = 0;
 	static protected int relativeORNumber = 0;
 	static protected int cumulativeORNumber = 0;
@@ -121,12 +120,6 @@ public class OperatingRound extends Round implements Observer
 			players = Game.getPlayerManager().getPlayers();
 			numberOfPlayers = players.size();
 		}
-		if (companies == null)
-		{
-			companies = Game.getCompanyManager()
-					.getAllPublicCompanies()
-					.toArray(new PublicCompanyI[0]);
-		}
 
 		for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies())
 		{
@@ -140,35 +133,7 @@ public class OperatingRound extends Round implements Observer
 
 		if (operate) {
 
-			// Determine operating sequence for this OR.
-			// Shortcut: order considered fixed at the OR start. This is not always
-			// true.
-			operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
-			StockSpaceI space;
-			int key;
-			int minorNo = 0;
-			for (PublicCompanyI company : companies)
-			{
-				if (!company.hasFloated() || company.isClosed())
-					continue;
-				// Key must put companies in reverse operating order, because sort
-				// is ascending.
-				if (company.hasStockPrice())
-				{
-					space = company.getCurrentPrice();
-					key = 1000000 * (999 - space.getPrice()) + 10000
-							* (99 - space.getColumn()) + 100 * space.getRow()
-							+ space.getStackPosition(company);
-				}
-				else
-				{
-					key = ++minorNo;
-				}
-				operatingCompanies.put(new Integer(key), company);
-			}
-
-			operatingCompanyArray = operatingCompanies.values()
-					.toArray(new PublicCompanyI[0]);
+			operatingCompanyArray = super.getOperatingCompanies();
 
 			numberOfCompanies = operatingCompanyArray.length;
 
@@ -1233,6 +1198,9 @@ public class OperatingRound extends Round implements Observer
 		int presidentCash = action.getPresidentCashToAdd();
 		boolean presidentMustSellShares = false;
 		int price = action.getPricePaid();
+		int actualPresidentCash = 0;
+		Player currentPlayer = operatingCompany.getPresident();
+;
 
 		// Dummy loop to enable a quick jump out.
 		while (true)
@@ -1269,12 +1237,12 @@ public class OperatingRound extends Round implements Observer
 			}
 
 			/* Check if this is an emergency buy */
-			Player currentPlayer = operatingCompany.getPresident();
 			if (action.mustPresidentAddCash()) {
 			    // From the Bank
 		        presidentCash = action.getPresidentCashToAdd();
 			    if (currentPlayer.getCash() >= presidentCash) {
-			        new CashMove(currentPlayer, operatingCompany, presidentCash);
+			        //new CashMove(currentPlayer, operatingCompany, presidentCash);
+			        actualPresidentCash = presidentCash;
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
@@ -1287,7 +1255,8 @@ public class OperatingRound extends Round implements Observer
 			            Bank.format (action.getPresidentCashToAdd()));
 			        break;
 			    } else if (currentPlayer.getCash() >= presidentCash) {
-			        new CashMove(currentPlayer, operatingCompany, presidentCash);
+			        //new CashMove(currentPlayer, operatingCompany, presidentCash);
+			        actualPresidentCash = presidentCash;
 			    } else {
 			        presidentMustSellShares = true;
 			        cashToBeRaisedByPresident = presidentCash - currentPlayer.getCash();
@@ -1332,6 +1301,10 @@ public class OperatingRound extends Round implements Observer
 			        cashToBeRaisedByPresident);
 
 		    return true;
+		}
+
+		if (actualPresidentCash > 0) {
+		    new CashMove(currentPlayer, operatingCompany, presidentCash);
 		}
 
 		Portfolio oldHolder = train.getHolder();
@@ -1621,7 +1594,8 @@ public class OperatingRound extends Round implements Observer
 		return operatingCompany;
 	}
 
-	public PublicCompanyI[] getOperatingCompanies()
+	@Override
+    public PublicCompanyI[] getOperatingCompanies()
 	{
 		return operatingCompanyArray;
 	}
@@ -1644,7 +1618,6 @@ public class OperatingRound extends Round implements Observer
 	 */
 	protected void setStep(int step)
 	{
-        //log.debug("+++Setting step to "+step);
         if (step == STEP_INITIAL) initTurn();
 
 	    if (stepObject == null) {
@@ -1792,7 +1765,7 @@ public class OperatingRound extends Round implements Observer
 	    boolean atTrainLimit  = operatingCompany.getNumberOfTrains()
 				>= operatingCompany.getCurrentTrainLimit();
 		boolean canBuyTrainNow = canBuyTrain();
-	    boolean presidentMayHelp = false;
+	    boolean presidentMayHelp = operatingCompany.mustOwnATrain();
 	    TrainI cheapestTrain = null;
 	    int costOfCheapestTrain = 0;
 	    Portfolio ipo = Bank.getIpo();
@@ -1866,10 +1839,10 @@ public class OperatingRound extends Round implements Observer
     		    }
     		}
     		if (!hasTrains && possibleActions.getType(BuyTrain.class).isEmpty()
-    				&& cheapestTrain != null) {
+    				&& cheapestTrain != null
+    				&& presidentMayHelp) {
     			possibleActions.add (new BuyTrain (cheapestTrain, cheapestTrain.getHolder(), costOfCheapestTrain)
                 		.setPresidentMustAddCash(costOfCheapestTrain - cash));
-    		    presidentMayHelp = true;
     		}
         }
 
