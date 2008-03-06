@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.10 2008/02/14 20:27:08 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.11 2008/03/06 21:53:21 evos Exp $ */
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import rails.game.action.BidStartItem;
-import rails.game.action.BuyStartItem;
-import rails.game.action.NullAction;
+import rails.game.action.*;
 import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
@@ -163,12 +162,13 @@ public class StartRound_1835 extends StartRound
 	{
 		Player currentPlayer = GameManager.getCurrentPlayer();
 		int cashToSpend = currentPlayer.getCash();
-		List<StartItem> startItems = startPacket.getItems();
+		//List<StartItem> startItems = startPacket.getItems();
 		int row;
 		int minRow = 0;
 		int items = 0;
 
-		for (StartItem item : startItems)
+		//for (StartItem item : startItems)
+		for (StartItem item : itemsToSell)
 		{
 			if (item.isSold()) {
 				item.setStatus (StartItem.SOLD);
@@ -197,7 +197,7 @@ public class StartRound_1835 extends StartRound
 			}
 		}
 
-		return startItems;
+		return itemsToSell;
 	}
 
 	/*----- MoveSet methods -----*/
