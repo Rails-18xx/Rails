@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.16 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.17 2008/03/06 21:53:21 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -81,14 +81,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 			        LocalText.getText("TileColorMissing", String.valueOf(id)));
 
 		upgradeable = !colour.equals("red") && !colour.equals("fixed");
-
-		/*
-		 * EV 23oct05: There is a lot to read and configure here, for now we
-		 * only read the tracks to determine the impassable hexsides of offmap
-		 * and fixed preprinted track.
-		 */
-
-
+log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();

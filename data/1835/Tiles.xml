@@ -51,7 +51,7 @@
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="side3" gauge="normal" to="side4"/>
 	</Tile><Tile colour="green" id="-803" name="Hamburg">
-		<Station id="city1" position="502" slots="1" type="City" value="20"/>
+		<Station id="city1" position="502" slots="1" type="City" value="40"/>
 		<Station id="city2" position="052" slots="1" type="City" value="40"/>
 		<Station id="city3" position="302" slots="1" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side5"/>
@@ -60,14 +60,10 @@
 		<Track from="city3" gauge="normal" to="side3"/>
 	</Tile><Tile colour="fixed" id="-804" name="Schwerin">
 		<Station id="city1" position="002" slots="1" type="City" value="10"/>
-		<Station id="city2" position="007" type=""/>
-		<Station id="city3" position="008" type=""/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="side4" gauge="normal" to="side2"/>
-		<Track from="side4" gauge="normal" to="city2"/>
-		<Track from="side2" gauge="normal" to="city3"/>
-		<Track from="city2" gauge="normal" to="city1"/>
-		<Track from="city3" gauge="normal" to="city1"/>
+		<Track from="side4" gauge="normal" to="city1"/>
+		<Track from="side2" gauge="normal" to="city2"/>
 	</Tile><Tile colour="fixed" id="-805" name="Oldenburg">
 		<Station id="city1" position="051" slots="1" type="City" value="10"/>
 		<Track from="city1" gauge="normal" to="side5"/>

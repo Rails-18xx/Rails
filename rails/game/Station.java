@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.8 2008/03/05 19:55:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.9 2008/03/06 21:53:21 evos Exp $ */
 package rails.game;
 
 import java.util.Arrays;
@@ -72,7 +72,7 @@ public class Station
 		this.baseSlots = slots;
 		this.position = position;
 		convertPosition();
-		log.debug(toString()+": x="+x+" y="+y);
+		//log.debug(toString()+": x="+x+" y="+y);
 	}
 
 	public String getName() {

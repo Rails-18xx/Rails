@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.21 2008/03/05 19:55:16 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.22 2008/03/06 21:53:21 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -150,6 +150,7 @@ implements ActionListener, KeyListener, ActionPerformer
 
 		items = round.getStartItems().toArray(new StartItem[0]);
 		ni = items.length;
+		log.debug("+++ ni="+ni);
 		StartItem item;
 		for (int i = 0; i < ni; i++)
 		{
@@ -262,6 +263,7 @@ implements ActionListener, KeyListener, ActionPerformer
 
 			for (int j = 0; j < np; j++)
 			{
+			    log.debug("+++ i="+i+"/"+ni+" j="+j);
 				f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
 				addField(f,
 						bidPerPlayerXOffset + j,
