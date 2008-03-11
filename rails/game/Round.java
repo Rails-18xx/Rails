@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.6 2008/03/05 19:55:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.7 2008/03/11 20:00:33 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -12,7 +12,9 @@ import org.apache.log4j.Logger;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
+import rails.game.move.CashMove;
 import rails.game.special.SpecialPropertyI;
+import rails.util.LocalText;
 
 /**
  * @author Erik Vos
@@ -98,6 +100,78 @@ public class Round implements RoundI {
         }
         return operatingCompanies.values()
                 .toArray(new PublicCompanyI[0]);
+    }
+
+    /** Check if a company must be floated, and if so, do it.
+     * <p>This method is included here because it is used in various types of Round.
+     * @param company
+     */
+    protected void checkFlotation (PublicCompanyI company) {
+
+        if (!company.hasStarted() || company.hasFloated()) return;
+
+        int unsoldPercentage = company.getUnsoldPercentage();
+
+        if (unsoldPercentage <= 100 - company.getFloatPercentage()) {
+            // Company floats
+            floatCompany (company);
+        }
+    }
+
+    /** Float a company, including a default implementation
+     * of moving cash and shares as a result of flotation.
+     * <p>Full capitalisation is implemented as in 1830.
+     * Partial capitalisation is implemented as in 1851.
+     * Other ways to process the consequences of company
+     * flotation must be handled in game-specific subclasses.
+     * */
+    protected void floatCompany (PublicCompanyI company) {
+
+        // Move cash and shares where required
+        int unsoldPercentage = company.getUnsoldPercentage();
+        int cash = 0;
+        int capitalisationMode = company.getCapitalisation();
+        if (company.hasStockPrice()) {
+            int capFactor = 0;
+            int shareUnit = company.getShareUnit();
+            if (capitalisationMode == PublicCompanyI.CAPITALISE_FULL) {
+                // Full capitalisation as in 1830
+                capFactor = 100 / shareUnit;
+            } else if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL) {
+                // Incremental capitalisation as in 1851
+                capFactor = (100 - unsoldPercentage) / shareUnit;
+            }
+            int price = (company.hasParPrice()
+                    ? company.getParPrice()
+                    : company.getCurrentPrice())
+                .getPrice();
+            cash = capFactor * price;
+        } else {
+            cash = company.getFixedPrice();
+        }
+
+        cash -= company.getBaseTokensBuyCost();
+
+        company.setFloated(); // After calculating cash (for 1851: price goes up)
+
+        new CashMove(Bank.getInstance(), company, cash);
+        ReportBuffer.add(LocalText.getText("FloatsWithCash",
+                new String[] {
+                company.getName(),
+                Bank.format(cash)
+                }));
+
+        if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
+                && company.canHoldOwnShares()) {
+            List<Certificate> moving = new ArrayList<Certificate>();
+            for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
+                    company.getName())) {
+                moving.add(ipoCert);
+            }
+            for (Certificate ipoCert : moving) {
+                ipoCert.moveTo(company.getPortfolio());
+            }
+        }
     }
 
 

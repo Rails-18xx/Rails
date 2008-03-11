@@ -815,10 +815,6 @@ public class StockRound extends Round
 		return true;
 	}
 
-	protected void checkFlotation (PublicCompanyI company) {
-		company.checkFlotation(true);
-	}
-
 	protected void recordSale(Player player, PublicCompanyI company)
 	{
 	    new DoubleMapChange<Player, PublicCompanyI, Object>

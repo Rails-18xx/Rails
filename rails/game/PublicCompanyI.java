@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.17 2008/02/28 21:43:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.18 2008/03/11 20:00:33 evos Exp $ */
 package rails.game;
 
 
@@ -81,7 +81,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	/**
 	 * Float the company, put its initial cash in the treasury.
 	 */
-	public void setFloated(boolean moveCash);
+	public void setFloated();
 
 	/**
 	 * Has the company already floated?
@@ -137,13 +137,20 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
 	public PriceModel getCurrentPriceModel ();
 
 	public PriceModel getParPriceModel();
-	/**
+
+    public int getFixedPrice();
+
+        /**
 	 * @return
 	 */
 	public int getPublicNumber();
 
-	   public int getBaseTokenLayCost ();
+    public int getBaseTokensBuyCost();
 
+    public int getBaseTokenLayCost ();
+
+    public boolean canHoldOwnShares();
+    public int getUnsoldPercentage();
 	/**
 	 * Get a list of this company's certificates.
 	 *
@@ -249,7 +256,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI
      * Games where the percentage varies must check this
      * in StockRound and possibly StartRound.
      */
-	public void checkFlotation(boolean moveCash);
+	//public boolean checkFlotation(boolean moveCash);
+	/** @deprecated */
+    @Deprecated
+    public int percentageOwnedByPlayers();
 
 	public int getCapitalisation();
 	public void setCapitalisation(int capitalisation);

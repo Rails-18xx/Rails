@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.33 2008/03/05 19:55:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.34 2008/03/11 20:00:33 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -753,13 +753,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Float the company, put its initial cash in the treasury.
      */
-    public void setFloated(boolean moveCash) {
+    public void setFloated() {
 
         hasFloated.set(true);
 
         // Remove the "unfloated" indicator in GameStatus
         getPresident().getPortfolio().getShareModel(this).update();
 
+        /*
         // In 18EU, before phase 5, cash has already been moved
         if (moveCash) {
 
@@ -798,9 +799,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 	                ipoCert.moveTo(portfolio);
 	            }
 	        }
+
         } else {
         	ReportBuffer.add(LocalText.getText("Floats", name));
         }
+        */
 
         if (sharePriceUpOnFloating) {
             Game.getStockMarket().moveUp(this);
@@ -1272,6 +1275,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return fixedPrice;
     }
 
+    public int getBaseTokensBuyCost() {
+        return baseTokensBuyCost;
+    }
+
     public int percentageOwnedByPlayers() {
         int share = 0;
         for (PublicCertificateI cert : certificates) {
@@ -1280,6 +1287,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
         return share;
+    }
+
+    public boolean canHoldOwnShares() {
+        return canHoldOwnShares;
     }
 
     /**
@@ -1348,14 +1359,31 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Games where the percentage varies must check this
      * in StockRound and possibly StartRound.
      */
-    public void checkFlotation(boolean moveCash) {
+    /*
+    public boolean checkFlotation(boolean moveCash) {
         if (hasStarted() && !hasFloated()
                 && (Bank.getIpo().getShare(this)
                 		+ portfolio.getShare(this)) <= 100 - floatPerc) {
-            // Float company (limit and capitalisation to be made
-            // configurable)
+            // Float company
             setFloated(moveCash);
+            return true;
+        } else {
+            return false;
         }
+    }
+    */
+
+    /** Return the unsold share percentage.
+     * It is calculated as the sum of the percentages in IPO
+     * and in the company treasury. <p>The latter percentage can
+     * only be nonzero in games where companies can hold their own shares,
+     * and will only truly represent the "unsold" percentage
+     * until the company has floated (in many games companies
+     * can buy and sell their own shares).
+     */
+    public int getUnsoldPercentage() {
+        return Bank.getIpo().getShare(this)
+            + portfolio.getShare(this);
     }
 
     /**
