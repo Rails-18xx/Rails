@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.34 2008/03/05 19:55:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.35 2008/03/11 19:59:38 evos Exp $ */
 package rails.game;
 
 
@@ -415,8 +415,6 @@ public class OperatingRound extends Round implements Observer
 
 		if (tile != null)
 		{
-			hex.upgrade(tile, orientation);
-
 			if (cost > 0) //Bank.transferCash((CashHolder) operatingCompany, null, cost);
 			    new CashMove (operatingCompany, null, cost);
 			operatingCompany.layTile(hex, tile, orientation, cost);
@@ -435,6 +433,7 @@ public class OperatingRound extends Round implements Observer
 			            Bank.format(cost)
 			    }));
 			}
+            hex.upgrade(tile, orientation);
 
 			// Was a special property used?
 			if (stl != null)
