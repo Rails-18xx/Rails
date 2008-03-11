@@ -1,12 +1,9 @@
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import rails.game.action.BidStartItem;
-import rails.game.action.BuyStartItem;
-import rails.game.action.StartItemAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
@@ -26,13 +23,13 @@ public abstract class StartRound extends Round implements StartRoundI
 	protected String variant;
 	protected GameManager gameMgr;
 	protected Player currentPlayer;
-	
+
 	/** Should the UI present bidding into and facilities?
 	 * This value MUST be set in the actual StartRound constructor.
 	 */
 	protected boolean hasBidding;
-	
-	/** Should the UI show base prices? 
+
+	/** Should the UI show base prices?
 	 * Not useful if the items are all equal, as in 1841 and 18EU.
 	 */
 	protected boolean hasBasePrices = true;
@@ -43,7 +40,7 @@ public abstract class StartRound extends Round implements StartRoundI
 	/*----- Initialisation -----*/
 	/**
 	 * Will be created dynamically.
-	 * 
+	 *
 	 */
 	public StartRound()
 	{
@@ -51,7 +48,7 @@ public abstract class StartRound extends Round implements StartRoundI
 
 	/**
 	 * Start the start round.
-	 * 
+	 *
 	 * @param startPacket
 	 *            The startpacket to be sold in this start round.
 	 */
@@ -66,10 +63,10 @@ public abstract class StartRound extends Round implements StartRoundI
 		itemsToSell = new ArrayList<StartItem>();
 		itemIndex = new int[startPacket.getItems().size()];
 		int index = 0;
-		
+
 		for (StartItem item : startPacket.getItems())
 		{
-			
+
 			// New: we only include items that have not yet been sold
 			// at the start of the current StartRound
 			if (!item.isSold()) {
@@ -84,21 +81,22 @@ public abstract class StartRound extends Round implements StartRoundI
 		gameMgr.setRound(this);
 		GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
 		currentPlayer = GameManager.getCurrentPlayer();
-		
+
 		ReportBuffer.add("");
 		ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
 		ReportBuffer.add (LocalText.getText("HasPriority", getCurrentPlayer().getName()));
 	}
-	
 
-	public boolean process (PossibleAction action) {
-		
+
+	@Override
+    public boolean process (PossibleAction action) {
+
 		boolean result = false;
-		
+
 		log.debug("Processing action "+action);
-		
+
 		if (action instanceof NullAction) {
-			
+
 			String playerName = action.getPlayerName();
 			NullAction nullAction = (NullAction) action;
 			switch (nullAction.getMode()) {
@@ -106,17 +104,17 @@ public abstract class StartRound extends Round implements StartRoundI
 				result = pass (playerName);
 				break;
 			}
-		
+
 		} else if (action instanceof StartItemAction) {
-			
+
 			StartItemAction startItemAction = (StartItemAction) action;
 			String playerName = action.getPlayerName();
-			
+
 			log.debug ("Item details: "+startItemAction.toString());
 
 			if (startItemAction instanceof BuyStartItem) {
 
-				BuyStartItem buyAction = (BuyStartItem) startItemAction; 
+				BuyStartItem buyAction = (BuyStartItem) startItemAction;
 				if (buyAction.hasSharePriceToSet()
 						&& buyAction.getAssociatedSharePrice() == 0) {
 					// We still need a share price for this item
@@ -131,18 +129,18 @@ public abstract class StartRound extends Round implements StartRoundI
 				result = bid (playerName, (BidStartItem)startItemAction);
 			}
 		} else {
-		
+
 			DisplayBuffer.add (LocalText.getText("UnexpectedAction",
 				action.toString()));
 		}
-		
+
 		if (startPacket.areAllSold()) {
-			/* If the complete start packet has been sold, 
+			/* If the complete start packet has been sold,
 			 * start a Stock round, */
 			possibleActions.clear();
 			GameManager.getInstance().nextRound(this);
 		} else if (!setPossibleActions()) {
-			/* If nobody can do anything, keep executing 
+			/* If nobody can do anything, keep executing
 			 * Operating and Start rounds until someone has got
 			 * enough money to buy one of the remaining items.
 			 * The game mechanism ensures that this will
@@ -150,15 +148,15 @@ public abstract class StartRound extends Round implements StartRoundI
 			 */
 			GameManager.getInstance().nextRound(this);
 		}
-		
+
 		return result;
 	}
-	
+
 	/*----- Processing player actions -----*/
 
 	/**
 	 * The current player bids on a given start item.
-	 * 
+	 *
 	 * @param playerName
 	 *            The name of the current player (for checking purposes).
 	 * @param itemName
@@ -170,7 +168,7 @@ public abstract class StartRound extends Round implements StartRoundI
 
 	/**
 	 * Buy a start item against the base price.
-	 * 
+	 *
 	 * @param playerName
 	 *            Name of the buying player.
 	 * @param itemName
@@ -195,16 +193,16 @@ public abstract class StartRound extends Round implements StartRoundI
 					errMsg = LocalText.getText("NotForSale");
 					break;
 				}
-	
+
 				price = item.getBasePrice();
 				if (item.getBid() > price) price = item.getBid();
-				
+
 				if (player.getFreeCash() < price) {
 					errMsg = LocalText.getText("NoMoney");
 					break;
 				}
 			}
-			
+
 			if (boughtItem.hasSharePriceToSet()) {
 				shareCompName = boughtItem.getCompanyToSetPriceFor();
 				sharePrice = boughtItem.getAssociatedSharePrice();
@@ -233,26 +231,26 @@ public abstract class StartRound extends Round implements StartRoundI
 				}));
 			return false;
 		}
-		
+
 		MoveSet.start(false);
-		
+
 		assignItem(player, item, price, sharePrice);
 
 		// Set priority
 		GameManager.setPriorityPlayer();
 		setNextPlayer();
-		
+
 		auctionItemState.set (null);
 		numPasses.set(0);
 
-		
+
 		return true;
 
 	}
 
 	/**
 	 * This method executes the start item buy action.
-	 * 
+	 *
 	 * @param player
 	 *            Buying player.
 	 * @param item
@@ -308,7 +306,7 @@ public abstract class StartRound extends Round implements StartRoundI
 			    }
 			}
 			if (comp.hasStarted() && !comp.hasFloated()) {
-				comp.checkFlotation(true);
+				checkFlotation(comp);
 			}
 
 		}
@@ -316,7 +314,7 @@ public abstract class StartRound extends Round implements StartRoundI
 
 	/**
 	 * Process a player's pass.
-	 * 
+	 *
 	 * @param playerName
 	 *            The name of the current player (for checking purposes).
 	 */
@@ -326,18 +324,19 @@ public abstract class StartRound extends Round implements StartRoundI
 
 	/**
 	 * Get the currentPlayer.
-	 * 
+	 *
 	 * @return The current Player object.
 	 * @see GameManager.getCurrentPlayer().
 	 */
-	public Player getCurrentPlayer()
+	@Override
+    public Player getCurrentPlayer()
 	{
 		return GameManager.getCurrentPlayer();
 	}
 
 	/**
 	 * Get the currentPlayer index in the player list (starting at 0).
-	 * 
+	 *
 	 * @return The index of the current Player.
 	 * @see GameManager.getCurrentPlayerIndex().
 	 */
@@ -350,12 +349,12 @@ public abstract class StartRound extends Round implements StartRoundI
 		GameManager.setCurrentPlayer(GameManager.getPriorityPlayer());
 		currentPlayer = GameManager.getCurrentPlayer();
 	}
-	
+
 	protected void setPlayer(Player player) {
 		GameManager.setCurrentPlayer(player);
 		currentPlayer = player;
 	}
-	
+
 	protected void setNextPlayer () {
 		GameManager.setCurrentPlayerIndex(GameManager.getCurrentPlayerIndex()+1);
 		currentPlayer = GameManager.getCurrentPlayer();
@@ -363,15 +362,15 @@ public abstract class StartRound extends Round implements StartRoundI
 
 	/**
 	 * Get a list of items that may be bought immediately.
-	 * 
+	 *
 	 * @return An array of start items, possibly empry.
 	 */
-	
+
 	public abstract List<StartItem> getStartItems ();
-	
+
 	/**
 	 * Get a list of items that the current player may bid upon.
-	 * 
+	 *
 	 * @return An array of start items, possibly empty.
 	 */
 
@@ -383,19 +382,19 @@ public abstract class StartRound extends Round implements StartRoundI
 	public boolean hasBidding() {
 		return hasBidding;
 	}
-	
+
 	public boolean hasBasePrices() {
 	    return hasBasePrices;
 	}
-	
+
 	public ModelObject getBidModel (int privateIndex, int playerIndex) {
-		return ((StartItem)itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
+		return (itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
 	}
-	
+
 	public ModelObject getMinimumBidModel (int privateIndex) {
-		return ((StartItem)itemsToSell.get(privateIndex)).getMinimumBidModel();
+		return (itemsToSell.get(privateIndex)).getMinimumBidModel();
 	}
-	
+
 	public ModelObject getFreeCashModel (int playerIndex) {
 		return Game.getPlayerManager().getPlayerByIndex(playerIndex)
 		        .getFreeCashModel();
