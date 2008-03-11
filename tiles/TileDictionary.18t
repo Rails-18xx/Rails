@@ -12481,22 +12481,17 @@ object TTilesWrapper
       Connections = <
         item
           Position1 = tp4SideD
-          Position2 = tp1SideC
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideC
         end
         item
           Position1 = tp4SideC
-          Position2 = tp1SideC
-        end
-        item
-          Position1 = tp4SideB
-          Position2 = tp1SideC
+          Position2 = tp4SideB
         end>
-      Junctions = <
-        item
-          JunType = jtWhistlestop
-          Position = tp1SideC
-          Revenue = -1
-        end>
+      Junctions = <>
     end
     item
       Code = -912
@@ -12846,32 +12841,18 @@ object TTilesWrapper
           Position2 = tp4SideC
         end
         item
-          Position1 = tp4SideE
-          Position2 = tpCurve2RightA
+          Position1 = tp2SideA
+          Position2 = tp4SideE
         end
         item
-          Position1 = tp4SideC
-          Position2 = tpCurve2LeftA
-        end
-        item
-          Position1 = tpCurve2RightA
-          Position2 = tp2SideA
-        end
-        item
-          Position1 = tpCurve2LeftA
-          Position2 = tp2SideA
+          Position1 = tp2SideA
+          Position2 = tp4SideC
         end>
       Junctions = <
         item
           JunType = jtCity
           Position = tp2SideA
           Revenue = 10
-        end
-        item
-          Position = tpCurve2RightA
-        end
-        item
-          Position = tpCurve2LeftA
         end>
     end
     item
@@ -13361,13 +13342,13 @@ object TTilesWrapper
         item
           JunType = jtCity
           Position = tp2SideA
-          Revenue = 30
+          Revenue = 40
           RevenuePosition = tp3CornerF
         end
         item
           JunType = jtCity
           Position = tp2SideD
-          Revenue = 30
+          Revenue = 40
           RevenuePosition = tp3CornerF
         end>
     end
