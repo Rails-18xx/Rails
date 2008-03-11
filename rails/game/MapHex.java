@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.16 2008/03/05 19:55:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.17 2008/03/11 19:58:24 evos Exp $ */
 package rails.game;
 
 
@@ -11,8 +11,8 @@ import org.apache.log4j.Logger;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
+import rails.util.LocalText;
 import rails.util.Tag;
-import rails.util.Util;
 
 
 /**
@@ -561,18 +561,44 @@ station:        for (Station newStation : newTile.getStations()) {
 
 
             // Move the tokens
+            Map<TokenI, TokenHolderI>tokenDestinations
+                = new HashMap<TokenI, TokenHolderI>();
+
             for (City oldCity : cities) {
             	//log.debug("Old city "+oldCity.getNumber()+" has "+oldCity.getTokens().size()+" tokens");
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
-                    for (TokenI token : oldCity.getTokens()) {
-                        //token.moveTo(newCity);
+oldtoken:           for (TokenI token : oldCity.getTokens()) {
+                        if (token instanceof BaseToken) {
+                            // Check if the new city already has such a token
+                            PublicCompanyI company = ((BaseToken)token).getCompany();
+                            for (TokenI token2 : newCity.getTokens()) {
+                                if (token2 instanceof BaseToken
+                                        && company == ((BaseToken)token2).getCompany()) {
+                                    // No duplicate tokens in one city!
+                                    tokenDestinations.put (token, company);
+                                    log.debug("Duplicate token "+token.getUniqueId()
+                                            +" moved from "+oldCity.getName()
+                                            +" to "+company.getName());
+                                    ReportBuffer.add(LocalText.getText("DuplicateTokenRemoved",
+                                            new String[] {
+                                                company.getName(),
+                                                getName()}
+                                            ));
+                                    continue oldtoken;
+                                }
+                            }
+                        }
+                        tokenDestinations.put(token, newCity);
                         log.debug("Token "+token.getUniqueId()
                                 +" moved from "+oldCity.getName()
                                 +" to "+newCity.getName());
                     }
-                    Util.moveObjects(oldCity.getTokens(),newCity);
-                    // TODO: Need to add check for double tokens
+                    if (!tokenDestinations.isEmpty()) {
+                        for (TokenI token : tokenDestinations.keySet()) {
+                            token.moveTo(tokenDestinations.get(token));
+                        }
+                    }
                 } else {
                 	log.debug("No new city!?");
                 }
