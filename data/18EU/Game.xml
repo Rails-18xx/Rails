@@ -2,6 +2,8 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.specific._18EU.GameManager_18EU">
 		<Game name="18EU"/>
+		<GameOption name="Extra3Trains" values="0,1,2"/>
+		<GameOption name="Extra4Trains" values="0,1"/>
 		<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
 			sequence="sellBuy"
 			skipFirst="yes"/>
@@ -39,13 +41,30 @@
 			<Score towns="yes"/>
 		</Defaults>
 		<Train name="2" majorStops="2" cost="100" amount="15"/>
-		<Train name="3" majorStops="3" cost="200" amount="5" startPhase="3" releasedTrain="P"/>
-		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
-			rustedTrain="2"/>
+		<Train name="3" majorStops="3" cost="200" startPhase="3" releasedTrain="P">
+			<IfOption name="Extra3Trains" value="0">
+				<Attributes amount="5"/>
+			</IfOption>
+			<IfOption name="Extra3Trains" value="1">
+				<Attributes amount="6"/>
+			</IfOption>
+			<IfOption name="Extra3Trains" value="2">
+				<Attributes amount="7"/>
+			</IfOption>
+		</Train>
+		<Train name="4" majorStops="4" cost="300" startPhase="4" 
+			rustedTrain="2">
+			<IfOption name="Extra4Trains" value="0">
+				<Attributes amount="4"/>
+			</IfOption>
+			<IfOption name="Extra4Trains" value="1">
+				<Attributes amount="5"/>
+			</IfOption>
+		</Train>
 		<Train name="5" majorStops="5" cost="500" amount="3" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6" 
 			rustedTrain="3"/>
-		<Train name="8" majorStops="8" cost="800" amount="8" startPhase="8" 
+		<Train name="8" majorStops="8" cost="800" amount="-1" startPhase="8" 
 			rustedTrain="4"/>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
 		<Train name="P" initialPortfolio="Pool" majorStops="-1" cost="100" amount="5"/>

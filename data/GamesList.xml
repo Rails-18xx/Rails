@@ -85,22 +85,14 @@ Limitation:
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="18EU">
-		<Note>Partly playable</Note>
+		<Note>Fully playable</Note>
 		<Description>18EU - A century of railroading in Europe
 (c) 1997-2004 David G.D. Hecht
 Published 2004 by Deep Thought Games, LLC
  
-Implemented:
-- Initial Minor auction round,
-- Starting companies and merging minors
-- Treasury shares trading
-- All tile laying rules except cost of green mountain upgrades
-
-Not yet implemented:
-- Final Minor exchange round
-- Pullmann trains
-- possibly more...
 		</Description>
+		<Option name="Extra3Trains" values="0,1,2" default="0"/>
+		<Option name="Extra4Trains" values="0,1" default="0"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18Kaas">
