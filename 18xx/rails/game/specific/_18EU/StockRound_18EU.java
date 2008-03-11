@@ -28,6 +28,7 @@ public class StockRound_18EU extends StockRound
     protected IntegerState discardingCompanyIndex;
     protected BooleanState discardingTrains
         = new BooleanState ("DiscardingTrains", false);
+    protected boolean phase5Reached = false;
 
 
     @Override
@@ -36,6 +37,10 @@ public class StockRound_18EU extends StockRound
         if (discardingTrains.booleanValue()) {
             discardingTrains.set(false);
         }
+
+        PhaseManagerI pmgr = PhaseManager.getInstance();
+        phase5Reached = pmgr.hasReachedPhase("5");
+
     }
 
     @Override
@@ -70,8 +75,7 @@ public class StockRound_18EU extends StockRound
 
         // 18EU special: until phase 5, we can only
         // start a company by trading in a Minor
-        PhaseManagerI pmgr = PhaseManager.getInstance();
-        boolean mustMergeMinor = !pmgr.hasReachedPhase("5");
+        boolean mustMergeMinor = !phase5Reached;
         List<PublicCompanyI> minors = null;
         List<City> freeStations = null;
         if (mustMergeMinor) {
@@ -290,6 +294,7 @@ public class StockRound_18EU extends StockRound
 		String companyName = company.getName();
 		PublicCompanyI minor = null;
 		StartCompany_18EU startAction = null;
+		City selectedHomeCity = null;
 
 		currentPlayer = GameManager.getCurrentPlayer();
 
@@ -339,24 +344,14 @@ public class StockRound_18EU extends StockRound
 				break;
 			}
 
-			// Check if the company has a fixed par price (1835).
-			startSpace = company.getParPrice();
-			if (startSpace != null)
+			// The given price must be a valid start price
+			if ((startSpace = stockMarket.getStartSpace(price)) == null)
 			{
-				// If so, it overrides whatever is given.
-				price = startSpace.getPrice();
-			}
-			else
-			{
-				// Else the given price must be a valid start price
-				if ((startSpace = stockMarket.getStartSpace(price)) == null)
-				{
-					errMsg = LocalText.getText("InvalidStartPrice", new String[] {
-							Bank.format(price),
-							company.getName()
-					});
-					break;
-				}
+				errMsg = LocalText.getText("InvalidStartPrice", new String[] {
+						Bank.format(price),
+						company.getName()
+				});
+				break;
 			}
 
 			// Check if the Player has the money.
@@ -366,16 +361,29 @@ public class StockRound_18EU extends StockRound
 				break;
 			}
 
-			// Check if the player owns the merged minor
-			minor = startAction.getChosenMinor();
-			if (minor != null
-			        && currentPlayer.getPortfolio().getCertificatesPerCompany(minor.getName())== null) {
-			    errMsg = LocalText.getText("PlayerDoesNotOwn",
-			            new String[] {
-			                currentPlayer.getName(),
-			                minor.getName()
-			    });
-			    break;
+			if (!phase5Reached) {
+	            // Check if the player owns the merged minor
+    			minor = startAction.getChosenMinor();
+    			if (minor != null
+    			        && currentPlayer.getPortfolio().getCertificatesPerCompany(minor.getName())== null) {
+    			    errMsg = LocalText.getText("PlayerDoesNotOwn",
+    			            new String[] {
+    			                currentPlayer.getName(),
+    			                minor.getName()
+    			    });
+    			    break;
+    			}
+			} else {
+			    // Check if a valid home base has been selected
+			    selectedHomeCity = startAction.getSelectedHomeStation();
+			    if (selectedHomeCity.getSlots() <= selectedHomeCity.getTokens().size()) {
+                    errMsg = LocalText.getText("InvalidHomeBase", new String[] {
+                            selectedHomeCity.toString(),
+                            company.getName()
+                            });
+                    break;
+                }
+
 			}
 			numberOfCertsToBuy++;
 
@@ -395,15 +403,19 @@ public class StockRound_18EU extends StockRound
 		MoveSet.start(true);
 
 		// All is OK, now start the company
+		MapHex homeHex = null;
+		int homeCityNumber = 1;
 		if (minor != null) {
-		    MapHex homeHex = minor.getHomeHex();
-		    int homeCityNumber = homeHex.getCityOfBaseToken(minor);
-		    company.setHomeHex(homeHex);
-		    company.setHomeCityNumber(homeCityNumber);
-		} else {
-
+		    homeHex = minor.getHomeHex();
+		    homeCityNumber = homeHex.getCityOfBaseToken(minor);
+		} else if (selectedHomeCity != null){
+		    homeHex = (MapHex) selectedHomeCity.getHolder();
+            homeCityNumber = selectedHomeCity.getNumber();
 		}
-		company.start(startSpace);
+        company.setHomeHex(homeHex);
+        company.setHomeCityNumber(homeCityNumber);
+
+        company.start(startSpace);
         ReportBuffer.add(LocalText.getText ("START_COMPANY_LOG", new String[] {
                 playerName,
                 companyName,
@@ -446,6 +458,13 @@ public class StockRound_18EU extends StockRound
                         company.getName(),
                         minor.getName()
                     }));
+    	} else {
+    	    ReportBuffer.add(LocalText.getText("SelectedHomeBase",
+    	            new String[] {
+    	                company.getName(),
+    	                homeHex.getName(),
+    	                selectedHomeCity.toString()
+    	    }));
     	}
 
 		// Move the remaining certificates to the company treasury
@@ -596,8 +615,29 @@ public class StockRound_18EU extends StockRound
     }
 
 	@Override
-    protected void checkFlotation (PublicCompanyI company) {
-		company.checkFlotation(false);
+    protected void floatCompany (PublicCompanyI company) {
+
+	    company.setFloated();
+        ReportBuffer.add(LocalText.getText("Floats", company.getName()));
+
+	    // Before phase 5, no other actions are required.
+
+	    if (phase5Reached) {
+	        // Put the remaining 5 shares in the pool,
+	        // getting cash in return
+	        // Move the remaining certificates to the company treasury
+	        Util.moveObjects(company.getPortfolio().getCertificatesPerCompany(company.getName()),
+	                pool);
+	        int cash = 5 * company.getCurrentPrice().getPrice();
+	        new CashMove (null, company, cash);
+	        ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
+	                new String[] {
+	                    company.getName(),
+	                    Bank.format(cash)
+	                }));
+
+
+	    }
 	}
 
     public boolean discardTrain (DiscardTrain action) {
