@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.35 2008/03/11 19:59:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.36 2008/03/16 17:25:44 evos Exp $ */
 package rails.game;
 
 
@@ -358,19 +358,15 @@ public class OperatingRound extends Round implements Observer
 			 */
 			if (!extra && !validateNormalTileLay(tile)) {
 			    errMsg = LocalText.getText("NumberOfNormalTileLaysExceeded",
-			            tile.getColour());
+			            tile.getColourName());
 			    break;
 			}
 
 			// Sort out cost
-			if (hex.getCurrentTile().getId() == hex.getPreprintedTileId())
-			{
-				cost = hex.getTileCost();
-				if (stl != null && stl.isFree()) cost = 0;
-			}
-			else
-			{
+			if (stl != null && stl.isFree()) {
 				cost = 0;
+			} else {
+				cost = hex.getTileCost();
 			}
 
 			// Amount must be non-negative multiple of 10
@@ -477,7 +473,7 @@ public class OperatingRound extends Round implements Observer
 
 	    //if (currentNormalTileLays.isEmpty()) return false;
         if (tileLaysPerColour.isEmpty()) return false;
-	    String colour = tile.getColour();
+	    String colour = tile.getColourName();
 
 	    Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
 	    if (oldAllowedNumberObject == null) return false;

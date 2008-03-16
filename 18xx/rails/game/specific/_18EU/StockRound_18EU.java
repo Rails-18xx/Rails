@@ -706,7 +706,7 @@ public class StockRound_18EU extends StockRound
     @Override
     protected void finishTurn() {
 
-        log.debug("+++ FinishTurn");
+        //log.debug("+++ FinishTurn");
         if (!discardingTrains.booleanValue()) {
             super.setNextPlayer();
         } else {
@@ -727,7 +727,7 @@ public class StockRound_18EU extends StockRound
 
     @Override
     protected void finishRound() {
-        log.debug("+++ FinishRound");
+        //log.debug("+++ FinishRound");
 
         if (discardingTrains.booleanValue()) {
 
