@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.13 2008/03/05 19:55:16 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.14 2008/03/16 17:25:41 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -813,7 +813,6 @@ public class GUIHex implements ViewObject
 			}
 		}
 		toolTip = tt.toString();
-		//log.debug("---Tooltip for hex "+getName()+": "+toolTip);
 	}
 
 	public boolean dropTile(int tileId, boolean upgradeMustConnect)

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.2 2008/03/05 19:55:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.3 2008/03/16 17:25:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -137,14 +137,12 @@ public class City implements TokenHolderI
     }
 
     public boolean hasTokenSlotsLeft() {
-    	//log.debug("---Hex "+mapHex.getName()+" city "+number+" has "+slots+" slots and "+tokens.size()+" tokens");
 	    return tokens.size() < slots;
 	}
 
 	public boolean removeToken (TokenI token) {
 
 	    boolean result = tokens.remove(token);
-        //mapHex.update();
 	    return result;
 	}
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.17 2008/03/11 19:58:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.18 2008/03/16 17:25:44 evos Exp $ */
 package rails.game;
 
 
@@ -73,7 +73,7 @@ public class MapHex extends ModelObject
 	protected int preprintedTileId;
 	protected TileI currentTile;
 	protected int currentTileRotation;
-	protected int tileCost;
+	protected int[] tileCost;
 	protected String cityName;
 
 	/** Neighbouring hexes <i>to which track may be laid</i>. */
@@ -184,7 +184,7 @@ public class MapHex extends ModelObject
 
 		currentTile = TileManager.get().getTile(preprintedTileId);
 		impassable = tag.getAttributeAsString("impassable");
-		tileCost = tag.getAttributeAsInteger("cost", 0);
+		tileCost = tag.getAttributeAsIntegerArray("cost", new int[0]);
 
 		// We need completely new objects, not just references to the Tile's
 		// stations.
@@ -393,10 +393,22 @@ public class MapHex extends ModelObject
 		 */
 		return null;
 	}
+	
+	public int getTileCost() {
+		if (currentTile.getId() == preprintedTileId) {
+			return getTileCost(0);
+		} else {
+			return getTileCost(currentTile.getColourNumber());
+		}
+	}
 
-	public int getTileCost()
+	public int getTileCost(int index)
 	{
-		return tileCost;
+		if (index >=0 && index < tileCost.length){
+			return tileCost[index];
+		} else {
+			return 0;
+		}
 	}
 
 	/** Prepare a tile upgrade.

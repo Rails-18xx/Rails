@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.17 2008/03/06 21:53:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.18 2008/03/16 17:25:44 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -26,8 +26,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	 */
 	private int pictureId;
 	private String name;
-	private String colour; // May become a separate class TileType
-	private boolean upgradeable;
+	private String colourName; // May become a separate class TileType
+	private int colourNumber;
+
 	private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
 	private String upgradesString = "";
 	private final List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
@@ -38,18 +39,42 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
 	private int quantity;
 	private boolean unlimited = false;
-	public static final int UNLIMITED = -1;
+	public static final int UNLIMITED_TILES = -1;
 
-	public static final String YELLOW = "yellow";
-	public static final String GREEN = "green";
-	public static final String BROWN = "brown";
-	public static final String GREY = "grey";
+	/** Off-board preprinted tiles */
+	public static final String RED_COLOUR_NAME = "red";
+	public static final int RED_COLOUR_NUMBER = -2;
+	/** Non-upgradeable preprinted tiles (colour grey or dark brown) */
+	public static final String FIXED_COLOUR_NAME = "fixed";
+	public static final int FIXED_COLOUR_NUMBER = -1;
+	/** Preprinted pre-yellow tiles */
+	public static final String WHITE_COLOUR_NAME = "white";
+	public static final int WHITE_COLOUR_NUMBER = 0;
+	public static final String YELLOW_COLOPUR_NAME = "yellow";
+	public static final int YELLOW_COLOUR_NUMBER = 1;
+	public static final String GREEN_COLOUR_NAME = "green";
+	public static final int GREEN_COLOUR_NUMBER = 2;
+	public static final String BROWN_COLOUR_NAME = "brown";
+	public static final int BROWN_COLOUR_NUMBER = 3;
+	public static final String GREY_COLOUR_NAME = "grey";
+	public static final int GREY_COLOUR_NUMBER = 4;
+	
+	protected static final List<String> VALID_COLOUR_NAMES 
+		= Arrays.asList(new String[] {
+				RED_COLOUR_NAME, FIXED_COLOUR_NAME, WHITE_COLOUR_NAME,
+				YELLOW_COLOPUR_NAME, GREEN_COLOUR_NAME, BROWN_COLOUR_NAME, GREY_COLOUR_NAME
+	});
+	
+	/** The offset to convert tile numbers to tilename index.
+	 * Colour number 0 and higher are upgradeable. */
+	
+	protected static final int TILE_NUMBER_OFFSET = 2;
 
 	private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
 	public Tile(Integer id)
 	{
-		this.id = id.intValue();
+		this.id = id;
 		externalId = pictureId = id;
 		name = "" + this.id;
 
@@ -75,13 +100,20 @@ public class Tile extends ModelObject implements TileI, StationHolderI
 
 		name = defTag.getAttributeAsString("name", name);
 
-		colour = defTag.getAttributeAsString("colour");
-		if (colour == null)
+		colourName = defTag.getAttributeAsString("colour");
+		if (colourName == null)
 			throw new ConfigurationException(
 			        LocalText.getText("TileColorMissing", String.valueOf(id)));
+		colourName = colourName.toLowerCase();
+		if (colourName.equals("gray")) colourName = "grey";
+		colourNumber = VALID_COLOUR_NAMES.indexOf(colourName);
+		if (colourNumber < 0) {
+			throw new ConfigurationException(
+					LocalText.getText("InvalidTileColourName",
+							new String[] {name, colourName}));
+		}
+		colourNumber -= TILE_NUMBER_OFFSET;
 
-		upgradeable = !colour.equals("red") && !colour.equals("fixed");
-log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();
@@ -171,9 +203,9 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 		/* Quantity */
 		quantity = setTag.getAttributeAsInteger("quantity", 0);
 		/* Value '99' and '-1' mean 'unlimited' */
-		unlimited = (quantity == 99 || quantity == UNLIMITED);
+		unlimited = (quantity == 99 || quantity == UNLIMITED_TILES);
 		if (unlimited)
-			quantity = UNLIMITED;
+			quantity = UNLIMITED_TILES;
 
 		/* Upgrades */
 		List<Tag> upgradeTags = setTag.getChildren("Upgrade");
@@ -241,9 +273,13 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 	/**
 	 * @return Returns the colour.
 	 */
-	public String getColour()
+	public String getColourName()
 	{
-		return colour;
+		return colourName;
+	}
+	
+	public int getColourNumber() {
+		return colourNumber;
 	}
 
 	/**
@@ -305,7 +341,7 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 	 */
 	public boolean isUpgradeable()
 	{
-		return upgradeable;
+		return colourNumber >= 0;
 	}
 
 	/**
@@ -315,7 +351,7 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 	 */
 	public boolean isLayableNow()
 	{
-		return GameManager.getCurrentPhase().isTileColourAllowed(colour);
+		return GameManager.getCurrentPhase().isTileColourAllowed(colourName);
 	}
 
 	/**
@@ -350,7 +386,7 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 		for (Upgrade upgrade : upgrades)
 		{
 			tile = upgrade.getTile();
-			if (phase.isTileColourAllowed(tile.getColour())
+			if (phase.isTileColourAllowed(tile.getColourName())
 					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
 					&& upgrade.isAllowedForHex(hex))
 			{
@@ -375,15 +411,6 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 	}
 
 	public List<Track> getTracksPerStation(int stationNumber) {
-	    /*
-		log.debug("--- tile "+id+" station "+stationId);
-		List<Track> tt = tracksPerStation.get(stationId);
-		if (tt != null) {
-			for (Track t : tt) {
-				log.debug("ST "+stationId+" "+t.toString());
-			}
-		}
-		*/
 	    return tracksPerStation.get(stationNumber);
 	}
 
@@ -413,7 +440,7 @@ log.debug("---Tile "+id+" colour="+colour+" upgradeable="+upgradeable);
 	public int countFreeTiles()
 	{
 		if (unlimited)
-			return UNLIMITED;
+			return UNLIMITED_TILES;
 		else
 			return quantity - tilesLaid.size();
 	}
