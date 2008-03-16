@@ -84,6 +84,9 @@
 	<Hex name="O12" cost="60" tile="-1" city="Pressburg"/>
 	<Hex name="P1" cost="60" tile="0" />
 	<Hex name="P3" tile="-1" city="Geneva"/>
+	<!-- Multiple upgrade costs: first value applies to FIRST tile laid
+		(regardless the colour). Any subsequent values apply to 
+		yellow-to-green, green-to-brown etc. upgrades -->
 	<Hex name="P5" cost="120,60" label="M" tile="0" /><!-- Simplon -->
 	<Hex name="P7" cost="60" tile="0" />
 	<Hex name="P9" cost="120,60" label="M" tile="0" /><!-- Arlberg -->
