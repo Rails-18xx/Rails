@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.14 2008/03/16 17:25:41 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.15 2008/03/17 17:50:12 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -310,7 +310,7 @@ public class GUIHex implements ViewObject
 		paintOffStationTokens(g2);
 
 		FontMetrics fontMetrics = g2.getFontMetrics();
-		if (getHexModel().getTileCost() > 0 && originalTileId == currentTileId)
+		if (getHexModel().getTileCost() > 0 /*&& originalTileId == currentTileId*/)
 		{
 			g2.drawString(Bank.format(getHexModel().getTileCost()),
 					rectBound.x + (rectBound.width - fontMetrics.stringWidth(
@@ -342,20 +342,11 @@ public class GUIHex implements ViewObject
 		{
 			List<PrivateCompanyI> privates = Game.getCompanyManager()
 					.getAllPrivateCompanies();
-			//Iterator pIT = privates.iterator();
-
-			//while (pIT.hasNext())
 			for (PrivateCompanyI p : privates)
 			{
-				//PrivateCompany p = (PrivateCompany) pIT.next();
 				List<MapHex> blocked = p.getBlockedHexes();
-				//Iterator bIT = blocked.iterator();
-
-				//while (bIT.hasNext())
 				for (MapHex hex : blocked)
 				{
-					//MapHex hex = (MapHex) bIT.next();
-
 					if (getHexModel().equals(hex))
 					{
 						g2.drawString("(" + p.getName() + ")",
