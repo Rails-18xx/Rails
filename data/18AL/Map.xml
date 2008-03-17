@@ -5,7 +5,7 @@
 	<Hex name="B3" tile="0" impassable="D3"/>
 	<Hex name="B5" tile="0"/>
 	<Hex name="B7" tile="-901" orientation="2" value="30,50" city="Chattanooga"/>
-	<Hex name="C2" tile="-1" cost="20"/ city="Florence"/>
+	<Hex name="C2" tile="-1" cost="20" city="Florence"/>
 	<Hex name="C4" tile="-10" cost="20" city="Decatur"/>
 	<Hex name="C6" tile="-1" cost="20" city="Stevenson"/>
 	<Hex name="D1" tile="0"/>
@@ -24,18 +24,18 @@
 	<Hex name="G2" tile="0" cost="20">
 		<Swamp/>
 	</Hex>
-	<Hex name="G4" tile="-10" cost="60" city="Birmingham"/>
+	<Hex name="G4" tile="-10" cost="60" city="Birmingham">
 		<Coalfield/>
 	</Hex>
-	<Hex name="G6" tile="-10" city="Anniston"/>
+	<Hex name="G6" tile="-10" city="Anniston">
 		<Coalfield/>
 	</Hex>
 	<Hex name="G8" tile="-902" orientation="2" value="40,70" city="Atlanta"/>
 	<Hex name="H1" tile="0"/>
-	<Hex name="H3" tile="-10" city="Tuscaloosa"/>
+	<Hex name="H3" tile="-10" city="Tuscaloosa">
 		<Coalfield/>
 	</Hex>
-	<Hex name="H5" tile="-113" city="Oxmoor"/>
+	<Hex name="H5" tile="-113" city="Oxmoor">
 		<Coalfield/>
 	</Hex>
 	<Hex name="H7" tile="0"/>
@@ -46,8 +46,8 @@
 	<Hex name="J1" tile="0"/>
 	<Hex name="J3" tile="0"/>
 	<Hex name="J5" tile="0"/>
-	<Hex name="J7" tile="-10"/ city="West Point"/>
-	<Hex name="K2" tile="-10"/ city="York"/>
+	<Hex name="J7" tile="-10" city="West Point"/>
+	<Hex name="K2" tile="-10" city="York"/>
 	<Hex name="K4" tile="6" orientation="2" city="Selma"/>
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="0"/>
