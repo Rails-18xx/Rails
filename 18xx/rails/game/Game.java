@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.15 2008/02/14 21:49:46 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.16 2008/04/01 16:34:56 wakko666 Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -15,7 +15,7 @@ import java.util.*;
 
 public class Game
 {
-	public static final String version = "1.0.4";
+	public static final String version = "1.0.5";
 
 	/**
 	 * Game is a singleton class.
