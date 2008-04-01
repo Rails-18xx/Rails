@@ -61,7 +61,7 @@
      transform="matrix(5.4034205e-3,0,0,-6.1627746e-3,1.8360008e-4,0.9985117)"
      xml:space="preserve"
      stroke-miterlimit="10.433"
-     fill-rule="even-odd"
+     fill-rule="evenodd"
      font-style="normal"
      font-variant="normal"
      font-weight="normal"
