@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.10 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.11 2008/05/27 22:55:26 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -176,9 +176,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     }
 
     private void populateGameList(List<String> gameNames, JComboBox gameNameBox) {
+		String preferredgame = Config.get("default_game");
 	for (String gameName : gameNames) {
 	    String gameText = gameName + " - " + GamesInfo.getNote(gameName);
 	    gameNameBox.addItem(gameText);
+			if (preferredgame.equals(gameName)) {
+				gameNameBox.setSelectedItem(gameText);
+			}
 	}
     }
 
