@@ -1,6 +1,5 @@
 package rails.ui.swing.gamespecific._18EU;
 
-
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -15,162 +14,143 @@ import rails.ui.swing.GameStatus;
 import rails.ui.swing.elements.RadioButtonDialog;
 import rails.util.LocalText;
 
-
 /**
- * This class is incorporated into StatusWindow and displays the bulk of rails.game
- * status information.
+ * This class is incorporated into StatusWindow and displays the bulk of
+ * rails.game status information.
  */
-public class GameStatus_18EU extends GameStatus
-{
+public class GameStatus_18EU extends GameStatus {
     @Override
-    protected void initGameSpecificActions () {
+    protected void initGameSpecificActions() {
 
         PublicCompanyI mergingCompany;
         int index;
 
-        List<MergeCompanies> mergers = possibleActions.getType(MergeCompanies.class);
+        List<MergeCompanies> mergers =
+                possibleActions.getType(MergeCompanies.class);
         if (mergers != null) {
-            for (MergeCompanies merger : mergers)
-            {
+            for (MergeCompanies merger : mergers) {
                 mergingCompany = merger.getMergingCompany();
                 if (mergingCompany != null) {
-	                index = mergingCompany.getPublicNumber();
-	                setPlayerCertButton(index, merger.getPlayerIndex(), true, merger);
+                    index = mergingCompany.getPublicNumber();
+                    setPlayerCertButton(index, merger.getPlayerIndex(), true,
+                            merger);
                 }
             }
         }
 
     }
 
+    /** Start a company - specific procedure for 18EU */
+    @Override
+    protected PossibleAction processGameSpecificActions(ActionEvent actor,
+            PossibleAction chosenAction) {
 
-	/** Start a company - specific procedure for 18EU */
-	@Override
-    protected PossibleAction processGameSpecificActions (
-	        ActionEvent actor,
-	        PossibleAction chosenAction) {
+        if (chosenAction instanceof MergeCompanies) {
 
-	    if (chosenAction instanceof MergeCompanies) {
+            log.debug("Merge action: " + chosenAction.toString());
 
-	        log.debug("Merge action: "+chosenAction.toString());
+            MergeCompanies action = (MergeCompanies) chosenAction;
+            PublicCompanyI minor = action.getMergingCompany();
+            List<PublicCompanyI> targets = action.getTargetCompanies();
 
-	        MergeCompanies action = (MergeCompanies) chosenAction;
-	        PublicCompanyI minor = action.getMergingCompany();
-	        List<PublicCompanyI> targets = action.getTargetCompanies();
-
-	        if (minor == null || targets == null || targets.isEmpty()) {
-	            log.error("Bad "+action.toString());
-	            return null;
-	        }
+            if (minor == null || targets == null || targets.isEmpty()) {
+                log.error("Bad " + action.toString());
+                return null;
+            }
 
             String[] options = new String[targets.size()];
             int i = 0;
             for (PublicCompanyI target : targets) {
-            	if (target != null) {
-            		options[i++] = target.getName()+ " " + target.getLongName();
-            	} else {
-            		options[i++] = LocalText.getText("CloseMinor", minor.getName());
-            	}
+                if (target != null) {
+                    options[i++] =
+                            target.getName() + " " + target.getLongName();
+                } else {
+                    options[i++] = LocalText.getText("CloseMinor", //
+                            minor.getName());
+                }
             }
-            int choice = new RadioButtonDialog(
-                    this,
-                    LocalText.getText("PleaseSelect"),
-                    LocalText.getText("SelectCompanyToMergeMinorInto",
-                            minor.getName()),
-                    options,
-                    -1)
-                .getSelectedOption();
+            int choice = new RadioButtonDialog(this, // 
+                    LocalText.getText("PleaseSelect"), //
+                    LocalText.getText("SelectCompanyToMergeMinorInto", //
+                            minor.getName()), //
+                    options, -1).getSelectedOption();
             if (choice < 0) return null;
 
             PublicCompanyI major = targets.get(choice);
             action.setSelectedTargetCompany(major);
 
             if (major != null) {
-	            boolean replaceToken =
-	                JOptionPane.showConfirmDialog(this,
-	                        LocalText.getText("WantToReplaceToken",
-	                            new String[] {
-	                                minor.getName(),
-	                                major.getName()
-	                        }),
-	                        LocalText.getText("PleaseSelect"),
-	                        JOptionPane.YES_NO_OPTION)
-	                    == JOptionPane.YES_OPTION;
-	            action.setReplaceToken(replaceToken);
+                boolean replaceToken =
+                        JOptionPane.showConfirmDialog(this, LocalText.getText(
+                                "WantToReplaceToken", new String[] {
+                                        minor.getName(), //
+                                        major.getName() //
+                                }), LocalText.getText("PleaseSelect"),
+                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                action.setReplaceToken(replaceToken);
             } else {
-            	return chosenAction;
+                return chosenAction;
             }
-
-
 
             // TODO MOVE THIS TO A LATER STEP - MAY BE ANOTHER PLAYER!!!
             /*
-            List<TrainI> trains = action.getMinorTrains();
-            trains.addAll(action.getMajorTrains().get(choice));
-            int trainLimit = action.getMajorTrainLimit();
-            List<TrainI> discardedTrains = new ArrayList<TrainI>();
+             * List<TrainI> trains = action.getMinorTrains();
+             * trains.addAll(action.getMajorTrains().get(choice)); int
+             * trainLimit = action.getMajorTrainLimit(); List<TrainI>
+             * discardedTrains = new ArrayList<TrainI>();
+             * 
+             * while (trains.size() > trainLimit) {
+             * 
+             * List<String> trainOptions = new ArrayList<String>(trains.size());
+             * options = new String[trains.size()];
+             * 
+             * for (int j=0; j<options.length; j++) { options[j] =
+             * LocalText.getText("N_Train", trains.get(j).getName());
+             * trainOptions.add(options[j]); } String discardedTrainName =
+             * (String) JOptionPane.showInputDialog (this,
+             * LocalText.getText("HasTooManyTrains", new String[] {
+             * major.getName(), String.valueOf(trains.size()),
+             * String.valueOf(trainLimit) }),
+             * LocalText.getText("WhichTrainToDiscard"),
+             * JOptionPane.QUESTION_MESSAGE, null, options, options[0]); if
+             * (discardedTrainName != null) { TrainI train =
+             * trains.get(trainOptions.indexOf(discardedTrainName));
+             * discardedTrains.add(train); trains.remove(train); } } if
+             * (!discardedTrains.isEmpty()) {
+             * action.setDiscardedTrains(discardedTrains); }
+             */
+        }
+        return chosenAction;
+    }
 
-            while (trains.size() > trainLimit) {
-
-                List<String> trainOptions = new ArrayList<String>(trains.size());
-                options = new String[trains.size()];
-
-                for (int j=0; j<options.length; j++) {
-                    options[j] = LocalText.getText("N_Train", trains.get(j).getName());
-                    trainOptions.add(options[j]);
-                }
-                String discardedTrainName = (String) JOptionPane.showInputDialog (this,
-                        LocalText.getText("HasTooManyTrains", new String[] {
-                                major.getName(),
-                                String.valueOf(trains.size()),
-                                String.valueOf(trainLimit)
-                        }),
-                        LocalText.getText("WhichTrainToDiscard"),
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]);
-                if (discardedTrainName != null)
-                {
-                    TrainI train = trains.get(trainOptions.indexOf(discardedTrainName));
-                    discardedTrains.add(train);
-                    trains.remove(train);
-                }
-
-            }
-            if (!discardedTrains.isEmpty()) {
-                action.setDiscardedTrains(discardedTrains);
-            }
-            */
-	    }
-	    return chosenAction;
-	}
-
-	  /** Start a company - specific procedure for 18EU */
+    /** Start a company - specific procedure for 18EU */
     @Override
-    protected PossibleAction processGameSpecificFollowUpActions (
-            ActionEvent actor,
-            PossibleAction chosenAction) {
+    protected PossibleAction processGameSpecificFollowUpActions(
+            ActionEvent actor, PossibleAction chosenAction) {
 
         if (chosenAction instanceof StartCompany_18EU) {
 
             StartCompany_18EU action = (StartCompany_18EU) chosenAction;
-            List<PublicCompanyI> minors =
-                ((StartCompany_18EU)chosenAction).getMinorsToMerge();
+            List<PublicCompanyI> minors = //
+                    ((StartCompany_18EU) chosenAction).getMinorsToMerge();
 
             if (minors == null || minors.isEmpty()) {
                 // Do nothing
             } else if (minors.size() == 1) {
                 PublicCompanyI minor = minors.get(0);
-                int answer = JOptionPane.showConfirmDialog(
-                        parent,
-                        LocalText.getText("MergeMinorConfirm",
-                                new String[] {
-                                    minor.getName(),
-                                    action.getCertificate().getCompany().getName()
-                        }),
-                        LocalText.getText("PleaseConfirm"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
+                int answer =
+                        JOptionPane.showConfirmDialog(
+                                parent, //
+                                LocalText
+                                        .getText("MergeMinorConfirm",
+                                                new String[] {
+                                                        minor.getName(),
+                                                        action.getCertificate()
+                                                                .getCompany()
+                                                                .getName() }),
+                                LocalText.getText("PleaseConfirm"),
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
                     action.setChosenMinor(minor);
                     chosenAction = action;
@@ -181,16 +161,17 @@ public class GameStatus_18EU extends GameStatus
                 String[] options = new String[minors.size()];
                 int i = 0;
                 for (PublicCompanyI minor : minors) {
-                    options[i++] = "Minor " + minor.getName()+ " " + minor.getLongName();
+                    options[i++] =
+                            "Minor " + minor.getName() + " "
+                                    + minor.getLongName();
                 }
-                int choice = new RadioButtonDialog(
-                        this,
-                        LocalText.getText("PleaseSelect"),
-                        LocalText.getText("SelectMinorToMerge",
-                                action.getCertificate().getCompany().getName()),
-                        options,
-                        -1)
-                    .getSelectedOption();
+                int choice =
+                        new RadioButtonDialog(this, //
+                                LocalText.getText("PleaseSelect"), //
+                                LocalText.getText("SelectMinorToMerge", action
+                                        .getCertificate().getCompany()
+                                        .getName()), options, -1)
+                                .getSelectedOption();
                 if (choice >= 0) {
                     action.setChosenMinor(minors.get(choice));
                     chosenAction = action;
@@ -202,25 +183,24 @@ public class GameStatus_18EU extends GameStatus
             List<City> cities = action.getAvailableHomeStations();
             if (cities != null && !cities.isEmpty()) {
                 String[] options = new String[cities.size()];
-                for (int i=0; i<options.length; i++) {
+                for (int i = 0; i < options.length; i++) {
                     options[i] = cities.get(i).toString();
                 }
-                int index = new RadioButtonDialog (this,
-                        LocalText.getText("PleaseSelect"),
-                        LocalText.getText("SelectHomeStation",
-                                action.getCertificate().getCompany().getName()),
-                        options,
-                        -1)
-                    .getSelectedOption();
+                int index =
+                        new RadioButtonDialog(this, //
+                                LocalText.getText("PleaseSelect"), //
+                                LocalText.getText("SelectHomeStation", //
+                                        action.getCertificate().getCompany()
+                                                .getName()), options, -1)
+                                .getSelectedOption();
                 if (index >= 0) {
                     action.setHomeStation(cities.get(index));
                 } else {
                     return null;
                 }
-}
+            }
         }
         return chosenAction;
     }
-
 
 }
