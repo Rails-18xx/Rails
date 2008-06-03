@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.13 2008/02/19 20:31:58 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.14 2008/06/03 21:25:43 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -280,9 +280,28 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void mouseEntered(MouseEvent e) {
+        Object source = e.getSource();
+        if (!(source instanceof JLabel)) return;
+        
+        if (!tokenMode) {
+            // tile mode
+            HexLabel tile = (HexLabel) e.getSource();
+            String tooltip = tile.getToolTip();
+            if (tooltip != "") {
+                tile.setToolTipText(tooltip);
+            }
+        }
     }
 
     public void mouseExited(MouseEvent e) {
+        Object source = e.getSource();
+        if (!(source instanceof JLabel)) return;
+        
+        if (!tokenMode) {
+            // tile mode
+            HexLabel tile = (HexLabel) e.getSource();
+            tile.setToolTipText(null);
+        }
     }
 
     public void mousePressed(MouseEvent e) {
@@ -299,15 +318,50 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     /** JLabel extension to allow attaching the internal hex ID */
     private class HexLabel extends JLabel {
 
+        String toolTip;
         int internalId;
 
         HexLabel (ImageIcon hexIcon, int internalId) {
             super (hexIcon);
             this.internalId = internalId;
+            this.setToolTip();
         }
 
         int getInternalId () {
             return internalId;
         }
+        
+        public String getToolTip()
+        {
+            return toolTip;
+        }
+        
+        protected void setToolTip()
+        {
+            TileI currentTile = TileManager.get().getTile(internalId);
+            StringBuffer tt = new StringBuffer("<html>");
+            tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or getId()
+            if (currentTile.hasStations())
+            {
+                //for (Station st : currentTile.getStations())
+                int cityNumber = 0;
+                // TileI has stations, but 
+                for (Station st: currentTile.getStations())
+                {
+                    cityNumber++; // = city.getNumber();
+                    tt.append("<br>  ").append(st.getType())
+                    .append(" ").append(cityNumber) //.append("/").append(st.getNumber())
+                    .append(": value ");
+                    tt.append(st.getValue());
+                    if (st.getBaseSlots() > 0)
+                    {
+                        tt.append(", ").append(st.getBaseSlots()).append(" slots");
+                    }
+                }
+            }
+            tt.append("</html>");
+            toolTip = tt.toString();
+        }
+
     }
 }

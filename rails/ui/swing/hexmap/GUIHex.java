@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.15 2008/03/17 17:50:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.16 2008/06/03 21:25:44 wakko666 Exp $*/
 package rails.ui.swing.hexmap;
 
 
@@ -799,7 +799,7 @@ public class GUIHex implements ViewObject
 		if (getHexModel().getDestinations() != null) {
 			tt.append("<br><b>Destination</b>:");
 			for (PublicCompanyI dest : getHexModel().getDestinations()) {
-			    tt.append (" ");
+			    tt.append("</html>");
                 tt.append(dest.getName());
 			}
 		}
