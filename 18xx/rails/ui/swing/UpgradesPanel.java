@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.14 2008/06/03 21:25:43 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.15 2008/06/04 19:00:33 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -35,12 +35,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private final String INIT_CANCEL_TEXT = "NoTile";
     private final String INIT_DONE_TEXT = "LayTile";
     private boolean tokenMode = false;
-    private JButton cancelButton = new JButton(
-            LocalText.getText(INIT_CANCEL_TEXT));
+    private JButton cancelButton =
+            new JButton(LocalText.getText(INIT_CANCEL_TEXT));
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
     private HexMap hexMap;
 
-    protected static Logger log = Logger.getLogger(UpgradesPanel.class.getPackage().getName());
+    protected static Logger log =
+            Logger.getLogger(UpgradesPanel.class.getPackage().getName());
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);
@@ -73,56 +74,58 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void populate() {
-        if (hexMap == null)
-            hexMap = orUIManager.getMapPanel().getMap();
+        if (hexMap == null) hexMap = orUIManager.getMapPanel().getMap();
 
         GUIHex uiHex = hexMap.getSelectedHex();
         MapHex hex = uiHex.getHexModel();
         orUIManager.tileUpgrades = new ArrayList<TileI>();
         List<TileI> tiles;
 
-        for (LayTile layTile: hexMap.getTileAllowancesForHex(hex)) {
-        	tiles = layTile.getTiles();
-        	if (tiles == null) {
-        		for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(
-                    hex,
-                    GameManager.getCurrentPhase())) {
-        			if (!orUIManager.tileUpgrades.contains(tile)) orUIManager.tileUpgrades.add (tile);
-        		}
-        	} else {
-        		for (TileI tile : tiles) {
-        			if (!orUIManager.tileUpgrades.contains(tile)) orUIManager.tileUpgrades.add (tile);
-        		}
-        	}
+        for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
+            tiles = layTile.getTiles();
+            if (tiles == null) {
+                for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
+                        GameManager.getCurrentPhase())) {
+                    if (!orUIManager.tileUpgrades.contains(tile))
+                        orUIManager.tileUpgrades.add(tile);
+                }
+            } else {
+                for (TileI tile : tiles) {
+                    if (!orUIManager.tileUpgrades.contains(tile))
+                        orUIManager.tileUpgrades.add(tile);
+                }
+            }
         }
     }
 
     public void showUpgrades() {
         upgradePanel.removeAll();
-        if (tokenMode && possibleTokenLays != null && possibleTokenLays.size() > 0) {
+        if (tokenMode && possibleTokenLays != null
+            && possibleTokenLays.size() > 0) {
 
-        	Color fgColour = null;
-        	Color bgColour = null;
-        	String text = null;
-        	String description = null;
+            Color fgColour = null;
+            Color bgColour = null;
+            String text = null;
+            String description = null;
             TokenIcon icon;
             ActionLabel tokenLabel;
             tokenLabels = new ArrayList<ActionLabel>();
             for (LayToken action : possibleTokenLays) {
-            	if (action instanceof LayBaseToken) {
-            		PublicCompanyI comp = ((LayBaseToken) action).getCompany();
-            		fgColour = comp.getFgColour();
-            		bgColour = comp.getBgColour();
-            		description = text = comp.getName();
-            	} else if (action instanceof LayBonusToken) {
-            		fgColour = Color.BLACK;
-            		bgColour = Color.WHITE;
-            		BonusToken token = (BonusToken) action.getSpecialProperty().getToken();
-            		description = token.getName();
-            		text = "+"+token.getValue();
-            	}
-                icon = new TokenIcon (25, fgColour, bgColour, text);
-                tokenLabel = new ActionLabel (icon);
+                if (action instanceof LayBaseToken) {
+                    PublicCompanyI comp = ((LayBaseToken) action).getCompany();
+                    fgColour = comp.getFgColour();
+                    bgColour = comp.getBgColour();
+                    description = text = comp.getName();
+                } else if (action instanceof LayBonusToken) {
+                    fgColour = Color.BLACK;
+                    bgColour = Color.WHITE;
+                    BonusToken token =
+                            (BonusToken) action.getSpecialProperty().getToken();
+                    description = token.getName();
+                    text = "+" + token.getValue();
+                }
+                icon = new TokenIcon(25, fgColour, bgColour, text);
+                tokenLabel = new ActionLabel(icon);
                 tokenLabel.setName(description);
                 tokenLabel.setText(description);
                 tokenLabel.setBackground(defaultLabelBgColour);
@@ -136,10 +139,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 upgradePanel.add(tokenLabel);
             }
 
-            setSelectedToken ();
+            setSelectedToken();
 
-        } else if (orUIManager.tileUpgrades == null) {
-        } else if (orUIManager.tileUpgrades.size() == 0) {
+        } else if (orUIManager.tileUpgrades == null) {} else if (orUIManager.tileUpgrades.size() == 0) {
             orUIManager.setMessage(LocalText.getText("NoTiles"));
         } else {
             for (TileI tile : orUIManager.tileUpgrades) {
@@ -148,8 +150,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 // Cheap n' Easy rescaling.
                 hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE*0.8),
-                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE*0.8),
+                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
+                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                         Image.SCALE_SMOOTH));
 
                 HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
@@ -170,27 +172,28 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         repaint();
     }
 
-    public void clear () {
-    	upgradePanel.removeAll();
+    public void clear() {
+        upgradePanel.removeAll();
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
-    	upgradePanel.repaint();
+        upgradePanel.repaint();
     }
 
-    public void setSelectedTokenIndex (int index) {
-    	log.debug("Selected token index from "+selectedTokenIndex+" to "+index);
-    	selectedTokenIndex = index;
+    public void setSelectedTokenIndex(int index) {
+        log.debug("Selected token index from " + selectedTokenIndex + " to "
+                  + index);
+        selectedTokenIndex = index;
     }
 
-    public void setSelectedToken () {
+    public void setSelectedToken() {
         if (tokenLabels == null || tokenLabels.isEmpty()) return;
         int index = -1;
         for (ActionLabel tokenLabel : tokenLabels) {
             tokenLabel.setBackground(++index == selectedTokenIndex
-                    ? selectedLabelBgColour
-                    : defaultLabelBgColour);
+                    ? selectedLabelBgColour : defaultLabelBgColour);
         }
     }
+
     private BufferedImage getHexImage(int tileId) {
         return GameUIManager.getImageLoader().getTile(tileId);
     }
@@ -209,7 +212,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         this.orUIManager.tileUpgrades = upgrades;
     }
 
-    public void addUpgrades (List<TileI> upgrades) {
+    public void addUpgrades(List<TileI> upgrades) {
         this.orUIManager.tileUpgrades.addAll(upgrades);
     }
 
@@ -224,7 +227,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         selectedTokenIndex = -1;
     }
 
-    public <T extends LayToken> void setPossibleTokenLays (List<T> actions) {
+    public <T extends LayToken> void setPossibleTokenLays(List<T> actions) {
         possibleTokenLays.clear();
         selectedTokenIndex = -1;
         if (actions != null) possibleTokenLays.addAll(actions);
@@ -251,7 +254,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         Object source = e.getSource();
 
         if (source == cancelButton) {
-        	orUIManager.cancelUpgrade();
+            orUIManager.cancelUpgrade();
         } else if (source == doneButton) {
             orUIManager.executeUpgrade();
         }
@@ -259,22 +262,23 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     public void mouseClicked(MouseEvent e) {
 
-    	Object source = e.getSource();
+        Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
 
         if (tokenMode) {
-        	if (tokenLabels.contains(source)) {
-        		orUIManager.tokenSelected((LayToken)((ActionLabel)source).getPossibleActions().get(0));
+            if (tokenLabels.contains(source)) {
+                orUIManager.tokenSelected((LayToken) ((ActionLabel) source).getPossibleActions().get(
+                        0));
                 setDoneEnabled(true);
-        	} else {
-        		orUIManager.tokenSelected(null);
-        	}
+            } else {
+                orUIManager.tokenSelected(null);
+            }
             setSelectedToken();
         } else {
 
-	        int id = ((HexLabel) e.getSource()).getInternalId();
+            int id = ((HexLabel) e.getSource()).getInternalId();
 
-	        orUIManager.tileSelected(id);
+            orUIManager.tileSelected(id);
         }
 
     }
@@ -282,7 +286,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     public void mouseEntered(MouseEvent e) {
         Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
-        
+
         if (!tokenMode) {
             // tile mode
             HexLabel tile = (HexLabel) e.getSource();
@@ -296,7 +300,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     public void mouseExited(MouseEvent e) {
         Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
-        
+
         if (!tokenMode) {
             // tile mode
             HexLabel tile = (HexLabel) e.getSource();
@@ -304,11 +308,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         }
     }
 
-    public void mousePressed(MouseEvent e) {
-    }
+    public void mousePressed(MouseEvent e) {}
 
-    public void mouseReleased(MouseEvent e) {
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     public void finish() {
         setDoneEnabled(false);
@@ -321,41 +323,38 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         String toolTip;
         int internalId;
 
-        HexLabel (ImageIcon hexIcon, int internalId) {
-            super (hexIcon);
+        HexLabel(ImageIcon hexIcon, int internalId) {
+            super(hexIcon);
             this.internalId = internalId;
             this.setToolTip();
         }
 
-        int getInternalId () {
+        int getInternalId() {
             return internalId;
         }
-        
-        public String getToolTip()
-        {
+
+        public String getToolTip() {
             return toolTip;
         }
-        
-        protected void setToolTip()
-        {
+
+        protected void setToolTip() {
             TileI currentTile = TileManager.get().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
-            tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or getId()
-            if (currentTile.hasStations())
-            {
-                //for (Station st : currentTile.getStations())
+            tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or
+                                                                        // getId()
+            if (currentTile.hasStations()) {
+                // for (Station st : currentTile.getStations())
                 int cityNumber = 0;
-                // TileI has stations, but 
-                for (Station st: currentTile.getStations())
-                {
+                // TileI has stations, but
+                for (Station st : currentTile.getStations()) {
                     cityNumber++; // = city.getNumber();
-                    tt.append("<br>  ").append(st.getType())
-                    .append(" ").append(cityNumber) //.append("/").append(st.getNumber())
+                    tt.append("<br>  ").append(st.getType()).append(" ").append(
+                            cityNumber) // .append("/").append(st.getNumber())
                     .append(": value ");
                     tt.append(st.getValue());
-                    if (st.getBaseSlots() > 0)
-                    {
-                        tt.append(", ").append(st.getBaseSlots()).append(" slots");
+                    if (st.getBaseSlots() > 0) {
+                        tt.append(", ").append(st.getBaseSlots()).append(
+                                " slots");
                     }
                 }
             }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18AL/NameTrainsDialog.java,v 1.2 2008/01/27 23:27:55 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18AL/NameTrainsDialog.java,v 1.3 2008/06/04 19:00:40 evos Exp $*/
 package rails.ui.swing.gamespecific._18AL;
 
 import java.awt.*;
@@ -36,184 +36,184 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
 
     JPanel pane, selectionPane, buttonPane;
     JButton doneButton, cancelButton;
-    Map<NamedTrainToken, List<JRadioButton>> buttonsPerToken = new HashMap<NamedTrainToken, List<JRadioButton>>();
+    Map<NamedTrainToken, List<JRadioButton>> buttonsPerToken =
+            new HashMap<NamedTrainToken, List<JRadioButton>>();
 
-    protected static Logger log = Logger.getLogger(NameTrainsDialog.class
-	    .getPackage().getName());
+    protected static Logger log =
+            Logger.getLogger(NameTrainsDialog.class.getPackage().getName());
 
     public NameTrainsDialog(ORWindow orWindow, AssignNamedTrains action) {
 
-	super(orWindow, true);
+        super(orWindow, true);
 
-	this.orWindow = orWindow;
-	this.action = action;
-	this.tokens = action.getTokens();
-	this.trains = action.getNameableTrains();
-	numberOfTrains = trains.size();
-	trainPerToken = new ArrayList<NameableTrain>(tokens.size());
-	for (int i = 0; i < tokens.size(); i++) {
-	    trainPerToken.add(null);
-	}
+        this.orWindow = orWindow;
+        this.action = action;
+        this.tokens = action.getTokens();
+        this.trains = action.getNameableTrains();
+        numberOfTrains = trains.size();
+        trainPerToken = new ArrayList<NameableTrain>(tokens.size());
+        for (int i = 0; i < tokens.size(); i++) {
+            trainPerToken.add(null);
+        }
 
-	initialize();
+        initialize();
 
-	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-	this.setLocationRelativeTo(orWindow);
-	this.pack();
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(orWindow);
+        this.pack();
     }
 
     private void initialize() {
 
-	ButtonGroup group;
-	JRadioButton radioButton;
+        ButtonGroup group;
+        JRadioButton radioButton;
 
-	pane = new JPanel(new BorderLayout());
+        pane = new JPanel(new BorderLayout());
 
-	selectionPane = new JPanel();
-	buttonPane = new JPanel();
+        selectionPane = new JPanel();
+        buttonPane = new JPanel();
 
-	selectionPane.setLayout(new GridBagLayout());
-	this.setTitle("Assign Named Trains");
-	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        selectionPane.setLayout(new GridBagLayout());
+        this.setTitle("Assign Named Trains");
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-	gc = new GridBagConstraints();
-	gc.gridx = 0;
-	gc.gridy = 0;
-	gc.weightx = 0;
-	gc.weighty = 0;
-	gc.gridwidth = 1;
-	gc.gridheight = 1;
-	gc.ipadx = 0;
-	gc.ipady = 0;
-	gc.anchor = GridBagConstraints.CENTER;
-	gc.fill = GridBagConstraints.HORIZONTAL;
-	gc.insets = new Insets(1, 1, 1, 1);
+        gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.weightx = 0;
+        gc.weighty = 0;
+        gc.gridwidth = 1;
+        gc.gridheight = 1;
+        gc.ipadx = 0;
+        gc.ipady = 0;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.insets = new Insets(1, 1, 1, 1);
 
-	int x = 2;
-	int y = 0;
-	for (TrainI train : trains) {
-	    addItem(new JLabel(train.getName(), SwingConstants.CENTER), x++, y);
-	}
-	addItem(new JLabel("None", SwingConstants.CENTER), x, y);
+        int x = 2;
+        int y = 0;
+        for (TrainI train : trains) {
+            addItem(new JLabel(train.getName(), SwingConstants.CENTER), x++, y);
+        }
+        addItem(new JLabel("None", SwingConstants.CENTER), x, y);
 
-	for (NamedTrainToken token : tokens) {
-	    x = 0;
-	    NameableTrain preAssignedTrain = action.getPreTrainPerToken().get(
-		    tokens.indexOf(token));
-	    trainPerToken.set(tokens.indexOf(token), preAssignedTrain);
+        for (NamedTrainToken token : tokens) {
+            x = 0;
+            NameableTrain preAssignedTrain =
+                    action.getPreTrainPerToken().get(tokens.indexOf(token));
+            trainPerToken.set(tokens.indexOf(token), preAssignedTrain);
 
-	    addItem(new JLabel(token.getName()), x, ++y);
-	    addItem(new JLabel("+" + Bank.format(token.getValue())), ++x, y);
-	    group = new ButtonGroup();
-	    List<JRadioButton> buttons = new ArrayList<JRadioButton>();
-	    buttonsPerToken.put(token, buttons);
-	    for (NameableTrain train : trains) {
-		radioButton = new JRadioButton();
-		radioButton.setSelected(train.equals(preAssignedTrain));
-		addItem(radioButton, ++x, y);
-		group.add(radioButton);
-		buttons.add(radioButton);
-		radioButton.addActionListener(this);
-	    }
-	    radioButton = new JRadioButton();
-	    addItem(radioButton, ++x, y);
-	    group.add(radioButton);
-	    buttons.add(radioButton);
-	    radioButton.addActionListener(this);
-	}
+            addItem(new JLabel(token.getName()), x, ++y);
+            addItem(new JLabel("+" + Bank.format(token.getValue())), ++x, y);
+            group = new ButtonGroup();
+            List<JRadioButton> buttons = new ArrayList<JRadioButton>();
+            buttonsPerToken.put(token, buttons);
+            for (NameableTrain train : trains) {
+                radioButton = new JRadioButton();
+                radioButton.setSelected(train.equals(preAssignedTrain));
+                addItem(radioButton, ++x, y);
+                group.add(radioButton);
+                buttons.add(radioButton);
+                radioButton.addActionListener(this);
+            }
+            radioButton = new JRadioButton();
+            addItem(radioButton, ++x, y);
+            group.add(radioButton);
+            buttons.add(radioButton);
+            radioButton.addActionListener(this);
+        }
 
-	doneButton = new JButton(LocalText.getText("Done"));
-	cancelButton = new JButton(LocalText.getText("Cancel"));
+        doneButton = new JButton(LocalText.getText("Done"));
+        cancelButton = new JButton(LocalText.getText("Cancel"));
 
-	doneButton.setMnemonic(KeyEvent.VK_D);
-	cancelButton.setMnemonic(KeyEvent.VK_C);
+        doneButton.setMnemonic(KeyEvent.VK_D);
+        cancelButton.setMnemonic(KeyEvent.VK_C);
 
-	doneButton.addActionListener(this);
-	cancelButton.addActionListener(this);
+        doneButton.addActionListener(this);
+        cancelButton.addActionListener(this);
 
-	buttonPane.add(doneButton);
-	buttonPane.add(cancelButton);
+        buttonPane.add(doneButton);
+        buttonPane.add(cancelButton);
 
-	pane.add(selectionPane, BorderLayout.NORTH);
-	pane.add(buttonPane, BorderLayout.SOUTH);
+        pane.add(selectionPane, BorderLayout.NORTH);
+        pane.add(buttonPane, BorderLayout.SOUTH);
 
-	getContentPane().add(pane);
+        getContentPane().add(pane);
 
     }
 
     private void addItem(JComponent item, int x, int y) {
-	gc.gridx = x;
-	gc.gridy = y;
-	// item.setBorder(border); // Does not work for radio buttons
-	selectionPane.add(item, gc);
+        gc.gridx = x;
+        gc.gridy = y;
+        // item.setBorder(border); // Does not work for radio buttons
+        selectionPane.add(item, gc);
     }
 
     public boolean hasChanged() {
-	return changed;
+        return changed;
     }
 
     public AssignNamedTrains getUpdatedAction() {
-	return action;
+        return action;
     }
 
     public void actionPerformed(ActionEvent arg0) {
 
-	Object source = arg0.getSource();
+        Object source = arg0.getSource();
 
-	if (source.equals(doneButton)) {
-	    action.setPostTrainPerToken(trainPerToken);
-	    setVisible(false);
-	} else if (source.equals(cancelButton)) {
-	    changed = false;
-	    setVisible(false);
-	} else if (source instanceof JRadioButton) {
+        if (source.equals(doneButton)) {
+            action.setPostTrainPerToken(trainPerToken);
+            setVisible(false);
+        } else if (source.equals(cancelButton)) {
+            changed = false;
+            setVisible(false);
+        } else if (source instanceof JRadioButton) {
 
-	    JRadioButton radioButton = (JRadioButton) source;
-	    int x = -1;
-	    int y = -1;
+            JRadioButton radioButton = (JRadioButton) source;
+            int x = -1;
+            int y = -1;
 
-	    // Find the coordinates of the selected button
-	    for (NamedTrainToken token : tokens) {
-		List<JRadioButton> buttons = (List<JRadioButton>) buttonsPerToken
-			.get(token);
-		for (JRadioButton button : buttons) {
-		    if (button == radioButton) {
-			x = buttons.indexOf(button);
-			y = tokens.indexOf(token);
-			break;
-		    }
-		}
-		if (x == -1)
-		    continue;
+            // Find the coordinates of the selected button
+            for (NamedTrainToken token : tokens) {
+                List<JRadioButton> buttons =
+                        (List<JRadioButton>) buttonsPerToken.get(token);
+                for (JRadioButton button : buttons) {
+                    if (button == radioButton) {
+                        x = buttons.indexOf(button);
+                        y = tokens.indexOf(token);
+                        break;
+                    }
+                }
+                if (x == -1) continue;
 
-		log.debug("RadioButton: x=" + x + " y=" + y);
-		changed = true;
+                log.debug("RadioButton: x=" + x + " y=" + y);
+                changed = true;
 
-		if (x < trains.size()) {
-		    trainPerToken.set(y, trains.get(x));
-		} else {
-		    trainPerToken.set(y, null);
-		}
+                if (x < trains.size()) {
+                    trainPerToken.set(y, trains.get(x));
+                } else {
+                    trainPerToken.set(y, null);
+                }
 
-		// Deselect any other tokens with the same train
-		if (x >= 0 && tokens.size() > 1) {
-		    for (NamedTrainToken otherToken : tokens) {
-			if (otherToken != token) {
-			    List<JRadioButton> otherButtons = (List<JRadioButton>) buttonsPerToken
-				    .get(otherToken);
-			    JRadioButton otherButton = otherButtons.get(x);
-			    if (otherButton.isSelected()) {
-				otherButtons.get(trains.size()).setSelected(
-					true);
-				trainPerToken.set(tokens.indexOf(otherToken),
-					null);
-			    }
-			}
-		    }
-		    break;
-		}
-	    }
-	}
+                // Deselect any other tokens with the same train
+                if (x >= 0 && tokens.size() > 1) {
+                    for (NamedTrainToken otherToken : tokens) {
+                        if (otherToken != token) {
+                            List<JRadioButton> otherButtons =
+                                    (List<JRadioButton>) buttonsPerToken.get(otherToken);
+                            JRadioButton otherButton = otherButtons.get(x);
+                            if (otherButton.isSelected()) {
+                                otherButtons.get(trains.size()).setSelected(
+                                        true);
+                                trainPerToken.set(tokens.indexOf(otherToken),
+                                        null);
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
     }
 
 }

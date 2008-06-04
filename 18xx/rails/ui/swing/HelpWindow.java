@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/HelpWindow.java,v 1.4 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/HelpWindow.java,v 1.5 2008/06/04 19:00:33 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -21,73 +21,66 @@ public class HelpWindow extends JFrame implements WindowListener {
 
     public static void displayHelp(String text) {
 
-	if (helpWindow == null)
-	    helpWindow = new HelpWindow();
-	helpWindow.display(text);
+        if (helpWindow == null) helpWindow = new HelpWindow();
+        helpWindow.display(text);
     }
 
     public HelpWindow() {
-	helpWindow = this;
+        helpWindow = this;
 
-	message = new JEditorPane("text/html", "");
-	message.setBackground(new Color(255, 255, 210));
-	message.setOpaque(true);
-	message.setEditable(false);
-	messagePanel = new JPanel(new GridBagLayout());
-	messageScroller = new JScrollPane(message,
-		ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	vbar = messageScroller.getVerticalScrollBar();
-	GridBagConstraints gbc = new GridBagConstraints();
-	gbc.gridx = gbc.gridy = 0;
-	gbc.weightx = gbc.weighty = 0.5;
-	gbc.fill = GridBagConstraints.BOTH;
-	messagePanel.add(messageScroller, gbc);
-	setContentPane(messagePanel);
+        message = new JEditorPane("text/html", "");
+        message.setBackground(new Color(255, 255, 210));
+        message.setOpaque(true);
+        message.setEditable(false);
+        messagePanel = new JPanel(new GridBagLayout());
+        messageScroller =
+                new JScrollPane(message,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        vbar = messageScroller.getVerticalScrollBar();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.weightx = gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        messagePanel.add(messageScroller, gbc);
+        setContentPane(messagePanel);
 
-	setSize(400, 400);
-	setLocation(600, 000);
+        setSize(400, 400);
+        setLocation(600, 000);
 
-	messagePanel.setBorder(BorderFactory.createEtchedBorder());
+        messagePanel.setBorder(BorderFactory.createEtchedBorder());
 
-	setTitle("Help");
-	addWindowListener(this);
+        setTitle("Help");
+        addWindowListener(this);
     }
 
     private void display(String text) {
-	if (text == null)
-	    text = "";
-	helpWindow.message.setText(text);
-	if (text.equals("")) {
-	    setVisible(false);
-	} else {
-	    helpWindow.vbar.setValue(helpWindow.vbar.getMaximum());
-	    setState(Frame.NORMAL);
-	    pack();
-	    setVisible(true);
-	    toFront();
-	}
+        if (text == null) text = "";
+        helpWindow.message.setText(text);
+        if (text.equals("")) {
+            setVisible(false);
+        } else {
+            helpWindow.vbar.setValue(helpWindow.vbar.getMaximum());
+            setState(Frame.NORMAL);
+            pack();
+            setVisible(true);
+            toFront();
+        }
     }
 
-    public void windowActivated(WindowEvent e) {
-    }
+    public void windowActivated(WindowEvent e) {}
 
-    public void windowClosed(WindowEvent e) {
-    }
+    public void windowClosed(WindowEvent e) {}
 
     public void windowClosing(WindowEvent e) {
-	dispose();
+        dispose();
     }
 
-    public void windowDeactivated(WindowEvent e) {
-    }
+    public void windowDeactivated(WindowEvent e) {}
 
-    public void windowDeiconified(WindowEvent e) {
-    }
+    public void windowDeiconified(WindowEvent e) {}
 
-    public void windowIconified(WindowEvent e) {
-    }
+    public void windowIconified(WindowEvent e) {}
 
-    public void windowOpened(WindowEvent e) {
-    }
+    public void windowOpened(WindowEvent e) {}
 }

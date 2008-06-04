@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ClickField.java,v 1.6 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ClickField.java,v 1.7 2008/06/04 19:00:39 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -24,35 +24,33 @@ public class ClickField extends JToggleButton implements ActionTaker {
     private List<PossibleAction> actions;
 
     public ClickField(String text, String actionCommand, String toolTip,
-	    ActionListener caller, ButtonGroup group) {
-	super(text);
-	this.setBackground(buttonColour);
-	this.setMargin(buttonInsets);
-	this.setOpaque(true);
-	this.setVisible(false);
-	this.addActionListener(caller);
-	this.setActionCommand(actionCommand);
-	this.setToolTipText(toolTip);
-	group.add(this);
+            ActionListener caller, ButtonGroup group) {
+        super(text);
+        this.setBackground(buttonColour);
+        this.setMargin(buttonInsets);
+        this.setOpaque(true);
+        this.setVisible(false);
+        this.addActionListener(caller);
+        this.setActionCommand(actionCommand);
+        this.setToolTipText(toolTip);
+        group.add(this);
     }
 
     public void addPossibleAction(PossibleAction o) {
-	if (actions == null)
-	    actions = new ArrayList<PossibleAction>(2);
-	actions.add(o);
+        if (actions == null) actions = new ArrayList<PossibleAction>(2);
+        actions.add(o);
     }
 
     public List<PossibleAction> getPossibleActions() {
-	return actions;
+        return actions;
     }
 
     public void clearPossibleActions() {
-	if (actions != null)
-	    actions.clear();
+        if (actions != null) actions.clear();
     }
 
     public void setPossibleAction(PossibleAction action) {
-	clearPossibleActions();
-	addPossibleAction(action);
+        clearPossibleActions();
+        addPossibleAction(action);
     }
 }

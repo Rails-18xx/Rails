@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.3 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.4 2008/06/04 19:00:33 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  * Operating Round. This window also contains the Game Map.
  */
 public class RemainingTilesWindow extends JFrame implements WindowListener,
-	ActionListener {
+        ActionListener {
     private static final long serialVersionUID = 1L;
     private GameUIManager gameUIManager;
     private ORUIManager orUIManager;
@@ -33,67 +33,62 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
     private final static int COLUMNS = 10;
 
-    protected static Logger log = Logger.getLogger(RemainingTilesWindow.class
-	    .getPackage().getName());
+    protected static Logger log =
+            Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
 
     public RemainingTilesWindow(ORWindow orWindow) {
-	super();
+        super();
 
-	getContentPane().setLayout(new GridLayout(0, COLUMNS, 5, 5));
+        getContentPane().setLayout(new GridLayout(0, COLUMNS, 5, 5));
 
-	setTitle("Rails: Remaining Tiles");
-	setVisible(false);
-	setSize(800, 600);
-	addWindowListener(this);
+        setTitle("Rails: Remaining Tiles");
+        setVisible(false);
+        setSize(800, 600);
+        addWindowListener(this);
 
-	init();
+        init();
 
-	this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-	this.setLocationRelativeTo(orWindow);
-	pack();
-	setVisible(true);
+        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        this.setLocationRelativeTo(orWindow);
+        pack();
+        setVisible(true);
     }
 
     private void init() {
 
-	TileManagerI tmgr = TileManager.get();
-	TileI tile;
-	Field label;
-	BufferedImage hexImage;
-	ImageIcon hexIcon;
+        TileManagerI tmgr = TileManager.get();
+        TileI tile;
+        Field label;
+        BufferedImage hexImage;
+        ImageIcon hexIcon;
 
-	// Build the grid with tiles in the sequence as
-	// these have been defined in Tiles.xml
-	List<Integer> tileIds = tmgr.getTileIds();
-	log.debug("There are " + tileIds.size() + " tiles known in this game");
+        // Build the grid with tiles in the sequence as
+        // these have been defined in Tiles.xml
+        List<Integer> tileIds = tmgr.getTileIds();
+        log.debug("There are " + tileIds.size() + " tiles known in this game");
 
-	for (int tileId : tileIds) {
-	    if (tileId <= 0)
-		continue;
+        for (int tileId : tileIds) {
+            if (tileId <= 0) continue;
 
-	    tile = tmgr.getTile(tileId);
+            tile = tmgr.getTile(tileId);
 
-	    hexImage = GameUIManager.getImageLoader().getTile(tileId);
-	    hexIcon = new ImageIcon(hexImage);
-	    hexIcon
-		    .setImage(hexIcon.getImage()
-			    .getScaledInstance(
-				    (int) (hexIcon.getIconWidth()
-					    * GUIHex.NORMAL_SCALE * 0.8),
-				    (int) (hexIcon.getIconHeight()
-					    * GUIHex.NORMAL_SCALE * 0.8),
-				    Image.SCALE_SMOOTH));
+            hexImage = GameUIManager.getImageLoader().getTile(tileId);
+            hexIcon = new ImageIcon(hexImage);
+            hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                    (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
+                    (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                    Image.SCALE_SMOOTH));
 
-	    label = new Field((ModelObject) tile, hexIcon, Field.CENTER);
-	    label.setVerticalTextPosition(Field.BOTTOM);
-	    label.setHorizontalTextPosition(Field.CENTER);
-	    label.setVisible(true);
+            label = new Field((ModelObject) tile, hexIcon, Field.CENTER);
+            label.setVerticalTextPosition(Field.BOTTOM);
+            label.setHorizontalTextPosition(Field.CENTER);
+            label.setVisible(true);
 
-	    getContentPane().add(label);
-	    shownTiles.add(tile);
-	    labels.add(label);
+            getContentPane().add(label);
+            shownTiles.add(tile);
+            labels.add(label);
 
-	}
+        }
 
     }
 
@@ -102,45 +97,38 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     }
 
     public ORUIManager getORUIManager() {
-	return orUIManager;
+        return orUIManager;
     }
 
     public GameUIManager getGameUIManager() {
-	return gameUIManager;
+        return gameUIManager;
     }
 
-    public void windowActivated(WindowEvent e) {
-    }
+    public void windowActivated(WindowEvent e) {}
 
-    public void windowClosed(WindowEvent e) {
-    }
+    public void windowClosed(WindowEvent e) {}
 
     public void windowClosing(WindowEvent e) {
-	StatusWindow.uncheckMenuItemBox(LocalText.getText("MAP"));
-	dispose();
+        StatusWindow.uncheckMenuItemBox(LocalText.getText("MAP"));
+        dispose();
     }
 
-    public void windowDeactivated(WindowEvent e) {
-    }
+    public void windowDeactivated(WindowEvent e) {}
 
-    public void windowDeiconified(WindowEvent e) {
-    }
+    public void windowDeiconified(WindowEvent e) {}
 
-    public void windowIconified(WindowEvent e) {
-    }
+    public void windowIconified(WindowEvent e) {}
 
-    public void windowOpened(WindowEvent e) {
-    }
+    public void windowOpened(WindowEvent e) {}
 
     public void activate() {
-	setVisible(true);
-	requestFocus();
+        setVisible(true);
+        requestFocus();
     }
 
     /**
-         * Round-end settings
-         * 
-         */
-    public void finish() {
-    }
+     * Round-end settings
+     * 
+     */
+    public void finish() {}
 }

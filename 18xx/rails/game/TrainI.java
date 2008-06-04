@@ -1,67 +1,66 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.6 2007/12/23 16:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.7 2008/06/04 19:00:32 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
 
-public interface TrainI extends Moveable
-{
-    public void init (TrainTypeI type, int index);
+public interface TrainI extends Moveable {
+    public void init(TrainTypeI type, int index);
 
-	/**
-	 * @return Returns the cost.
-	 */
-	public int getCost();
+    /**
+     * @return Returns the cost.
+     */
+    public int getCost();
 
-	/**
-	 * @return Returns the number of major stops cities, off-board, perhaps
-	 *         towns.
-	 */
-	public int getMajorStops();
+    /**
+     * @return Returns the number of major stops cities, off-board, perhaps
+     * towns.
+     */
+    public int getMajorStops();
 
-	/**
-	 * @return Returns the minorStops (towns).
-	 */
-	public int getMinorStops();
+    /**
+     * @return Returns the minorStops (towns).
+     */
+    public int getMinorStops();
 
-	/**
-	 * @return Returns the townCountIndicator (major, minor or not at all).
-	 */
-	public int getTownCountIndicator();
+    /**
+     * @return Returns the townCountIndicator (major, minor or not at all).
+     */
+    public int getTownCountIndicator();
 
-	/**
-	 * @return Returns the cityScoreFactor (0 or 1).
-	 */
-	public int getCityScoreFactor();
+    /**
+     * @return Returns the cityScoreFactor (0 or 1).
+     */
+    public int getCityScoreFactor();
 
-	/**
-	 * @return Returns the townScoreFactor (0 or 1).
-	 */
-	public int getTownScoreFactor();
+    /**
+     * @return Returns the townScoreFactor (0 or 1).
+     */
+    public int getTownScoreFactor();
 
-	/**
-	 * @return Returns the train type.
-	 */
-	public TrainTypeI getType();
+    /**
+     * @return Returns the train type.
+     */
+    public TrainTypeI getType();
 
-	public String getName();
-	
-	public String getUniqueId ();
+    public String getName();
 
-	public Portfolio getHolder();
+    public String getUniqueId();
 
-	public CashHolder getOwner();
+    public Portfolio getHolder();
 
-    public boolean isObsolete ();
+    public CashHolder getOwner();
 
-	public void setHolder(Portfolio newHolder);
-    
-   //public void moveTo (Portfolio to);
+    public boolean isObsolete();
 
-	public void setRusted();
-    
-    public void setObsolete ();
+    public void setHolder(Portfolio newHolder);
 
-	public boolean canBeExchanged();
+    // public void moveTo (Portfolio to);
+
+    public void setRusted();
+
+    public void setObsolete();
+
+    public boolean canBeExchanged();
 
     public String toDisplay();
 

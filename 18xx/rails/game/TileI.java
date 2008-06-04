@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.10 2008/03/16 17:25:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.11 2008/06/04 19:00:32 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -6,49 +6,57 @@ import java.util.Map;
 
 import rails.util.Tag;
 
-public interface TileI
-{
+public interface TileI {
 
-	public void configureFromXML(Tag se, Tag te)
-	throws ConfigurationException;
+    public void configureFromXML(Tag se, Tag te) throws ConfigurationException;
 
-	public String getColourName();
-	public int getColourNumber();
+    public String getColourName();
 
-	/**
-	 * @return Returns the id.
-	 */
-	public int getId();
-	public int getExternalId();
-	public int getPictureId();
+    public int getColourNumber();
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName();
+    /**
+     * @return Returns the id.
+     */
+    public int getId();
 
-	public boolean hasTracks(int sideNumber);
-    public List<Track> getTracksPerSide (int sideNumber);
+    public int getExternalId();
+
+    public int getPictureId();
+
+    /**
+     * @return Returns the name.
+     */
+    public String getName();
+
+    public boolean hasTracks(int sideNumber);
+
+    public List<Track> getTracksPerSide(int sideNumber);
+
     public Map<Integer, List<Track>> getTracksPerStationMap();
+
     public List<Track> getTracksPerStation(int stationNumber);
 
-	public boolean isUpgradeable();
+    public boolean isUpgradeable();
 
-	public boolean isLayableNow();
+    public boolean isLayableNow();
 
-	public List<TileI> getUpgrades(MapHex hex);
-	public List<TileI> getValidUpgrades (MapHex hex, PhaseI phase);
+    public List<TileI> getUpgrades(MapHex hex);
 
-	public String getUpgradesString(MapHex hex);
+    public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase);
 
-	public boolean hasStations();
+    public String getUpgradesString(MapHex hex);
 
-	public List<Station> getStations();
+    public boolean hasStations();
 
-	public int getNumStations();
+    public List<Station> getStations();
 
-	public boolean lay (MapHex hex);
-	public boolean remove (MapHex hex);
-	public int countFreeTiles ();
-	public int getQuantity ();
+    public int getNumStations();
+
+    public boolean lay(MapHex hex);
+
+    public boolean remove(MapHex hex);
+
+    public int countFreeTiles();
+
+    public int getQuantity();
 }

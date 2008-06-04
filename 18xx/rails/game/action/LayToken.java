@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.8 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.9 2008/06/04 19:00:29 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -14,24 +14,26 @@ import rails.game.special.SpecialTokenLay;
  * @author Erik Vos
  */
 public abstract class LayToken extends PossibleORAction {
-    
+
     /*--- Preconditions ---*/
-    
+
     /** Where to lay a token (null means anywhere) */
     transient protected List<MapHex> locations = null;
     protected String locationNames;
-    
-    /** Special property that will be fulfilled by this token lay.
-     * If null, this is a normal token lay. */
+
+    /**
+     * Special property that will be fulfilled by this token lay. If null, this
+     * is a normal token lay.
+     */
     transient protected SpecialTokenLay specialProperty = null;
-    protected int specialPropertyId; 
-    
+    protected int specialPropertyId;
+
     /*--- Postconditions ---*/
-    
+
     /** The map hex on which the token is laid */
     transient protected MapHex chosenHex = null;
     protected String chosenHexName;
-    
+
     public static final long serialVersionUID = 1L;
 
     /**
@@ -43,10 +45,10 @@ public abstract class LayToken extends PossibleORAction {
             this.locations = locations;
             buildLocationNameString();
         }
-        
+
     }
-    
-     public LayToken (SpecialTokenLay specialProperty) {
+
+    public LayToken(SpecialTokenLay specialProperty) {
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
@@ -59,6 +61,7 @@ public abstract class LayToken extends PossibleORAction {
     public MapHex getChosenHex() {
         return chosenHex;
     }
+
     /**
      * @param chosenHex The chosenHex to set.
      */
@@ -66,13 +69,14 @@ public abstract class LayToken extends PossibleORAction {
         this.chosenHex = chosenHex;
         this.chosenHexName = chosenHex.getName();
     }
-    
+
     /**
      * @return Returns the specialProperty.
      */
     public SpecialTokenLay getSpecialProperty() {
         return specialProperty;
     }
+
     /**
      * @param specialProperty The specialProperty to set.
      */
@@ -81,8 +85,8 @@ public abstract class LayToken extends PossibleORAction {
         // TODO this.specialPropertyUniqueId = specialProperty.getUniqueId();
     }
 
-   /**
-    * @deprecated
+    /**
+     * @deprecated
      * @return Returns the location.
      */
     public MapHex getLocation() {
@@ -92,15 +96,16 @@ public abstract class LayToken extends PossibleORAction {
             return null;
         }
     }
-    
+
     public List<MapHex> getLocations() {
         return locations;
     }
-    
+
     public String getLocationNameString() {
         return locationNames;
     }
-    private void buildLocationNameString () {
+
+    private void buildLocationNameString() {
         StringBuffer b = new StringBuffer();
         for (MapHex hex : locations) {
             if (b.length() > 0) b.append(",");
@@ -108,5 +113,5 @@ public abstract class LayToken extends PossibleORAction {
         }
         locationNames = b.toString();
     }
-    
+
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.4 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.5 2008/06/04 19:00:29 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -17,16 +17,16 @@ import rails.util.Util;
  * @author Erik Vos
  */
 public class SellShares extends PossibleAction {
-    
-	// Server-side settings
+
+    // Server-side settings
     private String companyName;
-    transient private  PublicCompanyI company;
+    transient private PublicCompanyI company;
     private int shareUnit;
     private int shareUnits;
     private int share;
     private int price;
     private int maximumNumber;
-    
+
     // Client-side settings
     private int numberSold = 0;
 
@@ -35,84 +35,86 @@ public class SellShares extends PossibleAction {
     /**
      * 
      */
-    public SellShares(String companyName, int shareUnits,
-    		int maximumNumber, int price) {
+    public SellShares(String companyName, int shareUnits, int maximumNumber,
+            int price) {
         this.companyName = companyName;
         this.shareUnits = shareUnits;
         this.price = price;
         this.maximumNumber = maximumNumber;
-        
+
         company = Game.getCompanyManager().getPublicCompany(companyName);
         shareUnit = company.getShareUnit();
         share = shareUnits * shareUnit;
     }
-    
+
     /**
      * @return Returns the maximumNumber.
      */
     public int getMaximumNumber() {
         return maximumNumber;
     }
+
     /**
      * @return Returns the price.
      */
     public int getPrice() {
         return price;
     }
+
     /**
      * @return Returns the companyName.
      */
     public String getCompanyName() {
         return companyName;
     }
-    
-    public PublicCompanyI getCompany () {
-    	return Game.getCompanyManager().getPublicCompany(companyName);
+
+    public PublicCompanyI getCompany() {
+        return Game.getCompanyManager().getPublicCompany(companyName);
     }
-    
+
     public int getShareUnits() {
-		return shareUnits;
-	}
+        return shareUnits;
+    }
 
     public int getShareUnit() {
-		return shareUnit;
-	}
+        return shareUnit;
+    }
 
-	public int getShare() {
-		return share;
-	}
+    public int getShare() {
+        return share;
+    }
 
-	public int getNumberSold() {
-		return numberSold;
-	}
+    public int getNumberSold() {
+        return numberSold;
+    }
 
-	public void setNumberSold(int numberSold) {
-		this.numberSold = numberSold;
-	}
-	
-	public boolean equals (PossibleAction action) {
-		if (!(action instanceof SellShares)) return false;
-		SellShares a = (SellShares) action;
-		return a.getCompanyName().equals(companyName)
-			&& a.getShareUnits() ==  shareUnits
-			&& a.getMaximumNumber() == maximumNumber
-			&& a.getPrice() == price;
-	}
+    public void setNumberSold(int numberSold) {
+        this.numberSold = numberSold;
+    }
 
-	public String toString() {
+    public boolean equals(PossibleAction action) {
+        if (!(action instanceof SellShares)) return false;
+        SellShares a = (SellShares) action;
+        return a.getCompanyName().equals(companyName)
+               && a.getShareUnits() == shareUnits
+               && a.getMaximumNumber() == maximumNumber
+               && a.getPrice() == price;
+    }
+
+    public String toString() {
         return "SellShares: "
-        	+ (numberSold > 0 ? numberSold : "max " + maximumNumber)
-        	+ " of " +share + "% " + companyName 
-         	+ " at " + Bank.format(shareUnits * price) + " apiece";
+               + (numberSold > 0 ? numberSold : "max " + maximumNumber)
+               + " of " + share + "% " + companyName + " at "
+               + Bank.format(shareUnits * price) + " apiece";
     }
 
     /** Deserialize */
-	private void readObject (ObjectInputStream in) 
-	throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
-		in.defaultReadObject();
-		
-		if (Util.hasValue(companyName))
-			company = Game.getCompanyManager().getPublicCompany(companyName);
-	}
+        in.defaultReadObject();
+
+        if (Util.hasValue(companyName))
+            company = Game.getCompanyManager().getPublicCompany(companyName);
+    }
 }

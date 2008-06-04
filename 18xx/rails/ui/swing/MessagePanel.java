@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.4 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.5 2008/06/04 19:00:33 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -14,34 +14,32 @@ public class MessagePanel extends JPanel {
     Color background = new Color(225, 225, 225);
 
     public MessagePanel() {
-	super();
+        super();
 
-	setBackground(background);
-	setLines(1);
-	setBorder(BorderFactory.createLoweredBevelBorder());
+        setBackground(background);
+        setLines(1);
+        setBorder(BorderFactory.createLoweredBevelBorder());
 
-	message = new JLabel("");
-	message.setBackground(background);
-	message.setVerticalAlignment(SwingConstants.CENTER);
-	message.setHorizontalAlignment(SwingConstants.CENTER);
-	message.setOpaque(true);
-	add(message);
-	message.setVisible(true);
-	setVisible(true);
+        message = new JLabel("");
+        message.setBackground(background);
+        message.setVerticalAlignment(SwingConstants.CENTER);
+        message.setHorizontalAlignment(SwingConstants.CENTER);
+        message.setOpaque(true);
+        add(message);
+        message.setVisible(true);
+        setVisible(true);
     }
 
     public void setMessage(String messageText) {
-	if (Util.hasValue(messageText)) {
-	    int lines = messageText.split("<[Bb][Rr]>").length + 1;
-	    setLines(lines);
-	    message
-		    .setText("<html><center>" + messageText
-			    + "</center></html>");
-	}
+        if (Util.hasValue(messageText)) {
+            int lines = messageText.split("<[Bb][Rr]>").length + 1;
+            setLines(lines);
+            message.setText("<html><center>" + messageText + "</center></html>");
+        }
     }
 
     public void setLines(int numberOfLines) {
-	setSize(1000, numberOfLines * 12);
+        setSize(1000, numberOfLines * 12);
     }
 
 }

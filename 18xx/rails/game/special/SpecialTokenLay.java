@@ -1,6 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.8 2008/01/18 19:58:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.9 2008/06/04 19:00:38 evos Exp $ */
 package rails.game.special;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,32 +8,30 @@ import rails.game.*;
 import rails.util.Tag;
 import rails.util.Util;
 
-public class SpecialTokenLay extends SpecialProperty
-{
-	String locationCodes = null;
+public class SpecialTokenLay extends SpecialProperty {
+    String locationCodes = null;
     List<MapHex> locations = null;
-	boolean extra = false;
-	boolean free = false;
-	boolean connected = false;
-	Class<? extends Token> tokenClass;
-	TokenI token = null;
+    boolean extra = false;
+    boolean free = false;
+    boolean connected = false;
+    Class<? extends Token> tokenClass;
+    TokenI token = null;
     int numberAvailable = 1;
     int numberUsed = 0;
 
-	public void configureFromXML(Tag tag) throws ConfigurationException
-	{
-		
-		super.configureFromXML (tag);
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
-		Tag tokenLayTag = tag.getChild("SpecialTokenLay");
-		if (tokenLayTag == null)
-		{
-			throw new ConfigurationException("<SpecialTokenLay> tag missing");
-		}
+        super.configureFromXML(tag);
 
-		locationCodes = tokenLayTag.getAttributeAsString("location");
-		if (!Util.hasValue(locationCodes))
-			throw new ConfigurationException("SpecialTokenLay: location missing");
+        Tag tokenLayTag = tag.getChild("SpecialTokenLay");
+        if (tokenLayTag == null) {
+            throw new ConfigurationException("<SpecialTokenLay> tag missing");
+        }
+
+        locationCodes = tokenLayTag.getAttributeAsString("location");
+        if (!Util.hasValue(locationCodes))
+            throw new ConfigurationException(
+                    "SpecialTokenLay: location missing");
         MapManager mmgr = MapManager.getInstance();
         MapHex hex;
         locations = new ArrayList<MapHex>();
@@ -42,86 +39,88 @@ public class SpecialTokenLay extends SpecialProperty
             hex = mmgr.getHex(hexName);
             if (hex == null)
                 throw new ConfigurationException("Location " + hexName
-                        + " does not exist");
-            locations.add (hex);
+                                                 + " does not exist");
+            locations.add(hex);
         }
 
-		extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
-		free = tokenLayTag.getAttributeAsBoolean("free", free);
-		connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
-		closingValue = tokenLayTag.getAttributeAsInteger("closingValue", closingValue);
-		
-		String tokenClassName = tokenLayTag.getAttributeAsString(
-				"class", "rails.game.BaseToken");
-		try {
-			tokenClass = Class.forName(tokenClassName).asSubclass(Token.class);
-			if (tokenClass == BonusToken.class) {
+        extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
+        free = tokenLayTag.getAttributeAsBoolean("free", free);
+        connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
+        closingValue =
+                tokenLayTag.getAttributeAsInteger("closingValue", closingValue);
+
+        String tokenClassName =
+                tokenLayTag.getAttributeAsString("class",
+                        "rails.game.BaseToken");
+        try {
+            tokenClass = Class.forName(tokenClassName).asSubclass(Token.class);
+            if (tokenClass == BonusToken.class) {
                 BonusToken bToken = (BonusToken) tokenClass.newInstance();
                 token = bToken;
                 bToken.configureFromXML(tokenLayTag);
-                
-                numberAvailable = tokenLayTag.getAttributeAsInteger(
-                		"number", numberAvailable);
-			}
-		} catch (ClassNotFoundException e) {
-			throw new ConfigurationException ("Unknown class "+tokenClassName, e);
-		} catch (Exception e) {
-			throw new ConfigurationException ("Cannot instantiate class "+tokenClassName, e);
-		}
-	}
-	
-	public boolean isExecutionable() {
-		return true;
-	}
-    
-    public int getNumberLeft () {
+
+                numberAvailable =
+                        tokenLayTag.getAttributeAsInteger("number",
+                                numberAvailable);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Unknown class " + tokenClassName,
+                    e);
+        } catch (Exception e) {
+            throw new ConfigurationException("Cannot instantiate class "
+                                             + tokenClassName, e);
+        }
+    }
+
+    public boolean isExecutionable() {
+        return true;
+    }
+
+    public int getNumberLeft() {
         return numberAvailable - numberUsed;
     }
 
-	public boolean isExtra()
-	{
-		return extra;
-	}
+    public boolean isExtra() {
+        return extra;
+    }
 
-	public boolean isFree()
-	{
-		return free;
-	}
+    public boolean isFree() {
+        return free;
+    }
 
     /** @deprecated */
-	public MapHex getLocation()
-	{
+    public MapHex getLocation() {
         if (locations != null) {
             return locations.get(0);
         } else {
             return null;
         }
-	}
-    
-    public List<MapHex> getLocations () {
+    }
+
+    public List<MapHex> getLocations() {
         return locations;
     }
-    
+
     public String getLocationCodeString() {
-    	return locationCodes;
+        return locationCodes;
     }
-	
-	public Class<? extends Token> getTokenClass() {
+
+    public Class<? extends Token> getTokenClass() {
         return tokenClass;
     }
-	
-	public TokenI getToken() {
-		return token;
-	}
-    
+
+    public TokenI getToken() {
+        return token;
+    }
+
     public String getName() {
         return toString();
     }
 
     public String toString() {
-	    return "SpecialTokenLay comp="+privateCompany.getName()
-            +" type="+tokenClass.getSimpleName() 
-            +": "+ (token != null ? token.toString() : "")
-            +" hex="+locationCodes+" extra="+extra+" cost="+free;
-	}
+        return "SpecialTokenLay comp=" + privateCompany.getName() + " type="
+               + tokenClass.getSimpleName() + ": "
+               + (token != null ? token.toString() : "") + " hex="
+               + locationCodes + " extra=" + extra + " cost=" + free;
+    }
 }

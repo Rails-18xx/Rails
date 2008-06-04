@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Caption.java,v 1.3 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Caption.java,v 1.4 2008/06/04 19:00:38 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -18,14 +18,14 @@ public class Caption extends JLabel {
     private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);
 
     public Caption(String text) {
-	super(text);
-	this.setBackground(NORMAL_BG_COLOR);
-	this.setHorizontalAlignment(SwingConstants.CENTER);
-	this.setBorder(labelBorder);
-	this.setOpaque(true);
+        super(text);
+        this.setBackground(NORMAL_BG_COLOR);
+        this.setHorizontalAlignment(SwingConstants.CENTER);
+        this.setBorder(labelBorder);
+        this.setOpaque(true);
     }
 
     public void setHighlight(boolean highlight) {
-	this.setBackground(highlight ? HIGHLIGHT_BG_COLOUR : NORMAL_BG_COLOR);
+        this.setBackground(highlight ? HIGHLIGHT_BG_COLOUR : NORMAL_BG_COLOR);
     }
 }

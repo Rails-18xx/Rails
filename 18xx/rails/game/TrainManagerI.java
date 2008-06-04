@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.5 2008/01/21 22:57:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Attic/TrainManagerI.java,v 1.6 2008/06/04 19:00:30 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -7,28 +7,27 @@ import java.util.List;
  * Interface for CompanyManager objects. A company manager is a factory which
  * vends Company objects.
  */
-public interface TrainManagerI
-{
+public interface TrainManagerI {
 
-	/**
-	 * This is the name by which the TrainManager should be registered with the
-	 * ComponentManager.
-	 */
-	static final String COMPONENT_NAME = "TrainManager";
+    /**
+     * This is the name by which the TrainManager should be registered with the
+     * ComponentManager.
+     */
+    static final String COMPONENT_NAME = "TrainManager";
 
-	public List<TrainI> getAvailableNewTrains();
+    public List<TrainI> getAvailableNewTrains();
 
-	public TrainTypeI getTypeByName(String name);
+    public TrainTypeI getTypeByName(String name);
 
-	public List<TrainTypeI> getTrainTypes();
+    public List<TrainTypeI> getTrainTypes();
 
-	public void checkTrainAvailability(TrainI train, Portfolio from);
+    public void checkTrainAvailability(TrainI train, Portfolio from);
 
-	public boolean hasAvailabilityChanged();
+    public boolean hasAvailabilityChanged();
 
-	public void resetAvailabilityChanged();
+    public void resetAvailabilityChanged();
 
-	public boolean hasPhaseChanged();
+    public boolean hasPhaseChanged();
 
     public boolean buyAtFaceValueBetweenDifferentPresidents();
 

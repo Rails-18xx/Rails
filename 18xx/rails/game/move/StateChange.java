@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.8 2007/12/21 21:18:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/StateChange.java,v 1.9 2008/06/04 19:00:33 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -12,30 +12,30 @@ import rails.game.state.StateI;
  * @author Erik Vos
  */
 public class StateChange extends Move {
-    
+
     protected StateI object;
     protected Object oldValue, newValue;
     protected ModelObject relatedModelObject;
-    
-    public StateChange (StateI object, Object newValue) {
-        
-        this (object, newValue, null);
+
+    public StateChange(StateI object, Object newValue) {
+
+        this(object, newValue, null);
     }
-    
-    public StateChange (StateI object, Object newValue, 
+
+    public StateChange(StateI object, Object newValue,
             ModelObject relatedModelObject) {
         this.object = object;
         this.oldValue = object.getObject();
         this.newValue = newValue;
         this.relatedModelObject = relatedModelObject;
-        
-        MoveSet.add (this);
+
+        MoveSet.add(this);
     }
-    
+
     public boolean execute() {
-       object.setState(newValue);
-       if (relatedModelObject != null) relatedModelObject.update();
-       return true;
+        object.setState(newValue);
+        if (relatedModelObject != null) relatedModelObject.update();
+        return true;
     }
 
     public boolean undo() {
@@ -43,10 +43,10 @@ public class StateChange extends Move {
         if (relatedModelObject != null) relatedModelObject.update();
         return true;
     }
-    
+
     public String toString() {
-        return "StateChange: " + object.toString() 
-        	+ " from " + oldValue + " to " + newValue;
+        return "StateChange: " + object.toString() + " from " + oldValue
+               + " to " + newValue;
     }
 
 }

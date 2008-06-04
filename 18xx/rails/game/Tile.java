@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.18 2008/03/16 17:25:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.19 2008/06/04 19:00:32 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -9,110 +9,109 @@ import rails.game.model.ModelObject;
 import rails.util.LocalText;
 import rails.util.Tag;
 
-public class Tile extends ModelObject implements TileI, StationHolderI
-{
+public class Tile extends ModelObject implements TileI, StationHolderI {
 
-	/** The 'internal id', identifying the tile in the XML files */
-	private final int id;
-	/** The 'external id', which is shown in the UI.
-	 * Usually equal to the internal id,
-	 * but different in case of duplicates.
-	 */
-	private int externalId;
-	/** The 'picture id', identifying the picture number to be loaded.
-	 * Usually equal to the internal id,
-	 * but different in case of graphical variants
-	 * (such as the 18EU tiles 80-83).
-	 */
-	private int pictureId;
-	private String name;
-	private String colourName; // May become a separate class TileType
-	private int colourNumber;
+    /** The 'internal id', identifying the tile in the XML files */
+    private final int id;
+    /**
+     * The 'external id', which is shown in the UI. Usually equal to the
+     * internal id, but different in case of duplicates.
+     */
+    private int externalId;
+    /**
+     * The 'picture id', identifying the picture number to be loaded. Usually
+     * equal to the internal id, but different in case of graphical variants
+     * (such as the 18EU tiles 80-83).
+     */
+    private int pictureId;
+    private String name;
+    private String colourName; // May become a separate class TileType
+    private int colourNumber;
 
-	private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains Upgrade instances
-	private String upgradesString = "";
-	private final List[] tracksPerSide = new ArrayList[6]; // Cannot parametrise collection array
-	private Map<Integer, List<Track>> tracksPerStation = null;
-	private final List<Track> tracks = new ArrayList<Track>();
-	private final List<Station> stations = new ArrayList<Station>();
-	private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
-	private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
-	private int quantity;
-	private boolean unlimited = false;
-	public static final int UNLIMITED_TILES = -1;
+    private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
+    // Upgrade
+    // instances
+    private String upgradesString = "";
+    private final List[] tracksPerSide = new ArrayList[6]; // Cannot
+    // parametrise
+    // collection array
+    private Map<Integer, List<Track>> tracksPerStation = null;
+    private final List<Track> tracks = new ArrayList<Track>();
+    private final List<Station> stations = new ArrayList<Station>();
+    private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
+    private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
+    private int quantity;
+    private boolean unlimited = false;
+    public static final int UNLIMITED_TILES = -1;
 
-	/** Off-board preprinted tiles */
-	public static final String RED_COLOUR_NAME = "red";
-	public static final int RED_COLOUR_NUMBER = -2;
-	/** Non-upgradeable preprinted tiles (colour grey or dark brown) */
-	public static final String FIXED_COLOUR_NAME = "fixed";
-	public static final int FIXED_COLOUR_NUMBER = -1;
-	/** Preprinted pre-yellow tiles */
-	public static final String WHITE_COLOUR_NAME = "white";
-	public static final int WHITE_COLOUR_NUMBER = 0;
-	public static final String YELLOW_COLOPUR_NAME = "yellow";
-	public static final int YELLOW_COLOUR_NUMBER = 1;
-	public static final String GREEN_COLOUR_NAME = "green";
-	public static final int GREEN_COLOUR_NUMBER = 2;
-	public static final String BROWN_COLOUR_NAME = "brown";
-	public static final int BROWN_COLOUR_NUMBER = 3;
-	public static final String GREY_COLOUR_NAME = "grey";
-	public static final int GREY_COLOUR_NUMBER = 4;
-	
-	protected static final List<String> VALID_COLOUR_NAMES 
-		= Arrays.asList(new String[] {
-				RED_COLOUR_NAME, FIXED_COLOUR_NAME, WHITE_COLOUR_NAME,
-				YELLOW_COLOPUR_NAME, GREEN_COLOUR_NAME, BROWN_COLOUR_NAME, GREY_COLOUR_NAME
-	});
-	
-	/** The offset to convert tile numbers to tilename index.
-	 * Colour number 0 and higher are upgradeable. */
-	
-	protected static final int TILE_NUMBER_OFFSET = 2;
+    /** Off-board preprinted tiles */
+    public static final String RED_COLOUR_NAME = "red";
+    public static final int RED_COLOUR_NUMBER = -2;
+    /** Non-upgradeable preprinted tiles (colour grey or dark brown) */
+    public static final String FIXED_COLOUR_NAME = "fixed";
+    public static final int FIXED_COLOUR_NUMBER = -1;
+    /** Preprinted pre-yellow tiles */
+    public static final String WHITE_COLOUR_NAME = "white";
+    public static final int WHITE_COLOUR_NUMBER = 0;
+    public static final String YELLOW_COLOPUR_NAME = "yellow";
+    public static final int YELLOW_COLOUR_NUMBER = 1;
+    public static final String GREEN_COLOUR_NAME = "green";
+    public static final int GREEN_COLOUR_NUMBER = 2;
+    public static final String BROWN_COLOUR_NAME = "brown";
+    public static final int BROWN_COLOUR_NUMBER = 3;
+    public static final String GREY_COLOUR_NAME = "grey";
+    public static final int GREY_COLOUR_NUMBER = 4;
 
-	private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
+    protected static final List<String> VALID_COLOUR_NAMES =
+            Arrays.asList(new String[] { RED_COLOUR_NAME, FIXED_COLOUR_NAME,
+                    WHITE_COLOUR_NAME, YELLOW_COLOPUR_NAME, GREEN_COLOUR_NAME,
+                    BROWN_COLOUR_NAME, GREY_COLOUR_NAME });
 
-	public Tile(Integer id)
-	{
-		this.id = id;
-		externalId = pictureId = id;
-		name = "" + this.id;
+    /**
+     * The offset to convert tile numbers to tilename index. Colour number 0 and
+     * higher are upgradeable.
+     */
 
-		for (int i = 0; i < 6; i++)
-			tracksPerSide[i] = new ArrayList<Track>();
-	}
+    protected static final int TILE_NUMBER_OFFSET = 2;
 
-	/**
-	 * @param se
-	 *            &lt;Tile&gt; element from TileSet.xml
-	 * @param te
-	 *            &lt;Tile&gt; element from Tiles.xml
-	 */
-	@SuppressWarnings("unchecked")
-	public void configureFromXML(Tag setTag, Tag defTag)
-	throws ConfigurationException
-	{
+    private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
-	    if (defTag == null) {
-	        throw new ConfigurationException (
-	                LocalText.getText("TileMissing", String.valueOf(id)));
-	    }
+    public Tile(Integer id) {
+        this.id = id;
+        externalId = pictureId = id;
+        name = "" + this.id;
 
-		name = defTag.getAttributeAsString("name", name);
+        for (int i = 0; i < 6; i++)
+            tracksPerSide[i] = new ArrayList<Track>();
+    }
 
-		colourName = defTag.getAttributeAsString("colour");
-		if (colourName == null)
-			throw new ConfigurationException(
-			        LocalText.getText("TileColorMissing", String.valueOf(id)));
-		colourName = colourName.toLowerCase();
-		if (colourName.equals("gray")) colourName = "grey";
-		colourNumber = VALID_COLOUR_NAMES.indexOf(colourName);
-		if (colourNumber < 0) {
-			throw new ConfigurationException(
-					LocalText.getText("InvalidTileColourName",
-							new String[] {name, colourName}));
-		}
-		colourNumber -= TILE_NUMBER_OFFSET;
+    /**
+     * @param se &lt;Tile&gt; element from TileSet.xml
+     * @param te &lt;Tile&gt; element from Tiles.xml
+     */
+    @SuppressWarnings("unchecked")
+    public void configureFromXML(Tag setTag, Tag defTag)
+            throws ConfigurationException {
+
+        if (defTag == null) {
+            throw new ConfigurationException(LocalText.getText("TileMissing",
+                    String.valueOf(id)));
+        }
+
+        name = defTag.getAttributeAsString("name", name);
+
+        colourName = defTag.getAttributeAsString("colour");
+        if (colourName == null)
+            throw new ConfigurationException(LocalText.getText(
+                    "TileColorMissing", String.valueOf(id)));
+        colourName = colourName.toLowerCase();
+        if (colourName.equals("gray")) colourName = "grey";
+        colourNumber = VALID_COLOUR_NAMES.indexOf(colourName);
+        if (colourNumber < 0) {
+            throw new ConfigurationException(LocalText.getText(
+                    "InvalidTileColourName", new String[] { name, colourName }));
+        }
+        colourNumber -= TILE_NUMBER_OFFSET;
 
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
@@ -122,405 +121,375 @@ public class Tile extends ModelObject implements TileI, StationHolderI
             String sid, type;
             int number, value, slots, position;
             Station station;
-            for (Tag stationTag : stationTags)
-            {
+            for (Tag stationTag : stationTags) {
                 sid = stationTag.getAttributeAsString("id");
                 if (sid == null)
-                    throw new ConfigurationException(
-                            LocalText.getText("TileStationHasNoID", String.valueOf(id)));
+                    throw new ConfigurationException(LocalText.getText(
+                            "TileStationHasNoID", String.valueOf(id)));
                 number = -getPointNumber(sid);
                 type = stationTag.getAttributeAsString("type");
                 if (type == null)
-                    throw new ConfigurationException(
-                            LocalText.getText("TileStationHasNoType", String.valueOf(id)));
+                    throw new ConfigurationException(LocalText.getText(
+                            "TileStationHasNoType", String.valueOf(id)));
                 if (!Station.isTypeValid(type)) {
-                    throw new ConfigurationException(
-                            LocalText.getText("TileStationHasInvalidType",
-                                    new String[] {String.valueOf(id), type}));
+                    throw new ConfigurationException(LocalText.getText(
+                            "TileStationHasInvalidType", new String[] {
+                                    String.valueOf(id), type }));
                 }
                 value = stationTag.getAttributeAsInteger("value", 0);
-                //log.debug("Tile #"+id+" st."+number+" value="+value);
+                // log.debug("Tile #"+id+" st."+number+" value="+value);
                 slots = stationTag.getAttributeAsInteger("slots", 0);
                 position = stationTag.getAttributeAsInteger("position", 0);
-                station = new Station(this, number, sid, type, value, slots, position);
+                station =
+                        new Station(this, number, sid, type, value, slots,
+                                position);
                 stations.add(station);
                 stationMap.put(sid, station);
             }
         }
 
-		/* Tracks (only number per side, no cities yet) */
-		List<Tag> trackTags = defTag.getChildren("Track");
-		if (trackTags != null) {
-			Track track;
-			int from, to;
-			String fromStr, toStr;
-			for (Tag trackTag : trackTags)
-			{
-				fromStr = trackTag.getAttributeAsString("from");
-				toStr = trackTag.getAttributeAsString("to");
-				if (fromStr == null || toStr == null)
-				{
-					throw new ConfigurationException(
-					        LocalText.getText("FromOrToMissing", String.valueOf(id)));
-				}
+        /* Tracks (only number per side, no cities yet) */
+        List<Tag> trackTags = defTag.getChildren("Track");
+        if (trackTags != null) {
+            Track track;
+            int from, to;
+            String fromStr, toStr;
+            for (Tag trackTag : trackTags) {
+                fromStr = trackTag.getAttributeAsString("from");
+                toStr = trackTag.getAttributeAsString("to");
+                if (fromStr == null || toStr == null) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "FromOrToMissing", String.valueOf(id)));
+                }
 
-				from = getPointNumber(fromStr);
-				to = getPointNumber(toStr);
-				track = new Track(from, to);
-				tracks.add(track);
-				if (from >= 0) {
-					tracksPerSide[from].add(track);
-				} else {
-				    if (tracksPerStation.get(-from) == null) {
-				        tracksPerStation.put(-from, new ArrayList<Track>(4));
-				    }
-				    tracksPerStation.get(-from).add(track);
-				}
-				if (to >= 0) {
-					tracksPerSide[to].add(track);
-				} else {
+                from = getPointNumber(fromStr);
+                to = getPointNumber(toStr);
+                track = new Track(from, to);
+                tracks.add(track);
+                if (from >= 0) {
+                    tracksPerSide[from].add(track);
+                } else {
+                    if (tracksPerStation.get(-from) == null) {
+                        tracksPerStation.put(-from, new ArrayList<Track>(4));
+                    }
+                    tracksPerStation.get(-from).add(track);
+                }
+                if (to >= 0) {
+                    tracksPerSide[to].add(track);
+                } else {
                     if (tracksPerStation.get(-to) == null) {
                         tracksPerStation.put(-to, new ArrayList<Track>(4));
                     }
                     tracksPerStation.get(-to).add(track);
-				}
-			}
-		}
-		/*
-		if (stations != null) {
-			for (Station station : stations) {
-				List<Track> tt = tracksPerStation.get(station);
-				if (tt == null) continue;
-				// TODO Put tracks into stations?
-			}
-		}
-		*/
+                }
+            }
+        }
+        /*
+         * if (stations != null) { for (Station station : stations) { List<Track>
+         * tt = tracksPerStation.get(station); if (tt == null) continue; // TODO
+         * Put tracks into stations? } }
+         */
 
-		/* External (printed) id */
-	    externalId = setTag.getAttributeAsInteger("extId", externalId);
-	    /* Picture id */
-	    pictureId = setTag.getAttributeAsInteger("pic", pictureId);
-		/* Quantity */
-		quantity = setTag.getAttributeAsInteger("quantity", 0);
-		/* Value '99' and '-1' mean 'unlimited' */
-		unlimited = (quantity == 99 || quantity == UNLIMITED_TILES);
-		if (unlimited)
-			quantity = UNLIMITED_TILES;
+        /* External (printed) id */
+        externalId = setTag.getAttributeAsInteger("extId", externalId);
+        /* Picture id */
+        pictureId = setTag.getAttributeAsInteger("pic", pictureId);
+        /* Quantity */
+        quantity = setTag.getAttributeAsInteger("quantity", 0);
+        /* Value '99' and '-1' mean 'unlimited' */
+        unlimited = (quantity == 99 || quantity == UNLIMITED_TILES);
+        if (unlimited) quantity = UNLIMITED_TILES;
 
-		/* Upgrades */
-		List<Tag> upgradeTags = setTag.getChildren("Upgrade");
+        /* Upgrades */
+        List<Tag> upgradeTags = setTag.getChildren("Upgrade");
 
-		if (upgradeTags != null) {
-			String ids;
-			int id;
-			String[] idArray;
-			TileI upgradeTile;
-			Upgrade upgrade;
-			String hexes;
+        if (upgradeTags != null) {
+            String ids;
+            int id;
+            String[] idArray;
+            TileI upgradeTile;
+            Upgrade upgrade;
+            String hexes;
 
-			for (Tag upgradeTag : upgradeTags)
-			{
-				ids = upgradeTag.getAttributeAsString("id");
-				upgradesString = ids; // TEMPORARY
-				List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
+            for (Tag upgradeTag : upgradeTags) {
+                ids = upgradeTag.getAttributeAsString("id");
+                upgradesString = ids; // TEMPORARY
+                List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
 
-				if (ids != null)
-				{
-					idArray = ids.split(",");
-					for (int j = 0; j < idArray.length; j++)
-					{
-						try
-						{
-							id = Integer.parseInt(idArray[j]);
-							upgradeTile = TileManager.get().getTile(id);
-							if (upgradeTile != null)
-							{
-								upgrade = new Upgrade (upgradeTile);
-								upgrades.add(upgrade);
-								newUpgrades.add(upgrade);
-							}
-							else
-							{
-								throw new ConfigurationException(LocalText.getText("UpgradeNotFound",
-								        new String[] {name, String.valueOf(id)}));
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							throw new ConfigurationException(LocalText.getText("NonNumericUpgrade",
-							        new String[] {name, idArray[j]}),
-									e);
-						}
+                if (ids != null) {
+                    idArray = ids.split(",");
+                    for (int j = 0; j < idArray.length; j++) {
+                        try {
+                            id = Integer.parseInt(idArray[j]);
+                            upgradeTile = TileManager.get().getTile(id);
+                            if (upgradeTile != null) {
+                                upgrade = new Upgrade(upgradeTile);
+                                upgrades.add(upgrade);
+                                newUpgrades.add(upgrade);
+                            } else {
+                                throw new ConfigurationException(
+                                        LocalText.getText("UpgradeNotFound",
+                                                new String[] { name,
+                                                        String.valueOf(id) }));
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new ConfigurationException(LocalText.getText(
+                                    "NonNumericUpgrade", new String[] { name,
+                                            idArray[j] }), e);
+                        }
 
-					}
+                    }
 
-				}
+                }
 
-				// Process any included or excluded hexes for the current set of upgrades
-				hexes = upgradeTag.getAttributeAsString("hex");
-				if (hexes != null)
-				{
-				    for (Upgrade newUpgrade : newUpgrades) {
-		                newUpgrade.setHexes(hexes);
-		            }
+                // Process any included or excluded hexes for the current set of
+                // upgrades
+                hexes = upgradeTag.getAttributeAsString("hex");
+                if (hexes != null) {
+                    for (Upgrade newUpgrade : newUpgrades) {
+                        newUpgrade.setHexes(hexes);
+                    }
 
-				}
-			}
-		}
+                }
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * @return Returns the colour.
-	 */
-	public String getColourName()
-	{
-		return colourName;
-	}
-	
-	public int getColourNumber() {
-		return colourNumber;
-	}
+    /**
+     * @return Returns the colour.
+     */
+    public String getColourName() {
+        return colourName;
+    }
 
-	/**
-	 * @return Returns the id.
-	 */
-	public int getId()
-	{
-		return id;
-	}
+    public int getColourNumber() {
+        return colourNumber;
+    }
 
-	public int getExternalId() {
-		return externalId;
-	}
+    /**
+     * @return Returns the id.
+     */
+    public int getId() {
+        return id;
+    }
 
-	public int getPictureId() {
-		return pictureId;
-	}
+    public int getExternalId() {
+        return externalId;
+    }
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName()
-	{
-		return name;
-	}
+    public int getPictureId() {
+        return pictureId;
+    }
 
-	private int getPointNumber(String trackEnd) throws ConfigurationException
-	{
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
 
-		Matcher m;
-		if ((m = sidePattern.matcher(trackEnd)).matches())
-		{
-			return (Integer.parseInt(m.group(1)) + 3) % 6;
-		}
-		else if ((m = cityPattern.matcher(trackEnd)).matches())
-		{
-			return -Integer.parseInt(m.group(1));
-		}
-		// Should add some validation!
-		throw new ConfigurationException(LocalText.getText("InvalidTrackEnd") + ": " + trackEnd);
-	}
+    private int getPointNumber(String trackEnd) throws ConfigurationException {
 
-	public boolean hasTracks(int sideNumber)
-	{
-		while (sideNumber < 0)
-			sideNumber += 6;
-		return (tracksPerSide[sideNumber % 6].size() > 0);
-	}
+        Matcher m;
+        if ((m = sidePattern.matcher(trackEnd)).matches()) {
+            return (Integer.parseInt(m.group(1)) + 3) % 6;
+        } else if ((m = cityPattern.matcher(trackEnd)).matches()) {
+            return -Integer.parseInt(m.group(1));
+        }
+        // Should add some validation!
+        throw new ConfigurationException(LocalText.getText("InvalidTrackEnd")
+                                         + ": " + trackEnd);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Track> getTracksPerSide (int sideNumber) {
+    public boolean hasTracks(int sideNumber) {
         while (sideNumber < 0)
             sideNumber += 6;
-	    return tracksPerSide[sideNumber % 6];
-	}
+        return (tracksPerSide[sideNumber % 6].size() > 0);
+    }
 
-	/**
-	 * Is a tile upgradeable at any time (regardles the phase)?
-	 */
-	public boolean isUpgradeable()
-	{
-		return colourNumber >= 0;
-	}
+    @SuppressWarnings("unchecked")
+    public List<Track> getTracksPerSide(int sideNumber) {
+        while (sideNumber < 0)
+            sideNumber += 6;
+        return tracksPerSide[sideNumber % 6];
+    }
 
-	/**
-	 * Is the tile layable now (in the current phase)?
-	 *
-	 * @return
-	 */
-	public boolean isLayableNow()
-	{
-		return GameManager.getCurrentPhase().isTileColourAllowed(colourName);
-	}
+    /**
+     * Is a tile upgradeable at any time (regardles the phase)?
+     */
+    public boolean isUpgradeable() {
+        return colourNumber >= 0;
+    }
 
-	/**
-	 * Get the valid upgrades if this tile on a certain hex (restrictions per
-	 * hex have not yet been implemented).
-	 *
-	 * @param hex
-	 *            The MapHex to be upgraded.
-	 * @return A List of valid upgrade TileI objects.
-	 */
-	public List<TileI> getUpgrades(MapHex hex)
-	{
-	    List<TileI> upgr = new ArrayList<TileI>();
-	    TileI tile;
-	    for (Upgrade upgrade : upgrades) {
-	        tile = upgrade.getTile();
-	        if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add (tile);
-	    }
-		return upgr;
-	}
+    /**
+     * Is the tile layable now (in the current phase)?
+     * 
+     * @return
+     */
+    public boolean isLayableNow() {
+        return GameManager.getCurrentPhase().isTileColourAllowed(colourName);
+    }
 
-	public String getUpgradesString(MapHex hex)
-	{
-		return upgradesString;
-	}
+    /**
+     * Get the valid upgrades if this tile on a certain hex (restrictions per
+     * hex have not yet been implemented).
+     * 
+     * @param hex The MapHex to be upgraded.
+     * @return A List of valid upgrade TileI objects.
+     */
+    public List<TileI> getUpgrades(MapHex hex) {
+        List<TileI> upgr = new ArrayList<TileI>();
+        TileI tile;
+        for (Upgrade upgrade : upgrades) {
+            tile = upgrade.getTile();
+            if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add(tile);
+        }
+        return upgr;
+    }
 
-	public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase)
-	{
-		List<TileI> valid = new ArrayList<TileI>();
-		TileI tile;
+    public String getUpgradesString(MapHex hex) {
+        return upgradesString;
+    }
 
-		for (Upgrade upgrade : upgrades)
-		{
-			tile = upgrade.getTile();
-			if (phase.isTileColourAllowed(tile.getColourName())
-					&& tile.countFreeTiles() != 0 /* -1 means unlimited */
-					&& upgrade.isAllowedForHex(hex))
-			{
-				valid.add(tile);
-			}
-		}
-		return valid;
-	}
+    public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase) {
+        List<TileI> valid = new ArrayList<TileI>();
+        TileI tile;
 
-	public boolean hasStations()
-	{
-		return stations.size() > 0;
-	}
+        for (Upgrade upgrade : upgrades) {
+            tile = upgrade.getTile();
+            if (phase.isTileColourAllowed(tile.getColourName())
+                && tile.countFreeTiles() != 0 /* -1 means unlimited */
+                && upgrade.isAllowedForHex(hex)) {
+                valid.add(tile);
+            }
+        }
+        return valid;
+    }
 
-	public List<Station> getStations()
-	{
-		return stations;
-	}
+    public boolean hasStations() {
+        return stations.size() > 0;
+    }
 
-	public Map<Integer, List<Track>> getTracksPerStationMap() {
-	    return tracksPerStation;
-	}
+    public List<Station> getStations() {
+        return stations;
+    }
 
-	public List<Track> getTracksPerStation(int stationNumber) {
-	    return tracksPerStation.get(stationNumber);
-	}
+    public Map<Integer, List<Track>> getTracksPerStationMap() {
+        return tracksPerStation;
+    }
 
-	public int getNumStations()
-	{
-		return stations.size();
-	}
+    public List<Track> getTracksPerStation(int stationNumber) {
+        return tracksPerStation.get(stationNumber);
+    }
 
-	public boolean lay(MapHex hex)
-	{
+    public int getNumStations() {
+        return stations.size();
+    }
 
-		tilesLaid.add(hex);
-		update();
+    public boolean lay(MapHex hex) {
 
-		return true;
-	}
+        tilesLaid.add(hex);
+        update();
 
-	public boolean remove(MapHex hex)
-	{
+        return true;
+    }
 
-		tilesLaid.remove(hex);
-		update();
-		return true;
-	}
+    public boolean remove(MapHex hex) {
 
-	/** Return the number of free tiles */
-	public int countFreeTiles()
-	{
-		if (unlimited)
-			return UNLIMITED_TILES;
-		else
-			return quantity - tilesLaid.size();
-	}
+        tilesLaid.remove(hex);
+        update();
+        return true;
+    }
 
-	/** Return a caption for the Remaining Tiles window */
-	@Override
-    public String getText () {
+    /** Return the number of free tiles */
+    public int countFreeTiles() {
+        if (unlimited)
+            return UNLIMITED_TILES;
+        else
+            return quantity - tilesLaid.size();
+    }
 
-	    String count = unlimited ? "+" : String.valueOf(countFreeTiles());
-	    return "#" + externalId + ": " + count;
-	}
+    /** Return a caption for the Remaining Tiles window */
+    @Override
+    public String getText() {
 
-	public int getQuantity()
-	{
-		return quantity;
-	}
+        String count = unlimited ? "+" : String.valueOf(countFreeTiles());
+        return "#" + externalId + ": " + count;
+    }
 
-	protected class Upgrade {
+    public int getQuantity() {
+        return quantity;
+    }
 
-	    /** The upgrade tile */
-	    TileI tile;
+    protected class Upgrade {
 
-	    /** Hexes where the upgrade can be executed */
-	    List<MapHex> allowedHexes = null;
-	    /** Hexes where the upgrade cannot be executed
-	     * Only one of allowedHexes and disallowedHexes should be used
-	     * */
-	    List<MapHex> disallowedHexes = null;
+        /** The upgrade tile */
+        TileI tile;
 
-	    /** A temporary String holding the in/excluded hexes.
-	     * This will be processed at the first usage, because Tiles
-	     * are initialised before the Map.
-	     * @author Erik Vos
-	     */
-	    String hexes = null;
+        /** Hexes where the upgrade can be executed */
+        List<MapHex> allowedHexes = null;
+        /**
+         * Hexes where the upgrade cannot be executed Only one of allowedHexes
+         * and disallowedHexes should be used
+         */
+        List<MapHex> disallowedHexes = null;
 
-	    protected Upgrade (TileI tile) {
-	        this.tile = tile;
-	    }
+        /**
+         * A temporary String holding the in/excluded hexes. This will be
+         * processed at the first usage, because Tiles are initialised before
+         * the Map.
+         * 
+         * @author Erik Vos
+         */
+        String hexes = null;
 
-	    protected boolean isAllowedForHex (MapHex hex) {
+        protected Upgrade(TileI tile) {
+            this.tile = tile;
+        }
 
-	        if (hexes != null) convertHexString();
+        protected boolean isAllowedForHex(MapHex hex) {
 
-	        if (allowedHexes != null) {
-	            return allowedHexes.contains(hex);
-	        } else if (disallowedHexes != null) {
-	            return !disallowedHexes.contains(hex);
-	        } else {
-	            return true;
-	        }
-	    }
+            if (hexes != null) convertHexString();
 
-	    protected TileI getTile() {
-	        return tile;
-	    }
+            if (allowedHexes != null) {
+                return allowedHexes.contains(hex);
+            } else if (disallowedHexes != null) {
+                return !disallowedHexes.contains(hex);
+            } else {
+                return true;
+            }
+        }
 
-	    protected void setHexes (String hexes) {
-	        this.hexes = hexes;
-	    }
+        protected TileI getTile() {
+            return tile;
+        }
 
-	    private void convertHexString () {
+        protected void setHexes(String hexes) {
+            this.hexes = hexes;
+        }
 
-	        boolean allowed = !hexes.startsWith("-");
-	        if (!allowed) hexes = hexes.substring(1);
-	        String[] hexArray = hexes.split(",");
-	        MapHex hex;
-	        for (int i=0; i<hexArray.length; i++) {
-	            hex = MapManager.getInstance().getHex(hexArray[i]);
-	            if (hex != null) {
-	                if (allowed) {
-	                    if (allowedHexes == null) allowedHexes = new ArrayList<MapHex>();
-	                    allowedHexes.add (hex);
-	                } else {
-	                    if (disallowedHexes == null) disallowedHexes = new ArrayList<MapHex>();
-	                    disallowedHexes.add(hex);
-	                }
-	            }
-	        }
-	        hexes = null; // Do this only once
-	    }
-	}
+        private void convertHexString() {
+
+            boolean allowed = !hexes.startsWith("-");
+            if (!allowed) hexes = hexes.substring(1);
+            String[] hexArray = hexes.split(",");
+            MapHex hex;
+            for (int i = 0; i < hexArray.length; i++) {
+                hex = MapManager.getInstance().getHex(hexArray[i]);
+                if (hex != null) {
+                    if (allowed) {
+                        if (allowedHexes == null)
+                            allowedHexes = new ArrayList<MapHex>();
+                        allowedHexes.add(hex);
+                    } else {
+                        if (disallowedHexes == null)
+                            disallowedHexes = new ArrayList<MapHex>();
+                        disallowedHexes.add(hex);
+                    }
+                }
+            }
+            hexes = null; // Do this only once
+        }
+    }
 }
