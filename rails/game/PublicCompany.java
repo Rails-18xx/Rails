@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.34 2008/03/11 20:00:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.35 2008/06/04 19:00:31 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -14,13 +14,10 @@ import rails.util.*;
 /**
  * This class provides an implementation of a (perhaps only basic) public
  * company. Public companies emcompass all 18xx company-like entities that lay
- * tracks and run trains.
- * <p>
- * Ownership of companies will always be performed by holding certificates. Some
- * minor company types may have only one certificate, but this will still be the
- * form in which ownership is expressed.
- * <p>
- * Company shares may or may not have a price on the stock market.
+ * tracks and run trains. <p> Ownership of companies will always be performed by
+ * holding certificates. Some minor company types may have only one certificate,
+ * but this will still be the form in which ownership is expressed. <p> Company
+ * shares may or may not have a price on the stock market.
  */
 public class PublicCompany extends Company implements PublicCompanyI {
     protected static final int DEFAULT_SHARE_UNIT = 10;
@@ -32,8 +29,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected static final int WHEN_FLOATED = 1;
     protected static final int START_OF_FIRST_OR = 2;
 
-    protected static final String[] tokenLayTimeNames = new String[] {
-            "whenStarted", "whenFloated", "firstOR" };
+    protected static final String[] tokenLayTimeNames =
+            new String[] { "whenStarted", "whenFloated", "firstOR" };
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
@@ -71,10 +68,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int numberOfBaseTokens = 0;
 
     protected int baseTokensBuyCost = 0;
-	/** An array of base token laying costs, per successive token */
-	protected int[] baseTokenLayCost;
-	protected String baseTokenLayCostMethod = "sequential";
-
+    /** An array of base token laying costs, per successive token */
+    protected int[] baseTokenLayCost;
+    protected String baseTokenLayCostMethod = "sequential";
 
     protected BaseTokensModel baseTokensModel; // Create after cloning
 
@@ -114,15 +110,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     protected Map<String, HashMap<String, Integer>> extraTileLays = null;
     /**
-     * A map per tile colour, holding the number of turns that the tile lay number applies.
-     * The default number is always 1.
+     * A map per tile colour, holding the number of turns that the tile lay
+     * number applies. The default number is always 1.
      */
     protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
     /** Copy of turnsWithExtraTileLaysInit, per company */
     protected Map<String, IntegerState> turnsWithExtraTileLays = null;
-    /** Number of tiles laid. Only used where
-     * more tiles can be laid in
-     * the company's first OR turn.
+    /**
+     * Number of tiles laid. Only used where more tiles can be laid in the
+     * company's first OR turn.
      */
     protected IntegerState extraTiles = null;
 
@@ -199,7 +195,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Must payout exceed stock price to move token right? */
     protected boolean payoutMustExceedPriceToMove = false;
 
-
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
 
@@ -255,8 +250,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = shareUnitTag.getAttributeAsInteger("percentage",
-                    shareUnit);
+            shareUnit =
+                    shareUnitTag.getAttributeAsInteger("percentage", shareUnit);
         }
 
         Tag homeBaseTag = tag.getChild("Home");
@@ -268,7 +263,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             } else {
                 throw new ConfigurationException("Invalid home hex "
-                        + homeHexName + " for company " + name);
+                                                 + homeHexName
+                                                 + " for company " + name);
             }
         }
 
@@ -280,7 +276,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 destinationHex = hex;
             } else {
                 throw new ConfigurationException("Invalid destination hex "
-                        + destHexName + " for company " + name);
+                                                 + destHexName
+                                                 + " for company " + name);
             }
         }
 
@@ -290,13 +287,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
             GameManager.setCanAnyCompBuyPrivates(true);
             GameManager.setCompaniesCanBuyPrivates();
 
-            String lower = privateBuyTag.getAttributeAsString("lowerPriceFactor");
+            String lower =
+                    privateBuyTag.getAttributeAsString("lowerPriceFactor");
             if (!Util.hasValue(lower))
                 throw new ConfigurationException(
                         "Lower private price factor missing");
             lowerPrivatePriceFactor = Float.parseFloat(lower);
 
-            String upper = privateBuyTag.getAttributeAsString("upperPriceFactor");
+            String upper =
+                    privateBuyTag.getAttributeAsString("upperPriceFactor");
             if (!Util.hasValue(upper))
                 throw new ConfigurationException(
                         "Upper private price factor missing");
@@ -330,8 +329,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
             splitAlways = split.equalsIgnoreCase("always");
             splitAllowed = split.equalsIgnoreCase("allowed");
 
-            payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean(
-                    "mustExceedPriceToMove", false);
+            payoutMustExceedPriceToMove =
+                    payoutTag.getAttributeAsBoolean("mustExceedPriceToMove",
+                            false);
         }
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
@@ -340,24 +340,26 @@ public class PublicCompany extends Company implements PublicCompanyI {
             treasuryPaysOut = true;
             GameManager.setCanAnyCompanyHoldShares(true);
 
-            maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc",
-                    maxPercOfOwnShares);
+            maxPercOfOwnShares =
+                    ownSharesTag.getAttributeAsInteger("maxPerc",
+                            maxPercOfOwnShares);
         }
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
             trainLimit = trainsTag.getAttributeAsIntegerArray("number");
-            mustOwnATrain = trainsTag.getAttributeAsBoolean("mandatory",
-                    mustOwnATrain);
+            mustOwnATrain =
+                    trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
             initialTrain = trainsTag.getAttributeAsString("initial");
         }
 
         Tag firstTrainTag = tag.getChild("FirstTrainCloses");
         if (firstTrainTag != null) {
-            String typeName = firstTrainTag.getAttributeAsString("type",
-                    "Private");
+            String typeName =
+                    firstTrainTag.getAttributeAsString("type", "Private");
             if (typeName.equalsIgnoreCase("Private")) {
-                privateToCloseOnFirstTrainName = firstTrainTag.getAttributeAsString("name");
+                privateToCloseOnFirstTrainName =
+                        firstTrainTag.getAttributeAsString("name");
             } else {
                 throw new ConfigurationException(
                         "Only Privates can be closed on first train buy");
@@ -366,8 +368,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag capitalisationTag = tag.getChild("Capitalisation");
         if (capitalisationTag != null) {
-            String capType = capitalisationTag.getAttributeAsString("type",
-                    "full");
+            String capType =
+                    capitalisationTag.getAttributeAsString("type", "full");
             if (capType.equalsIgnoreCase("full")) {
                 setCapitalisation(CAPITALISE_FULL);
             } else if (capType.equalsIgnoreCase("incremental")) {
@@ -381,48 +383,52 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Tag tileLaysTag = tag.getChild("TileLays");
         if (tileLaysTag != null) {
 
-        	for (Tag numberTag : tileLaysTag.getChildren("Number")) {
+            for (Tag numberTag : tileLaysTag.getChildren("Number")) {
 
-	            String colourString = numberTag.getAttributeAsString("colour");
-	            if (colourString == null)
-	                throw new ConfigurationException(
-	                        "No colour entry for NumberOfTileLays");
-	            String phaseString = numberTag.getAttributeAsString("phase");
-	            if (phaseString == null)
-	                throw new ConfigurationException(
-	                        "No phase entry for NumberOfTileLays");
-	            int number = numberTag.getAttributeAsInteger("number");
-	            Integer lays = new Integer(number);
+                String colourString = numberTag.getAttributeAsString("colour");
+                if (colourString == null)
+                    throw new ConfigurationException(
+                            "No colour entry for NumberOfTileLays");
+                String phaseString = numberTag.getAttributeAsString("phase");
+                if (phaseString == null)
+                    throw new ConfigurationException(
+                            "No phase entry for NumberOfTileLays");
+                int number = numberTag.getAttributeAsInteger("number");
+                Integer lays = new Integer(number);
 
-	            int validForTurns = numberTag.getAttributeAsInteger("occurrences", 0);
+                int validForTurns =
+                        numberTag.getAttributeAsInteger("occurrences", 0);
 
-	            String[] colours = colourString.split(",");
-	            HashMap<String, Integer> phaseMap;
-	            /**
-	             * TODO: should not be necessary to specify all phases separately
-	             */
-	            String[] phases = phaseString.split(",");
-	            for (int i = 0; i < colours.length; i++) {
-	                if (extraTileLays == null)
-	                    extraTileLays = new HashMap<String, HashMap<String, Integer>>();
-	                extraTileLays.put(colours[i],
-	                        (phaseMap = new HashMap<String, Integer>()));
-	                for (int k = 0; k < phases.length; k++) {
-	                    phaseMap.put(phases[k], lays);
-	                }
-		            //phaseMap.put("turns", validForTurns);
-	                if (validForTurns > 0) {
-	                	if (turnsWithExtraTileLaysInit == null) {
-	                		turnsWithExtraTileLaysInit = new HashMap<String, Integer>();
-	                	}
-	                	turnsWithExtraTileLaysInit.put (colours[i], validForTurns);
-	                }
-	            }
-        	}
+                String[] colours = colourString.split(",");
+                HashMap<String, Integer> phaseMap;
+                /**
+                 * TODO: should not be necessary to specify all phases
+                 * separately
+                 */
+                String[] phases = phaseString.split(",");
+                for (int i = 0; i < colours.length; i++) {
+                    if (extraTileLays == null)
+                        extraTileLays =
+                                new HashMap<String, HashMap<String, Integer>>();
+                    extraTileLays.put(colours[i], (phaseMap =
+                            new HashMap<String, Integer>()));
+                    for (int k = 0; k < phases.length; k++) {
+                        phaseMap.put(phases[k], lays);
+                    }
+                    // phaseMap.put("turns", validForTurns);
+                    if (validForTurns > 0) {
+                        if (turnsWithExtraTileLaysInit == null) {
+                            turnsWithExtraTileLaysInit =
+                                    new HashMap<String, Integer>();
+                        }
+                        turnsWithExtraTileLaysInit.put(colours[i],
+                                validForTurns);
+                    }
+                }
+            }
         }
 
-        if (hasParPrice)
-            GameManager.setHasAnyParPrice(true);
+        if (hasParPrice) GameManager.setHasAnyParPrice(true);
 
         List<Tag> certificateTags = tag.getChildren("Certificate");
         if (certificateTags != null) {
@@ -436,14 +442,17 @@ public class PublicCompany extends Company implements PublicCompanyI {
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
 
-                boolean president = "President".equals(certificateTag.getAttributeAsString(
-                        "type", ""));
+                boolean president =
+                        "President".equals(certificateTag.getAttributeAsString(
+                                "type", ""));
                 int number = certificateTag.getAttributeAsInteger("number", 1);
 
                 if (president) {
                     if (number > 1 || gotPresident)
-                        throw new ConfigurationException("Company type " + name
-                                + " cannot have multiple President shares");
+                        throw new ConfigurationException(
+                                "Company type "
+                                        + name
+                                        + " cannot have multiple President shares");
                     gotPresident = true;
                 }
 
@@ -455,51 +464,56 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
             if (shareTotal != 100)
                 throw new ConfigurationException("Company type " + name
-                        + " total shares is not 100%");
+                                                 + " total shares is not 100%");
         }
 
-		// BaseToken
-		Tag baseTokenTag = tag.getChild("BaseTokens");
-		if (baseTokenTag != null) {
+        // BaseToken
+        Tag baseTokenTag = tag.getChild("BaseTokens");
+        if (baseTokenTag != null) {
 
-			// Cost of laying a token
-			Tag layCostTag = baseTokenTag.getChild("LayCost");
-			if (layCostTag != null) {
-				baseTokenLayCostMethod = layCostTag.getAttributeAsString("method", baseTokenLayCostMethod);
-				// Must validate the cost method!
+            // Cost of laying a token
+            Tag layCostTag = baseTokenTag.getChild("LayCost");
+            if (layCostTag != null) {
+                baseTokenLayCostMethod =
+                        layCostTag.getAttributeAsString("method",
+                                baseTokenLayCostMethod);
+                // Must validate the cost method!
 
-				baseTokenLayCost = layCostTag.getAttributeAsIntegerArray("cost");
-			}
+                baseTokenLayCost =
+                        layCostTag.getAttributeAsIntegerArray("cost");
+            }
 
-			/* Cost of buying a token (mutually exclusive with laying cost) */
-			Tag buyCostTag = baseTokenTag.getChild("BuyCost");
-			if (buyCostTag != null) {
-				baseTokensBuyCost = floatTag.getAttributeAsInteger(
-	                "initialTokenCost", 0);
-			}
+            /* Cost of buying a token (mutually exclusive with laying cost) */
+            Tag buyCostTag = baseTokenTag.getChild("BuyCost");
+            if (buyCostTag != null) {
+                baseTokensBuyCost =
+                        floatTag.getAttributeAsInteger("initialTokenCost", 0);
+            }
 
-	        Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
-	        if (tokenLayTimeTag != null) {
-	        	// When is the home base laid?
-	        	// Note: if not before, home tokens are in any case laid
-	        	// at the start of the first OR
-	            String layTimeString = tokenLayTimeTag.getAttributeAsString("lay");
-	            if (Util.hasValue(layTimeString)) {
-	                for (int i = 0; i < tokenLayTimeNames.length; i++) {
-	                    if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
-	                        homeBaseTokensLayTime = i;
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-		}
+            Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
+            if (tokenLayTimeTag != null) {
+                // When is the home base laid?
+                // Note: if not before, home tokens are in any case laid
+                // at the start of the first OR
+                String layTimeString =
+                        tokenLayTimeTag.getAttributeAsString("lay");
+                if (Util.hasValue(layTimeString)) {
+                    for (int i = 0; i < tokenLayTimeNames.length; i++) {
+                        if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
+                            homeBaseTokensLayTime = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         Tag sellSharesTag = tag.getChild("TradeShares");
         if (sellSharesTag != null) {
             mayTradeShares = true;
-            mustHaveOperatedToTradeShares = sellSharesTag.getAttributeAsBoolean(
-                    "mustHaveOperated", mustHaveOperatedToTradeShares);
+            mustHaveOperatedToTradeShares =
+                    sellSharesTag.getAttributeAsBoolean("mustHaveOperated",
+                            mustHaveOperatedToTradeShares);
         }
     }
 
@@ -507,8 +521,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
-        if (!name.equals(""))
-            this.publicNumber = numberOfPublicCompanies++;
+        if (!name.equals("")) this.publicNumber = numberOfPublicCompanies++;
 
         this.portfolio = new Portfolio(name, this);
         treasury = new CashModel(this);
@@ -538,19 +551,19 @@ public class PublicCompany extends Company implements PublicCompanyI {
         trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
         bonusTokensValue = new MoneyModel(name + "_bonusValue");
         bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO
-                + MoneyModel.ADD_PLUS);
+                                   + MoneyModel.ADD_PLUS);
         if (hasStockPrice) {
             parPrice = new PriceModel(this, name + "_ParPrice");
             currentPrice = new PriceModel(this, name + "_CurrentPrice");
         }
 
         if (turnsWithExtraTileLaysInit != null) {
-        	turnsWithExtraTileLays = new HashMap<String, IntegerState>();
-        	for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-        		turnsWithExtraTileLays.put(colour,
-        				new IntegerState (name+"_"+colour+"_ExtraTileTurns",
-        						turnsWithExtraTileLaysInit.get(colour)));
-        	}
+            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+            for (String colour : turnsWithExtraTileLaysInit.keySet()) {
+                turnsWithExtraTileLays.put(colour, new IntegerState(
+                        name + "_" + colour + "_ExtraTileTurns",
+                        turnsWithExtraTileLaysInit.get(colour)));
+            }
         }
 
         PublicCompanyI dummyCompany = (PublicCompanyI) type.getDummyCompany();
@@ -570,7 +583,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     startSpace));
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
-                        + startSpace + "for company " + name);
+                                                 + startSpace + "for company "
+                                                 + name);
             currentPrice.setPrice(parPrice.getPrice());
 
         }
@@ -592,8 +606,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Reset turn objects */
     public void initTurn() {
 
-        if (!hasLaidHomeBaseTokens())
-            layHomeBaseTokens();
+        if (!hasLaidHomeBaseTokens()) layHomeBaseTokens();
 
         privatesCostThisTurn.set(0);
         tilesLaidThisTurn.set("");
@@ -605,7 +618,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token background colour.
-     *
+     * 
      * @return Color object
      */
     public Color getBgColour() {
@@ -614,7 +627,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token background colour.
-     *
+     * 
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexBgColour() {
@@ -623,7 +636,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token foreground colour.
-     *
+     * 
      * @return Color object.
      */
     public Color getFgColour() {
@@ -632,7 +645,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token foreground colour.
-     *
+     * 
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexFgColour() {
@@ -647,8 +660,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * @param homeHex
-     *            The homeHex to set.
+     * @param homeHex The homeHex to set.
      */
     public void setHomeHex(MapHex homeHex) {
         this.homeHex = homeHex;
@@ -662,8 +674,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * @param homeStation
-     *            The homeStation to set.
+     * @param homeStation The homeStation to set.
      */
     public void setHomeCityNumber(int number) {
         this.homeCityNumber = number;
@@ -699,14 +710,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         /* Final initialisations */
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
-            privateToCloseOnFirstTrain = Game.getCompanyManager().getPrivateCompany(
-                    privateToCloseOnFirstTrainName);
+            privateToCloseOnFirstTrain =
+                    Game.getCompanyManager().getPrivateCompany(
+                            privateToCloseOnFirstTrainName);
         }
 
         if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
         }
-   }
+    }
 
     public void start(int price) {
         StockSpaceI startSpace = StockMarket.getInstance().getStartSpace(price);
@@ -735,12 +747,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    public void transferAssetsFrom (PublicCompanyI otherCompany) {
+    public void transferAssetsFrom(PublicCompanyI otherCompany) {
 
         if (otherCompany.getCash() > 0) {
-        	new CashMove (otherCompany, this, otherCompany.getCash());
+            new CashMove(otherCompany, this, otherCompany.getCash());
         }
-        portfolio.transferAssetsFrom (otherCompany.getPortfolio());
+        portfolio.transferAssetsFrom(otherCompany.getPortfolio());
     }
 
     /**
@@ -761,49 +773,29 @@ public class PublicCompany extends Company implements PublicCompanyI {
         getPresident().getPortfolio().getShareModel(this).update();
 
         /*
-        // In 18EU, before phase 5, cash has already been moved
-        if (moveCash) {
-
-	        int cash = 0;
-	        if (hasStockPrice) {
-	            int capFactor = 0;
-	            if (capitalisation == CAPITALISE_FULL) {
-	                capFactor = 100 / shareUnit;
-	            } else if (capitalisation == CAPITALISE_INCREMENTAL) {
-	                // TODO Should be: 100% - percentage still in IPO
-	                capFactor = percentageOwnedByPlayers() / shareUnit;
-	            }
-	            int price = (hasParPrice ? getParPrice() : getCurrentPrice()).getPrice();
-	            cash = capFactor * price;
-	        } else {
-	            cash = fixedPrice;
-	        }
-
-	        if (baseTokensBuyCost > 0)
-	            cash -= baseTokensBuyCost;
-
-	        new CashMove(Bank.getInstance(), this, cash);
-	        ReportBuffer.add(LocalText.getText("FloatsWithCash",
-	        		new String[] {
-	        		name,
-	                Bank.format(cash)
-	                }));
-
-	        if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
-	            List<Certificate> moving = new ArrayList<Certificate>();
-	            for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
-	                    name)) {
-	                moving.add(ipoCert);
-	            }
-	            for (Certificate ipoCert : moving) {
-	                ipoCert.moveTo(portfolio);
-	            }
-	        }
-
-        } else {
-        	ReportBuffer.add(LocalText.getText("Floats", name));
-        }
-        */
+         * // In 18EU, before phase 5, cash has already been moved if (moveCash) {
+         * 
+         * int cash = 0; if (hasStockPrice) { int capFactor = 0; if
+         * (capitalisation == CAPITALISE_FULL) { capFactor = 100 / shareUnit; }
+         * else if (capitalisation == CAPITALISE_INCREMENTAL) { // TODO Should
+         * be: 100% - percentage still in IPO capFactor =
+         * percentageOwnedByPlayers() / shareUnit; } int price = (hasParPrice ?
+         * getParPrice() : getCurrentPrice()).getPrice(); cash = capFactor *
+         * price; } else { cash = fixedPrice; }
+         * 
+         * if (baseTokensBuyCost > 0) cash -= baseTokensBuyCost;
+         * 
+         * new CashMove(Bank.getInstance(), this, cash);
+         * ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
+         * name, Bank.format(cash) }));
+         * 
+         * if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
+         * List<Certificate> moving = new ArrayList<Certificate>(); for
+         * (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
+         * name)) { moving.add(ipoCert); } for (Certificate ipoCert : moving) {
+         * ipoCert.moveTo(portfolio); } } } else {
+         * ReportBuffer.add(LocalText.getText("Floats", name)); }
+         */
 
         if (sharePriceUpOnFloating) {
             Game.getStockMarket().moveUp(this);
@@ -816,13 +808,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (initialTrain != null) {
             TrainI train = Bank.getIpo().getTrainOfType(initialTrain);
             buyTrain(train, 0);
-    		TrainManager.get().checkTrainAvailability(train, Bank.getIpo());
+            TrainManager.get().checkTrainAvailability(train, Bank.getIpo());
         }
     }
 
     /**
      * Has the company already floated?
-     *
+     * 
      * @return true if the company has floated.
      */
     public boolean hasFloated() {
@@ -831,7 +823,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Has the company already operated?
-     *
+     * 
      * @return true if the company has operated.
      */
     public boolean hasOperated() {
@@ -855,12 +847,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Util.moveObjects(laidBaseTokens, this);
     }
+
     /**
-     * Set the company par price.
-     * <p>
-     * <i>Note: this method should <b>not</b> be used to start a company!</i>
-     * Use <code><b>start()</b></code> in stead.
-     *
+     * Set the company par price. <p> <i>Note: this method should <b>not</b> be
+     * used to start a company!</i> Use <code><b>start()</b></code> in
+     * stead.
+     * 
      * @param spaceI
      */
     public void setParPrice(StockSpaceI space) {
@@ -873,9 +865,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the company par (initial) price.
-     *
+     * 
      * @return StockSpace object, which defines the company start position on
-     *         the stock chart.
+     * the stock chart.
      */
     public StockSpaceI getParPrice() {
         if (hasParPrice) {
@@ -887,10 +879,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Set a new company price.
-     *
-     * @param price
-     *            The StockSpace object that defines the new location on the
-     *            stock market.
+     * 
+     * @param price The StockSpace object that defines the new location on the
+     * stock market.
      */
     public void setCurrentPrice(StockSpaceI price) {
         if (price != null) {
@@ -904,17 +895,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public PriceModel getParPriceModel() {
         // Temporary fix to satisfy GameStatus window. Should be removed there.
-        if (parPrice == null)
-            return currentPrice;
+        if (parPrice == null) return currentPrice;
 
         return parPrice;
     }
 
     /**
      * Get the current company share price.
-     *
+     * 
      * @return The StockSpace object that defines the current location on the
-     *         stock market.
+     * stock market.
      */
     public StockSpaceI getCurrentPrice() {
         return currentPrice != null ? currentPrice.getPrice() : null;
@@ -922,9 +912,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Add a given amount to the company treasury.
-     *
-     * @param amount
-     *            The amount to add (may be negative).
+     * 
+     * @param amount The amount to add (may be negative).
      */
     public boolean addCash(int amount) {
         return treasury.addCash(amount);
@@ -932,7 +921,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the current company treasury.
-     *
+     * 
      * @return The current cash amount.
      */
     public int getCash() {
@@ -963,9 +952,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get a list of this company's certificates.
-     *
+     * 
      * @return ArrayList containing the certificates (item 0 is the President's
-     *         share).
+     * share).
      */
     public List<PublicCertificateI> getCertificates() {
         return certificates;
@@ -974,9 +963,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Assign a predefined list of certificates to this company. The list is
      * deep cloned.
-     *
-     * @param list
-     *            ArrayList containing the certificates.
+     * 
+     * @param list ArrayList containing the certificates.
      */
     public void setCertificates(List<PublicCertificateI> list) {
         certificates = new ArrayList<PublicCertificateI>();
@@ -992,9 +980,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Add a certificate to the end of this company's list of certificates.
-     *
-     * @param certificate
-     *            The certificate to add.
+     * 
+     * @param certificate The certificate to add.
      */
     public void addCertificate(PublicCertificateI certificate) {
         if (certificates == null)
@@ -1006,7 +993,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Get the Portfolio of this company, containing all privates and
      * certificates owned..
-     *
+     * 
      * @return The Portfolio of this company.
      */
     public Portfolio getPortfolio() {
@@ -1015,7 +1002,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the percentage of shares that must be sold to float the company.
-     *
+     * 
      * @return The float percentage.
      */
     public int getFloatPercentage() {
@@ -1024,27 +1011,26 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the company President.
-     *
+     * 
      */
     public Player getPresident() {
         if (hasStarted()) {
-        	CashHolder owner = certificates.get(0).getPortfolio().getOwner();
-        	if (owner instanceof Player) return (Player) owner;
+            CashHolder owner = certificates.get(0).getPortfolio().getOwner();
+            if (owner instanceof Player) return (Player) owner;
         }
         return null;
     }
 
-    public boolean isAvailable () {
-    	Portfolio presLoc = certificates.get(0).getPortfolio();
-    	return presLoc != Bank.getUnavailable()
-    			&& presLoc != Bank.getScrapHeap();
+    public boolean isAvailable() {
+        Portfolio presLoc = certificates.get(0).getPortfolio();
+        return presLoc != Bank.getUnavailable()
+               && presLoc != Bank.getScrapHeap();
     }
 
     /**
      * Store the last revenue earned by this company.
-     *
-     * @param i
-     *            The last revenue amount.
+     * 
+     * @param i The last revenue amount.
      */
     public void setLastRevenue(int i) {
         lastRevenue.set(i);
@@ -1052,7 +1038,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the last revenue earned by this company.
-     *
+     * 
      * @return The last revenue amount.
      */
     public int getLastRevenue() {
@@ -1084,19 +1070,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Pay out a given amount of revenue (and store it). The amount is
      * distributed to all the certificate holders, or the "beneficiary" if
      * defined (e.g.: BankPool shares may pay to the company).
-     *
-     * @param The
-     *            revenue amount.
+     * 
+     * @param The revenue amount.
      */
     /*
      * public void payOut(int amount) {
-     *
+     * 
      * distributePayout(amount); // Move the token if (hasStockPrice &&
      * (!payoutMustExceedPriceToMove || amount >=
      * currentPrice.getPrice().getPrice())) Game.getStockMarket().payOut(this); } /*
-     *
+     * 
      * /** Split a dividend. TODO Optional rounding down the payout
-     *
+     * 
      * @param amount
      */
     public void splitRevenue(int amount) {
@@ -1106,8 +1091,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (amount > 0) {
             // Withhold half of it
             // For now, hardcode the rule that payout is rounded up.
-            int withheld = (amount / (2 * getNumberOfShares()))
-                    * getNumberOfShares();
+            int withheld =
+                    (amount / (2 * getNumberOfShares())) * getNumberOfShares();
             new CashMove(null, this, withheld);
             ReportBuffer.add(name + " receives " + Bank.format(withheld));
 
@@ -1120,13 +1105,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Distribute the dividend amongst the shareholders.
-     *
+     * 
      * @param amount
      */
     public void payout(int amount) {
 
-        if (amount == 0)
-            return;
+        if (amount == 0) return;
 
         int part;
         Map<CashHolder, Integer> split = new HashMap<CashHolder, Integer>();
@@ -1142,17 +1126,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
         // Report and add the cash
         for (CashHolder recipient : split.keySet()) {
-            if (recipient instanceof Bank)
-                continue;
+            if (recipient instanceof Bank) continue;
             part = (split.get(recipient)).intValue();
             ReportBuffer.add(recipient.getName() + " receives "
-                    + Bank.format(part));
+                             + Bank.format(part));
             new CashMove(null, recipient, part);
         }
 
         // Move the token
         if (hasStockPrice
-                && (!payoutMustExceedPriceToMove || amount >= currentPrice.getPrice().getPrice())) {
+            && (!payoutMustExceedPriceToMove || amount >= currentPrice.getPrice().getPrice())) {
             Game.getStockMarket().payOut(this);
         }
 
@@ -1165,7 +1148,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         CashHolder beneficiary = holder.getOwner();
         // Special cases apply if the holder is the IPO or the Pool
         if (holder == Bank.getIpo() && ipoPaysOut || holder == Bank.getPool()
-                && poolPaysOut) {
+            && poolPaysOut) {
             beneficiary = this;
         }
         // log.debug("Cert "+cert.getName()+"owned by "+holder.getName()+"
@@ -1176,16 +1159,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Withhold a given amount of revenue (and store it).
-     *
-     * @param The
-     *            revenue amount.
+     * 
+     * @param The revenue amount.
      */
     public void withhold(int amount) {
-        if (amount > 0)
-            new CashMove(null, this, amount);
+        if (amount > 0) new CashMove(null, this, amount);
         // Move the token
-        if (hasStockPrice)
-            Game.getStockMarket().withhold(this);
+        if (hasStockPrice) Game.getStockMarket().withhold(this);
     }
 
     /**
@@ -1193,7 +1173,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * if the share price should move up at the end of a stock round. Since 1851
      * (jan 2008) interpreted as: no share is owned either by the Bank or by the
      * company's own Treasury.
-     *
+     * 
      * @return true if the share price can move up.
      */
     public boolean isSoldOut() {
@@ -1217,7 +1197,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the unit of share.
-     *
+     * 
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit() {
@@ -1233,15 +1213,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
             StockSpace startSpace) {
         // TODO: Should probably do error checking in case names aren't found.
         Player player = Game.getPlayerManager().getPlayerByName(playerName);
-        PublicCompany company = (PublicCompany) Game.getCompanyManager().getPublicCompany(
-                companyName);
+        PublicCompany company =
+                (PublicCompany) Game.getCompanyManager().getPublicCompany(
+                        companyName);
 
-        PublicCertificate cert = (PublicCertificate) company.certificates.get(0);
+        PublicCertificate cert =
+                (PublicCertificate) company.certificates.get(0);
 
         if (player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit()))) {
             company.start(startSpace);
-            int price = startSpace.getPrice()
-                    * (cert.getShare() / company.getShareUnit());
+            int price =
+                    startSpace.getPrice()
+                            * (cert.getShare() / company.getShareUnit());
             player.buyShare(cert, price);
 
             return true;
@@ -1309,9 +1292,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Check if the presidency has changed for a <b>buying</b> player.
-     *
-     * @param buyer
-     *            Player who has just bought a certificate.
+     * 
+     * @param buyer Player who has just bought a certificate.
      */
     public void checkPresidencyOnBuy(Player buyer) {
 
@@ -1333,8 +1315,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void checkPresidencyOnSale(Player seller) {
 
-        if (seller != getPresident())
-            return;
+        if (seller != getPresident()) return;
 
         int presShare = seller.getPortfolio().getShare(this);
         int presIndex = seller.getIndex();
@@ -1342,7 +1323,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int share;
 
         for (int i = presIndex + 1; i < presIndex
-                + GameManager.getNumberOfPlayers(); i++) {
+                                        + GameManager.getNumberOfPlayers(); i++) {
             player = GameManager.getPlayer(i);
             share = player.getPortfolio().getShare(this);
             if (share > presShare) {
@@ -1355,35 +1336,26 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
-    /** Only usable if the float percentage is fixed.
-     * Games where the percentage varies must check this
-     * in StockRound and possibly StartRound.
+    /**
+     * Only usable if the float percentage is fixed. Games where the percentage
+     * varies must check this in StockRound and possibly StartRound.
      */
     /*
-    public boolean checkFlotation(boolean moveCash) {
-        if (hasStarted() && !hasFloated()
-                && (Bank.getIpo().getShare(this)
-                		+ portfolio.getShare(this)) <= 100 - floatPerc) {
-            // Float company
-            setFloated(moveCash);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    */
+     * public boolean checkFlotation(boolean moveCash) { if (hasStarted() &&
+     * !hasFloated() && (Bank.getIpo().getShare(this) +
+     * portfolio.getShare(this)) <= 100 - floatPerc) { // Float company
+     * setFloated(moveCash); return true; } else { return false; } }
+     */
 
-    /** Return the unsold share percentage.
-     * It is calculated as the sum of the percentages in IPO
-     * and in the company treasury. <p>The latter percentage can
-     * only be nonzero in games where companies can hold their own shares,
-     * and will only truly represent the "unsold" percentage
-     * until the company has floated (in many games companies
-     * can buy and sell their own shares).
+    /**
+     * Return the unsold share percentage. It is calculated as the sum of the
+     * percentages in IPO and in the company treasury. <p>The latter percentage
+     * can only be nonzero in games where companies can hold their own shares,
+     * and will only truly represent the "unsold" percentage until the company
+     * has floated (in many games companies can buy and sell their own shares).
      */
     public int getUnsoldPercentage() {
-        return Bank.getIpo().getShare(this)
-            + portfolio.getShare(this);
+        return Bank.getIpo().getShare(this) + portfolio.getShare(this);
     }
 
     /**
@@ -1394,8 +1366,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * @param capitalisation
-     *            The capitalisation to set.
+     * @param capitalisation The capitalisation to set.
      */
     public void setCapitalisation(int capitalisation) {
         log.debug("Capitalisation=" + capitalisation);
@@ -1415,13 +1386,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /*
-    public boolean mayBuyTrains() {
-
-        return portfolio.getNumberOfTrains() < getCurrentTrainLimit();
-    }
-    */
+     * public boolean mayBuyTrains() {
+     * 
+     * return portfolio.getNumberOfTrains() < getCurrentTrainLimit(); }
+     */
     public int getNumberOfTrains() {
-    	return portfolio.getNumberOfTrains();
+        return portfolio.getNumberOfTrains();
     }
 
     /**
@@ -1431,7 +1401,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         portfolio.buyTrain(train, price);
         trainsCostThisTurn.add(price);
         if (privateToCloseOnFirstTrain != null
-                && !privateToCloseOnFirstTrain.isClosed()) {
+            && !privateToCloseOnFirstTrain.isClosed()) {
             privateToCloseOnFirstTrain.setClosed();
         }
     }
@@ -1453,12 +1423,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public void layTile(MapHex hex, TileI tile, int orientation, int cost) {
 
-        String tileLaid = "#" + tile.getExternalId() + "/" + hex.getName()
-                + "/" + MapHex.getOrientationName(orientation);
+        String tileLaid =
+                "#" + tile.getExternalId() + "/" + hex.getName() + "/"
+                        + MapHex.getOrientationName(orientation);
         tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 
-        if (cost > 0)
-            tilesCostThisTurn.add(cost);
+        if (cost > 0) tilesCostThisTurn.add(cost);
 
         if (extraTiles != null && extraTiles.intValue() > 0) {
             extraTiles.add(-1);
@@ -1477,38 +1447,30 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         String tokenLaid = hex.getName();
         tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
-        if (cost > 0)
-            tokensCostThisTurn.add(cost);
+        if (cost > 0) tokensCostThisTurn.add(cost);
     }
 
-	/**
-	 * Calculate the cost of laying a token. Currently hardcoded for the
-	 * "sequence" method. The other token layong costing methods will be
-	 * implemented later.
-	 *
-	 * @param index
-	 *            The sequence number of the token that the company is laying.
-	 * @return The cost of laying that token.
-	 */
-	public int getBaseTokenLayCost()
-	{
+    /**
+     * Calculate the cost of laying a token. Currently hardcoded for the
+     * "sequence" method. The other token layong costing methods will be
+     * implemented later.
+     * 
+     * @param index The sequence number of the token that the company is laying.
+     * @return The cost of laying that token.
+     */
+    public int getBaseTokenLayCost() {
 
-		if (baseTokenLayCost == null) return 0;
+        if (baseTokenLayCost == null) return 0;
 
-		int index = getNumberOfLaidBaseTokens();
+        int index = getNumberOfLaidBaseTokens();
 
-		if (index >= baseTokenLayCost.length)
-		{
-			index = baseTokenLayCost.length - 1;
-		}
-		else if (index < 0)
-		{
-			index = 0;
-		}
-		return baseTokenLayCost[index];
-	}
-
-
+        if (index >= baseTokenLayCost.length) {
+            index = baseTokenLayCost.length - 1;
+        } else if (index < 0) {
+            index = 0;
+        }
+        return baseTokenLayCost[index];
+    }
 
     public ModelObject getTokensLaidThisTurnModel() {
         return tokensLaidThisTurn;
@@ -1547,8 +1509,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // This is not true in 1841!
         // TODO This does not yet cover cases where the user
         // has a choice, such in 1830 Erie.
-    	if (hasLaidHomeBaseTokens()) return true;
-    	log.debug(name+" lays home base on "+homeHex.getName()+" city "+homeCityNumber);
+        if (hasLaidHomeBaseTokens()) return true;
+        log.debug(name + " lays home base on " + homeHex.getName() + " city "
+                  + homeCityNumber);
         return homeHex.layBaseToken(this, homeCityNumber);
     }
 
@@ -1642,30 +1605,26 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int getNumberOfTileLays(String tileColour) {
 
-        if (extraTileLays == null)
-            return 1;
+        if (extraTileLays == null) return 1;
 
         Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
-        if (phaseMap == null || phaseMap.isEmpty())
-            return 1;
+        if (phaseMap == null || phaseMap.isEmpty()) return 1;
 
         PhaseI phase = PhaseManager.getInstance().getCurrentPhase();
         Integer ii = phaseMap.get(phase.getName());
-        if (ii == null)
-            return 1;
+        if (ii == null) return 1;
 
         int i = ii;
         if (i > 1) {
-        	if (extraTiles == null
-        				&& turnsWithExtraTileLays != null) {
-        			extraTiles = turnsWithExtraTileLays.get(tileColour);
-       		}
-        	if (extraTiles != null) {
-        		if (extraTiles.intValue() == 0)	{
-        			extraTiles = null;
-        			return 1;
-        		}
-        	}
+            if (extraTiles == null && turnsWithExtraTileLays != null) {
+                extraTiles = turnsWithExtraTileLays.get(tileColour);
+            }
+            if (extraTiles != null) {
+                if (extraTiles.intValue() == 0) {
+                    extraTiles = null;
+                    return 1;
+                }
+            }
         }
         return i;
     }

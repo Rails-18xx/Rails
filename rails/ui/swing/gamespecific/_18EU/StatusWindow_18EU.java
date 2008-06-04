@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.2 2008/06/01 13:33:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.3 2008/06/04 19:00:38 evos Exp $*/
 package rails.ui.swing.gamespecific._18EU;
 
 import java.util.ArrayList;
@@ -23,8 +23,8 @@ public class StatusWindow_18EU extends StatusWindow {
     protected boolean updateGameSpecificSettings() {
 
         if (possibleActions.contains(DiscardTrain.class)) {
-            immediateAction = possibleActions.getType(DiscardTrain.class)
-                    .get(0);
+            immediateAction =
+                    possibleActions.getType(DiscardTrain.class).get(0);
         }
 
         if (currentRound instanceof FinalMinorExchangeRound) {
@@ -52,24 +52,28 @@ public class StatusWindow_18EU extends StatusWindow {
                 PublicCompanyI c = dt.getCompany();
                 String playerName = dt.getPlayerName();
                 List<TrainI> trains = dt.getOwnedTrains();
-                List<String> trainOptions = new ArrayList<String>(trains.size());
+                List<String> trainOptions =
+                        new ArrayList<String>(trains.size());
                 String[] options = new String[trains.size()];
 
                 for (int i = 0; i < options.length; i++) {
-                    options[i] = LocalText.getText("N_Train", trains.get(i)
-                            .getName());
+                    options[i] =
+                            LocalText.getText("N_Train",
+                                    trains.get(i).getName());
                     trainOptions.add(options[i]);
                 }
-                String discardedTrainName = (String) JOptionPane
-                        .showInputDialog(this, LocalText.getText(
-                                "HAS_TOO_MANY_TRAINS", new String[] {
-                                        playerName, c.getName() }), LocalText
-                                .getText("WhichTrainToDiscard"),
+                String discardedTrainName =
+                        (String) JOptionPane.showInputDialog(
+                                this,
+                                LocalText.getText(
+                                        "HAS_TOO_MANY_TRAINS",
+                                        new String[] { playerName, c.getName() }),
+                                LocalText.getText("WhichTrainToDiscard"),
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if (discardedTrainName != null) {
-                    TrainI discardedTrain = trains.get(trainOptions
-                            .indexOf(discardedTrainName));
+                    TrainI discardedTrain =
+                            trains.get(trainOptions.indexOf(discardedTrainName));
 
                     dt.setDiscardedTrain(discardedTrain);
 

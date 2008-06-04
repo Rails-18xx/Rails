@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/BooleanState.java,v 1.1 2007/05/20 17:54:52 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/BooleanState.java,v 1.2 2008/06/04 19:00:36 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
@@ -26,11 +26,11 @@ public class BooleanState extends State {
         super(name, new Boolean(value));
     }
 
-    public void set (boolean value) {
-        super.set(new Boolean (value));
+    public void set(boolean value) {
+        super.set(new Boolean(value));
     }
-    
+
     public boolean booleanValue() {
-        return ((Boolean)object).booleanValue();
+        return ((Boolean) object).booleanValue();
     }
 }

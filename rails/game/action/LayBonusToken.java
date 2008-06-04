@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.5 2007/12/30 14:25:12 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.6 2008/06/04 19:00:30 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -21,52 +21,50 @@ import rails.util.Util;
  * @author Erik Vos
  */
 public class LayBonusToken extends LayToken {
-	
-	transient BonusToken token = null;
+
+    transient BonusToken token = null;
     String tokenId = null;
-    
+
     /*--- Preconditions ---*/
-    
+
     /*--- Postconditions ---*/
-    
+
     public static final long serialVersionUID = 1L;
 
-    public LayBonusToken (SpecialTokenLay specialProperty, BonusToken token) {
-        super (specialProperty);
+    public LayBonusToken(SpecialTokenLay specialProperty, BonusToken token) {
+        super(specialProperty);
         this.token = token;
         this.tokenId = token.getUniqueId();
     }
-    
+
     public BonusToken getToken() {
-    	return token;
-    }
-    
-    public boolean equals (PossibleAction action) {
-        if (!(action instanceof LayBonusToken)) return false;
-        LayBonusToken a = (LayBonusToken) action;
-        return (a.locationNames == null && locationNames == null
-                || a.locationNames.equals(locationNames))
-            && a.company == company
-            && a.specialProperty == specialProperty;
+        return token;
     }
 
-    public String toString () {
-        StringBuffer b = new StringBuffer  ("LayBonusToken ");
+    public boolean equals(PossibleAction action) {
+        if (!(action instanceof LayBonusToken)) return false;
+        LayBonusToken a = (LayBonusToken) action;
+        return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
+               && a.company == company && a.specialProperty == specialProperty;
+    }
+
+    public String toString() {
+        StringBuffer b = new StringBuffer("LayBonusToken ");
         if (chosenHex == null) {
-        	b.append(" location=").append(locationNames)
-        	 .append(" spec.prop=").append(specialProperty);
+            b.append(" location=").append(locationNames).append(" spec.prop=").append(
+                    specialProperty);
         } else {
-        	b.append("hex=").append(chosenHex.getName());
+            b.append("hex=").append(chosenHex.getName());
         }
         return b.toString();
     }
 
     /** Deserialize */
-	private void readObject (ObjectInputStream in) 
-	throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
-		in.defaultReadObject();
-		
+        in.defaultReadObject();
+
         MapManager mmgr = MapManager.getInstance();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
@@ -78,13 +76,13 @@ public class LayBonusToken extends LayToken {
         if (tokenId != null) {
             token = (BonusToken) Token.getByUniqueId(tokenId);
         }
-		if (specialPropertyId  > 0) {
-			specialProperty = (SpecialTokenLay) SpecialProperty.getByUniqueId (specialPropertyId);
-		}
-		if (chosenHexName != null && chosenHexName.length() > 0) {
-			chosenHex = MapManager.getInstance().getHex(chosenHexName);
-		}
-	}
-    
-    
+        if (specialPropertyId > 0) {
+            specialProperty =
+                    (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+        }
+        if (chosenHexName != null && chosenHexName.length() > 0) {
+            chosenHex = MapManager.getInstance().getHex(chosenHexName);
+        }
+    }
+
 }

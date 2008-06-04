@@ -13,23 +13,23 @@ import rails.game.specific._18AL.NamedTrainToken;
 import rails.game.specific._18AL.NameTrains;
 
 public class AssignNamedTrains extends UseSpecialProperty {
-    
+
     transient private List<NameableTrain> nameableTrains;
     private String[] trainIds;
     int numberOfTrains;
     int numberOfTokens;
-    
+
     transient private List<NameableTrain> preTrainPerToken;
     private String[] preTrainIds;
-    
+
     transient private List<NameableTrain> postTrainPerToken;
-    private String[] postTrainIds;    
+    private String[] postTrainIds;
 
     public static final long serialVersionUID = 1L;
 
-	public AssignNamedTrains (NameTrains namedTrainsSpecialProperty,
+    public AssignNamedTrains(NameTrains namedTrainsSpecialProperty,
             List<TrainI> trains) {
-        super (namedTrainsSpecialProperty);
+        super(namedTrainsSpecialProperty);
 
         numberOfTrains = trains.size();
         List<NamedTrainToken> tokens = namedTrainsSpecialProperty.getTokens();
@@ -37,25 +37,25 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
         nameableTrains = new ArrayList<NameableTrain>(numberOfTrains);
         for (TrainI train : trains) {
-            nameableTrains.add((NameableTrain)train);
+            nameableTrains.add((NameableTrain) train);
         }
         preTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
         postTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
-        
+
         trainIds = new String[numberOfTrains];
         preTrainIds = new String[numberOfTokens];
         postTrainIds = new String[numberOfTokens];
-        
-        for (int i=0; i<numberOfTokens; i++) {
+
+        for (int i = 0; i < numberOfTokens; i++) {
             preTrainPerToken.add(null);
         }
-        
+
         if (trains != null) {
             int trainIndex = 0;
             int tokenIndex;
             for (NameableTrain train : nameableTrains) {
                 trainIds[trainIndex] = train.getUniqueId();
-                NamedTrainToken token = ((NameableTrain)train).getNameToken();
+                NamedTrainToken token = ((NameableTrain) train).getNameToken();
                 if (token != null) {
                     preTrainPerToken.set(tokens.indexOf(token), train);
                     tokenIndex = tokens.indexOf(token);
@@ -64,33 +64,33 @@ public class AssignNamedTrains extends UseSpecialProperty {
                 trainIndex++;
             }
         }
-	}
-	
-	public String toMenu() {
-	    return ((NameTrains)specialProperty).toMenu();
-	}
+    }
 
-    public String toString () {
-        StringBuffer b = new StringBuffer  ("AssignNamedTrains ");
-        for (NamedTrainToken token : ((NameTrains)getSpecialProperty()).getTokens()) {
-        	b.append(token.toString()).append(",");
+    public String toMenu() {
+        return ((NameTrains) specialProperty).toMenu();
+    }
+
+    public String toString() {
+        StringBuffer b = new StringBuffer("AssignNamedTrains ");
+        for (NamedTrainToken token : ((NameTrains) getSpecialProperty()).getTokens()) {
+            b.append(token.toString()).append(",");
         }
-        b.deleteCharAt(b.length()-1);
+        b.deleteCharAt(b.length() - 1);
         return b.toString();
     }
-    
+
     public List<NamedTrainToken> getTokens() {
-        return ((NameTrains)specialProperty).getTokens();
+        return ((NameTrains) specialProperty).getTokens();
     }
-    
+
     public List<NameableTrain> getNameableTrains() {
         return nameableTrains;
     }
-    
+
     public List<NameableTrain> getPreTrainPerToken() {
         return preTrainPerToken;
     }
-    
+
     public List<NameableTrain> getPostTrainPerToken() {
         return postTrainPerToken;
     }
@@ -100,34 +100,34 @@ public class AssignNamedTrains extends UseSpecialProperty {
     }
 
     /** Deserialize */
-    private void readObject (ObjectInputStream in) 
-    throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
         in.defaultReadObject();
-        
+
         nameableTrains = new ArrayList<NameableTrain>();
         if (trainIds != null) {
             for (String trainId : trainIds) {
-                nameableTrains.add((NameableTrain)Train.getByUniqueId(trainId));
+                nameableTrains.add((NameableTrain) Train.getByUniqueId(trainId));
             }
         }
-        
+
         preTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
         if (preTrainIds != null) {
             for (String trainId : preTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
-                    preTrainPerToken.add((NameableTrain)Token.getByUniqueId(trainId));
+                    preTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                 } else {
                     preTrainPerToken.add(null);
                 }
             }
         }
-        
+
         postTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
         if (postTrainIds != null) {
             for (String trainId : postTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
-                    postTrainPerToken.add((NameableTrain)Token.getByUniqueId(trainId));
+                    postTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                 } else {
                     postTrainPerToken.add(null);
                 }
@@ -135,6 +135,5 @@ public class AssignNamedTrains extends UseSpecialProperty {
         }
 
     }
-    
 
 }

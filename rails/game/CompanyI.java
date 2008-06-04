@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.4 2008/02/15 22:50:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.5 2008/06/04 19:00:31 evos Exp $ */
 package rails.game;
 
 /**
@@ -15,69 +15,72 @@ public interface CompanyI extends ConfigurableComponentI {
     /** The name of the XML attribute for the company's type. */
     public static final String COMPANY_TYPE_TAG = "type";
 
-	void init (String name, CompanyTypeI type);
+    void init(String name, CompanyTypeI type);
 
-	//void configureFromXML (Element element) throws ConfigurationException;
+    // void configureFromXML (Element element) throws ConfigurationException;
 
     /**
      * Returns the name of the Company
+     * 
      * @return the name of the Company
      */
     String getName();
-    public String getLongName();
 
+    public String getLongName();
 
     /**
      * Returns the CompanyType of the Company
+     * 
      * @return the type of the Company
      */
     CompanyTypeI getType();
 
-
-	/**
+    /**
      * Returns the type name of the Company
-	 * @return type name
-	 */
-	public String getTypeName();
+     * 
+     * @return type name
+     */
+    public String getTypeName();
 
-	/**
-	 * @return Company Value
-	 */
-	int getValue();
+    /**
+     * @return Company Value
+     */
+    int getValue();
 
+    /**
+     * @param Company Value
+     */
+    void setValue(int i);
 
-	/**
-	 * @param Company Value
-	 */
-	void setValue(int i);
+    /**
+     * @return Company number
+     */
+    int getCompanyNumber();
 
-	/**
-	 * @return Company number
-	 */
-	int getCompanyNumber();
+    /**
+     * @return true if Company is closed.
+     */
+    boolean isClosed();
 
-	/**
-	 * @return true if Company is closed.
-	 */
-	boolean isClosed();
-	/**
-	 * Set company to closed
-	 */
-	void setClosed();
+    /**
+     * Set company to closed
+     */
+    void setClosed();
 
-	/**
-	 * @return
-	 */
-	public int getCertLimitCount();
-	/**
-	 * @param i
-	 */
-	public void setCertLimitCount(int i);
+    /**
+     * @return
+     */
+    public int getCertLimitCount();
 
-	public abstract Object clone() throws CloneNotSupportedException;
+    /**
+     * @param i
+     */
+    public void setCertLimitCount(int i);
 
+    public abstract Object clone() throws CloneNotSupportedException;
 
-	// Overriding some standard methods with something more useful.
-	public String toString();
-	public boolean equals(CompanyI company);
+    // Overriding some standard methods with something more useful.
+    public String toString();
+
+    public boolean equals(CompanyI company);
 }

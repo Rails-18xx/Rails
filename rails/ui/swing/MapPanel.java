@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.7 2008/01/27 23:27:54 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.8 2008/06/04 19:00:33 evos Exp $*/
 package rails.ui.swing;
 
 import javax.swing.*;
@@ -24,55 +24,54 @@ public class MapPanel extends JPanel {
     private HexMap map;
     private JScrollPane scrollPane;
 
-    protected static Logger log = Logger.getLogger(MapPanel.class.getPackage()
-	    .getName());
+    protected static Logger log =
+            Logger.getLogger(MapPanel.class.getPackage().getName());
 
     public MapPanel(ORUIManager orUIManager) {
-	Scale.set(15);
-	setLayout(new BorderLayout());
+        Scale.set(15);
+        setLayout(new BorderLayout());
 
-	mmgr = MapManager.getInstance();
-	try {
-	    map = (HexMap) Class.forName(mmgr.getMapUIClassName())
-		    .newInstance();
-	    map.setORUIManager(orUIManager);
-	} catch (Exception e) {
-	    log.fatal("Map class instantiation error:", e);
-	    e.printStackTrace();
-	    return;
-	}
+        mmgr = MapManager.getInstance();
+        try {
+            map =
+                    (HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
+            map.setORUIManager(orUIManager);
+        } catch (Exception e) {
+            log.fatal("Map class instantiation error:", e);
+            e.printStackTrace();
+            return;
+        }
 
-	ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-	scrollPane = new JScrollPane(map);
-	scrollPane.setSize(map.getPreferredSize());
+        scrollPane = new JScrollPane(map);
+        scrollPane.setSize(map.getPreferredSize());
 
-	add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
-	setSize(map.getPreferredSize().width, map.getPreferredSize().height);
-	setLocation(25, 25);
+        setSize(map.getPreferredSize().width, map.getPreferredSize().height);
+        setLocation(25, 25);
     }
 
     public void setAllowedTileLays(List<LayTile> allowedTileLays) {
-	map.setAllowedTileLays(allowedTileLays);
+        map.setAllowedTileLays(allowedTileLays);
     }
 
     public <T extends LayToken> void setAllowedTokenLays(
-	    List<T> allowedTokenLays) {
-	map.setAllowedTokenLays(allowedTokenLays);
+            List<T> allowedTokenLays) {
+        map.setAllowedTokenLays(allowedTokenLays);
     }
 
     public void keyPressed(KeyEvent e) {
-	if (e.getKeyCode() == KeyEvent.VK_F1) {
-	    HelpWindow.displayHelp(GameManager.getInstance().getHelp());
-	    e.consume();
-	}
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+            e.consume();
+        }
     }
 
-    public void keyReleased(KeyEvent e) {
-    }
+    public void keyReleased(KeyEvent e) {}
 
     public HexMap getMap() {
-	return map;
+        return map;
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.8 2008/02/19 20:11:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.9 2008/06/04 19:00:32 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -7,67 +7,62 @@ import java.util.List;
  * Interface for CompanyManager objects. A company manager is a factory which
  * vends Company objects.
  */
-public interface CompanyManagerI extends ConfigurableComponentI
-{
+public interface CompanyManagerI extends ConfigurableComponentI {
 
-	/**
-	 * This is the name by which the CompanyManager should be registered with
-	 * the ComponentManager.
-	 */
-	static final String COMPONENT_NAME = "CompanyManager";
+    /**
+     * This is the name by which the CompanyManager should be registered with
+     * the ComponentManager.
+     */
+    static final String COMPONENT_NAME = "CompanyManager";
 
-	/**
-	 * Returns the Private Company identified by the supplied name.
-	 *
-	 * @param name
-	 *            the name of the company sought
-	 * @return the Private Company with the supplied name
-	 */
-	PrivateCompanyI getPrivateCompany(String name);
+    /**
+     * Returns the Private Company identified by the supplied name.
+     * 
+     * @param name the name of the company sought
+     * @return the Private Company with the supplied name
+     */
+    PrivateCompanyI getPrivateCompany(String name);
 
-	/**
-	 * Returns the Public Company identified by the supplied name.
-	 *
-	 * @param name
-	 *            the name of the company sought
-	 * @return the Public Company with the supplied name
-	 */
-	PublicCompanyI getPublicCompany(String name);
+    /**
+     * Returns the Public Company identified by the supplied name.
+     * 
+     * @param name the name of the company sought
+     * @return the Public Company with the supplied name
+     */
+    PublicCompanyI getPublicCompany(String name);
 
-	/**
-	 * Gives a list of all the registered Private Companies.
-	 *
-	 * @return a list of all the registered Private Companies
-	 */
-	List<PrivateCompanyI> getAllPrivateCompanies();
+    /**
+     * Gives a list of all the registered Private Companies.
+     * 
+     * @return a list of all the registered Private Companies
+     */
+    List<PrivateCompanyI> getAllPrivateCompanies();
 
-	/**
-	 * Gives a list of all the registered Private Companies.
-	 *
-	 * @return a list of all the registered Private Companies
-	 */
-	List<PublicCompanyI> getAllPublicCompanies();
+    /**
+     * Gives a list of all the registered Private Companies.
+     * 
+     * @return a list of all the registered Private Companies
+     */
+    List<PublicCompanyI> getAllPublicCompanies();
 
-	/**
-	 * Find a company by type and name
-	 *
-	 * @param type
-	 *            The name of the CompanyType
-	 * @param name
-	 *            The name of the Company
-	 * @return The company object, or null if not found.
-	 */
-	CompanyI getCompany(String type, String name);
+    /**
+     * Find a company by type and name
+     * 
+     * @param type The name of the CompanyType
+     * @param name The name of the Company
+     * @return The company object, or null if not found.
+     */
+    CompanyI getCompany(String type, String name);
 
-   public PublicCompanyI getCompanyByName(String name);
+    public PublicCompanyI getCompanyByName(String name);
 
-	/** Post XML parsing initialisations */
-	public void initCompanies() throws ConfigurationException;
+    /** Post XML parsing initialisations */
+    public void initCompanies() throws ConfigurationException;
 
-	   public List<PublicCompanyI> getCompaniesWithExcessTrains ();
+    public List<PublicCompanyI> getCompaniesWithExcessTrains();
 
-		public void closeAllPrivates();
+    public void closeAllPrivates();
 
-		public List<PrivateCompanyI> getPrivatesOwnedByPlayers ();
+    public List<PrivateCompanyI> getPrivatesOwnedByPlayers();
 
 }

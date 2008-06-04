@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleORAction.java,v 1.2 2007/07/23 19:59:16 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleORAction.java,v 1.3 2008/06/04 19:00:29 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -16,51 +16,52 @@ import rails.game.RoundI;
 import rails.util.Util;
 
 /**
- * PossibleAction is the superclass of all classes that describe an allowed user action
- * (such as laying a tile or dropping a token on a specific hex, buying a train etc.).
+ * PossibleAction is the superclass of all classes that describe an allowed user
+ * action (such as laying a tile or dropping a token on a specific hex, buying a
+ * train etc.).
+ * 
  * @author Erik Vos
  */
 /* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
 
-	transient protected PublicCompanyI company;
-	protected String companyName;
-	
+    transient protected PublicCompanyI company;
+    protected String companyName;
 
     /**
      * 
      */
     public PossibleORAction() {
-    	
-    	super();
-    	RoundI round = GameManager.getInstance().getCurrentRound();
-    	if (round instanceof OperatingRound) {
-    		company = ((OperatingRound)round).getOperatingCompany();
-    		companyName = company.getName();
-    	}
+
+        super();
+        RoundI round = GameManager.getInstance().getCurrentRound();
+        if (round instanceof OperatingRound) {
+            company = ((OperatingRound) round).getOperatingCompany();
+            companyName = company.getName();
+        }
     }
-    
+
     public PublicCompanyI getCompany() {
-    	return company;
+        return company;
     }
-    
+
     public String getCompanyName() {
-    	return company.getName();
+        return company.getName();
     }
-    
+
     /** To be used in the client (to enable safety check in the server) */
     public void setCompany(PublicCompanyI company) {
         this.company = company;
         this.companyName = company.getName();
     }
-    
-    /** Deserialize */
-	private void readObject (ObjectInputStream in) 
-	throws IOException, ClassNotFoundException {
 
-		in.defaultReadObject();
-		
-		if (Util.hasValue(companyName))
-			company = Game.getCompanyManager().getPublicCompany(companyName);
-	}
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+        in.defaultReadObject();
+
+        if (Util.hasValue(companyName))
+            company = Game.getCompanyManager().getPublicCompany(companyName);
+    }
 }

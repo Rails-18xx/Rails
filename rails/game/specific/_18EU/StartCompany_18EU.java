@@ -29,40 +29,38 @@ public class StartCompany_18EU extends StartCompany {
 
     public static final long serialVersionUID = 1L;
 
-    public StartCompany_18EU(PublicCertificateI certificate,
-			int[] prices) {
-		super (certificate, prices, 1);
+    public StartCompany_18EU(PublicCertificateI certificate, int[] prices) {
+        super(certificate, prices, 1);
     }
 
-    public void setMinorsToMerge (List<PublicCompanyI> minors) {
+    public void setMinorsToMerge(List<PublicCompanyI> minors) {
 
-		minorsToMerge = minors;
+        minorsToMerge = minors;
 
-		if (minorsToMerge != null) {
-    		StringBuffer b = new StringBuffer();
-    		for (PublicCompanyI minor : minorsToMerge) {
-    		    if (b.length() > 0) b.append(",");
-    		    b.append (minor.getName());
-    		}
-    		minorsToMergeNames = b.toString();
-		}
-	}
+        if (minorsToMerge != null) {
+            StringBuffer b = new StringBuffer();
+            for (PublicCompanyI minor : minorsToMerge) {
+                if (b.length() > 0) b.append(",");
+                b.append(minor.getName());
+            }
+            minorsToMergeNames = b.toString();
+        }
+    }
 
-    public void setAvailableHomeStations (List<City> stations) {
+    public void setAvailableHomeStations(List<City> stations) {
         availableHomeStations = stations;
 
         if (availableHomeStations != null) {
             StringBuffer b = new StringBuffer();
             for (City station : availableHomeStations) {
                 if (b.length() > 0) b.append(",");
-                b.append (station.getName());
+                b.append(station.getName());
             }
             availableHomeStationNames = b.toString();
         }
     }
 
-
-	public List<City> getAvailableHomeStations() {
+    public List<City> getAvailableHomeStations() {
         return availableHomeStations;
     }
 
@@ -79,36 +77,36 @@ public class StartCompany_18EU extends StartCompany {
         this.chosenMinorName = chosenMinor.getName();
     }
 
-    public City getSelectedHomeStation () {
+    public City getSelectedHomeStation() {
         return selectedHomeStation;
     }
 
-    public void setHomeStation (City homeStation) {
+    public void setHomeStation(City homeStation) {
         selectedHomeStation = homeStation;
         selectedHomeStationName = homeStation.getName();
     }
 
     @Override
     public String toString() {
-		StringBuffer text = new StringBuffer(super.toString());
-		if (minorsToMergeNames != null) {
+        StringBuffer text = new StringBuffer(super.toString());
+        if (minorsToMergeNames != null) {
             text.append(" minors=").append(minorsToMergeNames);
-		}
-		if (chosenMinorName != null) {
-		    text.append(" merged minor="+chosenMinorName);
-		}
-		if (availableHomeStationNames != null) {
-		    text.append(" stations="+availableHomeStationNames);
-		}
-		if (selectedHomeStationName != null) {
-		    text.append(" home station="+selectedHomeStationName);
-		}
+        }
+        if (chosenMinorName != null) {
+            text.append(" merged minor=" + chosenMinorName);
+        }
+        if (availableHomeStationNames != null) {
+            text.append(" stations=" + availableHomeStationNames);
+        }
+        if (selectedHomeStationName != null) {
+            text.append(" home station=" + selectedHomeStationName);
+        }
         return text.toString();
     }
 
-	/** Deserialize */
-    private void readObject (ObjectInputStream in)
-    throws IOException, ClassNotFoundException {
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
         in.defaultReadObject();
 
@@ -123,6 +121,5 @@ public class StartCompany_18EU extends StartCompany {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
     }
-
 
 }

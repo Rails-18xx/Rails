@@ -1,6 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.10 2008/01/18 19:58:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.11 2008/06/04 19:00:30 evos Exp $ */
 package rails.game;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,458 +8,386 @@ import java.util.List;
 import rails.game.move.PriceTokenMove;
 import rails.util.*;
 
-public class StockMarket implements StockMarketI, ConfigurableComponentI
-{
+public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
-	protected HashMap<String, StockSpaceTypeI> stockSpaceTypes 
-		= new HashMap<String, StockSpaceTypeI>();
-	protected HashMap<String, StockSpaceI> stockChartSpaces 
-		= new HashMap<String, StockSpaceI>();
-	protected StockSpaceI stockChart[][];
-	protected StockSpaceI currentSquare;
-	protected int numRows = 0;
-	protected int numCols = 0;
-	protected ArrayList<StockSpaceI> startSpaces 
-		= new ArrayList<StockSpaceI>();
-	protected int[] startPrices;
+    protected HashMap<String, StockSpaceTypeI> stockSpaceTypes =
+            new HashMap<String, StockSpaceTypeI>();
+    protected HashMap<String, StockSpaceI> stockChartSpaces =
+            new HashMap<String, StockSpaceI>();
+    protected StockSpaceI stockChart[][];
+    protected StockSpaceI currentSquare;
+    protected int numRows = 0;
+    protected int numCols = 0;
+    protected ArrayList<StockSpaceI> startSpaces = new ArrayList<StockSpaceI>();
+    protected int[] startPrices;
 
-	protected static StockMarketI instance;
+    protected static StockMarketI instance;
 
-	/* Game-specific flags */
-	protected boolean upOrDownRight = false; /*
-												 * Sold out and at top: go down
-												 * right (1870)
-												 */
+    /* Game-specific flags */
+    protected boolean upOrDownRight = false; /*
+                                                 * Sold out and at top: go down
+                                                 * right (1870)
+                                                 */
 
-	/* States */
-	protected boolean gameOver = false; /*
-										 * Some games have "rails.game over"
-										 * stockmarket squares
-										 */
+    /* States */
+    protected boolean gameOver = false; /*
+                                         * Some games have "rails.game over"
+                                         * stockmarket squares
+                                         */
 
-	ArrayList<PublicCertificate> ipoPile;
+    ArrayList<PublicCertificate> ipoPile;
 
-	//ArrayList companiesStarted;
+    // ArrayList companiesStarted;
 
-	public StockMarket()
-	{
-		instance = this;
-	}
+    public StockMarket() {
+        instance = this;
+    }
 
-	public static StockMarketI getInstance()
-	{
-		return instance;
-	}
+    public static StockMarketI getInstance() {
+        return instance;
+    }
 
-	/**
-	 * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
-	 */
-	public void configureFromXML(Tag tag) throws ConfigurationException
-	{
-		/* Read and configure the stock market space types */
-		List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
+    /**
+     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        /* Read and configure the stock market space types */
+        List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
 
-		if (typeTags != null) {
-			for (Tag typeTag : typeTags)
-			{
-				/* Extract the attributes of the Stock space type */
-				String name = typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
-				if (name == null)
-				{
-					throw new ConfigurationException(LocalText.getText("UnnamedStockSpaceType"));
-				}
-				String colour = typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
-	
-				/* Check for duplicates */
-				if (stockSpaceTypes.get(name) != null)
-				{
-					throw new ConfigurationException(LocalText.getText("StockSpaceTypeConfiguredTwice", name));
-				}
-	
-				/* Create the type */
-				StockSpaceTypeI type = new StockSpaceType(name, colour);
-				stockSpaceTypes.put(name, type);
-	
-				// Check the stock space type flags
-				type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
-				type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
-				type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
-			}
-		}
+        if (typeTags != null) {
+            for (Tag typeTag : typeTags) {
+                /* Extract the attributes of the Stock space type */
+                String name =
+                        typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
+                if (name == null) {
+                    throw new ConfigurationException(
+                            LocalText.getText("UnnamedStockSpaceType"));
+                }
+                String colour =
+                        typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
 
-		/* Read and configure the stock market spaces */
-		List<Tag> spaceTags = tag.getChildren(StockSpaceI.ELEMENT_ID);
-		StockSpaceTypeI type;
-		int row, col;
-		for (Tag spaceTag : spaceTags)
-		{
-			type = null;
+                /* Check for duplicates */
+                if (stockSpaceTypes.get(name) != null) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "StockSpaceTypeConfiguredTwice", name));
+                }
 
-			// Extract the attributes of the Stock space
-			String name = spaceTag.getAttributeAsString(StockSpaceI.NAME_TAG);
-			if (name == null)
-			{
-				throw new ConfigurationException(LocalText.getText("UnnamedStockSpace"));
-			}
-			String price = spaceTag.getAttributeAsString(StockSpaceI.PRICE_TAG);
-			if (price == null)
-			{
-				throw new ConfigurationException(
-				        LocalText.getText("StockSpaceHasNoPrice", name));
-			}
-			String typeName = spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
-			if (typeName != null
-					&& (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null)
-			{
-				throw new ConfigurationException(
-				        LocalText.getText("StockSpaceTypeUndefined", type));
-			}
+                /* Create the type */
+                StockSpaceTypeI type = new StockSpaceType(name, colour);
+                stockSpaceTypes.put(name, type);
 
-			if (stockChartSpaces.get(name) != null)
-			{
-				throw new ConfigurationException(
-				        LocalText.getText("StockSpaceIsConfiguredTwice",  name));
-			}
+                // Check the stock space type flags
+                type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
+                type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
+                type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
+            }
+        }
 
-			StockSpaceI space = new StockSpace(name,
-					Integer.parseInt(price),
-					type);
-			stockChartSpaces.put(name, space);
+        /* Read and configure the stock market spaces */
+        List<Tag> spaceTags = tag.getChildren(StockSpaceI.ELEMENT_ID);
+        StockSpaceTypeI type;
+        int row, col;
+        for (Tag spaceTag : spaceTags) {
+            type = null;
 
-			row = Integer.parseInt(name.substring(1));
-			col = (int) (name.toUpperCase().charAt(0) - '@');
-			if (row > numRows)
-				numRows = row;
-			if (col > numCols)
-				numCols = col;
+            // Extract the attributes of the Stock space
+            String name = spaceTag.getAttributeAsString(StockSpaceI.NAME_TAG);
+            if (name == null) {
+                throw new ConfigurationException(
+                        LocalText.getText("UnnamedStockSpace"));
+            }
+            String price = spaceTag.getAttributeAsString(StockSpaceI.PRICE_TAG);
+            if (price == null) {
+                throw new ConfigurationException(LocalText.getText(
+                        "StockSpaceHasNoPrice", name));
+            }
+            String typeName =
+                    spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
+            if (typeName != null
+                && (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null) {
+                throw new ConfigurationException(LocalText.getText(
+                        "StockSpaceTypeUndefined", type));
+            }
 
-			// Loop through the stock space flags
-			if (spaceTag.getChild(StockSpaceI.START_SPACE_TAG) != null) {
-					space.setStart(true);
-					startSpaces.add(space);
-			}
-			space.setClosesCompany(spaceTag.getChild(StockSpaceI.CLOSES_COMPANY_TAG) != null);
-			space.setEndsGame(spaceTag.getChild(StockSpaceI.GAME_OVER_TAG) != null);
-			space.setBelowLedge(spaceTag.getChild(StockSpaceI.BELOW_LEDGE_TAG) != null);
-			space.setLeftOfLedge(spaceTag.getChild(StockSpaceI.LEFT_OF_LEDGE_TAG) != null);
+            if (stockChartSpaces.get(name) != null) {
+                throw new ConfigurationException(LocalText.getText(
+                        "StockSpaceIsConfiguredTwice", name));
+            }
 
-		}
+            StockSpaceI space =
+                    new StockSpace(name, Integer.parseInt(price), type);
+            stockChartSpaces.put(name, space);
 
-		startPrices = new int[startSpaces.size()];
-		for (int i = 0; i < startPrices.length; i++)
-		{
-			startPrices[i] = ((StockSpaceI) startSpaces.get(i)).getPrice();
-		}
+            row = Integer.parseInt(name.substring(1));
+            col = (int) (name.toUpperCase().charAt(0) - '@');
+            if (row > numRows) numRows = row;
+            if (col > numCols) numCols = col;
 
-		stockChart = new StockSpaceI[numRows][numCols];
-		for (StockSpaceI space : stockChartSpaces.values())
-		{
-			stockChart[space.getRow()][space.getColumn()] = space;
-		}
+            // Loop through the stock space flags
+            if (spaceTag.getChild(StockSpaceI.START_SPACE_TAG) != null) {
+                space.setStart(true);
+                startSpaces.add(space);
+            }
+            space.setClosesCompany(spaceTag.getChild(StockSpaceI.CLOSES_COMPANY_TAG) != null);
+            space.setEndsGame(spaceTag.getChild(StockSpaceI.GAME_OVER_TAG) != null);
+            space.setBelowLedge(spaceTag.getChild(StockSpaceI.BELOW_LEDGE_TAG) != null);
+            space.setLeftOfLedge(spaceTag.getChild(StockSpaceI.LEFT_OF_LEDGE_TAG) != null);
 
-		upOrDownRight = tag.getChild("UpOrDownRight") != null;
+        }
 
-	}
+        startPrices = new int[startSpaces.size()];
+        for (int i = 0; i < startPrices.length; i++) {
+            startPrices[i] = ((StockSpaceI) startSpaces.get(i)).getPrice();
+        }
 
-	/**
-	 * Final initialisations, to be called after all XML processing is complete.
-	 * The purpose is to register fixed company start prices.
-	 */
-	public void init()
-	{
+        stockChart = new StockSpaceI[numRows][numCols];
+        for (StockSpaceI space : stockChartSpaces.values()) {
+            stockChart[space.getRow()][space.getColumn()] = space;
+        }
 
-	    for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies())
-		{
-			if (!comp.hasStarted() && comp.getParPrice() != null)
-			{
-				comp.getParPrice().addFixedStartPrice(comp);
-			}
-		}
+        upOrDownRight = tag.getChild("UpOrDownRight") != null;
 
-	}
+    }
 
-	/**
-	 * @return
-	 */
-	public StockSpaceI[][] getStockChart()
-	{
-		return stockChart;
-	}
+    /**
+     * Final initialisations, to be called after all XML processing is complete.
+     * The purpose is to register fixed company start prices.
+     */
+    public void init() {
 
-	public StockSpaceI getStockSpace(int row, int col)
-	{
-		if (row >= 0 && row < numRows && col >= 0 && col < numCols)
-		{
-			return stockChart[row][col];
-		}
-		else
-		{
-			return null;
-		}
-	}
+        for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
+            if (!comp.hasStarted() && comp.getParPrice() != null) {
+                comp.getParPrice().addFixedStartPrice(comp);
+            }
+        }
 
-	public StockSpace getStockSpace(String name)
-	{
-		return (StockSpace) stockChartSpaces.get(name);
-	}
+    }
 
-	/*--- Actions ---*/
-	
-	public void start (PublicCompanyI company, StockSpaceI price) {
-	    prepareMove (company, null, price);
-	}
+    /**
+     * @return
+     */
+    public StockSpaceI[][] getStockChart() {
+        return stockChart;
+    }
 
-	public void payOut(PublicCompanyI company)
-	{
-		moveRightOrUp(company);
-	}
+    public StockSpaceI getStockSpace(int row, int col) {
+        if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
+            return stockChart[row][col];
+        } else {
+            return null;
+        }
+    }
 
-	public void withhold(PublicCompanyI company)
-	{
-		moveLeftOrDown(company);
-	}
+    public StockSpace getStockSpace(String name) {
+        return (StockSpace) stockChartSpaces.get(name);
+    }
 
-	public void sell(PublicCompanyI company, int numberOfSpaces)
-	{
-		moveDown(company, numberOfSpaces);
-	}
+    /*--- Actions ---*/
 
-	public void soldOut(PublicCompanyI company)
-	{
-		moveUp(company);
-	}
+    public void start(PublicCompanyI company, StockSpaceI price) {
+        prepareMove(company, null, price);
+    }
 
-	public void moveUp(PublicCompanyI company)
-	{
-		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = oldsquare;
-		int row = oldsquare.getRow();
-		int col = oldsquare.getColumn();
-		if (row > 0)
-		{
-			newsquare = getStockSpace(row - 1, col);
-		}
-		else if (upOrDownRight && col < numCols - 1)
-		{
-			newsquare = getStockSpace(row + 1, col + 1);
-		}
-		prepareMove(company, oldsquare, newsquare);
-	}
+    public void payOut(PublicCompanyI company) {
+        moveRightOrUp(company);
+    }
 
-	protected void moveDown(PublicCompanyI company, int numberOfSpaces)
-	{
-		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = oldsquare;
-		int row = oldsquare.getRow();
-		int col = oldsquare.getColumn();
+    public void withhold(PublicCompanyI company) {
+        moveLeftOrDown(company);
+    }
 
-		/* Drop the indicated number of rows */
-		int newrow = row + numberOfSpaces;
+    public void sell(PublicCompanyI company, int numberOfSpaces) {
+        moveDown(company, numberOfSpaces);
+    }
 
-		/* Don't drop below the bottom of the chart */
-		while (newrow >= numRows || getStockSpace(newrow, col) == null)
-			newrow--;
+    public void soldOut(PublicCompanyI company) {
+        moveUp(company);
+    }
 
-		/*
-		 * If marker landed just below a ledge, and NOT because it was bounced
-		 * by the bottom of the chart, it will stay just above the ledge.
-		 */
-		if (getStockSpace(newrow, col).isBelowLedge()
-				&& newrow == row + numberOfSpaces)
-			newrow--;
+    public void moveUp(PublicCompanyI company) {
+        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI newsquare = oldsquare;
+        int row = oldsquare.getRow();
+        int col = oldsquare.getColumn();
+        if (row > 0) {
+            newsquare = getStockSpace(row - 1, col);
+        } else if (upOrDownRight && col < numCols - 1) {
+            newsquare = getStockSpace(row + 1, col + 1);
+        }
+        prepareMove(company, oldsquare, newsquare);
+    }
 
-		if (newrow > row)
-		{
-			newsquare = getStockSpace(newrow, col);
-		}
-		if (newsquare != oldsquare && newsquare.closesCompany())
-		{
-			company.setClosed();
-			oldsquare.removeToken(company);
-			ReportBuffer.add(company.getName() + " closes at " + newsquare.getName());
-		}
-		else
-		{
-		    prepareMove(company, oldsquare, newsquare);
-		}
-	}
+    protected void moveDown(PublicCompanyI company, int numberOfSpaces) {
+        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI newsquare = oldsquare;
+        int row = oldsquare.getRow();
+        int col = oldsquare.getColumn();
 
-	protected void moveRightOrUp(PublicCompanyI company)
-	{
-		/* Ignore the amount for now */
-		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = oldsquare;
-		int row = oldsquare.getRow();
-		int col = oldsquare.getColumn();
-		if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
-				&& (newsquare = getStockSpace(row, col + 1)) != null)
-		{
-		}
-		else if (row > 0 && (newsquare = getStockSpace(row - 1, col)) != null)
-		{
-		}
-		prepareMove(company, oldsquare, newsquare);
-	}
+        /* Drop the indicated number of rows */
+        int newrow = row + numberOfSpaces;
 
-	protected void moveLeftOrDown(PublicCompanyI company)
-	{
-		StockSpaceI oldsquare = company.getCurrentPrice();
-		StockSpaceI newsquare = oldsquare;
-		int row = oldsquare.getRow();
-		int col = oldsquare.getColumn();
-		if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null)
-		{
-		}
-		else if (row < numRows - 1
-				&& (newsquare = getStockSpace(row + 1, col)) != null)
-		{
-		}
-		if (newsquare != oldsquare && newsquare.closesCompany())
-		{
-			company.setClosed();
-			oldsquare.removeToken(company);
-			ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT") + " " + newsquare.getName());
-		}
-		else
-		{
-			prepareMove(company, oldsquare, newsquare);
-		}
-	}
-	
-	protected void prepareMove (PublicCompanyI company,
-	        StockSpaceI from, StockSpaceI to) {
-		// To be written to a log file in the future.
-		if (from != null && from == to)
-		{
-			ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
-			        company.getName(),
-			        Bank.format(from.getPrice()),
-			        from.getName()
-			}));
-			return;
-		}
-		else if (from == null && to != null)
-		{
-		}
-		else if (from != null && to != null)
-		{
-			ReportBuffer.add (LocalText.getText("PRICE_MOVES_LOG", new String[] {
-			        company.getName(),
-			        Bank.format(from.getPrice()),
-			        from.getName(),
-			        Bank.format(to.getPrice()),
-			        to.getName()
-			}));
+        /* Don't drop below the bottom of the chart */
+        while (newrow >= numRows || getStockSpace(newrow, col) == null)
+            newrow--;
 
-			/* Check for rails.game closure */
-			if (to.endsGame())
-			{
-				ReportBuffer.add(LocalText.getText("GAME_OVER"));
-				gameOver = true;
-			}
+        /*
+         * If marker landed just below a ledge, and NOT because it was bounced
+         * by the bottom of the chart, it will stay just above the ledge.
+         */
+        if (getStockSpace(newrow, col).isBelowLedge()
+            && newrow == row + numberOfSpaces) newrow--;
 
-		}
-		company.setCurrentPrice(to);
-		new PriceTokenMove (company, from, to);
-	}
+        if (newrow > row) {
+            newsquare = getStockSpace(newrow, col);
+        }
+        if (newsquare != oldsquare && newsquare.closesCompany()) {
+            company.setClosed();
+            oldsquare.removeToken(company);
+            ReportBuffer.add(company.getName() + " closes at "
+                             + newsquare.getName());
+        } else {
+            prepareMove(company, oldsquare, newsquare);
+        }
+    }
 
-	public void processMove(PublicCompanyI company, StockSpaceI from,
-			StockSpaceI to)
-	{
-		// To be written to a log file in the future.
-		if (from != null) from.removeToken(company);
-		if (to != null) to.addToken(company);
-		//company.getCurrentPriceModel().setState(to);
-	}
+    protected void moveRightOrUp(PublicCompanyI company) {
+        /* Ignore the amount for now */
+        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI newsquare = oldsquare;
+        int row = oldsquare.getRow();
+        int col = oldsquare.getColumn();
+        if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
+            && (newsquare = getStockSpace(row, col + 1)) != null) {} else if (row > 0
+                                                                              && (newsquare =
+                                                                                      getStockSpace(
+                                                                                              row - 1,
+                                                                                              col)) != null) {}
+        prepareMove(company, oldsquare, newsquare);
+    }
 
-	/**
-	 * @return
-	 */
-	public List<StockSpaceI> getStartSpaces()
-	{
-		return startSpaces;
-	}
+    protected void moveLeftOrDown(PublicCompanyI company) {
+        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI newsquare = oldsquare;
+        int row = oldsquare.getRow();
+        int col = oldsquare.getColumn();
+        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {} else if (row < numRows - 1
+                                                                                      && (newsquare =
+                                                                                              getStockSpace(
+                                                                                                      row + 1,
+                                                                                                      col)) != null) {}
+        if (newsquare != oldsquare && newsquare.closesCompany()) {
+            company.setClosed();
+            oldsquare.removeToken(company);
+            ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT")
+                             + " " + newsquare.getName());
+        } else {
+            prepareMove(company, oldsquare, newsquare);
+        }
+    }
 
-	/**
-	 * Return start prices as an int array. Note: this array is NOT sorted.
-	 * 
-	 * @return
-	 */
-	public int[] getStartPrices()
-	{
-		return startPrices;
-	}
+    protected void prepareMove(PublicCompanyI company, StockSpaceI from,
+            StockSpaceI to) {
+        // To be written to a log file in the future.
+        if (from != null && from == to) {
+            ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
+                    company.getName(), Bank.format(from.getPrice()),
+                    from.getName() }));
+            return;
+        } else if (from == null && to != null) {} else if (from != null
+                                                           && to != null) {
+            ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG", new String[] {
+                    company.getName(), Bank.format(from.getPrice()),
+                    from.getName(), Bank.format(to.getPrice()), to.getName() }));
 
-	public StockSpaceI getStartSpace(int price)
-	{
-	    for (StockSpaceI square : startSpaces)
-		{
-			if (square.getPrice() == price)
-				return square;
-		}
-		return null;
-	}
+            /* Check for rails.game closure */
+            if (to.endsGame()) {
+                ReportBuffer.add(LocalText.getText("GAME_OVER"));
+                gameOver = true;
+            }
 
-	/**
-	 * @return
-	 */
-	public boolean isGameOver()
-	{
-		return gameOver;
-	}
+        }
+        company.setCurrentPrice(to);
+        new PriceTokenMove(company, from, to);
+    }
 
-	/* Brett's original code */
+    public void processMove(PublicCompanyI company, StockSpaceI from,
+            StockSpaceI to) {
+        // To be written to a log file in the future.
+        if (from != null) from.removeToken(company);
+        if (to != null) to.addToken(company);
+        // company.getCurrentPriceModel().setState(to);
+    }
 
-	/**
-	 * @return Returns the companiesStarted.
-	 */
-	/*
-	public ArrayList getCompaniesStarted()
-	{
-		return companiesStarted;
-	}
-	*/
+    /**
+     * @return
+     */
+    public List<StockSpaceI> getStartSpaces() {
+        return startSpaces;
+    }
 
-	/**
-	 * @return Returns the ipoPile.
-	 */
-	/*
-	public ArrayList getIpoPile()
-	{
-		return ipoPile;
-	}
-	*/
+    /**
+     * Return start prices as an int array. Note: this array is NOT sorted.
+     * 
+     * @return
+     */
+    public int[] getStartPrices() {
+        return startPrices;
+    }
 
-	public PublicCertificate removeShareFromPile(PublicCertificate stock)
-	{
-		if (ipoPile.contains(stock))
-		{
-			int index = ipoPile.lastIndexOf(stock);
-			stock = ipoPile.get(index);
-			ipoPile.remove(index);
-			return stock;
-		}
-		else
-		{
-			return null;
-		}
+    public StockSpaceI getStartSpace(int price) {
+        for (StockSpaceI square : startSpaces) {
+            if (square.getPrice() == price) return square;
+        }
+        return null;
+    }
 
-	}
+    /**
+     * @return
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
 
-	/**
-	 * @return
-	 */
-	public int getNumberOfColumns()
-	{
-		return numCols;
-	}
+    /* Brett's original code */
 
-	/**
-	 * @return
-	 */
-	public int getNumberOfRows()
-	{
-		return numRows;
-	}
+    /**
+     * @return Returns the companiesStarted.
+     */
+    /*
+     * public ArrayList getCompaniesStarted() { return companiesStarted; }
+     */
+
+    /**
+     * @return Returns the ipoPile.
+     */
+    /*
+     * public ArrayList getIpoPile() { return ipoPile; }
+     */
+
+    public PublicCertificate removeShareFromPile(PublicCertificate stock) {
+        if (ipoPile.contains(stock)) {
+            int index = ipoPile.lastIndexOf(stock);
+            stock = ipoPile.get(index);
+            ipoPile.remove(index);
+            return stock;
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * @return
+     */
+    public int getNumberOfColumns() {
+        return numCols;
+    }
+
+    /**
+     * @return
+     */
+    public int getNumberOfRows() {
+        return numRows;
+    }
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/StartItemAction.java,v 1.2 2008/02/14 20:28:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/StartItemAction.java,v 1.3 2008/06/04 19:00:29 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -15,7 +15,7 @@ import rails.game.StartItem;
  */
 public abstract class StartItemAction extends PossibleAction {
 
-	/* Server-provided fields */
+    /* Server-provided fields */
     transient protected StartItem startItem;
     protected String startItemName;
     protected int itemIndex;
@@ -23,7 +23,7 @@ public abstract class StartItemAction extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     /**
-     *
+     * 
      */
     public StartItemAction(StartItem startItem) {
 
@@ -33,32 +33,30 @@ public abstract class StartItemAction extends PossibleAction {
         this.itemIndex = startItem.getIndex();
     }
 
-   /**
+    /**
      * @return Returns the startItem.
      */
     public StartItem getStartItem() {
         return startItem;
     }
 
-
-
     public int getItemIndex() {
-	return itemIndex;
-}
+        return itemIndex;
+    }
 
-	/** @deprecated */
-	@Deprecated
+    /** @deprecated */
+    @Deprecated
     public int getStatus() {
-		//if (startItem == null) return 0;//BAD
+        // if (startItem == null) return 0;//BAD
         return startItem.getStatus();
-	}
+    }
 
-	private void readObject (ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
-		in.defaultReadObject();
+        in.defaultReadObject();
 
-		startItem = StartItem.getByName (startItemName);
+        startItem = StartItem.getByName(startItemName);
 
-	}
+    }
 }

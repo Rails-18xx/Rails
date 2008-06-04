@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.6 2008/02/28 21:43:49 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.7 2008/06/04 19:00:31 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -12,18 +12,14 @@ import rails.util.Util;
 /**
  * A BaseToken object represents a token that a operating public company can
  * place on the map to act as a rail building and train running starting point.
- * <p>
- * The "Base" qualifier is used (more or less) consistently in this rails.game program
- * as it most closely the function of such a token: to act as a base from which a
- * company can operate.
- * Other names used in various games and discussions are "railhead", "station",
- * "garrison", or just "token".
- *
+ * <p> The "Base" qualifier is used (more or less) consistently in this
+ * rails.game program as it most closely the function of such a token: to act as
+ * a base from which a company can operate. Other names used in various games
+ * and discussions are "railhead", "station", "garrison", or just "token".
+ * 
  * @author Erik Vos
  */
-public class BonusToken
-extends Token
-implements Closeable {
+public class BonusToken extends Token implements Closeable {
 
     int value;
     String name;
@@ -36,63 +32,61 @@ implements Closeable {
      */
     public BonusToken() {
         super();
-        setHolder (null);
+        setHolder(null);
     }
 
-    public void configureFromXML(Tag tag) throws ConfigurationException
-    {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
         Tag bonusTokenTag = tag.getChild("BonusToken");
-        if (bonusTokenTag == null)
-        {
+        if (bonusTokenTag == null) {
             throw new ConfigurationException("<BonusToken> tag missing");
         }
         value = bonusTokenTag.getAttributeAsInteger("value");
         if (value <= 0) {
-            throw new ConfigurationException ("Missing or invalid value "+value);
+            throw new ConfigurationException("Missing or invalid value "
+                                             + value);
         }
 
         name = bonusTokenTag.getAttributeAsString("name");
         if (!Util.hasValue(name)) {
-            throw new ConfigurationException ("Bonus token must have a name");
+            throw new ConfigurationException("Bonus token must have a name");
         }
-        description = name + " +" + Bank.format(value)+" bonus token";
+        description = name + " +" + Bank.format(value) + " bonus token";
 
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
 
-    public void close () {
-        //new TokenMove (this, holder, Bank.getScrapHeap());
-        new ObjectMove (this, holder, Bank.getScrapHeap());
+    public void close() {
+        // new TokenMove (this, holder, Bank.getScrapHeap());
+        new ObjectMove(this, holder, Bank.getScrapHeap());
         user.removeBonusToken(this);
     }
 
     @Override
-    public void setHolder (TokenHolderI newHolder) {
+    public void setHolder(TokenHolderI newHolder) {
         super.setHolder(newHolder);
 
         // Prepare for removal, is requested
-        if (removingObjectDesc != null
-                && removingObject == null) {
+        if (removingObjectDesc != null && removingObject == null) {
             String[] spec = removingObjectDesc.split(":");
             if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject = PhaseManager.getInstance().getPhaseNyName(spec[1]);
+                removingObject =
+                        PhaseManager.getInstance().getPhaseNyName(spec[1]);
             }
         }
 
         // If the token is placed, prepare its removal when required
-        if (newHolder instanceof MapHex
-                && removingObject != null) {
+        if (newHolder instanceof MapHex && removingObject != null) {
             if (removingObject instanceof Phase) {
-                ((Phase)removingObject).addObjectToClose(this);
+                ((Phase) removingObject).addObjectToClose(this);
             }
         }
     }
 
-    public void setUser (PublicCompanyI user) {
+    public void setUser(PublicCompanyI user) {
         this.user = user;
     }
 
-    public boolean isPlaced () {
+    public boolean isPlaced() {
         return (holder instanceof MapHex);
     }
 
@@ -100,13 +94,13 @@ implements Closeable {
         return name;
     }
 
-    public int getValue () {
+    public int getValue() {
         return value;
     }
 
     @Override
     public String toString() {
-    	return description;
+        return description;
     }
 
 }

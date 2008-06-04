@@ -11,89 +11,91 @@ import rails.game.move.ObjectMove;
 import rails.game.special.SpecialProperty;
 import rails.util.Tag;
 
-public class NameTrains 
-extends SpecialProperty 
-implements Moveable {
+public class NameTrains extends SpecialProperty implements Moveable {
 
-	private String tokenClassName;
-	private Class<?> tokenClass;
-	private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
-	private String name = "NameTrains";
-	private String description;
-	
-	public void configureFromXML(Tag tag) throws ConfigurationException
-	{
-		
-		super.configureFromXML (tag);
+    private String tokenClassName;
+    private Class<?> tokenClass;
+    private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
+    private String name = "NameTrains";
+    private String description;
 
-		Tag assignTag = tag.getChild("NameTrains");
-		if (assignTag == null)
-		{
-			throw new ConfigurationException("<NamedTrains> tag missing");
-		}
-		
-		tokenClassName = assignTag.getAttributeAsString("class");
-		if (tokenClassName == null) {
-			throw new ConfigurationException ("No named train token class name provided");
-		}
-		
-		try {
-			tokenClass = Class.forName(tokenClassName);
-		} catch (ClassNotFoundException e) {
-			throw new ConfigurationException ("Unknown class "+tokenClassName, e);
-		}
-		
-		String tokenTagName = tokenClassName.replaceAll(".*\\.", "");
-		List<Tag> tokenTags = assignTag.getChildren(tokenTagName);
-		if (tokenTags == null || tokenTags.isEmpty()) {
-			throw new ConfigurationException ("No <"+tokenTagName+"> tags found in <AssignNamedTrain>");
-		}
-		
-		description = name + ": ";
-		
-		for (Tag tokenTag : tokenTags) {
-			try {
-				NamedTrainToken token = (NamedTrainToken) tokenClass.newInstance();
-				tokens.add(token);
-	            token.configureFromXML(tokenTag);
-	            description += token.getLongName() + ", ";
-			} catch (Exception e) {
-				throw new ConfigurationException ("Cannot instantiate class "+tokenClassName, e);
-			}
-		}
-		description = description.replaceFirst(", $", "");
-	}
-	
-	public List<NamedTrainToken> getTokens() {
-		return tokens;
-	}
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
-	public boolean isExecutionable() {
-		return true;
-	}
+        super.configureFromXML(tag);
 
-	/** Tokens can be reassigned indefinitely, 
-	 * so the ability is never set to exercised. */
-	@Override
-	public void setExercised()
-	{
-	}
-	
-	@Override
-	public void moveTo (MoveableHolderI newHolder) {
-	    if (newHolder instanceof Portfolio) {
-	        new ObjectMove (this, privateCompany, newHolder);
-	    }
-	}
-    
+        Tag assignTag = tag.getChild("NameTrains");
+        if (assignTag == null) {
+            throw new ConfigurationException("<NamedTrains> tag missing");
+        }
+
+        tokenClassName = assignTag.getAttributeAsString("class");
+        if (tokenClassName == null) {
+            throw new ConfigurationException(
+                    "No named train token class name provided");
+        }
+
+        try {
+            tokenClass = Class.forName(tokenClassName);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Unknown class " + tokenClassName,
+                    e);
+        }
+
+        String tokenTagName = tokenClassName.replaceAll(".*\\.", "");
+        List<Tag> tokenTags = assignTag.getChildren(tokenTagName);
+        if (tokenTags == null || tokenTags.isEmpty()) {
+            throw new ConfigurationException(
+                    "No <" + tokenTagName
+                            + "> tags found in <AssignNamedTrain>");
+        }
+
+        description = name + ": ";
+
+        for (Tag tokenTag : tokenTags) {
+            try {
+                NamedTrainToken token =
+                        (NamedTrainToken) tokenClass.newInstance();
+                tokens.add(token);
+                token.configureFromXML(tokenTag);
+                description += token.getLongName() + ", ";
+            } catch (Exception e) {
+                throw new ConfigurationException("Cannot instantiate class "
+                                                 + tokenClassName, e);
+            }
+        }
+        description = description.replaceFirst(", $", "");
+    }
+
+    public List<NamedTrainToken> getTokens() {
+        return tokens;
+    }
+
+    public boolean isExecutionable() {
+        return true;
+    }
+
+    /**
+     * Tokens can be reassigned indefinitely, so the ability is never set to
+     * exercised.
+     */
+    @Override
+    public void setExercised() {}
+
+    @Override
+    public void moveTo(MoveableHolderI newHolder) {
+        if (newHolder instanceof Portfolio) {
+            new ObjectMove(this, privateCompany, newHolder);
+        }
+    }
+
     public String getName() {
         return name;
     }
-    
+
     public String toMenu() {
         return description;
     }
-    
+
     public String toString() {
         return description;
     }

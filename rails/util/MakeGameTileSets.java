@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.5 2007/10/07 20:14:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.6 2008/06/04 19:00:39 evos Exp $*/
 package rails.util;
 
 import java.io.*;
@@ -19,150 +19,150 @@ import rails.game.ConfigurationException;
  */
 public class MakeGameTileSets {
 
-    private static List <String> directories = new ArrayList<String>();
+    private static List<String> directories = new ArrayList<String>();
     private static String tilesFilePath = "Tiles.xml";
 
     public static void main(String[] args) {
 
-	try {
-	    if (args.length == 0) {
+        try {
+            if (args.length == 0) {
 
-		System.out
-			.println("Provide rails.game name(s) for which to create"
-				+ " tile sets as argument(s).\nALL implies all games below the data directory.");
+                System.out.println("Provide rails.game name(s) for which to create"
+                                   + " tile sets as argument(s).\nALL implies all games below the data directory.");
 
-	    } else if (args[0].equalsIgnoreCase("ALL")) {
+            } else if (args[0].equalsIgnoreCase("ALL")) {
 
-		List<String> games = new ArrayList<String>();
+                List<String> games = new ArrayList<String>();
 
-		File gamesDir = new File("data");
-		if (gamesDir.exists() && gamesDir.isDirectory()) {
-		    File[] files = gamesDir.listFiles();
-		    for (int i = 0; i < files.length; i++) {
-			if (files[i].isDirectory()
-				&& !files[i].getName().equalsIgnoreCase("CVS")) {
-			    games.add(files[i].getName());
-			}
-		    }
-		}
+                File gamesDir = new File("data");
+                if (gamesDir.exists() && gamesDir.isDirectory()) {
+                    File[] files = gamesDir.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        if (files[i].isDirectory()
+                            && !files[i].getName().equalsIgnoreCase("CVS")) {
+                            games.add(files[i].getName());
+                        }
+                    }
+                }
 
-		new MakeGameTileSets((String[]) games.toArray(new String[0]));
+                new MakeGameTileSets((String[]) games.toArray(new String[0]));
 
-	    } else {
+            } else {
 
-		new MakeGameTileSets(args);
+                new MakeGameTileSets(args);
 
-	    }
+            }
 
-	} catch (ConfigurationException e) {
-	    e.printStackTrace();
-	}
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        }
 
     }
 
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
-	directories.add("tiles");
-	Element inputTopElement = Tag.findTopTagInFile(tilesFilePath,
-		directories, "Tiles").getElement();
+        directories.add("tiles");
+        Element inputTopElement =
+                Tag.findTopTagInFile(tilesFilePath, directories, "Tiles").getElement();
 
-	Map<String, Element> tileMap = new HashMap<String, Element>();
-	Element tileSpec;
-	String tileName;
-	NodeList tList = inputTopElement.getElementsByTagName("Tile");
-	for (int i = 0; i < tList.getLength(); i++) {
-	    tileSpec = (Element) tList.item(i);
-	    tileName = tileSpec.getAttribute("id");
-	    tileMap.put(tileName, tileSpec);
-	}
+        Map<String, Element> tileMap = new HashMap<String, Element>();
+        Element tileSpec;
+        String tileName;
+        NodeList tList = inputTopElement.getElementsByTagName("Tile");
+        for (int i = 0; i < tList.getLength(); i++) {
+            tileSpec = (Element) tList.item(i);
+            tileName = tileSpec.getAttribute("id");
+            tileMap.put(tileName, tileSpec);
+        }
 
-	for (int i = 0; i < games.length; i++) {
+        for (int i = 0; i < games.length; i++) {
 
-	    makeTileSet(games[i], tileMap);
+            makeTileSet(games[i], tileMap);
 
-	}
+        }
 
     }
 
     private void makeTileSet(String gameName, Map tileMap)
-	    throws ConfigurationException {
+            throws ConfigurationException {
 
-	directories.add("data/" + gameName);
-	
-	// Open and read the tile set for this rails.game
-	String tileSetPath = "TileSet.xml";
-	Element tileSet = Tag.findTopTagInFile(tileSetPath, directories, "TileManager").getElement();
-	if (tileSet == null)
-	    return;
-	NodeList tiles = tileSet.getElementsByTagName("Tile");
-	Map<String, Object> tilesInSet = new HashMap<String, Object>();
+        directories.add("data/" + gameName);
 
-	// Also open and read the map tiles.
-	String mapPath = "Map.xml";
-	Element mapHexes = Tag.findTopTagInFile(mapPath, directories, "Map").getElement();
-	NodeList hexes = mapHexes.getElementsByTagName("Hex");
+        // Open and read the tile set for this rails.game
+        String tileSetPath = "TileSet.xml";
+        Element tileSet =
+                Tag.findTopTagInFile(tileSetPath, directories, "TileManager").getElement();
+        if (tileSet == null) return;
+        NodeList tiles = tileSet.getElementsByTagName("Tile");
+        Map<String, Object> tilesInSet = new HashMap<String, Object>();
 
-	String tilesPath = "data/" + gameName + "/Tiles.xml";
-	Document outputDoc;
-	String tileName;
+        // Also open and read the map tiles.
+        String mapPath = "Map.xml";
+        Element mapHexes =
+                Tag.findTopTagInFile(mapPath, directories, "Map").getElement();
+        NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    DOMImplementation impl = builder.getDOMImplementation();
-	    outputDoc = impl.createDocument(null, "Tiles", null);
+        String tilesPath = "data/" + gameName + "/Tiles.xml";
+        Document outputDoc;
+        String tileName;
 
-	    // Scan the TileSet
-	    for (int i = 0; i < tiles.getLength(); i++) {
+        try {
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            DOMImplementation impl = builder.getDOMImplementation();
+            outputDoc = impl.createDocument(null, "Tiles", null);
 
-		tileName = ((Element) tiles.item(i)).getAttribute("id");
-		// Save the tile in a Map so that we can check completeness
-		// later.
-		tilesInSet.put(tileName, null);
+            // Scan the TileSet
+            for (int i = 0; i < tiles.getLength(); i++) {
 
-		// Get the Tile specification
-		Element tileSpec = (Element) tileMap.get(tileName);
-		if (tileSpec != null) {
-		    // Copy it to the subset document
-		    Element copy = (Element) outputDoc.importNode(
-			    ((Element) tileMap.get(tileName)), true);
-		    outputDoc.getDocumentElement().appendChild(copy);
-		} else {
-		    System.out.println("ERROR: specified " + gameName
-			    + " tile " + tileName + " not found in Tiles.xml.");
-		}
-	    }
+                tileName = ((Element) tiles.item(i)).getAttribute("id");
+                // Save the tile in a Map so that we can check completeness
+                // later.
+                tilesInSet.put(tileName, null);
 
-	    // Scan the map, and add any missing tiles, with a warning.
-	    for (int i = 0; i < hexes.getLength(); i++) {
+                // Get the Tile specification
+                Element tileSpec = (Element) tileMap.get(tileName);
+                if (tileSpec != null) {
+                    // Copy it to the subset document
+                    Element copy =
+                            (Element) outputDoc.importNode(
+                                    ((Element) tileMap.get(tileName)), true);
+                    outputDoc.getDocumentElement().appendChild(copy);
+                } else {
+                    System.out.println("ERROR: specified " + gameName
+                                       + " tile " + tileName
+                                       + " not found in Tiles.xml.");
+                }
+            }
 
-		tileName = ((Element) hexes.item(i)).getAttribute("tile");
-		// Does the preprinted tile occur in TileSet?
-		if (tilesInSet.containsKey(tileName))
-		    continue;
+            // Scan the map, and add any missing tiles, with a warning.
+            for (int i = 0; i < hexes.getLength(); i++) {
 
-		// No, warn and add it to the tiles document.
-		System.out.println("WARNING: " + gameName
-			+ " preprinted map tile " + tileName
-			+ " does not occur in TileSet!");
+                tileName = ((Element) hexes.item(i)).getAttribute("tile");
+                // Does the preprinted tile occur in TileSet?
+                if (tilesInSet.containsKey(tileName)) continue;
 
-		// Copy it to the subset document
-		Element copy = (Element) outputDoc.importNode(
-			((Element) tileMap.get(tileName)), true);
-		outputDoc.getDocumentElement().appendChild(copy);
+                // No, warn and add it to the tiles document.
+                System.out.println("WARNING: " + gameName
+                                   + " preprinted map tile " + tileName
+                                   + " does not occur in TileSet!");
 
-	    }
+                // Copy it to the subset document
+                Element copy =
+                        (Element) outputDoc.importNode(
+                                ((Element) tileMap.get(tileName)), true);
+                outputDoc.getDocumentElement().appendChild(copy);
 
-	    TransformerFactory.newInstance().newTransformer()
-		    .transform(
-			    new DOMSource(outputDoc),
-			    new StreamResult(new FileOutputStream(new File(
-				    tilesPath))));
+            }
 
-	} catch (Exception e) {
-	    throw new ConfigurationException("Document build error", e);
-	}
+            TransformerFactory.newInstance().newTransformer().transform(
+                    new DOMSource(outputDoc),
+                    new StreamResult(new FileOutputStream(new File(tilesPath))));
+
+        } catch (Exception e) {
+            throw new ConfigurationException("Document build error", e);
+        }
 
     }
 

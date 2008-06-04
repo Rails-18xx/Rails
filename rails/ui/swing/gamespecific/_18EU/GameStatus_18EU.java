@@ -65,15 +65,16 @@ public class GameStatus_18EU extends GameStatus {
                     options[i++] =
                             target.getName() + " " + target.getLongName();
                 } else {
-                    options[i++] = LocalText.getText("CloseMinor", //
-                            minor.getName());
+                    options[i++] =
+                            LocalText.getText("CloseMinor", minor.getName());
                 }
             }
-            int choice = new RadioButtonDialog(this, // 
-                    LocalText.getText("PleaseSelect"), //
-                    LocalText.getText("SelectCompanyToMergeMinorInto", //
-                            minor.getName()), //
-                    options, -1).getSelectedOption();
+            int choice =
+                    new RadioButtonDialog(this,
+                            LocalText.getText("PleaseSelect"),
+                            LocalText.getText("SelectCompanyToMergeMinorInto",
+                                    minor.getName()), options, -1) //
+                    .getSelectedOption();
             if (choice < 0) return null;
 
             PublicCompanyI major = targets.get(choice);
@@ -84,8 +85,8 @@ public class GameStatus_18EU extends GameStatus {
                         JOptionPane.showConfirmDialog(this, LocalText.getText(
                                 "WantToReplaceToken", new String[] {
                                         minor.getName(), //
-                                        major.getName() //
-                                }), LocalText.getText("PleaseSelect"),
+                                        major.getName() }),
+                                LocalText.getText("PleaseSelect"),
                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                 action.setReplaceToken(replaceToken);
             } else {
@@ -140,14 +141,12 @@ public class GameStatus_18EU extends GameStatus {
                 PublicCompanyI minor = minors.get(0);
                 int answer =
                         JOptionPane.showConfirmDialog(
-                                parent, //
-                                LocalText
-                                        .getText("MergeMinorConfirm",
-                                                new String[] {
-                                                        minor.getName(),
-                                                        action.getCertificate()
-                                                                .getCompany()
-                                                                .getName() }),
+                                parent,
+                                LocalText.getText(
+                                        "MergeMinorConfirm",
+                                        new String[] {
+                                                minor.getName(),
+                                                action.getCertificate().getCompany().getName() }),
                                 LocalText.getText("PleaseConfirm"),
                                 JOptionPane.OK_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
@@ -166,12 +165,13 @@ public class GameStatus_18EU extends GameStatus {
                                     + minor.getLongName();
                 }
                 int choice =
-                        new RadioButtonDialog(this, //
+                        new RadioButtonDialog(
+                                this, //
                                 LocalText.getText("PleaseSelect"), //
-                                LocalText.getText("SelectMinorToMerge", action
-                                        .getCertificate().getCompany()
-                                        .getName()), options, -1)
-                                .getSelectedOption();
+                                LocalText.getText(
+                                        "SelectMinorToMerge",
+                                        action.getCertificate().getCompany().getName()),
+                                options, -1).getSelectedOption();
                 if (choice >= 0) {
                     action.setChosenMinor(minors.get(choice));
                     chosenAction = action;
@@ -187,12 +187,13 @@ public class GameStatus_18EU extends GameStatus {
                     options[i] = cities.get(i).toString();
                 }
                 int index =
-                        new RadioButtonDialog(this, //
+                        new RadioButtonDialog(
+                                this, //
                                 LocalText.getText("PleaseSelect"), //
-                                LocalText.getText("SelectHomeStation", //
-                                        action.getCertificate().getCompany()
-                                                .getName()), options, -1)
-                                .getSelectedOption();
+                                LocalText.getText(
+                                        "SelectHomeStation", //
+                                        action.getCertificate().getCompany().getName()),
+                                options, -1).getSelectedOption();
                 if (index >= 0) {
                     action.setHomeStation(cities.get(index));
                 } else {

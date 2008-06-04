@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.9 2008/02/14 20:28:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.10 2008/06/04 19:00:29 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -35,9 +35,11 @@ public class BuyCertificate extends PossibleAction {
      * Common constructor.
      */
     public BuyCertificate(PublicCertificateI certificate, Portfolio from,
-    		int price, int maximumNumber) {
+            int price, int maximumNumber) {
         this.certificate = certificate;
-        this.certUniqueId = certificate.getUniqueId(); // TODO: Must be replaced by a unique Id!
+        this.certUniqueId = certificate.getUniqueId(); // TODO: Must be
+        // replaced by a unique
+        // Id!
         this.from = from;
         this.fromName = from.getName();
         this.price = price;
@@ -45,20 +47,20 @@ public class BuyCertificate extends PossibleAction {
     }
 
     /** Buy a certificate from some portfolio at the current price */
-    public BuyCertificate (PublicCertificateI certificate, Portfolio from) {
-    	this (certificate, from, certificate.getCertificatePrice(),	1);
+    public BuyCertificate(PublicCertificateI certificate, Portfolio from) {
+        this(certificate, from, certificate.getCertificatePrice(), 1);
     }
 
     /** Buy a certificate from some portfolio at a given price */
-    public BuyCertificate (PublicCertificateI certificate, Portfolio from,
-    		int price) {
-    	this (certificate, from, price,	1);
+    public BuyCertificate(PublicCertificateI certificate, Portfolio from,
+            int price) {
+        this(certificate, from, price, 1);
     }
 
     /** Required for deserialization */
     public BuyCertificate() {}
 
-    public Portfolio getFromPortfolio () {
+    public Portfolio getFromPortfolio() {
         return from;
     }
 
@@ -72,6 +74,7 @@ public class BuyCertificate extends PossibleAction {
     public int getMaximumNumber() {
         return maximumNumber;
     }
+
     /**
      * @return Returns the price.
      */
@@ -87,44 +90,42 @@ public class BuyCertificate extends PossibleAction {
     }
 
     public int getNumberBought() {
-		return numberBought;
-	}
-
-	public void setNumberBought(int numberBought) {
-		this.numberBought = numberBought;
-	}
-
-    @Override
-    public boolean equals (PossibleAction action) {
-        if (!(action instanceof BuyCertificate)) return false;
-        BuyCertificate a = (BuyCertificate) action;
-        return a.certificate == certificate
-            && a.from == from
-            && a.price == price
-            && a.maximumNumber == maximumNumber;
+        return numberBought;
     }
 
-	@Override
+    public void setNumberBought(int numberBought) {
+        this.numberBought = numberBought;
+    }
+
+    @Override
+    public boolean equals(PossibleAction action) {
+        if (!(action instanceof BuyCertificate)) return false;
+        BuyCertificate a = (BuyCertificate) action;
+        return a.certificate == certificate && a.from == from
+               && a.price == price && a.maximumNumber == maximumNumber;
+    }
+
+    @Override
     public String toString() {
-		StringBuffer text = new StringBuffer();
+        StringBuffer text = new StringBuffer();
         text.append("BuyCertificate: ");
         if (numberBought > 1) {
-        	text.append (numberBought).append(" of ");
+            text.append(numberBought).append(" of ");
         } else if (numberBought == 0 && maximumNumber > 1) {
-        	text.append ("up to ").append(maximumNumber).append(" of ");
+            text.append("up to ").append(maximumNumber).append(" of ");
         }
-        text.append(certificate.getName())
-        	.append(" from ").append(from.getName())
-        	.append(" price=").append(Bank.format(certificate.getShares() * price));
+        text.append(certificate.getName()).append(" from ").append(
+                from.getName()).append(" price=").append(
+                Bank.format(certificate.getShares() * price));
         return text.toString();
     }
 
-	private void readObject (ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
 
-		in.defaultReadObject();
-		certificate = PublicCertificate.getByUniqueId (certUniqueId);
-		from = Portfolio.getByName(fromName);
+        in.defaultReadObject();
+        certificate = PublicCertificate.getByUniqueId(certUniqueId);
+        from = Portfolio.getByName(fromName);
 
-	}
+    }
 }

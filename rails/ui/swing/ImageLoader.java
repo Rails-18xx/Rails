@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.10 2007/10/05 22:02:29 evos Exp $*/
- package rails.ui.swing;
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.11 2008/06/04 19:00:33 evos Exp $*/
+package rails.ui.swing;
 
 import java.awt.image.*;
 import java.io.*;
@@ -21,133 +21,132 @@ import org.apache.log4j.*;
  */
 public class ImageLoader {
 
-	private static HashMap<String, BufferedImage> tileMap;
+    private static HashMap<String, BufferedImage> tileMap;
 
-	private static int svgWidth = 60;
-	private static int svgHeight = 55;
-	private static String svgTileDir = "tiles/svg";
-	private static String gifTileDir = "tiles/images";
-	private static String tileRootDir = Config.get("tile.root_directory");
-	private static String preference = Config.get("tile.format_preference");
-	private static ArrayList <String> directories = new ArrayList<String>();
+    private static int svgWidth = 60;
+    private static int svgHeight = 55;
+    private static String svgTileDir = "tiles/svg";
+    private static String gifTileDir = "tiles/images";
+    private static String tileRootDir = Config.get("tile.root_directory");
+    private static String preference = Config.get("tile.format_preference");
+    private static ArrayList<String> directories = new ArrayList<String>();
 
-	static {
-		GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
-	}
+    static {
+        GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
+    }
 
-	private static Logger log = Logger.getLogger(ImageLoader.class.getPackage()
-			.getName());
+    private static Logger log =
+            Logger.getLogger(ImageLoader.class.getPackage().getName());
 
-	static {
-		if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {
-			tileRootDir += "/";
-		}
-	}
+    static {
+        if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {
+            tileRootDir += "/";
+        }
+    }
 
-	/* cheat, using batik transcoder API. we only want the Image */
-	private static class BufferedImageTranscoder extends ImageTranscoder {
+    /* cheat, using batik transcoder API. we only want the Image */
+    private static class BufferedImageTranscoder extends ImageTranscoder {
 
-		private BufferedImage image;
+        private BufferedImage image;
 
-		public BufferedImage createImage(int width, int height) {
-			return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		}
+        public BufferedImage createImage(int width, int height) {
+            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        }
 
-		public void writeImage(BufferedImage image, TranscoderOutput output)
-				throws TranscoderException {
-			this.image = image;
-		}
+        public void writeImage(BufferedImage image, TranscoderOutput output)
+                throws TranscoderException {
+            this.image = image;
+        }
 
-		public BufferedImage getImage() {
-			return image;
-		}
-	}
+        public BufferedImage getImage() {
+            return image;
+        }
+    }
 
-	private void loadTile(int tileID) {
-		BufferedImage image = null;
+    private void loadTile(int tileID) {
+        BufferedImage image = null;
 
-		if (preference.equalsIgnoreCase("gif")) {
+        if (preference.equalsIgnoreCase("gif")) {
 
-			image = getGIFTile(tileID);
-			if (image == null) {
-				// If loading the GIF fails, try loading the SVG.
-				log.warn("Attempting to load SVG version of tile " + tileID);
-				image = getSVGTile(tileID);
-			}
+            image = getGIFTile(tileID);
+            if (image == null) {
+                // If loading the GIF fails, try loading the SVG.
+                log.warn("Attempting to load SVG version of tile " + tileID);
+                image = getSVGTile(tileID);
+            }
 
-		} else {
+        } else {
 
-			image = getSVGTile(tileID);
-			if (image == null) {
-				// If loading the SVG fails, try loading the GIF.
-				log.warn("Attempting to load GIF version of tile " + tileID);
-				image = getGIFTile(tileID);
-			}
-		}
+            image = getSVGTile(tileID);
+            if (image == null) {
+                // If loading the SVG fails, try loading the GIF.
+                log.warn("Attempting to load GIF version of tile " + tileID);
+                image = getGIFTile(tileID);
+            }
+        }
 
-		/* Image will be stored, even if null, to prevent further searches. */
-		tileMap.put(Integer.toString(tileID), image);
-	}
+        /* Image will be stored, even if null, to prevent further searches. */
+        tileMap.put(Integer.toString(tileID), image);
+    }
 
-	private BufferedImage getSVGTile(int tileID) {
-		String fn = "tile" + Integer.toString(tileID) + ".svg";
-		log.debug("Loading tile " + fn);
+    private BufferedImage getSVGTile(int tileID) {
+        String fn = "tile" + Integer.toString(tileID) + ".svg";
+        log.debug("Loading tile " + fn);
 
-		BufferedImage image = null;
+        BufferedImage image = null;
 
-		try {
-			InputStream stream = ResourceLoader.getInputStream(fn, directories);
-			if (stream != null) {
-				BufferedImageTranscoder t = new BufferedImageTranscoder();
-				t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(
-						svgWidth));
-				t.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, new Float(
-						svgHeight));
-				TranscoderInput input = new TranscoderInput(stream);
-				t.transcode(input, null);
-				image = t.getImage();
-			}
-		} catch (Exception e) {
-			log.error("SVG transcoding for tile id " + tileID + " failed with "
-					+ e);
-			return null;
-		}
+        try {
+            InputStream stream = ResourceLoader.getInputStream(fn, directories);
+            if (stream != null) {
+                BufferedImageTranscoder t = new BufferedImageTranscoder();
+                t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(
+                        svgWidth));
+                t.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, new Float(
+                        svgHeight));
+                TranscoderInput input = new TranscoderInput(stream);
+                t.transcode(input, null);
+                image = t.getImage();
+            }
+        } catch (Exception e) {
+            log.error("SVG transcoding for tile id " + tileID + " failed with "
+                      + e);
+            return null;
+        }
 
-		return image;
-	}
+        return image;
+    }
 
-	private BufferedImage getGIFTile(int tileID) {
-		String fn = "tile" + Integer.toString(tileID) + ".gif";
-		log.debug("Loading tile " + fn);
+    private BufferedImage getGIFTile(int tileID) {
+        String fn = "tile" + Integer.toString(tileID) + ".gif";
+        log.debug("Loading tile " + fn);
 
-		BufferedImage image = null;
+        BufferedImage image = null;
 
-		try {
+        try {
 
-			InputStream str = ResourceLoader.getInputStream(fn, directories);
-			if (str != null) {
-				image = ImageIO.read(str);
-			}
-		} catch (Exception e) {
-			log.error("Error loading file: " + fn + "\nLoad failed with " + e);
-			return null;
-		}
-		return image;
-	}
+            InputStream str = ResourceLoader.getInputStream(fn, directories);
+            if (str != null) {
+                image = ImageIO.read(str);
+            }
+        } catch (Exception e) {
+            log.error("Error loading file: " + fn + "\nLoad failed with " + e);
+            return null;
+        }
+        return image;
+    }
 
-	public BufferedImage getTile(int tileID) {
-		// Check for cached copy before loading from disk.
-		if (!tileMap.containsKey(Integer.toString(tileID)))
-			loadTile(tileID);
+    public BufferedImage getTile(int tileID) {
+        // Check for cached copy before loading from disk.
+        if (!tileMap.containsKey(Integer.toString(tileID))) loadTile(tileID);
 
-		return (BufferedImage) tileMap.get(Integer.toString(tileID));
-	}
+        return (BufferedImage) tileMap.get(Integer.toString(tileID));
+    }
 
-	public ImageLoader() {
-		tileMap = new HashMap<String, BufferedImage>();
-		directories.add(tileRootDir + svgTileDir);
-		directories.add(tileRootDir + gifTileDir);
-		directories.add(tileRootDir);
-	}
+    public ImageLoader() {
+        tileMap = new HashMap<String, BufferedImage>();
+        directories.add(tileRootDir + svgTileDir);
+        directories.add(tileRootDir + gifTileDir);
+        directories.add(tileRootDir);
+    }
 
 }

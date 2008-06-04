@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.3 2007/05/21 22:06:37 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.4 2008/06/04 19:00:36 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
@@ -28,19 +28,19 @@ public class StringState extends State {
         super(name, value);
     }
 
-    public void set (String value) {
-        super.set (value);
+    public void set(String value) {
+        super.set(value);
     }
-    
-    public void appendWithDelimiter (String value, String delimiter) {
+
+    public void appendWithDelimiter(String value, String delimiter) {
         String oldValue = (String) object;
         if (oldValue == null) oldValue = "";
-        StringBuffer newValue = new StringBuffer (oldValue);
-        if (newValue.length() > 0) newValue.append (delimiter);
-        newValue.append (value);
-        new StateChange (this, newValue.toString());
+        StringBuffer newValue = new StringBuffer(oldValue);
+        if (newValue.length() > 0) newValue.append(delimiter);
+        newValue.append(value);
+        new StateChange(this, newValue.toString());
     }
-    
+
     public String stringValue() {
         return (String) object;
     }
