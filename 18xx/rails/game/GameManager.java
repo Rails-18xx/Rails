@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.30 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.31 2008/06/11 19:53:27 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rails.game.action.*;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
+import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.ui.swing.*;
 import rails.util.*;
@@ -61,7 +62,10 @@ public class GameManager implements ConfigurableComponentI {
     protected State currentRound = new State("CurrentRound", Round.class);
     protected RoundI interruptedRound = null;
 
-    protected int orNumber;
+    protected IntegerState absoluteORNumber =
+            new IntegerState("AbsoluteORNUmber");
+    protected IntegerState relativeORNumber =
+            new IntegerState("RelativeORNumber");
     protected int numOfORs;
 
     protected boolean gameOver = false;
@@ -321,9 +325,9 @@ public class GameManager implements ConfigurableComponentI {
                 log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
                 // Create a new OperatingRound (never more than one Stock Round)
-                OperatingRound.resetRelativeORNumber();
+                // OperatingRound.resetRelativeORNumber();
 
-                orNumber = 1;
+                relativeORNumber.set(1);
                 startOperatingRound(true);
             } else {
                 startStockRound();
@@ -334,8 +338,8 @@ public class GameManager implements ConfigurableComponentI {
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
-            OperatingRound.resetRelativeORNumber();
-            orNumber = 1;
+            // OperatingRound.resetRelativeORNumber();
+            relativeORNumber.set(1);
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
@@ -343,7 +347,7 @@ public class GameManager implements ConfigurableComponentI {
 
                 finishGame();
 
-            } else if (++orNumber <= numOfORs) {
+            } else if (relativeORNumber.add(1) <= numOfORs) {
                 // There will be another OR
                 startOperatingRound(true);
             } else if (startPacket != null && !startPacket.areAllSold()) {
@@ -383,12 +387,18 @@ public class GameManager implements ConfigurableComponentI {
         // new OperatingRound().start(operate);
         try {
             OperatingRound or = operatingRoundClass.newInstance();
-            or.start(operate);
+            if (operate) absoluteORNumber.add(1);
+            or.start(operate, this, getCompositeORNumber());
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
                       + operatingRoundClass.getName(), e);
             System.exit(1);
         }
+    }
+
+    public String getCompositeORNumber() {
+        return StockRound.getLastStockRoundNumber() + "."
+               + relativeORNumber.intValue();
     }
 
     public void startShareSellingRound(OperatingRound or,

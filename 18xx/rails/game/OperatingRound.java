@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.37 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.38 2008/06/11 19:53:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -16,6 +16,8 @@ import rails.util.LocalText;
  * be discarded. <p> Permanent memory is formed by static attributes.
  */
 public class OperatingRound extends Round implements Observer {
+
+    protected GameManager gameManager;
 
     /* Transient memory (per round only) */
     protected IntegerState stepObject;
@@ -75,11 +77,9 @@ public class OperatingRound extends Round implements Observer {
 
     static protected int numberOfPlayers = 0;
 
-    static protected int numberOfCompanies = 0;
+    // static protected int relativeORNumber = 0;
 
-    static protected int relativeORNumber = 0;
-
-    static protected int cumulativeORNumber = 0;
+    // static protected int cumulativeORNumber = 0;
 
     /* Constants */
     public static final int SPLIT_NOT_ALLOWED = 0;
@@ -123,16 +123,14 @@ public class OperatingRound extends Round implements Observer {
      * Start Packet has not yet been sold completely.
      */
     public OperatingRound() {
-        relativeORNumber++;
-        cumulativeORNumber++;
-        thisOrNumber = getCompositeORNumber();
+        // relativeORNumber++;
+        // cumulativeORNumber++;
+        // thisOrNumber = getCompositeORNumber();
 
         if (operatingCompanyIndexObject == null) {
             operatingCompanyIndexObject =
                     new IntegerState("OperatingCompanyIndex", 0);
         }
-
-        ReportBuffer.add(LocalText.getText("START_OR", getCompositeORNumber()));
 
         if (players == null) {
             players = Game.getPlayerManager().getPlayers();
@@ -145,16 +143,18 @@ public class OperatingRound extends Round implements Observer {
 
     }
 
-    public void start(boolean operate) {
+    public void start(boolean operate, GameManager gameManager, String orNumber) {
+
+        this.gameManager = gameManager;
+        thisOrNumber = orNumber;
+        ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
         if (operate) {
 
             operatingCompanyArray = super.getOperatingCompanies();
 
-            numberOfCompanies = operatingCompanyArray.length;
-
             if (operatingCompanyArray.length > 0) {
-                GameManager.getInstance().setRound(this);
+                gameManager.setRound(this);
                 operatingCompanyIndex = operatingCompanyIndexObject.intValue();
                 operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
@@ -168,7 +168,7 @@ public class OperatingRound extends Round implements Observer {
         String text = LocalText.getText("ShortORExecuted");
         ReportBuffer.add(text);
         DisplayBuffer.add(text);
-        GameManager.getInstance().nextRound(this);
+        gameManager.nextRound(this);
     }
 
     /*----- General methods -----*/
@@ -179,41 +179,36 @@ public class OperatingRound extends Round implements Observer {
      * 
      * @return Composite SR/OR number.
      */
-    public String getCompositeORNumber() {
-        return StockRound.getLastStockRoundNumber() + "." + relativeORNumber;
-    }
-
+    // public String getCompositeORNumber() {
+    // return StockRound.getLastStockRoundNumber() + "." + relativeORNumber;
+    // }
     /**
      * Get the relative OR number. This number restarts at 1 after each stock
      * round.
      * 
      * @return Relative OR number
      */
-    public int getRelativeORNumber() {
-        return relativeORNumber;
-    }
-
+    // public int getRelativeORNumber() {
+    // return relativeORNumber;
+    // }
     /**
      * Get the cumulative OR number. This number never restarts.
      * 
      * @return Cumulative OR number.
      */
-    public int getCumulativeORNumber() {
-        return cumulativeORNumber;
-    }
-
-    public static int getLastORNumber() {
-        return cumulativeORNumber;
-    }
-
+    // public int getCumulativeORNumber() {
+    // return cumulativeORNumber;
+    // }
+    // public static int getLastORNumber() {
+    // return cumulativeORNumber;
+    // }
     /**
-     * @deprecated Currently needed, but will be removed in a later stage.
+     * //@deprecated Currently needed, but will be removed in a later stage.
      */
-    @Deprecated
-    public static void resetRelativeORNumber() {
-        relativeORNumber = 0;
-    }
-
+    // @Deprecated
+    // public static void resetRelativeORNumber() {
+    // relativeORNumber = 0;
+    // }
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
     @Override
@@ -890,7 +885,7 @@ public class OperatingRound extends Round implements Observer {
                     continue;
                 }
 
-                GameManager.getInstance().startTreasuryShareTradingRound(this,
+                gameManager.startTreasuryShareTradingRound(this,
                         operatingCompany);
 
             }
@@ -951,7 +946,7 @@ public class OperatingRound extends Round implements Observer {
 
         tileLaysPerColour =
                 new HashMap<String, Integer>(currentPhase.getTileColours()); // Clone
-                                                                                // it.
+        // it.
         int allowedNumber;
         for (String colour : tileLaysPerColour.keySet()) {
             allowedNumber = operatingCompany.getNumberOfTileLays(colour);
@@ -1124,18 +1119,24 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.setOperated(true);
 
         if (operatingCompanyIndex >= operatingCompanyArray.length - 1) {
-            // OR done. Inform GameManager.
-            ReportBuffer.add(LocalText.getText("EndOfOperatingRound",
-                    getCompositeORNumber()));
-            GameManager.getInstance().nextRound(this);
-            return;
+
+            finishOR();
+
+        } else {
+
+            operatingCompanyIndexObject.add(1);
+            operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+            operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+
+            setStep(STEP_INITIAL);
         }
+    }
 
-        operatingCompanyIndexObject.add(1);
-        operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-        operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+    protected void finishOR() {
 
-        setStep(STEP_INITIAL);
+        // OR done. Inform GameManager.
+        ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
+        gameManager.nextRound(this);
     }
 
     public boolean buyTrain(BuyTrain action) {
@@ -1247,8 +1248,8 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
-            GameManager.getInstance().startShareSellingRound(this,
-                    operatingCompany, cashToBeRaisedByPresident);
+            gameManager.startShareSellingRound(this, operatingCompany,
+                    cashToBeRaisedByPresident);
 
             return true;
         }
@@ -1845,7 +1846,7 @@ public class OperatingRound extends Round implements Observer {
     public String getHelp() {
         int step = getStep();
         StringBuffer b = new StringBuffer();
-        b.append("<big>Operating round: ").append(getCompositeORNumber()).append(
+        b.append("<big>Operating round: ").append(thisOrNumber).append(
                 "</big><br>");
         b.append("<br><b>").append(operatingCompany.getName()).append(
                 "</b> (president ").append(getCurrentPlayer().getName()).append(
@@ -1904,7 +1905,7 @@ public class OperatingRound extends Round implements Observer {
 
     @Override
     public String toString() {
-        return "OperatingRound " + getCumulativeORNumber();
+        return "OperatingRound " + thisOrNumber;
     }
 
     /** @Overrides */

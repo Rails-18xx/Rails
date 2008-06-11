@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/IntegerState.java,v 1.2 2008/06/04 19:00:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/IntegerState.java,v 1.3 2008/06/11 19:53:27 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
@@ -30,9 +30,10 @@ public class IntegerState extends State {
         super.set(new Integer(value));
     }
 
-    public void add(int value) {
+    public int add(int value) {
         int newValue = ((Integer) object).intValue() + value;
         set(newValue);
+        return newValue;
     }
 
     public int intValue() {
