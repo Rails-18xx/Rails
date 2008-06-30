@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.13 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.14 2008/06/30 20:35:29 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -176,7 +176,7 @@ public class StartRound_1830 extends StartRound {
 
         StartItem item = bidItem.getStartItem();
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         int previousBid = 0;
         int bidAmount = bidItem.getActualBid();
 
@@ -276,7 +276,7 @@ public class StartRound_1830 extends StartRound {
     protected boolean pass(String playerName) {
 
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         StartItem auctionItem = (StartItem) auctionItemState.getObject();
 
         while (true) {
@@ -319,7 +319,7 @@ public class StartRound_1830 extends StartRound {
             } else {
                 // More than one left: find next bidder
                 setNextBiddingPlayer(auctionItem,
-                        GameManager.getCurrentPlayerIndex());
+                        getCurrentPlayerIndex());
             }
 
         } else {
@@ -340,12 +340,12 @@ public class StartRound_1830 extends StartRound {
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
                         assignItem(getCurrentPlayer(),
                                 startPacket.getFirstItem(), 0, 0);
-                        GameManager.setPriorityPlayer();
+                        gameManager.setPriorityPlayer();
                         // startPacket.getFirstItem().getName());
                     }
                 } else {
                     numPasses.set(0);
-                    GameManager.getInstance().nextRound(this);
+                    gameManager.nextRound(this);
 
                 }
             } else if (auctionItem != null) {
@@ -360,9 +360,9 @@ public class StartRound_1830 extends StartRound {
 
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
         for (int i = currentIndex + 1; i < currentIndex
-                                           + GameManager.getNumberOfPlayers(); i++) {
-            if (item.hasBid(GameManager.getPlayer(i).getName())) {
-                GameManager.setCurrentPlayerIndex(i);
+                                           + gameManager.getNumberOfPlayers(); i++) {
+            if (item.hasBid(gameManager.getPlayerByIndex(i).getName())) {
+                setCurrentPlayerIndex(i);
                 break;
             }
         }
@@ -370,7 +370,7 @@ public class StartRound_1830 extends StartRound {
 
     private void setNextBiddingPlayer(StartItem item) {
 
-        setNextBiddingPlayer(item, GameManager.getCurrentPlayerIndex());
+        setNextBiddingPlayer(item, getCurrentPlayerIndex());
     }
 
     public String getHelp() {

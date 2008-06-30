@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.22 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.23 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -11,6 +11,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.ActionButton;
@@ -55,7 +56,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     protected ActionButton passButton;
 
-    protected GameManager gameManager;
+    //public GameManager gameManager;
 
     protected GameUIManager gameUIManager;
 
@@ -216,18 +217,18 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public void init(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
-        this.gameManager = gameUIManager.getGameManager();
 
-        Class<? extends GameStatus> gameStatusClass =
-                gameManager.getGameStatusClass();
+        String gameStatusClassName = gameUIManager.getClassName(Defs.ClassName.GAME_STATUS);
         // gameStatus = new GameStatus(this);
         try {
+            Class<? extends GameStatus> gameStatusClass =
+                Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
             gameStatus = gameStatusClass.newInstance();
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + gameStatusClass.getName());
+            log.fatal("Cannot instantiate class " + gameStatusClassName, e);
             System.exit(1);
         }
-        gameStatus.init(this);
+        gameStatus.init(this, gameUIManager);
 
         buttonPanel = new JPanel();
 
@@ -335,8 +336,8 @@ public class StatusWindow extends JFrame implements ActionListener,
             setTitle(LocalText.getText(
                     "EMERGENCY_SHARE_SELLING_TITLE",
                     (((ShareSellingRound) currentRound).getCompanyNeedingTrain().getName())));
-            gameStatus.initTurn(GameManager.getCurrentPlayerIndex());
-            gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
+            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
+            gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
             passButton.setEnabled(false);
             int cash =
@@ -350,7 +351,7 @@ public class StatusWindow extends JFrame implements ActionListener,
                  * games)
                  */
                 JOptionPane.showMessageDialog(this,
-                        gameManager.getGameReport(), "", JOptionPane.OK_OPTION);
+                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
                 /*
                  * All other wrapping up has already been done when calling
                  * getSellableCertificates, so we can just finish now.
@@ -367,8 +368,8 @@ public class StatusWindow extends JFrame implements ActionListener,
             setTitle(LocalText.getText(
                     "STOCK_ROUND_TITLE",
                     String.valueOf(((StockRound) currentRound).getStockRoundNumber())));
-            gameStatus.initTurn(GameManager.getCurrentPlayerIndex());
-            gameStatus.setPriorityPlayer(GameManager.getPriorityPlayer().getIndex());
+            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
+            gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
             passButton.setEnabled(true);
         }
@@ -471,7 +472,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         } else if (command.equals(SELL_CMD)) {
             process(executedAction);
         } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)) {
-            if (GameManager.isGameOver()) {
+            if (gameUIManager.isGameOver()) {
                 System.exit(0);
             }
             process(executedAction);
@@ -549,7 +550,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     public GameStatus getGameStatus() {
         return gameStatus;
     }
-
+    
     public static void uncheckMenuItemBox(String itemName) {
         int count = optMenu.getMenuComponentCount();
 
@@ -615,7 +616,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(gameManager.getHelp());
+            HelpWindow.displayHelp(gameUIManager.getHelp());
             e.consume();
         }
     }

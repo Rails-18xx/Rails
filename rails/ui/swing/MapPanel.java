@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.8 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.9 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
 import javax.swing.*;
@@ -23,11 +23,13 @@ public class MapPanel extends JPanel {
     private MapManager mmgr;
     private HexMap map;
     private JScrollPane scrollPane;
+    private ORUIManager orUIManager;
 
     protected static Logger log =
             Logger.getLogger(MapPanel.class.getPackage().getName());
 
     public MapPanel(ORUIManager orUIManager) {
+        this.orUIManager = orUIManager;
         Scale.set(15);
         setLayout(new BorderLayout());
 
@@ -64,7 +66,7 @@ public class MapPanel extends JPanel {
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+            HelpWindow.displayHelp(orUIManager.gameUIManager.getHelp());
             e.consume();
         }
     }

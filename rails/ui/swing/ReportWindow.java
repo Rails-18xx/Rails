@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.4 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.5 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -20,11 +20,13 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
     private JScrollBar vbar;
     private JPanel messagePanel;
     private static ReportWindow messageWindow;
+    private GameManager gameManager;
 
     private static StringBuffer buffer = new StringBuffer("<html></html>");
 
-    public ReportWindow() {
+    public ReportWindow(GameManager gameManager) {
         messageWindow = this;
+        this.gameManager = gameManager;
 
         message = new JLabel("");
         message.setBackground(Color.WHITE);
@@ -83,7 +85,7 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+            HelpWindow.displayHelp(gameManager.getHelp());
             e.consume();
         }
     }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.11 2008/06/04 19:00:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.12 2008/06/30 20:35:30 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -22,15 +22,17 @@ public class ShareSellingRound extends StockRound {
     PublicCompanyI companyNeedingTrain;
     IntegerState cashToRaise;
 
-    public ShareSellingRound(PublicCompanyI compNeedingTrain, int cashToRaise) {
+    public ShareSellingRound(GameManager gameManager,
+            PublicCompanyI compNeedingTrain, int cashToRaise) {
 
+        this.gameManager = gameManager;
         this.companyNeedingTrain = compNeedingTrain;
         this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
         sellingPlayer = compNeedingTrain.getPresident();
         currentPlayer = sellingPlayer;
         log.debug("Creating ShareSellingRound, cash to raise =" + cashToRaise);
-        GameManager.getInstance().setRound(this);
-        GameManager.setCurrentPlayerIndex(sellingPlayer.getIndex());
+        gameManager.setRound(this);
+        setCurrentPlayerIndex(sellingPlayer.getIndex());
 
     }
 
@@ -61,7 +63,7 @@ public class ShareSellingRound extends StockRound {
             DisplayBuffer.add(LocalText.getText("YouAreBankrupt",
                     Bank.format(cashToRaise.intValue())));
 
-            GameManager.getInstance().registerBankruptcy();
+            gameManager.registerBankruptcy();
             return false;
         }
 
@@ -116,7 +118,7 @@ public class ShareSellingRound extends StockRound {
                     dumpAllowed = false;
                     if (company != companyNeedingTrain) {
                         int playerShare;
-                        List<Player> players = GameManager.getPlayers();
+                        List<Player> players = gameManager.getPlayers();
                         for (Player player : players) {
                             if (player == currentPlayer) continue;
                             playerShare =
@@ -197,7 +199,7 @@ public class ShareSellingRound extends StockRound {
         int presSharesToSell = 0;
         int numberToSell = action.getNumberSold();
         int shareUnits = action.getShareUnits();
-        int currentIndex = GameManager.getCurrentPlayerIndex();
+        int currentIndex = getCurrentPlayerIndex();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -257,7 +259,7 @@ public class ShareSellingRound extends StockRound {
                 Player otherPlayer;
                 for (int i = currentIndex + 1; i < currentIndex
                                                    + numberOfPlayers; i++) {
-                    otherPlayer = GameManager.getPlayer(i);
+                    otherPlayer = gameManager.getPlayerByIndex(i);
                     if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
@@ -337,7 +339,7 @@ public class ShareSellingRound extends StockRound {
         if (currentPlayer == company.getPresident()) {
             Player otherPlayer;
             for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = GameManager.getPlayer(i);
+                otherPlayer = gameManager.getPlayerByIndex(i);
                 if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
@@ -352,7 +354,7 @@ public class ShareSellingRound extends StockRound {
         cashToRaise.add(-numberSold * price);
 
         if (cashToRaise.intValue() <= 0) {
-            GameManager.getInstance().finishShareSellingRound();
+            gameManager.finishShareSellingRound();
         }
 
         return true;

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.11 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.12 2008/06/30 20:35:29 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -6,9 +6,9 @@ import java.util.*;
 import rails.game.state.State;
 import rails.util.Tag;
 
-public class PhaseManager implements PhaseManagerI, ConfigurableComponentI {
+public class PhaseManager implements ConfigurableComponentI {
 
-    protected static PhaseManagerI instance = null;
+    protected static PhaseManager instance = null;
 
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;
@@ -21,7 +21,7 @@ public class PhaseManager implements PhaseManagerI, ConfigurableComponentI {
         instance = this;
     }
 
-    public static PhaseManagerI getInstance() {
+    public static PhaseManager getInstance() {
         return instance;
     }
 

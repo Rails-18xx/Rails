@@ -15,17 +15,14 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.Bank;
-import rails.game.CompanyManagerI;
-import rails.game.Game;
-import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.Portfolio;
 import rails.game.PublicCertificateI;
@@ -61,7 +58,7 @@ public class GameStatus extends JPanel implements ActionListener {
     private static final String SELL_CMD = "Sell";
 
     private static GameStatus gameStatus;
-    protected JFrame parent;
+    protected StatusWindow parent;
 
     private GridBagConstraints gbc;
     private Color buttonHighlight = new Color(255, 160, 80);
@@ -119,11 +116,13 @@ public class GameStatus extends JPanel implements ActionListener {
     protected int np; // Number of players
     protected GridBagLayout gb;
 
-    protected int nc; // NUmber of companies
+    protected int nc; // Number of companies
     protected Player[] players;
     protected PublicCompanyI[] companies;
-    protected CompanyManagerI cm;
+    //protected CompanyManagerI cm;
     protected Portfolio ipo, pool;
+    
+    protected GameUIManager gameUIManager;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
@@ -154,10 +153,11 @@ public class GameStatus extends JPanel implements ActionListener {
         super();
     }
 
-    public void init(JFrame parent) {
+    public void init(StatusWindow parent, GameUIManager gameUIManager) {
 
         gameStatus = this;
         this.parent = parent;
+        this.gameUIManager = gameUIManager;
 
         gb = new GridBagLayout();
         this.setLayout(gb);
@@ -169,15 +169,15 @@ public class GameStatus extends JPanel implements ActionListener {
         setBorder(BorderFactory.createEtchedBorder());
         setOpaque(false);
 
-        players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
-        np = GameManager.getNumberOfPlayers();
-        cm = Game.getCompanyManager();
-        companies = cm.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
+        players = gameUIManager.getPlayers().toArray(new Player[0]);
+        np = gameUIManager.getNumberOfPlayers();
+        //cm = Game.getCompanyManager();
+        companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
 
-        hasParPrices = GameManager.hasAnyParPrice();
-        compCanBuyPrivates = GameManager.canAnyCompBuyPrivates();
-        compCanHoldOwnShares = GameManager.canAnyCompanyHoldShares();
+        hasParPrices = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_PAR_PRICE);
+        compCanBuyPrivates = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        compCanHoldOwnShares = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
 
         ipo = Bank.getIpo();
         pool = Bank.getPool();

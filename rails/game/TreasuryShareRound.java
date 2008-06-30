@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.4 2008/06/04 19:00:32 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.5 2008/06/30 20:35:30 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -25,12 +25,14 @@ public class TreasuryShareRound extends StockRound {
 
     Player sellingPlayer;
     PublicCompanyI operatingCompany;
-    GameManager gameMgr;
+    //GameManager gameMgr;
     private final BooleanState hasBought;
     private final BooleanState hasSold;
 
-    public TreasuryShareRound(PublicCompanyI operatingCompany) {
+    public TreasuryShareRound(GameManager gameManager,
+            PublicCompanyI operatingCompany) {
 
+        this.gameManager = gameManager;
         this.operatingCompany = operatingCompany;
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
@@ -41,9 +43,8 @@ public class TreasuryShareRound extends StockRound {
                 new BooleanState(operatingCompany.getName() + "_soldShares",
                         false);
 
-        gameMgr = GameManager.getInstance();
-        gameMgr.setRound(this);
-        GameManager.setCurrentPlayerIndex(sellingPlayer.getIndex());
+        gameManager.setRound(this);
+        setCurrentPlayerIndex(sellingPlayer.getIndex());
 
     }
 
@@ -124,7 +125,7 @@ public class TreasuryShareRound extends StockRound {
             int ownedShare =
                     operatingCompany.getPortfolio().getShare(operatingCompany);
             // Max share that may be owned
-            int maxShare = gameMgr.getTreasuryShareLimit();
+            int maxShare = gameManager.getTreasuryShareLimit();
             // Max number of shares to add
             int maxBuyable =
                     (maxShare - ownedShare) / operatingCompany.getShareUnit();
@@ -267,7 +268,7 @@ public class TreasuryShareRound extends StockRound {
         PublicCompanyI company = null;
         Portfolio portfolio = null;
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -320,10 +321,10 @@ public class TreasuryShareRound extends StockRound {
             portfolio = operatingCompany.getPortfolio();
 
             // Check if company would exceed the per-company share limit
-            if (portfolio.getShare(company) + shares * company.getShareUnit() > gameMgr.getTreasuryShareLimit()) {
+            if (portfolio.getShare(company) + shares * company.getShareUnit() > gameManager.getTreasuryShareLimit()) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",
-                                String.valueOf(gameMgr.getTreasuryShareLimit()));
+                                String.valueOf(gameManager.getTreasuryShareLimit()));
                 break;
             }
 
@@ -508,7 +509,7 @@ public class TreasuryShareRound extends StockRound {
     @Override
     public boolean done(String playerName) {
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getName())) {
             DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
@@ -518,7 +519,7 @@ public class TreasuryShareRound extends StockRound {
         MoveSet.start(false);
 
         // Inform GameManager
-        gameMgr.finishTreasuryShareRound();
+        gameManager.finishTreasuryShareRound();
 
         return true;
     }

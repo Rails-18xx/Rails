@@ -20,7 +20,7 @@ public abstract class StartRound extends Round implements StartRoundI {
     protected IntegerState numPasses = new IntegerState("StartRoundPasses");
     protected int numPlayers;
     protected String variant;
-    protected GameManager gameMgr;
+    //protected GameManager gameMgr;
     protected Player currentPlayer;
 
     /**
@@ -55,7 +55,7 @@ public abstract class StartRound extends Round implements StartRoundI {
         this.startPacket = startPacket;
         this.variant = Game.getGameOption(GameManager.VARIANT_KEY);
         if (variant == null) variant = "";
-        numPlayers = GameManager.getNumberOfPlayers();
+        numPlayers = gameManager.getNumberOfPlayers();
 
         itemsToSell = new ArrayList<StartItem>();
         itemIndex = new int[startPacket.getItems().size()];
@@ -73,10 +73,10 @@ public abstract class StartRound extends Round implements StartRoundI {
         numPasses.set(0);
         auctionItemState.set(null);
 
-        gameMgr = GameManager.getInstance();
-        gameMgr.setRound(this);
-        GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
-        currentPlayer = GameManager.getCurrentPlayer();
+        //gameMgr = GameManager.getInstance();
+        gameManager.setRound(this);
+        setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
+        currentPlayer = getCurrentPlayer();
 
         ReportBuffer.add("");
         ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
@@ -117,7 +117,7 @@ public abstract class StartRound extends Round implements StartRoundI {
                     startItemAction.getStartItem().setStatus(
                             StartItem.NEEDS_SHARE_PRICE);
                     // We must set the priority player, though
-                    GameManager.setPriorityPlayer();
+                    gameManager.setPriorityPlayer();
                     result = true;
                 } else {
                     result = buy(playerName, buyAction);
@@ -136,7 +136,7 @@ public abstract class StartRound extends Round implements StartRoundI {
              * If the complete start packet has been sold, start a Stock round,
              */
             possibleActions.clear();
-            GameManager.getInstance().nextRound(this);
+            gameManager.nextRound(this);
         } else if (!setPossibleActions()) {
             /*
              * If nobody can do anything, keep executing Operating and Start
@@ -144,7 +144,7 @@ public abstract class StartRound extends Round implements StartRoundI {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            GameManager.getInstance().nextRound(this);
+            gameManager.nextRound(this);
         }
 
         return result;
@@ -174,7 +174,7 @@ public abstract class StartRound extends Round implements StartRoundI {
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         StartItem item = boughtItem.getStartItem();
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         int price = 0;
         int sharePrice = 0;
         String shareCompName = "";
@@ -225,7 +225,7 @@ public abstract class StartRound extends Round implements StartRoundI {
         assignItem(player, item, price, sharePrice);
 
         // Set priority
-        GameManager.setPriorityPlayer();
+        gameManager.setPriorityPlayer();
         setNextPlayer();
 
         auctionItemState.set(null);
@@ -296,40 +296,29 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /*----- Setting up the UI for the next action -----*/
 
-    /**
-     * Get the currentPlayer.
-     * 
-     * @return The current Player object.
-     * @see GameManager.getCurrentPlayer().
-     */
-    @Override
-    public Player getCurrentPlayer() {
-        return GameManager.getCurrentPlayer();
-    }
-
-    /**
+   /**
      * Get the currentPlayer index in the player list (starting at 0).
      * 
      * @return The index of the current Player.
      * @see GameManager.getCurrentPlayerIndex().
      */
     public int getCurrentPlayerIndex() {
-        return GameManager.getCurrentPlayerIndex();
+        return gameManager.getCurrentPlayerIndex();
     }
 
     protected void setPriorityPlayer() {
-        GameManager.setCurrentPlayer(GameManager.getPriorityPlayer());
-        currentPlayer = GameManager.getCurrentPlayer();
+        setCurrentPlayer(gameManager.getPriorityPlayer());
+        currentPlayer = getCurrentPlayer();
     }
 
     protected void setPlayer(Player player) {
-        GameManager.setCurrentPlayer(player);
+        setCurrentPlayer(player);
         currentPlayer = player;
     }
 
     protected void setNextPlayer() {
-        GameManager.setCurrentPlayerIndex(GameManager.getCurrentPlayerIndex() + 1);
-        currentPlayer = GameManager.getCurrentPlayer();
+        setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
+        currentPlayer = getCurrentPlayer();
     }
 
     /**
@@ -367,11 +356,11 @@ public abstract class StartRound extends Round implements StartRoundI {
     }
 
     public ModelObject getFreeCashModel(int playerIndex) {
-        return Game.getPlayerManager().getPlayerByIndex(playerIndex).getFreeCashModel();
+        return gameManager.getPlayerByIndex(playerIndex).getFreeCashModel();
     }
 
     public ModelObject getBlockedCashModel(int playerIndex) {
-        return Game.getPlayerManager().getPlayerByIndex(playerIndex).getBlockedCashModel();
+        return gameManager.getPlayerByIndex(playerIndex).getBlockedCashModel();
     }
 
 }

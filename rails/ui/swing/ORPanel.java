@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.24 2008/06/04 19:00:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.25 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -10,6 +10,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
@@ -117,6 +118,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         orWindow = parent;
         this.orUIManager = orUIManager;
+        GameUIManager gameUIManager = parent.gameUIManager;
 
         statusPanel = new JPanel();
         gb = new GridBagLayout();
@@ -124,14 +126,14 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setOpaque(true);
 
-        round = GameManager.getInstance().getCurrentRound();
-        privatesCanBeBought = GameManager.getCompaniesCanBuyPrivates();
-        bonusTokensExist = GameManager.doBonusTokensExist();
+        round = gameUIManager.getCurrentRound();
+        privatesCanBeBought = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        bonusTokensExist = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.DO_BONUS_TOKENS_EXIST);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
 
-        players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getPlayers().toArray(new Player[0]);
 
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies();
@@ -452,7 +454,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button2.setEnabled(false);
         button3.setEnabled(false);
 
-        round = GameManager.getInstance().getCurrentRound();
+        round = orUIManager.gameUIManager.getCurrentRound();
         if (!(round instanceof ShareSellingRound)) {
             orUIManager.setORCompanyTurn(-1);
         }

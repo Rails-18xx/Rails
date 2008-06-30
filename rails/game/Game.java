@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.17 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.18 2008/06/30 20:35:30 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -25,6 +25,7 @@ public class Game {
     protected GameManager gameManager;
     protected CompanyManagerI companyManager;
     protected PlayerManager playerManager;
+    protected PhaseManager phaseManager;
     protected StockMarketI stockMarket;
     protected Bank bank;
     // protected ArrayList companyList;
@@ -63,7 +64,7 @@ public class Game {
     }
 
     public void start() {
-        gameManager.startGame();
+        gameManager.startGame(playerManager, companyManager, phaseManager);
     }
 
     public boolean setup() {
@@ -116,6 +117,14 @@ public class Game {
             if (gameManager == null) {
                 throw new ConfigurationException(
                         "No GameManager XML element found in file "
+                                + GAME_XML_FILE);
+            }
+
+            phaseManager =
+                (PhaseManager) componentManager.findComponent("PhaseManager");
+            if (phaseManager == null) {
+                throw new ConfigurationException(
+                        "No PhaseManager XML element found in file "
                                 + GAME_XML_FILE);
             }
 

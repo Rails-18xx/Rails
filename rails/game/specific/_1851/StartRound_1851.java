@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.5 2008/06/04 19:00:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.6 2008/06/30 20:35:30 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class StartRound_1851 extends StartRound {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            GameManager.getInstance().nextRound(this);
+            gameManager.nextRound(this);
         }
 
     }
@@ -61,7 +61,7 @@ public class StartRound_1851 extends StartRound {
                 item.setStatus(StartItem.BUYABLE);
                 possibleActions.add(action =
                         new BuyStartItem(item, item.getBasePrice(), false));
-                log.debug(GameManager.getCurrentPlayer().getName() + " may: "
+                log.debug(getCurrentPlayer().getName() + " may: "
                           + action.toString());
             }
 
@@ -74,7 +74,7 @@ public class StartRound_1851 extends StartRound {
 
     @Override
     public List<StartItem> getStartItems() {
-        Player currentPlayer = GameManager.getCurrentPlayer();
+        Player currentPlayer = getCurrentPlayer();
         int cashToSpend = currentPlayer.getCash();
         List<StartItem> startItems = startPacket.getItems();
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.12 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.13 2008/06/30 20:35:30 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class StartRound_1835 extends StartRound {
     private static IntegerState startRoundNumber =
             new IntegerState("StartRoundNumber", 0);
 
-    private final int numberOfPlayers = GameManager.getNumberOfPlayers();
+    private final int numberOfPlayers = gameManager.getNumberOfPlayers();
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -51,7 +51,7 @@ public class StartRound_1835 extends StartRound {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            GameManager.getInstance().nextRound(this);
+            gameManager.nextRound(this);
         }
 
     }
@@ -149,7 +149,7 @@ public class StartRound_1835 extends StartRound {
 
     @Override
     public List<StartItem> getStartItems() {
-        Player currentPlayer = GameManager.getCurrentPlayer();
+        Player currentPlayer = getCurrentPlayer();
         int cashToSpend = currentPlayer.getCash();
         // List<StartItem> startItems = startPacket.getItems();
         int row;
@@ -228,9 +228,9 @@ public class StartRound_1835 extends StartRound {
             } else {
                 newIndex = turnIndex;
             }
-            Player oldPlayer = GameManager.getCurrentPlayer();
-            GameManager.setCurrentPlayerIndex(newIndex);
-            Player newPlayer = GameManager.getCurrentPlayer();
+            Player oldPlayer = getCurrentPlayer();
+            setCurrentPlayerIndex(newIndex);
+            Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getName()
                       + " to " + newPlayer.getName() + " [startRound="
                       + startRoundNumber + " cycle=" + cycleNumber + " turn="
@@ -239,9 +239,9 @@ public class StartRound_1835 extends StartRound {
         } else {
 
             /* In any subsequent Round, the normal order applies. */
-            Player oldPlayer = GameManager.getCurrentPlayer();
+            Player oldPlayer = getCurrentPlayer();
             super.setNextPlayer();
-            Player newPlayer = GameManager.getCurrentPlayer();
+            Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getName()
                       + " to " + newPlayer.getName());
         }
@@ -258,7 +258,7 @@ public class StartRound_1835 extends StartRound {
     public boolean pass(String playerName) {
 
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
 
         while (true) {
 
@@ -286,7 +286,7 @@ public class StartRound_1835 extends StartRound {
             // All players have passed.
             ReportBuffer.add(LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
-            GameManager.getInstance().nextRound(this);
+            gameManager.nextRound(this);
         } else {
             setNextPlayer();
         }

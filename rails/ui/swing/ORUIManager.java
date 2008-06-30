@@ -23,6 +23,8 @@ public class ORUIManager {
     private HexMap map;
     private MessagePanel messagePanel;
     private RemainingTilesWindow remainingTiles;
+    
+    public GameUIManager gameUIManager;
 
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
@@ -80,6 +82,7 @@ public class ORUIManager {
     public void init(ORWindow orWindow) {
 
         this.orWindow = orWindow;
+        gameUIManager = orWindow.getGameUIManager();
 
         orPanel = orWindow.getORPanel();
         mapPanel = orWindow.getMapPanel();
@@ -88,6 +91,8 @@ public class ORUIManager {
         messagePanel = orWindow.getMessagePanel();
 
     }
+    
+    
 
     public void initOR(OperatingRound or) {
         oRound = or;
