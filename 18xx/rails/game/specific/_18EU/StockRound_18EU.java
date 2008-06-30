@@ -32,8 +32,8 @@ public class StockRound_18EU extends StockRound {
             discardingTrains.set(false);
         }
 
-        PhaseManagerI pmgr = PhaseManager.getInstance();
-        phase5Reached = pmgr.hasReachedPhase("5");
+        PhaseManager pmgr = PhaseManager.getInstance();
+        phase5Reached = gameManager.getPhaseManager().hasReachedPhase("5");
 
     }
 
@@ -177,7 +177,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         // Get any shares in company treasuries that can be bought
-        if (GameManager.canAnyCompanyHoldShares()) {
+        if (gameManager.canAnyCompanyHoldShares()) {
 
             for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
                 certs =
@@ -269,7 +269,7 @@ public class StockRound_18EU extends StockRound {
         StartCompany_18EU startAction = null;
         City selectedHomeCity = null;
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -637,7 +637,7 @@ public class StockRound_18EU extends StockRound {
             }
             PublicCompanyI discardingCompany =
                     discardingCompanies[discardingCompanyIndex.intValue()];
-            GameManager.setCurrentPlayer(discardingCompany.getPresident());
+            setCurrentPlayer(discardingCompany.getPresident());
         }
     }
 
@@ -674,7 +674,7 @@ public class StockRound_18EU extends StockRound {
             }
             PublicCompanyI discardingCompany =
                     discardingCompanies[discardingCompanyIndex.intValue()];
-            GameManager.setCurrentPlayer(discardingCompany.getPresident());
+            setCurrentPlayer(discardingCompany.getPresident());
 
         } else {
 

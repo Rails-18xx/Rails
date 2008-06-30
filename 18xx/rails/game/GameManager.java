@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.31 2008/06/11 19:53:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.32 2008/06/30 20:35:30 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -6,12 +6,12 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.action.*;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
-import rails.ui.swing.*;
 import rails.util.*;
 
 /**
@@ -31,11 +31,16 @@ public class GameManager implements ConfigurableComponentI {
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass =
             OperatingRound.class;
-    protected Class<? extends ORUIManager> orUIManagerClass = ORUIManager.class;
-    protected Class<? extends GameStatus> gameStatusClass = GameStatus.class;
-    protected Class<? extends StatusWindow> statusWindowClass =
-            StatusWindow.class;
-
+    
+    // Variable UI Class names
+    protected String orUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.OR_UI_MANAGER);
+    protected String gameStatusClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_STATUS);
+    protected String statusWindowClassName = Defs.getDefaultClassName(Defs.ClassName.STATUS_WINDOW);
+    
+    protected PlayerManager playerManager;
+    protected CompanyManagerI companyManager;
+    protected PhaseManager phaseManager;
+    
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
@@ -62,6 +67,8 @@ public class GameManager implements ConfigurableComponentI {
     protected State currentRound = new State("CurrentRound", Round.class);
     protected RoundI interruptedRound = null;
 
+    protected IntegerState srNumber = new IntegerState ("SRNumber");
+    
     protected IntegerState absoluteORNumber =
             new IntegerState("AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
@@ -71,7 +78,7 @@ public class GameManager implements ConfigurableComponentI {
     protected boolean gameOver = false;
     protected boolean endedByBankruptcy = false;
     protected boolean hasAnyParPrice = false;
-    protected boolean canAnyCompBuyPrivates = false;
+    protected boolean canAnyCompanyBuyPrivates = false;
     protected boolean canAnyCompanyHoldShares = false;
     protected boolean bonusTokensExist = false;
     protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
@@ -235,53 +242,57 @@ public class GameManager implements ConfigurableComponentI {
         // ORUIManager class
         Tag orMgrTag = tag.getChild("ORUIManager");
         if (orMgrTag != null) {
-            String orMgrClassName =
+            orUIManagerClassName =
                     orMgrTag.getAttributeAsString("class", "ORUIManager");
-            try {
-                orUIManagerClass =
-                        Class.forName(orMgrClassName).asSubclass(
-                                ORUIManager.class);
-            } catch (ClassNotFoundException e) {
-                throw new ConfigurationException("Cannot find class "
-                                                 + orMgrClassName, e);
-            }
+            // Check instantiatability (not sure if this belongs here)
+            canClassBeInstantiated (orUIManagerClassName);
         }
 
         // GameStatus class
         Tag gameStatusTag = tag.getChild("GameStatus");
         if (gameStatusTag != null) {
-            String gameStatusClassName =
+            gameStatusClassName =
                     gameStatusTag.getAttributeAsString("class", "GameStatus");
-            try {
-                gameStatusClass =
-                        Class.forName(gameStatusClassName).asSubclass(
-                                GameStatus.class);
-            } catch (ClassNotFoundException e) {
-                throw new ConfigurationException("Cannot find class "
-                                                 + gameStatusClassName, e);
-            }
+            // Check instantiatability (not sure if this belongs here)
+            canClassBeInstantiated (gameStatusClassName);
         }
 
         // StatusWindow class
         Tag statusWindowTag = tag.getChild("StatusWindow");
         if (statusWindowTag != null) {
-            String statusWindowClassName =
+            statusWindowClassName =
                     statusWindowTag.getAttributeAsString("class",
                             "StatusWindow");
-            try {
-                statusWindowClass =
-                        Class.forName(statusWindowClassName).asSubclass(
-                                StatusWindow.class);
-            } catch (ClassNotFoundException e) {
-                throw new ConfigurationException("Cannot find class "
-                                                 + statusWindowClassName, e);
-            }
+            // Check instantiatability (not sure if this belongs here)
+            canClassBeInstantiated (statusWindowClassName);
+        }
+    }
+    
+    /** Check if a classname can be instantiated.
+     * Throws a ConfiguratioNException if not.
+     * @param className
+     * @throws ConfigurationException
+     */
+    protected void canClassBeInstantiated (String className) 
+    throws ConfigurationException {
+        
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Cannot find class "
+                                             + className, e);
         }
     }
 
-    public void startGame() {
-        players = Game.getPlayerManager().getPlayers();
-        playerNames = Game.getPlayerManager().getPlayerNames();
+    public void startGame(PlayerManager playerManager,
+            CompanyManagerI companyManager,
+            PhaseManager phaseManager) {
+        this.playerManager = playerManager;
+        this.companyManager = companyManager;
+        this.phaseManager = phaseManager;
+        
+        players = playerManager.getPlayers();
+        playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
 
@@ -364,55 +375,68 @@ public class GameManager implements ConfigurableComponentI {
 
     protected void startStartRound() {
         String startRoundClassName = startPacket.getRoundClassName();
-        ((StartRound) instantiate(startRoundClassName)).start(startPacket);
+        Class<? extends StartRound> startRoundClass = null;
+        try {
+            startRoundClass = Class.forName (startRoundClassName).asSubclass(StartRound.class);
+        } catch (Exception e) {
+            log.fatal("Cannot find class "
+                    + startRoundClassName, e);
+          System.exit(1);
+        }
+        StartRound startRound = createRound (startRoundClass);
+        startRound.setGameManager(this);
+        startRound.start (startPacket);
     }
 
     protected void startStockRound() {
-        try {
-            StockRound sr =
-                    stockRoundClass.asSubclass(StockRound.class).newInstance();
-            sr.start();
-        } catch (Exception e) {
-            log.fatal("Cannot instantiate class "
-                      + operatingRoundClass.getName(), e);
-            System.exit(1);
-        }
+        StockRound sr = createRound (stockRoundClass);
+        srNumber.add(1);
+        sr.start();
     }
 
     protected void startOperatingRound(boolean operate) {
         log.debug("Operating round started with operate-flag=" + operate);
-        // playHomeTokens(); // TODO Not always at this moment, and not at all
-        // is StartPacket has not yet been sold
+ 
+        OperatingRound or = createRound(operatingRoundClass);
+        if (operate) absoluteORNumber.add(1);
+        or.start(operate, getCompositeORNumber());
+    }
+ 
+    protected <T extends Round> T createRound (Class<T> roundClass) {
 
-        // new OperatingRound().start(operate);
+        T round = null;
         try {
-            OperatingRound or = operatingRoundClass.newInstance();
-            if (operate) absoluteORNumber.add(1);
-            or.start(operate, this, getCompositeORNumber());
+            round = roundClass.newInstance();
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
-                      + operatingRoundClass.getName(), e);
+                      + roundClass.getName(), e);
             System.exit(1);
         }
+        round.setGameManager (this);
+        return round;
     }
 
     public String getCompositeORNumber() {
-        return StockRound.getLastStockRoundNumber() + "."
+        return srNumber.intValue() + "."
                + relativeORNumber.intValue();
+    }
+    
+    public int getSRNumber () {
+        return srNumber.intValue();
     }
 
     public void startShareSellingRound(OperatingRound or,
             PublicCompanyI companyNeedingTrain, int cashToRaise) {
 
         interruptedRound = getCurrentRound();
-        new ShareSellingRound(companyNeedingTrain, cashToRaise).start();
+        new ShareSellingRound(this, companyNeedingTrain, cashToRaise).start();
     }
 
     public void startTreasuryShareTradingRound(OperatingRound or,
             PublicCompanyI companyTradingShares) {
 
         interruptedRound = getCurrentRound();
-        new TreasuryShareRound(companyTradingShares).start();
+        new TreasuryShareRound(this, companyTradingShares).start();
     }
 
     /**
@@ -595,8 +619,8 @@ public class GameManager implements ConfigurableComponentI {
      * 
      * @return
      */
-    public static boolean isGameOver() {
-        return instance.gameOver;
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public void logGameReport() {
@@ -647,35 +671,35 @@ public class GameManager implements ConfigurableComponentI {
     /**
      * @return Returns the currentPlayerIndex.
      */
-    public static int getCurrentPlayerIndex() {
+    public int getCurrentPlayerIndex() {
         return getCurrentPlayer().getIndex();
     }
 
     /**
      * @param currentPlayerIndex The currentPlayerIndex to set.
      */
-    public static void setCurrentPlayerIndex(int currentPlayerIndex) {
-        currentPlayerIndex = currentPlayerIndex % instance.numberOfPlayers;
-        instance.currentPlayer.set(instance.players.get(currentPlayerIndex));
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
+        currentPlayer.set(players.get(currentPlayerIndex));
     }
 
-    public static void setCurrentPlayer(Player player) {
-        instance.currentPlayer.set(player);
+    public void setCurrentPlayer(Player player) {
+        currentPlayer.set(player);
     }
 
     /**
      * Set priority deal to the player after the current player.
      * 
      */
-    public static void setPriorityPlayer() {
+    public void setPriorityPlayer() {
         int priorityPlayerIndex =
-                (getCurrentPlayer().getIndex() + 1) % instance.numberOfPlayers;
-        setPriorityPlayer(instance.players.get(priorityPlayerIndex));
+                (getCurrentPlayer().getIndex() + 1) % numberOfPlayers;
+        setPriorityPlayer(players.get(priorityPlayerIndex));
 
     }
 
-    public static void setPriorityPlayer(Player player) {
-        instance.priorityPlayer.set(player);
+    public void setPriorityPlayer(Player player) {
+        priorityPlayer.set(player);
         log.debug("Priority player set to " + player.getIndex() + " "
                   + player.getName());
     }
@@ -683,41 +707,49 @@ public class GameManager implements ConfigurableComponentI {
     /**
      * @return Returns the priorityPlayer.
      */
-    public static Player getPriorityPlayer() {
-        return (Player) instance.priorityPlayer.getObject();
+    public Player getPriorityPlayer() {
+        return (Player) priorityPlayer.getObject();
     }
 
     /**
      * @return Returns the currentPlayer.
      */
-    public static Player getCurrentPlayer() {
-        return (Player) instance.currentPlayer.getObject();
+    public Player getCurrentPlayer() {
+        return (Player) currentPlayer.getObject();
     }
 
     /**
      * @return Returns the players.
      */
-    public static List<Player> getPlayers() {
-        return instance.players;
+    public List<Player> getPlayers() {
+        return players;
     }
 
-    public static int getNumberOfPlayers() {
-        return instance.numberOfPlayers;
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
     }
-
+    
+    public List<String> getPlayerNames() {
+        return playerNames;
+    }
+    
+    public List<PublicCompanyI> getAllPublicCompanies() {
+        return companyManager.getAllPublicCompanies();
+    }
+    
     /**
      * Return a player by its index in the list, modulo the number of players.
      * 
      * @param index The player index.
      * @return A player object.
      */
-    public static Player getPlayer(int index) {
-        return instance.players.get(index % instance.numberOfPlayers);
+    public Player getPlayerByIndex(int index) {
+        return players.get(index % numberOfPlayers);
     }
-
-    public static void setNextPlayer() {
+    
+    public void setNextPlayer() {
         int currentPlayerIndex = getCurrentPlayerIndex();
-        currentPlayerIndex = ++currentPlayerIndex % instance.numberOfPlayers;
+        currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
         setCurrentPlayerIndex(currentPlayerIndex);
     }
 
@@ -728,15 +760,15 @@ public class GameManager implements ConfigurableComponentI {
         return startPacket;
     }
 
-    public static String getName() {
-        return instance.name;
-    }
-
     /**
      * @return Current phase
      */
-    public static PhaseI getCurrentPhase() {
-        return PhaseManager.getInstance().getCurrentPhase();
+    public PhaseI getCurrentPhase() {
+        return phaseManager.getCurrentPhase();
+    }
+    
+    public PhaseManager getPhaseManager() {
+        return phaseManager;
     }
 
     // TODO Should be removed
@@ -751,58 +783,20 @@ public class GameManager implements ConfigurableComponentI {
         }
     }
 
-    public static List<GameOption> getAvailableOptions() {
-        return instance.availableGameOptions;
-    }
-
-    private Object instantiate(String className) {
-        try {
-            return Class.forName(className).newInstance();
-        } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + className, e);
-            return null;
-        }
-    }
-
-    /*
-     * private void playHomeTokens() { // TODO: Need to check whether player
-     * gets to choose placement of token // where OO tiles are concerned.
-     * 
-     * PublicCompanyI[] companies = (PublicCompanyI[]) Game.getCompanyManager()
-     * .getAllPublicCompanies() .toArray(new PublicCompanyI[0]);
-     * 
-     * for (int compIndex = 0; compIndex < companies.length; compIndex++) {
-     * PublicCompanyI company = companies[compIndex]; if (company.hasFloated() &&
-     * company.hasStarted()) { // If the home token has not been placed yet, do
-     * it. /* TODO: in reality, the home token placement time is
-     * rails.game-dependent, so it should be configured. (EV)
-     *//*
-         * if (company.getNumberOfLaidBaseTokens() == 0) {
-         * company.layHomeBaseTokens(); } } } }
-         */
-
     public static void setCompaniesCanBuyPrivates() {
         instance.companiesCanBuyPrivates = true;
-    }
-
-    public static boolean getCompaniesCanBuyPrivates() {
-        return instance.companiesCanBuyPrivates;
     }
 
     public String getHelp() {
         return getCurrentRound().getHelp();
     }
 
-    public static boolean hasAnyParPrice() {
-        return instance.hasAnyParPrice;
-    }
-
     public static void setHasAnyParPrice(boolean hasAnyParPrice) {
         instance.hasAnyParPrice = hasAnyParPrice;
     }
 
-    public static boolean canAnyCompanyHoldShares() {
-        return instance.canAnyCompanyHoldShares;
+    public boolean canAnyCompanyHoldShares() {
+        return canAnyCompanyHoldShares;
     }
 
     public static void setCanAnyCompanyHoldShares(
@@ -810,32 +804,41 @@ public class GameManager implements ConfigurableComponentI {
         instance.canAnyCompanyHoldShares = canAnyCompanyHoldShares;
     }
 
+    /*
     public static boolean canAnyCompBuyPrivates() {
         return instance.canAnyCompBuyPrivates;
     }
+    */
 
     public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
-        instance.canAnyCompBuyPrivates = canAnyCompBuyPrivates;
+        instance.canAnyCompanyBuyPrivates = canAnyCompBuyPrivates;
     }
 
+    /*
     public static boolean doBonusTokensExist() {
         return instance.bonusTokensExist;
     }
+    */
 
     public static void setBonusTokensExist(boolean bonusTokensExist) {
         instance.bonusTokensExist = bonusTokensExist;
     }
+    
+    public String getClassName (Defs.ClassName key) {
+        
+        switch (key) {
+        case OR_UI_MANAGER:
+            return orUIManagerClassName;
+        
+        case STATUS_WINDOW:
+            return statusWindowClassName;
 
-    public Class<? extends ORUIManager> getORUIManagerClass() {
-        return orUIManagerClass;
-    }
-
-    public Class<? extends GameStatus> getGameStatusClass() {
-        return gameStatusClass;
-    }
-
-    public Class<? extends StatusWindow> getStatusWindowClass() {
-        return statusWindowClass;
+        case GAME_STATUS:
+            return gameStatusClassName;
+            
+        default:
+            return "";
+        }
     }
 
     public int getStockRoundSequenceRule() {
@@ -845,5 +848,21 @@ public class GameManager implements ConfigurableComponentI {
     public int getTreasuryShareLimit() {
         return treasuryShareLimit;
     }
+    
+    public Object getCommonParameter (Defs.Parm key) {
+        switch (key) {
+        case HAS_ANY_PAR_PRICE:
+            return hasAnyParPrice;
+        case CAN_ANY_COMPANY_BUY_PRIVATES:
+            return canAnyCompanyBuyPrivates;
+        case CAN_ANY_COMPANY_HOLD_OWN_SHARES:
+            return canAnyCompanyHoldShares;
+        case DO_BONUS_TOKENS_EXIST:
+            return bonusTokensExist;
+        default:
+            return null;
+        }
 
+    }
+    
 }

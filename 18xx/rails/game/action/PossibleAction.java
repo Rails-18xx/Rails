@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.11 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.12 2008/06/30 20:35:30 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -39,7 +39,7 @@ public abstract class PossibleAction implements Serializable {
      */
     public PossibleAction() {
 
-        Player player = GameManager.getCurrentPlayer();
+        Player player = GameManager.getInstance().getCurrentPlayer();
         if (player != null) {
             playerName = player.getName();
             playerIndex = player.getIndex();

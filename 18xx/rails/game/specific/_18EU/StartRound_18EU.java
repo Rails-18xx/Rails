@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.3 2008/06/04 19:00:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.4 2008/06/30 20:35:30 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.List;
 
 import rails.game.Bank;
 import rails.game.DisplayBuffer;
-import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificateI;
 import rails.game.ReportBuffer;
@@ -79,7 +78,7 @@ public class StartRound_18EU extends StartRound {
         boolean passAllowed = false;
 
         // Refresh player, may have been reset by Undo/Redo
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         switch (getStep()) {
         case SELECT_STEP:
@@ -140,7 +139,7 @@ public class StartRound_18EU extends StartRound {
         StartItem item = boughtItem.getStartItem();
         int status = boughtItem.getStatus();
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         int price = 0;
 
         while (true) {
@@ -191,7 +190,7 @@ public class StartRound_18EU extends StartRound {
         StartItem item = bidItem.getStartItem();
         StartItem auctionedItem = (StartItem) currentAuctionItem.getObject();
         String errMsg = null;
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
 
         while (true) {

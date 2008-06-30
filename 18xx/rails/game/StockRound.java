@@ -18,7 +18,7 @@ import rails.util.LocalText;
 public class StockRound extends Round {
 
     /* Transient memory (per round only) */
-    protected static int numberOfPlayers;
+    protected /*static*/ int numberOfPlayers;
     protected Player currentPlayer;
 
     // protected PublicCompanyI companyBoughtThisTurn = null;
@@ -53,13 +53,13 @@ public class StockRound extends Round {
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
 
     /* Permanent memory */
-    static IntegerState stockRoundNumber =
-            new IntegerState("StockRoundNumber", 0);
+    //static IntegerState stockRoundNumber =
+    //        new IntegerState("StockRoundNumber", 0);
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
     static protected CompanyManagerI companyMgr;
-    static protected GameManager gameMgr;
+    //static protected GameManager gameMgr;
 
     /* Rules */
     protected int sequenceRule;
@@ -67,30 +67,25 @@ public class StockRound extends Round {
     static protected boolean noSaleInFirstSR = false;
     static protected boolean noSaleIfNotOperated = false;
 
-    /**
-     * The constructor.
-     */
-    public StockRound() {
+    public void start() {
 
         if (numberOfPlayers == 0)
-            numberOfPlayers = GameManager.getPlayers().size();
-        if (gameMgr == null) gameMgr = GameManager.getInstance();
+            numberOfPlayers = gameManager.getPlayers().size();
+        //if (gameMgr == null) gameMgr = GameManager.getInstance();
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
         if (companyMgr == null) companyMgr = Game.getCompanyManager();
-        GameManager.getInstance().setRound(this);
+        gameManager.setRound(this);
 
-        sequenceRule = gameMgr.getStockRoundSequenceRule();
-    }
+        sequenceRule = gameManager.getStockRoundSequenceRule();
 
-    public void start() {
-        stockRoundNumber.add(1);
+        //stockRoundNumber.add(1);
 
         ReportBuffer.add("\n" + LocalText.getText("StartStockRound")
-                         + stockRoundNumber.intValue());
+                         + getStockRoundNumber());
 
-        GameManager.setCurrentPlayerIndex(GameManager.getPriorityPlayer().getIndex());
+        setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
 
         initPlayer();
         ReportBuffer.add(LocalText.getText("HasPriority",
@@ -100,12 +95,9 @@ public class StockRound extends Round {
     /*----- General methods -----*/
 
     public int getStockRoundNumber() {
-        return stockRoundNumber.intValue();
+        return gameManager.getSRNumber();
     }
 
-    public static int getLastStockRoundNumber() {
-        return stockRoundNumber.intValue();
-    }
 
     @Override
     public boolean setPossibleActions() {
@@ -250,7 +242,7 @@ public class StockRound extends Round {
         }
 
         // Get any shares in company treasuries that can be bought
-        if (GameManager.canAnyCompanyHoldShares()) {
+        if (gameManager.canAnyCompanyHoldShares()) {
 
             for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
                 certs =
@@ -321,7 +313,7 @@ public class StockRound extends Round {
                 if (maxShareToSell > share - presidentShare) {
                     dumpAllowed = false;
                     int playerShare;
-                    for (Player player : GameManager.getPlayers()) {
+                    for (Player player : gameManager.getPlayers()) {
                         if (player == currentPlayer) continue;
                         playerShare = player.getPortfolio().getShare(company);
                         if (playerShare >= presidentShare) {
@@ -393,7 +385,7 @@ public class StockRound extends Round {
 
         boolean result = false;
         String playerName = action.getPlayerName();
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         if (action instanceof NullAction) {
 
@@ -466,7 +458,7 @@ public class StockRound extends Round {
         PublicCertificateI cert = null;
         String companyName = company.getName();
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -595,7 +587,7 @@ public class StockRound extends Round {
         int price = 0;
         PublicCompanyI company = null;
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -762,13 +754,13 @@ public class StockRound extends Round {
         int presSharesToSell = 0;
         int numberToSell = action.getNumberSold();
         int shareUnits = action.getShareUnits();
-        int currentIndex = GameManager.getCurrentPlayerIndex();
+        int currentIndex = getCurrentPlayerIndex();
 
         // Dummy loop to allow a quick jump out
         while (true) {
 
             // Check everything
-            if (stockRoundNumber.intValue() == 1 && noSaleInFirstSR) {
+            if (getStockRoundNumber() == 1 && noSaleInFirstSR) {
                 errMsg = LocalText.getText("FirstSRNoSell");
                 break;
             }
@@ -826,7 +818,7 @@ public class StockRound extends Round {
                 Player otherPlayer;
                 for (int i = currentIndex + 1; i < currentIndex
                                                    + numberOfPlayers; i++) {
-                    otherPlayer = GameManager.getPlayer(i);
+                    otherPlayer = gameManager.getPlayerByIndex(i);
                     if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
@@ -915,7 +907,7 @@ public class StockRound extends Round {
         if (currentPlayer == company.getPresident()) {
             Player otherPlayer;
             for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = GameManager.getPlayer(i);
+                otherPlayer = gameManager.getPlayerByIndex(i);
                 if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
@@ -963,7 +955,7 @@ public class StockRound extends Round {
      */
     public boolean done(String playerName) {
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getName())) {
             DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
@@ -983,7 +975,7 @@ public class StockRound extends Round {
         if (numPasses.intValue() >= numberOfPlayers) {
 
             ReportBuffer.add(LocalText.getText("END_SR",
-                    String.valueOf(stockRoundNumber.intValue())));
+                    String.valueOf(getStockRoundNumber())));
 
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
@@ -1028,13 +1020,13 @@ public class StockRound extends Round {
      */
     protected void setNextPlayer() {
 
-        GameManager.setNextPlayer();
+        gameManager.setNextPlayer();
         initPlayer();
     }
 
     protected void initPlayer() {
 
-        currentPlayer = GameManager.getCurrentPlayer();
+        currentPlayer = getCurrentPlayer();
         companyBoughtThisTurnWrapper.set(null);
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);
@@ -1046,36 +1038,21 @@ public class StockRound extends Round {
      * setNextPlayer()!</b>
      */
     protected void setPriority() {
-        GameManager.setPriorityPlayer();
+        gameManager.setPriorityPlayer();
     }
 
     protected void finishRound() {
         // Inform GameManager
-        GameManager.getInstance().nextRound(this);
+        gameManager.nextRound(this);
     }
 
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
-     * @return The player that has the Priority Deal.
-     */
-    public static Player getPriorityPlayer() {
-        return GameManager.getPriorityPlayer();
-    }
-
-    /**
-     * @return The player that has the turn.
-     */
-    @Override
-    public Player getCurrentPlayer() {
-        return GameManager.getCurrentPlayer();
-    }
-
-    /**
      * @return The index of the player that has the turn.
      */
     public int getCurrentPlayerIndex() {
-        return GameManager.getCurrentPlayerIndex();
+        return getCurrentPlayerIndex();
     }
 
     /**
@@ -1084,7 +1061,8 @@ public class StockRound extends Round {
      * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAnything() {
-        if (stockRoundNumber.intValue() == 1 && noSaleInFirstSR) return false;
+        
+        if (getStockRoundNumber() == 1 && noSaleInFirstSR) return false;
 
         if (companyBoughtThisTurnWrapper.getObject() != null
             && (sequenceRule == SELL_BUY_OR_BUY_SELL

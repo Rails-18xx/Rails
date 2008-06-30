@@ -1,6 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.15 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.16 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
+import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
@@ -23,7 +24,7 @@ import org.apache.log4j.Logger;
  */
 public class ORWindow extends JFrame implements WindowListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
-    private GameUIManager gameUIManager;
+    public GameUIManager gameUIManager;
     private ORUIManager orUIManager;
     private MapPanel mapPanel;
     private ORPanel orPanel;
@@ -42,12 +43,14 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
         super();
         this.gameUIManager = gameUIManager;
 
-        Class<? extends ORUIManager> orUIManagerClass =
-                gameUIManager.getGameManager().getORUIManagerClass();
+        String orUIManagerClassName = gameUIManager.getClassName(Defs.ClassName.OR_UI_MANAGER);
         try {
+            Class<? extends ORUIManager> orUIManagerClass =
+                Class.forName(orUIManagerClassName).asSubclass(ORUIManager.class);
+            log.debug("Class is "+orUIManagerClass.getName());
             orUIManager = orUIManagerClass.newInstance();
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + orUIManagerClass.getName());
+            log.fatal("Cannot instantiate class " + orUIManagerClassName, e);
             System.exit(1);
         }
 

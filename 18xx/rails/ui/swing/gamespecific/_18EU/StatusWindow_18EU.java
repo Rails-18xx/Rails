@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.3 2008/06/04 19:00:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.4 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing.gamespecific._18EU;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class StatusWindow_18EU extends StatusWindow {
 
         if (currentRound instanceof FinalMinorExchangeRound) {
             setTitle(LocalText.getText("FinalMinorExchangeRoundTitle"));
-            gameStatus.initTurn(GameManager.getCurrentPlayerIndex());
+            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
             return true;
         }
         return false;

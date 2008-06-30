@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.8 2008/06/04 19:00:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.9 2008/06/30 20:35:30 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -18,19 +18,21 @@ import rails.util.LocalText;
 /**
  * @author Erik Vos
  */
-public class Round implements RoundI {
+public abstract class Round implements RoundI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
     protected static Logger log =
             Logger.getLogger(Round.class.getPackage().getName());
+    
+    protected GameManager gameManager = null;
 
-    /**
-     * 
-     */
-    public Round() {
-        super();
-        // TODO Auto-generated constructor stub
+    public void setGameManager (GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+    
+    public GameManager getGameManager () {
+        return gameManager;
     }
 
     /*
@@ -39,11 +41,31 @@ public class Round implements RoundI {
      * @see rails.game.RoundI#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
-        // TODO Auto-generated method stub
+
+        if (gameManager != null) return gameManager.getCurrentPlayer();
         return null;
     }
 
-    /*
+    /**
+     * @return Returns the currentPlayerIndex.
+     */
+    public int getCurrentPlayerIndex() {
+        return getCurrentPlayer().getIndex();
+    }
+    
+    public void setCurrentPlayerIndex(int newIndex) {
+        gameManager.setCurrentPlayerIndex(newIndex);
+    }
+    
+    public void setCurrentPlayer(Player player) {
+        gameManager.setCurrentPlayer(player);
+    }
+    
+    public PhaseI getCurrentPhase() {
+        return gameManager.getCurrentPhase();
+    }
+
+     /*
      * (non-Javadoc)
      * 
      * @see rails.game.RoundI#getHelp()

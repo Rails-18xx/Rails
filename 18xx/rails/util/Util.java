@@ -1,17 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.13 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.14 2008/06/30 20:35:30 evos Exp $*/
 package rails.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import rails.game.Company;
 import rails.game.ConfigurationException;
-import rails.game.Game;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolderI;
-import rails.game.move.ObjectMove;
 
 public final class Util {
     // protected static Logger log = Game.getLogger();

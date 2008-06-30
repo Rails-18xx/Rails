@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.38 2008/06/11 19:53:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.39 2008/06/30 20:35:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -16,8 +16,6 @@ import rails.util.LocalText;
  * be discarded. <p> Permanent memory is formed by static attributes.
  */
 public class OperatingRound extends Round implements Observer {
-
-    protected GameManager gameManager;
 
     /* Transient memory (per round only) */
     protected IntegerState stepObject;
@@ -127,13 +125,17 @@ public class OperatingRound extends Round implements Observer {
         // cumulativeORNumber++;
         // thisOrNumber = getCompositeORNumber();
 
+   }
+
+    public void start(boolean operate, String orNumber) {
+
         if (operatingCompanyIndexObject == null) {
             operatingCompanyIndexObject =
                     new IntegerState("OperatingCompanyIndex", 0);
         }
 
         if (players == null) {
-            players = Game.getPlayerManager().getPlayers();
+            players = gameManager.getPlayers();
             numberOfPlayers = players.size();
         }
 
@@ -141,11 +143,6 @@ public class OperatingRound extends Round implements Observer {
             if (!priv.isClosed()) priv.payOut();
         }
 
-    }
-
-    public void start(boolean operate, GameManager gameManager, String orNumber) {
-
-        this.gameManager = gameManager;
         thisOrNumber = orNumber;
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
@@ -905,7 +902,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected void initTurn() {
-        GameManager.setCurrentPlayer(operatingCompany.getPresident());
+        setCurrentPlayer(operatingCompany.getPresident());
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();
     }
@@ -1243,7 +1240,7 @@ public class OperatingRound extends Round implements Observer {
 
         /* End of validation, start of execution */
         MoveSet.start(true);
-        PhaseI previousPhase = GameManager.getCurrentPhase();
+        PhaseI previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {
             savedAction = action;
@@ -1292,7 +1289,7 @@ public class OperatingRound extends Round implements Observer {
 
         // Check if the phase has changed.
         TrainManager.get().checkTrainAvailability(train, oldHolder);
-        currentPhase = GameManager.getCurrentPhase();
+        currentPhase = getCurrentPhase();
 
         // Check if any companies must discard trains
         if (currentPhase != previousPhase && checkForExcessTrains()) {
@@ -1494,15 +1491,6 @@ public class OperatingRound extends Round implements Observer {
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
-     * @return The player that has the turn (in this case: the President of the
-     * currently operating company).
-     */
-    @Override
-    public Player getCurrentPlayer() {
-        return operatingCompany.getPresident();
-    }
-
-    /**
      * Get the public company that has the turn to operate.
      * 
      * @return The currently operating company object.
@@ -1614,7 +1602,7 @@ public class OperatingRound extends Round implements Observer {
         setGameSpecificPossibleActions();
 
         // Can private companies be bought?
-        if (GameManager.getCurrentPhase().isPrivateSellingAllowed()) {
+        if (getCurrentPhase().isPrivateSellingAllowed()) {
 
             // Create a list of players with the current one in front
             int currentPlayerIndex = operatingCompany.getPresident().getIndex();
@@ -1822,10 +1810,10 @@ public class OperatingRound extends Round implements Observer {
         // Scan the players in SR sequence, starting with the current player
         Player player;
         List<PublicCompanyI> list;
-        int currentPlayerIndex = GameManager.getCurrentPlayerIndex();
+        int currentPlayerIndex = getCurrentPlayerIndex();
         for (int i = currentPlayerIndex; i < currentPlayerIndex
                                              + numberOfPlayers; i++) {
-            player = GameManager.getPlayer(i);
+            player = gameManager.getPlayerByIndex(i);
             if (excessTrainCompanies.containsKey(player)) {
                 list = excessTrainCompanies.get(player);
                 for (PublicCompanyI comp : list) {
@@ -1834,7 +1822,7 @@ public class OperatingRound extends Round implements Observer {
                     // We handle one company at at time.
                     // We come back here until all excess trains have been
                     // discarded.
-                    GameManager.setCurrentPlayer(player);
+                    setCurrentPlayer(player);
                     return;
                 }
             }
@@ -1868,7 +1856,7 @@ public class OperatingRound extends Round implements Observer {
             b.append("<br> - Press 'Done' to finish your turn");
         }
         /* TODO: The below if needs be refined. */
-        if (GameManager.getCurrentPhase().isPrivateSellingAllowed()
+        if (getCurrentPhase().isPrivateSellingAllowed()
             && step != STEP_PAYOUT) {
             b.append("<br> - Buy one or more Privates");
         }

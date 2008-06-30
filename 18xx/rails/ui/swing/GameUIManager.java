@@ -3,18 +3,22 @@ package rails.ui.swing;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.Bank;
 import rails.game.DisplayBuffer;
 import rails.game.Game;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
+import rails.game.PhaseI;
 import rails.game.Player;
+import rails.game.PublicCompanyI;
 import rails.game.RoundI;
 import rails.game.StartRound;
 import rails.game.StockRound;
@@ -84,26 +88,27 @@ public class GameUIManager {
         gameManager = GameManager.getInstance();
         imageLoader = new ImageLoader();
         stockChart = new StockChart();
-        reportWindow = new ReportWindow();
+        reportWindow = new ReportWindow(gameManager);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
         // mapPanel = orWindow.getMapPanel();
         // statusWindow = new StatusWindow(this);
 
-        Class<? extends StatusWindow> statusWindowClass =
-                gameManager.getStatusWindowClass();
+        String statusWindowClassName = getClassName(Defs.ClassName.STATUS_WINDOW);
         try {
+            Class<? extends StatusWindow> statusWindowClass =
+                Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
             statusWindow = statusWindowClass.newInstance();
             statusWindow.init(this);
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + statusWindowClass.getName());
+            log.fatal("Cannot instantiate class " + statusWindowClassName, e);
             System.exit(1);
         }
 
         updateUI();
 
     }
-
+    
     public boolean processOnServer(PossibleAction action) {
 
         // In some cases an Undo requires a different follow-up
@@ -111,7 +116,7 @@ public class GameUIManager {
 
         log.debug("==Passing to server: " + action);
 
-        Player player = GameManager.getCurrentPlayer();
+        Player player = getCurrentPlayer();
         if (action != null && player != null) {
             action.setPlayerName(player.getName());
         }
@@ -122,7 +127,7 @@ public class GameUIManager {
         ReportWindow.addLog();
 
         // End of game checks
-        if (GameManager.isGameOver()) {
+        if (gameManager.isGameOver()) {
 
             statusWindow.reportGameOver();
 
@@ -290,6 +295,59 @@ public class GameUIManager {
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+    
+    public RoundI getCurrentRound() {
+        return gameManager.getCurrentRound();
+    }
+    
+    public boolean isGameOver() {
+        return gameManager.isGameOver();
+    }
+    
+    public String getHelp () {
+        return gameManager.getHelp();
+    }
+    
+    public int getNumberOfPlayers() {
+        return gameManager.getNumberOfPlayers();
+    }
+    
+    public List<Player> getPlayers() {
+        return gameManager.getPlayers();
+    }
+    
+    public List<String> getPlayerNames() {
+        return gameManager.getPlayerNames();
+    }
+    
+    public Player getCurrentPlayer() {
+        return gameManager.getCurrentPlayer();
+    }
+    
+    public Player getPriorityPlayer () {
+        return gameManager.getPriorityPlayer();
+    }
+    
+    public PhaseI getCurrentPhase() {
+        return gameManager.getCurrentPhase();
+    }
+    
+    public List<PublicCompanyI> getAllPublicCompanies(){
+        return gameManager.getAllPublicCompanies();
+    }
+    
+    public String getClassName (Defs.ClassName key) {
+        return gameManager.getClassName(key);
+    }
+    
+    public Object getCommonParameter (Defs.Parm key) {
+        return gameManager.getCommonParameter(key);
+    }
+    
+    public boolean getCommonParameterAsBoolean (Defs.Parm key) {
+        
+        return (Boolean) getCommonParameter(key);
     }
 
 }

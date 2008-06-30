@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.15 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.16 2008/06/30 20:35:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -85,7 +85,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             tiles = layTile.getTiles();
             if (tiles == null) {
                 for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
-                        GameManager.getCurrentPhase())) {
+                        orUIManager.gameUIManager.getCurrentPhase())) {
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
