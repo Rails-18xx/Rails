@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.3 2008/06/04 19:00:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.4 2008/07/04 20:46:33 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -171,7 +171,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // if we still have at least one Minor operating.
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
-        if (result && PhaseManager.getInstance().hasReachedPhase("5")
+        if (result && gameManager.getPhaseManager().hasReachedPhase("5")
             && operatingCompanyArray[0].getTypeName().equals("Minor")) {
             playerToStartExchangeRound.set(operatingCompany.getPresident());
         }

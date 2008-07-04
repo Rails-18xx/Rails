@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.32 2008/06/30 20:35:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.33 2008/07/04 20:46:33 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -10,6 +10,8 @@ import rails.common.Defs;
 import rails.game.action.*;
 import rails.game.move.AddToList;
 import rails.game.move.MoveSet;
+import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialTokenLay;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.*;
@@ -52,7 +54,7 @@ public class GameManager implements ConfigurableComponentI {
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
 
-    protected boolean companiesCanBuyPrivates = false;
+    //protected boolean companiesCanBuyPrivates = false;
     protected boolean gameEndsWithBankruptcy = false;
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
@@ -295,6 +297,8 @@ public class GameManager implements ConfigurableComponentI {
         playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
+        
+        setGameParameters();
 
         if (startPacket == null)
             startPacket = StartPacket.getStartPacket("Initial");
@@ -307,6 +311,26 @@ public class GameManager implements ConfigurableComponentI {
 
         // Initialisation is complete. Undoability starts here.
         MoveSet.enable();
+    }
+    
+    private void setGameParameters () {
+        
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
+            canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
+            canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
+        }
+        
+loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
+            for (SpecialPropertyI sp : company.getSpecialProperties()) {
+                if (sp instanceof SpecialTokenLay
+                        && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
+                    bonusTokensExist = true;
+                    break loop;
+                }
+            }
+            
+        }
     }
 
     /**
@@ -331,7 +355,7 @@ public class GameManager implements ConfigurableComponentI {
                 startOperatingRound(false);
             } else if (skipFirstStockRound) {
                 PhaseI currentPhase =
-                        PhaseManager.getInstance().getCurrentPhase();
+                        phaseManager.getCurrentPhase();
                 numOfORs = currentPhase.getNumberOfOperatingRounds();
                 log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
@@ -344,7 +368,7 @@ public class GameManager implements ConfigurableComponentI {
                 startStockRound();
             }
         } else if (round instanceof StockRound) {
-            PhaseI currentPhase = PhaseManager.getInstance().getCurrentPhase();
+            PhaseI currentPhase = phaseManager.getCurrentPhase();
             numOfORs = currentPhase.getNumberOfOperatingRounds();
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
@@ -779,30 +803,36 @@ public class GameManager implements ConfigurableComponentI {
 
         // TODO The below should be merged into activate()
         if (phase.doPrivatesClose()) {
-            Game.getCompanyManager().closeAllPrivates();
+            instance.companyManager.closeAllPrivates();
         }
     }
 
+    /*
     public static void setCompaniesCanBuyPrivates() {
         instance.companiesCanBuyPrivates = true;
     }
+    */
 
     public String getHelp() {
         return getCurrentRound().getHelp();
     }
 
+    /*
     public static void setHasAnyParPrice(boolean hasAnyParPrice) {
         instance.hasAnyParPrice = hasAnyParPrice;
     }
+    */
 
     public boolean canAnyCompanyHoldShares() {
         return canAnyCompanyHoldShares;
     }
 
+    /*
     public static void setCanAnyCompanyHoldShares(
             boolean canAnyCompanyHoldShares) {
         instance.canAnyCompanyHoldShares = canAnyCompanyHoldShares;
     }
+    */
 
     /*
     public static boolean canAnyCompBuyPrivates() {
@@ -810,9 +840,11 @@ public class GameManager implements ConfigurableComponentI {
     }
     */
 
+    /*
     public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
         instance.canAnyCompanyBuyPrivates = canAnyCompBuyPrivates;
     }
+    */
 
     /*
     public static boolean doBonusTokensExist() {
@@ -820,9 +852,11 @@ public class GameManager implements ConfigurableComponentI {
     }
     */
 
+    /*
     public static void setBonusTokensExist(boolean bonusTokensExist) {
         instance.bonusTokensExist = bonusTokensExist;
     }
+    */
     
     public String getClassName (Defs.ClassName key) {
         
