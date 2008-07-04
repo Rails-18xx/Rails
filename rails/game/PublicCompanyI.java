@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.19 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.20 2008/07/04 20:46:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -16,6 +16,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public static final int CAPITALISE_INCREMENTAL = 1;
 
     public void init2() throws ConfigurationException;
+    
+    public void setIndex (int index);
+
 
     /**
      * Return the company token background colour.

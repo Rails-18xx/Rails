@@ -775,7 +775,7 @@ public class ORUIManager {
         if (train != null) {
             // Remember the old off-board revenue step
             int oldOffBoardRevenueStep =
-                    PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
+                    gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
 
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
@@ -827,7 +827,7 @@ public class ORUIManager {
             }
 
             int newOffBoardRevenueStep =
-                    PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep();
+                    gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
             if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
                 HexMap.updateOffBoardToolTips();
             }

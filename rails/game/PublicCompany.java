@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.36 2008/06/30 20:35:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.37 2008/07/04 20:46:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -284,8 +284,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
         if (privateBuyTag != null) {
             canBuyPrivates = true;
-            GameManager.setCanAnyCompBuyPrivates(true);
-            GameManager.setCompaniesCanBuyPrivates();
+            //GameManager.setCanAnyCompBuyPrivates(true);
+            //GameManager.setCompaniesCanBuyPrivates();
 
             String lower =
                     privateBuyTag.getAttributeAsString("lowerPriceFactor");
@@ -338,7 +338,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
             treasuryPaysOut = true;
-            GameManager.setCanAnyCompanyHoldShares(true);
+            //GameManager.setCanAnyCompanyHoldShares(true);
 
             maxPercOfOwnShares =
                     ownSharesTag.getAttributeAsInteger("maxPerc",
@@ -428,7 +428,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
-        if (hasParPrice) GameManager.setHasAnyParPrice(true);
+        //if (hasParPrice) GameManager.setHasAnyParPrice(true);
 
         List<Tag> certificateTags = tag.getChildren("Certificate");
         if (certificateTags != null) {
@@ -518,10 +518,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
-    @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
-        if (!name.equals("")) this.publicNumber = numberOfPublicCompanies++;
 
         this.portfolio = new Portfolio(name, this);
         treasury = new CashModel(this);
@@ -572,6 +570,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
             bgHexColour = dummyCompany.getHexBgColour();
         }
 
+    }
+    
+    public void setIndex (int index) {
+        publicNumber = index;
     }
 
     /**
@@ -939,9 +941,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * @return
      */
+    /*
     public static int getNumberOfPublicCompanies() {
         return numberOfPublicCompanies;
     }
+    /*
 
     /**
      * @return

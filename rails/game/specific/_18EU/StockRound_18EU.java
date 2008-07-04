@@ -32,7 +32,6 @@ public class StockRound_18EU extends StockRound {
             discardingTrains.set(false);
         }
 
-        PhaseManager pmgr = PhaseManager.getInstance();
         phase5Reached = gameManager.getPhaseManager().hasReachedPhase("5");
 
     }
