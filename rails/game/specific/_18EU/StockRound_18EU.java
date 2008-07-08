@@ -178,7 +178,7 @@ public class StockRound_18EU extends StockRound {
         // Get any shares in company treasuries that can be bought
         if (gameManager.canAnyCompanyHoldShares()) {
 
-            for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+            for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
                 certs =
                         company.getPortfolio().getCertificatesPerCompany(
                                 company.getName());
@@ -208,7 +208,7 @@ public class StockRound_18EU extends StockRound {
         if (!mayCurrentPlayerBuyAnything()) return;
 
         List<PublicCompanyI> comps =
-                Game.getCompanyManager().getAllPublicCompanies();
+                companyManager.getAllPublicCompanies();
         List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
         List<PublicCompanyI> targetCompanies = new ArrayList<PublicCompanyI>();
         String type;
@@ -285,7 +285,7 @@ public class StockRound_18EU extends StockRound {
             }
 
             // Check company
-            company = companyMgr.getPublicCompany(companyName);
+            company = companyManager.getPublicCompany(companyName);
             if (company == null) {
                 errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
                 break;

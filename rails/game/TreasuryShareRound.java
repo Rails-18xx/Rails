@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.5 2008/06/30 20:35:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.6 2008/07/08 19:54:08 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -33,6 +33,8 @@ public class TreasuryShareRound extends StockRound {
             PublicCompanyI operatingCompany) {
 
         this.gameManager = gameManager;
+        this.companyManager = gameManager.getCompanyManager();
+        
         this.operatingCompany = operatingCompany;
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
@@ -168,7 +170,7 @@ public class TreasuryShareRound extends StockRound {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
 
             // Can't sell shares that have no price
             if (!company.hasStarted()) continue;
@@ -281,7 +283,7 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // Check company
-            company = companyMgr.getPublicCompany(companyName);
+            company = companyManager.getPublicCompany(companyName);
             if (company == null) {
                 errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
                 break;
@@ -380,7 +382,7 @@ public class TreasuryShareRound extends StockRound {
         Portfolio portfolio = operatingCompany.getPortfolio();
         String errMsg = null;
         String companyName = action.getCompanyName();
-        PublicCompanyI company = companyMgr.getPublicCompany(companyName);
+        PublicCompanyI company = companyManager.getPublicCompany(companyName);
         PublicCertificateI cert = null;
         List<PublicCertificateI> certsToSell =
                 new ArrayList<PublicCertificateI>();

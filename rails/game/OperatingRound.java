@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.40 2008/07/04 20:46:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.41 2008/07/08 19:54:08 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -139,7 +139,7 @@ public class OperatingRound extends Round implements Observer {
             numberOfPlayers = players.size();
         }
 
-        for (PrivateCompanyI priv : Game.getCompanyManager().getAllPrivateCompanies()) {
+        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) priv.payOut();
         }
 
@@ -1401,7 +1401,7 @@ public class OperatingRound extends Round implements Observer {
             // Checks
             // Does private exist?
             if ((privateCompany =
-                    Game.getCompanyManager().getPrivateCompany(
+                    companyManager.getPrivateCompany(
                             privateCompanyName)) == null) {
                 errMsg =
                         LocalText.getText("PrivateDoesNotExist",

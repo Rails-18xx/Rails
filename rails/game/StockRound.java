@@ -58,7 +58,7 @@ public class StockRound extends Round {
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
-    static protected CompanyManagerI companyMgr;
+    //static protected CompanyManagerI companyMgr;
     //static protected GameManager gameMgr;
 
     /* Rules */
@@ -75,7 +75,7 @@ public class StockRound extends Round {
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
-        if (companyMgr == null) companyMgr = Game.getCompanyManager();
+        //if (companyMgr == null) companyMgr = Game.getCompanyManager();
         gameManager.setRound(this);
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
@@ -244,7 +244,7 @@ public class StockRound extends Round {
         // Get any shares in company treasuries that can be bought
         if (gameManager.canAnyCompanyHoldShares()) {
 
-            for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+            for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
                 certs =
                         company.getPortfolio().getCertificatesPerCompany(
                                 company.getName());
@@ -285,7 +285,7 @@ public class StockRound extends Round {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
 
             // Can't sell shares that have no price
             if (!company.hasStarted() || !company.hasStockPrice()) continue;
@@ -600,7 +600,7 @@ public class StockRound extends Round {
             }
 
             // Check company
-            company = companyMgr.getPublicCompany(companyName);
+            company = companyManager.getPublicCompany(companyName);
             if (company == null) {
                 errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
                 break;
@@ -745,7 +745,7 @@ public class StockRound extends Round {
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompanyI company =
-                companyMgr.getPublicCompany(action.getCompanyName());
+            companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificateI cert = null;
         PublicCertificateI presCert = null;
         List<PublicCertificateI> certsToSell =
@@ -978,7 +978,7 @@ public class StockRound extends Round {
                     String.valueOf(getStockRoundNumber())));
 
             /* Check if any companies are sold out. */
-            for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+            for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
                 if (company.hasStockPrice() && company.isSoldOut()) {
                     StockSpaceI oldSpace = company.getCurrentPrice();
                     stockMarket.soldOut(company);
