@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.9 2008/06/30 20:35:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.10 2008/07/08 19:54:08 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -26,9 +26,11 @@ public abstract class Round implements RoundI {
             Logger.getLogger(Round.class.getPackage().getName());
     
     protected GameManager gameManager = null;
+    protected CompanyManagerI companyManager = null;
 
     public void setGameManager (GameManager gameManager) {
         this.gameManager = gameManager;
+        this.companyManager = gameManager.getCompanyManager();
     }
     
     public GameManager getGameManager () {
@@ -103,7 +105,7 @@ public abstract class Round implements RoundI {
     public PublicCompanyI[] getOperatingCompanies() {
 
         List<PublicCompanyI> companies =
-                Game.getCompanyManager().getAllPublicCompanies();
+                companyManager.getAllPublicCompanies();
         Map<Integer, PublicCompanyI> operatingCompanies =
                 new TreeMap<Integer, PublicCompanyI>();
         StockSpaceI space;

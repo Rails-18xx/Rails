@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.33 2008/07/04 20:46:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.34 2008/07/08 19:54:08 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -338,6 +338,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public static GameManager getInstance() {
         return instance;
+    }
+    
+    public CompanyManagerI getCompanyManager() {
+        return companyManager;
     }
 
     public void setRound(RoundI round) {

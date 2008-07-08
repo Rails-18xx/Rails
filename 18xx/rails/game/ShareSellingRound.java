@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.12 2008/06/30 20:35:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.13 2008/07/08 19:54:08 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -93,7 +93,7 @@ public class ShareSellingRound extends StockRound {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyMgr.getAllPublicCompanies()) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
 
             // Can't sell shares that have no price
             if (!company.hasStarted()) continue;
@@ -190,7 +190,7 @@ public class ShareSellingRound extends StockRound {
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompanyI company =
-                companyMgr.getPublicCompany(action.getCompanyName());
+                companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificateI cert = null;
         PublicCertificateI presCert = null;
         List<PublicCertificateI> certsToSell =
