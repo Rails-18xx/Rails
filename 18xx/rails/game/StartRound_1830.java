@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.14 2008/06/30 20:35:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.15 2008/10/10 19:56:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -70,7 +70,8 @@ public class StartRound_1830 extends StartRound {
                     }
                 } else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
                     /* This status is set in buy() if a share price is missing */
-                    possibleActions.add(new BuyStartItem(item, 0, false, true));
+                    setPlayer(item.getBidder());
+                    possibleActions.add(new BuyStartItem(item, item.getBid(), false, true));
                     passAllowed = false;
                     break; // No more actions
                 } else if (item == startPacket.getFirstUnsoldItem()) {

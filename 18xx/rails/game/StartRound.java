@@ -193,6 +193,8 @@ public abstract class StartRound extends Round implements StartRoundI {
                     errMsg = LocalText.getText("NoMoney");
                     break;
                 }
+            } else {
+                price = item.getBid();
             }
 
             if (boughtItem.hasSharePriceToSet()) {
