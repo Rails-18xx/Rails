@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.14 2008/07/04 20:46:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.15 2008/10/10 19:56:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -20,7 +20,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     protected int basePrice = 0;
     protected int revenue = 0;
-    protected List<SpecialPropertyI> specialProperties = null;
+    protected List<SpecialPropertyI> specialProperties = new ArrayList<SpecialPropertyI>();
     protected String auctionType;
     protected int closingPhase;
     protected boolean closeIfAllExercised = false; // Not yet used
@@ -64,7 +64,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         spsTag.getAttributeAsBoolean("closeIfAllExercised",
                                 closeIfAllExercised);
 
-                specialProperties = new ArrayList<SpecialPropertyI>();
                 List<Tag> spTags = spsTag.getChildren("SpecialProperty");
                 String className;
                 for (Tag spTag : spTags) {
