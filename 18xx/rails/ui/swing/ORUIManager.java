@@ -368,7 +368,7 @@ public class ORUIManager {
             amount = orPanel.getRevenue(orCompIndex);
             log.debug("Set revenue amount is " + amount);
             action.setActualRevenue(amount);
-            if (action.getRevenueAllocation() != SetDividend.UNKNOWN) {
+            if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
                 log.debug("Allocation is known: "
                           + action.getRevenueAllocation());
                 orWindow.process(action);
