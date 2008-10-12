@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.25 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.26 2008/10/12 14:36:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -354,7 +354,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             f =
                     president[i] =
                             new Field(c.hasStarted()
-                                    ? c.getPresident().getName() : "");
+                                    ? c.getPresident().getNameAndPriority() : "");
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0);
 
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());

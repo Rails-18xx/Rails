@@ -264,7 +264,7 @@ public class GameStatus extends JPanel implements ActionListener {
                 certPerPlayerXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
             playerIndex.put(players[i], new Integer(i));
-            f = upperPlayerCaption[i] = new Caption(players[i].getName());
+            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
         }
         addField(new Caption(LocalText.getText("BANK_SHARES")),
@@ -605,10 +605,12 @@ public class GameStatus extends JPanel implements ActionListener {
                 BuyCertificate buy;
                 PublicCertificateI cert;
                 String companyName = "";
+                String playerName = "";
 
                 for (PossibleAction action : actions) {
                     buy = (BuyCertificate) action;
                     cert = buy.getCertificate();
+                    playerName = buy.getPlayerName ();
 
                     if (buy instanceof StartCompany) {
 
@@ -660,8 +662,9 @@ public class GameStatus extends JPanel implements ActionListener {
                         index =
                                 new RadioButtonDialog(this,
                                         LocalText.getText("PleaseSelect"),
-                                        LocalText.getText("WHICH_START_PRICE",
-                                                companyName),
+                                        LocalText.getText("WHICH_START_PRICE", new String[] {
+                                                playerName,
+                                                companyName}),
                                         options.toArray(new String[0]), -1).getSelectedOption();
                     } else {
                         String sp =

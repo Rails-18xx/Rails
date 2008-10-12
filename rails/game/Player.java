@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.12 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.13 2008/10/12 14:36:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,8 +40,6 @@ public class Player implements CashHolder, Comparable<Player> {
     private MoneyModel blockedCash;
     private CalculatedMoneyModel freeCash;
     private CalculatedMoneyModel worth;
-
-    private boolean hasPriority = false;
 
     private boolean hasBoughtStockThisTurn = false;
 
@@ -243,20 +241,6 @@ public class Player implements CashHolder, Comparable<Player> {
     }
 
     /**
-     * @return Returns if the Player hasPriority.
-     */
-    public boolean hasPriority() {
-        return hasPriority;
-    }
-
-    /**
-     * @param hasPriority The hasPriority to set.
-     */
-    public void setHasPriority(boolean hasPriority) {
-        this.hasPriority = hasPriority;
-    }
-
-    /**
      * @return Returns the player's portfolio.
      */
     public Portfolio getPortfolio() {
@@ -268,6 +252,10 @@ public class Player implements CashHolder, Comparable<Player> {
      */
     public String getName() {
         return name;
+    }
+
+    public String getNameAndPriority() {
+        return name + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");
     }
 
     /**

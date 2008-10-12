@@ -1052,7 +1052,7 @@ public class StockRound extends Round {
      * @return The index of the player that has the turn.
      */
     public int getCurrentPlayerIndex() {
-        return getCurrentPlayerIndex();
+        return currentPlayer.getIndex();
     }
 
     /**
