@@ -10,7 +10,10 @@
     <ShareUnit percentage="10"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="8"/>
-    <NumberOfTileLays colour="yellow" phase="1,2,3,4,5,6,7,8" number="2"/>
+    <!--NumberOfTileLays colour="yellow" phase="1,2,3,4,5,6,7,8" number="2"/-->
+    <TileLays>
+		<Number colour="yellow" phase="1,2,3,4,5,6,7,8" number="2"/>
+    </TileLays>
 	<BaseTokens>
 	    <LayCost method="sequence" cost="0,40,100"/>
 	</BaseTokens>

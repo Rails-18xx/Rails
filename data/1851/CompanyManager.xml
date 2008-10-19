@@ -16,7 +16,10 @@
 		    <HomeBase lay="whenFloated"/>
 		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
-	    <NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/>
+	    <!--NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/-->
+		<TileLays>
+			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
+		</TileLays>
 		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
 	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5"/>
@@ -35,7 +38,7 @@
 	</Company>
 	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000" 
 		bgColour="4444FF">
-		<Home hex="B16" city="2"/>
+		<Home hex="B16" city="1"/>
 	</Company>
 	<Company name="Dixie" type="Public" tokens="4" fgColour="000000" 
 		bgColour="FFFF00">
