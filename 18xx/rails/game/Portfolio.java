@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.25 2008/06/04 19:00:32 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.26 2008/10/19 17:03:10 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -707,9 +707,8 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
                     if ((clazz == null || Util.isInstanceOf(sp, clazz))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
-                        && (owner instanceof Company
-                            && sp.isUsableIfOwnedByCompany() || owner instanceof Player
-                                                                && sp.isUsableIfOwnedByPlayer())) {
+                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany() 
+                            || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                         log.debug("Adding private SP: " + sp);
                         result.add((T) sp);
                     }
@@ -722,9 +721,8 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
                     if ((clazz == null || Util.isInstanceOf(sp, clazz))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
-                        && (owner instanceof Company
-                            && sp.isUsableIfOwnedByCompany() || owner instanceof Player
-                                                                && sp.isUsableIfOwnedByPlayer())) {
+                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany() 
+                            || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                         log.debug("Adding persistent SP: " + sp);
                         result.add((T) sp);
                     }
