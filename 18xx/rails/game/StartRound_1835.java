@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.13 2008/06/30 20:35:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.14 2008/10/19 17:04:48 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -19,8 +19,6 @@ public class StartRound_1835 extends StartRound {
 
     private static IntegerState startRoundNumber =
             new IntegerState("StartRoundNumber", 0);
-
-    private final int numberOfPlayers = gameManager.getNumberOfPlayers();
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -130,7 +128,7 @@ public class StartRound_1835 extends StartRound {
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
-                if (numPasses.intValue() == numberOfPlayers) {
+                if (numPasses.intValue() == numPlayers) {
                     /*
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
@@ -211,19 +209,19 @@ public class StartRound_1835 extends StartRound {
              */
             turn.add(1);
             int turnNumber = turn.intValue();
-            int cycleNumber = turnNumber / numberOfPlayers;
-            int turnIndex = turnNumber % numberOfPlayers;
+            int cycleNumber = turnNumber / numPlayers;
+            int turnIndex = turnNumber % numPlayers;
             int newIndex;
 
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
                 /* Reverse ordee in the first cycle only */
                 newIndex =
-                        cycleNumber == 0 ? numberOfPlayers - 1 - turnIndex
+                        cycleNumber == 0 ? numPlayers - 1 - turnIndex
                                 : turnIndex;
             } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
                 /* Reverse order in the second cycle only */
                 newIndex =
-                        cycleNumber == 1 ? numberOfPlayers - 1 - turnIndex
+                        cycleNumber == 1 ? numPlayers - 1 - turnIndex
                                 : turnIndex;
             } else {
                 newIndex = turnIndex;
