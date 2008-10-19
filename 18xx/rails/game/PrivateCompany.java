@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.15 2008/10/10 19:56:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.16 2008/10/19 17:04:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -20,7 +20,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     protected int basePrice = 0;
     protected int revenue = 0;
-    protected List<SpecialPropertyI> specialProperties = new ArrayList<SpecialPropertyI>();
+    protected List<SpecialPropertyI> specialProperties = null;
     protected String auctionType;
     protected int closingPhase;
     protected boolean closeIfAllExercised = false; // Not yet used
@@ -93,6 +93,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                                              + name, e);
         }
 
+    }
+
+    /** Initialisation, to be called directly after instantiation (cloning) */
+    public void init(String name, CompanyTypeI type) {
+        super.init(name, type);
+
+        specialProperties = new ArrayList<SpecialPropertyI>();
+        
     }
 
     public void moveTo(MoveableHolderI newHolder) {
@@ -200,6 +208,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             log.fatal("Cannot clone company " + name);
             return null;
         }
+        
         return clone;
     }
 
