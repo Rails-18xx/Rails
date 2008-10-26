@@ -20,11 +20,41 @@
   </Company>
   <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
     <Blocking hex="I12"/>
+	<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
+		</SpecialProperty>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
+			<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
+		</SpecialProperty>
+	</SpecialProperties>
+	<ClosingConditions>
+		<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
+	</ClosingConditions>
   </Company>
   <Company name="TCC" type="Private" basePrice="50" revenue="10">
     <Blocking hex="H11"/>
+	<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialTileLay location="H11" connected="no" extra="yes"/>
+		</SpecialProperty>
+	</SpecialProperties>
   </Company>
-  <Company name="Ship" type="Private" tokens="1" tokenValue="20" basePrice="70" revenue="15"/>
+  <Company name="Ship" type="Private" basePrice="70" revenue="15">
+	<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByCompany" 
+			when="anyTimeDuringORTurn" 
+			class="rails.game.special.SpecialTokenLay">
+			<SpecialTokenLay class="rails.game.BonusToken" 
+					location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
+				<BonusToken name="Port" value="20" removed="Phase:6"/>
+			</SpecialTokenLay>
+		</SpecialProperty>
+	</SpecialProperties>
+	<ClosingConditions>
+		<SpecialProperties condition="ifExercised"/>
+	</ClosingConditions>
+  </Company>
   <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
   <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
   
