@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.12 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.13 2008/10/26 20:39:16 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected BooleanState exercised;
     protected boolean usableIfOwnedByPlayer = false;
     protected boolean usableIfOwnedByCompany = false;
-    protected boolean closeIfExercised = false;
+    //protected boolean closeIfExercised = false;
 
     protected String conditionText = "";
     protected String whenText = "";
@@ -38,8 +38,8 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
-        closeIfExercised =
-                tag.getAttributeAsBoolean("closeIfExercised", closeIfExercised);
+        //closeIfExercised =
+        //        tag.getAttributeAsBoolean("closeIfExercised", closeIfExercised);
 
         conditionText = tag.getAttributeAsString("condition");
         if (!Util.hasValue(conditionText))
@@ -110,17 +110,11 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public void setExercised() {
         exercised.set(true);
-        if (this.closeIfExercised) {
-            privateCompany.setClosed();
-        }
+        privateCompany.checkClosingIfExercised(false);
     }
 
     public boolean isExercised() {
         return exercised.booleanValue();
-    }
-
-    public boolean closesIfExercised() {
-        return closeIfExercised;
     }
 
     public int getClosingValue() {
