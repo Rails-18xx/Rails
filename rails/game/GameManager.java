@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.34 2008/07/08 19:54:08 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.35 2008/10/26 20:47:37 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -763,6 +763,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     
     public List<PublicCompanyI> getAllPublicCompanies() {
         return companyManager.getAllPublicCompanies();
+    }
+    
+    public List<PrivateCompanyI> getAllPrivateCompanies() {
+        return companyManager.getAllPrivateCompanies();
     }
     
     /**

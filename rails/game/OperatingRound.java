@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.41 2008/07/08 19:54:08 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.42 2008/10/26 20:47:37 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1115,6 +1115,12 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompany.setOperated(true);
 
+        // Check if any privates must be closed
+        // (now only applies to 1856 W&SR)
+        for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
+            priv.checkClosingIfExercised(true);
+        }
+        
         if (operatingCompanyIndex >= operatingCompanyArray.length - 1) {
 
             finishOR();
@@ -1131,6 +1137,12 @@ public class OperatingRound extends Round implements Observer {
 
     protected void finishOR() {
 
+        // Check if any privates must be closed
+        // (now only applies to 1856 W&SR)
+        for (PrivateCompanyI priv : gameManager.getAllPrivateCompanies()) {
+            priv.checkClosingIfExercised(true);
+        }
+        
         // OR done. Inform GameManager.
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
         gameManager.nextRound(this);
