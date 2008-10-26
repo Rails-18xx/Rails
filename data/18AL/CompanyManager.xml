@@ -47,7 +47,7 @@
 				</NameTrains>
 			</SpecialProperty>
 		</SpecialProperties>
-	</Company>/>
+	</Company>
 	<Company name="NDY" type="Private" basePrice="120" revenue="20">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="duringTrainBuyingStep"
@@ -55,7 +55,11 @@
 				<SpecialTrainBuy trainType="any" deduction="50%"/>
 			</SpecialProperty>
 		</SpecialProperties>
-	</Company>/>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
+	
 	<Company name="WRA" type="Public" tokens="4" fgColour="000000" bgColour="FF8000">
 		<Home hex="L5"/>
 		<Destination hex="J7"/>
