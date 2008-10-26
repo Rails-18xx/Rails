@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.11 2008/06/04 19:00:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.12 2008/10/26 20:35:53 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -161,9 +161,7 @@ public class GUITile {
             }
 
             // Finish the city connection check
-            log.debug("*1*");
             if (!oldCities.isEmpty()) {
-                log.debug("*2*");
                 int endPoint, kk, ll, kkk, lll;
                 for (k = 0; k < 6; k++) {
                     tempTileSide = (6 + k - tempRot) % 6;
