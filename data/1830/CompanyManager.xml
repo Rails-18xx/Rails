@@ -53,6 +53,7 @@
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30">
     <Blocking hex="I13,I15"/>
   </Company>
+  
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000FF">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
     <Home hex="I15"/>
