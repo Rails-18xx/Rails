@@ -34,9 +34,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
     <ClosingConditions>
-      <ClosingCondition>
-        <SpecialPropertiesExercised/>
-      </ClosingCondition>
+		<SpecialProperties condition="ifExercised"/>
     </ClosingConditions>
   </Company>
   <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10">
@@ -48,13 +46,8 @@
 				<SpecialTileLay location="M17" extra="yes" free="yes" />
 			</SpecialProperty>
 		</SpecialProperties>
-    <ClosingConditions connector="and">
-      <ClosingCondition>
-        <TileLaid hex="M15"/>
-      </ClosingCondition>
-      <ClosingCondition>
-        <TileLaid hex="M17"/>
-      </ClosingCondition>
+    <ClosingConditions>
+		<SpecialProperties condition="ifAllExercised"/>
     </ClosingConditions>
   </Company>
   <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
@@ -67,9 +60,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
     <ClosingConditions>
-      <ClosingCondition>
-        <SpecialPropertiesExercised/>
-      </ClosingCondition>
+		<SpecialProperties condition="ifAllExercised"/>
     </ClosingConditions>
   </Company>
   <Company name="LD"  longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
