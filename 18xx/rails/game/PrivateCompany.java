@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.16 2008/10/19 17:04:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.17 2008/10/26 20:39:16 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -22,8 +22,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected int revenue = 0;
     protected List<SpecialPropertyI> specialProperties = null;
     protected String auctionType;
+    
+    // Closing conditions
     protected int closingPhase;
-    protected boolean closeIfAllExercised = false; // Not yet used
+    // Closing when special properties are used
+    protected boolean closeIfAllExercised = false;
+    protected boolean closeIfAnyExercised = false;
+    protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
 
     protected List<MapHex> blockedHexes = null;
 
@@ -60,9 +65,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             // Special properties
             Tag spsTag = tag.getChild("SpecialProperties");
             if (spsTag != null) {
-                closeIfAllExercised =
-                        spsTag.getAttributeAsBoolean("closeIfAllExercised",
-                                closeIfAllExercised);
 
                 List<Tag> spTags = spsTag.getChildren("SpecialProperty");
                 String className;
@@ -87,6 +89,32 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
                 }
             }
+            
+            // Closing conditions
+            // Currently only used to handle closure following laying
+            // tiles and/or tokens because of special properties.
+            // Other cases are currently handled elsewhere.
+            Tag closureTag = tag.getChild("ClosingConditions");
+            
+            if (closureTag != null) {
+
+                Tag spTag = closureTag.getChild("SpecialProperties");
+                
+                if (spTag != null) {
+                    
+                    String ifAttribute = spTag.getAttributeAsString("condition");
+                    if (ifAttribute != null) {
+                        closeIfAllExercised = ifAttribute.equalsIgnoreCase("ifExercised")
+                            || ifAttribute.equalsIgnoreCase("ifAllExercised");
+                        closeIfAnyExercised = ifAttribute.equalsIgnoreCase("ifAnyExercised");
+                    }
+                    String whenAttribute = spTag.getAttributeAsString("when");
+                    if (whenAttribute != null) {
+                        closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("atEndOfORTurn");
+                    }
+                }
+            }
+            
 
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
@@ -255,8 +283,39 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         return blockedHexes;
     }
 
-    public void closeIfExcercised() {
-
+    public boolean closesIfAllExercised() {
+        return closeIfAllExercised;
     }
+
+    public boolean closesIfAnyExercised() {
+        return closeIfAnyExercised;
+    }
+
+    public boolean closesAtEndOfTurn() {
+        return closeAtEndOfTurn;
+    }
+    
+    public void checkClosingIfExercised (boolean endOfOR) {
+        
+        if (endOfOR != closeAtEndOfTurn) return;
+        
+        if (closeIfAllExercised) {
+            for (SpecialPropertyI sp : specialProperties) {
+                if (!sp.isExercised()) return;
+            }
+            log.debug("CloseIfAll: closing "+name);
+            setClosed();
+            
+        } else if (closeIfAnyExercised) {
+            for (SpecialPropertyI sp : specialProperties) {
+                if (sp.isExercised()) {
+                    log.debug("CloseIfAny: closing "+name);
+                    setClosed();
+                    return;
+                }
+            }
+        }
+    }
+
 
 }
