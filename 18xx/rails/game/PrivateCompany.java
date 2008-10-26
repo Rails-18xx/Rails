@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.17 2008/10/26 20:39:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.18 2008/10/26 20:47:37 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -297,7 +297,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     
     public void checkClosingIfExercised (boolean endOfOR) {
         
-        if (endOfOR != closeAtEndOfTurn) return;
+        if (isClosed() || endOfOR != closeAtEndOfTurn) return;
         
         if (closeIfAllExercised) {
             for (SpecialPropertyI sp : specialProperties) {
