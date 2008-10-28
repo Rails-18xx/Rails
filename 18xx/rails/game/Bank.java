@@ -146,7 +146,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     /**
      * Put all available certificates in the IPO
      */
-    public static void initIpo() {
+    public /*static*/ void initCertificates() {
         // Add privates
         List<PrivateCompanyI> privates =
                 Game.getCompanyManager().getAllPrivateCompanies();
@@ -159,8 +159,11 @@ public class Bank implements CashHolder, ConfigurableComponentI {
                 Game.getCompanyManager().getAllPublicCompanies();
         for (PublicCompanyI comp : companies) {
             for (PublicCertificateI cert : comp.getCertificates()) {
-                ipo.addCertificate(cert);
-                /** TODO in some games not all certs are buyable at the start */
+                if (cert.isInitiallyAvailable()) {
+                    ipo.addCertificate(cert);
+                } else {
+                    unavailable.addCertificate(cert);
+                }
             }
         }
     }

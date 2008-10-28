@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.26 2008/10/19 17:03:10 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.27 2008/10/28 21:01:34 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -152,11 +152,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         // Move the certificate
         // new CertificateMove (from, this, certificate);
         certificate.moveTo(this);
-
-        // PublicCertificate is no longer for sale.
-        // TODO this is not the intended use of available (which is now
-        // redundant).
-        certificate.setAvailable(false);
 
         // Move the money.
         if (price != 0) {
