@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.8 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.9 2008/10/28 21:01:34 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -22,8 +22,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     protected int shares;
     /** President's certificate? */
     protected boolean president;
-    /** Availability */
-    protected boolean available;
+    /** Availability at the start of the game */
+    protected boolean initiallyAvailable;
     /** Current holder of the certificate */
     protected Portfolio portfolio;
 
@@ -51,7 +51,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     public PublicCertificate(int shares, boolean president, boolean available) {
         this.shares = shares;
         this.president = president;
-        this.available = available;
+        this.initiallyAvailable = available;
     }
 
     public void setUniqueId(String name, int index) {
@@ -144,8 +144,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /**
      * @param b
      */
-    public void setAvailable(boolean b) {
-        available = b;
+    public boolean isInitiallyAvailable() {
+        return initiallyAvailable;
     }
 
     /**

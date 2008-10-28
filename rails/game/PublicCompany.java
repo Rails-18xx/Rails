@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.37 2008/07/04 20:46:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.38 2008/10/28 21:01:34 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -216,7 +216,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Initial train at floating time */
     protected String initialTrain = null;
-
+    
     /**
      * The constructor. The way this class is instantiated does not allow
      * arguments.
@@ -247,6 +247,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
         numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
+        
+        boolean certsAreInitiallyAvailable 
+                = tag.getAttributeAsBoolean("available", true);
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
@@ -446,6 +449,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         "President".equals(certificateTag.getAttributeAsString(
                                 "type", ""));
                 int number = certificateTag.getAttributeAsInteger("number", 1);
+                
+                boolean certIsInitiallyAvailable 
+                        = certificateTag.getAttributeAsBoolean("available", 
+                                certsAreInitiallyAvailable);
 
                 if (president) {
                     if (number > 1 || gotPresident)
@@ -457,7 +464,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 }
 
                 for (int k = 0; k < number; k++) {
-                    certificate = new PublicCertificate(shares, president);
+                    certificate = new PublicCertificate(shares, president,
+                            certIsInitiallyAvailable);
                     addCertificate(certificate);
                     shareTotal += shares * shareUnit;
                 }

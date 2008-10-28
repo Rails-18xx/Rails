@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.18 2008/06/30 20:35:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.19 2008/10/28 21:01:34 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -132,7 +132,7 @@ public class Game {
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
-            Bank.initIpo();
+            bank.initCertificates();
             StartPacket.init();
             companyManager.initCompanies();
             stockMarket.init();

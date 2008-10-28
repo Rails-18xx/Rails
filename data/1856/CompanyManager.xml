@@ -94,7 +94,12 @@
     <Home hex="D17"/>
     <Destination hex="H15"/>
   </Company>
-  <Company name="CGR" type="Public" tokens="10" fgColour="FFFFFF" bgColour="000000"/>
+  <Company name="CGR" type="Public" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
+	<!-- Initially 20 shares are configured-->
+    <ShareUnit percentage="5"/>
+	<Certificate type="President" shares="2"/>
+    <Certificate shares="1" number="18"/>
+  </Company>
   <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
     <Home hex="K8"/>
     <Destination hex="H5"/>
