@@ -20,12 +20,22 @@ public class StartCompany extends BuyCertificate {
         this(certificate, startPrice, 1);
     }
 
+    public StartCompany(PublicCertificateI certificate, int price,
+            int maximumNumber) {
+        super(certificate, Bank.getIpo(), 0, maximumNumber);
+        this.price = price;
+    }
+
+    public StartCompany(PublicCertificateI certificate, int price) {
+        this(certificate, price, 1);
+    }
+
     public int[] getStartPrices() {
         return startPrices;
     }
 
     public boolean mustSelectAPrice() {
-        return startPrices.length > 1;
+        return startPrices != null && startPrices.length > 1;
     }
 
     public void setStartPrice(int startPrice) {
