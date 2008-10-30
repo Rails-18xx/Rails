@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.38 2008/10/28 21:01:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.39 2008/10/30 21:48:20 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -474,6 +474,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 throw new ConfigurationException("Company type " + name
                                                  + " total shares is not 100%");
         }
+        nameCertificates();
 
         // BaseToken
         Tag baseTokenTag = tag.getChild("BaseTokens");
@@ -984,9 +985,20 @@ public class PublicCompany extends Company implements PublicCompanyI {
         for (PublicCertificateI cert : list) {
             cert2 = cert.copy();
             certificates.add(cert2);
-            cert2.setCompany(this);
+            //cert2.setCompany(this);
             // TODO Questionable if it should be put in IPO or in
             // Unavailable.
+        }
+    }
+    
+    /** 
+     * Backlink the certificates to this company, 
+     * and give each one a type name.
+     *
+     */
+    public void nameCertificates () {
+        for (PublicCertificateI cert : certificates) {
+            cert.setCompany(this);
         }
     }
 
@@ -999,7 +1011,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (certificates == null)
             certificates = new ArrayList<PublicCertificateI>();
         certificates.add(certificate);
-        certificate.setCompany(this);
+        //certificate.setCompany(this);
     }
 
     /**
@@ -1031,6 +1043,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
+    }
+    
+    public PublicCertificateI getPresidentsShare () {
+        return certificates.get(0);
     }
 
     public boolean isAvailable() {

@@ -536,7 +536,6 @@ public class GameStatus extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
-        String command = actor.getActionCommand(); // Fall-back only
         List<PossibleAction> actions;
         PossibleAction chosenAction = null;
 
@@ -611,26 +610,37 @@ public class GameStatus extends JPanel implements ActionListener {
                     buy = (BuyCertificate) action;
                     cert = buy.getCertificate();
                     playerName = buy.getPlayerName ();
+                    PublicCompanyI company = cert.getCompany();
+                    companyName = company.getName();
 
                     if (buy instanceof StartCompany) {
 
                         startCompany = true;
-                        int[] startPrices =
-                                ((StartCompany) buy).getStartPrices();
-                        Arrays.sort(startPrices);
-                        PublicCompanyI company = cert.getCompany();
-                        companyName = company.getName();
-                        for (int i = 0; i < startPrices.length; i++) {
-                            options.add(LocalText.getText("StartCompany",
-                                    new String[] {
-                                            Bank.format(startPrices[i]),
-                                            String.valueOf(cert.getShare()),
-                                            Bank.format(cert.getShares()
-                                                        * startPrices[i]) }));
+                        int[] startPrices;
+                        if (((StartCompany) buy).mustSelectAPrice()) {
+                            startPrices =
+                                    ((StartCompany) buy).getStartPrices();
+                            Arrays.sort(startPrices);
+                            for (int i = 0; i < startPrices.length; i++) {
+                                options.add(LocalText.getText("StartCompany",
+                                        new String[] {
+                                                Bank.format(startPrices[i]),
+                                                String.valueOf(cert.getShare()),
+                                                Bank.format(cert.getShares()
+                                                            * startPrices[i]) }));
+                                buyActions.add(buy);
+                                buyAmounts.add(startPrices[i]);
+                            }
+                        } else {
+                            startPrices = new int[] {((StartCompany) buy).getPrice()};
+                            options.add(LocalText.getText("StartCompanyFixed", new String[]{
+                                    companyName,
+                                    String.valueOf(cert.getShare()),
+                                    Bank.format(startPrices[0])}));
                             buyActions.add(buy);
-                            buyAmounts.add(startPrices[i]);
+                            buyAmounts.add(startPrices[0]);
                         }
-
+ 
                     } else {
 
                         options.add(LocalText.getText("BuyCertificate",

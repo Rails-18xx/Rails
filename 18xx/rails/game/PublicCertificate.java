@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.9 2008/10/28 21:01:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.10 2008/10/30 21:48:20 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -174,7 +174,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      */
     public void setCompany(PublicCompanyI companyI) {
         company = companyI;
-        certTypeId = company.getName() + "_" + getShares() + "%";
+        certTypeId = company.getName() + "_" + getShare() + "%";
         if (president) certTypeId += "_P";
     }
 

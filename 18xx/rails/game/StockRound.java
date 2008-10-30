@@ -58,6 +58,7 @@ public class StockRound extends Round {
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
+    static protected Portfolio unavailable;
     //static protected CompanyManagerI companyMgr;
     //static protected GameManager gameMgr;
 
@@ -75,6 +76,7 @@ public class StockRound extends Round {
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
+        if (unavailable == null) unavailable = Bank.getUnavailable();
         //if (companyMgr == null) companyMgr = Game.getCompanyManager();
         gameManager.setRound(this);
 
@@ -152,7 +154,7 @@ public class StockRound extends Round {
         PublicCompanyI companyBoughtThisTurn =
                 (PublicCompanyI) companyBoughtThisTurnWrapper.getObject();
         if (companyBoughtThisTurn == null) {
-            from = Bank.getIpo();
+            from = ipo;
             Map<String, List<PublicCertificateI>> map =
                     from.getCertsPerCompanyMap();
             int shares;
@@ -168,20 +170,30 @@ public class StockRound extends Round {
                         cert.getShare()) < 1) continue;
                 shares = cert.getShares();
 
-                if (!comp.hasStarted()) {
-                    List<Integer> startPrices = new ArrayList<Integer>();
-                    for (int startPrice : stockMarket.getStartPrices()) {
-                        if (startPrice * shares <= playerCash) {
-                            startPrices.add(startPrice);
-                        }
+                if (!cert.isPresidentShare()) {
+                    if (cert.getCertificatePrice() <= playerCash) {
+                        possibleActions.add(new BuyCertificate(cert, from));
                     }
-                    if (startPrices.size() > 0) {
-                        int[] prices = new int[startPrices.size()];
-                        Arrays.sort(prices);
-                        for (int i = 0; i < prices.length; i++) {
-                            prices[i] = startPrices.get(i);
+                } else if (!comp.hasStarted()) {
+                    if (comp.hasParPrice()) {
+                        price = comp.getParPrice().getPrice() * cert.getShares();
+                        possibleActions.add(new StartCompany(cert, 
+                                price));
+                    } else {
+                        List<Integer> startPrices = new ArrayList<Integer>();
+                        for (int startPrice : stockMarket.getStartPrices()) {
+                            if (startPrice * shares <= playerCash) {
+                                startPrices.add(startPrice);
+                            }
                         }
-                        possibleActions.add(new StartCompany(cert, prices));
+                        if (startPrices.size() > 0) {
+                            int[] prices = new int[startPrices.size()];
+                            Arrays.sort(prices);
+                            for (int i = 0; i < prices.length; i++) {
+                                prices[i] = startPrices.get(i);
+                            }
+                            possibleActions.add(new StartCompany(cert, prices));
+                        }
                     }
                 } else if (comp.hasParPrice()) {
                     price = comp.getParPrice().getPrice() * cert.getShares();
@@ -189,15 +201,13 @@ public class StockRound extends Round {
                         possibleActions.add(new BuyCertificate(cert, from,
                                 price));
                     }
-                } else if (cert.getCertificatePrice() <= playerCash) {
-                    possibleActions.add(new BuyCertificate(cert, from));
-                }
+                } 
 
             }
         }
 
         /* Get the unique Pool certificates and check which ones can be bought */
-        from = Bank.getPool();
+        from = pool;
         Map<String, List<PublicCertificateI>> map =
                 from.getCertsPerCompanyMap();
 
@@ -562,6 +572,10 @@ public class StockRound extends Round {
         hasActed.set(true);
         setPriority();
 
+        // Check for any game-specific consequences
+        // (such as making another company available in the IPO)
+        gameSpecificChecks(ipo, company);
+
         return true;
     }
 
@@ -615,7 +629,10 @@ public class StockRound extends Round {
             }
 
             // The company must have started before
-            if (!company.hasStarted()) {
+            //if (!company.hasStarted()) {
+            // The above is not true for 1835 Pr (for instance)
+            // New rule: the presidents share may not be in IPO
+            if (company.getPresidentsShare().getHolder() == ipo) {
                 errMsg = LocalText.getText("NotYetStarted", companyName);
                 break;
             }
@@ -721,8 +738,31 @@ public class StockRound extends Round {
 
         // Check if the company has floated
         if (!company.hasFloated()) checkFlotation(company);
+        
+        // Check for any game-specific consequences
+        // (such as making another company available in the IPO)
+        gameSpecificChecks(from, company);
 
         return true;
+    }
+    
+    /** Stub, may be overridden in subclasses */
+    protected void gameSpecificChecks(Portfolio boughtFrom,
+            PublicCompanyI company) {
+        
+    }
+    
+    /** Make the cerificates of one company available for buying
+     * by putting these in the IPO.
+     * @param company The company to be released.
+     */
+    protected void releaseCompanyShares (PublicCompanyI company) {
+        
+        for (PublicCertificateI cert : company.getCertificates()) {
+            if (cert.getHolder().equals(unavailable)) {
+                cert.moveTo(ipo);
+            }
+        }
     }
 
     protected void recordSale(Player player, PublicCompanyI company) {
