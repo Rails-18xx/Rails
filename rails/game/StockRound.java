@@ -175,7 +175,7 @@ public class StockRound extends Round {
                         possibleActions.add(new BuyCertificate(cert, from));
                     }
                 } else if (!comp.hasStarted()) {
-                    if (comp.hasParPrice()) {
+                    if (comp.getParPrice() != null) {
                         price = comp.getParPrice().getPrice() * cert.getShares();
                         possibleActions.add(new StartCompany(cert, 
                                 price));
