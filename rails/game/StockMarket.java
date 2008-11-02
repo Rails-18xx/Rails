@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.12 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.13 2008/11/02 20:04:26 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -306,7 +306,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             }
 
         }
-        company.setCurrentPrice(to);
+        company.setCurrentSpace(to);
         new PriceTokenMove(company, from, to);
     }
 

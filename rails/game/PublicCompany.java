@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.40 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.41 2008/11/02 20:04:26 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -715,7 +715,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public void start(StockSpaceI startSpace) {
         hasStarted.set(true);
-        setParPrice(startSpace);
+        setParSpace(startSpace);
         // The current price is set via the Stock Market
         StockMarket.getInstance().start(this, startSpace);
 
@@ -866,7 +866,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * 
      * @param spaceI
      */
-    public void setParPrice(StockSpaceI space) {
+    public void setParSpace(StockSpaceI space) {
         if (hasStockPrice) {
             if (space != null) {
                 parPrice.setPrice(space);
@@ -914,7 +914,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @param price The StockSpace object that defines the new location on the
      * stock market.
      */
-    public void setCurrentPrice(StockSpaceI price) {
+    public void setCurrentSpace(StockSpaceI price) {
         if (price != null) {
             currentPrice.setPrice(price);
         }
