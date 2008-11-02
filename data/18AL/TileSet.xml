@@ -21,8 +21,12 @@
 	<Tile id="-913"/> <!-- Mobile -->
 	
 	<!-- Yellow tiles -->
-	<Tile id="3" quantity="3" />
-	<Tile id="4" quantity="3" />
+	<Tile id="3" quantity="3" >
+		<Upgrade id="142,143" />
+	</Tile>
+	<Tile id="4" quantity="3">
+		<Upgrade id="142"/>
+	</Tile>
 	<Tile id="5" quantity="3">
 		<Upgrade id="14,15" hex="-L5"/>
 		<Upgrade id="1443" hex="L5"/>
@@ -44,7 +48,9 @@
 		<Upgrade id="14,15" hex="-L5"/>
 		<Upgrade id="1443" hex="L5"/>
 	</Tile>
-	<Tile id="58" quantity="3" />
+	<Tile id="58" quantity="3">
+		<Upgrade id="142,143,144" />
+	</Tile>
 	<Tile id="1441" extId="441" quantity="1"><!--Missing!-->
 		<Upgrade id="1442" />
 	</Tile>
