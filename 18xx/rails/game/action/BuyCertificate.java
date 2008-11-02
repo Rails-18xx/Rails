@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.10 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.11 2008/11/02 19:52:48 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -47,9 +47,9 @@ public class BuyCertificate extends PossibleAction {
     }
 
     /** Buy a certificate from some portfolio at the current price */
-    public BuyCertificate(PublicCertificateI certificate, Portfolio from) {
-        this(certificate, from, certificate.getCertificatePrice(), 1);
-    }
+    //public BuyCertificate(PublicCertificateI certificate, Portfolio from) {
+    //    this(certificate, from, certificate.getCertificatePrice(), 1);
+    //}
 
     /** Buy a certificate from some portfolio at a given price */
     public BuyCertificate(PublicCertificateI certificate, Portfolio from,

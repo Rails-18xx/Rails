@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.10 2008/07/08 19:54:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.11 2008/11/02 19:52:48 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -116,7 +116,7 @@ public abstract class Round implements RoundI {
             // Key must put companies in reverse operating order, because sort
             // is ascending.
             if (company.hasStockPrice()) {
-                space = company.getCurrentPrice();
+                space = company.getCurrentSpace();
                 key =
                         1000000 * (999 - space.getPrice()) + 10000
                                 * (99 - space.getColumn()) + 100
@@ -171,9 +171,7 @@ public abstract class Round implements RoundI {
                 // Incremental capitalisation as in 1851
                 capFactor = (100 - unsoldPercentage) / shareUnit;
             }
-            int price =
-                    (company.hasParPrice() ? company.getParPrice()
-                            : company.getCurrentPrice()).getPrice();
+            int price = company.getIPOPrice();
             cash = capFactor * price;
         } else {
             cash = company.getFixedPrice();

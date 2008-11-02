@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.11 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.12 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -458,7 +458,7 @@ public class StartItem {
 
         if (!company.hasStockPrice()) return null;
 
-        if (company.getParPrice() != null) return null;
+        if (company.getIPOPrice() != 0) return null;
 
         return company;
 

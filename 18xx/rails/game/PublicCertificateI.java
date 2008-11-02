@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.8 2008/10/28 21:01:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.9 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
@@ -36,7 +36,7 @@ public interface PublicCertificateI extends Certificate, Moveable {
      * 
      * @return The current certificate price.
      */
-    public int getCertificatePrice();
+    //public int getCertificatePrice();
 
     /**
      * @param b

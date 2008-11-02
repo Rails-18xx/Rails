@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.21 2008/10/30 21:48:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.22 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -115,7 +115,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
      * @return StockSpace object, which defines the company start position on
      * the stock chart.
      */
-    public StockSpaceI getParPrice();
+    public StockSpaceI getStartSpace();
 
     /**
      * Set a new company price.
@@ -131,7 +131,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
      * @return The StockSpace object that defines the current location on the
      * stock market.
      */
-    public StockSpaceI getCurrentPrice();
+    public StockSpaceI getCurrentSpace();
 
     public PriceModel getCurrentPriceModel();
 
@@ -139,9 +139,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public int getFixedPrice();
 
-    /**
-     * @return
-     */
+    public int getIPOPrice ();
+    
+    public int getMarketPrice ();
+
     public int getPublicNumber();
 
     public int getBaseTokensBuyCost();

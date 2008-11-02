@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.11 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.12 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -156,8 +156,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     public void init() {
 
         for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
-            if (!comp.hasStarted() && comp.getParPrice() != null) {
-                comp.getParPrice().addFixedStartPrice(comp);
+            if (!comp.hasStarted() && comp.getStartSpace() != null) {
+                comp.getStartSpace().addFixedStartPrice(comp);
             }
         }
 
@@ -205,7 +205,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     }
 
     public void moveUp(PublicCompanyI company) {
-        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
@@ -218,7 +218,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     }
 
     protected void moveDown(PublicCompanyI company, int numberOfSpaces) {
-        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
@@ -252,7 +252,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     protected void moveRightOrUp(PublicCompanyI company) {
         /* Ignore the amount for now */
-        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
@@ -266,7 +266,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     }
 
     protected void moveLeftOrDown(PublicCompanyI company) {
-        StockSpaceI oldsquare = company.getCurrentPrice();
+        StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();

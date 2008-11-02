@@ -137,8 +137,9 @@ public class StockRound_18EU extends StockRound {
                         }
                         possibleActions.add(action);
                     }
-                } else if (cert.getCertificatePrice() <= playerCash) {
-                    possibleActions.add(new BuyCertificate(cert, from));
+                } else if (comp.getMarketPrice() <= playerCash) {
+                    possibleActions.add(new BuyCertificate(cert, from,
+                            comp.getMarketPrice()));
                 }
 
             }
@@ -158,8 +159,8 @@ public class StockRound_18EU extends StockRound {
             if (isSaleRecorded(currentPlayer, comp)) continue;
             if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
                     cert.getShare()) < 1) continue;
-            stockSpace = comp.getCurrentPrice();
-            price = stockSpace.getPrice();
+            //stockSpace = comp.getCurrentSpace();
+            price = comp.getMarketPrice();
 
             if (companyBoughtThisTurn != null) {
                 continue;
@@ -188,12 +189,13 @@ public class StockRound_18EU extends StockRound {
                 if (!currentPlayer.mayBuyCompanyShare(company, 1)) continue;
                 if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
                         certs.get(0).getShare()) < 1) continue;
-                stockSpace = company.getCurrentPrice();
+                stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
                     && !currentPlayer.mayBuyCertificate(company, 1)) continue;
-                if (cert.getCertificatePrice() <= playerCash) {
+                if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
-                            company.getPortfolio()));
+                            company.getPortfolio(),
+                            company.getMarketPrice()));
                 }
             }
         }
@@ -555,7 +557,7 @@ public class StockRound_18EU extends StockRound {
             // Move the remaining certificates to the company treasury
             Util.moveObjects(company.getPortfolio().getCertificatesPerCompany(
                     company.getName()), pool);
-            int cash = 5 * company.getCurrentPrice().getPrice();
+            int cash = 5 * company.getMarketPrice();
             new CashMove(null, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
                     new String[] { company.getName(), Bank.format(cash) }));

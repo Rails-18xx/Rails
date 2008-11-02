@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.27 2008/10/28 21:01:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.28 2008/11/02 19:52:48 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -337,7 +337,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         for (PublicCertificateI cert : certificates) {
             comp = cert.getCompany();
             if (!comp.hasFloated() || !comp.hasStockPrice()
-                || !cert.getCompany().getCurrentPrice().isNoCertLimit())
+                || !cert.getCompany().getCurrentSpace().isNoCertLimit())
                 number++;
         }
         return number;

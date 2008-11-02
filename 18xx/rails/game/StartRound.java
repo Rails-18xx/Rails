@@ -274,8 +274,8 @@ public abstract class StartRound extends Round implements StartRoundI {
                     if (sharePrice > 0) {
                         // User has told us the start price
                         comp.start(sharePrice);
-                    } else if (comp.getParPrice() != null) {
-                        // Company has a fixed start price
+                    } else if (comp.getIPOPrice() != 0) {
+                        // Company has a known start price
                         comp.start();
                     } else {
                         log.error("No start price for " + comp.getName());
