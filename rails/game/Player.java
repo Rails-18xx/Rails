@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.13 2008/10/12 14:36:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.14 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -134,13 +134,15 @@ public class Player implements CashHolder, Comparable<Player> {
         hasBoughtStockThisTurn = true;
     }
 
+    /*
     public void buyShare(PublicCertificate share) throws NullPointerException {
         try {
-            buyShare(share, share.getCompany().getCurrentPrice().getPrice());
+            buyShare(share, share.getCompany().getCurrentSpace().getPrice());
         } catch (NullPointerException e) {
             throw e;
         }
     }
+    */
 
     public boolean isOverLimits() {
 
@@ -165,7 +167,7 @@ public class Player implements CashHolder, Comparable<Player> {
      * @return True if it is allowed.
      */
     public boolean mayBuyCertificate(PublicCompanyI comp, int number) {
-        if (comp.hasFloated() && comp.getCurrentPrice().isNoCertLimit())
+        if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
         if (portfolio.getNumberOfCountedCertificates() + number > playerCertificateLimit)
             return false;
@@ -184,7 +186,7 @@ public class Player implements CashHolder, Comparable<Player> {
     public boolean mayBuyCompanyShare(PublicCompanyI company, int number) {
         // Check for per-company share limit
         if (portfolio.getShare(company) + number * company.getShareUnit() > playerShareLimit
-            && !company.getCurrentPrice().isNoHoldLimit()) return false;
+            && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
     }
 
@@ -208,7 +210,7 @@ public class Player implements CashHolder, Comparable<Player> {
             limit = playerShareLimit;
         } else {
             limit =
-                    company.getCurrentPrice().isNoHoldLimit() ? 100
+                    company.getCurrentSpace().isNoHoldLimit() ? 100
                             : playerShareLimit;
         }
         return (limit - portfolio.getShare(company)) / shareSize;
@@ -233,12 +235,14 @@ public class Player implements CashHolder, Comparable<Player> {
         }
     }
 
+    /*
     public int sellShare(PublicCertificate share) {
         Portfolio.sellCertificate(share, portfolio,
-                share.getCompany().getCurrentPrice().getPrice());
+                share.getCompany().getCurrentSpace().getPrice());
         Game.getStockMarket().sell(share.getCompany(), 1);
         return 1;
     }
+    */
 
     /**
      * @return Returns the player's portfolio.
@@ -283,7 +287,7 @@ public class Player implements CashHolder, Comparable<Player> {
         int worth = wallet.getCash();
 
         for (PublicCertificateI cert : portfolio.getCertificates()) {
-            worth += cert.getCertificatePrice();
+            worth += cert.getCompany().getMarketPrice();
         }
         for (PrivateCompanyI priv : portfolio.getPrivateCompanies()) {
             worth += priv.getBasePrice();

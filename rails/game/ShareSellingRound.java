@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.13 2008/07/08 19:54:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.14 2008/11/02 19:52:48 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -159,7 +159,7 @@ public class ShareSellingRound extends StockRound {
             if (sellPrices.containsKey(compName)) {
                 price = (sellPrices.get(compName)).getPrice();
             } else {
-                price = company.getCurrentPrice().getPrice();
+                price = company.getMarketPrice();
             }
 
             for (int i = 1; i <= 4; i++) {
@@ -303,7 +303,7 @@ public class ShareSellingRound extends StockRound {
         if (sellPrices.containsKey(companyName)) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
-            sellPrice = company.getCurrentPrice();
+            sellPrice = company.getCurrentSpace();
             price = sellPrice.getPrice();
             sellPrices.put(companyName, sellPrice);
         }

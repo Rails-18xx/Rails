@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.39 2008/10/30 21:48:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.40 2008/11/02 19:52:48 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -880,11 +880,31 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return StockSpace object, which defines the company start position on
      * the stock chart.
      */
-    public StockSpaceI getParPrice() {
+    public StockSpaceI getStartSpace() {
         if (hasParPrice) {
             return parPrice != null ? parPrice.getPrice() : null;
         } else {
             return currentPrice != null ? currentPrice.getPrice() : null;
+        }
+    }
+    
+    public int getIPOPrice () {
+        if (hasParPrice) {
+            if (getStartSpace() != null) {
+                return getStartSpace().getPrice();
+            } else {
+                return 0;
+            }
+        } else {
+            return getMarketPrice();
+        }
+    }
+    
+    public int getMarketPrice () {
+        if (getCurrentSpace() != null) {
+            return getCurrentSpace().getPrice();
+        } else {
+            return 0;
         }
     }
 
@@ -917,7 +937,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return The StockSpace object that defines the current location on the
      * stock market.
      */
-    public StockSpaceI getCurrentPrice() {
+    public StockSpaceI getCurrentSpace() {
         return currentPrice != null ? currentPrice.getPrice() : null;
     }
 

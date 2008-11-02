@@ -171,14 +171,17 @@ public class StockRound extends Round {
                 shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
-                    if (cert.getCertificatePrice() <= playerCash) {
-                        possibleActions.add(new BuyCertificate(cert, from));
+                    price = comp.getIPOPrice();
+                    if (price <= playerCash) {
+                        possibleActions.add(new BuyCertificate(cert, from, price));
                     }
                 } else if (!comp.hasStarted()) {
-                    if (comp.getParPrice() != null) {
-                        price = comp.getParPrice().getPrice() * cert.getShares();
-                        possibleActions.add(new StartCompany(cert, 
-                                price));
+                    if (comp.getIPOPrice() != 0) {
+                        price = comp.getIPOPrice() * cert.getShares();
+                        if (price <= playerCash) {
+                            possibleActions.add(new StartCompany(cert, 
+                                    price));
+                        }
                     } else {
                         List<Integer> startPrices = new ArrayList<Integer>();
                         for (int startPrice : stockMarket.getStartPrices()) {
@@ -194,12 +197,6 @@ public class StockRound extends Round {
                             }
                             possibleActions.add(new StartCompany(cert, prices));
                         }
-                    }
-                } else if (comp.hasParPrice()) {
-                    price = comp.getParPrice().getPrice() * cert.getShares();
-                    if (price <= playerCash) {
-                        possibleActions.add(new BuyCertificate(cert, from,
-                                price));
                     }
                 } 
 
@@ -220,7 +217,7 @@ public class StockRound extends Round {
             if (isSaleRecorded(currentPlayer, comp)) continue;
             if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
                     cert.getShare()) < 1) continue;
-            stockSpace = comp.getCurrentPrice();
+            stockSpace = comp.getCurrentSpace();
             price = stockSpace.getPrice();
 
             if (companyBoughtThisTurn != null) {
@@ -264,12 +261,13 @@ public class StockRound extends Round {
                 if (!currentPlayer.mayBuyCompanyShare(company, 1)) continue;
                 if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
                         certs.get(0).getShare()) < 1) continue;
-                stockSpace = company.getCurrentPrice();
+                stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
                     && !currentPlayer.mayBuyCertificate(company, 1)) continue;
-                if (cert.getCertificatePrice() <= playerCash) {
+                if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
-                            company.getPortfolio()));
+                            company.getPortfolio(),
+                            company.getMarketPrice()));
                 }
             }
         }
@@ -361,7 +359,7 @@ public class StockRound extends Round {
             if (sellPrices.containsKey(compName)) {
                 price = (sellPrices.get(compName)).getPrice();
             } else {
-                price = company.getCurrentPrice().getPrice();
+                price = company.getMarketPrice();
             }
 
             for (int i = 1; i <= 4; i++) {
@@ -513,7 +511,7 @@ public class StockRound extends Round {
             }
 
             // Check if the company has a fixed par price (1835).
-            startSpace = company.getParPrice();
+            startSpace = company.getStartSpace();
             if (startSpace != null) {
                 // If so, it overrides whatever is given.
                 price = startSpace.getPrice();
@@ -550,14 +548,14 @@ public class StockRound extends Round {
 
         // Transfer the President's certificate
         currentPlayer.getPortfolio().buyCertificate(cert, ipo,
-                cert.getCertificatePrice());
+                company.getIPOPrice());
 
         // If more than one certificate is bought at the same time, transfer
         // these too.
         for (int i = 1; i < numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
             currentPlayer.getPortfolio().buyCertificate(cert, ipo,
-                    cert.getCertificatePrice());
+                    company.getIPOPrice());
         }
 
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG", new String[] {
@@ -642,7 +640,7 @@ public class StockRound extends Round {
             PublicCompanyI companyBoughtThisTurn =
                     (PublicCompanyI) companyBoughtThisTurnWrapper.getObject();
             if (companyBoughtThisTurn != null
-                && (companyBoughtThisTurn != company || !company.getCurrentPrice().isNoBuyLimit())) {
+                && (companyBoughtThisTurn != company || !company.getCurrentSpace().isNoBuyLimit())) {
                 errMsg = LocalText.getText("AlreadyBought", playerName);
                 break;
             }
@@ -657,9 +655,9 @@ public class StockRound extends Round {
 
             StockSpaceI currentSpace;
             if (from == ipo && company.hasParPrice()) {
-                currentSpace = company.getParPrice();
+                currentSpace = company.getStartSpace();
             } else {
-                currentSpace = company.getCurrentPrice();
+                currentSpace = company.getCurrentSpace();
             }
 
             // Check if it is allowed to buy more than one certificate (if
@@ -902,7 +900,7 @@ public class StockRound extends Round {
         if (sellPrices.containsKey(companyName)) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
-            sellPrice = company.getCurrentPrice();
+            sellPrice = company.getCurrentSpace();
             price = sellPrice.getPrice();
             sellPrices.put(companyName, sellPrice);
         }
@@ -1020,9 +1018,9 @@ public class StockRound extends Round {
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
                 if (company.hasStockPrice() && company.isSoldOut()) {
-                    StockSpaceI oldSpace = company.getCurrentPrice();
+                    StockSpaceI oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
-                    StockSpaceI newSpace = company.getCurrentPrice();
+                    StockSpaceI newSpace = company.getCurrentSpace();
                     if (newSpace != oldSpace) {
                         ReportBuffer.add(LocalText.getText("SoldOut",
                                 new String[] { company.getName(),
