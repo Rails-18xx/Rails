@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseI.java,v 1.5 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseI.java,v 1.6 2008/11/03 15:55:00 evos Exp $ */
 package rails.game;
 
 import java.util.Map;
@@ -28,4 +28,7 @@ public interface PhaseI extends ConfigurableComponentI {
     public int getNumberOfOperatingRounds();
 
     public int getOffBoardRevenueStep();
+
+    public String getParameterAsString (String key);
+    public int getParameterAsInteger (String key);
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.8 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.9 2008/11/03 15:55:00 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -41,6 +41,11 @@ public class Phase implements PhaseI {
 
     /** Items to close if a phase gets activated */
     protected List<Closeable> closedObjects = null;
+    
+    /** A HashMap to contain phase-dependent parameters
+     * by name and value.
+     */
+    protected Map<String, String> parameters = null;
 
     // protected static boolean previousPrivateSellingAllowed = false;
     // protected static int previousNumberOfOperatingRounds = 1;
@@ -65,6 +70,12 @@ public class Phase implements PhaseI {
             trainTradingAllowed = defaults.trainTradingAllowed;
             oneTrainPerTurn = defaults.oneTrainPerTurn;
             oneTrainPerTypePerTurn = defaults.oneTrainPerTypePerTurn;
+            if (defaults.parameters != null) {
+                this.parameters = new HashMap<String, String>();
+                for (String key : defaults.parameters.keySet()) {
+                    parameters.put(key, defaults.parameters.get(key));
+                }
+            }
         }
 
         // String colourList;
@@ -117,6 +128,15 @@ public class Phase implements PhaseI {
             oneTrainPerTypePerTurn =
                     trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
                             oneTrainPerTypePerTurn);
+        }
+        
+        Tag parameterTag = tag.getChild("Parameters");
+        if (parameterTag != null) {
+            if (parameters == null) parameters = new HashMap<String, String>();
+            Map<String,String> attributes = parameterTag.getAttributes();
+            for (String key : attributes.keySet()) {
+                parameters.put (key, attributes.get(key));
+            }
         }
     }
 
@@ -189,6 +209,28 @@ public class Phase implements PhaseI {
             closedObjects = new ArrayList<Closeable>();
         }
         closedObjects.add(object);
+    }
+    
+    public String getParameterAsString (String key) {
+        if (parameters != null) {
+            return parameters.get(key);
+        } else {
+            return null;
+        }
+    }
+    
+    public int getParameterAsInteger (String key) {
+        String stringValue = getParameterAsString(key);
+        if (stringValue == null) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(stringValue);
+        } catch (Exception e) {
+            log.error ("Error while parsing parameter "+key+" in phase "+name, e);
+            return 0;
+        }
+
     }
 
     public String toString() {
