@@ -5,10 +5,10 @@
   <CompanyType name="Public" class="rails.game.PublicCompany">
     <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
     <PoolPaysOut/>
-    <Float percentage="30"/><!-- Should be variable-->
     <ShareUnit percentage="10"/>
     <Certificate type="President" shares="2"/>
     <Certificate shares="1" number="8"/>
+	<Capitalisation type="incremental"/>
 	<BaseTokens>
 		<LayCost method="sequence" cost="0,40,100"/>
 	</BaseTokens>
