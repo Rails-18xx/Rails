@@ -48,28 +48,23 @@
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="1"/>
 			<Trains tradingAllowed="yes"/>
-			<Parameters floatPercentage="20"/>
 		</Phase>
 		<Phase name="2">
 			<Tiles colour="yellow,green"/>
 			<OperatingRounds number="2"/>
 			<Privates sellingAllowed="yes"/>
-			<Parameters floatPercentage="30"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
-			<Parameters floatPercentage="40"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green,brown"/>
 			<OperatingRounds number="3"/>
 			<Privates close="yes"/>
 			<OffBoardRevenue step="2"/>
-			<Parameters floatPercentage="50"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown,grey"/>
-			<Parameters floatPercentage="60"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown,grey"/>
