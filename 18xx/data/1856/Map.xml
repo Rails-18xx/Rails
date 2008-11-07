@@ -1,6 +1,6 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="horizontal" even="A">
 	<Hex name="A20" tile="-902" value="30,50,60" city="Detroit/Windsor"/>
-	<Hex name="B13" tile="-902" value="30,50,50" city="Sarnia"/>
+	<Hex name="B13" tile="-902" orientation="1" value="30,50,50" city="Sarnia"/>
 	<Hex name="B15" tile="0"/>
 	<Hex name="B17" tile="0"/>
 	<Hex name="B19" tile="-10" label="L" city="Chatham"/>
