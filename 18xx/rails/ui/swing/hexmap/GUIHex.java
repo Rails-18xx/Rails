@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.18 2008/06/04 19:00:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.19 2008/11/07 00:52:11 krazick Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -319,19 +319,21 @@ public class GUIHex implements ViewObject {
                     Game.getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompanyI p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();
-                for (MapHex hex : blocked) {
-                    if (getHexModel().equals(hex)) {
-                        g2.drawString(
-                                "(" + p.getName() + ")",
-                                rectBound.x
-                                        + (rectBound.width - fontMetrics.stringWidth("("
-                                                                                     + p.getName()
-                                                                                     + ")"))
-                                        * 1 / 2,
-                                rectBound.y
-                                        + ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
-                    }
-                }
+				if (blocked != null) {
+					for (MapHex hex : blocked) {
+						if (getHexModel().equals(hex)) {
+							g2.drawString(
+										  "(" + p.getName() + ")",
+										  rectBound.x
+										  + (rectBound.width - fontMetrics.stringWidth("("
+																					   + p.getName()
+																					   + ")"))
+										  * 1 / 2,
+										  rectBound.y
+										  + ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
+						}
+					}
+				}
             }
         }
 
