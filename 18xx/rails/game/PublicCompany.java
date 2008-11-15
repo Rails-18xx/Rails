@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.41 2008/11/02 20:04:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.42 2008/11/15 13:42:27 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -55,6 +55,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Destination hex * */
     protected MapHex destinationHex = null;
+    protected BooleanState hasReachedDestination = null;
 
     /** Sequence number in the array of public companies - may not be useful */
     protected int publicNumber = -1; // For internal use
@@ -277,6 +278,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             MapHex hex = MapManager.getInstance().getHex(destHexName);
             if (hex != null) {
                 destinationHex = hex;
+                hasReachedDestination = new BooleanState (name+"_reachedDestination", false); 
             } else {
                 throw new ConfigurationException("Invalid destination hex "
                                                  + destHexName
@@ -696,6 +698,19 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public MapHex getDestinationHex() {
         return destinationHex;
+    }
+    
+    public boolean hasDestination () {
+        return destinationHex != null;
+    }
+    
+    public boolean hasReachedDestination() {
+        return hasReachedDestination != null &&
+            hasReachedDestination.booleanValue();
+    }
+    
+    public void setReachedDestination (boolean value) {
+        hasReachedDestination.set(value);
     }
 
     /**
