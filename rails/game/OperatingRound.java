@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.42 2008/10/26 20:47:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.43 2008/11/15 13:43:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -129,10 +129,10 @@ public class OperatingRound extends Round implements Observer {
 
     public void start(boolean operate, String orNumber) {
 
-        if (operatingCompanyIndexObject == null) {
-            operatingCompanyIndexObject =
-                    new IntegerState("OperatingCompanyIndex", 0);
-        }
+        //if (operatingCompanyIndexObject == null) {
+        //    operatingCompanyIndexObject =
+        //            new IntegerState("OperatingCompanyIndex", 0);
+        //}
 
         if (players == null) {
             players = gameManager.getPlayers();
@@ -152,13 +152,13 @@ public class OperatingRound extends Round implements Observer {
 
             if (operatingCompanyArray.length > 0) {
                 gameManager.setRound(this);
-                operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-                operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
-                setStep(STEP_INITIAL);
+                if (setNextOperatingCompany(true)) {
+                    setStep(STEP_INITIAL);
+                    return;
+                }
             }
 
-            return;
         }
 
         // No operating companies yet: close the round.
@@ -320,7 +320,8 @@ public class OperatingRound extends Round implements Observer {
 
             if (tile == null) break;
 
-            if (!tile.isLayableNow()) {
+            //if (!tile.isLayableNow()) {
+            if (!currentPhase.isTileColourAllowed(tile.getColourName())) {
                 errMsg =
                         LocalText.getText("TileNotYetAvailable",
                                 tile.getExternalId());
@@ -1121,17 +1122,34 @@ public class OperatingRound extends Round implements Observer {
             priv.checkClosingIfExercised(true);
         }
         
-        if (operatingCompanyIndex >= operatingCompanyArray.length - 1) {
-
-            finishOR();
-
-        } else {
-
-            operatingCompanyIndexObject.add(1);
-            operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-            operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+        if (setNextOperatingCompany(false)) {
 
             setStep(STEP_INITIAL);
+        } else {
+            finishOR();
+        }
+    }
+    
+    protected boolean setNextOperatingCompany(boolean initial) {
+        
+        
+        if (operatingCompanyIndexObject == null) {
+            operatingCompanyIndexObject =
+                    new IntegerState("OperatingCompanyIndex");
+        }
+        if (initial) {
+            operatingCompanyIndexObject.set(0);
+        } else {
+            operatingCompanyIndexObject.add(1);
+        }
+        
+        operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+        
+        if (operatingCompanyIndex >= operatingCompanyArray.length) {
+            return false;
+        } else {
+            operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+            return true;
         }
     }
 
