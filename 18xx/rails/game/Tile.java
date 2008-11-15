@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.20 2008/06/30 20:35:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.21 2008/11/15 13:41:11 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -327,9 +327,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
      * 
      * @return
      */
-    public boolean isLayableNow() {
-        return GameManager.getInstance().getCurrentPhase().isTileColourAllowed(colourName);
-    }
+    // public boolean isLayableNow() {
+    //    return GameManager.getInstance().getCurrentPhase().isTileColourAllowed(colourName);
+    //}
 
     /**
      * Get the valid upgrades if this tile on a certain hex (restrictions per

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.11 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.12 2008/11/15 13:41:11 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public interface TileI {
 
     public boolean isUpgradeable();
 
-    public boolean isLayableNow();
+    //public boolean isLayableNow();
 
     public List<TileI> getUpgrades(MapHex hex);
 
