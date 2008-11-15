@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.21 2008/11/15 13:41:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.22 2008/11/15 21:22:50 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -184,11 +184,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                 }
             }
         }
-        /*
-         * if (stations != null) { for (Station station : stations) { List<Track>
-         * tt = tracksPerStation.get(station); if (tt == null) continue; // TODO
-         * Put tracks into stations? } }
-         */
 
         /* External (printed) id */
         externalId = setTag.getAttributeAsInteger("extId", externalId);
@@ -321,15 +316,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     public boolean isUpgradeable() {
         return colourNumber >= 0;
     }
-
-    /**
-     * Is the tile layable now (in the current phase)?
-     * 
-     * @return
-     */
-    // public boolean isLayableNow() {
-    //    return GameManager.getInstance().getCurrentPhase().isTileColourAllowed(colourName);
-    //}
 
     /**
      * Get the valid upgrades if this tile on a certain hex (restrictions per
