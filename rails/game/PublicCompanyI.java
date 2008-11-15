@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.23 2008/11/02 20:04:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.24 2008/11/15 13:42:27 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -328,7 +328,10 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public void setHomeCityNumber(int homeCityNumber);
 
     public MapHex getDestinationHex();
-
+    public boolean hasDestination ();
+    public boolean hasReachedDestination();
+    public void setReachedDestination (boolean value);
+    
     public int getNumberOfTileLays(String tileColour);
 
     public boolean mustOwnATrain();
