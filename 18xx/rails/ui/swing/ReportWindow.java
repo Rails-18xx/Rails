@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.5 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.6 2008/11/18 22:12:50 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -32,6 +32,8 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
         message.setBackground(Color.WHITE);
         message.setOpaque(true);
         message.setVerticalAlignment(SwingConstants.TOP);
+        message.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
         messagePanel = new JPanel(new GridBagLayout());
         messageScroller =
                 new JScrollPane(message,
@@ -47,9 +49,6 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
 
         setSize(400, 400);
         setLocation(600, 400);
-
-        messagePanel.setBorder(BorderFactory.createEtchedBorder());
-
         setTitle("Rails: Game log");
         addWindowListener(this);
         addKeyListener(this);
@@ -62,7 +61,11 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
             buffer.insert(buffer.length() - 7, newText.replaceAll("\n", "<br>"));
 
             messageWindow.message.setText(buffer.toString());
-            messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+                }
+            });
         }
     }
 
