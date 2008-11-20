@@ -28,16 +28,16 @@
 		
 	<!-- Yellow tiles -->
 	<Tile id="1" quantity="1">
-		<Upgrade id="14" phase="5"/>
+		<Upgrade id="14" phase="5,6"/>
 	</Tile>
 	<Tile id="2" quantity="1">
-		<Upgrade id="15" phase="5"/>
+		<Upgrade id="15" phase="5,6"/>
 	</Tile>
 	<Tile id="3" quantity="3">
-		<Upgrade id="5,7" phase="5"/>
+		<Upgrade id="5,7" phase="5,6"/>
 	</Tile>
 	<Tile id="4" quantity="3">
-		<Upgrade id="57,9" phase="5"/>
+		<Upgrade id="57,9" phase="5,6"/>
 	</Tile>
 	<Tile id="5" quantity="2">
 		<Upgrade id="14,15" />
@@ -55,27 +55,27 @@
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="55" quantity="1">
-		<Upgrade id="14" phase="5"/>
+		<Upgrade id="14" phase="5,6"/>
 	</Tile>
 	<Tile id="56" quantity="1">
-		<Upgrade id="15" phase="5"/>
+		<Upgrade id="15" phase="5,6"/>
 	</Tile>
 	<Tile id="57" quantity="4">
 		<Upgrade id="14,15" />
 	</Tile>
 	<Tile id="58" quantity="3">
-		<Upgrade id="6,8" phase="5"/>
+		<Upgrade id="6,8" phase="5,6"/>
 	</Tile>
 	<Tile id="69" quantity="1" />
 	
 	<!-- Green tiles -->
 	<Tile id="14" quantity="4">
-		<Upgrade id="63" />
-		<Upgrade id="125" hexLabel="L"/>
+		<Upgrade id="63" hex="D17,G12,H15,I8,J11,J13,J15,K8"/>
+		<Upgrade id="125" hex="B19,C14,F17,L13,N3,O18,P9"/>
 	</Tile>
 	<Tile id="15" quantity="4">
-		<Upgrade id="63" />
-		<Upgrade id="125" hexLabel="L"/>
+		<Upgrade id="63" hex="D17,G12,H15,I8,J11,J13,J15,K8"/>
+		<Upgrade id="125" hex="B19,C14,F17,L13,N3,O18,P9"/>
 	</Tile>
 	<Tile id="16" quantity="1">
 		<Upgrade id="43,70" />
@@ -114,13 +114,14 @@
 		<Upgrade id="39,43,45,70" />
 	</Tile>
 	<Tile id="59" quantity="2">
-		<Upgrade id="63,64,65,66,67,68" />
+		<Upgrade id="64,65,66,67,68" />
 	</Tile>
 	<Tile id="120" quantity="1">
 		<Upgrade id="122" />
 	</Tile>
 	<Tile id="121" quantity="2">
-		<Upgrade id="126,127" />
+		<Upgrade id="126" hex="F15"/>
+		<Upgrade id="127" hex="M4"/>
 	</Tile>
 
 	<!-- Brown tiles -->
@@ -134,11 +135,21 @@
 	<Tile id="46" quantity="2" />
 	<Tile id="47" quantity="2" />
 	<Tile id="63" quantity="4" />
-	<Tile id="64" quantity="1" />
-	<Tile id="65" quantity="1" />
-	<Tile id="66" quantity="1" />
-	<Tile id="67" quantity="1" />
-	<Tile id="68" quantity="1" />
+	<Tile id="64" quantity="1">
+		<Upgrade id="123" hex="L15"/>
+	</Tile>
+	<Tile id="65" quantity="1">
+		<Upgrade id="123" hex="L15"/>
+	</Tile>
+	<Tile id="66" quantity="1">
+		<Upgrade id="123" hex="L15"/>
+	</Tile>
+	<Tile id="67" quantity="1">
+		<Upgrade id="123" hex="L15"/>
+	</Tile>
+	<Tile id="68" quantity="1">
+		<Upgrade id="123" hex="L15"/>
+	</Tile>
 	<Tile id="70" quantity="1" />
 	<Tile id="122" quantity="1">
 		<Upgrade id="124" />
