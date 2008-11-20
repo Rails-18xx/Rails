@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.43 2008/11/15 13:43:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.44 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -44,8 +44,6 @@ public class OperatingRound extends Round implements Observer {
     protected Map<String, Integer> tileLaysPerColour =
             new HashMap<String, Integer>();
 
-    // protected Map<MapHex, SpecialPropertyI> specialPropertyPerHex
-    // = new HashMap<MapHex, SpecialPropertyI>();
     protected List<LayBaseToken> currentNormalTokenLays =
             new ArrayList<LayBaseToken>();
 
@@ -74,10 +72,6 @@ public class OperatingRound extends Round implements Observer {
     static protected List<Player> players;
 
     static protected int numberOfPlayers = 0;
-
-    // static protected int relativeORNumber = 0;
-
-    // static protected int cumulativeORNumber = 0;
 
     /* Constants */
     public static final int SPLIT_NOT_ALLOWED = 0;
@@ -121,18 +115,9 @@ public class OperatingRound extends Round implements Observer {
      * Start Packet has not yet been sold completely.
      */
     public OperatingRound() {
-        // relativeORNumber++;
-        // cumulativeORNumber++;
-        // thisOrNumber = getCompositeORNumber();
-
    }
 
     public void start(boolean operate, String orNumber) {
-
-        //if (operatingCompanyIndexObject == null) {
-        //    operatingCompanyIndexObject =
-        //            new IntegerState("OperatingCompanyIndex", 0);
-        //}
 
         if (players == null) {
             players = gameManager.getPlayers();
@@ -168,44 +153,7 @@ public class OperatingRound extends Round implements Observer {
         gameManager.nextRound(this);
     }
 
-    /*----- General methods -----*/
 
-    /**
-     * Return the operating round (OR) number in the format sr.or, where sr is
-     * the last stock round number and or is the relative OR number.
-     * 
-     * @return Composite SR/OR number.
-     */
-    // public String getCompositeORNumber() {
-    // return StockRound.getLastStockRoundNumber() + "." + relativeORNumber;
-    // }
-    /**
-     * Get the relative OR number. This number restarts at 1 after each stock
-     * round.
-     * 
-     * @return Relative OR number
-     */
-    // public int getRelativeORNumber() {
-    // return relativeORNumber;
-    // }
-    /**
-     * Get the cumulative OR number. This number never restarts.
-     * 
-     * @return Cumulative OR number.
-     */
-    // public int getCumulativeORNumber() {
-    // return cumulativeORNumber;
-    // }
-    // public static int getLastORNumber() {
-    // return cumulativeORNumber;
-    // }
-    /**
-     * //@deprecated Currently needed, but will be removed in a later stage.
-     */
-    // @Deprecated
-    // public static void resetRelativeORNumber() {
-    // relativeORNumber = 0;
-    // }
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
     @Override
@@ -255,6 +203,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof BuyPrivate) {
 
             result = buyPrivate((BuyPrivate) selectedAction);
+            
+        } else if (selectedAction instanceof ReachDestinations) {
+            
+            result = reachDestinations ((ReachDestinations) selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -320,7 +272,6 @@ public class OperatingRound extends Round implements Observer {
 
             if (tile == null) break;
 
-            //if (!tile.isLayableNow()) {
             if (!currentPhase.isTileColourAllowed(tile.getColourName())) {
                 errMsg =
                         LocalText.getText("TileNotYetAvailable",
@@ -408,8 +359,7 @@ public class OperatingRound extends Round implements Observer {
         MoveSet.start(true);
 
         if (tile != null) {
-            if (cost > 0) // Bank.transferCash((CashHolder) operatingCompany,
-                // null, cost);
+            if (cost > 0) 
                 new CashMove(operatingCompany, null, cost);
             operatingCompany.layTile(hex, tile, orientation, cost);
 
@@ -446,8 +396,6 @@ public class OperatingRound extends Round implements Observer {
         if (tile == null || currentNormalTileLays.isEmpty()
             && currentSpecialTileLays.isEmpty()) {
             nextStep();
-        } else {
-            // setPossibleActions("layTile");
         }
 
         return true;
@@ -463,7 +411,6 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean checkNormalTileLay(TileI tile, boolean update) {
 
-        // if (currentNormalTileLays.isEmpty()) return false;
         if (tileLaysPerColour.isEmpty()) return false;
         String colour = tile.getColourName();
 
@@ -556,8 +503,12 @@ public class OperatingRound extends Round implements Observer {
 
             // Does the company have the money?
             if (cost > operatingCompany.getCash()) {
-                errMsg = LocalText.getText("NotEnoughMoney", companyName);
-                break;
+                errMsg = LocalText.getText("NotEnoughMoney", new String[] {
+                        companyName,
+                        Bank.format(operatingCompany.getCash()),
+                        Bank.format(cost)
+                        });
+                 break;
             }
             break;
         }
@@ -609,8 +560,6 @@ public class OperatingRound extends Round implements Observer {
             if (currentNormalTokenLays.isEmpty()
                 && currentSpecialTokenLays.isEmpty()) {
                 nextStep();
-            } else {
-                // setPossibleActions("layBaseToken");
             }
 
         }
@@ -892,8 +841,6 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        // if (step >= steps.length) {
-        // done();
         if (step == STEP_FINAL) {
             finishTurn();
         } else {
@@ -984,9 +931,6 @@ public class OperatingRound extends Round implements Observer {
                  * If the special tile lay is not extra, it is only allowed if
                  * normal tile lays are also (still) allowed
                  */
-                // for (MapHex hex : stl.getLocations()) {
-                // specialPropertyPerHex.put(hex, stl);
-                // }
                 currentSpecialTileLays.add(new LayTile(stl));
             }
         }
@@ -1014,8 +958,7 @@ public class OperatingRound extends Round implements Observer {
 
         /* Special-property tile lays */
         currentSpecialTokenLays.clear();
-        // specialPropertyPerHex.clear();
-
+ 
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
@@ -1030,7 +973,6 @@ public class OperatingRound extends Round implements Observer {
                  * If the special tile lay is not extra, it is only allowed if
                  * normal tile lays are also (still) allowed
                  */
-                // specialPropertyPerHex.put(stl.getLocation(), stl);
                 currentSpecialTokenLays.add(new LayBaseToken(stl));
             }
         }
@@ -1218,8 +1160,6 @@ public class OperatingRound extends Round implements Observer {
                 // From the Bank
                 presidentCash = action.getPresidentCashToAdd();
                 if (currentPlayer.getCash() >= presidentCash) {
-                    // new CashMove(currentPlayer, operatingCompany,
-                    // presidentCash);
                     actualPresidentCash = presidentCash;
                 } else {
                     presidentMustSellShares = true;
@@ -1235,9 +1175,7 @@ public class OperatingRound extends Round implements Observer {
                                     Bank.format(action.getPresidentCashToAdd()));
                     break;
                 } else if (currentPlayer.getCash() >= presidentCash) {
-                    // new CashMove(currentPlayer, operatingCompany,
-                    // presidentCash);
-                    actualPresidentCash = presidentCash;
+                     actualPresidentCash = presidentCash;
                 } else {
                     presidentMustSellShares = true;
                     cashToBeRaisedByPresident =
@@ -1326,7 +1264,6 @@ public class OperatingRound extends Round implements Observer {
             stepObject.set(STEP_DISCARD_TRAINS);
         }
 
-        // setPossibleActions("buyTrain");
         return true;
     }
 
@@ -1517,6 +1454,38 @@ public class OperatingRound extends Round implements Observer {
         return true;
 
     }
+    
+    public boolean reachDestinations (ReachDestinations action) {
+        
+        List<PublicCompanyI> destinedCompanies
+            = action.getReachedCompanies();
+        if (destinedCompanies != null) {
+            for (PublicCompanyI company : destinedCompanies) {
+                if (company.hasDestination() 
+                        && !company.hasReachedDestination()) {
+                    if (!MoveSet.isOpen()) MoveSet.start(true);
+                    company.setReachedDestination(true);
+                    ReportBuffer.add(LocalText.getText("DestinationReached", new String[] {
+                        company.getName(),
+                        company.getDestinationHex().getName()
+                    }));
+                    // Process any consequences of reaching a destination
+                    // (default none)
+                    reachDestination (company);
+                }
+            }
+        }
+        return true;
+    }
+    
+    /** Stub for applying any follow-up actions when
+     * a company reaches it destinations. 
+     * Default version: no actions.
+     * @param company
+     */
+    protected void reachDestination (PublicCompanyI company) {
+        
+    }
 
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
@@ -1574,8 +1543,6 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public boolean setPossibleActions() {
 
-        // log.debug("Called from ", new Exception("HERE"));
-
         operatingCompanyIndex = operatingCompanyIndexObject.intValue();
         operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
@@ -1594,6 +1561,7 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.addAll(currentNormalTileLays);
             possibleActions.addAll(currentSpecialTileLays);
             possibleActions.add(new NullAction(NullAction.SKIP));
+
         } else if (step == STEP_LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
@@ -1628,6 +1596,8 @@ public class OperatingRound extends Round implements Observer {
         }
 
         setBonusTokenLays();
+        
+        setDestinationActions();
 
         setGameSpecificPossibleActions();
 
@@ -1685,7 +1655,7 @@ public class OperatingRound extends Round implements Observer {
         int cash = operatingCompany.getCash();
         int cost;
         List<TrainI> trains;
-        // TrainI train;
+
         boolean hasTrains =
                 operatingCompany.getPortfolio().getNumberOfTrains() > 0;
         boolean atTrainLimit =
@@ -1857,6 +1827,16 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
         }
+    }
+    
+    /** 
+     * This is currently a stub, as it is unclear if there is a common
+     * rule for setting destination reaching options.
+     * See OperatingRound_1856 for a first implementation
+     * of such rules.     
+     */
+    protected void setDestinationActions () {
+        
     }
 
     /* TODO This is just a start of a possible approach to a Help system */

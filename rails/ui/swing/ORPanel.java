@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.26 2008/10/12 14:36:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.27 2008/11/20 21:49:38 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -171,7 +171,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void recreate(OperatingRound or) {
-        log.debug("ORPanel.recreate() called"/* , new Exception("TRACE") */);
+        log.debug("ORPanel.recreate() called");
 
         companies = (or).getOperatingCompanies();
         nc = companies.length;
@@ -507,9 +507,6 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         revenueCaption.setHighlight(false);
         trainCaption.setHighlight(false);
         if (privatesCanBeBought) privatesCaption.setHighlight(false);
-        // if (orCompIndex >= 0)
-        // president[orCompIndex].setHighlight(false);
-        // }
         for (int i = 0; i < president.length; i++) {
             president[i].setHighlight(false);
         }

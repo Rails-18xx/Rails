@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.12 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.13 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -153,8 +153,8 @@ public class StartItem {
             PublicCertificateI pubcert = (PublicCertificateI) primary;
 
             if (pubcert.getPortfolio() == null
-                || !pubcert.getPortfolio().getName().equals("Unavailable"))
-                unavailable.buyCertificate(pubcert, pubcert.getPortfolio(), 0);
+                || pubcert.getPortfolio() != unavailable)
+                pubcert.moveTo(unavailable);
         }
 
         // Check if there is another certificate
@@ -169,9 +169,8 @@ public class StartItem {
                                 president2);
                 // Move the certificate to the "unavailable" pool.
                 PublicCertificateI pubcert2 = (PublicCertificateI) secondary;
-                if (!pubcert2.getPortfolio().getName().equals("Unavailable"))
-                    unavailable.buyCertificate(pubcert2,
-                            pubcert2.getPortfolio(), 0);
+                if (pubcert2.getPortfolio() != unavailable)
+                    pubcert2.moveTo(unavailable);
             }
         }
 

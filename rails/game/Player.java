@@ -1,7 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.14 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.15 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.model.*;
@@ -44,9 +43,6 @@ public class Player implements CashHolder, Comparable<Player> {
     private boolean hasBoughtStockThisTurn = false;
 
     private Portfolio portfolio = null;
-
-    private ArrayList<PublicCompanyI> companiesSoldThisTurn =
-            new ArrayList<PublicCompanyI>();
 
     public static void setLimits(int number, int cash, int certLimit) {
         if (number > 1 && number <= MAX_PLAYERS) {
@@ -105,44 +101,6 @@ public class Player implements CashHolder, Comparable<Player> {
         worth = new CalculatedMoneyModel(this, "getWorth");
         wallet.addDependent(worth);
     }
-
-    /**
-     * @param share
-     * @throws NullPointerException if company hasn't started yet. UI needs to
-     * handle this.
-     */
-    public void buyShare(PublicCertificate share, int price)
-            throws NullPointerException {
-        if (hasBoughtStockThisTurn) return;
-
-        for (int i = 0; i < companiesSoldThisTurn.size(); i++) {
-            if (share.company.getName().equalsIgnoreCase(
-                    companiesSoldThisTurn.get(i).toString())) return;
-        }
-
-        if (portfolio.getCertificates().size() >= playerCertificateLimit)
-            return;
-
-        try {
-            // throws nullpointer if company hasn't started yet.
-            // it's up to the UI to catch this and gracefully start the company.
-            getPortfolio().buyCertificate(share, share.getPortfolio(), price);
-        } catch (NullPointerException e) {
-            throw e;
-        }
-
-        hasBoughtStockThisTurn = true;
-    }
-
-    /*
-    public void buyShare(PublicCertificate share) throws NullPointerException {
-        try {
-            buyShare(share, share.getCompany().getCurrentSpace().getPrice());
-        } catch (NullPointerException e) {
-            throw e;
-        }
-    }
-    */
 
     public boolean isOverLimits() {
 
@@ -215,34 +173,6 @@ public class Player implements CashHolder, Comparable<Player> {
         }
         return (limit - portfolio.getShare(company)) / shareSize;
     }
-
-    /**
-     * Front-end method for buying any kind of certificate from anyone.
-     * 
-     * @param cert PrivateCompany or PublicCertificate.
-     * @param from Portfolio of seller.
-     * @param price Price.
-     */
-    public void buy(Certificate cert, int price) {
-
-        if (cert instanceof PrivateCompanyI) {
-            portfolio.buyPrivate((PrivateCompanyI) cert, cert.getPortfolio(),
-                    price);
-        } else if (cert instanceof PublicCertificateI) {
-            Portfolio from = cert.getPortfolio();
-            portfolio.buyCertificate((PublicCertificateI) cert, from, price);
-            ((PublicCertificateI) cert).getCompany().checkPresidencyOnBuy(this);
-        }
-    }
-
-    /*
-    public int sellShare(PublicCertificate share) {
-        Portfolio.sellCertificate(share, portfolio,
-                share.getCompany().getCurrentSpace().getPrice());
-        Game.getStockMarket().sell(share.getCompany(), 1);
-        return 1;
-    }
-    */
 
     /**
      * @return Returns the player's portfolio.

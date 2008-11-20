@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.7 2008/11/02 19:52:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.8 2008/11/20 21:49:38 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -369,7 +369,8 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, cert.getShares(), false);
-            portfolio.buyCertificate(cert2, from, shares * price);
+            //portfolio.buyCertificate(cert2, from, shares * price);
+            executeTradeCertificate(cert2, portfolio, shares * price);
         }
 
         hasBought.set(true);
@@ -492,8 +493,10 @@ public class TreasuryShareRound extends StockRound {
 
         // Transfer the sold certificates
         for (PublicCertificateI cert2 : certsToSell) {
-            if (cert2 != null)
-                pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
+            if (cert2 != null) {
+                //pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
+                executeTradeCertificate (cert2, pool, cert2.getShares() * price);
+            }
         }
         stockMarket.sell(company, numberSold);
 

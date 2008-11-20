@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.18 2008/10/26 20:47:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.19 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,7 +8,6 @@ import rails.game.move.Moveable;
 import rails.game.move.MoveableHolderI;
 import rails.game.move.ObjectMove;
 import rails.game.special.SpecialPropertyI;
-import rails.game.special.SpecialTokenLay;
 import rails.util.LocalText;
 import rails.util.Tag;
 import rails.util.Util;
@@ -53,7 +52,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         blockedTag.getAttributeAsString("hex").split(",");
                 if (hexes != null && hexes.length > 0) {
                     blockedHexes = new ArrayList<MapHex>();
-                    // for (int i = 0; i < hexes.length; i++)
                     for (String hexName : hexes) {
                         MapHex hex = MapManager.getInstance().getHex(hexName);
                         blockedHexes.add(hex);
@@ -79,14 +77,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     sp.setCompany(this);
                     specialProperties.add(sp);
                     sp.configureFromXML(spTag);
-
-                    /*
-                    if (sp instanceof SpecialTokenLay
-                        && ((SpecialTokenLay) sp).getToken() instanceof BonusToken) {
-                        GameManager.setBonusTokensExist(true);
-                    }
-                    */
-
                 }
             }
             

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.14 2008/11/02 19:52:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.15 2008/11/20 21:49:38 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -318,7 +318,7 @@ public class ShareSellingRound extends StockRound {
         // Check if the presidency has changed
         if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[] {
-                    dumpedPlayer.getName(), companyName }));
+                    dumpedPlayer.getName(), companyName}));
             // First swap the certificates
             Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
             List<PublicCertificateI> swapped =
@@ -330,8 +330,10 @@ public class ShareSellingRound extends StockRound {
 
         // Transfer the sold certificates
         for (PublicCertificateI cert2 : certsToSell) {
-            if (cert2 != null)
-                pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
+            if (cert2 != null) {
+                //pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
+                executeTradeCertificate (cert2, pool, cert2.getShares() * price);
+            }
         }
         stockMarket.sell(company, numberSold);
 
@@ -345,7 +347,8 @@ public class ShareSellingRound extends StockRound {
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                             new String[] { otherPlayer.getName(),
-                                    company.getName() }));
+                                company.getName() 
+                                     }));
                     break;
                 }
             }

@@ -20,7 +20,6 @@ public abstract class StartRound extends Round implements StartRoundI {
     protected IntegerState numPasses = new IntegerState("StartRoundPasses");
     protected int numPlayers;
     protected String variant;
-    //protected GameManager gameMgr;
     protected Player currentPlayer;
 
     /**
@@ -73,7 +72,6 @@ public abstract class StartRound extends Round implements StartRoundI {
         numPasses.set(0);
         auctionItemState.set(null);
 
-        //gameMgr = GameManager.getInstance();
         gameManager.setRound(this);
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         currentPlayer = getCurrentPlayer();
@@ -249,13 +247,15 @@ public abstract class StartRound extends Round implements StartRoundI {
         Certificate primary = item.getPrimary();
         ReportBuffer.add(LocalText.getText("BuysItemFor", new String[] {
                 player.getName(), primary.getName(), Bank.format(price) }));
-        player.buy(primary, price);
+        //player.buy(primary, price);
+        executeTradeCertificate (primary, player.getPortfolio(), price);
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
             ReportBuffer.add(LocalText.getText("ALSO_GETS", new String[] {
                     player.getName(), extra.getName() }));
-            player.buy(extra, 0);
+            //player.buy(extra, 0);
+            executeTradeCertificate (extra, player.getPortfolio(), 0);
             checksOnBuying(extra, sharePrice);
         }
         item.setSold(player, price);
