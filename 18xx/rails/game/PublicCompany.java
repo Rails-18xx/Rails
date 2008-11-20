@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.42 2008/11/15 13:42:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.43 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -289,8 +289,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
         if (privateBuyTag != null) {
             canBuyPrivates = true;
-            //GameManager.setCanAnyCompBuyPrivates(true);
-            //GameManager.setCompaniesCanBuyPrivates();
 
             String lower =
                     privateBuyTag.getAttributeAsString("lowerPriceFactor");
@@ -343,7 +341,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
             treasuryPaysOut = true;
-            //GameManager.setCanAnyCompanyHoldShares(true);
 
             maxPercOfOwnShares =
                     ownSharesTag.getAttributeAsInteger("maxPerc",
@@ -379,6 +376,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 setCapitalisation(CAPITALISE_FULL);
             } else if (capType.equalsIgnoreCase("incremental")) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
+            } else if (capType.equalsIgnoreCase("whenBought")) {
+                setCapitalisation(CAPITALISE_WHEN_BOUGHT);
             } else {
                 throw new ConfigurationException(
                         "Invalid capitalisation type: " + capType);
@@ -432,8 +431,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 }
             }
         }
-
-        //if (hasParPrice) GameManager.setHasAnyParPrice(true);
 
         List<Tag> certificateTags = tag.getChildren("Certificate");
         if (certificateTags != null) {
@@ -498,7 +495,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             Tag buyCostTag = baseTokenTag.getChild("BuyCost");
             if (buyCostTag != null) {
                 baseTokensBuyCost =
-                        floatTag.getAttributeAsInteger("initialTokenCost", 0);
+                        buyCostTag.getAttributeAsInteger("initialTokenCost", 0);
             }
 
             Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
@@ -729,6 +726,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public void start(StockSpaceI startSpace) {
+        log.debug("+++Starting1b "+name);
         hasStarted.set(true);
         setParSpace(startSpace);
         // The current price is set via the Stock Market
@@ -760,17 +758,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Start a company with a fixed par price.
      */
     public void start() {
-        hasStarted.set(true);
-        if (hasStockPrice && parPrice.getPrice() != null) {
-            // setCurrentPrice (parPrice.getPrice());
-            // The current price is set via the Stock Market
-            StockMarket.getInstance().start(this, parPrice.getPrice());
+        if (hasStockPrice) {
+            start (getStartSpace());
+        } else {
+            hasStarted.set(true);
+            if (homeBaseTokensLayTime == WHEN_STARTED) {
+                layHomeBaseTokens();
+            }
         }
-
-        if (homeBaseTokensLayTime == WHEN_STARTED) {
-            layHomeBaseTokens();
-        }
-
     }
 
     public void transferAssetsFrom(PublicCompanyI otherCompany) {
@@ -797,31 +792,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         // Remove the "unfloated" indicator in GameStatus
         getPresident().getPortfolio().getShareModel(this).update();
-
-        /*
-         * // In 18EU, before phase 5, cash has already been moved if (moveCash) {
-         * 
-         * int cash = 0; if (hasStockPrice) { int capFactor = 0; if
-         * (capitalisation == CAPITALISE_FULL) { capFactor = 100 / shareUnit; }
-         * else if (capitalisation == CAPITALISE_INCREMENTAL) { // TODO Should
-         * be: 100% - percentage still in IPO capFactor =
-         * percentageOwnedByPlayers() / shareUnit; } int price = (hasParPrice ?
-         * getParPrice() : getCurrentPrice()).getPrice(); cash = capFactor *
-         * price; } else { cash = fixedPrice; }
-         * 
-         * if (baseTokensBuyCost > 0) cash -= baseTokensBuyCost;
-         * 
-         * new CashMove(Bank.getInstance(), this, cash);
-         * ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
-         * name, Bank.format(cash) }));
-         * 
-         * if (capitalisation == CAPITALISE_INCREMENTAL && canHoldOwnShares) {
-         * List<Certificate> moving = new ArrayList<Certificate>(); for
-         * (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
-         * name)) { moving.add(ipoCert); } for (Certificate ipoCert : moving) {
-         * ipoCert.moveTo(portfolio); } } } else {
-         * ReportBuffer.add(LocalText.getText("Floats", name)); }
-         */
 
         if (sharePriceUpOnFloating) {
             Game.getStockMarket().moveUp(this);
@@ -985,15 +955,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * @return
      */
-    /*
-    public static int getNumberOfPublicCompanies() {
-        return numberOfPublicCompanies;
-    }
-    /*
-
-    /**
-     * @return
-     */
     public int getPublicNumber() {
         return publicNumber;
     }
@@ -1020,9 +981,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         for (PublicCertificateI cert : list) {
             cert2 = cert.copy();
             certificates.add(cert2);
-            //cert2.setCompany(this);
-            // TODO Questionable if it should be put in IPO or in
-            // Unavailable.
         }
     }
     
@@ -1046,7 +1004,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (certificates == null)
             certificates = new ArrayList<PublicCertificateI>();
         certificates.add(certificate);
-        //certificate.setCompany(this);
     }
 
     /**
@@ -1129,27 +1086,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return lastRevenueAllocation;
     }
 
-    /**
-     * Pay out a given amount of revenue (and store it). The amount is
-     * distributed to all the certificate holders, or the "beneficiary" if
-     * defined (e.g.: BankPool shares may pay to the company).
-     * 
-     * @param The revenue amount.
-     */
-    /*
-     * public void payOut(int amount) {
-     * 
-     * distributePayout(amount); // Move the token if (hasStockPrice &&
-     * (!payoutMustExceedPriceToMove || amount >=
-     * currentPrice.getPrice().getPrice())) Game.getStockMarket().payOut(this); } /*
-     * 
-     * /** Split a dividend. TODO Optional rounding down the payout
+/** Split a dividend. TODO Optional rounding down the payout
      * 
      * @param amount
      */
     public void splitRevenue(int amount) {
-
-        // setLastRevenue(amount);
 
         if (amount > 0) {
             // Withhold half of it
@@ -1214,9 +1155,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
             && poolPaysOut) {
             beneficiary = this;
         }
-        // log.debug("Cert "+cert.getName()+"owned by "+holder.getName()+"
-        // benefits "+beneficiary.getName()
-        // +" (IPO:"+ipoPaysOut+" Pool:"+poolPaysOut+")");
         return beneficiary;
     }
 
@@ -1270,29 +1208,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     @Override
     public String toString() {
         return name + ", " + publicNumber + " of " + numberOfPublicCompanies;
-    }
-
-    public static boolean startCompany(String playerName, String companyName,
-            StockSpace startSpace) {
-        // TODO: Should probably do error checking in case names aren't found.
-        Player player = Game.getPlayerManager().getPlayerByName(playerName);
-        PublicCompany company =
-                (PublicCompany) Game.getCompanyManager().getPublicCompany(
-                        companyName);
-
-        PublicCertificate cert =
-                (PublicCertificate) company.certificates.get(0);
-
-        if (player.getCash() >= (startSpace.getPrice() * (cert.getShare() / company.getShareUnit()))) {
-            company.start(startSpace);
-            int price =
-                    startSpace.getPrice()
-                            * (cert.getShare() / company.getShareUnit());
-            player.buyShare(cert, price);
-
-            return true;
-        } else
-            return false;
     }
 
     /**
@@ -1368,8 +1283,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (buyerShare > presShare) {
             pres.getPortfolio().swapPresidentCertificate(this,
                     buyer.getPortfolio());
-            ReportBuffer.add(LocalText.getText("PresidencyIsTransferredTo",
-                    new String[] { name, buyer.getName() }));
+            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    new String[] { buyer.getName(), name }));
         }
     }
 
@@ -1393,22 +1308,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 // Presidency must be transferred
                 seller.getPortfolio().swapPresidentCertificate(this,
                         player.getPortfolio());
-                ReportBuffer.add(LocalText.getText("PresidencyIsTransferredTo",
-                        new String[] { name, player.getName() }));
+                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                        new String[] { player.getName(), name }));
             }
         }
     }
-
-    /**
-     * Only usable if the float percentage is fixed. Games where the percentage
-     * varies must check this in StockRound and possibly StartRound.
-     */
-    /*
-     * public boolean checkFlotation(boolean moveCash) { if (hasStarted() &&
-     * !hasFloated() && (Bank.getIpo().getShare(this) +
-     * portfolio.getShare(this)) <= 100 - floatPerc) { // Float company
-     * setFloated(moveCash); return true; } else { return false; } }
-     */
 
     /**
      * Return the unsold share percentage. It is calculated as the sum of the
@@ -1448,11 +1352,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return getTrainLimit(GameManager.getInstance().getCurrentPhase().getIndex());
     }
 
-    /*
-     * public boolean mayBuyTrains() {
-     * 
-     * return portfolio.getNumberOfTrains() < getCurrentTrainLimit(); }
-     */
     public int getNumberOfTrains() {
         return portfolio.getNumberOfTrains();
     }
@@ -1605,10 +1504,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return result;
 
     }
-
-    /*
-     * public List<TokenI> getLaidBaseTokens() { return laidBaseTokens; }
-     */
 
     public List<TokenI> getTokens() {
         return allBaseTokens;

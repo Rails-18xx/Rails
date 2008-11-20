@@ -146,7 +146,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     /**
      * Put all available certificates in the IPO
      */
-    public /*static*/ void initCertificates() {
+    public void initCertificates() {
         // Add privates
         List<PrivateCompanyI> privates =
                 Game.getCompanyManager().getAllPrivateCompanies();
@@ -242,7 +242,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     }
 
     public String getName() {
-        return "Bank";
+        return LocalText.getText("Bank");
     }
 
     public String getFormattedCash() {

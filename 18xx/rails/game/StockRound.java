@@ -3,6 +3,7 @@ package rails.game;
 import java.util.*;
 
 import rails.game.action.*;
+import rails.game.move.CashMove;
 import rails.game.move.DoubleMapChange;
 import rails.game.move.MoveSet;
 import rails.game.special.*;
@@ -18,10 +19,9 @@ import rails.util.LocalText;
 public class StockRound extends Round {
 
     /* Transient memory (per round only) */
-    protected /*static*/ int numberOfPlayers;
+    protected int numberOfPlayers;
     protected Player currentPlayer;
 
-    // protected PublicCompanyI companyBoughtThisTurn = null;
     protected State companyBoughtThisTurnWrapper =
             new State("CompanyBoughtThisTurn", PublicCompany.class);
 
@@ -29,12 +29,6 @@ public class StockRound extends Round {
             new BooleanState("HoldSoldBeforeBuyingThisTurn", false);
 
     protected BooleanState hasActed = new BooleanState("HasActed", false); // Is
-    // set
-    // true
-    // on
-    // any
-    // player
-    // action
 
     protected IntegerState numPasses = new IntegerState("StockRoundPasses");
 
@@ -53,14 +47,10 @@ public class StockRound extends Round {
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
 
     /* Permanent memory */
-    //static IntegerState stockRoundNumber =
-    //        new IntegerState("StockRoundNumber", 0);
     static protected StockMarketI stockMarket;
     static protected Portfolio ipo;
     static protected Portfolio pool;
     static protected Portfolio unavailable;
-    //static protected CompanyManagerI companyMgr;
-    //static protected GameManager gameMgr;
 
     /* Rules */
     protected int sequenceRule;
@@ -72,17 +62,13 @@ public class StockRound extends Round {
 
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
-        //if (gameMgr == null) gameMgr = GameManager.getInstance();
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
         if (unavailable == null) unavailable = Bank.getUnavailable();
-        //if (companyMgr == null) companyMgr = Game.getCompanyManager();
         gameManager.setRound(this);
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
-
-        //stockRoundNumber.add(1);
 
         ReportBuffer.add("\n" + LocalText.getText("StartStockRound")
                          + getStockRoundNumber());
@@ -99,7 +85,6 @@ public class StockRound extends Round {
     public int getStockRoundNumber() {
         return gameManager.getSRNumber();
     }
-
 
     @Override
     public boolean setPossibleActions() {
@@ -173,14 +158,14 @@ public class StockRound extends Round {
                 if (!cert.isPresidentShare()) {
                     price = comp.getIPOPrice();
                     if (price <= playerCash) {
-                        possibleActions.add(new BuyCertificate(cert, from, price));
+                        possibleActions.add(new BuyCertificate(cert, from,
+                                price));
                     }
                 } else if (!comp.hasStarted()) {
                     if (comp.getIPOPrice() != 0) {
                         price = comp.getIPOPrice() * cert.getShares();
                         if (price <= playerCash) {
-                            possibleActions.add(new StartCompany(cert, 
-                                    price));
+                            possibleActions.add(new StartCompany(cert, price));
                         }
                     } else {
                         List<Integer> startPrices = new ArrayList<Integer>();
@@ -198,7 +183,7 @@ public class StockRound extends Round {
                             possibleActions.add(new StartCompany(cert, prices));
                         }
                     }
-                } 
+                }
 
             }
         }
@@ -266,8 +251,7 @@ public class StockRound extends Round {
                     && !currentPlayer.mayBuyCertificate(company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
-                            company.getPortfolio(),
-                            company.getMarketPrice()));
+                            company.getPortfolio(), company.getMarketPrice()));
                 }
             }
         }
@@ -413,12 +397,6 @@ public class StockRound extends Round {
 
         } else if (action instanceof BuyCertificate) {
 
-            // BuyCertificate buyAction = (BuyCertificate) action;
-            // result = buyShare (playerName,
-            // buyAction.getCertificate().getPortfolio(),
-            // buyAction.getCertificate().getCompany().getName(),
-            // buyAction.getCertificate().getShares(),
-            // 1);
             result = buyShares(playerName, (BuyCertificate) action);
 
         } else if (action instanceof SellShares) {
@@ -429,7 +407,7 @@ public class StockRound extends Round {
 
             result = useSpecialProperty((UseSpecialProperty) action);
 
-        } else if ((result = processGameSpecificAction(action))) {
+        } else if (!!(result = processGameSpecificAction(action))) {
 
         } else {
 
@@ -545,27 +523,30 @@ public class StockRound extends Round {
 
         // All is OK, now start the company
         company.start(startSpace);
+        
+        CashHolder priceRecipient = getSharePriceRecipient (cert, price);
 
         // Transfer the President's certificate
-        currentPlayer.getPortfolio().buyCertificate(cert, ipo,
-                company.getIPOPrice());
+        executeTradeCertificate(cert, currentPlayer.getPortfolio(),
+                price * cert.getShares(), priceRecipient);
 
         // If more than one certificate is bought at the same time, transfer
         // these too.
         for (int i = 1; i < numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
-            currentPlayer.getPortfolio().buyCertificate(cert, ipo,
-                    company.getIPOPrice());
+            executeTradeCertificate(cert, currentPlayer.getPortfolio(),
+                    company.getIPOPrice(), priceRecipient);
         }
 
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG", new String[] {
                 playerName, companyName, Bank.format(price),
                 Bank.format(shares * price), String.valueOf(shares),
-                String.valueOf(cert.getShare()), LocalText.getText("BANK") }));
+                String.valueOf(cert.getShare()), 
+                priceRecipient.getName()}));
+        ReportBuffer.getAllWaiting();
 
         checkFlotation(company);
 
-        // companyBoughtThisTurn = company;
         companyBoughtThisTurnWrapper.set(company);
         hasActed.set(true);
         setPriority();
@@ -597,6 +578,7 @@ public class StockRound extends Round {
 
         String errMsg = null;
         int price = 0;
+        int cash = 0;
         PublicCompanyI company = null;
 
         currentPlayer = getCurrentPlayer();
@@ -626,10 +608,7 @@ public class StockRound extends Round {
                 break;
             }
 
-            // The company must have started before
-            //if (!company.hasStarted()) {
-            // The above is not true for 1835 Pr (for instance)
-            // New rule: the presidents share may not be in IPO
+            // The presidents share may not be in IPO
             if (company.getPresidentsShare().getHolder() == ipo) {
                 errMsg = LocalText.getText("NotYetStarted", companyName);
                 break;
@@ -688,9 +667,10 @@ public class StockRound extends Round {
             }
 
             price = currentSpace.getPrice();
+            cash = shares * price;
 
             // Check if the Player has the money.
-            if (currentPlayer.getCash() < shares * price) {
+            if (currentPlayer.getCash() < cash) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -708,17 +688,20 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         MoveSet.start(true);
 
+        CashHolder priceRecipient = getSharePriceRecipient (cert, cash);
+        
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
                     playerName, String.valueOf(shareUnit), companyName,
-                    from.getName(), Bank.format(shares * price) }));
+                    from.getName(), Bank.format(cash) }));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
                     playerName, String.valueOf(number),
                     String.valueOf(shareUnit),
                     String.valueOf(number * shareUnit), companyName,
-                    from.getName(), Bank.format(shares * price) }));
+                    from.getName(), Bank.format(cash) }));
         }
+        ReportBuffer.getAllWaiting();
 
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
@@ -727,35 +710,78 @@ public class StockRound extends Round {
                 log.error("Cannot find " + companyName + " " + shareUnit
                           + "% share in " + from.getName());
             }
-            currentPlayer.buy(cert2, price * shares);
+            executeTradeCertificate(cert2, currentPlayer.getPortfolio(),
+                    cash, priceRecipient);
+        }
+        
+        if (priceRecipient != from.getOwner()) {
+            ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
+                    new String[] {
+                    Bank.format(price * shares), 
+                    priceRecipient.getName()
+            }));
         }
 
         companyBoughtThisTurnWrapper.set(company);
         hasActed.set(true);
         setPriority();
 
+        // Check if presidency has changed
+        company.checkPresidencyOnBuy(currentPlayer);
+
         // Check if the company has floated
         if (!company.hasFloated()) checkFlotation(company);
-        
+
         // Check for any game-specific consequences
         // (such as making another company available in the IPO)
         gameSpecificChecks(from, company);
 
         return true;
     }
-    
+
     /** Stub, may be overridden in subclasses */
     protected void gameSpecificChecks(Portfolio boughtFrom,
             PublicCompanyI company) {
+
+    }
+
+    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder, 
+            int price, CashHolder priceRecipient) {
+        
+        cert.moveTo(newHolder);
+        new CashMove (newHolder.getOwner(), priceRecipient, price);
         
     }
-    
-    /** Make the cerificates of one company available for buying
+
+    /** 
+     * Who receives the cash when a certificate is bought.
+     * With incremental capitalization, this can be the company treasure.
+     * This method must be called <i>before</i> transferring the certificate.
+     * @param cert
+     * @return
+     */
+    protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
+
+        Portfolio oldHolder = (Portfolio) cert.getHolder();
+        PublicCompanyI comp;
+        CashHolder recipient;
+        if (cert instanceof PublicCertificateI
+            && (comp = ((PublicCertificateI) cert).getCompany()).hasFloated()
+            && oldHolder == Bank.getIpo()
+            && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
+            recipient = comp;
+        } else {
+            recipient = oldHolder.getOwner();
+        }
+        return recipient;
+    }
+
+   /** Make the certificates of one company available for buying
      * by putting these in the IPO.
      * @param company The company to be released.
      */
-    protected void releaseCompanyShares (PublicCompanyI company) {
-        
+    protected void releaseCompanyShares(PublicCompanyI company) {
+
         for (PublicCertificateI cert : company.getCertificates()) {
             if (cert.getHolder().equals(unavailable)) {
                 cert.moveTo(ipo);
@@ -783,7 +809,7 @@ public class StockRound extends Round {
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompanyI company =
-            companyManager.getPublicCompany(action.getCompanyName());
+                companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificateI cert = null;
         PublicCertificateI presCert = null;
         List<PublicCertificateI> certsToSell =
@@ -936,8 +962,9 @@ public class StockRound extends Round {
         Iterator<PublicCertificateI> it = certsToSell.iterator();
         while (it.hasNext()) {
             cert = it.next();
-            if (cert != null)
-                pool.buyCertificate(cert, portfolio, cert.getShares() * price);
+            if (cert != null) {
+                executeTradeCertificate(cert, pool, cert.getShares() * price);
+            }
         }
         stockMarket.sell(company, numberToSell);
 
@@ -950,8 +977,8 @@ public class StockRound extends Round {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                            new String[] { otherPlayer.getName(),
-                                    company.getName() }));
+                            new String[] { otherPlayer.getName(), company.getName() 
+                                     }));
                     break;
                 }
             }
@@ -1099,7 +1126,7 @@ public class StockRound extends Round {
      * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAnything() {
-        
+
         if (getStockRoundNumber() == 1 && noSaleInFirstSR) return false;
 
         if (companyBoughtThisTurnWrapper.getObject() != null

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.22 2008/11/15 21:22:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.23 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -29,12 +29,10 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     private int colourNumber;
 
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
-    // Upgrade
-    // instances
+    // Upgrade instances
     private String upgradesString = "";
-    private final List[] tracksPerSide = new ArrayList[6]; // Cannot
-    // parametrise
-    // collection array
+    private final List[] tracksPerSide = new ArrayList[6]; 
+    // N.B. Cannot parametrise collection array
     private Map<Integer, List<Track>> tracksPerStation = null;
     private final List<Track> tracks = new ArrayList<Track>();
     private final List<Station> stations = new ArrayList<Station>();
@@ -137,7 +135,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                                     String.valueOf(id), type }));
                 }
                 value = stationTag.getAttributeAsInteger("value", 0);
-                // log.debug("Tile #"+id+" st."+number+" value="+value);
                 slots = stationTag.getAttributeAsInteger("slots", 0);
                 position = stationTag.getAttributeAsInteger("position", 0);
                 station =
@@ -246,6 +243,15 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                     }
 
                 }
+
+                // Process any phases in which the upgrade is allowed
+                String phases = upgradeTag.getAttributeAsString("phase");
+                if (phases != null) {
+                    for (Upgrade newUpgrade : newUpgrades) {
+                        newUpgrade.setPhases(phases);
+                    }
+
+                }
             }
         }
 
@@ -324,12 +330,12 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
      * @param hex The MapHex to be upgraded.
      * @return A List of valid upgrade TileI objects.
      */
-    public List<TileI> getUpgrades(MapHex hex) {
+    public List<TileI> getUpgrades(MapHex hex, PhaseI phase) {
         List<TileI> upgr = new ArrayList<TileI>();
         TileI tile;
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
-            if (hex == null || upgrade.isAllowedForHex(hex)) upgr.add(tile);
+            if (hex == null || upgrade.isAllowedForHex(hex, phase.getName())) upgr.add(tile);
         }
         return upgr;
     }
@@ -346,7 +352,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
             tile = upgrade.getTile();
             if (phase.isTileColourAllowed(tile.getColourName())
                 && tile.countFreeTiles() != 0 /* -1 means unlimited */
-                && upgrade.isAllowedForHex(hex)) {
+                && upgrade.isAllowedForHex(hex, phase.getName())) {
                 valid.add(tile);
             }
         }
@@ -420,6 +426,10 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
          * and disallowedHexes should be used
          */
         List<MapHex> disallowedHexes = null;
+        /**
+         * Phases in which the upgrade can be executed.
+         */
+        List<String> allowedPhases = null;
 
         /**
          * A temporary String holding the in/excluded hexes. This will be
@@ -434,8 +444,13 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
             this.tile = tile;
         }
 
-        protected boolean isAllowedForHex(MapHex hex) {
+        protected boolean isAllowedForHex(MapHex hex, String phaseName) {
 
+            if (allowedPhases != null 
+                    && !allowedPhases.contains(phaseName)) {
+                return false;
+            }
+            
             if (hexes != null) convertHexString();
 
             if (allowedHexes != null) {
@@ -446,13 +461,17 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                 return true;
             }
         }
-
+        
         protected TileI getTile() {
             return tile;
         }
 
         protected void setHexes(String hexes) {
             this.hexes = hexes;
+        }
+        
+        protected void setPhases (String phases) {
+            allowedPhases = Arrays.asList(phases.split(","));
         }
 
         private void convertHexString() {

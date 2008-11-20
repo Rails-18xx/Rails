@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.7 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.8 2008/11/20 21:49:38 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -88,7 +88,8 @@ public class ExchangeForShare extends SpecialProperty {
                 ipoHasShare ? Bank.getIpo().findCertificate(publicCompany,
                         false) : Bank.getPool().findCertificate(publicCompany,
                         false);
-        player.buy(cert, 0);
+        //player.buy(cert, 0);
+        cert.moveTo(player.getPortfolio());
         ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
                 new String[] { player.getName(), privateCompany.getName(),
                         String.valueOf(share), publicCompanyName }));

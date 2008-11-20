@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.11 2008/11/02 19:52:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.12 2008/11/20 21:49:38 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -170,6 +170,9 @@ public abstract class Round implements RoundI {
             } else if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL) {
                 // Incremental capitalisation as in 1851
                 capFactor = (100 - unsoldPercentage) / shareUnit;
+            } else if (capitalisationMode == PublicCompanyI.CAPITALISE_WHEN_BOUGHT) {
+                // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
+                capFactor = 0;
             }
             int price = company.getIPOPrice();
             cash = capFactor * price;
@@ -177,14 +180,20 @@ public abstract class Round implements RoundI {
             cash = company.getFixedPrice();
         }
 
+        // Substract initial token cost (e.g. 1851, 18EU)
         cash -= company.getBaseTokensBuyCost();
 
         company.setFloated(); // After calculating cash (for 1851: price goes
         // up)
 
-        new CashMove(Bank.getInstance(), company, cash);
-        ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
+        if (cash > 0) {
+            new CashMove(Bank.getInstance(), company, cash);
+            ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
                 company.getName(), Bank.format(cash) }));
+        } else {
+            ReportBuffer.add(LocalText.getText("Floats", 
+                    company.getName()));
+        }
 
         if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
             && company.canHoldOwnShares()) {
@@ -204,4 +213,27 @@ public abstract class Round implements RoundI {
         return getClass().getName().replaceAll(".*\\.", "");
     }
 
+    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder, int price) {
+        
+        Portfolio oldHolder = (Portfolio) cert.getHolder();
+        cert.moveTo(newHolder);
+    
+        if (price != 0) {
+            new CashMove(newHolder.getOwner(), oldHolder.getOwner(), price);
+        }
+        
+    }
+    
+    /** 
+     * Who receives the cash when a certificate is bought.
+     * Normally this is owner of the previously holding portfolio.
+     * This method must be called <i>before</i> transferring the certificate.
+     * @param cert
+     * @param newHolder
+     * @return
+     */
+    protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
+        return ((Portfolio)cert.getHolder()).getOwner();
+    }
+ 
 }

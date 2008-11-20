@@ -2,6 +2,7 @@ package rails.ui.swing;
 
 import java.util.*;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
@@ -9,6 +10,8 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.*;
+import rails.ui.swing.elements.CheckBoxDialog;
+import rails.ui.swing.elements.RadioButtonDialog;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
@@ -335,6 +338,10 @@ public class ORUIManager {
                        || actionType == GameAction.class) {
 
                 orWindow.process(actions.get(0));
+                
+            } else if (actionType == ReachDestinations.class) {
+                
+                reachDestinations ((ReachDestinations) actions.get(0));
             }
 
         } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
@@ -402,6 +409,35 @@ public class ORUIManager {
 
         orPanel.initTokenLayingStep();
 
+    }
+    
+    protected void reachDestinations (ReachDestinations action) {
+        
+        int index;
+        List<String> options = new ArrayList<String>();
+        List<PublicCompanyI> companies = action.getPossibleCompanies();
+        String chosenOption;
+
+        for (PublicCompanyI company : companies) {
+            options.add(company.getName());
+        }
+
+        if (options.size() > 0) {
+            boolean[] destined = 
+                new CheckBoxDialog(orPanel,
+                        LocalText.getText("DestinationsReached"),
+                        LocalText.getText("DestinationsReachedPrompt"),
+                        options.toArray(new String[0]))
+                    .getSelectedOptions();
+            for (index=0; index < options.size(); index++) {
+                if (destined[index]) {
+                    action.addReachedCompany(companies.get(index));
+                }
+            }
+            if (orWindow.process(action)) {
+                updateMessage();
+            }
+        }
     }
 
     public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
@@ -1085,6 +1121,11 @@ public class ORUIManager {
                                 token.toString(), stl.getLocationCodeString() });
                 orPanel.addSpecialAction(btAction, text);
             }
+        }
+        
+        if (possibleActions.contains(ReachDestinations.class)) {
+            orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
+                    LocalText.getText("DestinationsReached"));
         }
 
         checkForGameSpecificActions();

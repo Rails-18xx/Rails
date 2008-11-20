@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.3 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.4 2008/11/20 21:49:38 evos Exp $ */
 package rails.game;
 
 import java.io.*;
 import java.text.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -97,6 +99,20 @@ public final class ReportBuffer {
             log.error("Cannot open file " + reportPathname, e);
             wantReport = false;
         }
+    }
+    
+    /* A stack for messages that must "wait" for other messages */
+    private static List<String> waitQueue = new ArrayList<String> ();
+
+    public static void addWaiting (String string) {
+        waitQueue.add (string);
+    }
+    
+    public static void getAllWaiting () {
+        for (String message : waitQueue) {
+            ReportBuffer.add (message);
+        }
+        waitQueue.clear();
     }
 
 }

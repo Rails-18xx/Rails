@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.28 2008/11/02 19:52:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.29 2008/11/20 21:49:38 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -146,51 +146,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         }
     }
 
-    public void buyCertificate(PublicCertificateI certificate, Portfolio from,
-            int price) {
-
-        // Move the certificate
-        // new CertificateMove (from, this, certificate);
-        certificate.moveTo(this);
-
-        // Move the money.
-        if (price != 0) {
-            /*
-             * If the company has floated and capitalisation is incremental, the
-             * money goes to the company, even if the certificates are still in
-             * the IPO (as in 1835)
-             */
-            PublicCompanyI comp = certificate.getCompany();
-            CashHolder recipient;
-            if (comp.hasFloated()
-                && from == Bank.getIpo()
-                && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
-                recipient = comp;
-            } else {
-                recipient = from.owner;
-            }
-            // Bank.transferCash(owner, recipient, price);
-            new CashMove(owner, recipient, price);
-        }
-    }
-
-    // Sales of stock always go to the Bank pool
-    // This method should be overridden for 1870 and other games
-    // that allow price protection.
-    public static void sellCertificate(PublicCertificateI certificate,
-            Portfolio from, int price) {
-
-        ReportBuffer.add(LocalText.getText("SellsItemFor", new String[] {
-                from.getName(), certificate.getName(), Bank.format(price) }));
-
-        // Move the certificate
-        // new CertificateMove (from, Bank.getPool(), certificate);
-        certificate.moveTo(Bank.getPool());
-
-        // Move the money
-        new CashMove(Bank.getInstance(), from.owner, price);
-    }
-
     public void transferAssetsFrom(Portfolio otherPortfolio) {
 
         // Move trains
@@ -198,48 +153,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
         // Move treasury certificates
         Util.moveObjects(otherPortfolio.getCertificates(), this);
-    }
-
-    public static void transferCertificate(Certificate certificate,
-            Portfolio from, Portfolio to) {
-        if (certificate instanceof PublicCertificateI) {
-            if (from != null)
-                from.removeCertificate((PublicCertificateI) certificate);
-            to.addCertificate((PublicCertificateI) certificate);
-        } else if (certificate instanceof PrivateCompanyI) {
-            if (from != null)
-                from.removePrivate((PrivateCompanyI) certificate);
-            to.addPrivate((PrivateCompanyI) certificate);
-        }
-
-        /* Update player's worth */
-        if (from.owner instanceof Player) {
-            updatePlayerWorth((Player) from.owner, from, certificate);
-        }
-        if (to.owner instanceof Player) {
-            updatePlayerWorth((Player) to.owner, to, certificate);
-        }
-    }
-
-    protected static void updatePlayerWorth(Player player, Portfolio portfolio,
-            Certificate certificate) {
-
-        PublicCompanyI company;
-
-        /* Update player worth */
-        player.getWorthModel().update();
-
-        /* Make sure that future price changes will update the worth too */
-        if (certificate instanceof PublicCertificateI) {
-            company = ((PublicCertificateI) certificate).getCompany();
-            if (portfolio.certPerCompany.containsKey(company.getName())) {
-                company.getCurrentPriceModel().addDependent(
-                        player.getWorthModel());
-            } else {
-                company.getCurrentPriceModel().removeDependent(
-                        player.getWorthModel());
-            }
-        }
     }
 
     public void addPrivate(PrivateCompanyI privateCompany) {

@@ -171,7 +171,6 @@ public class GameStatus extends JPanel implements ActionListener {
 
         players = gameUIManager.getPlayers().toArray(new Player[0]);
         np = gameUIManager.getNumberOfPlayers();
-        //cm = Game.getCompanyManager();
         companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
 
@@ -469,7 +468,7 @@ public class GameStatus extends JPanel implements ActionListener {
                 certLimitYOffset, 1, 1, WIDE_TOP);
 
         // Bank
-        addField(new Caption(LocalText.getText("BANK")), bankCashXOffset - 1,
+        addField(new Caption(LocalText.getText("Bank")), bankCashXOffset - 1,
                 bankCashYOffset - 1, 1, 2, WIDE_TOP + WIDE_LEFT);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP);
@@ -776,10 +775,8 @@ public class GameStatus extends JPanel implements ActionListener {
                     possibleActions.getType(BuyCertificate.class);
             if (buyableCerts != null) {
                 for (BuyCertificate bCert : buyableCerts) {
-                    // tCert = (TradeableCertificate) it.next();
                     cert = bCert.getCertificate();
                     index = cert.getCompany().getPublicNumber();
-                    // holder = cert.getPortfolio();
                     holder = bCert.getFromPortfolio();
                     if (holder == ipo) {
                         setIPOCertButton(index, true, bCert);
