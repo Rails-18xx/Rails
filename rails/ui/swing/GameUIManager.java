@@ -124,7 +124,7 @@ public class GameUIManager {
         log.debug("==Result from server: " + result);
         activeWindow.displayServerMessage();
 
-        ReportWindow.addLog();
+        reportWindow.addLog();
 
         // End of game checks
         if (gameManager.isGameOver()) {

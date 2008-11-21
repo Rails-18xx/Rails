@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.16 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.17 2008/11/21 20:41:47 evos Exp $*/
 package rails.ui.swing;
 
 import rails.common.Defs;
@@ -77,7 +77,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
         setSize(800, 600);
         addWindowListener(this);
 
-        ReportWindow.addLog();
+        gameUIManager.reportWindow.addLog();
     }
 
     public ORUIManager getORUIManager() {

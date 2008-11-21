@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.6 2008/11/18 22:12:50 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.7 2008/11/21 20:41:47 evos Exp $*/
 package rails.ui.swing;
 
 import rails.game.*;
@@ -15,29 +15,28 @@ import java.awt.event.*;
 public class ReportWindow extends JFrame implements WindowListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
-    private JLabel message;
+    private JTextArea message;
     private JScrollPane messageScroller;
     private JScrollBar vbar;
     private JPanel messagePanel;
-    private static ReportWindow messageWindow;
+    private ReportWindow messageWindow;
     private GameManager gameManager;
-
-    private static StringBuffer buffer = new StringBuffer("<html></html>");
 
     public ReportWindow(GameManager gameManager) {
         messageWindow = this;
         this.gameManager = gameManager;
 
-        message = new JLabel("");
+        message = new JTextArea();
+        message.setEditable(false);
+        message.setLineWrap(false);
         message.setBackground(Color.WHITE);
         message.setOpaque(true);
-        message.setVerticalAlignment(SwingConstants.TOP);
         message.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         messagePanel = new JPanel(new GridBagLayout());
         messageScroller =
                 new JScrollPane(message,
-                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         vbar = messageScroller.getVerticalScrollBar();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,12 +54,10 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
 
     }
 
-    public static void addLog() {
+    public void addLog() {
         String newText = ReportBuffer.get();
         if (newText.length() > 0) {
-            buffer.insert(buffer.length() - 7, newText.replaceAll("\n", "<br>"));
-
-            messageWindow.message.setText(buffer.toString());
+            message.append(newText);
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
