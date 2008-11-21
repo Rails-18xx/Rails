@@ -357,7 +357,7 @@ public class ORUIManager {
             displayRemainingTiles();
         }
 
-        ReportWindow.addLog();
+        gameUIManager.reportWindow.addLog();
     }
 
     /** Stub, can be overridden in subclasses */
