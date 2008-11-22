@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.35 2008/10/26 20:47:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.36 2008/11/22 17:22:59 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -54,7 +54,6 @@ public class GameManager implements ConfigurableComponentI {
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
 
-    //protected boolean companiesCanBuyPrivates = false;
     protected boolean gameEndsWithBankruptcy = false;
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
@@ -542,8 +541,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
 
         // Note: round may have changed!
-        // log.debug("Calling setPossibleActions for round
-        // "+getCurrentRound().toString());
         possibleActions.clear();
         getCurrentRound().setPossibleActions();
 
@@ -612,8 +609,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public void finishShareSellingRound() {
-        // currentRound = interruptedRound;
-        setRound(interruptedRound);
+         setRound(interruptedRound);
         ((OperatingRound) getCurrentRound()).resumeTrainBuying();
     }
 
@@ -815,57 +811,14 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
     }
 
-    /*
-    public static void setCompaniesCanBuyPrivates() {
-        instance.companiesCanBuyPrivates = true;
-    }
-    */
-
     public String getHelp() {
         return getCurrentRound().getHelp();
     }
-
-    /*
-    public static void setHasAnyParPrice(boolean hasAnyParPrice) {
-        instance.hasAnyParPrice = hasAnyParPrice;
-    }
-    */
 
     public boolean canAnyCompanyHoldShares() {
         return canAnyCompanyHoldShares;
     }
 
-    /*
-    public static void setCanAnyCompanyHoldShares(
-            boolean canAnyCompanyHoldShares) {
-        instance.canAnyCompanyHoldShares = canAnyCompanyHoldShares;
-    }
-    */
-
-    /*
-    public static boolean canAnyCompBuyPrivates() {
-        return instance.canAnyCompBuyPrivates;
-    }
-    */
-
-    /*
-    public static void setCanAnyCompBuyPrivates(boolean canAnyCompBuyPrivates) {
-        instance.canAnyCompanyBuyPrivates = canAnyCompBuyPrivates;
-    }
-    */
-
-    /*
-    public static boolean doBonusTokensExist() {
-        return instance.bonusTokensExist;
-    }
-    */
-
-    /*
-    public static void setBonusTokensExist(boolean bonusTokensExist) {
-        instance.bonusTokensExist = bonusTokensExist;
-    }
-    */
-    
     public String getClassName (Defs.ClassName key) {
         
         switch (key) {
