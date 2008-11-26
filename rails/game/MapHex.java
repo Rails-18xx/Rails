@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.19 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.20 2008/11/26 22:26:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -450,15 +450,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             Map<City, City> oldToNewCities = new HashMap<City, City>();
             Map<Station, City> newStationsToCities =
                     new HashMap<Station, City>();
-            // Tentatively number the new cities after the new stations
-            // City city;
-            // for (Station newStation : newTile.getStations()) {
-            // city = new City (this, newStation.getNumber(), newStation);
-            // newCities.add(city);
-            // }
-
+ 
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
+            int newCityNumber = 0;
             for (City oldCity : cities) {
                 int cityNumber = oldCity.getNumber();
                 Station oldStation = oldCity.getRelatedStation();
@@ -490,7 +485,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                                 // Match found!
                                 if (!newStationsToCities.containsKey(newStation)) {
                                     newCity =
-                                            new City(this, cityNumber,
+                                            new City(this, ++newCityNumber,
                                                     newStation);
                                     newCities.add(newCity);
                                     mNewCities.put(cityNumber, newCity);
@@ -528,17 +523,70 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                         }
                     }
 
+
+                }
+            }
+            
+            // If an old city is not yet connected, check if was 
+            // connected to another city it has merged into (1851 Louisville)
+            for (City oldCity : cities) {
+                if (oldToNewCities.containsKey(oldCity)) continue;
+                Station oldStation = oldCity.getRelatedStation();
+                int[] oldTrackEnds =
+                    getTrackEndPoints(currentTile, currentTileRotation,
+                            oldStation);
+                station: for (int i = 0; i < oldTrackEnds.length; i++) {
+                    log.debug("Old track ending at "+oldTrackEnds[i]);
+                    if (oldTrackEnds[i] < 0) {
+                        int oldStationNumber = -oldTrackEnds[i];
+                        // Find the old city that has this number
+                        for (City oldCity2 : cities) {
+                            log.debug("Old city "+oldCity2.getNumber()+" has station "+oldCity2.getRelatedStation().getNumber());
+                            log.debug("  and links to new city "+oldToNewCities.get(oldCity2));
+                            if (oldCity2.getRelatedStation().getNumber()
+                                    == oldStationNumber
+                                    && oldToNewCities.containsKey(oldCity2)) {
+                                newCity = oldToNewCities.get(oldCity2);
+                                oldToNewCities.put(oldCity, newCity);
+                                log.debug("Assigned from "
+                                        + oldCity.getUniqueId()
+                                        + " #"
+                                        + currentTile.getId()
+                                        + "/"
+                                        + currentTileRotation
+                                        + " "
+                                        + oldStation.getId()
+                                        + " "
+                                        + getConnectionString(currentTile,
+                                                currentTileRotation,
+                                                oldStation.getNumber())
+                                        + " to " + newCity.getUniqueId()
+                                        + " #" + newTile.getId() + "/"
+                                        + newRotation + " "
+                                        + newCity.getRelatedStation().getId() + " "
+                                        + newCity.getTrackEdges());
+                              break station;
+                                                            
+                                
+                            }
+                        }
+                        
+                    }
                 }
             }
 
+
+
             // Check if there any new stations not corresponding
-            // to an old city - create a new city for these stations.
+            // to an old city.
             for (Station newStation : newTile.getStations()) {
                 if (newStationsToCities.containsKey(newStation)) continue;
+                
+                // Create a new city for such a station.
                 int cityNumber;
                 for (cityNumber = 1; mNewCities.containsKey(cityNumber); cityNumber++)
                     ;
-                newCity = new City(this, cityNumber, newStation);
+                newCity = new City(this, ++newCityNumber, newStation);
                 newCities.add(newCity);
                 mNewCities.put(cityNumber, newCity);
                 newStationsToCities.put(newStation, newCity);
@@ -557,8 +605,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                     new HashMap<TokenI, TokenHolderI>();
 
             for (City oldCity : cities) {
-                // log.debug("Old city "+oldCity.getNumber()+" has
-                // "+oldCity.getTokens().size()+" tokens");
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
                     oldtoken: for (TokenI token : oldCity.getTokens()) {
