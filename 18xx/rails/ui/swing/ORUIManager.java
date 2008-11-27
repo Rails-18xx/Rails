@@ -416,7 +416,6 @@ public class ORUIManager {
         int index;
         List<String> options = new ArrayList<String>();
         List<PublicCompanyI> companies = action.getPossibleCompanies();
-        String chosenOption;
 
         for (PublicCompanyI company : companies) {
             options.add(company.getName());
