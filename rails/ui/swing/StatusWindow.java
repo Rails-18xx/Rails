@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.23 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.24 2008/11/27 22:20:21 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -23,7 +23,7 @@ import rails.util.LocalText;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow extends JFrame implements ActionListener,
-        KeyListener, ActionPerformer {
+        KeyListener, /*WindowListener,*/ ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";
@@ -209,7 +209,8 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuBar.add(specialMenu);
 
         setJMenuBar(menuBar);
-    }
+
+}
 
     public StatusWindow() {
 
@@ -261,6 +262,19 @@ public class StatusWindow extends JFrame implements ActionListener,
         gameStatus.addKeyListener(this);
         buttonPanel.addKeyListener(this);
         addKeyListener(this);
+
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE );
+        final JFrame frame = this;
+        addWindowListener(new WindowAdapter () {
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(frame, "Do you really want to exit the game?", "Select", JOptionPane.OK_CANCEL_OPTION)
+                        == JOptionPane.OK_OPTION) {
+                    frame.dispose();
+                    System.exit(0);
+                }
+            }
+        });
+        
 
         pack();
     }
@@ -622,4 +636,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     }
 
     public void keyTyped(KeyEvent e) {}
+    
+
 }
