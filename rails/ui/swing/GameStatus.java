@@ -468,7 +468,7 @@ public class GameStatus extends JPanel implements ActionListener {
                 certLimitYOffset, 1, 1, WIDE_TOP);
 
         // Bank
-        addField(new Caption(LocalText.getText("Bank")), bankCashXOffset - 1,
+        addField(new Caption(LocalText.getText("BANK")), bankCashXOffset - 1,
                 bankCashYOffset - 1, 1, 2, WIDE_TOP + WIDE_LEFT);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP);
