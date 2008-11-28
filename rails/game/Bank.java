@@ -242,7 +242,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     }
 
     public String getName() {
-        return LocalText.getText("Bank");
+        return LocalText.getText("BANK");
     }
 
     public String getFormattedCash() {
