@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.4 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.5 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -93,7 +93,6 @@ public class City implements TokenHolderI {
         } else {
             token.setHolder(this);
             boolean result = tokens.add(token);
-            // mapHex.update();
             return result;
         }
     }
@@ -145,6 +144,16 @@ public class City implements TokenHolderI {
         if (tokens.contains(company)) return true;
         return false;
     }
+    
+    public boolean hasTokenOf (String companyName) {
+        for (TokenI token : tokens) {
+            if (token instanceof BaseToken
+                    && ((BaseToken)token).getCompany().getName().equals(companyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void setTokens(ArrayList<TokenI> tokens) {
         this.tokens = tokens;
@@ -172,6 +181,5 @@ public class City implements TokenHolderI {
         }
         b.append(")");
         return b.toString();
-        // return "City ID: " + number + ", Hex: " + mapHex.getName();
     }
 }

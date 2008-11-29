@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.24 2008/11/27 22:20:21 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.25 2008/11/29 20:01:33 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -23,7 +23,7 @@ import rails.util.LocalText;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow extends JFrame implements ActionListener,
-        KeyListener, /*WindowListener,*/ ActionPerformer {
+        KeyListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";
@@ -55,8 +55,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     protected GameStatus gameStatus;
 
     protected ActionButton passButton;
-
-    //public GameManager gameManager;
 
     protected GameUIManager gameUIManager;
 
@@ -220,7 +218,6 @@ public class StatusWindow extends JFrame implements ActionListener,
         this.gameUIManager = gameUIManager;
 
         String gameStatusClassName = gameUIManager.getClassName(Defs.ClassName.GAME_STATUS);
-        // gameStatus = new GameStatus(this);
         try {
             Class<? extends GameStatus> gameStatusClass =
                 Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
@@ -324,7 +321,6 @@ public class StatusWindow extends JFrame implements ActionListener,
             disableCheckBoxMenuItem(MAP_CMD);
             disableCheckBoxMenuItem(MARKET_CMD);
         } else if (round instanceof StockRound) {
-            // stockRound = (StockRound) currentRound;
             enableCheckBoxMenuItem(MARKET_CMD);
             disableCheckBoxMenuItem(MAP_CMD);
         } else if (round instanceof OperatingRound) {
@@ -521,7 +517,6 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public boolean process(PossibleAction executedAction) {
 
-        Game.getLogger().debug("Action: " + executedAction.toString());
         if (executedAction == null) {
             JOptionPane.showMessageDialog(this, "ERROR: no action found!");
             return false;

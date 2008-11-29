@@ -560,10 +560,11 @@ public class ORUIManager {
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
             allowance.setLaidTile(selectedHex.getProvisionalTile());
+            
+            relayBaseTokens (allowance);
 
             if (orWindow.process(allowance)) {
                 selectedHex.fixTile();
-                // updateStatus();
             } else {
                 selectedHex.removeTile();
                 setLocalStep(SELECT_HEX_FOR_TILE);
@@ -634,6 +635,60 @@ public class ORUIManager {
                 selectedHex.fixToken();
             } else {
                 setLocalStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
+            }
+        }
+    }
+    
+    /** 
+     * Manually relay the tokens.
+     * This is only needed in special cases, 
+     * such as the 1830 Erie home token.
+     * If applicable, the TileSet entry for the <i>old</i> tile
+     * should specify <code>relayBaseTokens="yes"</code> as an
+     * attribute in the Upgrade tag.
+     * @param action The LayTile PossibleAction.
+     */
+    protected void relayBaseTokens (LayTile action) {
+        
+        MapHex hex = action.getChosenHex();
+        TileI newTile = action.getLaidTile();
+        TileI oldTile = hex.getCurrentTile();
+         if (!action.isRelayBaseTokens() 
+                && !oldTile.relayBaseTokensOnUpgrade()) return;
+        for (City oldCity : hex.getCities()) {
+            if (oldCity.hasTokens()) {
+                // Assume only 1 token (no exceptions known)
+                PublicCompanyI company = ((BaseToken)oldCity.getTokens().get(0)).getCompany();
+                
+                List<String> prompts = new ArrayList<String>();
+                Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
+                String prompt;
+                for (Station newStation : newTile.getStations()) {
+                    if (newStation.getBaseSlots() > 0) {
+                        prompt =
+                                LocalText.getText(
+                                        "SelectStationForTokenOption",
+                                        new String[] {
+                                                String.valueOf(newStation.getNumber()),
+                                                hex.getConnectionString(
+                                                        newTile,
+                                                        action.getOrientation(),
+                                                        newStation.getNumber()) });
+                        prompts.add(prompt);
+                        promptToCityMap.put(prompt, newStation.getNumber());
+                    }
+                }
+                if (prompts.isEmpty()) {
+                    continue;
+                }
+                String selected =
+                        (String) JOptionPane.showInputDialog(orWindow,
+                                LocalText.getText("SelectStationForToken"),
+                                LocalText.getText("WhichStation"),
+                                JOptionPane.PLAIN_MESSAGE, null,
+                                prompts.toArray(), prompts.get(0));
+                if (selected == null) return;
+                action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
             }
         }
     }

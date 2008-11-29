@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.20 2008/11/26 22:26:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.21 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
@@ -361,9 +362,16 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
      * Prepare a tile upgrade. The actual tile replacement is done in
      * replaceTile(), via a TileMove object.
      */
-    public void upgrade(TileI newTile, int newRotation) {
+    public void upgrade(LayTile action) {
+        TileI newTile = action.getLaidTile();
+        int newRotation = action.getOrientation();
+        
         City newCity;
         String newTracks;
+        List<City> newCities;
+
+        Map<String, Integer> relaidTokens = action.getRelaidBaseTokens();
+        if (relaidTokens == null) relaidTokens = new HashMap<String, Integer>();
 
         if (currentTile.getNumStations() == newTile.getNumStations()) {
             // If the number of stations does not change,
@@ -371,38 +379,26 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             // keeping the original numbers (which therefore
             // may become different from the new tile's
             // station numbers).
+            Map<City, Station> citiesToStations = new HashMap<City, Station>();
+            
+            // Check for manual handling of tokens
+            for (String compName : relaidTokens.keySet()) {
+                for (City city : cities) {
+                    if (city.hasTokenOf(compName)) {
+                        citiesToStations.put(city, newTile.getStations().get(relaidTokens.get(compName)-1));
+                    }
+                }
+            }
 
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
             for (City city : cities) {
+                if (citiesToStations.containsKey(city)) continue;
                 Station oldStation = city.getRelatedStation();
                 int[] oldTrackEnds =
                         getTrackEndPoints(currentTile, currentTileRotation,
                                 oldStation);
-                if (oldTrackEnds.length == 0) {
-                    // Old tile without any tracks: do not try to match
-                    // but just assign in sequence.
-                    // (assuming that we never will have an old tile
-                    // where some cities have tracks and others haven't).
-                    Station newStation =
-                            newTile.getStations().get(city.getNumber() - 1);
-                    city.setRelatedStation(newStation);
-                    city.setSlots(newStation.getBaseSlots());
-                    log.debug("Assigned "
-                              + city.getUniqueId()
-                              + " from "
-                              + oldStation.getId()
-                              + " "
-                              + getConnectionString(currentTile,
-                                      currentTileRotation,
-                                      oldStation.getNumber())
-                              + " to "
-                              + newStation.getId()
-                              + " "
-                              + getConnectionString(newTile, newRotation,
-                                      newStation.getNumber()));
-                    continue;
-                }
+                if (oldTrackEnds.length == 0) continue;
                 station: for (Station newStation : newTile.getStations()) {
                     int[] newTrackEnds =
                             getTrackEndPoints(newTile, newRotation, newStation);
@@ -410,42 +406,56 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                         for (int j = 0; j < newTrackEnds.length; j++) {
                             if (oldTrackEnds[i] == newTrackEnds[j]) {
                                 // Match found!
-                                city.setRelatedStation(newStation);
-                                city.setSlots(newStation.getBaseSlots());
-                                newTracks =
-                                        getConnectionString(newTile,
-                                                newRotation,
-                                                newStation.getNumber());
-                                city.setTrackEdges(newTracks);
-                                log.debug("Assigned "
-                                          + city.getUniqueId()
-                                          + " from "
-                                          + oldStation.getId()
-                                          + " "
-                                          + getConnectionString(currentTile,
-                                                  currentTileRotation,
-                                                  oldStation.getNumber())
-                                          + " to " + newStation.getId() + " "
-                                          + newTracks);
-                                break station;
-
+                                citiesToStations.put(city, newStation);
+                                continue station;
                             }
                         }
                     }
-
                 }
-
             }
-            new TileMove(this, currentTile, currentTileRotation, cities,
-                    newTile, newRotation, cities);
-
+            
+            // Map any unassigned cities randomly
+            city: for (City city : cities) {
+                if (citiesToStations.containsKey(city)) continue;
+                for (Station newStation : newTile.getStations()) {
+                    if (citiesToStations.values().contains(newStation)) continue;
+                    citiesToStations.put(city, newStation);
+                    continue city;
+                }
+            }
+        
+                
+           // Assign the new Stations to the existing cities
+           for (City city : citiesToStations.keySet()) {
+               Station newStation = citiesToStations.get(city);
+               Station oldStation = city.getRelatedStation();
+               city.setRelatedStation(newStation);
+               city.setSlots(newStation.getBaseSlots());
+               newTracks =
+                        getConnectionString(newTile,
+                                newRotation,
+                                newStation.getNumber());
+               city.setTrackEdges(newTracks);
+               log.debug("Assigned "
+                          + city.getUniqueId()
+                          + " from "
+                          + oldStation.getId()
+                          + " "
+                          + getConnectionString(currentTile,
+                                  currentTileRotation,
+                                  oldStation.getNumber())
+                          + " to " + newStation.getId() + " "
+                          + newTracks);
+            }
+            newCities = cities;
+            
         } else {
             // If the number of stations does change,
             // create a new set of cities.
 
             // Build a map from old to new cities,
             // so that we can move tokens at the end.
-            List<City> newCities = new ArrayList<City>(4);
+            newCities = new ArrayList<City>(4);
             Map<Integer, City> mNewCities = new HashMap<Integer, City>(4);
             Map<City, City> oldToNewCities = new HashMap<City, City>();
             Map<Station, City> newStationsToCities =
@@ -467,9 +477,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                           + ": "
                           + getConnectionString(currentTile,
                                   currentTileRotation, oldStation.getNumber()));
-                // for (City newCity : newCities) {
                 station: for (Station newStation : newTile.getStations()) {
-                    // Station newStation = newCity.getRelatedStation();
                     int[] newTrackEnds =
                             getTrackEndPoints(newTile, newRotation, newStation);
                     log.debug("New station #"
@@ -575,8 +583,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                 }
             }
 
-
-
             // Check if there any new stations not corresponding
             // to an old city.
             for (Station newStation : newTile.getStations()) {
@@ -646,10 +652,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
             }
 
-            // Replace the tile
-            new TileMove(this, currentTile, currentTileRotation, cities,
-                    newTile, newRotation, newCities);
         }
+
+        // Replace the tile
+        new TileMove(this, currentTile, currentTileRotation, cities,
+                newTile, newRotation, newCities);
 
         /* TODO Further consequences to be processed here, e.g. new routes etc. */
     }
@@ -717,7 +724,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             log.error("Company " + company.getName() + " has no free token");
             return false;
         } else {
-            // new TokenMove (token, company, station);
             token.moveTo(city);
             return true;
         }
@@ -728,7 +734,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             log.error("No token specified");
             return false;
         } else {
-            // new TokenMove (token, token.getHolder(), this);
             token.moveTo(this);
             return true;
         }
@@ -802,22 +807,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         }
         return false;
     }
-
-    /** Check if the tile already has a token of a company in one station */
-    /*
-     * public boolean hasTokenOfCompany (PublicCompanyI company, Station
-     * station) {
-     * 
-     * for (TokenI token : station.getTokens()) { if
-     * (((BaseToken)token).getCompany() == company) return true; } return false; }
-     */
-
-    /** Check if the tile already has a token of a company in one station */
-    /*
-     * public boolean hasTokenOfCompany (PublicCompanyI company, int station) {
-     * 
-     * return hasTokenOfCompany (company, cities.get(station).getNumber()); }
-     */
 
     public List<TokenI> getTokens(int cityNumber) {
         if (cities.size() > 0 && mCities.get(cityNumber) != null) {

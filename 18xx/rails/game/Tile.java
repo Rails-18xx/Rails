@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.23 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.24 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -41,6 +41,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     private int quantity;
     private boolean unlimited = false;
     public static final int UNLIMITED_TILES = -1;
+
+    /**
+     * Flag indicating that player must reposition any  basetokens during the upgrade.
+     */
+    boolean relayBaseTokensOnUpgrade = false;
 
     /** Off-board preprinted tiles */
     public static final String RED_COLOUR_NAME = "red";
@@ -252,7 +257,13 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                     }
 
                 }
-            }
+                
+                // Set reposition base tokens flag
+                // (valid for all upgrades although attribute of one)
+                relayBaseTokensOnUpgrade = upgradeTag.getAttributeAsBoolean(
+                        "relayBaseTokens", 
+                        relayBaseTokensOnUpgrade);
+             }
         }
 
     }
@@ -379,6 +390,10 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         return stations.size();
     }
 
+    public boolean relayBaseTokensOnUpgrade() {
+        return relayBaseTokensOnUpgrade;
+    }
+
     public boolean lay(MapHex hex) {
 
         tilesLaid.add(hex);
@@ -473,6 +488,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         protected void setPhases (String phases) {
             allowedPhases = Arrays.asList(phases.split(","));
         }
+        
 
         private void convertHexString() {
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.43 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.44 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -726,7 +726,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public void start(StockSpaceI startSpace) {
-        log.debug("+++Starting1b "+name);
+
         hasStarted.set(true);
         setParSpace(startSpace);
         // The current price is set via the Stock Market

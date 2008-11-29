@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.44 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.45 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -373,7 +373,7 @@ public class OperatingRound extends Round implements Observer {
                                 String.valueOf(tile.getExternalId()),
                                 hex.getName(), Bank.format(cost) }));
             }
-            hex.upgrade(tile, orientation);
+            hex.upgrade(action);
 
             // Was a special property used?
             if (stl != null) {

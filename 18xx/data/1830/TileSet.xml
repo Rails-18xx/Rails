@@ -19,7 +19,7 @@
 		<Upgrade id="53"/>
 	</Tile>
 	<Tile id="-20"><!-- 2 OO cities -->
-		<Upgrade id="59"/>
+		<Upgrade id="59" relayBaseTokens="yes"/>
 	</Tile>
 	<Tile id="-21"><!-- New York -->
 		<Upgrade id="54"/>
