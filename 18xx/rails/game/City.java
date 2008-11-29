@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.5 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.6 2008/11/29 21:50:58 krazick Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -138,11 +138,12 @@ public class City implements TokenHolderI {
     /**
      * @param company
      * @return true if this City already contains an instance of the specified
-     * company's token.
+     * company's token. Do this by calling the hasTokenOf with Company Name.
+	 * Using a tokens.contains(company) fails since the tokens are a ArrayList 
+	 * of TokenI not a ArrayList of PublicCompanyI.
      */
     public boolean hasTokenOf(PublicCompanyI company) {
-        if (tokens.contains(company)) return true;
-        return false;
+		return hasTokenOf (company.getName());
     }
     
     public boolean hasTokenOf (String companyName) {
