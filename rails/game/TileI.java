@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.13 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.14 2008/11/29 20:01:33 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -44,6 +44,8 @@ public interface TileI {
 
     public String getUpgradesString(MapHex hex);
 
+    public boolean relayBaseTokensOnUpgrade();
+        
     public boolean hasStations();
 
     public List<Station> getStations();

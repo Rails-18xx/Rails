@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.12 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.13 2008/11/29 20:01:33 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -7,10 +7,14 @@ package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectInputStream.GetField;
 import java.util.*;
 
+import rails.game.City;
+import rails.game.Company;
 import rails.game.MapHex;
 import rails.game.MapManager;
+import rails.game.PublicCompanyI;
 import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.special.SpecialProperty;
@@ -50,6 +54,11 @@ public class LayTile extends PossibleORAction {
      */
     transient private SpecialTileLay specialProperty = null;
     private int specialPropertyId;
+    
+    /**
+     * Need base tokens be relaid?
+     */
+    private boolean relayBaseTokens = false;
 
     /*--- Postconditions ---*/
 
@@ -63,6 +72,10 @@ public class LayTile extends PossibleORAction {
 
     /** The tile orientation */
     private int orientation;
+    
+    /** Any manually assigned base token positions */
+    private Map<String, Integer> relaidBaseTokens = null;
+    private String relaidBaseTokensString = null;
 
     public static final long serialVersionUID = 1L;
 
@@ -201,6 +214,29 @@ public class LayTile extends PossibleORAction {
     public void setTileColours(Map<String, Integer> map) {
         tileColours = map;
     }
+    
+    
+    public boolean isRelayBaseTokens() {
+        return relayBaseTokens;
+    }
+
+    public void setRelayBaseTokens(boolean relayBaseTokens) {
+        this.relayBaseTokens = relayBaseTokens;
+    }
+    
+    public void addRelayBaseToken (String companyName, Integer cityNumber) {
+        if (relaidBaseTokens == null) {
+            relaidBaseTokens = new HashMap<String, Integer>();
+        }
+        relaidBaseTokens.put(companyName, cityNumber);
+        relaidBaseTokensString = Util.appendWithDelimiter(relaidBaseTokensString, 
+                Util.appendWithDelimiter(companyName, String.valueOf(cityNumber), ":"),
+                ",");
+    }
+
+    public Map<String, Integer> getRelaidBaseTokens() {
+        return relaidBaseTokens;
+    }
 
     public boolean equals(PossibleAction action) {
         if (!(action instanceof LayTile)) return false;
@@ -229,7 +265,7 @@ public class LayTile extends PossibleORAction {
         } else {
             b.append(" tile=").append(laidTile.getId()).append(" hex=").append(
                     chosenHex.getName()).append(" orientation=").append(
-                    orientation);
+                    orientation).append(" tokens=").append(relaidBaseTokensString);
         }
         return b.toString();
     }
@@ -238,7 +274,19 @@ public class LayTile extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+        ObjectInputStream.GetField fields = in.readFields(); 
+        locationNames = (String) fields.get("locationNames", locationNames);
+        tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
+        tileIds = (int[]) fields.get("tileIds", tileIds);
+        specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
+        laidTileId = fields.get("laidTileId", laidTileId);
+        chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
+        orientation = fields.get("orientation", orientation);
+        relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
+        relaidBaseTokens = (Map<String,Integer>)fields.get("relaidBaseTokens", relaidBaseTokens);
+        relaidBaseTokensString = (String) fields.get("relaidBaseTokensString", relaidBaseTokensString);
 
         MapManager mmgr = MapManager.getInstance();
         locations = new ArrayList<MapHex>();
@@ -264,6 +312,7 @@ public class LayTile extends PossibleORAction {
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = MapManager.getInstance().getHex(chosenHexName);
         }
+        
     }
 
     private void buildLocationNameString() {
