@@ -2,7 +2,6 @@ package rails.ui.swing;
 
 import java.util.*;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
@@ -11,7 +10,6 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.*;
 import rails.ui.swing.elements.CheckBoxDialog;
-import rails.ui.swing.elements.RadioButtonDialog;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
