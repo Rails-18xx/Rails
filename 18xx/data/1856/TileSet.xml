@@ -16,7 +16,7 @@
 		<Upgrade id="121"/>
 	</Tile>
 	<Tile id="-20"><!-- 2 OO cities -->
-		<Upgrade id="59"/>
+		<Upgrade id="59" relayBaseTokens="yes"/>
 	</Tile>
 	<Tile id="-21"><!-- Toronto -->
 		<Upgrade id="120"/>
