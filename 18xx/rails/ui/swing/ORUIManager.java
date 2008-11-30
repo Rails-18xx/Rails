@@ -617,14 +617,19 @@ public class ORUIManager {
                 if (prompts.isEmpty()) {
                     return;
                 }
-                String selected =
-                        (String) JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("SelectStationForToken"),
-                                LocalText.getText("WhichStation"),
-                                JOptionPane.PLAIN_MESSAGE, null,
-                                prompts.toArray(), prompts.get(0));
-                if (selected == null) return;
-                station = promptToCityMap.get(selected).getNumber();
+					// If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
+				if (prompts.size() > 1) {
+					String selected =
+                       (String) JOptionPane.showInputDialog(orWindow,
+														 LocalText.getText("SelectStationForToken"),
+														 LocalText.getText("WhichStation"),
+														 JOptionPane.PLAIN_MESSAGE, null,
+														 prompts.toArray(), prompts.get(0));
+					if (selected == null) return;
+					station = promptToCityMap.get(selected).getNumber();
+				} else {
+					station = promptToCityMap.get(prompts.toArray() [0]).getNumber();
+				}
             }
 
             allowance.setChosenHex(selectedHex.getHexModel());
@@ -681,15 +686,19 @@ public class ORUIManager {
                 if (prompts.isEmpty()) {
                     continue;
                 }
-                String selected =
-                        (String) JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("SelectStationForToken"),
-                                LocalText.getText("WhichStation"),
-                                JOptionPane.PLAIN_MESSAGE, null,
-                                prompts.toArray(), prompts.get(0));
-                if (selected == null) return;
-                action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
-            }
+				if (prompts.size () > 1) {
+					String selected =
+					(String) JOptionPane.showInputDialog(orWindow,
+														 LocalText.getText("SelectStationForToken"),
+														 LocalText.getText("WhichStation"),
+														 JOptionPane.PLAIN_MESSAGE, null,
+														 prompts.toArray(), prompts.get(0));
+					if (selected == null) return;
+					action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
+				} else {
+					action.addRelayBaseToken(company.getName(), promptToCityMap.get(prompts.toArray() [0]));
+				}
+           }
         }
     }
 
