@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.17 2008/11/21 20:41:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.18 2008/12/01 21:31:55 evos Exp $*/
 package rails.ui.swing;
 
 import rails.common.Defs;
@@ -30,6 +30,8 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
     private ORPanel orPanel;
     private UpgradesPanel upgradePanel;
     private MessagePanel messagePanel;
+    
+    private Rectangle lastBounds;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
@@ -162,6 +164,11 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
     public void activate(OperatingRound or) {
         orPanel.recreate(or);
         pack();
+        if (lastBounds != null) {
+            Rectangle newBounds = getBounds();
+            lastBounds.x = newBounds.x;
+            setBounds (lastBounds);
+        }
         setVisible(true);
         requestFocus();
     }
@@ -176,6 +183,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
      * 
      */
     public void finish() {
+        lastBounds = getBounds();
         orPanel.finish();
         upgradePanel.finish();
     }
