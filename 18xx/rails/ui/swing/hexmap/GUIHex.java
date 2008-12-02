@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.19 2008/11/07 00:52:11 krazick Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.20 2008/12/02 20:29:15 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -358,7 +358,7 @@ public class GUIHex implements ViewObject {
 
         for (int i = 0; i < tokens.size(); i++) {
             PublicCompanyI co = ((BaseToken) tokens.get(i)).getCompany();
-            Point origin = getTokenOrigin2(numTokens, i, 1, 0);
+            Point origin = getTokenOrigin(numTokens, i, 1, 0);
             drawBaseToken(g2, co, origin);
         }
     }
@@ -375,7 +375,7 @@ public class GUIHex implements ViewObject {
             numTokens = tokens.size();
 
             for (int j = 0; j < tokens.size(); j++) {
-                origin = getTokenOrigin2(numTokens, j, numStations, i);
+                origin = getTokenOrigin(numTokens, j, numStations, i);
                 co = ((BaseToken) tokens.get(j)).getCompany();
                 drawBaseToken(g2, co, origin);
             }
@@ -435,153 +435,13 @@ public class GUIHex implements ViewObject {
         token.drawToken(g2);
     }
 
-    /*
-     * Beware! Here be dragons! And nested switch/case statements! The horror!
-     * 
-     * NOTE: CurrentFoo starts at 0 TotalFoo starts at 1
-     */
-    private Point getTokenOrigin(int numTokens, int currentToken,
-            int numStations, int currentStation) {
-        Point p = new Point();
-
-        switch (numStations) {
-        // Single city, variable number of token spots.
-        // This is the most common scenario.
-        case 1:
-            switch (numTokens) {
-            // Single dot, basic hex
-            case 1:
-                p.x = (center.x - 9);
-                p.y = (center.y - 9);
-                return p;
-                // Two dots, common green hex upgrade
-            case 2:
-                // First token
-                if (currentToken == 0) {
-                    p.x = (center.x - 5);
-                    p.y = (center.y - 9);
-                    return p;
-                }
-                // Second Token
-                else {
-                    p.x = (center.x - 17);
-                    p.y = (center.y - 9);
-                    return p;
-                }
-                // Three dots, common brown hex upgrade
-            case 3:
-                // First token
-                if (currentToken == 0) {
-                    p.x = (center.x - 14);
-                    p.y = (center.y - 3);
-                    return p;
-                }
-                // Second Token
-                else if (currentToken == 1) {
-                    p.x = (center.x - 5);
-                    p.y = (center.y - 3);
-                    return p;
-                }
-                // Third Token
-                else {
-                    p.x = (center.x - 9);
-                    p.y = (center.y - 14);
-                    return p;
-                }
-                // Four dots, slightly less common brown hex upgrade
-            case 4:
-            case 5:
-            case 6:
-            default:
-                return center;
-            }
-            // Big Cities, two stations.
-            // usually only one or two token spots per station
-        case 2:
-            // First Station... (left side)
-            if (currentStation == 0) {
-                switch (numTokens) {
-                case 1:
-                    p.x = (center.x - 14);
-                    p.y = (center.y + 3);
-                    return p;
-                case 2:
-                    // First token
-                    if (currentToken == 0) {
-                        p.x = (center.x - 20);
-                        p.y = (center.y - 3);
-                        return p;
-                    }
-                    // Second Token
-                    else {
-                        p.x = (center.x - 10);
-                        p.y = (center.y + 9);
-                        return p;
-                    }
-                default:
-                    return center;
-                }
-            }
-            // Second Station... (right side)
-            else {
-                switch (numTokens) {
-                case 1:
-                    p.x = (center.x - 1);
-                    p.y = (center.y - 20);
-                    return p;
-                case 2:
-                    // First token
-                    if (currentToken == 0) {
-                        p.x = (center.x - 6);
-                        p.y = (center.y - 23);
-                        return p;
-                    }
-                    // Second Token
-                    else {
-                        p.x = (center.x + 6);
-                        p.y = (center.y - 12);
-                        return p;
-                    }
-                default:
-                    return center;
-                }
-            }
-        case 3:
-            // TODO: We'll deal with the 3 station scenario later... much later.
-
-            // Known cases: 3 single token stations,
-            // 2 double token station and a single token station
-
-            // Only do the 3 single token stations case now.
-            // Coordinates sort of work for 18EU B/V tiles
-            switch (currentStation) {
-            case 0:
-                p.x = center.x - 14;
-                p.y = center.y + 8;
-                return p;
-            case 1:
-                p.x = center.x - 16;
-                p.y = center.y - 18;
-                return p;
-            case 2:
-                p.x = center.x + 3;
-                p.y = center.y - 9;
-                return p;
-            default:
-                return center;
-            }
-        default:
-            return center;
-        }
-    }
-
     public void rotateTile() {
         if (provisionalGUITile != null) {
             provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
         }
     }
 
-    private Point getTokenOrigin2(int numTokens, int currentToken,
+    private Point getTokenOrigin(int numTokens, int currentToken,
             int numStations, int stationNumber) {
         Point p = new Point(center.x - 8, center.y - 8);
 

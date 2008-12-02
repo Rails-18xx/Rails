@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.8 2008/11/20 21:49:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.9 2008/12/02 20:29:15 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -100,7 +100,6 @@ public class TreasuryShareRound extends StockRound {
         List<PublicCertificateI> certs;
         PublicCertificateI cert;
         PublicCompanyI comp;
-        StockSpaceI stockSpace;
         Portfolio from;
         int price;
         int number;
@@ -329,10 +328,6 @@ public class TreasuryShareRound extends StockRound {
                                 String.valueOf(gameManager.getTreasuryShareLimit()));
                 break;
             }
-
-            StockSpaceI currentSpace;
-            // TODO NEVER A PAR PRICE ?
-            //currentSpace = company.getCurrentSpace();
 
             price = company.getMarketPrice();
 

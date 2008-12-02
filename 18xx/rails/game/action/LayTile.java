@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.13 2008/11/29 20:01:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.14 2008/12/02 20:29:15 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -7,14 +7,10 @@ package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputStream.GetField;
 import java.util.*;
 
-import rails.game.City;
-import rails.game.Company;
 import rails.game.MapHex;
 import rails.game.MapManager;
-import rails.game.PublicCompanyI;
 import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.special.SpecialProperty;

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.6 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.7 2008/12/02 20:29:15 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -343,7 +343,8 @@ public class Tag {
 
     /**
      * @deprecated This is a stop-gap, needed until all XML parsing code has
-     * been converted to use Tag.
+     * been converted to use Tag. This method is now only called from
+     * some external utilities.
      * @return
      */
     public Element getElement() {
