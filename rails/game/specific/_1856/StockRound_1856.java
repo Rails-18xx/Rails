@@ -8,7 +8,6 @@ import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
 import rails.game.StockRound;
-import rails.game.move.CashMove;
 import rails.util.LocalText;
 
 public class StockRound_1856 extends StockRound {

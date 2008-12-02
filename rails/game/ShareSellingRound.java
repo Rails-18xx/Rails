@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.15 2008/11/20 21:49:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.16 2008/12/02 20:29:15 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -26,6 +26,7 @@ public class ShareSellingRound extends StockRound {
             PublicCompanyI compNeedingTrain, int cashToRaise) {
 
         this.gameManager = gameManager;
+            this.companyManager = gameManager.getCompanyManager();
         this.companyNeedingTrain = compNeedingTrain;
         this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
         sellingPlayer = compNeedingTrain.getPresident();

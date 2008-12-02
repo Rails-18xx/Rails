@@ -7,8 +7,6 @@ import java.util.List;
 
 import rails.game.CompanyManagerI;
 import rails.game.Game;
-import rails.game.MapHex;
-import rails.game.MapManager;
 import rails.game.PublicCompanyI;
 
 /** This class is needed until we have a means to determine reaching
@@ -88,7 +86,6 @@ public class ReachDestinations extends PossibleORAction {
         in.defaultReadObject();
 
         CompanyManagerI cmgr = Game.getCompanyManager();
-        MapManager mmgr = MapManager.getInstance();
 
         possibleCompanies = new ArrayList<PublicCompanyI>();
         for (String cname : possibleCompanyNames.split(",")) {
