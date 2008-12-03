@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.25 2008/11/29 20:01:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.26 2008/12/03 20:17:36 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -153,7 +153,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         optMenu.add(menuItem);
 
         menuItem = new JCheckBoxMenuItem(LocalText.getText("REPORT"));
-        menuItem.setName(LocalText.getText("REPORT"));
+        menuItem.setName(REPORT_CMD);
         menuItem.setActionCommand(REPORT_CMD);
         menuItem.setMnemonic(KeyEvent.VK_R);
         menuItem.addActionListener(this);
@@ -263,6 +263,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE );
         final JFrame frame = this;
         addWindowListener(new WindowAdapter () {
+            @Override
             public void windowClosing(WindowEvent e) {
                 if (JOptionPane.showConfirmDialog(frame, "Do you really want to exit the game?", "Select", JOptionPane.OK_CANCEL_OPTION)
                         == JOptionPane.OK_OPTION) {
@@ -271,7 +272,7 @@ public class StatusWindow extends JFrame implements ActionListener,
                 }
             }
         });
-        
+
 
         pack();
     }
@@ -559,7 +560,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     public GameStatus getGameStatus() {
         return gameStatus;
     }
-    
+
     public static void uncheckMenuItemBox(String itemName) {
         int count = optMenu.getMenuComponentCount();
 
@@ -631,6 +632,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     }
 
     public void keyTyped(KeyEvent e) {}
-    
+
 
 }
