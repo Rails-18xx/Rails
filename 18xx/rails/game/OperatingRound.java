@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.45 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.46 2008/12/03 20:15:15 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -110,7 +110,7 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * The constructor.
-     * 
+     *
      * @param operate If false, only the privates pay out. This applies if the
      * Start Packet has not yet been sold completely.
      */
@@ -203,9 +203,9 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof BuyPrivate) {
 
             result = buyPrivate((BuyPrivate) selectedAction);
-            
+
         } else if (selectedAction instanceof ReachDestinations) {
-            
+
             result = reachDestinations ((ReachDestinations) selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
@@ -359,7 +359,7 @@ public class OperatingRound extends Round implements Observer {
         MoveSet.start(true);
 
         if (tile != null) {
-            if (cost > 0) 
+            if (cost > 0)
                 new CashMove(operatingCompany, null, cost);
             operatingCompany.layTile(hex, tile, orientation, cost);
 
@@ -764,7 +764,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Internal method: change the OR state to the next step. If the currently
      * Operating Company is done, notify this.
-     * 
+     *
      * @param company The current company.
      */
     protected void nextStep() {
@@ -918,7 +918,6 @@ public class OperatingRound extends Round implements Observer {
 
         /* Special-property tile lays */
         currentSpecialTileLays.clear();
-        // specialPropertyPerHex.clear();
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
@@ -958,7 +957,7 @@ public class OperatingRound extends Round implements Observer {
 
         /* Special-property tile lays */
         currentSpecialTokenLays.clear();
- 
+
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
@@ -1012,7 +1011,7 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * The current Company is done operating.
-     * 
+     *
      * @param company Name of the company that finished operating.
      * @return False if an error is found.
      */
@@ -1063,7 +1062,7 @@ public class OperatingRound extends Round implements Observer {
         for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
             priv.checkClosingIfExercised(true);
         }
-        
+
         if (setNextOperatingCompany(false)) {
 
             setStep(STEP_INITIAL);
@@ -1071,10 +1070,10 @@ public class OperatingRound extends Round implements Observer {
             finishOR();
         }
     }
-    
+
     protected boolean setNextOperatingCompany(boolean initial) {
-        
-        
+
+
         if (operatingCompanyIndexObject == null) {
             operatingCompanyIndexObject =
                     new IntegerState("OperatingCompanyIndex");
@@ -1084,9 +1083,9 @@ public class OperatingRound extends Round implements Observer {
         } else {
             operatingCompanyIndexObject.add(1);
         }
-        
+
         operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-        
+
         if (operatingCompanyIndex >= operatingCompanyArray.length) {
             return false;
         } else {
@@ -1102,7 +1101,7 @@ public class OperatingRound extends Round implements Observer {
         for (PrivateCompanyI priv : gameManager.getAllPrivateCompanies()) {
             priv.checkClosingIfExercised(true);
         }
-        
+
         // OR done. Inform GameManager.
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
         gameManager.nextRound(this);
@@ -1454,14 +1453,14 @@ public class OperatingRound extends Round implements Observer {
         return true;
 
     }
-    
+
     public boolean reachDestinations (ReachDestinations action) {
-        
+
         List<PublicCompanyI> destinedCompanies
             = action.getReachedCompanies();
         if (destinedCompanies != null) {
             for (PublicCompanyI company : destinedCompanies) {
-                if (company.hasDestination() 
+                if (company.hasDestination()
                         && !company.hasReachedDestination()) {
                     if (!MoveSet.isOpen()) MoveSet.start(true);
                     company.setReachedDestination(true);
@@ -1477,21 +1476,21 @@ public class OperatingRound extends Round implements Observer {
         }
         return true;
     }
-    
+
     /** Stub for applying any follow-up actions when
-     * a company reaches it destinations. 
+     * a company reaches it destinations.
      * Default version: no actions.
      * @param company
      */
     protected void reachDestination (PublicCompanyI company) {
-        
+
     }
 
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
      * Get the public company that has the turn to operate.
-     * 
+     *
      * @return The currently operating company object.
      */
     public PublicCompanyI getOperatingCompany() {
@@ -1505,7 +1504,7 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Get the current operating round step (i.e. the next action).
-     * 
+     *
      * @return The number that defines the next action.
      */
     public int getStep() {
@@ -1516,7 +1515,7 @@ public class OperatingRound extends Round implements Observer {
      * Bypass normal order of operations and explicitly set round step. This
      * should only be done for specific rails.game exceptions, such as forced
      * train purchases.
-     * 
+     *
      * @param step
      */
     protected void setStep(int step) {
@@ -1538,7 +1537,7 @@ public class OperatingRound extends Round implements Observer {
      * To be called after each change, to re-establish the currently allowed
      * actions. (new method, intended to absorb code from several other
      * methods).
-     * 
+     *
      */
     @Override
     public boolean setPossibleActions() {
@@ -1596,7 +1595,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         setBonusTokenLays();
-        
+
         setDestinationActions();
 
         setGameSpecificPossibleActions();
@@ -1643,7 +1642,7 @@ public class OperatingRound extends Round implements Observer {
      * Get a list of buyable trains for the currently operating company. Omit
      * trains that the company has no money for. If there is no cash to buy any
      * train from the Bank, prepare for emergency train buying.
-     * 
+     *
      * @return List of all trains that could potentially be bought.
      */
     public void setBuyableTrains() {
@@ -1798,7 +1797,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Returns whether or not the company is allowed to buy a train, considering
      * its train limit.
-     * 
+     *
      * @return
      */
     protected boolean canBuyTrain() {
@@ -1828,15 +1827,15 @@ public class OperatingRound extends Round implements Observer {
             }
         }
     }
-    
-    /** 
+
+    /**
      * This is currently a stub, as it is unclear if there is a common
      * rule for setting destination reaching options.
      * See OperatingRound_1856 for a first implementation
-     * of such rules.     
+     * of such rules.
      */
     protected void setDestinationActions () {
-        
+
     }
 
     /* TODO This is just a start of a possible approach to a Help system */
