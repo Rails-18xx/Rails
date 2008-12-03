@@ -1,14 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.9 2008/11/03 15:55:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.10 2008/12/03 20:15:14 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import rails.util.Tag;
+import java.util.*;
 
 import org.apache.log4j.Logger;
+
+import rails.util.Tag;
 
 public class Phase implements PhaseI {
 
@@ -41,16 +38,11 @@ public class Phase implements PhaseI {
 
     /** Items to close if a phase gets activated */
     protected List<Closeable> closedObjects = null;
-    
+
     /** A HashMap to contain phase-dependent parameters
      * by name and value.
      */
     protected Map<String, String> parameters = null;
-
-    // protected static boolean previousPrivateSellingAllowed = false;
-    // protected static int previousNumberOfOperatingRounds = 1;
-    // protected static String previousTileColours = "";
-    // protected static int previousOffBoardRevenueStep = 1;
 
     protected static Logger log =
             Logger.getLogger(Phase.class.getPackage().getName());
@@ -129,7 +121,7 @@ public class Phase implements PhaseI {
                     trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
                             oneTrainPerTypePerTurn);
         }
-        
+
         Tag parameterTag = tag.getChild("Parameters");
         if (parameterTag != null) {
             if (parameters == null) parameters = new HashMap<String, String>();
@@ -210,7 +202,7 @@ public class Phase implements PhaseI {
         }
         closedObjects.add(object);
     }
-    
+
     public String getParameterAsString (String key) {
         if (parameters != null) {
             return parameters.get(key);
@@ -218,7 +210,7 @@ public class Phase implements PhaseI {
             return null;
         }
     }
-    
+
     public int getParameterAsInteger (String key) {
         String stringValue = getParameterAsString(key);
         if (stringValue == null) {
@@ -233,6 +225,7 @@ public class Phase implements PhaseI {
 
     }
 
+    @Override
     public String toString() {
         return name;
     }

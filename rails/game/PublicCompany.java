@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.44 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.45 2008/12/03 20:15:15 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -217,7 +217,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Initial train at floating time */
     protected String initialTrain = null;
-    
+
     /**
      * The constructor. The way this class is instantiated does not allow
      * arguments.
@@ -248,8 +248,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
         numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
-        
-        boolean certsAreInitiallyAvailable 
+
+        boolean certsAreInitiallyAvailable
                 = tag.getAttributeAsBoolean("available", true);
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
@@ -278,7 +278,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             MapHex hex = MapManager.getInstance().getHex(destHexName);
             if (hex != null) {
                 destinationHex = hex;
-                hasReachedDestination = new BooleanState (name+"_reachedDestination", false); 
+                hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
             } else {
                 throw new ConfigurationException("Invalid destination hex "
                                                  + destHexName
@@ -419,7 +419,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     for (int k = 0; k < phases.length; k++) {
                         phaseMap.put(phases[k], lays);
                     }
-                    // phaseMap.put("turns", validForTurns);
                     if (validForTurns > 0) {
                         if (turnsWithExtraTileLaysInit == null) {
                             turnsWithExtraTileLaysInit =
@@ -448,9 +447,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         "President".equals(certificateTag.getAttributeAsString(
                                 "type", ""));
                 int number = certificateTag.getAttributeAsInteger("number", 1);
-                
-                boolean certIsInitiallyAvailable 
-                        = certificateTag.getAttributeAsBoolean("available", 
+
+                boolean certIsInitiallyAvailable
+                        = certificateTag.getAttributeAsBoolean("available",
                                 certsAreInitiallyAvailable);
 
                 if (president) {
@@ -526,6 +525,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
+    @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
@@ -579,7 +579,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
     }
-    
+
     public void setIndex (int index) {
         publicNumber = index;
     }
@@ -628,7 +628,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token background colour.
-     * 
+     *
      * @return Color object
      */
     public Color getBgColour() {
@@ -637,7 +637,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token background colour.
-     * 
+     *
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexBgColour() {
@@ -646,7 +646,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token foreground colour.
-     * 
+     *
      * @return Color object.
      */
     public Color getFgColour() {
@@ -655,7 +655,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Return the company token foreground colour.
-     * 
+     *
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexFgColour() {
@@ -696,16 +696,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public MapHex getDestinationHex() {
         return destinationHex;
     }
-    
+
     public boolean hasDestination () {
         return destinationHex != null;
     }
-    
+
     public boolean hasReachedDestination() {
         return hasReachedDestination != null &&
             hasReachedDestination.booleanValue();
     }
-    
+
     public void setReachedDestination (boolean value) {
         hasReachedDestination.set(value);
     }
@@ -810,7 +810,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Has the company already floated?
-     * 
+     *
      * @return true if the company has floated.
      */
     public boolean hasFloated() {
@@ -819,7 +819,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Has the company already operated?
-     * 
+     *
      * @return true if the company has operated.
      */
     public boolean hasOperated() {
@@ -848,7 +848,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Set the company par price. <p> <i>Note: this method should <b>not</b> be
      * used to start a company!</i> Use <code><b>start()</b></code> in
      * stead.
-     * 
+     *
      * @param spaceI
      */
     public void setParSpace(StockSpaceI space) {
@@ -861,7 +861,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the company par (initial) price.
-     * 
+     *
      * @return StockSpace object, which defines the company start position on
      * the stock chart.
      */
@@ -872,7 +872,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             return currentPrice != null ? currentPrice.getPrice() : null;
         }
     }
-    
+
     public int getIPOPrice () {
         if (hasParPrice) {
             if (getStartSpace() != null) {
@@ -884,7 +884,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             return getMarketPrice();
         }
     }
-    
+
     public int getMarketPrice () {
         if (getCurrentSpace() != null) {
             return getCurrentSpace().getPrice();
@@ -895,7 +895,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Set a new company price.
-     * 
+     *
      * @param price The StockSpace object that defines the new location on the
      * stock market.
      */
@@ -918,7 +918,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the current company share price.
-     * 
+     *
      * @return The StockSpace object that defines the current location on the
      * stock market.
      */
@@ -928,7 +928,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Add a given amount to the company treasury.
-     * 
+     *
      * @param amount The amount to add (may be negative).
      */
     public boolean addCash(int amount) {
@@ -937,7 +937,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the current company treasury.
-     * 
+     *
      * @return The current cash amount.
      */
     public int getCash() {
@@ -961,7 +961,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get a list of this company's certificates.
-     * 
+     *
      * @return ArrayList containing the certificates (item 0 is the President's
      * share).
      */
@@ -972,7 +972,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Assign a predefined list of certificates to this company. The list is
      * deep cloned.
-     * 
+     *
      * @param list ArrayList containing the certificates.
      */
     public void setCertificates(List<PublicCertificateI> list) {
@@ -983,9 +983,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
             certificates.add(cert2);
         }
     }
-    
-    /** 
-     * Backlink the certificates to this company, 
+
+    /**
+     * Backlink the certificates to this company,
      * and give each one a type name.
      *
      */
@@ -997,7 +997,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Add a certificate to the end of this company's list of certificates.
-     * 
+     *
      * @param certificate The certificate to add.
      */
     public void addCertificate(PublicCertificateI certificate) {
@@ -1009,7 +1009,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Get the Portfolio of this company, containing all privates and
      * certificates owned..
-     * 
+     *
      * @return The Portfolio of this company.
      */
     public Portfolio getPortfolio() {
@@ -1018,7 +1018,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the percentage of shares that must be sold to float the company.
-     * 
+     *
      * @return The float percentage.
      */
     public int getFloatPercentage() {
@@ -1027,7 +1027,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the company President.
-     * 
+     *
      */
     public Player getPresident() {
         if (hasStarted()) {
@@ -1036,7 +1036,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
         return null;
     }
-    
+
     public PublicCertificateI getPresidentsShare () {
         return certificates.get(0);
     }
@@ -1049,7 +1049,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Store the last revenue earned by this company.
-     * 
+     *
      * @param i The last revenue amount.
      */
     public void setLastRevenue(int i) {
@@ -1058,7 +1058,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the last revenue earned by this company.
-     * 
+     *
      * @return The last revenue amount.
      */
     public int getLastRevenue() {
@@ -1087,7 +1087,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
 /** Split a dividend. TODO Optional rounding down the payout
-     * 
+     *
      * @param amount
      */
     public void splitRevenue(int amount) {
@@ -1109,7 +1109,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Distribute the dividend amongst the shareholders.
-     * 
+     *
      * @param amount
      */
     public void payout(int amount) {
@@ -1160,7 +1160,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Withhold a given amount of revenue (and store it).
-     * 
+     *
      * @param The revenue amount.
      */
     public void withhold(int amount) {
@@ -1174,7 +1174,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * if the share price should move up at the end of a stock round. Since 1851
      * (jan 2008) interpreted as: no share is owned either by the Bank or by the
      * company's own Treasury.
-     * 
+     *
      * @return true if the share price can move up.
      */
     public boolean isSoldOut() {
@@ -1198,7 +1198,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Get the unit of share.
-     * 
+     *
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit() {
@@ -1270,7 +1270,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Check if the presidency has changed for a <b>buying</b> player.
-     * 
+     *
      * @param buyer Player who has just bought a certificate.
      */
     public void checkPresidencyOnBuy(Player buyer) {
@@ -1416,7 +1416,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Calculate the cost of laying a token. Currently hardcoded for the
      * "sequence" method. The other token layong costing methods will be
      * implemented later.
-     * 
+     *
      * @param index The sequence number of the token that the company is laying.
      * @return The cost of laying that token.
      */

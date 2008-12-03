@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.14 2008/12/02 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.15 2008/12/03 20:15:15 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -173,18 +173,6 @@ public class LayTile extends PossibleORAction {
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++) {
             tileIds[i] = tiles.get(i).getId();
-        }
-    }
-
-    /**
-     * @deprecated
-     * @return Returns the location.
-     */
-    public MapHex getLocation() {
-        if (locations != null) {
-            return locations.get(0);
-        } else {
-            return null;
         }
     }
 

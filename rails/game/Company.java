@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.8 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.9 2008/12/03 20:15:15 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -27,7 +27,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
      */
     protected int certLimitCount = 2;
 
-    // protected boolean closed = false;
     protected BooleanState closedObject;
 
     protected static Logger log =
@@ -144,7 +143,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
     /**
      * Stub method implemented to comply with TokenHolderI interface. Always
      * returns false.
-     * 
+     *
      * Use addToken(MapHex hex) method instead.
      */
     public boolean addToken(CompanyI company) {

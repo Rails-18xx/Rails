@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.25 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.26 2008/12/03 20:15:15 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -246,8 +246,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public boolean hasParPrice();
 
-    // public int percentageOwnedByPlayers();
-
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();
@@ -255,15 +253,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public void checkPresidencyOnSale(Player seller);
 
     public void checkPresidencyOnBuy(Player buyer);
-
-    /**
-     * Only usable if the float percentage is fixed. Games where the percentage
-     * varies must check this in StockRound and possibly StartRound.
-     */
-    // public boolean checkFlotation(boolean moveCash);
-    /** @deprecated */
-    @Deprecated
-    public int percentageOwnedByPlayers();
 
     public int getCapitalisation();
 
@@ -273,7 +262,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public int getCurrentTrainLimit();
 
-    // public boolean mayBuyTrains ();
     public int getNumberOfTrains();
 
     public void initTurn();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyStartItem.java,v 1.3 2008/12/02 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyStartItem.java,v 1.4 2008/12/03 20:15:15 evos Exp $
  * 
  * Created on 17-Sep-2006
  * Change Log:
@@ -74,10 +74,6 @@ public class BuyStartItem extends StartItemAction {
 
     public String getCompanyToSetPriceFor() {
         return companyNeedingSharePrice;
-    }
-
-    public int getStatus() {
-        return startItem.getStatus();
     }
 
     public boolean equals(PossibleAction action) {
