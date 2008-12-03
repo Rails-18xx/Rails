@@ -1,28 +1,28 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.18 2008/12/01 21:31:55 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.19 2008/12/03 20:16:39 evos Exp $*/
 package rails.ui.swing;
 
-import rails.common.Defs;
-import rails.game.*;
-import rails.game.action.LayTile;
-import rails.game.action.LayToken;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.util.LocalText;
-
+import java.awt.BorderLayout;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+
+import rails.common.Defs;
+import rails.game.DisplayBuffer;
+import rails.game.OperatingRound;
+import rails.game.action.*;
 
 /**
  * This Window displays the available operations that may be performed during an
  * Operating Round. This window also contains the Game Map.
  */
-public class ORWindow extends JFrame implements WindowListener, ActionPerformer {
+public class ORWindow extends JFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
     public GameUIManager gameUIManager;
     private ORUIManager orUIManager;
@@ -30,7 +30,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
     private ORPanel orPanel;
     private UpgradesPanel upgradePanel;
     private MessagePanel messagePanel;
-    
+
     private Rectangle lastBounds;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
@@ -77,7 +77,15 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
         setLocation(10, 10);
         setVisible(false);
         setSize(800, 600);
-        addWindowListener(this);
+
+        final JFrame frame = this;
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);
+                frame.dispose();
+            }
+        });
 
         gameUIManager.reportWindow.addLog();
     }
@@ -109,23 +117,6 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
     public MessagePanel getMessagePanel() {
         return messagePanel;
     }
-
-    public void windowActivated(WindowEvent e) {}
-
-    public void windowClosed(WindowEvent e) {}
-
-    public void windowClosing(WindowEvent e) {
-        StatusWindow.uncheckMenuItemBox(LocalText.getText("MAP"));
-        dispose();
-    }
-
-    public void windowDeactivated(WindowEvent e) {}
-
-    public void windowDeiconified(WindowEvent e) {}
-
-    public void windowIconified(WindowEvent e) {}
-
-    public void windowOpened(WindowEvent e) {}
 
     public boolean process(PossibleAction action) {
 
@@ -166,7 +157,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
         pack();
         if (lastBounds != null) {
             Rectangle newBounds = getBounds();
-            lastBounds.x = newBounds.x;
+            lastBounds.width = newBounds.width;
             setBounds (lastBounds);
         }
         setVisible(true);
@@ -180,7 +171,7 @@ public class ORWindow extends JFrame implements WindowListener, ActionPerformer 
 
     /**
      * Round-end settings
-     * 
+     *
      */
     public void finish() {
         lastBounds = getBounds();

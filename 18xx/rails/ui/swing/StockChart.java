@@ -1,19 +1,19 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.5 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.6 2008/12/03 20:16:39 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import rails.game.*;
 import rails.ui.swing.elements.GUIStockSpace;
-import rails.util.LocalText;
 
 /**
  * This class displays the StockMarket Window.
  */
 
-public class StockChart extends JFrame implements WindowListener, KeyListener {
+public class StockChart extends JFrame implements KeyListener {
     private static final long serialVersionUID = 1L;
     private JPanel stockPanel;
     private Box horLabels, verLabels;
@@ -30,7 +30,14 @@ public class StockChart extends JFrame implements WindowListener, KeyListener {
 
         stockPanel.setBackground(Color.LIGHT_GRAY);
 
-        addWindowListener(this);
+        final JFrame frame = this;
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                StatusWindow.uncheckMenuItemBox(StatusWindow.MARKET_CMD);
+                frame.dispose();
+            }
+        });
         addKeyListener(this);
         pack();
     }
@@ -95,23 +102,6 @@ public class StockChart extends JFrame implements WindowListener, KeyListener {
         verLabels.add(Box.createVerticalGlue());
         horLabels.add(Box.createHorizontalGlue());
     }
-
-    public void windowActivated(WindowEvent e) {}
-
-    public void windowClosed(WindowEvent e) {}
-
-    public void windowClosing(WindowEvent e) {
-        StatusWindow.uncheckMenuItemBox(LocalText.getText("MARKET"));
-        dispose();
-    }
-
-    public void windowDeactivated(WindowEvent e) {}
-
-    public void windowDeiconified(WindowEvent e) {}
-
-    public void windowIconified(WindowEvent e) {}
-
-    public void windowOpened(WindowEvent e) {}
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {

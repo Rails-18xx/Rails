@@ -1,18 +1,19 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.7 2008/11/21 20:41:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.8 2008/12/03 20:16:39 evos Exp $*/
 package rails.ui.swing;
 
-import rails.game.*;
-import rails.util.LocalText;
-
 import java.awt.*;
-import javax.swing.*;
 import java.awt.event.*;
+
+import javax.swing.*;
+
+import rails.game.GameManager;
+import rails.game.ReportBuffer;
 
 /**
  * This is the UI for the LogWindow. It displays logged messages to the user
  * during the rails.game.
  */
-public class ReportWindow extends JFrame implements WindowListener, KeyListener {
+public class ReportWindow extends JFrame implements KeyListener {
 
     private static final long serialVersionUID = 1L;
     private JTextArea message;
@@ -49,7 +50,15 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
         setSize(400, 400);
         setLocation(600, 400);
         setTitle("Rails: Game log");
-        addWindowListener(this);
+
+        final JFrame frame = this;
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                StatusWindow.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
+                frame.dispose();
+            }
+        });
         addKeyListener(this);
 
     }
@@ -65,23 +74,6 @@ public class ReportWindow extends JFrame implements WindowListener, KeyListener 
             });
         }
     }
-
-    public void windowActivated(WindowEvent e) {}
-
-    public void windowClosed(WindowEvent e) {}
-
-    public void windowClosing(WindowEvent e) {
-        StatusWindow.uncheckMenuItemBox(LocalText.getText("REPORT"));
-        dispose();
-    }
-
-    public void windowDeactivated(WindowEvent e) {}
-
-    public void windowDeiconified(WindowEvent e) {}
-
-    public void windowIconified(WindowEvent e) {}
-
-    public void windowOpened(WindowEvent e) {}
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
