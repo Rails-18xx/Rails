@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.9 2008/12/02 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.10 2008/12/04 01:03:40 krazick Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -29,12 +29,17 @@ public class TreasuryShareRound extends StockRound {
     private final BooleanState hasBought;
     private final BooleanState hasSold;
 
-    public TreasuryShareRound(GameManager gameManager,
-            PublicCompanyI operatingCompany) {
-
-        this.gameManager = gameManager;
-        this.companyManager = gameManager.getCompanyManager();
-        
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and 
+	 * and other parameters used by the Treasury Share Round Class
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
+	 * @param operatingCompany The PublicCompanyI Object that is selling shares
+	 *
+	 */
+    public TreasuryShareRound(GameManager aGameManager,
+							  PublicCompanyI operatingCompany) {
+		super (aGameManager);
         this.operatingCompany = operatingCompany;
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
