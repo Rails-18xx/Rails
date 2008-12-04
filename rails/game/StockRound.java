@@ -58,6 +58,24 @@ public class StockRound extends Round {
     static protected boolean noSaleInFirstSR = false;
     static protected boolean noSaleIfNotOperated = false;
 
+	/**
+	 * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
+	 *
+	 */
+	public StockRound () {
+		super ();
+	}
+	
+	/**
+	 * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Round Class
+	 *
+	 */
+	public StockRound (GameManager aGameManager) {
+		super (aGameManager);
+	}
+	
     public void start() {
 
         if (numberOfPlayers == 0)
