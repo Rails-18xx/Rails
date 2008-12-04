@@ -18,11 +18,25 @@ import rails.util.LocalText;
 public class FinalMinorExchangeRound extends StockRound_18EU {
     OperatingRound_18EU lastOR;
 
-    /**
-     * The constructor.
-     */
-    public FinalMinorExchangeRound() {}
+	/**
+	 * Constructor with no parameters, will call super class (StockRound_18EU's) Constructor to initialize
+	 *
+	 */
+    public FinalMinorExchangeRound() 
+	{
+		super ();
+	}
 
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound_18EU's) Constructor to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
+	 *
+	 */
+	public FinalMinorExchangeRound(GameManager aGameManager) {
+		super (aGameManager);
+	}
+	
     public void start(OperatingRound_18EU lastOR) {
         ReportBuffer.add("\n"
                          + LocalText.getText("StartFinalMinorExchangeRound"));

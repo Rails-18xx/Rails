@@ -25,6 +25,24 @@ public class StockRound_18EU extends StockRound {
             new BooleanState("DiscardingTrains", false);
     protected boolean phase5Reached = false;
 
+	/**
+	 * Constructor with no parameters, will call super class (StockRound's) Constructor to initialize
+	 *
+	 */
+	public StockRound_18EU () {
+		super ();
+	}
+	
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
+	 *
+	 */
+	public StockRound_18EU (GameManager aGameManager) {
+		super (aGameManager);
+	}
+	
     @Override
     public void start() {
         super.start();
