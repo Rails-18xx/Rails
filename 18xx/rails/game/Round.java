@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.12 2008/11/20 21:49:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.13 2008/12/04 00:46:46 krazick Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -28,9 +28,36 @@ public abstract class Round implements RoundI {
     protected GameManager gameManager = null;
     protected CompanyManagerI companyManager = null;
 
-    public void setGameManager (GameManager gameManager) {
-        this.gameManager = gameManager;
-        this.companyManager = gameManager.getCompanyManager();
+	/**
+	 * Constructor with no parameters, call the setGameManager with null to properly initialize
+	 *
+	 */
+	public Round () {
+		setGameManager (null);
+	}
+	
+	/**
+	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Round Class
+	 *
+	 */
+	public Round (GameManager aGameManager) {
+		setGameManager (aGameManager);
+	}
+	
+	/** Initialization routine that will set the gameManager and the companyManager objects for use in the class
+	 *
+	 * @param aGameManager The GameManager Object to save in the class, and use to find the CompanyManager
+	 *
+	 */
+    public void setGameManager (GameManager aGameManager) {
+        gameManager = aGameManager;
+		if (aGameManager == null) {
+			companyManager = null;
+		} else {
+			companyManager = aGameManager.getCompanyManager();
+		}
     }
     
     public GameManager getGameManager () {

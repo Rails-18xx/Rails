@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.46 2008/12/03 20:15:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.47 2008/12/04 00:45:23 krazick Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -109,14 +109,13 @@ public class OperatingRound extends Round implements Observer {
                     "BuyTrain", "TradeShares", "Final" };
 
     /**
-     * The constructor.
-     *
-     * @param operate If false, only the privates pay out. This applies if the
-     * Start Packet has not yet been sold completely.
+	 * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
+	 *
      */
     public OperatingRound() {
-   }
-
+		super ();
+	}
+	
     public void start(boolean operate, String orNumber) {
 
         if (players == null) {
