@@ -3,14 +3,26 @@ package rails.game.specific._1856;
 import rails.game.Bank;
 import rails.game.CashHolder;
 import rails.game.Certificate;
+import rails.game.GameManager;
 import rails.game.Portfolio;
 import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
 import rails.game.StockRound;
+import rails.game.move.CashMove;
 import rails.util.LocalText;
 
 public class StockRound_1856 extends StockRound {
+
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
+	 *
+	 */
+	public StockRound_1856 (GameManager aGameManager) {
+		super (aGameManager);
+	}
 
     /**
      * Special 1856 code to check for company flotation.

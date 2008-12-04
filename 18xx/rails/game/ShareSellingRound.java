@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.16 2008/12/02 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.17 2008/12/04 01:15:35 krazick Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -22,11 +22,20 @@ public class ShareSellingRound extends StockRound {
     PublicCompanyI companyNeedingTrain;
     IntegerState cashToRaise;
 
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and 
+	 * and other parameters used by the Share Selling Round Class
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
+	 * @param compNeedingTraing The PublicCompanyI Object that needs to buy the train, 
+	 *        who is limited on selling shares of
+	 * @param cashToRaise The amount of cash needed to be raised during the special sell-off
+	 *
+	 */
     public ShareSellingRound(GameManager gameManager,
             PublicCompanyI compNeedingTrain, int cashToRaise) {
 
-        this.gameManager = gameManager;
-            this.companyManager = gameManager.getCompanyManager();
+		super (gameManager);
         this.companyNeedingTrain = compNeedingTrain;
         this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
         sellingPlayer = compNeedingTrain.getPresident();
