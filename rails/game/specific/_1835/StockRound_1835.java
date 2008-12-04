@@ -5,6 +5,7 @@
 package rails.game.specific._1835;
 
 import rails.game.CompanyManagerI;
+import rails.game.GameManager;
 import rails.game.Portfolio;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
@@ -17,6 +18,16 @@ public class StockRound_1835 extends StockRound {
     //Portfolio unavailable = Bank.getUnavailable();
     CompanyManagerI compMgr;
 
+	/**
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+	 *
+	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
+	 *
+	 */
+	public StockRound_1835 (GameManager aGameManager) {
+		super (aGameManager);
+	}
+	
     /**
      * The company release rules for 1835.
      * 
