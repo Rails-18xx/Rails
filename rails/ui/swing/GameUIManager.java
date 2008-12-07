@@ -91,8 +91,6 @@ public class GameUIManager {
         reportWindow = new ReportWindow(gameManager);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
-        // mapPanel = orWindow.getMapPanel();
-        // statusWindow = new StatusWindow(this);
 
         String statusWindowClassName = getClassName(Defs.ClassName.STATUS_WINDOW);
         try {
@@ -106,7 +104,7 @@ public class GameUIManager {
         }
 
         updateUI();
-
+        
     }
     
     public boolean processOnServer(PossibleAction action) {
@@ -214,8 +212,6 @@ public class GameUIManager {
         } else if (currentRound instanceof StockRound) {
             activeWindow = statusWindow;
 
-            // stockRound = (StockRound) currentRound;
-
             statusWindow.updateStatus();
 
         } else if (currentRound instanceof OperatingRound) {
@@ -278,7 +274,6 @@ public class GameUIManager {
 
             gameUIInit();
             processOnServer(null);
-            // updateUI();
             statusWindow.setGameActions();
         }
 
