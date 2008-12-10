@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.2 2008/06/04 19:00:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.3 2008/12/10 20:44:48 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.GameManager;
@@ -29,7 +29,9 @@ public class GameManager_18EU extends GameManager {
     private void startFinalMinorExchangeRound(OperatingRound_18EU or) {
 
         FinalMinorExchangeRound sr = new FinalMinorExchangeRound();
+        sr.setGameManager(this);
         sr.start(or);
+        setRound (sr);
     }
 
 }
