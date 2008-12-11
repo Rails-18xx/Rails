@@ -1,12 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.6 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.7 2008/12/11 20:12:30 evos Exp $*/
 package rails.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
@@ -45,7 +47,7 @@ public class MakeGameTileSets {
                     }
                 }
 
-                new MakeGameTileSets((String[]) games.toArray(new String[0]));
+                new MakeGameTileSets(games.toArray(new String[0]));
 
             } else {
 

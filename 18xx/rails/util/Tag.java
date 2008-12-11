@@ -1,11 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.7 2008/12/02 20:29:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.8 2008/12/11 20:12:30 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -13,18 +10,16 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import rails.game.ConfigurationException;
-import rails.game.Game;
-import rails.game.GameOption;
+import rails.game.*;
 
 /**
  * Each object of this class both contains and represents a DOM Element object.
  * Its purpose it to hide the XML parsing details from the application program.
  * The methods of this class intend to replace the corresponding methods in
  * XmlUtils.
- * 
+ *
  * @author Erik Vos
- * 
+ *
  */
 public class Tag {
 
@@ -51,7 +46,7 @@ public class Tag {
 
     /**
      * Return all child Elements with a given name of an Element.
-     * 
+     *
      * @param element
      * @param tagName
      * @return
@@ -66,7 +61,7 @@ public class Tag {
 
     /**
      * Return the (first) child Element with a given name from an Element.
-     * 
+     *
      * @param element
      * @param tagName
      * @return
@@ -193,7 +188,7 @@ public class Tag {
      * &lt;/AnyElement&gt;
      * </code>
      * <p> For variant names, the fixed option name "variant" is used.
-     * 
+     *
      * @param element
      * @return
      */
@@ -290,7 +285,7 @@ public class Tag {
     /**
      * Opens and parses an xml file. Searches the root level of the file for an
      * element with the supplied name.
-     * 
+     *
      * @param fileName the name of the file to open
      * @param tagName the name of the top-level tag to find
      * @return the named element in the named file
@@ -298,7 +293,7 @@ public class Tag {
      * parsing the file, or if the file does not contain a top level element
      * with the given name.
      */
-    public static Tag findTopTagInFile(String filename, List directories,
+    public static Tag findTopTagInFile(String filename, List<String> directories,
             String tagName) throws ConfigurationException {
         Document doc = null;
         try {
@@ -347,6 +342,7 @@ public class Tag {
      * some external utilities.
      * @return
      */
+    @Deprecated
     public Element getElement() {
         return element;
     }
