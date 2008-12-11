@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.11 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.12 2008/12/11 20:12:07 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -16,8 +16,6 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     protected PublicCompanyI company;
     /**
      * Share percentage represented by this certificate
-     * 
-     * @deprecated
      */
     protected int shares;
     /** President's certificate? */
@@ -91,7 +89,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     /**
      * Get the number of shares that this certificate represents.
-     * 
+     *
      * @return The number of shares.
      */
     public int getShares() {
@@ -101,7 +99,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /**
      * Get the percentage of ownership that this certificate represents. This is
      * equal to the number of shares * the share unit.
-     * 
+     *
      * @return The share percentage.
      */
     public int getShare() {
@@ -110,7 +108,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     /**
      * Get the current price of this certificate.
-     * 
+     *
      * @return The current certificate price.
      */
     /*
@@ -184,6 +182,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return certTypeId;
     }
 
+    @Override
     protected Object clone() {
         try {
             return super.clone();
@@ -200,7 +199,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /**
      * Two certificates are "equal" if they both belong to the same company,
      * represent the same share percentage, and are not a president share.
-     * 
+     *
      * @param cert Public company certificate to compare with.
      * @return True if the certs are "equal" in the defined sense.
      */
@@ -209,6 +208,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
                 && isPresidentShare() == cert.isPresidentShare() && getShares() == cert.getShares());
     }
 
+    @Override
     public String toString() {
         return "PublicCertificate: " + getName();
     }

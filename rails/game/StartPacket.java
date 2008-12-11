@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.11 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.12 2008/12/11 20:12:07 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -25,6 +25,7 @@ public class StartPacket {
     /**
      * The start packet name. Usually the default name "Ïnitial" is used.
      */
+    @SuppressWarnings("unused")
     private String name; // For identification if there is more than one.
     /** The name of the class that implements the Start Round for this packet. */
     private String roundClassName;
@@ -46,7 +47,7 @@ public class StartPacket {
     /**
      * Constructor. Only takes the packet and class named. Actual initialisation
      * is done in <b>configureFromXML()</b>.
-     * 
+     *
      * @param name The start packet name.
      * @param roundClassName The StartRound class name.
      */
@@ -59,7 +60,7 @@ public class StartPacket {
     /**
      * Configure the start packet from the contents of a &lt;StartPacket&gt; XML
      * element.
-     * 
+     *
      * @param element The &lt;StartPacket&gt; Element object.
      * @throws ConfigurationException if anything goes wrong.
      */
@@ -135,17 +136,17 @@ public class StartPacket {
 
     /**
      * Get the start packet with as given name.
-     * 
+     *
      * @param name The start packet name.
      * @return The start packet (or null if it does not exist).
      */
     public static StartPacket getStartPacket(String name) {
-        return (StartPacket) packets.get(name);
+        return packets.get(name);
     }
 
     /**
      * Get the start packet with the default name.
-     * 
+     *
      * @return The default start packet (or null if it does not exist).
      */
     public static StartPacket getStartPacket() {
@@ -154,7 +155,7 @@ public class StartPacket {
 
     /**
      * Get the items of this start packet.
-     * 
+     *
      * @return The List of start items.
      */
     public List<StartItem> getItems() {
@@ -162,18 +163,18 @@ public class StartPacket {
     }
 
     public StartItem getItem(int index) {
-        return (StartItem) items.get(index);
+        return items.get(index);
     }
 
     /**
      * Get the first start item. This one often gets a special treatment (price
      * reduction).
-     * 
+     *
      * @return first item
      */
     public StartItem getFirstItem() {
         if (!items.isEmpty()) {
-            return (StartItem) items.get(0);
+            return items.get(0);
         } else {
             return null;
         }
@@ -182,7 +183,7 @@ public class StartPacket {
     /**
      * Get the first start item that has not yet been sold. In many cases this
      * is the only item that can be bought immediately.
-     * 
+     *
      * @return first unsold item
      */
     public StartItem getFirstUnsoldItem() {
@@ -194,7 +195,7 @@ public class StartPacket {
 
     /**
      * Get all not yet sold start items.
-     * 
+     *
      * @return A List of all unsold items.
      */
     public List<StartItem> getUnsoldItems() {
@@ -209,7 +210,7 @@ public class StartPacket {
 
     /**
      * Check if all items have bene sold.
-     * 
+     *
      * @return True if all items have been sold.
      */
     public boolean areAllSold() {
@@ -221,7 +222,7 @@ public class StartPacket {
 
     /**
      * Get the name of the StartRound class that will sell out this packet.
-     * 
+     *
      * @return StartRound subclass name.
      */
     public String getRoundClassName() {

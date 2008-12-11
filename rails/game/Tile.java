@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.24 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.25 2008/12/11 20:12:07 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -31,7 +31,8 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
     // Upgrade instances
     private String upgradesString = "";
-    private final List[] tracksPerSide = new ArrayList[6]; 
+    @SuppressWarnings("unchecked")
+    private final List[] tracksPerSide = new ArrayList[6];
     // N.B. Cannot parametrise collection array
     private Map<Integer, List<Track>> tracksPerStation = null;
     private final List<Track> tracks = new ArrayList<Track>();
@@ -257,11 +258,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                     }
 
                 }
-                
+
                 // Set reposition base tokens flag
                 // (valid for all upgrades although attribute of one)
                 relayBaseTokensOnUpgrade = upgradeTag.getAttributeAsBoolean(
-                        "relayBaseTokens", 
+                        "relayBaseTokens",
                         relayBaseTokensOnUpgrade);
              }
         }
@@ -337,7 +338,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     /**
      * Get the valid upgrades if this tile on a certain hex (restrictions per
      * hex have not yet been implemented).
-     * 
+     *
      * @param hex The MapHex to be upgraded.
      * @return A List of valid upgrade TileI objects.
      */
@@ -450,7 +451,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
          * A temporary String holding the in/excluded hexes. This will be
          * processed at the first usage, because Tiles are initialised before
          * the Map.
-         * 
+         *
          * @author Erik Vos
          */
         String hexes = null;
@@ -461,11 +462,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
 
         protected boolean isAllowedForHex(MapHex hex, String phaseName) {
 
-            if (allowedPhases != null 
+            if (allowedPhases != null
                     && !allowedPhases.contains(phaseName)) {
                 return false;
             }
-            
+
             if (hexes != null) convertHexString();
 
             if (allowedHexes != null) {
@@ -476,7 +477,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                 return true;
             }
         }
-        
+
         protected TileI getTile() {
             return tile;
         }
@@ -484,11 +485,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         protected void setHexes(String hexes) {
             this.hexes = hexes;
         }
-        
+
         protected void setPhases (String phases) {
             allowedPhases = Arrays.asList(phases.split(","));
         }
-        
+
 
         private void convertHexString() {
 
