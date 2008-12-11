@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.26 2008/10/11 16:43:41 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.27 2008/12/11 20:12:30 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -148,7 +148,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         items = round.getStartItems().toArray(new StartItem[0]);
         ni = items.length;
-        // log.debug("+++ ni="+ni);
         StartItem item;
         for (int i = 0; i < ni; i++) {
             item = items[i];
@@ -250,7 +249,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             }
 
             for (int j = 0; j < np; j++) {
-                // log.debug("+++ i="+i+"/"+ni+" j="+j);
                 f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
                 addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
                         1, 1, 0);
@@ -442,7 +440,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         if (includeBidding) bidButton.setEnabled(bidAllowed);
         passButton.setEnabled(passAllowed);
 
-        // pack();
         requestFocus();
     }
 
@@ -467,7 +464,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent actor) {
@@ -512,7 +509,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     spinnerModel.setValue(minBid);
                 }
             }
-            // pack();
         } else if (source instanceof ActionButton) {
             PossibleAction activeItem =
                     ((ActionButton) source).getPossibleActions().get(0);
