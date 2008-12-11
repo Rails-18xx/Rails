@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.8 2008/12/03 20:16:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.9 2008/12/11 20:10:25 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import rails.game.GameManager;
 import rails.game.ReportBuffer;
+import rails.util.LocalText;
 
 /**
  * This is the UI for the LogWindow. It displays logged messages to the user
@@ -49,7 +50,7 @@ public class ReportWindow extends JFrame implements KeyListener {
 
         setSize(400, 400);
         setLocation(600, 400);
-        setTitle("Rails: Game log");
+        setTitle(LocalText.getText("GameReportTitle"));
 
         final JFrame frame = this;
         addWindowListener(new WindowAdapter() {

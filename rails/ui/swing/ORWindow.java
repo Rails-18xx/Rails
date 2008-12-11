@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.19 2008/12/03 20:16:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.20 2008/12/11 20:10:25 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -17,6 +17,7 @@ import rails.common.Defs;
 import rails.game.DisplayBuffer;
 import rails.game.OperatingRound;
 import rails.game.action.*;
+import rails.util.LocalText;
 
 /**
  * This Window displays the available operations that may be performed during an
@@ -73,7 +74,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         orUIManager.init(this);
 
-        setTitle("Rails: Map");
+        setTitle(LocalText.getText("MapWindowTitle"));
         setLocation(10, 10);
         setVisible(false);
         setSize(800, 600);
@@ -154,6 +155,8 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
     public void activate(OperatingRound or) {
         orPanel.recreate(or);
+        setTitle(LocalText.getText("MapWindowORTitle",
+                gameUIManager.getGameManager().getCompositeORNumber()));
         pack();
         if (lastBounds != null) {
             Rectangle newBounds = getBounds();
@@ -177,5 +180,6 @@ public class ORWindow extends JFrame implements ActionPerformer {
         lastBounds = getBounds();
         orPanel.finish();
         upgradePanel.finish();
+        setTitle(LocalText.getText("MapWindowTitle"));
     }
 }
