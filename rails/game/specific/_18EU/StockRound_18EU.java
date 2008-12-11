@@ -32,7 +32,7 @@ public class StockRound_18EU extends StockRound {
 	public StockRound_18EU () {
 		super ();
 	}
-	
+
 	/**
 	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
 	 *
@@ -42,7 +42,7 @@ public class StockRound_18EU extends StockRound {
 	public StockRound_18EU (GameManager aGameManager) {
 		super (aGameManager);
 	}
-	
+
     @Override
     public void start() {
         super.start();
@@ -66,7 +66,7 @@ public class StockRound_18EU extends StockRound {
     /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
-     * 
+     *
      * @return List of buyable certificates.
      */
     @Override
@@ -265,7 +265,7 @@ public class StockRound_18EU extends StockRound {
 
     /**
      * Start a company by buying one or more shares (more applies to e.g. 1841)
-     * 
+     *
      * @param player The player that wants to start a company.
      * @param company The company to start.
      * @param price The start (par) price (ignored if the price is fixed).
@@ -477,7 +477,7 @@ public class StockRound_18EU extends StockRound {
      * actions of the Final Minor Exchange Round, in which minors can also be
      * closed (in that case, the MergeCompanies.major attribute is null, which
      * never occurs in normal stock rounds).
-     * 
+     *
      * @param action
      * @return
      */
@@ -527,7 +527,6 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (major != null) {
-            checkFlotation(major);
             if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
                 && !compWithExcessTrains.contains(major)) {
 
@@ -546,6 +545,7 @@ public class StockRound_18EU extends StockRound {
                             cert.getPortfolio().getName(), minor.getName() }));
             cert.moveTo(currentPlayer.getPortfolio());
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getName()));
+            checkFlotation(major);
         } else {
             ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG", new String[] {
                     currentPlayer.getName(), minor.getName(),
