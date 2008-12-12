@@ -177,7 +177,6 @@ public class StockRound_18EU extends StockRound {
             if (isSaleRecorded(currentPlayer, comp)) continue;
             if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
                     cert.getShare()) < 1) continue;
-            //stockSpace = comp.getCurrentSpace();
             price = comp.getMarketPrice();
 
             if (companyBoughtThisTurn != null) {
@@ -235,8 +234,7 @@ public class StockRound_18EU extends StockRound {
 
         for (PublicCompanyI comp : comps) {
             type = comp.getTypeName();
-            if (type.equals("Major") && comp.hasStarted()
-                && !comp.hasOperated()) {
+            if (type.equals("Major") && comp.hasStarted()) {
                 targetCompanies.add(comp);
             } else if (type.equals("Minor")
                        && comp.getPresident() == currentPlayer) {
@@ -401,9 +399,6 @@ public class StockRound_18EU extends StockRound {
                 String.valueOf(cert.getShare()), company.getName() }));
 
         // Transfer the President's certificate
-        // currentPlayer.getPortfolio().buyCertificate(cert,
-        // ipo,
-        // cert.getCertificatePrice());
         cert.moveTo(currentPlayer.getPortfolio());
 
         new CashMove(currentPlayer, company, shares * price);
@@ -640,7 +635,6 @@ public class StockRound_18EU extends StockRound {
     @Override
     protected void finishTurn() {
 
-        // log.debug("+++ FinishTurn");
         if (!discardingTrains.booleanValue()) {
             super.setNextPlayer();
         } else {
@@ -662,7 +656,6 @@ public class StockRound_18EU extends StockRound {
 
     @Override
     protected void finishRound() {
-        // log.debug("+++ FinishRound");
 
         if (discardingTrains.booleanValue()) {
 
