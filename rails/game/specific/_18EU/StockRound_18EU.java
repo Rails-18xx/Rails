@@ -234,7 +234,8 @@ public class StockRound_18EU extends StockRound {
 
         for (PublicCompanyI comp : comps) {
             type = comp.getTypeName();
-            if (type.equals("Major") && comp.hasStarted()) {
+            if (type.equals("Major") && comp.hasStarted()
+                && !comp.hasOperated()) {
                 targetCompanies.add(comp);
             } else if (type.equals("Minor")
                        && comp.getPresident() == currentPlayer) {
