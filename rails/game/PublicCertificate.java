@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.12 2008/12/11 20:12:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.13 2008/12/14 21:55:05 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -105,21 +105,6 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     public int getShare() {
         return shares * company.getShareUnit();
     }
-
-    /**
-     * Get the current price of this certificate.
-     *
-     * @return The current certificate price.
-     */
-    /*
-    public int getCertificatePrice() {
-        if (company.getCurrentPrice() != null) {
-            return company.getCurrentPrice().getPrice() * shares;
-        } else {
-            return 0;
-        }
-    }
-    */
 
     /**
      * Get the name of a certificate. The name is derived from the company name
