@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.29 2008/11/20 21:49:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.30 2008/12/14 21:55:05 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -120,7 +120,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         }
 
         // Move the private certificate
-        // new CertificateMove (from, this, privateCompany);
         privateCompany.moveTo(this);
 
         // Move the money
@@ -401,20 +400,17 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         if (other.ownsCertificates(company, 1, false) >= shares) {
             for (int i = 0; i < shares; i++) {
                 swapCert = other.findCertificate(company, 1, false);
-                // new CertificateMove (other, this, swapCert);
                 swapCert.moveTo(this);
                 swapped.add(swapCert);
 
             }
         } else if (other.ownsCertificates(company, shares, false) >= 1) {
             swapCert = other.findCertificate(company, 2, false);
-            // new CertificateMove(other, this, swapCert);
             swapCert.moveTo(this);
             swapped.add(swapCert);
         } else {
             return null;
         }
-        // new CertificateMove (this, other, cert);
         cert.moveTo(other);
 
         // Make sure the old President is no longer marked as such
@@ -443,13 +439,11 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     public void buyTrain(TrainI train, int price) {
         CashHolder oldOwner = train.getOwner();
-        // new TrainMove (train, train.getHolder(), this);
         train.moveTo(this);
         if (price > 0) new CashMove(owner, oldOwner, price);
     }
 
     public void discardTrain(TrainI train) {
-        // new TrainMove (train, this, Bank.getPool());
         train.moveTo(Bank.getPool());
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 new String[] { name, train.getName() }));
