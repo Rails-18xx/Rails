@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.13 2008/12/04 00:46:46 krazick Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.14 2008/12/23 19:55:29 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -24,49 +24,34 @@ public abstract class Round implements RoundI {
 
     protected static Logger log =
             Logger.getLogger(Round.class.getPackage().getName());
-    
-    protected GameManager gameManager = null;
+
+    protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
 
-	/**
-	 * Constructor with no parameters, call the setGameManager with null to properly initialize
-	 *
-	 */
-	public Round () {
-		setGameManager (null);
-	}
-	
+    /** Default constructor cannot be used */
+    private Round () {}
+
 	/**
 	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the Round Class
 	 *
 	 */
-	public Round (GameManager aGameManager) {
-		setGameManager (aGameManager);
+	public Round (GameManagerI aGameManager) {
+
+        this.gameManager = aGameManager;
+
+        if (aGameManager == null) {
+            companyManager = null;
+        } else {
+            companyManager = aGameManager.getCompanyManager();
+        }
+
 	}
-	
-	/** Initialization routine that will set the gameManager and the companyManager objects for use in the class
-	 *
-	 * @param aGameManager The GameManager Object to save in the class, and use to find the CompanyManager
-	 *
-	 */
-    public void setGameManager (GameManager aGameManager) {
-        gameManager = aGameManager;
-		if (aGameManager == null) {
-			companyManager = null;
-		} else {
-			companyManager = aGameManager.getCompanyManager();
-		}
-    }
-    
-    public GameManager getGameManager () {
-        return gameManager;
-    }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.RoundI#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
@@ -81,22 +66,22 @@ public abstract class Round implements RoundI {
     public int getCurrentPlayerIndex() {
         return getCurrentPlayer().getIndex();
     }
-    
+
     public void setCurrentPlayerIndex(int newIndex) {
         gameManager.setCurrentPlayerIndex(newIndex);
     }
-    
+
     public void setCurrentPlayer(Player player) {
         gameManager.setCurrentPlayer(player);
     }
-    
+
     public PhaseI getCurrentPhase() {
         return gameManager.getCurrentPhase();
     }
 
      /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.RoundI#getHelp()
      */
     public String getHelp() {
@@ -106,7 +91,7 @@ public abstract class Round implements RoundI {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.RoundI#getSpecialProperties()
      */
     public List<SpecialPropertyI> getSpecialProperties() {
@@ -121,7 +106,7 @@ public abstract class Round implements RoundI {
     /**
      * Default version, does nothing. Subclasses should override this method
      * with a real version.
-     * 
+     *
      * @return
      */
     public boolean setPossibleActions() {
@@ -160,7 +145,7 @@ public abstract class Round implements RoundI {
     /**
      * Check if a company must be floated, and if so, do it. <p>This method is
      * included here because it is used in various types of Round.
-     * 
+     *
      * @param company
      */
     protected void checkFlotation(PublicCompanyI company) {
@@ -218,7 +203,7 @@ public abstract class Round implements RoundI {
             ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
                 company.getName(), Bank.format(cash) }));
         } else {
-            ReportBuffer.add(LocalText.getText("Floats", 
+            ReportBuffer.add(LocalText.getText("Floats",
                     company.getName()));
         }
 
@@ -241,17 +226,17 @@ public abstract class Round implements RoundI {
     }
 
     protected void executeTradeCertificate(Certificate cert, Portfolio newHolder, int price) {
-        
+
         Portfolio oldHolder = (Portfolio) cert.getHolder();
         cert.moveTo(newHolder);
-    
+
         if (price != 0) {
             new CashMove(newHolder.getOwner(), oldHolder.getOwner(), price);
         }
-        
+
     }
-    
-    /** 
+
+    /**
      * Who receives the cash when a certificate is bought.
      * Normally this is owner of the previously holding portfolio.
      * This method must be called <i>before</i> transferring the certificate.
@@ -262,5 +247,5 @@ public abstract class Round implements RoundI {
     protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
         return ((Portfolio)cert.getHolder()).getOwner();
     }
- 
+
 }
