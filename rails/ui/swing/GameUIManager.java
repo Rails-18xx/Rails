@@ -11,17 +11,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import rails.common.Defs;
-import rails.game.Bank;
-import rails.game.DisplayBuffer;
-import rails.game.Game;
-import rails.game.GameManager;
-import rails.game.OperatingRound;
-import rails.game.PhaseI;
-import rails.game.Player;
-import rails.game.PublicCompanyI;
-import rails.game.RoundI;
-import rails.game.StartRound;
-import rails.game.StockRound;
+import rails.game.*;
 import rails.game.action.GameAction;
 import rails.game.action.PossibleAction;
 import rails.util.Config;
@@ -42,7 +32,7 @@ public class GameUIManager {
     public GameSetupWindow gameSetupWindow;
     public static ImageLoader imageLoader;
 
-    private GameManager gameManager;
+    private GameManagerI gameManager;
     private PossibleAction lastAction;
     private ActionPerformer activeWindow = null;
     private RoundI currentRound;
@@ -288,7 +278,7 @@ public class GameUIManager {
         return imageLoader;
     }
 
-    public GameManager getGameManager() {
+    public GameManagerI getGameManager() {
         return gameManager;
     }
     
