@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.36 2008/11/22 17:22:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.37 2008/12/23 19:54:14 evos Exp $ */
 package rails.game;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -20,7 +21,7 @@ import rails.util.*;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager implements ConfigurableComponentI {
+public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -33,16 +34,16 @@ public class GameManager implements ConfigurableComponentI {
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass =
             OperatingRound.class;
-    
+
     // Variable UI Class names
     protected String orUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.OR_UI_MANAGER);
     protected String gameStatusClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_STATUS);
     protected String statusWindowClassName = Defs.getDefaultClassName(Defs.ClassName.STATUS_WINDOW);
-    
+
     protected PlayerManager playerManager;
     protected CompanyManagerI companyManager;
     protected PhaseManager phaseManager;
-    
+
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
@@ -69,7 +70,7 @@ public class GameManager implements ConfigurableComponentI {
     protected RoundI interruptedRound = null;
 
     protected IntegerState srNumber = new IntegerState ("SRNumber");
-    
+
     protected IntegerState absoluteORNumber =
             new IntegerState("AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
@@ -109,14 +110,14 @@ public class GameManager implements ConfigurableComponentI {
 
     /**
      * Private constructor.
-     * 
+     *
      */
     public GameManager() {
         instance = this;
     }
 
-    /**
-     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#configureFromXML(rails.util.Tag)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Get the rails.game name as configured */
@@ -268,15 +269,15 @@ public class GameManager implements ConfigurableComponentI {
             canClassBeInstantiated (statusWindowClassName);
         }
     }
-    
+
     /** Check if a classname can be instantiated.
      * Throws a ConfiguratioNException if not.
      * @param className
      * @throws ConfigurationException
      */
-    protected void canClassBeInstantiated (String className) 
+    protected void canClassBeInstantiated (String className)
     throws ConfigurationException {
-        
+
         try {
             Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -285,18 +286,21 @@ public class GameManager implements ConfigurableComponentI {
         }
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
+     */
     public void startGame(PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager) {
         this.playerManager = playerManager;
         this.companyManager = companyManager;
         this.phaseManager = phaseManager;
-        
+
         players = playerManager.getPlayers();
         playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
-        
+
         setGameParameters();
 
         if (startPacket == null)
@@ -311,15 +315,15 @@ public class GameManager implements ConfigurableComponentI {
         // Initialisation is complete. Undoability starts here.
         MoveSet.enable();
     }
-    
+
     private void setGameParameters () {
-        
+
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
             canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
             canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
         }
-        
+
 loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
@@ -328,29 +332,33 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     break loop;
                 }
             }
-            
+
         }
     }
 
     /**
      * @return instance of GameManager
      */
-    public static GameManager getInstance() {
+    public static GameManagerI getInstance() {
         return instance;
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCompanyManager()
+     */
     public CompanyManagerI getCompanyManager() {
         return companyManager;
     }
 
-    public void setRound(RoundI round) {
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setRound(rails.game.RoundI)
+     */
+    private void setRound(RoundI round) {
         currentRound.set(round);
     }
 
-    /**
-     * Should be called by each Round when it finishes.
-     * 
-     * @param round The object that represents the finishing round.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#nextRound(rails.game.RoundI)
      */
     public void nextRound(RoundI round) {
         if (round instanceof StartRound) {
@@ -411,8 +419,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
           System.exit(1);
         }
         StartRound startRound = createRound (startRoundClass);
-        startRound.setGameManager(this);
-        startRound.start (startPacket);
+        startRound.start ();
     }
 
     protected void startStockRound() {
@@ -423,55 +430,83 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     protected void startOperatingRound(boolean operate) {
         log.debug("Operating round started with operate-flag=" + operate);
- 
+
         OperatingRound or = createRound(operatingRoundClass);
         if (operate) absoluteORNumber.add(1);
-        or.start(operate, getCompositeORNumber());
+        or.start(operate);
     }
- 
-    protected <T extends Round> T createRound (Class<T> roundClass) {
+
+    protected <T extends RoundI> T createRound (Class<T> roundClass) {
 
         T round = null;
         try {
-            round = roundClass.newInstance();
+            Constructor<T> cons = roundClass.getConstructor(GameManagerI.class);
+            round = cons.newInstance(this);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
                       + roundClass.getName(), e);
             System.exit(1);
         }
-        round.setGameManager (this);
+        setRound (round);
         return round;
     }
 
+    protected <T extends RoundI, U extends RoundI>
+            T createRound (Class<T> roundClass, U parentRound) {
+
+        if (parentRound == null) {
+            return createRound (roundClass);
+        }
+
+        T round = null;
+        try {
+            Constructor<T> cons = roundClass.getConstructor(GameManagerI.class, RoundI.class);
+            round = cons.newInstance(this, parentRound);
+        } catch (Exception e) {
+            log.fatal("Cannot instantiate class "
+                      + roundClass.getName(), e);
+            System.exit(1);
+        }
+        setRound (round);
+        return round;
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCompositeORNumber()
+     */
     public String getCompositeORNumber() {
         return srNumber.intValue() + "."
                + relativeORNumber.intValue();
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getSRNumber()
+     */
     public int getSRNumber () {
         return srNumber.intValue();
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#startShareSellingRound(rails.game.OperatingRound, rails.game.PublicCompanyI, int)
+     */
     public void startShareSellingRound(OperatingRound or,
             PublicCompanyI companyNeedingTrain, int cashToRaise) {
 
         interruptedRound = getCurrentRound();
-        new ShareSellingRound(this, companyNeedingTrain, cashToRaise).start();
+        createRound (ShareSellingRound.class, interruptedRound).start();
     }
 
-    public void startTreasuryShareTradingRound(OperatingRound or,
-            PublicCompanyI companyTradingShares) {
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#startTreasuryShareTradingRound(rails.game.OperatingRound, rails.game.PublicCompanyI)
+     */
+    public void startTreasuryShareTradingRound() {
 
         interruptedRound = getCurrentRound();
-        new TreasuryShareRound(this, companyTradingShares).start();
+        createRound (TreasuryShareRound.class, interruptedRound).start();
     }
 
-    /**
-     * The central server-side method that takes a client-side initiated action
-     * and processes it.
-     * 
-     * @param action A PossibleAction subclass object sent by the client.
-     * @return TRUE is the action was valid.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#process(rails.game.action.PossibleAction)
      */
     public boolean process(PossibleAction action) {
 
@@ -565,6 +600,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#processOnReload(java.util.List)
+     */
     public void processOnReload(List<PossibleAction> actions) throws Exception {
 
         for (PossibleAction action : actions) {
@@ -608,16 +646,25 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#finishShareSellingRound()
+     */
     public void finishShareSellingRound() {
          setRound(interruptedRound);
         ((OperatingRound) getCurrentRound()).resumeTrainBuying();
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#finishTreasuryShareRound()
+     */
     public void finishTreasuryShareRound() {
         setRound(interruptedRound);
         ((OperatingRound) getCurrentRound()).nextStep();
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#registerBankruptcy()
+     */
     public void registerBankruptcy() {
         endedByBankruptcy = true;
         String message =
@@ -638,24 +685,23 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         logGameReport();
     }
 
-    /**
-     * To be called by the UI to check if the rails.game is over.
-     * 
-     * @return
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#isGameOver()
      */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#logGameReport()
+     */
     public void logGameReport() {
 
         ReportBuffer.add(getGameReport());
     }
 
-    /**
-     * Create a HTML-formatted rails.game status report.
-     * 
-     * @return
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getGameReport()
      */
     public String getGameReport() {
 
@@ -683,37 +729,37 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return b.toString();
     }
 
-    /**
-     * Should be called whenever a Phase changes. The effect on the number of
-     * ORs is delayed until a StockRound finishes.
-     * 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCurrentRound()
      */
     public RoundI getCurrentRound() {
         return (RoundI) currentRound.getObject();
     }
 
-    /**
-     * @return Returns the currentPlayerIndex.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCurrentPlayerIndex()
      */
     public int getCurrentPlayerIndex() {
         return getCurrentPlayer().getIndex();
     }
 
-    /**
-     * @param currentPlayerIndex The currentPlayerIndex to set.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setCurrentPlayerIndex(int)
      */
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
         currentPlayer.set(players.get(currentPlayerIndex));
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setCurrentPlayer(rails.game.Player)
+     */
     public void setCurrentPlayer(Player player) {
         currentPlayer.set(player);
     }
 
-    /**
-     * Set priority deal to the player after the current player.
-     * 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setPriorityPlayer()
      */
     public void setPriorityPlayer() {
         int priorityPlayerIndex =
@@ -722,79 +768,97 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setPriorityPlayer(rails.game.Player)
+     */
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
         log.debug("Priority player set to " + player.getIndex() + " "
                   + player.getName());
     }
 
-    /**
-     * @return Returns the priorityPlayer.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getPriorityPlayer()
      */
     public Player getPriorityPlayer() {
         return (Player) priorityPlayer.getObject();
     }
 
-    /**
-     * @return Returns the currentPlayer.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
         return (Player) currentPlayer.getObject();
     }
 
-    /**
-     * @return Returns the players.
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getPlayers()
      */
     public List<Player> getPlayers() {
         return players;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getNumberOfPlayers()
+     */
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getPlayerNames()
+     */
     public List<String> getPlayerNames() {
         return playerNames;
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getAllPublicCompanies()
+     */
     public List<PublicCompanyI> getAllPublicCompanies() {
         return companyManager.getAllPublicCompanies();
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getAllPrivateCompanies()
+     */
     public List<PrivateCompanyI> getAllPrivateCompanies() {
         return companyManager.getAllPrivateCompanies();
     }
-    
-    /**
-     * Return a player by its index in the list, modulo the number of players.
-     * 
-     * @param index The player index.
-     * @return A player object.
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getPlayerByIndex(int)
      */
     public Player getPlayerByIndex(int index) {
         return players.get(index % numberOfPlayers);
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#setNextPlayer()
+     */
     public void setNextPlayer() {
         int currentPlayerIndex = getCurrentPlayerIndex();
         currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
         setCurrentPlayerIndex(currentPlayerIndex);
     }
 
-    /**
-     * @return the StartPacket
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getStartPacket()
      */
     public StartPacket getStartPacket() {
         return startPacket;
     }
 
-    /**
-     * @return Current phase
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCurrentPhase()
      */
     public PhaseI getCurrentPhase() {
         return phaseManager.getCurrentPhase();
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getPhaseManager()
+     */
     public PhaseManager getPhaseManager() {
         return phaseManager;
     }
@@ -811,39 +875,57 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getHelp()
+     */
     public String getHelp() {
         return getCurrentRound().getHelp();
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#canAnyCompanyHoldShares()
+     */
     public boolean canAnyCompanyHoldShares() {
         return canAnyCompanyHoldShares;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getClassName(rails.common.Defs.ClassName)
+     */
     public String getClassName (Defs.ClassName key) {
-        
+
         switch (key) {
         case OR_UI_MANAGER:
             return orUIManagerClassName;
-        
+
         case STATUS_WINDOW:
             return statusWindowClassName;
 
         case GAME_STATUS:
             return gameStatusClassName;
-            
+
         default:
             return "";
         }
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getStockRoundSequenceRule()
+     */
     public int getStockRoundSequenceRule() {
         return stockRoundSequenceRule;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getTreasuryShareLimit()
+     */
     public int getTreasuryShareLimit() {
         return treasuryShareLimit;
     }
-    
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManagerI#getCommonParameter(rails.common.Defs.Parm)
+     */
     public Object getCommonParameter (Defs.Parm key) {
         switch (key) {
         case HAS_ANY_PAR_PRICE:
@@ -859,5 +941,5 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
 
     }
-    
+
 }
