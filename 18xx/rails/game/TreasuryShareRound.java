@@ -1,19 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.10 2008/12/04 01:03:40 krazick Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.11 2008/12/23 19:57:26 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
  */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import rails.game.action.BuyCertificate;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.SellShares;
+import rails.game.action.*;
 import rails.game.move.MoveSet;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
@@ -25,22 +19,22 @@ public class TreasuryShareRound extends StockRound {
 
     Player sellingPlayer;
     PublicCompanyI operatingCompany;
-    //GameManager gameMgr;
     private final BooleanState hasBought;
     private final BooleanState hasSold;
 
 	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and 
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
 	 * and other parameters used by the Treasury Share Round Class
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
 	 * @param operatingCompany The PublicCompanyI Object that is selling shares
 	 *
 	 */
-    public TreasuryShareRound(GameManager aGameManager,
-							  PublicCompanyI operatingCompany) {
+    public TreasuryShareRound(GameManagerI aGameManager,
+                             RoundI parentRound) {
 		super (aGameManager);
-        this.operatingCompany = operatingCompany;
+
+        operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
         hasBought =
@@ -50,7 +44,6 @@ public class TreasuryShareRound extends StockRound {
                 new BooleanState(operatingCompany.getName() + "_soldShares",
                         false);
 
-        gameManager.setRound(this);
         setCurrentPlayerIndex(sellingPlayer.getIndex());
 
     }
@@ -97,7 +90,7 @@ public class TreasuryShareRound extends StockRound {
     /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
-     * 
+     *
      * @return List of buyable certificates.
      */
     @Override
@@ -139,7 +132,6 @@ public class TreasuryShareRound extends StockRound {
             number = Math.min(certs.size(), maxBuyable);
             if (number == 0) continue;
 
-            //stockSpace = comp.getCurrentSpace();
             price = comp.getMarketPrice();
 
             // Does the company have enough cash?
@@ -159,7 +151,7 @@ public class TreasuryShareRound extends StockRound {
      * taken into account. <br>Note: old code that provides for ownership of
      * presidencies of other companies has been retained, but not tested. This
      * code will be needed for 1841.
-     * 
+     *
      * @return List of sellable certificates.
      */
     public void setSellableCerts() {
@@ -188,24 +180,7 @@ public class TreasuryShareRound extends StockRound {
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
-            // If the current Player is president, check if he can dump
-            // the presidency onto someone else
-            /*
-             * DISABLED, companies cannot yet have another company as a
-             * President. We will need this code later for 1841, so it might
-             * make sense to retain it. if (company.getPresident() ==
-             * currentPlayer) { int presidentShare =
-             * company.getCertificates().get(0).getShare(); if (maxShareToSell >
-             * share - presidentShare) { dumpAllowed = false; if (company !=
-             * operatingCompany) { int playerShare; List<Player> players =
-             * GameManager.getPlayers(); for (Player player : players) { if
-             * (player == currentPlayer) continue; playerShare =
-             * player.getPortfolio().getShare(company); if (playerShare >=
-             * presidentShare) { dumpAllowed = true; break; } } } if
-             * (!dumpAllowed) maxShareToSell = share - presidentShare; } }
-             */
-
-            /*
+             /*
              * Check what share units the player actually owns. In some games
              * (e.g. 1835) companies may have different ordinary shares: 5% and
              * 10%, or 10% and 20%. The president's share counts as a multiple
@@ -253,7 +228,7 @@ public class TreasuryShareRound extends StockRound {
     /**
      * Buying one or more single or double-share certificates (more is sometimes
      * possible)
-     * 
+     *
      * @param player The player that wants to buy shares.
      * @param action The executed action
      * @return True if the certificates could be bought. False indicates an
@@ -369,7 +344,6 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, cert.getShares(), false);
-            //portfolio.buyCertificate(cert2, from, shares * price);
             executeTradeCertificate(cert2, portfolio, shares * price);
         }
 
@@ -494,8 +468,7 @@ public class TreasuryShareRound extends StockRound {
         // Transfer the sold certificates
         for (PublicCertificateI cert2 : certsToSell) {
             if (cert2 != null) {
-                //pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
-                executeTradeCertificate (cert2, pool, cert2.getShares() * price);
+                 executeTradeCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
         stockMarket.sell(company, numberSold);
@@ -507,7 +480,7 @@ public class TreasuryShareRound extends StockRound {
 
     /**
      * The current Player passes or is done.
-     * 
+     *
      * @param player Name of the passing player.
      * @return False if an error is found.
      */

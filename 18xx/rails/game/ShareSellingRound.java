@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.17 2008/12/04 01:15:35 krazick Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.18 2008/12/23 19:57:26 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -18,30 +18,31 @@ import rails.util.LocalText;
  */
 public class ShareSellingRound extends StockRound {
 
+    OperatingRound or;
     Player sellingPlayer;
     PublicCompanyI companyNeedingTrain;
     IntegerState cashToRaise;
 
 	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and 
+	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
 	 * and other parameters used by the Share Selling Round Class
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-	 * @param compNeedingTraing The PublicCompanyI Object that needs to buy the train, 
+	 * @param compNeedingTraing The PublicCompanyI Object that needs to buy the train,
 	 *        who is limited on selling shares of
 	 * @param cashToRaise The amount of cash needed to be raised during the special sell-off
 	 *
 	 */
-    public ShareSellingRound(GameManager gameManager,
-            PublicCompanyI compNeedingTrain, int cashToRaise) {
+    public ShareSellingRound(GameManagerI gameManager,
+            RoundI parentRound) {
 
 		super (gameManager);
-        this.companyNeedingTrain = compNeedingTrain;
-        this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
-        sellingPlayer = compNeedingTrain.getPresident();
+		or = ((OperatingRound) parentRound);
+        companyNeedingTrain = or.getOperatingCompany();
+        cashToRaise = new IntegerState("CashToRaise", or.getCashToBeRaisedByPresident());
+        sellingPlayer = companyNeedingTrain.getPresident();
         currentPlayer = sellingPlayer;
-        log.debug("Creating ShareSellingRound, cash to raise =" + cashToRaise);
-        gameManager.setRound(this);
+        log.debug("Creating ShareSellingRound, cash to raise =" + cashToRaise.intValue());
         setCurrentPlayerIndex(sellingPlayer.getIndex());
 
     }
@@ -50,6 +51,7 @@ public class ShareSellingRound extends StockRound {
     public void start() {
         log.info("Share selling round started");
         currentPlayer = sellingPlayer;
+        setPossibleActions();
     }
 
     @Override
@@ -87,7 +89,7 @@ public class ShareSellingRound extends StockRound {
     /**
      * Create a list of certificates that a player may sell in a Stock Round,
      * taking all rules taken into account.
-     * 
+     *
      * @return List of sellable certificates.
      */
     @Override
@@ -341,7 +343,6 @@ public class ShareSellingRound extends StockRound {
         // Transfer the sold certificates
         for (PublicCertificateI cert2 : certsToSell) {
             if (cert2 != null) {
-                //pool.buyCertificate(cert2, portfolio, cert2.getShares() * price);
                 executeTradeCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
@@ -357,7 +358,7 @@ public class ShareSellingRound extends StockRound {
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                             new String[] { otherPlayer.getName(),
-                                company.getName() 
+                                company.getName()
                                      }));
                     break;
                 }
