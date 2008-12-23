@@ -40,18 +40,21 @@ public abstract class StartRound extends Round implements StartRoundI {
     /*----- Initialisation -----*/
     /**
      * Will be created dynamically.
-     * 
+     *
      */
-    public StartRound() {}
+    public StartRound(GameManagerI gameManager) {
+
+        super (gameManager);
+        this.startPacket = gameManager.getStartPacket();
+    }
 
     /**
      * Start the start round.
-     * 
+     *
      * @param startPacket The startpacket to be sold in this start round.
      */
-    public void start(StartPacket startPacket) {
+    public void start() {
 
-        this.startPacket = startPacket;
         this.variant = Game.getGameOption(GameManager.VARIANT_KEY);
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
@@ -72,7 +75,6 @@ public abstract class StartRound extends Round implements StartRoundI {
         numPasses.set(0);
         auctionItemState.set(null);
 
-        gameManager.setRound(this);
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         currentPlayer = getCurrentPlayer();
 
@@ -152,7 +154,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * The current player bids on a given start item.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      * @param itemName The name of the start item on which the bid is placed.
      * @param amount The bid amount.
@@ -161,7 +163,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * Buy a start item against the base price.
-     * 
+     *
      * @param playerName Name of the buying player.
      * @param itemName Name of the bought start item.
      * @param sharePrice If nonzero: share price if item contains a President's
@@ -237,7 +239,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * This method executes the start item buy action.
-     * 
+     *
      * @param player Buying player.
      * @param item Start item being bought.
      * @param price Buy price.
@@ -291,7 +293,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * Process a player's pass.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
     protected abstract boolean pass(String playerName);
@@ -300,10 +302,11 @@ public abstract class StartRound extends Round implements StartRoundI {
 
    /**
      * Get the currentPlayer index in the player list (starting at 0).
-     * 
+     *
      * @return The index of the current Player.
      * @see GameManager.getCurrentPlayerIndex().
      */
+    @Override
     public int getCurrentPlayerIndex() {
         return gameManager.getCurrentPlayerIndex();
     }
@@ -325,7 +328,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * Get a list of items that may be bought immediately.
-     * 
+     *
      * @return An array of start items, possibly empry.
      */
 
@@ -333,7 +336,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     /**
      * Get a list of items that the current player may bid upon.
-     * 
+     *
      * @return An array of start items, possibly empty.
      */
 

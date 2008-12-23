@@ -26,20 +26,12 @@ public class StockRound_18EU extends StockRound {
     protected boolean phase5Reached = false;
 
 	/**
-	 * Constructor with no parameters, will call super class (StockRound's) Constructor to initialize
-	 *
-	 */
-	public StockRound_18EU () {
-		super ();
-	}
-
-	/**
 	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
 	 *
 	 */
-	public StockRound_18EU (GameManager aGameManager) {
+	public StockRound_18EU (GameManagerI aGameManager) {
 		super (aGameManager);
 	}
 
@@ -482,7 +474,6 @@ public class StockRound_18EU extends StockRound {
         PublicCompanyI minor = action.getMergingCompany();
         PublicCompanyI major = action.getSelectedTargetCompany();
         PublicCertificateI cert = null;
-        Portfolio pool = Bank.getPool();
         CashHolder cashDestination = null; // Bank
 
         // TODO Validation to be added?

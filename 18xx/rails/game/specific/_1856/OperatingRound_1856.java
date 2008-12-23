@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.game.Bank;
 import rails.game.DisplayBuffer;
+import rails.game.GameManagerI;
 import rails.game.OperatingRound;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
@@ -16,6 +17,10 @@ import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
+
+    public OperatingRound_1856 (GameManagerI gameManager) {
+        super (gameManager);
+    }
 
     /** 
      * Implements special rules for first time operating in 1856

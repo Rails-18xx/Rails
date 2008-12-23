@@ -11,7 +11,7 @@ public class StockRound_1856 extends StockRound {
 	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
 	 *
 	 */
-	public StockRound_1856 (GameManager aGameManager) {
+	public StockRound_1856 (GameManagerI aGameManager) {
 		super (aGameManager);
 	}
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.47 2008/12/04 00:45:23 krazick Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.48 2008/12/23 19:56:40 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -112,22 +112,23 @@ public class OperatingRound extends Round implements Observer {
 	 * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
 	 *
      */
-    public OperatingRound() {
-		super ();
-	}
-	
-    public void start(boolean operate, String orNumber) {
+    public OperatingRound(GameManagerI gameManager) {
+		super (gameManager);
+
+        thisOrNumber = gameManager.getCompositeORNumber();
 
         if (players == null) {
             players = gameManager.getPlayers();
             numberOfPlayers = players.size();
         }
+    }
+
+    public void start(boolean operate) {
 
         for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) priv.payOut();
         }
 
-        thisOrNumber = orNumber;
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
         if (operate) {
@@ -135,7 +136,6 @@ public class OperatingRound extends Round implements Observer {
             operatingCompanyArray = super.getOperatingCompanies();
 
             if (operatingCompanyArray.length > 0) {
-                gameManager.setRound(this);
 
                 if (setNextOperatingCompany(true)) {
                     setStep(STEP_INITIAL);
@@ -831,8 +831,7 @@ public class OperatingRound extends Round implements Observer {
                     continue;
                 }
 
-                gameManager.startTreasuryShareTradingRound(this,
-                        operatingCompany);
+                gameManager.startTreasuryShareTradingRound();
 
             }
 
@@ -1825,6 +1824,10 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
         }
+    }
+
+    public int getCashToBeRaisedByPresident() {
+        return cashToBeRaisedByPresident;
     }
 
     /**

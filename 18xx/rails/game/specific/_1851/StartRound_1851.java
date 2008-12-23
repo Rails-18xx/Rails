@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.6 2008/06/30 20:35:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.7 2008/12/23 19:59:06 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.List;
@@ -15,19 +15,19 @@ public class StartRound_1851 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1851() {
-        super();
+    public StartRound_1851(GameManagerI gameManager) {
+        super(gameManager);
         hasBidding = false;
     }
 
     /**
      * Start the 1835-style start round.
-     * 
+     *
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
 
         if (!setPossibleActions()) {
             /*
@@ -44,7 +44,7 @@ public class StartRound_1851 extends StartRound {
     /**
      * Get a list of items that may be bought immediately. <p> In an 1835-style
      * auction this method will usually return several items.
-     * 
+     *
      * @return An array of start items that can be bought.
      */
 
@@ -101,7 +101,7 @@ public class StartRound_1851 extends StartRound {
 
     /**
      * Process a player's pass.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
