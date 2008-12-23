@@ -4,27 +4,18 @@
  */
 package rails.game.specific._1835;
 
-import rails.game.CompanyManagerI;
-import rails.game.GameManager;
-import rails.game.Portfolio;
-import rails.game.PublicCompanyI;
-import rails.game.ReportBuffer;
-import rails.game.StockRound;
+import rails.game.*;
 import rails.util.LocalText;
 
 public class StockRound_1835 extends StockRound {
     
-    //Portfolio ipo = Bank.getIpo();
-    //Portfolio unavailable = Bank.getUnavailable();
-    CompanyManagerI compMgr;
-
 	/**
 	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
 	 *
 	 */
-	public StockRound_1835 (GameManager aGameManager) {
+	public StockRound_1835 (GameManagerI aGameManager) {
 		super (aGameManager);
 	}
 	
@@ -43,28 +34,25 @@ public class StockRound_1835 extends StockRound {
         
         if (boughtFrom != ipo) return;
         
-        if (compMgr == null) compMgr = gameManager.getCompanyManager();
-
-        
         String name = company.getName();
         int sharesInIPO = ipo.getShare(company);
         
         // Check for group releases
         if (sharesInIPO == 0) {
             if (name.equals("Sax") && 
-                ipo.getShare(compMgr.getCompanyByName("Bay")) == 0
+                ipo.getShare(companyManager.getCompanyByName("Bay")) == 0
             || name.equals("Bay") && 
-                ipo.getShare(compMgr.getCompanyByName("Sax")) == 0) {
+                ipo.getShare(companyManager.getCompanyByName("Sax")) == 0) {
                 // Group 1 sold out: release Badische
-                releaseCompanyShares (compMgr.getCompanyByName("Bad"));
+                releaseCompanyShares (companyManager.getCompanyByName("Bad"));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         new String[] {"All", "Bad"}));
             } else if (name.equals("Bad") || name.equals("Wrt") || name.equals("Hes")) {
-                if (ipo.getShare(compMgr.getCompanyByName("Bad")) == 0
-                        && ipo.getShare(compMgr.getCompanyByName("Wrt")) == 0
-                        && ipo.getShare(compMgr.getCompanyByName("Hes")) == 0) {
+                if (ipo.getShare(companyManager.getCompanyByName("Bad")) == 0
+                        && ipo.getShare(companyManager.getCompanyByName("Wrt")) == 0
+                        && ipo.getShare(companyManager.getCompanyByName("Hes")) == 0) {
                     // Group 2 sold out: release MS
-                    releaseCompanyShares (compMgr.getCompanyByName("MS"));
+                    releaseCompanyShares (companyManager.getCompanyByName("MS"));
                     ReportBuffer.add (LocalText.getText("SharesReleased",
                             new String[] {"All", "MS"}));
                 }
@@ -77,7 +65,7 @@ public class StockRound_1835 extends StockRound {
          */
         if (name.equals("Bad")) {
             if (sharesInIPO == 50) {  // 50% sold: release Wurttemberg
-                releaseCompanyShares (compMgr.getCompanyByName("Wrt"));
+                releaseCompanyShares (companyManager.getCompanyByName("Wrt"));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         new String[] {"All", "Wrt"}));
             } else if (sharesInIPO == 80) { 
@@ -90,13 +78,13 @@ public class StockRound_1835 extends StockRound {
             }
         } else if (name.equals("Wrt")) { //Wurttembergische
             if (sharesInIPO == 50) {  // 50% sold: release Hessische
-                releaseCompanyShares (compMgr.getCompanyByName("Hes"));
+                releaseCompanyShares (companyManager.getCompanyByName("Hes"));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         new String[] {"All", "Hes"}));
             }
         } else if (name.equals("MS")) { // Mecklenburg/Schwerin
             if (sharesInIPO == 40) {  // 60% sold: release Oldenburg
-                releaseCompanyShares (compMgr.getCompanyByName("Old"));
+                releaseCompanyShares (companyManager.getCompanyByName("Old"));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         new String[] {"All", "Old"}));
             }

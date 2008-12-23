@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.14 2008/10/19 17:04:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.15 2008/12/23 19:59:06 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -27,19 +27,19 @@ public class StartRound_1835 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1835() {
-        super();
+    public StartRound_1835(GameManagerI gameManager) {
+        super(gameManager);
         hasBidding = false;
     }
 
     /**
      * Start the 1835-style start round.
-     * 
+     *
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
         startRoundNumber.add(1);
 
         if (!setPossibleActions()) {
@@ -57,7 +57,7 @@ public class StartRound_1835 extends StartRound {
     /**
      * Get a list of items that may be bought immediately. <p> In an 1835-style
      * auction this method will usually return several items.
-     * 
+     *
      * @return An array of start items that can be bought.
      */
     // public StartItem[] getBuyableItems() {return null;}
@@ -193,7 +193,7 @@ public class StartRound_1835 extends StartRound {
 
     /**
      * Set the next player turn.
-     * 
+     *
      */
     @Override
     protected void setNextPlayer() {
@@ -249,7 +249,7 @@ public class StartRound_1835 extends StartRound {
 
     /**
      * Process a player's pass.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override

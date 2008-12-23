@@ -3,9 +3,7 @@ package rails.game;
 import java.util.*;
 
 import rails.game.action.*;
-import rails.game.move.CashMove;
-import rails.game.move.DoubleMapChange;
-import rails.game.move.MoveSet;
+import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.LocalText;
@@ -59,24 +57,13 @@ public class StockRound extends Round {
     static protected boolean noSaleIfNotOperated = false;
 
 	/**
-	 * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
-	 *
-	 */
-	public StockRound () {
-		super ();
-	}
-	
-	/**
 	 * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
 	 *
 	 * @param aGameManager The GameManager Object needed to initialize the Round Class
 	 *
 	 */
-	public StockRound (GameManager aGameManager) {
+	public StockRound (GameManagerI aGameManager) {
 		super (aGameManager);
-	}
-	
-    public void start() {
 
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
@@ -84,9 +71,12 @@ public class StockRound extends Round {
         if (ipo == null) ipo = Bank.getIpo();
         if (pool == null) pool = Bank.getPool();
         if (unavailable == null) unavailable = Bank.getUnavailable();
-        gameManager.setRound(this);
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
+
+}
+
+    public void start() {
 
         ReportBuffer.add("\n" + LocalText.getText("StartStockRound")
                          + getStockRoundNumber());
@@ -136,7 +126,7 @@ public class StockRound extends Round {
     /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
-     * 
+     *
      * @return List of buyable certificates.
      */
     public void setBuyableCerts() {
@@ -278,7 +268,7 @@ public class StockRound extends Round {
     /**
      * Create a list of certificates that a player may sell in a Stock Round,
      * taking all rules taken into account.
-     * 
+     *
      * @return List of sellable certificates.
      */
     public void setSellableShares() {
@@ -443,7 +433,7 @@ public class StockRound extends Round {
 
     /**
      * Start a company by buying one or more shares (more applies to e.g. 1841)
-     * 
+     *
      * @param player The player that wants to start a company.
      * @param company The company to start.
      * @param price The start (par) price (ignored if the price is fixed).
@@ -541,7 +531,7 @@ public class StockRound extends Round {
 
         // All is OK, now start the company
         company.start(startSpace);
-        
+
         CashHolder priceRecipient = getSharePriceRecipient (cert, price);
 
         // Transfer the President's certificate
@@ -559,7 +549,7 @@ public class StockRound extends Round {
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG", new String[] {
                 playerName, companyName, Bank.format(price),
                 Bank.format(shares * price), String.valueOf(shares),
-                String.valueOf(cert.getShare()), 
+                String.valueOf(cert.getShare()),
                 priceRecipient.getName()}));
         ReportBuffer.getAllWaiting();
 
@@ -579,7 +569,7 @@ public class StockRound extends Round {
     /**
      * Buying one or more single or double-share certificates (more is sometimes
      * possible)
-     * 
+     *
      * @param player The player that wants to buy shares.
      * @param action The executed BuyCertificates action
      * @return True if the certificates could be bought. False indicates an
@@ -707,7 +697,7 @@ public class StockRound extends Round {
         MoveSet.start(true);
 
         CashHolder priceRecipient = getSharePriceRecipient (cert, cash);
-        
+
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
                     playerName, String.valueOf(shareUnit), companyName,
@@ -731,11 +721,11 @@ public class StockRound extends Round {
             executeTradeCertificate(cert2, currentPlayer.getPortfolio(),
                     cash, priceRecipient);
         }
-        
+
         if (priceRecipient != from.getOwner()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
                     new String[] {
-                    Bank.format(price * shares), 
+                    Bank.format(price * shares),
                     priceRecipient.getName()
             }));
         }
@@ -763,21 +753,22 @@ public class StockRound extends Round {
 
     }
 
-    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder, 
+    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder,
             int price, CashHolder priceRecipient) {
-        
+
         cert.moveTo(newHolder);
         new CashMove (newHolder.getOwner(), priceRecipient, price);
-        
+
     }
 
-    /** 
+    /**
      * Who receives the cash when a certificate is bought.
      * With incremental capitalization, this can be the company treasure.
      * This method must be called <i>before</i> transferring the certificate.
      * @param cert
      * @return
      */
+    @Override
     protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
 
         Portfolio oldHolder = (Portfolio) cert.getHolder();
@@ -995,7 +986,7 @@ public class StockRound extends Round {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                            new String[] { otherPlayer.getName(), company.getName() 
+                            new String[] { otherPlayer.getName(), company.getName()
                                      }));
                     break;
                 }
@@ -1032,7 +1023,7 @@ public class StockRound extends Round {
 
     /**
      * The current Player passes or is done.
-     * 
+     *
      * @param player Name of the passing player.
      * @return False if an error is found.
      */
@@ -1134,13 +1125,14 @@ public class StockRound extends Round {
     /**
      * @return The index of the player that has the turn.
      */
+    @Override
     public int getCurrentPlayerIndex() {
         return currentPlayer.getIndex();
     }
 
     /**
      * Can the current player do any selling?
-     * 
+     *
      * @return True if any selling is allowed.
      */
     public boolean mayCurrentPlayerSellAnything() {
@@ -1156,7 +1148,7 @@ public class StockRound extends Round {
 
     /**
      * Can the current player do any buying?
-     * 
+     *
      * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAnything() {

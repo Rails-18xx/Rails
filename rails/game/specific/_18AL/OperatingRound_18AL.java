@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.Bank;
+import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
 import rails.game.ReportBuffer;
@@ -16,6 +17,10 @@ import rails.game.specific._18AL.AssignNamedTrains;
 import rails.util.LocalText;
 
 public class OperatingRound_18AL extends OperatingRound {
+
+    public OperatingRound_18AL (GameManagerI gameManager) {
+        super (gameManager);
+    }
 
     @Override
     protected void setGameSpecificPossibleActions() {
