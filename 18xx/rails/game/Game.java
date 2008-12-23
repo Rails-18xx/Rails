@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.19 2008/10/28 21:01:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.20 2008/12/23 19:50:41 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -22,7 +22,7 @@ public class Game {
 
     /** The component Manager */
     protected ComponentManager componentManager;
-    protected GameManager gameManager;
+    protected GameManagerI gameManager;
     protected CompanyManagerI companyManager;
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
@@ -113,7 +113,7 @@ public class Game {
                                 + GAME_XML_FILE);
             }
             gameManager =
-                    (GameManager) componentManager.findComponent("GameManager");
+                    (GameManagerI) componentManager.findComponent("GameManager");
             if (gameManager == null) {
                 throw new ConfigurationException(
                         "No GameManager XML element found in file "
