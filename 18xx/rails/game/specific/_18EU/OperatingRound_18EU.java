@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.4 2008/07/04 20:46:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.5 2008/12/23 20:02:18 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -20,6 +20,10 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected State playerToStartExchangeRound =
             new State("PlayerToStartExchangeRound", Player.class);
+    
+    public OperatingRound_18EU (GameManagerI gameManager) {
+        super (gameManager);
+    }
 
     @Override
     protected void initTurn() {
@@ -172,7 +176,8 @@ public class OperatingRound_18EU extends OperatingRound {
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
         if (result && gameManager.getPhaseManager().hasReachedPhase("5")
-            && operatingCompanyArray[0].getTypeName().equals("Minor")) {
+            && operatingCompanyArray[0].getTypeName().equals("Minor")
+            && playerToStartExchangeRound.getObject() == null) {
             playerToStartExchangeRound.set(operatingCompany.getPresident());
         }
 

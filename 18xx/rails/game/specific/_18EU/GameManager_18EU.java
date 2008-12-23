@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.3 2008/12/10 20:44:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.4 2008/12/23 20:02:18 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.GameManager;
+import rails.game.Player;
 import rails.game.RoundI;
 
 /**
@@ -10,28 +11,27 @@ import rails.game.RoundI;
  */
 public class GameManager_18EU extends GameManager {
 
-    private OperatingRound_18EU lastOperatingRound = null;
+    private Player playerToStartFMERound = null;
 
     @Override
     public void nextRound(RoundI round) {
-        if (round instanceof OperatingRound_18EU
-            && ((OperatingRound_18EU) round).getPlayerToStartExchangeRound() != null) {
-            lastOperatingRound = (OperatingRound_18EU) round;
-            startFinalMinorExchangeRound(lastOperatingRound);
+        if (round instanceof OperatingRound_18EU) {
+            if (((OperatingRound_18EU) round).getPlayerToStartExchangeRound() != null) {
+                playerToStartFMERound = ((OperatingRound_18EU) round).getPlayerToStartExchangeRound();
+            }
+            if (playerToStartFMERound != null
+                    && relativeORNumber.intValue() == numOfORs) {
+                createRound (FinalMinorExchangeRound.class).start (playerToStartFMERound);
+                playerToStartFMERound = null;
+            } else {
+                super.nextRound(round);
+            }
         } else if (round instanceof FinalMinorExchangeRound) {
             startStockRound();
         } else {
             super.nextRound(round);
         }
 
-    }
-
-    private void startFinalMinorExchangeRound(OperatingRound_18EU or) {
-
-        FinalMinorExchangeRound sr = new FinalMinorExchangeRound();
-        sr.setGameManager(this);
-        sr.start(or);
-        setRound (sr);
     }
 
 }
