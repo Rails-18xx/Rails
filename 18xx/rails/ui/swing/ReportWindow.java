@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.9 2008/12/11 20:10:25 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.10 2008/12/23 20:02:45 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import rails.game.GameManager;
+import rails.game.GameManagerI;
 import rails.game.ReportBuffer;
 import rails.util.LocalText;
 
@@ -22,9 +22,9 @@ public class ReportWindow extends JFrame implements KeyListener {
     private JScrollBar vbar;
     private JPanel messagePanel;
     private ReportWindow messageWindow;
-    private GameManager gameManager;
+    private GameManagerI gameManager;
 
-    public ReportWindow(GameManager gameManager) {
+    public ReportWindow(GameManagerI gameManager) {
         messageWindow = this;
         this.gameManager = gameManager;
 
