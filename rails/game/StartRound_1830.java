@@ -1,12 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.15 2008/10/10 19:56:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.16 2008/12/23 19:58:36 evos Exp $ */
 package rails.game;
 
-import java.util.*;
+import java.util.List;
 
-import rails.game.action.BidStartItem;
-import rails.game.action.BuyStartItem;
-import rails.game.action.StartItemAction;
-import rails.game.action.NullAction;
+import rails.game.action.*;
 import rails.game.move.MoveSet;
 import rails.util.LocalText;
 
@@ -19,23 +16,25 @@ public class StartRound_1830 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1830() {
-        super();
+    public StartRound_1830(GameManagerI gameManager) {
+        super(gameManager);
         hasBidding = true;
+        bidIncrement = startPacket.getModulus();
     }
 
     /**
      * Start the 1830-style start round.
-     * 
+     *
      * @param startPacket The startpacket to be sold in this start round.
      */
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
-        bidIncrement = startPacket.getModulus();
+    @Override
+    public void start() {
+        super.start();
         setPossibleActions();
 
     }
 
+    @Override
     public boolean setPossibleActions() {
 
         boolean passAllowed = true;
@@ -43,8 +42,6 @@ public class StartRound_1830 extends StartRound {
         possibleActions.clear();
 
         if (StartPacket.getStartPacket().areAllSold()) return false;
-
-        StartItem auctionItem = (StartItem) auctionItemState.getObject();
 
         while (possibleActions.isEmpty()) {
 
@@ -55,17 +52,18 @@ public class StartRound_1830 extends StartRound {
                 if (item.isSold()) {
                     // Don't include
                 } else if (item.getStatus() == StartItem.AUCTIONED) {
-                    item.setStatus(StartItem.AUCTIONED);
+
                     if (currentPlayer.getFreeCash()
-                        + auctionItem.getBid(currentPlayer) >= auctionItem.getMinimumBid()) {
+                        + item.getBid(currentPlayer) >= item.getMinimumBid()) {
                         BidStartItem possibleAction =
-                                new BidStartItem(auctionItem,
-                                        auctionItem.getMinimumBid(),
+                                new BidStartItem(item,
+                                        item.getMinimumBid(),
                                         startPacket.getModulus(), true);
                         possibleActions.add(possibleAction);
                         break; // No more actions
                     } else {
                         // Can't bid: Autopass
+                        numPasses.add(1);
                         break;
                     }
                 } else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
@@ -160,6 +158,7 @@ public class StartRound_1830 extends StartRound {
     /**
      * Return the start items, marked as appropriate for an 1830-style auction.
      */
+    @Override
     public List<StartItem> getStartItems() {
 
         return itemsToSell;
@@ -168,11 +167,12 @@ public class StartRound_1830 extends StartRound {
     /*----- MoveSet methods -----*/
     /**
      * The current player bids on a given start item.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      * @param itemName The name of the start item on which the bid is placed.
      * @param amount The bid amount.
      */
+    @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {
 
         StartItem item = bidItem.getStartItem();
@@ -271,9 +271,10 @@ public class StartRound_1830 extends StartRound {
 
     /**
      * Process a player's pass.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
+    @Override
     protected boolean pass(String playerName) {
 
         String errMsg = null;
@@ -304,7 +305,7 @@ public class StartRound_1830 extends StartRound {
 
         if (auctionItem != null) {
 
-            if (numPasses.intValue() == auctionItem.getBidders() - 1) {
+            if (numPasses.intValue() >= auctionItem.getBidders() - 1) {
                 // All but the highest bidder have passed.
                 int price = auctionItem.getBid();
 
@@ -374,6 +375,7 @@ public class StartRound_1830 extends StartRound {
         setNextBiddingPlayer(item, getCurrentPlayerIndex());
     }
 
+    @Override
     public String getHelp() {
         return "1830 Start Round help text";
     }
