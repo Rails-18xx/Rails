@@ -16,37 +16,19 @@ import rails.util.LocalText;
  * the Priority Deal).
  */
 public class FinalMinorExchangeRound extends StockRound_18EU {
-    OperatingRound_18EU lastOR;
 
-	/**
-	 * Constructor with no parameters, will call super class (StockRound_18EU's) Constructor to initialize
-	 *
-	 */
-    public FinalMinorExchangeRound() 
-	{
-		super ();
-	}
-
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound_18EU's) Constructor to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
-	 *
-	 */
-	public FinalMinorExchangeRound(GameManager aGameManager) {
-		super (aGameManager);
-	}
-	
-    public void start(OperatingRound_18EU lastOR) {
+    public FinalMinorExchangeRound(GameManagerI aGameManager) {
+        super (aGameManager);
+    }
+    
+    public void start(Player playerToStartFMERound) {
         ReportBuffer.add("\n"
                          + LocalText.getText("StartFinalMinorExchangeRound"));
 
-        this.lastOR = lastOR;
-        Player firstPlayer = lastOR.getPlayerToStartExchangeRound();
-        setCurrentPlayerIndex(firstPlayer.getIndex());
+        setCurrentPlayerIndex(playerToStartFMERound.getIndex());
         initPlayer();
         ReportBuffer.add(LocalText.getText("HasFirstTurn",
-                new String[] { currentPlayer.getName() }));
+                new String[] { playerToStartFMERound.getName() }));
     }
 
     /*----- General methods -----*/
@@ -70,7 +52,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
         }
 
         List<PublicCompanyI> comps =
-                Game.getCompanyManager().getAllPublicCompanies();
+                companyManager.getAllPublicCompanies();
         List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
         List<PublicCompanyI> targetCompanies = new ArrayList<PublicCompanyI>();
         String type;
