@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.3 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.4 2008/12/24 14:55:11 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -22,6 +22,7 @@ public class MergeCompanies extends PossibleAction {
     protected String mergingCompanyName;
     transient protected List<PublicCompanyI> targetCompanies;
     protected String targetCompanyNames;
+    protected List<Boolean> canReplaceToken;
 
     // Client-side settings
     transient protected PublicCompanyI selectedTargetCompany = null;
@@ -39,12 +40,22 @@ public class MergeCompanies extends PossibleAction {
         this.mergingCompanyName = mergingCompany.getName();
         this.targetCompanies = targetCompanies;
         StringBuffer b = new StringBuffer();
+        canReplaceToken = new ArrayList<Boolean>(targetCompanies.size());
         for (PublicCompanyI target : targetCompanies) {
             if (b.length() > 0) b.append(",");
             if (target == null) {
                 b.append("null");
+                canReplaceToken.add(false);
             } else {
                 b.append(target.getName());
+                canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
+                        && (!mergingCompany.getHomeHex().hasTokenOfCompany(target)
+                                || mergingCompany.getHomeHex().getCurrentTile().allowsMultipleBasesOfOneCompany()));
+                /* The above does not yet take care of cases where a tile where two
+                 * bases of the same company are allowed has different multi-slot 
+                 * stations (e.g. the 18EU brown Paris tile #583). 
+                 * Duplicate tokens in one station are not yet prevented here.
+                 */
             }
         }
         targetCompanyNames = b.toString();
@@ -59,6 +70,10 @@ public class MergeCompanies extends PossibleAction {
 
     public List<PublicCompanyI> getTargetCompanies() {
         return targetCompanies;
+    }
+
+    public boolean canReplaceToken(int index) {
+        return canReplaceToken.get(index);
     }
 
     public PublicCompanyI getSelectedTargetCompany() {
@@ -99,10 +114,18 @@ public class MergeCompanies extends PossibleAction {
         return text.toString();
     }
 
+    @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+        ObjectInputStream.GetField fields = in.readFields();
+        mergingCompanyName = (String) fields.get("mergingCompanyName", mergingCompanyName);
+        targetCompanyNames = (String) fields.get("targetCompanyNames", targetCompanyNames);
+        canReplaceToken = (List<Boolean>) fields.get("canReplaceToken", canReplaceToken);
+        selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
+        replaceToken = fields.get("replaceToken", replaceToken);
 
         CompanyManagerI cmgr = Game.getCompanyManager();
 

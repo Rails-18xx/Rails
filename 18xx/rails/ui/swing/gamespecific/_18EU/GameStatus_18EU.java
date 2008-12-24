@@ -80,7 +80,8 @@ public class GameStatus_18EU extends GameStatus {
             PublicCompanyI major = targets.get(choice);
             action.setSelectedTargetCompany(major);
 
-            if (major != null) {
+            if (major != null
+                    && action.canReplaceToken(choice)) {
                 boolean replaceToken =
                         JOptionPane.showConfirmDialog(this, LocalText.getText(
                                 "WantToReplaceToken", new String[] {
