@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.4 2008/12/24 14:55:11 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.5 2008/12/24 22:02:20 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -48,14 +48,12 @@ public class MergeCompanies extends PossibleAction {
                 canReplaceToken.add(false);
             } else {
                 b.append(target.getName());
+                MapHex hex = mergingCompany.getHomeHex();
                 canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
-                        && (!mergingCompany.getHomeHex().hasTokenOfCompany(target)
-                                || mergingCompany.getHomeHex().getCurrentTile().allowsMultipleBasesOfOneCompany()));
-                /* The above does not yet take care of cases where a tile where two
-                 * bases of the same company are allowed has different multi-slot 
-                 * stations (e.g. the 18EU brown Paris tile #583). 
-                 * Duplicate tokens in one station are not yet prevented here.
-                 */
+                    && (!hex.hasTokenOfCompany(target)
+                        || hex.getCurrentTile().allowsMultipleBasesOfOneCompany()
+                            && hex.getCityOfBaseToken(mergingCompany) 
+                                != hex.getCityOfBaseToken(target)));
             }
         }
         targetCompanyNames = b.toString();
