@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.8 2008/12/11 20:12:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.9 2008/12/24 14:51:39 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -77,6 +77,11 @@ public class Tag {
         } else {
             return null;
         }
+    }
+    
+    public boolean hasChild (String tagName) throws ConfigurationException {
+        
+        return getChildren ("AllowsMultipleBasesOfOneCompany") != null;
     }
 
     public String getText() throws ConfigurationException {
