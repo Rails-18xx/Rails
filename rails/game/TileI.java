@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.14 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.15 2008/12/24 14:52:47 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -37,6 +37,8 @@ public interface TileI {
     public List<Track> getTracksPerStation(int stationNumber);
 
     public boolean isUpgradeable();
+    
+    public boolean allowsMultipleBasesOfOneCompany();
 
     public List<TileI> getUpgrades(MapHex hex, PhaseI phase);
 

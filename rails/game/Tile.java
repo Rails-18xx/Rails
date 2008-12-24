@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.25 2008/12/11 20:12:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.26 2008/12/24 14:52:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -41,6 +41,8 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
     private int quantity;
     private boolean unlimited = false;
+    private boolean allowsMultipleBasesOfOneCompany = false;
+    
     public static final int UNLIMITED_TILES = -1;
 
     /**
@@ -197,6 +199,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         /* Value '99' and '-1' mean 'unlimited' */
         unlimited = (quantity == 99 || quantity == UNLIMITED_TILES);
         if (unlimited) quantity = UNLIMITED_TILES;
+        /* Multiple base tokens of one company allowed */
+        allowsMultipleBasesOfOneCompany = setTag.hasChild(
+                "AllowsMultipleBasesOfOneCompany");
 
         /* Upgrades */
         List<Tag> upgradeTags = setTag.getChildren("Upgrade");
@@ -333,6 +338,10 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
      */
     public boolean isUpgradeable() {
         return colourNumber >= 0;
+    }
+
+    public boolean allowsMultipleBasesOfOneCompany() {
+        return allowsMultipleBasesOfOneCompany;
     }
 
     /**
