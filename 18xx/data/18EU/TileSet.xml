@@ -17,9 +17,11 @@
 	<Tile id="-939"/>
 	<Tile id="-3005"><!--Berlin/Vienna-->
 		<Upgrade id="581"/>
+		<AllowsMultipleBasesOfOneCompany/>
 	</Tile>
 	<Tile id="-3006"><!--Paris-->
 		<Upgrade id="580"/>
+		<AllowsMultipleBasesOfOneCompany/>
 	</Tile>
 
 	<!-- Yellow tiles -->
@@ -96,9 +98,11 @@
 	</Tile>
 	<Tile id="580" quantity="1">
 		<Upgrade id="583" />
+		<AllowsMultipleBasesOfOneCompany/>
 	</Tile>
 	<Tile id="581" quantity="2">
 		<Upgrade id="584" />
+		<AllowsMultipleBasesOfOneCompany/>
 	</Tile>
 
 	<!-- Brown tiles -->
@@ -109,7 +113,9 @@
 	<Tile id="545" quantity="3" />
 	<Tile id="546" quantity="3" />
 	<Tile id="582" quantity="9" />
-	<Tile id="583" quantity="1" />
+	<Tile id="583" quantity="1">
+		<AllowsMultipleBasesOfOneCompany/>
+	</Tile>
 	<Tile id="584" quantity="2" />
 	<Tile id="611" quantity="8">
 		<Upgrade id="513" />
