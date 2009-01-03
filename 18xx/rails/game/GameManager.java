@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.37 2008/12/23 19:54:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.38 2009/01/03 22:51:35 krazick Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -475,10 +475,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#getCompositeORNumber()
      */
     public String getCompositeORNumber() {
-        return srNumber.intValue() + "."
-               + relativeORNumber.intValue();
+        return srNumber.intValue() + "." + relativeORNumber.intValue();
     }
 
+	public String getNumOfORs () {
+		return new Integer(numOfORs).toString();
+	}
+	
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getSRNumber()
      */
