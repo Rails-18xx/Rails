@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.19 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.20 2009/01/03 18:24:53 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -59,6 +59,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
     protected TrainTypeI releasedTrainType = null;
 
     protected ArrayList<TrainI> trains = null;
+    
+    protected int lastIndex = 0;
 
     protected BooleanState available;
     protected BooleanState rusted;
@@ -196,31 +198,11 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
                  * We create one train, but will add one more each time a train
                  * of this type is bought.
                  */
-                try {
-                    train = trainClass.newInstance();
-                } catch (InstantiationException e) {
-                    throw new ConfigurationException(
-                            "Cannot instantiate class " + trainClassName, e);
-                } catch (IllegalAccessException e) {
-                    throw new ConfigurationException("Cannot access class "
-                                                     + trainClassName
-                                                     + "constructor", e);
-                }
-                train.init(this, 0);
+                train = createTrain();
                 trains.add(train);
             } else {
                 for (int i = 0; i < amount; i++) {
-                    try {
-                        train = trainClass.newInstance();
-                    } catch (InstantiationException e) {
-                        throw new ConfigurationException(
-                                "Cannot instantiate class " + trainClassName, e);
-                    } catch (IllegalAccessException e) {
-                        throw new ConfigurationException("Cannot access class "
-                                                         + trainClassName
-                                                         + "constructor", e);
-                    }
-                    train.init(this, i);
+                    train = createTrain ();
                     trains.add(train);
                 }
             }
@@ -230,6 +212,38 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
         numberBoughtFromIPO = new IntegerState(name + "-trains_Bought", 0);
         available = new BooleanState(name + "-trains_Available", false);
         rusted = new BooleanState(name + "-trains_Rusted", false);
+    }
+    
+    protected TrainI createTrain () throws ConfigurationException {
+        
+        TrainI train;
+        try {
+            train = trainClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new ConfigurationException(
+                    "Cannot instantiate class " + trainClassName, e);
+        } catch (IllegalAccessException e) {
+            throw new ConfigurationException("Cannot access class "
+                                             + trainClassName
+                                             + "constructor", e);
+        }
+        train.init(this, lastIndex++);
+        return train;
+    }
+    
+    /** Create train without throwing exceptions. 
+     * To be used <b>after</b> completing initialization, 
+     * i.e. in cloning infinitely available trains. 
+     */
+    
+    public TrainI cloneTrain () {
+        TrainI train = null;
+        try {
+            train = createTrain();
+        } catch (ConfigurationException e) {
+            log.warn("Unexpected exception", e);
+        }
+        return train;
     }
 
     /**

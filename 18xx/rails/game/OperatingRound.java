@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.48 2008/12/23 19:56:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.49 2009/01/03 18:24:53 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1119,7 +1119,6 @@ public class OperatingRound extends Round implements Observer {
         int price = action.getPricePaid();
         int actualPresidentCash = 0;
         Player currentPlayer = operatingCompany.getPresident();
-        ;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1242,7 +1241,14 @@ public class OperatingRound extends Round implements Observer {
         }
 
         operatingCompany.buyTrain(train, price);
-        if (oldHolder == Bank.getIpo()) train.getType().addToBoughtFromIPO();
+        if (oldHolder == Bank.getIpo()) {
+            train.getType().addToBoughtFromIPO();
+            // Clone the train if infinitely available
+            if (train.getType().hasInfiniteAmount()) {
+                Bank.getIpo().addTrain(train.getType().cloneTrain());
+            }
+
+        }
         if (oldHolder.getOwner() instanceof Bank) {
             trainsBoughtThisTurn.add(train.getType());
         }

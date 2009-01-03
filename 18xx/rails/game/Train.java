@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.11 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.12 2009/01/03 18:24:53 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -136,6 +136,7 @@ public class Train implements TrainI {
     public void moveTo(MoveableHolderI to) {
 
         new ObjectMove(this, holder, to);
+        
     }
 
     public void setRusted() {
