@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.6 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.7 2009/01/03 18:24:53 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI {
@@ -97,5 +97,7 @@ public interface TrainTypeI {
     public void setReleasedTrainType(TrainTypeI releasedTrainType);
 
     public void setRustedTrainType(TrainTypeI rustedTrainType);
+    
+    public TrainI cloneTrain();
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.6 2008/11/29 21:50:58 krazick Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.7 2009/01/03 18:24:53 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -49,7 +49,8 @@ public class City implements TokenHolderI {
     }
 
     public String getName() {
-        return "City " + number + " on Hex " + mapHex.getName();
+        return mapHex.getName() + "/" + number;
+                
     }
 
     /**
