@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.15 2008/12/23 19:59:06 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.16 2009/01/03 22:49:59 krazick Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -70,6 +70,7 @@ public class StartRound_1835 extends StartRound {
         boolean buyable;
         int items = 0;
         int minRow = 0;
+		int prevRow = 0;
 
         /*
          * First, mark which items are buyable. Once buyable, they always remain
@@ -85,15 +86,19 @@ public class StartRound_1835 extends StartRound {
                 buyable = true;
             } else {
                 row = item.getRow();
+				if (row > prevRow) {
+					items = 0;
+					prevRow = row;
+				}
+				items++;
                 if (minRow == 0) minRow = row;
                 if (row == minRow) {
                     // Allow all items in the top row.
                     buyable = true;
-                    items++;
                 } else if (row == minRow + 1 && items == 1) {
-                    // Allow the first item in the next row if the
-                    // top row has only one item.
-                    buyable = true;
+					// Allow the first item in the next row if the
+					// top row has only one item.
+					buyable = true;
                 }
             }
             if (buyable) {
