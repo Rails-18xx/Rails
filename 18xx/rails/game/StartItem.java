@@ -1,15 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.14 2008/12/23 19:57:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.15 2009/01/07 21:03:24 evos Exp $ */
 package rails.game;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
 import rails.game.model.MoneyModel;
-import rails.game.state.*;
+import rails.game.state.IntegerState;
 
 /**
  * Each object of this class represents a "start packet item", which consist of
@@ -81,7 +79,7 @@ public class StartItem {
      * The constructor, taking the properties of the "primary" (often teh only)
      * certificate. The parameters are only stored, real initialisation is done
      * by the init() method.
-     * 
+     *
      * @param name The Company name of the primary certificate. This name will
      * also become the name of the start item itself.
      * @param type The CompanyType name of the primary certificate.
@@ -108,7 +106,7 @@ public class StartItem {
 
     /**
      * Add a secondary certificate, that "comes with" the primary certificate.
-     * 
+     *
      * @param name2 The Company name of the secondary certificate.
      * @param type2 The CompanyType name of the secondary certificate.
      * @param president2 True if the secondary certificate is the president's
@@ -183,7 +181,7 @@ public class StartItem {
     /**
      * Set the start packet row. <p> Applies to games like 1835 where start
      * items are organised and become available in rows.
-     * 
+     *
      * @param row
      */
     protected void setRow(int row) {
@@ -193,7 +191,7 @@ public class StartItem {
     /**
      * Set the start packet row. <p> Applies to games like 1837 where start
      * items are organised and become available in columns.
-     * 
+     *
      * @param row
      */
     protected void setColumn(int column) {
@@ -202,7 +200,7 @@ public class StartItem {
 
     /**
      * Get the row number.
-     * 
+     *
      * @see setRow()
      * @return The row number. Default 0.
      */
@@ -212,7 +210,7 @@ public class StartItem {
 
     /**
      * Get the column number.
-     * 
+     *
      * @see setColumn()
      * @return The column number. Default 0.
      */
@@ -222,7 +220,7 @@ public class StartItem {
 
     /**
      * Get the primary (or only) certificate.
-     * 
+     *
      * @return The primary certificate object.
      */
     public Certificate getPrimary() {
@@ -231,7 +229,7 @@ public class StartItem {
 
     /**
      * Check if there is a secondary certificate.
-     * 
+     *
      * @return True if there is a secondary certificate.
      */
     public boolean hasSecondary() {
@@ -240,7 +238,7 @@ public class StartItem {
 
     /**
      * Get the secondary certificate.
-     * 
+     *
      * @return The secondary certificate object, or null if it does not exist.
      */
     public Certificate getSecondary() {
@@ -249,7 +247,7 @@ public class StartItem {
 
     /**
      * Get the start item base price.
-     * 
+     *
      * @return The base price.
      */
     public int getBasePrice() {
@@ -263,7 +261,7 @@ public class StartItem {
     /**
      * Get the start item name (which is the company name of the primary
      * certificate).
-     * 
+     *
      * @return The start item name.
      */
     public String getName() {
@@ -273,7 +271,7 @@ public class StartItem {
     /**
      * Register a bid. <p> This method does <b>not</b> check off the amount of
      * money that a player has available for bidding.
-     * 
+     *
      * @param amount The bid amount.
      * @param bidder The bidding player.
      */
@@ -297,7 +295,7 @@ public class StartItem {
 
     /**
      * Get the currently highest bid amount.
-     * 
+     *
      * @return The bid amount (0 if there have been no bids yet).
      */
     public int getBid() {
@@ -311,7 +309,7 @@ public class StartItem {
 
     /**
      * Get the highest bid done so far by a particular player.
-     * 
+     *
      * @param player The name of the player.
      * @return The bid amount for this player (default 0).
      */
@@ -323,7 +321,7 @@ public class StartItem {
     /**
      * Return the total number of players that has done bids so far on this
      * item.
-     * 
+     *
      * @return The number of bidders.
      */
     public int getBidders() {
@@ -336,7 +334,7 @@ public class StartItem {
 
     /**
      * Get the highest bidder so far.
-     * 
+     *
      * @return The player object that did the highest bid.
      */
     public Player getBidder() {
@@ -350,7 +348,7 @@ public class StartItem {
 
     /**
      * Get the minimum allowed next bid. TODO 5 should be configurable.
-     * 
+     *
      * @return Minimum bid
      */
     public int getMinimumBid() {
@@ -363,7 +361,7 @@ public class StartItem {
 
     /**
      * Check if a player has done any bids on this start item.
-     * 
+     *
      * @param playerName The name of the player.
      * @return True if this player has done any bids.
      */
@@ -375,7 +373,7 @@ public class StartItem {
 
     /**
      * Get the last Bid done by a given player.
-     * 
+     *
      * @param playerName The name of the player.
      * @return His latest Bid object.
      */
@@ -387,7 +385,7 @@ public class StartItem {
 
     /**
      * Check if the start item has been sold.
-     * 
+     *
      * @return True if this item has been sold.
      */
     public boolean isSold() {
@@ -396,7 +394,7 @@ public class StartItem {
 
     /**
      * Set the start item sold status.
-     * 
+     *
      * @param sold The new sold status (usually true).
      */
     public void setSold(Player player, int buyPrice) {
@@ -422,7 +420,7 @@ public class StartItem {
      * set when this start item is bought. The UI can use this to ask for the
      * price immediately, so bypassing the extra "price asking" intermediate
      * step.
-     * 
+     *
      * @return A public company for which a price must be set.
      */
     public PublicCompanyI needsPriceSetting() {
@@ -441,7 +439,7 @@ public class StartItem {
     /**
      * If a start item component a President's certificate that needs price
      * setting, return the name of thecompany for which the price must be set.
-     * 
+     *
      * @param certificate
      * @return Name of public company, or null
      */
@@ -476,15 +474,15 @@ public class StartItem {
     }
 
     public ModelObject getBasePriceModel() {
-        return (ModelObject) basePrice;
+        return basePrice;
     }
 
     public ModelObject getBidForPlayerModel(int index) {
-        return (ModelObject) bids[index];
+        return bids[index];
     }
 
     public ModelObject getMinimumBidModel() {
-        return (ModelObject) minimumBid;
+        return minimumBid;
     }
 
     public static StartItem getByName(String name) {
@@ -501,7 +499,8 @@ public class StartItem {
         return this.name.equals(item.getName())
                && this.type.equals(item.getType());
     }
-    
+
+    @Override
     public String toString() {
         return ("StartItem "+name+" status="+statusName[status.intValue()]);
     }
