@@ -1,14 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.7 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.8 2009/01/07 21:03:24 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Observable;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import rails.game.model.ModelObject;
@@ -30,6 +27,14 @@ public class Field extends JLabel implements ViewObject {
 
     public Field(String text) {
         super(text.equals("0%") ? "" : text);
+        this.setBackground(NORMAL_BG_COLOUR);
+        this.setHorizontalAlignment(SwingConstants.CENTER);
+        this.setBorder(labelBorder);
+        this.setOpaque(true);
+    }
+
+    public Field(ImageIcon info) {
+        super(info);
         this.setBackground(NORMAL_BG_COLOUR);
         this.setHorizontalAlignment(SwingConstants.CENTER);
         this.setBorder(labelBorder);
@@ -72,9 +77,10 @@ public class Field extends JLabel implements ViewObject {
 
     /** This method is mainly needed when NOT using the Observer pattern. */
 
+    @Override
     public void paintComponent(Graphics g) {
         if (modelObject != null && (pull || !StatusWindow.useObserver)) {
-            setText((String) modelObject.getText());
+            setText(modelObject.getText());
         }
         super.paintComponent(g);
     }

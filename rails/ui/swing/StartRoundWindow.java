@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.27 2008/12/11 20:12:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.28 2009/01/07 21:03:24 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.special.SpecialPropertyI;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
@@ -51,6 +52,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private int playerBidsXOffset, playerBidsYOffset;
     private Field playerFree[];
     private int playerFreeCashXOffset, playerFreeCashYOffset;
+    private Field info[];
+    private int infoXOffset, infoYOffset;
 
     private Caption[] upperPlayerCaption;
     private Caption[] lowerPlayerCaption;
@@ -60,6 +63,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private JSpinner bidAmount;
     private SpinnerNumberModel spinnerModel;
     private final ActionButton passButton;
+
+    private ImageIcon infoIcon = null;
 
     private final int np; // Number of players
     private final int ni; // Number of start items
@@ -156,6 +161,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         actionableItems = new StartItemAction[ni];
 
+        infoIcon = createInfoIcon();
+
         init();
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
@@ -181,6 +188,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         basePrice = new Field[ni];
         minBid = new Field[ni];
         bidPerPlayer = new Field[ni][np];
+        info = new Field[ni];
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
         playerBids = new Field[np];
@@ -198,6 +206,9 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
         bidPerPlayerXOffset = ++lastX;
         bidPerPlayerYOffset = lastY;
+
+        infoXOffset = bidPerPlayerXOffset + np;
+        infoYOffset = lastY;
 
         // Bottom rows
         lastY += (ni - 1);
@@ -253,6 +264,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
                         1, 1, 0);
             }
+
+            f = info[i] = new Field (infoIcon);
+            f.setToolTipText(getStartItemDescription(items[i]));
+            addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
         }
 
         // Player money
@@ -613,6 +628,48 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private void setItemNameButton(int i, boolean clickable) {
         itemName[i].setVisible(!clickable);
         itemNameButton[i].setVisible(clickable);
+    }
+
+    private String getStartItemDescription (StartItem item) {
+            StringBuffer b = new StringBuffer("<html>");
+            b.append (item.getPrimary().toString());
+            if (item.getPrimary() instanceof PrivateCompany) {
+                PrivateCompany priv = (PrivateCompany) item.getPrimary();
+                b.append ("<br>Revenue: ").append(Bank.format(priv.getRevenue()));
+                List<MapHex> blockedHexes = priv.getBlockedHexes();
+                if (blockedHexes == null) {
+                } else if (blockedHexes.size() == 1) {
+                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getName());
+                } else if (blockedHexes.size() > 1) {
+                    b.append("<br>Blocked hexes:");
+                    for (MapHex hex : blockedHexes) {
+                        b.append(" ").append(hex.getName());
+                    }
+                }
+                if (priv.hasSpecialProperties()) {
+                    b.append("<br><b>Special properties:</b>");
+                    for (SpecialPropertyI sp : priv.getSpecialProperties()) {
+                        b.append("<br>").append(sp.toString());
+                   }
+                }
+            }
+            if (item.getSecondary() != null) {
+                b.append("<br><b>Also contains:</b><br>");
+                b.append(item.getSecondary().toString());
+            }
+            return b.toString();
+    }
+
+    private ImageIcon createInfoIcon() {
+
+        String path = "/rails/ui/images/Inform.gif";
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, "Info");
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
     }
 
     public void keyPressed(KeyEvent e) {
