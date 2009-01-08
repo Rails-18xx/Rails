@@ -327,12 +327,15 @@ public abstract class StartRound extends Round implements StartRoundI {
     }
 
     /**
-     * Get a list of items that may be bought immediately.
+     * Get the current list of start items.
      *
      * @return An array of start items, possibly empry.
      */
 
-    public abstract List<StartItem> getStartItems();
+    public List<StartItem> getStartItems() {
+
+        return itemsToSell;
+    }
 
     /**
      * Get a list of items that the current player may bid upon.

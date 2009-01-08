@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.17 2009/01/04 13:09:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.18 2009/01/08 19:59:39 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -143,43 +143,6 @@ public class StartRound_1835 extends StartRound {
         possibleActions.add(new NullAction(NullAction.PASS));
 
         return true;
-    }
-
-    @Override
-    public List<StartItem> getStartItems() {
-        Player currentPlayer = getCurrentPlayer();
-        int cashToSpend = currentPlayer.getCash();
-        // List<StartItem> startItems = startPacket.getItems();
-        int row;
-        int minRow = 0;
-        int items = 0;
-
-        // for (StartItem item : startItems)
-        for (StartItem item : itemsToSell) {
-            if (item.isSold()) {
-                item.setStatus(StartItem.SOLD);
-            } else if (item.getBasePrice() > cashToSpend) {
-                item.setStatus(StartItem.UNAVAILABLE);
-            } else if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-                item.setStatus(StartItem.BUYABLE);
-            } else {
-                row = item.getRow();
-                if (minRow == 0) minRow = row;
-                if (row == minRow) {
-                    // Allow all items in the top row.
-                    item.setStatus(StartItem.BUYABLE);
-                    items++;
-                } else if (row == minRow + 1 && items == 1) {
-                    // Allow the first item in the next row if the
-                    // top row has only one item.
-                    item.setStatus(StartItem.BUYABLE);
-                } else {
-                    item.setStatus(StartItem.UNAVAILABLE);
-                }
-            }
-        }
-
-        return itemsToSell;
     }
 
     /*----- MoveSet methods -----*/

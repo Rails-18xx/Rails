@@ -1,7 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.16 2008/12/23 19:58:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.17 2009/01/08 19:59:39 evos Exp $ */
 package rails.game;
-
-import java.util.List;
 
 import rails.game.action.*;
 import rails.game.move.MoveSet;
@@ -153,15 +151,6 @@ public class StartRound_1830 extends StartRound {
         }
 
         return true;
-    }
-
-    /**
-     * Return the start items, marked as appropriate for an 1830-style auction.
-     */
-    @Override
-    public List<StartItem> getStartItems() {
-
-        return itemsToSell;
     }
 
     /*----- MoveSet methods -----*/

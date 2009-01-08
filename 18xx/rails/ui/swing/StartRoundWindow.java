@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.28 2009/01/07 21:03:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.29 2009/01/08 19:59:39 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -32,6 +32,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private static final int WIDE_TOP = 4;
     private static final int WIDE_BOTTOM = 8;
 
+    private static final Color buyableColour = new Color (0, 128, 0);
+    private static final Color soldColour = new Color (128, 128, 128);
+    private static final Color defaultColour = Color.BLACK;
+
     private final JPanel statusPanel;
     private final JPanel buttonPanel;
 
@@ -54,6 +58,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private int playerFreeCashXOffset, playerFreeCashYOffset;
     private Field info[];
     private int infoXOffset, infoYOffset;
+    private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
     private Caption[] upperPlayerCaption;
     private Caption[] lowerPlayerCaption;
@@ -78,6 +83,12 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
     private StartItem si;
     private JComponent f;
+
+    /** @see StartItem.statusName */
+    public static final String[] itemStatusTextKeys =
+        new String[] { "Status_Unavailable", "Status_Biddable", "Status_Buyable",
+                "Status_Selectable", "Status_Auctioned",
+                "Status_NeedingSharePrice", "Status_Sold" };
 
     // Current state
     private int playerIndex = -1;
@@ -189,6 +200,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         minBid = new Field[ni];
         bidPerPlayer = new Field[ni][np];
         info = new Field[ni];
+        itemStatus = new Field[ni];
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
         playerBids = new Field[np];
@@ -266,8 +278,11 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             }
 
             f = info[i] = new Field (infoIcon);
-            f.setToolTipText(getStartItemDescription(items[i]));
+            f.setToolTipText(getStartItemDescription(si));
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
+
+            // Invisible field, only used to hold current item status.
+            f = itemStatus[i] = new Field (si.getStatusModel());
         }
 
         // Player money
@@ -380,7 +395,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     if (selected) {
                         buyButton.setPossibleAction(action);
                     } else {
-                        itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
+                        //itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
                         itemNameButton[i].setPossibleAction(action);
                     }
                     itemNameButton[i].setSelected(selected);
@@ -422,7 +437,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     spinnerModel.setStepSize(bidAction.getBidIncrement());
                     spinnerModel.setValue(mb);
                 } else {
-                    itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBidding"));
+                    //itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBidding"));
                     itemNameButton[i].setPossibleAction(action);
                 }
                 bidAllowed = selected;
@@ -626,11 +641,23 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     }
 
     private void setItemNameButton(int i, boolean clickable) {
+
         itemName[i].setVisible(!clickable);
         itemNameButton[i].setVisible(clickable);
+
+        int status = Integer.parseInt(itemStatus[i].getText());
+        String tooltip = LocalText.getText(itemStatusTextKeys[status]);
+
+        itemName[i].setToolTipText(clickable ? "" : tooltip);
+        itemNameButton[i].setToolTipText(clickable ? tooltip : "");
+
+        itemName[i].setForeground (
+                status == StartItem.SOLD ? soldColour : defaultColour);
+        itemNameButton[i].setForeground (
+                status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
-    private String getStartItemDescription (StartItem item) {
+   private String getStartItemDescription (StartItem item) {
             StringBuffer b = new StringBuffer("<html>");
             b.append (item.getPrimary().toString());
             if (item.getPrimary() instanceof PrivateCompany) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.15 2009/01/07 21:03:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.16 2009/01/08 19:59:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -46,16 +46,17 @@ public class StartItem {
     public static final int UNAVAILABLE = 0;
     public static final int BIDDABLE = 1;
     public static final int BUYABLE = 2;
-    public static final int AUCTIONED = 3;
-    public static final int NEEDS_SHARE_PRICE = 4; // TODO No longer used (may
+    public static final int SELECTABLE = 3;
+    public static final int AUCTIONED = 4;
+    public static final int NEEDS_SHARE_PRICE = 5; // TODO No longer used (may
     // not be true after
     // bidding), needs code
     // cleanup
-    public static final int SOLD = 5;
+    public static final int SOLD = 6;
 
     public static final String[] statusName =
-            new String[] { "Unavailable", "Biddable", "Buyable", "Auctioned",
-                    "NeedingSharePrice", "Sold" };
+            new String[] { "Unavailable", "Biddable", "Buyable", "Selectable",
+                    "Auctioned", "NeedingSharePrice", "Sold" };
 
     // For initialisation purposes only
     protected String type = null;
@@ -465,6 +466,10 @@ public class StartItem {
         return status.intValue();
     }
 
+    public ModelObject getStatusModel () {
+        return status;
+    }
+
     public String getStatusName() {
         return statusName[status.intValue()];
     }
@@ -503,6 +508,10 @@ public class StartItem {
     @Override
     public String toString() {
         return ("StartItem "+name+" status="+statusName[status.intValue()]);
+    }
+
+    public String getText () {
+        return toString();
     }
 
 }
