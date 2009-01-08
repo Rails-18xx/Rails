@@ -1,7 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.5 2008/12/23 19:59:06 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.6 2009/01/08 19:59:39 evos Exp $ */
 package rails.game.specific._18EU;
-
-import java.util.List;
 
 import rails.game.*;
 import rails.game.action.*;
@@ -55,13 +53,6 @@ public class StartRound_18EU extends StartRound {
         setPossibleActions();
     }
 
-    /**
-     * Get a list of items that may be bought immediately. <p> In an 1835-style
-     * auction this method will usually return several items.
-     *
-     * @return An array of start items that can be bought.
-     */
-    // public StartItem[] getBuyableItems() {return null;}
     @Override
     public boolean setPossibleActions() {
 
@@ -73,7 +64,7 @@ public class StartRound_18EU extends StartRound {
 
         switch (getStep()) {
         case SELECT_STEP:
-            // In the selection step, all not yet sold items are buyable.
+            // In the selection step, all not yet sold items are selectable.
             // The current player MUST select an item,
             // and may then bid for it or pass.
 
@@ -82,13 +73,12 @@ public class StartRound_18EU extends StartRound {
 
             for (StartItem item : itemsToSell) {
                 if (!item.isSold()) {
-                    item.setStatus(StartItem.BIDDABLE);
+                    item.setStatus(StartItem.SELECTABLE);
                     item.setMinimumBid(item.getBasePrice());
                     BidStartItem possibleAction =
                             new BidStartItem(item, item.getBasePrice(),
                                     startPacket.getModulus(), false, true);
                     possibleActions.add(possibleAction);
-                    // /item.setStatus (StartItem.BIDDABLE);
                 }
             }
             break;
@@ -121,11 +111,6 @@ public class StartRound_18EU extends StartRound {
     }
 
     @Override
-    public List<StartItem> getStartItems() {
-        return startPacket.getItems();
-    }
-
-    @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         StartItem item = boughtItem.getStartItem();
         int status = boughtItem.getStatus();
@@ -136,14 +121,14 @@ public class StartRound_18EU extends StartRound {
         while (true) {
 
             // Is the item buyable?
-            if (status == StartItem.BUYABLE) {
+            if (status == StartItem.AUCTIONED && currentStep.intValue() == BUY_STEP) {
                 price = currentBuyPrice.intValue();
             } else {
                 errMsg = LocalText.getText("NotForSale");
                 break;
             }
 
-            if (status == StartItem.BUYABLE && player.getFreeCash() < price) {
+            if (player.getFreeCash() < price) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -246,6 +231,11 @@ public class StartRound_18EU extends StartRound {
 
             currentAuctionItem.set(item);
             item.setStatus(StartItem.AUCTIONED);
+            for (StartItem item2 : itemsToSell) {
+                if (item2 != item && !item2.isSold()) {
+                    item2.setStatus(StartItem.UNAVAILABLE);
+                }
+            }
             if (bidAmount == -1) {
                 setStep(OPEN_STEP);
             }
@@ -313,9 +303,9 @@ public class StartRound_18EU extends StartRound {
                         new String[] { auctionedItem.getName(),
                                 Bank.format(currentBuyPrice.intValue()) }));
                 setStep(BUY_STEP);
-                if (auctionedItem.getStatus() != StartItem.BUYABLE) {
-                    auctionedItem.setStatus(StartItem.BUYABLE);
-                }
+                //if (auctionedItem.getStatus() != StartItem.BUYABLE) {
+                //    auctionedItem.setStatus(StartItem.BUYABLE);
+                //}
                 if (currentBuyPrice.intValue() == 0) {
                     // Forced buy
                     // Trick to make the zero buy price visible
