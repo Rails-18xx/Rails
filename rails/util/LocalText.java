@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.5 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.6 2009/01/11 17:23:21 evos Exp $*/
 package rails.util;
 
 import java.text.MessageFormat;
@@ -25,14 +25,15 @@ public class LocalText extends ResourceBundle {
             Logger.getLogger(LocalText.class.getPackage().getName());
 
     public static String getText(String key) {
-        return getText(key, null);
+        return getText(key, (Object[]) null);
     }
 
     public static String getText(String key, Object parameter) {
         return getText(key, new Object[] { parameter });
     }
-
-    public static String getText(String key, Object[] parameters) {
+    
+    //public static String getText(String key, Object[] parameters) {
+    public static String getText(String key, Object... parameters) {
         String result = "";
 
         if (key == null || key.length() == 0) return "";
