@@ -1,42 +1,19 @@
 package rails.ui.swing;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
 import rails.common.Defs;
-import rails.game.Bank;
-import rails.game.Player;
-import rails.game.Portfolio;
-import rails.game.PublicCertificateI;
-import rails.game.PublicCompanyI;
-import rails.game.action.BuyCertificate;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.SellShares;
-import rails.game.action.StartCompany;
-import rails.ui.swing.elements.Caption;
-import rails.ui.swing.elements.ClickField;
-import rails.ui.swing.elements.Field;
-import rails.ui.swing.elements.RadioButtonDialog;
+import rails.game.*;
+import rails.game.action.*;
+import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
 /**
@@ -90,6 +67,8 @@ public class GameStatus extends JPanel implements ActionListener {
     protected int compTokensXOffset, compTokensYOffset;
     protected Field compPrivates[];
     protected int compPrivatesXOffset, compPrivatesYOffset;
+    protected Field compLoans[];
+    protected int compLoansXOffset, compLoansYOffset;
     protected Field playerCash[];
     protected int playerCashXOffset, playerCashYOffset;
     protected Field playerPrivates[];
@@ -121,7 +100,7 @@ public class GameStatus extends JPanel implements ActionListener {
     protected PublicCompanyI[] companies;
     //protected CompanyManagerI cm;
     protected Portfolio ipo, pool;
-    
+
     protected GameUIManager gameUIManager;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
@@ -130,6 +109,7 @@ public class GameStatus extends JPanel implements ActionListener {
     protected boolean compCanBuyPrivates = false;
     protected boolean compCanHoldOwnShares = false;
     protected boolean compCanHoldForeignShares = false; // NOT YET USED
+    protected boolean hasCompanyLoans = false;
 
     private PublicCompanyI c;
     private JComponent f;
@@ -177,6 +157,7 @@ public class GameStatus extends JPanel implements ActionListener {
         hasParPrices = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_PAR_PRICE);
         compCanBuyPrivates = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         compCanHoldOwnShares = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
+        hasCompanyLoans = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
 
         ipo = Bank.getIpo();
         pool = Bank.getPool();
@@ -198,6 +179,8 @@ public class GameStatus extends JPanel implements ActionListener {
         compTrains = new Field[nc];
         compTokens = new Field[nc];
         compPrivates = new Field[nc];
+        compLoans = new Field[nc];
+
         playerCash = new Field[np];
         playerPrivates = new Field[np];
         playerWorth = new Field[np];
@@ -234,6 +217,10 @@ public class GameStatus extends JPanel implements ActionListener {
         if (compCanBuyPrivates) {
             compPrivatesXOffset = ++lastX;
             compPrivatesYOffset = lastY;
+        }
+        if (hasCompanyLoans) {
+            compLoansXOffset = ++lastX;
+            compLoansYOffset = lastY;
         }
         rightCompCaptionXOffset = ++lastX;
 
@@ -292,7 +279,8 @@ public class GameStatus extends JPanel implements ActionListener {
 
         }
         addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
-                compCashXOffset, 0, this.compCanBuyPrivates ? 5 : 4, 1, 0);
+                compCashXOffset, 0, 4 + (compCanBuyPrivates ? 1 : 0)
+                                      + (hasCompanyLoans ? 1 : 0), 1, 0);
         addField(new Caption(LocalText.getText("CASH")), compCashXOffset, 1, 1,
                 1, WIDE_BOTTOM);
         addField(new Caption(LocalText.getText("REVENUE")), compRevenueXOffset,
@@ -305,6 +293,11 @@ public class GameStatus extends JPanel implements ActionListener {
             addField(new Caption(LocalText.getText("PRIVATES")),
                     compPrivatesXOffset, 1, 1, 1, WIDE_BOTTOM);
         }
+        if (hasCompanyLoans) {
+            addField (new Caption (LocalText.getText("LOANS")),
+                    compLoansXOffset, 1, 1, 1, WIDE_BOTTOM);
+        }
+
         addField(new Caption(LocalText.getText("COMPANY")),
                 rightCompCaptionXOffset, 0, 1, 2, WIDE_LEFT + WIDE_BOTTOM);
 
@@ -407,6 +400,10 @@ public class GameStatus extends JPanel implements ActionListener {
                                         c.getPortfolio().getPrivatesOwnedModel());
                 addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,
                         0);
+            }
+            if (hasCompanyLoans) {
+                f = compLoans[i] = new Field (c.getLoanValueModel());
+                addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0);
             }
 
             f = new Caption(c.getName());
@@ -639,7 +636,7 @@ public class GameStatus extends JPanel implements ActionListener {
                             buyActions.add(buy);
                             buyAmounts.add(startPrices[0]);
                         }
- 
+
                     } else {
 
                         options.add(LocalText.getText("BuyCertificate",
@@ -718,7 +715,7 @@ public class GameStatus extends JPanel implements ActionListener {
         chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);
 
         if (chosenAction != null)
-            ((StatusWindow) parent).process(chosenAction);
+            (parent).process(chosenAction);
 
         repaint();
 
@@ -809,7 +806,7 @@ public class GameStatus extends JPanel implements ActionListener {
                     possibleActions.getType(NullAction.class);
             if (nullActions != null) {
                 for (NullAction na : nullActions) {
-                    ((StatusWindow) parent).setPassButton(na);
+                    (parent).setPassButton(na);
                 }
             }
 

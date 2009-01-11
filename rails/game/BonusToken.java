@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.7 2008/06/04 19:00:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.8 2009/01/11 17:24:46 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -70,7 +70,7 @@ public class BonusToken extends Token implements Closeable {
             String[] spec = removingObjectDesc.split(":");
             if (spec[0].equalsIgnoreCase("Phase")) {
                 removingObject =
-                        PhaseManager.getInstance().getPhaseNyName(spec[1]);
+                        PhaseManager.getInstance().getPhaseByName(spec[1]);
             }
         }
 

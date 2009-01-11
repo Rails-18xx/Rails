@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.27 2008/11/20 21:49:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.28 2009/01/11 17:24:46 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -37,6 +37,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
     public static final String REM_TILES_CMD = "RemainingTiles";
+    public static final String TAKE_LOANS_CMD = "TakeLoans";
+    public static final String REPAY_LOANS_CMD = "RepayLoans";
 
     ORWindow orWindow;
     ORUIManager orUIManager;
@@ -48,6 +50,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JMenu infoMenu;
     private JMenuItem remainingTilesMenuItem;
     private JMenu specialMenu;
+    private JMenu loansMenu;
+    private ActionMenuItem takeLoans;
+    private ActionMenuItem repayLoans;
 
     private GridBagLayout gb;
     private GridBagConstraints gbc;
@@ -66,6 +71,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private Field privates[];
     private int privatesXOffset, privatesYOffset;
     private Field newPrivatesCost[];
+    private Field[] compLoans;
+    private int loansXOffset, loansYOffset;
     private Field tiles[];
     private int tilesXOffset, tilesYOffset;
     private Field tileCost[];
@@ -84,9 +91,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
+    private boolean hasCompanyLoans = false;
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
-            privatesCaption;
+            privatesCaption, loansCaption;
 
     private ActionButton button1;
     private ActionButton button2;
@@ -109,6 +117,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
+    
+    private List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
     protected static Logger log =
             Logger.getLogger(ORPanel.class.getPackage().getName());
@@ -129,6 +139,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         round = gameUIManager.getCurrentRound();
         privatesCanBeBought = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         bonusTokensExist = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.DO_BONUS_TOKENS_EXIST);
+        hasCompanyLoans = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -158,11 +169,30 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         menuBar.add(infoMenu);
 
         specialMenu = new JMenu(LocalText.getText("SPECIAL"));
-        specialMenu.setBackground(Color.YELLOW); // Normally not seen
-        // because menu is not
-        // opaque
+        specialMenu.setBackground(Color.YELLOW);
+        // Normally not seen because menu is not opaque
         specialMenu.setEnabled(false);
         menuBar.add(specialMenu);
+
+        if (hasCompanyLoans) {
+            loansMenu = new JMenu (LocalText.getText("LOANS"));
+            specialMenu.setEnabled(true);
+
+            takeLoans = new ActionMenuItem (LocalText.getText("TakeLoans"));
+            takeLoans.addActionListener(this);
+            takeLoans.setEnabled(false);
+            loansMenu.add(takeLoans);
+            menuItemsToReset.add(takeLoans);
+
+            repayLoans = new ActionMenuItem (LocalText.getText("RepayLoans"));
+            repayLoans.addActionListener(this);
+            repayLoans.setEnabled(false);
+            loansMenu.add(repayLoans);
+            menuItemsToReset.add(repayLoans);
+
+            menuBar.add(loansMenu);
+        }
+
         add(menuBar, BorderLayout.NORTH);
 
         setVisible(true);
@@ -258,6 +288,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         tokenCost = new Field[nc];
         tokensLeft = new Field[nc];
         if (bonusTokensExist) tokenBonus = new Field[nc];
+        if (hasCompanyLoans) compLoans = new Field[nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
         decision = new Field[nc];
@@ -297,6 +328,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                     WIDE_BOTTOM);
             addField(new Caption("cost"), privatesXOffset + 1, 1, 1, 1,
                     WIDE_BOTTOM + WIDE_RIGHT);
+        }
+
+        if (hasCompanyLoans) {
+            loansXOffset = currentXOffset += lastXWidth;
+            loansYOffset = leftCompNameYOffset;
+            addField (loansCaption = new Caption(LocalText.getText("LOANS")),
+                    loansXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
         }
 
         tilesXOffset = currentXOffset += lastXWidth;
@@ -376,6 +414,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                                 new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT);
+            }
+
+            if (hasCompanyLoans) {
+                f = compLoans[i] = new Field (c.getLoanValueModel());
+                addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT);
             }
 
             f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());
@@ -501,7 +544,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         revenue[orCompIndex].setText(Bank.format(amount));
     }
 
-    public void setHighlightsOff() {
+    public void resetActions() {
         tileCaption.setHighlight(false);
         tokenCaption.setHighlight(false);
         revenueCaption.setHighlight(false);
@@ -509,6 +552,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         if (privatesCanBeBought) privatesCaption.setHighlight(false);
         for (int i = 0; i < president.length; i++) {
             president[i].setHighlight(false);
+        }
+        
+        for (JMenuItem item : menuItemsToReset) {
+            item.setEnabled(false);
+            if (item instanceof ActionMenuItem) {
+                ((ActionMenuItem)item).clearPossibleActions();
+            }
         }
     }
 
@@ -667,6 +717,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     public void enableRedo(GameAction action) {
         redoButton.setEnabled(action != null);
         if (action != null) redoButton.setPossibleAction(action);
+    }
+    
+    public void enableLoanTaking (TakeLoans action) {
+        if (action != null) takeLoans.addPossibleAction(action);
+        takeLoans.setEnabled(action != null);
     }
 
     public void finishORCompanyTurn(int orCompIndex) {
