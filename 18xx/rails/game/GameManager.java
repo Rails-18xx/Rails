@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.38 2009/01/03 22:51:35 krazick Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.39 2009/01/11 17:24:46 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -83,6 +83,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean canAnyCompanyBuyPrivates = false;
     protected boolean canAnyCompanyHoldShares = false;
     protected boolean bonusTokensExist = false;
+    protected boolean hasAnyCompanyLoans = false;
+
     protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
     protected static GameManager instance;
@@ -322,6 +324,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
             canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
             canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
+            hasAnyCompanyLoans = hasAnyCompanyLoans || company.getMaxNumberOfLoans() != 0;
         }
 
 loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
@@ -481,7 +484,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 	public String getNumOfORs () {
 		return new Integer(numOfORs).toString();
 	}
-	
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getSRNumber()
      */
@@ -939,6 +942,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             return canAnyCompanyHoldShares;
         case DO_BONUS_TOKENS_EXIST:
             return bonusTokensExist;
+        case HAS_ANY_COMPANY_LOANS:
+            return hasAnyCompanyLoans;
         default:
             return null;
         }

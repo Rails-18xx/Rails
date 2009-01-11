@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.49 2009/01/03 18:24:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.50 2009/01/11 17:24:46 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import rails.game.action.*;
 import rails.game.move.CashMove;
+import rails.game.move.MapChange;
 import rails.game.move.MoveSet;
 import rails.game.special.*;
 import rails.game.state.IntegerState;
@@ -55,6 +56,8 @@ public class OperatingRound extends Round implements Observer {
 
     protected List<TrainTypeI> trainsBoughtThisTurn =
             new ArrayList<TrainTypeI>(4);
+    
+    protected Map<PublicCompanyI, Integer> loansThisRound = null;
 
     protected PhaseI currentPhase;
 
@@ -206,6 +209,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof ReachDestinations) {
 
             result = reachDestinations ((ReachDestinations) selectedAction);
+            
+        } else if (selectedAction instanceof TakeLoans) {
+            
+            result = takeLoans((TakeLoans) selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -1489,7 +1496,108 @@ public class OperatingRound extends Round implements Observer {
     protected void reachDestination (PublicCompanyI company) {
 
     }
+    
+    protected boolean takeLoans (TakeLoans action) {
+        
+        String errMsg = validateTakeLoans (action);
+        
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotTakeLoans",
+                        action.getCompanyName(), 
+                        action.getNumberTaken(),
+                        action.getPrice(),
+                        errMsg));
+                                
+            return false;
+        }
 
+        MoveSet.start(true);
+        
+        executeTakeLoans (action);
+
+        return true;
+
+    }
+    
+    protected String validateTakeLoans (TakeLoans action) {
+
+        String errMsg = null;
+        PublicCompanyI company = action.getCompany();
+        String companyName = company.getName();
+        int number = action.getNumberTaken();
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+
+            // Checks
+            // Is company operating?
+            if (company != operatingCompany) {
+                errMsg =
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                action.getCompanyName());
+                break;
+            }
+            // Does company allow any loans?
+            if (company.getMaxNumberOfLoans() == 0) {
+                errMsg = LocalText.getText("LoansNotAllowed",
+                        companyName);
+                break;
+            }
+            // Does the company exceed the maximum number of loans?
+            if (company.getMaxNumberOfLoans() > 0
+                    && company.getCurrentNumberOfLoans() + number >
+                        company.getMaxNumberOfLoans()) {
+                errMsg =
+                        LocalText.getText("MoreLoansNotAllowed",
+                                companyName,
+                                company.getMaxNumberOfLoans());
+                break;
+            }
+            break;
+        }
+
+        return errMsg;
+    }
+    
+    protected void executeTakeLoans (TakeLoans action) {
+        
+        int number = action.getNumberTaken();
+        int amount = calculateLoanAmount (number);
+        operatingCompany.addLoans(number);
+        new CashMove (null, operatingCompany, amount);
+        if (number == 1) {
+            ReportBuffer.add(LocalText.getText("CompanyTakesLoan",
+                operatingCompany.getName(),
+                Bank.format(operatingCompany.getValuePerLoan()),
+                Bank.format(amount)
+            ));
+        } else {
+            ReportBuffer.add(LocalText.getText("CompanyTakesLoans",
+                    operatingCompany.getName(),
+                    number,
+                    Bank.format(operatingCompany.getValuePerLoan()),
+                    Bank.format(amount)
+            ));
+        }
+        
+        if (operatingCompany.getMaxLoansPerRound() > 0) {
+            int oldLoansThisRound = 0;
+            if (loansThisRound == null) {
+                loansThisRound = new HashMap<PublicCompanyI, Integer>();
+            } else if (loansThisRound.containsKey(operatingCompany)){
+                oldLoansThisRound = loansThisRound.get(operatingCompany);
+            }
+            new MapChange<PublicCompanyI, Integer> (loansThisRound, 
+                    operatingCompany,
+                    new Integer (oldLoansThisRound + number));
+        }
+    }
+    
+    protected int calculateLoanAmount (int numberOfLoans) {
+        return numberOfLoans * operatingCompany.getValuePerLoan();
+    }
+    
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -1845,6 +1953,34 @@ public class OperatingRound extends Round implements Observer {
     protected void setDestinationActions () {
 
     }
+    
+    public void repayLoans (int number) {
+        operatingCompany.addLoans(-number);
+        int amount = number * operatingCompany.getValuePerLoan();
+        new CashMove (operatingCompany, null, amount);
+        DisplayBuffer.add(LocalText.getText("CompanyRepaysLoan",
+                new String[] { 
+                    operatingCompany.getName(), 
+                    String.valueOf(number),
+                    Bank.format(operatingCompany.getValuePerLoan()),
+                    Bank.format(amount)
+                    }));
+    }
+    
+    public void payLoanInterest () {
+        int amount = operatingCompany.getCurrentLoanValue()
+            * operatingCompany.getLoanInterestPct() / 100;
+        new CashMove (operatingCompany, null, amount);
+        DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
+                new String[] { 
+                    operatingCompany.getName(), 
+                    Bank.format(amount),
+                    String.valueOf(operatingCompany.getLoanInterestPct()),
+                    String.valueOf(operatingCompany.getCurrentNumberOfLoans()),
+                    Bank.format(operatingCompany.getValuePerLoan()),
+                    }));
+    }
+
 
     /* TODO This is just a start of a possible approach to a Help system */
     @Override

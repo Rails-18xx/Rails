@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.26 2008/12/03 20:15:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.27 2009/01/11 17:24:46 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -14,31 +14,31 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public static final int CAPITALISE_FULL = 0;
 
     public static final int CAPITALISE_INCREMENTAL = 1;
-    
+
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
 
     public void init2() throws ConfigurationException;
-    
+
     public void setIndex (int index);
 
 
     /**
      * Return the company token background colour.
-     * 
+     *
      * @return Color object
      */
     public Color getBgColour();
 
     /**
      * Return the company token background colour.
-     * 
+     *
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexBgColour();
 
     /**
      * Return the company token foreground colour.
-     * 
+     *
      * @return Color object.
      */
 
@@ -46,7 +46,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Return the company token foreground colour.
-     * 
+     *
      * @return Hexadecimal string RRGGBB.
      */
     public String getHexFgColour();
@@ -88,7 +88,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Has the company already floated?
-     * 
+     *
      * @return true if the company has floated.
      */
 
@@ -96,7 +96,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Has the company already operated?
-     * 
+     *
      * @return true if the company has operated.
      */
     public boolean hasOperated();
@@ -105,7 +105,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Start the company and set its initial (par) price.
-     * 
+     *
      * @param spaceI
      */
 
@@ -113,7 +113,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Get the company par (initial) price.
-     * 
+     *
      * @return StockSpace object, which defines the company start position on
      * the stock chart.
      */
@@ -121,7 +121,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Set a new company price.
-     * 
+     *
      * @param price The StockSpace object that defines the new location on the
      * stock market.
      */
@@ -129,7 +129,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Get the current company share price.
-     * 
+     *
      * @return The StockSpace object that defines the current location on the
      * stock market.
      */
@@ -142,7 +142,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getFixedPrice();
 
     public int getIPOPrice ();
-    
+
     public int getMarketPrice ();
 
     public int getPublicNumber();
@@ -157,7 +157,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Get a list of this company's certificates.
-     * 
+     *
      * @return ArrayList containing the certificates (item 0 is the President's
      * share).
      */
@@ -165,14 +165,14 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Assign a predefined array of certificates to this company.
-     * 
+     *
      * @param list ArrayList containing the certificates.
      */
     public void setCertificates(List<PublicCertificateI> list);
 
     /**
      * Add a certificate to the end of this company's list of certificates.
-     * 
+     *
      * @param certificate The certificate to add.
      */
     public void addCertificate(PublicCertificateI certificate);
@@ -180,7 +180,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     /**
      * Get the current company treasury. <p> <i>Note: other cash-related methods
      * are declared in interface CashHolder </i>
-     * 
+     *
      * @return The current cash amount.
      */
     public int getCash();
@@ -191,7 +191,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Get the last revenue earned by this company.
-     * 
+     *
      * @return The last revenue amount.
      */
     public int getLastRevenue();
@@ -205,7 +205,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public ModelObject getLastRevenueAllocationModel();
 
     public Player getPresident();
-    
+
     public PublicCertificateI getPresidentsShare();
 
     public int getFloatPercentage();
@@ -222,7 +222,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Get the unit of share.
-     * 
+     *
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit();
@@ -239,7 +239,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     /**
      * Is company present on the Stock Market?
-     * 
+     *
      * @return True if the company has a stock price.
      */
     public boolean hasStockPrice();
@@ -321,9 +321,19 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public boolean hasDestination ();
     public boolean hasReachedDestination();
     public void setReachedDestination (boolean value);
-    
+
     public int getNumberOfTileLays(String tileColour);
 
     public boolean mustOwnATrain();
 
+    public int getCurrentNumberOfLoans();
+    public int getCurrentLoanValue ();
+    public void addLoans(int number);
+    public int getLoanInterestPct();
+    public int getMaxNumberOfLoans();
+    public int getMaxLoansPerRound();
+    public int getValuePerLoan();
+    public MoneyModel getLoanValueModel ();
+    
+    public int sharesOwnedByPlayers();
 }

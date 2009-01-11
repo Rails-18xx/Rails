@@ -24,7 +24,7 @@ public class ORUIManager {
     private HexMap map;
     private MessagePanel messagePanel;
     private RemainingTilesWindow remainingTiles;
-    
+
     public GameUIManager gameUIManager;
 
     private OperatingRound oRound;
@@ -92,8 +92,8 @@ public class ORUIManager {
         messagePanel = orWindow.getMessagePanel();
 
     }
-    
-    
+
+
 
     public void initOR(OperatingRound or) {
         oRound = or;
@@ -312,7 +312,7 @@ public class ORUIManager {
 
     /**
      * Processes button presses and menu selection actions
-     * 
+     *
      * @param command
      * @param actions
      */
@@ -336,10 +336,14 @@ public class ORUIManager {
                        || actionType == GameAction.class) {
 
                 orWindow.process(actions.get(0));
-                
+
             } else if (actionType == ReachDestinations.class) {
-                
+
                 reachDestinations ((ReachDestinations) actions.get(0));
+                
+            } else if (actionType == TakeLoans.class) {
+                
+                takeLoans ((TakeLoans)actions.get(0));
             }
 
         } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
@@ -353,6 +357,7 @@ public class ORUIManager {
         } else if (command.equals(ORPanel.REM_TILES_CMD)) {
 
             displayRemainingTiles();
+
         }
 
         gameUIManager.reportWindow.addLog();
@@ -408,9 +413,9 @@ public class ORUIManager {
         orPanel.initTokenLayingStep();
 
     }
-    
+
     protected void reachDestinations (ReachDestinations action) {
-        
+
         int index;
         List<String> options = new ArrayList<String>();
         List<PublicCompanyI> companies = action.getPossibleCompanies();
@@ -420,7 +425,7 @@ public class ORUIManager {
         }
 
         if (options.size() > 0) {
-            boolean[] destined = 
+            boolean[] destined =
                 new CheckBoxDialog(orPanel,
                         LocalText.getText("DestinationsReached"),
                         LocalText.getText("DestinationsReachedPrompt"),
@@ -558,7 +563,7 @@ public class ORUIManager {
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
             allowance.setLaidTile(selectedHex.getProvisionalTile());
-            
+
             relayBaseTokens (allowance);
 
             if (orWindow.process(allowance)) {
@@ -641,10 +646,10 @@ public class ORUIManager {
             }
         }
     }
-    
-    /** 
+
+    /**
      * Manually relay the tokens.
-     * This is only needed in special cases, 
+     * This is only needed in special cases,
      * such as the 1830 Erie home token.
      * If applicable, the TileSet entry for the <i>old</i> tile
      * should specify <code>relayBaseTokens="yes"</code> as an
@@ -652,17 +657,17 @@ public class ORUIManager {
      * @param action The LayTile PossibleAction.
      */
     protected void relayBaseTokens (LayTile action) {
-        
+
         MapHex hex = action.getChosenHex();
         TileI newTile = action.getLaidTile();
         TileI oldTile = hex.getCurrentTile();
-         if (!action.isRelayBaseTokens() 
+         if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
         for (City oldCity : hex.getCities()) {
             if (oldCity.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
                 PublicCompanyI company = ((BaseToken)oldCity.getTokens().get(0)).getCompany();
-                
+
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
                 String prompt;
@@ -702,7 +707,7 @@ public class ORUIManager {
 
     /**
      * Lay Token finished.
-     * 
+     *
      * @param action The LayBonusToken action object of the laid token.
      */
     public void layBonusToken(PossibleAction action) {
@@ -1026,6 +1031,35 @@ public class ORUIManager {
 
     }
 
+    /** Default implementation.
+     * The &lt;Loans&gt; attributes number and value <b>must</b>
+     * have been configured in CompanyManager.xml */
+    protected void takeLoans(TakeLoans action) {
+
+        if (action.getMaxNumber() == 1) {
+            
+            String message = LocalText.getText("PleaseConfirm");
+            String prompt = LocalText.getText("TakeLoanPrompt", 
+                    action.getCompanyName(), 
+                    Bank.format(action.getPrice()));
+            if (JOptionPane.showConfirmDialog(orWindow, prompt,
+                            message, JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE)
+                    == JOptionPane.OK_OPTION) {
+                action.setNumberTaken(1);
+                orWindow.process(action);
+            }
+
+        } else {
+            // For now we disregard the case of multiple loans
+        }
+
+    }
+
+    protected void repayLoans () {
+
+    }
+
     public void updateStatus() {
 
         updateStatus(null);
@@ -1036,7 +1070,7 @@ public class ORUIManager {
 
         mapRelatedActions.clear();
 
-        orPanel.setHighlightsOff();
+        orPanel.resetActions();
 
         if (actionToComplete != null) {
             log.debug("ExecutedAction: " + actionToComplete);
@@ -1123,10 +1157,18 @@ public class ORUIManager {
         } else if (possibleActions.contains(DiscardTrain.class)) {
 
             // discardTrain();
+            
+        } else if (possibleActions.contains(TakeLoans.class)) {
+            
+            orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
 
         } else if (orStep == OperatingRound.STEP_FINAL) {
             // Does not occur???
             orPanel.finishORCompanyTurn(orCompIndex);
+        }
+
+        if (possibleActions.contains(TakeLoans.class)) {
+            orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
         }
 
         setMapRelatedActions(mapRelatedActions);
@@ -1183,7 +1225,7 @@ public class ORUIManager {
                 orPanel.addSpecialAction(btAction, text);
             }
         }
-        
+
         if (possibleActions.contains(ReachDestinations.class)) {
             orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
                     LocalText.getText("DestinationsReached"));

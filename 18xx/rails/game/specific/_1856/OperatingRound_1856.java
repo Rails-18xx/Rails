@@ -12,14 +12,16 @@ import rails.game.ReportBuffer;
 import rails.game.TrainI;
 import rails.game.TrainManager;
 import rails.game.action.ReachDestinations;
+import rails.game.action.TakeLoans;
 import rails.game.move.CashMove;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
-
+    
     public OperatingRound_1856 (GameManagerI gameManager) {
         super (gameManager);
+        
     }
 
     /** 
@@ -67,11 +69,11 @@ public class OperatingRound_1856 extends OperatingRound {
                     
 
                     if (soldPercentage < floatPercentage) {
-                        DisplayBuffer.add(LocalText.getText("MayNotYetOperate", new String[] {
+                        DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
                                 operatingCompany.getName(),
                                 String.valueOf(soldPercentage),
                                 String.valueOf(floatPercentage)
-                        }));
+                        ));
                         // Company may not yet operate
                         continue;
                     }
@@ -103,12 +105,70 @@ public class OperatingRound_1856 extends OperatingRound {
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
             new CashMove (null, company, cashInEscrow);
-            ReportBuffer.add(LocalText.getText("ReleasedFromEscrow", new String[] {
+            ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
                     company.getName(),
                     Bank.format(cashInEscrow)
-            }));
+            ));
         }
 
     }
+    
+    protected void setGameSpecificPossibleActions() {
 
+        // Take a loan
+        if ((loansThisRound == null
+                || !loansThisRound.containsKey(operatingCompany)
+                || loansThisRound.get(operatingCompany) == 0)
+            && gameManager.getCurrentPhase().getIndex() 
+                <= gameManager.getPhaseManager().getPhaseByName("4").getIndex()
+            && operatingCompany.getCurrentNumberOfLoans() 
+                < operatingCompany.sharesOwnedByPlayers()) {
+            possibleActions.add(new TakeLoans(operatingCompany, 
+                    1, operatingCompany.getValuePerLoan()));
+        }
+    }
+
+    protected String validateTakeLoans (TakeLoans action) {
+        
+        String errMsg = super.validateTakeLoans(action);
+        
+        if (errMsg == null) {
+            
+            while (true) {
+                // Still allowed in current phase?
+                if (gameManager.getCurrentPhase().getIndex() 
+                        > gameManager.getPhaseManager().getPhaseByName("4").getIndex()) {
+                    errMsg = LocalText.getText("WrongPhase",
+                            gameManager.getCurrentPhase().getName());
+                    break;
+                }
+                // Exceeds number of shares in player hands?
+                int newLoans = operatingCompany.getCurrentNumberOfLoans()
+                        + action.getNumberTaken();
+                int maxLoans = operatingCompany.sharesOwnedByPlayers();
+                if (newLoans > maxLoans) {
+                    errMsg = LocalText.getText("WouldExceedSharesAtPlayers",
+                            newLoans, maxLoans);
+                    break;
+                }
+                break;
+            }
+        }
+        return errMsg;
+    }
+
+    protected int calculateLoanAmount (int numberOfLoans) {
+        
+        int amount = super.calculateLoanAmount(numberOfLoans);
+        
+        // Deduct interest immediately?
+        if (stepObject.intValue() > STEP_PAYOUT) {
+            int interest = numberOfLoans 
+                    * operatingCompany.getValuePerLoan()
+                    * operatingCompany.getLoanInterestPct() / 100;
+            amount -= interest;
+        }
+        
+        return amount;
+    }
 }

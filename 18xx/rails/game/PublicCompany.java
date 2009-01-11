@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.45 2008/12/03 20:15:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.46 2009/01/11 17:24:46 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -217,6 +217,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Initial train at floating time */
     protected String initialTrain = null;
+
+    /* Loans */
+    protected int maxNumberOfLoans = 0;
+    protected int valuePerLoan = 0;
+    protected IntegerState currentNumberOfLoans = null;
+    protected int loanInterestPct = 0;
+    protected int maxLoansPerRound = 0;
+    protected MoneyModel currentLoanValue = null;
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -522,6 +530,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     sellSharesTag.getAttributeAsBoolean("mustHaveOperated",
                             mustHaveOperatedToTradeShares);
         }
+
+        Tag loansTag = tag.getChild("Loans");
+        if (loansTag != null) {
+            maxNumberOfLoans = loansTag.getAttributeAsInteger("number", -1);
+            // Note: -1 means undefined, to be handled in the code
+            // (for instance: 1856).
+            valuePerLoan = loansTag.getAttributeAsInteger("value", 0);
+            loanInterestPct = loansTag.getAttributeAsInteger("interest", 0);
+            maxLoansPerRound = loansTag.getAttributeAsInteger("perRound", -1);
+        }
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -576,6 +594,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (dummyCompany != null) {
             fgHexColour = dummyCompany.getHexFgColour();
             bgHexColour = dummyCompany.getHexBgColour();
+        }
+
+        if (maxNumberOfLoans != 0) {
+            currentNumberOfLoans = new IntegerState (name+"_Loans", 0);
+            currentLoanValue = new MoneyModel (name+"_LoanValue", 0);
+            currentLoanValue.setOption(MoneyModel.SUPPRESS_ZERO);
         }
 
     }
@@ -1240,14 +1264,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return baseTokensBuyCost;
     }
 
-    public int percentageOwnedByPlayers() {
-        int share = 0;
+    public int sharesOwnedByPlayers() {
+        int shares = 0;
         for (PublicCertificateI cert : certificates) {
             if (cert.getPortfolio().getOwner() instanceof Player) {
-                share += cert.getShare();
+                shares += cert.getShares();
             }
         }
-        return share;
+        return shares;
     }
 
     public boolean canHoldOwnShares() {
@@ -1589,6 +1613,39 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean mustOwnATrain() {
         return mustOwnATrain;
+    }
+
+    public int getCurrentNumberOfLoans() {
+        return currentNumberOfLoans.intValue();
+    }
+
+    public int getCurrentLoanValue () {
+        return getCurrentNumberOfLoans() * getValuePerLoan();
+    }
+
+    public void addLoans(int number) {
+        currentNumberOfLoans.add(number);
+        currentLoanValue.add(number * getValuePerLoan());
+    }
+
+    public int getLoanInterestPct() {
+        return loanInterestPct;
+    }
+
+    public int getMaxNumberOfLoans() {
+        return maxNumberOfLoans;
+    }
+
+    public int getMaxLoansPerRound() {
+        return maxLoansPerRound;
+    }
+
+    public int getValuePerLoan() {
+        return valuePerLoan;
+    }
+
+    public MoneyModel getLoanValueModel () {
+        return currentLoanValue;
     }
 
     @Override
