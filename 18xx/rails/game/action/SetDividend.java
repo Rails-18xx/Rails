@@ -1,8 +1,12 @@
 package rails.game.action;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 import rails.game.Bank;
+import rails.game.Game;
+import rails.util.Util;
 
 /**
  * Action class that comprises the earnings setting and distribution steps. In
@@ -10,9 +14,9 @@ import rails.game.Bank;
  * the user. In a later version, the earnings may have been calculated by the
  * back-end; in that case, the user can only select the earnings distribution
  * method.
- * 
+ *
  * @author Erik Vos
- * 
+ *
  */
 public class SetDividend extends PossibleORAction implements Cloneable {
 
@@ -26,11 +30,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     public static final String[] allocationNameKeys =
             new String[] { "WITHHOLD", "SPLIT", "PAYOUT" };
 
+    /*--- Server-side settings ---*/
     /**
      * The revenue as proposed by the back-end. Currently this is always the
      * previous revenue. In the future, this could be the calculated revenue.
      */
-    private int presetRevenue;
+    protected int presetRevenue;
 
     /**
      * Is the user allowed to set the revenue? Currently, this will aways be
@@ -38,29 +43,44 @@ public class SetDividend extends PossibleORAction implements Cloneable {
      * future, it will only be true if the user has some influence on it (e.g.,
      * in 1844, the user may opt for less that maximum revenue is some cases).
      */
-    private boolean mayUserSetRevenue;
-
-    /** The revenue as set (or accepted, or just seen) by the user. */
-    private int actualRevenue;
+    protected boolean mayUserSetRevenue;
 
     /**
      * The revenue allocations that the user may select from. If only one value
      * is provided, the user has no option (e.g. minor companies always split in
      * most games).
      */
-    private int[] allowedRevenueAllocations;
+    protected int[] allowedRevenueAllocations;
+
+    /** Cash that should be minimally raised as revenue
+     * (for instance, to pay loan interest as in 1856).
+     * If actual revenue is below this value, the dividend will be zero,
+     * and no dividend allocation should be requested.
+     * */
+    protected int requiredCash = 0;
+
+    /*--- Client-side settings ---*/
+
+    /** The revenue as set (or accepted, or just seen) by the user. */
+    protected int actualRevenue;
 
     /** The revenue destination selected by the user (if he has a choice at all). */
-    private int revenueAllocation;
+    protected int revenueAllocation;
 
     public static final long serialVersionUID = 1L;
 
     public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations) {
+        this (presetRevenue, mayUserSetRevenue, allowedAllocations, 0);
+    }
+
+    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
+                int[] allowedAllocations, int requiredCash) {
         super();
         this.presetRevenue = presetRevenue;
         this.mayUserSetRevenue = mayUserSetRevenue;
-        this.allowedRevenueAllocations = (int[]) allowedAllocations.clone();
+        this.allowedRevenueAllocations = allowedAllocations.clone();
+        this.requiredCash = requiredCash;
         if (allowedRevenueAllocations.length == 1) {
             revenueAllocation = allowedRevenueAllocations[0];
         } else {
@@ -69,9 +89,10 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     }
 
     /** Clone an instance (used by clone) */
-    private SetDividend(SetDividend action) {
+    protected SetDividend(SetDividend action) {
         this(action.presetRevenue, action.mayUserSetRevenue,
-                action.allowedRevenueAllocations);
+                action.allowedRevenueAllocations,
+                action.requiredCash);
     }
 
     public int getPresetRevenue() {
@@ -97,6 +118,10 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return false;
     }
 
+    public int getRequiredCash() {
+        return requiredCash;
+    }
+
     public void setRevenueAllocation(int allocation) {
         revenueAllocation = allocation;
     }
@@ -113,6 +138,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         }
     }
 
+    @Override
     public Object clone() {
 
         SetDividend result = new SetDividend(this);
@@ -121,19 +147,22 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return result;
     }
 
+    @Override
     public boolean equals(PossibleAction action) {
         if (!(action instanceof SetDividend)) return false;
         SetDividend a = (SetDividend) action;
         return a.company == company
                && a.presetRevenue == presetRevenue
                && a.mayUserSetRevenue == mayUserSetRevenue
+               && a.requiredCash == requiredCash
                && Arrays.equals(a.allowedRevenueAllocations,
                        allowedRevenueAllocations);
     }
 
+    @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append("SetDividend: ").append(company.getName());
+        b.append(getClass().getSimpleName()).append(": ").append(company.getName());
         if (mayUserSetRevenue) {
             b.append(", settable, previous=").append(Bank.format(presetRevenue));
             if (actualRevenue > 0) {
@@ -149,8 +178,30 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         if (revenueAllocation >= 0) {
             b.append(" chosen=").append(allocationNameKeys[revenueAllocation]);
         }
+        if (requiredCash > 0) {
+            b.append(" requiredCash="+requiredCash);
+        }
 
         return b.toString();
+    }
+
+    /** Deserialize */
+    @SuppressWarnings("unchecked")
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+        // Custom deserialization for backwards compatibility
+        ObjectInputStream.GetField fields = in.readFields();
+        presetRevenue = fields.get("presetRevenue", presetRevenue);
+        mayUserSetRevenue = fields.get("mayUserSetRevenue", mayUserSetRevenue);
+        allowedRevenueAllocations = (int[]) fields.get("allowedRevenueAllocations", allowedRevenueAllocations);
+        requiredCash = fields.get("requiredCash", 0);
+        actualRevenue = fields.get("actualRevenue", actualRevenue);
+        revenueAllocation = fields.get("revenueAllocation", revenueAllocation);
+
+        if (Util.hasValue(companyName)) {
+            company = Game.getCompanyManager().getPublicCompany(companyName);
+        }
     }
 
 }
