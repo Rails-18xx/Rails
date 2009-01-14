@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.50 2009/01/11 17:24:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.51 2009/01/14 20:45:07 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import rails.game.action.*;
-import rails.game.move.CashMove;
-import rails.game.move.MapChange;
-import rails.game.move.MoveSet;
+import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
@@ -56,7 +54,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected List<TrainTypeI> trainsBoughtThisTurn =
             new ArrayList<TrainTypeI>(4);
-    
+
     protected Map<PublicCompanyI, Integer> loansThisRound = null;
 
     protected PhaseI currentPhase;
@@ -65,7 +63,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected PossibleAction selectedAction = null;
 
-    protected BuyTrain savedAction = null;
+    protected PossibleAction savedAction = null;
 
     protected int cashToBeRaisedByPresident = 0;
 
@@ -209,9 +207,9 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof ReachDestinations) {
 
             result = reachDestinations ((ReachDestinations) selectedAction);
-            
+
         } else if (selectedAction instanceof TakeLoans) {
-            
+
             result = takeLoans((TakeLoans) selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
@@ -647,6 +645,34 @@ public class OperatingRound extends Round implements Observer {
 
     public boolean setRevenueAndDividend(SetDividend action) {
 
+        String errMsg = validateSetRevenueAndDividend (action);
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText(
+                    "CannotProcessRevenue",
+                    Bank.format (action.getActualRevenue()),
+                    action.getCompanyName(),
+                    errMsg
+            ));
+            return false;
+        }
+
+        MoveSet.start(true);
+
+        int remainingAmount = checkForDeductions (action);
+        if (remainingAmount < 0) {
+            // A share selling round will be run to raise cash to pay debts
+            return true;
+        }
+
+        executeSetRevenueAndDividend (action);
+
+        return true;
+
+    }
+
+    protected String validateSetRevenueAndDividend (SetDividend action) {
+
         String errMsg = null;
         PublicCompanyI company;
         String companyName;
@@ -716,43 +742,61 @@ public class OperatingRound extends Round implements Observer {
                 }
             } else {
                 // If there is no revenue, use withhold.
-                revenueAllocation = SetDividend.WITHHOLD;
+                action.setRevenueAllocation(SetDividend.WITHHOLD);
+            }
+
+            ReportBuffer.add(LocalText.getText("CompanyRevenue",
+                    action.getCompanyName(),
+                    Bank.format(amount)));
+            if (amount == 0 && operatingCompany.getNumberOfTrains() == 0) {
+                DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
+                            operatingCompany.getName(),
+                            Bank.format(0) ));
             }
 
             break;
         }
-        if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText(
-                    "CannotProcessRevenue",
-                    new String[] { String.valueOf(amount), companyName, errMsg }));
-            return false;
-        }
 
-        MoveSet.start(true);
+        return errMsg;
+    }
+
+    protected void executeSetRevenueAndDividend (SetDividend action) {
+
+        int amount = action.getActualRevenue();
+        int revenueAllocation = action.getRevenueAllocation();
 
         operatingCompany.setLastRevenue(amount);
         operatingCompany.setLastRevenueAllocation(revenueAllocation);
-        ReportBuffer.add(LocalText.getText("CompanyRevenue", new String[] {
-                companyName, Bank.format(amount) }));
 
-        if (revenueAllocation == SetDividend.PAYOUT) {
+        // Pay any debts from treasury, revenue and/or president's cash
+        // The remaining dividend may be less that the original income
+        amount = executeDeductions (action);
+
+        if (amount == 0) {
+
+            ReportBuffer.add(LocalText.getText("CompanyDoesNotPayDividend",
+                    operatingCompany.getName()));
+            operatingCompany.withhold(amount);
+
+        } else if (revenueAllocation == SetDividend.PAYOUT) {
 
             ReportBuffer.add(LocalText.getText("CompanyPaysOutFull",
-                    new String[] { companyName, Bank.format(amount) }));
+                    operatingCompany.getName(), Bank.format(amount) ));
 
             operatingCompany.payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
-            ReportBuffer.add(LocalText.getText("CompanySplits", new String[] {
-                    companyName, Bank.format(amount) }));
+            ReportBuffer.add(LocalText.getText("CompanySplits",
+                    operatingCompany.getName(), Bank.format(amount) ));
 
             operatingCompany.splitRevenue(amount);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
 
             ReportBuffer.add(LocalText.getText("CompanyWithholds",
-                    new String[] { companyName, Bank.format(amount) }));
+                    operatingCompany.getName(),
+                    Bank.format(amount) ));
 
             operatingCompany.withhold(amount);
 
@@ -763,8 +807,16 @@ public class OperatingRound extends Round implements Observer {
 
         // We have done the payout step, so continue from there
         nextStep(STEP_PAYOUT);
+    }
 
-        return true;
+    /** Default version, to be overridden if need be */
+    protected int checkForDeductions (SetDividend action) {
+        return action.getActualRevenue();
+    }
+
+    /** Default version, to be overridden if need be */
+    protected int executeDeductions (SetDividend action) {
+        return action.getActualRevenue();
     }
 
     /**
@@ -798,11 +850,16 @@ public class OperatingRound extends Round implements Observer {
 
                 if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
                     // No trains, then the revenue is zero.
+                    /*
                     operatingCompany.setLastRevenue(0);
                     operatingCompany.setLastRevenueAllocation(SetDividend.UNKNOWN);
                     ReportBuffer.add(LocalText.getText("CompanyRevenue",
                             new String[] { operatingCompany.getName(),
                                     Bank.format(0) }));
+                                    */
+                    executeSetRevenueAndDividend (
+                            new SetDividend (0, false, new int[] {SetDividend.WITHHOLD}));
+                    // TODO: This probably does not handle share selling correctly
                     continue;
                 }
             }
@@ -810,9 +867,11 @@ public class OperatingRound extends Round implements Observer {
             if (step == STEP_PAYOUT) {
 
                 // If we already know what to do: do it.
+                /*
                 int amount = operatingCompany.getLastRevenue();
                 if (amount == 0) {
                     /* Zero dividend: process it and go to the next step */
+                /*
                     operatingCompany.withhold(0);
                     DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
                             new String[] { operatingCompany.getName(),
@@ -824,10 +883,12 @@ public class OperatingRound extends Round implements Observer {
                     /*
                      * Automatic revenue split: process it and go to the next
                      * step
-                     */
+                     *//*
                     operatingCompany.splitRevenue(amount);
                     continue;
                 }
+                */
+                continue;
             }
 
             if (step == STEP_TRADE_SHARES) {
@@ -1295,9 +1356,13 @@ public class OperatingRound extends Round implements Observer {
         return !excessTrainCompanies.isEmpty();
     }
 
-    public void resumeTrainBuying() {
+    public void resume() {
 
-        buyTrain(savedAction);
+        if (savedAction instanceof BuyTrain) {
+            buyTrain ((BuyTrain)savedAction);
+        } else if (savedAction instanceof SetDividend) {
+            executeSetRevenueAndDividend ((SetDividend) savedAction);
+        }
     }
 
     public boolean discardTrain(DiscardTrain action) {
@@ -1496,29 +1561,29 @@ public class OperatingRound extends Round implements Observer {
     protected void reachDestination (PublicCompanyI company) {
 
     }
-    
+
     protected boolean takeLoans (TakeLoans action) {
-        
+
         String errMsg = validateTakeLoans (action);
-        
+
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotTakeLoans",
-                        action.getCompanyName(), 
+                        action.getCompanyName(),
                         action.getNumberTaken(),
                         action.getPrice(),
                         errMsg));
-                                
+
             return false;
         }
 
         MoveSet.start(true);
-        
+
         executeTakeLoans (action);
 
         return true;
 
     }
-    
+
     protected String validateTakeLoans (TakeLoans action) {
 
         String errMsg = null;
@@ -1559,9 +1624,9 @@ public class OperatingRound extends Round implements Observer {
 
         return errMsg;
     }
-    
+
     protected void executeTakeLoans (TakeLoans action) {
-        
+
         int number = action.getNumberTaken();
         int amount = calculateLoanAmount (number);
         operatingCompany.addLoans(number);
@@ -1580,7 +1645,7 @@ public class OperatingRound extends Round implements Observer {
                     Bank.format(amount)
             ));
         }
-        
+
         if (operatingCompany.getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
@@ -1588,16 +1653,16 @@ public class OperatingRound extends Round implements Observer {
             } else if (loansThisRound.containsKey(operatingCompany)){
                 oldLoansThisRound = loansThisRound.get(operatingCompany);
             }
-            new MapChange<PublicCompanyI, Integer> (loansThisRound, 
+            new MapChange<PublicCompanyI, Integer> (loansThisRound,
                     operatingCompany,
                     new Integer (oldLoansThisRound + number));
         }
     }
-    
+
     protected int calculateLoanAmount (int numberOfLoans) {
         return numberOfLoans * operatingCompany.getValuePerLoan();
     }
-    
+
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -1683,23 +1748,7 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.addAll(currentSpecialTokenLays);
             possibleActions.add(new NullAction(NullAction.SKIP));
         } else if (step == STEP_CALC_REVENUE) {
-            if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
-                // No trains: the revenue is fixed at 0
-            } else {
-                int[] allowedRevenueActions =
-                        operatingCompany.isSplitAlways()
-                                ? new int[] { SetDividend.SPLIT }
-                                : operatingCompany.isSplitAllowed()
-                                        ? new int[] { SetDividend.PAYOUT,
-                                                SetDividend.SPLIT,
-                                                SetDividend.WITHHOLD }
-                                        : new int[] { SetDividend.PAYOUT,
-                                                SetDividend.WITHHOLD };
-
-                possibleActions.add(new SetDividend(
-                        operatingCompany.getLastRevenue(), true,
-                        allowedRevenueActions));
-            }
+            prepareRevenueAndDividendAction();
         } else if (step == STEP_BUY_TRAIN) {
             setBuyableTrains();
         } else if (step == STEP_DISCARD_TRAINS) {
@@ -1748,6 +1797,26 @@ public class OperatingRound extends Round implements Observer {
         }
 
         return true;
+    }
+
+    protected void prepareRevenueAndDividendAction () {
+
+        // There is only revenue if there are any trains
+        if (operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+            int[] allowedRevenueActions =
+                    operatingCompany.isSplitAlways()
+                            ? new int[] { SetDividend.SPLIT }
+                            : operatingCompany.isSplitAllowed()
+                                    ? new int[] { SetDividend.PAYOUT,
+                                            SetDividend.SPLIT,
+                                            SetDividend.WITHHOLD }
+                                    : new int[] { SetDividend.PAYOUT,
+                                            SetDividend.WITHHOLD };
+
+            possibleActions.add(new SetDividend(
+                    operatingCompany.getLastRevenue(), true,
+                    allowedRevenueActions));
+        }
     }
 
     /**
@@ -1953,27 +2022,27 @@ public class OperatingRound extends Round implements Observer {
     protected void setDestinationActions () {
 
     }
-    
+
     public void repayLoans (int number) {
         operatingCompany.addLoans(-number);
         int amount = number * operatingCompany.getValuePerLoan();
         new CashMove (operatingCompany, null, amount);
         DisplayBuffer.add(LocalText.getText("CompanyRepaysLoan",
-                new String[] { 
-                    operatingCompany.getName(), 
+                new String[] {
+                    operatingCompany.getName(),
                     String.valueOf(number),
                     Bank.format(operatingCompany.getValuePerLoan()),
                     Bank.format(amount)
                     }));
     }
-    
+
     public void payLoanInterest () {
         int amount = operatingCompany.getCurrentLoanValue()
             * operatingCompany.getLoanInterestPct() / 100;
         new CashMove (operatingCompany, null, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
-                new String[] { 
-                    operatingCompany.getName(), 
+                new String[] {
+                    operatingCompany.getName(),
                     Bank.format(amount),
                     String.valueOf(operatingCompany.getLoanInterestPct()),
                     String.valueOf(operatingCompany.getCurrentNumberOfLoans()),

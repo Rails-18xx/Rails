@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.39 2009/01/11 17:24:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.40 2009/01/14 20:45:07 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -657,7 +657,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void finishShareSellingRound() {
          setRound(interruptedRound);
-        ((OperatingRound) getCurrentRound()).resumeTrainBuying();
+        ((OperatingRound) getCurrentRound()).resume();
     }
 
     /* (non-Javadoc)

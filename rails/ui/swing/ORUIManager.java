@@ -1142,7 +1142,15 @@ public class ORUIManager {
                     possibleActions.getType(SetDividend.class).get(0);
 
             orPanel.initRevenueEntryStep(orCompIndex, action);
-            setMessage(LocalText.getText("EnterRevenue"));
+            
+            String message = LocalText.getText("EnterRevenue");
+            if (action.getRequiredCash() > 0) {
+                message += "<br><font color=\"red\">"
+                    + LocalText.getText("WarningNeedCash",
+                            Bank.format(action.getRequiredCash()))
+                    + "</font>";
+            }
+            setMessage(message);
 
         } else if (possibleActions.contains(BuyTrain.class)/*
                                                              * ||
