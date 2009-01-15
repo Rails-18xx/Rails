@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.17 2009/01/08 19:59:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.18 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -187,8 +187,7 @@ public class StartRound_1830 extends StartRound {
 
             }
             if (!validItem) {
-                errMsg =
-                        LocalText.getText("ActionNotAllowed",
+                errMsg = LocalText.getText("ActionNotAllowed",
                                 bidItem.toString());
                 break;
             }
@@ -202,20 +201,16 @@ public class StartRound_1830 extends StartRound {
 
             // Bid must be at least 5 above last bid
             if (bidAmount < item.getMinimumBid()) {
-                errMsg =
-                        LocalText.getText("BidTooLow", ""
+                errMsg = LocalText.getText("BidTooLow", ""
                                                        + item.getMinimumBid());
                 break;
             }
 
             // Bid must be a multiple of the modulus
             if (bidAmount % startPacket.getModulus() != 0) {
-                errMsg =
-                        LocalText.getText(
-                                "BidMustBeMultipleOf",
-                                new String[] {
-                                        String.valueOf(bidAmount),
-                                        String.valueOf(startPacket.getMinimumIncrement()) });
+                errMsg = LocalText.getText("BidMustBeMultipleOf",
+                                bidAmount,
+                                startPacket.getMinimumIncrement());
                 break;
             }
 
@@ -223,8 +218,7 @@ public class StartRound_1830 extends StartRound {
             previousBid = item.getBid(player);
             int available = player.getFreeCash() + previousBid;
             if (bidAmount > available) {
-                errMsg =
-                        LocalText.getText("BidTooHigh", Bank.format(available));
+                errMsg = LocalText.getText("BidTooHigh", Bank.format(available));
                 break;
             }
 
@@ -232,8 +226,10 @@ public class StartRound_1830 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidBid", new String[] {
-                    playerName, item.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("InvalidBid",
+                    playerName,
+                    item.getName(),
+                    errMsg ));
             return false;
         }
 
@@ -242,9 +238,11 @@ public class StartRound_1830 extends StartRound {
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
         player.blockCash(bidAmount);
-        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG", new String[] {
-                playerName, Bank.format(bidAmount), item.getName(),
-                Bank.format(player.getFreeCash()) }));
+        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
+                playerName,
+                Bank.format(bidAmount),
+                item.getName(),
+                Bank.format(player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
             /* GameManager. */;
@@ -281,8 +279,9 @@ public class StartRound_1830 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidPass", new String[] {
-                    playerName, errMsg }));
+            DisplayBuffer.add(LocalText.getText("InvalidPass",
+                    playerName,
+                    errMsg ));
             return false;
         }
 
@@ -324,9 +323,8 @@ public class StartRound_1830 extends StartRound {
                     startPacket.getFirstItem().reduceBasePriceBy(5);
                     ReportBuffer.add(LocalText.getText(
                             "ITEM_PRICE_REDUCED",
-                            new String[] {
                                     startPacket.getFirstItem().getName(),
-                                    Bank.format(startPacket.getFirstItem().getBasePrice()) }));
+                                    Bank.format(startPacket.getFirstItem().getBasePrice()) ));
                     numPasses.set(0);
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
                         assignItem(getCurrentPlayer(),

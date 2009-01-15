@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.11 2008/12/23 19:57:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.12 2009/01/15 20:53:28 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -269,8 +269,9 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                        LocalText.getText("WrongCompany", new String[] {
-                                companyName, operatingCompany.getName() });
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                operatingCompany.getName() );
 
             }
 
@@ -294,8 +295,9 @@ public class TreasuryShareRound extends StockRound {
             // Check if that many shares are available
             if (shares > from.getShare(company)) {
                 errMsg =
-                        LocalText.getText("NotAvailable", new String[] {
-                                companyName, from.getName() });
+                        LocalText.getText("NotAvailable",
+                                companyName,
+                                from.getName() );
                 break;
             }
 
@@ -321,23 +323,32 @@ public class TreasuryShareRound extends StockRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuy", new String[] {
-                    companyName, String.valueOf(shares), companyName,
-                    from.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantBuy",
+                    companyName,
+                    shares,
+                    companyName,
+                    from.getName(),
+                    errMsg ));
             return false;
         }
 
         // All seems OK, now buy the shares.
         if (number == 1) {
-            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
-                    companyName, String.valueOf(shareUnit), companyName,
-                    from.getName(), Bank.format(shares * price) }));
+            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
+                    companyName,
+                    shareUnit,
+                    companyName,
+                    from.getName(),
+                    Bank.format(shares * price) ));
         } else {
-            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
-                    companyName, String.valueOf(number),
-                    String.valueOf(shareUnit),
-                    String.valueOf(number * shareUnit), companyName,
-                    from.getName(), Bank.format(shares * price) }));
+            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
+                    companyName,
+                    number,
+                    shareUnit,
+                    number * shareUnit,
+                    companyName,
+                    from.getName(),
+                    Bank.format(shares * price) ));
         }
 
         MoveSet.start(true);
@@ -380,8 +391,9 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                        LocalText.getText("WrongCompany", new String[] {
-                                companyName, operatingCompany.getName() });
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                operatingCompany.getName() );
                 break;
             }
 
@@ -439,9 +451,11 @@ public class TreasuryShareRound extends StockRound {
 
         int numberSold = action.getNumberSold();
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantSell", new String[] {
-                    companyName, String.valueOf(numberSold), companyName,
-                    errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantSell",
+                    companyName,
+                    numberSold,
+                    companyName,
+                    errMsg ));
             return false;
         }
 
@@ -460,10 +474,12 @@ public class TreasuryShareRound extends StockRound {
 
         MoveSet.start(true);
 
-        ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG", new String[] {
-                companyName, String.valueOf(numberSold),
-                String.valueOf((numberSold * company.getShareUnit())),
-                companyName, Bank.format(numberSold * price) }));
+        ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+                companyName,
+                numberSold,
+                (numberSold * company.getShareUnit()),
+                companyName,
+                Bank.format(numberSold * price) ));
 
         // Transfer the sold certificates
         for (PublicCertificateI cert2 : certsToSell) {

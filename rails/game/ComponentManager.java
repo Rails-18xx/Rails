@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.11 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.12 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -141,14 +141,13 @@ public class ComponentManager {
 
         // Add it to the map of known components.
         instance.mComponentMap.put(name, component);
-        log.debug(LocalText.getText("ComponentInitAs", new String[] { name,
-                clazz }));
+        log.debug(LocalText.getText("ComponentInitAs", name, clazz ));
 
     }
 
     /**
      * Returns the configured parameter with the given name.
-     * 
+     *
      * @param componentName the of the component sought.
      * @return the component sought, or null if it has not been configured.
      */

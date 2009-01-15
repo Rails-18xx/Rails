@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.19 2009/01/14 20:45:07 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.20 2009/01/15 20:53:28 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -305,8 +305,10 @@ public class ShareSellingRound extends StockRound {
         int numberSold = action.getNumberSold();
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CantSell",
-                    new String[] { playerName, String.valueOf(numberSold),
-                            companyName, errMsg }));
+                    playerName,
+                    numberSold,
+                    companyName,
+                    errMsg ));
             return false;
         }
 
@@ -335,8 +337,9 @@ public class ShareSellingRound extends StockRound {
 
         // Check if the presidency has changed
         if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[] {
-                    dumpedPlayer.getName(), companyName}));
+            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getName(),
+                    companyName));
             // First swap the certificates
             Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
             List<PublicCertificateI> swapped =
@@ -363,9 +366,8 @@ public class ShareSellingRound extends StockRound {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                            new String[] { otherPlayer.getName(),
-                                company.getName()
-                                     }));
+                            otherPlayer.getName(),
+                            company.getName()));
                     break;
                 }
             }

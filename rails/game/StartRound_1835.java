@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.18 2009/01/08 19:59:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.19 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -232,8 +232,9 @@ public class StartRound_1835 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidPass", new String[] {
-                    playerName, errMsg }));
+            DisplayBuffer.add(LocalText.getText("InvalidPass",
+                    playerName,
+                    errMsg ));
             return false;
         }
 

@@ -84,9 +84,9 @@ public class GameStatus_18EU extends GameStatus {
                     && action.canReplaceToken(choice)) {
                 boolean replaceToken =
                         JOptionPane.showConfirmDialog(this, LocalText.getText(
-                                "WantToReplaceToken", new String[] {
-                                        minor.getName(), //
-                                        major.getName() }),
+                                    "WantToReplaceToken",
+                                    minor.getName(),
+                                    major.getName() ),
                                 LocalText.getText("PleaseSelect"),
                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                 action.setReplaceToken(replaceToken);
@@ -94,33 +94,6 @@ public class GameStatus_18EU extends GameStatus {
                 return chosenAction;
             }
 
-            // TODO MOVE THIS TO A LATER STEP - MAY BE ANOTHER PLAYER!!!
-            /*
-             * List<TrainI> trains = action.getMinorTrains();
-             * trains.addAll(action.getMajorTrains().get(choice)); int
-             * trainLimit = action.getMajorTrainLimit(); List<TrainI>
-             * discardedTrains = new ArrayList<TrainI>();
-             * 
-             * while (trains.size() > trainLimit) {
-             * 
-             * List<String> trainOptions = new ArrayList<String>(trains.size());
-             * options = new String[trains.size()];
-             * 
-             * for (int j=0; j<options.length; j++) { options[j] =
-             * LocalText.getText("N_Train", trains.get(j).getName());
-             * trainOptions.add(options[j]); } String discardedTrainName =
-             * (String) JOptionPane.showInputDialog (this,
-             * LocalText.getText("HasTooManyTrains", new String[] {
-             * major.getName(), String.valueOf(trains.size()),
-             * String.valueOf(trainLimit) }),
-             * LocalText.getText("WhichTrainToDiscard"),
-             * JOptionPane.QUESTION_MESSAGE, null, options, options[0]); if
-             * (discardedTrainName != null) { TrainI train =
-             * trains.get(trainOptions.indexOf(discardedTrainName));
-             * discardedTrains.add(train); trains.remove(train); } } if
-             * (!discardedTrains.isEmpty()) {
-             * action.setDiscardedTrains(discardedTrains); }
-             */
         }
         return chosenAction;
     }
@@ -145,9 +118,8 @@ public class GameStatus_18EU extends GameStatus {
                                 parent,
                                 LocalText.getText(
                                         "MergeMinorConfirm",
-                                        new String[] {
-                                                minor.getName(),
-                                                action.getCertificate().getCompany().getName() }),
+                                        minor.getName(),
+                                        action.getCertificate().getCompany().getName() ),
                                 LocalText.getText("PleaseConfirm"),
                                 JOptionPane.OK_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);

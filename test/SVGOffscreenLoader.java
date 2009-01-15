@@ -1,33 +1,18 @@
 package test;
 
-import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
+import java.awt.geom.AffineTransform;
+import java.io.*;
 import java.util.List;
 
+import org.apache.batik.bridge.*;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
-
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.BridgeException;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UpdateManager;
-import org.apache.batik.bridge.UpdateManagerAdapter;
-import org.apache.batik.bridge.UpdateManagerEvent;
-import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.util.RunnableQueue;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.batik.gvt.CanvasGraphicsNode;
-import org.apache.batik.gvt.CompositeGraphicsNode;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.renderer.ConcreteImageRendererFactory;
-import org.apache.batik.gvt.renderer.ImageRenderer;
-import org.apache.batik.gvt.renderer.ImageRendererFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -107,10 +92,12 @@ public class SVGOffscreenLoader {
         renderer.repaint(new Rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT));
         manager.addUpdateManagerListener(new UpdateManagerAdapter() {
 
+            @Override
             public void updateCompleted(UpdateManagerEvent e) {
                 render(e.getImage());
             }
 
+            @Override
             public void managerSuspended(UpdateManagerEvent e) {
                 // Make sure pending updates are completed.
                 System.exit(0);
@@ -123,7 +110,7 @@ public class SVGOffscreenLoader {
     private CanvasGraphicsNode getGraphicsNode(GraphicsNode gn) {
         if (!(gn instanceof CompositeGraphicsNode)) return null;
         CompositeGraphicsNode cgn = (CompositeGraphicsNode) gn;
-        List children = cgn.getChildren();
+        List<?> children = cgn.getChildren();
         if (children.size() == 0) return null;
         gn = (GraphicsNode) children.get(0);
         if (!(gn instanceof CanvasGraphicsNode)) return null;

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.21 2008/11/29 20:01:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.22 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import rails.util.Tag;
 
 /**
  * Represents a Hex on the Map from the Model side.
- * 
+ *
  * <p> <b>Tile orientations</b>. Tiles can be oriented NS or EW; the directions
  * refer to the "flat" hex sides. <p> The term "rotation" is used to indicate
  * the amount of rotation (in 60 degree units) from the standard orientation of
@@ -321,20 +321,20 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         /*
          * int x = 0; int y = Integer.parseInt(new String(label.substring(1)));
          * switch (label.charAt(0)) { case 'A': case 'a': x = 0; break;
-         * 
+         *
          * case 'B': case 'b': x = 1; break;
-         * 
+         *
          * case 'C': case 'c': x = 2; break;
-         * 
+         *
          * case 'D': case 'd': x = 3; break;
-         * 
+         *
          * case 'E': case 'e': x = 4; break;
-         * 
+         *
          * case 'F': case 'f': x = 5; break;
-         * 
+         *
          * case 'X': case 'x': // entrances GUIHex[] gameEntrances = (GUIHex[])
          * entranceHexes.get(terrain); return gameEntrances[y].getMapHexModel();
-         * 
+         *
          * default: Log.error("Label " + label + " is invalid"); } y = 6 - y -
          * (int) Math.abs(((x - 3) / 2)); GUIHex[][] correctHexes = (GUIHex[][])
          * terrainH.get(terrain); return correctHexes[x][y].getMapHexModel();
@@ -365,7 +365,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public void upgrade(LayTile action) {
         TileI newTile = action.getLaidTile();
         int newRotation = action.getOrientation();
-        
+
         City newCity;
         String newTracks;
         List<City> newCities;
@@ -380,7 +380,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             // may become different from the new tile's
             // station numbers).
             Map<City, Station> citiesToStations = new HashMap<City, Station>();
-            
+
             // Check for manual handling of tokens
             for (String compName : relaidTokens.keySet()) {
                 for (City city : cities) {
@@ -413,7 +413,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                     }
                 }
             }
-            
+
             // Map any unassigned cities randomly
             city: for (City city : cities) {
                 if (citiesToStations.containsKey(city)) continue;
@@ -423,8 +423,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                     continue city;
                 }
             }
-        
-                
+
+
            // Assign the new Stations to the existing cities
            for (City city : citiesToStations.keySet()) {
                Station newStation = citiesToStations.get(city);
@@ -448,7 +448,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                           + newTracks);
             }
             newCities = cities;
-            
+
         } else {
             // If the number of stations does change,
             // create a new set of cities.
@@ -460,7 +460,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             Map<City, City> oldToNewCities = new HashMap<City, City>();
             Map<Station, City> newStationsToCities =
                     new HashMap<Station, City>();
- 
+
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
             int newCityNumber = 0;
@@ -534,8 +534,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
                 }
             }
-            
-            // If an old city is not yet connected, check if was 
+
+            // If an old city is not yet connected, check if was
             // connected to another city it has merged into (1851 Louisville)
             for (City oldCity : cities) {
                 if (oldToNewCities.containsKey(oldCity)) continue;
@@ -574,11 +574,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                                         + newCity.getRelatedStation().getId() + " "
                                         + newCity.getTrackEdges());
                               break station;
-                                                            
-                                
+
+
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -587,7 +587,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             // to an old city.
             for (Station newStation : newTile.getStations()) {
                 if (newStationsToCities.containsKey(newStation)) continue;
-                
+
                 // Create a new city for such a station.
                 int cityNumber;
                 for (cityNumber = 1; mNewCities.containsKey(cityNumber); cityNumber++)
@@ -630,8 +630,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                                               + company.getName());
                                     ReportBuffer.add(LocalText.getText(
                                             "DuplicateTokenRemoved",
-                                            new String[] { company.getName(),
-                                                    getName() }));
+                                                    company.getName(),
+                                                    getName() ));
                                     continue oldtoken;
                                 }
                             }
@@ -664,7 +664,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     /**
      * Execute a tile replacement. This method should only be called from
      * TileMove objects. It is also used to undo tile lays.
-     * 
+     *
      * @param oldTile The tile to be replaced (only used for validation).
      * @param newTile The new tile to be laid on this hex.
      * @param newTileOrientation The orientation of the new tile (0-5).
@@ -819,7 +819,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     /**
      * Return the city number (1,...) where a company has a base token. If none,
      * return zero.
-     * 
+     *
      * @param company
      * @return
      */
@@ -944,7 +944,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     /**
      * The string sent to the GUIHex as it is notified. Format is
      * tileId/orientation.
-     * 
+     *
      * @TODO include tokens??
      */
     @Override
@@ -955,7 +955,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     /**
      * Get a String describing one stations's connection directions of a laid
      * tile, taking into account the current tile rotation.
-     * 
+     *
      * @return
      */
     public String getConnectionString(TileI tile, int rotation,

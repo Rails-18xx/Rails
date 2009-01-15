@@ -1,22 +1,23 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.4 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.5 2009/01/15 20:53:28 evos Exp $*/
 package rails.util;
 
-import javax.swing.text.*;
-import javax.swing.text.html.*;
-import java.awt.*;
-import java.net.*;
+import java.awt.Font;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.net.Socket;
 import java.util.*;
-import java.util.List;
-import java.lang.reflect.*;
+
+import javax.swing.text.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.log4j.Logger;
 
 /**
  * Class ResourceLoader is an utility class to load a resource from a filename
  * and a list of directory.
- * 
- * @version $Id: ResourceLoader.java,v 1.4 2008/06/04 19:00:39 evos Exp $
+ *
+ * @version $Id: ResourceLoader.java,v 1.5 2009/01/15 20:53:28 evos Exp $
  * @author Romain Dolbeau
  * @author David Ripton
  */
@@ -26,12 +27,12 @@ public final class ResourceLoader {
     /**
      * Class ColossusClassLoader allows for class loading outside the CLASSPATH,
      * i.e. from the various variant directories.
-     * 
-     * @version $Id: ResourceLoader.java,v 1.4 2008/06/04 19:00:39 evos Exp $
+     *
+     * @version $Id: ResourceLoader.java,v 1.5 2009/01/15 20:53:28 evos Exp $
      * @author Romain Dolbeau
      */
     private static class RailsClassLoader extends ClassLoader {
-        List directories = null;
+        List<String> directories = null;
 
         protected static Logger log =
                 Logger.getLogger(RailsClassLoader.class.getPackage().getName());
@@ -44,6 +45,7 @@ public final class ResourceLoader {
             super();
         }
 
+        @Override
         public Class<?> findClass(String className)
                 throws ClassNotFoundException {
             try {
@@ -71,7 +73,7 @@ public final class ResourceLoader {
             }
         }
 
-        void setDirectories(List d) {
+        void setDirectories(List<String> d) {
             directories = d;
         }
     }
@@ -108,7 +110,7 @@ public final class ResourceLoader {
 
     /**
      * Give the String to mark directories.
-     * 
+     *
      * @return The String to mark directories.
      */
     public static String getPathSeparator() {
@@ -124,13 +126,13 @@ public final class ResourceLoader {
     /**
      * Return the first InputStream from file of name filename in the list of
      * directories, tell the getInputStream not to complain if not found.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @return The InputStream, or null if it was not found.
      */
     public static InputStream getInputStreamIgnoreFail(String filename,
-            List directories) {
+            List<String> directories) {
         return getInputStream(filename, directories, server != null, false,
                 true);
     }
@@ -138,12 +140,12 @@ public final class ResourceLoader {
     /**
      * Return the first InputStream from file of name filename in the list of
      * directories.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @return The InputStream, or null if it was not found.
      */
-    public static InputStream getInputStream(String filename, List directories) {
+    public static InputStream getInputStream(String filename, List<String> directories) {
         return getInputStream(filename, directories, server != null, false,
                 false);
     }
@@ -151,7 +153,7 @@ public final class ResourceLoader {
     /**
      * Return the first InputStream from file of name filename in the list of
      * directories.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @param remote Ask the server for the stream.
@@ -160,7 +162,7 @@ public final class ResourceLoader {
      * @param ignoreFail (=don't complain) if file not found
      * @return The InputStream, or null if it was not found.
      */
-    public static InputStream getInputStream(String filename, List directories,
+    public static InputStream getInputStream(String filename, List<String> directories,
             boolean remote, boolean cachedOnly, boolean ignoreFail) {
         String mapKey = getMapKey(filename, directories);
         Object cached = fileCache.get(mapKey);
@@ -177,7 +179,7 @@ public final class ResourceLoader {
         if ((cached == null) && ((!remote) || (server == null))) {
             synchronized (fileCache) {
                 InputStream stream = null;
-                java.util.Iterator it = directories.iterator();
+                java.util.Iterator<String> it = directories.iterator();
                 while (it.hasNext() && (stream == null)) {
                     Object o = it.next();
                     if (o instanceof String) {
@@ -250,9 +252,9 @@ public final class ResourceLoader {
                                 // Constants.fileServerIgnoreFailSignal + sep);
                             }
                             out.print(filename);
-                            java.util.Iterator it = directories.iterator();
+                            java.util.Iterator<String> it = directories.iterator();
                             while (it.hasNext()) {
-                                out.print(sep + (String) it.next());
+                                out.print(sep + it.next());
                             }
                             out.println();
                             data = getBytesFromInputStream(is);
@@ -276,7 +278,7 @@ public final class ResourceLoader {
 
     /**
      * Return the content of the specified file as an array of byte.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @param cachedOnly Only look in the cache file, do not try to load the
@@ -284,7 +286,7 @@ public final class ResourceLoader {
      * @return An array of byte representing the content of the file, or null if
      * it fails.
      */
-    public static byte[] getBytesFromFile(String filename, List directories,
+    public static byte[] getBytesFromFile(String filename, List<String> directories,
             boolean cachedOnly, boolean ignoreFail) {
         InputStream is =
                 getInputStream(filename, directories, server != null,
@@ -304,7 +306,7 @@ public final class ResourceLoader {
 
     /**
      * Return the content of the specified InputStream as an array of byte.
-     * 
+     *
      * @param InputStream The InputStream to use.
      * @return An array of byte representing the content of the InputStream, or
      * null if it fails.
@@ -334,7 +336,7 @@ public final class ResourceLoader {
 
     /**
      * Return the content of the specified byte array as an InputStream.
-     * 
+     *
      * @param data The byte array to convert.
      * @return An InputStream whose content is the data byte array.
      */
@@ -350,14 +352,14 @@ public final class ResourceLoader {
     /**
      * Return the first OutputStream from file of name filename in the list of
      * directories.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @return The OutputStream, or null if it was not found.
      */
-    public static OutputStream getOutputStream(String filename, List directories) {
+    public static OutputStream getOutputStream(String filename, List<String> directories) {
         OutputStream stream = null;
-        java.util.Iterator it = directories.iterator();
+        java.util.Iterator<String> it = directories.iterator();
         while (it.hasNext() && (stream == null)) {
             Object o = it.next();
             if (o instanceof String) {
@@ -381,12 +383,12 @@ public final class ResourceLoader {
      * directories. It also add a property of key keyContentType and of type
      * String describing the content type of the Document. This can currently
      * load HTML and pure text.
-     * 
+     *
      * @param filename Name of the file to load.
      * @param directories List of directories to search (in order).
      * @return The Document, or null if it was not found.
      */
-    public static Document getDocument(String filename, List directories) {
+    public static Document getDocument(String filename, List<String> directories) {
         InputStream htmlIS =
                 getInputStreamIgnoreFail(filename + ".html", directories);
         if (htmlIS != null) {
@@ -439,13 +441,13 @@ public final class ResourceLoader {
 
     /**
      * Return the key to use in the image and file caches.
-     * 
+     *
      * @param filename Name of the file.
      * @param directories List of directories.
      * @return A String to use as a key when storing/loading in a cache the
      * specified file from the specified list of directories.
      */
-    private static String getMapKey(String filename, List directories) {
+    private static String getMapKey(String filename, List<String> directories) {
         String[] filenames = new String[1];
         filenames[0] = filename;
         return getMapKey(filenames, directories);
@@ -453,19 +455,19 @@ public final class ResourceLoader {
 
     /**
      * Return the key to use in the image cache.
-     * 
+     *
      * @param filenames Array of name of files.
      * @param directories List of directories.
      * @return A String to use as a key when storing/loading in a cache the
      * specified array of name of files from the specified list of directories.
      */
-    private static String getMapKey(String[] filenames, List directories) {
+    private static String getMapKey(String[] filenames, List<String> directories) {
         StringBuffer buf = new StringBuffer(filenames[0]);
         for (int i = 1; i < filenames.length; i++) {
             buf.append(",");
             buf.append(filenames[i]);
         }
-        Iterator it = directories.iterator();
+        Iterator<String> it = directories.iterator();
         while (it.hasNext()) {
             Object o = it.next();
             if (o instanceof String) {
@@ -478,7 +480,7 @@ public final class ResourceLoader {
 
     /**
      * Fix a filename by replacing space with underscore.
-     * 
+     *
      * @param filename Filename to fix.
      * @return The fixed filename.
      */
@@ -488,25 +490,25 @@ public final class ResourceLoader {
 
     /**
      * Create an instance of the class whose name is in parameter.
-     * 
+     *
      * @param className The name of the class to use.
      * @param directories List of directories to search (in order).
      * @return A new object, instance from the given class.
      */
-    public static Object getNewObject(String className, List directories) {
+    public static Object getNewObject(String className, List<String> directories) {
         return getNewObject(className, directories, null);
     }
 
     /**
      * Create an instance of the class whose name is in parameter, using
      * parameters.
-     * 
+     *
      * If no parameters are given, the default constructor is used.
-     * 
+     *
      * @TODO this is full of catch(Exception) blocks, which all return null.
      * Esp. returning null seems a rather bad idea, since it will most likely
      * turn out to be NPEs somewhere later.
-     * 
+     *
      * @param className The name of the class to use, must not be null.
      * @param directories List of directories to search (in order), must not be
      * null.
@@ -515,9 +517,9 @@ public final class ResourceLoader {
      * @return A new object, instance from the given class or null if
      * instantiation failed.
      */
-    public static Object getNewObject(String className, List directories,
+    public static Object getNewObject(String className, List<String> directories,
             Object[] parameter) {
-        Class theClass = null;
+        Class<?> theClass = null;
         cl.setDirectories(directories);
         try {
             theClass = cl.loadClass(className);
@@ -527,12 +529,12 @@ public final class ResourceLoader {
             return null;
         }
         if (parameter != null) {
-            Class[] paramClasses = new Class[parameter.length];
+            Class<?>[] paramClasses = new Class[parameter.length];
             for (int i = 0; i < parameter.length; i++) {
                 paramClasses[i] = parameter[i].getClass();
             }
             try {
-                Constructor c = theClass.getConstructor(paramClasses);
+                Constructor<?> c = theClass.getConstructor(paramClasses);
                 return c.newInstance(parameter);
             } catch (Exception e) {
                 log.error("Loading or instantiating class' constructor for \""
@@ -553,12 +555,12 @@ public final class ResourceLoader {
     /**
      * Force adding the given data as belonging to the given filename in the
      * file cache.
-     * 
+     *
      * @param filename Name of the Image file to add.
      * @param directories List of directories to search (in order).
      * @param data File content to add.
      */
-    public static void putIntoFileCache(String filename, List directories,
+    public static void putIntoFileCache(String filename, List<String> directories,
             byte[] data) {
         String mapKey = getMapKey(filename, directories);
         fileCache.put(mapKey, data);
@@ -567,7 +569,7 @@ public final class ResourceLoader {
     /**
      * Force adding the given data as belonging to the given key in the file
      * cache.
-     * 
+     *
      * @see #getMapKey(String, List)
      * @see #getMapKey(String[], List)
      * @param mapKey Key to use in the cache.

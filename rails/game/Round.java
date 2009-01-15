@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.14 2008/12/23 19:55:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.15 2009/01/15 20:53:28 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -200,8 +200,9 @@ public abstract class Round implements RoundI {
 
         if (cash > 0) {
             new CashMove(Bank.getInstance(), company, cash);
-            ReportBuffer.add(LocalText.getText("FloatsWithCash", new String[] {
-                company.getName(), Bank.format(cash) }));
+            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+                company.getName(),
+                Bank.format(cash) ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
                     company.getName()));

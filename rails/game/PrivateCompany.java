@@ -1,16 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.19 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.20 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import rails.game.move.CashMove;
-import rails.game.move.Moveable;
-import rails.game.move.MoveableHolderI;
-import rails.game.move.ObjectMove;
+import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
-import rails.util.LocalText;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.util.*;
 
 public class PrivateCompany extends Company implements PrivateCompanyI {
 
@@ -21,7 +17,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected int revenue = 0;
     protected List<SpecialPropertyI> specialProperties = null;
     protected String auctionType;
-    
+
     // Closing conditions
     protected int closingPhase;
     // Closing when special properties are used
@@ -79,19 +75,19 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     sp.configureFromXML(spTag);
                 }
             }
-            
+
             // Closing conditions
             // Currently only used to handle closure following laying
             // tiles and/or tokens because of special properties.
             // Other cases are currently handled elsewhere.
             Tag closureTag = tag.getChild("ClosingConditions");
-            
+
             if (closureTag != null) {
 
                 Tag spTag = closureTag.getChild("SpecialProperties");
-                
+
                 if (spTag != null) {
-                    
+
                     String ifAttribute = spTag.getAttributeAsString("condition");
                     if (ifAttribute != null) {
                         closeIfAllExercised = ifAttribute.equalsIgnoreCase("ifExercised")
@@ -104,7 +100,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     }
                 }
             }
-            
+
 
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
@@ -114,11 +110,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
+    @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
         specialProperties = new ArrayList<SpecialPropertyI>();
-        
+
     }
 
     public void moveTo(MoveableHolderI newHolder) {
@@ -163,6 +160,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /**
      * @param b
      */
+    @Override
     public void setClosed() {
         if (!isClosed()) {
             super.setClosed();
@@ -204,19 +202,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
     }
 
-    public void payOut() {
-        if (portfolio.getOwner() != Bank.getInstance()) {
-            ReportBuffer.add(LocalText.getText("ReceivesFor",
-                    new String[] { portfolio.getOwner().getName(),
-                            Bank.format(revenue), name }));
-            new CashMove(null, portfolio.getOwner(), revenue);
-        }
-    }
-
+   @Override
     public String toString() {
         return "Private: " + name;
     }
 
+    @Override
     public Object clone() {
 
         Object clone = null;
@@ -226,7 +217,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             log.fatal("Cannot clone company " + name);
             return null;
         }
-        
+
         return clone;
     }
 
@@ -241,13 +232,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /**
      * Remove a special property. Only used to transfer a persistent special
      * property to a Portfolio, where it becomes independent of the private.
-     * 
+     *
      * @param token The special property object to remove.
      * @return True if successful.
      */
     public boolean removeObject(Moveable object) {
         if (object instanceof SpecialPropertyI) {
-            return specialProperties.remove((SpecialPropertyI) object);
+            return specialProperties.remove(object);
         } else {
             return false;
         }
@@ -262,7 +253,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     /**
      * Do we have any special properties?
-     * 
+     *
      * @return Boolean
      */
     public boolean hasSpecialProperties() {
@@ -284,18 +275,18 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public boolean closesAtEndOfTurn() {
         return closeAtEndOfTurn;
     }
-    
+
     public void checkClosingIfExercised (boolean endOfOR) {
-        
+
         if (isClosed() || endOfOR != closeAtEndOfTurn) return;
-        
+
         if (closeIfAllExercised) {
             for (SpecialPropertyI sp : specialProperties) {
                 if (!sp.isExercised()) return;
             }
             log.debug("CloseIfAll: closing "+name);
             setClosed();
-            
+
         } else if (closeIfAnyExercised) {
             for (SpecialPropertyI sp : specialProperties) {
                 if (sp.isExercised()) {

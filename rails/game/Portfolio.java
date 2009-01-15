@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.30 2008/12/14 21:55:05 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.31 2009/01/15 20:53:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -6,20 +6,12 @@
  */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.ModelObject;
-import rails.game.model.PrivatesModel;
-import rails.game.model.ShareModel;
-import rails.game.model.TrainsModel;
-import rails.game.move.CashMove;
-import rails.game.move.Moveable;
-import rails.game.move.MoveableHolderI;
+import rails.game.model.*;
+import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -115,8 +107,10 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
          */
         {
             ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
-                    new String[] { name, privateCompany.getName(),
-                            from.getName(), Bank.format(price) }));
+                    name,
+                    privateCompany.getName(),
+                    from.getName(),
+                    Bank.format(price) ));
         }
 
         // Move the private certificate
@@ -272,7 +266,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Find a certificate for a given company.
-     * 
+     *
      * @param company The public company for which a certificate is found.
      * @param president Whether we look for a president or non-president
      * certificate. If there is only one certificate, this parameter has no
@@ -346,7 +340,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Returns percentage that a portfolio contains of one company.
-     * 
+     *
      * @param company
      * @return
      */
@@ -380,7 +374,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     /**
      * Swap this Portfolio's President certificate for common shares in another
      * Portfolio.
-     * 
+     *
      * @param company The company whose Presidency is handed over.
      * @param other The new President's portfolio.
      * @return The common certificates returned.
@@ -446,7 +440,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     public void discardTrain(TrainI train) {
         train.moveTo(Bank.getPool());
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                new String[] { name, train.getName() }));
+                name, train.getName() ));
     }
 
     public void updateTrainsModel() {
@@ -506,7 +500,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     /**
      * Add a special property. Used to make special properties independent of
      * the private company that originally held it.
-     * 
+     *
      * @param property The special property object to add.
      * @return True if successful.
      */
@@ -519,7 +513,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Remove a special property. Not currently used.
-     * 
+     *
      * @param property The special property object to remove.
      * @return True if successful.
      */
@@ -533,7 +527,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Add an object.
-     * 
+     *
      * @param object The object to add.
      * @return True if successful.
      */
@@ -556,7 +550,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Remove an object. Not currently used.
-     * 
+     *
      * @param object The object to remove.
      * @return True if successful.
      */
@@ -586,7 +580,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     /**
      * Do we have any special properties?
-     * 
+     *
      * @return Boolean
      */
     public boolean hasSpecialProperties() {
@@ -609,7 +603,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
                     if ((clazz == null || Util.isInstanceOf(sp, clazz))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
-                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany() 
+                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                         log.debug("Adding private SP: " + sp);
                         result.add((T) sp);
@@ -623,7 +617,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
                     if ((clazz == null || Util.isInstanceOf(sp, clazz))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
-                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany() 
+                        && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                         log.debug("Adding persistent SP: " + sp);
                         result.add((T) sp);

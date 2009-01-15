@@ -1,12 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.13 2008/11/02 20:04:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.14 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import rails.game.move.PriceTokenMove;
-import rails.util.*;
+import rails.util.LocalText;
+import rails.util.Tag;
 
 public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
@@ -104,7 +103,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             String typeName =
                     spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
             if (typeName != null
-                && (type = (StockSpaceTypeI) stockSpaceTypes.get(typeName)) == null) {
+                && (type = stockSpaceTypes.get(typeName)) == null) {
                 throw new ConfigurationException(LocalText.getText(
                         "StockSpaceTypeUndefined", type));
             }
@@ -119,7 +118,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             stockChartSpaces.put(name, space);
 
             row = Integer.parseInt(name.substring(1));
-            col = (int) (name.toUpperCase().charAt(0) - '@');
+            col = (name.toUpperCase().charAt(0) - '@');
             if (row > numRows) numRows = row;
             if (col > numCols) numCols = col;
 
@@ -137,7 +136,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
         startPrices = new int[startSpaces.size()];
         for (int i = 0; i < startPrices.length; i++) {
-            startPrices[i] = ((StockSpaceI) startSpaces.get(i)).getPrice();
+            startPrices[i] = (startSpaces.get(i)).getPrice();
         }
 
         stockChart = new StockSpaceI[numRows][numCols];
@@ -289,15 +288,19 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             StockSpaceI to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
-            ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG", new String[] {
-                    company.getName(), Bank.format(from.getPrice()),
-                    from.getName() }));
+            ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
+                    company.getName(),
+                    Bank.format(from.getPrice()),
+                    from.getName() ));
             return;
         } else if (from == null && to != null) {} else if (from != null
                                                            && to != null) {
-            ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG", new String[] {
-                    company.getName(), Bank.format(from.getPrice()),
-                    from.getName(), Bank.format(to.getPrice()), to.getName() }));
+            ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
+                    company.getName(),
+                    Bank.format(from.getPrice()),
+                    from.getName(),
+                    Bank.format(to.getPrice()),
+                    to.getName() ));
 
             /* Check for rails.game closure */
             if (to.endsGame()) {
@@ -327,7 +330,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     /**
      * Return start prices as an int array. Note: this array is NOT sorted.
-     * 
+     *
      * @return
      */
     public int[] getStartPrices() {

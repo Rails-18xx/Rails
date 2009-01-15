@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.40 2009/01/14 20:45:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.41 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -529,7 +529,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             String currentPlayerName = getCurrentPlayer().getName();
             if (!actionPlayerName.equals(currentPlayerName)) {
                 DisplayBuffer.add(LocalText.getText("WrongPlayer",
-                        new String[] { actionPlayerName, currentPlayerName }));
+                        actionPlayerName, currentPlayerName ));
                 return false;
             }
 

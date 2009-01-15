@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.8 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.9 2009/01/15 20:53:28 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
 import rails.game.move.MoveSet;
-import rails.util.LocalText;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.util.*;
 
 public class ExchangeForShare extends SpecialProperty {
 
@@ -15,6 +13,7 @@ public class ExchangeForShare extends SpecialProperty {
     /** The share size */
     int share;
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         Tag swapTag = tag.getChild("ExchangeForShare");
@@ -76,9 +75,12 @@ public class ExchangeForShare extends SpecialProperty {
         }
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText(
-                    "CannotSwapPrivateForCertificate", new String[] {
-                            player.getName(), privateCompany.getName(),
-                            String.valueOf(share), publicCompanyName, errMsg }));
+                    "CannotSwapPrivateForCertificate",
+                            player.getName(),
+                            privateCompany.getName(),
+                            share,
+                            publicCompanyName,
+                            errMsg ));
             return false;
         }
 
@@ -91,8 +93,10 @@ public class ExchangeForShare extends SpecialProperty {
         //player.buy(cert, 0);
         cert.moveTo(player.getPortfolio());
         ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
-                new String[] { player.getName(), privateCompany.getName(),
-                        String.valueOf(share), publicCompanyName }));
+                player.getName(),
+                privateCompany.getName(),
+                share,
+                publicCompanyName ));
         setExercised();
         privateCompany.setClosed();
 
@@ -124,14 +128,17 @@ public class ExchangeForShare extends SpecialProperty {
         return toString();
     }
 
+    @Override
     public String toString() {
         return "Swap " + privateCompany.getName() + " for " + share
                + "% share of " + publicCompanyName;
     }
 
+    @Override
     public String toMenu() {
-        return LocalText.getText("SwapPrivateForCertificate", new String[] {
-                privateCompany.getName(), String.valueOf(share),
-                publicCompanyName });
+        return LocalText.getText("SwapPrivateForCertificate",
+                privateCompany.getName(),
+                share,
+                publicCompanyName );
     }
 }

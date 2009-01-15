@@ -236,9 +236,9 @@ public class ORUIManager {
             }
             if (specialTiles.length() > 1) {
                 extraMessage +=
-                        LocalText.getText("SpecialTile", new String[] {
+                        LocalText.getText("SpecialTile",
                                 specialTiles.toString(),
-                                extraTileMessage.toString() });
+                                extraTileMessage.toString() );
             } else if (extraTileMessage.length() > 1) {
                 extraMessage +=
                         LocalText.getText("ExtraTile", extraTileMessage);
@@ -340,9 +340,9 @@ public class ORUIManager {
             } else if (actionType == ReachDestinations.class) {
 
                 reachDestinations ((ReachDestinations) actions.get(0));
-                
+
             } else if (actionType == TakeLoans.class) {
-                
+
                 takeLoans ((TakeLoans)actions.get(0));
             }
 
@@ -604,15 +604,13 @@ public class ORUIManager {
                 String prompt;
                 for (City city : stations) {
                     if (city.hasTokenSlotsLeft()) {
-                        prompt =
-                                LocalText.getText(
-                                        "SelectStationForTokenOption",
-                                        new String[] {
-                                                String.valueOf(city.getNumber()),
-                                                ((MapHex) selectedHex.getModel()).getConnectionString(
-                                                        selectedHex.getCurrentTile(),
-                                                        ((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
-                                                        city.getNumber()) });
+                        prompt = LocalText.getText(
+                                "SelectStationForTokenOption",
+                                        city.getNumber(),
+                                        ((MapHex) selectedHex.getModel()).getConnectionString(
+                                        selectedHex.getCurrentTile(),
+                                        ((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
+                                        city.getNumber())) ;
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, city);
                     }
@@ -673,15 +671,12 @@ public class ORUIManager {
                 String prompt;
                 for (Station newStation : newTile.getStations()) {
                     if (newStation.getBaseSlots() > 0) {
-                        prompt =
-                                LocalText.getText(
-                                        "SelectStationForTokenOption",
-                                        new String[] {
-                                                String.valueOf(newStation.getNumber()),
-                                                hex.getConnectionString(
-                                                        newTile,
-                                                        action.getOrientation(),
-                                                        newStation.getNumber()) });
+                        prompt = LocalText.getText("SelectStationForTokenOption",
+                                newStation.getNumber(),
+                                hex.getConnectionString(
+                                    newTile,
+                                    action.getOrientation(),
+                                    newStation.getNumber()) );
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, newStation.getNumber());
                     }
@@ -756,8 +751,9 @@ public class ORUIManager {
             /* Create a prompt per buying option */
             b = new StringBuffer();
 
-            b.append(LocalText.getText("BUY_TRAIN_FROM", new String[] {
-                    train.getName(), from.getName() }));
+            b.append(LocalText.getText("BUY_TRAIN_FROM",
+                    train.getName(),
+                    from.getName() ));
             if (bTrain.isForExchange()) {
                 b.append(" (").append(LocalText.getText("EXCHANGED")).append(
                         ")");
@@ -819,10 +815,10 @@ public class ORUIManager {
         int price = buyAction.getFixedCost();
 
         if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
-            prompt =
-                    LocalText.getText("WHICH_TRAIN_PRICE",
-                            new String[] { orComp.getName(), train.getName(),
-                                    seller.getName() });
+            prompt = LocalText.getText("WHICH_TRAIN_PRICE",
+                            orComp.getName(),
+                            train.getName(),
+                            seller.getName() );
             String response;
             for (;;) {
                 response =
@@ -912,8 +908,8 @@ public class ORUIManager {
                     String discardedTrainName =
                             (String) JOptionPane.showInputDialog(orWindow,
                                     LocalText.getText("HAS_TOO_MANY_TRAINS",
-                                            new String[] { playerName,
-                                                    c.getName() }),
+                                            playerName,
+                                            c.getName() ),
                                     LocalText.getText("WhichTrainToDiscard"),
                                     JOptionPane.QUESTION_MESSAGE, null,
                                     options, options[0]);
@@ -948,13 +944,11 @@ public class ORUIManager {
         int minPrice = 0, maxPrice = 0;
 
         for (BuyPrivate action : privates) {
-            privatesForSale.add(LocalText.getText(
-                    "BuyPrivatePrompt",
-                    new String[] {
-                            action.getPrivateCompany().getName(),
-                            action.getPrivateCompany().getPortfolio().getName(),
-                            Bank.format(action.getMinimumPrice()),
-                            Bank.format(action.getMaximumPrice()) }));
+            privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
+                    action.getPrivateCompany().getName(),
+                    action.getPrivateCompany().getPortfolio().getName(),
+                    Bank.format(action.getMinimumPrice()),
+                    Bank.format(action.getMaximumPrice()) ));
         }
 
         if (privatesForSale.size() > 0) {
@@ -972,9 +966,9 @@ public class ORUIManager {
                 String price =
                         JOptionPane.showInputDialog(orWindow,
                                 LocalText.getText("WHICH_PRIVATE_PRICE",
-                                        new String[] { chosenOption,
-                                                Bank.format(minPrice),
-                                                Bank.format(maxPrice) }),
+                                        chosenOption,
+                                        Bank.format(minPrice),
+                                        Bank.format(maxPrice) ),
                                 LocalText.getText("WHICH_PRICE"),
                                 JOptionPane.QUESTION_MESSAGE);
                 try {
@@ -1037,10 +1031,10 @@ public class ORUIManager {
     protected void takeLoans(TakeLoans action) {
 
         if (action.getMaxNumber() == 1) {
-            
+
             String message = LocalText.getText("PleaseConfirm");
-            String prompt = LocalText.getText("TakeLoanPrompt", 
-                    action.getCompanyName(), 
+            String prompt = LocalText.getText("TakeLoanPrompt",
+                    action.getCompanyName(),
                     Bank.format(action.getPrice()));
             if (JOptionPane.showConfirmDialog(orWindow, prompt,
                             message, JOptionPane.OK_CANCEL_OPTION,
@@ -1142,7 +1136,7 @@ public class ORUIManager {
                     possibleActions.getType(SetDividend.class).get(0);
 
             orPanel.initRevenueEntryStep(orCompIndex, action);
-            
+
             String message = LocalText.getText("EnterRevenue");
             if (action.getRequiredCash() > 0) {
                 message += "<br><font color=\"red\">"
@@ -1165,9 +1159,9 @@ public class ORUIManager {
         } else if (possibleActions.contains(DiscardTrain.class)) {
 
             // discardTrain();
-            
+
         } else if (possibleActions.contains(TakeLoans.class)) {
-            
+
             orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
 
         } else if (orStep == OperatingRound.STEP_FINAL) {
@@ -1228,8 +1222,9 @@ public class ORUIManager {
                 SpecialTokenLay stl = btAction.getSpecialProperty();
                 BonusToken token = (BonusToken) stl.getToken();
                 String text =
-                        LocalText.getText("LayBonusToken", new String[] {
-                                token.toString(), stl.getLocationCodeString() });
+                        LocalText.getText("LayBonusToken",
+                                token.toString(),
+                                stl.getLocationCodeString() );
                 orPanel.addSpecialAction(btAction, text);
             }
         }
