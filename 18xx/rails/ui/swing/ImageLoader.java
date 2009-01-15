@@ -1,19 +1,18 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.11 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.12 2009/01/15 20:53:28 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.*;
 
 import javax.imageio.ImageIO;
 
-import rails.ui.swing.hexmap.GUIHex;
-import rails.util.*;
-
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.log4j.Logger;
 
-import org.apache.log4j.*;
+import rails.ui.swing.hexmap.GUIHex;
+import rails.util.*;
 
 /**
  * This class handles loading our tile images. It provides BufferedImages to be
@@ -29,7 +28,7 @@ public class ImageLoader {
     private static String gifTileDir = "tiles/images";
     private static String tileRootDir = Config.get("tile.root_directory");
     private static String preference = Config.get("tile.format_preference");
-    private static ArrayList<String> directories = new ArrayList<String>();
+    private static List<String> directories = new ArrayList<String>();
 
     static {
         GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
@@ -49,10 +48,12 @@ public class ImageLoader {
 
         private BufferedImage image;
 
+        @Override
         public BufferedImage createImage(int width, int height) {
             return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
 
+        @Override
         public void writeImage(BufferedImage image, TranscoderOutput output)
                 throws TranscoderException {
             this.image = image;
@@ -139,7 +140,7 @@ public class ImageLoader {
         // Check for cached copy before loading from disk.
         if (!tileMap.containsKey(Integer.toString(tileID))) loadTile(tileID);
 
-        return (BufferedImage) tileMap.get(Integer.toString(tileID));
+        return tileMap.get(Integer.toString(tileID));
     }
 
     public ImageLoader() {

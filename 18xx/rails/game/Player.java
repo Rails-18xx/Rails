@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.15 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.16 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class Player implements CashHolder, Comparable<Player> {
     /**
      * Initialises each Player's parameters which depend on the number of
      * players. To be called when all Players have been added.
-     * 
+     *
      */
     public static void initPlayers(List<Player> players) {
         int numberOfPlayers = players.size();
@@ -65,8 +65,9 @@ public class Player implements CashHolder, Comparable<Player> {
         for (Player player : players) {
             player.index = index++;
             Bank.transferCash(null, player, startCash);
-            ReportBuffer.add(LocalText.getText("PlayerIs", new String[] {
-                    String.valueOf(index), player.getName() }));
+            ReportBuffer.add(LocalText.getText("PlayerIs",
+                    index,
+                    player.getName() ));
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
@@ -119,7 +120,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     /**
      * Check if a player may buy the given number of certificates.
-     * 
+     *
      * @param number Number of certificates to buy (usually 1 but not always
      * so).
      * @return True if it is allowed.
@@ -136,7 +137,7 @@ public class Player implements CashHolder, Comparable<Player> {
      * Check if a player may buy the given number of shares from a given
      * company, given the "hold limit" per company, that is the percentage of
      * shares of one company that a player may hold (typically 60%).
-     * 
+     *
      * @param company The company from which to buy
      * @param number The number of shares (usually 1 but not always so).
      * @return True if it is allowed.
@@ -154,7 +155,7 @@ public class Player implements CashHolder, Comparable<Player> {
      * company, that is the percentage of shares of one company that a player
      * may hold (typically 60%). <p>If no hold limit applies, it is taken to be
      * 100%.
-     * 
+     *
      * @param company The company from which to buy
      * @param number The share unit (typically 10%).
      * @return The maximum number of such shares that would not let the player
@@ -210,7 +211,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     /**
      * Get the player's total worth.
-     * 
+     *
      * @return Total worth
      */
     public int getWorth() {
@@ -255,7 +256,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     /**
      * Block cash allocated by a bid.
-     * 
+     *
      * @param amount Amount of cash to be blocked.
      * @return false if the amount was not available.
      */
@@ -271,7 +272,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     /**
      * Unblock cash.
-     * 
+     *
      * @param amount Amount to be unblocked.
      * @return false if the given amount was not blocked.
      */
@@ -287,7 +288,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     /**
      * Return the unblocked cash (available for bidding)
-     * 
+     *
      * @return
      */
     public int getFreeCash() {

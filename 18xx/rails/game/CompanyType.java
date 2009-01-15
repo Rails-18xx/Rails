@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.6 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import rails.util.LocalText;
@@ -25,7 +25,7 @@ public class CompanyType implements CompanyTypeI {
 
     /**
      * The constructor.
-     * 
+     *
      * @param name Company type name ("Private", "Public", "Minor" etc.).
      * @param className Name of the class that will instantiate this type of
      * company.
@@ -72,7 +72,7 @@ public class CompanyType implements CompanyTypeI {
             newCompany.configureFromXML(tag);
         } catch (CloneNotSupportedException e) {
             DisplayBuffer.add(LocalText.getText("CantCloneCompany",
-                    new String[] { name, this.name }));
+                    name, this.name ));
         }
         return newCompany;
     }
@@ -80,7 +80,7 @@ public class CompanyType implements CompanyTypeI {
     /*--- Getters and setters ---*/
     /**
      * Get the company type name
-     * 
+     *
      * @return The name of this company type.
      */
     public String getName() {
@@ -89,7 +89,7 @@ public class CompanyType implements CompanyTypeI {
 
     /**
      * Get the name of the class that will implement this type of company.
-     * 
+     *
      * @return The full class name.
      */
     public String getClassName() {

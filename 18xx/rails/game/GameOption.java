@@ -1,10 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.6 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import rails.util.LocalText;
 
@@ -42,7 +39,7 @@ public class GameOption {
     }
 
     public String getLocalisedName() {
-        return LocalText.getText(name, parm);
+        return LocalText.getText(name, (Object[]) parm);
     }
 
     public String getType() {

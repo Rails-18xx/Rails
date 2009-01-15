@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.46 2009/01/11 17:24:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.47 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1308,7 +1308,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             pres.getPortfolio().swapPresidentCertificate(this,
                     buyer.getPortfolio());
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                    new String[] { buyer.getName(), name }));
+                    buyer.getName(),
+                    name ));
         }
     }
 
@@ -1333,7 +1334,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 seller.getPortfolio().swapPresidentCertificate(this,
                         player.getPortfolio());
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                        new String[] { player.getName(), name }));
+                        player.getName(),
+                        name ));
             }
         }
     }

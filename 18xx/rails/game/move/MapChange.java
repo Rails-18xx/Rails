@@ -1,17 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.1 2009/01/11 17:24:46 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.2 2009/01/15 20:53:28 evos Exp $
+ *
  * Created on 19-Jul-2006
  * Change Log:
  */
 package rails.game.move;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This Move class handles adding an entry to a 2-D Map (a Map of Maps, or a
  * matrix). An Undo will remove the second key, but not the first key.
- * 
+ *
  * @author Erik Vos
  */
 public class MapChange<K, V> extends Move {
@@ -33,6 +32,7 @@ public class MapChange<K, V> extends Move {
         MoveSet.add(this);
     }
 
+    @Override
     public boolean execute() {
 
         map.put(key, newValue);
@@ -40,6 +40,7 @@ public class MapChange<K, V> extends Move {
         return true;
     }
 
+    @Override
     public boolean undo() {
 
         if (keyExisted) {

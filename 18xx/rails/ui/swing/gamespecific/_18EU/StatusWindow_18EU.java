@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.4 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.5 2009/01/15 20:53:28 evos Exp $*/
 package rails.ui.swing.gamespecific._18EU;
 
 import java.util.ArrayList;
@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import rails.game.*;
+import rails.game.PublicCompanyI;
+import rails.game.TrainI;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.specific._18EU.FinalMinorExchangeRound;
@@ -67,7 +68,8 @@ public class StatusWindow_18EU extends StatusWindow {
                                 this,
                                 LocalText.getText(
                                         "HAS_TOO_MANY_TRAINS",
-                                        new String[] { playerName, c.getName() }),
+                                        playerName,
+                                        c.getName() ),
                                 LocalText.getText("WhichTrainToDiscard"),
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);

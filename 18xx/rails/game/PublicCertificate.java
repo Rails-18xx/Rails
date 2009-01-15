@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.13 2008/12/14 21:55:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.14 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -118,11 +118,13 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
             /* Applies to shareless minors: just name the company */
             return company.getName();
         } else if (president) {
-            return LocalText.getText("PRES_CERT_NAME", new String[] {
-                    company.getName(), String.valueOf(getShare()) });
+            return LocalText.getText("PRES_CERT_NAME",
+                    company.getName(),
+                    getShare() );
         } else {
-            return LocalText.getText("CERT_NAME", new String[] {
-                    company.getName(), String.valueOf(getShare()) });
+            return LocalText.getText("CERT_NAME",
+                    company.getName(),
+                    getShare());
         }
     }
 

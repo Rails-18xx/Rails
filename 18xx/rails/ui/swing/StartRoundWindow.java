@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.29 2009/01/08 19:59:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.30 2009/01/15 20:53:28 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -593,9 +593,9 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
             StockSpace sp =
                     (StockSpace) JOptionPane.showInputDialog(this,
-                            LocalText.getText("WHICH_START_PRICE", new String[] {
+                            LocalText.getText("WHICH_START_PRICE",
                                     activeItem.getPlayerName(),
-                                    compName}),
+                                    compName),
                             LocalText.getText("WHICH_PRICE"),
                             JOptionPane.QUESTION_MESSAGE, null, options,
                             options[0]);

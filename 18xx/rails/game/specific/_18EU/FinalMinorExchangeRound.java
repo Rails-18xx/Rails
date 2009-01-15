@@ -20,7 +20,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     public FinalMinorExchangeRound(GameManagerI aGameManager) {
         super (aGameManager);
     }
-    
+
     public void start(Player playerToStartFMERound) {
         ReportBuffer.add("\n"
                          + LocalText.getText("StartFinalMinorExchangeRound"));
@@ -28,7 +28,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
         setCurrentPlayerIndex(playerToStartFMERound.getIndex());
         initPlayer();
         ReportBuffer.add(LocalText.getText("HasFirstTurn",
-                new String[] { playerToStartFMERound.getName() }));
+                playerToStartFMERound.getName() ));
     }
 
     /*----- General methods -----*/

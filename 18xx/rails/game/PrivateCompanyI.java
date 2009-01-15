@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.6 2008/10/26 20:39:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -34,8 +34,6 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolderI 
     public List<MapHex> getBlockedHexes();
 
     public void setHolder(Portfolio portfolio);
-
-    public void payOut();
 
     // Methods related to closure when special properties are exercised.
     public boolean closesIfAllExercised();

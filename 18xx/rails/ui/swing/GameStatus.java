@@ -558,11 +558,10 @@ public class GameStatus extends JPanel implements ActionListener {
 
                     for (int i = 1; i <= sale.getMaximumNumber(); i++) {
                         options.add(LocalText.getText("SellShares",
-                                new String[] {
-                                        String.valueOf(i * sale.getShare()),
-                                        sale.getCompanyName(),
-                                        Bank.format(i * sale.getShareUnits()
-                                                    * sale.getPrice()) }));
+                                (i * sale.getShare()),
+                                sale.getCompanyName(),
+                                Bank.format(i * sale.getShareUnits()
+                                                    * sale.getPrice()) ));
                         sellActions.add(sale);
                         sellAmounts.add(i);
                     }
@@ -619,20 +618,19 @@ public class GameStatus extends JPanel implements ActionListener {
                             Arrays.sort(startPrices);
                             for (int i = 0; i < startPrices.length; i++) {
                                 options.add(LocalText.getText("StartCompany",
-                                        new String[] {
-                                                Bank.format(startPrices[i]),
-                                                String.valueOf(cert.getShare()),
-                                                Bank.format(cert.getShares()
-                                                            * startPrices[i]) }));
+                                        Bank.format(startPrices[i]),
+                                        cert.getShare(),
+                                        Bank.format(cert.getShares()
+                                                            * startPrices[i]) ));
                                 buyActions.add(buy);
                                 buyAmounts.add(startPrices[i]);
                             }
                         } else {
                             startPrices = new int[] {((StartCompany) buy).getPrice()};
-                            options.add(LocalText.getText("StartCompanyFixed", new String[]{
+                            options.add(LocalText.getText("StartCompanyFixed",
                                     companyName,
-                                    String.valueOf(cert.getShare()),
-                                    Bank.format(startPrices[0])}));
+                                    cert.getShare(),
+                                    Bank.format(startPrices[0]) ));
                             buyActions.add(buy);
                             buyAmounts.add(startPrices[0]);
                         }
@@ -640,23 +638,21 @@ public class GameStatus extends JPanel implements ActionListener {
                     } else {
 
                         options.add(LocalText.getText("BuyCertificate",
-                                new String[] {
-                                        String.valueOf(cert.getShare()),
-                                        cert.getCompany().getName(),
-                                        cert.getPortfolio().getName(),
-                                        Bank.format(cert.getShares()
-                                                    * buy.getPrice()) }));
+                                cert.getShare(),
+                                cert.getCompany().getName(),
+                                cert.getPortfolio().getName(),
+                                Bank.format(cert.getShares()
+                                                    * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
                         for (int i = 2; i <= buy.getMaximumNumber(); i++) {
                             options.add(LocalText.getText("BuyCertificates",
-                                    new String[] {
-                                            String.valueOf(i),
-                                            String.valueOf(cert.getShare()),
-                                            cert.getCompany().getName(),
-                                            cert.getPortfolio().getName(),
-                                            Bank.format(i * cert.getShares()
-                                                        * buy.getPrice()) }));
+                                    i,
+                                    cert.getShare(),
+                                    cert.getCompany().getName(),
+                                    cert.getPortfolio().getName(),
+                                    Bank.format(i * cert.getShares()
+                                                        * buy.getPrice()) ));
                             buyActions.add(buy);
                             buyAmounts.add(i);
                         }
@@ -668,9 +664,9 @@ public class GameStatus extends JPanel implements ActionListener {
                         index =
                                 new RadioButtonDialog(this,
                                         LocalText.getText("PleaseSelect"),
-                                        LocalText.getText("WHICH_START_PRICE", new String[] {
+                                        LocalText.getText("WHICH_START_PRICE",
                                                 playerName,
-                                                companyName}),
+                                                companyName),
                                         options.toArray(new String[0]), -1).getSelectedOption();
                     } else {
                         String sp =

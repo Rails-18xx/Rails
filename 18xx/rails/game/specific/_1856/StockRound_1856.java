@@ -66,10 +66,9 @@ public class StockRound_1856 extends StockRound {
                         && !comp.hasReachedDestination()) {
                     recipient = oldHolder.getOwner(); // i.e. the Bank
                     comp.addMoneyInEscrow(price);
-                    ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow", new String[] {
+                    ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
                             Bank.format(comp.getMoneyInEscrow()),
-                            comp.getName()
-                            }));
+                            comp.getName() ));
                     break;
                 }
                 // fall through

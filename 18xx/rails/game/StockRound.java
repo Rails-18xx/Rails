@@ -85,7 +85,7 @@ public class StockRound extends Round {
 
         initPlayer();
         ReportBuffer.add(LocalText.getText("HasPriority",
-                new String[] { currentPlayer.getName() }));
+                currentPlayer.getName() ));
     }
 
     /*----- General methods -----*/
@@ -504,10 +504,9 @@ public class StockRound extends Round {
             } else {
                 // Else the given price must be a valid start price
                 if ((startSpace = stockMarket.getStartSpace(price)) == null) {
-                    errMsg =
-                            LocalText.getText("InvalidStartPrice",
-                                    new String[] { Bank.format(price),
-                                            company.getName() });
+                    errMsg = LocalText.getText("InvalidStartPrice",
+                                    Bank.format(price),
+                                    company.getName() );
                     break;
                 }
             }
@@ -522,8 +521,11 @@ public class StockRound extends Round {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantStart", new String[] {
-                    playerName, companyName, Bank.format(price), errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantStart",
+                    playerName,
+                    companyName,
+                    Bank.format(price),
+                    errMsg ));
             return false;
         }
 
@@ -546,11 +548,14 @@ public class StockRound extends Round {
                     company.getIPOPrice(), priceRecipient);
         }
 
-        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG", new String[] {
-                playerName, companyName, Bank.format(price),
-                Bank.format(shares * price), String.valueOf(shares),
-                String.valueOf(cert.getShare()),
-                priceRecipient.getName()}));
+        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
+                playerName,
+                companyName,
+                Bank.format(price),
+                Bank.format(shares * price),
+                shares,
+                cert.getShare(),
+                priceRecipient.getName() ));
         ReportBuffer.getAllWaiting();
 
         checkFlotation(company);
@@ -611,8 +616,9 @@ public class StockRound extends Round {
             // The player may not have sold the company this round.
             if (isSaleRecorded(currentPlayer, company)) {
                 errMsg =
-                        LocalText.getText("AlreadySoldThisTurn", new String[] {
-                                currentPlayer.getName(), companyName });
+                        LocalText.getText("AlreadySoldThisTurn",
+                                currentPlayer.getName(),
+                                companyName );
                 break;
             }
 
@@ -635,8 +641,9 @@ public class StockRound extends Round {
             // Check if that many shares are available
             if (shares > from.getShare(company)) {
                 errMsg =
-                        LocalText.getText("NotAvailable", new String[] {
-                                companyName, from.getName() });
+                        LocalText.getText("NotAvailable",
+                                companyName,
+                                from.getName() );
                 break;
             }
 
@@ -687,9 +694,12 @@ public class StockRound extends Round {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuy", new String[] {
-                    playerName, String.valueOf(shares), companyName,
-                    from.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantBuy",
+                    playerName,
+                    shares,
+                    companyName,
+                    from.getName(),
+                    errMsg ));
             return false;
         }
 
@@ -699,15 +709,21 @@ public class StockRound extends Round {
         CashHolder priceRecipient = getSharePriceRecipient (cert, cash);
 
         if (number == 1) {
-            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG", new String[] {
-                    playerName, String.valueOf(shareUnit), companyName,
-                    from.getName(), Bank.format(cash) }));
+            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
+                    playerName,
+                    shareUnit,
+                    companyName,
+                    from.getName(),
+                    Bank.format(cash) ));
         } else {
-            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG", new String[] {
-                    playerName, String.valueOf(number),
-                    String.valueOf(shareUnit),
-                    String.valueOf(number * shareUnit), companyName,
-                    from.getName(), Bank.format(cash) }));
+            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
+                    playerName,
+                    number,
+                    shareUnit,
+                    number * shareUnit,
+                    companyName,
+                    from.getName(),
+                    Bank.format(cash) ));
         }
         ReportBuffer.getAllWaiting();
 
@@ -724,10 +740,8 @@ public class StockRound extends Round {
 
         if (priceRecipient != from.getOwner()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
-                    new String[] {
                     Bank.format(price * shares),
-                    priceRecipient.getName()
-            }));
+                    priceRecipient.getName() ));
         }
 
         companyBoughtThisTurnWrapper.set(company);
@@ -921,9 +935,11 @@ public class StockRound extends Round {
 
         numberToSell = action.getNumberSold();
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantSell", new String[] {
-                    playerName, String.valueOf(numberToSell), companyName,
-                    errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantSell",
+                    playerName,
+                    numberToSell,
+                    companyName,
+                    errMsg ));
             return false;
         }
 
@@ -943,21 +959,26 @@ public class StockRound extends Round {
         MoveSet.start(true);
 
         if (numberToSell == 1) {
-            ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG", new String[] {
-                    playerName, String.valueOf(company.getShareUnit()),
-                    companyName, Bank.format(numberToSell * price) }));
+            ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
+                    playerName,
+                    company.getShareUnit(),
+                    companyName,
+                    Bank.format(numberToSell * price) ));
         } else {
-            ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG", new String[] {
-                    playerName, String.valueOf(numberToSell),
-                    String.valueOf(company.getShareUnit()),
-                    String.valueOf(numberToSell * company.getShareUnit()),
-                    companyName, Bank.format(numberToSell * price) }));
+            ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+                    playerName,
+                    numberToSell,
+                    company.getShareUnit(),
+                    numberToSell * company.getShareUnit(),
+                    companyName,
+                    Bank.format(numberToSell * price) ));
         }
 
         // Check if the presidency has changed
         if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF", new String[] {
-                    dumpedPlayer.getName(), companyName }));
+            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getName(),
+                    companyName ));
             // First swap the certificates
             Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
             List<PublicCertificateI> swapped =
@@ -986,8 +1007,8 @@ public class StockRound extends Round {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolio());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                            new String[] { otherPlayer.getName(), company.getName()
-                                     }));
+                            otherPlayer.getName(),
+                            company.getName() ));
                     break;
                 }
             }
@@ -1059,16 +1080,16 @@ public class StockRound extends Round {
                     StockSpaceI newSpace = company.getCurrentSpace();
                     if (newSpace != oldSpace) {
                         ReportBuffer.add(LocalText.getText("SoldOut",
-                                new String[] { company.getName(),
-                                        Bank.format(oldSpace.getPrice()),
-                                        oldSpace.getName(),
-                                        Bank.format(newSpace.getPrice()),
-                                        newSpace.getName(), }));
+                                company.getName(),
+                                Bank.format(oldSpace.getPrice()),
+                                oldSpace.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
                     } else {
                         ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
-                                new String[] { company.getName(),
-                                        Bank.format(newSpace.getPrice()),
-                                        newSpace.getName(), }));
+                                company.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
                     }
                 }
             }

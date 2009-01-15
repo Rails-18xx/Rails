@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.26 2008/12/24 14:52:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.27 2009/01/15 20:53:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     private int quantity;
     private boolean unlimited = false;
     private boolean allowsMultipleBasesOfOneCompany = false;
-    
+
     public static final int UNLIMITED_TILES = -1;
 
     /**
@@ -115,7 +115,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         colourNumber = VALID_COLOUR_NAMES.indexOf(colourName);
         if (colourNumber < 0) {
             throw new ConfigurationException(LocalText.getText(
-                    "InvalidTileColourName", new String[] { name, colourName }));
+                    "InvalidTileColourName",
+                        name,
+                        colourName ));
         }
         colourNumber -= TILE_NUMBER_OFFSET;
 
@@ -139,8 +141,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                             "TileStationHasNoType", String.valueOf(id)));
                 if (!Station.isTypeValid(type)) {
                     throw new ConfigurationException(LocalText.getText(
-                            "TileStationHasInvalidType", new String[] {
-                                    String.valueOf(id), type }));
+                            "TileStationHasInvalidType",
+                                    id,
+                                    type ));
                 }
                 value = stationTag.getAttributeAsInteger("value", 0);
                 slots = stationTag.getAttributeAsInteger("slots", 0);
@@ -232,13 +235,14 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                             } else {
                                 throw new ConfigurationException(
                                         LocalText.getText("UpgradeNotFound",
-                                                new String[] { name,
-                                                        String.valueOf(id) }));
+                                                name,
+                                                id ));
                             }
                         } catch (NumberFormatException e) {
                             throw new ConfigurationException(LocalText.getText(
-                                    "NonNumericUpgrade", new String[] { name,
-                                            idArray[j] }), e);
+                                    "NonNumericUpgrade",
+                                    name,
+                                    idArray[j] ), e);
                         }
 
                     }

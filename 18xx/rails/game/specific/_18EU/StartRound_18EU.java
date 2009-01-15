@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.6 2009/01/08 19:59:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.*;
@@ -137,8 +137,10 @@ public class StartRound_18EU extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuyItem", new String[] {
-                    playerName, item.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantBuyItem",
+                    playerName,
+                    item.getName(),
+                    errMsg ));
             return false;
         }
 
@@ -183,8 +185,9 @@ public class StartRound_18EU extends StartRound {
                 if ((getStep() == OPEN_STEP || getStep() == BID_STEP)
                     && !item.equals(auctionedItem)) {
                     errMsg =
-                            LocalText.getText("WrongStartItem", new String[] {
-                                    item.getName(), auctionedItem.getName() });
+                            LocalText.getText("WrongStartItem",
+                                    item.getName(),
+                                    auctionedItem.getName() );
                     break;
                 }
 
@@ -198,12 +201,10 @@ public class StartRound_18EU extends StartRound {
 
                 // Bid must be a multiple of the modulus
                 if (bidAmount % startPacket.getModulus() != 0) {
-                    errMsg =
-                            LocalText.getText(
+                    errMsg = LocalText.getText(
                                     "BidMustBeMultipleOf",
-                                    new String[] {
-                                            String.valueOf(bidAmount),
-                                            String.valueOf(startPacket.getMinimumIncrement()) });
+                                    bidAmount,
+                                    startPacket.getMinimumIncrement() );
                     break;
                 }
 
@@ -220,8 +221,10 @@ public class StartRound_18EU extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidBid", new String[] {
-                    playerName, item.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("InvalidBid",
+                    playerName,
+                    item.getName(),
+                    errMsg ));
             return false;
         }
 
@@ -240,8 +243,9 @@ public class StartRound_18EU extends StartRound {
                 setStep(OPEN_STEP);
             }
 
-            ReportBuffer.add(LocalText.getText("SELECT_ITEM", new String[] {
-                    playerName, item.getName() }));
+            ReportBuffer.add(LocalText.getText("SELECT_ITEM",
+                    playerName,
+                    item.getName() ));
         }
 
         if (bidAmount > 0) {
@@ -249,8 +253,10 @@ public class StartRound_18EU extends StartRound {
             item.setMinimumBid(bidAmount + 5);
             setStep(BID_STEP);
 
-            ReportBuffer.add(LocalText.getText("BID_ITEM", new String[] {
-                    playerName, Bank.format(bidAmount), item.getName() }));
+            ReportBuffer.add(LocalText.getText("BID_ITEM",
+                    playerName,
+                    Bank.format(bidAmount),
+                    item.getName() ));
         }
 
         switch (getStep()) {
@@ -300,8 +306,8 @@ public class StartRound_18EU extends StartRound {
                 currentBuyPrice.add(-10);
                 auctionedItem.setMinimumBid(currentBuyPrice.intValue());
                 ReportBuffer.add(LocalText.getText("ITEM_PRICE_REDUCED",
-                        new String[] { auctionedItem.getName(),
-                                Bank.format(currentBuyPrice.intValue()) }));
+                        auctionedItem.getName(),
+                        Bank.format(currentBuyPrice.intValue()) ));
                 setStep(BUY_STEP);
                 //if (auctionedItem.getStatus() != StartItem.BUYABLE) {
                 //    auctionedItem.setStatus(StartItem.BUYABLE);

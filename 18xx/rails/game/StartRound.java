@@ -208,8 +208,8 @@ public abstract class StartRound extends Round implements StartRoundI {
                 if ((StockMarket.getInstance().getStartSpace(sharePrice)) == null) {
                     errMsg =
                             LocalText.getText("InvalidStartPrice",
-                                    new String[] { Bank.format(sharePrice),
-                                            shareCompName });
+                                    Bank.format(sharePrice),
+                                    shareCompName );
                     break;
                 }
             }
@@ -217,8 +217,10 @@ public abstract class StartRound extends Round implements StartRoundI {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuyItem", new String[] {
-                    playerName, item.getName(), errMsg }));
+            DisplayBuffer.add(LocalText.getText("CantBuyItem",
+                    playerName,
+                    item.getName(),
+                    errMsg ));
             return false;
         }
 
@@ -247,16 +249,17 @@ public abstract class StartRound extends Round implements StartRoundI {
     protected void assignItem(Player player, StartItem item, int price,
             int sharePrice) {
         Certificate primary = item.getPrimary();
-        ReportBuffer.add(LocalText.getText("BuysItemFor", new String[] {
-                player.getName(), primary.getName(), Bank.format(price) }));
-        //player.buy(primary, price);
+        ReportBuffer.add(LocalText.getText("BuysItemFor",
+                player.getName(),
+                primary.getName(),
+                Bank.format(price) ));
         executeTradeCertificate (primary, player.getPortfolio(), price);
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(LocalText.getText("ALSO_GETS", new String[] {
-                    player.getName(), extra.getName() }));
-            //player.buy(extra, 0);
+            ReportBuffer.add(LocalText.getText("ALSO_GETS",
+                    player.getName(),
+                    extra.getName() ));
             executeTradeCertificate (extra, player.getPortfolio(), 0);
             checksOnBuying(extra, sharePrice);
         }

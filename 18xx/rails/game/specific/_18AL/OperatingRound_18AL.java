@@ -3,17 +3,11 @@ package rails.game.specific._18AL;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.Bank;
-import rails.game.GameManagerI;
-import rails.game.MapHex;
-import rails.game.OperatingRound;
-import rails.game.ReportBuffer;
-import rails.game.TrainI;
+import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
 import rails.game.move.CashMove;
 import rails.game.move.MoveSet;
-import rails.game.specific._18AL.AssignNamedTrains;
 import rails.util.LocalText;
 
 public class OperatingRound_18AL extends OperatingRound {
@@ -71,9 +65,9 @@ public class OperatingRound_18AL extends OperatingRound {
                     trains.get(i).setNameToken(newToken);
                     if (newToken != null) {
                         ReportBuffer.add(LocalText.getText("NamesTrain",
-                                new String[] { operatingCompany.getName(),
-                                        trains.get(i).getName(),
-                                        newToken.getLongName() }));
+                                operatingCompany.getName(),
+                                trains.get(i).getName(),
+                                newToken.getLongName() ));
                     }
                 }
             }
@@ -92,8 +86,9 @@ public class OperatingRound_18AL extends OperatingRound {
                 int payout = 100;
                 new CashMove(Bank.getInstance(), operatingCompany, payout);
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
-                        new String[] { operatingCompany.getName(),
-                                Bank.format(payout), hex.getName() }));
+                        operatingCompany.getName(),
+                        Bank.format(payout),
+                        hex.getName() ));
             }
             return true;
         } else {
