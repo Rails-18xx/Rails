@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.52 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.53 2009/01/21 20:18:23 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -96,7 +96,7 @@ public class OperatingRound extends Round implements Observer {
 
     public static final int STEP_TRADE_SHARES = 5;
 
-    public static final int STEP_FINAL = 6;
+    public static int STEP_FINAL = 6;
 
     protected static int[] steps =
             new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN, STEP_CALC_REVENUE,
@@ -105,7 +105,9 @@ public class OperatingRound extends Round implements Observer {
     // side steps
     public static final int STEP_DISCARD_TRAINS = -2;
 
-    public static final String[] stepNames =
+    protected boolean doneAllowed = false;
+
+    public static String[] stepNames =
             new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
                     "BuyTrain", "TradeShares", "Final" };
 
@@ -223,6 +225,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof TakeLoans) {
 
             result = takeLoans((TakeLoans) selectedAction);
+
+        } else if (selectedAction instanceof RepayLoans) {
+
+            result = repayLoans((RepayLoans) selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -793,6 +799,12 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.setLastRevenue(amount);
         operatingCompany.setLastRevenueAllocation(revenueAllocation);
 
+        if (amount == 0 && operatingCompany.getNumberOfTrains() == 0) {
+            DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
+                        operatingCompany.getName(),
+                        Bank.format(0) ));
+        }
+
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
         amount = executeDeductions (action);
@@ -893,7 +905,7 @@ public class OperatingRound extends Round implements Observer {
                 // This step is now obsolete
                continue;
             }
-
+            
             if (step == STEP_TRADE_SHARES) {
 
                 // Is company allowed to trade trasury shares?
@@ -906,6 +918,8 @@ public class OperatingRound extends Round implements Observer {
 
             }
 
+            if (!gameSpecificNextStep (step)) continue;
+
             // No reason found to skip this step
             break;
         }
@@ -916,6 +930,11 @@ public class OperatingRound extends Round implements Observer {
             setStep(step);
         }
 
+    }
+
+    /** Stub, can be overridden in subclasses to check for extra steps */
+    protected boolean gameSpecificNextStep (int step) {
+        return true;
     }
 
     protected void initTurn() {
@@ -1087,28 +1106,16 @@ public class OperatingRound extends Round implements Observer {
     public boolean done() {
         String errMsg = null;
 
-        int step = getStep();
-
-        if (step == STEP_BUY_TRAIN) {
-
-            if (operatingCompany.getPortfolio().getNumberOfTrains() == 0
-                && operatingCompany.mustOwnATrain()) {
-                // FIXME: Need to check for valid route before throwing an
-                // error.
-                errMsg =
-                        LocalText.getText("CompanyMustOwnATrain",
-                                operatingCompany.getName());
-                setStep(STEP_BUY_TRAIN);
-                DisplayBuffer.add(errMsg);
-                return false;
-            }
-
-        } else {
-
-            errMsg = LocalText.getText("InvalidDoneAction");
+         if (operatingCompany.getPortfolio().getNumberOfTrains() == 0
+            && operatingCompany.mustOwnATrain()) {
+            // FIXME: Need to check for valid route before throwing an
+            // error.
+            errMsg =
+                    LocalText.getText("CompanyMustOwnATrain",
+                            operatingCompany.getName());
+            setStep(STEP_BUY_TRAIN);
             DisplayBuffer.add(errMsg);
             return false;
-
         }
 
         MoveSet.start(false);
@@ -1374,6 +1381,8 @@ public class OperatingRound extends Round implements Observer {
             buyTrain ((BuyTrain)savedAction);
         } else if (savedAction instanceof SetDividend) {
             executeSetRevenueAndDividend ((SetDividend) savedAction);
+        } else if (savedAction instanceof RepayLoans) {
+            executeRepayLoans ((RepayLoans) savedAction);
         }
     }
 
@@ -1569,15 +1578,6 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
-    /** Stub for applying any follow-up actions when
-     * a company reaches it destinations.
-     * Default version: no actions.
-     * @param company
-     */
-    protected void reachDestination (PublicCompanyI company) {
-
-    }
-
     protected boolean takeLoans (TakeLoans action) {
 
         String errMsg = validateTakeLoans (action);
@@ -1586,7 +1586,7 @@ public class OperatingRound extends Round implements Observer {
             DisplayBuffer.add(LocalText.getText("CannotTakeLoans",
                         action.getCompanyName(),
                         action.getNumberTaken(),
-                        action.getPrice(),
+                        Bank.format(action.getPrice()),
                         errMsg));
 
             return false;
@@ -1675,6 +1675,100 @@ public class OperatingRound extends Round implements Observer {
         }
     }
 
+    /** Stub for applying any follow-up actions when
+     * a company reaches it destinations.
+     * Default version: no actions.
+     * @param company
+     */
+    protected void reachDestination (PublicCompanyI company) {
+
+    }
+
+    protected boolean repayLoans (RepayLoans action) {
+
+        String errMsg = validateRepayLoans (action);
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotRepayLoans",
+                        action.getCompanyName(),
+                        action.getNumberRepaid(),
+                        Bank.format(action.getPrice()),
+                        errMsg));
+
+            return false;
+        }
+
+        int repayment = action.getNumberRepaid() * operatingCompany.getValuePerLoan();
+        if (repayment > operatingCompany.getCash()) {
+            // President must contribute
+            int remainder = repayment - operatingCompany.getCash();
+            Player president = operatingCompany.getPresident();
+            int presCash = president.getCash();
+            if (remainder > presCash) {
+                // Start a share selling round
+                cashToBeRaisedByPresident = remainder - presCash;
+                log.info("A share selling round must be started as the president cannot pay $"
+                        + remainder + " loan repayment");
+                log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
+                savedAction = action;
+                gameManager.startShareSellingRound(this, operatingCompany,
+                        cashToBeRaisedByPresident);
+                return true;
+            }
+        }
+
+        MoveSet.start(true);
+
+        executeRepayLoans (action);
+
+        return true;
+    }
+
+    protected String validateRepayLoans (RepayLoans action) {
+
+        String errMsg = null;
+
+        return errMsg;
+    }
+
+    protected void executeRepayLoans (RepayLoans action) {
+
+        int number = action.getNumberRepaid();
+        int payment;
+        int remainder = 0;
+
+        operatingCompany.addLoans(-number);
+        int amount = payment = number * operatingCompany.getValuePerLoan();
+        if (amount > operatingCompany.getCash()) {
+            // By now the president must have enough cash
+            payment = operatingCompany.getCash();
+            remainder = amount - payment;
+            if (payment > 0) {
+                new CashMove (operatingCompany, null, payment);
+            }
+            ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
+                    operatingCompany.getName(),
+                    Bank.format(payment),
+                    Bank.format(amount),
+                    number,
+                    Bank.format(operatingCompany.getValuePerLoan())));
+        }
+        if (remainder > 0) {
+            Player president = operatingCompany.getPresident();
+            if (president.getCash() >= remainder) {
+                payment = remainder;
+                new CashMove (president, null, payment);
+                ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
+                        operatingCompany.getName(),
+                        Bank.format(payment),
+                        Bank.format(amount),
+                        number,
+                        Bank.format(operatingCompany.getValuePerLoan()),
+                        president.getName()));
+            }
+        }
+    }
+
     protected int calculateLoanAmount (int numberOfLoans) {
         return numberOfLoans * operatingCompany.getValuePerLoan();
     }
@@ -1741,6 +1835,7 @@ public class OperatingRound extends Round implements Observer {
         /* Create a new list of possible actions for the UI */
         possibleActions.clear();
         selectedAction = null;
+        doneAllowed = false;
 
         int step = getStep();
 
@@ -1799,8 +1894,7 @@ public class OperatingRound extends Round implements Observer {
             }
         }
 
-        if (getStep() >= STEP_BUY_TRAIN
-            && (!operatingCompany.mustOwnATrain() || operatingCompany.getPortfolio().getNumberOfTrains() > 0)) {
+        if (doneAllowed) {
             possibleActions.add(new NullAction(NullAction.DONE));
         }
 
@@ -1989,6 +2083,11 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
         }
+
+        if (!operatingCompany.mustOwnATrain()
+                || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+                    doneAllowed = true;
+        }
     }
 
     /**
@@ -2037,17 +2136,6 @@ public class OperatingRound extends Round implements Observer {
      */
     protected void setDestinationActions () {
 
-    }
-
-    public void repayLoans (int number) {
-        operatingCompany.addLoans(-number);
-        int amount = number * operatingCompany.getValuePerLoan();
-        new CashMove (operatingCompany, null, amount);
-        DisplayBuffer.add(LocalText.getText("CompanyRepaysLoan",
-                operatingCompany.getName(),
-                number,
-                Bank.format(operatingCompany.getValuePerLoan()),
-                Bank.format(amount)));
     }
 
     public void payLoanInterest () {

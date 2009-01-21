@@ -344,6 +344,10 @@ public class ORUIManager {
             } else if (actionType == TakeLoans.class) {
 
                 takeLoans ((TakeLoans)actions.get(0));
+
+            } else if (actionType == RepayLoans.class) {
+
+                repayLoans ((RepayLoans)actions.get(0));
             }
 
         } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
@@ -1050,8 +1054,46 @@ public class ORUIManager {
 
     }
 
-    protected void repayLoans () {
+    protected void repayLoans (RepayLoans action) {
 
+        int minNumber = action.getMinNumber();
+        int maxNumber = action.getMaxNumber();
+        int loanAmount = action.getPrice();
+        int numberRepaid = 0;
+
+        if (minNumber == maxNumber) {
+            // No choice, just tell him
+            JOptionPane.showMessageDialog (orWindow,
+                    LocalText.getText("RepayLoan",
+                            minNumber,
+                            Bank.format(loanAmount),
+                            Bank.format(minNumber * loanAmount)));
+            numberRepaid = minNumber;
+        } else {
+            List<String> options = new ArrayList<String>();
+            for (int i=minNumber; i<=maxNumber; i++) {
+                if (i == 0) {
+                    options.add(LocalText.getText("None"));
+                } else {
+                    options.add(LocalText.getText("RepayLoan",
+                            i,
+                            Bank.format(loanAmount),
+                            Bank.format(i * loanAmount)));
+                }
+            }
+            Object choice = JOptionPane.showInputDialog(orWindow,
+                    LocalText.getText("SelectLoansToRepay"),
+                    LocalText.getText("Select"),
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options.toArray(),
+                    options.get(minNumber == 0 ? 1 : minNumber));
+
+            numberRepaid = minNumber + options.indexOf(choice);
+
+        }
+        action.setNumberTaken(numberRepaid);
+        orWindow.process(action);
     }
 
     public void updateStatus() {
@@ -1146,23 +1188,18 @@ public class ORUIManager {
             }
             setMessage(message);
 
-        } else if (possibleActions.contains(BuyTrain.class)/*
-                                                             * ||
-                                                             * possibleActions.contains(DiscardTrain.class)
-                                                             */) {
+        } else if (possibleActions.contains(BuyTrain.class)) {
 
-            // orPanel.initTrainBuying(oRound.getOperatingCompany().mayBuyTrains());
             orPanel.initTrainBuying(true);
 
             setMessage(LocalText.getText("BuyTrain"));
 
         } else if (possibleActions.contains(DiscardTrain.class)) {
 
-            // discardTrain();
 
-        } else if (possibleActions.contains(TakeLoans.class)) {
+        } else if (possibleActions.contains(RepayLoans.class)) {
 
-            orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
+            orPanel.enableLoanRepayment (possibleActions.getType(RepayLoans.class).get(0));
 
         } else if (orStep == OperatingRound.STEP_FINAL) {
             // Does not occur???
