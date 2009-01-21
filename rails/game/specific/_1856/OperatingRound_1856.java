@@ -11,6 +11,21 @@ import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
 
+    public static final int STEP_REPAY_LOANS = 6;
+
+    static {
+        STEP_FINAL = 7;
+
+        steps =
+                new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN, STEP_CALC_REVENUE,
+                        STEP_PAYOUT, STEP_BUY_TRAIN, STEP_TRADE_SHARES,
+                        STEP_REPAY_LOANS, STEP_FINAL };
+
+        stepNames =
+                new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
+                        "BuyTrain", "TradeShares", "RepayLoans", "Final" };
+    }
+
     public OperatingRound_1856 (GameManagerI gameManager) {
         super (gameManager);
 
@@ -273,6 +288,40 @@ public class OperatingRound_1856 extends OperatingRound {
             possibleActions.add(new TakeLoans(operatingCompany,
                     1, operatingCompany.getValuePerLoan()));
         }
+
+        if (getStep() == STEP_REPAY_LOANS) {
+            // Has company any outstanding loans to repay?
+            if (operatingCompany.getMaxNumberOfLoans() != 0
+                && operatingCompany.getCurrentNumberOfLoans() > 0) {
+
+                // Minimum number to repay
+                int minNumber = Math.max(0,
+                        operatingCompany.getCurrentNumberOfLoans()
+                            - operatingCompany.sharesOwnedByPlayers());
+                // Maximum number to repay (dependent on cash)
+                int maxNumber = Math.min(operatingCompany.getCurrentNumberOfLoans(),
+                        operatingCompany.getCash() / operatingCompany.getValuePerLoan());
+
+                if (maxNumber < minNumber) {
+                    // Company doesn't have the cash, president must contribute.
+                    maxNumber = minNumber;
+                }
+
+                if (minNumber > 0) {
+                    // Mandatory repayment
+                    DisplayBuffer.add(LocalText.getText("MustRepayLoans",
+                            operatingCompany.getName(),
+                            minNumber,
+                            Bank.format(operatingCompany.getValuePerLoan()),
+                            Bank.format(minNumber * operatingCompany.getValuePerLoan())));
+                }
+                possibleActions.add(new RepayLoans(operatingCompany,
+                        minNumber, maxNumber, operatingCompany.getValuePerLoan()));
+
+                // Step may only be skipped if repayment is optional
+                if (minNumber == 0) doneAllowed = true;
+            }
+        }
     }
 
     @Override
@@ -324,4 +373,33 @@ public class OperatingRound_1856 extends OperatingRound {
             * operatingCompany.getValuePerLoan()
             * operatingCompany.getLoanInterestPct() / 100;
     }
+
+    @Override
+    protected boolean gameSpecificNextStep (int step) {
+
+        if (step == STEP_REPAY_LOANS) {
+
+            // Has company any outstanding loans to repay?
+            if (operatingCompany.getMaxNumberOfLoans() == 0
+                || operatingCompany.getCurrentNumberOfLoans() == 0) {
+                return false;
+            // Is company required to repay loans?
+            } else if (operatingCompany.sharesOwnedByPlayers()
+                    < operatingCompany.getCurrentNumberOfLoans()) {
+                return true;
+            // Has company enough money to repay at least one loan?
+            } else if (operatingCompany.getCash()
+                    < operatingCompany.getValuePerLoan()) {
+                return false;
+            } else {
+                // Loan repayment is possible but optional
+                return true;
+            }
+        } else {
+            // We are not in this step
+            return true;
+        }
+
+    }
+
 }

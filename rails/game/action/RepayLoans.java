@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.1 2009/01/11 17:24:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.2 2009/01/21 20:18:24 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -19,6 +19,7 @@ public class RepayLoans extends PossibleORAction {
     // Initial attributes
     transient private PublicCompanyI company;
     private String companyName;
+    private int minNumber;
     private int maxNumber;
     private int price;
 
@@ -30,13 +31,18 @@ public class RepayLoans extends PossibleORAction {
     /**
      *
      */
-    public RepayLoans(PublicCompanyI company, int maxNumber,
+    public RepayLoans(PublicCompanyI company, int minNumber, int maxNumber,
             int price) {
 
         this.company = company;
         this.companyName = company.getName();
+        this.minNumber = minNumber;
         this.maxNumber = maxNumber;
         this.price = price;
+    }
+
+    public int getMinNumber() {
+        return minNumber;
     }
 
     /**
@@ -62,11 +68,16 @@ public class RepayLoans extends PossibleORAction {
         this.numberRepaid = numberRepaid;
     }
 
+    public int getNumberRepaid() {
+        return numberRepaid;
+    }
+
     @Override
     public boolean equals(PossibleAction action) {
         if (!(action instanceof RepayLoans)) return false;
         RepayLoans a = (RepayLoans) action;
         return a.company == company
+               && a.minNumber == minNumber
                && a.maxNumber == maxNumber
                && a.price == price;
     }
@@ -75,6 +86,7 @@ public class RepayLoans extends PossibleORAction {
     public String toString() {
         StringBuffer b = new StringBuffer();
         b.append ("RepayLoans ").append(company.getName())
+         .append(" minNumber=").append(minNumber)
          .append(" maxNumber=").append(maxNumber)
          .append(" value=").append(price);
         if (numberRepaid != 0) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.28 2009/01/11 17:24:46 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.29 2009/01/21 20:18:23 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -722,6 +722,21 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     public void enableLoanTaking (TakeLoans action) {
         if (action != null) takeLoans.addPossibleAction(action);
         takeLoans.setEnabled(action != null);
+    }
+    
+    public void enableLoanRepayment (RepayLoans action) {
+        
+        repayLoans.setPossibleAction(action);
+        repayLoans.setEnabled(true);
+        
+        loansCaption.setHighlight(true);
+
+        button1.setText(LocalText.getText("RepayLoans"));
+        button1.setActionCommand(REPAY_LOANS_CMD);
+        button1.setPossibleAction(action);
+        button1.setMnemonic(KeyEvent.VK_R);
+        button1.setEnabled(true);
+        button1.setVisible(true);
     }
 
     public void finishORCompanyTurn(int orCompIndex) {

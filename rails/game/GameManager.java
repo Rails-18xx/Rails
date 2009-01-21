@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.41 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.42 2009/01/21 20:18:24 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -612,6 +612,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public void processOnReload(List<PossibleAction> actions) throws Exception {
 
         for (PossibleAction action : actions) {
+            
+            // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
+            if (!possibleActions.contains(action.getClass())
+                    && possibleActions.contains(RepayLoans.class)) {
+                // Insert "Done"
+                log.debug("Action DONE inserted");
+                getCurrentRound().process(new NullAction (NullAction.DONE));
+                getCurrentRound().setPossibleActions();
+            }
+            
             try {
                 log.debug("Action: " + action);
                 getCurrentRound().process(action);
