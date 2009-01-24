@@ -6,10 +6,15 @@ import java.util.List;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
+import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
+    
+    BooleanState finalLoanRepaymentPending 
+        = new BooleanState ("LoanRepaymentPending", false);
+    Player playerToStartLoanRepayment = null;
 
     public static final int STEP_REPAY_LOANS = 6;
 
@@ -63,7 +68,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     int soldPercentage
                         = 100 - operatingCompany.getUnsoldPercentage();
 
-                    TrainI nextAvailableTrain = TrainManager.get().getAvailableNewTrains().get(0);
+                    TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
                     int trainNumber;
                     try {
                         trainNumber = Integer.parseInt(nextAvailableTrain.getName());
@@ -323,6 +328,24 @@ public class OperatingRound_1856 extends OperatingRound {
             }
         }
     }
+    
+    public boolean buyTrain(BuyTrain action) {
+        
+        PhaseI prePhase = currentPhase;
+        
+        boolean result = super.buyTrain(action);
+        
+        PhaseI postPhase = currentPhase;
+        
+        if (postPhase != prePhase && postPhase.getName().equals("5")) {
+            finalLoanRepaymentPending.set(true);
+            playerToStartLoanRepayment 
+                = gameManager.getPlayerByIndex(action.getPlayerIndex());
+        }
+        
+        return result;
+    }
+
 
     @Override
     protected String validateTakeLoans (TakeLoans action) {
@@ -401,5 +424,28 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
     }
+    
+    protected void finishTurn() {
+
+        operatingCompany.setOperated(true);
+
+        // Check if any privates must be closed
+        // (now only applies to 1856 W&SR)
+        for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
+            priv.checkClosingIfExercised(true);
+        }
+        
+        if (finalLoanRepaymentPending.booleanValue()) {
+            // Must start final loan repayment and CGR formation
+            // TODO
+        }
+
+        if (setNextOperatingCompany(false)) {
+            setStep(STEP_INITIAL);
+        } else {
+            finishOR();
+        }
+    }
+
 
 }
