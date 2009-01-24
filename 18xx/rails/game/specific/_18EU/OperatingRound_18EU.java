@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.5 2008/12/23 20:02:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.6 2009/01/24 15:10:29 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -14,6 +14,8 @@ import rails.game.state.State;
  * be discarded. <p> Permanent memory is formed by static attributes.
  */
 public class OperatingRound_18EU extends OperatingRound {
+    
+    protected TrainTypeI pullmannType;
 
     protected BooleanState hasPullmannAtStart =
             new BooleanState("ORCompanyHasPullmannAtStart", false);
@@ -23,13 +25,14 @@ public class OperatingRound_18EU extends OperatingRound {
     
     public OperatingRound_18EU (GameManagerI gameManager) {
         super (gameManager);
+        pullmannType = trainManager.getTypeByName("P");
     }
 
     @Override
     protected void initTurn() {
         super.initTurn();
-        hasPullmannAtStart.set(operatingCompany.getPortfolio().getTrainOfType(
-                "P") != null);
+        hasPullmannAtStart.set(operatingCompany.getPortfolio()
+                .getTrainOfType(pullmannType) != null);
     }
 
     /**
@@ -40,7 +43,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         if (operatingCompany == null) return;
 
-        TrainManagerI trainMgr = TrainManager.get();
+        TrainManagerI trainMgr = gameManager.getTrainManager();
 
         int cash = operatingCompany.getCash();
         int cost;
@@ -60,7 +63,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // Check if the company already has a Pullmann
         TrainI ownedPTrain = null;
         if (hasTrains) {
-            ownedPTrain = operatingCompany.getPortfolio().getTrainOfType("P");
+            ownedPTrain = operatingCompany.getPortfolio().getTrainOfType(pullmannType);
         }
 
         // Postpone train limit checking, because an exchange might be possible
@@ -163,7 +166,7 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     protected boolean canBuyTrain() {
         return super.canBuyTrain()
-               || operatingCompany.getPortfolio().getTrainOfType("P") != null
+               || operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null
                && hasPullmannAtStart.booleanValue();
     }
 
@@ -200,7 +203,7 @@ public class OperatingRound_18EU extends OperatingRound {
             numberOfTrains = portfolio.getNumberOfTrains();
 
             // Check if the company has a Pullmann
-            pullmann = portfolio.getTrainOfType("P");
+            pullmann = portfolio.getTrainOfType(pullmannType);
 
             // A Pullmann always goes first, and automatically.
             // If the last train is a Pullmann, discard it.

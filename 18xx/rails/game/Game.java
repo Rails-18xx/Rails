@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.20 2008/12/23 19:50:41 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.21 2009/01/24 15:10:28 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -26,6 +26,7 @@ public class Game {
     protected CompanyManagerI companyManager;
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
+    protected TrainManagerI trainManager;
     protected StockMarketI stockMarket;
     protected Bank bank;
     // protected ArrayList companyList;
@@ -64,7 +65,8 @@ public class Game {
     }
 
     public void start() {
-        gameManager.startGame(playerManager, companyManager, phaseManager);
+        gameManager.startGame(playerManager, companyManager, 
+                phaseManager, trainManager);
     }
 
     public boolean setup() {
@@ -128,13 +130,21 @@ public class Game {
                                 + GAME_XML_FILE);
             }
 
+            trainManager =
+                (TrainManager) componentManager.findComponent("TrainManager");
+            if (trainManager == null) {
+                throw new ConfigurationException(
+                        "No TrainManager XML element found in file "
+                                + GAME_XML_FILE);
+            }
+
             /*
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
             bank.initCertificates();
             StartPacket.init();
-            companyManager.initCompanies();
+            companyManager.initCompanies(gameManager);
             stockMarket.init();
         } catch (Exception e) {
             String message =

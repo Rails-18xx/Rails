@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.8 2009/01/24 15:10:28 evos Exp $ */
 package rails.game;
 
 import rails.util.LocalText;
@@ -22,7 +22,7 @@ public class CompanyType implements CompanyTypeI {
     protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
 
     private CompanyI dummyCompany;
-
+    
     /**
      * The constructor.
      *
@@ -59,8 +59,8 @@ public class CompanyType implements CompanyTypeI {
          */
 
     }
-
-    public CompanyI createCompany(String name, Tag tag)
+    
+   public CompanyI createCompany(String name, Tag tag)
             throws ConfigurationException {
         CompanyI newCompany = null;
         try {

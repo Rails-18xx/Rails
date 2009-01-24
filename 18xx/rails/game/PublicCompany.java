@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.47 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.48 2009/01/24 15:10:28 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -225,6 +225,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
     protected MoneyModel currentLoanValue = null;
+    
+    protected GameManagerI gameManager;
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -611,7 +613,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void init2() throws ConfigurationException {
+    public void init2(GameManagerI gameManager) 
+    throws ConfigurationException {
+        
+        this.gameManager = gameManager;
+        
         if (hasStockPrice && Util.hasValue(startSpace)) {
             parPrice.setPrice(StockMarket.getInstance().getStockSpace(
                     startSpace));
@@ -826,9 +832,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         if (initialTrain != null) {
-            TrainI train = Bank.getIpo().getTrainOfType(initialTrain);
+            TrainManagerI trainManager = gameManager.getTrainManager();
+            TrainTypeI type = trainManager.getTypeByName(initialTrain);
+            TrainI train = Bank.getIpo().getTrainOfType(type);
             buyTrain(train, 0);
-            TrainManager.get().checkTrainAvailability(train, Bank.getIpo());
+            trainManager.checkTrainAvailability(train, Bank.getIpo());
         }
     }
 
@@ -1594,7 +1602,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
         if (phaseMap == null || phaseMap.isEmpty()) return 1;
 
-        PhaseI phase = PhaseManager.getInstance().getCurrentPhase();
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
         Integer ii = phaseMap.get(phase.getName());
         if (ii == null) return 1;
 
