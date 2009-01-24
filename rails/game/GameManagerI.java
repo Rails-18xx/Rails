@@ -15,7 +15,8 @@ public interface GameManagerI {
             throws ConfigurationException;
 
     public abstract void startGame(PlayerManager playerManager,
-            CompanyManagerI companyManager, PhaseManager phaseManager);
+            CompanyManagerI companyManager, PhaseManager phaseManager,
+            TrainManagerI trainManager);
 
     public abstract CompanyManagerI getCompanyManager();
 
@@ -140,6 +141,9 @@ public interface GameManagerI {
     public abstract PhaseI getCurrentPhase();
 
     public abstract PhaseManager getPhaseManager();
+    
+    public abstract TrainManagerI getTrainManager ();
+
 
     public abstract String getHelp();
 

@@ -3,7 +3,6 @@ package rails.game.specific._1856;
 import rails.game.PublicCompany;
 import rails.game.StockSpaceI;
 import rails.game.TrainI;
-import rails.game.TrainManager;
 import rails.game.state.IntegerState;
 
 public class PublicCompany_1856 extends PublicCompany {
@@ -16,7 +15,8 @@ public class PublicCompany_1856 extends PublicCompany {
         
         super.start(startSpace);
         
-        TrainI nextAvailableTrain = TrainManager.get().getAvailableNewTrains().get(0);
+        TrainI nextAvailableTrain 
+            = gameManager.getTrainManager().getAvailableNewTrains().get(0);
         int trainNumber;
         try { 
             trainNumber = Integer.parseInt(nextAvailableTrain.getName());

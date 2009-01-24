@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.53 2009/01/21 20:18:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.54 2009/01/24 15:10:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -106,6 +106,8 @@ public class OperatingRound extends Round implements Observer {
     public static final int STEP_DISCARD_TRAINS = -2;
 
     protected boolean doneAllowed = false;
+    
+    protected TrainManagerI trainManager = gameManager.getTrainManager();
 
     public static String[] stepNames =
             new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
@@ -1346,7 +1348,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Check if the phase has changed.
-        TrainManager.get().checkTrainAvailability(train, oldHolder);
+        gameManager.getTrainManager().checkTrainAvailability(train, oldHolder);
         currentPhase = getCurrentPhase();
 
         // Check if any companies must discard trains
@@ -1940,7 +1942,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (operatingCompany == null) return;
 
-        TrainManagerI trainMgr = TrainManager.get();
+        TrainManagerI trainMgr = gameManager.getTrainManager();
 
         int cash = operatingCompany.getCash();
         int cost;
