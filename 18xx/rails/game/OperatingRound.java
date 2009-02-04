@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.54 2009/01/24 15:10:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.55 2009/02/04 20:36:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -106,7 +106,7 @@ public class OperatingRound extends Round implements Observer {
     public static final int STEP_DISCARD_TRAINS = -2;
 
     protected boolean doneAllowed = false;
-    
+
     protected TrainManagerI trainManager = gameManager.getTrainManager();
 
     public static String[] stepNames =
@@ -126,6 +126,8 @@ public class OperatingRound extends Round implements Observer {
             players = gameManager.getPlayers();
             numberOfPlayers = players.size();
         }
+
+        operatingCompanyArray = super.getOperatingCompanies();
     }
 
     public void start(boolean operate) {
@@ -150,7 +152,14 @@ public class OperatingRound extends Round implements Observer {
 
         if (operate) {
 
-            operatingCompanyArray = super.getOperatingCompanies();
+
+
+            StringBuffer msg = new StringBuffer();
+            for (PublicCompanyI company : operatingCompanyArray) {
+                msg.append(",").append(company.getName());
+            }
+            msg.deleteCharAt(0);
+            log.info("Initial operating sequence is "+msg.toString());
 
             if (operatingCompanyArray.length > 0) {
 
@@ -907,7 +916,7 @@ public class OperatingRound extends Round implements Observer {
                 // This step is now obsolete
                continue;
             }
-            
+
             if (step == STEP_TRADE_SHARES) {
 
                 // Is company allowed to trade trasury shares?
@@ -1386,6 +1395,7 @@ public class OperatingRound extends Round implements Observer {
         } else if (savedAction instanceof RepayLoans) {
             executeRepayLoans ((RepayLoans) savedAction);
         }
+        savedAction = null;
     }
 
     public boolean discardTrain(DiscardTrain action) {
@@ -1701,7 +1711,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         int repayment = action.getNumberRepaid() * operatingCompany.getValuePerLoan();
-        if (repayment > operatingCompany.getCash()) {
+        if (repayment > 0 && repayment > operatingCompany.getCash()) {
             // President must contribute
             int remainder = repayment - operatingCompany.getCash();
             Player president = operatingCompany.getPresident();
@@ -1721,7 +1731,7 @@ public class OperatingRound extends Round implements Observer {
 
         MoveSet.start(true);
 
-        executeRepayLoans (action);
+        if (repayment > 0) executeRepayLoans (action);
 
         return true;
     }
@@ -1864,6 +1874,10 @@ public class OperatingRound extends Round implements Observer {
             prepareRevenueAndDividendAction();
         } else if (step == STEP_BUY_TRAIN) {
             setBuyableTrains();
+            if (!operatingCompany.mustOwnATrain()
+                    || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+                        doneAllowed = true;
+            }
         } else if (step == STEP_DISCARD_TRAINS) {
             setTrainsToDiscard();
         }

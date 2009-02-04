@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.26 2008/12/03 20:17:36 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.27 2009/02/04 20:36:40 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -513,6 +513,9 @@ public class StatusWindow extends JFrame implements ActionListener,
             case GameAction.REDO:
                 process(executedAction);
             }
+        } else {
+            // Unknown action, let UIManager catch it
+            process (executedAction);
         }
     }
 

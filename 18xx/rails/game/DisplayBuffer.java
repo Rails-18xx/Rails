@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/DisplayBuffer.java,v 1.5 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/DisplayBuffer.java,v 1.6 2009/02/04 20:36:39 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -26,16 +26,23 @@ public final class DisplayBuffer {
      * interest to players.
      */
     private static List<String> displayBuffer = new ArrayList<String>();
+    
+    private static boolean autoDisplay = true;
 
     /**
      * Add a message to the message (display) buffer (and display it on the
      * console)
      */
     public static void add(String message) {
+        add (message, true);
+    }
+    
+    public static void add (String message, boolean autoDisplay) {
+        DisplayBuffer.autoDisplay = autoDisplay;
         if (Util.hasValue(message)) {
             displayBuffer.add(message);
             /* Also log the message */
-            log.info("Displayed: " + message);
+            log.info("To display: " + message);
         }
     }
 
@@ -48,6 +55,14 @@ public final class DisplayBuffer {
         } else {
             return null;
         }
+    }
+    
+    public static int getSize() {
+        return displayBuffer.size();
+    }
+    
+    public static boolean getAutoDisplay () {
+        return autoDisplay;
     }
 
     public static void clear() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.9 2008/12/23 19:55:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.10 2009/02/04 20:36:39 evos Exp $ */
 package rails.game;
 
 import rails.game.action.PossibleAction;
@@ -11,10 +11,12 @@ public interface RoundI {
 
     /**
      * Get the player that has the next turn.
-     * 
+     *
      * @return Player object.
      */
     public Player getCurrentPlayer();
+
+    public Class<? extends RoundI> getRoundTypeForUI ();
 
     public String getHelp();
 

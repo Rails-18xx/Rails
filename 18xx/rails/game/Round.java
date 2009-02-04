@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.15 2009/01/15 20:53:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.16 2009/02/04 20:36:39 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -79,6 +79,16 @@ public abstract class Round implements RoundI {
         return gameManager.getCurrentPhase();
     }
 
+    /** Allows round instances to tell the UI what type of window to raise.
+     * Normally the type corresponds to the round type (e.g. OperatingRound
+     * needs ORWindow), but sometimes deviations occur (such as the
+     * CGRFormationRound, which isn't a StockRound type but needs StatusWindow).
+     * @return
+     */
+    public Class<? extends RoundI> getRoundTypeForUI () {
+        return this.getClass();
+    }
+
      /*
      * (non-Javadoc)
      *
@@ -139,6 +149,7 @@ public abstract class Round implements RoundI {
             }
             operatingCompanies.put(new Integer(key), company);
         }
+
         return operatingCompanies.values().toArray(new PublicCompanyI[0]);
     }
 

@@ -11,10 +11,10 @@ import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
-    
-    BooleanState finalLoanRepaymentPending 
+
+    private BooleanState finalLoanRepaymentPending
         = new BooleanState ("LoanRepaymentPending", false);
-    Player playerToStartLoanRepayment = null;
+    private Player playerToStartLoanRepayment = null;
 
     public static final int STEP_REPAY_LOANS = 6;
 
@@ -295,6 +295,7 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         if (getStep() == STEP_REPAY_LOANS) {
+
             // Has company any outstanding loans to repay?
             if (operatingCompany.getMaxNumberOfLoans() != 0
                 && operatingCompany.getCurrentNumberOfLoans() > 0) {
@@ -328,21 +329,22 @@ public class OperatingRound_1856 extends OperatingRound {
             }
         }
     }
-    
+
+    @Override
     public boolean buyTrain(BuyTrain action) {
-        
+
         PhaseI prePhase = currentPhase;
-        
+
         boolean result = super.buyTrain(action);
-        
+
         PhaseI postPhase = currentPhase;
-        
+
         if (postPhase != prePhase && postPhase.getName().equals("5")) {
             finalLoanRepaymentPending.set(true);
-            playerToStartLoanRepayment 
+            playerToStartLoanRepayment
                 = gameManager.getPlayerByIndex(action.getPlayerIndex());
         }
-        
+
         return result;
     }
 
@@ -418,13 +420,29 @@ public class OperatingRound_1856 extends OperatingRound {
                 // Loan repayment is possible but optional
                 return true;
             }
-        } else {
-            // We are not in this step
-            return true;
         }
 
+        return true;
     }
-    
+
+    @Override
+    public void resume() {
+
+        if (savedAction == null) {
+            // End of CGRFormationRound
+            finalLoanRepaymentPending.set(false);
+            if (setNextOperatingCompany(false)) {
+                setStep(STEP_INITIAL);
+            } else {
+                finishOR();
+            }
+        } else {
+            super.resume();
+        }
+    }
+
+
+    @Override
     protected void finishTurn() {
 
         operatingCompany.setOperated(true);
@@ -434,10 +452,11 @@ public class OperatingRound_1856 extends OperatingRound {
         for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
             priv.checkClosingIfExercised(true);
         }
-        
+
         if (finalLoanRepaymentPending.booleanValue()) {
-            // Must start final loan repayment and CGR formation
-            // TODO
+
+            ((GameManager_1856)gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
+            return;
         }
 
         if (setNextOperatingCompany(false)) {
@@ -446,6 +465,4 @@ public class OperatingRound_1856 extends OperatingRound {
             finishOR();
         }
     }
-
-
 }
