@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.55 2009/02/04 20:36:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.56 2009/02/04 20:43:37 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1757,13 +1757,13 @@ public class OperatingRound extends Round implements Observer {
             remainder = amount - payment;
             if (payment > 0) {
                 new CashMove (operatingCompany, null, payment);
-            }
-            ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
+                ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                     operatingCompany.getName(),
                     Bank.format(payment),
                     Bank.format(amount),
                     number,
                     Bank.format(operatingCompany.getValuePerLoan())));
+            }
         }
         if (remainder > 0) {
             Player president = operatingCompany.getPresident();
