@@ -94,9 +94,9 @@ public class GameUIManager {
         }
 
         updateUI();
-        
+
     }
-    
+
     public boolean processOnServer(PossibleAction action) {
 
         // In some cases an Undo requires a different follow-up
@@ -110,7 +110,7 @@ public class GameUIManager {
         }
         boolean result = gameManager.process(action);
         log.debug("==Result from server: " + result);
-        activeWindow.displayServerMessage();
+        if (DisplayBuffer.getAutoDisplay()) activeWindow.displayServerMessage();
 
         reportWindow.addLog();
 
@@ -148,25 +148,36 @@ public class GameUIManager {
                   + previousRound);
         // Process consequences of a round type change to the UI
 
+        Class<? extends RoundI> previousRoundUItype
+                = previousRound == null ? null : previousRound.getRoundTypeForUI();
+        Class<? extends RoundI> currentRoundUItype
+                = currentRound.getRoundTypeForUI();
+
         if (previousRound == null || !previousRound.equals(currentRound)) {
 
-            // Finish the previous round UI aspects
-            if (previousRound instanceof StockRound) {
-                log.debug("Finishing Stock Round UI");
-                statusWindow.finishRound();
-            } else if (previousRound instanceof StartRound) {
-                log.debug("Finishing Start Round UI");
-                if (startRoundWindow != null) {
-                    startRoundWindow.close();
-                    startRoundWindow = null;
+            if (previousRound != null) {
+                // Finish the previous round UI aspects
+                //if (previousRound instanceof StockRound) {
+                if (StockRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Finishing Stock Round UI");
+                    statusWindow.finishRound();
+                //} else if (previousRound instanceof StartRound) {
+                } else if (StartRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Finishing Start Round UI");
+                    if (startRoundWindow != null) {
+                        startRoundWindow.close();
+                        startRoundWindow = null;
+                    }
+                //} else if (previousRound instanceof OperatingRound) {
+                } else if (OperatingRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Finishing Operating Round UI");
+                    orUIManager.finish();
                 }
-            } else if (previousRound instanceof OperatingRound) {
-                log.debug("Finishing Operating Round UI");
-                orUIManager.finish();
             }
 
             // Start the new round UI aspects
-            if (currentRound instanceof StartRound) {
+            //if (currentRound instanceof StartRound) {
+            if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
 
                 log.debug("Entering Start Round UI");
                 startRound = (StartRound) currentRound;
@@ -176,13 +187,15 @@ public class GameUIManager {
 
                 stockChart.setVisible(false);
 
-            } else if (currentRound instanceof StockRound) {
+            //} else if (currentRound instanceof StockRound) {
+            } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
 
                 log.debug("Entering Stock Round UI");
                 stockChart.setVisible(true);
                 statusWindow.setVisible(true);
 
-            } else if (currentRound instanceof OperatingRound) {
+            //} else if (currentRound instanceof OperatingRound) {
+            } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
 
                 log.debug("Entering Operating Round UI");
                 stockChart.setVisible(false);
@@ -191,27 +204,29 @@ public class GameUIManager {
         }
 
         statusWindow.setupFor(currentRound);
+        previousRound = currentRound;
 
         // Update the current round window
-        if (currentRound instanceof StartRound) {
+        //if (currentRound instanceof StartRound) {
+        if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
             activeWindow = startRoundWindow;
 
             startRoundWindow.updateStatus();
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
-        } else if (currentRound instanceof StockRound) {
+        //} else if (currentRound instanceof StockRound) {
+        } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
             activeWindow = statusWindow;
 
             statusWindow.updateStatus();
 
-        } else if (currentRound instanceof OperatingRound) {
+        //} else if (currentRound instanceof OperatingRound) {
+        } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
             activeWindow = orUIManager.getORWindow();
 
             orUIManager.updateStatus();
+
         }
-
-        previousRound = currentRound;
-
     }
 
     public void saveGame(GameAction saveAction) {
@@ -281,57 +296,57 @@ public class GameUIManager {
     public GameManagerI getGameManager() {
         return gameManager;
     }
-    
+
     public RoundI getCurrentRound() {
         return gameManager.getCurrentRound();
     }
-    
+
     public boolean isGameOver() {
         return gameManager.isGameOver();
     }
-    
+
     public String getHelp () {
         return gameManager.getHelp();
     }
-    
+
     public int getNumberOfPlayers() {
         return gameManager.getNumberOfPlayers();
     }
-    
+
     public List<Player> getPlayers() {
         return gameManager.getPlayers();
     }
-    
+
     public List<String> getPlayerNames() {
         return gameManager.getPlayerNames();
     }
-    
+
     public Player getCurrentPlayer() {
         return gameManager.getCurrentPlayer();
     }
-    
+
     public Player getPriorityPlayer () {
         return gameManager.getPriorityPlayer();
     }
-    
+
     public PhaseI getCurrentPhase() {
         return gameManager.getCurrentPhase();
     }
-    
+
     public List<PublicCompanyI> getAllPublicCompanies(){
         return gameManager.getAllPublicCompanies();
     }
-    
+
     public String getClassName (Defs.ClassName key) {
         return gameManager.getClassName(key);
     }
-    
+
     public Object getCommonParameter (Defs.Parm key) {
         return gameManager.getCommonParameter(key);
     }
-    
+
     public boolean getCommonParameterAsBoolean (Defs.Parm key) {
-        
+
         return (Boolean) getCommonParameter(key);
     }
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.43 2009/01/24 15:10:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.44 2009/02/04 20:36:39 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -39,6 +39,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected String orUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.OR_UI_MANAGER);
     protected String gameStatusClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_STATUS);
     protected String statusWindowClassName = Defs.getDefaultClassName(Defs.ClassName.STATUS_WINDOW);
+    protected String orWindowClassName = Defs.getDefaultClassName(Defs.ClassName.OR_WINDOW);
 
     protected PlayerManager playerManager;
     protected CompanyManagerI companyManager;
@@ -248,7 +249,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         Tag orMgrTag = tag.getChild("ORUIManager");
         if (orMgrTag != null) {
             orUIManagerClassName =
-                    orMgrTag.getAttributeAsString("class", "ORUIManager");
+                    orMgrTag.getAttributeAsString("class", orUIManagerClassName);
             // Check instantiatability (not sure if this belongs here)
             canClassBeInstantiated (orUIManagerClassName);
         }
@@ -257,7 +258,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         Tag gameStatusTag = tag.getChild("GameStatus");
         if (gameStatusTag != null) {
             gameStatusClassName =
-                    gameStatusTag.getAttributeAsString("class", "GameStatus");
+                    gameStatusTag.getAttributeAsString("class", gameStatusClassName);
             // Check instantiatability (not sure if this belongs here)
             canClassBeInstantiated (gameStatusClassName);
         }
@@ -267,9 +268,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (statusWindowTag != null) {
             statusWindowClassName =
                     statusWindowTag.getAttributeAsString("class",
-                            "StatusWindow");
+                            statusWindowClassName);
             // Check instantiatability (not sure if this belongs here)
             canClassBeInstantiated (statusWindowClassName);
+        }
+
+        // ORWindow class
+        Tag orWindowTag = tag.getChild("ORWindow");
+        if (orWindowTag != null) {
+            orWindowClassName =
+                orWindowTag.getAttributeAsString("class",
+                        orWindowClassName);
+            // Check instantiatability (not sure if this belongs here)
+            canClassBeInstantiated (orWindowClassName);
         }
     }
 
@@ -359,7 +370,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#setRound(rails.game.RoundI)
      */
-    private void setRound(RoundI round) {
+    protected void setRound(RoundI round) {
         currentRound.set(round);
     }
 
@@ -615,7 +626,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public void processOnReload(List<PossibleAction> actions) throws Exception {
 
         for (PossibleAction action : actions) {
-            
+
             // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
             if (!possibleActions.contains(action.getClass())
                     && possibleActions.contains(RepayLoans.class)) {
@@ -624,7 +635,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 getCurrentRound().process(new NullAction (NullAction.DONE));
                 getCurrentRound().setPossibleActions();
             }
-            
+
             try {
                 log.debug("Action: " + action);
                 getCurrentRound().process(action);
@@ -881,7 +892,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public PhaseManager getPhaseManager() {
         return phaseManager;
     }
-    
+
     public TrainManagerI getTrainManager () {
         return trainManager;
     }
@@ -918,6 +929,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public String getClassName (Defs.ClassName key) {
 
         switch (key) {
+
         case OR_UI_MANAGER:
             return orUIManagerClassName;
 

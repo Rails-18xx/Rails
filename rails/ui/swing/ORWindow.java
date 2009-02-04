@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.22 2009/01/15 20:53:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.23 2009/02/04 20:36:40 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -24,14 +24,14 @@ import rails.util.LocalText;
  */
 public class ORWindow extends JFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
-    public GameUIManager gameUIManager;
-    private ORUIManager orUIManager;
-    private MapPanel mapPanel;
-    private ORPanel orPanel;
-    private UpgradesPanel upgradePanel;
-    private MessagePanel messagePanel;
+    protected GameUIManager gameUIManager;
+    protected ORUIManager orUIManager;
+    protected MapPanel mapPanel;
+    protected ORPanel orPanel;
+    protected UpgradesPanel upgradePanel;
+    protected MessagePanel messagePanel;
 
-    private Rectangle lastBounds;
+    protected Rectangle lastBounds;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 

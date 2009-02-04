@@ -8,7 +8,8 @@ public class Defs {
     public enum ClassName {
         OR_UI_MANAGER,
         STATUS_WINDOW,
-        GAME_STATUS
+        GAME_STATUS,
+        OR_WINDOW
     }
 
     private static EnumMap<Defs.ClassName, String> defaultClasses =
@@ -21,6 +22,8 @@ public class Defs {
                 "rails.ui.swing.StatusWindow");
         defaultClasses.put (ClassName.GAME_STATUS,
                 "rails.ui.swing.GameStatus");
+        defaultClasses.put (ClassName.OR_WINDOW,
+                "rails.ui.swing.ORWindow");
     }
 
     public static String getDefaultClassName (ClassName key) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.2 2009/01/21 20:18:24 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.3 2009/02/04 20:36:40 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -14,7 +14,7 @@ import rails.game.PublicCompanyI;
 /**
  * @author Erik Vos
  */
-public class RepayLoans extends PossibleORAction {
+public class RepayLoans extends PossibleAction {
 
     // Initial attributes
     transient private PublicCompanyI company;
@@ -55,9 +55,15 @@ public class RepayLoans extends PossibleORAction {
     /**
      * @return Returns the company.
      */
-    @Override
     public PublicCompanyI getCompany() {
         return company;
+    }
+
+    /**
+     * @return Returns the company.
+     */
+    public String getCompanyName() {
+        return companyName;
     }
 
     public int getPrice() {
