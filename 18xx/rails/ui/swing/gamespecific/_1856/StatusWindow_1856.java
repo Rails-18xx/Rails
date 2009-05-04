@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rails.game.*;
+import rails.game.action.DiscardTrain;
+import rails.game.action.ExchangeTokens;
 import rails.game.action.RepayLoans;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
@@ -20,17 +22,52 @@ public class StatusWindow_1856 extends StatusWindow {
     @Override
     public void updateStatus() {
         RoundI currentRound = gameUIManager.getCurrentRound();
-        if (!(currentRound instanceof OperatingRound)) {
-            return;
-        } else if (!(currentRound instanceof CGRFormationRound)) {
+        //if (!(currentRound instanceof OperatingRound)) {
+        if (!(currentRound instanceof CGRFormationRound)) {
             super.updateStatus();
         } else if (possibleActions.contains(RepayLoans.class)) {
-            RepayLoans action = possibleActions.getType(RepayLoans.class).get(0);
-            repayLoans (action);
+            //RepayLoans action = possibleActions.getType(RepayLoans.class).get(0);
+            //repayLoans (action);
+            immediateAction = possibleActions.getType(RepayLoans.class).get(0);
+        } else if (possibleActions.contains(DiscardTrain.class)) {
+            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
+        } else if (possibleActions.contains(ExchangeTokens.class)) {
+            immediateAction = possibleActions.getType(ExchangeTokens.class).get(0);
         }
     }
 
-    // Code copied from ORUIManager
+    @Override
+    public boolean processImmediateAction() {
+
+        if (immediateAction == null) {
+            return false;
+        } else if (immediateAction instanceof RepayLoans) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            RepayLoans nextAction = (RepayLoans) immediateAction;
+            immediateAction = null;
+            repayLoans (nextAction);
+            return true;
+        } else if (immediateAction instanceof DiscardTrain) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            DiscardTrain nextAction = (DiscardTrain) immediateAction;
+            immediateAction = null;
+            gameUIManager.discardTrains (nextAction);
+            return true;
+        } else if (immediateAction instanceof ExchangeTokens) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            ExchangeTokens nextAction = (ExchangeTokens) immediateAction;
+            immediateAction = null;
+            gameUIManager.exchangeTokens (nextAction);
+            return true;
+        } else {
+            return super.processImmediateAction();
+        }
+    }
+
+    // Code partly copied from ORUIManager
     protected void repayLoans (RepayLoans action) {
 
         int minNumber = action.getMinNumber();
@@ -54,7 +91,7 @@ public class StatusWindow_1856 extends StatusWindow {
         System.arraycopy (DisplayBuffer.get(),0,message,0,displayBufSize);
         message[displayBufSize] = LocalText.getText("SelectLoansToRepay",
                 action.getCompanyName());
-        
+
         Object choice = JOptionPane.showInputDialog(this,
                 message,
                 LocalText.getText("Select"),

@@ -31,6 +31,7 @@ public class GameTest {
         System.out.println("Configuration file = " + myConfigFile);
 
         /* Start the rails.game selector, which will do all the rest. */
-        new GameUIManager();
+        //new GameUIManager();
+        new GameSetupWindow();
     }
 }

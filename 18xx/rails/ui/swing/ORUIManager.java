@@ -896,35 +896,7 @@ public class ORUIManager {
                             possibleActions.getType(DiscardTrain.class).get(0);
                     if (dt == null) break;
 
-                    PublicCompanyI c = dt.getCompany();
-                    String playerName = dt.getPlayerName();
-                    List<TrainI> trains = dt.getOwnedTrains();
-                    List<String> trainOptions =
-                            new ArrayList<String>(trains.size());
-                    String[] options = new String[trains.size()];
-
-                    for (int i = 0; i < options.length; i++) {
-                        options[i] =
-                                LocalText.getText("N_Train",
-                                        trains.get(i).getName());
-                        trainOptions.add(options[i]);
-                    }
-                    String discardedTrainName =
-                            (String) JOptionPane.showInputDialog(orWindow,
-                                    LocalText.getText("HAS_TOO_MANY_TRAINS",
-                                            playerName,
-                                            c.getName() ),
-                                    LocalText.getText("WhichTrainToDiscard"),
-                                    JOptionPane.QUESTION_MESSAGE, null,
-                                    options, options[0]);
-                    if (discardedTrainName != null) {
-                        TrainI discardedTrain =
-                                trains.get(trainOptions.indexOf(discardedTrainName));
-
-                        dt.setDiscardedTrain(discardedTrain);
-
-                        orWindow.process(dt);
-                    }
+                    gameUIManager.discardTrains(dt);
                 }
             }
 

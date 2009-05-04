@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.16 2009/02/04 20:36:39 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.17 2009/05/04 20:29:14 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -9,9 +9,12 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.game.action.ExchangeTokens;
+import rails.game.action.ExchangeableToken;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.move.CashMove;
+import rails.game.move.MoveSet;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 
@@ -27,6 +30,8 @@ public abstract class Round implements RoundI {
 
     protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
+    
+    protected Class<? extends RoundI> roundTypeForUI = null;
 
     /** Default constructor cannot be used */
     private Round () {}
@@ -47,6 +52,7 @@ public abstract class Round implements RoundI {
             companyManager = aGameManager.getCompanyManager();
         }
 
+        roundTypeForUI = getClass();
 	}
 
     /*
@@ -89,6 +95,10 @@ public abstract class Round implements RoundI {
         return this.getClass();
     }
 
+    public void setRoundTypeForUI(Class<? extends RoundI> roundTypeForUI) {
+        this.roundTypeForUI = roundTypeForUI;
+    }
+
      /*
      * (non-Javadoc)
      *
@@ -112,6 +122,83 @@ public abstract class Round implements RoundI {
     public boolean process(PossibleAction action) {
         return true;
     }
+
+    protected boolean exchangeTokens (ExchangeTokens action) {
+        
+        String errMsg = null;
+        
+        List<ExchangeableToken> tokens = action.getTokensToExchange();
+        int min = action.getMinNumberToExchange();
+        int max = action.getMaxNumberToExchange();
+        int exchanged = 0;
+        
+        checks: {
+
+            for (ExchangeableToken token : tokens) {
+                if (token.isSelected()) exchanged++;
+            }
+            if (exchanged < min || exchanged > max) {
+                errMsg = LocalText.getText("WrongNumberOfTokensExchanged",
+                        action.getCompany(),
+                        min, max, exchanged);
+                break checks;
+            }
+        }
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotExchangeTokens",
+                    action.getCompany(),
+                    action.toString(),
+                    errMsg));
+
+            return false;
+        }
+
+        MoveSet.start(true);
+        
+        if (exchanged > 0) {
+            MapHex hex;
+            City city;
+            String cityName, hexName;
+            int cityNumber;
+            String[] ct;
+            PublicCompanyI comp = action.getCompany();
+            
+            for (ExchangeableToken token : tokens) {
+                cityName = token.getCityName();
+                ct = cityName.split("/");
+                hexName = ct[0];
+                try {
+                    cityNumber = Integer.parseInt(ct[1]);
+                } catch (NumberFormatException e) {
+                    cityNumber = 1;
+                }
+                hex = MapManager.getInstance().getHex(hexName);
+                city = hex.getCity(cityNumber);
+
+                if (token.isSelected()) {
+                   
+                    // For now we'll assume that the old token(s) have already been removed.
+                    // This is true in the 1856 CGR formation.
+                    if (hex.layBaseToken(comp, city.getNumber())) {
+                        /* TODO: the false return value must be impossible. */
+                        ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                                comp.getName(), 
+                                token.getOldCompanyName(),
+                                city.getName()));
+                        comp.layBaseToken(hex, 0);
+                    }
+                } else {
+                    ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
+                            comp.getName(),
+                            city.getName()));
+                }
+            }
+        }
+        
+        return true;
+    }
+    
 
     /**
      * Default version, does nothing. Subclasses should override this method

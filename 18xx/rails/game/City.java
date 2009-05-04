@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.7 2009/01/03 18:24:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class City implements TokenHolderI {
     /**
      * @return Returns the holder.
      */
-    public Object getHolder() {
+    public MapHex getHolder() {
         return mapHex;
     }
 

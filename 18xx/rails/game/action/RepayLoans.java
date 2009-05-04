@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.3 2009/02/04 20:36:40 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.4 2009/05/04 20:29:15 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -95,7 +95,7 @@ public class RepayLoans extends PossibleAction {
          .append(" minNumber=").append(minNumber)
          .append(" maxNumber=").append(maxNumber)
          .append(" value=").append(price);
-        if (numberRepaid != 0) {
+        if (acted) {
             b.append(" numberRepaid="+numberRepaid);
         }
         return b.toString();

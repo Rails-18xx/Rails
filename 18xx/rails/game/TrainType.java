@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.20 2009/01/03 18:24:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.21 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,6 +40,8 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
     protected IntegerState numberBoughtFromIPO;
 
     protected boolean obsoleting = false;
+    
+    protected boolean permanent = true;
 
     private boolean real; // Only to determine if top-level attributes must be
     // read.
@@ -247,13 +249,6 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
     }
 
     /**
-     * @return Returns the amount.
-     */
-    /*
-     * public int getAmount() { return amount; }
-     */
-
-    /**
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {
@@ -382,6 +377,14 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
      */
     public void setRustedTrainType(TrainTypeI rustedTrainType) {
         this.rustedTrainType = rustedTrainType;
+    }
+
+    public boolean isPermanent() {
+        return permanent;
+    }
+
+    public void setPermanent(boolean permanent) {
+        this.permanent = permanent;
     }
 
     /**

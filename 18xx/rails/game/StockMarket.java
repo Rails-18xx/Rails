@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.14 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.15 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -215,6 +215,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         }
         prepareMove(company, oldsquare, newsquare);
     }
+    
+    public void close (PublicCompanyI company) {
+        prepareMove(company, company.getCurrentSpace(), null);
+    }
 
     protected void moveDown(PublicCompanyI company, int numberOfSpaces) {
         StockSpaceI oldsquare = company.getCurrentSpace();
@@ -293,8 +297,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
                     Bank.format(from.getPrice()),
                     from.getName() ));
             return;
-        } else if (from == null && to != null) {} else if (from != null
-                                                           && to != null) {
+        } else if (from == null && to != null) {
+            ;
+        } else if (from != null && to != null) {
             ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
                     company.getName(),
                     Bank.format(from.getPrice()),

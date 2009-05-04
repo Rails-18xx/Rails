@@ -2,8 +2,7 @@ package rails.ui.swing;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -12,10 +11,9 @@ import org.apache.log4j.Logger;
 
 import rails.common.Defs;
 import rails.game.*;
-import rails.game.action.GameAction;
-import rails.game.action.PossibleAction;
-import rails.util.Config;
-import rails.util.Util;
+import rails.game.action.*;
+import rails.ui.swing.elements.CheckBoxDialog;
+import rails.util.*;
 
 /**
  * This class is called by main() and loads all of the UI components
@@ -54,7 +52,13 @@ public class GameUIManager {
             Logger.getLogger(GameUIManager.class.getPackage().getName());
 
     public GameUIManager() {
+        
+    }
+    
+    public void init (GameSetupWindow gameSetupWindow) {
+        
         instance = this;
+        this.gameSetupWindow = gameSetupWindow;
 
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
@@ -70,7 +74,7 @@ public class GameUIManager {
             saveExtension = DEFAULT_SAVE_EXTENSION;
         }
 
-        gameSetupWindow = new GameSetupWindow(this);
+        //gameSetupWindow = new GameSetupWindow(this);
 
     }
 
@@ -96,19 +100,30 @@ public class GameUIManager {
         updateUI();
 
     }
+    
+    public void startLoadedGame() {
+        gameUIInit();
+        processOnServer(null);
+        statusWindow.setGameActions();
+    }
 
     public boolean processOnServer(PossibleAction action) {
 
         // In some cases an Undo requires a different follow-up
         lastAction = action;
-
+        if (action != null) action.setActed();
+        
         log.debug("==Passing to server: " + action);
 
         Player player = getCurrentPlayer();
         if (action != null && player != null) {
             action.setPlayerName(player.getName());
         }
+        
+        // Process the action on the server
         boolean result = gameManager.process(action);
+        
+        // Follow-up the result
         log.debug("==Result from server: " + result);
         if (DisplayBuffer.getAutoDisplay()) activeWindow.displayServerMessage();
 
@@ -148,84 +163,250 @@ public class GameUIManager {
                   + previousRound);
         // Process consequences of a round type change to the UI
 
+        Class<? extends RoundI> previousRoundType
+                = previousRound == null ? null : previousRound.getClass();
+        Class<? extends RoundI> currentRoundType
+                = currentRound.getClass();
         Class<? extends RoundI> previousRoundUItype
                 = previousRound == null ? null : previousRound.getRoundTypeForUI();
         Class<? extends RoundI> currentRoundUItype
                 = currentRound.getRoundTypeForUI();
 
+        /* Distinguish actual round type from visible round type.
+         * Actual round type is the class of the active Round subclass.
+         * Visible round type is the class of one of the three 'basic'
+         * round types: Start, Stock or Operating. 
+         * The latter type determines what UI windows will become visible.
+         */
+        
+        /* Process actual round type changes */
         if (previousRound == null || !previousRound.equals(currentRound)) {
 
+            /* Finish previous round UI processing */
             if (previousRound != null) {
-                // Finish the previous round UI aspects
-                //if (previousRound instanceof StockRound) {
-                if (StockRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Finishing Stock Round UI");
+
+                if (StockRound.class.isAssignableFrom(previousRoundType)) {
+                    log.debug("UI leaving Stock Round");
                     statusWindow.finishRound();
-                //} else if (previousRound instanceof StartRound) {
-                } else if (StartRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Finishing Start Round UI");
+                } else if (StartRound.class.isAssignableFrom(previousRoundType)) {
+                    log.debug("UI leaving Start Round");
                     if (startRoundWindow != null) {
                         startRoundWindow.close();
                         startRoundWindow = null;
                     }
-                //} else if (previousRound instanceof OperatingRound) {
-                } else if (OperatingRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Finishing Operating Round UI");
+                } else if (OperatingRound.class.isAssignableFrom(previousRoundType)) {
+                    log.debug("UI leaving Operating Round");
                     orUIManager.finish();
+                } else if (SwitchableUIRound.class.isAssignableFrom(previousRoundType) ) {
+                    log.debug("UI leaving switchable round type");
                 }
             }
 
-            // Start the new round UI aspects
-            //if (currentRound instanceof StartRound) {
-            if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
+            // Start the new round UI processing
+            if (StartRound.class.isAssignableFrom(currentRoundType)) {
 
-                log.debug("Entering Start Round UI");
+                log.debug("UI entering Start Round");
                 startRound = (StartRound) currentRound;
                 if (startRoundWindow == null) {
                     startRoundWindow = new StartRoundWindow(startRound, this);
                 }
 
+            } else if (StockRound.class.isAssignableFrom(currentRoundType)) {
+
+                log.debug("UI entering Stock Round");
+
+            } else if (OperatingRound.class.isAssignableFrom(currentRoundType)) {
+
+                log.debug("UI entering Operating Round");
+                orUIManager.initOR((OperatingRound) currentRound);
+            } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
+                log.debug("UI entering switchable round type");
+            }
+        }
+
+        /* Process visible round type changes */
+        if (previousRoundUItype == null || !previousRoundUItype.equals(currentRoundUItype)) {
+
+            if (previousRoundUItype != null) {
+                // Finish the previous round UI aspects
+                if (StockRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Leaving Stock Round UI type");
+                } else if (StartRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Leaving Start Round UI type");
+                } else if (OperatingRound.class.isAssignableFrom(previousRoundUItype)) {
+                    log.debug("Leaving Operating Round UI type");
+                    orWindow.setVisible(false);
+                }
+            }
+
+            // Start the new round UI aspects
+             if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
+
+                log.debug("Entering Start Round UI type");
+                activeWindow = startRoundWindow;
                 stockChart.setVisible(false);
 
-            //} else if (currentRound instanceof StockRound) {
             } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
 
-                log.debug("Entering Stock Round UI");
+                log.debug("Entering Stock Round UI type");
+                activeWindow = statusWindow;
                 stockChart.setVisible(true);
                 statusWindow.setVisible(true);
 
-            //} else if (currentRound instanceof OperatingRound) {
             } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
 
-                log.debug("Entering Operating Round UI");
+                log.debug("Entering Operating Round UI type ");
+                activeWindow = orWindow;
                 stockChart.setVisible(false);
-                orUIManager.initOR((OperatingRound) currentRound);
+                orWindow.setVisible(true);
             }
         }
 
         statusWindow.setupFor(currentRound);
         previousRound = currentRound;
 
-        // Update the current round window
-        //if (currentRound instanceof StartRound) {
+        // Update the currently visible round window
+        // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
-            activeWindow = startRoundWindow;
 
+            log.debug("Updating Start round window");
             startRoundWindow.updateStatus();
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
-        //} else if (currentRound instanceof StockRound) {
         } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
-            activeWindow = statusWindow;
 
+            log.debug("Updating Stock (status) round window");
             statusWindow.updateStatus();
 
-        //} else if (currentRound instanceof OperatingRound) {
         } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
-            activeWindow = orUIManager.getORWindow();
 
+            log.debug("Updating Operating round window");
             orUIManager.updateStatus();
 
+        } else {
+            // Handle special rounds that do not fall in a standard category
+            // The round must indicate which main window to raise
+            if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
+                log.debug("Updating switched Stock (status) round window");
+                activeWindow = statusWindow;
+            } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
+                log.debug("Updating switched Operating round window");
+                activeWindow = orWindow;
+            }
+            updateStatus(activeWindow);
+        }
+    }
+    
+    /** Stub, to be overridden in subclasses for special round types */ 
+    protected void updateStatus(ActionPerformer activeWindow) {
+        
+    }
+
+    public void discardTrains (DiscardTrain dt) {
+
+        PublicCompanyI c = dt.getCompany();
+        String playerName = dt.getPlayerName();
+        List<TrainI> trains = dt.getOwnedTrains();
+        int size = trains.size() + (dt.isForced() ? 0 : 1);
+        List<String> trainOptions =
+                new ArrayList<String>(size);
+        String[] options = new String[size];
+        String prompt = null;
+
+        int j = 0;
+        if (!dt.isForced()) {
+            trainOptions.add(
+                    options[j++] = LocalText.getText("None")
+            );
+            prompt = LocalText.getText("MayDiscardTrain",
+                    c.getName());
+        }
+        int offset = j;
+        for (int i = 0; i < trains.size(); i++) {
+            trainOptions.add(
+                    options[j++] = LocalText.getText("N_Train",
+                            trains.get(i).getName())
+            );
+        }
+        if (prompt == null) prompt = LocalText.getText(
+                "HAS_TOO_MANY_TRAINS",
+                playerName,
+                c.getName() );
+        String discardedTrainName =
+                (String) JOptionPane.showInputDialog(orWindow,
+                        prompt,
+                        LocalText.getText("WhichTrainToDiscard"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        options, options[0]);
+        if (discardedTrainName != null) {
+            int index = trainOptions.indexOf(discardedTrainName);
+            if (index >= offset) {
+                TrainI discardedTrain =
+                        trains.get(trainOptions.indexOf(discardedTrainName)-offset);
+                dt.setDiscardedTrain(discardedTrain);
+            }
+
+            orWindow.process(dt);
+        }
+    }
+
+    public void exchangeTokens (ExchangeTokens action) {
+
+        int index, cityNumber;
+        String prompt, cityName, hexName, oldCompName;
+        String[] ct;
+        MapHex hex;
+        List<String> options = new ArrayList<String>();
+        City city;
+        List<ExchangeableToken> oldTokens = action.getTokensToExchange();
+
+        for (ExchangeableToken t : oldTokens) {
+            cityName = t.getCityName();
+            ct = cityName.split("/");
+            hexName = ct[0];
+            try {
+                cityNumber = Integer.parseInt(ct[1]);
+            } catch (NumberFormatException e) {
+                cityNumber = 1;
+            }
+            hex = orWindow.getMapPanel().getMap().getHexByName (hexName).getHexModel();
+            city = hex.getCity(cityNumber);
+            oldCompName = t.getOldCompanyName();
+            options.add(LocalText.getText("ExchangeableToken",
+                    oldCompName,
+                    hexName,
+                    hex.getCityName(),
+                    cityNumber,
+                    city.getTrackEdges()));
+        }
+
+
+        int minNumber = action.getMinNumberToExchange();
+        int maxNumber = action.getMaxNumberToExchange();
+        if (minNumber == maxNumber) {
+            prompt = LocalText.getText("ExchangeTokensPrompt1",
+                    minNumber,
+                    action.getCompanyName());
+        } else {
+            prompt = LocalText.getText("ExchangeTokensPrompt2",
+                    minNumber, maxNumber,
+                    action.getCompanyName());
+        }
+
+        if (options.size() > 0) {
+            orWindow.setVisible(true);
+            boolean[] exchanged =
+                new CheckBoxDialog(orWindow.getORPanel(),
+                        LocalText.getText("ExchangeTokens"),
+                        prompt,
+                        options.toArray(new String[0]))
+                    .getSelectedOptions();
+            for (index=0; index < options.size(); index++) {
+                if (exchanged[index]) {
+                    oldTokens.get(index).setSelected(true);
+                }
+            }
+            orWindow.process(action);
         }
     }
 
@@ -256,6 +437,7 @@ public class GameUIManager {
         }
     }
 
+    /*
     public boolean loadGame() {
 
         JFileChooser jfc = new JFileChooser();
@@ -284,6 +466,7 @@ public class GameUIManager {
 
         return true;
     }
+    */
 
     public PossibleAction getLastAction() {
         return lastAction;

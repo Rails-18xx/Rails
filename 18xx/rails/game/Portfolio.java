@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.32 2009/01/24 15:10:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.33 2009/05/04 20:29:14 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -163,7 +163,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     public void addCertificate(PublicCertificateI certificate) {
         // When undoing a company start, put the President back at the top.
-        boolean atTop = certificate.isPresidentShare() && this == Bank.getIpo();
+        boolean atTop = certificate.isPresidentShare()/* && this == Bank.getIpo()*/;
 
         if (atTop)
             certificates.add(0, certificate);

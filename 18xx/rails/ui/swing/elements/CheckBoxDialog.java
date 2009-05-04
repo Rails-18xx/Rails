@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.1 2008/11/20 21:46:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.2 2009/05/04 20:29:14 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -50,7 +50,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
 
         initialize();
         pack();
-
+        this.setVisible(true);
         // Center on owner
         int x =
                 (int) owner.getLocationOnScreen().getX()
@@ -60,7 +60,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
                         + (owner.getHeight() - getHeight()) / 2;
         setLocation(x, y);
 
-        this.setVisible(true);
+
     }
 
     private void initialize() {

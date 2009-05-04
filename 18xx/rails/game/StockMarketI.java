@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.7 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -30,6 +30,8 @@ public interface StockMarketI {
     public void soldOut(PublicCompanyI company);
 
     public void moveUp(PublicCompanyI company);
+    
+    public void close (PublicCompanyI company);
 
     public int getNumberOfColumns();
 

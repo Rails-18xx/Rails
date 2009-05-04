@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.6 2008/06/04 19:00:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.7 2009/05/04 20:29:15 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
@@ -42,6 +42,7 @@ public class NSHexMap extends HexMap {
 
                     hex.setHexModel(mh);
                     hex.originalTileId = hex.currentTileId;
+                    hexesByName.put(mh.getName(), hex);
 
                     h[i][j] = hex;
                     hexes.add(hex);

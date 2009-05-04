@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.48 2009/01/24 15:10:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.49 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -874,6 +874,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         treasury.update();
 
         Util.moveObjects(laidBaseTokens, this);
+        StockMarket.getInstance().close(this);
+        
     }
 
     /**

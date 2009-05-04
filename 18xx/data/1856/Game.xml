@@ -5,6 +5,7 @@
 		<StockRound class="rails.game.specific._1856.StockRound_1856" 
 			sequence="SellBuyOrBuySell"/>
 		<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
+		<GameUIManager class="rails.game.specific._1856.GameUIManager_1856"/>
 		<StatusWindow class="rails.ui.swing.gamespecific._1856.StatusWindow_1856"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
