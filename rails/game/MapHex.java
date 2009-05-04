@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.22 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.23 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -749,6 +749,19 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             token.setHolder(this);
             return offStationTokens.add(token);
         }
+    }
+    
+    public List<BaseToken> getBaseTokens () {
+        if (cities == null || cities.isEmpty()) return null;
+        List<BaseToken> tokens = new ArrayList<BaseToken>();
+        for (City city : cities) {
+            for (TokenI token : city.getTokens()) {
+                if (token instanceof BaseToken) {
+                    tokens.add((BaseToken)token);
+                }
+            }
+        }
+        return tokens;
     }
 
     public List<TokenI> getTokens() {

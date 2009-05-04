@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.7 2009/01/03 18:24:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI {
@@ -93,7 +93,11 @@ public interface TrainTypeI {
     public String getReleasedTrainTypeName();
 
     public String getRustedTrainTypeName();
-
+    
+    public boolean isPermanent();
+    
+    public void setPermanent(boolean permanent);
+ 
     public void setReleasedTrainType(TrainTypeI releasedTrainType);
 
     public void setRustedTrainType(TrainTypeI rustedTrainType);

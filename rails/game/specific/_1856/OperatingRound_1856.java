@@ -1,6 +1,8 @@
 package rails.game.specific._1856;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import rails.game.*;
@@ -431,7 +433,8 @@ public class OperatingRound_1856 extends OperatingRound {
         if (savedAction == null) {
             // End of CGRFormationRound
             finalLoanRepaymentPending.set(false);
-            if (setNextOperatingCompany(false)) {
+            resetOperatingCompanies();
+            if (operatingCompany != null) {
                 setStep(STEP_INITIAL);
             } else {
                 finishOR();
@@ -441,6 +444,54 @@ public class OperatingRound_1856 extends OperatingRound {
         }
     }
 
+    private void resetOperatingCompanies() {
+
+        int lastOperatingCompanyIndex = operatingCompanyIndex;
+        // Find the first company that has not yet operated
+        // and is not closed.
+        while (setNextOperatingCompany(false) 
+                && getOperatingCompany().isClosed());
+        
+        List<PublicCompanyI> companies 
+                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
+        PublicCompanyI company;
+        PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
+        int index = 0;
+        boolean cgrCanOperate = true;
+        for (Iterator<PublicCompanyI> it = companies.iterator();
+                it.hasNext(); ) {
+            company = it.next();
+            if (company.isClosed()) {
+                if (index <= lastOperatingCompanyIndex) cgrCanOperate = false;
+                it.remove();
+            }
+        }
+        
+        if (operatingCompany != null) {
+            operatingCompanyIndex = companies.indexOf(operatingCompany);
+        }
+        
+        for (PublicCompanyI c : companies) {
+            log.debug("Now operating: "+c.getName());
+        }
+        
+        String message;
+        if (cgrCanOperate) {
+            operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
+            companies.add(operatingCompanyIndex, cgr);
+            operatingCompany = cgr;
+            message = LocalText.getText("CanOperate", cgr.getName());
+        } else {
+            message = LocalText.getText("CannotOperate", cgr.getName());
+        }
+        ReportBuffer.add (message);
+        DisplayBuffer.add(message);
+
+        operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
+        operatingCompanyIndexObject.set(operatingCompanyIndex);
+        
+        log.debug ("Next operating company: "+operatingCompany.getName());
+    }   
 
     @Override
     protected void finishTurn() {

@@ -6,6 +6,7 @@ public class Defs {
 
     /* Identifiers and default names for configurable UI classes */
     public enum ClassName {
+        GAME_UI_MANAGER,
         OR_UI_MANAGER,
         STATUS_WINDOW,
         GAME_STATUS,
@@ -16,6 +17,8 @@ public class Defs {
         new EnumMap<Defs.ClassName, String> (Defs.ClassName.class);
 
     static {
+        defaultClasses.put (ClassName.GAME_UI_MANAGER,
+                "rails.ui.swing.GameUIManager");
         defaultClasses.put (ClassName.OR_UI_MANAGER,
                 "rails.ui.swing.ORUIManager");
         defaultClasses.put (ClassName.STATUS_WINDOW,

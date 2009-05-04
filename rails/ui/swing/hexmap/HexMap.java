@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.14 2008/06/04 19:00:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.15 2009/05/04 20:29:15 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -36,7 +36,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
     // GUI hexes need to be recreated for each object, since scale varies.
     protected GUIHex[][] h;
 
-    MapHex[][] hexArray;
+    protected MapHex[][] hexArray;
+    protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
     protected static ArrayList<GUIHex> hexes;
     protected int scale = 2 * Scale.get();
     protected int cx;
@@ -92,6 +93,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
 
         return null;
+    }
+    
+    public GUIHex getHexByName (String hexName) {
+        return hexesByName.get (hexName);
     }
 
     public void paintComponent(Graphics g) {

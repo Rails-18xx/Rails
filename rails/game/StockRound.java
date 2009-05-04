@@ -73,13 +73,13 @@ public class StockRound extends Round {
         if (unavailable == null) unavailable = Bank.getUnavailable();
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
-
-}
+        
+	}
 
     public void start() {
 
-        ReportBuffer.add("\n" + LocalText.getText("StartStockRound")
-                         + getStockRoundNumber());
+        ReportBuffer.add("\n" + LocalText.getText("StartStockRound",
+                         + getStockRoundNumber()));
 
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
 

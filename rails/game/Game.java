@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.21 2009/01/24 15:10:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.22 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -163,9 +163,9 @@ public class Game {
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean load(String filepath) {
+    public static Game load(String filepath) {
 
-        boolean result = false;
+        Game game = null;
 
         log.debug("Loading game from file " + filepath);
 
@@ -185,7 +185,7 @@ public class Game {
                     (Map<String, String>) ois.readObject();
             List<String> playerNames = (List<String>) ois.readObject();
 
-            Game game = new Game(name, playerNames, selectedGameOptions);
+            game = new Game(name, playerNames, selectedGameOptions);
 
             if (!game.setup()) {
                 throw new ConfigurationException("Error in setting up " + name);
@@ -202,14 +202,14 @@ public class Game {
 
             instance.gameManager.processOnReload(executedActions);
 
-            result = true;
+            return game;
 
         } catch (Exception e) {
             log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
 
-        return result;
+        return null;
     }
 
     /*----- Getters -----*/
@@ -253,6 +253,10 @@ public class Game {
      */
     public static PlayerManager getPlayerManager() {
         return instance.playerManager;
+    }
+    
+    public GameManagerI getGameManager() {
+        return gameManager;
     }
 
     /**

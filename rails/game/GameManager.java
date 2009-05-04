@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.44 2009/02/04 20:36:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.45 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -36,6 +36,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             OperatingRound.class;
 
     // Variable UI Class names
+    protected String gameUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_UI_MANAGER);
     protected String orUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.OR_UI_MANAGER);
     protected String gameStatusClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_STATUS);
     protected String statusWindowClassName = Defs.getDefaultClassName(Defs.ClassName.STATUS_WINDOW);
@@ -243,6 +244,15 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     gameEndsAfterSetOfORs = false;
                 }
             }
+        }
+
+        // GameUIManager class
+        Tag gameUIMgrTag = tag.getChild("GameUIManager");
+        if (gameUIMgrTag != null) {
+            gameUIManagerClassName =
+                    gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
+            // Check instantiatability (not sure if this belongs here)
+            canClassBeInstantiated (gameUIManagerClassName);
         }
 
         // ORUIManager class
@@ -930,6 +940,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         switch (key) {
 
+        case GAME_UI_MANAGER:
+            return gameUIManagerClassName;
+
         case OR_UI_MANAGER:
             return orUIManagerClassName;
 
@@ -977,6 +990,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             return null;
         }
 
+    }
+
+    public RoundI getInterruptedRound() {
+        return interruptedRound;
     }
 
 }

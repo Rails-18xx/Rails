@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.56 2009/02/04 20:43:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.57 2009/05/04 20:29:14 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -240,6 +240,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof RepayLoans) {
 
             result = repayLoans((RepayLoans) selectedAction);
+            
+        } else if (selectedAction instanceof ExchangeTokens) {
+            
+            result = exchangeTokens ((ExchangeTokens)selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -1174,6 +1178,7 @@ public class OperatingRound extends Round implements Observer {
         operatingCompanyIndex = operatingCompanyIndexObject.intValue();
 
         if (operatingCompanyIndex >= operatingCompanyArray.length) {
+            operatingCompany = null;
             return false;
         } else {
             operatingCompany = operatingCompanyArray[operatingCompanyIndex];
@@ -1750,20 +1755,17 @@ public class OperatingRound extends Round implements Observer {
         int remainder = 0;
 
         operatingCompany.addLoans(-number);
-        int amount = payment = number * operatingCompany.getValuePerLoan();
-        if (amount > operatingCompany.getCash()) {
-            // By now the president must have enough cash
-            payment = operatingCompany.getCash();
-            remainder = amount - payment;
-            if (payment > 0) {
-                new CashMove (operatingCompany, null, payment);
-                ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
-                    operatingCompany.getName(),
-                    Bank.format(payment),
-                    Bank.format(amount),
-                    number,
-                    Bank.format(operatingCompany.getValuePerLoan())));
-            }
+        int amount = number * operatingCompany.getValuePerLoan();
+        payment = Math.min(amount, operatingCompany.getCash());
+        remainder = amount - payment;
+        if (payment > 0) {
+            new CashMove (operatingCompany, null, payment);
+            ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
+                operatingCompany.getName(),
+                Bank.format(payment),
+                Bank.format(amount),
+                number,
+                Bank.format(operatingCompany.getValuePerLoan())));
         }
         if (remainder > 0) {
             Player president = operatingCompany.getPresident();
@@ -1784,7 +1786,7 @@ public class OperatingRound extends Round implements Observer {
     protected int calculateLoanAmount (int numberOfLoans) {
         return numberOfLoans * operatingCompany.getValuePerLoan();
     }
-
+    
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -2129,7 +2131,7 @@ public class OperatingRound extends Round implements Observer {
                 list = excessTrainCompanies.get(player);
                 for (PublicCompanyI comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
-                            comp.getPortfolio().getUniqueTrains()));
+                            comp.getPortfolio().getUniqueTrains(), true));
                     // We handle one company at at time.
                     // We come back here until all excess trains have been
                     // discarded.

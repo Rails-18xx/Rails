@@ -99,6 +99,7 @@
   <Company name="CGR" type="Public" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
 	<!-- Initially 20 shares are configured-->
     <ShareUnit percentage="5"/>
+	<Trains number="0,0,0,3"/>
 	<Certificate type="President" shares="2"/>
     <Certificate shares="1" number="18"/>
   </Company>

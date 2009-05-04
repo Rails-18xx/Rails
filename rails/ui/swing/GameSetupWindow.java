@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.12 2008/06/04 19:00:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.13 2009/05/04 20:29:15 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -7,10 +7,12 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Defs;
 import rails.game.*;
 import rails.ui.swing.GameUIManager;
 import rails.util.*;
 
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     List<JComponent> optionComponents = new ArrayList<JComponent>();
     List<GameOption> availableOptions = new ArrayList<GameOption>();
     String gameName;
+    Game game;
 
     // Used by the player selection combo box.
     static final int NONE_PLAYER = 0;
@@ -45,10 +48,10 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(GameSetupWindow.class.getPackage().getName());
 
-    public GameSetupWindow(GameUIManager gameUIManager) {
+    public GameSetupWindow(/*GameUIManager gameUIManager*/) {
         super();
 
-        this.gameUIManager = gameUIManager;
+        //this.gameUIManager = gameUIManager;
 
         initialize();
         populateGridBag();
@@ -192,8 +195,30 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         } else if (arg0.getSource().equals(optionButton)) {
             toggleOptions();
             this.pack();
-        } else if (arg0.getSource().equals(loadButton)
-                   && gameUIManager.loadGame()) {
+        } else if (arg0.getSource().equals(loadButton)) {
+            String saveDirectory = Config.get("save.directory");
+            JFileChooser jfc = new JFileChooser();
+            //if (providedName != null) {
+           //    jfc.setSelectedFile(new File(providedName));
+            //} else {
+                jfc.setCurrentDirectory(new File(saveDirectory));
+            //}
+
+            if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+                String filepath = selectedFile.getPath();
+                saveDirectory = selectedFile.getParent();
+                if ((game = Game.load(filepath)) == null) {
+                    JOptionPane.showMessageDialog(this,
+                            DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                DisplayBuffer.clear();
+
+            }
+
+            startGameUIManager(game);
+            gameUIManager.startLoadedGame();
             setVisible(false);
         } else if (arg0.getSource().equals(infoButton)) {
             JOptionPane.showMessageDialog(this,
@@ -343,7 +368,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         }
 
-        Game game = new Game(gameName, playerNames, selectedOptions);
+        game = new Game(gameName, playerNames, selectedOptions);
         if (!game.setup()) {
             JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
                     JOptionPane.ERROR_MESSAGE);
@@ -354,11 +379,25 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             System.exit(-1);
         } else {
             game.start();
+            startGameUIManager (game);
             gameUIManager.gameUIInit();
         }
 
         this.setVisible(false); // XXX: At some point we should destroy this
         // XXX: object rather than just making it invisible
+    }
+    
+    private void startGameUIManager(Game game) {
+        String gameUIManagerClassName = game.getGameManager().getClassName(Defs.ClassName.GAME_UI_MANAGER);
+        try {
+            Class<? extends GameUIManager> gameUIManagerClass =
+                Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
+            gameUIManager = gameUIManagerClass.newInstance();
+            gameUIManager.init(this);
+        } catch (Exception e) {
+            log.fatal("Cannot instantiate class " + gameUIManagerClassName, e);
+            System.exit(1);
+        }
     }
 
     private void fillPlayersPane() {
