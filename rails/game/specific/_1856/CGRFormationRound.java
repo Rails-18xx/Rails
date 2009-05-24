@@ -493,13 +493,53 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else {
             executeExchangeTokens (nonHomeTokens);
         }
-
-        // Close the absorbed companies and float the CGR
+        
+        // Determine the CGR starting price, 
+        // and close the absorbed companies.
+        int lowestPrice = 999;
+        int totalPrice = 0;
+        int price;
+        int numberMerged = mergingCompanies.size();
         for (PublicCompanyI comp : mergingCompanies) {
+            price = comp.getMarketPrice();
+            totalPrice += price;
+            if (price < lowestPrice) lowestPrice = price;
             comp.setClosed();
         }
-        cgr.start(100); // TODO: assign correct starting price
+        if (numberMerged >= 3) {
+            totalPrice -= lowestPrice;
+            numberMerged--;
+        }
+        int cgrPrice = Math.max(100, ((int)((totalPrice/numberMerged)/5))*5);
+        
+        // Find the correct start space and start the CGR
+        if (cgrPrice == 100) {
+            cgr.start(100);
+        } else {
+            StockMarketI sm = StockMarket.getInstance();
+            int prevColPrice = 100;
+            int colPrice;
+            StockSpaceI startSpace;
+            for (int col=6; col <= sm.getNumberOfColumns(); col++) {
+                colPrice = sm.getStockSpace(1, col).getPrice();
+                if (cgrPrice > colPrice) continue;
+                if (cgrPrice - prevColPrice < colPrice - cgrPrice) {
+                    startSpace = sm.getStockSpace(1, col-1);
+                } else {
+                    startSpace = sm.getStockSpace(1, col);
+                }
+                cgr.start(startSpace);
+                message = LocalText.getText("START_MERGED_COMPANY",
+                        "CGR", 
+                        Bank.format(startSpace.getPrice()), 
+                        startSpace.getName());
+                DisplayBuffer.add(message);
+                ReportBuffer.add(message);
+                break;
+            }
+        }
         cgr.setFloated();
+        ReportBuffer.add (LocalText.getText("Floats", "CGR"));
 
         // Check the trains, autodiscard any excess non-permanent trains
         int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
