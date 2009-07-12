@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.57 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.58 2009/07/12 21:06:18 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -185,6 +185,7 @@ public class OperatingRound extends Round implements Observer {
     public boolean process(PossibleAction action) {
 
         boolean result = false;
+        doneAllowed = false;
 
         /*--- Common OR checks ---*/
         /* Check operating company */
@@ -1737,6 +1738,8 @@ public class OperatingRound extends Round implements Observer {
         MoveSet.start(true);
 
         if (repayment > 0) executeRepayLoans (action);
+        
+        doneAllowed = true;
 
         return true;
     }
@@ -1849,7 +1852,6 @@ public class OperatingRound extends Round implements Observer {
         /* Create a new list of possible actions for the UI */
         possibleActions.clear();
         selectedAction = null;
-        doneAllowed = false;
 
         int step = getStep();
 
