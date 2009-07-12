@@ -455,7 +455,8 @@ public class CGRFormationRound extends SwitchableUIRound {
             List<BaseToken> otherTokens = hex.getBaseTokens();
             if (otherTokens != null) {
                 for (BaseToken token2 : otherTokens) {
-                    if (token2.getCompany() == cgr) {
+                    if (token2.getCompany() == cgr
+                            || nonHomeTokens.contains(token2) && token2 != token) {
                         ReportBuffer.add(LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getCompany().getName(),
                                 city.getName()));
