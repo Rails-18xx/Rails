@@ -70,12 +70,20 @@ public class CGRFormationRound extends SwitchableUIRound {
                 companiesToRepayLoans.get(president).add(company);
             }
         }
+        
+        if (companiesToRepayLoans == null) {
+            finishRound();
+            return;
+        }
 
         setStep(STEP_REPAY_LOANS);
 
         setCurrentPlayer (startingPlayer);
 
-        setNextCompanyNeedingPresidentIntervention();
+        if (!setNextCompanyNeedingPresidentIntervention()) {
+            finishRound();
+            return;
+        }
     }
     
     private void setStep(int step) {

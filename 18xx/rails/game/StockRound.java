@@ -1136,11 +1136,6 @@ public class StockRound extends Round {
         gameManager.setPriorityPlayer();
     }
 
-    protected void finishRound() {
-        // Inform GameManager
-        gameManager.nextRound(this);
-    }
-
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**

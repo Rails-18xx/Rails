@@ -457,7 +457,7 @@ public class OperatingRound_1856 extends OperatingRound {
         PublicCompanyI company;
         PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
         int index = 0;
-        boolean cgrCanOperate = true;
+        boolean cgrCanOperate = cgr.hasStarted();
         for (Iterator<PublicCompanyI> it = companies.iterator();
                 it.hasNext(); ) {
             company = it.next();
@@ -476,13 +476,17 @@ public class OperatingRound_1856 extends OperatingRound {
         }
         
         String message;
-        if (cgrCanOperate) {
-            operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
-            companies.add(operatingCompanyIndex, cgr);
-            operatingCompany = cgr;
-            message = LocalText.getText("CanOperate", cgr.getName());
+        if (cgr.hasStarted()) {
+            if (cgrCanOperate) {
+                operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
+                companies.add(operatingCompanyIndex, cgr);
+                operatingCompany = cgr;
+                message = LocalText.getText("CanOperate", cgr.getName());
+            } else {
+                message = LocalText.getText("CannotOperate", cgr.getName());
+            }
         } else {
-            message = LocalText.getText("CannotOperate", cgr.getName());
+            message = LocalText.getText("DoesNotForm", cgr.getName());
         }
         ReportBuffer.add (message);
         DisplayBuffer.add(message);
