@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.17 2009/05/04 20:29:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.18 2009/07/14 20:49:34 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -317,6 +317,11 @@ public abstract class Round implements RoundI {
                 ipoCert.moveTo(company.getPortfolio());
             }
         }
+    }
+    
+    protected void finishRound() {
+        // Inform GameManager
+        gameManager.nextRound(this);
     }
 
     @Override
