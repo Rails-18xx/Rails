@@ -463,7 +463,7 @@ public class OperatingRound_1856 extends OperatingRound {
             company = it.next();
             if (company.isClosed()) {
                 if (index <= lastOperatingCompanyIndex) cgrCanOperate = false;
-                it.remove();
+                //it.remove();
             }
         }
         

@@ -80,10 +80,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         setCurrentPlayer (startingPlayer);
 
-        if (!setNextCompanyNeedingPresidentIntervention()) {
-            finishRound();
-            return;
-        }
+        process (null);
     }
     
     private void setStep(int step) {
@@ -586,7 +583,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
     
     public boolean process (PossibleAction action) {
         
-        boolean result = false;
+        boolean result = true;
         
         if (action instanceof RepayLoans) {
             result = repayLoans((RepayLoans)action);
