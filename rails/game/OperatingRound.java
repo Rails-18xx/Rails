@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.59 2009/07/14 20:49:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.60 2009/07/17 21:40:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2073,7 +2073,7 @@ public class OperatingRound extends Round implements Observer {
             // Sort out which players preside over wich companies.
             for (int j = 0; j < operatingCompanyArray.length; j++) {
                 c = operatingCompanyArray[j];
-                if (c == operatingCompany) continue;
+                if (c.isClosed() || c == operatingCompany) continue;
                 p = c.getPresident();
                 index = p.getIndex();
                 companiesPerPlayer.get(index).add(c);
