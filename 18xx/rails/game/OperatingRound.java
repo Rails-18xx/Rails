@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.60 2009/07/17 21:40:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.61 2009/07/19 19:24:21 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -175,7 +175,8 @@ public class OperatingRound extends Round implements Observer {
         String text = LocalText.getText("ShortORExecuted");
         ReportBuffer.add(text);
         DisplayBuffer.add(text);
-        gameManager.nextRound(this);
+        //gameManager.nextRound(this);
+        finishRound();
     }
 
 
@@ -1198,7 +1199,8 @@ public class OperatingRound extends Round implements Observer {
 
         // OR done. Inform GameManager.
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
-        gameManager.nextRound(this);
+        //gameManager.nextRound(this);
+        finishRound();
     }
 
     public boolean buyTrain(BuyTrain action) {
@@ -1403,6 +1405,7 @@ public class OperatingRound extends Round implements Observer {
             executeRepayLoans ((RepayLoans) savedAction);
         }
         savedAction = null;
+        wasInterrupted.set(true);
     }
 
     public boolean discardTrain(DiscardTrain action) {

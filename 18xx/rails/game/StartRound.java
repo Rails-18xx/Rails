@@ -136,7 +136,8 @@ public abstract class StartRound extends Round implements StartRoundI {
              * If the complete start packet has been sold, start a Stock round,
              */
             possibleActions.clear();
-            gameManager.nextRound(this);
+            //gameManager.nextRound(this);
+            finishRound();
         } else if (!setPossibleActions()) {
             /*
              * If nobody can do anything, keep executing Operating and Start
@@ -144,7 +145,8 @@ public abstract class StartRound extends Round implements StartRoundI {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            gameManager.nextRound(this);
+            //gameManager.nextRound(this);
+            finishRound();
         }
 
         return result;
