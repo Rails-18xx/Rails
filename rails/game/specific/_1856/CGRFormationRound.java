@@ -603,6 +603,8 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             if (!mergingCompanies.isEmpty()) {
                 formCGR();
                 setStep (STEP_EXCHANGE_TOKENS);
+            } else {
+                gameManager.nextRound(this);
             }
         }
 
