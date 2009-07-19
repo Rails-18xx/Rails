@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.10 2009/02/04 20:36:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.11 2009/07/19 19:24:21 evos Exp $ */
 package rails.game;
 
 import rails.game.action.PossibleAction;
@@ -24,4 +24,5 @@ public interface RoundI {
 
     public boolean setPossibleActions();
 
+    public boolean wasInterrupted ();
 }

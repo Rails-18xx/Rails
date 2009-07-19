@@ -439,6 +439,7 @@ public class OperatingRound_1856 extends OperatingRound {
             } else {
                 finishOR();
             }
+            wasInterrupted.set(true);
         } else {
             super.resume();
         }

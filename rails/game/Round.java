@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.18 2009/07/14 20:49:34 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.19 2009/07/19 19:24:21 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -16,6 +16,7 @@ import rails.game.action.PossibleActions;
 import rails.game.move.CashMove;
 import rails.game.move.MoveSet;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.BooleanState;
 import rails.util.LocalText;
 
 /**
@@ -32,6 +33,7 @@ public abstract class Round implements RoundI {
     protected CompanyManagerI companyManager = null;
     
     protected Class<? extends RoundI> roundTypeForUI = null;
+    protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
 
     /** Default constructor cannot be used */
     private Round () {}
@@ -322,6 +324,10 @@ public abstract class Round implements RoundI {
     protected void finishRound() {
         // Inform GameManager
         gameManager.nextRound(this);
+    }
+    
+    public boolean wasInterrupted () {
+        return wasInterrupted.booleanValue();
     }
 
     @Override

@@ -604,7 +604,8 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
                 formCGR();
                 setStep (STEP_EXCHANGE_TOKENS);
             } else {
-                gameManager.nextRound(this);
+                //gameManager.nextRound(this);
+                finishRound();
             }
         }
 
@@ -622,7 +623,8 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         if (getStep() == STEP_DISCARD_TRAINS) {
  
             if (checkForTrainsToDiscard()) return true;
-            gameManager.nextRound(this);
+            //gameManager.nextRound(this);        
+            finishRound();
         }
 
         return true;

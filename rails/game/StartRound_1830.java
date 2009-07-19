@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.18 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.19 2009/07/19 19:24:21 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -334,7 +334,8 @@ public class StartRound_1830 extends StartRound {
                     }
                 } else {
                     numPasses.set(0);
-                    gameManager.nextRound(this);
+                    //gameManager.nextRound(this);
+                    finishRound();
 
                 }
             } else if (auctionItem != null) {
