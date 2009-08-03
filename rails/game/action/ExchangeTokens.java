@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeTokens.java,v 1.1 2009/05/04 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeTokens.java,v 1.2 2009/08/03 21:26:20 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -7,11 +7,8 @@ package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import rails.game.*;
 
 /**
  * @author Erik Vos
