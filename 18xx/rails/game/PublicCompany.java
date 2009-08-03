@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.49 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.50 2009/08/03 21:27:19 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -174,7 +174,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected Portfolio portfolio;
 
     /** What percentage of ownership constitutes "one share" */
-    protected int shareUnit = DEFAULT_SHARE_UNIT;
+    protected IntegerState shareUnit;
 
     /** At what percentage sold does the company float */
     protected int floatPerc = 0;
@@ -264,8 +264,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit =
-                    shareUnitTag.getAttributeAsInteger("percentage", shareUnit);
+            shareUnit = new IntegerState (name+"_ShareUnit", 
+                    shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
         }
 
         Tag homeBaseTag = tag.getChild("Home");
@@ -475,7 +475,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     certificate = new PublicCertificate(shares, president,
                             certIsInitiallyAvailable);
                     addCertificate(certificate);
-                    shareTotal += shares * shareUnit;
+                    shareTotal += shares * shareUnit.intValue();
                 }
             }
             if (shareTotal != 100)
@@ -627,6 +627,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
                                                  + name);
             currentPrice.setPrice(parPrice.getPrice());
 
+        }
+        
+        if (shareUnit == null) {
+            shareUnit = new IntegerState (name+"_ShareUnit", DEFAULT_SHARE_UNIT);
         }
 
         // Give each certificate an unique Id
@@ -1155,7 +1159,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         for (PublicCertificateI cert : certificates) {
             CashHolder recipient = getBeneficiary(cert);
-            part = amount * cert.getShares() * shareUnit / 100;
+            part = amount * cert.getShares() * shareUnit.intValue() / 100;
             // For reporting, we want to add up the amounts per recipient
             if (split.containsKey(recipient)) {
                 part += (split.get(recipient)).intValue();
@@ -1236,7 +1240,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit() {
-        return shareUnit;
+        return shareUnit.intValue();
     }
 
     @Override
@@ -1377,7 +1381,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public int getNumberOfShares() {
-        return 100 / shareUnit;
+        return 100 / shareUnit.intValue();
     }
 
     public int getTrainLimit(int phaseIndex) {

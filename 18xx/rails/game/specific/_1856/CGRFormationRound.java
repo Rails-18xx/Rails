@@ -390,8 +390,20 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         log.info(cgrSharesUsed+" CGR shares are now in play");
+        
+        // If no more than 10 shares are in play, the CGR share
+        // unit becomes 10%; otherwise it stays 5%.
+        if (cgrSharesUsed <=10) {
+            ((PublicCompany_1856)cgr).setShareUnit (10);
+            // All superfluous shares have been removed 
+        }
+        message = LocalText.getText("CompanyHasShares",
+                cgr.getName(), 100/cgr.getShareUnit(), cgr.getShareUnit());
+        DisplayBuffer.add(message);
+        ReportBuffer.add(message);
+       
         // Move the remaining CGR shares to the ipo.
-        // Must clone the list first
+        // Clone the shares list first
         certs = new ArrayList<PublicCertificateI>(unavailable.getCertificatesPerCompany("CGR"));
         for (PublicCertificateI cert : certs) {
             cert.moveTo(ipo);
