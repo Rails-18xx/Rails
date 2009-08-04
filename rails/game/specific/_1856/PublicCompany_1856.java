@@ -79,6 +79,7 @@ public class PublicCompany_1856 extends PublicCompany {
             for (PublicCertificateI cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);
+                    certificates.remove(cert);
                 } else {
                     share += cert.getShare();
                 }
@@ -91,7 +92,7 @@ public class PublicCompany_1856 extends PublicCompany {
             for (PublicCertificateI cert : certificates) {
                 portfolio = (Portfolio)cert.getHolder();
                 if (!done.contains(portfolio)) {
-                    portfolio.getShareModel(this).update();
+                    portfolio.getShareModel(this).setShare();
                     done.add(portfolio);
                 }
             }
