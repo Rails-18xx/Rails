@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.game.*;
 import rails.game.move.MoveableHolderI;
+import rails.game.move.RemoveFromList;
 import rails.game.state.IntegerState;
 
 public class PublicCompany_1856 extends PublicCompany {
@@ -79,7 +80,7 @@ public class PublicCompany_1856 extends PublicCompany {
             for (PublicCertificateI cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);
-                    certificates.remove(cert);
+                    new RemoveFromList<PublicCertificateI>(certificates, cert, "CGR_Certs");
                 } else {
                     share += cert.getShare();
                 }
