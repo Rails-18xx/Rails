@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.50 2009/08/03 21:27:19 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.51 2009/08/28 20:27:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -169,6 +169,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** The certificates of this company (minimum 1) */
     protected ArrayList<PublicCertificateI> certificates;
+    /** Are the certificates available from the first SR? */
+    boolean certsAreInitiallyAvailable = true;
 
     /** Privates and Certificates owned by the public company */
     protected Portfolio portfolio;
@@ -225,7 +227,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
     protected MoneyModel currentLoanValue = null;
-    
+
     protected GameManagerI gameManager;
 
     /**
@@ -259,12 +261,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
 
-        boolean certsAreInitiallyAvailable
-                = tag.getAttributeAsBoolean("available", true);
+        certsAreInitiallyAvailable
+                = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = new IntegerState (name+"_ShareUnit", 
+            shareUnit = new IntegerState (name+"_ShareUnit",
                     shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
         }
 
@@ -613,29 +615,33 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void init2(GameManagerI gameManager) 
+    public void init2(GameManagerI gameManager)
     throws ConfigurationException {
-        
+
         this.gameManager = gameManager;
-        
+
         if (hasStockPrice && Util.hasValue(startSpace)) {
             parPrice.setPrice(StockMarket.getInstance().getStockSpace(
                     startSpace));
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
-                                                 + startSpace + "for company "
+                                                 + startSpace + " for company "
                                                  + name);
             currentPrice.setPrice(parPrice.getPrice());
 
         }
-        
+
         if (shareUnit == null) {
             shareUnit = new IntegerState (name+"_ShareUnit", DEFAULT_SHARE_UNIT);
         }
 
         // Give each certificate an unique Id
+        PublicCertificateI cert;
         for (int i = 0; i < certificates.size(); i++) {
-            certificates.get(i).setUniqueId(name, i);
+            cert = certificates.get(i);
+            cert.setUniqueId(name, i);
+            cert.setInitiallyAvailable(cert.isInitiallyAvailable()
+            		&& this.certsAreInitiallyAvailable);
         }
 
         BaseToken token;
@@ -879,7 +885,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Util.moveObjects(laidBaseTokens, this);
         StockMarket.getInstance().close(this);
-        
+
     }
 
     /**
@@ -1015,10 +1021,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void setCertificates(List<PublicCertificateI> list) {
         certificates = new ArrayList<PublicCertificateI>();
-        PublicCertificateI cert2;
         for (PublicCertificateI cert : list) {
-            cert2 = cert.copy();
-            certificates.add(cert2);
+        	certificates.add(new PublicCertificate(cert));
         }
     }
 
@@ -1650,6 +1654,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int getMaxNumberOfLoans() {
         return maxNumberOfLoans;
+    }
+    
+    public boolean canLoan() {
+        return maxNumberOfLoans > 0;
     }
 
     public int getMaxLoansPerRound() {

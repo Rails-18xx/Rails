@@ -25,7 +25,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
     private List<BaseToken> nonHomeTokens = null;
-    
+
     private IntegerState stepObject = new IntegerState ("CGRFormStep", 0);
 
     public static final int STEP_REPAY_LOANS = 1;
@@ -70,7 +70,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 companiesToRepayLoans.get(president).add(company);
             }
         }
-        
+
         if (companiesToRepayLoans == null) {
             finishRound();
             return;
@@ -82,11 +82,11 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         process (null);
     }
-    
+
     private void setStep(int step) {
         stepObject.set(step);
     }
-    
+
     private int getStep() {
         return stepObject.intValue();
     }
@@ -215,20 +215,20 @@ public class CGRFormationRound extends SwitchableUIRound {
     }
 
     protected boolean repayLoans (RepayLoans action) {
-        
+
         // TODO Validation skipped for now...
 
         MoveSet.start(true);
-        
+
         PublicCompanyI company = action.getCompany();
         int numberRepaid = action.getNumberRepaid();
         int repayment = numberRepaid * company.getValuePerLoan();
-        
+
         if (repayment > 0) {
-        
+
             int repaymentByCompany = Math.min (repayment, company.getCash());
             int repaymentByPresident = repayment - repaymentByCompany;
-    
+
             company.addLoans(-numberRepaid);
             if (repaymentByCompany > 0) {
                 new CashMove (company, null, repaymentByCompany);
@@ -302,9 +302,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                     }
                 }
             }
-            
+
             if (oldShares > 0) {
-                
+
                 count = oldShares;
                 if (count >= 4 && temporaryPresident == null && cgrSharesUsed <= 18) {
                     cgrCert = cgr.getPresidentsShare();
@@ -321,7 +321,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     cgrSharesUsed++;
                     newShares++;
                 }
-    
+
                 String message = LocalText.getText("HasMergedShares",
                         player.getName(),
                         oldShares,
@@ -329,24 +329,24 @@ public class CGRFormationRound extends SwitchableUIRound {
                         "CGR");
                 DisplayBuffer.add(message, false);
                 ReportBuffer.add(message);
-    
+
                 if (count == 1) {
                     // Should work OK even if this is a president's share.
                     // In the pool we will treat all certs equally.
                     poolCert = certs.get(certs.size()-1);
                     poolCert.moveTo(pool);
                     certs.remove(poolCert);
-    
+
                     message = LocalText.getText("HasPutShareInPool",
                             player.getName());
                     DisplayBuffer.add(message, false);
                     ReportBuffer.add(message);
-    
+
                 }
                 // Note: old shares are removed when company is closed
-    
+
                 if (firstCGRowner == null) firstCGRowner = player;
-    
+
                 // Check for presidency
                 if (newShares > maxShares) {
                     maxShares = newShares;
@@ -390,18 +390,18 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         log.info(cgrSharesUsed+" CGR shares are now in play");
-        
+
         // If no more than 10 shares are in play, the CGR share
         // unit becomes 10%; otherwise it stays 5%.
         if (cgrSharesUsed <=10) {
-            ((PublicCompany_1856)cgr).setShareUnit (10);
-            // All superfluous shares have been removed 
+            ((PublicCompany_State)cgr).setShareUnit (10);
+            // All superfluous shares have been removed
         }
         message = LocalText.getText("CompanyHasShares",
                 cgr.getName(), 100/cgr.getShareUnit(), cgr.getShareUnit());
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
-       
+
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
         certs = new ArrayList<PublicCertificateI>(unavailable.getCertificatesPerCompany("CGR"));
@@ -511,8 +511,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else {
             executeExchangeTokens (nonHomeTokens);
         }
-        
-        // Determine the CGR starting price, 
+
+        // Determine the CGR starting price,
         // and close the absorbed companies.
         int lowestPrice = 999;
         int totalPrice = 0;
@@ -528,8 +528,8 @@ public class CGRFormationRound extends SwitchableUIRound {
             totalPrice -= lowestPrice;
             numberMerged--;
         }
-        int cgrPrice = Math.max(100, ((int)((totalPrice/numberMerged)/5))*5);
-        
+        int cgrPrice = Math.max(100, (((totalPrice/numberMerged)/5))*5);
+
         // Find the correct start space and start the CGR
         if (cgrPrice == 100) {
             cgr.start(100);
@@ -548,8 +548,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
-                        "CGR", 
-                        Bank.format(startSpace.getPrice()), 
+                        "CGR",
+                        Bank.format(startSpace.getPrice()),
                         startSpace.getName());
                 DisplayBuffer.add(message);
                 ReportBuffer.add(message);
@@ -592,11 +592,12 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             }
         }
     }
-    
-    public boolean process (PossibleAction action) {
-        
+
+    @Override
+	public boolean process (PossibleAction action) {
+
         boolean result = true;
-        
+
         if (action instanceof RepayLoans) {
             result = repayLoans((RepayLoans)action);
         } else if (action instanceof DiscardTrain) {
@@ -605,13 +606,13 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             result = exchangeTokens ((ExchangeTokens)action);
         }
         if (!result) return false;
-        
+
         if (getStep() == STEP_REPAY_LOANS) {
-            
+
             if (setNextCompanyNeedingPresidentIntervention()) {
                 return true;
             }
-            
+
             if (!mergingCompanies.isEmpty()) {
                 formCGR();
                 setStep (STEP_EXCHANGE_TOKENS);
@@ -621,7 +622,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             }
         }
 
-        if (getStep() == STEP_EXCHANGE_TOKENS) { 
+        if (getStep() == STEP_EXCHANGE_TOKENS) {
 
             if (action instanceof ExchangeTokens) {
                 tokensToExchangeFrom = null;
@@ -631,18 +632,18 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             }
             setStep (STEP_DISCARD_TRAINS);
         }
-        
+
         if (getStep() == STEP_DISCARD_TRAINS) {
- 
+
             if (checkForTrainsToDiscard()) return true;
-            //gameManager.nextRound(this);        
+            //gameManager.nextRound(this);
             finishRound();
         }
 
         return true;
     }
-    
-    
+
+
     private boolean checkForTrainsToDiscard () {
 
         // Check if CGR must discard trains
