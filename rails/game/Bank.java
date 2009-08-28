@@ -1,6 +1,6 @@
 package rails.game;
 
-import java.util.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -63,7 +63,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 
     /**
      * Central method for transferring all cash.
-     * 
+     *
      * @param from Who pays the money (null = Bank).
      * @param to Who received the money (null = Bank).
      * @param amount The amount of money.
@@ -161,9 +161,9 @@ public class Bank implements CashHolder, ConfigurableComponentI {
             for (PublicCertificateI cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
                     ipo.addCertificate(cert);
-                } else {
+                 } else {
                     unavailable.addCertificate(cert);
-                }
+               }
             }
         }
     }
@@ -255,7 +255,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 
     /**
      * Get the maximum share percentage that may be sold to the Bank Pool.
-     * 
+     *
      * @return The maximum percentage.
      */
     public static int getPoolShareLimit() {
