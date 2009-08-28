@@ -289,11 +289,11 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected void setGameSpecificPossibleActions() {
         // Take a loan
-        if ((loansThisRound == null
+        if (currentPhase.isLoanTakingAllowed()
+            && operatingCompany.canLoan()
+            && (loansThisRound == null
                 || !loansThisRound.containsKey(operatingCompany)
                 || loansThisRound.get(operatingCompany) == 0)
-            && gameManager.getCurrentPhase().getIndex()
-                <= gameManager.getPhaseManager().getPhaseByName("4").getIndex()
             && operatingCompany.getCurrentNumberOfLoans()
                 < operatingCompany.sharesOwnedByPlayers()) {
             possibleActions.add(new TakeLoans(operatingCompany,
@@ -410,7 +410,6 @@ public class OperatingRound_1856 extends OperatingRound {
 
         if (step == STEP_REPAY_LOANS) {
 
-            // Are we 
             // Has company any outstanding loans to repay?
             if (operatingCompany.getMaxNumberOfLoans() == 0
                 || operatingCompany.getCurrentNumberOfLoans() == 0) {

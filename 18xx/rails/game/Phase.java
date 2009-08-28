@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.11 2009/08/28 20:27:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.12 2009/08/28 20:49:20 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -125,6 +125,12 @@ public class Phase implements PhaseI {
                     trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
                             oneTrainPerTypePerTurn);
         }
+        
+        Tag loansTag = tag.getChild("Loans");
+        if (loansTag != null) {
+            loanTakingAllowed = loansTag.getAttributeAsBoolean("allowed",
+                    loanTakingAllowed); 
+        }
 
         Tag parameterTag = tag.getChild("Parameters");
         if (parameterTag != null) {
@@ -187,6 +193,10 @@ public class Phase implements PhaseI {
 
     public boolean canBuyMoreTrainsPerTypePerTurn() {
         return !oneTrainPerTypePerTurn;
+    }
+
+    public boolean isLoanTakingAllowed() {
+        return loanTakingAllowed;
     }
 
     public int getNumberOfOperatingRounds() {

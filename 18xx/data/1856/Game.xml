@@ -51,6 +51,7 @@
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="1"/>
 			<Trains tradingAllowed="yes"/>
+			<Loans allowed="yes"/>
 		</Phase>
 		<Phase name="2">
 			<Tiles colour="yellow,green"/>
@@ -68,6 +69,7 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown,grey"/>
+			<Loans allowed="no"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown,grey"/>
