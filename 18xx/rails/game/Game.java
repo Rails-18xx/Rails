@@ -1,16 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.22 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.23 2009/08/28 20:25:28 evos Exp $ */
 package rails.game;
+
+import java.io.*;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
 import rails.game.action.PossibleAction;
 import rails.util.LocalText;
 import rails.util.Tag;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.util.*;
 
 public class Game {
     public static final String version = "1.0.5";
@@ -65,7 +63,7 @@ public class Game {
     }
 
     public void start() {
-        gameManager.startGame(playerManager, companyManager, 
+        gameManager.startGame(playerManager, companyManager,
                 phaseManager, trainManager);
     }
 
@@ -142,9 +140,10 @@ public class Game {
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
+            companyManager.initCompanies(gameManager);
             bank.initCertificates();
             StartPacket.init();
-            companyManager.initCompanies(gameManager);
+            //companyManager.initCompanies(gameManager);
             stockMarket.init();
         } catch (Exception e) {
             String message =
@@ -254,7 +253,7 @@ public class Game {
     public static PlayerManager getPlayerManager() {
         return instance.playerManager;
     }
-    
+
     public GameManagerI getGameManager() {
         return gameManager;
     }
