@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.10 2008/12/03 20:15:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.11 2009/08/28 20:27:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -32,6 +32,9 @@ public class Phase implements PhaseI {
 
     /** May company buy more than one Train of each type from the Bank per turn? */
     protected boolean oneTrainPerTypePerTurn = false;
+    
+    /** Is loan taking allowed */
+    protected boolean loanTakingAllowed = false;
 
     /** Previous phase, defining the current one's defaults */
     protected Phase defaults = null;
@@ -62,6 +65,7 @@ public class Phase implements PhaseI {
             trainTradingAllowed = defaults.trainTradingAllowed;
             oneTrainPerTurn = defaults.oneTrainPerTurn;
             oneTrainPerTypePerTurn = defaults.oneTrainPerTypePerTurn;
+            loanTakingAllowed = defaults.loanTakingAllowed;
             if (defaults.parameters != null) {
                 this.parameters = new HashMap<String, String>();
                 for (String key : defaults.parameters.keySet()) {

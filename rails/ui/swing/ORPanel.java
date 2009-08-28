@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.29 2009/01/21 20:18:23 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.30 2009/08/28 20:27:38 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -417,7 +417,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             }
 
             if (hasCompanyLoans) {
-                f = compLoans[i] = new Field (c.getLoanValueModel());
+                if (c.canLoan()) {
+                    f = compLoans[i] = new Field (c.getLoanValueModel());
+                } else {
+                    f = compLoans[i] = new Field ("");
+                }
                 addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT);
             }
 

@@ -402,7 +402,11 @@ public class GameStatus extends JPanel implements ActionListener {
                         0);
             }
             if (hasCompanyLoans) {
-                f = compLoans[i] = new Field (c.getLoanValueModel());
+            	if (c.getLoanValueModel() != null) {
+            		f = compLoans[i] = new Field (c.getLoanValueModel());
+            	} else {
+            		f = compLoans[i] = new Field ("");
+            	}
                 addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0);
             }
 

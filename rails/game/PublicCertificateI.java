@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.9 2008/11/02 19:52:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.10 2009/08/28 20:27:38 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
@@ -18,7 +18,7 @@ public interface PublicCertificateI extends Certificate, Moveable {
 
     /**
      * Get the number of shares that this certificate represents.
-     * 
+     *
      * @return The number of shares.
      */
     public int getShares();
@@ -26,18 +26,19 @@ public interface PublicCertificateI extends Certificate, Moveable {
     /**
      * Get the percentage of ownership that this certificate represents. This is
      * equal to the number of shares * the share unit.
-     * 
+     *
      * @return The share percentage.
      */
     public int getShare();
 
     /**
      * Get the current price of this certificate.
-     * 
+     *
      * @return The current certificate price.
      */
     //public int getCertificatePrice();
 
+    public void setInitiallyAvailable(boolean initiallyAvailable);
     /**
      * @param b
      */
@@ -70,7 +71,7 @@ public interface PublicCertificateI extends Certificate, Moveable {
 
     /**
      * Compare certificates
-     * 
+     *
      * @param cert Another publoc certificate.
      * @return TRUE if the certificates are of the same company and represent
      * the same number of shares.

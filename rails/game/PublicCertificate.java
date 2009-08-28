@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.14 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.15 2009/08/28 20:27:38 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /** A key identifying the certificate's unique ID */
     protected String certId;
 
-    /** A map alllowing to find certificates by unique id */
+    /** A map allowing to find certificates by unique id */
     protected static Map<String, PublicCertificateI> certMap =
             new HashMap<String, PublicCertificateI>();
 
@@ -50,6 +50,12 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         this.shares = shares;
         this.president = president;
         this.initiallyAvailable = available;
+    }
+
+    public PublicCertificate(PublicCertificateI oldCert) {
+        this.shares = oldCert.getShares();
+        this.president = oldCert.isPresidentShare();
+        this.initiallyAvailable = oldCert.isInitiallyAvailable();
     }
 
     public void setUniqueId(String name, int index) {
@@ -128,7 +134,11 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         }
     }
 
-    /**
+    public void setInitiallyAvailable(boolean initiallyAvailable) {
+		this.initiallyAvailable = initiallyAvailable;
+	}
+
+	/**
      * @param b
      */
     public boolean isInitiallyAvailable() {

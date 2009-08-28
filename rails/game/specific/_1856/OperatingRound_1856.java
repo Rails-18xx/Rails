@@ -105,12 +105,14 @@ public class OperatingRound_1856 extends OperatingRound {
         int requiredCash = 0;
 
         // Check if any loan interest can be paid
-        int loanValue = operatingCompany.getLoanValueModel().intValue();
-        if (loanValue > 0) {
-            int interest = loanValue * operatingCompany.getLoanInterestPct() / 100;
-            int compCash = (operatingCompany.getCash() / 10) * 10;
-            requiredCash = Math.max(interest - compCash, 0);
-       }
+        if (operatingCompany.canLoan()) {
+            int loanValue = operatingCompany.getLoanValueModel().intValue();
+            if (loanValue > 0) {
+                int interest = loanValue * operatingCompany.getLoanInterestPct() / 100;
+                int compCash = (operatingCompany.getCash() / 10) * 10;
+                requiredCash = Math.max(interest - compCash, 0);
+            }
+        }
 
         // There is only revenue if there are any trains
         if (operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
@@ -140,6 +142,7 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int checkForDeductions (SetDividend action) {
 
         int amount = action.getActualRevenue();
+        if (!operatingCompany.canLoan()) return amount;
         int due = calculateLoanInterest(operatingCompany.getCurrentNumberOfLoans());
         if (due == 0) return amount;
         int remainder = due;
@@ -191,6 +194,7 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int executeDeductions (SetDividend action) {
 
         int amount = action.getActualRevenue();
+        if (!operatingCompany.canLoan()) return amount;
         int due = calculateLoanInterest(operatingCompany.getCurrentNumberOfLoans());
         if (due == 0) return amount;
         int remainder = due;
@@ -406,6 +410,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         if (step == STEP_REPAY_LOANS) {
 
+            // Are we 
             // Has company any outstanding loans to repay?
             if (operatingCompany.getMaxNumberOfLoans() == 0
                 || operatingCompany.getCurrentNumberOfLoans() == 0) {

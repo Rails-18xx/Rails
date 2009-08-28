@@ -16,6 +16,16 @@
 	<Loans value="100" perRound="1" interest="10"/>
 	<!-- Number of loans is undefined and handled in the code -->
   </CompanyType>
+  <CompanyType name="State" class="rails.game.specific._1856.PublicCompany_State">
+    <PoolPaysOut/>
+    <ShareUnit percentage="5"/>
+    <Certificate type="President" shares="2"/>
+    <Certificate shares="1" number="18"/>
+	<BaseTokens>
+		<LayCost method="sequence" cost="0,40,100"/>
+	</BaseTokens>
+	<Trains number="0,0,0,3"/>
+  </CompanyType>
   
   <Company name="Flos" type="Private" basePrice="20" revenue="5">
     <Blocking hex="L3"/>
@@ -96,12 +106,7 @@
     <Home hex="D17"/>
     <Destination hex="H15"/>
   </Company>
-  <Company name="CGR" type="Public" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
-	<!-- Initially 20 shares are configured-->
-    <ShareUnit percentage="5"/>
-	<Trains number="0,0,0,3"/>
-	<Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="18"/>
+  <Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
   </Company>
   <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
     <Home hex="K8"/>
