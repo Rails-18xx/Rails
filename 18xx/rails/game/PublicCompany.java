@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.51 2009/08/28 20:27:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.52 2009/08/30 18:15:18 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -463,6 +463,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 boolean certIsInitiallyAvailable
                         = certificateTag.getAttributeAsBoolean("available",
                                 certsAreInitiallyAvailable);
+                
+                float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
                 if (president) {
                     if (number > 1 || gotPresident)
@@ -475,7 +477,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
                 for (int k = 0; k < number; k++) {
                     certificate = new PublicCertificate(shares, president,
-                            certIsInitiallyAvailable);
+                            certIsInitiallyAvailable, certificateCount);
                     addCertificate(certificate);
                     shareTotal += shares * shareUnit.intValue();
                 }

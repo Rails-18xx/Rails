@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.15 2009/08/28 20:27:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.16 2009/08/30 18:15:18 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -20,6 +20,9 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     protected int shares;
     /** President's certificate? */
     protected boolean president;
+    /** Count against certificate limits */
+    protected float certificateCount = 1.0f;
+    
     /** Availability at the start of the game */
     protected boolean initiallyAvailable;
     /** Current holder of the certificate */
@@ -38,24 +41,19 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     protected static Logger log =
             Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
-    public PublicCertificate(int shares) {
-        this(shares, false, true);
-    }
-
-    public PublicCertificate(int shares, boolean president) {
-        this(shares, president, true);
-    }
-
-    public PublicCertificate(int shares, boolean president, boolean available) {
+    public PublicCertificate(int shares, boolean president, 
+            boolean available, float certificateCount) {
         this.shares = shares;
         this.president = president;
         this.initiallyAvailable = available;
+        this.certificateCount = certificateCount;
     }
 
     public PublicCertificate(PublicCertificateI oldCert) {
         this.shares = oldCert.getShares();
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();
+        this.certificateCount = oldCert.getCertificateCount();
     }
 
     public void setUniqueId(String name, int index) {
@@ -143,6 +141,14 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      */
     public boolean isInitiallyAvailable() {
         return initiallyAvailable;
+    }
+    
+    public float getCertificateCount() {
+        return certificateCount;
+    }
+
+    public void setCertificateCount(float certificateCount) {
+        this.certificateCount = certificateCount;
     }
 
     /**

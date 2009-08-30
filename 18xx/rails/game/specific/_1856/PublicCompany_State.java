@@ -36,6 +36,7 @@ public class PublicCompany_State extends PublicCompany {
                     cert.moveTo(scrapHeap);
                     new RemoveFromList<PublicCertificateI>(certificates, cert, "CGR_Certs");
                 } else {
+                    cert.setCertificateCount(1.0f);
                     share += cert.getShare();
                 }
             }

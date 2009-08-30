@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.10 2009/08/28 20:27:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.11 2009/08/30 18:15:18 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
@@ -43,6 +43,10 @@ public interface PublicCertificateI extends Certificate, Moveable {
      * @param b
      */
     public boolean isInitiallyAvailable();
+
+    public float getCertificateCount();
+
+    public void setCertificateCount(float certificateCount);
 
     /**
      * @param portfolio
