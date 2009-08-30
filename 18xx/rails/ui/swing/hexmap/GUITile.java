@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.12 2008/10/26 20:35:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.13 2009/08/30 15:06:48 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -67,8 +67,7 @@ public class GUITile {
     }
 
     /**
-     * Rotate right (clockwise) until a valid orientation is found. TODO:
-     * Currently only impassable hex sides are taken into account.
+     * Rotate right (clockwise) until a valid orientation is found. 
      * 
      * @param initial: First rotation to try. Should be 0 for the initial tile
      * drop, and 1 at subsequent rotation attempts.
@@ -132,18 +131,29 @@ public class GUITile {
                             } else {
                                 // Old track ending in a station
                                 // All old tracks ending the same/different
-                                // stations
-                                // must keep doing so.
-                                /*
-                                 * for (Track newTrack : newTracks) { if
-                                 * (newTrack.getEndPoint(tempTileSide) < 0 ==
-                                 * oldTrack.getEndPoint(prevTileSide) < 0) { //
-                                 * OK, this old track is preserved continue old; } }
-                                 */
-                                log.debug("[" + i + "," + j + "] Found "
+                                // stations must keep doing so (except when
+                                // downgrading to plain track, as in 1856)
+                                if (tile.hasStations()) {
+                                    log.debug("[" + i + "," + j + "] Found "
                                           + oldTrack.getEndPoint(prevTileSide));
-                                oldCities.put(prevTileSide,
+                                    oldCities.put(prevTileSide,
                                         oldTrack.getEndPoint(prevTileSide));
+                                } else {
+                                    log.debug ("downgrading...");
+                                    // Assume there are only two exits 
+                                    // (this is the only known case for downgrading: 
+                                    // #3->#7, #4->#9, #58->#8.
+                                    // Find the other new exit
+                                    int otherNewEndPoint = newTracks.get(0).getEndPoint(tempTileSide);
+                                    // Calculate the corresponding old tile side number                                   
+                                    int otherOldEndPoint = (otherNewEndPoint - tempRot + prevTileRotation +6 ) % 6;
+                                    // That old tile side must have track too
+                                    if (prevTile.getTracksPerSide(otherOldEndPoint) == null 
+                                            && prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
+                                        continue rot;
+                                    }
+                                    
+                                }
                             }
                         }
                     }
