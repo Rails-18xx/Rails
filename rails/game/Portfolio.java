@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.33 2009/05/04 20:29:14 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.34 2009/08/30 18:15:18 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -235,16 +235,16 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     }
 
     /** Get the number of certificates that count against the certificate limit */
-    public int getNumberOfCountedCertificates() {
+    public float getCertificateCount() {
 
-        int number = privateCompanies.size(); // May not hold for all games
+        float number = privateCompanies.size(); // May not hold for all games
         PublicCompanyI comp;
 
         for (PublicCertificateI cert : certificates) {
             comp = cert.getCompany();
             if (!comp.hasFloated() || !comp.hasStockPrice()
                 || !cert.getCompany().getCurrentSpace().isNoCertLimit())
-                number++;
+                number += cert.getCertificateCount();
         }
         return number;
     }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CertCountModel.java,v 1.4 2008/06/04 19:00:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CertCountModel.java,v 1.5 2009/08/30 18:15:18 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Player;
@@ -12,7 +12,7 @@ public class CertCountModel extends ModelObject {
     }
 
     public String getText() {
-        return "" + owner.getPortfolio().getNumberOfCountedCertificates();
+        return "" + owner.getPortfolio().getCertificateCount();
     }
 
 }

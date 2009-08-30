@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.16 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.17 2009/08/30 18:15:18 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -106,7 +106,7 @@ public class Player implements CashHolder, Comparable<Player> {
     public boolean isOverLimits() {
 
         // Over the total certificate hold Limit?
-        if (portfolio.getNumberOfCountedCertificates() > playerCertificateLimit)
+        if (portfolio.getCertificateCount() > playerCertificateLimit)
             return true;
 
         // Over the hold limit of any company?
@@ -128,7 +128,7 @@ public class Player implements CashHolder, Comparable<Player> {
     public boolean mayBuyCertificate(PublicCompanyI comp, int number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
-        if (portfolio.getNumberOfCountedCertificates() + number > playerCertificateLimit)
+        if (portfolio.getCertificateCount() + number > playerCertificateLimit)
             return false;
         return true;
     }
