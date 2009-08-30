@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.14 2009/08/30 15:18:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.15 2009/08/30 18:13:29 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -139,10 +139,9 @@ public class GUITile {
                                     oldCities.put(prevTileSide,
                                         oldTrack.getEndPoint(prevTileSide));
                                 } else {
-                                    log.debug ("downgrading...");
                                     // Assume there are only two exits 
                                     // (this is the only known case for downgrading: 
-                                    // #3->#7, #4->#9, #58->#8.
+                                    // #3->#7, #4->#9, #58->#8).
                                     // Find the other new exit
                                     int otherNewEndPoint = newTracks.get(0).getEndPoint(tempTileSide);
                                     // Calculate the corresponding old tile side number                                   
@@ -152,7 +151,7 @@ public class GUITile {
                                             || prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
                                         continue rot;
                                     }
-                                    
+                                    log.debug("[" + i + "," + j + "] Downgraded");
                                 }
                             }
                         }
