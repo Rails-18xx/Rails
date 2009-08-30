@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.9 2008/12/24 14:51:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.10 2009/08/30 18:13:48 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -130,10 +130,30 @@ public class Tag {
         }
     }
 
-    public int getAttributeAsInteger(String name) throws ConfigurationException {
+    public float getAttributeAsFloat(String name) throws ConfigurationException {
 
-        return getAttributeAsInteger(name, 0);
+        return getAttributeAsFloat(name, 0.0f);
     }
+
+    public float getAttributeAsFloat(String name, float defaultValue)
+    throws ConfigurationException {
+
+        if (!parsed) parse(element);
+        
+        String value = attributes.get(name);
+        if (value == null) return defaultValue;
+        try {
+            return Float.parseFloat(value);
+        } catch (Exception e) {
+            throw new ConfigurationException("Invalid floating point value: " + value,
+                    e);
+        }
+    }
+
+public int getAttributeAsInteger(String name) throws ConfigurationException {
+
+return getAttributeAsInteger(name, 0);
+}
 
     public int[] getAttributeAsIntegerArray(String name, int[] defaultArray)
             throws ConfigurationException {
