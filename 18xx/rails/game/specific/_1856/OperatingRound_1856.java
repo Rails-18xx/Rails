@@ -1,9 +1,6 @@
 package rails.game.specific._1856;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import rails.game.*;
 import rails.game.action.*;
@@ -454,10 +451,10 @@ public class OperatingRound_1856 extends OperatingRound {
         int lastOperatingCompanyIndex = operatingCompanyIndex;
         // Find the first company that has not yet operated
         // and is not closed.
-        while (setNextOperatingCompany(false) 
+        while (setNextOperatingCompany(false)
                 && getOperatingCompany().isClosed());
-        
-        List<PublicCompanyI> companies 
+
+        List<PublicCompanyI> companies
                 = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
         PublicCompanyI company;
         PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
@@ -471,15 +468,15 @@ public class OperatingRound_1856 extends OperatingRound {
                 //it.remove();
             }
         }
-        
+
         if (operatingCompany != null) {
             operatingCompanyIndex = companies.indexOf(operatingCompany);
         }
-        
+
         for (PublicCompanyI c : companies) {
             log.debug("Now operating: "+c.getName());
         }
-        
+
         String message;
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
@@ -498,9 +495,9 @@ public class OperatingRound_1856 extends OperatingRound {
 
         operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
         operatingCompanyIndexObject.set(operatingCompanyIndex);
-        
+
         log.debug ("Next operating company: "+operatingCompany.getName());
-    }   
+    }
 
     @Override
     protected void finishTurn() {
