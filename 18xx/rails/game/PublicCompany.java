@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.52 2009/08/30 18:15:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.53 2009/08/31 22:34:01 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -216,6 +216,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Must the company own a train */
     protected boolean mustOwnATrain = true;
+
+    protected boolean mustTradeTrainsAtFixedPrice = false;
 
     /** Initial train at floating time */
     protected String initialTrain = null;
@@ -463,7 +465,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 boolean certIsInitiallyAvailable
                         = certificateTag.getAttributeAsBoolean("available",
                                 certsAreInitiallyAvailable);
-                
+
                 float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
                 if (president) {
@@ -1637,6 +1639,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return mustOwnATrain;
     }
 
+    public boolean mustTradeTrainsAtFixedPrice() {
+    	return mustTradeTrainsAtFixedPrice;
+    }
+
     public int getCurrentNumberOfLoans() {
         return currentNumberOfLoans.intValue();
     }
@@ -1657,7 +1663,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public int getMaxNumberOfLoans() {
         return maxNumberOfLoans;
     }
-    
+
     public boolean canLoan() {
         return maxNumberOfLoans > 0;
     }
