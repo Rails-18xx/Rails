@@ -19,7 +19,7 @@
   <CompanyType name="State" class="rails.game.specific._1856.PublicCompany_State">
     <PoolPaysOut/>
     <ShareUnit percentage="5"/>
-    <Certificate type="President" shares="2" certificateCount="0.5"/>
+    <Certificate type="President" shares="2" certificateCount="1"/>
     <Certificate shares="1" number="18" certificateCount="0.5"/>
 	<BaseTokens>
 		<LayCost method="sequence" cost="0,40,100"/>
