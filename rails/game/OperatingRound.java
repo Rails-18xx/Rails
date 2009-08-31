@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.61 2009/07/19 19:24:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.62 2009/08/31 22:35:51 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -242,9 +242,9 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof RepayLoans) {
 
             result = repayLoans((RepayLoans) selectedAction);
-            
+
         } else if (selectedAction instanceof ExchangeTokens) {
-            
+
             result = exchangeTokens ((ExchangeTokens)selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
@@ -1742,7 +1742,7 @@ public class OperatingRound extends Round implements Observer {
         MoveSet.start(true);
 
         if (repayment > 0) executeRepayLoans (action);
-        
+
         doneAllowed = true;
 
         return true;
@@ -1793,7 +1793,7 @@ public class OperatingRound extends Round implements Observer {
     protected int calculateLoanAmount (int numberOfLoans) {
         return numberOfLoans * operatingCompany.getValuePerLoan();
     }
-    
+
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -1957,8 +1957,6 @@ public class OperatingRound extends Round implements Observer {
      * Get a list of buyable trains for the currently operating company. Omit
      * trains that the company has no money for. If there is no cash to buy any
      * train from the Bank, prepare for emergency train buying.
-     *
-     * @return List of all trains that could potentially be bought.
      */
     public void setBuyableTrains() {
 
@@ -1975,7 +1973,7 @@ public class OperatingRound extends Round implements Observer {
         boolean atTrainLimit =
                 operatingCompany.getNumberOfTrains() >= operatingCompany.getCurrentTrainLimit();
         boolean canBuyTrainNow = canBuyTrain();
-        boolean presidentMayHelp = operatingCompany.mustOwnATrain();
+        boolean presidentMayHelp = !hasTrains && operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
         Portfolio ipo = Bank.getIpo();
@@ -2053,7 +2051,8 @@ public class OperatingRound extends Round implements Observer {
             if (!hasTrains && possibleActions.getType(BuyTrain.class).isEmpty()
                 && cheapestTrain != null && presidentMayHelp) {
                 possibleActions.add(new BuyTrain(cheapestTrain,
-                        cheapestTrain.getHolder(), costOfCheapestTrain).setPresidentMustAddCash(costOfCheapestTrain
+                        cheapestTrain.getHolder(), costOfCheapestTrain)
+                    .setPresidentMustAddCash(costOfCheapestTrain
                                                                                                 - cash));
             }
         }
@@ -2073,7 +2072,7 @@ public class OperatingRound extends Round implements Observer {
             for (int i = 0; i < numberOfPlayers; i++)
                 companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
             List<PublicCompanyI> companies;
-            // Sort out which players preside over wich companies.
+            // Sort out which players preside over which companies.
             for (int j = 0; j < operatingCompanyArray.length; j++) {
                 c = operatingCompanyArray[j];
                 if (c.isClosed() || c == operatingCompany) continue;
@@ -2094,8 +2093,14 @@ public class OperatingRound extends Round implements Observer {
                     for (TrainI train : trains) {
                         if (train.isObsolete()) continue;
                         if (i != currentPlayerIndex
-                            && trainMgr.buyAtFaceValueBetweenDifferentPresidents()) {
-                            bt = new BuyTrain(train, pf, train.getCost());
+                                    && trainMgr.buyAtFaceValueBetweenDifferentPresidents()
+                                || operatingCompany.mustTradeTrainsAtFixedPrice()
+                                || company.mustTradeTrainsAtFixedPrice()) {
+                            if (cash >= train.getCost()) {
+                                bt = new BuyTrain(train, pf, train.getCost());
+                            } else {
+                                continue;
+                            }
                         } else {
                             bt = new BuyTrain(train, pf, 0);
                         }
