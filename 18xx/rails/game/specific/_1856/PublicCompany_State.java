@@ -12,6 +12,10 @@ public class PublicCompany_State extends PublicCompany {
     /** Used for CGR */
     private boolean hadPermanentTrain = false;
 
+    public PublicCompany_State() {
+        super();
+        mustTradeTrainsAtFixedPrice = true;
+    }
     public boolean hadPermanentTrain() {
         return hadPermanentTrain;
     }
@@ -55,5 +59,15 @@ public class PublicCompany_State extends PublicCompany {
         }
 
     }
+
+    @Override
+	public boolean mustOwnATrain() {
+    	if (!hadPermanentTrain) {
+    		return false;
+    	} else {
+    		return super.mustOwnATrain();
+    	}
+    }
+
 
 }
