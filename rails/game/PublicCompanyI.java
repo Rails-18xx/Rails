@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.29 2009/08/28 20:27:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.30 2009/08/31 22:34:01 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -325,6 +325,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getNumberOfTileLays(String tileColour);
 
     public boolean mustOwnATrain();
+    public boolean mustTradeTrainsAtFixedPrice();
 
     public int getCurrentNumberOfLoans();
     public int getCurrentLoanValue ();
@@ -335,6 +336,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getMaxLoansPerRound();
     public int getValuePerLoan();
     public MoneyModel getLoanValueModel ();
-    
+
     public int sharesOwnedByPlayers();
 }
