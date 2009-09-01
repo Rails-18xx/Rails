@@ -16,6 +16,7 @@ public class OperatingRound_1856 extends OperatingRound {
     private Player playerToStartLoanRepayment = null;
 
     public static final int STEP_REPAY_LOANS = 6;
+    private final String CGRNAME = "CGR";
 
     static {
         STEP_FINAL = 7;
@@ -62,7 +63,9 @@ public class OperatingRound_1856 extends OperatingRound {
             } else {
                 operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
-                // 1856 special: check if the company may operate
+                // 1856 special: check if the company has sold enough shares to operate
+                // This check does not apply to the CGR
+                if (operatingCompany.getName().equals(CGRNAME)) return true;
                 if (!operatingCompany.hasOperated()) {
                     int soldPercentage
                         = 100 - operatingCompany.getUnsoldPercentage();
@@ -112,7 +115,7 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         // There is only revenue if there are any trains
-        if (operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+        if (operatingCompany.canRunTrains()) {
             int[] allowedRevenueActions =
                     operatingCompany.isSplitAlways()
                             ? new int[] { SetDividend.SPLIT }
@@ -132,6 +135,12 @@ public class OperatingRound_1856 extends OperatingRound {
             // If the revenue is less than that, the allocation
             // question should be suppressed.
             // In that case, the follow-up is done from this class.
+
+            if (operatingCompany instanceof PublicCompany_State
+                    && !((PublicCompany_State)operatingCompany).runsWithBorrowedTrain()) {
+                DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
+                        "CGR", "D"));
+            }
         }
     }
 
@@ -341,7 +350,7 @@ public class OperatingRound_1856 extends OperatingRound {
         boolean result = super.buyTrain(action);
 
         PhaseI postPhase = currentPhase;
-
+log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
         if (postPhase != prePhase && postPhase.getName().equals("5")) {
             finalLoanRepaymentPending.set(true);
             playerToStartLoanRepayment
