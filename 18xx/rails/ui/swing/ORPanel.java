@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.30 2009/08/28 20:27:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.31 2009/09/01 19:30:15 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -117,7 +117,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
-    
+
     private List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
     protected static Logger log =
@@ -417,7 +417,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             }
 
             if (hasCompanyLoans) {
-                if (c.canLoan()) {
+                //if (c.canLoan()) {
+            	if (c.getLoanValueModel() != null) {
                     f = compLoans[i] = new Field (c.getLoanValueModel());
                 } else {
                     f = compLoans[i] = new Field ("");
@@ -557,7 +558,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         for (int i = 0; i < president.length; i++) {
             president[i].setHighlight(false);
         }
-        
+
         for (JMenuItem item : menuItemsToReset) {
             item.setEnabled(false);
             if (item instanceof ActionMenuItem) {
@@ -722,17 +723,17 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         redoButton.setEnabled(action != null);
         if (action != null) redoButton.setPossibleAction(action);
     }
-    
+
     public void enableLoanTaking (TakeLoans action) {
         if (action != null) takeLoans.addPossibleAction(action);
         takeLoans.setEnabled(action != null);
     }
-    
+
     public void enableLoanRepayment (RepayLoans action) {
-        
+
         repayLoans.setPossibleAction(action);
         repayLoans.setEnabled(true);
-        
+
         loansCaption.setHighlight(true);
 
         button1.setText(LocalText.getText("RepayLoans"));
