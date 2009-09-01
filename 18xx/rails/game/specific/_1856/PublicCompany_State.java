@@ -20,6 +20,17 @@ public class PublicCompany_State extends PublicCompany {
         return hadPermanentTrain;
     }
 
+    public boolean canRunTrains() {
+        if (!hadPermanentTrain) {
+            return true;
+        }
+        return getNumberOfTrains() > 0;
+    }
+    
+    public boolean runsWithBorrowedTrain () {
+        return !hadPermanentTrain && getNumberOfTrains() == 0;
+    }
+
     @Override
     public void buyTrain(TrainI train, int price) {
         super.buyTrain (train, price);

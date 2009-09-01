@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.53 2009/08/31 22:34:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.54 2009/09/01 21:14:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1404,6 +1404,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return portfolio.getNumberOfTrains();
     }
 
+    public boolean canRunTrains() {
+        return portfolio.getNumberOfTrains() > 0;
+    }
+    
     /**
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
@@ -1665,7 +1669,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean canLoan() {
-        return maxNumberOfLoans > 0;
+        return maxNumberOfLoans > 0;  //TODO Does not work?? (see ORPanel)
     }
 
     public int getMaxLoansPerRound() {

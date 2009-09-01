@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.30 2009/08/31 22:34:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.31 2009/09/01 21:14:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -263,7 +263,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getCurrentTrainLimit();
 
     public int getNumberOfTrains();
-
+    public boolean canRunTrains();
+    
     public void initTurn();
 
     public void buyTrain(TrainI train, int price);

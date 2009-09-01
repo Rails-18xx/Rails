@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.62 2009/08/31 22:35:51 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.63 2009/09/01 21:14:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -902,7 +902,8 @@ public class OperatingRound extends Round implements Observer {
 
             if (step == STEP_CALC_REVENUE) {
 
-                if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
+                //if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
+                if (!operatingCompany.canRunTrains()) {
                     // No trains, then the revenue is zero.
                     /*
                     operatingCompany.setLastRevenue(0);
@@ -1936,7 +1937,7 @@ public class OperatingRound extends Round implements Observer {
     protected void prepareRevenueAndDividendAction () {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+        if (operatingCompany.canRunTrains()) {
             int[] allowedRevenueActions =
                     operatingCompany.isSplitAlways()
                             ? new int[] { SetDividend.SPLIT }
