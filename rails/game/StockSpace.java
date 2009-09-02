@@ -57,7 +57,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
      * @param company The company object to add.
      */
     public boolean addToken(PublicCompanyI company) {
-        log.debug(company.getName() + " token added to " + name);
+        log.debug(company.getName() + " price token added to " + name);
         tokens.add(company);
         update();
         return true;
@@ -70,7 +70,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
      * @return False if the token was not found.
      */
     public boolean removeToken(PublicCompanyI company) {
-        log.debug(company.getName() + " token removed from " + name);
+        log.debug(company.getName() + " price token removed from " + name);
         int index = tokens.indexOf(company);
         if (index >= 0) {
             tokens.remove(index);
