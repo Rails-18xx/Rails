@@ -104,43 +104,50 @@ public class OperatingRound_1856 extends OperatingRound {
 
         int requiredCash = 0;
 
-        // Check if any loan interest can be paid
-        if (operatingCompany.canLoan()) {
-            int loanValue = operatingCompany.getLoanValueModel().intValue();
-            if (loanValue > 0) {
-                int interest = loanValue * operatingCompany.getLoanInterestPct() / 100;
-                int compCash = (operatingCompany.getCash() / 10) * 10;
-                requiredCash = Math.max(interest - compCash, 0);
-            }
-        }
-
         // There is only revenue if there are any trains
         if (operatingCompany.canRunTrains()) {
-            int[] allowedRevenueActions =
-                    operatingCompany.isSplitAlways()
-                            ? new int[] { SetDividend.SPLIT }
-                            : operatingCompany.isSplitAllowed()
-                                    ? new int[] { SetDividend.PAYOUT,
-                                            SetDividend.SPLIT,
-                                            SetDividend.WITHHOLD }
-                                    : new int[] { SetDividend.PAYOUT,
-                                            SetDividend.WITHHOLD };
 
-            possibleActions.add(new SetDividend(
-                    operatingCompany.getLastRevenue(), true,
-                    allowedRevenueActions,
-                    requiredCash));
+            if (operatingCompany instanceof PublicCompany_State
+                    && ((PublicCompany_State)operatingCompany).runsWithBorrowedTrain()) {
+                DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
+                        "CGR", "D"));
+                possibleActions.add(new SetDividend(
+                        operatingCompany.getLastRevenue(), true,
+                        new int[] {SetDividend.WITHHOLD }));
+            } else {
+
+	            int[] allowedRevenueActions =
+	                    operatingCompany.isSplitAlways()
+	                            ? new int[] { SetDividend.SPLIT }
+	                            : operatingCompany.isSplitAllowed()
+	                                    ? new int[] { SetDividend.PAYOUT,
+	                                            SetDividend.SPLIT,
+	                                            SetDividend.WITHHOLD }
+	                                    : new int[] { SetDividend.PAYOUT,
+	                                            SetDividend.WITHHOLD };
+
+                // Check if any loan interest can be paid
+                if (operatingCompany.canLoan()) {
+                    int loanValue = operatingCompany.getLoanValueModel().intValue();
+                    if (loanValue > 0) {
+                        int interest = loanValue * operatingCompany.getLoanInterestPct() / 100;
+                        int compCash = (operatingCompany.getCash() / 10) * 10;
+                        requiredCash = Math.max(interest - compCash, 0);
+                    }
+                }
+
+	            possibleActions.add(new SetDividend(
+	                    operatingCompany.getLastRevenue(), true,
+	                    allowedRevenueActions,
+	                    requiredCash));
+            }
+
             // UI directions:
             // Any nonzero required cash should be reported to the user.
             // If the revenue is less than that, the allocation
             // question should be suppressed.
             // In that case, the follow-up is done from this class.
 
-            if (operatingCompany instanceof PublicCompany_State
-                    && !((PublicCompany_State)operatingCompany).runsWithBorrowedTrain()) {
-                DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
-                        "CGR", "D"));
-            }
         }
     }
 
@@ -437,46 +444,41 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
         return true;
     }
 
-    @Override
-    public void resume() {
+    public void resume (List<PublicCompanyI> mergingCompanies) {
 
-        if (savedAction == null) {
-            // End of CGRFormationRound
-            finalLoanRepaymentPending.set(false);
-            resetOperatingCompanies();
-            if (operatingCompany != null) {
-                setStep(STEP_INITIAL);
-            } else {
-                finishOR();
-            }
-            wasInterrupted.set(true);
+    	// End of CGRFormationRound
+        finalLoanRepaymentPending.set(false);
+        resetOperatingCompanies(mergingCompanies);
+        if (operatingCompany != null) {
+            setStep(STEP_INITIAL);
         } else {
-            super.resume();
+            finishOR();
         }
+        wasInterrupted.set(true);
     }
 
-    private void resetOperatingCompanies() {
+    private void resetOperatingCompanies(List<PublicCompanyI> mergingCompanies) {
 
-        int lastOperatingCompanyIndex = operatingCompanyIndex;
+        List<PublicCompanyI> companies
+                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
+        PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
+        boolean cgrCanOperate = cgr.hasStarted();
+        //for (Iterator<PublicCompanyI> it = companies.iterator();
+        //        it.hasNext(); ) {
+        //    company = it.next();
+        //    if (company.isClosed()) {
+        //        if (index <= lastOperatingCompanyIndex) cgrCanOperate = false;
+        //        //it.remove();
+        //    }
+        //}
+        for (PublicCompanyI company : mergingCompanies) {;
+       		if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
+        }
+
         // Find the first company that has not yet operated
         // and is not closed.
         while (setNextOperatingCompany(false)
                 && getOperatingCompany().isClosed());
-
-        List<PublicCompanyI> companies
-                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
-        PublicCompanyI company;
-        PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
-        int index = 0;
-        boolean cgrCanOperate = cgr.hasStarted();
-        for (Iterator<PublicCompanyI> it = companies.iterator();
-                it.hasNext(); ) {
-            company = it.next();
-            if (company.isClosed()) {
-                if (index <= lastOperatingCompanyIndex) cgrCanOperate = false;
-                //it.remove();
-            }
-        }
 
         if (operatingCompany != null) {
             operatingCompanyIndex = companies.indexOf(operatingCompany);

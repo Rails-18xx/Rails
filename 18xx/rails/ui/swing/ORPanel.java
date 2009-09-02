@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.31 2009/09/01 19:30:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.32 2009/09/02 21:47:47 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -391,7 +391,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             f =
                     president[i] =
-                            new Field(c.hasStarted()
+                            new Field(c.hasStarted() && !c.isClosed()
                                     ? c.getPresident().getNameAndPriority() : "");
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0);
 

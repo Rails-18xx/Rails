@@ -996,7 +996,7 @@ public class StockRound extends Round {
                 executeTradeCertificate(cert, pool, cert.getShares() * price);
             }
         }
-        stockMarket.sell(company, numberToSell);
+        if (company.canSharePriceVary()) stockMarket.sell(company, numberToSell);
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {

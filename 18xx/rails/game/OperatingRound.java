@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.63 2009/09/01 21:14:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.64 2009/09/02 21:47:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -24,6 +24,8 @@ public class OperatingRound extends Round implements Observer {
     protected String actionNotPossibleMessage = "";
 
     protected TreeMap<Integer, PublicCompanyI> operatingCompanies;
+    protected List<PublicCompanyI> companiesOperatedThisRound
+    	= new ArrayList<PublicCompanyI> ();
 
     protected PublicCompanyI[] operatingCompanyArray;
 
@@ -1151,6 +1153,7 @@ public class OperatingRound extends Round implements Observer {
     protected void finishTurn() {
 
         operatingCompany.setOperated(true);
+        companiesOperatedThisRound.add(operatingCompany);
 
         // Check if any privates must be closed
         // (now only applies to 1856 W&SR)
