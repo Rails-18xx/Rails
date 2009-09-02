@@ -4,37 +4,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
+import rails.game.move.CashMove;
 import rails.game.move.MoveableHolderI;
 import rails.game.move.RemoveFromList;
+import rails.game.state.BooleanState;
 
 public class PublicCompany_State extends PublicCompany {
 
     /** Used for CGR */
-    private boolean hadPermanentTrain = false;
+    private BooleanState hadPermanentTrain;
 
     public PublicCompany_State() {
         super();
         mustTradeTrainsAtFixedPrice = true;
     }
+
+    /** Initialisation, to be called directly after instantiation (cloning) */
+    @Override
+    public void init(String name, CompanyTypeI type) {
+        super.init(name, type);
+        hadPermanentTrain = new BooleanState (name+"_HadPermanentTrain", false);
+        
+        // Share price is initially fixed
+        canSharePriceVary.set(false);
+    }
+
     public boolean hadPermanentTrain() {
-        return hadPermanentTrain;
+        return hadPermanentTrain.booleanValue();
+    }
+
+    public void setHadPermanentTrain(boolean hadPermanentTrain) {
+        this.hadPermanentTrain.set(hadPermanentTrain);
+        canSharePriceVary.set(true);
     }
 
     public boolean canRunTrains() {
-        if (!hadPermanentTrain) {
+        if (!hadPermanentTrain()) {
             return true;
         }
         return getNumberOfTrains() > 0;
     }
     
     public boolean runsWithBorrowedTrain () {
-        return !hadPermanentTrain && getNumberOfTrains() == 0;
+        return !hadPermanentTrain() && getNumberOfTrains() == 0;
+    }
+    
+    /**
+     * CGR share price does not move until a permanent train is bought. 
+     *
+     * @param The revenue amount.
+     */
+    public void withhold(int amount) {
+        if (amount > 0) new CashMove(null, this, amount);
+        if (hasStockPrice && !runsWithBorrowedTrain()) {
+            Game.getStockMarket().withhold(this);
+        }
     }
 
     @Override
     public void buyTrain(TrainI train, int price) {
         super.buyTrain (train, price);
-        if (train.getType().isPermanent()) hadPermanentTrain = true;
+        if (train.getType().isPermanent()) setHadPermanentTrain(true);
     }
 
     public void setShareUnit (int percentage) {
@@ -73,7 +103,7 @@ public class PublicCompany_State extends PublicCompany {
 
     @Override
 	public boolean mustOwnATrain() {
-    	if (!hadPermanentTrain) {
+    	if (!hadPermanentTrain()) {
     		return false;
     	} else {
     		return super.mustOwnATrain();

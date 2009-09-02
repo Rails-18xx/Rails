@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.31 2009/09/01 21:14:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.32 2009/09/02 21:47:47 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -245,7 +245,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public boolean hasStockPrice();
 
     public boolean hasParPrice();
-
+    
+    public boolean canSharePriceVary();
+    
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();

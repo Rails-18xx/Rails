@@ -19,7 +19,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private PublicCompanyI currentCompany = null;
     private int maxLoansToRepayByPresident = 0;
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
-    private PublicCompanyI cgr = gameManager.getCompanyManager().getCompanyByName(CGRNAME);
+    private PublicCompany_State cgr = (PublicCompany_State)gameManager.getCompanyManager().getCompanyByName(CGRNAME);
     private String cgrName = CGRNAME;
     private List<TrainI> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
@@ -421,7 +421,54 @@ public class CGRFormationRound extends SwitchableUIRound {
         ReportBuffer.add(message);
         DisplayBuffer.add(message);
 
-        // Collect the old token spots, and move cash and trains
+        // Determine the CGR starting price,
+        // and close the absorbed companies.
+        int lowestPrice = 999;
+        int totalPrice = 0;
+        int price;
+        int numberMerged = mergingCompanies.size();
+        for (PublicCompanyI comp : mergingCompanies) {
+            price = comp.getMarketPrice();
+            totalPrice += price;
+            if (price < lowestPrice) lowestPrice = price;
+            //comp.setClosed();
+        }
+        if (numberMerged >= 3) {
+            totalPrice -= lowestPrice;
+            numberMerged--;
+        }
+        int cgrPrice = Math.max(100, (((totalPrice/numberMerged)/5))*5);
+
+        // Find the correct start space and start the CGR
+        if (cgrPrice == 100) {
+            cgr.start(100);
+        } else {
+            StockMarketI sm = StockMarket.getInstance();
+            int prevColPrice = 100;
+            int colPrice;
+            StockSpaceI startSpace;
+            for (int col=6; col <= sm.getNumberOfColumns(); col++) {
+                colPrice = sm.getStockSpace(1, col).getPrice();
+                if (cgrPrice > colPrice) continue;
+                if (cgrPrice - prevColPrice < colPrice - cgrPrice) {
+                    startSpace = sm.getStockSpace(1, col-1);
+                } else {
+                    startSpace = sm.getStockSpace(1, col);
+                }
+                cgr.start(startSpace);
+                message = LocalText.getText("START_MERGED_COMPANY",
+                        "CGR",
+                        Bank.format(startSpace.getPrice()),
+                        startSpace.getName());
+                DisplayBuffer.add(message);
+                ReportBuffer.add(message);
+                break;
+            }
+        }
+        cgr.setFloated();
+        ReportBuffer.add (LocalText.getText("Floats", "CGR"));
+
+         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
         nonHomeTokens = new ArrayList<BaseToken>();
         BaseToken bt;
@@ -448,6 +495,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             List<TrainI> trains = new ArrayList<TrainI> (comp.getPortfolio().getTrainList());
             for (TrainI train : trains) {
                 train.moveTo(cgr.getPortfolio());
+                if (train.getType().isPermanent()) cgr.setHadPermanentTrain(true);
             }
         }
 
@@ -512,52 +560,10 @@ public class CGRFormationRound extends SwitchableUIRound {
             executeExchangeTokens (nonHomeTokens);
         }
 
-        // Determine the CGR starting price,
-        // and close the absorbed companies.
-        int lowestPrice = 999;
-        int totalPrice = 0;
-        int price;
-        int numberMerged = mergingCompanies.size();
+       // Close the merged companies
         for (PublicCompanyI comp : mergingCompanies) {
-            price = comp.getMarketPrice();
-            totalPrice += price;
-            if (price < lowestPrice) lowestPrice = price;
             comp.setClosed();
         }
-        if (numberMerged >= 3) {
-            totalPrice -= lowestPrice;
-            numberMerged--;
-        }
-        int cgrPrice = Math.max(100, (((totalPrice/numberMerged)/5))*5);
-
-        // Find the correct start space and start the CGR
-        if (cgrPrice == 100) {
-            cgr.start(100);
-        } else {
-            StockMarketI sm = StockMarket.getInstance();
-            int prevColPrice = 100;
-            int colPrice;
-            StockSpaceI startSpace;
-            for (int col=6; col <= sm.getNumberOfColumns(); col++) {
-                colPrice = sm.getStockSpace(1, col).getPrice();
-                if (cgrPrice > colPrice) continue;
-                if (cgrPrice - prevColPrice < colPrice - cgrPrice) {
-                    startSpace = sm.getStockSpace(1, col-1);
-                } else {
-                    startSpace = sm.getStockSpace(1, col);
-                }
-                cgr.start(startSpace);
-                message = LocalText.getText("START_MERGED_COMPANY",
-                        "CGR",
-                        Bank.format(startSpace.getPrice()),
-                        startSpace.getName());
-                DisplayBuffer.add(message);
-                ReportBuffer.add(message);
-                break;
-            }
-        }
-        cgr.setFloated();
-        ReportBuffer.add (LocalText.getText("Floats", "CGR"));
 
         // Check the trains, autodiscard any excess non-permanent trains
         int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
@@ -741,7 +747,11 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         return true;
     }
 
-    @Override
+    public List<PublicCompanyI> getMergingCompanies() {
+		return mergingCompanies;
+	}
+
+	@Override
     public String toString() {
         return "1856 CGRFormationRound";
     }

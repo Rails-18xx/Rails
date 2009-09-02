@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.54 2009/09/01 21:14:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.55 2009/09/02 21:47:47 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -229,6 +229,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
     protected MoneyModel currentLoanValue = null;
+    
+    protected BooleanState canSharePriceVary = null;
 
     protected GameManagerI gameManager;
 
@@ -587,6 +589,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasStockPrice) {
             parPrice = new PriceModel(this, name + "_ParPrice");
             currentPrice = new PriceModel(this, name + "_CurrentPrice");
+            canSharePriceVary = new BooleanState (name+"_CanSharePriceVary", true);
         }
 
         if (turnsWithExtraTileLaysInit != null) {
@@ -768,7 +771,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean mustHaveOperatedToTradeShares() {
         return mustHaveOperatedToTradeShares;
     }
-
+    
     public void start(StockSpaceI startSpace) {
 
         hasStarted.set(true);
@@ -1276,6 +1279,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean hasParPrice() {
         return hasParPrice;
+    }
+
+    public boolean canSharePriceVary() {
+        return canSharePriceVary.booleanValue();
     }
 
     public int getFixedPrice() {
