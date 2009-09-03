@@ -17,10 +17,10 @@
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
 		<Bank amount="12000"/>
-		<Players number="3" cash="500" certLimit="28"/>
-		<Players number="4" cash="375" certLimit="22"/>
-		<Players number="5" cash="300" certLimit="18"/>
-		<Players number="6" cash="250" certLimit="15"/>
+		<Players number="3" cash="500" certLimit="20"/>
+		<Players number="4" cash="375" certLimit="16"/>
+		<Players number="5" cash="300" certLimit="13"/>
+		<Players number="6" cash="250" certLimit="11"/>
 	</Component>
 	<Component name="TileManager" class="rails.game.TileManager"
 		file="TileSet.xml"/>

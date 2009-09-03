@@ -463,15 +463,8 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
                 = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
         PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
         boolean cgrCanOperate = cgr.hasStarted();
-        //for (Iterator<PublicCompanyI> it = companies.iterator();
-        //        it.hasNext(); ) {
-        //    company = it.next();
-        //    if (company.isClosed()) {
-        //        if (index <= lastOperatingCompanyIndex) cgrCanOperate = false;
-        //        //it.remove();
-        //    }
-        //}
-        for (PublicCompanyI company : mergingCompanies) {;
+
+        for (PublicCompanyI company : mergingCompanies) {
        		if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
         }
 
@@ -479,6 +472,15 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
         // and is not closed.
         while (setNextOperatingCompany(false)
                 && getOperatingCompany().isClosed());
+
+        // Remove closed companies from the operating company list
+        // (leave this code in case we need it; it works)
+        //for (Iterator<PublicCompanyI> it = companies.iterator();
+        //        it.hasNext(); ) {
+        //    if ((it.next()).isClosed()) {
+        //        it.remove();
+        //    }
+        //}
 
         if (operatingCompany != null) {
             operatingCompanyIndex = companies.indexOf(operatingCompany);
@@ -494,6 +496,7 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
                 operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
                 companies.add(operatingCompanyIndex, cgr);
                 operatingCompany = cgr;
+                operatingCompanyIndex = companies.indexOf(operatingCompany);
                 message = LocalText.getText("CanOperate", cgr.getName());
             } else {
                 message = LocalText.getText("CannotOperate", cgr.getName());
@@ -511,26 +514,14 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
     }
 
     @Override
-    protected void finishTurn() {
-
-        operatingCompany.setOperated(true);
-
-        // Check if any privates must be closed
-        // (now only applies to 1856 W&SR)
-        for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
-            priv.checkClosingIfExercised(true);
-        }
+    protected boolean finishTurnSpecials() {
 
         if (finalLoanRepaymentPending.booleanValue()) {
 
             ((GameManager_1856)gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
-            return;
+            return false;
         }
 
-        if (setNextOperatingCompany(false)) {
-            setStep(STEP_INITIAL);
-        } else {
-            finishOR();
-        }
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.64 2009/09/02 21:47:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.65 2009/09/03 18:33:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1161,12 +1161,22 @@ public class OperatingRound extends Round implements Observer {
             priv.checkClosingIfExercised(true);
         }
 
-        if (setNextOperatingCompany(false)) {
+        if (!finishTurnSpecials()) return;
 
+        if (setNextOperatingCompany(false)) {
             setStep(STEP_INITIAL);
         } else {
             finishOR();
         }
+    }
+
+    /** Stub, may be overridden in subclasses
+     * Return value:
+     * TRUE = normal turn end;
+     * FALSE = return immediately from finishTurn().
+     */
+    protected boolean finishTurnSpecials () {
+    	return true;
     }
 
     protected boolean setNextOperatingCompany(boolean initial) {
