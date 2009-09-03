@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.17 2009/08/30 18:15:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.18 2009/09/03 18:33:28 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -84,7 +84,12 @@ public class Player implements CashHolder, Comparable<Player> {
         return playerCertificateLimit;
     }
 
-    public static void setShareLimit(int percentage) {
+    /** In some games, the cert limit can change during the game (e.g. 1856) */
+    public static void setPlayerCertificateLimit(int playerCertificateLimit) {
+		Player.playerCertificateLimit = playerCertificateLimit;
+	}
+
+	public static void setShareLimit(int percentage) {
         playerShareLimit = percentage;
     }
 

@@ -32,6 +32,13 @@ public class CGRFormationRound extends SwitchableUIRound {
     public static final int STEP_DISCARD_TRAINS = 2;
     public static final int STEP_EXCHANGE_TOKENS = 3;
 
+    private static int[][] certLimitsTable = {
+    	{10, 13, 15, 18, 20, 22, 25, 28},
+    	{8, 10, 12, 14, 16, 18, 20, 22},
+    	{7, 8, 10, 11, 13, 15, 16, 18},
+    	{6, 7, 8, 10, 11, 12, 14, 15}
+    };
+
     public CGRFormationRound (GameManagerI gameManager) {
         super (gameManager);
     }
@@ -394,7 +401,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         // If no more than 10 shares are in play, the CGR share
         // unit becomes 10%; otherwise it stays 5%.
         if (cgrSharesUsed <=10) {
-            ((PublicCompany_State)cgr).setShareUnit (10);
+            (cgr).setShareUnit (10);
             // All superfluous shares have been removed
         }
         message = LocalText.getText("CompanyHasShares",
@@ -579,6 +586,22 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             }
             break;
         }
+
+        // Determine the new certificate limit.
+        // The number of available companies is 11,
+        // or 12 minus the number of closed companies, whichever is lower.
+        int numCompanies = Math.min(11, 12-mergingCompanies.size());
+        int numPlayers = gameManager.getNumberOfPlayers();
+        // Need some checks here...
+        int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
+        Player.setPlayerCertificateLimit(newCertLimit);
+        message = LocalText.getText("CertificateLimit",
+        		newCertLimit,
+        		numPlayers,
+        		numCompanies);
+        DisplayBuffer.add(message);
+        ReportBuffer.add(message);
+
     }
 
    private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
