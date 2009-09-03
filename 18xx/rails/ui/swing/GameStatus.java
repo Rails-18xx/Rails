@@ -465,7 +465,8 @@ public class GameStatus extends JPanel implements ActionListener {
         // Certificate Limit
         addField(new Caption(LocalText.getText("LIMIT")), certLimitXOffset - 1,
                 certLimitYOffset, 1, 1, WIDE_TOP + WIDE_LEFT);
-        addField(new Field("" + Player.getCertLimit()), certLimitXOffset,
+        addField(new Field("" + gameUIManager.getGameManager().getPlayerManager().getPlayerCertificateLimit()),
+                certLimitXOffset,
                 certLimitYOffset, 1, 1, WIDE_TOP);
 
         // Bank

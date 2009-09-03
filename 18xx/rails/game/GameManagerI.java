@@ -143,6 +143,7 @@ public interface GameManagerI {
     public abstract PhaseManager getPhaseManager();
     
     public abstract TrainManagerI getTrainManager ();
+    public PlayerManager getPlayerManager();
 
 
     public abstract String getHelp();

@@ -12,11 +12,13 @@
 			<!-- 0 = "Runs out"; -1 = "broken" -->
 		</EndOfGame>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
-		<Bank amount="8040"/>
+	<Component name="PlayerManager" class="rails.game.PlayerManager">
 		<Players number="3" cash="500" certLimit="10"/>
 		<Players number="4" cash="430" certLimit="12"/>
 		<Players number="5" cash="400" certLimit="15"/>
+	</Component>
+	<Component name="Bank" class="rails.game.Bank">
+		<Bank amount="8040"/>
 		<Money format="$@"/>
 	</Component>
 	<Component name="TileManager" class="rails.game.TileManager" 

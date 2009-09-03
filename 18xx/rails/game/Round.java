@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.19 2009/07/19 19:24:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.20 2009/09/03 21:36:53 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -31,6 +31,7 @@ public abstract class Round implements RoundI {
 
     protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
+    protected PlayerManager playerManager = null;
     
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
@@ -52,6 +53,7 @@ public abstract class Round implements RoundI {
             companyManager = null;
         } else {
             companyManager = aGameManager.getCompanyManager();
+            playerManager = aGameManager.getPlayerManager();
         }
 
         roundTypeForUI = getClass();

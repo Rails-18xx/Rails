@@ -594,7 +594,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         int numPlayers = gameManager.getNumberOfPlayers();
         // Need some checks here...
         int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
-        Player.setPlayerCertificateLimit(newCertLimit);
+        playerManager.setPlayerCertificateLimit(newCertLimit);
         message = LocalText.getText("CertificateLimit",
         		newCertLimit,
         		numPlayers,

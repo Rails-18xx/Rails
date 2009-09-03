@@ -93,7 +93,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        int number, startCash, certLimit;
 
         // Parse the Bank element
 
@@ -119,21 +118,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         ReportBuffer.add(LocalText.getText("BankSizeIs",
                 format(money.getCash())));
 
-        List<Tag> playerTags = tag.getChildren("Players");
-        int minPlayers = 99;
-        int maxPlayers = 0;
-        for (Tag playerTag : playerTags) {
-            number = playerTag.getAttributeAsInteger("number");
-            startCash = playerTag.getAttributeAsInteger("cash");
-            certLimit = playerTag.getAttributeAsInteger("certLimit");
-
-            Player.setLimits(number, startCash, certLimit);
-
-            minPlayers = Math.min(minPlayers, number);
-            maxPlayers = Math.max(maxPlayers, number);
-        }
-        Player.MIN_PLAYERS = minPlayers;
-        Player.MAX_PLAYERS = maxPlayers;
     }
 
     /**
