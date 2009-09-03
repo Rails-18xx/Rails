@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.9 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.10 2009/09/03 21:36:53 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -33,7 +33,7 @@ public class ExchangeForShare extends SpecialProperty {
         return privateCompany.getPortfolio().getOwner() instanceof Player;
     }
 
-    public boolean execute() {
+    public boolean execute(StockRound round) {
 
         publicCompany =
                 Game.getCompanyManager().getPublicCompany(publicCompanyName);
@@ -64,7 +64,7 @@ public class ExchangeForShare extends SpecialProperty {
                 break;
             }
             /* Check if the player has room for a share of this company */
-            if (!player.mayBuyCompanyShare(publicCompany, 1)) {
+            if (!round.playerMayBuyCompanyShare(player, publicCompany, 1)) {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",

@@ -15,12 +15,14 @@
 			<!-- "Runs out"; when "broken", -1 is the limit -->
 		</EndOfGame>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
-		<Bank amount="12000"/>
+	<Component name="PlayerManager" class="rails.game.PlayerManager">
 		<Players number="3" cash="500" certLimit="20"/>
 		<Players number="4" cash="375" certLimit="16"/>
 		<Players number="5" cash="300" certLimit="13"/>
 		<Players number="6" cash="250" certLimit="11"/>
+	</Component>
+	<Component name="Bank" class="rails.game.Bank">
+		<Bank amount="12000"/>
 	</Component>
 	<Component name="TileManager" class="rails.game.TileManager"
 		file="TileSet.xml"/>

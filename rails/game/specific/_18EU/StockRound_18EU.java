@@ -195,12 +195,12 @@ public class StockRound_18EU extends StockRound {
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
-                if (!currentPlayer.mayBuyCompanyShare(company, 1)) continue;
+                if (!playerMayBuyCompanyShare(currentPlayer, company, 1)) continue;
                 if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
-                    && !currentPlayer.mayBuyCertificate(company, 1)) continue;
+                    && !playerMayBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
                             company.getPortfolio(),
@@ -317,7 +317,7 @@ public class StockRound_18EU extends StockRound {
             // (shortcut: assume that any additional certs are one share each)
             numberOfCertsToBuy = shares - (cert.getShares() - 1);
             // Check if the player may buy that many certificates.
-            if (!currentPlayer.mayBuyCertificate(company, numberOfCertsToBuy)) {
+            if (!playerMayBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
                 errMsg = LocalText.getText("CantBuyMoreCerts");
                 break;
             }

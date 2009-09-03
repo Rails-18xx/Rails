@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.23 2009/08/28 20:25:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.24 2009/09/03 21:36:53 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -34,6 +34,8 @@ public class Game {
     protected static String GAME_XML_FILE = "Game.xml";
     protected List<String> directories = new ArrayList<String>();
     protected Map<String, String> gameOptions;
+    
+    protected List<String> players;
 
     protected static Logger log =
             Logger.getLogger(Game.class.getPackage().getName());
@@ -59,7 +61,8 @@ public class Game {
         directories.add("data");
         directories.add("data/" + name);
 
-        playerManager = new PlayerManager(players);
+        //playerManager = new PlayerManager(players);
+        this.players = players;
     }
 
     public void start() {
@@ -93,11 +96,18 @@ public class Game {
             // Have the ComponentManager work through the other rails.game files
             componentManager.finishPreparation();
 
+            playerManager = (PlayerManager) componentManager.findComponent("PlayerManager");
+            if (playerManager == null) {
+                throw new ConfigurationException(
+                        "No PlayerManager XML element found in file " + GAME_XML_FILE);
+            }
+            
             bank = (Bank) componentManager.findComponent("Bank");
             if (bank == null) {
                 throw new ConfigurationException(
                         "No Bank XML element found in file " + GAME_XML_FILE);
             }
+            
             companyManager =
                     (CompanyManagerI) componentManager.findComponent(CompanyManagerI.COMPONENT_NAME);
             if (companyManager == null) {
@@ -140,6 +150,8 @@ public class Game {
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
+            playerManager.setPlayers(players, playerManager.getStartCash());
+
             companyManager.initCompanies(gameManager);
             bank.initCertificates();
             StartPacket.init();
@@ -155,8 +167,6 @@ public class Game {
 
         // We need to do this assignment after we've loaded all the XML data.
         MapManager.assignHomesAndDestinations();
-
-        Player.initPlayers(playerManager.getPlayers());
 
         return true;
     }

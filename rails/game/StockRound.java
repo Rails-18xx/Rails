@@ -223,11 +223,11 @@ public class StockRound extends Round {
             if (!stockSpace.isNoBuyLimit()) {
                 number = 1;
                 /* Would the player exceed the per-company share hold limit? */
-                if (!currentPlayer.mayBuyCompanyShare(comp, number)) continue;
+                if (!playerMayBuyCompanyShare(currentPlayer, comp, number)) continue;
 
                 /* Would the player exceed the total certificate limit? */
                 if (!stockSpace.isNoCertLimit()
-                    && !currentPlayer.mayBuyCertificate(comp, number))
+                    && !playerMayBuyCertificate(currentPlayer, comp, number))
                     continue;
             }
 
@@ -251,12 +251,12 @@ public class StockRound extends Round {
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
-                if (!currentPlayer.mayBuyCompanyShare(company, 1)) continue;
+                if (!playerMayBuyCompanyShare(currentPlayer, company, 1)) continue;
                 if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
-                    && !currentPlayer.mayBuyCertificate(company, 1)) continue;
+                    && !playerMayBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
                             company.getPortfolio(), company.getMarketPrice()));
@@ -491,7 +491,7 @@ public class StockRound extends Round {
             // (shortcut: assume that any additional certs are one share each)
             numberOfCertsToBuy = shares - (cert.getShares() - 1);
             // Check if the player may buy that many certificates.
-            if (!currentPlayer.mayBuyCertificate(company, numberOfCertsToBuy)) {
+            if (!playerMayBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
                 errMsg = LocalText.getText("CantBuyMoreCerts");
                 break;
             }
@@ -664,17 +664,17 @@ public class StockRound extends Round {
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
             if (!currentSpace.isNoCertLimit()
-                && !currentPlayer.mayBuyCertificate(company, shares)) {
+                && !playerMayBuyCertificate(currentPlayer, company, shares)) {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedCertLimit",
-                                        String.valueOf(Player.getCertLimit()));
+                                        String.valueOf(playerManager.getPlayerCertificateLimit()));
                 break;
             }
 
             // Check if player would exceed the per-company share limit
             if (!currentSpace.isNoHoldLimit()
-                && !currentPlayer.mayBuyCompanyShare(company, shares)) {
+                && !playerMayBuyCompanyShare(currentPlayer, company, shares)) {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedHoldLimit");
@@ -1033,7 +1033,7 @@ public class StockRound extends Round {
         // yet.
         if (sp instanceof ExchangeForShare) {
 
-            boolean result = ((ExchangeForShare) sp).execute();
+            boolean result = ((ExchangeForShare) sp).execute(this);
             if (result) hasActed.set(true);
             return result;
 
@@ -1168,10 +1168,57 @@ public class StockRound extends Round {
      * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAnything() {
-        return !currentPlayer.isOverLimits()
+        return !playerIsOverLimits(currentPlayer)
                && companyBoughtThisTurnWrapper.getObject() == null;
     }
 
+    protected boolean playerIsOverLimits(Player player) {
+
+        // Over the total certificate hold Limit?
+        if (player.getPortfolio().getCertificateCount() > playerManager.getPlayerCertificateLimit())
+            return true;
+
+        // Over the hold limit of any company?
+        for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
+            if (company.hasStarted() && company.hasStockPrice()
+                && !playerMayBuyCompanyShare(player, company, 0)) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a player may buy the given number of certificates.
+     *
+     * @param number Number of certificates to buy (usually 1 but not always
+     * so).
+     * @return True if it is allowed.
+     */
+    public boolean playerMayBuyCertificate(Player player, PublicCompanyI comp, int number) {
+        if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
+            return true;
+        if (player.getPortfolio().getCertificateCount() + number > playerManager.getPlayerCertificateLimit())
+            return false;
+        return true;
+    }
+
+    /**
+     * Check if a player may buy the given number of shares from a given
+     * company, given the "hold limit" per company, that is the percentage of
+     * shares of one company that a player may hold (typically 60%).
+     *
+     * @param company The company from which to buy
+     * @param number The number of shares (usually 1 but not always so).
+     * @return True if it is allowed.
+     */
+    public boolean playerMayBuyCompanyShare(Player player, PublicCompanyI company, int number) {
+        // Check for per-company share limit
+        if (player.getPortfolio().getShare(company) + number * company.getShareUnit() > Player.getShareLimit()
+            && !company.getCurrentSpace().isNoHoldLimit()) return false;
+        return true;
+    }
+
+ 
     public static void setNoSaleInFirstSR() {
         noSaleInFirstSR = true;
     }
