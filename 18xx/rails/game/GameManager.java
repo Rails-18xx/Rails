@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.47 2009/09/04 18:40:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.48 2009/09/04 18:56:16 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -211,7 +211,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         /* Max. % of shares of one company that a player may hold */
         Tag shareLimitTag = tag.getChild("PlayerShareLimit");
         if (shareLimitTag != null) {
-            Player.setShareLimit(shareLimitTag.getAttributeAsInteger("percentage"));
+            playerShareLimit = shareLimitTag.getAttributeAsInteger("percentage", playerShareLimit);
         }
 
         /* Max. % of shares of one company that the bank pool may hold */
@@ -867,7 +867,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 		return playerCertificateLimit;
 	}
 
-	/* (non-Javadoc)
+	public int getPlayerShareLimit() {
+        return playerShareLimit;
+    }
+
+    /* (non-Javadoc)
      * @see rails.game.GameManagerI#getAllPublicCompanies()
      */
     public List<PublicCompanyI> getAllPublicCompanies() {

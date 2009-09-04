@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.11 2009/09/04 18:40:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.12 2009/09/04 18:56:16 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -68,7 +68,7 @@ public class ExchangeForShare extends SpecialProperty {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",
-                                String.valueOf(Player.getShareLimit()));
+                                String.valueOf(round.getGameManager().getPlayerShareLimit()));
                 break;
             }
             break;

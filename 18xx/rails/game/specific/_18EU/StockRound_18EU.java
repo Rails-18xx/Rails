@@ -115,7 +115,7 @@ public class StockRound_18EU extends StockRound {
                 cert = certs.get(0);
                 comp = cert.getCompany();
                 if (isSaleRecorded(currentPlayer, comp)) continue;
-                if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
+                if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1) continue;
                 shares = cert.getShares();
 
@@ -167,7 +167,7 @@ public class StockRound_18EU extends StockRound {
             cert = certs.get(0);
             comp = cert.getCompany();
             if (isSaleRecorded(currentPlayer, comp)) continue;
-            if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
+            if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                     cert.getShare()) < 1) continue;
             price = comp.getMarketPrice();
 
@@ -196,7 +196,7 @@ public class StockRound_18EU extends StockRound {
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
                 if (!mayPlayerBuyCompanyShare(currentPlayer, company, 1)) continue;
-                if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
+                if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()

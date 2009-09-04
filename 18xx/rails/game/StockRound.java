@@ -159,7 +159,7 @@ public class StockRound extends Round {
                 cert = certs.get(0);
                 comp = cert.getCompany();
                 if (isSaleRecorded(currentPlayer, comp)) continue;
-                if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
+                if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1) continue;
                 shares = cert.getShares();
 
@@ -208,7 +208,7 @@ public class StockRound extends Round {
             cert = certs.get(0);
             comp = cert.getCompany();
             if (isSaleRecorded(currentPlayer, comp)) continue;
-            if (currentPlayer.maxAllowedNumberOfSharesToBuy(comp,
+            if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                     cert.getShare()) < 1) continue;
             stockSpace = comp.getCurrentSpace();
             price = stockSpace.getPrice();
@@ -252,7 +252,7 @@ public class StockRound extends Round {
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
                 if (!mayPlayerBuyCompanyShare(currentPlayer, company, 1)) continue;
-                if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
+                if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
@@ -1213,9 +1213,38 @@ public class StockRound extends Round {
      */
     public boolean mayPlayerBuyCompanyShare(Player player, PublicCompanyI company, int number) {
         // Check for per-company share limit
-        if (player.getPortfolio().getShare(company) + number * company.getShareUnit() > Player.getShareLimit()
+        if (player.getPortfolio().getShare(company) 
+                + number * company.getShareUnit() 
+                > gameManager.getPlayerShareLimit()
             && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
+    }
+
+    /**
+     * Return the number of <i>additional</i> shares of a certain company and
+     * of a certain size that a player may buy, given the share "hold limit" per
+     * company, that is the percentage of shares of one company that a player
+     * may hold (typically 60%). <p>If no hold limit applies, it is taken to be
+     * 100%.
+     *
+     * @param company The company from which to buy
+     * @param number The share unit (typically 10%).
+     * @return The maximum number of such shares that would not let the player
+     * overrun the per-company share hold limit.
+     */
+    public int maxAllowedNumberOfSharesToBuy(Player player, 
+            PublicCompanyI company,
+            int shareSize) {
+
+        int limit;
+        if (!company.hasStarted()) {
+            limit = gameManager.getPlayerShareLimit();
+        } else {
+            limit =
+                    company.getCurrentSpace().isNoHoldLimit() ? 100
+                            : gameManager.getPlayerShareLimit();
+        }
+        return (limit - player.getPortfolio().getShare(company)) / shareSize;
     }
 
 
