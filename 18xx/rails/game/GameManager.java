@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.46 2009/09/03 21:36:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.47 2009/09/04 18:40:30 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -55,6 +55,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected int playerShareLimit = 60;
     protected int treasuryShareLimit = 50; // For some games
+    protected IntegerState playerCertificateLimit
+    		= new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
 
@@ -326,6 +328,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
+        setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
 
         setGameParameters();
 
@@ -852,7 +855,19 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return playerNames;
     }
 
-    /* (non-Javadoc)
+    public int getPlayerCertificateLimit() {
+		return playerCertificateLimit.intValue();
+	}
+
+	public void setPlayerCertificateLimit(int newLimit) {
+		playerCertificateLimit.set (newLimit);
+	}
+
+	public IntegerState getPlayerCertificateLimitModel () {
+		return playerCertificateLimit;
+	}
+
+	/* (non-Javadoc)
      * @see rails.game.GameManagerI#getAllPublicCompanies()
      */
     public List<PublicCompanyI> getAllPublicCompanies() {

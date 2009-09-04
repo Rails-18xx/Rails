@@ -4,6 +4,7 @@ import java.util.List;
 
 import rails.common.Defs;
 import rails.game.action.PossibleAction;
+import rails.game.model.ModelObject;
 import rails.util.Tag;
 
 public interface GameManagerI {
@@ -141,10 +142,13 @@ public interface GameManagerI {
     public abstract PhaseI getCurrentPhase();
 
     public abstract PhaseManager getPhaseManager();
-    
+
     public abstract TrainManagerI getTrainManager ();
     public PlayerManager getPlayerManager();
 
+    public int getPlayerCertificateLimit();
+	public void setPlayerCertificateLimit(int newLimit);
+	public ModelObject getPlayerCertificateLimitModel ();
 
     public abstract String getHelp();
 
@@ -157,6 +161,6 @@ public interface GameManagerI {
     public abstract int getTreasuryShareLimit();
 
     public abstract Object getCommonParameter(Defs.Parm key);
-    
+
     public RoundI getInterruptedRound();
 }

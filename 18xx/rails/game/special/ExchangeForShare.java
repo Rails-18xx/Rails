@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.10 2009/09/03 21:36:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.11 2009/09/04 18:40:30 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -64,7 +64,7 @@ public class ExchangeForShare extends SpecialProperty {
                 break;
             }
             /* Check if the player has room for a share of this company */
-            if (!round.playerMayBuyCompanyShare(player, publicCompany, 1)) {
+            if (!round.mayPlayerBuyCompanyShare(player, publicCompany, 1)) {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",

@@ -16,7 +16,6 @@ public class OperatingRound_1856 extends OperatingRound {
     private Player playerToStartLoanRepayment = null;
 
     public static final int STEP_REPAY_LOANS = 6;
-    private final String CGRNAME = "CGR";
 
     static {
         STEP_FINAL = 7;
@@ -65,7 +64,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 // 1856 special: check if the company has sold enough shares to operate
                 // This check does not apply to the CGR
-                if (operatingCompany.getName().equals(CGRNAME)) return true;
+                if (operatingCompany instanceof PublicCompany_CGR) return true;
                 if (!operatingCompany.hasOperated()) {
                     int soldPercentage
                         = 100 - operatingCompany.getUnsoldPercentage();
@@ -107,10 +106,10 @@ public class OperatingRound_1856 extends OperatingRound {
         // There is only revenue if there are any trains
         if (operatingCompany.canRunTrains()) {
 
-            if (operatingCompany instanceof PublicCompany_State
-                    && ((PublicCompany_State)operatingCompany).runsWithBorrowedTrain()) {
+            if (operatingCompany instanceof PublicCompany_CGR
+                    && ((PublicCompany_CGR)operatingCompany).runsWithBorrowedTrain()) {
                 DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
-                        "CGR", "D"));
+                		PublicCompany_CGR.NAME, "D"));
                 possibleActions.add(new SetDividend(
                         operatingCompany.getLastRevenue(), true,
                         new int[] {SetDividend.WITHHOLD }));
@@ -461,7 +460,7 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
 
         List<PublicCompanyI> companies
                 = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
-        PublicCompanyI cgr = companyManager.getCompanyByName("CGR");
+        PublicCompanyI cgr = companyManager.getCompanyByName(PublicCompany_CGR.NAME);
         boolean cgrCanOperate = cgr.hasStarted();
 
         for (PublicCompanyI company : mergingCompanies) {
