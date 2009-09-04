@@ -150,6 +150,8 @@ public interface GameManagerI {
 	public void setPlayerCertificateLimit(int newLimit);
 	public ModelObject getPlayerCertificateLimitModel ();
 
+    public int getPlayerShareLimit();
+    
     public abstract String getHelp();
 
     public abstract boolean canAnyCompanyHoldShares();

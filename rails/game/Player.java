@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.19 2009/09/03 21:36:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.20 2009/09/04 18:56:16 evos Exp $ */
 package rails.game;
 
 import rails.game.model.*;
@@ -9,16 +9,10 @@ import rails.game.model.*;
 
 public class Player implements CashHolder, Comparable<Player> {
 
-    /** Default limit to percentage of a company a player may hold */
-    private static final int DEFAULT_PLAYER_SHARE_LIMIT = 60;
-
     public static int MAX_PLAYERS = 8;
 
     public static int MIN_PLAYERS = 2;
     
-    private static int playerShareLimit = DEFAULT_PLAYER_SHARE_LIMIT;
-    // May need to become an array
-
     private String name = "";
 
     private int index = 0;
@@ -45,32 +39,6 @@ public class Player implements CashHolder, Comparable<Player> {
         blockedCash.setOption(MoneyModel.SUPPRESS_ZERO);
         worth = new CalculatedMoneyModel(this, "getWorth");
         wallet.addDependent(worth);
-    }
-
-   /**
-     * Return the number of <i>additional</i> shares of a certain company and
-     * of a certain size that a player may buy, given the share "hold limit" per
-     * company, that is the percentage of shares of one company that a player
-     * may hold (typically 60%). <p>If no hold limit applies, it is taken to be
-     * 100%.
-     *
-     * @param company The company from which to buy
-     * @param number The share unit (typically 10%).
-     * @return The maximum number of such shares that would not let the player
-     * overrun the per-company share hold limit.
-     */
-    public int maxAllowedNumberOfSharesToBuy(PublicCompanyI company,
-            int shareSize) {
-
-        int limit;
-        if (!company.hasStarted()) {
-            limit = playerShareLimit;
-        } else {
-            limit =
-                    company.getCurrentSpace().isNoHoldLimit() ? 100
-                            : playerShareLimit;
-        }
-        return (limit - portfolio.getShare(company)) / shareSize;
     }
 
     /**
@@ -201,13 +169,6 @@ public class Player implements CashHolder, Comparable<Player> {
         return index;
     }
 
-    public static void setShareLimit(int percentage) {
-        playerShareLimit = percentage;
-    }
-
-    public static int getShareLimit() {
-        return playerShareLimit;
-    }
     /**
      * Compare Players by their total worth, in descending order. This method
      * implements the Comparable interface.

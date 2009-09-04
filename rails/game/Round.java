@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.20 2009/09/03 21:36:53 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.21 2009/09/04 18:56:15 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -360,4 +360,9 @@ public abstract class Round implements RoundI {
         return ((Portfolio)cert.getHolder()).getOwner();
     }
 
+    public GameManagerI getGameManager() {
+        return gameManager;
+    }
+
+    
 }
