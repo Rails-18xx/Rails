@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.55 2009/09/02 21:47:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.56 2009/09/04 18:38:11 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -219,6 +219,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected boolean mustTradeTrainsAtFixedPrice = false;
 
+    /** Can the company price token go down to a "Close" square?
+     * 1856 CGR cannot.
+     */
+    protected boolean canClose = true;
+
     /** Initial train at floating time */
     protected String initialTrain = null;
 
@@ -229,7 +234,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
     protected MoneyModel currentLoanValue = null;
-    
+
     protected BooleanState canSharePriceVary = null;
 
     protected GameManagerI gameManager;
@@ -550,6 +555,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
             loanInterestPct = loansTag.getAttributeAsInteger("interest", 0);
             maxLoansPerRound = loansTag.getAttributeAsInteger("perRound", -1);
         }
+
+        Tag optionsTag = tag.getChild("Options");
+        if (optionsTag != null) {
+        	mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean
+        		("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
+        	canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
+        }
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -771,7 +783,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean mustHaveOperatedToTradeShares() {
         return mustHaveOperatedToTradeShares;
     }
-    
+
     public void start(StockSpaceI startSpace) {
 
         hasStarted.set(true);
@@ -1414,7 +1426,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean canRunTrains() {
         return portfolio.getNumberOfTrains() > 0;
     }
-    
+
     /**
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
@@ -1691,7 +1703,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return currentLoanValue;
     }
 
-    @Override
+    public boolean canClose() {
+		return canClose;
+	}
+
+	@Override
     public Object clone() {
 
         Object clone = null;
