@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.15 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.16 2009/09/04 18:38:11 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -215,7 +215,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         }
         prepareMove(company, oldsquare, newsquare);
     }
-    
+
     public void close (PublicCompanyI company) {
         prepareMove(company, company.getCurrentSpace(), null);
     }
@@ -232,6 +232,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         /* Don't drop below the bottom of the chart */
         while (newrow >= numRows || getStockSpace(newrow, col) == null)
             newrow--;
+
+        // Check if company may enter a "Closed" area
+        while (getStockSpace(newrow, col).closesCompany() && !company.canClose())
+        	newrow--;
 
         /*
          * If marker landed just below a ledge, and NOT because it was bounced
@@ -260,11 +264,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
         if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
-            && (newsquare = getStockSpace(row, col + 1)) != null) {} else if (row > 0
-                                                                              && (newsquare =
-                                                                                      getStockSpace(
-                                                                                              row - 1,
-                                                                                              col)) != null) {}
+        		&& (newsquare = getStockSpace(row, col + 1)) != null) {}
+        else if (row > 0
+        		&& (newsquare = getStockSpace(row - 1, col)) != null) {}
+        if (newsquare == oldsquare) return;
         prepareMove(company, oldsquare, newsquare);
     }
 
@@ -273,12 +276,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
-        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {} else if (row < numRows - 1
-                                                                                      && (newsquare =
-                                                                                              getStockSpace(
-                                                                                                      row + 1,
-                                                                                                      col)) != null) {}
-        if (newsquare != oldsquare && newsquare.closesCompany()) {
+        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {}
+        else if (row < numRows - 1 &&
+        		(newsquare = getStockSpace(row + 1, col)) != null) {}
+        if (newsquare == oldsquare) return;
+        if (newsquare.closesCompany()) {
+        	if (!company.canClose()) return; // E.g. 1856 CGR
             company.setClosed();
             oldsquare.removeToken(company);
             ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT")

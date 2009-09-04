@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.32 2009/09/02 21:47:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.33 2009/09/04 18:38:11 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -245,9 +245,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public boolean hasStockPrice();
 
     public boolean hasParPrice();
-    
+
     public boolean canSharePriceVary();
-    
+
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();
@@ -266,7 +266,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public int getNumberOfTrains();
     public boolean canRunTrains();
-    
+
     public void initTurn();
 
     public void buyTrain(TrainI train, int price);
@@ -336,6 +336,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getLoanInterestPct();
     public int getMaxNumberOfLoans();
     public boolean canLoan();
+    public boolean canClose();
     public int getMaxLoansPerRound();
     public int getValuePerLoan();
     public MoneyModel getLoanValueModel ();
