@@ -73,7 +73,7 @@ public class StockRound extends Round {
         if (unavailable == null) unavailable = Bank.getUnavailable();
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
-        
+
 	}
 
     public void start() {
@@ -223,11 +223,11 @@ public class StockRound extends Round {
             if (!stockSpace.isNoBuyLimit()) {
                 number = 1;
                 /* Would the player exceed the per-company share hold limit? */
-                if (!playerMayBuyCompanyShare(currentPlayer, comp, number)) continue;
+                if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
 
                 /* Would the player exceed the total certificate limit? */
                 if (!stockSpace.isNoCertLimit()
-                    && !playerMayBuyCertificate(currentPlayer, comp, number))
+                    && !mayPlayerBuyCertificate(currentPlayer, comp, number))
                     continue;
             }
 
@@ -251,12 +251,12 @@ public class StockRound extends Round {
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
-                if (!playerMayBuyCompanyShare(currentPlayer, company, 1)) continue;
+                if (!mayPlayerBuyCompanyShare(currentPlayer, company, 1)) continue;
                 if (currentPlayer.maxAllowedNumberOfSharesToBuy(company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
-                    && !playerMayBuyCertificate(currentPlayer, company, 1)) continue;
+                    && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(cert,
                             company.getPortfolio(), company.getMarketPrice()));
@@ -491,7 +491,7 @@ public class StockRound extends Round {
             // (shortcut: assume that any additional certs are one share each)
             numberOfCertsToBuy = shares - (cert.getShares() - 1);
             // Check if the player may buy that many certificates.
-            if (!playerMayBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
+            if (!mayPlayerBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
                 errMsg = LocalText.getText("CantBuyMoreCerts");
                 break;
             }
@@ -664,17 +664,17 @@ public class StockRound extends Round {
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
             if (!currentSpace.isNoCertLimit()
-                && !playerMayBuyCertificate(currentPlayer, company, shares)) {
+                && !mayPlayerBuyCertificate(currentPlayer, company, shares)) {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedCertLimit",
-                                        String.valueOf(playerManager.getPlayerCertificateLimit()));
+                                        String.valueOf(gameManager.getPlayerCertificateLimit()));
                 break;
             }
 
             // Check if player would exceed the per-company share limit
             if (!currentSpace.isNoHoldLimit()
-                && !playerMayBuyCompanyShare(currentPlayer, company, shares)) {
+                && !mayPlayerBuyCompanyShare(currentPlayer, company, shares)) {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedHoldLimit");
@@ -1168,20 +1168,20 @@ public class StockRound extends Round {
      * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAnything() {
-        return !playerIsOverLimits(currentPlayer)
+        return !isPlayerOverLimits(currentPlayer)
                && companyBoughtThisTurnWrapper.getObject() == null;
     }
 
-    protected boolean playerIsOverLimits(Player player) {
+    protected boolean isPlayerOverLimits(Player player) {
 
         // Over the total certificate hold Limit?
-        if (player.getPortfolio().getCertificateCount() > playerManager.getPlayerCertificateLimit())
+        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit())
             return true;
 
         // Over the hold limit of any company?
         for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
-                && !playerMayBuyCompanyShare(player, company, 0)) return true;
+                && !mayPlayerBuyCompanyShare(player, company, 0)) return true;
         }
 
         return false;
@@ -1194,10 +1194,10 @@ public class StockRound extends Round {
      * so).
      * @return True if it is allowed.
      */
-    public boolean playerMayBuyCertificate(Player player, PublicCompanyI comp, int number) {
+    public boolean mayPlayerBuyCertificate(Player player, PublicCompanyI comp, int number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
-        if (player.getPortfolio().getCertificateCount() + number > playerManager.getPlayerCertificateLimit())
+        if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit())
             return false;
         return true;
     }
@@ -1211,14 +1211,14 @@ public class StockRound extends Round {
      * @param number The number of shares (usually 1 but not always so).
      * @return True if it is allowed.
      */
-    public boolean playerMayBuyCompanyShare(Player player, PublicCompanyI company, int number) {
+    public boolean mayPlayerBuyCompanyShare(Player player, PublicCompanyI company, int number) {
         // Check for per-company share limit
         if (player.getPortfolio().getShare(company) + number * company.getShareUnit() > Player.getShareLimit()
             && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
     }
 
- 
+
     public static void setNoSaleInFirstSR() {
         noSaleInFirstSR = true;
     }

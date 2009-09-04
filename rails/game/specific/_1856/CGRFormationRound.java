@@ -12,15 +12,14 @@ import rails.util.LocalText;
 
 public class CGRFormationRound extends SwitchableUIRound {
 
-    private final String CGRNAME = "CGR";
-
     private Player startingPlayer;
     private Map<Player, List<PublicCompanyI>> companiesToRepayLoans = null;
     private PublicCompanyI currentCompany = null;
     private int maxLoansToRepayByPresident = 0;
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
-    private PublicCompany_State cgr = (PublicCompany_State)gameManager.getCompanyManager().getCompanyByName(CGRNAME);
-    private String cgrName = CGRNAME;
+    private String cgrName = PublicCompany_CGR.NAME;
+    private PublicCompany_CGR cgr
+    	= (PublicCompany_CGR)gameManager.getCompanyManager().getCompanyByName(cgrName);
     private List<TrainI> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
@@ -185,7 +184,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 mergingCompanies.add(currentCompany);
                 message = LocalText.getText("WillMergeInto",
                         currentCompany.getName(),
-                        "CGR");
+                        PublicCompany_CGR.NAME);
                 DisplayBuffer.add(message, false);
                 ReportBuffer.add(message);
                 continue;
@@ -263,7 +262,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             mergingCompanies.add(currentCompany);
             String message = LocalText.getText("WillMergeInto",
                     currentCompany.getName(),
-                    "CGR");
+                    PublicCompany_CGR.NAME);
             DisplayBuffer.add(message, true);
             ReportBuffer.add(message);
 
@@ -333,7 +332,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                         player.getName(),
                         oldShares,
                         newShares,
-                        "CGR");
+                        PublicCompany_CGR.NAME);
                 DisplayBuffer.add(message, false);
                 ReportBuffer.add(message);
 
@@ -388,7 +387,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 LocalText.getText("POOL"),
                 oldShares,
                 newShares,
-                "CGR");
+                PublicCompany_CGR.NAME);
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
 
@@ -401,7 +400,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         // If no more than 10 shares are in play, the CGR share
         // unit becomes 10%; otherwise it stays 5%.
         if (cgrSharesUsed <=10) {
-            (cgr).setShareUnit (10);
+            cgr.setShareUnit (10);
             // All superfluous shares have been removed
         }
         message = LocalText.getText("CompanyHasShares",
@@ -411,7 +410,8 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
-        certs = new ArrayList<PublicCertificateI>(unavailable.getCertificatesPerCompany("CGR"));
+        certs = new ArrayList<PublicCertificateI>
+        		(unavailable.getCertificatesPerCompany(PublicCompany_CGR.NAME));
         for (PublicCertificateI cert : certs) {
             cert.moveTo(ipo);
         }
@@ -464,7 +464,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
-                        "CGR",
+                		PublicCompany_CGR.NAME,
                         Bank.format(startSpace.getPrice()),
                         startSpace.getName());
                 DisplayBuffer.add(message);
@@ -473,7 +473,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
         }
         cgr.setFloated();
-        ReportBuffer.add (LocalText.getText("Floats", "CGR"));
+        ReportBuffer.add (LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
          // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
@@ -594,7 +594,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         int numPlayers = gameManager.getNumberOfPlayers();
         // Need some checks here...
         int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
-        playerManager.setPlayerCertificateLimit(newCertLimit);
+        gameManager.setPlayerCertificateLimit(newCertLimit);
         message = LocalText.getText("CertificateLimit",
         		newCertLimit,
         		numPlayers,

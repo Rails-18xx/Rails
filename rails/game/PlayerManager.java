@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.8 2009/09/03 21:36:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.9 2009/09/04 18:40:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -21,14 +21,12 @@ public class PlayerManager implements ConfigurableComponentI {
 
     private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
 
-    private int playerCertificateLimit = 0;
-
     public PlayerManager() {
-        
+
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         int number, startCash, certLimit;
 
         List<Tag> playerTags = tag.getChildren("Players");
@@ -40,14 +38,14 @@ public class PlayerManager implements ConfigurableComponentI {
             playerStartCash[number] = startCash;
             certLimit = playerTag.getAttributeAsInteger("certLimit");
             playerCertificateLimits[number] = certLimit;
-    
+
             minPlayers = Math.min(minPlayers, number);
             maxPlayers = Math.max(maxPlayers, number);
         }
     }
-    
+
    public void setPlayers (List<String> playerNames, int startCash) {
-        
+
         Player player;
 
         this.playerNames = playerNames;
@@ -69,8 +67,6 @@ public class PlayerManager implements ConfigurableComponentI {
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
                 Bank.format(Bank.getInstance().getCash())));
-
-        playerCertificateLimit = playerCertificateLimits[numberOfPlayers];
     }
 
     /**
@@ -91,17 +87,16 @@ public class PlayerManager implements ConfigurableComponentI {
     public Player getPlayerByIndex(int index) {
         return players.get(index);
     }
-    
+
     public int getStartCash () {
         return playerStartCash[numberOfPlayers];
     }
 
-    public int getPlayerCertificateLimit() {
-        return playerCertificateLimit;
-    }
-
-    public void setPlayerCertificateLimit(int playerCertificateLimit) {
-        this.playerCertificateLimit = playerCertificateLimit;
+    /** Only to be called at initialisation time.
+     * Does not reflect later changes to this limit.
+     */
+    public int getInitialPlayerCertificateLimit() {
+        return playerCertificateLimits[numberOfPlayers];
     }
 
 }
