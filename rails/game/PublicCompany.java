@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.56 2009/09/04 18:38:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.57 2009/09/06 12:27:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -887,8 +887,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return hasOperated.booleanValue();
     }
 
-    public void setOperated(boolean value) {
-        hasOperated.set(value);
+    public void setOperated() {
+        hasOperated.set(true);
     }
 
     @Override
@@ -988,6 +988,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public StockSpaceI getCurrentSpace() {
         return currentPrice != null ? currentPrice.getPrice() : null;
     }
+
+    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
+            StockMarketI stockMarket) {
+        if (actionPerformed == StockRound.SOLD) {
+            if (canSharePriceVary()) {
+                stockMarket.sell(this, numberOfSharesSold);
+            }
+        }
+    }
+
 
     /**
      * Add a given amount to the company treasury.
