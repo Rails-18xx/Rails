@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.15 2009/08/30 18:13:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.16 2009/09/06 16:16:56 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -145,8 +145,8 @@ public class GUITile {
                                     // Find the other new exit
                                     int otherNewEndPoint = newTracks.get(0).getEndPoint(tempTileSide);
                                     // Calculate the corresponding old tile side number                                   
-                                    int otherOldEndPoint = (otherNewEndPoint - tempRot + prevTileRotation +6 ) % 6;
-                                    // That old tile side must have track too
+                                    int otherOldEndPoint = (otherNewEndPoint + tempRot - prevTileRotation + 6) % 6;
+                                               // That old tile side must have track too
                                     if (prevTile.getTracksPerSide(otherOldEndPoint) == null 
                                             || prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
                                         continue rot;
