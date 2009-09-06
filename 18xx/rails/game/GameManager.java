@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.48 2009/09/04 18:56:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.49 2009/09/06 12:27:36 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -46,6 +46,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected CompanyManagerI companyManager;
     protected PhaseManager phaseManager;
     protected TrainManagerI trainManager;
+    protected StockMarketI stockMarket;
 
     protected List<Player> players;
     protected List<String> playerNames;
@@ -318,11 +319,13 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void startGame(PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
-            TrainManagerI trainManager) {
+            TrainManagerI trainManager,
+            StockMarketI stockMarket) {
         this.playerManager = playerManager;
         this.companyManager = companyManager;
         this.phaseManager = phaseManager;
         this.trainManager = trainManager;
+        this.stockMarket = stockMarket;
 
         players = playerManager.getPlayers();
         playerNames = playerManager.getPlayerNames();
@@ -928,6 +931,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public TrainManagerI getTrainManager () {
         return trainManager;
+    }
+
+    public StockMarketI getStockMarket() {
+        return stockMarket;
     }
 
     // TODO Should be removed

@@ -17,7 +17,7 @@ public interface GameManagerI {
 
     public abstract void startGame(PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
-            TrainManagerI trainManager);
+            TrainManagerI trainManager, StockMarketI stockMarket);
 
     public abstract CompanyManagerI getCompanyManager();
 
@@ -145,7 +145,8 @@ public interface GameManagerI {
 
     public abstract TrainManagerI getTrainManager ();
     public PlayerManager getPlayerManager();
-
+    public StockMarketI getStockMarket();
+    
     public int getPlayerCertificateLimit();
 	public void setPlayerCertificateLimit(int newLimit);
 	public ModelObject getPlayerCertificateLimitModel ();

@@ -65,6 +65,9 @@ public class OperatingRound_1856 extends OperatingRound {
                 // 1856 special: check if the company has sold enough shares to operate
                 // This check does not apply to the CGR
                 if (operatingCompany instanceof PublicCompany_CGR) return true;
+                
+                if (operatingCompany.isClosed()) continue;
+                
                 if (!operatingCompany.hasOperated()) {
                     int soldPercentage
                         = 100 - operatingCompany.getUnsoldPercentage();
@@ -470,7 +473,7 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
         // Find the first company that has not yet operated
         // and is not closed.
         while (setNextOperatingCompany(false)
-                && getOperatingCompany().isClosed());
+                && operatingCompany.isClosed());
 
         // Remove closed companies from the operating company list
         // (leave this code in case we need it; it works)
@@ -486,7 +489,11 @@ log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
         }
 
         for (PublicCompanyI c : companies) {
-            log.debug("Now operating: "+c.getName());
+            if (c.isClosed()) {
+                log.info(c.getName()+" is closed");
+            } else {
+                log.debug(c.getName()+" is operating");
+            }
         }
 
         String message;

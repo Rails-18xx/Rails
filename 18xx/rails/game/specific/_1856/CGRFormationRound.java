@@ -562,7 +562,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             for (String key : new TreeSet<String> (oldTokens.keySet())) {
                  tokensToExchangeFrom.add(new ExchangeableToken(
                         key, oldTokens.get(key)));
-        }
+            }
         } else {
             executeExchangeTokens (nonHomeTokens);
         }

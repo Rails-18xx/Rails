@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.20 2009/01/15 20:53:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.21 2009/09/06 12:27:33 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -355,7 +355,7 @@ public class ShareSellingRound extends StockRound {
                 executeTradeCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
-        stockMarket.sell(company, numberSold);
+        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket()); 
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {

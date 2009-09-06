@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.24 2009/09/03 21:36:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.25 2009/09/06 12:27:31 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -67,7 +67,7 @@ public class Game {
 
     public void start() {
         gameManager.startGame(playerManager, companyManager,
-                phaseManager, trainManager);
+                phaseManager, trainManager, stockMarket);
     }
 
     public boolean setup() {

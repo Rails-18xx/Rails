@@ -6,13 +6,18 @@ import java.util.List;
 import rails.game.*;
 import rails.game.move.*;
 import rails.game.state.BooleanState;
+import rails.game.state.IntegerState;
 
 public class PublicCompany_CGR extends PublicCompany {
 
 	public static final String NAME = "CGR";
 
-    /** Used for CGR */
+    /** Special rules apply before CGR has got its first permanent train */
     private BooleanState hadPermanentTrain;
+    
+    /* Cope with multiple 5% share sales in one turn */
+    private IntegerState sharesSoldSoFar;
+    private IntegerState squaresDownSoFar;
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
@@ -22,6 +27,9 @@ public class PublicCompany_CGR extends PublicCompany {
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
+
+        sharesSoldSoFar = new IntegerState(name+"_SharesSoldSoFar", 0);
+        squaresDownSoFar = new IntegerState(name+"_SquaresDownSoFar", 0);
     }
 
     public boolean hadPermanentTrain() {
@@ -96,6 +104,36 @@ public class PublicCompany_CGR extends PublicCompany {
             }
         }
 
+    }
+
+    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
+            StockMarketI stockMarket) {
+        
+        if (actionPerformed == StockRound.SOLD) {
+            if (canSharePriceVary()) {
+                int numberOfSpaces;
+                if (shareUnit.intValue() == 5) {
+                    // Take care for selling 5% shares in multiple blocks per turn 
+                    numberOfSpaces 
+                        = (sharesSoldSoFar.intValue() + numberOfSharesSold)/2 
+                        - squaresDownSoFar.intValue();
+                    sharesSoldSoFar.add(numberOfSharesSold);
+                    squaresDownSoFar.add(numberOfSpaces);
+                } else {
+                    numberOfSpaces = numberOfSharesSold;
+                }
+                stockMarket.sell(this, numberOfSpaces);
+            }
+        }
+    }
+    
+    public void setOperated() {
+        super.setOperated();
+        
+        // Reset the share selling counts
+        // TODO Should this be a generic function?
+        sharesSoldSoFar.set(0);
+        squaresDownSoFar.set(0);
     }
 
     @Override

@@ -43,6 +43,10 @@ public class StockRound extends Round {
     static protected final int SELL_BUY_SELL = 0;
     static protected final int SELL_BUY = 1;
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
+    
+    /* Action comnstants */
+    static public final int BOUGHT = 0;
+    static public final int SOLD = 1;
 
     /* Permanent memory */
     static protected StockMarketI stockMarket;
@@ -996,7 +1000,7 @@ public class StockRound extends Round {
                 executeTradeCertificate(cert, pool, cert.getShares() * price);
             }
         }
-        if (company.canSharePriceVary()) stockMarket.sell(company, numberToSell);
+        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket()); 
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.33 2009/09/04 18:38:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.34 2009/09/06 12:27:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -101,7 +101,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
      */
     public boolean hasOperated();
 
-    public void setOperated(boolean value);
+    public void setOperated();
 
     /**
      * Start the company and set its initial (par) price.
@@ -248,6 +248,9 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public boolean canSharePriceVary();
 
+    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
+            StockMarketI stockMarket);
+    
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();
