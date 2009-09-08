@@ -17,7 +17,7 @@
 	<Hex name="E14" tile="0"/>
 	<Hex name="E16" tile="0"/>
 	<Hex name="E18" tile="-2" port="yes"/>
-	<Hex name="F9" tile="-939" port="yes" revenue="30,50,40" city="Goderich"/>
+	<Hex name="F9" tile="-939" port="yes" value="30,50,40" city="Goderich"/>
 	<Hex name="F11" tile="0"/>
 	<Hex name="F13" tile="-2"/>
 	<Hex name="F15" tile="-11" city="London"/>
@@ -28,7 +28,7 @@
 	<Hex name="G14" tile="0"/>
 	<Hex name="G16" tile="0"/>
 	<Hex name="G18" tile="0"/>
-	<Hex name="H5" tile="-902" orientation="1" port="yes" revenue="30,50,40" city="Lake Huron"/>
+	<Hex name="H5" tile="-902" orientation="1" port="yes" value="30,50,40" city="Lake Huron"/>
 	<Hex name="H7" tile="-2" port="yes"/>
 	<Hex name="H9" tile="0"/>
 	<Hex name="H11" tile="-1"/>
@@ -49,7 +49,7 @@
 	<Hex name="J13" tile="-10" city="Galt"/>
 	<Hex name="J15" tile="-10" city="Brantford"/>
 	<Hex name="J17" tile="-2" port="yes"/>
-	<Hex name="K2" tile="-902" orientation="1" port="yes" revenue="20,30,30" city="Georgian Bay"/>
+	<Hex name="K2" tile="-902" orientation="1" port="yes" value="20,30,30" city="Georgian Bay"/>
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="-10" city="Orangeville"/>
