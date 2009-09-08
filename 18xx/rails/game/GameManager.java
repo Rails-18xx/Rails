@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.49 2009/09/06 12:27:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.50 2009/09/08 21:48:59 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -938,7 +938,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     // TODO Should be removed
-    public static void initialiseNewPhase(PhaseI phase) {
+    public void initialiseNewPhase(PhaseI phase) {
         ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
 
         phase.activate();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.8 2009/01/11 17:24:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.9 2009/09/08 21:48:58 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -16,7 +16,7 @@ import rails.util.Util;
  * rails.game program as it most closely the function of such a token: to act as
  * a base from which a company can operate. Other names used in various games
  * and discussions are "railhead", "station", "garrison", or just "token".
- * 
+ *
  * @author Erik Vos
  */
 public class BonusToken extends Token implements Closeable {
@@ -55,30 +55,36 @@ public class BonusToken extends Token implements Closeable {
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
 
+    /**
+     * Remove the token.
+     * This method can be called by a certain phase when it starts.
+     * See prepareForRemovel().
+     */
     public void close() {
-        // new TokenMove (this, holder, Bank.getScrapHeap());
+
         new ObjectMove(this, holder, Bank.getScrapHeap());
         user.removeBonusToken(this);
     }
 
-    @Override
-    public void setHolder(TokenHolderI newHolder) {
-        super.setHolder(newHolder);
+    /**
+     * Prepare the bonus token for removal, if so configured.
+     * The only case currently implemented to trigger removal
+     * is the start of a given phase.
+     */
+    public void prepareForRemoval (PhaseManager phaseManager) {
 
-        // Prepare for removal, is requested
-        if (removingObjectDesc != null && removingObject == null) {
-            String[] spec = removingObjectDesc.split(":");
-            if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject =
-                        PhaseManager.getInstance().getPhaseByName(spec[1]);
-            }
+        if (removingObjectDesc == null) return;
+
+        if (removingObject == null) {
+	        String[] spec = removingObjectDesc.split(":");
+	        if (spec[0].equalsIgnoreCase("Phase")) {
+	            removingObject =
+	                    phaseManager.getPhaseByName(spec[1]);
+	        }
         }
 
-        // If the token is placed, prepare its removal when required
-        if (newHolder instanceof MapHex && removingObject != null) {
-            if (removingObject instanceof Phase) {
-                ((Phase) removingObject).addObjectToClose(this);
-            }
+        if (removingObject instanceof Phase) {
+            ((Phase) removingObject).addObjectToClose(this);
         }
     }
 

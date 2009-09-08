@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.13 2009/01/11 17:24:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.14 2009/09/08 21:48:59 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,22 +8,16 @@ import rails.util.Tag;
 
 public class PhaseManager implements ConfigurableComponentI {
 
-    protected static PhaseManager instance = null;
-
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
     protected State currentPhase = new State("CurrentPhase", Phase.class);
 
-    public PhaseManager() {
+    // Can be removed once setPhase() has been redone.
+    protected GameManagerI gameManager;
 
-        instance = this;
-    }
-
-    public static PhaseManager getInstance() {
-        return instance;
-    }
+    public PhaseManager() {}
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /*
@@ -40,7 +34,7 @@ public class PhaseManager implements ConfigurableComponentI {
 
         int n = 0;
         for (Tag phaseTag : phaseTags) {
-            name = phaseTag.getAttributeAsString("name", "" + (n + 1));
+            name = phaseTag.getAttributeAsString("name", String.valueOf(n + 1));
             phase = new Phase(n++, name, previousPhase);
             phaseList.add(phase);
             phaseMap.put(name, phase);
@@ -50,6 +44,10 @@ public class PhaseManager implements ConfigurableComponentI {
         PhaseI initialPhase = phaseList.get(0);
         setPhase(initialPhase);
 
+    }
+
+    public void init (GameManagerI gameManager) {
+    	this.gameManager = gameManager;
     }
 
     public PhaseI getCurrentPhase() {
@@ -71,7 +69,7 @@ public class PhaseManager implements ConfigurableComponentI {
             // TODO Redundant, should be replaced by phase.activate()
             // as soon as privates closing is included there.
             // Please consider Undo/Redo as well
-            GameManager.initialiseNewPhase(phase);
+            gameManager.initialiseNewPhase(phase);
         }
     }
 

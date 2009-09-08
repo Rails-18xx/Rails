@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.25 2009/09/06 12:27:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.26 2009/09/08 21:48:59 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -34,7 +34,7 @@ public class Game {
     protected static String GAME_XML_FILE = "Game.xml";
     protected List<String> directories = new ArrayList<String>();
     protected Map<String, String> gameOptions;
-    
+
     protected List<String> players;
 
     protected static Logger log =
@@ -101,13 +101,13 @@ public class Game {
                 throw new ConfigurationException(
                         "No PlayerManager XML element found in file " + GAME_XML_FILE);
             }
-            
+
             bank = (Bank) componentManager.findComponent("Bank");
             if (bank == null) {
                 throw new ConfigurationException(
                         "No Bank XML element found in file " + GAME_XML_FILE);
             }
-            
+
             companyManager =
                     (CompanyManagerI) componentManager.findComponent(CompanyManagerI.COMPONENT_NAME);
             if (companyManager == null) {
@@ -153,6 +153,7 @@ public class Game {
             playerManager.setPlayers(players, playerManager.getStartCash());
 
             companyManager.initCompanies(gameManager);
+            trainManager.init(gameManager);
             bank.initCertificates();
             StartPacket.init();
             //companyManager.initCompanies(gameManager);

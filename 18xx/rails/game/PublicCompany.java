@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.57 2009/09/06 12:27:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.58 2009/09/08 21:48:59 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1222,8 +1222,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Portfolio holder = cert.getPortfolio();
         CashHolder beneficiary = holder.getOwner();
         // Special cases apply if the holder is the IPO or the Pool
-        if (holder == Bank.getIpo() && ipoPaysOut || holder == Bank.getPool()
-            && poolPaysOut) {
+        if (holder == Bank.getIpo() && ipoPaysOut 
+                || holder == Bank.getPool() && poolPaysOut) {
             beneficiary = this;
         }
         return beneficiary;

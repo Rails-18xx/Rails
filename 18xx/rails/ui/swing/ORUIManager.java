@@ -98,6 +98,7 @@ public class ORUIManager {
     public void initOR(OperatingRound or) {
         oRound = or;
         companies = (oRound).getOperatingCompanies();
+        map.updateOffBoardToolTips();
         orWindow.activate(oRound);
     }
 
@@ -903,7 +904,7 @@ public class ORUIManager {
             int newOffBoardRevenueStep =
                     gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
             if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
-                HexMap.updateOffBoardToolTips();
+                map.updateOffBoardToolTips();
             }
 
         }
@@ -1360,6 +1361,10 @@ public class ORUIManager {
     // TEMPORARY
     public HexMap getMap() {
         return map;
+    }
+
+    public GameUIManager getGameUIManager () {
+    	return gameUIManager;
     }
 
     private void displayRemainingTiles() {
