@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.20 2008/12/02 20:29:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.21 2009/09/08 21:48:57 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -57,7 +57,7 @@ public class GUIHex implements ViewObject {
     /**
      * Stores the neighbouring views. This parallels the neighors field in
      * MapHex, just on the view side.
-     * 
+     *
      * @todo check if we can avoid this
      */
     private GUIHex[] neighbors = new GUIHex[6];
@@ -553,7 +553,7 @@ public class GUIHex implements ViewObject {
                 .append(" (").append(model.getConnectionString(cityNumber)).append(
                         "): value ");
                 if (model.hasOffBoardValues()) {
-                    tt.append(model.getCurrentOffBoardValue()).append(" [");
+                    tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
                     int[] values = model.getOffBoardValues();
                     for (int i = 0; i < values.length; i++) {
                         if (i > 0) tt.append(",");

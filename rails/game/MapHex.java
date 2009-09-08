@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.23 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.24 2009/09/08 21:48:59 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -729,12 +729,20 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         }
     }
 
-    public boolean layBonusToken(BonusToken token) {
+    /**
+     * Lay a bonus token.
+     * @param token The bonus token object to place
+     * @param phaseManager The PhaseManager is also passed in case the
+     * token must register itself for removal when a certain phase starts.
+     * @return
+     */
+    public boolean layBonusToken(BonusToken token, PhaseManager phaseManager) {
         if (token == null) {
             log.error("No token specified");
             return false;
         } else {
             token.moveTo(this);
+            token.prepareForRemoval (phaseManager);
             return true;
         }
     }
@@ -750,7 +758,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             return offStationTokens.add(token);
         }
     }
-    
+
     public List<BaseToken> getBaseTokens () {
         if (cities == null || cities.isEmpty()) return null;
         List<BaseToken> tokens = new ArrayList<BaseToken>();
@@ -929,11 +937,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         return offBoardValues;
     }
 
-    public int getCurrentOffBoardValue() {
-        if (hasOffBoardValues()) {
+    public int getCurrentOffBoardValue(PhaseI phase) {
+        if (hasOffBoardValues() && phase != null) {
             return offBoardValues[Math.min(
                     offBoardValues.length,
-                    PhaseManager.getInstance().getCurrentPhase().getOffBoardRevenueStep()) - 1];
+                    phase.getOffBoardRevenueStep()) - 1];
         } else {
             return 0;
         }

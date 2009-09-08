@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.5 2008/06/04 19:00:31 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.6 2009/09/08 21:48:59 evos Exp $
+ *
  * Created on Jan 1, 2007
  * Change Log:
  */
@@ -16,9 +16,9 @@ import rails.game.move.ObjectMove;
  */
 public abstract class Token implements TokenI {
 
-    TokenHolderI holder = null;
-    String description = "";
-    String uniqueId;
+    protected TokenHolderI holder = null;
+    protected String description = "";
+    protected String uniqueId;
 
     private static Map<String, TokenI> tokenMap = new HashMap<String, TokenI>();
     private static int index = 0;
@@ -58,7 +58,7 @@ public abstract class Token implements TokenI {
     /**
      * Transfer a token object from one TokenHolder (e.g. a Company) to another
      * (e.g. a Station in a MapHex).
-     * 
+     *
      * @param token
      * @param from
      * @param to

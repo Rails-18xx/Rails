@@ -1,22 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.15 2009/05/04 20:29:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.16 2009/09/08 21:48:58 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 
-import rails.game.*;
-import rails.game.action.LayBonusToken;
-import rails.game.action.LayTile;
-import rails.game.action.LayBaseToken;
-import rails.game.action.LayToken;
-import rails.ui.swing.*;
+import rails.game.MapHex;
+import rails.game.PhaseI;
+import rails.game.action.*;
+import rails.ui.swing.ORUIManager;
+import rails.ui.swing.Scale;
 
 /**
  * Base class that stores common info for HexMap independant of Hex
@@ -94,12 +93,13 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
         return null;
     }
-    
+
     public GUIHex getHexByName (String hexName) {
         return hexesByName.get (hexName);
     }
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         try {
@@ -123,15 +123,17 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
     }
 
-    public Dimension getMinimumSize() {
+    @Override
+	public Dimension getMinimumSize() {
         Dimension dim = new Dimension();
-        Rectangle r = ((GUIHex) h[h.length][h[0].length]).getBounds();
+        Rectangle r = (h[h.length][h[0].length]).getBounds();
         dim.height = r.height + 40;
         dim.width = r.width + 100;
         return dim;
     }
 
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         return preferredSize;
     }
 
@@ -281,6 +283,19 @@ public abstract class HexMap extends JComponent implements MouseListener,
         return allowances;
     }
 
+    /**
+     * Off-board tiles must be able to retrieve the current phase.
+     *
+     * @return The current Phase object.
+     */
+    public PhaseI getPhase () {
+    	if (orUIManager != null) {
+    		return orUIManager.getGameUIManager().getGameManager().getPhaseManager().getCurrentPhase();
+    	} else {
+    		return null;
+    	}
+    }
+
     public void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
@@ -290,14 +305,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
      */
     public void mouseDragged(MouseEvent arg0) {}
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
      */
     public void mouseMoved(MouseEvent arg0) {
@@ -314,7 +329,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public void mouseReleased(MouseEvent arg0) {}
 
-    public static void updateOffBoardToolTips() {
+    public void updateOffBoardToolTips() {
         for (GUIHex hex : hexes) {
             if (hex.getHexModel().hasOffBoardValues()) {
                 hex.setToolTip();

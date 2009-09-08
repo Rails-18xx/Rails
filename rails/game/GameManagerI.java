@@ -142,17 +142,18 @@ public interface GameManagerI {
     public abstract PhaseI getCurrentPhase();
 
     public abstract PhaseManager getPhaseManager();
+    public void initialiseNewPhase(PhaseI phase);
 
     public abstract TrainManagerI getTrainManager ();
     public PlayerManager getPlayerManager();
     public StockMarketI getStockMarket();
-    
+
     public int getPlayerCertificateLimit();
 	public void setPlayerCertificateLimit(int newLimit);
 	public ModelObject getPlayerCertificateLimitModel ();
 
     public int getPlayerShareLimit();
-    
+
     public abstract String getHelp();
 
     public abstract boolean canAnyCompanyHoldShares();
