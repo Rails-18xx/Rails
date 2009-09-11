@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.26 2009/09/08 21:48:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.27 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -66,8 +66,7 @@ public class Game {
     }
 
     public void start() {
-        gameManager.startGame(playerManager, companyManager,
-                phaseManager, trainManager, stockMarket);
+        gameManager.startGame();
     }
 
     public boolean setup() {
@@ -151,11 +150,14 @@ public class Game {
              * only be done after all XML has been processed.
              */
             playerManager.setPlayers(players, playerManager.getStartCash());
+            gameManager.init(playerManager, companyManager,
+                    phaseManager, trainManager, stockMarket, bank);
 
-            companyManager.initCompanies(gameManager);
+            companyManager.initCompanies(gameManager, playerManager.getPlayers());
             trainManager.init(gameManager);
+            phaseManager.init(gameManager);
             bank.initCertificates();
-            StartPacket.init();
+            //StartPacket.init();
             //companyManager.initCompanies(gameManager);
             stockMarket.init();
         } catch (Exception e) {

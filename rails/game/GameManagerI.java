@@ -15,9 +15,11 @@ public interface GameManagerI {
     public abstract void configureFromXML(Tag tag)
             throws ConfigurationException;
 
-    public abstract void startGame(PlayerManager playerManager,
+    public abstract void init(PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
-            TrainManagerI trainManager, StockMarketI stockMarket);
+            TrainManagerI trainManager, StockMarketI stockMarket,
+            Bank bank);
+    public abstract void startGame();
 
     public abstract CompanyManagerI getCompanyManager();
 
@@ -147,6 +149,7 @@ public interface GameManagerI {
     public abstract TrainManagerI getTrainManager ();
     public PlayerManager getPlayerManager();
     public StockMarketI getStockMarket();
+    public Bank getBank ();
 
     public int getPlayerCertificateLimit();
 	public void setPlayerCertificateLimit(int newLimit);

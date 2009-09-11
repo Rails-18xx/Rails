@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.21 2009/09/04 18:56:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.22 2009/09/11 19:27:23 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -9,10 +9,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.action.ExchangeTokens;
-import rails.game.action.ExchangeableToken;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
+import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.move.MoveSet;
 import rails.game.special.SpecialPropertyI;
@@ -32,12 +29,9 @@ public abstract class Round implements RoundI {
     protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
     protected PlayerManager playerManager = null;
-    
+
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
-
-    /** Default constructor cannot be used */
-    private Round () {}
 
 	/**
 	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
@@ -128,14 +122,14 @@ public abstract class Round implements RoundI {
     }
 
     protected boolean exchangeTokens (ExchangeTokens action) {
-        
+
         String errMsg = null;
-        
+
         List<ExchangeableToken> tokens = action.getTokensToExchange();
         int min = action.getMinNumberToExchange();
         int max = action.getMaxNumberToExchange();
         int exchanged = 0;
-        
+
         checks: {
 
             for (ExchangeableToken token : tokens) {
@@ -159,7 +153,7 @@ public abstract class Round implements RoundI {
         }
 
         MoveSet.start(true);
-        
+
         if (exchanged > 0) {
             MapHex hex;
             City city;
@@ -167,7 +161,7 @@ public abstract class Round implements RoundI {
             int cityNumber;
             String[] ct;
             PublicCompanyI comp = action.getCompany();
-            
+
             for (ExchangeableToken token : tokens) {
                 cityName = token.getCityName();
                 ct = cityName.split("/");
@@ -181,13 +175,13 @@ public abstract class Round implements RoundI {
                 city = hex.getCity(cityNumber);
 
                 if (token.isSelected()) {
-                   
+
                     // For now we'll assume that the old token(s) have already been removed.
                     // This is true in the 1856 CGR formation.
                     if (hex.layBaseToken(comp, city.getNumber())) {
                         /* TODO: the false return value must be impossible. */
                         ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
-                                comp.getName(), 
+                                comp.getName(),
                                 token.getOldCompanyName(),
                                 city.getName()));
                         comp.layBaseToken(hex, 0);
@@ -199,10 +193,10 @@ public abstract class Round implements RoundI {
                 }
             }
         }
-        
+
         return true;
     }
-    
+
 
     /**
      * Default version, does nothing. Subclasses should override this method
@@ -322,12 +316,12 @@ public abstract class Round implements RoundI {
             }
         }
     }
-    
+
     protected void finishRound() {
         // Inform GameManager
         gameManager.nextRound(this);
     }
-    
+
     public boolean wasInterrupted () {
         return wasInterrupted.booleanValue();
     }
@@ -364,5 +358,5 @@ public abstract class Round implements RoundI {
         return gameManager;
     }
 
-    
+
 }

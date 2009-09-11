@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.12 2008/12/11 20:12:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.13 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -19,8 +20,8 @@ public class StartPacket {
      * A Map holding all start packets of a rails.game (yes, there can be more
      * than one, e.g. 18US).
      */
-    private static Map<String, StartPacket> packets =
-            new HashMap<String, StartPacket>();
+    //private static Map<String, StartPacket> packets =
+    //        new HashMap<String, StartPacket>();
 
     /**
      * The start packet name. Usually the default name "Ïnitial" is used.
@@ -54,7 +55,7 @@ public class StartPacket {
     StartPacket(String name, String roundClassName) {
         this.name = Util.hasValue(name) ? name : DEFAULT_NAME;
         this.roundClassName = roundClassName;
-        packets.put(name, this);
+        //packets.put(name, this);
     }
 
     /**
@@ -68,7 +69,7 @@ public class StartPacket {
         Tag biddingTag = tag.getChild("Bidding");
         if (biddingTag != null) {
             minimumInitialIncrement =
-                    biddingTag.getAttributeAsInteger("ïnitial",
+                    biddingTag.getAttributeAsInteger("initial",
                             minimumInitialIncrement);
             minimumIncrement =
                     biddingTag.getAttributeAsInteger("minimum",
@@ -77,6 +78,7 @@ public class StartPacket {
         }
         List<Tag> itemTags = tag.getChildren("Item");
 
+        int index = 0;
         for (Tag itemTag : itemTags) {
             // Extract the attributes of the Start Packet Item (certificate)
             String itemName = itemTag.getAttributeAsString("name");
@@ -90,7 +92,7 @@ public class StartPacket {
 
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
             StartItem item =
-                    (new StartItem(itemName, itemType, basePrice, president));
+                    (new StartItem(itemName, itemType, basePrice, index++, president));
             items.add(item);
 
             // Optional attributes
@@ -126,11 +128,9 @@ public class StartPacket {
      * set the relationships between all start packets and the start items that
      * each one contains.
      */
-    protected static void init() {
-        for (StartPacket sp : packets.values()) {
-            for (StartItem item : sp.items) {
-                item.init();
-            }
+    protected void init(GameManagerI gameManager) {
+        for (StartItem item : items) {
+            item.init(gameManager);
         }
     }
 
@@ -140,18 +140,18 @@ public class StartPacket {
      * @param name The start packet name.
      * @return The start packet (or null if it does not exist).
      */
-    public static StartPacket getStartPacket(String name) {
-        return packets.get(name);
-    }
+    //public static StartPacket getStartPacket(String name) {
+    //    return packets.get(name);
+    //}
 
     /**
      * Get the start packet with the default name.
      *
      * @return The default start packet (or null if it does not exist).
      */
-    public static StartPacket getStartPacket() {
-        return getStartPacket(DEFAULT_NAME);
-    }
+    //public static StartPacket getStartPacket() {
+    //    return getStartPacket(DEFAULT_NAME);
+    //}
 
     /**
      * Get the items of this start packet.
