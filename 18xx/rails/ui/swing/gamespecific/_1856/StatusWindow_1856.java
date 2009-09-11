@@ -6,14 +6,14 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rails.game.*;
-import rails.game.action.DiscardTrain;
-import rails.game.action.ExchangeTokens;
-import rails.game.action.RepayLoans;
+import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
 import rails.util.LocalText;
 
 public class StatusWindow_1856 extends StatusWindow {
+
+    private static final long serialVersionUID = 1L;
 
     public StatusWindow_1856() {
         super();

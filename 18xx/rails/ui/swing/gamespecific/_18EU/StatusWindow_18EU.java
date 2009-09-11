@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.5 2009/01/15 20:53:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18EU/StatusWindow_18EU.java,v 1.6 2009/09/11 19:26:44 evos Exp $*/
 package rails.ui.swing.gamespecific._18EU;
 
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ import rails.util.LocalText;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow_18EU extends StatusWindow {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected boolean updateGameSpecificSettings() {
