@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.19 2009/07/19 19:24:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.20 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -39,7 +39,7 @@ public class StartRound_1830 extends StartRound {
 
         possibleActions.clear();
 
-        if (StartPacket.getStartPacket().areAllSold()) return false;
+        if (startPacket.areAllSold()) return false;
 
         while (possibleActions.isEmpty()) {
 
@@ -132,7 +132,7 @@ public class StartRound_1830 extends StartRound {
              * it is possible that the last unsold item was sold in the above
              * loop. go to next round if that happened
              */
-            if (StartPacket.getStartPacket().areAllSold()) {
+            if (gameManager.getStartPacket().areAllSold()) {
                 return false;
             }
 
@@ -351,7 +351,7 @@ public class StartRound_1830 extends StartRound {
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
         for (int i = currentIndex + 1; i < currentIndex
                                            + gameManager.getNumberOfPlayers(); i++) {
-            if (item.hasBid(gameManager.getPlayerByIndex(i).getName())) {
+            if (item.hasBid(gameManager.getPlayerByIndex(i))) {
                 setCurrentPlayerIndex(i);
                 break;
             }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.16 2009/01/08 19:59:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.17 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -25,12 +25,12 @@ public class StartItem {
     protected MoneyModel basePrice;
     protected int row = 0;
     protected int column = 0;
-    protected int index = nextIndex++;
+    protected int index;
 
     // Bids
     protected IntegerState lastBidderIndex;
-    protected static List<Player> players;
-    protected static int numberOfPlayers;
+    protected List<Player> players;
+    protected int numberOfPlayers;
     protected MoneyModel[] bids;
     protected MoneyModel minimumBid;
 
@@ -66,10 +66,10 @@ public class StartItem {
     protected boolean president2 = false;
 
     // Static properties
-    protected static Portfolio ipo;
-    protected static Portfolio unavailable;
-    protected static CompanyManagerI compMgr;
-    protected static int nextIndex = 0;
+    //protected static Portfolio ipo;
+    //protected static Portfolio unavailable;
+    //protected static CompanyManagerI compMgr;
+    //protected static int nextIndex = 0;
 
     protected static Map<String, StartItem> startItemMap;
 
@@ -89,11 +89,12 @@ public class StartItem {
      * @param president True if the primary certificate is the president's
      * share.
      */
-    public StartItem(String name, String type, int basePrice, boolean president) {
+    public StartItem(String name, String type, int basePrice, int index, boolean president) {
         this.name = name;
         this.type = type;
         this.basePrice = new MoneyModel(name + "_basePrice");
         this.basePrice.set(basePrice);
+        this.index = index;
         this.president = president;
         status = new IntegerState(name + "_status");
         minimumBid = new MoneyModel(name + "_minimumBid");
@@ -123,11 +124,10 @@ public class StartItem {
      * Initialisation, to be called after all XML parsing has completed, and
      * after IPO initialisation.
      */
-    public void init() {
-        if (players == null) {
-            players = Game.getPlayerManager().getPlayers();
-            numberOfPlayers = players.size();
-        }
+    public void init(GameManagerI gameManager) {
+
+    	this.players = gameManager.getPlayers();
+        numberOfPlayers = players.size();
         bids = new MoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             bids[i] =
@@ -139,9 +139,10 @@ public class StartItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.intValue() + 5);
 
-        if (ipo == null) ipo = Bank.getIpo();
-        if (unavailable == null) unavailable = Bank.getUnavailable();
-        if (compMgr == null) compMgr = Game.getCompanyManager();
+        Portfolio ipo = Bank.getIpo();
+        Portfolio unavailable = Bank.getUnavailable();
+
+        CompanyManagerI compMgr = gameManager.getCompanyManager();
 
         CompanyI company = compMgr.getCompany(type, name);
         if (company instanceof PrivateCompanyI) {
@@ -366,8 +367,7 @@ public class StartItem {
      * @param playerName The name of the player.
      * @return True if this player has done any bids.
      */
-    public boolean hasBid(String playerName) {
-        Player player = Game.getPlayerManager().getPlayerByName(playerName);
+    public boolean hasBid(Player player) {
         int index = player.getIndex();
         return bids[index].intValue() > 0;
     }
@@ -378,11 +378,11 @@ public class StartItem {
      * @param playerName The name of the player.
      * @return His latest Bid object.
      */
-    public int getBidForPlayer(String playerName) {
-        Player player = Game.getPlayerManager().getPlayerByName(playerName);
-        int index = player.getIndex();
-        return bids[index].intValue();
-    }
+    //public int getBidForPlayer(String playerName) {
+    //    Player player = Game.getPlayerManager().getPlayerByName(playerName);
+    //    int index = player.getIndex();
+    //    return bids[index].intValue();
+    //}
 
     /**
      * Check if the start item has been sold.

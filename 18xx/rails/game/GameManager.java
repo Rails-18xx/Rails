@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.50 2009/09/08 21:48:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.51 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -47,6 +47,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected PhaseManager phaseManager;
     protected TrainManagerI trainManager;
     protected StockMarketI stockMarket;
+    protected Bank bank;
 
     protected List<Player> players;
     protected List<String> playerNames;
@@ -316,28 +317,35 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
      */
-    public void startGame(PlayerManager playerManager,
+    public void init(PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
             TrainManagerI trainManager,
-            StockMarketI stockMarket) {
+            StockMarketI stockMarket,
+            Bank bank) {
         this.playerManager = playerManager;
         this.companyManager = companyManager;
         this.phaseManager = phaseManager;
         this.trainManager = trainManager;
         this.stockMarket = stockMarket;
+        this.bank = bank;
 
         players = playerManager.getPlayers();
         playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
+    }
 
-        setGameParameters();
+    public void startGame() {
+
+    	setGameParameters();
 
         if (startPacket == null)
-            startPacket = StartPacket.getStartPacket("Initial");
+            startPacket = companyManager.getStartPacket(StartPacket.DEFAULT_NAME);
         if (startPacket != null && !startPacket.areAllSold()) {
+            startPacket.init(this);
+
             // If we have a non-exhausted start packet
             startStartRound();
         } else {
@@ -412,8 +420,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 startStockRound();
             }
         } else if (round instanceof StockRound) {
-            PhaseI currentPhase = phaseManager.getCurrentPhase();
-            numOfORs = currentPhase.getNumberOfOperatingRounds();
+            PhaseI currentPhase = getCurrentPhase();
+            numOfORs = getCurrentPhase().getNumberOfOperatingRounds();
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
@@ -935,6 +943,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public StockMarketI getStockMarket() {
         return stockMarket;
+    }
+
+    public Bank getBank () {
+    	return bank;
     }
 
     // TODO Should be removed
