@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.special.SpecialProperty;
-import rails.game.specific._18AL.NamedTrainToken;
 import rails.game.specific._18AL.NameTrains;
+import rails.game.specific._18AL.NamedTrainToken;
 
 public class AssignNamedTrains extends PossibleAction {
 
     transient private NameTrains namedTrainsSpecialProperty;
     private int namedTrainsSpecialPropertyId;
+
+    private static final long serialVersionUID = 1L;
 
     public AssignNamedTrains(NameTrains namedTrainsSpecialProperty) {
         this.namedTrainsSpecialProperty = namedTrainsSpecialProperty;
@@ -18,7 +20,8 @@ public class AssignNamedTrains extends PossibleAction {
                 namedTrainsSpecialProperty.getUniqueId();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer b = new StringBuffer("AssignNamedTrains ");
         for (NamedTrainToken token : namedTrainsSpecialProperty.getTokens()) {
             b.append(token.toString()).append(",");

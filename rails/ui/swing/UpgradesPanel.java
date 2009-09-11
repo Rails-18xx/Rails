@@ -1,21 +1,23 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.16 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.17 2009/09/11 19:26:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
 import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.ActionLabel;
-import rails.ui.swing.hexmap.*;
+import rails.ui.swing.hexmap.GUIHex;
+import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
@@ -319,6 +321,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     /** JLabel extension to allow attaching the internal hex ID */
     private class HexLabel extends JLabel {
+
+        private static final long serialVersionUID = 1L;
 
         String toolTip;
         int internalId;

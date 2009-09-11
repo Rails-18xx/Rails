@@ -19,6 +19,9 @@ import rails.util.LocalText;
  * rails.game status information.
  */
 public class GameStatus_18EU extends GameStatus {
+
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void initGameSpecificActions() {
 
