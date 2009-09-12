@@ -359,7 +359,7 @@ public class OperatingRound_1856 extends OperatingRound {
         boolean result = super.buyTrain(action);
 
         PhaseI postPhase = currentPhase;
-log.debug("+++Phase was "+prePhase.getName()+" now "+postPhase.getName());
+
         if (postPhase != prePhase && postPhase.getName().equals("5")) {
             finalLoanRepaymentPending.set(true);
             playerToStartLoanRepayment

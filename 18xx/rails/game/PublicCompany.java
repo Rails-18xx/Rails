@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.58 2009/09/08 21:48:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.59 2009/09/12 09:40:56 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -954,6 +954,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
         } else {
             return 0;
         }
+    }
+    
+    /** Return the price per share at game end. 
+     * Normally, it is equal to the market price, 
+     * but in some games (e.g. 1856) deductions may apply.
+     * @return
+     */
+    public int getGameEndPrice() {
+        return getMarketPrice();
     }
 
     /**

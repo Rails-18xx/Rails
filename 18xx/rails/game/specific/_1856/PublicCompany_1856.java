@@ -62,5 +62,9 @@ public class PublicCompany_1856 extends PublicCompany {
         super.buyTrain (train, price);
         if (train.getType().isPermanent()) hadPermanentTrain = true;
     }
+    
+    public int getGameEndPrice() {
+        return Math.max(0, getMarketPrice() - 10 * getCurrentNumberOfLoans());
+    }
 
 }
