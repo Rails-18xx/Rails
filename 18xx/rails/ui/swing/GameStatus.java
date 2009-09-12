@@ -154,10 +154,10 @@ public class GameStatus extends JPanel implements ActionListener {
         companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
 
-        hasParPrices = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_PAR_PRICE);
-        compCanBuyPrivates = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
-        compCanHoldOwnShares = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
-        hasCompanyLoans = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
+        hasParPrices = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_PAR_PRICE);
+        compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
+        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
 
         ipo = Bank.getIpo();
         pool = Bank.getPool();
