@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.34 2009/09/06 12:27:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.35 2009/09/12 09:40:56 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -144,7 +144,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public int getIPOPrice ();
 
     public int getMarketPrice ();
-
+    public int getGameEndPrice();
+    
     public int getPublicNumber();
 
     public int getBaseTokensBuyCost();
