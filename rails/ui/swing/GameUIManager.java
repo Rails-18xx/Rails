@@ -524,13 +524,12 @@ public class GameUIManager {
         return gameManager.getClassName(key);
     }
 
-    public Object getCommonParameter (Defs.Parm key) {
-        return gameManager.getCommonParameter(key);
+    public Object getGameParameter (Defs.Parm key) {
+        return gameManager.getGameParameter(key);
     }
 
-    public boolean getCommonParameterAsBoolean (Defs.Parm key) {
-
-        return (Boolean) getCommonParameter(key);
+    public boolean getGameParameterAsBoolean (Defs.Parm key) {
+        return (Boolean) getGameParameter(key);
     }
 
 }

@@ -167,7 +167,7 @@ public interface GameManagerI {
 
     public abstract int getTreasuryShareLimit();
 
-    public abstract Object getCommonParameter(Defs.Parm key);
+    public abstract Object getGameParameter(Defs.Parm key);
 
     public RoundI getInterruptedRound();
 }

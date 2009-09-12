@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.32 2009/09/02 21:47:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.33 2009/09/12 19:48:39 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -137,9 +137,9 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         statusPanel.setOpaque(true);
 
         round = gameUIManager.getCurrentRound();
-        privatesCanBeBought = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
-        bonusTokensExist = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.DO_BONUS_TOKENS_EXIST);
-        hasCompanyLoans = gameUIManager.getCommonParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
+        privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        bonusTokensExist = gameUIManager.getGameParameterAsBoolean(Defs.Parm.DO_BONUS_TOKENS_EXIST);
+        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
 
         initButtonPanel();
         gbc = new GridBagConstraints();

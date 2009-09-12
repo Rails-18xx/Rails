@@ -1,39 +1,32 @@
 package rails.common;
 
-import java.util.EnumMap;
-
 public class Defs {
 
-    /* Identifiers and default names for configurable UI classes */
+    /** Identifiers and default names for configurable UI classes */
     public enum ClassName {
-        GAME_UI_MANAGER,
-        OR_UI_MANAGER,
-        STATUS_WINDOW,
-        GAME_STATUS,
-        OR_WINDOW
-    }
-
-    private static EnumMap<Defs.ClassName, String> defaultClasses =
-        new EnumMap<Defs.ClassName, String> (Defs.ClassName.class);
-
-    static {
-        defaultClasses.put (ClassName.GAME_UI_MANAGER,
-                "rails.ui.swing.GameUIManager");
-        defaultClasses.put (ClassName.OR_UI_MANAGER,
-                "rails.ui.swing.ORUIManager");
-        defaultClasses.put (ClassName.STATUS_WINDOW,
-                "rails.ui.swing.StatusWindow");
-        defaultClasses.put (ClassName.GAME_STATUS,
-                "rails.ui.swing.GameStatus");
-        defaultClasses.put (ClassName.OR_WINDOW,
-                "rails.ui.swing.ORWindow");
-    }
+        
+        GAME_UI_MANAGER ("rails.ui.swing.GameUIManager"),
+        OR_UI_MANAGER ("rails.ui.swing.ORUIManager"),
+        STATUS_WINDOW ("rails.ui.swing.StatusWindow"),
+        GAME_STATUS ("rails.ui.swing.GameStatus"),
+        OR_WINDOW ("rails.ui.swing.ORWindow");
+        
+        private String defaultClassName;
+        
+        ClassName (String defaultClassName) {
+            this.defaultClassName = defaultClassName;
+        }
+        
+        public String getDefaultClassName () {
+            return defaultClassName;
+        }
+   }
 
     public static String getDefaultClassName (ClassName key) {
-        return defaultClasses.get(key);
+        return key.getDefaultClassName();
     }
 
-    /* Definitions for key/value pairs in the communication
+    /** Definitions for key/value pairs in the communication
      * between GameManager and GameUIManager.
      */
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.51 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.52 2009/09/12 19:48:39 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -86,11 +86,15 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected boolean gameOver = false;
     protected boolean endedByBankruptcy = false;
-    protected boolean hasAnyParPrice = false;
-    protected boolean canAnyCompanyBuyPrivates = false;
-    protected boolean canAnyCompanyHoldShares = false;
-    protected boolean bonusTokensExist = false;
-    protected boolean hasAnyCompanyLoans = false;
+    
+    /** Flags to be passed to the UI, aiding the layout definition */
+    protected EnumMap<Defs.Parm, Boolean> gameParameters =
+        new EnumMap<Defs.Parm, Boolean>(Defs.Parm.class);
+    //protected boolean hasAnyParPrice = false;
+    //protected boolean canAnyCompanyBuyPrivates = false;
+    //protected boolean canAnyCompanyHoldShares = false;
+    //protected boolean bonusTokensExist = false;
+    //protected boolean hasAnyCompanyLoans = false;
 
     protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
@@ -359,17 +363,22 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     private void setGameParameters () {
 
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-            hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
-            canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
-            canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
-            hasAnyCompanyLoans = hasAnyCompanyLoans || company.getMaxNumberOfLoans() != 0;
+            //hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
+            if (company.hasParPrice()) gameParameters.put(Defs.Parm.HAS_ANY_PAR_PRICE, true);
+            //canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
+            if (company.canBuyPrivates()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
+            //canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
+            if (company.canHoldOwnShares()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
+            //hasAnyCompanyLoans = hasAnyCompanyLoans || company.getMaxNumberOfLoans() != 0;
+            if (company.getMaxNumberOfLoans() != 0) gameParameters.put(Defs.Parm.HAS_ANY_COMPANY_LOANS, true);
         }
 
 loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
-                    bonusTokensExist = true;
+                    //bonusTokensExist = true;
+                    gameParameters.put(Defs.Parm.DO_BONUS_TOKENS_EXIST, true);
                     break loop;
                 }
             }
@@ -972,7 +981,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#canAnyCompanyHoldShares()
      */
     public boolean canAnyCompanyHoldShares() {
-        return canAnyCompanyHoldShares;
+        return (Boolean) getGameParameter(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
     }
 
     /* (non-Javadoc)
@@ -1016,22 +1025,12 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCommonParameter(rails.common.Defs.Parm)
      */
-    public Object getCommonParameter (Defs.Parm key) {
-        switch (key) {
-        case HAS_ANY_PAR_PRICE:
-            return hasAnyParPrice;
-        case CAN_ANY_COMPANY_BUY_PRIVATES:
-            return canAnyCompanyBuyPrivates;
-        case CAN_ANY_COMPANY_HOLD_OWN_SHARES:
-            return canAnyCompanyHoldShares;
-        case DO_BONUS_TOKENS_EXIST:
-            return bonusTokensExist;
-        case HAS_ANY_COMPANY_LOANS:
-            return hasAnyCompanyLoans;
-        default:
-            return null;
+    public Object getGameParameter (Defs.Parm key) {
+        if (gameParameters.containsKey(key)) {
+            return gameParameters.get(key);
+        } else {
+            return false;
         }
-
     }
 
     public RoundI getInterruptedRound() {
