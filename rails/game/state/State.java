@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.9 2008/06/04 19:00:36 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.10 2009/09/23 21:38:57 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
@@ -45,7 +45,7 @@ public class State extends ModelObject implements StateI {
                 new StateChange(this, object);
         } else {
             log.error("Incompatible object type " + object.getClass().getName()
-                      + "passed to " + getClassName()
+                      + " passed to " + getClassName()
                       + " wrapper for object type " + clazz.getName() + " at:",
                     new Exception(""));
         }
@@ -74,7 +74,8 @@ public class State extends ModelObject implements StateI {
         return name;
     }
 
-    public String getText() {
+    @Override
+	public String getText() {
         if (object != null) {
             return object.toString();
         } else {
@@ -82,7 +83,8 @@ public class State extends ModelObject implements StateI {
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return name;
     }
 

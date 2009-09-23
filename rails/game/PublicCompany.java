@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.59 2009/09/12 09:40:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.60 2009/09/23 21:38:57 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -6,8 +6,8 @@ import java.util.*;
 
 import rails.game.action.SetDividend;
 import rails.game.model.*;
-import rails.game.move.CashMove;
-import rails.game.move.Moveable;
+import rails.game.move.*;
+import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.*;
 
@@ -90,7 +90,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected BooleanState hasStarted = null;
 
     /** Total bonus tokens amount */
-    protected MoneyModel bonusTokensValue = null;
+    protected BonusModel bonusValue = null;
+
+    /** Acquires Bonus objects */
+    protected List<Bonus> bonuses = null;
 
     /** Most recent revenue earned. */
     protected MoneyModel lastRevenue = null;
@@ -595,9 +598,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
         trainsCostThisTurn = new MoneyModel(name + "_spentOnTrains");
         trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-        bonusTokensValue = new MoneyModel(name + "_bonusValue");
-        bonusTokensValue.setOption(MoneyModel.SUPPRESS_ZERO
-                                   + MoneyModel.ADD_PLUS);
+        bonusValue = new BonusModel(name + "_bonusValue");
+
         if (hasStockPrice) {
             parPrice = new PriceModel(this, name + "_ParPrice");
             currentPrice = new PriceModel(this, name + "_CurrentPrice");
@@ -955,9 +957,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
             return 0;
         }
     }
-    
-    /** Return the price per share at game end. 
-     * Normally, it is equal to the market price, 
+
+    /** Return the price per share at game end.
+     * Normally, it is equal to the market price,
      * but in some games (e.g. 1856) deductions may apply.
      * @return
      */
@@ -1231,7 +1233,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Portfolio holder = cert.getPortfolio();
         CashHolder beneficiary = holder.getOwner();
         // Special cases apply if the holder is the IPO or the Pool
-        if (holder == Bank.getIpo() && ipoPaysOut 
+        if (holder == Bank.getIpo() && ipoPaysOut
                 || holder == Bank.getPool() && poolPaysOut) {
             beneficiary = this;
         }
@@ -1464,9 +1466,52 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
             int price) {
-        portfolio.buyPrivate(privateCompany, from, price);
 
+        //portfolio.buyPrivate(privateCompany, from, price);
+        if (from != Bank.getIpo()) {
+            // The initial buy is reported from StartRound. This message should also
+            // move to elsewhere.
+            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
+                    name,
+                    privateCompany.getName(),
+                    from.getName(),
+                    Bank.format(price) ));
+        }
+
+        // Move the private certificate
+        privateCompany.moveTo(portfolio);
+
+        // Move the money
+        if (price > 0) new CashMove(this, from.owner, price);
         privatesCostThisTurn.add(price);
+
+        // Move any special abilities to the portfolio, if configured so
+        List<SpecialPropertyI> sps = privateCompany.getSpecialProperties();
+        if (sps != null) {
+            // Need intermediate List to avoid ConcurrentModificationException
+            List<SpecialPropertyI> spsToMoveHere =
+                    new ArrayList<SpecialPropertyI>(2);
+            List<SpecialPropertyI> spsToMoveToGM =
+                	new ArrayList<SpecialPropertyI>(2);
+            for (SpecialPropertyI sp : sps) {
+                if (sp.getTransferText().equalsIgnoreCase("toCompany")) {
+                    spsToMoveHere.add(sp);
+                } else if (sp.getTransferText().equalsIgnoreCase("toGameManager")) {
+                	// This must be SellBonusToken - remember the owner!
+                	if (sp instanceof SellBonusToken) {
+                		((SellBonusToken)sp).setSeller(this);
+                	}
+                	spsToMoveToGM.add(sp);
+                }
+            }
+            for (SpecialPropertyI sp : spsToMoveHere) {
+                sp.moveTo(portfolio);
+            }
+            for (SpecialPropertyI sp : spsToMoveToGM) {
+                sp.moveTo(gameManager);
+            }
+        }
+
     }
 
     public ModelObject getPrivatesSpentThisTurnModel() {
@@ -1536,19 +1581,35 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return baseTokensModel;
     }
 
-    public void layBonusToken(MapHex hex, int cost, BonusToken token) {
-        // TODO for now we only add the bonus value.
-        // We must be prepared though, that tokens may be removed later.
-        bonusTokensValue.add(token.getValue());
-
+    public boolean addBonus(Bonus bonus) {
+    	if (bonuses == null) {
+    		bonuses = new ArrayList<Bonus>(2);
+            bonusValue.set(bonuses);
+    	}
+        new AddToList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
+        return true;
     }
 
-    public void removeBonusToken(BonusToken token) {
-        bonusTokensValue.add(-token.getValue());
+    public boolean removeBonus(Bonus bonus) {
+    	new RemoveFromList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
+        return true;
     }
 
-    public MoneyModel getBonusTokensModel() {
-        return bonusTokensValue;
+    public boolean removeBonus (String name) {
+    	if (bonuses != null && !bonuses.isEmpty()) {
+    		for(Bonus bonus : bonuses) {
+    			if (bonus.getName().equals(name)) return removeBonus(bonus);
+    		}
+    	}
+    	return false;
+    }
+
+    public List<Bonus> getBonuses() {
+		return bonuses;
+	}
+
+	public BonusModel getBonusTokensModel() {
+        return bonusValue;
     }
 
     public boolean hasLaidHomeBaseTokens() {
@@ -1635,6 +1696,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean addObject(Moveable object) {
         if (object instanceof TokenI) {
             return addToken((TokenI) object);
+        } else if (object instanceof LocatedBonus) {
+        	return addBonus ((Bonus) object);
         } else {
             return false;
         }
@@ -1643,8 +1706,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean removeObject(Moveable object) {
         if (object instanceof BaseToken) {
             return removeToken((TokenI) object);
-        } else if (object instanceof BonusToken) {
-            removeBonusToken((BonusToken) object);
+        } else if (object instanceof Bonus) {
+            removeBonus((Bonus) object);
             return true;
         } else {
             return false;

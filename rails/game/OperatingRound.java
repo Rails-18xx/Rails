@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.67 2009/09/08 21:48:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.68 2009/09/23 21:38:57 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -216,6 +216,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof LayBonusToken) {
 
             result = layBonusToken((LayBonusToken) selectedAction);
+
+        } else if (selectedAction instanceof BuyBonusToken) {
+
+        	result = buyBonusToken((BuyBonusToken) selectedAction);
 
         } else if (selectedAction instanceof SetDividend) {
 
@@ -669,7 +673,9 @@ public class OperatingRound extends Round implements Observer {
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
 
-            operatingCompany.layBonusToken(hex, cost, token);
+       		operatingCompany.addBonus(new Bonus(operatingCompany,
+        				token.getName(),
+        				token.getValue(), hex.getName()));
             token.setUser(operatingCompany);
 
             ReportBuffer.add(LocalText.getText("LaysBonusTokenOn",
@@ -692,6 +698,59 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
+    public boolean buyBonusToken(BuyBonusToken action) {
+
+        String errMsg = null;
+        int cost;
+        SellBonusToken sbt = null;
+        CashHolder seller = null;
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+
+            // Checks
+            sbt = action.getSpecialProperty();
+            cost = sbt.getPrice();
+            seller = sbt.getSeller();
+
+            // Does the company have the money?
+            if (cost > operatingCompany.getCash()) {
+                errMsg =
+                        LocalText.getText("NotEnoughMoney",
+                                operatingCompany.getName());
+                break;
+            }
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotBuyBonusToken",
+            		operatingCompany.getName(),
+                    sbt.getName(),
+                    seller.getName(),
+                    Bank.format(cost),
+                    errMsg ));
+            return false;
+        }
+
+        /* End of validation, start of execution */
+        MoveSet.start(true);
+
+        new CashMove (operatingCompany, seller, cost);
+  		operatingCompany.addBonus(new Bonus(operatingCompany,
+    				sbt.getName(),
+    				sbt.getValue(), sbt.getLocationNameString()));
+
+        ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
+                operatingCompany.getName(),
+                sbt.getName(),
+                Bank.format(sbt.getValue()),
+                seller.getName(),
+                Bank.format(sbt.getValue())));
+
+        sbt.setExercised();
+
+        return true;
+    }
     public boolean setRevenueAndDividend(SetDividend action) {
 
         String errMsg = validateSetRevenueAndDividend (action);
@@ -975,7 +1034,9 @@ public class OperatingRound extends Round implements Observer {
 
         if (step == STEP_LAY_TRACK) {
             getNormalTileLays();
-        } else if (step == STEP_LAY_TOKEN) {} else {
+        } else if (step == STEP_LAY_TOKEN) {
+
+        } else {
             currentSpecialProperties = null;
         }
 
@@ -1930,6 +1991,25 @@ public class OperatingRound extends Round implements Observer {
                             maxPrice));
                 }
             }
+        }
+
+        // Are there any "common" special properties,
+        // i.e. properties that are available to everyone?
+        List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
+        if (commonSP != null) {
+        	SellBonusToken sbt;
+    loop:   for (SpecialPropertyI sp : commonSP) {
+    			if (sp instanceof SellBonusToken) {
+        			sbt = (SellBonusToken) sp;
+        			// Can't buy if already owned
+        			if (operatingCompany.getBonuses() != null) {
+        				for (Bonus bonus : operatingCompany.getBonuses()) {
+        					if (bonus.getName().equals(sp.getName())) continue loop;
+        				}
+        			}
+        			possibleActions.add (new BuyBonusToken (sbt));
+        		}
+        	}
         }
 
         if (doneAllowed) {

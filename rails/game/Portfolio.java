@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.34 2009/08/30 18:15:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.35 2009/09/23 21:38:57 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.model.*;
 import rails.game.move.*;
+import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -95,48 +96,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
     public static Portfolio getByName(String name) {
         return portfolioMap.get(name);
-    }
-
-    public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
-            int price) {
-
-        if (from != Bank.getIpo())
-        /*
-         * The initial buy is reported from StartRound. This message should also
-         * move to elsewhere.
-         */
-        {
-            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
-                    name,
-                    privateCompany.getName(),
-                    from.getName(),
-                    Bank.format(price) ));
-        }
-
-        // Move the private certificate
-        privateCompany.moveTo(this);
-
-        // Move the money
-        if (price > 0) new CashMove(owner, from.owner, price);
-
-        // Move any special abilities, if configured so
-        List<SpecialPropertyI> sps = privateCompany.getSpecialProperties();
-        if (sps != null) {
-            // Need intermediate List to avoid ConcurrentModificationException
-            List<SpecialPropertyI> spsToMove =
-                    new ArrayList<SpecialPropertyI>(2);
-            for (SpecialPropertyI sp : sps) {
-                if (sp.getTransferText().equalsIgnoreCase("toCompany")
-                    && owner instanceof PublicCompanyI
-                    || sp.getTransferText().equalsIgnoreCase("toPlayer")
-                    && owner instanceof Player) {
-                    spsToMove.add(sp);
-                }
-            }
-            for (SpecialPropertyI sp : spsToMove) {
-                sp.moveTo(this);
-            }
-        }
     }
 
     public void transferAssetsFrom(Portfolio otherPortfolio) {
@@ -500,24 +459,55 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
      * @return True if successful.
      */
     public boolean addSpecialProperty(SpecialPropertyI property) {
+
+    	boolean result = false;
+
         if (specialProperties == null) {
             specialProperties = new ArrayList<SpecialPropertyI>(2);
         }
-        return specialProperties.add(property);
+        result = specialProperties.add(property);
+
+        // Special case for bonuses with predefined locations
+        // TODO Does this belong here?
+        if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
+        	PublicCompanyI company = (PublicCompanyI)owner;
+        	LocatedBonus locBonus = (LocatedBonus)property;
+        	Bonus bonus = new Bonus(company, locBonus.getName(), locBonus.getValue(),
+        			locBonus.getLocationNameString());
+        	company.addBonus(bonus);
+        	ReportBuffer.add(LocalText.getText("AcquiresBonus",
+        			owner.getName(),
+        			locBonus.getName(),
+        			Bank.format(locBonus.getValue()),
+        			locBonus.getLocationNameString()));
+        }
+
+        return result;
     }
 
     /**
-     * Remove a special property. Not currently used.
+     * Remove a special property.
      *
      * @param property The special property object to remove.
      * @return True if successful.
      */
     public boolean removeSpecialProperty(SpecialPropertyI property) {
+
+    	boolean result = false;
+
         if (specialProperties != null) {
-            return specialProperties.remove(property);
-        } else {
-            return false;
+            result = specialProperties.remove(property);
+
+            // Special case for bonuses with predefined locations
+            // TODO Does this belong here?
+            if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
+            	PublicCompanyI company = (PublicCompanyI)owner;
+            	LocatedBonus locBonus = (LocatedBonus)property;
+            	company.removeBonus(locBonus.getName());
+            }
         }
+
+        return result;
     }
 
     /**
@@ -544,7 +534,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     }
 
     /**
-     * Remove an object. Not currently used.
+     * Remove an object.
      *
      * @param object The object to remove.
      * @return True if successful.

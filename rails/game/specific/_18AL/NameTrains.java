@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.ConfigurationException;
-import rails.game.Portfolio;
 import rails.game.move.Moveable;
-import rails.game.move.MoveableHolderI;
-import rails.game.move.ObjectMove;
 import rails.game.special.SpecialProperty;
 import rails.util.Tag;
 
@@ -19,7 +16,8 @@ public class NameTrains extends SpecialProperty implements Moveable {
     private String name = "NameTrains";
     private String description;
 
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+    @Override
+	public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
 
@@ -81,22 +79,17 @@ public class NameTrains extends SpecialProperty implements Moveable {
     @Override
     public void setExercised() {}
 
-    @Override
-    public void moveTo(MoveableHolderI newHolder) {
-        if (newHolder instanceof Portfolio) {
-            new ObjectMove(this, privateCompany, newHolder);
-        }
-    }
-
     public String getName() {
         return name;
     }
 
-    public String toMenu() {
+    @Override
+	public String toMenu() {
         return description;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return description;
     }
 

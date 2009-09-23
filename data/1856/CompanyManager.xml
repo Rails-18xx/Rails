@@ -68,8 +68,30 @@
 		<SpecialProperties condition="ifExercised"/>
 	</ClosingConditions>
   </Company>
-  <Company name="Brdg" type="Private" basePrice="100" revenue="20"/>
-  <Company name="Tunn" type="Private" basePrice="100" revenue="20"/>
+  <Company name="Brdg" type="Private" basePrice="100" revenue="20">
+	<SpecialProperties>
+	  <SpecialProperty condition="ifOwnedByCompany"	when="revenueStep" 
+			class="rails.game.special.LocatedBonus" transfer="toCompany">
+		<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
+	  </SpecialProperty>
+	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
+		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
+		<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10" number="2"/>
+	  </SpecialProperty>
+	</SpecialProperties>
+  </Company>
+  <Company name="Tunn" type="Private" basePrice="100" revenue="20">
+	<SpecialProperties>
+	  <SpecialProperty condition="ifOwnedByCompany"	when="revenueStep" 
+			class="rails.game.special.LocatedBonus" transfer="toCompany">
+		<LocatedBonus name="Tunnel" location="B13" value="10"/>
+	  </SpecialProperty>
+	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
+		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
+		<SellBonusToken name="Tunnel" location="B13" price="50" value="10" number="2"/>
+	  </SpecialProperty>
+	</SpecialProperties>
+  </Company>
   
   <Company name="GT"  type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
     <Home hex="P9"/>

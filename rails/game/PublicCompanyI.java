@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.35 2009/09/12 09:40:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.36 2009/09/23 21:38:57 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -145,7 +145,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public int getMarketPrice ();
     public int getGameEndPrice();
-    
+
     public int getPublicNumber();
 
     public int getBaseTokensBuyCost();
@@ -251,7 +251,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
             StockMarketI stockMarket);
-    
+
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();
@@ -310,11 +310,13 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
 
     public BaseTokensModel getBaseTokensModel();
 
-    public MoneyModel getBonusTokensModel();
+    public BonusModel getBonusTokensModel();
 
-    public void layBonusToken(MapHex hex, int cost, BonusToken token);
+    public boolean addBonus(Bonus bonus);
 
-    public void removeBonusToken(BonusToken token);
+    public boolean removeBonus(Bonus bonus);
+    public boolean removeBonus (String name);
+    public List<Bonus> getBonuses();
 
     public MapHex getHomeHex();
 
