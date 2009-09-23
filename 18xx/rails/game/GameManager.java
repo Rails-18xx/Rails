@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.52 2009/09/12 19:48:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.53 2009/09/23 21:38:57 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -9,8 +9,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.Defs;
 import rails.game.action.*;
-import rails.game.move.AddToList;
-import rails.game.move.MoveSet;
+import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.IntegerState;
@@ -86,7 +85,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected boolean gameOver = false;
     protected boolean endedByBankruptcy = false;
-    
+
     /** Flags to be passed to the UI, aiding the layout definition */
     protected EnumMap<Defs.Parm, Boolean> gameParameters =
         new EnumMap<Defs.Parm, Boolean>(Defs.Parm.class);
@@ -104,9 +103,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected StartPacket startPacket;
 
-    PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
+    protected List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
+
+    /** Special properties that can be used by other players or companies
+     * than just the owner (such as buyable bonus tokens as in 1856).
+     */
+    protected List<SpecialPropertyI> commonSpecialProperties = null;
 
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
@@ -1035,6 +1039,85 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public RoundI getInterruptedRound() {
         return interruptedRound;
+    }
+
+    /**
+     * Add an object.
+     *
+     * @param object The object to add.
+     * @return True if successful.
+     */
+    public boolean addObject(Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return addSpecialProperty((SpecialPropertyI) object);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Remove an object.
+     *
+     * @param object The object to remove.
+     * @return True if successful.
+     */
+    public boolean removeObject(Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return removeSpecialProperty((SpecialPropertyI) object);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean addSpecialProperty(SpecialPropertyI property) {
+
+        if (commonSpecialProperties == null) {
+        	commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
+        }
+        return commonSpecialProperties.add(property);
+    }
+
+    /**
+     * Remove a special property.
+     *
+     * @param property The special property object to remove.
+     * @return True if successful.
+     */
+    public boolean removeSpecialProperty(SpecialPropertyI property) {
+
+        if (commonSpecialProperties != null) {
+            return commonSpecialProperties.remove(property);
+        }
+
+        return false;
+    }
+
+    public List<SpecialPropertyI> getCommonSpecialProperties () {
+    	return getSpecialProperties (null, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends SpecialPropertyI> List<T> getSpecialProperties(
+            Class<T> clazz, boolean includeExercised) {
+
+        List<T> result = new ArrayList<T>();
+
+        if (commonSpecialProperties != null) {
+            for (SpecialPropertyI sp : commonSpecialProperties) {
+                if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
+	                    && sp.isExecutionable()
+	                    && (!sp.isExercised() || includeExercised)) {
+                    log.debug("Adding common SP: " + sp);
+                    result.add((T) sp);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public String getName () {
+    	return "GameManager";
     }
 
 }

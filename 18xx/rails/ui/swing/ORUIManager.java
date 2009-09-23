@@ -333,6 +333,10 @@ public class ORUIManager {
 
                 prepareBonusToken((LayBonusToken) actions.get(0));
 
+            } else if (actionType == BuyBonusToken.class) {
+
+            	buyBonusToken ((BuyBonusToken)actions.get(0));
+
             } else if (actionType == NullAction.class
                        || actionType == GameAction.class) {
 
@@ -417,6 +421,11 @@ public class ORUIManager {
 
         orPanel.initTokenLayingStep();
 
+    }
+
+    private void buyBonusToken (BuyBonusToken action) {
+
+    	orWindow.process(action);
     }
 
     protected void reachDestinations (ReachDestinations action) {
@@ -1236,6 +1245,22 @@ public class ORUIManager {
                                 token.toString(),
                                 stl.getLocationCodeString() );
                 orPanel.addSpecialAction(btAction, text);
+            }
+        }
+
+        // Can bonus tokens be bought?
+        if (possibleActions.contains(BuyBonusToken.class)) {
+
+            List<BuyBonusToken> bonusTokenActions =
+                    possibleActions.getType(BuyBonusToken.class);
+            for (BuyBonusToken bbt : bonusTokenActions) {
+                String text =
+                        LocalText.getText("BuyBonusToken",
+                                bbt.getName(),
+                                Bank.format(bbt.getValue()),
+                                bbt.getCompanyName(),
+                                Bank.format(bbt.getPrice()) );
+                orPanel.addSpecialAction(bbt, text);
             }
         }
 

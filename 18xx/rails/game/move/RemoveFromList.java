@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/RemoveFromList.java,v 1.2 2008/06/04 19:00:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/RemoveFromList.java,v 1.3 2009/09/23 21:38:57 evos Exp $
  * 
  * Created on 18-Jul-2006
  * Change Log:
@@ -6,6 +6,8 @@
 package rails.game.move;
 
 import java.util.List;
+
+import rails.game.model.ModelObject;
 
 /**
  * @author Erik Vos
@@ -17,16 +19,22 @@ public class RemoveFromList<E> extends Move {
     protected String listName;
     protected int index;
 
-    public RemoveFromList(List<E> list, E object, String listName) {
+    public RemoveFromList(List<E> list, E object, String listName,
+            ModelObject modelToUpdate) {
         this.object = object;
         this.list = list;
         this.listName = listName;
         index = list.indexOf(object);
+        if (modelToUpdate != null) registerModelToUpdate (modelToUpdate);
 
         MoveSet.add(this);
     }
 
-    public boolean execute() {
+    public RemoveFromList(List<E> list, E object, String listName) {
+        this (list, object, listName, null);
+     }
+
+        public boolean execute() {
         list.remove(object);
         return true;
     }
@@ -37,7 +45,7 @@ public class RemoveFromList<E> extends Move {
     }
 
     public String toString() {
-        return "RemoveFrom " + listName + ": " + object.toString();
+        return "RemoveFromList " + listName + ": " + object.toString();
     }
 
 }

@@ -482,6 +482,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         MapHex hex;
         City city;
         for (PublicCompanyI comp : mergingCompanies) {
+
+        	// Exchange home tokens and collect non-home tokens
             for (TokenI token :comp.getTokens()) {
                 if (token instanceof BaseToken) {
                     bt = (BaseToken) token;
@@ -496,13 +498,25 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
 
+            // Move any remaining cash
             if (comp.getCash() > 0) {
                 new CashMove (comp, cgr, comp.getCash());
             }
+
+            // Move any remaining trains
             List<TrainI> trains = new ArrayList<TrainI> (comp.getPortfolio().getTrainList());
             for (TrainI train : trains) {
                 train.moveTo(cgr.getPortfolio());
                 if (train.getType().isPermanent()) cgr.setHadPermanentTrain(true);
+            }
+
+            // Move any still valid bonuses
+            if (comp.getBonuses() != null) {
+	            List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
+	            for (Bonus bonus : bonuses) {
+	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(), bonus.getLocationNameString()));
+	            	comp.removeBonus(bonus);
+	            }
             }
         }
 
@@ -567,7 +581,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             executeExchangeTokens (nonHomeTokens);
         }
 
-       // Close the merged companies
+        // Close the merged companies
         for (PublicCompanyI comp : mergingCompanies) {
             comp.setClosed();
         }

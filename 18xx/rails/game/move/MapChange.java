@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.2 2009/01/15 20:53:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.3 2009/09/23 21:38:57 evos Exp $
  *
  * Created on 19-Jul-2006
  * Change Log:
@@ -50,6 +50,10 @@ public class MapChange<K, V> extends Move {
         }
 
         return true;
+    }
+    
+    public String toString() {
+        return "MapChange: key="+key+" from "+oldValue+" to "+newValue;
     }
 
 }

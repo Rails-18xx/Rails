@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.6 2008/06/04 19:00:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/DoubleMapChange.java,v 1.7 2009/09/23 21:38:57 evos Exp $
  * 
  * Created on 19-Jul-2006
  * Change Log:
@@ -50,4 +50,7 @@ public class DoubleMapChange<K1, K2, V> extends Move {
         return true;
     }
 
+    public String toString() {
+        return "DoubleMapChange: key1="+firstKey+"key2="+secondKey+" value="+value;
+    }
 }

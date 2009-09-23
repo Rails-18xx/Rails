@@ -5,9 +5,11 @@ import java.util.List;
 import rails.common.Defs;
 import rails.game.action.PossibleAction;
 import rails.game.model.ModelObject;
+import rails.game.move.MoveableHolderI;
+import rails.game.special.SpecialPropertyI;
 import rails.util.Tag;
 
-public interface GameManagerI {
+public interface GameManagerI extends MoveableHolderI {
 
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
@@ -170,4 +172,8 @@ public interface GameManagerI {
     public abstract Object getGameParameter(Defs.Parm key);
 
     public RoundI getInterruptedRound();
+
+    public List<SpecialPropertyI> getCommonSpecialProperties ();
+    public <T extends SpecialPropertyI> List<T> getSpecialProperties(
+            Class<T> clazz, boolean includeExercised);
 }

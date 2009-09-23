@@ -1,11 +1,13 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.13 2008/10/26 20:39:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.14 2009/09/23 21:38:57 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rails.game.*;
+import rails.game.ConfigurationException;
+import rails.game.PrivateCompanyI;
 import rails.game.move.MoveableHolderI;
+import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 import rails.util.Tag;
 import rails.util.Util;
@@ -13,6 +15,7 @@ import rails.util.Util;
 public abstract class SpecialProperty implements SpecialPropertyI {
 
     protected PrivateCompanyI privateCompany;
+    protected MoveableHolderI holder = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     protected boolean usableIfOwnedByPlayer = false;
@@ -66,7 +69,8 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public void setCompany(PrivateCompanyI company) {
-        this.privateCompany = company;
+        privateCompany = company;
+        holder = company;
         exercised =
                 new BooleanState(company.getName() + "_SP_" + uniqueId
                                  + "_Exercised", false);
@@ -77,7 +81,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public MoveableHolderI getHolder() {
-        return null;
+        return holder;
     }
 
     /**
@@ -134,12 +138,18 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     /**
-     * Stub for moving the special property to another holder. Must be
-     * overridden by subsclasses that actually can be moved.
+     * Move the special property to another holder.
+     * Only to be used for special properties that have the "transfer" attribute.
      */
-    public void moveTo(MoveableHolderI newHolder) {}
+    public void moveTo(MoveableHolderI newHolder) {
+    	if (transferText.equals("")) return;
+        //if (newHolder instanceof Portfolio) {
+            new ObjectMove(this, holder, newHolder);
+        //}
+    }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getClass().getSimpleName() + " of private "
                + privateCompany.getName();
     }

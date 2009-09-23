@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.9 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.10 2009/09/23 21:38:57 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -19,7 +19,8 @@ public class SpecialTokenLay extends SpecialProperty {
     int numberAvailable = 1;
     int numberUsed = 0;
 
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+    @Override
+	public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
 
@@ -88,15 +89,6 @@ public class SpecialTokenLay extends SpecialProperty {
         return free;
     }
 
-    /** @deprecated */
-    public MapHex getLocation() {
-        if (locations != null) {
-            return locations.get(0);
-        } else {
-            return null;
-        }
-    }
-
     public List<MapHex> getLocations() {
         return locations;
     }
@@ -117,7 +109,8 @@ public class SpecialTokenLay extends SpecialProperty {
         return toString();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "SpecialTokenLay comp=" + privateCompany.getName() + " type="
                + tokenClass.getSimpleName() + ": "
                + (token != null ? token.toString() : "") + " hex="

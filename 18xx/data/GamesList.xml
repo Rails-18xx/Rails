@@ -50,12 +50,13 @@ Limitation:
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="1856">
-		<Note>Partly playable</Note>
+		<Note>Almost playable</Note>
 		<Description>1856 - Railroading in Upper Canada
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
 
-Aspects not present in 1830 have not been implemented yet.
+Current limitation:
+- No Bridge and Tunnel bonuses.
 		</Description>
 		<Players minimum="3" maximum="6"/>
 	</Game>
@@ -102,7 +103,7 @@ Not yet implemented:
 		<Description>18Kaas (Netherlands)
 (c) 1992 ERJO GAMES
 
-Should work, but has not been extensively tested
+Should work, but has not been extensively tested. Linitations as with 1830.
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
