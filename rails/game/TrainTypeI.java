@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.9 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI {
@@ -84,7 +84,7 @@ public interface TrainTypeI {
     /**
      * @param available The available to set.
      */
-    public void setAvailable();
+    public void setAvailable(Bank bank);
 
     public void setRusted(Portfolio lastBuyingCompany);
 

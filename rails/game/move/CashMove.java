@@ -1,11 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.4 2008/06/04 19:00:33 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.5 2009/09/25 19:13:01 evos Exp $
+ *
  * Created on 17-Jul-2006
  * Change Log:
  */
 package rails.game.move;
 
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.CashHolder;
 
 /**
  * @author Erik Vos
@@ -21,7 +22,7 @@ public class CashMove extends Move {
     /**
      * Create a CashMove instance. In this specific case either from or to may
      * be null, in which case the Bank is implied.
-     * 
+     *
      * @param from The cash payer (null implies the Bank).
      * @param to The cash payee (null implies the Bank).
      * @param amount
@@ -34,19 +35,27 @@ public class CashMove extends Move {
         MoveSet.add(this);
     }
 
-    public boolean execute() {
+    @Override
+	public boolean execute() {
 
-        Bank.transferCash(from, to, amount);
+        transferCash(from, to, amount);
         return true;
     }
 
-    public boolean undo() {
+    @Override
+	public boolean undo() {
 
-        Bank.transferCash(to, from, amount);
+        transferCash(to, from, amount);
         return true;
     }
 
-    public String toString() {
+    private boolean transferCash(CashHolder from, CashHolder to,
+            int amount) {
+        return to.addCash(amount) && from.addCash(-amount);
+    }
+
+    @Override
+	public String toString() {
         return "CashMove: " + Bank.format(amount) + " from " + from.getName()
                + " to " + to.getName();
     }

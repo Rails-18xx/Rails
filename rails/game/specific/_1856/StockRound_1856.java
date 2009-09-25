@@ -53,7 +53,7 @@ public class StockRound_1856 extends StockRound {
 
         if (price != 0
                 && cert instanceof PublicCertificateI
-                && oldHolder == Bank.getIpo()) {
+                && oldHolder == ipo) {
 
             PublicCompany_1856 comp = (PublicCompany_1856)((PublicCertificateI) cert).getCompany();
 

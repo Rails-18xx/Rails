@@ -84,7 +84,7 @@ public class OperatingRound_18AL extends OperatingRound {
             MapHex hex = action.getChosenHex();
             if (hex == operatingCompany.getDestinationHex()) {
                 int payout = 100;
-                new CashMove(Bank.getInstance(), operatingCompany, payout);
+                new CashMove(bank, operatingCompany, payout);
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
                         operatingCompany.getName(),
                         Bank.format(payout),

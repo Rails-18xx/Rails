@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.12 2009/09/04 18:56:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.13 2009/09/25 19:13:01 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -41,8 +41,9 @@ public class ExchangeForShare extends SpecialProperty {
         Portfolio portfolio = privateCompany.getPortfolio();
         Player player = null;
         String errMsg = null;
-        boolean ipoHasShare = Bank.getIpo().getShare(publicCompany) >= share;
-        boolean poolHasShare = Bank.getPool().getShare(publicCompany) >= share;
+        Bank bank = Bank.getInstance();
+        boolean ipoHasShare = bank.getIpo().getShare(publicCompany) >= share;
+        boolean poolHasShare = bank.getPool().getShare(publicCompany) >= share;
 
         while (true) {
 
@@ -87,8 +88,8 @@ public class ExchangeForShare extends SpecialProperty {
         MoveSet.start(true);
 
         Certificate cert =
-                ipoHasShare ? Bank.getIpo().findCertificate(publicCompany,
-                        false) : Bank.getPool().findCertificate(publicCompany,
+                ipoHasShare ? bank.getIpo().findCertificate(publicCompany,
+                        false) : bank.getPool().findCertificate(publicCompany,
                         false);
         //player.buy(cert, 0);
         cert.moveTo(player.getPortfolio());

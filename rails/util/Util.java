@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.14 2008/06/30 20:35:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.15 2009/09/25 19:13:01 evos Exp $*/
 package rails.util;
 
 import java.util.ArrayList;
@@ -27,20 +27,6 @@ public final class Util {
         if (b.length() > 0) b.append(delimiter);
         b.append(s2);
         return b.toString();
-    }
-
-    /** Check if an object is an instance of a class - at runtime! */
-    public static boolean isInstanceOf(Object o, Class<?> clazz) {
-        Class<?> c = o.getClass();
-        while (c != null) {
-            if (c == clazz) return true;
-            c = c.getSuperclass();
-        }
-        return false;
-    }
-
-    public static String getClassShortName(Object object) {
-        return object.getClass().getName().replaceAll(".*\\.", "");
     }
 
     public static int parseInt(String value) throws ConfigurationException {
@@ -74,7 +60,7 @@ public final class Util {
     /**
      * Safely move objects from one holder to another, avoiding
      * ConcurrentModificationExceptions.
-     * 
+     *
      * @param from
      * @param to
      * @param objects

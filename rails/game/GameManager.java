@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.53 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.54 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -227,7 +227,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         /* Max. % of shares of one company that the bank pool may hold */
         Tag poolLimitTag = tag.getChild("BankPoolShareLimit");
         if (poolLimitTag != null) {
-            Bank.setPoolShareLimit(poolLimitTag.getAttributeAsInteger("percentage"));
+            bank.setPoolShareLimit(poolLimitTag.getAttributeAsInteger("percentage"));
         }
 
         /* Max. % of own shares that a company treasury may hold */
@@ -443,7 +443,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
-            if (Bank.isBroken() && !gameEndsAfterSetOfORs) {
+            if (bank.isBroken() && !gameEndsAfterSetOfORs) {
 
                 finishGame();
 
@@ -453,7 +453,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             } else if (startPacket != null && !startPacket.areAllSold()) {
                 startStartRound();
             } else {
-                if (Bank.isBroken() && gameEndsAfterSetOfORs) {
+                if (bank.isBroken() && gameEndsAfterSetOfORs) {
                     finishGame();
                 } else {
                     startStockRound();

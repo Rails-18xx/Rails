@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.21 2009/09/06 12:27:33 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.22 2009/09/25 19:13:01 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -118,7 +118,7 @@ public class ShareSellingRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell, Bank.getPoolShareLimit()
+                    Math.min(maxShareToSell, bank.getPoolShareLimit()
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -238,7 +238,7 @@ public class ShareSellingRound extends StockRound {
             }
 
             // The pool may not get over its limit.
-            if (pool.getShare(company) + numberToSell * company.getShareUnit() > Bank.getPoolShareLimit()) {
+            if (pool.getShare(company) + numberToSell * company.getShareUnit() > bank.getPoolShareLimit()) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

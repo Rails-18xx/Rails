@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.60 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.61 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -241,6 +241,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected BooleanState canSharePriceVary = null;
 
     protected GameManagerI gameManager;
+    protected Bank bank;
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -640,6 +641,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     throws ConfigurationException {
 
         this.gameManager = gameManager;
+        bank = gameManager.getBank();
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
             parPrice.setPrice(StockMarket.getInstance().getStockSpace(
@@ -865,9 +867,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (initialTrain != null) {
             TrainManagerI trainManager = gameManager.getTrainManager();
             TrainTypeI type = trainManager.getTypeByName(initialTrain);
-            TrainI train = Bank.getIpo().getTrainOfType(type);
+            TrainI train = bank.getIpo().getTrainOfType(type);
             buyTrain(train, 0);
-            trainManager.checkTrainAvailability(train, Bank.getIpo());
+            trainManager.checkTrainAvailability(train, bank.getIpo());
         }
     }
 
@@ -897,7 +899,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void setClosed() {
         super.setClosed();
         for (PublicCertificateI cert : certificates) {
-            cert.moveTo(Bank.getScrapHeap());
+            cert.moveTo(bank.getScrapHeap());
         }
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
         setLastRevenue(0);
@@ -1125,8 +1127,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean isAvailable() {
         Portfolio presLoc = certificates.get(0).getPortfolio();
-        return presLoc != Bank.getUnavailable()
-               && presLoc != Bank.getScrapHeap();
+        return presLoc != bank.getUnavailable()
+               && presLoc != bank.getScrapHeap();
     }
 
     /**
@@ -1179,7 +1181,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             // For now, hardcode the rule that payout is rounded up.
             int withheld =
                     (amount / (2 * getNumberOfShares())) * getNumberOfShares();
-            new CashMove(null, this, withheld);
+            new CashMove(bank, this, withheld);
             ReportBuffer.add(name + " receives " + Bank.format(withheld));
 
             // Payout the remainder
@@ -1216,7 +1218,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             part = (split.get(recipient)).intValue();
             ReportBuffer.add(recipient.getName() + " receives "
                              + Bank.format(part));
-            new CashMove(null, recipient, part);
+            new CashMove(bank, recipient, part);
         }
 
         // Move the token
@@ -1233,8 +1235,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Portfolio holder = cert.getPortfolio();
         CashHolder beneficiary = holder.getOwner();
         // Special cases apply if the holder is the IPO or the Pool
-        if (holder == Bank.getIpo() && ipoPaysOut
-                || holder == Bank.getPool() && poolPaysOut) {
+        if (holder == bank.getIpo() && ipoPaysOut
+                || holder == bank.getPool() && poolPaysOut) {
             beneficiary = this;
         }
         return beneficiary;
@@ -1246,7 +1248,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @param The revenue amount.
      */
     public void withhold(int amount) {
-        if (amount > 0) new CashMove(null, this, amount);
+        if (amount > 0) new CashMove(bank, this, amount);
         // Move the token
         if (hasStockPrice) Game.getStockMarket().withhold(this);
     }
@@ -1410,7 +1412,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * has floated (in many games companies can buy and sell their own shares).
      */
     public int getUnsoldPercentage() {
-        return Bank.getIpo().getShare(this) + portfolio.getShare(this);
+        return bank.getIpo().getShare(this) + portfolio.getShare(this);
     }
 
     /**
@@ -1468,7 +1470,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             int price) {
 
         //portfolio.buyPrivate(privateCompany, from, price);
-        if (from != Bank.getIpo()) {
+        if (from != bank.getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
             ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
@@ -1482,7 +1484,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         privateCompany.moveTo(portfolio);
 
         // Move the money
-        if (price > 0) new CashMove(this, from.owner, price);
+        if (price > 0) new CashMove(bank, from.owner, price);
         privatesCostThisTurn.add(price);
 
         // Move any special abilities to the portfolio, if configured so

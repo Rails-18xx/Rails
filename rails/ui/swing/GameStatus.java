@@ -102,6 +102,7 @@ public class GameStatus extends JPanel implements ActionListener {
     protected Portfolio ipo, pool;
 
     protected GameUIManager gameUIManager;
+    protected Bank bank;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
@@ -138,6 +139,7 @@ public class GameStatus extends JPanel implements ActionListener {
         gameStatus = this;
         this.parent = parent;
         this.gameUIManager = gameUIManager;
+        bank = gameUIManager.getGameManager().getBank();
 
         gb = new GridBagLayout();
         this.setLayout(gb);
@@ -159,8 +161,8 @@ public class GameStatus extends JPanel implements ActionListener {
         compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
 
-        ipo = Bank.getIpo();
-        pool = Bank.getPool();
+        ipo = bank.getIpo();
+        pool = bank.getPool();
 
         certPerPlayer = new Field[nc][np];
         certPerPlayerButton = new ClickField[nc][np];
@@ -325,7 +327,7 @@ public class GameStatus extends JPanel implements ActionListener {
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, 0);
             }
-            f = certInIPO[i] = new Field(Bank.getIpo().getShareModel(c));
+            f = certInIPO[i] = new Field(ipo.getShareModel(c));
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
             f =
                     certInIPOButton[i] =
@@ -338,7 +340,7 @@ public class GameStatus extends JPanel implements ActionListener {
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT);
             certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
-            f = certInPool[i] = new Field(Bank.getPool().getShareModel(c));
+            f = certInPool[i] = new Field(pool.getShareModel(c));
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
                     WIDE_RIGHT);
             f =
@@ -474,7 +476,7 @@ public class GameStatus extends JPanel implements ActionListener {
                 bankCashYOffset - 1, 1, 2, WIDE_TOP + WIDE_LEFT);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP);
-        bankCash = new Field(Bank.getInstance().getCashModel());
+        bankCash = new Field(bank.getCashModel());
         addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0);
 
         // Trains
@@ -483,13 +485,13 @@ public class GameStatus extends JPanel implements ActionListener {
                                                                     + WIDE_LEFT);
         addField(new Caption(LocalText.getText("USED")), poolTrainsXOffset,
                 poolTrainsYOffset - 1, 1, 1, WIDE_TOP);
-        poolTrains = new Field(Bank.getPool().getTrainsModel());
+        poolTrains = new Field(pool.getTrainsModel());
         addField(poolTrains, poolTrainsXOffset, poolTrainsYOffset, 1, 1, 0);
 
         // New trains
         addField(new Caption(LocalText.getText("NEW")), newTrainsXOffset,
                 newTrainsYOffset - 1, 1, 1, WIDE_TOP);
-        newTrains = new Field(Bank.getIpo().getTrainsModel());
+        newTrains = new Field(ipo.getTrainsModel());
         addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0);
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
@@ -497,7 +499,7 @@ public class GameStatus extends JPanel implements ActionListener {
         // Future trains
         addField(new Caption(LocalText.getText("Future")), futureTrainsXOffset,
                 futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP);
-        futureTrains = new Field(Bank.getUnavailable().getTrainsModel());
+        futureTrains = new Field(bank.getUnavailable().getTrainsModel());
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0);
 

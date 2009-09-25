@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.10 2009/09/23 21:38:57 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.11 2009/09/25 19:13:01 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
 
 import rails.game.model.ModelObject;
 import rails.game.move.StateChange;
-import rails.util.Util;
 
 public class State extends ModelObject implements StateI {
 
@@ -29,7 +28,7 @@ public class State extends ModelObject implements StateI {
         this.name = name;
         if (object == null) {
             new Exception("NULL object not allowed in creating State wrapper").printStackTrace();
-        } else if (clazz != null && Util.isInstanceOf(object, clazz)) {
+        } else if (clazz != null && clazz.isAssignableFrom(object.getClass())) {
             new Exception("Object " + object + " must be instance of " + clazz).printStackTrace();
         } else {
             this.object = object;
@@ -40,7 +39,8 @@ public class State extends ModelObject implements StateI {
     public void set(Object object, boolean forced) {
         if (object == null) {
             if (this.object != null) new StateChange(this, object);
-        } else if (Util.isInstanceOf(object, clazz)) {
+        //} else if (Util.isInstanceOf(object, clazz)) {
+        } else if (clazz.isAssignableFrom(object.getClass())) {
             if (!object.equals(this.object) || forced)
                 new StateChange(this, object);
         } else {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.12 2009/01/03 18:24:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.13 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -28,8 +28,8 @@ public class Train implements TrainI {
     protected Portfolio holder;
     protected BooleanState obsolete;
 
-    protected static final Portfolio unavailable = Bank.getUnavailable();
-    protected static final Portfolio ipo = Bank.getIpo();
+    protected static final Portfolio unavailable = Bank.getInstance().getUnavailable();
+    protected static final Portfolio ipo = Bank.getInstance().getIpo();
 
     protected static Logger log =
             Logger.getLogger(Train.class.getPackage().getName());
@@ -140,7 +140,7 @@ public class Train implements TrainI {
     }
 
     public void setRusted() {
-        new ObjectMove(this, holder, Bank.getScrapHeap());
+        new ObjectMove(this, holder, Bank.getInstance().getScrapHeap());
     }
 
     public void setObsolete() {

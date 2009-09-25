@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.21 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.22 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -397,15 +397,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
     /**
      * Make a train type available for buying by public companies.
      */
-    public void setAvailable() {
+    public void setAvailable(Bank bank) {
         available.set(true);
 
         Portfolio to =
-                (initialPortfolio.equalsIgnoreCase("Pool") ? Bank.getPool()
-                        : Bank.getIpo());
+                (initialPortfolio.equalsIgnoreCase("Pool") ? bank.getPool()
+                        : bank.getIpo());
 
         for (TrainI train : trains) {
-            new ObjectMove(train, Bank.getUnavailable(), to);
+            new ObjectMove(train, bank.getUnavailable(), to);
         }
     }
 

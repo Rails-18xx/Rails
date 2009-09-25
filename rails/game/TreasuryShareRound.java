@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.12 2009/01/15 20:53:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.13 2009/09/25 19:13:01 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -105,7 +105,7 @@ public class TreasuryShareRound extends StockRound {
         int cash = operatingCompany.getCash();
 
         /* Get the unique Pool certificates and check which ones can be bought */
-        from = Bank.getPool();
+        from = pool;
         Map<String, List<PublicCertificateI>> map =
                 from.getCertsPerCompanyMap();
 
@@ -176,7 +176,7 @@ public class TreasuryShareRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell, Bank.getPoolShareLimit()
+                    Math.min(maxShareToSell, bank.getPoolShareLimit()
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -421,7 +421,7 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // The pool may not get over its limit.
-            if (pool.getShare(company) + numberToSell * company.getShareUnit() > Bank.getPoolShareLimit()) {
+            if (pool.getShare(company) + numberToSell * company.getShareUnit() > bank.getPoolShareLimit()) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
