@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.17 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.18 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -139,8 +139,8 @@ public class StartItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.intValue() + 5);
 
-        Portfolio ipo = Bank.getIpo();
-        Portfolio unavailable = Bank.getUnavailable();
+        Portfolio ipo = gameManager.getBank().getIpo();
+        Portfolio unavailable = gameManager.getBank().getUnavailable();
 
         CompanyManagerI compMgr = gameManager.getCompanyManager();
 

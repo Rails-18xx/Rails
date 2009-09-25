@@ -136,7 +136,7 @@ public class GameUIManager {
 
             return true;
 
-        } else if (Bank.isJustBroken()) {
+        } else if (gameManager.getBank().isJustBroken()) {
 
             statusWindow.reportBankBroken();
 

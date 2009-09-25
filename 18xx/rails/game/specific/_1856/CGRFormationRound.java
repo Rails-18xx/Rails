@@ -141,7 +141,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (numberToRepay > 0) {
                 payment = numberToRepay * valuePerLoan;
 
-                new CashMove (currentCompany, null, payment);
+                new CashMove (currentCompany, bank, payment);
                 currentCompany.addLoans(-numberToRepay);
 
                 message = LocalText.getText("CompanyRepaysLoans",
@@ -237,7 +237,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             company.addLoans(-numberRepaid);
             if (repaymentByCompany > 0) {
-                new CashMove (company, null, repaymentByCompany);
+                new CashMove (company, bank, repaymentByCompany);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                         company.getName(),
                     Bank.format(repaymentByCompany),
@@ -247,7 +247,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
-                new CashMove (president, null, repaymentByPresident);
+                new CashMove (president, bank, repaymentByPresident);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getName(),
                         Bank.format(repaymentByPresident),
@@ -279,10 +279,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificateI cgrCert, poolCert;
         List<PublicCertificateI> certs = new ArrayList<PublicCertificateI>();
-        Portfolio scrapHeap = Bank.getScrapHeap();
-        Portfolio pool = Bank.getPool();
-        Portfolio unavailable = Bank.getUnavailable();
-        Portfolio ipo = Bank.getIpo();
         Player temporaryPresident = null;
         Player newPresident = null;
         Player firstCGRowner = null;
@@ -774,7 +770,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
 
             if (action.isForced()) MoveSet.setLinkedToPrevious();
 
-            train.moveTo(Bank.getPool());
+            train.moveTo(pool);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                     companyName,
                     train.getName() ));

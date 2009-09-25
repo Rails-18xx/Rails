@@ -14,7 +14,7 @@ public class PublicCompany_CGR extends PublicCompany {
 
     /** Special rules apply before CGR has got its first permanent train */
     private BooleanState hadPermanentTrain;
-    
+
     /* Cope with multiple 5% share sales in one turn */
     private IntegerState sharesSoldSoFar;
     private IntegerState squaresDownSoFar;
@@ -60,7 +60,7 @@ public class PublicCompany_CGR extends PublicCompany {
      */
     @Override
 	public void withhold(int amount) {
-        if (amount > 0) new CashMove(null, this, amount);
+        if (amount > 0) new CashMove(bank, this, amount);
         if (hasStockPrice && !runsWithBorrowedTrain()) {
             Game.getStockMarket().withhold(this);
         }
@@ -80,7 +80,7 @@ public class PublicCompany_CGR extends PublicCompany {
             // Drop the last 10 shares
             List<PublicCertificateI>certs = new ArrayList<PublicCertificateI>(certificates);
             int share = 0;
-            MoveableHolderI scrapHeap = Bank.getScrapHeap();
+            MoveableHolderI scrapHeap = bank.getScrapHeap();
             for (PublicCertificateI cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);
@@ -106,16 +106,17 @@ public class PublicCompany_CGR extends PublicCompany {
 
     }
 
-    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
+    @Override
+	public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
             StockMarketI stockMarket) {
-        
+
         if (actionPerformed == StockRound.SOLD) {
             if (canSharePriceVary()) {
                 int numberOfSpaces;
                 if (shareUnit.intValue() == 5) {
-                    // Take care for selling 5% shares in multiple blocks per turn 
-                    numberOfSpaces 
-                        = (sharesSoldSoFar.intValue() + numberOfSharesSold)/2 
+                    // Take care for selling 5% shares in multiple blocks per turn
+                    numberOfSpaces
+                        = (sharesSoldSoFar.intValue() + numberOfSharesSold)/2
                         - squaresDownSoFar.intValue();
                     sharesSoldSoFar.add(numberOfSharesSold);
                     squaresDownSoFar.add(numberOfSpaces);
@@ -126,10 +127,11 @@ public class PublicCompany_CGR extends PublicCompany {
             }
         }
     }
-    
-    public void setOperated() {
+
+    @Override
+	public void setOperated() {
         super.setOperated();
-        
+
         // Reset the share selling counts
         // TODO Should this be a generic function?
         sharesSoldSoFar.set(0);

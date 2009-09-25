@@ -65,9 +65,9 @@ public class OperatingRound_1856 extends OperatingRound {
                 // 1856 special: check if the company has sold enough shares to operate
                 // This check does not apply to the CGR
                 if (operatingCompany instanceof PublicCompany_CGR) return true;
-                
+
                 if (operatingCompany.isClosed()) continue;
-                
+
                 if (!operatingCompany.hasOperated()) {
                     int soldPercentage
                         = 100 - operatingCompany.getUnsoldPercentage();
@@ -217,7 +217,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // Pay from company treasury
         int payment = Math.min(due, (operatingCompany.getCash() / 10) * 10);
         if (payment > 0) {
-            new CashMove (operatingCompany, null, payment);
+            new CashMove (operatingCompany, bank, payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.getName(),
@@ -259,7 +259,7 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
 
             payment = remainder;
-            new CashMove (president, null, payment);
+            new CashMove (president, bank, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.getName(),
                     Bank.format(payment),
@@ -292,7 +292,7 @@ public class OperatingRound_1856 extends OperatingRound {
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
-            new CashMove (null, company, cashInEscrow);
+            new CashMove (bank, company, cashInEscrow);
             ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
                     company.getName(),
                     Bank.format(cashInEscrow)

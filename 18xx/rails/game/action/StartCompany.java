@@ -12,7 +12,7 @@ public class StartCompany extends BuyCertificate {
 
     public StartCompany(PublicCertificateI certificate, int[] prices,
             int maximumNumber) {
-        super(certificate, Bank.getIpo(), 0, maximumNumber);
+        super(certificate, Bank.getInstance().getIpo(), 0, maximumNumber);
         this.startPrices = prices.clone();
     }
 
@@ -22,7 +22,7 @@ public class StartCompany extends BuyCertificate {
 
     public StartCompany(PublicCertificateI certificate, int price,
             int maximumNumber) {
-        super(certificate, Bank.getIpo(), 0, maximumNumber);
+        super(certificate, Bank.getInstance().getIpo(), 0, maximumNumber);
         this.price = price;
     }
 

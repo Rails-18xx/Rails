@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.10 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.11 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import rails.util.Util;
 
 /**
  * A Station object represents any junction on a tile, where one, two or more
@@ -20,7 +18,7 @@ import rails.util.Util;
  * represented by Tile objects, so laying the first tile on a hex is treated as
  * a normal upgrade in this program. <p> See also the City class, which
  * represents stations on tiles that have actually been laid on a MapHex.
- * 
+ *
  * @author Erik Vos
  */
 public class Station {
@@ -69,7 +67,7 @@ public class Station {
     }
 
     public String getName() {
-        return "Station " + id + " on " + Util.getClassShortName(tile) + " "
+        return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
                + tile.getName();
     }
 

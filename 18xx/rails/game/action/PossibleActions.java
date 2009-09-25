@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.13 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.14 2009/09/25 19:13:01 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.util.Util;
-
 /**
  * This class manages the actions that the current user can execute at any point
  * in time. Each possible action is represented by an instance of a subclass of
@@ -19,7 +17,7 @@ import rails.util.Util;
  * type. <p>This class is implemented as a singleton to prevent multiple
  * instances lingering around, as there can only be one set of possible actions
  * at any point in time.
- * 
+ *
  * @author Erik Vos
  */
 public class PossibleActions {
@@ -63,7 +61,7 @@ public class PossibleActions {
 
     public boolean contains(Class<? extends PossibleAction> clazz) {
         for (PossibleAction action : possibleActions) {
-            if (Util.isInstanceOf(action, clazz)) return true;
+            if (clazz.isAssignableFrom(action.getClass())) return true;
         }
         return false;
     }
@@ -72,7 +70,7 @@ public class PossibleActions {
     public <T extends PossibleAction> List<T> getType(Class<T> clazz) {
         List<T> result = new ArrayList<T>();
         for (PossibleAction action : possibleActions) {
-            if (Util.isInstanceOf(action, clazz)) result.add((T) action);
+            if (clazz.isAssignableFrom(action.getClass())) result.add((T) action);
         }
         return result;
     }

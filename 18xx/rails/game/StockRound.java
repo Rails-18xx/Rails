@@ -50,9 +50,6 @@ public class StockRound extends Round {
 
     /* Permanent memory */
     static protected StockMarketI stockMarket;
-    static protected Portfolio ipo;
-    static protected Portfolio pool;
-    static protected Portfolio unavailable;
 
     /* Rules */
     protected int sequenceRule;
@@ -72,9 +69,6 @@ public class StockRound extends Round {
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
         if (stockMarket == null) stockMarket = StockMarket.getInstance();
-        if (ipo == null) ipo = Bank.getIpo();
-        if (pool == null) pool = Bank.getPool();
-        if (unavailable == null) unavailable = Bank.getUnavailable();
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
 
@@ -303,7 +297,7 @@ public class StockRound extends Round {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell, Bank.getPoolShareLimit()
+                    Math.min(maxShareToSell, bank.getPoolShareLimit()
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -794,7 +788,7 @@ public class StockRound extends Round {
         CashHolder recipient;
         if (cert instanceof PublicCertificateI
             && (comp = ((PublicCertificateI) cert).getCompany()).hasFloated()
-            && oldHolder == Bank.getIpo()
+            && oldHolder == ipo
             && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
             recipient = comp;
         } else {
@@ -879,7 +873,7 @@ public class StockRound extends Round {
             }
 
             // The pool may not get over its limit.
-            if (pool.getShare(company) + numberToSell * company.getShareUnit() > Bank.getPoolShareLimit()) {
+            if (pool.getShare(company) + numberToSell * company.getShareUnit() > bank.getPoolShareLimit()) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

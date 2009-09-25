@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.6 2009/01/24 15:10:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.7 2009/09/25 19:13:01 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -57,8 +57,6 @@ public class OperatingRound_18EU extends OperatingRound {
         boolean presidentMayHelp = operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
-        Portfolio ipo = Bank.getIpo();
-        Portfolio pool = Bank.getPool();
 
         // Check if the company already has a Pullmann
         TrainI ownedPTrain = null;
@@ -209,7 +207,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // If the last train is a Pullmann, discard it.
             if ((numberOfTrains > comp.getTrainLimit(currentPhase.getIndex()) || numberOfTrains == 1)
                 && pullmann != null) {
-                pullmann.moveTo(Bank.getPool());
+                pullmann.moveTo(pool);
             }
 
             // If we are still above the limit, make the list

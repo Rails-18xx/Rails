@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.68 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.69 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -144,7 +144,7 @@ public class OperatingRound extends Round implements Observer {
                             recipient.getName(),
                             Bank.format(revenue),
                             priv.getName()));
-                    new CashMove(null, recipient, revenue);
+                    new CashMove(bank, recipient, revenue);
                 }
 
             }
@@ -407,7 +407,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (tile != null) {
             if (cost > 0)
-                new CashMove(operatingCompany, null, cost);
+                new CashMove(operatingCompany, bank, cost);
             operatingCompany.layTile(hex, tile, orientation, cost);
 
             if (cost > 0) {
@@ -579,7 +579,7 @@ public class OperatingRound extends Round implements Observer {
             operatingCompany.layBaseToken(hex, cost);
 
             if (cost > 0) {
-                new CashMove(operatingCompany, null, cost);
+                new CashMove(operatingCompany, bank, cost);
                 ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON",
                         companyName,
                         hex.getName(),
@@ -1400,7 +1400,7 @@ public class OperatingRound extends Round implements Observer {
             TrainI oldTrain =
                     operatingCompany.getPortfolio().getTrainOfType(
                             exchangedTrain.getType());
-            Bank.getPool().buyTrain(oldTrain, 0);
+            pool.buyTrain(oldTrain, 0);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
                     companyName,
                     exchangedTrain.getName(),
@@ -1423,11 +1423,11 @@ public class OperatingRound extends Round implements Observer {
         }
 
         operatingCompany.buyTrain(train, price);
-        if (oldHolder == Bank.getIpo()) {
+        if (oldHolder == ipo) {
             train.getType().addToBoughtFromIPO();
             // Clone the train if infinitely available
             if (train.getType().hasInfiniteAmount()) {
-                Bank.getIpo().addTrain(train.getType().cloneTrain());
+                ipo.addTrain(train.getType().cloneTrain());
             }
 
         }
@@ -1530,7 +1530,7 @@ public class OperatingRound extends Round implements Observer {
         //
         if (action.isForced()) MoveSet.setLinkedToPrevious();
 
-        Bank.getPool().buyTrain(train, 0);
+        pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.getName() ));
@@ -1743,7 +1743,7 @@ public class OperatingRound extends Round implements Observer {
         int number = action.getNumberTaken();
         int amount = calculateLoanAmount (number);
         operatingCompany.addLoans(number);
-        new CashMove (null, operatingCompany, amount);
+        new CashMove (bank, operatingCompany, amount);
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("CompanyTakesLoan",
                 operatingCompany.getName(),
@@ -1853,7 +1853,7 @@ public class OperatingRound extends Round implements Observer {
             Player president = operatingCompany.getPresident();
             if (president.getCash() >= remainder) {
                 payment = remainder;
-                new CashMove (president, null, payment);
+                new CashMove (president, bank, payment);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         operatingCompany.getName(),
                         Bank.format(payment),
@@ -2070,8 +2070,6 @@ public class OperatingRound extends Round implements Observer {
         boolean presidentMayHelp = !hasTrains && operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
-        Portfolio ipo = Bank.getIpo();
-        Portfolio pool = Bank.getPool();
 
         // First check if any more trains may be bought from the Bank
         // Postpone train limit checking, because an exchange might be possible
@@ -2264,7 +2262,7 @@ public class OperatingRound extends Round implements Observer {
     public void payLoanInterest () {
         int amount = operatingCompany.getCurrentLoanValue()
             * operatingCompany.getLoanInterestPct() / 100;
-        new CashMove (operatingCompany, null, amount);
+        new CashMove (operatingCompany, bank, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
                 operatingCompany.getName(),
                 Bank.format(amount),

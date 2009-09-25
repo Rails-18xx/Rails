@@ -103,7 +103,7 @@ public class StockRound_18EU extends StockRound {
         PublicCompanyI companyBoughtThisTurn =
                 (PublicCompanyI) companyBoughtThisTurnWrapper.getObject();
         if (companyBoughtThisTurn == null) {
-            from = Bank.getIpo();
+            from = ipo;
             Map<String, List<PublicCertificateI>> map =
                     from.getCertsPerCompanyMap();
             int shares;
@@ -156,7 +156,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* Get the unique Pool certificates and check which ones can be bought */
-        from = Bank.getPool();
+        from = pool;
         Map<String, List<PublicCertificateI>> map =
                 from.getCertsPerCompanyMap();
 
@@ -384,7 +384,7 @@ public class StockRound_18EU extends StockRound {
             homeHex = minor.getHomeHex();
             homeCityNumber = homeHex.getCityOfBaseToken(minor);
         } else if (selectedHomeCity != null) {
-            homeHex = (MapHex) selectedHomeCity.getHolder();
+            homeHex = selectedHomeCity.getHolder();
             homeCityNumber = selectedHomeCity.getNumber();
         }
         company.setHomeHex(homeHex);
@@ -442,7 +442,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO must get this amount from XML
         int tokensCost = 100;
-        new CashMove(company, null, tokensCost);
+        new CashMove(company, bank, tokensCost);
         ReportBuffer.add(LocalText.getText("PaysForTokens",
                 company.getName(),
                 Bank.format(100),
@@ -510,7 +510,7 @@ public class StockRound_18EU extends StockRound {
         int minorTrains = minor.getPortfolio().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
-            if (minorCash > 0) new CashMove(minor, null, minorCash);
+            if (minorCash > 0) new CashMove(minor, bank, minorCash);
             pool.transferAssetsFrom(minor.getPortfolio());
         } else {
             // Assets go to the major company
@@ -584,7 +584,7 @@ public class StockRound_18EU extends StockRound {
             Util.moveObjects(company.getPortfolio().getCertificatesPerCompany(
                     company.getName()), pool);
             int cash = 5 * company.getMarketPrice();
-            new CashMove(null, company, cash);
+            new CashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
                     company.getName(),
                     Bank.format(cash) ));
@@ -639,7 +639,7 @@ public class StockRound_18EU extends StockRound {
         //
         if (action.isForced()) MoveSet.setLinkedToPrevious();
 
-        Bank.getPool().buyTrain(train, 0);
+        pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.getName() ));

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.35 2009/09/23 21:38:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.36 2009/09/25 19:13:01 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -397,7 +397,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     }
 
     public void discardTrain(TrainI train) {
-        train.moveTo(Bank.getPool());
+        train.moveTo(Bank.getInstance().getPool());
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 name, train.getName() ));
     }
@@ -585,7 +585,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
                 if (sps == null) continue;
 
                 for (SpecialPropertyI sp : sps) {
-                    if ((clazz == null || Util.isInstanceOf(sp, clazz))
+                    if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
                         && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
@@ -599,7 +599,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
             // Private-independent special properties
             if (specialProperties != null) {
                 for (SpecialPropertyI sp : specialProperties) {
-                    if ((clazz == null || Util.isInstanceOf(sp, clazz))
+                    if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
                         && (owner instanceof Company && sp.isUsableIfOwnedByCompany()

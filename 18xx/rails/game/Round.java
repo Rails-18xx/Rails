@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.22 2009/09/11 19:27:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.23 2009/09/25 19:13:01 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -29,6 +29,11 @@ public abstract class Round implements RoundI {
     protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
     protected PlayerManager playerManager = null;
+    protected Bank bank = null;
+    protected Portfolio ipo = null;
+    protected Portfolio pool = null;
+    protected Portfolio unavailable = null;
+    protected Portfolio scrapHeap = null;
 
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
@@ -48,6 +53,11 @@ public abstract class Round implements RoundI {
         } else {
             companyManager = aGameManager.getCompanyManager();
             playerManager = aGameManager.getPlayerManager();
+            bank = aGameManager.getBank();
+            ipo = bank.getIpo();
+            pool = bank.getPool();
+            unavailable = bank.getUnavailable();
+            scrapHeap = bank.getScrapHeap();
         }
 
         roundTypeForUI = getClass();
@@ -295,7 +305,7 @@ public abstract class Round implements RoundI {
         // up)
 
         if (cash > 0) {
-            new CashMove(Bank.getInstance(), company, cash);
+            new CashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                 company.getName(),
                 Bank.format(cash) ));
@@ -307,7 +317,7 @@ public abstract class Round implements RoundI {
         if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
             && company.canHoldOwnShares()) {
             List<Certificate> moving = new ArrayList<Certificate>();
-            for (Certificate ipoCert : Bank.getIpo().getCertificatesPerCompany(
+            for (Certificate ipoCert : ipo.getCertificatesPerCompany(
                     company.getName())) {
                 moving.add(ipoCert);
             }

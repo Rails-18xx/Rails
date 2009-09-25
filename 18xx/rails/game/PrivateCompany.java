@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.21 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.22 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -168,13 +168,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     	super.setClosed();
         unblockHexes();
-        moveTo(Bank.getScrapHeap());
+        moveTo(Bank.getInstance().getScrapHeap());
         ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 
         // For 1856: buyable tokens move to Bank
         for (SpecialPropertyI sp : specialProperties) {
         	if (sp instanceof SellBonusToken) {
-        		((SellBonusToken)sp).setSeller(Bank.getInstance());
+        		((SellBonusToken)sp).setSeller((CashHolder)Bank.getInstance());
         	}
         }
     }

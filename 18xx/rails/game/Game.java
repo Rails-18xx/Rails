@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.27 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.28 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -149,7 +149,7 @@ public class Game {
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
-            playerManager.setPlayers(players, playerManager.getStartCash());
+            playerManager.setPlayers(players, bank);
             gameManager.init(playerManager, companyManager,
                     phaseManager, trainManager, stockMarket, bank);
 

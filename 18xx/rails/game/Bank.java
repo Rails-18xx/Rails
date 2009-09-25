@@ -16,40 +16,31 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
     /** The Bank's amont of cash */
-    private static CashModel money;
-
-    private static int gameType;
+    private CashModel money;
 
     /** The IPO */
-    private static Portfolio ipo = null;
+    private Portfolio ipo = null;
     /** The Bank Pool */
-    private static Portfolio pool = null;
+    private Portfolio pool = null;
     /** Collection of items that will (may) become available in the future */
-    private static Portfolio unavailable = null;
+    private Portfolio unavailable = null;
     /** Collection of items that have bene discarded (but are kept to allow Undo) */
-    private static Portfolio scrapHeap = null;
+    private Portfolio scrapHeap = null;
 
     private static Bank instance = null;
 
     /** Is the bank broken (remains true once set) */
-    private static boolean broken = false;
+    private boolean broken = false;
     /** Is the bank just broken (returns true exactly once) */
-    private static boolean brokenReported = false;
+    private boolean brokenReported = false;
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
      * rest is copied.
      */
-    private static String moneyFormat = null;
+    private String moneyFormat = null;
 
-    static {
-        String configFormat = Config.get("money_format");
-        if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
-            moneyFormat = configFormat;
-        }
-    }
-
-    private static int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
+    private int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
     protected static Logger log =
             Logger.getLogger(Bank.class.getPackage().getName());
@@ -61,25 +52,10 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         return instance;
     }
 
-    /**
-     * Central method for transferring all cash.
-     *
-     * @param from Who pays the money (null = Bank).
-     * @param to Who received the money (null = Bank).
-     * @param amount The amount of money.
-     */
-    public static boolean transferCash(CashHolder from, CashHolder to,
-            int amount) {
-        if (from == null)
-            from = instance;
-        else if (to == null) to = instance;
-        to.addCash(amount);
-        return from.addCash(-amount);
-    }
-
     public Bank() {
 
         instance = this;
+
         money = new CashModel(this);
         // Create the IPO and the Bank Pool.
         ipo = new Portfolio("IPO", this);
@@ -87,6 +63,10 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         unavailable = new Portfolio("Unavailable", this);
         scrapHeap = new Portfolio("ScrapHeap", this);
 
+        String configFormat = Config.get("money_format");
+        if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
+            moneyFormat = configFormat;
+        }
     }
 
     /**
@@ -123,7 +103,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     /**
      * @param percentage of a company allowed to be in the Bank pool.
      */
-    public static void setPoolShareLimit(int percentage) {
+    public void setPoolShareLimit(int percentage) {
         poolShareLimit = percentage;
     }
 
@@ -153,20 +133,13 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     }
 
     /**
-     * @return Which type of rails.game we're playing (1830, 1856, 1870, etc.)
-     */
-    public static int getGameType() {
-        return gameType;
-    }
-
-    /**
      * @return IPO Portfolio
      */
-    public static Portfolio getIpo() {
+    public Portfolio getIpo() {
         return ipo;
     }
 
-    public static Portfolio getScrapHeap() {
+    public Portfolio getScrapHeap() {
         return scrapHeap;
     }
 
@@ -194,11 +167,11 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         return negative;
     }
 
-    public static boolean isBroken() {
+    public boolean isBroken() {
         return broken;
     }
 
-    public static boolean isJustBroken() {
+    public boolean isJustBroken() {
         boolean result = broken && !brokenReported;
         brokenReported = true;
         return result;
@@ -207,14 +180,14 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     /**
      * @return Portfolio of stock in Bank Pool
      */
-    public static Portfolio getPool() {
+    public Portfolio getPool() {
         return pool;
     }
 
     /**
      * @return Portfolio of unavailable shares
      */
-    public static Portfolio getUnavailable() {
+    public Portfolio getUnavailable() {
         return unavailable;
     }
 
@@ -242,12 +215,12 @@ public class Bank implements CashHolder, ConfigurableComponentI {
      *
      * @return The maximum percentage.
      */
-    public static int getPoolShareLimit() {
+    public int getPoolShareLimit() {
         return poolShareLimit;
     }
 
     public static String format(int amount) {
-        return moneyFormat.replaceFirst("@", String.valueOf(amount));
+        return instance.moneyFormat.replaceFirst("@", String.valueOf(amount));
     }
 
 }

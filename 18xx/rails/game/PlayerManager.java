@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.9 2009/09/04 18:40:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.10 2009/09/25 19:13:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -44,7 +44,7 @@ public class PlayerManager implements ConfigurableComponentI {
         }
     }
 
-   public void setPlayers (List<String> playerNames, int startCash) {
+   public void setPlayers (List<String> playerNames, Bank bank) {
 
         Player player;
 
@@ -55,18 +55,20 @@ public class PlayerManager implements ConfigurableComponentI {
         playerMap = new HashMap<String, Player>(numberOfPlayers);
 
         int playerIndex = 0;
+        int startCash = getStartCash();
         for (String playerName : playerNames) {
             player = new Player(playerName, playerIndex++);
             players.add(player);
             playerMap.put(playerName, player);
-            Bank.transferCash(null, player, getStartCash());
+            player.addCash(startCash);
+            bank.addCash(-startCash);
             ReportBuffer.add(LocalText.getText("PlayerIs",
                     playerIndex,
                     player.getName() ));
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
-                Bank.format(Bank.getInstance().getCash())));
+                Bank.format(bank.getCash())));
     }
 
     /**
@@ -84,11 +86,7 @@ public class PlayerManager implements ConfigurableComponentI {
         return playerNames;
     }
 
-    public Player getPlayerByIndex(int index) {
-        return players.get(index);
-    }
-
-    public int getStartCash () {
+    protected int getStartCash () {
         return playerStartCash[numberOfPlayers];
     }
 
