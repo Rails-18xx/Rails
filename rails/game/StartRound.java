@@ -207,7 +207,7 @@ public abstract class StartRound extends Round implements StartRoundI {
                             LocalText.getText("NoSharePriceSet", shareCompName);
                     break;
                 }
-                if ((StockMarket.getInstance().getStartSpace(sharePrice)) == null) {
+                if ((stockMarket.getStartSpace(sharePrice)) == null) {
                     errMsg =
                             LocalText.getText("InvalidStartPrice",
                                     Bank.format(sharePrice),

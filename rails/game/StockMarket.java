@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.17 2009/09/06 12:27:33 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.18 2009/09/25 19:29:56 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -20,8 +20,6 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     protected ArrayList<StockSpaceI> startSpaces = new ArrayList<StockSpaceI>();
     protected int[] startPrices;
 
-    protected static StockMarketI instance;
-
     /* Game-specific flags */
     protected boolean upOrDownRight = false; /*
                                                  * Sold out and at top: go down
@@ -36,14 +34,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     ArrayList<PublicCertificate> ipoPile;
 
-    // ArrayList companiesStarted;
-
     public StockMarket() {
-        instance = this;
-    }
-
-    public static StockMarketI getInstance() {
-        return instance;
     }
 
     /**
@@ -316,7 +307,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
         }
         company.setCurrentSpace(to);
-        new PriceTokenMove(company, from, to);
+        new PriceTokenMove(company, from, to, this);
     }
 
     public void processMove(PublicCompanyI company, StockSpaceI from,
