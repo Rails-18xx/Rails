@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.23 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.24 2009/09/25 19:29:56 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -34,6 +34,7 @@ public abstract class Round implements RoundI {
     protected Portfolio pool = null;
     protected Portfolio unavailable = null;
     protected Portfolio scrapHeap = null;
+    protected StockMarketI stockMarket;
 
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
@@ -58,6 +59,7 @@ public abstract class Round implements RoundI {
             pool = bank.getPool();
             unavailable = bank.getUnavailable();
             scrapHeap = bank.getScrapHeap();
+            stockMarket = aGameManager.getStockMarket();
         }
 
         roundTypeForUI = getClass();

@@ -48,9 +48,6 @@ public class StockRound extends Round {
     static public final int BOUGHT = 0;
     static public final int SOLD = 1;
 
-    /* Permanent memory */
-    static protected StockMarketI stockMarket;
-
     /* Rules */
     protected int sequenceRule;
     static protected boolean buySellInSameRound = true;
@@ -68,7 +65,6 @@ public class StockRound extends Round {
 
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
-        if (stockMarket == null) stockMarket = StockMarket.getInstance();
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
 

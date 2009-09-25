@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.61 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.62 2009/09/25 19:29:56 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -242,6 +242,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected GameManagerI gameManager;
     protected Bank bank;
+    protected StockMarketI stockMarket;
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -642,9 +643,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         this.gameManager = gameManager;
         bank = gameManager.getBank();
+        stockMarket = gameManager.getStockMarket();
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
-            parPrice.setPrice(StockMarket.getInstance().getStockSpace(
+            parPrice.setPrice(stockMarket.getStockSpace(
                     startSpace));
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
@@ -793,7 +795,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         hasStarted.set(true);
         setParSpace(startSpace);
         // The current price is set via the Stock Market
-        StockMarket.getInstance().start(this, startSpace);
+        stockMarket.start(this, startSpace);
 
         /* Final initialisations */
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
@@ -808,7 +810,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public void start(int price) {
-        StockSpaceI startSpace = StockMarket.getInstance().getStartSpace(price);
+        StockSpaceI startSpace = stockMarket.getStartSpace(price);
         if (startSpace == null) {
             log.error("Invalid start price " + Bank.format(price));
         } else {
@@ -907,7 +909,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         treasury.update();
 
         Util.moveObjects(laidBaseTokens, this);
-        StockMarket.getInstance().close(this);
+        stockMarket.close(this);
 
     }
 
