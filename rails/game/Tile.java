@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.27 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.28 2009/10/03 14:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -480,7 +480,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                 return false;
             }
 
-            if (hexes != null) convertHexString();
+            if (hexes != null) convertHexString(hex.getMapManager());
 
             if (allowedHexes != null) {
                 return allowedHexes.contains(hex);
@@ -504,14 +504,14 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         }
 
 
-        private void convertHexString() {
+        private void convertHexString(MapManager mapManager) {
 
             boolean allowed = !hexes.startsWith("-");
             if (!allowed) hexes = hexes.substring(1);
             String[] hexArray = hexes.split(",");
             MapHex hex;
             for (int i = 0; i < hexArray.length; i++) {
-                hex = MapManager.getInstance().getHex(hexArray[i]);
+                hex = mapManager.getHex(hexArray[i]);
                 if (hex != null) {
                     if (allowed) {
                         if (allowedHexes == null)

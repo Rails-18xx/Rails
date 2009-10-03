@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.24 2009/09/08 21:48:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.25 2009/10/03 14:02:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -92,11 +92,15 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
     protected List<TokenI> offStationTokens;
+    
+    protected MapManager mapManager = null;
 
     protected static Logger log =
             Logger.getLogger(MapHex.class.getPackage().getName());
 
-    public MapHex() {}
+    public MapHex(MapManager mapManager) {
+        this.mapManager = mapManager;
+    }
 
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
@@ -955,6 +959,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         if (hex.getName().equals(getName()) && hex.row == row
             && hex.column == column) return true;
         return false;
+    }
+    
+    public MapManager getMapManager() {
+        return mapManager;
     }
 
     @Override
