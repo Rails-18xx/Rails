@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.62 2009/09/25 19:29:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.63 2009/10/03 14:02:28 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -50,10 +50,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected String bgHexColour = "000000";
 
     /** Home hex & city * */
+    protected String homeHexName = null;
     protected MapHex homeHex = null;
     protected int homeCityNumber = 1;
 
     /** Destination hex * */
+    protected String destinationHexName = null;
     protected MapHex destinationHex = null;
     protected BooleanState hasReachedDestination = null;
 
@@ -243,6 +245,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected GameManagerI gameManager;
     protected Bank bank;
     protected StockMarketI stockMarket;
+    protected MapManager mapManager;
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -286,30 +289,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag homeBaseTag = tag.getChild("Home");
         if (homeBaseTag != null) {
-            String homeHexName = homeBaseTag.getAttributeAsString("hex");
-            MapHex hex = MapManager.getInstance().getHex(homeHexName);
-            if (hex != null) {
-                homeHex = hex;
-                homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
-            } else {
-                throw new ConfigurationException("Invalid home hex "
-                                                 + homeHexName
-                                                 + " for company " + name);
-            }
+            homeHexName = homeBaseTag.getAttributeAsString("hex");
+            homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
         }
 
         Tag destinationTag = tag.getChild("Destination");
         if (destinationTag != null) {
-            String destHexName = destinationTag.getAttributeAsString("hex");
-            MapHex hex = MapManager.getInstance().getHex(destHexName);
-            if (hex != null) {
-                destinationHex = hex;
-                hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
-            } else {
-                throw new ConfigurationException("Invalid destination hex "
-                                                 + destHexName
-                                                 + " for company " + name);
-            }
+            destinationHexName = destinationTag.getAttributeAsString("hex");
         }
 
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
@@ -644,6 +630,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         this.gameManager = gameManager;
         bank = gameManager.getBank();
         stockMarket = gameManager.getStockMarket();
+        mapManager = gameManager.getMapManager();
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
             parPrice.setPrice(stockMarket.getStockSpace(
@@ -676,6 +663,25 @@ public class PublicCompany extends Company implements PublicCompanyI {
             freeBaseTokens.add(token);
         }
 
+        if (homeHexName != null) {
+            homeHex = mapManager.getHex(homeHexName);
+            if (homeHex == null) {
+                throw new ConfigurationException("Invalid home hex "
+                                                 + homeHexName
+                                                 + " for company " + name);
+            }
+        }
+        
+        if (destinationHexName != null) {
+            destinationHex = mapManager.getHex(destinationHexName);
+            if (destinationHex != null) {
+                hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
+            } else {
+                throw new ConfigurationException("Invalid destination hex "
+                                                 + destinationHexName
+                                                 + " for company " + name);
+            }
+        }
     }
 
     /** Reset turn objects */

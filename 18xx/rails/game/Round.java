@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.24 2009/09/25 19:29:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.25 2009/10/03 14:02:28 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -34,7 +34,8 @@ public abstract class Round implements RoundI {
     protected Portfolio pool = null;
     protected Portfolio unavailable = null;
     protected Portfolio scrapHeap = null;
-    protected StockMarketI stockMarket;
+    protected StockMarketI stockMarket = null;
+    protected MapManager mapManager = null;
 
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
@@ -60,6 +61,7 @@ public abstract class Round implements RoundI {
             unavailable = bank.getUnavailable();
             scrapHeap = bank.getScrapHeap();
             stockMarket = aGameManager.getStockMarket();
+            mapManager = aGameManager.getMapManager();
         }
 
         roundTypeForUI = getClass();
@@ -183,7 +185,7 @@ public abstract class Round implements RoundI {
                 } catch (NumberFormatException e) {
                     cityNumber = 1;
                 }
-                hex = MapManager.getInstance().getHex(hexName);
+                hex = mapManager.getHex(hexName);
                 city = hex.getCity(cityNumber);
 
                 if (token.isSelected()) {

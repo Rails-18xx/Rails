@@ -121,18 +121,18 @@ public class StartCompany_18EU extends StartCompany {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
         
-        MapManager mmgr = MapManager.getInstance();
+        MapManager mapManager = MapManager.getInstance();
         if (availableHomeStationNames != null) {
             availableHomeStations = new ArrayList<City>();
             for (String cityName : availableHomeStationNames.split(",")) {
                 String[] parts = parseStationName (cityName); 
-                MapHex hex = mmgr.getHex(parts[0]);
+                MapHex hex = mapManager.getHex(parts[0]);
                 availableHomeStations.add (hex.getCity(Integer.parseInt(parts[1])));
             }
         }
         if (selectedHomeStationName != null) {
             String[] parts = parseStationName (selectedHomeStationName); 
-            MapHex hex = mmgr.getHex(parts[0]);
+            MapHex hex = mapManager.getHex(parts[0]);
             selectedHomeStation = hex.getCity(Integer.parseInt(parts[1]));
         }
     }

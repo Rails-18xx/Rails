@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.36 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.37 2009/10/03 14:02:28 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -581,6 +581,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         if (owner instanceof Player || owner instanceof PublicCompanyI) {
 
             for (PrivateCompanyI priv : privateCompanies) {
+
                 sps = priv.getSpecialProperties();
                 if (sps == null) continue;
 
