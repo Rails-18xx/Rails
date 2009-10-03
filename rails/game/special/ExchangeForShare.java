@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.13 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.14 2009/10/03 13:59:33 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -15,6 +15,8 @@ public class ExchangeForShare extends SpecialProperty {
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        super.configureFromXML(tag);
 
         Tag swapTag = tag.getChild("ExchangeForShare");
         if (swapTag == null) {
