@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.2 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.3 2009/10/03 14:00:06 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -23,6 +23,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     int deductionAmount; // Money or percentage
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
+        
         super.configureFromXML(tag);
 
         Tag trainBuyTag = tag.getChild("SpecialTrainBuy");

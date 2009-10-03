@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.14 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.15 2009/10/03 14:00:07 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -20,7 +20,6 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected BooleanState exercised;
     protected boolean usableIfOwnedByPlayer = false;
     protected boolean usableIfOwnedByCompany = false;
-    //protected boolean closeIfExercised = false;
 
     protected String conditionText = "";
     protected String whenText = "";
@@ -40,9 +39,6 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        //closeIfExercised =
-        //        tag.getAttributeAsBoolean("closeIfExercised", closeIfExercised);
 
         conditionText = tag.getAttributeAsString("condition");
         if (!Util.hasValue(conditionText))
