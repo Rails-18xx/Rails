@@ -24,7 +24,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private Portfolio pool = null;
     /** Collection of items that will (may) become available in the future */
     private Portfolio unavailable = null;
-    /** Collection of items that have bene discarded (but are kept to allow Undo) */
+    /** Collection of items that have been discarded (but are kept to allow Undo) */
     private Portfolio scrapHeap = null;
 
     private static Bank instance = null;
