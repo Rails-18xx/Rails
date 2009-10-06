@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.69 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.70 2009/10/06 18:34:04 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1384,8 +1384,8 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
-            gameManager.startShareSellingRound(this, operatingCompany,
-                    cashToBeRaisedByPresident);
+            gameManager.startShareSellingRound(operatingCompany.getPresident(),
+                    cashToBeRaisedByPresident, operatingCompany);
 
             return true;
         }
@@ -1470,7 +1470,8 @@ public class OperatingRound extends Round implements Observer {
         return !excessTrainCompanies.isEmpty();
     }
 
-    public void resume() {
+    @Override
+	public void resume() {
 
         if (savedAction instanceof BuyTrain) {
             buyTrain ((BuyTrain)savedAction);
@@ -1808,8 +1809,9 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                gameManager.startShareSellingRound(this, operatingCompany,
-                        cashToBeRaisedByPresident);
+                MoveSet.start(true);
+                gameManager.startShareSellingRound(operatingCompany.getPresident(),
+                        cashToBeRaisedByPresident, operatingCompany);
                 return true;
             }
         }
@@ -1841,7 +1843,7 @@ public class OperatingRound extends Round implements Observer {
         payment = Math.min(amount, operatingCompany.getCash());
         remainder = amount - payment;
         if (payment > 0) {
-            new CashMove (operatingCompany, null, payment);
+            new CashMove (operatingCompany, bank, payment);
             ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                 operatingCompany.getName(),
                 Bank.format(payment),

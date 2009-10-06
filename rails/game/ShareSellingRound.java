@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.22 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.23 2009/10/06 18:34:04 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -18,10 +18,10 @@ import rails.util.LocalText;
  */
 public class ShareSellingRound extends StockRound {
 
-    OperatingRound or;
+    RoundI parentRound;
     Player sellingPlayer;
-    PublicCompanyI companyNeedingCash;
     IntegerState cashToRaise;
+    PublicCompanyI unsellableCompany = null;
 
 	/**
 	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
@@ -37,23 +37,20 @@ public class ShareSellingRound extends StockRound {
             RoundI parentRound) {
 
 		super (gameManager);
-		or = ((OperatingRound) parentRound);
-        companyNeedingCash = or.getOperatingCompany();
-        cashToRaise = new IntegerState("CashToRaise", or.getCashToBeRaisedByPresident());
-        sellingPlayer = companyNeedingCash.getPresident();
-        currentPlayer = sellingPlayer;
-        setCurrentPlayerIndex(sellingPlayer.getIndex());
-
+		this.parentRound = parentRound;
     }
 
-    @Override
-    public void start() {
-        log.info("Share selling round started");
+    public void start(Player sellingPlayer, int cashToRaise, 
+            PublicCompanyI unsellableCompany) {
+        log.info("Share selling round started, player="
+                +sellingPlayer.getName()+" cash="+cashToRaise);
         ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getName(),
-                Bank.format(cashToRaise.intValue()),
-                companyNeedingCash.getName()));
-        currentPlayer = sellingPlayer;
+                Bank.format(cashToRaise)));
+        currentPlayer = this.sellingPlayer = sellingPlayer;
+        this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
+        this.unsellableCompany = unsellableCompany;
+        setCurrentPlayerIndex(sellingPlayer.getIndex());
         setPossibleActions();
     }
 
@@ -131,7 +128,7 @@ public class ShareSellingRound extends StockRound {
                         company.getCertificates().get(0).getShare();
                 if (maxShareToSell > share - presidentShare) {
                     dumpAllowed = false;
-                    if (company != companyNeedingCash) {
+                    if (company != unsellableCompany) {
                         int playerShare;
                         List<Player> players = gameManager.getPlayers();
                         for (Player player : players) {
@@ -265,7 +262,7 @@ public class ShareSellingRound extends StockRound {
             if (numberToSell > 0 && presCert != null
                 && numberToSell <= presCert.getShares()) {
                 // Not allowed to dump the company that needs the train
-                if (company == companyNeedingCash) {
+                if (company == unsellableCompany) {
                     errMsg =
                             LocalText.getText("CannotDumpTrainBuyingPresidency");
                     break;
@@ -386,8 +383,8 @@ public class ShareSellingRound extends StockRound {
         return cashToRaise.intValue();
     }
 
-    public PublicCompanyI getCompanyNeedingTrain() {
-        return companyNeedingCash;
+    public PublicCompanyI getCompanyNeedingCash() {
+        return unsellableCompany;
     }
 
     @Override

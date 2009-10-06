@@ -5,8 +5,7 @@ import java.util.List;
 
 import rails.game.*;
 import rails.game.move.*;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
+import rails.game.state.*;
 
 public class PublicCompany_CGR extends PublicCompany {
 
@@ -14,6 +13,9 @@ public class PublicCompany_CGR extends PublicCompany {
 
     /** Special rules apply before CGR has got its first permanent train */
     private BooleanState hadPermanentTrain;
+
+    /** If no player has 2 shares, we need a separate attribute to mark the president. */
+    private State temporaryPresident = null;
 
     /* Cope with multiple 5% share sales in one turn */
     private IntegerState sharesSoldSoFar;
@@ -41,7 +43,35 @@ public class PublicCompany_CGR extends PublicCompany {
         canSharePriceVary.set(true);
     }
 
+    public boolean hasTemporaryPresident () {
+    	return getTemporaryPresident() != null;
+    }
+
+    public Player getTemporaryPresident() {
+    	if (temporaryPresident != null) {
+    		return (Player) temporaryPresident.getObject();
+    	} else {
+    		return null;
+    	}
+	}
+
     @Override
+	public Player getPresident() {
+    	if (hasTemporaryPresident()) {
+    		return getTemporaryPresident();
+    	} else {
+    		return super.getPresident();
+    	}
+    }
+
+	public void setTemporaryPresident(Player temporaryPresident) {
+		if (this.temporaryPresident == null) {
+			this.temporaryPresident = new State ("CGR_TempPres", Player.class);
+		}
+		this.temporaryPresident.set(temporaryPresident);
+	}
+
+	@Override
 	public boolean canRunTrains() {
         if (!hadPermanentTrain()) {
             return true;
@@ -147,5 +177,8 @@ public class PublicCompany_CGR extends PublicCompany {
     	}
     }
 
-
+    @Override
+	public String getExtraShareMarks () {
+    	return (hasTemporaryPresident() ? "T" : "");
+    }
 }

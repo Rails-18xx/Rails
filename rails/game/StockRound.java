@@ -43,7 +43,7 @@ public class StockRound extends Round {
     static protected final int SELL_BUY_SELL = 0;
     static protected final int SELL_BUY = 1;
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
-    
+
     /* Action comnstants */
     static public final int BOUGHT = 0;
     static public final int SOLD = 1;
@@ -617,7 +617,10 @@ public class StockRound extends Round {
             }
 
             // The presidents share may not be in IPO
-            if (company.getPresidentsShare().getHolder() == ipo) {
+            //if (company.getPresidentsShare().getHolder() == ipo) {
+            // There is an exception for 1856 CGR. Just chech 'started',
+            // but even this might not be true for e.g. 1835 Prussi
+            if (!company.hasStarted()) {
                 errMsg = LocalText.getText("NotYetStarted", companyName);
                 break;
             }
@@ -776,14 +779,13 @@ public class StockRound extends Round {
      * @param cert
      * @return
      */
-    @Override
-    protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
+    protected CashHolder getSharePriceRecipient (PublicCertificateI cert, int price) {
 
         Portfolio oldHolder = (Portfolio) cert.getHolder();
         PublicCompanyI comp;
         CashHolder recipient;
         if (cert instanceof PublicCertificateI
-            && (comp = ((PublicCertificateI) cert).getCompany()).hasFloated()
+            && (comp = (cert).getCompany()).hasFloated()
             && oldHolder == ipo
             && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
             recipient = comp;
@@ -990,7 +992,7 @@ public class StockRound extends Round {
                 executeTradeCertificate(cert, pool, cert.getShares() * price);
             }
         }
-        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket()); 
+        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket());
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
@@ -1207,8 +1209,8 @@ public class StockRound extends Round {
      */
     public boolean mayPlayerBuyCompanyShare(Player player, PublicCompanyI company, int number) {
         // Check for per-company share limit
-        if (player.getPortfolio().getShare(company) 
-                + number * company.getShareUnit() 
+        if (player.getPortfolio().getShare(company)
+                + number * company.getShareUnit()
                 > gameManager.getPlayerShareLimit()
             && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
@@ -1226,7 +1228,7 @@ public class StockRound extends Round {
      * @return The maximum number of such shares that would not let the player
      * overrun the per-company share hold limit.
      */
-    public int maxAllowedNumberOfSharesToBuy(Player player, 
+    public int maxAllowedNumberOfSharesToBuy(Player player,
             PublicCompanyI company,
             int shareSize) {
 

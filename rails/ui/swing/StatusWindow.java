@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.27 2009/02/04 20:36:40 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.28 2009/10/06 18:34:04 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -346,7 +346,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         } else if ((currentRound instanceof ShareSellingRound)) {
             setTitle(LocalText.getText(
                     "EMERGENCY_SHARE_SELLING_TITLE",
-                    (((ShareSellingRound) currentRound).getCompanyNeedingTrain().getName())));
+                    (((ShareSellingRound) currentRound).getCompanyNeedingCash().getName())));
             gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
