@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.25 2009/10/03 14:02:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.26 2009/10/06 18:34:04 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -336,6 +336,14 @@ public abstract class Round implements RoundI {
         gameManager.nextRound(this);
     }
 
+    /** Generic stub to resume an interrupted round.
+     * Only valid if implemented in a subclass.
+     *
+     */
+    public void resume() {
+        log.error("Calling Round.resume() is invalid");
+    }
+
     public boolean wasInterrupted () {
         return wasInterrupted.booleanValue();
     }
@@ -354,18 +362,6 @@ public abstract class Round implements RoundI {
             new CashMove(newHolder.getOwner(), oldHolder.getOwner(), price);
         }
 
-    }
-
-    /**
-     * Who receives the cash when a certificate is bought.
-     * Normally this is owner of the previously holding portfolio.
-     * This method must be called <i>before</i> transferring the certificate.
-     * @param cert
-     * @param newHolder
-     * @return
-     */
-    protected CashHolder getSharePriceRecipient (Certificate cert, int price) {
-        return ((Portfolio)cert.getHolder()).getOwner();
     }
 
     public GameManagerI getGameManager() {

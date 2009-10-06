@@ -1,9 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.7 2008/06/04 19:00:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.8 2009/10/06 18:34:04 evos Exp $*/
 package rails.game.model;
 
-import rails.game.Player;
-import rails.game.Portfolio;
-import rails.game.PublicCompanyI;
+import rails.game.*;
 
 public class ShareModel extends ModelObject {
 
@@ -40,6 +38,7 @@ public class ShareModel extends ModelObject {
             && company.getPresident() == portfolio.getOwner()) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
+            b.append(company.getExtraShareMarks());
         }
         return b.toString();
     }

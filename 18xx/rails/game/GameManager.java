@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.55 2009/10/03 14:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.56 2009/10/06 18:34:04 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -549,11 +549,12 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#startShareSellingRound(rails.game.OperatingRound, rails.game.PublicCompanyI, int)
      */
-    public void startShareSellingRound(OperatingRound or,
-            PublicCompanyI companyNeedingTrain, int cashToRaise) {
+    public void startShareSellingRound(Player player, int cashToRaise,
+            PublicCompanyI unsellableCompany) {
 
         interruptedRound = getCurrentRound();
-        createRound (ShareSellingRound.class, interruptedRound).start();
+        createRound (ShareSellingRound.class, interruptedRound)
+            .start(player, cashToRaise, unsellableCompany);
     }
 
     /* (non-Javadoc)
@@ -629,15 +630,22 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             if (result && !(action instanceof GameAction)) {
                 new AddToList<PossibleAction>(executedActions, action,
                         "ExecutedActions");
-                if (MoveSet.isOpen()) MoveSet.finish();
-            } else {
-                if (MoveSet.isOpen()) MoveSet.cancel();
             }
         }
 
         // Note: round may have changed!
         possibleActions.clear();
         getCurrentRound().setPossibleActions();
+
+        // MoveSet closing is done here to allow state changes to occur
+        // when setting possible actions
+        if (action != null) {
+        	if (result && !(action instanceof GameAction)) {
+        		if (MoveSet.isOpen()) MoveSet.finish();
+	        } else {
+	            if (MoveSet.isOpen()) MoveSet.cancel();
+	        }
+        }
 
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
@@ -720,8 +728,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#finishShareSellingRound()
      */
     public void finishShareSellingRound() {
-         setRound(interruptedRound);
-        ((OperatingRound) getCurrentRound()).resume();
+        setRound(interruptedRound);
+        getCurrentRound().resume();
     }
 
     /* (non-Javadoc)
@@ -960,7 +968,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public StockMarketI getStockMarket() {
         return stockMarket;
     }
-    
+
     public MapManager getMapManager() {
         return mapManager;
     }

@@ -413,9 +413,16 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         // Assign the new president
-        if (temporaryPresident != newPresident) {
-            temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
-                    newPresident.getPortfolio());
+        if (newPresident.getPortfolio().getShare(cgr) == cgr.getShareUnit()) {
+        	// Nobody has 2 shares, then takes the first player who has got one share
+        	log.debug("Nobody has two shares, creating a temp.pres.: "+firstCGRowner.getName());
+        	cgr.setTemporaryPresident(firstCGRowner);
+        	newPresident = firstCGRowner;
+        } else if (temporaryPresident != null && temporaryPresident != newPresident) {
+        	log.debug("Moving pres.share from "+temporaryPresident.getName()
+        			+" to "+newPresident.getName());
+        		temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
+        				newPresident.getPortfolio());
         }
 
         newPresident.getPortfolio().getShareModel(cgr).setShare();

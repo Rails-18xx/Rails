@@ -193,8 +193,8 @@ public class OperatingRound_1856 extends OperatingRound {
                     + remainder + " loan interest");
             log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
             savedAction = action;
-            gameManager.startShareSellingRound(this, operatingCompany,
-                    cashToBeRaisedByPresident);
+            gameManager.startShareSellingRound(operatingCompany.getPresident(),
+                    cashToBeRaisedByPresident, operatingCompany);
             // Return arbitrary negative value to signal end of processing to caller.
             return -remainder;
 

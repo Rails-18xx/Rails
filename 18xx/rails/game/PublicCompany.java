@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.63 2009/10/03 14:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.64 2009/10/06 18:34:04 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -671,7 +671,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                                                  + " for company " + name);
             }
         }
-        
+
         if (destinationHexName != null) {
             destinationHex = mapManager.getHex(destinationHexName);
             if (destinationHex != null) {
@@ -906,8 +906,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     @Override
     public void setClosed() {
         super.setClosed();
+        Portfolio scrapHeap = bank.getScrapHeap();
         for (PublicCertificateI cert : certificates) {
-            cert.moveTo(bank.getScrapHeap());
+            if (cert.getHolder() != scrapHeap) {
+            	cert.moveTo(scrapHeap);
+            }
         }
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
         setLastRevenue(0);
@@ -1492,7 +1495,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         privateCompany.moveTo(portfolio);
 
         // Move the money
-        if (price > 0) new CashMove(bank, from.owner, price);
+        if (price > 0) new CashMove(this, from.owner, price);
         privatesCostThisTurn.add(price);
 
         // Move any special abilities to the portfolio, if configured so
@@ -1820,4 +1823,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         return clone;
     }
+
+	/** Extra codes to be added to the president's indicator in the Game Status window.
+	 * Normally nothing (see 1856 CGR for an exception). */
+	public String getExtraShareMarks () {
+		return "";
+	}
 }
