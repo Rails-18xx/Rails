@@ -484,9 +484,9 @@ public class OperatingRound_1856 extends OperatingRound {
         //    }
         //}
 
-        if (operatingCompany != null) {
-            operatingCompanyIndex = companies.indexOf(operatingCompany);
-        }
+        //if (operatingCompany != null) {
+        //    operatingCompanyIndex = companies.indexOf(operatingCompany);
+        //}
 
         for (PublicCompanyI c : companies) {
             if (c.isClosed()) {
@@ -506,7 +506,11 @@ public class OperatingRound_1856 extends OperatingRound {
                 message = LocalText.getText("CanOperate", cgr.getName());
             } else {
                 message = LocalText.getText("CannotOperate", cgr.getName());
-            }
+                // Find the first company that has not yet operated
+                // and is not closed.
+                while (setNextOperatingCompany(false)
+                        && operatingCompany.isClosed());
+           }
         } else {
             message = LocalText.getText("DoesNotForm", cgr.getName());
         }
@@ -514,9 +518,14 @@ public class OperatingRound_1856 extends OperatingRound {
         DisplayBuffer.add(message);
 
         operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
-        operatingCompanyIndexObject.set(operatingCompanyIndex);
 
-        log.debug ("Next operating company: "+operatingCompany.getName());
+        if (operatingCompanyIndex < operatingCompanyArray.length) {
+            operatingCompanyIndexObject.set(operatingCompanyIndex);
+            log.debug ("Next operating company: "+operatingCompany.getName());
+        } else {
+        	finishOR();
+        }
+
     }
 
     @Override
