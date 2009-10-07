@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.21 2009/10/07 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.22 2009/10/07 21:03:36 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -96,7 +96,6 @@ public class StartRound_1830 extends StartRound {
                             currentPlayer = getCurrentPlayer();
                             item.setStatus(StartItem.AUCTIONED);
                             auctionItemState.set(item);
-                            // numBidders = item.getBidders();
                         }
                         if (currentPlayer.getFreeCash()
                             + item.getBid(currentPlayer) >= item.getMinimumBid()) {
@@ -289,7 +288,6 @@ public class StartRound_1830 extends StartRound {
         moveStack.start(false);
 
         numPasses.add(1);
-
         if (auctionItem != null) {
 
             if (numPasses.intValue() >= auctionItem.getBidders() - 1) {

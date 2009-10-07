@@ -47,7 +47,6 @@ public class CGRFormationRound extends SwitchableUIRound {
      */
     public Class<? extends RoundI> getRoundTypeForUI () {
         return StockRound.class;
-        //return OperatingRound.class;
     }
 
     public void start (Player startingPlayer) {
@@ -440,7 +439,6 @@ public class CGRFormationRound extends SwitchableUIRound {
             price = comp.getMarketPrice();
             totalPrice += price;
             if (price < lowestPrice) lowestPrice = price;
-            //comp.setClosed();
         }
         if (numberMerged >= 3) {
             totalPrice -= lowestPrice;
@@ -630,7 +628,6 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             // Replace it with a CGR token
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 cgr.layBaseToken(hex, 0);
-                //log.debug("CGR exchanges a token at "+hex.getName()+" "+hex.getCityName());
             } else {
                 log.error("Error in laying CGR token on "+hex.getName()+" "+hex.getCityName());
             }
@@ -661,7 +658,6 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
                 formCGR();
                 setStep (STEP_EXCHANGE_TOKENS);
             } else {
-                //gameManager.nextRound(this);
                 finishRound();
             }
         }
@@ -680,7 +676,6 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         if (getStep() == STEP_DISCARD_TRAINS) {
 
             if (checkForTrainsToDiscard()) return true;
-            //gameManager.nextRound(this);
             finishRound();
         }
 

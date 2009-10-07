@@ -139,7 +139,6 @@ public class StockRound_1856 extends StockRound {
                     currentPlayer.getName(),
                     cgr.getName(),
                     cgr.getShareUnit()));
-            //log.debug("MustBuyExtraShareMessageAdded", new Exception("HERE"));
             if (lowestPrice > cash) {
                 gameManager.startShareSellingRound(currentPlayer,
                         lowestPrice - cash, cgr);

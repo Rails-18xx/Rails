@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.8 2009/07/19 19:24:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.9 2009/10/07 21:03:36 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.List;
@@ -36,7 +36,6 @@ public class StartRound_1851 extends StartRound {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            //gameManager.nextRound(this);
             finishRound();
         }
 
