@@ -144,7 +144,6 @@ public abstract class StartRound extends Round implements StartRoundI {
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            //gameManager.nextRound(this);
             finishRound();
         }
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.8 2009/10/07 19:00:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.9 2009/10/07 21:03:36 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.*;
@@ -308,9 +308,7 @@ public class StartRound_18EU extends StartRound {
                         auctionedItem.getName(),
                         Bank.format(currentBuyPrice.intValue()) ));
                 setStep(BUY_STEP);
-                //if (auctionedItem.getStatus() != StartItem.BUYABLE) {
-                //    auctionedItem.setStatus(StartItem.BUYABLE);
-                //}
+
                 if (currentBuyPrice.intValue() == 0) {
                     // Forced buy
                     // Trick to make the zero buy price visible

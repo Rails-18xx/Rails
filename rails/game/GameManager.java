@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.57 2009/10/07 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.58 2009/10/07 21:03:36 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -91,15 +91,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** Flags to be passed to the UI, aiding the layout definition */
     protected EnumMap<Defs.Parm, Boolean> gameParameters =
         new EnumMap<Defs.Parm, Boolean>(Defs.Parm.class);
-    //protected boolean hasAnyParPrice = false;
-    //protected boolean canAnyCompanyBuyPrivates = false;
-    //protected boolean canAnyCompanyHoldShares = false;
-    //protected boolean bonusTokensExist = false;
-    //protected boolean hasAnyCompanyLoans = false;
 
     protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
-    //protected static GameManager instance;
     /**
      * Map of GameManager instances.
      * Currently there can be only one instance, but in a possible
@@ -168,13 +162,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      *
      */
     public GameManager() {
-        //instance = this;
     	gameManagerMap.put(GM_KEY, this);
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.GameManagerI#configureFromXML(rails.util.Tag)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Get the rails.game name as configured */
         Tag gameTag = tag.getChild("Game");
@@ -411,13 +401,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     private void setGameParameters () {
 
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-            //hasAnyParPrice = hasAnyParPrice || company.hasParPrice();
             if (company.hasParPrice()) gameParameters.put(Defs.Parm.HAS_ANY_PAR_PRICE, true);
-            //canAnyCompanyBuyPrivates = canAnyCompanyBuyPrivates || company.canBuyPrivates();
             if (company.canBuyPrivates()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
-            //canAnyCompanyHoldShares = canAnyCompanyHoldShares || company.canHoldOwnShares();
             if (company.canHoldOwnShares()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
-            //hasAnyCompanyLoans = hasAnyCompanyLoans || company.getMaxNumberOfLoans() != 0;
             if (company.getMaxNumberOfLoans() != 0) gameParameters.put(Defs.Parm.HAS_ANY_COMPANY_LOANS, true);
         }
 
@@ -425,7 +411,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
-                    //bonusTokensExist = true;
                     gameParameters.put(Defs.Parm.DO_BONUS_TOKENS_EXIST, true);
                     break loop;
                 }

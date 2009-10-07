@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.71 2009/10/07 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.72 2009/10/07 21:03:36 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -137,7 +137,6 @@ public class OperatingRound extends Round implements Observer {
 
         for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) {
-                //priv.payOut();
                 if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
                     CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
                     int revenue = priv.getRevenue();
@@ -176,7 +175,6 @@ public class OperatingRound extends Round implements Observer {
         String text = LocalText.getText("ShortORExecuted");
         ReportBuffer.add(text);
         DisplayBuffer.add(text);
-        //gameManager.nextRound(this);
         finishRound();
     }
 
@@ -962,16 +960,8 @@ public class OperatingRound extends Round implements Observer {
 
             if (step == STEP_CALC_REVENUE) {
 
-                //if (operatingCompany.getPortfolio().getNumberOfTrains() == 0) {
                 if (!operatingCompany.canRunTrains()) {
                     // No trains, then the revenue is zero.
-                    /*
-                    operatingCompany.setLastRevenue(0);
-                    operatingCompany.setLastRevenueAllocation(SetDividend.UNKNOWN);
-                    ReportBuffer.add(LocalText.getText("CompanyRevenue",
-                            new String[] { operatingCompany.getName(),
-                                    Bank.format(0) }));
-                                    */
                     executeSetRevenueAndDividend (
                             new SetDividend (0, false, new int[] {SetDividend.WITHHOLD}));
                     // TODO: This probably does not handle share selling correctly
@@ -1273,7 +1263,6 @@ public class OperatingRound extends Round implements Observer {
 
         // OR done. Inform GameManager.
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
-        //gameManager.nextRound(this);
         finishRound();
     }
 

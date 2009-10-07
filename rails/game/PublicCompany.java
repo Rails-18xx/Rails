@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.65 2009/10/07 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.66 2009/10/07 21:03:36 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1481,7 +1481,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
             int price) {
 
-        //portfolio.buyPrivate(privateCompany, from, price);
         if (from != bank.getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
@@ -1710,8 +1709,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean addObject(Moveable object) {
         if (object instanceof TokenI) {
             return addToken((TokenI) object);
-        } else if (object instanceof LocatedBonus) {
-        	return addBonus ((Bonus) object);
         } else {
             return false;
         }
@@ -1720,9 +1717,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean removeObject(Moveable object) {
         if (object instanceof BaseToken) {
             return removeToken((TokenI) object);
-        } else if (object instanceof Bonus) {
-            removeBonus((Bonus) object);
-            return true;
         } else {
             return false;
         }
