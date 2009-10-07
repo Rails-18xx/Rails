@@ -6,7 +6,6 @@ import java.util.List;
 import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
-import rails.game.move.MoveSet;
 import rails.util.LocalText;
 
 /**
@@ -94,7 +93,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     @Override
     public boolean done(String playerName) {
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
             if (comp.getTypeName().equals("Minor")) {

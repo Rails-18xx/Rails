@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.20 2009/07/19 19:24:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.21 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.action.*;
-import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
@@ -146,7 +145,7 @@ public class StartRound_1835 extends StartRound {
         return true;
     }
 
-    /*----- MoveSet methods -----*/
+    /*----- moveStack methods -----*/
 
     @Override
     public boolean bid(String playerName, BidStartItem item) {
@@ -241,7 +240,7 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         numPasses.add(1);
 

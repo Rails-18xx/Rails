@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.5 2008/06/04 19:00:33 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.6 2009/10/07 19:00:38 evos Exp $
+ *
  * Created on 17-Jul-2006
  * Change Log:
  */
@@ -21,7 +21,7 @@ public class ObjectMove extends Move {
      * 'to' TokenHolders. <p>The parameter descriptions cover the usual case of
      * a Base Token lay, which is physically removed from a PublicCompany and
      * added to a Station on a MapHex.
-     * 
+     *
      * @param moveableObject The moveableObject to be moved (e.g. a BaseToken).
      * @param from Where the moveableObject is removed from (e.g. a
      * PublicCompany charter).
@@ -39,19 +39,22 @@ public class ObjectMove extends Move {
         MoveSet.add(this);
     }
 
-    public boolean execute() {
+    @Override
+	public boolean execute() {
 
-        return (from == null || from.removeObject(moveableObject))
+    	return (from == null || from.removeObject(moveableObject))
                && to.addObject(moveableObject);
     }
 
-    public boolean undo() {
+    @Override
+	public boolean undo() {
 
         return to.removeObject(moveableObject)
                && (from == null || from.addObject(moveableObject));
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (moveableObject == null) log.error("Token is null");
         if (from == null) log.warn("From is null");
         if (to == null) log.error("To is null");

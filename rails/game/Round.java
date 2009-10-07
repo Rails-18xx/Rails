@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.26 2009/10/06 18:34:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.27 2009/10/07 19:00:38 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.action.*;
 import rails.game.move.CashMove;
-import rails.game.move.MoveSet;
+import rails.game.move.MoveStack;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
@@ -40,6 +40,8 @@ public abstract class Round implements RoundI {
     protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
 
+    protected MoveStack moveStack = null;
+
 	/**
 	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
 	 *
@@ -62,6 +64,8 @@ public abstract class Round implements RoundI {
             scrapHeap = bank.getScrapHeap();
             stockMarket = aGameManager.getStockMarket();
             mapManager = aGameManager.getMapManager();
+
+            moveStack = aGameManager.getMoveStack();
         }
 
         roundTypeForUI = getClass();
@@ -166,7 +170,7 @@ public abstract class Round implements RoundI {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (exchanged > 0) {
             MapHex hex;
@@ -263,7 +267,6 @@ public abstract class Round implements RoundI {
         if (!company.hasStarted() || company.hasFloated()) return;
 
         int unsoldPercentage = company.getUnsoldPercentage();
-
         if (unsoldPercentage <= 100 - company.getFloatPercentage()) {
             // Company floats
             floatCompany(company);

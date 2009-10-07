@@ -5,7 +5,6 @@ import java.util.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
-import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
@@ -224,7 +223,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         PublicCompanyI company = action.getCompany();
         int numberRepaid = action.getNumberRepaid();
@@ -770,11 +769,11 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (train != null) {
 
-            if (action.isForced()) MoveSet.setLinkedToPrevious();
+            if (action.isForced()) moveStack.setLinkedToPrevious();
 
             train.moveTo(pool);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

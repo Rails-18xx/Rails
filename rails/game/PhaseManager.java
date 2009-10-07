@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.15 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.16 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import rails.game.state.State;
 import rails.util.Tag;
@@ -16,6 +18,9 @@ public class PhaseManager implements ConfigurableComponentI {
 
     // Can be removed once setPhase() has been redone.
     protected GameManagerI gameManager;
+
+    protected static Logger log =
+        Logger.getLogger(PhaseManager.class.getPackage().getName());
 
     public PhaseManager() {}
 

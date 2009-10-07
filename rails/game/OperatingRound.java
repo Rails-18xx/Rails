@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.70 2009/10/06 18:34:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.71 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import rails.game.action.*;
-import rails.game.move.*;
+import rails.game.move.CashMove;
+import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
@@ -154,13 +155,11 @@ public class OperatingRound extends Round implements Observer {
 
         if (operate) {
 
-
-
             StringBuffer msg = new StringBuffer();
             for (PublicCompanyI company : operatingCompanyArray) {
                 msg.append(",").append(company.getName());
             }
-            msg.deleteCharAt(0);
+            if (msg.length() > 0) msg.deleteCharAt(0);
             log.info("Initial operating sequence is "+msg.toString());
 
             if (operatingCompanyArray.length > 0) {
@@ -403,7 +402,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (tile != null) {
             if (cost > 0)
@@ -571,7 +570,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (hex.layBaseToken(operatingCompany, station)) {
             /* TODO: the false return value must be impossible. */
@@ -668,7 +667,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
@@ -733,7 +732,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
 
         new CashMove (operatingCompany, seller, cost);
   		operatingCompany.addBonus(new Bonus(operatingCompany,
@@ -765,7 +764,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         int remainingAmount = checkForDeductions (action);
         if (remainingAmount < 0) {
@@ -1175,7 +1174,7 @@ public class OperatingRound extends Round implements Observer {
 
     public void skip() {
         log.debug("Skip step " + stepObject.intValue());
-        MoveSet.start(true);
+        moveStack.start(true);
         nextStep();
     }
 
@@ -1200,7 +1199,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         nextStep();
 
@@ -1378,7 +1377,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
         PhaseI previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {
@@ -1527,9 +1526,9 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(true);
+        moveStack.start(true);
         //
-        if (action.isForced()) MoveSet.setLinkedToPrevious();
+        if (action.isForced()) moveStack.setLinkedToPrevious();
 
         pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
@@ -1644,7 +1643,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         operatingCompany.buyPrivate(privateCompany, player.getPortfolio(),
                 price);
@@ -1661,7 +1660,7 @@ public class OperatingRound extends Round implements Observer {
             for (PublicCompanyI company : destinedCompanies) {
                 if (company.hasDestination()
                         && !company.hasReachedDestination()) {
-                    if (!MoveSet.isOpen()) MoveSet.start(true);
+                    if (!moveStack.isOpen()) moveStack.start(true);
                     company.setReachedDestination(true);
                     ReportBuffer.add(LocalText.getText("DestinationReached",
                         company.getName(),
@@ -1690,7 +1689,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         executeTakeLoans (action);
 
@@ -1809,14 +1808,14 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                MoveSet.start(true);
+                moveStack.start(true);
                 gameManager.startShareSellingRound(operatingCompany.getPresident(),
                         cashToBeRaisedByPresident, operatingCompany);
                 return true;
             }
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (repayment > 0) executeRepayLoans (action);
 

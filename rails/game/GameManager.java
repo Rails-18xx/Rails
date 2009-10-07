@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.56 2009/10/06 18:34:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.57 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
 
 import rails.common.Defs;
 import rails.game.action.*;
@@ -98,7 +99,43 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
-    protected static GameManager instance;
+    //protected static GameManager instance;
+    /**
+     * Map of GameManager instances.
+     * Currently there can be only one instance, but in a possible
+     * future multi-game server there may be several instances
+     * running in parallel.
+     *
+     * <p>The reason for creating this map is the need to access
+     * GameManager instances (or other common instances via the GM)
+     * from many different classes, some of which
+     * (like those in the move package) are many method calls away from
+     * the actual GM.
+     * <p>To prevent the need to pass GameManager instances or the keys to
+     * this map around throughout the code, NDC is (mis-)used as the
+     * mechanism to pass around a string key to each GM instance.
+     * This is possible,because the server processes all player actions
+     * in one thread. The key will be set in process(), which is where server
+     * processing currently starts (in the furtire it will probably be moved
+     * to the then needed communication interface). The key
+     * can be retrieved (via NDC.peek()) anywhere.
+     * <p>For now, the key is a fixed string, but that may change in the future.
+     */
+    protected static Map<String, GameManagerI> gameManagerMap
+    	= new HashMap<String, GameManagerI>();
+
+    /**
+     * The temporary fixed key to the currently single GameManager instance
+     * in the GameManager map.
+     * It will only be used inside the GM objects.
+     * All other objects will access it via NDC.
+     */
+    protected static final String GM_KEY = "GM-1";
+
+    /**
+     * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
+     */
+    protected MoveStack moveStack = new MoveStack();
 
     protected String name;
 
@@ -131,7 +168,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      *
      */
     public GameManager() {
-        instance = this;
+        //instance = this;
+    	gameManagerMap.put(GM_KEY, this);
     }
 
     /* (non-Javadoc)
@@ -350,6 +388,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     public void startGame() {
 
+    	NDC.clear();
+    	NDC.push (GM_KEY);
+
     	setGameParameters();
 
         if (startPacket == null)
@@ -364,7 +405,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
 
         // Initialisation is complete. Undoability starts here.
-        MoveSet.enable();
+        moveStack.enable();
     }
 
     private void setGameParameters () {
@@ -396,8 +437,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /**
      * @return instance of GameManager
      */
-    public static GameManagerI getInstance() {
-        return instance;
+    public static GameManagerI getInstance () {
+    	return gameManagerMap.get(NDC.peek());
     }
 
     /* (non-Javadoc)
@@ -437,7 +478,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
         } else if (round instanceof StockRound) {
             PhaseI currentPhase = getCurrentPhase();
-            numOfORs = getCurrentPhase().getNumberOfOperatingRounds();
+            if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
+            numOfORs = currentPhase.getNumberOfOperatingRounds();
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
@@ -571,6 +613,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public boolean process(PossibleAction action) {
 
+    	NDC.clear();
+    	NDC.push (GM_KEY);
+
         boolean result = true;
 
         // The action is null only immediately after Load.
@@ -606,15 +651,15 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                         result = save(gameAction);
                         break;
                     case GameAction.UNDO:
-                        MoveSet.undo(false);
+                        moveStack.undoMoveSet(false);
                         result = true;
                         break;
                     case GameAction.FORCED_UNDO:
-                        MoveSet.undo(true);
+                        moveStack.undoMoveSet(true);
                         result = true;
                         break;
                     case GameAction.REDO:
-                        MoveSet.redo();
+                        moveStack.redoMoveSet();
                         result = true;
                         break;
                     }
@@ -637,13 +682,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         possibleActions.clear();
         getCurrentRound().setPossibleActions();
 
-        // MoveSet closing is done here to allow state changes to occur
+        // moveStack closing is done here to allow state changes to occur
         // when setting possible actions
         if (action != null) {
         	if (result && !(action instanceof GameAction)) {
-        		if (MoveSet.isOpen()) MoveSet.finish();
+        		if (moveStack.isOpen()) moveStack.finish();
 	        } else {
-	            if (MoveSet.isOpen()) MoveSet.cancel();
+	            if (moveStack.isOpen()) moveStack.cancel();
 	        }
         }
 
@@ -653,13 +698,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
 
         // Add the Undo/Redo possibleActions here.
-        if (MoveSet.isUndoableByPlayer()) {
+        if (moveStack.isUndoableByPlayer()) {
             possibleActions.add(new GameAction(GameAction.UNDO));
         }
-        if (MoveSet.isUndoableByManager()) {
+        if (moveStack.isUndoableByManager()) {
             possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
         }
-        if (MoveSet.isRedoable()) {
+        if (moveStack.isRedoable()) {
             possibleActions.add(new GameAction(GameAction.REDO));
         }
         possibleActions.add(new GameAction(GameAction.SAVE));
@@ -672,6 +717,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */
     public void processOnReload(List<PossibleAction> actions) throws Exception {
+
+    	NDC.clear();
+    	NDC.push (GM_KEY);
 
         for (PossibleAction action : actions) {
 
@@ -695,7 +743,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
             new AddToList<PossibleAction>(executedActions, action,
                     "ExecutedActions");
-            if (MoveSet.isOpen()) MoveSet.finish();
+            if (moveStack.isOpen()) moveStack.finish();
         }
     }
 
@@ -985,7 +1033,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         // TODO The below should be merged into activate()
         if (phase.doPrivatesClose()) {
-            instance.companyManager.closeAllPrivates();
+            companyManager.closeAllPrivates();
         }
     }
 
@@ -1133,6 +1181,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public String getName () {
     	return "GameManager";
+    }
+
+    public MoveStack getMoveStack () {
+    	return moveStack;
     }
 
 }

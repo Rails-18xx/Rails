@@ -5,7 +5,6 @@ import java.util.List;
 
 import rails.game.action.*;
 import rails.game.model.ModelObject;
-import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.LocalText;
@@ -226,7 +225,7 @@ public abstract class StartRound extends Round implements StartRoundI {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         assignItem(player, item, price, sharePrice);
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.23 2009/10/06 18:34:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.24 2009/10/07 19:00:38 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -9,7 +9,6 @@ import java.util.*;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
-import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
@@ -40,7 +39,7 @@ public class ShareSellingRound extends StockRound {
 		this.parentRound = parentRound;
     }
 
-    public void start(Player sellingPlayer, int cashToRaise, 
+    public void start(Player sellingPlayer, int cashToRaise,
             PublicCompanyI unsellableCompany) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getName()+" cash="+cashToRaise);
@@ -322,7 +321,7 @@ public class ShareSellingRound extends StockRound {
             sellPrices.put(companyName, sellPrice);
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 playerName,
@@ -352,7 +351,7 @@ public class ShareSellingRound extends StockRound {
                 executeTradeCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
-        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket()); 
+        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket());
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {

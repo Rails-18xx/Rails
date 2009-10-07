@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.64 2009/10/06 18:34:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.65 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1399,10 +1399,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int presIndex = seller.getIndex();
         Player player;
         int share;
+        GameManagerI gmgr = GameManager.getInstance();
 
         for (int i = presIndex + 1; i < presIndex
-                                        + GameManager.getInstance().getNumberOfPlayers(); i++) {
-            player = GameManager.getInstance().getPlayerByIndex(i);
+                                        + gmgr.getNumberOfPlayers(); i++) {
+            player = gmgr.getPlayerByIndex(i);
             share = player.getPortfolio().getShare(this);
             if (share > presShare) {
                 // Presidency must be transferred
