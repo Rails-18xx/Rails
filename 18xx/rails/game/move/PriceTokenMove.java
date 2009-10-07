@@ -1,14 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.4 2009/09/25 19:29:56 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.5 2009/10/07 19:00:38 evos Exp $
+ *
  * Created on 22-Jul-2006
  * Change Log:
  */
 package rails.game.move;
 
-import rails.game.PublicCompanyI;
-import rails.game.StockMarket;
-import rails.game.StockMarketI;
-import rails.game.StockSpaceI;
+import rails.game.*;
 
 /**
  * @author Erik Vos
@@ -29,17 +26,20 @@ public class PriceTokenMove extends Move {
         MoveSet.add(this);
     }
 
-    public boolean execute() {
+    @Override
+	public boolean execute() {
         stockMarket.processMove(company, from, to);
         return true;
     }
 
-    public boolean undo() {
+    @Override
+	public boolean undo() {
         stockMarket.processMove(company, to, from);
         return true;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "PriceTokenMove: " + company.getName() + " from " + from
                + " to " + to;
     }

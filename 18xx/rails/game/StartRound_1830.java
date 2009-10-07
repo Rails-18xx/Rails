@@ -1,8 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.20 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.21 2009/10/07 19:00:38 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
-import rails.game.move.MoveSet;
 import rails.util.LocalText;
 
 /**
@@ -153,7 +152,7 @@ public class StartRound_1830 extends StartRound {
         return true;
     }
 
-    /*----- MoveSet methods -----*/
+    /*----- moveStack methods -----*/
     /**
      * The current player bids on a given start item.
      *
@@ -233,7 +232,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -287,7 +286,7 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         numPasses.add(1);
 

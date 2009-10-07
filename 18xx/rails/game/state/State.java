@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.11 2009/09/25 19:13:01 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.12 2009/10/07 19:00:37 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
@@ -66,7 +66,7 @@ public class State extends ModelObject implements StateI {
     /** Must only be called by the Move execute() and undo() methods */
     public void setState(Object object) {
         this.object = object;
-        // log.debug (getClassName() + " "+name+" set to "+object);
+        //log.debug (getClassName() + " "+name+" set to "+object);
         update();
     }
 

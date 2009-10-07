@@ -1,9 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.8 2009/10/07 19:00:39 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.move.MoveSet;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.LocalText;
@@ -144,7 +143,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         assignItem(player, item, price, 0);
         ((PublicCertificateI) item.getPrimary()).getCompany().start();
@@ -228,7 +227,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         if (getStep() == SELECT_STEP) {
 
@@ -293,7 +292,7 @@ public class StartRound_18EU extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.getObject();
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.13 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.14 2009/10/07 19:00:38 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -8,7 +8,6 @@ package rails.game;
 import java.util.*;
 
 import rails.game.action.*;
-import rails.game.move.MoveSet;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
 
@@ -351,7 +350,7 @@ public class TreasuryShareRound extends StockRound {
                     Bank.format(shares * price) ));
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, cert.getShares(), false);
@@ -472,7 +471,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(companyName, sellPrice);
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 companyName,
@@ -510,7 +509,7 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

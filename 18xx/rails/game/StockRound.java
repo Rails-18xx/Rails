@@ -3,7 +3,8 @@ package rails.game;
 import java.util.*;
 
 import rails.game.action.*;
-import rails.game.move.*;
+import rails.game.move.CashMove;
+import rails.game.move.DoubleMapChange;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.LocalText;
@@ -523,7 +524,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         // All is OK, now start the company
         company.start(startSpace);
@@ -701,7 +702,7 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now buy the shares.
-        MoveSet.start(true);
+        moveStack.start(true);
 
         CashHolder priceRecipient = getSharePriceRecipient (cert, cash);
 
@@ -952,7 +953,7 @@ public class StockRound extends Round {
             sellPrices.put(companyName, sellPrice);
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (numberToSell == 1) {
             ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
@@ -1029,13 +1030,83 @@ public class StockRound extends Round {
         // yet.
         if (sp instanceof ExchangeForShare) {
 
-            boolean result = ((ExchangeForShare) sp).execute(this);
+            boolean result = executeExchangeForShare((ExchangeForShare) sp);
             if (result) hasActed.set(true);
             return result;
 
         } else {
             return false;
         }
+    }
+
+    public boolean executeExchangeForShare (ExchangeForShare sp) {
+
+        PublicCompanyI publicCompany =
+                companyManager.getPublicCompany(sp.getPublicCompanyName());
+        PrivateCompanyI privateCompany = sp.getCompany();
+        Portfolio portfolio = privateCompany.getPortfolio();
+        Player player = null;
+        String errMsg = null;
+        boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();
+        boolean poolHasShare = pool.getShare(publicCompany) >= sp.getShare();
+
+        while (true) {
+
+            /* Check if the private is owned by a player */
+            if (!(portfolio.getOwner() instanceof Player)) {
+                errMsg =
+                        LocalText.getText("PrivateIsNotOwnedByAPlayer",
+                                privateCompany.getName());
+                break;
+            }
+
+            player = (Player) portfolio.getOwner();
+
+            /* Check if a share is available */
+            if (!ipoHasShare && !poolHasShare) {
+                errMsg =
+                        LocalText.getText("NoSharesAvailable",
+                                publicCompany.getName());
+                break;
+            }
+            /* Check if the player has room for a share of this company */
+            if (!mayPlayerBuyCompanyShare(player, publicCompany, 1)) {
+                // TODO: Not nice to use '1' here, should be percentage.
+                errMsg =
+                        LocalText.getText("WouldExceedHoldLimit",
+                                String.valueOf(gameManager.getPlayerShareLimit()));
+                break;
+            }
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText(
+                    "CannotSwapPrivateForCertificate",
+                            player.getName(),
+                            privateCompany.getName(),
+                            sp.getShare(),
+                            publicCompany.getName(),
+                            errMsg ));
+            return false;
+        }
+
+        moveStack.start(true);
+
+        Certificate cert =
+                ipoHasShare ? ipo.findCertificate(publicCompany,
+                        false) : pool.findCertificate(publicCompany,
+                        false);
+        //player.buy(cert, 0);
+        cert.moveTo(player.getPortfolio());
+        ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
+                player.getName(),
+                privateCompany.getName(),
+                sp.getShare(),
+                publicCompany.getName()));
+        sp.setExercised();
+        privateCompany.setClosed();
+
+        return true;
     }
 
     /**
@@ -1053,7 +1124,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        MoveSet.start(false);
+        moveStack.start(false);
 
         if (hasActed.booleanValue()) {
             numPasses.set(0);

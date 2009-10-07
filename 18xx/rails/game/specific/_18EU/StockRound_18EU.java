@@ -4,7 +4,8 @@ import java.util.*;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.move.*;
+import rails.game.move.AddToList;
+import rails.game.move.CashMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
@@ -375,7 +376,7 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         // All is OK, now start the company
         MapHex homeHex = null;
@@ -492,7 +493,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        MoveSet.start(true);
+        moveStack.start(true);
 
         if (major != null) {
             cert = major.getPortfolio().findCertificate(major, false);
@@ -635,9 +636,9 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        MoveSet.start(false);
+        moveStack.start(false);
         //
-        if (action.isForced()) MoveSet.setLinkedToPrevious();
+        if (action.isForced()) moveStack.setLinkedToPrevious();
 
         pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
