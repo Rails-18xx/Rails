@@ -1,45 +1,67 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.4 2008/11/20 21:49:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.5 2009/10/08 21:14:14 evos Exp $ */
 package rails.game;
 
 import java.io.*;
-import java.text.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.util.*;
+import rails.util.Config;
+import rails.util.Util;
 
 /**
  * Class to write a log, and also to maintain a log message stack for writing to
  * the UI.
  */
 public final class ReportBuffer {
-    protected static Logger log =
-            Logger.getLogger(ReportBuffer.class.getPackage().getName());
     protected static String reportDirectory = null;
-    protected static String reportPathname = null;
-    protected static PrintWriter report = null;
+    protected String reportPathname = null;
+    protected PrintWriter report = null;
     protected static boolean wantReport = false;
+    protected static List<String> initialQueue = new ArrayList<String>();
+
+    private static final String DEFAULT_DTS_PATTERN = "yyyyMMdd_HHmm";
+    private static final String DEFAULT_REPORT_EXTENSION = "txt";
+    protected static Logger log =
+        Logger.getLogger(ReportBuffer.class.getPackage().getName());
 
     static {
         reportDirectory = Config.get("report.directory");
         wantReport = Util.hasValue(reportDirectory);
     }
 
-    /** This class is not instantiated */
-    private ReportBuffer() {}
+    public ReportBuffer() {
+    	if (!initialQueue.isEmpty()) {
+    		for (String s : initialQueue) {
+    			addMessage (s);
+    		}
+    		initialQueue.clear();
+    	}
+    }
 
     /**
      * A buffer for displaying messages in the Log Window. Such messages are
      * intended to record the progress of the rails.game and can be used as a
      * rails.game report.
      */
-    private static StringBuffer reportBuffer = new StringBuffer();
+    private StringBuffer reportBuffer = new StringBuffer();
 
     /** Add a message to the log buffer (and display it on the console) */
     public static void add(String message) {
+    	GameManagerI gm = GameManager.getInstance();
+    	ReportBuffer instance = null;
+    	if (gm != null) instance = gm.getReportBuffer();
+    	if (gm == null || instance == null) {
+    		// Queue in a static buffer until the instance is created
+    		initialQueue.add(message);
+    	} else {
+    		instance.addMessage(message);
+    	}
+    }
+
+    private void addMessage (String message) {
         if (Util.hasValue(message)) {
             reportBuffer.append(message).append("\n");
             /* Also log the message */
@@ -51,12 +73,17 @@ public final class ReportBuffer {
 
     /** Get the current log buffer, and clear it */
     public static String get() {
-        String result = reportBuffer.toString();
-        reportBuffer = new StringBuffer();
+    	ReportBuffer instance = getInstance();
+        String result = instance.reportBuffer.toString();
+        instance.reportBuffer = new StringBuffer();
         return result;
     }
 
-    private static void writeToReport(String message) {
+    private static ReportBuffer getInstance() {
+    	return GameManager.getInstance().getReportBuffer();
+    }
+
+    private void writeToReport(String message) {
 
         /* Get out if we don't want a report */
         if (!Util.hasValue(reportDirectory) || !wantReport) return;
@@ -69,25 +96,26 @@ public final class ReportBuffer {
         }
     }
 
-    private static void openReportFile() {
+    private void openReportFile() {
 
         /* Get any configured date/time pattern, or else set the default */
         String reportFilenamePattern =
                 Config.get("report.filename.date_time_pattern");
         if (!Util.hasValue(reportFilenamePattern)) {
-            reportFilenamePattern = "yyyyMMdd_HHmm";
+            reportFilenamePattern = ReportBuffer.DEFAULT_DTS_PATTERN;
         }
         /* Get any configured extension, or else set the default */
         String reportFilenameExtension =
                 Config.get("report.filename.extension");
         if (!Util.hasValue(reportFilenameExtension)) {
-            reportFilenameExtension = "txt";
+            reportFilenameExtension = ReportBuffer.DEFAULT_REPORT_EXTENSION;
         }
         /* Create a date formatter */
         DateFormat dateFormat = new SimpleDateFormat(reportFilenamePattern);
         /* Create the pathname */
         reportPathname =
                 reportDirectory + "/" + Game.getName() + "_"
+                		+ GameManager.getInstance().getKey() + "_"
                         + dateFormat.format(new Date()) + "."
                         + reportFilenameExtension;
         log.debug("Report pathname is " + reportPathname);
@@ -100,19 +128,20 @@ public final class ReportBuffer {
             wantReport = false;
         }
     }
-    
+
     /* A stack for messages that must "wait" for other messages */
-    private static List<String> waitQueue = new ArrayList<String> ();
+    private List<String> waitQueue = new ArrayList<String> ();
 
     public static void addWaiting (String string) {
-        waitQueue.add (string);
+        getInstance().waitQueue.add (string);
     }
-    
+
     public static void getAllWaiting () {
-        for (String message : waitQueue) {
-            ReportBuffer.add (message);
+    	ReportBuffer instance = getInstance();
+        for (String message : instance.waitQueue) {
+            instance.addMessage (message);
         }
-        waitQueue.clear();
+        instance.waitQueue.clear();
     }
 
 }

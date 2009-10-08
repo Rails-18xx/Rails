@@ -179,6 +179,9 @@ public interface GameManagerI extends MoveableHolderI {
     public <T extends SpecialPropertyI> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised);
 
+    public String getKey ();
     public MoveStack getMoveStack ();
+	public DisplayBuffer getDisplayBuffer();
+	public ReportBuffer getReportBuffer();
 
 }
