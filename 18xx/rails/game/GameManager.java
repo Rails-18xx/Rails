@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.58 2009/10/07 21:03:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.59 2009/10/08 21:14:15 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -124,14 +124,26 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * It will only be used inside the GM objects.
      * All other objects will access it via NDC.
      */
-    protected static final String GM_KEY = "GM-1";
+    protected static final String GM_KEY = "01";
+    protected static final String GM_NAME = "GameManager";
 
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
      */
     protected MoveStack moveStack = new MoveStack();
 
+    /**
+     * The DisplayBuffer instance collects messages to be displayed in the UI.
+     */
+    protected DisplayBuffer displayBuffer;
+
+    /**
+     * The ReportBuffer collectes messages to be shown in the Game Report.
+     */
+    protected ReportBuffer reportBuffer;
+
     protected String name;
+    protected String key;
 
     protected StartPacket startPacket;
 
@@ -162,7 +174,13 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      *
      */
     public GameManager() {
+    	name = GM_NAME;
+    	key = GM_KEY;
+    	NDC.clear();
+    	NDC.push (GM_KEY);
     	gameManagerMap.put(GM_KEY, this);
+    	displayBuffer = new DisplayBuffer();
+    	reportBuffer = new ReportBuffer();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -377,9 +395,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     }
 
     public void startGame() {
-
-    	NDC.clear();
-    	NDC.push (GM_KEY);
 
     	setGameParameters();
 
@@ -702,9 +717,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */
     public void processOnReload(List<PossibleAction> actions) throws Exception {
-
-    	NDC.clear();
-    	NDC.push (GM_KEY);
 
         for (PossibleAction action : actions) {
 
@@ -1164,12 +1176,27 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return result;
     }
 
+    /**
+     * Get name of the GM instance. Currently, the name is fixed,
+     * but that will change whenever a multi-game server will be implemented.
+     */
     public String getName () {
-    	return "GameManager";
+    	return name;
+    }
+
+    public String getKey () {
+    	return key;
     }
 
     public MoveStack getMoveStack () {
     	return moveStack;
     }
 
+	public DisplayBuffer getDisplayBuffer() {
+		return displayBuffer;
+	}
+
+	public ReportBuffer getReportBuffer() {
+		return reportBuffer;
+	}
 }
