@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.31 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.32 2009/10/09 22:29:01 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -27,6 +27,7 @@ public class Game {
     protected TrainManager trainManager;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
+    protected TileManager tileManager;
     protected Bank bank;
     // protected ArrayList companyList;
     protected String name;
@@ -154,13 +155,22 @@ public class Game {
                                 + GAME_XML_FILE);
             }
 
+            tileManager =
+                (TileManager) componentManager.findComponent("TileManager");
+            if (tileManager == null) {
+                throw new ConfigurationException(
+                        "No TileManager XML element found in file "
+                                + GAME_XML_FILE);
+            }
+
             /*
              * Initialisations that involve relations between components can
              * only be done after all XML has been processed.
              */
             playerManager.setPlayers(players, bank);
             gameManager.init(playerManager, companyManager,
-                    phaseManager, trainManager, stockMarket, mapManager, bank);
+                    phaseManager, trainManager, stockMarket, mapManager, 
+                    tileManager, bank);
 
             companyManager.finishConfiguration(gameManager);
             trainManager.finishConfiguration(gameManager);

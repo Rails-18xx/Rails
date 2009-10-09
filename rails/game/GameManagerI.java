@@ -8,7 +8,6 @@ import rails.game.model.ModelObject;
 import rails.game.move.MoveStack;
 import rails.game.move.MoveableHolderI;
 import rails.game.special.SpecialPropertyI;
-import rails.util.Tag;
 
 public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
 
@@ -18,7 +17,7 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
     public abstract void init(PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
             TrainManager trainManager, StockMarketI stockMarket,
-            MapManager mapManager, Bank bank);
+            MapManager mapManager, TileManager tileManager, Bank bank);
     public abstract void startGame();
 
     public abstract CompanyManagerI getCompanyManager();
