@@ -20,7 +20,7 @@ public interface GameManagerI extends MoveableHolderI {
 
     public abstract void init(PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
-            TrainManagerI trainManager, StockMarketI stockMarket,
+            TrainManager trainManager, StockMarketI stockMarket,
             MapManager mapManager, Bank bank);
     public abstract void startGame();
 
@@ -149,7 +149,7 @@ public interface GameManagerI extends MoveableHolderI {
     public abstract PhaseManager getPhaseManager();
     public void initialiseNewPhase(PhaseI phase);
 
-    public abstract TrainManagerI getTrainManager ();
+    public abstract TrainManager getTrainManager ();
     public PlayerManager getPlayerManager();
     public StockMarketI getStockMarket();
     public MapManager getMapManager();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.59 2009/10/08 21:14:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.60 2009/10/09 19:03:49 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -45,7 +45,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected PlayerManager playerManager;
     protected CompanyManagerI companyManager;
     protected PhaseManager phaseManager;
-    protected TrainManagerI trainManager;
+    protected TrainManager trainManager;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
     protected Bank bank;
@@ -375,7 +375,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void init(PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
-            TrainManagerI trainManager,
+            TrainManager trainManager,
             StockMarketI stockMarket,
             MapManager mapManager,
             Bank bank) {
@@ -1006,7 +1006,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return playerManager;
     }
 
-    public TrainManagerI getTrainManager () {
+    public TrainManager getTrainManager () {
         return trainManager;
     }
 

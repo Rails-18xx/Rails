@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.66 2009/10/07 21:03:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.67 2009/10/09 19:03:49 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -7,7 +7,8 @@ import java.util.*;
 import rails.game.action.SetDividend;
 import rails.game.model.*;
 import rails.game.move.*;
-import rails.game.special.*;
+import rails.game.special.SellBonusToken;
+import rails.game.special.SpecialPropertyI;
 import rails.game.state.*;
 import rails.util.*;
 
@@ -873,7 +874,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         if (initialTrain != null) {
-            TrainManagerI trainManager = gameManager.getTrainManager();
+            TrainManager trainManager = gameManager.getTrainManager();
             TrainTypeI type = trainManager.getTypeByName(initialTrain);
             TrainI train = bank.getIpo().getTrainOfType(type);
             buyTrain(train, 0);
