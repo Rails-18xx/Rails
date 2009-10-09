@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.30 2009/10/09 19:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.31 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -20,7 +20,7 @@ public class Game {
 
     /** The component Manager */
     protected ComponentManager componentManager;
-    protected GameManagerI gameManager;
+    protected GameManager gameManager;
     protected CompanyManagerI companyManager;
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
@@ -123,7 +123,7 @@ public class Game {
                                 + GAME_XML_FILE);
             }
             gameManager =
-                    (GameManagerI) componentManager.findComponent("GameManager");
+                    (GameManager) componentManager.findComponent("GameManager");
             if (gameManager == null) {
                 throw new ConfigurationException(
                         "No GameManager XML element found in file "
@@ -162,13 +162,14 @@ public class Game {
             gameManager.init(playerManager, companyManager,
                     phaseManager, trainManager, stockMarket, mapManager, bank);
 
-            companyManager.initCompanies(gameManager, playerManager.getPlayers());
-            trainManager.init(gameManager);
-            phaseManager.init(gameManager);
-            bank.initCertificates();
+            companyManager.finishConfiguration(gameManager);
+            trainManager.finishConfiguration(gameManager);
+            phaseManager.finishConfiguration(gameManager);
+            mapManager.finishConfiguration(gameManager);
+            bank.finishConfiguration(gameManager);
             //StartPacket.init();
             //companyManager.initCompanies(gameManager);
-            stockMarket.init();
+            stockMarket.finishConfiguration(gameManager);
         } catch (Exception e) {
             String message =
                     LocalText.getText("GameSetupFailed", GAME_XML_FILE);
@@ -176,9 +177,6 @@ public class Game {
             DisplayBuffer.add(message + ":\n " + e.getMessage());
             return false;
         }
-
-        // We need to do this assignment after we've loaded all the XML data.
-        MapManager.assignHomesAndDestinations();
 
         return true;
     }
@@ -257,25 +255,6 @@ public class Game {
         return instance.stockMarket;
     }
 
-    /**
-     * @return The compinent manager (maybe this getter is not needed)
-     */
-    public static ComponentManager getComponentManager() {
-        return instance.componentManager;
-    }
-
-    /* Do the Bank properly later */
-    public static Bank getBank() {
-        return instance.bank;
-    }
-
-    /**
-     * @return Returns the playerManager.
-     */
-    public static PlayerManager getPlayerManager() {
-        return instance.playerManager;
-    }
-
     public GameManagerI getGameManager() {
         return gameManager;
     }
@@ -285,9 +264,5 @@ public class Game {
      */
     public static String getName() {
         return instance.name;
-    }
-
-    public static Logger getLogger() {
-        return log;
     }
 }

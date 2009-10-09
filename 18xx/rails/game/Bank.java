@@ -95,32 +95,24 @@ public class Bank implements CashHolder, ConfigurableComponentI {
             money.setCash(bankTag.getAttributeAsInteger("amount",
                     DEFAULT_BANK_AMOUNT));
         }
+
+    }
+
+    public void finishConfiguration (GameManager gameManager) {
+        
         ReportBuffer.add(LocalText.getText("BankSizeIs",
                 format(money.getCash())));
 
-    }
-
-    /**
-     * @param percentage of a company allowed to be in the Bank pool.
-     */
-    public void setPoolShareLimit(int percentage) {
-        poolShareLimit = percentage;
-    }
-
-    /**
-     * Put all available certificates in the IPO
-     */
-    public void initCertificates() {
         // Add privates
         List<PrivateCompanyI> privates =
-                Game.getCompanyManager().getAllPrivateCompanies();
+            gameManager.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompanyI priv : privates) {
             ipo.addPrivate(priv);
         }
 
         // Add public companies
         List<PublicCompanyI> companies =
-                Game.getCompanyManager().getAllPublicCompanies();
+            gameManager.getCompanyManager().getAllPublicCompanies();
         for (PublicCompanyI comp : companies) {
             for (PublicCertificateI cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
@@ -130,6 +122,13 @@ public class Bank implements CashHolder, ConfigurableComponentI {
                }
             }
         }
+}
+    
+    /**
+     * @param percentage of a company allowed to be in the Bank pool.
+     */
+    public void setPoolShareLimit(int percentage) {
+        poolShareLimit = percentage;
     }
 
     /**

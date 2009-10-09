@@ -10,14 +10,11 @@ import rails.game.move.MoveableHolderI;
 import rails.game.special.SpecialPropertyI;
 import rails.util.Tag;
 
-public interface GameManagerI extends MoveableHolderI {
+public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
 
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
-    public abstract void configureFromXML(Tag tag)
-            throws ConfigurationException;
-
     public abstract void init(PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
             TrainManager trainManager, StockMarketI stockMarket,

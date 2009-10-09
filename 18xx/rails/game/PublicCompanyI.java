@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.37 2009/10/06 18:34:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.38 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -16,8 +16,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public static final int CAPITALISE_INCREMENTAL = 1;
 
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
-
-    public void init2(GameManagerI gameManager) throws ConfigurationException;
 
     public void setIndex (int index);
 

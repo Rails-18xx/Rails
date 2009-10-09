@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.25 2009/10/03 14:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.26 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -185,6 +185,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         cityName = tag.getAttributeAsString("city", "");
 
     }
+
+    public void finishConfiguration (GameManager gameManager) {}
 
     public boolean isNeighbour(MapHex neighbour, int direction) {
         /*

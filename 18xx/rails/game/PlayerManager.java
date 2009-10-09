@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.10 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.11 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -44,7 +44,9 @@ public class PlayerManager implements ConfigurableComponentI {
         }
     }
 
-   public void setPlayers (List<String> playerNames, Bank bank) {
+    public void finishConfiguration (GameManager gameManager) {}
+    
+    public void setPlayers (List<String> playerNames, Bank bank) {
 
         Player player;
 

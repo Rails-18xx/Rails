@@ -88,8 +88,7 @@ public class StockRound_18EU extends StockRound {
             }
         } else {
             freeStations = new ArrayList<City>();
-            MapManager map =
-                    (MapManager) Game.getComponentManager().findComponent("Map");
+            MapManager map = gameManager.getMapManager();
             for (City city : map.getCurrentStations()) {
                 if (city.getSlots() > city.getTokens().size()) {
                     freeStations.add(city);

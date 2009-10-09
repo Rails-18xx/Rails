@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.18 2009/09/25 19:29:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.19 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -143,7 +143,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
      * Final initialisations, to be called after all XML processing is complete.
      * The purpose is to register fixed company start prices.
      */
-    public void init() {
+    public void finishConfiguration (GameManager gameManager) {
 
         for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
