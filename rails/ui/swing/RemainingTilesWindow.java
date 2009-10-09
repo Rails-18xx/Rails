@@ -1,22 +1,23 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.4 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.5 2009/10/09 19:03:49 evos Exp $*/
 package rails.ui.swing;
 
-import rails.game.*;
-import rails.game.model.ModelObject;
-import rails.ui.swing.elements.Field;
-import rails.ui.swing.hexmap.GUIHex;
-import rails.util.LocalText;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import java.awt.*;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+
+import rails.game.TileI;
+import rails.game.TileManager;
+import rails.game.model.ModelObject;
+import rails.ui.swing.elements.Field;
+import rails.ui.swing.hexmap.GUIHex;
+import rails.util.LocalText;
 
 /**
  * This Window displays the available operations that may be performed during an
@@ -56,7 +57,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
     private void init() {
 
-        TileManagerI tmgr = TileManager.get();
+        TileManager tmgr = TileManager.get();
         TileI tile;
         Field label;
         BufferedImage hexImage;
@@ -128,7 +129,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
     /**
      * Round-end settings
-     * 
+     *
      */
     public void finish() {}
 }

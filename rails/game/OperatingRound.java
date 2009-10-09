@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.72 2009/10/07 21:03:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.73 2009/10/09 19:03:49 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -110,7 +110,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean doneAllowed = false;
 
-    protected TrainManagerI trainManager = gameManager.getTrainManager();
+    protected TrainManager trainManager = gameManager.getTrainManager();
 
     public static String[] stepNames =
             new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
@@ -2046,7 +2046,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (operatingCompany == null) return;
 
-        TrainManagerI trainMgr = gameManager.getTrainManager();
+        TrainManager trainMgr = gameManager.getTrainManager();
 
         int cash = operatingCompany.getCash();
         int cost;

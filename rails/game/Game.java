@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.29 2009/10/03 14:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.30 2009/10/09 19:03:49 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -24,7 +24,7 @@ public class Game {
     protected CompanyManagerI companyManager;
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
-    protected TrainManagerI trainManager;
+    protected TrainManager trainManager;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
     protected Bank bank;

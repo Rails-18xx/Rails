@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.7 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.8 2009/10/09 19:03:49 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import rails.game.state.State;
  * be discarded. <p> Permanent memory is formed by static attributes.
  */
 public class OperatingRound_18EU extends OperatingRound {
-    
+
     protected TrainTypeI pullmannType;
 
     protected BooleanState hasPullmannAtStart =
@@ -22,7 +22,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected State playerToStartExchangeRound =
             new State("PlayerToStartExchangeRound", Player.class);
-    
+
     public OperatingRound_18EU (GameManagerI gameManager) {
         super (gameManager);
         pullmannType = trainManager.getTypeByName("P");
@@ -43,7 +43,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         if (operatingCompany == null) return;
 
-        TrainManagerI trainMgr = gameManager.getTrainManager();
+        TrainManager trainMgr = gameManager.getTrainManager();
 
         int cash = operatingCompany.getCash();
         int cost;
