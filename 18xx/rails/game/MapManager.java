@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.9 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.10 2009/10/09 22:29:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -21,6 +21,7 @@ public class MapManager implements ConfigurableComponentI {
 
     protected static MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
+    protected int maxX, maxY;
 
     protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
     protected static final int[] yXEvenDeltaNS =
@@ -77,8 +78,8 @@ public class MapManager implements ConfigurableComponentI {
 
         List<Tag> hexTags = tag.getChildren("Hex");
         MapHex hex;
-        int maxX = 0;
-        int maxY = 0;
+        maxX = 0;
+        maxY = 0;
         for (Tag hexTag : hexTags) {
             hex = new MapHex(this);
             hex.configureFromXML(hexTag);
@@ -93,17 +94,28 @@ public class MapManager implements ConfigurableComponentI {
             hex = mHexes.get(hexName);
             hexes[hex.getX()][hex.getY()] = hex;
         }
+    }
+
+    public void finishConfiguration (GameManager gameManager) {
+
+        MapHex hex;
+        int i, j, k, dx, dy;
+        MapHex nb;
+
+        for (String hexName : mHexes.keySet()) {
+            hex = mHexes.get(hexName);
+            hex.finishConfiguration(gameManager);
+        }
 
         // Initialise the neighbours
         /**
          * TODO: impassable hexsides. TODO: blank sides of fixed and offboard
          * preprinted tiles.
          */
-        int i, j, k, dx, dy;
-        MapHex nb;
         for (i = 0; i <= maxX; i++) {
             for (j = 0; j <= maxY; j++) {
                 if ((hex = hexes[i][j]) == null) continue;
+                
                 for (k = 0; k < 6; k++) {
                     if (tileOrientation == MapHex.EW) {
                         dx = (j % 2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
@@ -125,10 +137,6 @@ public class MapManager implements ConfigurableComponentI {
                 }
             }
         }
-    }
-
-    public void finishConfiguration (GameManager gameManager) {
-        MapHex hex;
 
         for (PublicCompanyI company : gameManager.getCompanyManager().getAllPublicCompanies()) {
             if ((hex = company.getHomeHex()) != null) {

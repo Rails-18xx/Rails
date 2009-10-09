@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.26 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.27 2009/10/09 22:29:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -161,22 +161,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
         currentTileRotation = tag.getAttributeAsInteger("orientation", 0);
 
-        currentTile = TileManager.get().getTile(preprintedTileId);
         impassable = tag.getAttributeAsString("impassable");
         tileCost = tag.getAttributeAsIntegerArray("cost", new int[0]);
-
-        // We need completely new objects, not just references to the Tile's
-        // stations.
-        cities = new ArrayList<City>(4);
-        mCities = new HashMap<Integer, City>(4);
-        // for (int i = 0; i < currentTile.getStations().size(); i++)
-        for (Station s : currentTile.getStations()) {
-            // sid, type, value, slots
-            // Station s = currentTile.getStations().get(i);
-            City c = new City(this, s.getNumber(), s);
-            cities.add(c);
-            mCities.put(c.getNumber(), c);
-        }
 
         // Off-board revenue values
         offBoardValues = tag.getAttributeAsIntegerArray("value", null);
@@ -186,7 +172,21 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {}
+    public void finishConfiguration (GameManager gameManager) {
+        
+        currentTile = gameManager.getTileManager().getTile(preprintedTileId);
+        // We need completely new objects, not just references to the Tile's
+        // stations.
+        cities = new ArrayList<City>(4);
+        mCities = new HashMap<Integer, City>(4);
+         for (Station s : currentTile.getStations()) {
+            // sid, type, value, slots
+            City c = new City(this, s.getNumber(), s);
+            cities.add(c);
+            mCities.put(c.getNumber(), c);
+        }
+
+    }
 
     public boolean isNeighbour(MapHex neighbour, int direction) {
         /*
