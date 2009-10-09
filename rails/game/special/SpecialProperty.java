@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.15 2009/10/03 14:00:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.16 2009/10/09 20:20:34 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import rails.game.ConfigurationException;
+import rails.game.GameManager;
 import rails.game.PrivateCompanyI;
 import rails.game.move.MoveableHolderI;
 import rails.game.move.ObjectMove;
@@ -55,6 +56,8 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
         transferText = tag.getAttributeAsString("transfer", "");
     }
+    
+    public void finishConfiguration (GameManager gameManager) {}
 
     public int getUniqueId() {
         return uniqueId;

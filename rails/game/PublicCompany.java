@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.67 2009/10/09 19:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.68 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -21,6 +21,7 @@ import rails.util.*;
  * shares may or may not have a price on the stock market.
  */
 public class PublicCompany extends Company implements PublicCompanyI {
+    
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
     protected static int numberOfPublicCompanies = 0;
@@ -625,7 +626,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void init2(GameManagerI gameManager)
+    public void finishConfiguration(GameManager gameManager)
     throws ConfigurationException {
 
         this.gameManager = gameManager;
@@ -683,6 +684,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
                                                  + " for company " + name);
             }
         }
+
+        if (Util.hasValue(privateToCloseOnFirstTrainName)) {
+            privateToCloseOnFirstTrain =
+                gameManager.getCompanyManager().getPrivateCompany(
+                            privateToCloseOnFirstTrainName);
+        }
+
     }
 
     /** Reset turn objects */
@@ -804,14 +812,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // The current price is set via the Stock Market
         stockMarket.start(this, startSpace);
 
-        /* Final initialisations */
-        if (Util.hasValue(privateToCloseOnFirstTrainName)) {
-            privateToCloseOnFirstTrain =
-                    Game.getCompanyManager().getPrivateCompany(
-                            privateToCloseOnFirstTrainName);
-        }
-
-        if (homeBaseTokensLayTime == WHEN_STARTED) {
+       if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
         }
     }
@@ -866,7 +867,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         getPresident().getPortfolio().getShareModel(this).update();
 
         if (sharePriceUpOnFloating) {
-            Game.getStockMarket().moveUp(this);
+            stockMarket.moveUp(this);
         }
 
         if (homeBaseTokensLayTime == WHEN_FLOATED) {
@@ -1235,8 +1236,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         // Move the token
         if (hasStockPrice
-            && (!payoutMustExceedPriceToMove || amount >= currentPrice.getPrice().getPrice())) {
-            Game.getStockMarket().payOut(this);
+                && (!payoutMustExceedPriceToMove 
+                        || amount >= currentPrice.getPrice().getPrice())) {
+            stockMarket.payOut(this);
         }
 
     }
@@ -1262,7 +1264,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void withhold(int amount) {
         if (amount > 0) new CashMove(bank, this, amount);
         // Move the token
-        if (hasStockPrice) Game.getStockMarket().withhold(this);
+        if (hasStockPrice) stockMarket.withhold(this);
     }
 
     /**

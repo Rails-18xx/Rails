@@ -1,17 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.9 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.util.List;
 
-public interface StockMarketI {
+public interface StockMarketI extends ConfigurableComponentI {
 
     /**
      * This is the name by which the CompanyManager should be registered with
      * the ComponentManager.
      */
     static final String COMPONENT_NAME = "StockMarket";
-
-    public void init();
 
     public StockSpaceI[][] getStockChart();
 

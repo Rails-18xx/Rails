@@ -92,7 +92,7 @@ public class PublicCompany_CGR extends PublicCompany {
 	public void withhold(int amount) {
         if (amount > 0) new CashMove(bank, this, amount);
         if (hasStockPrice && !runsWithBorrowedTrain()) {
-            Game.getStockMarket().withhold(this);
+            stockMarket.withhold(this);
         }
     }
 

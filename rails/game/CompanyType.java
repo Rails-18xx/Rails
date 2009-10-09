@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.8 2009/01/24 15:10:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.9 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import rails.util.LocalText;
@@ -60,7 +60,11 @@ public class CompanyType implements CompanyTypeI {
 
     }
     
-   public CompanyI createCompany(String name, Tag tag)
+    public void finishConfiguration (GameManager gameManager) {
+        
+    }
+    
+    public CompanyI createCompany(String name, Tag tag)
             throws ConfigurationException {
         CompanyI newCompany = null;
         try {

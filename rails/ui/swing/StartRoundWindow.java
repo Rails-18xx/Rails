@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.30 2009/01/15 20:53:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.31 2009/10/09 20:20:34 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -157,7 +157,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         gbc = new GridBagConstraints();
 
-        players = Game.getPlayerManager().getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getGameManager().getPlayers().toArray(new Player[0]);
         np = GameManager.getInstance().getNumberOfPlayers();
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];

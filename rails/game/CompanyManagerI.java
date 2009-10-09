@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.12 2009/09/11 19:27:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.13 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -55,10 +55,6 @@ public interface CompanyManagerI extends ConfigurableComponentI {
     CompanyI getCompany(String type, String name);
 
     public PublicCompanyI getCompanyByName(String name);
-
-    /** Post XML parsing initialisations */
-    public void initCompanies(GameManagerI gameManager, List<Player> players)
-    throws ConfigurationException;
 
     public void closeAllPrivates();
 

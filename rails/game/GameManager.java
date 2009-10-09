@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.60 2009/10/09 19:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.61 2009/10/09 20:20:34 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -352,6 +352,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             canClassBeInstantiated (orWindowClassName);
         }
     }
+
+    public void finishConfiguration (GameManager gameManager) {}
 
     /** Check if a classname can be instantiated.
      * Throws a ConfiguratioNException if not.
