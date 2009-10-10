@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.23 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.24 2009/10/10 15:25:49 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -11,7 +11,8 @@ import rails.game.state.IntegerState;
 import rails.util.LocalText;
 import rails.util.Tag;
 
-public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable {
+public class TrainType 
+implements TrainTypeI {
 
     public final static int TOWN_COUNT_MAJOR = 2;
     public final static int TOWN_COUNT_MINOR = 1;
@@ -23,6 +24,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
     protected String name;
     protected int amount;
     protected boolean infiniteAmount = false;
+    
+    /** Index: used for sorting trains lists in configured order. */
+    protected int index;
 
     private String reachBasis = "stops";
     protected boolean countHexes = false;
@@ -216,7 +220,15 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
         rusted = new BooleanState(name + "-trains_Rusted", false);
     }
 
-    public void finishConfiguration (GameManager gameManager) {}
+    public void finishConfiguration (GameManager gameManager) {
+        index = gameManager.getTrainManager().getTrainTypes().indexOf(this);
+        
+        Portfolio unavailable = gameManager.getBank().getUnavailable();
+      
+        for (TrainI train : trains) {
+            unavailable.addTrain(train);
+        }
+    }
     
     protected TrainI createTrain () throws ConfigurationException {
         
@@ -449,5 +461,9 @@ public class TrainType implements TrainTypeI, ConfigurableComponentI, Cloneable 
 
         return clone;
     }
-
+    
+    public int getIndex() {
+        return index;
+    }
+    
 }
