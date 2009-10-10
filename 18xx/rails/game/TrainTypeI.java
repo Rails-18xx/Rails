@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.9 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.10 2009/10/10 15:25:49 evos Exp $ */
 package rails.game;
 
-public interface TrainTypeI {
+public interface TrainTypeI 
+extends ConfigurableComponentI, Cloneable {
 
     /**
      * @return Returns the cityScoreFactor.
@@ -103,5 +104,7 @@ public interface TrainTypeI {
     public void setRustedTrainType(TrainTypeI rustedTrainType);
     
     public TrainI cloneTrain();
+    
+    public int getIndex();
 
 }

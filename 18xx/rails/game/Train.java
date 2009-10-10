@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.13 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.14 2009/10/10 15:25:49 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -46,7 +46,6 @@ public class Train implements TrainI {
         this.townScoreFactor = type.getTownScoreFactor();
         this.townCountIndicator = type.getTownCountIndicator();
 
-        unavailable.addTrain(this);
         uniqueId = type.getName() + "_" + index;
         trainMap.put(uniqueId, this);
 
@@ -154,5 +153,5 @@ public class Train implements TrainI {
     public String toDisplay() {
         return getName();
     }
-
+    
 }

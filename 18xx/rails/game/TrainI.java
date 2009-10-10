@@ -1,9 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.7 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.8 2009/10/10 15:25:49 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
 
 public interface TrainI extends Moveable {
+    
     public void init(TrainTypeI type, int index);
 
     /**
