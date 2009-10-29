@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.68 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.69 2009/10/29 19:40:31 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -21,7 +21,7 @@ import rails.util.*;
  * shares may or may not have a price on the stock market.
  */
 public class PublicCompany extends Company implements PublicCompanyI {
-    
+
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
     protected static int numberOfPublicCompanies = 0;
@@ -1214,29 +1214,40 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (amount == 0) return;
 
         int part;
-        Map<CashHolder, Integer> split = new HashMap<CashHolder, Integer>();
+        int shares;
+        Map<CashHolder, Integer> sharesPerRecipient = new HashMap<CashHolder, Integer>();
 
+        // Changed to accomodate the CGR 5% share roundup rule.
+        // For now it is assumed, that actual payouts are always rounded up
+        // (the withheld half of split revenues is not handled here, see splitRevenue()).
+
+        // First count the shares per recipient
         for (PublicCertificateI cert : certificates) {
             CashHolder recipient = getBeneficiary(cert);
-            part = amount * cert.getShares() * shareUnit.intValue() / 100;
-            // For reporting, we want to add up the amounts per recipient
-            if (split.containsKey(recipient)) {
-                part += (split.get(recipient)).intValue();
+            if (!sharesPerRecipient.containsKey(recipient)) {
+                sharesPerRecipient.put(recipient, cert.getShares());
+            } else {
+            	sharesPerRecipient.put(recipient,
+            		sharesPerRecipient.get(recipient) + cert.getShares());
             }
-            split.put(recipient, new Integer(part));
         }
-        // Report and add the cash
-        for (CashHolder recipient : split.keySet()) {
+
+        // Calculate, round up, report and add the cash
+        for (CashHolder recipient : sharesPerRecipient.keySet()) {
             if (recipient instanceof Bank) continue;
-            part = (split.get(recipient)).intValue();
-            ReportBuffer.add(recipient.getName() + " receives "
-                             + Bank.format(part));
+            shares = (sharesPerRecipient.get(recipient));
+            part = (int) Math.ceil(amount * shares * shareUnit.intValue() / 100.0);
+            ReportBuffer.add(LocalText.getText("Payout",
+            		recipient.getName(),
+            		Bank.format(part),
+            		shares,
+            		shareUnit.intValue()));
             new CashMove(bank, recipient, part);
         }
 
         // Move the token
         if (hasStockPrice
-                && (!payoutMustExceedPriceToMove 
+                && (!payoutMustExceedPriceToMove
                         || amount >= currentPrice.getPrice().getPrice())) {
             stockMarket.payOut(this);
         }
