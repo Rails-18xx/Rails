@@ -1,24 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.12 2008/06/30 20:35:30 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.13 2009/10/29 19:41:30 evos Exp $
+ *
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.GameManager;
-import rails.game.Player;
+import rails.game.*;
 
 /**
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- * 
+ *
  * @author Erik Vos
  */
 /* Or should this be an interface? We will see. */
@@ -35,7 +32,7 @@ public abstract class PossibleAction implements Serializable {
             Logger.getLogger(PossibleAction.class.getPackage().getName());
 
     /**
-     * 
+     *
      */
     public PossibleAction() {
 
@@ -58,7 +55,7 @@ public abstract class PossibleAction implements Serializable {
      * Set the name of the player who <b>executed</b> the action (as opposed to
      * the player who was <b>allowed</b> to do the action, which is the one set
      * in the constructor).
-     * 
+     *
      * @param playerName
      */
     public void setPlayerName(String playerName) {
@@ -74,6 +71,14 @@ public abstract class PossibleAction implements Serializable {
     }
 
     public abstract boolean equals(PossibleAction pa);
+
+    protected GameManagerI getGameManager() {
+    	return GameManager.getInstance();
+    }
+
+    protected CompanyManagerI getCompanyManager () {
+    	return getGameManager().getCompanyManager();
+    }
 
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {

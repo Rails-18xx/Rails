@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.62 2009/10/09 22:29:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.63 2009/10/29 19:41:29 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -50,6 +50,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected Bank bank;
+
+    protected Map<String, String> gameOptions;
 
     protected List<Player> players;
     protected List<String> playerNames;
@@ -399,8 +401,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
     }
 
-    public void startGame() {
+    public void startGame(Map<String,String> gameOptions) {
 
+    	this.gameOptions = gameOptions;
     	setGameParameters();
 
         if (startPacket == null)
@@ -1029,6 +1032,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public Bank getBank () {
     	return bank;
+    }
+
+    public String getGameOption (String key) {
+    	return gameOptions.get(key);
     }
 
     // TODO Should be removed

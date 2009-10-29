@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.5 2008/06/04 19:00:29 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.6 2009/10/29 19:41:29 evos Exp $
+ *
  * Created on 17-Sep-2006
  * Change Log:
  */
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.Bank;
-import rails.game.Game;
 import rails.game.PublicCompanyI;
 import rails.util.Util;
 
@@ -33,7 +32,7 @@ public class SellShares extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     public SellShares(String companyName, int shareUnits, int maximumNumber,
             int price) {
@@ -42,7 +41,7 @@ public class SellShares extends PossibleAction {
         this.price = price;
         this.maximumNumber = maximumNumber;
 
-        company = Game.getCompanyManager().getPublicCompany(companyName);
+        company = getCompanyManager().getPublicCompany(companyName);
         shareUnit = company.getShareUnit();
         share = shareUnits * shareUnit;
     }
@@ -69,7 +68,7 @@ public class SellShares extends PossibleAction {
     }
 
     public PublicCompanyI getCompany() {
-        return Game.getCompanyManager().getPublicCompany(companyName);
+        return getCompanyManager().getPublicCompany(companyName);
     }
 
     public int getShareUnits() {
@@ -92,7 +91,8 @@ public class SellShares extends PossibleAction {
         this.numberSold = numberSold;
     }
 
-    public boolean equals(PossibleAction action) {
+    @Override
+	public boolean equals(PossibleAction action) {
         if (!(action instanceof SellShares)) return false;
         SellShares a = (SellShares) action;
         return a.getCompanyName().equals(companyName)
@@ -101,7 +101,8 @@ public class SellShares extends PossibleAction {
                && a.getPrice() == price;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "SellShares: "
                + (numberSold > 0 ? numberSold : "max " + maximumNumber)
                + " of " + share + "% " + companyName + " at "
@@ -115,6 +116,6 @@ public class SellShares extends PossibleAction {
         in.defaultReadObject();
 
         if (Util.hasValue(companyName))
-            company = Game.getCompanyManager().getPublicCompany(companyName);
+            company = getCompanyManager().getPublicCompany(companyName);
     }
 }

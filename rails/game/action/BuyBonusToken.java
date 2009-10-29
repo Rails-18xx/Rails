@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.1 2009/09/23 21:38:58 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.2 2009/10/29 19:41:30 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -115,12 +115,12 @@ public class BuyBonusToken extends PossibleORAction {
         in.defaultReadObject();
 
         privateCompany =
-                Game.getCompanyManager().getPrivateCompany(privateCompanyName);
+                getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
         	seller = Bank.getInstance();
         } else if (sellerName != null) {
         	seller =
-        		Game.getCompanyManager().getPublicCompany(sellerName);
+        		getCompanyManager().getPublicCompany(sellerName);
         }
         if (specialPropertyId > 0) {
             specialProperty =

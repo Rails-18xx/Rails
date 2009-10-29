@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.19 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.20 2009/10/29 19:41:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -145,7 +145,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
      */
     public void finishConfiguration (GameManager gameManager) {
 
-        for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompanyI comp : GameManager.getInstance().getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }

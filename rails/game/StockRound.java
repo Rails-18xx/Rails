@@ -1246,7 +1246,7 @@ public class StockRound extends Round {
             return true;
 
         // Over the hold limit of any company?
-        for (PublicCompanyI company : Game.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
                 && !mayPlayerBuyCompanyShare(player, company, 0)) return true;
         }

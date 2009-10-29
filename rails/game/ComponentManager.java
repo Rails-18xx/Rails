@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.12 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.13 2009/10/29 19:41:29 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -34,6 +34,8 @@ public class ComponentManager {
     public static final String COMPONENT_FILE_TAG = "file";
 
     private List<Tag> componentTags;
+    private Map<String, String> gameOptions;
+
     protected static Logger log =
             Logger.getLogger(ComponentManager.class.getPackage().getName());
     protected static List<String> directories = new ArrayList<String>();
@@ -46,18 +48,21 @@ public class ComponentManager {
                 LocalText.getText("ComponentManagerNotYetConfigured"));
     }
 
-    public static synchronized void configureInstance(String gameName, Tag tag)
+    public static synchronized void configureInstance(String gameName, Tag tag,
+    		Map<String, String> gameOptions)
             throws ConfigurationException {
         if (instance != null) {
             throw new ConfigurationException(
                     LocalText.getText("ComponentManagerNotReconfigured"));
         }
-        new ComponentManager(gameName, tag);
+        new ComponentManager(gameName, tag, gameOptions);
     }
 
-    private ComponentManager(String gameName, Tag tag)
+    private ComponentManager(String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
+
         instance = this;
+        this.gameOptions = gameOptions;
 
         ComponentManager.gameName = gameName;
         componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
@@ -81,7 +86,7 @@ public class ComponentManager {
         }
     }
 
-    private static void configureComponent(Tag componentTag)
+    private void configureComponent(Tag componentTag)
             throws ConfigurationException {
 
         // Extract the attributes of the Component

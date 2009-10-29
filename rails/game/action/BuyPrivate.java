@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.5 2008/06/04 19:00:29 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.6 2009/10/29 19:41:30 evos Exp $
+ *
  * Created on 17-Sep-2006
  * Change Log:
  */
@@ -8,7 +8,6 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Game;
 import rails.game.PrivateCompanyI;
 
 /**
@@ -28,7 +27,7 @@ public class BuyPrivate extends PossibleORAction {
     public static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     public BuyPrivate(PrivateCompanyI privateCompany, int minimumPrice,
             int maximumPrice) {
@@ -68,7 +67,8 @@ public class BuyPrivate extends PossibleORAction {
         this.price = price;
     }
 
-    public boolean equals(PossibleAction action) {
+    @Override
+	public boolean equals(PossibleAction action) {
         if (!(action instanceof BuyPrivate)) return false;
         BuyPrivate a = (BuyPrivate) action;
         return a.privateCompany == privateCompany
@@ -76,7 +76,8 @@ public class BuyPrivate extends PossibleORAction {
                && a.maximumPrice == maximumPrice;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "BuyPrivate " + privateCompany.getName() + " holder="
                + privateCompany.getPortfolio().getName();
     }
@@ -88,7 +89,7 @@ public class BuyPrivate extends PossibleORAction {
         in.defaultReadObject();
 
         privateCompany =
-                Game.getCompanyManager().getPrivateCompany(privateCompanyName);
+                getCompanyManager().getPrivateCompany(privateCompanyName);
     }
 
 }
