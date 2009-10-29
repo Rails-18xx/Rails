@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.5 2008/12/24 22:02:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.6 2009/10/29 19:41:29 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -52,7 +52,7 @@ public class MergeCompanies extends PossibleAction {
                 canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
                     && (!hex.hasTokenOfCompany(target)
                         || hex.getCurrentTile().allowsMultipleBasesOfOneCompany()
-                            && hex.getCityOfBaseToken(mergingCompany) 
+                            && hex.getCityOfBaseToken(mergingCompany)
                                 != hex.getCityOfBaseToken(target)));
             }
         }
@@ -125,7 +125,7 @@ public class MergeCompanies extends PossibleAction {
         selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
         replaceToken = fields.get("replaceToken", replaceToken);
 
-        CompanyManagerI cmgr = Game.getCompanyManager();
+        CompanyManagerI cmgr = getCompanyManager();
 
         mergingCompany = cmgr.getCompanyByName(mergingCompanyName);
 

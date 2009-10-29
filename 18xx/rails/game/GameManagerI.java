@@ -1,6 +1,7 @@
 package rails.game;
 
 import java.util.List;
+import java.util.Map;
 
 import rails.common.Defs;
 import rails.game.action.PossibleAction;
@@ -18,7 +19,7 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
             CompanyManagerI companyManager, PhaseManager phaseManager,
             TrainManager trainManager, StockMarketI stockMarket,
             MapManager mapManager, TileManager tileManager, Bank bank);
-    public abstract void startGame();
+    public abstract void startGame(Map<String, String> gameOptions);
 
     public abstract CompanyManagerI getCompanyManager();
 
@@ -150,6 +151,8 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
     public StockMarketI getStockMarket();
     public MapManager getMapManager();
     public Bank getBank ();
+
+    public String getGameOption (String key);
 
     public int getPlayerCertificateLimit();
 	public void setPlayerCertificateLimit(int newLimit);

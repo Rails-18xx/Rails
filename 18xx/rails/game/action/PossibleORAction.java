@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleORAction.java,v 1.3 2008/06/04 19:00:29 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleORAction.java,v 1.4 2009/10/29 19:41:29 evos Exp $
+ *
  * Created on 14-Sep-2006
  * Change Log:
  */
@@ -8,18 +8,14 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Game;
-import rails.game.GameManager;
-import rails.game.OperatingRound;
-import rails.game.PublicCompanyI;
-import rails.game.RoundI;
+import rails.game.*;
 import rails.util.Util;
 
 /**
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- * 
+ *
  * @author Erik Vos
  */
 /* Or should this be an interface? We will see. */
@@ -29,7 +25,7 @@ public abstract class PossibleORAction extends PossibleAction {
     protected String companyName;
 
     /**
-     * 
+     *
      */
     public PossibleORAction() {
 
@@ -62,6 +58,6 @@ public abstract class PossibleORAction extends PossibleAction {
         in.defaultReadObject();
 
         if (Util.hasValue(companyName))
-            company = Game.getCompanyManager().getPublicCompany(companyName);
+            company = getCompanyManager().getPublicCompany(companyName);
     }
 }

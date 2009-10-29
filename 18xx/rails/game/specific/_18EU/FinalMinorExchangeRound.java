@@ -95,7 +95,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
 
         moveStack.start(false);
 
-        for (PublicCompanyI comp : Game.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompanyI comp : companyManager.getAllPublicCompanies()) {
             if (comp.getTypeName().equals("Minor")) {
                 if (!comp.isClosed()) {
                     finishTurn();

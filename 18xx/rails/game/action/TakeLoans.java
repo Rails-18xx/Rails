@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/TakeLoans.java,v 1.1 2009/01/11 17:24:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/TakeLoans.java,v 1.2 2009/10/29 19:41:29 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -8,7 +8,6 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Game;
 import rails.game.PublicCompanyI;
 
 /**
@@ -94,7 +93,7 @@ public class TakeLoans extends PossibleORAction {
         in.defaultReadObject();
 
         company =
-                Game.getCompanyManager().getPublicCompany(companyName);
+                getCompanyManager().getPublicCompany(companyName);
     }
 
 }

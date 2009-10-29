@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.CompanyManagerI;
-import rails.game.Game;
 import rails.game.PublicCompanyI;
 
 /** This class is needed until we have a means to determine reaching
@@ -25,30 +24,30 @@ public class ReachDestinations extends PossibleORAction {
     protected String reachedCompanyNames = "";
 
     public static final long serialVersionUID = 1L;
-    
+
     public ReachDestinations (List<PublicCompanyI> companies) {
         possibleCompanies = companies;
-        StringBuffer b = new StringBuffer(); 
+        StringBuffer b = new StringBuffer();
         for (PublicCompanyI company : companies) {
             if (b.length() > 0) b.append(",");
             b.append (company.getName());
         }
         possibleCompanyNames = b.toString();
     }
-    
+
     /** Required for deserialization */
     public ReachDestinations() {}
 
     public List<PublicCompanyI> getPossibleCompanies() {
         return possibleCompanies;
     }
-    
+
     public String getPossibleCompanyNames () {
         return possibleCompanyNames;
     }
-    
+
     public void addReachedCompany (PublicCompanyI company) {
-        if (reachedCompanies == null) 
+        if (reachedCompanies == null)
             reachedCompanies = new ArrayList<PublicCompanyI>();
         reachedCompanies.add (company);
         if (reachedCompanyNames.length() > 0) {
@@ -60,8 +59,8 @@ public class ReachDestinations extends PossibleORAction {
     public List<PublicCompanyI> getReachedCompanies() {
         return reachedCompanies;
     }
-    
-   
+
+
 
     @Override
     public boolean equals(PossibleAction pa) {
@@ -85,7 +84,7 @@ public class ReachDestinations extends PossibleORAction {
 
         in.defaultReadObject();
 
-        CompanyManagerI cmgr = Game.getCompanyManager();
+        CompanyManagerI cmgr = getCompanyManager();
 
         possibleCompanies = new ArrayList<PublicCompanyI>();
         for (String cname : possibleCompanyNames.split(",")) {

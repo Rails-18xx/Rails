@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 import rails.game.Bank;
-import rails.game.Game;
 import rails.util.Util;
 
 /**
@@ -200,7 +199,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         revenueAllocation = fields.get("revenueAllocation", revenueAllocation);
 
         if (Util.hasValue(companyName)) {
-            company = Game.getCompanyManager().getPublicCompany(companyName);
+            company = getCompanyManager().getPublicCompany(companyName);
         }
     }
 

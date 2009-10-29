@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.32 2009/10/09 22:29:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.33 2009/10/29 19:41:29 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -68,7 +68,7 @@ public class Game {
     }
 
     public void start() {
-        gameManager.startGame();
+        gameManager.startGame(gameOptions);
     }
 
     public boolean setup() {
@@ -88,7 +88,7 @@ public class Game {
                         "No Game XML element found in file " + GAME_XML_FILE);
             }
 
-            ComponentManager.configureInstance(name, componentManagerTag);
+            ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
 
             componentManager = ComponentManager.getInstance();
 
@@ -169,7 +169,7 @@ public class Game {
              */
             playerManager.setPlayers(players, bank);
             gameManager.init(playerManager, companyManager,
-                    phaseManager, trainManager, stockMarket, mapManager, 
+                    phaseManager, trainManager, stockMarket, mapManager,
                     tileManager, bank);
 
             companyManager.finishConfiguration(gameManager);
@@ -249,13 +249,6 @@ public class Game {
 
     public static Map<String, String> getGameOptions() {
         return instance.gameOptions;
-    }
-
-    /**
-     * @return The company manager
-     */
-    public static CompanyManagerI getCompanyManager() {
-        return instance.companyManager;
     }
 
     /**

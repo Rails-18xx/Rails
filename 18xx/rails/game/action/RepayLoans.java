@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.4 2009/05/04 20:29:15 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.5 2009/10/29 19:41:30 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -8,7 +8,6 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Game;
 import rails.game.PublicCompanyI;
 
 /**
@@ -108,7 +107,7 @@ public class RepayLoans extends PossibleAction {
         in.defaultReadObject();
 
         company =
-                Game.getCompanyManager().getPublicCompany(companyName);
+                getCompanyManager().getPublicCompany(companyName);
     }
 
 }
