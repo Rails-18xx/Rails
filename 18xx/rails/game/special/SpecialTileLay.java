@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.6 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.7 2009/10/30 21:53:04 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -18,7 +18,8 @@ public class SpecialTileLay extends SpecialProperty {
     boolean extra = false;
     boolean free = false;
 
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+    @Override
+	public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
 
         Tag tileLayTag = tag.getChild("SpecialTileLay");
@@ -29,8 +30,28 @@ public class SpecialTileLay extends SpecialProperty {
         locationCodes = tileLayTag.getAttributeAsString("location");
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException("SpecialTileLay: location missing");
-        MapManager mmgr = MapManager.getInstance();
+
+        tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
+
+        name = tileLayTag.getAttributeAsString("name");
+
+        extra = tileLayTag.getAttributeAsBoolean("extra", extra);
+        free = tileLayTag.getAttributeAsBoolean("free", free);
+        closingValue =
+                tileLayTag.getAttributeAsInteger("closingValue", closingValue);
+    }
+    
+    public void finishConfiguration (GameManagerI gameManager)
+    throws ConfigurationException {
+        
+        TileManager tmgr = gameManager.getTileManager();
+        MapManager mmgr = gameManager.getMapManager();
         MapHex hex;
+
+        if (tileNumber > 0) {
+            tile = tmgr.getTile(tileNumber);
+        }
+
         locations = new ArrayList<MapHex>();
         for (String hexName : locationCodes.split(",")) {
             hex = mmgr.getHex(hexName);
@@ -40,17 +61,6 @@ public class SpecialTileLay extends SpecialProperty {
             locations.add(hex);
         }
 
-        tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
-        if (tileNumber > 0) {
-            tile = TileManager.get().getTile(tileNumber);
-        }
-
-        name = tileLayTag.getAttributeAsString("name");
-
-        extra = tileLayTag.getAttributeAsBoolean("extra", extra);
-        free = tileLayTag.getAttributeAsBoolean("free", free);
-        closingValue =
-                tileLayTag.getAttributeAsInteger("closingValue", closingValue);
     }
 
     public boolean isExecutionable() {
@@ -66,7 +76,8 @@ public class SpecialTileLay extends SpecialProperty {
     }
 
     /** @deprecated */
-    public MapHex getLocation() {
+    @Deprecated
+	public MapHex getLocation() {
         if (locations != null) {
             return locations.get(0);
         } else {
@@ -94,7 +105,8 @@ public class SpecialTileLay extends SpecialProperty {
         return name;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "SpecialTileLay comp=" + privateCompany.getName() + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free;
     }

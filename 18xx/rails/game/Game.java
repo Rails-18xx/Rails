@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.33 2009/10/29 19:41:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.34 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -13,11 +13,6 @@ import rails.util.Tag;
 public class Game {
     public static final String version = "1.0.5";
 
-    /**
-     * Game is a singleton class.
-     */
-    protected static Game instance;
-
     /** The component Manager */
     protected ComponentManager componentManager;
     protected GameManager gameManager;
@@ -29,9 +24,7 @@ public class Game {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected Bank bank;
-    // protected ArrayList companyList;
     protected String name;
-    // protected Element componentManagerElement;
     protected Tag componentManagerTag;
     protected static String GAME_XML_FILE = "Game.xml";
     protected List<String> directories = new ArrayList<String>();
@@ -44,8 +37,6 @@ public class Game {
 
     // The new Game entry point
     public Game(String name, List<String> players, Map<String, String> options) {
-
-        instance = this;
 
         this.name = name;
         this.gameOptions = options;
@@ -63,7 +54,6 @@ public class Game {
         directories.add("data");
         directories.add("data/" + name);
 
-        //playerManager = new PlayerManager(players);
         this.players = players;
     }
 
@@ -77,9 +67,6 @@ public class Game {
 
         try {
             // Have the ComponentManager work through the other rails.game files
-            // componentManagerTag = XmlUtils.findElementInFile(GAME_XML_FILE,
-            // directories,
-            // ComponentManager.ELEMENT_ID);
             componentManagerTag =
                     Tag.findTopTagInFile(GAME_XML_FILE, directories,
                             ComponentManager.ELEMENT_ID);
@@ -168,7 +155,7 @@ public class Game {
              * only be done after all XML has been processed.
              */
             playerManager.setPlayers(players, bank);
-            gameManager.init(playerManager, companyManager,
+            gameManager.init(name, playerManager, companyManager,
                     phaseManager, trainManager, stockMarket, mapManager,
                     tileManager, bank);
 
@@ -177,9 +164,8 @@ public class Game {
             phaseManager.finishConfiguration(gameManager);
             mapManager.finishConfiguration(gameManager);
             bank.finishConfiguration(gameManager);
-            //StartPacket.init();
-            //companyManager.initCompanies(gameManager);
             stockMarket.finishConfiguration(gameManager);
+            tileManager.finishConfiguration(gameManager);
         } catch (Exception e) {
             String message =
                     LocalText.getText("GameSetupFailed", GAME_XML_FILE);
@@ -229,7 +215,7 @@ public class Game {
 
             log.debug("Starting to execute loaded actions");
 
-            instance.gameManager.processOnReload(executedActions);
+            game.getGameManager().processOnReload(executedActions);
 
             return game;
 
@@ -243,29 +229,8 @@ public class Game {
 
     /*----- Getters -----*/
 
-    public static String getGameOption(String optionName) {
-        return instance.gameOptions.get(optionName);
-    }
-
-    public static Map<String, String> getGameOptions() {
-        return instance.gameOptions;
-    }
-
-    /**
-     * @return The company manager
-     */
-    public static StockMarketI getStockMarket() {
-        return instance.stockMarket;
-    }
-
     public GameManagerI getGameManager() {
         return gameManager;
     }
 
-    /**
-     * @return Game Name
-     */
-    public static String getName() {
-        return instance.name;
-    }
 }

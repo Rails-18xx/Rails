@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.10 2009/08/30 18:13:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.11 2009/10/30 21:53:04 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -10,7 +10,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import rails.game.*;
+import rails.game.ConfigurationException;
+import rails.game.GameOption;
 
 /**
  * Each object of this class both contains and represents a DOM Element object.
@@ -30,11 +31,23 @@ public class Tag {
     private boolean parsed = false;
     private boolean parsing = false;
 
+    /** A reference to the current game chosen options */
+    private Map<String, String> gameOptions = null;
+
     protected static Logger log =
             Logger.getLogger(Tag.class.getPackage().getName());
 
     public Tag(Element element) {
         this.element = element;
+    }
+
+    public Tag (Element element, Map<String, String> gameOptions) {
+    	this (element);
+    	this.gameOptions = gameOptions;
+    }
+
+    public void setGameOptions (Map<String, String> gameOptions) {
+    	this.gameOptions = gameOptions;
     }
 
     public Map<String, List<Tag>> getChildren() throws ConfigurationException {
@@ -78,9 +91,9 @@ public class Tag {
             return null;
         }
     }
-    
+
     public boolean hasChild (String tagName) throws ConfigurationException {
-        
+
         return getChildren ("AllowsMultipleBasesOfOneCompany") != null;
     }
 
@@ -139,7 +152,7 @@ public class Tag {
     throws ConfigurationException {
 
         if (!parsed) parse(element);
-        
+
         String value = attributes.get(name);
         if (value == null) return defaultValue;
         try {
@@ -278,15 +291,19 @@ return getAttributeAsInteger(name, 0);
 
                     // Check if the option has been chosen; if not, skip the
                     // rest
-                    String optionValue = Game.getGameOption(name);
+                    if (gameOptions == null) {
+                    	throw new ConfigurationException (
+                    			"No GameOptions available in tag "+element.getNodeName());
+                    }
+
+                    String optionValue = gameOptions.get(name);
                     if (optionValue == null) {
-                        // throw new ConfigurationException ("GameOption
-                        // "+name+"="+value+" but no assigned value found");
-                        log.warn("GameOption " + name + "=" + value
+                         log.warn("GameOption " + name + "=" + value
                                  + " but no assigned value found");
                         // Take the default value
-                        optionValue =
+                        	optionValue =
                                 GameOption.getByName(name).getDefaultValue();
+
                     }
                     if (optionValue.equalsIgnoreCase(value)) {
                         parseSubTags(childElement);
@@ -295,7 +312,7 @@ return getAttributeAsInteger(name, 0);
                     if (!children.containsKey(childTagName)) {
                         children.put(childTagName, new ArrayList<Tag>());
                     }
-                    children.get(childTagName).add(new Tag(childElement));
+                    children.get(childTagName).add(new Tag(childElement, gameOptions));
                 }
             } else if (childNode.getNodeType() == Node.TEXT_NODE) {
                 textBuffer.append(childNode.getNodeValue());

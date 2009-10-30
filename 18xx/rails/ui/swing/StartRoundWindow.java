@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.31 2009/10/09 20:20:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.32 2009/10/30 21:53:04 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -573,7 +573,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         if (activeItem.hasSharePriceToSet()) {
             String compName = activeItem.getCompanyToSetPriceFor();
-            StockMarketI stockMarket = Game.getStockMarket();
+            StockMarketI stockMarket = gameUIManager.getGameManager().getStockMarket();
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.6 2008/12/03 20:16:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StockChart.java,v 1.7 2009/10/30 21:53:03 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import rails.game.*;
+import rails.game.GameManager;
+import rails.game.StockSpaceI;
 import rails.ui.swing.elements.GUIStockSpace;
 
 /**
@@ -21,9 +22,11 @@ public class StockChart extends JFrame implements KeyListener {
     private GridLayout stockGrid;
     private GridBagConstraints gc;
     private StockSpaceI[][] market;
+    private GameUIManager gameUIManager;
 
-    public StockChart() {
+    public StockChart(GameUIManager gameUIManager) {
         super();
+        this.gameUIManager = gameUIManager;
 
         initialize();
         populateStockPanel();
@@ -58,7 +61,7 @@ public class StockChart extends JFrame implements KeyListener {
 
         gc = new GridBagConstraints();
 
-        market = Game.getStockMarket().getStockChart();
+        market = gameUIManager.getGameManager().getStockMarket().getStockChart();
 
         gc.gridx = 0;
         gc.gridy = 0;

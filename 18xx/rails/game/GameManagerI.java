@@ -15,7 +15,7 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
-    public abstract void init(PlayerManager playerManager,
+    public abstract void init(String gameName, PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
             TrainManager trainManager, StockMarketI stockMarket,
             MapManager mapManager, TileManager tileManager, Bank bank);
@@ -148,10 +148,12 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
 
     public abstract TrainManager getTrainManager ();
     public PlayerManager getPlayerManager();
+    public TileManager getTileManager();
     public StockMarketI getStockMarket();
     public MapManager getMapManager();
     public Bank getBank ();
 
+    public String getGameName ();
     public String getGameOption (String key);
 
     public int getPlayerCertificateLimit();

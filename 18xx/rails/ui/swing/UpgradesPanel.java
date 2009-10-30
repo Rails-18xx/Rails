@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.17 2009/09/11 19:26:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.18 2009/10/30 21:53:04 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -342,7 +342,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         }
 
         protected void setToolTip() {
-            TileI currentTile = TileManager.get().getTile(internalId);
+            TileI currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
             tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or
                                                                         // getId()

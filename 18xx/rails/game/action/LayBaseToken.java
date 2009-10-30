@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.4 2008/06/04 19:00:29 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.5 2009/10/30 21:53:04 evos Exp $
+ *
  * Created on 14-Sep-2006
  * Change Log:
  */
@@ -63,7 +63,8 @@ public class LayBaseToken extends LayToken {
         return type;
     }
 
-    public boolean equals(PossibleAction action) {
+    @Override
+	public boolean equals(PossibleAction action) {
         if (!(action instanceof LayBaseToken)) return false;
         LayBaseToken a = (LayBaseToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
@@ -72,7 +73,8 @@ public class LayBaseToken extends LayToken {
                && a.specialProperty == specialProperty;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer b = new StringBuffer("LayBaseToken ");
         if (chosenHex == null) {
             b.append("type=").append(type).append(" location=").append(
@@ -90,7 +92,7 @@ public class LayBaseToken extends LayToken {
 
         in.defaultReadObject();
 
-        MapManager mmgr = MapManager.getInstance();
+        MapManager mmgr = gameManager.getMapManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {
@@ -103,7 +105,7 @@ public class LayBaseToken extends LayToken {
                     (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
-            chosenHex = MapManager.getInstance().getHex(chosenHexName);
+            chosenHex = mmgr.getHex(chosenHexName);
         }
     }
 

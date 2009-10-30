@@ -1,5 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.6 2008/06/04 19:00:30 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.7 2009/10/30 21:53:04 evos Exp $
+ *
  * Created on 14-Sep-2006
  * Change Log:
  */
@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-import rails.game.BonusToken;
-import rails.game.MapHex;
-import rails.game.MapManager;
-import rails.game.Token;
+import rails.game.*;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.util.Util;
@@ -41,14 +38,16 @@ public class LayBonusToken extends LayToken {
         return token;
     }
 
-    public boolean equals(PossibleAction action) {
+    @Override
+	public boolean equals(PossibleAction action) {
         if (!(action instanceof LayBonusToken)) return false;
         LayBonusToken a = (LayBonusToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
                && a.company == company && a.specialProperty == specialProperty;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer b = new StringBuffer("LayBonusToken ");
         if (chosenHex == null) {
             b.append(" location=").append(locationNames).append(" spec.prop=").append(
@@ -65,7 +64,7 @@ public class LayBonusToken extends LayToken {
 
         in.defaultReadObject();
 
-        MapManager mmgr = MapManager.getInstance();
+        MapManager mmgr = gameManager.getMapManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {
@@ -81,7 +80,7 @@ public class LayBonusToken extends LayToken {
                     (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
-            chosenHex = MapManager.getInstance().getHex(chosenHexName);
+            chosenHex = mmgr.getHex(chosenHexName);
         }
     }
 

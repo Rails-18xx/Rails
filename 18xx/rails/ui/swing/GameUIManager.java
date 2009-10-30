@@ -52,11 +52,11 @@ public class GameUIManager {
             Logger.getLogger(GameUIManager.class.getPackage().getName());
 
     public GameUIManager() {
-        
+
     }
-    
+
     public void init (GameSetupWindow gameSetupWindow) {
-        
+
         instance = this;
         this.gameSetupWindow = gameSetupWindow;
 
@@ -81,7 +81,7 @@ public class GameUIManager {
     public void gameUIInit() {
         gameManager = GameManager.getInstance();
         imageLoader = new ImageLoader();
-        stockChart = new StockChart();
+        stockChart = new StockChart(this);
         reportWindow = new ReportWindow(gameManager);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
@@ -100,7 +100,7 @@ public class GameUIManager {
         updateUI();
 
     }
-    
+
     public void startLoadedGame() {
         gameUIInit();
         processOnServer(null);
@@ -112,17 +112,17 @@ public class GameUIManager {
         // In some cases an Undo requires a different follow-up
         lastAction = action;
         if (action != null) action.setActed();
-        
+
         log.debug("==Passing to server: " + action);
 
         Player player = getCurrentPlayer();
         if (action != null && player != null) {
             action.setPlayerName(player.getName());
         }
-        
+
         // Process the action on the server
         boolean result = gameManager.process(action);
-        
+
         // Follow-up the result
         log.debug("==Result from server: " + result);
         if (DisplayBuffer.getAutoDisplay()) activeWindow.displayServerMessage();
@@ -175,10 +175,10 @@ public class GameUIManager {
         /* Distinguish actual round type from visible round type.
          * Actual round type is the class of the active Round subclass.
          * Visible round type is the class of one of the three 'basic'
-         * round types: Start, Stock or Operating. 
+         * round types: Start, Stock or Operating.
          * The latter type determines what UI windows will become visible.
          */
-        
+
         /* Process actual round type changes */
         if (previousRound == null || !previousRound.equals(currentRound)) {
 
@@ -296,10 +296,10 @@ public class GameUIManager {
             updateStatus(activeWindow);
         }
     }
-    
-    /** Stub, to be overridden in subclasses for special round types */ 
+
+    /** Stub, to be overridden in subclasses for special round types */
     protected void updateStatus(ActionPerformer activeWindow) {
-        
+
     }
 
     public void discardTrains (DiscardTrain dt) {
@@ -418,7 +418,7 @@ public class GameUIManager {
             filename = providedName;
         } else {
             filename =
-                    saveDirectory + "/" + Game.getName() + "_"
+                    saveDirectory + "/" + gameManager.getGameName() + "_"
                             + saveDateTimeFormat.format(new Date()) + "."
                             + saveExtension;
         }

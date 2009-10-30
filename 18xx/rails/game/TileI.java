@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.15 2008/12/24 14:52:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.16 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -10,6 +10,9 @@ public interface TileI {
 
     public void configureFromXML(Tag se, Tag te) throws ConfigurationException;
 
+    public void finishConfiguration (TileManager tileManager) 
+    throws ConfigurationException;
+    
     public String getColourName();
 
     public int getColourNumber();
