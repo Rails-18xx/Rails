@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.63 2009/10/29 19:41:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.64 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -51,6 +51,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected TileManager tileManager;
     protected Bank bank;
 
+    protected String gameName;
     protected Map<String, String> gameOptions;
 
     protected List<Player> players;
@@ -128,7 +129,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * All other objects will access it via NDC.
      */
     protected static final String GM_KEY = "01";
-    protected static final String GM_NAME = "GameManager";
+    public static final String GM_NAME = "GameManager";
 
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
@@ -192,8 +193,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (gameTag == null)
             throw new ConfigurationException(
                     "No Game tag specified in GameManager tag");
-        name = gameTag.getAttributeAsString("name");
-        if (name == null)
+        gameName = gameTag.getAttributeAsString("name");
+        if (gameName == null)
             throw new ConfigurationException("No name specified in Game tag");
 
         // Get any available game options
@@ -377,7 +378,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
      */
-    public void init(PlayerManager playerManager,
+    public void init(String gameName,
+    		PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
             TrainManager trainManager,
@@ -385,6 +387,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             MapManager mapManager,
             TileManager tileManager,
             Bank bank) {
+    	this.gameName = gameName;
         this.playerManager = playerManager;
         this.companyManager = companyManager;
         this.phaseManager = phaseManager;
@@ -763,7 +766,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                             filepath)));
             oos.writeObject(saveFileVersionID);
             oos.writeObject(name);
-            oos.writeObject(Game.getGameOptions());
+            oos.writeObject(gameOptions);
             oos.writeObject(playerNames);
             oos.writeObject(executedActions);
             oos.close();
@@ -996,18 +999,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return startPacket;
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCurrentPhase()
-     */
     public PhaseI getCurrentPhase() {
         return phaseManager.getCurrentPhase();
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getPhaseManager()
-     */
     public PhaseManager getPhaseManager() {
         return phaseManager;
+    }
+
+    public String getGameName () {
+    	return gameName;
     }
 
     public PlayerManager getPlayerManager() {

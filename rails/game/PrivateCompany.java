@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.23 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.24 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -110,7 +110,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {}
+    public void finishConfiguration (GameManager gameManager) 
+    throws ConfigurationException {
+        
+        for (SpecialPropertyI sp : specialProperties) {
+            sp.finishConfiguration(gameManager);
+        }
+    }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override

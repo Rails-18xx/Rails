@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.5 2009/10/09 19:03:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.6 2009/10/30 21:53:03 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.GridLayout;
@@ -57,7 +57,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
     private void init() {
 
-        TileManager tmgr = TileManager.get();
+        TileManager tmgr = gameUIManager.getGameManager().getTileManager();
         TileI tile;
         Field label;
         BufferedImage hexImage;

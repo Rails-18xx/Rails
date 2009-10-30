@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.16 2008/12/11 20:12:07 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.17 2009/10/30 21:53:04 evos Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -272,7 +272,8 @@ public class LayTile extends PossibleORAction {
         relaidBaseTokens = (Map<String,Integer>)fields.get("relaidBaseTokens", relaidBaseTokens);
         relaidBaseTokensString = (String) fields.get("relaidBaseTokensString", relaidBaseTokensString);
 
-        MapManager mmgr = MapManager.getInstance();
+        MapManager mmgr = gameManager.getMapManager();
+        TileManager tmgr = gameManager.getTileManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {
@@ -283,7 +284,7 @@ public class LayTile extends PossibleORAction {
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<TileI>();
             for (int i = 0; i < tileIds.length; i++) {
-                tiles.add(TileManager.get().getTile(tileIds[i]));
+                tiles.add(tmgr.getTile(tileIds[i]));
             }
         }
         if (specialPropertyId > 0) {
@@ -291,10 +292,10 @@ public class LayTile extends PossibleORAction {
                     (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (laidTileId != 0) {
-            laidTile = TileManager.get().getTile(laidTileId);
+            laidTile = tmgr.getTile(laidTileId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
-            chosenHex = MapManager.getInstance().getHex(chosenHexName);
+            chosenHex = mmgr.getHex(chosenHexName);
         }
 
     }

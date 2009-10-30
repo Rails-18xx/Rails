@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.5 2009/10/08 21:14:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.6 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -114,7 +114,7 @@ public final class ReportBuffer {
         DateFormat dateFormat = new SimpleDateFormat(reportFilenamePattern);
         /* Create the pathname */
         reportPathname =
-                reportDirectory + "/" + Game.getName() + "_"
+                reportDirectory + "/" + GameManager.getInstance().getGameName() + "_"
                 		+ GameManager.getInstance().getKey() + "_"
                         + dateFormat.format(new Date()) + "."
                         + reportFilenameExtension;

@@ -512,7 +512,7 @@ public class ORUIManager {
     public void tileSelected(int tileId) {
 
         GUIHex hex = map.getSelectedHex();
-        TileI tile = TileManager.get().getTile(tileId);
+        TileI tile = gameUIManager.getGameManager().getTileManager().getTile(tileId);
 
         // Check if the new tile must be connected to some other track
         boolean mustConnect =

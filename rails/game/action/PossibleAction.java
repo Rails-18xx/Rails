@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.13 2009/10/29 19:41:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.14 2009/10/30 21:53:04 evos Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -23,6 +23,7 @@ public abstract class PossibleAction implements Serializable {
 
     protected String playerName;
     protected int playerIndex;
+    transient protected GameManagerI gameManager;
 
     protected boolean acted = false;
 
@@ -36,7 +37,8 @@ public abstract class PossibleAction implements Serializable {
      */
     public PossibleAction() {
 
-        Player player = GameManager.getInstance().getCurrentPlayer();
+    	gameManager = GameManager.getInstance();
+        Player player = gameManager.getCurrentPlayer();
         if (player != null) {
             playerName = player.getName();
             playerIndex = player.getIndex();
@@ -83,5 +85,7 @@ public abstract class PossibleAction implements Serializable {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
+    	gameManager = GameManager.getInstance();
+
     }
 }

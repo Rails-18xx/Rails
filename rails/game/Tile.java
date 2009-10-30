@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.28 2009/10/03 14:02:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.29 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -121,6 +121,8 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         }
         colourNumber -= TILE_NUMBER_OFFSET;
 
+        TileManager tileManager = GameManager.getInstance().getTileManager();
+
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();
@@ -227,17 +229,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                     for (int j = 0; j < idArray.length; j++) {
                         try {
                             id = Integer.parseInt(idArray[j]);
-                            upgradeTile = TileManager.get().getTile(id);
-                            if (upgradeTile != null) {
-                                upgrade = new Upgrade(upgradeTile);
-                                upgrades.add(upgrade);
-                                newUpgrades.add(upgrade);
-                            } else {
-                                throw new ConfigurationException(
-                                        LocalText.getText("UpgradeNotFound",
-                                                name,
-                                                id ));
-                            }
+                            upgrade = new Upgrade(id);
+                            upgrades.add(upgrade);
+                            newUpgrades.add(upgrade);
                         } catch (NumberFormatException e) {
                             throw new ConfigurationException(LocalText.getText(
                                     "NonNumericUpgrade",
@@ -278,6 +272,21 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
 
     }
 
+    public void finishConfiguration (TileManager tileManager) 
+    throws ConfigurationException {
+        
+        for (Upgrade upgrade : upgrades) {
+            
+            TileI tile = tileManager.getTile(upgrade.getTileId());
+            if (tile != null) {
+                upgrade.setTile(tile);
+            } else {
+                throw new ConfigurationException ("Cannot find upgrade tile #"
+                        +upgrade.getTileId()+" for tile #"+id);
+            }
+        }
+    }
+    
     /**
      * @return Returns the colour.
      */
@@ -444,6 +453,9 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     }
 
     protected class Upgrade {
+        
+        /** The upgrade tile id */
+        int tileId;
 
         /** The upgrade tile */
         TileI tile;
@@ -469,8 +481,8 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
          */
         String hexes = null;
 
-        protected Upgrade(TileI tile) {
-            this.tile = tile;
+        protected Upgrade(int tileId) {
+            this.tileId = tileId;
         }
 
         protected boolean isAllowedForHex(MapHex hex, String phaseName) {
@@ -491,8 +503,16 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
             }
         }
 
+        public void setTile(TileI tile) {
+            this.tile = tile;
+        }
+
         protected TileI getTile() {
             return tile;
+        }
+
+        public int getTileId() {
+            return tileId;
         }
 
         protected void setHexes(String hexes) {

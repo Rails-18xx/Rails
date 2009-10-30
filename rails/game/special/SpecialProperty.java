@@ -1,12 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.16 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.17 2009/10/30 21:53:04 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rails.game.ConfigurationException;
-import rails.game.GameManager;
-import rails.game.PrivateCompanyI;
+import rails.game.*;
 import rails.game.move.MoveableHolderI;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
@@ -30,6 +28,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     protected int uniqueId;
 
+    /** To give subclasses access to the various 'managers' */
+    protected GameManagerI gameManager;
+
     protected static Map<Integer, SpecialPropertyI> spMap =
             new HashMap<Integer, SpecialPropertyI>();
     protected static int lastIndex = 0;
@@ -37,6 +38,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     public SpecialProperty() {
         uniqueId = ++lastIndex;
         spMap.put(uniqueId, this);
+        gameManager = GameManager.getInstance();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -56,8 +58,11 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
         transferText = tag.getAttributeAsString("transfer", "");
     }
-    
-    public void finishConfiguration (GameManager gameManager) {}
+
+    public void finishConfiguration (GameManager gameManager) 
+    throws ConfigurationException {
+        
+    }
 
     public int getUniqueId() {
         return uniqueId;

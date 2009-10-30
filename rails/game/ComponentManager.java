@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.13 2009/10/29 19:41:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.14 2009/10/30 21:53:03 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -63,13 +63,14 @@ public class ComponentManager {
 
         instance = this;
         this.gameOptions = gameOptions;
+        log.debug("+++GameOptions="+gameOptions);
 
         ComponentManager.gameName = gameName;
         componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
         for (Tag component : componentTags) {
             String compName = component.getAttributeAsString("name");
             log.debug("Found component " + compName);
-            if (compName.equalsIgnoreCase("GameManager")) {
+            if (compName.equalsIgnoreCase(GameManager.GM_NAME)) {
                 configureComponent(component);
                 break;
             }
@@ -78,11 +79,12 @@ public class ComponentManager {
 
     public synchronized void finishPreparation() throws ConfigurationException {
 
-        for (Tag component : componentTags) {
-            String compName = component.getAttributeAsString("name");
-            if (compName.equalsIgnoreCase("GameManager")) continue;
+        for (Tag componentTag : componentTags) {
+            componentTag.setGameOptions(gameOptions);
+            String compName = componentTag.getAttributeAsString("name");
+            if (compName.equalsIgnoreCase(GameManager.GM_NAME)) continue;
             log.debug("Found component " + compName);
-            configureComponent(component);
+            configureComponent(componentTag);
         }
     }
 
@@ -136,6 +138,9 @@ public class ComponentManager {
             directories.add("data/" + gameName);
             configElement = Tag.findTopTagInFile(file, directories, name);
         }
+
+        log.debug("+++ Before configuring" +name+": gameOptions="+gameOptions);
+        configElement.setGameOptions(gameOptions);
 
         try {
             component.configureFromXML(configElement);
