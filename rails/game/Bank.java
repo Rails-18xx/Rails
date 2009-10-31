@@ -98,7 +98,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {
+    public void finishConfiguration (GameManagerI gameManager) {
         
         ReportBuffer.add(LocalText.getText("BankSizeIs",
                 format(money.getCash())));

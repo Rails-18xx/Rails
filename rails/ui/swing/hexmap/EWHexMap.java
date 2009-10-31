@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.8 2009/05/04 20:29:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.9 2009/10/31 17:08:27 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
@@ -22,8 +22,7 @@ public class EWHexMap extends HexMap {
     protected void setupHexesGUI() {
         hexes = new ArrayList<GUIHex>();
 
-        MapManager mmgr = MapManager.getInstance();
-        hexArray = mmgr.getHexes();
+        hexArray = MapManager.getInstance().getHexes();
         MapHex mh;
         h = new GUIHex[hexArray.length][hexArray[0].length];
         for (int i = 0; i < hexArray.length; i++) {

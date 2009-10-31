@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.ConfigurationException;
+import rails.game.GameManagerI;
 import rails.game.move.Moveable;
 import rails.game.special.SpecialProperty;
 import rails.util.Tag;
@@ -62,6 +63,14 @@ public class NameTrains extends SpecialProperty implements Moveable {
             }
         }
         description = description.replaceFirst(", $", "");
+    }
+
+    public void finishConfiguration (GameManagerI gameManager) 
+    throws ConfigurationException {
+        
+        for (NamedTrainToken token : tokens) {
+            token.finishConfiguration(gameManager);
+        }
     }
 
     public List<NamedTrainToken> getTokens() {

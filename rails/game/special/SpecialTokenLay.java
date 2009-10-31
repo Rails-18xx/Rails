@@ -1,7 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.10 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.11 2009/10/31 17:08:26 evos Exp $ */
 package rails.game.special;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
@@ -33,16 +32,6 @@ public class SpecialTokenLay extends SpecialProperty {
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException(
                     "SpecialTokenLay: location missing");
-        MapManager mmgr = MapManager.getInstance();
-        MapHex hex;
-        locations = new ArrayList<MapHex>();
-        for (String hexName : locationCodes.split(",")) {
-            hex = mmgr.getHex(hexName);
-            if (hex == null)
-                throw new ConfigurationException("Location " + hexName
-                                                 + " does not exist");
-            locations.add(hex);
-        }
 
         extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
         free = tokenLayTag.getAttributeAsBoolean("free", free);
@@ -71,6 +60,13 @@ public class SpecialTokenLay extends SpecialProperty {
             throw new ConfigurationException("Cannot instantiate class "
                                              + tokenClassName, e);
         }
+    }
+
+    @Override
+    public void finishConfiguration (GameManagerI gameManager) 
+    throws ConfigurationException {
+
+        locations = gameManager.getMapManager().parseLocations(locationCodes);
     }
 
     public boolean isExecutionable() {

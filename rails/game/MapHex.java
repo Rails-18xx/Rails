@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.27 2009/10/09 22:29:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.28 2009/10/31 17:08:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -172,7 +172,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {
+    public void finishConfiguration (GameManagerI gameManager) {
         
         currentTile = gameManager.getTileManager().getTile(preprintedTileId);
         // We need completely new objects, not just references to the Tile's

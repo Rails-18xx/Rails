@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.4 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.5 2009/10/31 17:08:27 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -63,8 +63,7 @@ public class UseSpecialProperty extends PossibleORAction {
         in.defaultReadObject();
 
         if (specialPropertyId > 0) {
-            specialProperty =
-                    (SpecialPropertyI) SpecialProperty.getByUniqueId(specialPropertyId);
+            specialProperty = SpecialProperty.getByUniqueId(specialPropertyId);
         }
     }
 

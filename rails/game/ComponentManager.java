@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.14 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.15 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -63,7 +63,6 @@ public class ComponentManager {
 
         instance = this;
         this.gameOptions = gameOptions;
-        log.debug("+++GameOptions="+gameOptions);
 
         ComponentManager.gameName = gameName;
         componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
@@ -139,7 +138,6 @@ public class ComponentManager {
             configElement = Tag.findTopTagInFile(file, directories, name);
         }
 
-        log.debug("+++ Before configuring" +name+": gameOptions="+gameOptions);
         configElement.setGameOptions(gameOptions);
 
         try {

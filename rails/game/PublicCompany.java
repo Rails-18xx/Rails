@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.69 2009/10/29 19:40:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.70 2009/10/31 17:08:26 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -626,7 +626,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void finishConfiguration(GameManager gameManager)
+    public void finishConfiguration(GameManagerI gameManager)
     throws ConfigurationException {
 
         this.gameManager = gameManager;

@@ -1,7 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.1 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.2 2009/10/31 17:08:26 evos Exp $ */
 package rails.game.special;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
@@ -35,13 +34,18 @@ public class LocatedBonus extends SpecialProperty {
         locationCodes = bonusTag.getAttributeAsString("location");
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException("LocatedBonus: location missing");
-        parseLocations ();
 
         name = bonusTag.getAttributeAsString("name");
 
         value = bonusTag.getAttributeAsInteger("value");
         if (value <= 0)
             throw new ConfigurationException("Value invalid ["+value+"] or missing");
+    }
+
+    public void finishConfiguration (GameManager gameManager) 
+    throws ConfigurationException {
+        
+        locations = gameManager.getMapManager().parseLocations(locationCodes);
     }
 
     public boolean isExecutionable() {
@@ -64,25 +68,10 @@ public class LocatedBonus extends SpecialProperty {
         return value;
     }
 
-    private void parseLocations ()
-    throws ConfigurationException {
-
-        MapManager mmgr = MapManager.getInstance();
-        MapHex hex;
-        locations = new ArrayList<MapHex>();
-        for (String hexName : locationCodes.split(",")) {
-            hex = mmgr.getHex(hexName);
-            if (hex == null)
-                throw new ConfigurationException("Location " + hexName
-                                                 + " does not exist");
-            locations.add(hex);
-        }
-    }
 
 	@Override
 	public String toString() {
         return "LocatedBonus "+name+" comp=" + privateCompany.getName() + " hex="
                + locationCodes + " value=" + value;
     }
-
 }

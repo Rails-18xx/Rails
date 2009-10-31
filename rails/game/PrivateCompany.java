@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.24 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.25 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected boolean closeIfAnyExercised = false;
     protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
 
+    protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
 
     public PrivateCompany() {
@@ -45,16 +46,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             // Blocked hexes (until bought by a company)
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
-                String[] hexes =
-                        blockedTag.getAttributeAsString("hex").split(",");
-                if (hexes != null && hexes.length > 0) {
-                    blockedHexes = new ArrayList<MapHex>();
-                    for (String hexName : hexes) {
-                        MapHex hex = MapManager.getInstance().getHex(hexName);
-                        blockedHexes.add(hex);
-                        hex.setBlocked(true);
-                    }
-                }
+                blockedHexesString =
+                        blockedTag.getAttributeAsString("hex");
             }
 
             // Special properties
@@ -110,13 +103,23 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     }
 
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (GameManagerI gameManager) 
     throws ConfigurationException {
         
         for (SpecialPropertyI sp : specialProperties) {
             sp.finishConfiguration(gameManager);
         }
-    }
+
+        if (Util.hasValue(blockedHexesString)) {
+            MapManager mapManager = gameManager.getMapManager();
+            blockedHexes = new ArrayList<MapHex>();
+            for (String hexName : blockedHexesString.split(",")) {
+                MapHex hex = mapManager.getHex(hexName);
+                blockedHexes.add(hex);
+                hex.setBlocked(true);
+            }
+        }
+}
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
@@ -182,7 +185,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         // For 1856: buyable tokens move to Bank
         for (SpecialPropertyI sp : specialProperties) {
         	if (sp instanceof SellBonusToken) {
-        		((SellBonusToken)sp).setSeller((CashHolder)Bank.getInstance());
+        		((SellBonusToken)sp).setSeller(Bank.getInstance());
         	}
         }
     }

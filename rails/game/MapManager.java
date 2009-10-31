@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.10 2009/10/09 22:29:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.11 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -96,7 +96,7 @@ public class MapManager implements ConfigurableComponentI {
         }
     }
 
-    public void finishConfiguration (GameManager gameManager) {
+    public void finishConfiguration (GameManagerI gameManager) {
 
         MapHex hex;
         int i, j, k, dx, dy;
@@ -201,4 +201,25 @@ public class MapManager implements ConfigurableComponentI {
         }
         return stations;
     }
+    
+    public List<MapHex> parseLocations (String locationCodes) 
+    throws ConfigurationException {
+
+        List<MapHex> locations = new ArrayList<MapHex>();
+        MapHex hex;
+        locations = new ArrayList<MapHex>();
+        for (String hexName : locationCodes.split(",")) {
+            hex = getHex(hexName);
+            if (hex != null) {
+                locations.add(hex);
+            } else {
+                throw new ConfigurationException ("Invalid hex "+hexName+
+                        " specified in location string "+locationCodes);
+            }
+        }
+        
+        return locations;
+    }
+
+
 }

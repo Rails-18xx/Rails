@@ -39,7 +39,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
         this.price = price;
         this.type = type;
         this.row = Integer.parseInt(name.substring(1)) - 1;
-        this.column = (int) (name.toUpperCase().charAt(0) - '@') - 1;
+        this.column = (name.toUpperCase().charAt(0) - '@') - 1;
     }
 
     public StockSpace(String name, int price) {

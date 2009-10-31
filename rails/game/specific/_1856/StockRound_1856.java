@@ -53,7 +53,6 @@ public class StockRound_1856 extends StockRound {
         Portfolio oldHolder = (Portfolio) cert.getHolder();
 
         if (price != 0
-                && cert instanceof PublicCertificateI
                 && !cert.getCompany().getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && oldHolder == ipo) {
 
