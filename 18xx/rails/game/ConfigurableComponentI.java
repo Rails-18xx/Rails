@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.6 2009/10/10 15:25:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.7 2009/10/31 17:08:26 evos Exp $ */
 package rails.game;
 
 import rails.util.Tag;
@@ -31,7 +31,7 @@ public interface ConfigurableComponentI {
      * the 'child' to access any other object without the need to resort to
      * static calls where possible. 
      */
-    void finishConfiguration (GameManager parent)
+    void finishConfiguration (GameManagerI parent)
     throws ConfigurationException;
 
 }

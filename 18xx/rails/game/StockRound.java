@@ -785,8 +785,7 @@ public class StockRound extends Round {
         Portfolio oldHolder = (Portfolio) cert.getHolder();
         PublicCompanyI comp;
         CashHolder recipient;
-        if (cert instanceof PublicCertificateI
-            && (comp = (cert).getCompany()).hasFloated()
+        if ((comp = (cert).getCompany()).hasFloated()
             && oldHolder == ipo
             && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
             recipient = comp;

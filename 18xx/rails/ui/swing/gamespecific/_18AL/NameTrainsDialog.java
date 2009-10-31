@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18AL/NameTrainsDialog.java,v 1.3 2008/06/04 19:00:40 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18AL/NameTrainsDialog.java,v 1.4 2009/10/31 17:08:27 evos Exp $*/
 package rails.ui.swing.gamespecific._18AL;
 
 import java.awt.*;
@@ -175,8 +175,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
 
             // Find the coordinates of the selected button
             for (NamedTrainToken token : tokens) {
-                List<JRadioButton> buttons =
-                        (List<JRadioButton>) buttonsPerToken.get(token);
+                List<JRadioButton> buttons = buttonsPerToken.get(token);
                 for (JRadioButton button : buttons) {
                     if (button == radioButton) {
                         x = buttons.indexOf(button);
@@ -200,7 +199,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
                     for (NamedTrainToken otherToken : tokens) {
                         if (otherToken != token) {
                             List<JRadioButton> otherButtons =
-                                    (List<JRadioButton>) buttonsPerToken.get(otherToken);
+                                    buttonsPerToken.get(otherToken);
                             JRadioButton otherButton = otherButtons.get(x);
                             if (otherButton.isSelected()) {
                                 otherButtons.get(trains.size()).setSelected(

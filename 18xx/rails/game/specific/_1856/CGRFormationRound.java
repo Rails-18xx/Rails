@@ -513,7 +513,8 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (comp.getBonuses() != null) {
 	            List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
 	            for (Bonus bonus : bonuses) {
-	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(), bonus.getLocationNameString()));
+	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(), 
+                            bonus.getLocations()));
 	            	comp.removeBonus(bonus);
 	            }
             }

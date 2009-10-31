@@ -1,7 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.1 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.2 2009/10/31 17:08:26 evos Exp $ */
 package rails.game.special;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
@@ -33,16 +32,6 @@ public class SellBonusToken extends SpecialProperty {
         locationCodes = sellBonusTokenTag.getAttributeAsString("location");
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException("SellBonusToken: location missing");
-        MapManager mmgr = MapManager.getInstance();
-        MapHex hex;
-        locations = new ArrayList<MapHex>();
-        for (String hexName : locationCodes.split(",")) {
-            hex = mmgr.getHex(hexName);
-            if (hex == null)
-                throw new ConfigurationException("Location " + hexName
-                                                 + " does not exist");
-            locations.add(hex);
-        }
 
         name = sellBonusTokenTag.getAttributeAsString("name");
 
@@ -59,7 +48,13 @@ public class SellBonusToken extends SpecialProperty {
         seller = new State ("SellerOf_"+name+"_Bonus", CashHolder.class);
     }
 
-    @Override
+    public void finishConfiguration (GameManager gameManager) 
+    throws ConfigurationException {
+        
+        locations = gameManager.getMapManager().parseLocations(locationCodes);
+    }
+
+     @Override
 	public void setExercised () {
     	numberSold++;
     	if (maxNumberToSell >= 0 && numberSold >= maxNumberToSell) {

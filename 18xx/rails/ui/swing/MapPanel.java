@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.9 2008/06/30 20:35:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.10 2009/10/31 17:08:26 evos Exp $*/
 package rails.ui.swing;
 
 import javax.swing.*;
@@ -33,6 +33,7 @@ public class MapPanel extends JPanel {
         Scale.set(15);
         setLayout(new BorderLayout());
 
+        //mmgr = orUIManager.getGameUIManager().getGameManager().getMapManager();
         mmgr = MapManager.getInstance();
         try {
             map =

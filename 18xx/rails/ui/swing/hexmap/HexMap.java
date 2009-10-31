@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.16 2009/09/08 21:48:58 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.17 2009/10/31 17:08:27 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import org.apache.log4j.Logger;
 
 import rails.game.MapHex;
+import rails.game.MapManager;
 import rails.game.PhaseI;
 import rails.game.action.*;
 import rails.ui.swing.ORUIManager;
@@ -28,6 +29,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
             Logger.getLogger(HexMap.class.getPackage().getName());
 
     protected ORUIManager orUIManager;
+    //protected MapManager mapManager;
 
     // Abstract Methods
     protected abstract void setupHexesGUI();
@@ -62,6 +64,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public void setORUIManager(ORUIManager orUIManager) {
         this.orUIManager = orUIManager;
+        //this.mapManager = orUIManager.getGameUIManager().getGameManager().getMapManager();
     }
 
     public void setupHexes() {

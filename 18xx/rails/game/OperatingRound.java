@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.73 2009/10/09 19:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.74 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -672,7 +672,7 @@ public class OperatingRound extends Round implements Observer {
 
        		operatingCompany.addBonus(new Bonus(operatingCompany,
         				token.getName(),
-        				token.getValue(), hex.getName()));
+        				token.getValue(), Collections.singletonList(hex)));
             token.setUser(operatingCompany);
 
             ReportBuffer.add(LocalText.getText("LaysBonusTokenOn",
@@ -735,7 +735,8 @@ public class OperatingRound extends Round implements Observer {
         new CashMove (operatingCompany, seller, cost);
   		operatingCompany.addBonus(new Bonus(operatingCompany,
     				sbt.getName(),
-    				sbt.getValue(), sbt.getLocationNameString()));
+    				sbt.getValue(), 
+                    sbt.getLocations()));
 
         ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
                 operatingCompany.getName(),

@@ -121,7 +121,7 @@ public class StartCompany_18EU extends StartCompany {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
 
-        MapManager mapManager = MapManager.getInstance();
+        MapManager mapManager = GameManager.getInstance().getMapManager();
         if (availableHomeStationNames != null) {
             availableHomeStations = new ArrayList<City>();
             for (String cityName : availableHomeStationNames.split(",")) {

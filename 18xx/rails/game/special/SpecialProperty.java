@@ -1,8 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.17 2009/10/30 21:53:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.18 2009/10/31 17:08:26 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.move.MoveableHolderI;
@@ -34,6 +36,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected static Map<Integer, SpecialPropertyI> spMap =
             new HashMap<Integer, SpecialPropertyI>();
     protected static int lastIndex = 0;
+    
+    protected static Logger log =
+        Logger.getLogger(SpecialProperty.class.getPackage().getName());
 
     public SpecialProperty() {
         uniqueId = ++lastIndex;
@@ -59,7 +64,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         transferText = tag.getAttributeAsString("transfer", "");
     }
 
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (GameManagerI gameManager) 
     throws ConfigurationException {
         
     }

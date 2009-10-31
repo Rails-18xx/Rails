@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.29 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.30 2009/10/31 17:08:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -121,8 +121,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         }
         colourNumber -= TILE_NUMBER_OFFSET;
 
-        TileManager tileManager = GameManager.getInstance().getTileManager();
-
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();
@@ -215,7 +213,6 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
             String ids;
             int id;
             String[] idArray;
-            TileI upgradeTile;
             Upgrade upgrade;
             String hexes;
 

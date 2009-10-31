@@ -55,7 +55,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             int tokenIndex;
             for (NameableTrain train : nameableTrains) {
                 trainIds[trainIndex] = train.getUniqueId();
-                NamedTrainToken token = ((NameableTrain) train).getNameToken();
+                NamedTrainToken token = train.getNameToken();
                 if (token != null) {
                     preTrainPerToken.set(tokens.indexOf(token), train);
                     tokenIndex = tokens.indexOf(token);

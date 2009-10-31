@@ -1,7 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.1 2009/09/23 21:38:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.2 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +18,6 @@ import java.util.List;
 public class Bonus implements Closeable {
 
 	private PublicCompanyI owner;
-    private String locationCodes = null;
     private List<MapHex> locations = null;
     private String name;
     private int value;
@@ -27,12 +25,11 @@ public class Bonus implements Closeable {
     private Object removingObject = null;
 
     public Bonus (PublicCompanyI owner,
-    		String name, int value, String locationCodes) {
-    	this.owner = owner;
-    	this.name = name;
-    	this.value = value;
-    	this.locationCodes = locationCodes;
-   		parseLocations();
+            String name, int value, List<MapHex> locations) {
+        this.owner = owner;
+        this.name = name;
+        this.value = value;
+        this.locations = locations;
     }
 
     public boolean isExecutionable() {
@@ -48,7 +45,15 @@ public class Bonus implements Closeable {
     }
 
     public String getLocationNameString() {
-        return locationCodes;
+
+        if (locations == null || locations.isEmpty()) return "";
+        
+        StringBuffer b = new StringBuffer();
+        for (MapHex location : locations) {
+            if (b.length() > 0) b.append(",");
+            b.append(location.getName());
+        }
+        return b.toString();
     }
 
     public String getName() {
@@ -57,17 +62,6 @@ public class Bonus implements Closeable {
 
     public int getValue() {
         return value;
-    }
-
-    private void parseLocations () {
-
-        MapManager mmgr = MapManager.getInstance();
-        MapHex hex;
-        locations = new ArrayList<MapHex>();
-        for (String hexName : locationCodes.split(",")) {
-            hex = mmgr.getHex(hexName);
-            if (hex != null) locations.add(hex);
-        }
     }
 
     /**
@@ -105,7 +99,7 @@ public class Bonus implements Closeable {
 	@Override
 	public String toString() {
         return "Bonus "+name+" hex="
-               + locationCodes + " value=" + value;
+               + getLocationNameString() + " value=" + value;
     }
 
 }

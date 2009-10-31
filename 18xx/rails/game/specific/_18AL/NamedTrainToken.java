@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.Bank;
+import rails.game.ConfigurableComponentI;
 import rails.game.ConfigurationException;
+import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.Token;
 import rails.util.Tag;
 import rails.util.Util;
 
-public class NamedTrainToken extends Token {
+public class NamedTrainToken extends Token implements ConfigurableComponentI {
 
     private String name;
     private String longName;
@@ -44,17 +46,17 @@ public class NamedTrainToken extends Token {
         }
 
         hexesString = tag.getAttributeAsString("ifRouteIncludes");
-        if (hexesString != null) {
-            MapHex hex;
-            hexes = new ArrayList<MapHex>(2);
-            for (String hexName : hexesString.split(",")) {
-                hex = MapManager.getInstance().getHex(hexName);
-                hexes.add(hex);
-            }
-        }
 
         description =
                 longName + " [" + hexesString + "] +" + Bank.format(value);
+    }
+
+    public void finishConfiguration (GameManagerI gameManager) 
+    throws ConfigurationException {
+        
+        if (hexesString != null) {
+            hexes = gameManager.getMapManager().parseLocations(hexesString);
+        }
     }
 
     public String getName() {

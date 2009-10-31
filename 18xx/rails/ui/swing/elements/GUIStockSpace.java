@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.6 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.7 2009/10/31 17:08:27 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -98,7 +98,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
         GUIToken token;
 
         for (int k = tokenList.size() - 1; k >= 0; k--) {
-            co = (PublicCompanyI) tokenList.get(k);
+            co = tokenList.get(k);
             bgColour = co.getBgColour();
             fgColour = co.getFgColour();
 

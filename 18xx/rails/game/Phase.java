@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.13 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.14 2009/10/31 17:08:27 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -142,7 +142,7 @@ public class Phase implements PhaseI {
         }
     }
 
-    public void finishConfiguration (GameManager gameManager) {}
+    public void finishConfiguration (GameManagerI gameManager) {}
 
     /** Called when a phase gets activated */
     public void activate() {
