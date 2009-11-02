@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.16 2009/09/06 16:16:56 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.17 2009/11/02 23:30:36 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -54,7 +54,7 @@ public class GUITile {
     }
 
     private void initialise() {
-        if (MapManager.getTileOrientation() == MapHex.EW) {
+        if (hex.getTileOrientation() == MapHex.EW) {
             baseRotation = 0.5 * DEG60;
         } else {
             baseRotation = 0.0;
@@ -67,8 +67,8 @@ public class GUITile {
     }
 
     /**
-     * Rotate right (clockwise) until a valid orientation is found. 
-     * 
+     * Rotate right (clockwise) until a valid orientation is found.
+     *
      * @param initial: First rotation to try. Should be 0 for the initial tile
      * drop, and 1 at subsequent rotation attempts.
      * @return <b>false</b> if no valid rotation exists (i.e. the tile cannot
@@ -139,15 +139,15 @@ public class GUITile {
                                     oldCities.put(prevTileSide,
                                         oldTrack.getEndPoint(prevTileSide));
                                 } else {
-                                    // Assume there are only two exits 
-                                    // (this is the only known case for downgrading: 
+                                    // Assume there are only two exits
+                                    // (this is the only known case for downgrading:
                                     // #3->#7, #4->#9, #58->#8).
                                     // Find the other new exit
                                     int otherNewEndPoint = newTracks.get(0).getEndPoint(tempTileSide);
-                                    // Calculate the corresponding old tile side number                                   
+                                    // Calculate the corresponding old tile side number
                                     int otherOldEndPoint = (otherNewEndPoint + tempRot - prevTileRotation + 6) % 6;
                                                // That old tile side must have track too
-                                    if (prevTile.getTracksPerSide(otherOldEndPoint) == null 
+                                    if (prevTile.getTracksPerSide(otherOldEndPoint) == null
                                             || prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
                                         continue rot;
                                     }

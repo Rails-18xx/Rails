@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.28 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.29 2009/11/02 23:30:36 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -41,9 +41,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     public static final int EW = 0;
     public static final int NS = 1;
-    protected static int tileOrientation;
-    protected static boolean lettersGoHorizontal;
-    protected static boolean letterAHasEvenNumbers;
 
     private static final String[] ewOrNames =
             { "SW", "W", "NW", "NE", "E", "SE" };
@@ -92,7 +89,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
     protected List<TokenI> offStationTokens;
-    
+
     protected MapManager mapManager = null;
 
     protected static Logger log =
@@ -124,10 +121,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
          * Translate hex names (as on the board) to coordinates used for
          * drawing.
          */
-        if (lettersGoHorizontal) {
+        if (lettersGoHorizontal()) {
             row = number;
             column = letter - '@';
-            if (tileOrientation == MapHex.EW) {
+            if (getTileOrientation() == MapHex.EW) {
                 // Tiles with flat EW sides, letters go horizontally.
                 // Example: 1841 (NOT TESTED, PROBABLY WRONG).
                 x = column;
@@ -143,11 +140,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         {
             row = letter - '@';
             column = number;
-            if (tileOrientation == MapHex.EW) {
+            if (getTileOrientation() == MapHex.EW) {
                 // Tiles with flat EW sides, letters go vertically.
                 // Most common case.
                 // Tested for 1830 and 1870.
-                x = (column + (letterAHasEvenNumbers ? 1 : 0)) / 2;
+                x = (column + (letterAHasEvenNumbers() ? 1 : 0)) / 2;
                 y = row;
             } else {
                 // Tiles with flat NS sides, letters go vertically.
@@ -173,7 +170,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
-        
+
         currentTile = gameManager.getTileManager().getTile(preprintedTileId);
         // We need completely new objects, not just references to the Tile's
         // stations.
@@ -209,42 +206,27 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         return true;
     }
 
-    public static void setTileOrientation(int orientation) {
-        tileOrientation = orientation;
-    }
-
-    public static int getTileOrientation() {
-        return tileOrientation;
-    }
-
-    public static void setLettersGoHorizontal(boolean b) {
-        lettersGoHorizontal = b;
+    public int getTileOrientation() {
+        return mapManager.getTileOrientation();
     }
 
     /**
      * @return Returns the letterAHasEvenNumbers.
      */
-    public static boolean hasLetterAEvenNumbers() {
-        return letterAHasEvenNumbers;
-    }
-
-    /**
-     * @param letterAHasEvenNumbers The letterAHasEvenNumbers to set.
-     */
-    public static void setLetterAHasEvenNumbers(boolean letterAHasEvenNumbers) {
-        MapHex.letterAHasEvenNumbers = letterAHasEvenNumbers;
+    public boolean letterAHasEvenNumbers() {
+        return mapManager.letterAHasEvenNumbers();
     }
 
     /**
      * @return Returns the lettersGoHorizontal.
      */
-    public static boolean isLettersGoHorizontal() {
-        return lettersGoHorizontal;
+    public boolean lettersGoHorizontal() {
+        return mapManager.lettersGoHorizontal();
     }
 
-    public static String getOrientationName(int orientation) {
+    public String getOrientationName(int orientation) {
 
-        if (tileOrientation == EW) {
+        if (getTileOrientation() == EW) {
             return ewOrNames[orientation % 6];
         } else {
             return nsOrNames[orientation % 6];
@@ -319,33 +301,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     public int getCurrentTileRotation() {
         return currentTileRotation;
-    }
-
-    /** Look for the Hex matching the Label in the terrain static map */
-    /* EV: useful, but needs to be rewritten */
-    public static MapHex getHexByLabel(String terrain, String label) {
-        /*
-         * int x = 0; int y = Integer.parseInt(new String(label.substring(1)));
-         * switch (label.charAt(0)) { case 'A': case 'a': x = 0; break;
-         *
-         * case 'B': case 'b': x = 1; break;
-         *
-         * case 'C': case 'c': x = 2; break;
-         *
-         * case 'D': case 'd': x = 3; break;
-         *
-         * case 'E': case 'e': x = 4; break;
-         *
-         * case 'F': case 'f': x = 5; break;
-         *
-         * case 'X': case 'x': // entrances GUIHex[] gameEntrances = (GUIHex[])
-         * entranceHexes.get(terrain); return gameEntrances[y].getMapHexModel();
-         *
-         * default: Log.error("Label " + label + " is invalid"); } y = 6 - y -
-         * (int) Math.abs(((x - 3) / 2)); GUIHex[][] correctHexes = (GUIHex[][])
-         * terrainH.get(terrain); return correctHexes[x][y].getMapHexModel();
-         */
-        return null;
     }
 
     public int getTileCost() {
@@ -962,7 +917,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             && hex.column == column) return true;
         return false;
     }
-    
+
     public MapManager getMapManager() {
         return mapManager;
     }
@@ -1000,7 +955,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
                     if (endPoint < 0) continue;
                     int direction = rotation + endPoint;
                     if (b.length() > 0) b.append(",");
-                    b.append(MapHex.getOrientationName(direction));
+                    b.append(getOrientationName(direction));
                 }
             }
         }

@@ -1,10 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.9 2009/10/31 17:08:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.10 2009/11/02 23:30:36 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import rails.game.*;
+import rails.game.MapHex;
 
 /**
  * Class EWHexMap displays a basic hex map with EW exit orientation.
@@ -14,15 +14,15 @@ public class EWHexMap extends HexMap {
     private static final long serialVersionUID = 1L;
 
     public EWHexMap() {
-        setupHexes();
         cx = scale / 2;
         cy = 0;
     }
 
-    protected void setupHexesGUI() {
+    @Override
+	protected void setupHexesGUI() {
         hexes = new ArrayList<GUIHex>();
 
-        hexArray = MapManager.getInstance().getHexes();
+        hexArray = mapManager.getHexes();
         MapHex mh;
         h = new GUIHex[hexArray.length][hexArray[0].length];
         for (int i = 0; i < hexArray.length; i++) {

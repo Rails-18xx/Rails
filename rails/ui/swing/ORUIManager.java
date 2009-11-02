@@ -80,10 +80,13 @@ public class ORUIManager {
 
     }
 
+    public void setGameUIManager (GameUIManager gameUIManager) {
+    	this.gameUIManager = gameUIManager;
+    }
+
     public void init(ORWindow orWindow) {
 
         this.orWindow = orWindow;
-        gameUIManager = orWindow.getGameUIManager();
 
         orPanel = orWindow.getORPanel();
         mapPanel = orWindow.getMapPanel();
