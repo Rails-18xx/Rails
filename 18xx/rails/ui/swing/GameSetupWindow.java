@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.13 2009/05/04 20:29:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.14 2009/11/02 23:30:35 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -388,12 +388,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     }
     
     private void startGameUIManager(Game game) {
-        String gameUIManagerClassName = game.getGameManager().getClassName(Defs.ClassName.GAME_UI_MANAGER);
+        GameManagerI gameManager = game.getGameManager();
+        String gameUIManagerClassName = gameManager.getClassName(Defs.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(this);
+            gameUIManager.init(gameManager);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class " + gameUIManagerClassName, e);
             System.exit(1);

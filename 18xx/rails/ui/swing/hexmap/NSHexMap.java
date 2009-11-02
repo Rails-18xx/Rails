@@ -1,11 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.8 2009/10/31 17:08:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.9 2009/11/02 23:30:36 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import rails.game.*;
-import rails.ui.swing.*;
+import rails.game.MapHex;
+import rails.ui.swing.Scale;
 
 /**
  * Class NSHexMap displays a basic hex map with NS exit orientation.
@@ -15,17 +15,17 @@ public class NSHexMap extends HexMap {
     private static final long serialVersionUID = 1L;
 
     public NSHexMap() {
-        setupHexes();
         cx = 0;
         cy = -scale / 2;
     }
 
-    protected void setupHexesGUI() {
+    @Override
+	protected void setupHexesGUI() {
         hexes = new ArrayList<GUIHex>();
 
         scale = Scale.get();
 
-        hexArray = MapManager.getInstance().getHexes();
+        hexArray = mapManager.getHexes();
         MapHex mh;
         h = new GUIHex[hexArray.length][hexArray[0].length];
         for (int i = 0; i < hexArray.length; i++) {

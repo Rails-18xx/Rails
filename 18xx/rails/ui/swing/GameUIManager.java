@@ -27,7 +27,6 @@ public class GameUIManager {
     public ORUIManager orUIManager;
     public ORWindow orWindow; // TEMPORARY
     private StartRoundWindow startRoundWindow;
-    public GameSetupWindow gameSetupWindow;
     public static ImageLoader imageLoader;
 
     private GameManagerI gameManager;
@@ -55,10 +54,10 @@ public class GameUIManager {
 
     }
 
-    public void init (GameSetupWindow gameSetupWindow) {
+    public void init (GameManagerI gameManager) {
 
         instance = this;
-        this.gameSetupWindow = gameSetupWindow;
+        this.gameManager = gameManager;
 
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
@@ -74,12 +73,9 @@ public class GameUIManager {
             saveExtension = DEFAULT_SAVE_EXTENSION;
         }
 
-        //gameSetupWindow = new GameSetupWindow(this);
-
     }
 
     public void gameUIInit() {
-        gameManager = GameManager.getInstance();
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
         reportWindow = new ReportWindow(gameManager);
@@ -437,37 +433,6 @@ public class GameUIManager {
         }
     }
 
-    /*
-    public boolean loadGame() {
-
-        JFileChooser jfc = new JFileChooser();
-        if (providedName != null) {
-            jfc.setSelectedFile(new File(providedName));
-        } else {
-            jfc.setCurrentDirectory(new File(saveDirectory));
-        }
-
-        if (jfc.showOpenDialog(gameSetupWindow.getContentPane()) == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
-            String filepath = selectedFile.getPath();
-            saveDirectory = selectedFile.getParent();
-
-            if (!Game.load(filepath)) {
-                JOptionPane.showMessageDialog(gameSetupWindow,
-                        DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-            DisplayBuffer.clear();
-
-            gameUIInit();
-            processOnServer(null);
-            statusWindow.setGameActions();
-        }
-
-        return true;
-    }
-    */
-
     public PossibleAction getLastAction() {
         return lastAction;
     }
@@ -478,6 +443,14 @@ public class GameUIManager {
 
     public GameManagerI getGameManager() {
         return gameManager;
+    }
+
+    public void setORUIManager(ORUIManager orUIManager) {
+        this.orUIManager = orUIManager;
+    }
+
+    public ORUIManager getORUIManager() {
+        return orUIManager;
     }
 
     public RoundI getCurrentRound() {

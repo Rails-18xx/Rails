@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.11 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.12 2009/11/02 23:30:36 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,15 +11,14 @@ import rails.util.Tag;
 public class MapManager implements ConfigurableComponentI {
 
     private String mapUIClassName = null;
-    private static MapManager instance = null;
 
     // The next attributes are duplicates in MapHex. We'll see what we really
     // need.
-    protected static int tileOrientation;
-    protected static boolean lettersGoHorizontal;
-    protected static boolean letterAHasEvenNumbers;
+    protected int tileOrientation;
+    protected boolean lettersGoHorizontal;
+    protected boolean letterAHasEvenNumbers;
 
-    protected static MapHex[][] hexes;
+    protected MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
     protected int maxX, maxY;
 
@@ -35,7 +34,6 @@ public class MapManager implements ConfigurableComponentI {
     protected static final int[] yDeltaEW = new int[] { +1, 0, -1, -1, 0, +1 };
 
     public MapManager() {
-        instance = this;
     }
 
     /**
@@ -52,10 +50,8 @@ public class MapManager implements ConfigurableComponentI {
             throw new ConfigurationException("Map orientation undefined");
         if (attr.equals("EW")) {
             tileOrientation = MapHex.EW;
-            MapHex.setTileOrientation(MapHex.EW);
         } else if (attr.equals("NS")) {
             tileOrientation = MapHex.NS;
-            MapHex.setTileOrientation(MapHex.NS);
         } else {
             throw new ConfigurationException("Invalid tile orientation: "
                                              + attr);
@@ -70,11 +66,9 @@ public class MapManager implements ConfigurableComponentI {
             throw new ConfigurationException("Invalid letter orientation: "
                                              + attr);
         }
-        MapHex.setLettersGoHorizontal(lettersGoHorizontal);
 
         attr = tag.getAttributeAsString("even");
         letterAHasEvenNumbers = ((attr.toUpperCase().charAt(0) - 'A')) % 2 == 0;
-        MapHex.setLetterAHasEvenNumbers(letterAHasEvenNumbers);
 
         List<Tag> hexTags = tag.getChildren("Hex");
         MapHex hex;
@@ -115,7 +109,7 @@ public class MapManager implements ConfigurableComponentI {
         for (i = 0; i <= maxX; i++) {
             for (j = 0; j <= maxY; j++) {
                 if ((hex = hexes[i][j]) == null) continue;
-                
+
                 for (k = 0; k < 6; k++) {
                     if (tileOrientation == MapHex.EW) {
                         dx = (j % 2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
@@ -149,30 +143,23 @@ public class MapManager implements ConfigurableComponentI {
     }
 
     /**
-     * @return an instance of the MapManager
-     */
-    public static MapManager getInstance() {
-        return instance;
-    }
-
-    /**
      * @return Returns the letterAHasEvenNumbers.
      */
-    public static boolean letterAHasEvenNumbers() {
+    public boolean letterAHasEvenNumbers() {
         return letterAHasEvenNumbers;
     }
 
     /**
      * @return Returns the lettersGoHorizontal.
      */
-    public static boolean lettersGoHorizontal() {
+    public boolean lettersGoHorizontal() {
         return lettersGoHorizontal;
     }
 
     /**
      * @return Returns the currentTileOrientation.
      */
-    public static int getTileOrientation() {
+    public int getTileOrientation() {
         return tileOrientation;
     }
 
@@ -201,8 +188,8 @@ public class MapManager implements ConfigurableComponentI {
         }
         return stations;
     }
-    
-    public List<MapHex> parseLocations (String locationCodes) 
+
+    public List<MapHex> parseLocations (String locationCodes)
     throws ConfigurationException {
 
         List<MapHex> locations = new ArrayList<MapHex>();
@@ -217,7 +204,7 @@ public class MapManager implements ConfigurableComponentI {
                         " specified in location string "+locationCodes);
             }
         }
-        
+
         return locations;
     }
 

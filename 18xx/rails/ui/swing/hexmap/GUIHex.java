@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.22 2009/10/29 19:41:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.23 2009/11/02 23:30:35 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -84,7 +84,7 @@ public class GUIHex implements ViewObject {
             double xCoord, double yCoord) {
         this.hexMap = hexMap;
 
-        if (MapManager.getTileOrientation() == MapHex.EW) {
+        if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
             len = scale;
             xVertex[0] = cx + SQRT3 / 2 * scale;
             yVertex[0] = cy + 0.5 * scale;

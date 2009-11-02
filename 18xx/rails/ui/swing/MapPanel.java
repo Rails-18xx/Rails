@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.10 2009/10/31 17:08:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.11 2009/11/02 23:30:34 evos Exp $*/
 package rails.ui.swing;
 
 import javax.swing.*;
@@ -23,22 +23,21 @@ public class MapPanel extends JPanel {
     private MapManager mmgr;
     private HexMap map;
     private JScrollPane scrollPane;
-    private ORUIManager orUIManager;
+    private GameUIManager gameUIManager;
 
     protected static Logger log =
             Logger.getLogger(MapPanel.class.getPackage().getName());
 
-    public MapPanel(ORUIManager orUIManager) {
-        this.orUIManager = orUIManager;
+    public MapPanel(GameUIManager gameUIManager) {
+        this.gameUIManager = gameUIManager;
         Scale.set(15);
         setLayout(new BorderLayout());
 
-        //mmgr = orUIManager.getGameUIManager().getGameManager().getMapManager();
-        mmgr = MapManager.getInstance();
+        mmgr = gameUIManager.getGameManager().getMapManager();
         try {
             map =
                     (HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
-            map.setORUIManager(orUIManager);
+            map.init(gameUIManager.getORUIManager(), mmgr);
         } catch (Exception e) {
             log.fatal("Map class instantiation error:", e);
             e.printStackTrace();
@@ -67,7 +66,7 @@ public class MapPanel extends JPanel {
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(orUIManager.gameUIManager.getHelp());
+            HelpWindow.displayHelp(gameUIManager.getHelp());
             e.consume();
         }
     }

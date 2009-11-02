@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.25 2009/09/02 21:47:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.26 2009/11/02 23:30:35 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -55,13 +55,15 @@ public class ORWindow extends JFrame implements ActionPerformer {
             log.fatal("Cannot instantiate class " + orUIManagerClassName, e);
             System.exit(1);
         }
+        gameUIManager.setORUIManager(orUIManager);
+        orUIManager.setGameUIManager(gameUIManager);
 
         getContentPane().setLayout(new BorderLayout());
 
         messagePanel = new MessagePanel();
         getContentPane().add(messagePanel, BorderLayout.NORTH);
 
-        mapPanel = new MapPanel(orUIManager);
+        mapPanel = new MapPanel(gameUIManager);
         getContentPane().add(mapPanel, BorderLayout.CENTER);
 
         upgradePanel = new UpgradesPanel(orUIManager);

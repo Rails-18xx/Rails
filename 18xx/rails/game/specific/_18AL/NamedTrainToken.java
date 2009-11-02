@@ -1,15 +1,8 @@
 package rails.game.specific._18AL;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.Bank;
-import rails.game.ConfigurableComponentI;
-import rails.game.ConfigurationException;
-import rails.game.GameManagerI;
-import rails.game.MapHex;
-import rails.game.MapManager;
-import rails.game.Token;
+import rails.game.*;
 import rails.util.Tag;
 import rails.util.Util;
 
@@ -51,9 +44,9 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI {
                 longName + " [" + hexesString + "] +" + Bank.format(value);
     }
 
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-        
+
         if (hexesString != null) {
             hexes = gameManager.getMapManager().parseLocations(hexesString);
         }
@@ -71,7 +64,8 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI {
         return value;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return description;
     }
 

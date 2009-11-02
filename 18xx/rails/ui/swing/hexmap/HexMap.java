@@ -1,9 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.17 2009/10/31 17:08:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.18 2009/11/02 23:30:36 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
@@ -11,12 +10,9 @@ import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 
-import rails.game.MapHex;
-import rails.game.MapManager;
-import rails.game.PhaseI;
+import rails.game.*;
 import rails.game.action.*;
-import rails.ui.swing.ORUIManager;
-import rails.ui.swing.Scale;
+import rails.ui.swing.*;
 
 /**
  * Base class that stores common info for HexMap independant of Hex
@@ -29,7 +25,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
             Logger.getLogger(HexMap.class.getPackage().getName());
 
     protected ORUIManager orUIManager;
-    //protected MapManager mapManager;
+    protected MapManager mapManager;
 
     // Abstract Methods
     protected abstract void setupHexesGUI();
@@ -39,11 +35,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     protected MapHex[][] hexArray;
     protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
-    protected static ArrayList<GUIHex> hexes;
+    protected ArrayList<GUIHex> hexes;
     protected int scale = 2 * Scale.get();
     protected int cx;
     protected int cy;
-    protected static GUIHex selectedHex = null;
+    protected GUIHex selectedHex = null;
     protected Dimension preferredSize;
 
     /** A list of all allowed tile lays */
@@ -62,29 +58,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     protected boolean bonusTokenLayingEnabled = false;
 
-    public void setORUIManager(ORUIManager orUIManager) {
+    public void init(ORUIManager orUIManager, MapManager mapManager) {
         this.orUIManager = orUIManager;
-        //this.mapManager = orUIManager.getGameUIManager().getGameManager().getMapManager();
+        this.mapManager = mapManager;
+        setupHexes();
     }
 
     public void setupHexes() {
         setupHexesGUI();
         addMouseListener(this);
         addMouseMotionListener(this);
-    }
-
-    /**
-     * Return the GUIBattleHex that contains the given point, or null if none
-     * does.
-     */
-    GUIHex getHexContainingPoint(Point2D.Double point) {
-        for (GUIHex hex : hexes) {
-            if (hex.contains(point)) {
-                return hex;
-            }
-        }
-
-        return null;
     }
 
     GUIHex getHexContainingPoint(Point point) {
@@ -293,13 +276,20 @@ public abstract class HexMap extends JComponent implements MouseListener,
      */
     public PhaseI getPhase () {
     	if (orUIManager != null) {
-    		return orUIManager.getGameUIManager().getGameManager().getPhaseManager().getCurrentPhase();
-    	} else {
-    		return null;
+    		//return orUIManager.getGameUIManager().getGameManager().getPhaseManager().getCurrentPhase();
+    		GameUIManager u = orUIManager.getGameUIManager();
+    		GameManagerI g = u.getGameManager();
+    		PhaseManager p = g.getPhaseManager();
+    		return p.getCurrentPhase();
     	}
+    	return null;
     }
 
-    public void mouseClicked(MouseEvent arg0) {
+    public MapManager getMapManager() {
+		return mapManager;
+	}
+
+	public void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
 
