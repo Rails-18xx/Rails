@@ -1,8 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.6 2008/06/04 19:00:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.7 2009/11/04 20:33:22 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Portfolio;
-import rails.game.TrainManager;
 
 public class TrainsModel extends ModelObject {
 
@@ -15,11 +14,12 @@ public class TrainsModel extends ModelObject {
         this.portfolio = portfolio;
     }
 
-    public String getText() {
+    @Override
+	public String getText() {
         if (option == FULL_LIST) {
-            return TrainManager.makeFullList(portfolio);
+            return portfolio.makeFullListOfTrains();
         } else if (option == ABBR_LIST) {
-            return TrainManager.makeAbbreviatedList(portfolio);
+            return portfolio.makeAbbreviatedListOfTrains();
         } else {
             return "";
         }

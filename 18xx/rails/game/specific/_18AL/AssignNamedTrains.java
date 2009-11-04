@@ -5,12 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.Token;
-import rails.game.Train;
-import rails.game.TrainI;
+import rails.game.*;
 import rails.game.action.UseSpecialProperty;
-import rails.game.specific._18AL.NamedTrainToken;
-import rails.game.specific._18AL.NameTrains;
 
 public class AssignNamedTrains extends UseSpecialProperty {
 
@@ -66,11 +62,13 @@ public class AssignNamedTrains extends UseSpecialProperty {
         }
     }
 
-    public String toMenu() {
+    @Override
+	public String toMenu() {
         return ((NameTrains) specialProperty).toMenu();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer b = new StringBuffer("AssignNamedTrains ");
         for (NamedTrainToken token : ((NameTrains) getSpecialProperty()).getTokens()) {
             b.append(token.toString()).append(",");
@@ -105,10 +103,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
         in.defaultReadObject();
 
+        TrainManager trainManager = GameManager.getInstance().getTrainManager();
+
         nameableTrains = new ArrayList<NameableTrain>();
         if (trainIds != null) {
             for (String trainId : trainIds) {
-                nameableTrains.add((NameableTrain) Train.getByUniqueId(trainId));
+                nameableTrains.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
             }
         }
 

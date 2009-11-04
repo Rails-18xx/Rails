@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.2 2009/10/29 19:41:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.3 2009/11/04 20:33:21 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -8,7 +8,8 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.*;
+import rails.game.CashHolder;
+import rails.game.PrivateCompanyI;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 
@@ -117,7 +118,7 @@ public class BuyBonusToken extends PossibleORAction {
         privateCompany =
                 getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
-        	seller = Bank.getInstance();
+        	seller = gameManager.getBank();
         } else if (sellerName != null) {
         	seller =
         		getCompanyManager().getPublicCompany(sellerName);

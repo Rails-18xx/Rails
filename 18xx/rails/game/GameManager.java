@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.65 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.66 2009/11/04 20:33:22 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -59,6 +59,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected int numberOfPlayers;
     protected State currentPlayer = new State("CurrentPlayer", Player.class);
     protected State priorityPlayer = new State("PriorityPlayer", Player.class);
+
+    /** Map relating portfolio names and objects, to enable deserialization */
+    protected Map<String, Portfolio> portfolioMap =
+    	new HashMap<String, Portfolio> ();
 
     protected int playerShareLimit = 60;
     protected int treasuryShareLimit = 50; // For some games
@@ -990,6 +994,14 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         int currentPlayerIndex = getCurrentPlayerIndex();
         currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
         setCurrentPlayerIndex(currentPlayerIndex);
+    }
+
+    public void addPortfolio (Portfolio portfolio) {
+    	portfolioMap.put(portfolio.getName(), portfolio);
+    }
+
+    public Portfolio getPortfolioByName (String name) {
+    	return portfolioMap.get(name);
     }
 
     /* (non-Javadoc)

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.10 2008/06/04 19:00:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.11 2009/11/04 20:33:21 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -221,13 +221,16 @@ public class BuyTrain extends PossibleORAction {
 
         in.defaultReadObject();
 
-        train = Train.getByUniqueId(trainUniqueId);
-        from = Portfolio.getByName(fromName);
+        GameManagerI gameManager = GameManager.getInstance();
+        TrainManager trainManager = gameManager.getTrainManager();
+
+        train = trainManager.getTrainByUniqueId(trainUniqueId);
+        from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new ArrayList<TrainI>();
             for (int i = 0; i < trainsForExchangeUniqueIds.length; i++) {
-                trainsForExchange.add(Train.getByUniqueId(trainsForExchangeUniqueIds[i]));
+                trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));
             }
         }
 
@@ -237,7 +240,7 @@ public class BuyTrain extends PossibleORAction {
         }
 
         if (Util.hasValue(exchangedTrainUniqueId)) {
-            exchangedTrain = Train.getByUniqueId(exchangedTrainUniqueId);
+            exchangedTrain = trainManager.getTrainByUniqueId(exchangedTrainUniqueId);
         }
     }
 

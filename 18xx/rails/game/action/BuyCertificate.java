@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.11 2008/11/02 19:52:48 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.12 2009/11/04 20:33:22 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -8,10 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Bank;
-import rails.game.Portfolio;
-import rails.game.PublicCertificate;
-import rails.game.PublicCertificateI;
+import rails.game.*;
 
 /**
  * @author Erik Vos
@@ -124,8 +121,11 @@ public class BuyCertificate extends PossibleAction {
             ClassNotFoundException {
 
         in.defaultReadObject();
+
+        GameManagerI gameManager = GameManager.getInstance();
+
         certificate = PublicCertificate.getByUniqueId(certUniqueId);
-        from = Portfolio.getByName(fromName);
+        from = gameManager.getPortfolioByName(fromName);
 
     }
 }

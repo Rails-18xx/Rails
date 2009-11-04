@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.17 2009/11/02 23:30:36 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.18 2009/11/04 20:33:22 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -29,9 +29,7 @@ public class GUITile {
 
     protected double tileScale = GUIHex.NORMAL_SCALE;
 
-    protected static double baseRotation;
-
-    protected static boolean initialised = false;
+    protected double baseRotation;
 
     protected MapHex hex = null;
 
@@ -47,19 +45,14 @@ public class GUITile {
     public GUITile(int tileId, MapHex hex) {
         this.tileId = tileId;
         this.hex = hex;
-        tile = TileManager.get().getTile(tileId);
+        tile = GameManager.getInstance().getTileManager().getTile(tileId);
         tileImage = imageLoader.getTile(tileId);
 
-        if (!initialised) initialise();
-    }
-
-    private void initialise() {
         if (hex.getTileOrientation() == MapHex.EW) {
             baseRotation = 0.5 * DEG60;
         } else {
             baseRotation = 0.0;
         }
-        initialised = true;
     }
 
     public void setRotation(int rotation) {

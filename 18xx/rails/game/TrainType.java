@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.25 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.26 2009/11/04 20:33:22 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import rails.game.state.IntegerState;
 import rails.util.LocalText;
 import rails.util.Tag;
 
-public class TrainType 
+public class TrainType
 implements TrainTypeI {
 
     public final static int TOWN_COUNT_MAJOR = 2;
@@ -24,7 +24,7 @@ implements TrainTypeI {
     protected String name;
     protected int amount;
     protected boolean infiniteAmount = false;
-    
+
     /** Index: used for sorting trains lists in configured order. */
     protected int index;
 
@@ -44,7 +44,7 @@ implements TrainTypeI {
     protected IntegerState numberBoughtFromIPO;
 
     protected boolean obsoleting = false;
-    
+
     protected boolean permanent = true;
 
     private boolean real; // Only to determine if top-level attributes must be
@@ -65,11 +65,13 @@ implements TrainTypeI {
     protected TrainTypeI releasedTrainType = null;
 
     protected ArrayList<TrainI> trains = null;
-    
+
     protected int lastIndex = 0;
 
     protected BooleanState available;
     protected BooleanState rusted;
+
+    protected TrainManager trainManager;
 
     /** In some cases, trains start their life in the Pool */
     protected String initialPortfolio = "IPO";
@@ -221,17 +223,20 @@ implements TrainTypeI {
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
-        index = gameManager.getTrainManager().getTrainTypes().indexOf(this);
-        
+
+    	trainManager = gameManager.getTrainManager();
+        index = trainManager.getTrainTypes().indexOf(this);
+
         Portfolio unavailable = gameManager.getBank().getUnavailable();
-      
+
         for (TrainI train : trains) {
+            train.init(this, lastIndex++);
             unavailable.addTrain(train);
         }
     }
-    
+
     protected TrainI createTrain () throws ConfigurationException {
-        
+
         TrainI train;
         try {
             train = trainClass.newInstance();
@@ -243,15 +248,14 @@ implements TrainTypeI {
                                              + trainClassName
                                              + "constructor", e);
         }
-        train.init(this, lastIndex++);
         return train;
     }
-    
-    /** Create train without throwing exceptions. 
-     * To be used <b>after</b> completing initialization, 
-     * i.e. in cloning infinitely available trains. 
+
+    /** Create train without throwing exceptions.
+     * To be used <b>after</b> completing initialization,
+     * i.e. in cloning infinitely available trains.
      */
-    
+
     public TrainI cloneTrain () {
         TrainI train = null;
         try {
@@ -461,9 +465,13 @@ implements TrainTypeI {
 
         return clone;
     }
-    
+
     public int getIndex() {
         return index;
     }
-    
+
+	public TrainManager getTrainManager() {
+		return trainManager;
+	}
+
 }

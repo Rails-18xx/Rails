@@ -1,7 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.10 2009/10/10 15:25:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.11 2009/11/04 20:33:22 evos Exp $ */
 package rails.game;
 
-public interface TrainTypeI 
+public interface TrainTypeI
 extends ConfigurableComponentI, Cloneable {
 
     /**
@@ -94,17 +94,18 @@ extends ConfigurableComponentI, Cloneable {
     public String getReleasedTrainTypeName();
 
     public String getRustedTrainTypeName();
-    
+
     public boolean isPermanent();
-    
+
     public void setPermanent(boolean permanent);
- 
+
     public void setReleasedTrainType(TrainTypeI releasedTrainType);
 
     public void setRustedTrainType(TrainTypeI rustedTrainType);
-    
+
     public TrainI cloneTrain();
-    
+
     public int getIndex();
 
+	public TrainManager getTrainManager();
 }
