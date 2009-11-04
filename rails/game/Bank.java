@@ -45,23 +45,16 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     protected static Logger log =
             Logger.getLogger(Bank.class.getPackage().getName());
 
-    /**
-     * @return an instance of the Bank object
-     */
-    public static Bank getInstance() {
-        return instance;
-    }
-
     public Bank() {
 
         instance = this;
 
         money = new CashModel(this);
         // Create the IPO and the Bank Pool.
-        ipo = new Portfolio("IPO", this);
-        pool = new Portfolio("Pool", this);
-        unavailable = new Portfolio("Unavailable", this);
-        scrapHeap = new Portfolio("ScrapHeap", this);
+        ipo = new Portfolio(Portfolio.IPO_NAME, this);
+        pool = new Portfolio(Portfolio.POOL_NAME, this);
+        unavailable = new Portfolio(Portfolio.UNAVAILABLE_NAME, this);
+        scrapHeap = new Portfolio(Portfolio.SCRAPHEAP_NAME, this);
 
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
@@ -99,7 +92,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
-        
+
         ReportBuffer.add(LocalText.getText("BankSizeIs",
                 format(money.getCash())));
 
@@ -123,7 +116,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
             }
         }
 }
-    
+
     /**
      * @param percentage of a company allowed to be in the Bank pool.
      */

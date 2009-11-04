@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.9 2008/12/03 20:15:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.10 2009/11/04 20:33:22 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -9,7 +9,6 @@ import rails.game.state.BooleanState;
 public abstract class Company implements CompanyI, ConfigurableComponentI,
         Cloneable {
 
-    protected static int numberOfCompanies = 0;
     protected String name;
     protected String longName;
     protected CompanyTypeI type;
@@ -33,7 +32,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
             Logger.getLogger(Company.class.getPackage().getName());
 
     public Company() {
-        this.companyNumber = numberOfCompanies++;
     }
 
     public void init(String name, CompanyTypeI type) {
@@ -41,13 +39,6 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
         this.type = type;
         closedObject = new BooleanState(name + "_Closed", false);
 
-    }
-
-    /**
-     * @return Number of Companies
-     */
-    public static int getNumberOfCompanies() {
-        return numberOfCompanies;
     }
 
     /**

@@ -133,7 +133,10 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
 
     public abstract void setNextPlayer();
 
-    /**
+    public void addPortfolio (Portfolio portfolio);
+    public Portfolio getPortfolioByName (String name);
+
+    	/**
      * @return the StartPacket
      */
     public abstract StartPacket getStartPacket();

@@ -1,12 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.5 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.6 2009/11/04 20:33:22 evos Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
  */
 package rails.game.move;
 
-import rails.game.Bank;
-import rails.game.CashHolder;
+import rails.game.*;
 
 /**
  * @author Erik Vos
@@ -17,7 +16,7 @@ public class CashMove extends Move {
     CashHolder from;
     CashHolder to;
 
-    private static Bank bank = Bank.getInstance();
+    private static Bank bank = GameManager.getInstance().getBank();
 
     /**
      * Create a CashMove instance. In this specific case either from or to may

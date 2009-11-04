@@ -1,8 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.14 2009/10/10 15:25:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.15 2009/11/04 20:33:22 evos Exp $ */
 package rails.game;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -22,14 +19,9 @@ public class Train implements TrainI {
     protected int townCountIndicator;
 
     protected String uniqueId;
-    protected static Map<String, TrainI> trainMap =
-            new HashMap<String, TrainI>();
 
     protected Portfolio holder;
     protected BooleanState obsolete;
-
-    protected static final Portfolio unavailable = Bank.getInstance().getUnavailable();
-    protected static final Portfolio ipo = Bank.getInstance().getIpo();
 
     protected static Logger log =
             Logger.getLogger(Train.class.getPackage().getName());
@@ -47,13 +39,9 @@ public class Train implements TrainI {
         this.townCountIndicator = type.getTownCountIndicator();
 
         uniqueId = type.getName() + "_" + index;
-        trainMap.put(uniqueId, this);
+        type.getTrainManager().addTrain(uniqueId, this);
 
         obsolete = new BooleanState(uniqueId, false);
-    }
-
-    public static TrainI getByUniqueId(String id) {
-        return trainMap.get(id);
     }
 
     public String getUniqueId() {
@@ -135,11 +123,11 @@ public class Train implements TrainI {
     public void moveTo(MoveableHolderI to) {
 
         new ObjectMove(this, holder, to);
-        
+
     }
 
     public void setRusted() {
-        new ObjectMove(this, holder, Bank.getInstance().getScrapHeap());
+        new ObjectMove(this, holder, GameManager.getInstance().getBank().getScrapHeap());
     }
 
     public void setObsolete() {
@@ -153,5 +141,5 @@ public class Train implements TrainI {
     public String toDisplay() {
         return getName();
     }
-    
+
 }

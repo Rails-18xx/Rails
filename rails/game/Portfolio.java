@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.38 2009/10/31 17:08:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.39 2009/11/04 20:33:22 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -72,9 +72,11 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     /** Name of portfolio */
     protected String name;
 
-    /** A map allowing finding portfolios by name, for use in deserialization */
-    protected static Map<String, Portfolio> portfolioMap =
-            new HashMap<String, Portfolio>();
+    /** Specific portfolio names */
+    public static final String IPO_NAME = "IPO";
+    public static final String POOL_NAME = "Pool";
+    public static final String SCRAPHEAP_NAME = "ScrapHeap";
+    public static final String UNAVAILABLE_NAME = "Unavailable";
 
     protected static Logger log =
             Logger.getLogger(Portfolio.class.getPackage().getName());
@@ -82,7 +84,8 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     public Portfolio(String name, CashHolder holder) {
         this.name = name;
         this.owner = holder;
-        portfolioMap.put(name, this);
+        //portfolioMap.put(name, this);
+        GameManager.getInstance().addPortfolio(this);
 
         if (owner instanceof PublicCompanyI) {
             trainsModel.setOption(TrainsModel.FULL_LIST);
@@ -92,10 +95,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         } else if (owner instanceof Player) {
             privatesOwnedModel.setOption(PrivatesModel.BREAK);
         }
-    }
-
-    public static Portfolio getByName(String name) {
-        return portfolioMap.get(name);
     }
 
     public void transferAssetsFrom(Portfolio otherPortfolio) {
@@ -376,8 +375,9 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
         trains.add(train);
         TrainTypeI type = train.getType();
-        if (trainsPerType.get(type) == null)
+            if (!trainsPerType.containsKey(type)) {
             trainsPerType.put(type, new ArrayList<TrainI>());
+        }
         trainsPerType.get(train.getType()).add(train);
         train.setHolder(this);
         trainsModel.update();
@@ -397,7 +397,7 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     }
 
     public void discardTrain(TrainI train) {
-        train.moveTo(Bank.getInstance().getPool());
+        train.moveTo(GameManager.getInstance().getBank().getPool());
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 name, train.getName() ));
     }
@@ -450,6 +450,64 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         }
         return null;
     }
+
+    /**
+     * Make an abbreviated list of trains, like "2(6) 3(5)" etc, to show in the
+     * IPO.
+     *
+     * @param holder The Portfolio for which this list will be made (always
+     * IPO).
+     */
+
+    public String makeAbbreviatedListOfTrains() {
+
+    	if (trains == null || trains.isEmpty()) return "";
+
+        StringBuffer b = new StringBuffer();
+        List<TrainI> trainsOfType;
+
+        for (TrainTypeI type : GameManager.getInstance().getTrainManager().getTrainTypes()) {
+            trainsOfType = trainsPerType.get(type);
+            if (trainsOfType != null && !trainsOfType.isEmpty()) {
+                if (b.length() > 0) b.append(" ");
+                b.append(type.getName()).append("(");
+                if (type.hasInfiniteAmount()) {
+                    b.append("+");
+                } else {
+                    b.append(trainsOfType.size());
+                }
+                b.append(")");
+            }
+        }
+
+        return b.toString();
+    }
+
+    /**
+     * Make a full list of trains, like "2 2 3 3", to show in any field
+     * describing train possessions, except the IPO.
+     *
+     * @param holder The Portfolio for which this list will be made.
+     */
+    public String makeFullListOfTrains() {
+
+    	if (trains == null || trains.isEmpty()) return "";
+
+        List<TrainI> trainsOfType;
+        StringBuffer b = new StringBuffer();
+
+        for (TrainTypeI type : GameManager.getInstance().getTrainManager().getTrainTypes()) {
+        	trainsOfType = trainsPerType.get(type);
+            if (trainsOfType != null && !trainsOfType.isEmpty()) {
+            	for (TrainI train : trainsOfType) {
+	                if (b.length() > 0) b.append(" ");
+	                b.append(train.getName());
+            	}
+            }
+        }
+
+        return b.toString();
+   }
 
     /**
      * Add a special property. Used to make special properties independent of
