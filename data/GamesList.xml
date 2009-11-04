@@ -50,13 +50,10 @@ Limitation:
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="1856">
-		<Note>Almost playable</Note>
+		<Note>Fully playable</Note>
 		<Description>1856 - Railroading in Upper Canada
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
-
-Current limitation:
-- No Bridge and Tunnel bonuses.
 		</Description>
 		<Players minimum="3" maximum="6"/>
 	</Game>
