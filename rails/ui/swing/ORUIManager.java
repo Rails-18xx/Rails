@@ -593,15 +593,20 @@ public class ORUIManager {
         }
     }
 
-    public void layBaseToken() {
+    public void layBaseToken(LayBaseToken action) {
 
         GUIHex selectedHex = map.getSelectedHex();
+        LayBaseToken allowance;
 
         if (selectedHex != null) {
-            List<LayBaseToken> allowances =
+            if (action != null) {
+                allowance = action;
+            } else {
+                List<LayBaseToken> allowances =
                     map.getBaseTokenAllowanceForHex(selectedHex.getHexModel());
-            // Pick the first one (unknown if we will ever need more than one)
-            LayBaseToken allowance = allowances.get(0);
+                // Pick the first one (unknown if we will ever need more than one)
+                allowance = allowances.get(0);
+            }
             int station;
             List<City> stations = selectedHex.getHexModel().getCities();
 
@@ -977,7 +982,6 @@ public class ORUIManager {
 
     public void executeUpgrade() {
         GUIHex selectedHex = map.getSelectedHex();
-
         if (tileLayingEnabled) {
             if (selectedHex == null) {
                 orWindow.displayORUIMessage(LocalText.getText("SelectAHexForToken"));
@@ -992,7 +996,7 @@ public class ORUIManager {
             } else if (selectedTokenAllowance == null) {
                 orWindow.displayORUIMessage(LocalText.getText("SelectAToken"));
             } else if (selectedTokenAllowance instanceof LayBaseToken) {
-                layBaseToken();
+                layBaseToken((LayBaseToken)selectedTokenAllowance);
             } else {
                 layBonusToken(selectedTokenAllowance);
             }

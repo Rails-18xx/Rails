@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.39 2009/11/04 20:33:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.40 2009/11/05 22:50:37 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -372,7 +372,6 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
     }
 
     public void addTrain(TrainI train) {
-
         trains.add(train);
         TrainTypeI type = train.getType();
             if (!trainsPerType.containsKey(type)) {

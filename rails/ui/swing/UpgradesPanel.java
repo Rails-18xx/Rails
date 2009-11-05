@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.18 2009/10/30 21:53:04 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.19 2009/11/05 22:50:38 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -118,6 +118,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
                     description = text = comp.getName();
+                    if (action.getSpecialProperty() != null) {
+                    	description += " (" + action.getSpecialProperty().getCompany().getName()+")";
+                    }
                 } else if (action instanceof LayBonusToken) {
                     fgColour = Color.BLACK;
                     bgColour = Color.WHITE;

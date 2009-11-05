@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.34 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.35 2009/11/05 22:50:37 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import rails.util.LocalText;
 import rails.util.Tag;
 
 public class Game {
-    public static final String version = "1.0.5";
+    public static final String version = "1.0.6+";
 
     /** The component Manager */
     protected ComponentManager componentManager;
@@ -80,6 +80,7 @@ public class Game {
             componentManager = ComponentManager.getInstance();
 
             log.info("========== Start of rails.game " + name + " ==========");
+            log.info("Rails version "+version);
 
             // Have the ComponentManager work through the other rails.game files
             componentManager.finishPreparation();
@@ -183,12 +184,29 @@ public class Game {
         Game game = null;
 
         log.debug("Loading game from file " + filepath);
+        String filename = filepath.replaceAll(".*[/\\\\]", "");
 
         try {
             ObjectInputStream ois =
                     new ObjectInputStream(new FileInputStream(
                             new File(filepath)));
-            long versionID = (Long) ois.readObject();
+
+            // New in 1.0.7: Rails version & save date/time.
+            // Allow for older saved file versions.
+            Object object = ois.readObject();
+            if (object instanceof String) {
+            	log.info("Reading Rails "+(String)object+" saved file "+filename);
+            	object = ois.readObject();
+            } else {
+            	log.info("Reading Rails (pre-1.0.7) saved file "+filename);
+            }
+            if (object instanceof String) {
+            	log.info("File was saved at "+(String)object);
+            	object = ois.readObject();
+            }
+
+            long versionID = (Long) object;
+            log.debug("Saved versionID="+versionID+" (object="+object+")");
             long saveFileVersionID = GameManager.saveFileVersionID;
             if (versionID != saveFileVersionID) {
                 throw new Exception("Save version " + versionID
@@ -196,6 +214,7 @@ public class Game {
                                     + saveFileVersionID);
             }
             String name = (String) ois.readObject();
+            log.debug("Saved game="+name);
             Map<String, String> selectedGameOptions =
                     (Map<String, String>) ois.readObject();
             List<String> playerNames = (List<String>) ois.readObject();
