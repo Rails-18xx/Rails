@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.21 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.22 2009/11/05 22:50:37 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -315,7 +315,6 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         // To be written to a log file in the future.
         if (from != null) from.removeToken(company);
         if (to != null) to.addToken(company);
-        // company.getCurrentPriceModel().setState(to);
     }
 
     /**
@@ -347,22 +346,6 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     public boolean isGameOver() {
         return gameOver;
     }
-
-    /* Brett's original code */
-
-    /**
-     * @return Returns the companiesStarted.
-     */
-    /*
-     * public ArrayList getCompaniesStarted() { return companiesStarted; }
-     */
-
-    /**
-     * @return Returns the ipoPile.
-     */
-    /*
-     * public ArrayList getIpoPile() { return ipoPile; }
-     */
 
     public PublicCertificate removeShareFromPile(PublicCertificate stock) {
         if (ipoPile.contains(stock)) {

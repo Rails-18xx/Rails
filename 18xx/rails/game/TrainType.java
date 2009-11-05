@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.26 2009/11/04 20:33:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.27 2009/11/05 22:50:37 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -263,6 +263,7 @@ implements TrainTypeI {
         } catch (ConfigurationException e) {
             log.warn("Unexpected exception", e);
         }
+        train.init(this, lastIndex++);
         return train;
     }
 

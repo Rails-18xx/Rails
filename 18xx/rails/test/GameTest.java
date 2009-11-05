@@ -1,6 +1,6 @@
 package rails.test;
 
-import rails.ui.swing.*;
+import rails.ui.swing.GameSetupWindow;
 import rails.util.Config;
 import rails.util.Util;
 
@@ -31,7 +31,6 @@ public class GameTest {
         System.out.println("Configuration file = " + myConfigFile);
 
         /* Start the rails.game selector, which will do all the rest. */
-        //new GameUIManager();
         new GameSetupWindow();
     }
 }

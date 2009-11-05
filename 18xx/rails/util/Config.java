@@ -1,16 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.7 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.8 2009/11/05 22:50:38 evos Exp $*/
 package rails.util;
 
-import java.util.*;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.util.Properties;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
 /**
  * This is a simple utility class with a collection of static functions to load
  * a property object from a property file, to retrieve a particular value from
  * the property file etc.
- * 
+ *
  * @author Ramiah Bala, rewritten by Erik Vos
  * @version 1.0
  */
@@ -52,7 +52,7 @@ public final class Config {
 
     /**
      * This method loads a property file.
-     * 
+     *
      * @param filename - file key name as a String.
      * @param required - if TRUE, an exception will be logged if the file does
      * not exist.
@@ -72,6 +72,7 @@ public final class Config {
         } catch (Exception e) {
             System.err.println(e + " whilst loading properties file "
                                + filename);
+            e.printStackTrace(System.err);
         }
     }
 }

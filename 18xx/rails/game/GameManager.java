@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.66 2009/11/04 20:33:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.67 2009/11/05 22:50:37 evos Exp $ */
 package rails.game;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -150,7 +151,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      */
     protected ReportBuffer reportBuffer;
 
-    protected String name;
+    protected String gmName;
     protected String key;
 
     protected StartPacket startPacket;
@@ -182,7 +183,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      *
      */
     public GameManager() {
-    	name = GM_NAME;
+    	gmName = GM_NAME;
     	key = GM_KEY;
     	NDC.clear();
     	NDC.push (GM_KEY);
@@ -768,8 +769,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             ObjectOutputStream oos =
                     new ObjectOutputStream(new FileOutputStream(new File(
                             filepath)));
+            oos.writeObject(Game.version+" "+BuildInfo.timeStamp);
+            oos.writeObject(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             oos.writeObject(saveFileVersionID);
-            oos.writeObject(name);
+            oos.writeObject(gameName);
             oos.writeObject(gameOptions);
             oos.writeObject(playerNames);
             oos.writeObject(executedActions);
@@ -1210,7 +1213,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * but that will change whenever a multi-game server will be implemented.
      */
     public String getName () {
-    	return name;
+    	return gmName;
     }
 
     public String getKey () {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.74 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.75 2009/11/05 22:50:37 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -547,7 +547,7 @@ public class OperatingRound extends Round implements Observer {
 
             cost = operatingCompany.getBaseTokenLayCost();
             if (stl != null && stl.isFree()) cost = 0;
-
+ 
             // Does the company have the money?
             if (cost > operatingCompany.getCash()) {
                 errMsg = LocalText.getText("NotEnoughMoney",
@@ -735,7 +735,7 @@ public class OperatingRound extends Round implements Observer {
         new CashMove (operatingCompany, seller, cost);
   		operatingCompany.addBonus(new Bonus(operatingCompany,
     				sbt.getName(),
-    				sbt.getValue(), 
+    				sbt.getValue(),
                     sbt.getLocations()));
 
         ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
