@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.12 2009/11/02 23:30:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.13 2009/11/06 20:23:53 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -102,10 +102,6 @@ public class MapManager implements ConfigurableComponentI {
         }
 
         // Initialise the neighbours
-        /**
-         * TODO: impassable hexsides. TODO: blank sides of fixed and offboard
-         * preprinted tiles.
-         */
         for (i = 0; i <= maxX; i++) {
             for (j = 0; j <= maxY; j++) {
                 if ((hex = hexes[i][j]) == null) continue;
@@ -125,6 +121,10 @@ public class MapManager implements ConfigurableComponentI {
                             && nb.isNeighbour(hex, k + 3)) {
                             hex.setNeighbor(k, nb);
                             nb.setNeighbor(k + 3, hex);
+                        }
+                        if (hex.isImpassable(nb) || nb.isImpassable(hex)) {
+                        	hex.addImpassableSide(k);
+                        	//nb.addImpassableSide(k+3);
                         }
                     }
 
