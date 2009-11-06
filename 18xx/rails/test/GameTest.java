@@ -9,6 +9,7 @@ public class GameTest {
     private static String DEFAULT_CONFIG_FILE = "my.properties";
 
     public static void main(String[] args) {
+
         /*
          * Check if the property file has been set on the command line. The way
          * to do this is adding an option to the java command: -Dconfigfile=<property-filename>
@@ -30,7 +31,14 @@ public class GameTest {
         Config.setConfigFile(myConfigFile);
         System.out.println("Configuration file = " + myConfigFile);
 
-        /* Start the rails.game selector, which will do all the rest. */
+    	int nargs = 0;
+    	if (args != null && args.length > 0) {
+    		for (String arg : args) {
+    			System.out.println ("Arg "+(++nargs)+": "+arg);
+    		}
+    	}
+
+    	/* Start the rails.game selector, which will do all the rest. */
         new GameSetupWindow();
     }
 }
