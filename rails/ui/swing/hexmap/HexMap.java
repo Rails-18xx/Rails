@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.18 2009/11/02 23:30:36 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.19 2009/11/06 20:23:53 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -36,6 +36,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected MapHex[][] hexArray;
     protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
     protected ArrayList<GUIHex> hexes;
+    protected List<GUIBar> bars = new ArrayList<GUIBar>();
     protected int scale = 2 * Scale.get();
     protected int cx;
     protected int cy;
@@ -66,8 +67,21 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public void setupHexes() {
         setupHexesGUI();
+        setupBars();
         addMouseListener(this);
         addMouseMotionListener(this);
+    }
+
+    public void setupBars() {
+    	List<Integer> barSides;
+    	for (GUIHex hex : hexes) {
+    		barSides = hex.getHexModel().getImpassableSides();
+    		if (barSides != null) {
+    			for (int k : barSides) {
+    				if (k < 3) hex.addBar (k);
+    			}
+    		}
+    	}
     }
 
     GUIHex getHexContainingPoint(Point point) {
@@ -103,6 +117,17 @@ public abstract class HexMap extends JComponent implements MouseListener,
                     hex.paint(g);
                 }
             }
+
+            // Paint the impassability bars latest
+            for (GUIHex hex : hexes) {
+                Rectangle hexrect = hex.getBounds();
+
+                if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                        hexrect.height)) {
+                    hex.paintBars(g);
+                }
+            }
+
         } catch (NullPointerException ex) {
             // If we try to paint before something is loaded, just retry
             // later.

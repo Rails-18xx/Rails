@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.23 2009/11/02 23:30:35 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.24 2009/11/06 20:23:53 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -47,6 +47,7 @@ public class GUIHex implements ViewObject {
     protected boolean upgradeMustConnect;
 
     protected List<TokenI> offStationTokens;
+    protected List<GUIBar> bars;
 
     protected GUIToken provisionalGUIToken = null;
 
@@ -165,6 +166,20 @@ public class GUIHex implements ViewObject {
             model.addObserver(this);
         }
 
+    }
+
+    public void addBar (int orientation) {
+    	orientation %= 6;
+    	if (bars == null) bars = new ArrayList<GUIBar>();
+        int offset = hexMap.getMapManager().getTileOrientation() == MapHex.EW ? 0 : 4;
+    	int x1 = (int)xVertex[(offset+5-orientation)%6];
+    	int y1 = (int)yVertex[(offset+5-orientation)%6];
+    	int x2 = (int)xVertex[(offset+6-orientation)%6];
+    	int y2 = (int)yVertex[(offset+6-orientation)%6];
+    	GUIBar bar = new GUIBar (model.getName()+":"+orientation,
+    			x1, y1, x2, y2);
+    	bars.add(bar);
+    	log.debug("--- Added bar "+bar.getName()+" from "+x1+","+y1+" to "+x2+","+y2);
     }
 
     public Rectangle getBounds() {
@@ -345,6 +360,14 @@ public class GUIHex implements ViewObject {
         } else {
             currentGUITile.paintTile(g2, center.x, center.y);
         }
+    }
+
+    public void paintBars(Graphics g) {
+    	if (bars == null) return;
+        Graphics2D g2 = (Graphics2D) g;
+    	for (GUIBar bar : bars) {
+    		bar.drawBar(g2);
+    	}
     }
 
     private void paintStationTokens(Graphics2D g2) {

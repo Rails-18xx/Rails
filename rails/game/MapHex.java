@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.29 2009/11/02 23:30:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.30 2009/11/06 20:23:53 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -78,6 +78,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
      * derived and need not be specified.
      */
     protected String impassable = null;
+    protected List<Integer> impassableSides;
 
     protected List<City> cities;
     protected Map<Integer, City> mCities;
@@ -182,7 +183,20 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             cities.add(c);
             mCities.put(c.getNumber(), c);
         }
+    }
 
+    public void addImpassableSide (int orientation) {
+    	if (impassableSides == null) impassableSides = new ArrayList<Integer>(4);
+    	impassableSides.add(orientation%6);
+    	log.debug("+++Hex "+name+" is impassable on side "+(orientation%6));
+    }
+
+    public List<Integer> getImpassableSides () {
+    	return impassableSides;
+    }
+
+    public boolean isImpassable (MapHex neighbour) {
+    	return impassable != null && impassable.indexOf(neighbour.getName()) > -1;
     }
 
     public boolean isNeighbour(MapHex neighbour, int direction) {
