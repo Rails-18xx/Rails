@@ -446,6 +446,7 @@ public class StockRound extends Round {
         int numberOfCertsToBuy = 0;
         PublicCertificateI cert = null;
         String companyName = company.getName();
+        int cost = 0;
 
         currentPlayer = getCurrentPlayer();
 
@@ -507,7 +508,8 @@ public class StockRound extends Round {
             }
 
             // Check if the Player has the money.
-            if (currentPlayer.getCash() < shares * price) {
+            cost = shares * price;
+            if (currentPlayer.getCash() < cost) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -532,22 +534,24 @@ public class StockRound extends Round {
         CashHolder priceRecipient = getSharePriceRecipient (cert, price);
 
         // Transfer the President's certificate
-        executeTradeCertificate(cert, currentPlayer.getPortfolio(),
-                price * cert.getShares(), priceRecipient);
+        cert.moveTo(currentPlayer.getPortfolio());
+
 
         // If more than one certificate is bought at the same time, transfer
         // these too.
         for (int i = 1; i < numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
-            executeTradeCertificate(cert, currentPlayer.getPortfolio(),
-                    company.getIPOPrice(), priceRecipient);
+            cert.moveTo(currentPlayer.getPortfolio());
         }
+
+        // Pay for these shares
+        new CashMove (currentPlayer, priceRecipient, cost);
 
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 Bank.format(price),
-                Bank.format(shares * price),
+                Bank.format(cost),
                 shares,
                 cert.getShare(),
                 priceRecipient.getName() ));
@@ -586,7 +590,7 @@ public class StockRound extends Round {
 
         String errMsg = null;
         int price = 0;
-        int cash = 0;
+        int cost = 0;
         PublicCompanyI company = null;
 
         currentPlayer = getCurrentPlayer();
@@ -680,10 +684,10 @@ public class StockRound extends Round {
             }
 
             price = currentSpace.getPrice();
-            cash = shares * price;
+            cost = shares * price;
 
             // Check if the Player has the money.
-            if (currentPlayer.getCash() < cash) {
+            if (currentPlayer.getCash() < cost) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -704,7 +708,7 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         moveStack.start(true);
 
-        CashHolder priceRecipient = getSharePriceRecipient (cert, cash);
+        CashHolder priceRecipient = getSharePriceRecipient (cert, cost);
 
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -712,7 +716,7 @@ public class StockRound extends Round {
                     shareUnit,
                     companyName,
                     from.getName(),
-                    Bank.format(cash) ));
+                    Bank.format(cost) ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
                     playerName,
@@ -721,7 +725,7 @@ public class StockRound extends Round {
                     number * shareUnit,
                     companyName,
                     from.getName(),
-                    Bank.format(cash) ));
+                    Bank.format(cost) ));
         }
         ReportBuffer.getAllWaiting();
 
@@ -732,13 +736,13 @@ public class StockRound extends Round {
                 log.error("Cannot find " + companyName + " " + shareUnit
                           + "% share in " + from.getName());
             }
-            executeTradeCertificate(cert2, currentPlayer.getPortfolio(),
-                    cash, priceRecipient);
+            cert.moveTo(currentPlayer.getPortfolio());
         }
+        new CashMove (currentPlayer, priceRecipient, cost);
 
         if (priceRecipient != from.getOwner()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
-                    Bank.format(price * shares),
+                    Bank.format(cost),
                     priceRecipient.getName() ));
         }
 
@@ -765,15 +769,7 @@ public class StockRound extends Round {
 
     }
 
-    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder,
-            int price, CashHolder priceRecipient) {
-
-        cert.moveTo(newHolder);
-        new CashMove (newHolder.getOwner(), priceRecipient, price);
-
-    }
-
-    /**
+   /**
      * Who receives the cash when a certificate is bought.
      * With incremental capitalization, this can be the company treasure.
      * This method must be called <i>before</i> transferring the certificate.
