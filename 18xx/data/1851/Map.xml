@@ -70,7 +70,7 @@
 	<Hex name="H4" tile="-10" orientation="4" cost="60" city="Memphis"/>
 	<Hex name="H6" tile="0"/>
 	<Hex name="H8" tile="0" impassable="H10"/>
-	<Hex name="H10" tile="0" impsssable="I9,I11"/>
+	<Hex name="H10" tile="0" impassable="I9,I11"/>
 	<Hex name="H12" tile="0" impassable="I11"/>
 	<Hex name="H14" tile="0" impassable="I15"/>
 	<Hex name="H16" tile="-10" cost="40" city="Chattanooga"/>
@@ -81,7 +81,7 @@
 	<Hex name="I7" tile="0"/>
 	<Hex name="I9" tile="0"/>
 	<Hex name="I11" tile="0"/>
-	<Hex name="I13" tile="-10" orientation="4" cost="40" city="Huntsville"/>
+	<Hex name="I13" tile="-10" orientation="4" cost="40" city="Huntsville" impassable="I15"/>
 	<Hex name="I15" tile="0"/>
 	<Hex name="I17" tile="0" cost="60"/>
 	<Hex name="I19" tile="0" cost="60"/>
