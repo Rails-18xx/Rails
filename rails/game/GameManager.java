@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.67 2009/11/05 22:50:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.68 2009/11/06 20:22:20 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -769,7 +769,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             ObjectOutputStream oos =
                     new ObjectOutputStream(new FileOutputStream(new File(
                             filepath)));
-            oos.writeObject(Game.version+" "+BuildInfo.timeStamp);
+            oos.writeObject(Game.version+" "+BuildInfo.buildDate);
             oos.writeObject(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             oos.writeObject(saveFileVersionID);
             oos.writeObject(gameName);

@@ -1,15 +1,15 @@
 <!-- Generate a java class with the current svn revision number -->
-<project name="build" default="makeBuildInfo" basedir=".">
+<project name="buildinfo " default="makeBuildInfo" basedir=".">
 	<target name="makeBuildInfo" description="Create a BuildInfo source">
 		<tstamp>
-			<format property="TODAY" pattern="yyyy/MM/dd"/>
+			<format property="TODAY" pattern="yyyy-MM-dd"/>
 		</tstamp>
 		<!-- the source code of the java class -->
-		<echo file="${basedir}/rails/game/BuildInfo.java">
-package rails.game;
+		<echo file="${basedir}/rails/util/BuildInfo.java">
+package rails.util;
 
 public class BuildInfo {
-	public static final String timeStamp="${TODAY}";
+	public static final String buildDate = "${TODAY}";
 }
 		</echo>
 	</target>
