@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.8 2009/11/05 22:50:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.9 2009/11/07 12:10:37 evos Exp $*/
 package rails.util;
 
 import java.io.FileNotFoundException;
@@ -43,6 +43,7 @@ public final class Config {
             /* List the property files to read here */
             load(myConfigFile, false);
             load(gamesConfigFile, false);
+            setDefaults();
             loaded = true;
         }
         if (prop.containsKey(key)) return prop.getProperty(key).trim();
@@ -73,6 +74,13 @@ public final class Config {
             System.err.println(e + " whilst loading properties file "
                                + filename);
             e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void setDefaults() {
+        if (!Util.hasValue(prop.getProperty("save.directory"))) {
+            log.debug("Setting save directory to "+System.getProperty("user.dir"));
+            prop.put("save.directory", System.getProperty("user.dir"));
         }
     }
 }
