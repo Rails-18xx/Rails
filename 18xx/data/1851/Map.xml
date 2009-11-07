@@ -21,7 +21,7 @@
 	<Hex name="C5" tile="0"/>
 	<Hex name="C7" tile="0"/>
 	<Hex name="C9" tile="0" cost="40"/>
-	<Hex name="C11" tile="0" cost="40"/>
+	<Hex name="C11" tile="0" cost="40" city="Owensboro"/>
 	<Hex name="C13" tile="0" cost="40"/>
 	<Hex name="C15" tile="0"/>
 	<Hex name="C17" tile="0" cost="40"/>
@@ -45,7 +45,7 @@
 	<Hex name="E17" tile="0" cost="60"/>
 	<Hex name="E19" tile="0"/>
 	<Hex name="E21" tile="0"/>
-	<Hex name="E23" tile="-3" orientation="2" value="40,30,30"/>
+	<Hex name="E23" tile="-3" orientation="2" value="40,30,30" city="Johnson City"/>
 	<Hex name="F4" tile="0" impassable="F6,G5"/>
 	<Hex name="F6" tile="-10" orientation="1" city="Dyersburg"/>
 	<Hex name="F8" tile="0" impassable="F10"/>
@@ -89,5 +89,5 @@
 	<Hex name="J12" tile="-903" orientation="4" value="0,30,50" city="Birmingham"/>
 	<Hex name="J14" tile="0"/>
 	<Hex name="J16" tile="0" cost="60"/>
-	<Hex name="J18" tile="-903" orientation="3" value="30,40,50"/>
+	<Hex name="J18" tile="-903" orientation="3" value="30,40,50" city="Atlanta"/>
 </Map>

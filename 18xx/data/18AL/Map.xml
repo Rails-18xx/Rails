@@ -1,6 +1,6 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Hex name="A2" tile="0"/>
-	<Hex name="A4" tile="-912" orientation="2" value="40,50"/><!--Nashville-->
+	<Hex name="A4" tile="-912" orientation="2" value="40,50" city="Nashville"/>
 	<Hex name="B1" tile="-901" value="40,30" city="Corinth"/>
 	<Hex name="B3" tile="0" impassable="D3"/>
 	<Hex name="B5" tile="0"/>
@@ -14,7 +14,7 @@
 	<Hex name="D7" tile="-3" orientation="1" city="Rome"/>
 	<Hex name="E2" tile="0"/>
 	<Hex name="E4" tile="0"/>
-	<Hex name="E6" tile="5" orientation="5">
+	<Hex name="E6" tile="5" orientation="5" city="Gadsden">
 		<Coalfield/>
 	</Hex>
 	<Hex name="F1" tile="-112" city="Tupelo"/>

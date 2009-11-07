@@ -61,7 +61,7 @@
     <Hex name="L5" tile="-1" city="Stuttgart"/>
     <Hex name="L7" tile="-10" city="Munich"/>
     <Hex name="L9" cost="60" tile="0" />
-    <Hex name="L11" tile="-1" city="Brunn"/>
+    <Hex name="L11" tile="-1" city="Brünn"/>
     <Hex name="L13" tile="0" />
     <Hex name="M2" tile="-1" city="Dijon"/>
     <Hex name="M4" label="Y" tile="-10" city="Strasbourg"/>
@@ -120,5 +120,5 @@
     <Hex name="U6" tile="-1" city="Florence"/>
     <Hex name="U8" tile="0" />
     <Hex name="V5" port="yes" value="10" tile="-901" orientation="4"/>
-    <Hex name="V7" label="V" value="30,50" tile="-903" orientation="4"/><!-- Rome -->
+    <Hex name="V7" label="V" value="30,50" tile="-903" orientation="4" city="Rome"/>
 </Map>
