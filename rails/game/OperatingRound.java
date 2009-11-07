@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.75 2009/11/05 22:50:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.76 2009/11/07 12:09:55 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1007,7 +1007,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected void initTurn() {
-        System.out.println("---Starting turn of "+operatingCompany.getName());
+        log.debug("Starting turn of "+operatingCompany.getName());
         setCurrentPlayer(operatingCompany.getPresident());
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();

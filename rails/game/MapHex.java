@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.30 2009/11/06 20:23:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.31 2009/11/07 12:09:56 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -188,7 +188,6 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public void addImpassableSide (int orientation) {
     	if (impassableSides == null) impassableSides = new ArrayList<Integer>(4);
     	impassableSides.add(orientation%6);
-    	log.debug("+++Hex "+name+" is impassable on side "+(orientation%6));
     }
 
     public List<Integer> getImpassableSides () {

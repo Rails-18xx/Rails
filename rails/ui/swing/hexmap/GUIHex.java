@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.24 2009/11/06 20:23:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.25 2009/11/07 12:09:55 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -179,7 +179,6 @@ public class GUIHex implements ViewObject {
     	GUIBar bar = new GUIBar (model.getName()+":"+orientation,
     			x1, y1, x2, y2);
     	bars.add(bar);
-    	log.debug("--- Added bar "+bar.getName()+" from "+x1+","+y1+" to "+x2+","+y2);
     }
 
     public Rectangle getBounds() {
