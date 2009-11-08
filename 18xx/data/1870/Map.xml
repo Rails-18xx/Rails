@@ -135,8 +135,8 @@
 	<Hex name="M16" tile="0"/>
 	<Hex name="M18" tile="0"/>
 	<Hex name="M20" tile="-10" city="Mobile"/>
-	<Hex name="M22" tile="-903" orientation="2" value="20,30,50"/>
-	<Hex name="N1" tile="-903" orientation="5" value="20,40,50"/>
+	<Hex name="M22" tile="-903" orientation="2" value="20,30,50" city="Southeast"/>
+	<Hex name="N1" tile="-903" orientation="5" value="20,40,50" city="Southwest"/>
 	<Hex name="N3" tile="0"/>
 	<Hex name="N5" tile="0"/>
 	<Hex name="N7" tile="-10" cost="80" city="Galveston"/>

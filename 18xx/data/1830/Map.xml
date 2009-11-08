@@ -1,7 +1,7 @@
 <Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
-	<Hex name="A9" tile="-901" orientation="0" value="30,50"/>
-	<Hex name="A11" tile="-902" orientation="1" value="30,50"/>
-	<Hex name="A17" tile="-7" orientation="1"/>
+	<Hex name="A9" tile="-901" orientation="0" value="30,50" city="Canadian West"/>
+	<Hex name="A11" tile="-902" orientation="1" value="30,50" city="Canadian West"/>
+	<Hex name="A17" tile="-7" orientation="1" city="Montreal"/>
 	<Hex name="A19" tile="-103"  orientation="0"/>
 	<Hex name="B10" tile="-10"/>
 	<Hex name="B12" tile="0"/>
@@ -42,10 +42,10 @@
 	<Hex name="E17" tile="0" cost="120"/>
 	<Hex name="E19" tile="-10"/>
 	<Hex name="E21" tile="0" cost="120"/>
-	<Hex name="E23" tile="-11"  orientation="5" label="B"/>
-	<Hex name="F2" tile="-903" orientation="5" value="40,70"/>
+	<Hex name="E23" tile="-11"  orientation="5" label="B" city="Boston"/>
+	<Hex name="F2" tile="-903" orientation="5" value="40,70" city="Chicago"/>
 	<Hex name="F4" tile="-10" cost="80"/>
-	<Hex name="F6" tile="-105"/>
+	<Hex name="F6" tile="-105" city="Cleveland"/>
 	<Hex name="F8" tile="0"/>
 	<Hex name="F10" tile="-1"/>
 	<Hex name="F12" tile="0"/>
@@ -63,7 +63,7 @@
 	<Hex name="G13" tile="0" cost="120"/>
 	<Hex name="G15" tile="0" cost="120"/>
 	<Hex name="G17" tile="-2"/>
-	<Hex name="G19" tile="-21"  orientation="1" cost="80"/>
+	<Hex name="G19" tile="-21"  orientation="1" cost="80" city="New York"/>
 	<Hex name="H2" tile="0"/>
 	<Hex name="H4" tile="-10"/>
 	<Hex name="H6" tile="0"/>
@@ -73,24 +73,24 @@
 	<Hex name="H14" tile="0"/>
 	<Hex name="H16" tile="-10"/>
 	<Hex name="H18" tile="-20" label="OO"/>
-	<Hex name="I1" tile="-901" orientation="5" value="30,60"/>
+	<Hex name="I1" tile="-901" orientation="5" value="30,60" city="Gulf"/>
 	<Hex name="I3" tile="0"/>
 	<Hex name="I5" tile="0"/>
 	<Hex name="I7" tile="0"/>
 	<Hex name="I9" tile="0"/>
 	<Hex name="I11" tile="0" cost="120"/>
 	<Hex name="I13" tile="0"/>
-	<Hex name="I15" tile="-11" label="B"/>
+	<Hex name="I15" tile="-11" label="B" city="Baltimore"/>
 	<Hex name="I17" tile="0" cost="80"/>
 	<Hex name="I19" tile="-3" orientation="2"/>
-	<Hex name="J2" tile="-902" orientation="5" value="30,60"/>
+	<Hex name="J2" tile="-902" orientation="5" value="30,60" city="Gulf"/>
 	<Hex name="J4" tile="0"/>
 	<Hex name="J6" tile="0"/>
 	<Hex name="J8" tile="0"/>
 	<Hex name="J10" tile="0" cost="120"/>
 	<Hex name="J12" tile="0" cost="120"/>
-	<Hex name="J14" tile="-10" cost="80"/>
-	<Hex name="K13" tile="-902" orientation="4" value="30,40"/>
+	<Hex name="J14" tile="-10" cost="80" city="Washington"/>
+	<Hex name="K13" tile="-902" orientation="4" value="30,40" city="Deep South"/>
 	<Hex name="K15" tile="-104" orientation="3"/>
 		
 </Map>
