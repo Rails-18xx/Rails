@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.68 2009/11/06 20:22:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.69 2009/11/08 10:45:49 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -633,6 +633,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     	NDC.push (GM_KEY);
 
         boolean result = true;
+        
+        DisplayBuffer.clear();
 
         // The action is null only immediately after Load.
         if (action != null) {

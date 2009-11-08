@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.14 2009/11/02 23:30:35 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.15 2009/11/08 10:45:49 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -48,10 +48,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(GameSetupWindow.class.getPackage().getName());
 
-    public GameSetupWindow(/*GameUIManager gameUIManager*/) {
+    public GameSetupWindow() {
         super();
-
-        //this.gameUIManager = gameUIManager;
 
         initialize();
         populateGridBag();
@@ -198,11 +196,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         } else if (arg0.getSource().equals(loadButton)) {
             String saveDirectory = Config.get("save.directory");
             JFileChooser jfc = new JFileChooser();
-            //if (providedName != null) {
-           //    jfc.setSelectedFile(new File(providedName));
-            //} else {
-                jfc.setCurrentDirectory(new File(saveDirectory));
-            //}
+            jfc.setCurrentDirectory(new File(saveDirectory));
 
             if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = jfc.getSelectedFile();
@@ -213,8 +207,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                             DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                DisplayBuffer.clear();
-
             }
 
             startGameUIManager(game);
