@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.22 2009/11/05 22:50:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.23 2009/11/11 22:26:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -269,6 +269,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {}
         else if (row < numRows - 1 &&
         		(newsquare = getStockSpace(row + 1, col)) != null) {}
+        else { 
+            newsquare = oldsquare;
+        }
         if (newsquare.closesCompany()) {
         	if (!company.canClose()) return; // E.g. 1856 CGR
             company.setClosed();
