@@ -7,8 +7,9 @@
 <project basedir="." default="build" name="18xx">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+	<property name="version" value="1.0.7-rc2"/>
     <path id="18xx.classpath">
         <pathelement location="classes"/>
         <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
@@ -26,9 +27,10 @@
     </target>
     <target name="clean">
         <delete dir="classes"/>
+    	<delete dir="jar"/>
     </target>
     <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project,build-jar" name="build"/>
+    <target depends="build-subprojects,build-project,build-release" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
@@ -51,8 +53,45 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-	<target name="build-jar">
-		<jar destfile="rails-1.0.7-rc1.jar" basedir="classes" duplicate="preserve">
+	<target name="build-release">
+        <mkdir dir="jar"/>
+        <copy includeemptydirs="false" todir="jar">
+            <fileset dir="classes">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            	<exclude name="rails/test/*"/>
+            	<exclude name="18xx.log"/>
+            	<exclude name="build.xml"/>
+            	<exclude name="buildinfo.xml"/>
+            	<exclude name="manifest"/>
+            	<exclude name="doc/*"/>
+            	<exclude name="html/*"/>
+            	<exclude name="lib/**"/>
+            	<exclude name="rails-${version}/**"/>
+            	<exclude name="rails.bat"/>
+            	<exclude name="rails.sh"/>
+            	<exclude name=".project"/>
+            	<exclude name=".classpath"/>
+            	<exclude name="**/CVS/*"/>
+            	<exclude name="**/.settings/*"/>
+            	<exclude name="**/rails-${version}.jar"/>
+            </fileset>
+        </copy>
+		<mkdir dir="rails-${version}"/>
+		<copy includeemptydirs="false" todir="rails-${version}">
+			<fileset dir=".">
+				<include name="LICENSE"/>
+				<include name="README"/>
+				<include name="AUTHORS"/>
+				<include name="rails.bat"/>
+				<include name="rails.sh"/>
+				<include name="my.properties"/>
+				<include name="LocalisedText.properties"/>
+				<include name="games.properties"/>
+				<include name="lib/**"/>
+			</fileset>
+		</copy>
+		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
 			<manifest>
 				<attribute name="Main-Class" value="rails.util.RunGame" />
 				<attribute name="Class-Path" value="./my.properties ./LocalisedText.properties ./lib/log4j-1.2/log4j-1.2.14.jar ./lib/batik-1.6/lib/batik-transcoder.jar ./lib/batik-1.6/batik.jar ./lib/batik-1.6/lib/batik-util.jar ./lib/batik-1.6/lib/batik-script.jar ./lib/batik-1.6/lib/batik-bridge.jar ./lib/batik-1.6/lib/batik-ext.jar ./lib/batik-1.6/lib/batik-awt-util.jar ./lib/batik-1.6/lib/batik-dom.jar ./lib/batik-1.6/lib/batik-gvt.jar" />
