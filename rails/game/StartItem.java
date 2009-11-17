@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.19 2009/11/17 19:31:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.20 2009/11/17 22:38:29 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -373,18 +373,6 @@ public class StartItem {
         int index = player.getIndex();
         return bids[index].intValue() > 0;
     }
-
-    /**
-     * Get the last Bid done by a given player.
-     *
-     * @param playerName The name of the player.
-     * @return His latest Bid object.
-     */
-    //public int getBidForPlayer(String playerName) {
-    //    Player player = Game.getPlayerManager().getPlayerByName(playerName);
-    //    int index = player.getIndex();
-    //    return bids[index].intValue();
-    //}
 
     /**
      * Check if the start item has been sold.

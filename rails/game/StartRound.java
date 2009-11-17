@@ -173,6 +173,7 @@ public abstract class StartRound extends Round implements StartRoundI {
 
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         StartItem item = boughtItem.getStartItem();
+        int lastBid = item.getBid();
         String errMsg = null;
         Player player = getCurrentPlayer();
         int price = 0;
@@ -228,8 +229,11 @@ public abstract class StartRound extends Round implements StartRoundI {
 
         assignItem(player, item, price, sharePrice);
 
-        // Set priority
-        gameManager.setPriorityPlayer();
+        // Set priority (only if the item was not auctioned)
+        // ASSUMPTION: getting an item in auction mode never changes priority
+        if (lastBid == 0) {
+            gameManager.setPriorityPlayer();
+        }
         setNextPlayer();
 
         auctionItemState.set(null);
