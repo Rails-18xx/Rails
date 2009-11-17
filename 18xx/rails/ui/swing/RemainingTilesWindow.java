@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.6 2009/10/30 21:53:03 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.7 2009/11/17 19:31:27 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.GridLayout;
@@ -47,7 +47,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         setSize(800, 600);
         addWindowListener(this);
 
-        init();
+        init(orWindow.getGameUIManager());
 
         this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         this.setLocationRelativeTo(orWindow);
@@ -55,7 +55,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         setVisible(true);
     }
 
-    private void init() {
+    private void init(GameUIManager gameUIManager) {
 
         TileManager tmgr = gameUIManager.getGameManager().getTileManager();
         TileI tile;

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.8 2009/10/09 19:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.9 2009/11/17 19:31:27 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -53,7 +53,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 operatingCompany.getPortfolio().getNumberOfTrains() > 0;
         boolean atTrainLimit =
                 operatingCompany.getNumberOfTrains() >= operatingCompany.getCurrentTrainLimit();
-        boolean canBuyTrainNow = canBuyTrain();
+        boolean canBuyTrainNow = isBelowTrainLimit();
         boolean presidentMayHelp = operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
@@ -162,8 +162,8 @@ public class OperatingRound_18EU extends OperatingRound {
 
     /** In 18EU, a company can (effectively) exchange a Pullmann */
     @Override
-    protected boolean canBuyTrain() {
-        return super.canBuyTrain()
+    protected boolean isBelowTrainLimit() {
+        return super.isBelowTrainLimit()
                || operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null
                && hasPullmannAtStart.booleanValue();
     }

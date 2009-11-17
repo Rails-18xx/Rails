@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.22 2009/10/07 21:03:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.23 2009/11/17 19:31:21 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -305,6 +305,7 @@ public class StartRound_1830 extends StartRound {
                 numPasses.set(0);
             } else {
                 // More than one left: find next bidder
+            	auctionItem.setBid(-1, player);
                 setNextBiddingPlayer(auctionItem,
                         getCurrentPlayerIndex());
             }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.30 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.31 2009/11/17 19:31:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -269,11 +269,11 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
 
     }
 
-    public void finishConfiguration (TileManager tileManager) 
+    public void finishConfiguration (TileManager tileManager)
     throws ConfigurationException {
-        
+
         for (Upgrade upgrade : upgrades) {
-            
+
             TileI tile = tileManager.getTile(upgrade.getTileId());
             if (tile != null) {
                 upgrade.setTile(tile);
@@ -283,7 +283,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
             }
         }
     }
-    
+
     /**
      * @return Returns the colour.
      */
@@ -371,8 +371,19 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
         return upgr;
     }
 
+    /** Get a delimited list of all possible upgrades, regardless current phase */
     public String getUpgradesString(MapHex hex) {
-        return upgradesString;
+    	StringBuffer b = new StringBuffer();
+    	TileI tile;
+        for (Upgrade upgrade : upgrades) {
+            tile = upgrade.getTile();
+            if (upgrade.isAllowedForHex(hex)) {
+            	if (b.length() > 0) b.append(",");
+                b.append(tile.getExternalId());
+            }
+        }
+
+        return b.toString();
     }
 
     public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase) {
@@ -450,7 +461,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     }
 
     protected class Upgrade {
-        
+
         /** The upgrade tile id */
         int tileId;
 
@@ -488,6 +499,19 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
                     && !allowedPhases.contains(phaseName)) {
                 return false;
             }
+
+            if (hexes != null) convertHexString(hex.getMapManager());
+
+            if (allowedHexes != null) {
+                return allowedHexes.contains(hex);
+            } else if (disallowedHexes != null) {
+                return !disallowedHexes.contains(hex);
+            } else {
+                return true;
+            }
+        }
+
+        protected boolean isAllowedForHex(MapHex hex) {
 
             if (hexes != null) convertHexString(hex.getMapManager());
 

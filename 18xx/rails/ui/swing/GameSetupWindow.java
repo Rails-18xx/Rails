@@ -1,20 +1,20 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.15 2009/11/08 10:45:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.16 2009/11/17 19:31:28 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
 import rails.common.Defs;
 import rails.game.*;
-import rails.ui.swing.GameUIManager;
-import rails.util.*;
-
-import java.io.File;
-import java.util.*;
-import java.util.List;
+import rails.util.Config;
+import rails.util.LocalText;
 
 /**
  * The Game Setup Window displays the first window presented to the user. This
@@ -370,7 +370,12 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             // once we have passed setup(), so we can only quit.
             System.exit(-1);
         } else {
-            game.start();
+            String startError = game.start();
+            if (startError != null) {
+                JOptionPane.showMessageDialog(this, startError, "",
+                        JOptionPane.ERROR_MESSAGE);
+            	System.exit(-1);
+            }
             startGameUIManager (game);
             gameUIManager.gameUIInit();
         }
@@ -378,7 +383,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.setVisible(false); // XXX: At some point we should destroy this
         // XXX: object rather than just making it invisible
     }
-    
+
     private void startGameUIManager(Game game) {
         GameManagerI gameManager = game.getGameManager();
         String gameUIManagerClassName = gameManager.getClassName(Defs.ClassName.GAME_UI_MANAGER);

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.18 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.19 2009/11/17 19:31:24 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -281,8 +281,6 @@ public class StartItem {
         int index = bidder.getIndex();
         bids[index].set(amount);
 
-        // Take care for negative values, meaning "has passed"
-        // (used in 18EU)
         if (amount > 0) {
             lastBidderIndex.set(index);
             minimumBid.set(amount + 5);
@@ -291,6 +289,10 @@ public class StartItem {
             // (in fact: buy price) visible
             bids[index].resetOption(MoneyModel.SUPPRESS_ZERO);
             bids[index].update();
+        } else {
+        	// Passed
+        	bids[index].set(0);
+        	bids[index].update();
         }
 
     }
