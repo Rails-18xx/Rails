@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.26 2009/11/02 23:30:35 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.27 2009/11/17 19:31:27 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -110,10 +110,6 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
     public UpgradesPanel getUpgradePanel() {
         return upgradePanel;
-    }
-
-    public ORUIManager getOrUIManager() {
-        return orUIManager;
     }
 
     public MessagePanel getMessagePanel() {

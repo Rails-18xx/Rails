@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.37 2009/11/14 20:21:51 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.38 2009/11/17 19:31:26 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -57,8 +57,16 @@ public class Game {
         this.players = players;
     }
 
-    public void start() {
+    public String  start() {
+
+    	if (players.size() < playerManager.minPlayers
+    			|| players.size() > playerManager.maxPlayers) {
+    		return name+" is not configured to be played with "+players.size()+" players\n"
+    				+ "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
+    	}
+
         gameManager.startGame(gameOptions);
+        return null;
     }
 
     public boolean setup() {
@@ -230,7 +238,11 @@ public class Game {
             ois.close();
             log.debug("Number of loaded actions: " + executedActions.size());
 
-            game.start();
+            String startError = game.start();
+            if (startError != null) {
+                DisplayBuffer.add(startError);
+                return null;
+            }
 
             log.debug("Starting to execute loaded actions");
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.76 2009/11/07 12:09:55 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.77 2009/11/17 19:31:25 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -547,7 +547,7 @@ public class OperatingRound extends Round implements Observer {
 
             cost = operatingCompany.getBaseTokenLayCost();
             if (stl != null && stl.isFree()) cost = 0;
- 
+
             // Does the company have the money?
             if (cost > operatingCompany.getCash()) {
                 errMsg = LocalText.getText("NotEnoughMoney",
@@ -1306,7 +1306,7 @@ public class OperatingRound extends Round implements Observer {
 
             // Does the company have room for another train?
             int trainLimit = operatingCompany.getCurrentTrainLimit();
-            if (!canBuyTrain()) {
+            if (!isBelowTrainLimit() && !action.isForcedExchange()) {
                 errMsg =
                         LocalText.getText("WouldExceedTrainLimit",
                                 String.valueOf(trainLimit));
@@ -2057,7 +2057,7 @@ public class OperatingRound extends Round implements Observer {
                 operatingCompany.getPortfolio().getNumberOfTrains() > 0;
         boolean atTrainLimit =
                 operatingCompany.getNumberOfTrains() >= operatingCompany.getCurrentTrainLimit();
-        boolean canBuyTrainNow = canBuyTrain();
+        boolean canBuyTrainNow = isBelowTrainLimit();
         boolean presidentMayHelp = !hasTrains && operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
@@ -2095,10 +2095,11 @@ public class OperatingRound extends Round implements Observer {
                         action.setTrainsForExchange(exchangeableTrains);
                         if (atTrainLimit) action.setForcedExchange(true);
                         possibleActions.add(action);
+                        canBuyTrainNow = true;
                     }
                 }
 
-                if (!canBuyTrainNow) return;
+                if (!canBuyTrainNow) continue;
 
                 // Can a special property be used?
                 // N.B. Assume that this never occurs in combination with
@@ -2208,7 +2209,7 @@ public class OperatingRound extends Round implements Observer {
      *
      * @return
      */
-    protected boolean canBuyTrain() {
+    protected boolean isBelowTrainLimit() {
         return operatingCompany.getNumberOfTrains() < operatingCompany.getCurrentTrainLimit();
     }
 

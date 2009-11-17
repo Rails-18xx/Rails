@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.21 2009/09/12 09:40:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.22 2009/11/17 19:31:25 evos Exp $ */
 package rails.game;
 
 import rails.game.model.*;
@@ -12,7 +12,7 @@ public class Player implements CashHolder, Comparable<Player> {
     public static int MAX_PLAYERS = 8;
 
     public static int MIN_PLAYERS = 2;
-    
+
     private String name = "";
 
     private int index = 0;
@@ -84,7 +84,7 @@ public class Player implements CashHolder, Comparable<Player> {
         int worth = wallet.getCash();
 
         for (PublicCertificateI cert : portfolio.getCertificates()) {
-            worth += cert.getCompany().getGameEndPrice();
+            worth += cert.getCompany().getGameEndPrice() * cert.getShares();
         }
         for (PrivateCompanyI priv : portfolio.getPrivateCompanies()) {
             worth += priv.getBasePrice();
