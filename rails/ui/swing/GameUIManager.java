@@ -433,6 +433,10 @@ public class GameUIManager {
         }
     }
 
+    public void setSaveDirectory(String saveDirectory) {
+        this.saveDirectory = saveDirectory;
+    }
+
     public PossibleAction getLastAction() {
         return lastAction;
     }

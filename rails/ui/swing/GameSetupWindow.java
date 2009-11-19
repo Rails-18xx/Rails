@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.16 2009/11/17 19:31:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.17 2009/11/19 20:48:53 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -210,6 +210,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
 
             startGameUIManager(game);
+            gameUIManager.setSaveDirectory (saveDirectory);
             gameUIManager.startLoadedGame();
             setVisible(false);
         } else if (arg0.getSource().equals(infoButton)) {
