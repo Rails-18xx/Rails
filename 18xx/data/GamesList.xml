@@ -9,8 +9,6 @@ Designed by Francis Tresham and Bruce Shelley
 Limitations: 
 - The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 - Privates cannot be traded between players.
-- Token handling and track preservation on OO tiles do not yet work correctly. 
-  This also implies, that the Erie home base cannot yet be selected. 
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
