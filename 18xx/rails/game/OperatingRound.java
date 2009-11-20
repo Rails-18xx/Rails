@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.77 2009/11/17 19:31:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.78 2009/11/20 20:56:50 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1182,12 +1182,14 @@ public class OperatingRound extends Round implements Observer {
             && operatingCompany.mustOwnATrain()) {
             // FIXME: Need to check for valid route before throwing an
             // error.
+        	/* Check TEMPORARILY disabled
             errMsg =
                     LocalText.getText("CompanyMustOwnATrain",
                             operatingCompany.getName());
             setStep(STEP_BUY_TRAIN);
             DisplayBuffer.add(errMsg);
             return false;
+            */
         }
 
         moveStack.start(false);
@@ -1948,10 +1950,12 @@ public class OperatingRound extends Round implements Observer {
             prepareRevenueAndDividendAction();
         } else if (step == STEP_BUY_TRAIN) {
             setBuyableTrains();
-            if (!operatingCompany.mustOwnATrain()
-                    || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
+            // TODO Need route checking here.
+            // TEMPORARILY allow not buying a train if none owned
+            //if (!operatingCompany.mustOwnATrain()
+            //        || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
                         doneAllowed = true;
-            }
+            //}
         } else if (step == STEP_DISCARD_TRAINS) {
             setTrainsToDiscard();
         }
@@ -2078,8 +2082,11 @@ public class OperatingRound extends Round implements Observer {
                 }
                 cost = train.getCost();
                 if (cost <= cash) {
-                    if (canBuyTrainNow)
-                        possibleActions.add(new BuyTrain(train, ipo, cost));
+                    if (canBuyTrainNow) {
+                    	BuyTrain action = new BuyTrain(train, ipo, cost);
+                    	action.setHasNoTrains(!hasTrains); // TEMPORARY
+                        possibleActions.add(action);
+                    }
                 } else if (costOfCheapestTrain == 0
                            || cost < costOfCheapestTrain) {
                     cheapestTrain = train;
@@ -2110,6 +2117,7 @@ public class OperatingRound extends Round implements Observer {
                     if (reducedPrice > cash) continue;
                     BuyTrain bt = new BuyTrain(train, ipo, reducedPrice);
                     bt.setSpecialProperty(stb);
+                	bt.setHasNoTrains(!hasTrains); // TEMPORARY
                     possibleActions.add(bt);
                 }
 
@@ -2125,7 +2133,9 @@ public class OperatingRound extends Round implements Observer {
                 }
                 cost = train.getCost();
                 if (cost <= cash) {
-                    possibleActions.add(new BuyTrain(train, pool, cost));
+                	BuyTrain bt = new BuyTrain(train, pool, cost);
+                	bt.setHasNoTrains(!hasTrains); // TEMPORARY
+                    possibleActions.add(bt);
                 } else if (costOfCheapestTrain == 0
                            || cost < costOfCheapestTrain) {
                     cheapestTrain = train;
@@ -2133,11 +2143,12 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
             if (!hasTrains && possibleActions.getType(BuyTrain.class).isEmpty()
-                && cheapestTrain != null && presidentMayHelp) {
-                possibleActions.add(new BuyTrain(cheapestTrain,
-                        cheapestTrain.getHolder(), costOfCheapestTrain)
-                    .setPresidentMustAddCash(costOfCheapestTrain
-                                                                                                - cash));
+            		&& cheapestTrain != null && presidentMayHelp) {
+            	BuyTrain bt = new BuyTrain(cheapestTrain,
+                        cheapestTrain.getHolder(), costOfCheapestTrain);
+            	bt.setPresidentMustAddCash(costOfCheapestTrain);
+            	bt.setHasNoTrains(!hasTrains); // TEMPORARY
+                possibleActions.add(bt);
             }
         }
 
