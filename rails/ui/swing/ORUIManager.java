@@ -1181,7 +1181,19 @@ public class ORUIManager {
 
             orPanel.initTrainBuying(true);
 
-            setMessage(LocalText.getText("BuyTrain"));
+            StringBuffer b = new StringBuffer(LocalText.getText("BuyTrain"));
+
+            // TEMPORARY extra message about having no route
+            for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
+	            if (bTrain.hasNoTrains()) {
+	                b.append("<br><font color=\"red\">");
+	                b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+	                b.append("</font>");
+	                break;
+	            }
+            }
+
+            setMessage(b.toString());
 
         } else if (possibleActions.contains(DiscardTrain.class)) {
 

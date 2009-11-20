@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.11 2009/11/04 20:33:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.12 2009/11/20 20:56:51 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -26,6 +26,7 @@ public class BuyTrain extends PossibleORAction {
     transient private Portfolio from;
     private String fromName;
     private int fixedCost = 0;
+    private boolean hasNoTrains = false; // TODO Remove once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
     private boolean presidentMustAddCash = false;
@@ -87,7 +88,11 @@ public class BuyTrain extends PossibleORAction {
         return this;
     }
 
-    /**
+    public void setHasNoTrains(boolean hasNoTrains) {
+		this.hasNoTrains = hasNoTrains;
+	}
+
+	/**
      * @return Returns the specialProperty.
      */
     public SpecialTrainBuy getSpecialProperty() {
@@ -142,7 +147,11 @@ public class BuyTrain extends PossibleORAction {
         return presidentCashToAdd;
     }
 
-    public Portfolio getHolder() {
+    public boolean hasNoTrains() {
+		return hasNoTrains;
+	}
+
+	public Portfolio getHolder() {
         return train.getHolder();
     }
 
@@ -219,7 +228,19 @@ public class BuyTrain extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        // TEMPORARY Custom reading for backwards compatibility
+    	// TODO We need this code only until route checking is implemented,
+    	// as then it will be possible to detect route existence.
+        ObjectInputStream.GetField fields = in.readFields();
+        trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
+        fromName = (String) fields.get("fromName", fromName);
+        fixedCost = fields.get("fixedCost", fixedCost);
+        hasNoTrains = fields.get("hasNoTrains", hasNoTrains);//TEMPORARY
+        trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
+        presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);
+        presidentMayAddCash = fields.get("presidentMayAddCash", presidentMayAddCash);
+        presidentCashToAdd = fields.get("presidentCashToAdd", presidentCashToAdd);
 
         GameManagerI gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
