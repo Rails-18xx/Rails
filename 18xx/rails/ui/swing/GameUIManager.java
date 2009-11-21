@@ -39,10 +39,12 @@ public class GameUIManager {
     protected static final String DEFAULT_SAVE_DIRECTORY = "save";
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
     protected static final String DEFAULT_SAVE_EXTENSION = "rails";
+    protected static final String NEXT_PLAYER_SUFFIX = "NEXT_PLAYER";
 
     protected String saveDirectory;
     protected String savePattern;
     protected String saveExtension;
+    protected String saveSuffixSpec = "";
     protected String saveSuffix = "";
     protected String providedName = null;
     protected SimpleDateFormat saveDateTimeFormat;
@@ -78,9 +80,9 @@ public class GameUIManager {
         if (Util.hasValue(timezone)) {
             saveDateTimeFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         }
-        String suffix = Config.get("save.filename.suffix"); 
-        if (Util.hasValue(suffix)) {
-            saveSuffix = "_" + suffix;
+        saveSuffixSpec = Config.get("save.filename.suffix"); 
+        if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
+            saveSuffix = "_" + saveSuffixSpec;
         }
 
     }
@@ -423,6 +425,9 @@ public class GameUIManager {
         if (providedName != null) {
             filename = providedName;
         } else {
+            if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {
+                saveSuffix = "_" + gameManager.getCurrentPlayer().getName();
+            }
             filename =
                     saveDirectory + "/" + gameManager.getGameName() + "_"
                             + saveDateTimeFormat.format(new Date()) 
