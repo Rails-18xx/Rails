@@ -43,6 +43,7 @@ public class GameUIManager {
     protected String saveDirectory;
     protected String savePattern;
     protected String saveExtension;
+    protected String saveSuffix = "";
     protected String providedName = null;
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
@@ -71,6 +72,15 @@ public class GameUIManager {
         saveExtension = Config.get("save.filename.extension");
         if (!Util.hasValue(saveExtension)) {
             saveExtension = DEFAULT_SAVE_EXTENSION;
+        }
+        String timezone = Config.get("save.filename.date_time_zone");
+        // Default is local time
+        if (Util.hasValue(timezone)) {
+            saveDateTimeFormat.setTimeZone(TimeZone.getTimeZone(timezone));
+        }
+        String suffix = Config.get("save.filename.suffix"); 
+        if (Util.hasValue(suffix)) {
+            saveSuffix = "_" + suffix;
         }
 
     }
@@ -415,7 +425,8 @@ public class GameUIManager {
         } else {
             filename =
                     saveDirectory + "/" + gameManager.getGameName() + "_"
-                            + saveDateTimeFormat.format(new Date()) + "."
+                            + saveDateTimeFormat.format(new Date()) 
+                            + saveSuffix + "."
                             + saveExtension;
         }
 
