@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.38 2009/11/17 19:31:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.39 2009/11/22 18:48:40 wakko666 Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import rails.util.LocalText;
 import rails.util.Tag;
 
 public class Game {
-    public static final String version = "1.0.7-rc2";
+    public static final String version = "1.0.7-rc3";
 
     /** The component Manager */
     protected ComponentManager componentManager;
