@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.24 2009/11/22 14:28:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.25 2009/11/23 18:32:45 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -305,12 +305,12 @@ public class StartRound_1830 extends StartRound {
                 numPasses.set(0);
             } else {
                 // More than one left: find next bidder
-                
-            	//auctionItem.setBid(-1, player);
-                // That was incorrect: passing players may still bid.
-                // But often they won't, or don't have the money.
-                // TODO Need autopass facility, and skipping of turns if no money
-                
+
+            	if (GameOption.OPTION_VALUE_YES.equalsIgnoreCase(getGameOption("LeaveAuctionOnPass"))) {
+            		// Game option: player to leave auction after a pass (default no).
+            		auctionItem.setBid(-1, player);
+            	}
+
                 setNextBiddingPlayer(auctionItem,
                         getCurrentPlayerIndex());
             }

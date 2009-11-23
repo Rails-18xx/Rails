@@ -1,21 +1,18 @@
 /**
- * This is a singleton class that encapsulates the static game info 
+ * This is a singleton class that encapsulates the static game info
  * contained in data/Games.xml.
  * This information is available through a number of getters.
  */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import rails.util.Tag;
 import rails.util.Util;
 
 /**
  * @author Erik Vos
- * 
+ *
  */
 public class GamesInfo {
 
@@ -62,6 +59,7 @@ public class GamesInfo {
         if (!Util.hasValue(myGamesXmlFile)) {
             myGamesXmlFile = GAMES_XML;
         }
+        System.out.println("Loading games list from "+myGamesXmlFile);
 
         List<String> directories = new ArrayList<String>();
         directories.add(DATA_DIR);

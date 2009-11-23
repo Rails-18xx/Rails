@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18Kaas"/>
+		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<PlayerShareLimit percentage="60"/>
 		<BankPoolLimit percentage="50"/>
 		<EndOfGame>
