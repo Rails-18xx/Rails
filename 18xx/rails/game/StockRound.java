@@ -925,11 +925,11 @@ public class StockRound extends Round {
             break;
         }
 
-        numberToSell = action.getNumberSold();
+        int numberSold = action.getNumberSold();
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CantSell",
                     playerName,
-                    numberToSell,
+                    numberSold,
                     companyName,
                     errMsg ));
             return false;
@@ -950,20 +950,20 @@ public class StockRound extends Round {
 
         moveStack.start(true);
 
-        if (numberToSell == 1) {
+        if (numberSold == 1) {
             ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
                     playerName,
                     company.getShareUnit(),
                     companyName,
-                    Bank.format(numberToSell * price) ));
+                    Bank.format(numberSold * price) ));
         } else {
             ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                     playerName,
-                    numberToSell,
+                    numberSold,
                     company.getShareUnit(),
-                    numberToSell * company.getShareUnit(),
+                    numberSold * company.getShareUnit(),
                     companyName,
-                    Bank.format(numberToSell * price) ));
+                    Bank.format(numberSold * price) ));
         }
 
         // Check if the presidency has changed
@@ -988,7 +988,7 @@ public class StockRound extends Round {
                 executeTradeCertificate(cert, pool, cert.getShares() * price);
             }
         }
-        company.adjustSharePrice (SOLD, numberToSell, gameManager.getStockMarket());
+        company.adjustSharePrice (SOLD, numberSold, gameManager.getStockMarket());
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
