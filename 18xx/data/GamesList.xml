@@ -12,6 +12,7 @@ Limitations:
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1835">
@@ -53,6 +54,7 @@ Limitation:
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
 		</Description>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1870">
@@ -63,12 +65,14 @@ Designed by Bill Dixon
 
 Aspects not present in 1830 have not been implemented yet.
 		</Description>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18AL">
 		<Note>Fully playable</Note>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Description>18AL  - The Railroads come to Alabama
 (c) 2000, 2004 Mark Derrick and John David Galt
 Designed by Mark Derrick
@@ -98,10 +102,11 @@ Not yet implemented:
 		<Description>18Kaas (Netherlands)
 (c) 1992 ERJO GAMES
 
-Should work, but has not been extensively tested. Linitations as with 1830.
+Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Credits>Rails is a computer implementation of a number of railroad board games,

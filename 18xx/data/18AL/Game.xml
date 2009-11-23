@@ -4,6 +4,7 @@
 		<Game name="18AL"/>
 		<GameOption name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<GameOption name="Obsolete4Trains" type="toggle" default="yes"/>
+		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<OperatingRound class="rails.game.specific._18AL.OperatingRound_18AL"/>
 		<ORUIManager class="rails.ui.swing.gamespecific._18AL.ORUIManager_18AL"/>
 		<PlayerShareLimit percentage="60"/>

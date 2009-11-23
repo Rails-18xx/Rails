@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.71 2009/11/02 23:30:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.72 2009/11/23 18:32:45 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1792,7 +1792,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean canLoan() {
-        return maxNumberOfLoans > 0;  //TODO Does not work?? (see ORPanel)
+        return maxNumberOfLoans != 0;
     }
 
     public int getMaxLoansPerRound() {

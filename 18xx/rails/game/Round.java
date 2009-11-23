@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.27 2009/10/07 19:00:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.28 2009/11/23 18:32:44 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -115,6 +115,9 @@ public abstract class Round implements RoundI {
         this.roundTypeForUI = roundTypeForUI;
     }
 
+    public String getGameOption (String name) {
+    	return gameManager.getGameOption(name);
+    }
      /*
      * (non-Javadoc)
      *
