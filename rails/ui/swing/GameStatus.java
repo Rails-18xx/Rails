@@ -753,6 +753,7 @@ public class GameStatus extends JPanel implements ActionListener {
         for (i = 0; i < nc; i++) {
             setIPOCertButton(i, false);
             setPoolCertButton(i, false);
+            setPlayerCertButton (i, actorIndex, false);
             if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
         }
 
