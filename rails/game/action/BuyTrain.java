@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.12 2009/11/20 20:56:51 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.13 2009/11/25 18:45:28 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -29,6 +29,7 @@ public class BuyTrain extends PossibleORAction {
     private boolean hasNoTrains = false; // TODO Remove once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
+    private boolean forcedExchange = false;
     private boolean presidentMustAddCash = false;
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
@@ -41,7 +42,6 @@ public class BuyTrain extends PossibleORAction {
     private int addedCash = 0;
     transient private TrainI exchangedTrain = null;
     private String exchangedTrainUniqueId;
-    private boolean forcedExchange = false;
 
     public static final long serialVersionUID = 2L;
 
@@ -59,7 +59,8 @@ public class BuyTrain extends PossibleORAction {
         if (trains != null) {
             trainsForExchangeUniqueIds = new String[trains.size()];
             for (int i = 0; i < trains.size(); i++) {
-                trainsForExchangeUniqueIds[i] = trains.get(i).getName(); // TODO:
+                trainsForExchangeUniqueIds[i] = trains.get(i).getName();
+                // TODO:
                 // Must
                 // be
                 // replaced
@@ -182,11 +183,7 @@ public class BuyTrain extends PossibleORAction {
     public void setExchangedTrain(TrainI exchangedTrain) {
         this.exchangedTrain = exchangedTrain;
         if (exchangedTrain != null)
-            this.exchangedTrainUniqueId = exchangedTrain.getName();// TODO:
-        // Must be
-        // replaced
-        // by unique
-        // Id
+            this.exchangedTrainUniqueId = exchangedTrain.getName();
     }
 
     @Override
@@ -200,6 +197,7 @@ public class BuyTrain extends PossibleORAction {
             b.append(" for ").append(Bank.format(fixedCost));
         } else {
             b.append(" for any amount");
+            if (pricePaid > 0) b.append(" - paid: ").append(Bank.format(pricePaid));
         }
         if (specialProperty != null) {
             b.append(" using ").append(specialProperty.getCompany().getName());
@@ -212,6 +210,7 @@ public class BuyTrain extends PossibleORAction {
         else if (presidentMayAddCash)
             b.append(" may add cash up to ").append(
                     Bank.format(presidentCashToAdd));
+        if (pricePaid > 0) b.append(" - paid: ").append(Bank.format(pricePaid));
 
         return b.toString();
     }
@@ -238,9 +237,14 @@ public class BuyTrain extends PossibleORAction {
         fixedCost = fields.get("fixedCost", fixedCost);
         hasNoTrains = fields.get("hasNoTrains", hasNoTrains);//TEMPORARY
         trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
+        forcedExchange = fields.get("forcedExchange", forcedExchange);
         presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);
         presidentMayAddCash = fields.get("presidentMayAddCash", presidentMayAddCash);
         presidentCashToAdd = fields.get("presidentCashToAdd", presidentCashToAdd);
+        specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
+        pricePaid = fields.get("pricePaid", pricePaid);
+        addedCash = fields.get("addedCash", addedCash);
+        exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
 
         GameManagerI gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
