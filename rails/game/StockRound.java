@@ -1327,4 +1327,9 @@ public class StockRound extends Round {
     public String toString() {
         return "StockRound " + getStockRoundNumber();
     }
+
+    @Override
+	public String getRoundName() {
+    	return toString();
+    }
 }
