@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.78 2009/11/20 20:56:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.79 2009/11/25 18:44:17 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1305,6 +1305,14 @@ public class OperatingRound extends Round implements Observer {
                                 Bank.format(price));
                 break;
             }
+            
+            // Fixed price must be honoured
+            int fixedPrice = action.getFixedCost();
+            if (fixedPrice != 0 && fixedPrice != price) {
+                errMsg = LocalText.getText("FixedPriceNotPaid",
+                        Bank.format(price),
+                        Bank.format(fixedPrice));
+            }
 
             // Does the company have room for another train?
             int trainLimit = operatingCompany.getCurrentTrainLimit();
@@ -1359,6 +1367,7 @@ public class OperatingRound extends Round implements Observer {
 
             break;
         }
+
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotBuyTrainFor",
                     companyName,
@@ -2346,6 +2355,11 @@ public class OperatingRound extends Round implements Observer {
     public boolean equals(RoundI round) {
         return round instanceof OperatingRound
                && thisOrNumber.equals(((OperatingRound) round).thisOrNumber);
+    }
+
+    @Override
+	public String getRoundName() {
+    	return toString();
     }
 
 }
