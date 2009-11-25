@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.17 2009/11/19 20:48:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.18 2009/11/25 18:48:19 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -206,6 +206,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     JOptionPane.showMessageDialog(this,
                             DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
                     return;
+                } else if (DisplayBuffer.getSize() > 0) {
+                    JOptionPane.showMessageDialog(this,
+                            DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
                 }
             }
 

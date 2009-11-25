@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.69 2009/11/08 10:45:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.70 2009/11/25 18:48:19 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -633,7 +633,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     	NDC.push (GM_KEY);
 
         boolean result = true;
-        
+
         DisplayBuffer.clear();
 
         // The action is null only immediately after Load.
@@ -734,10 +734,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */
-    public void processOnReload(List<PossibleAction> actions) throws Exception {
+    public boolean processOnReload(List<PossibleAction> actions) throws Exception {
 
         for (PossibleAction action : actions) {
 
+        	DisplayBuffer.clear();
             // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
             if (!possibleActions.contains(action.getClass())
                     && possibleActions.contains(RepayLoans.class)) {
@@ -749,17 +750,25 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
             try {
                 log.debug("Action: " + action);
-                getCurrentRound().process(action);
+                if (!getCurrentRound().process(action)) {
+                	String msg = "Player "+action.getPlayerName()+"\'s action \""
+                		+action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
+                		+" is considered invalid by the game engine";
+                	log.error(msg);
+                	DisplayBuffer.add(msg);
+                    if (moveStack.isOpen()) moveStack.finish();
+                	return false;
+                }
                 getCurrentRound().setPossibleActions();
             } catch (Exception e) {
                 log.debug("Error while reprocessing " + action.toString(), e);
                 throw new Exception("Reload failure", e);
-
             }
             new AddToList<PossibleAction>(executedActions, action,
                     "ExecutedActions");
             if (moveStack.isOpen()) moveStack.finish();
         }
+        return true;
     }
 
     protected boolean save(GameAction saveAction) {

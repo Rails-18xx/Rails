@@ -80,7 +80,7 @@ public class GameUIManager {
         if (Util.hasValue(timezone)) {
             saveDateTimeFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         }
-        saveSuffixSpec = Config.get("save.filename.suffix"); 
+        saveSuffixSpec = Config.get("save.filename.suffix");
         if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = "_" + saveSuffixSpec;
         }
@@ -430,7 +430,7 @@ public class GameUIManager {
             }
             filename =
                     saveDirectory + "/" + gameManager.getGameName() + "_"
-                            + saveDateTimeFormat.format(new Date()) 
+                            + saveDateTimeFormat.format(new Date())
                             + saveSuffix + "."
                             + saveExtension;
         }
