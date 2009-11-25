@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.28 2009/11/23 18:32:44 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.29 2009/11/25 18:44:45 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -374,5 +374,8 @@ public abstract class Round implements RoundI {
         return gameManager;
     }
 
+    public String getRoundName() {
+    	return this.getClass().getSimpleName();
+    }
 
 }
