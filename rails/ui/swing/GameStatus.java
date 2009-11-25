@@ -841,6 +841,7 @@ public class GameStatus extends JPanel implements ActionListener {
 
     protected void setPlayerCertButton(int i, int j, boolean clickable, Object o) {
 
+        if (j < 0) return;
         setPlayerCertButton(i, j, clickable);
         if (clickable && o != null) {
             if (o instanceof PossibleAction)
@@ -849,6 +850,7 @@ public class GameStatus extends JPanel implements ActionListener {
     }
 
     protected void setPlayerCertButton(int i, int j, boolean clickable) {
+        if (j < 0) return;
         if (clickable) {
             certPerPlayerButton[i][j].setText(certPerPlayer[i][j].getText());
         } else {
