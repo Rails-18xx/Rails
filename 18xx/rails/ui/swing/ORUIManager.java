@@ -889,7 +889,6 @@ public class ORUIManager {
             if (index >= 0) {
                 exchangedTrain = oldTrains.get(index);
             }
-
         }
 
         if (train != null) {

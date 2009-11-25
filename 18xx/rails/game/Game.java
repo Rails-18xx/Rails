@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.39 2009/11/22 18:48:40 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.40 2009/11/25 18:48:19 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -71,8 +71,6 @@ public class Game {
 
     public boolean setup() {
 
-        ReportBuffer.add(LocalText.getText("GameIs", name));
-
         try {
             // Have the ComponentManager work through the other rails.game files
             componentManagerTag =
@@ -89,6 +87,7 @@ public class Game {
 
             log.info("========== Start of rails.game " + name + " ==========");
             log.info("Rails version "+version);
+            ReportBuffer.add(LocalText.getText("GameIs", name));
 
             // Have the ComponentManager work through the other rails.game files
             componentManager.finishPreparation();
@@ -246,7 +245,10 @@ public class Game {
 
             log.debug("Starting to execute loaded actions");
 
-            game.getGameManager().processOnReload(executedActions);
+            if (!game.getGameManager().processOnReload(executedActions)) {
+                log.error ("Load interrupted");
+                DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
+            }
 
             return game;
 

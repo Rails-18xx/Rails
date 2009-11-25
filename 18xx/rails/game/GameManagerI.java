@@ -48,7 +48,7 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
      */
     public abstract boolean process(PossibleAction action);
 
-    public abstract void processOnReload(List<PossibleAction> actions)
+    public abstract boolean processOnReload(List<PossibleAction> actions)
             throws Exception;
 
     public abstract void finishShareSellingRound();
