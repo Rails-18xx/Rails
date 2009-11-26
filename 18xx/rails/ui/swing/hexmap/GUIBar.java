@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/Attic/GUIBar.java,v 1.1 2009/11/06 20:23:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/Attic/GUIBar.java,v 1.2 2009/11/26 20:12:06 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class GUIBar {
 
-    private Color color = Color.BLACK;
+    private Color color = Color.BLUE;
     private int x1, x2;
     private int y1, y2;
     private String name;
