@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.12 2009/10/07 19:00:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.13 2009/11/26 20:14:30 evos Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -18,10 +18,9 @@ import rails.game.GameManagerI;
 public class MoveSet {
 
     private List<Move> moves = new ArrayList<Move>();
-    private List<Move> reversedMoves = null;
     private boolean undoableByPlayer;
     /** If TRUE, undoing this move will also undo the previous one. */
-    private boolean linkedToPrevious = false;
+    private boolean linkedToPreviousMoveSet = false;
 
     protected static Logger log =
             Logger.getLogger(MoveSet.class.getPackage().getName());
@@ -45,11 +44,9 @@ public class MoveSet {
 
     protected void unexecute() {
 
-        // Create a reversed move list, if not yet done
-    	if (reversedMoves == null) {
-    		reversedMoves = new ArrayList<Move>(moves);
-    		Collections.reverse(reversedMoves);
-    	}
+        // Create a reversed move list
+    	List<Move> reversedMoves = new ArrayList<Move>(moves);
+    	Collections.reverse(reversedMoves);
         for (Move move : reversedMoves) {
             move.undo();
             log.debug("Undone: " + move);
@@ -60,12 +57,12 @@ public class MoveSet {
         return moves.isEmpty();
     }
 
-    public void setLinkedToPrevious() {
-        linkedToPrevious = true;
+    public void linkToPreviousMoveSet() {
+        linkedToPreviousMoveSet = true;
     }
 
-    protected boolean isLinkedToPrevious() {
-    	return linkedToPrevious;
+    protected boolean isLinkedToPreviousMove() {
+    	return linkedToPreviousMoveSet;
     }
 
     protected boolean isUndoableByPlayer () {

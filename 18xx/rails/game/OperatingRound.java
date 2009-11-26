@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.79 2009/11/25 18:44:17 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.80 2009/11/26 20:14:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1305,7 +1305,7 @@ public class OperatingRound extends Round implements Observer {
                                 Bank.format(price));
                 break;
             }
-            
+
             // Fixed price must be honoured
             int fixedPrice = action.getFixedCost();
             if (fixedPrice != 0 && fixedPrice != price) {
@@ -1529,7 +1529,7 @@ public class OperatingRound extends Round implements Observer {
         /* End of validation, start of execution */
         moveStack.start(true);
         //
-        if (action.isForced()) moveStack.setLinkedToPrevious();
+        if (action.isForced()) moveStack.linkToPreviousMoveSet();
 
         pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
@@ -2155,8 +2155,8 @@ public class OperatingRound extends Round implements Observer {
             		&& cheapestTrain != null && presidentMayHelp) {
             	BuyTrain bt = new BuyTrain(cheapestTrain,
                         cheapestTrain.getHolder(), costOfCheapestTrain);
-            	bt.setPresidentMustAddCash(costOfCheapestTrain);
-            	bt.setHasNoTrains(!hasTrains); // TEMPORARY
+            	bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
+            	bt.setHasNoTrains(!hasTrains); // TODO TEMPORARY
                 possibleActions.add(bt);
             }
         }

@@ -769,7 +769,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
 
         if (train != null) {
 
-            if (action.isForced()) moveStack.setLinkedToPrevious();
+            if (action.isForced()) moveStack.linkToPreviousMoveSet();
 
             train.moveTo(pool);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
