@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.25 2009/11/23 18:31:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.26 2009/11/26 20:14:00 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -321,7 +321,7 @@ public class ShareSellingRound extends StockRound {
             sellPrices.put(companyName, sellPrice);
         }
 
-        moveStack.start(true);
+        moveStack.start(true).linkToPreviousMoveSet();
 
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 playerName,
