@@ -107,6 +107,7 @@ public class GameUIManager {
 
         updateUI();
 
+        reportWindow.scrollDown();
     }
 
     public void startLoadedGame() {

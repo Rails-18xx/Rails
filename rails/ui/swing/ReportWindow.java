@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.10 2008/12/23 20:02:45 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.11 2009/11/26 22:15:28 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -68,12 +68,16 @@ public class ReportWindow extends JFrame implements KeyListener {
         String newText = ReportBuffer.get();
         if (newText.length() > 0) {
             message.append(newText);
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
-                }
-            });
+            scrollDown();
         }
+    }
+    
+    public void scrollDown () {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+            }
+        });
     }
 
     public void keyPressed(KeyEvent e) {
