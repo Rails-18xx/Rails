@@ -212,7 +212,11 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     }
 
     public static String format(int amount) {
-        return instance.moneyFormat.replaceFirst("@", String.valueOf(amount));
+    	// Replace @ with the amount
+    	String result = instance.moneyFormat.replaceFirst("@", String.valueOf(amount));
+    	// Move any minus to the front
+    	if (amount < 0) result = result.replaceFirst("(.+)-", "-$1");
+        return result;
     }
 
 }
