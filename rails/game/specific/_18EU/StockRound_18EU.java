@@ -637,7 +637,7 @@ public class StockRound_18EU extends StockRound {
         /* End of validation, start of execution */
         moveStack.start(false);
         //
-        if (action.isForced()) moveStack.setLinkedToPrevious();
+        if (action.isForced()) moveStack.linkToPreviousMoveSet();
 
         pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

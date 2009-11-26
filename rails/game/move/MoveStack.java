@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.1 2009/10/07 19:00:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.2 2009/11/26 20:14:30 evos Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -41,17 +41,17 @@ public class MoveStack {
         enabled = true;
     }
 
-    public boolean start(boolean undoableByPlayer) {
+    public MoveSet start(boolean undoableByPlayer) {
         log.debug(">>> Start MoveSet(index=" + (lastIndex + 1) + ")");
         if (currentMoveSet == null) {
             currentMoveSet = new MoveSet(undoableByPlayer);
             while (lastIndex < moveStack.size() - 1) {
                 moveStack.remove(moveStack.size() - 1);
             }
-            return true;
+            return currentMoveSet;
         } else {
-            log.warn("MoveStack is already open");
-            return false;
+            log.warn("MoveSet is already open");
+            return currentMoveSet;
         }
     }
 
@@ -96,9 +96,9 @@ public class MoveStack {
         }
     }
 
-    public void setLinkedToPrevious() {
+    public void linkToPreviousMoveSet() {
         if (currentMoveSet != null) {
-            currentMoveSet.setLinkedToPrevious();
+            currentMoveSet.linkToPreviousMoveSet();
         } else {
             log.warn("No MoveSet open");
         }
@@ -114,7 +114,7 @@ public class MoveStack {
                 // log.debug ("MoveStack undo index is "+lastIndex);
                 undoAction = moveStack.get(lastIndex--);
                 undoAction.unexecute();
-            } while (undoAction.isLinkedToPrevious());
+            } while (undoAction.isLinkedToPreviousMove());
             return true;
         } else {
             log.error("Invalid undo: index=" + lastIndex + " size="
