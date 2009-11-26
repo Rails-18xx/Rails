@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.72 2009/11/23 18:32:45 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.73 2009/11/26 20:13:19 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -587,7 +587,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         tokensCostThisTurn = new MoneyModel(name + "_spentOnTokens");
         tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
         trainsCostThisTurn = new MoneyModel(name + "_spentOnTrains");
-        trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
+        trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO|MoneyModel.ALLOW_NEGATIVE);
         bonusValue = new BonusModel(name + "_bonusValue");
 
         if (hasStockPrice) {
@@ -1480,6 +1480,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
     public void buyTrain(TrainI train, int price) {
+        if (train.getOwner() instanceof PublicCompanyI) {
+        	((MoneyModel)((PublicCompanyI)train.getOwner()).getTrainsSpentThisTurnModel()).add(-price);
+        }
         portfolio.buyTrain(train, price);
         trainsCostThisTurn.add(price);
         if (privateToCloseOnFirstTrain != null
