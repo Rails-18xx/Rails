@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.28 2009/10/06 18:34:04 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.29 2009/11/27 20:32:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -16,6 +16,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.ActionButton;
 import rails.ui.swing.elements.ActionMenuItem;
+import rails.util.Config;
 import rails.util.LocalText;
 
 /**
@@ -208,6 +209,9 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         setJMenuBar(menuBar);
 
+        if ("yes".equalsIgnoreCase(Config.get("report.window.open"))) {
+        	enableCheckBoxMenuItem(REPORT_CMD);
+        }
 }
 
     public StatusWindow() {
