@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.6 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.7 2009/11/27 20:34:01 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -62,10 +62,10 @@ public final class ReportBuffer {
     }
 
     private void addMessage (String message) {
-        if (Util.hasValue(message)) {
+        if (message != null) {
             reportBuffer.append(message).append("\n");
             /* Also log the message */
-            log.info(message);
+            if (message.length() > 0) log.info(message);
             /* Also write it to the report file, if requested */
             if (wantReport) writeToReport(message);
         }
