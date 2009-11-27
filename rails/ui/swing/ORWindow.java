@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.27 2009/11/17 19:31:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.28 2009/11/27 20:31:50 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -152,13 +152,13 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
     public void activate(OperatingRound or) {
 		GameManager gameManager = (GameManager) gameUIManager.getGameManager();
-		String compositeORNumber = gameManager.getCompositeORNumber ();
 		String numORs = gameManager.getNumOfORs ();
 
         /*if (!or.wasInterrupted())*/ orPanel.recreate(or);
         setTitle(LocalText.getText("MapWindowORTitle",
-								   compositeORNumber,
-								   numORs ));
+        		gameManager.getORId(),
+        		String.valueOf(gameManager.getRelativeORNumber()),
+        		numORs ));
         pack();
         if (lastBounds != null) {
             Rectangle newBounds = getBounds();
