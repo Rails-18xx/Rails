@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.70 2009/11/25 18:48:19 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.71 2009/11/27 20:35:18 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -71,6 +71,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     		= new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
+    protected boolean showCompositeORNumber = true;
 
     protected boolean gameEndsWithBankruptcy = false;
     protected int gameEndsWhenBankHasLessOrEqual = 0;
@@ -407,6 +408,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
+
+        showCompositeORNumber =  !"simple".equalsIgnoreCase(Config.get("or.number_format"));
     }
 
     public void startGame(Map<String,String> gameOptions) {
@@ -586,11 +589,23 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return round;
     }
 
+    public String getORId () {
+    	if (showCompositeORNumber) {
+    		return getCompositeORNumber();
+    	} else {
+    		return String.valueOf(absoluteORNumber.intValue());
+    	}
+    }
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCompositeORNumber()
      */
     public String getCompositeORNumber() {
         return srNumber.intValue() + "." + relativeORNumber.intValue();
+    }
+
+    public int getRelativeORNumber() {
+    	return relativeORNumber.intValue();
     }
 
 	public String getNumOfORs () {

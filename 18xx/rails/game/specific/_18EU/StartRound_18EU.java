@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.9 2009/10/07 21:03:36 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.10 2009/11/27 20:35:18 evos Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.*;
@@ -242,7 +242,7 @@ public class StartRound_18EU extends StartRound {
                 setStep(OPEN_STEP);
             }
 
-            ReportBuffer.add(LocalText.getText("SELECT_ITEM",
+            ReportBuffer.add(LocalText.getText("SelectForAuctioning",
                     playerName,
                     item.getName() ));
         }

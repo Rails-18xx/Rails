@@ -476,7 +476,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 && operatingCompany.isClosed());
 
         // Remove closed companies from the operating company list
-        // (leave this code in case we need it; it works)
+        // (PLEASE leave this code in case we need it; it works)
         //for (Iterator<PublicCompanyI> it = companies.iterator();
         //        it.hasNext(); ) {
         //    if ((it.next()).isClosed()) {
@@ -514,6 +514,9 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
             message = LocalText.getText("DoesNotForm", cgr.getName());
         }
+        ReportBuffer.add(LocalText.getText("EndOfFormationRound",
+        		cgr.getName(),
+        		getRoundName()));
         ReportBuffer.add (message);
         DisplayBuffer.add(message);
 

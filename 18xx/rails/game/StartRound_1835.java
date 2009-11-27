@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.21 2009/10/07 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.22 2009/11/27 20:35:18 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -110,6 +110,8 @@ public class StartRound_1835 extends StartRound {
         while (possibleActions.isEmpty()) {
 
             Player currentPlayer = getCurrentPlayer();
+            if (currentPlayer == startPlayer) ReportBuffer.add("");
+
             int cashToSpend = currentPlayer.getCash();
 
             for (StartItem item : buyableItems) {

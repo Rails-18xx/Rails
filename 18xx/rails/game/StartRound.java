@@ -20,6 +20,7 @@ public abstract class StartRound extends Round implements StartRoundI {
     protected int numPlayers;
     protected String variant;
     protected Player currentPlayer;
+    protected Player startPlayer;
 
     /**
      * Should the UI present bidding into and facilities? This value MUST be set
@@ -76,8 +77,8 @@ public abstract class StartRound extends Round implements StartRoundI {
 
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         currentPlayer = getCurrentPlayer();
+        startPlayer = currentPlayer;
 
-        ReportBuffer.add("");
         ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
         ReportBuffer.add(LocalText.getText("HasPriority",
                 getCurrentPlayer().getName()));
@@ -135,20 +136,21 @@ public abstract class StartRound extends Round implements StartRoundI {
              * If the complete start packet has been sold, start a Stock round,
              */
             possibleActions.clear();
-            //gameManager.nextRound(this);
             finishRound();
-        } else if (!setPossibleActions()) {
+       // } else if (!setPossibleActions()) {
             /*
              * If nobody can do anything, keep executing Operating and Start
              * rounds until someone has got enough money to buy one of the
              * remaining items. The game mechanism ensures that this will
              * ultimately be possible.
              */
-            finishRound();
+        //    finishRound();
         }
 
         return result;
     }
+
+
 
     /*----- Processing player actions -----*/
 
