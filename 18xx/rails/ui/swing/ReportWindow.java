@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.11 2009/11/26 22:15:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.12 2009/11/27 20:32:18 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import rails.game.GameManagerI;
 import rails.game.ReportBuffer;
+import rails.util.Config;
 import rails.util.LocalText;
 
 /**
@@ -61,7 +62,7 @@ public class ReportWindow extends JFrame implements KeyListener {
             }
         });
         addKeyListener(this);
-
+        setVisible("yes".equalsIgnoreCase(Config.get("report.window.open")));
     }
 
     public void addLog() {
@@ -71,7 +72,7 @@ public class ReportWindow extends JFrame implements KeyListener {
             scrollDown();
         }
     }
-    
+
     public void scrollDown () {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
