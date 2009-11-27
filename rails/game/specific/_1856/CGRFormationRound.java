@@ -57,7 +57,8 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         companiesToRepayLoans = null;
 
-        ReportBuffer.add(LocalText.getText("StartCGRFormationRound",
+        ReportBuffer.add(LocalText.getText("StartFormationRound",
+        		cgrName,
                 startingPlayer.getName()));
 
         // Collect companies having loans
@@ -79,6 +80,10 @@ public class CGRFormationRound extends SwitchableUIRound {
             finishRound();
             return;
         }
+
+        ReportBuffer.add(LocalText.getText("StartFormationRound",
+        		cgrName,
+                startingPlayer.getName()));
 
         setStep(STEP_REPAY_LOANS);
 
@@ -154,7 +159,9 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             // If that was all, we're done with this company
             numberOfLoans = currentCompany.getCurrentNumberOfLoans();
-            if (numberOfLoans == 0) continue;
+            if (numberOfLoans == 0) {
+            	continue;
+            }
 
             // Check the president's cash
             // He should be involved if at least one extra loan could be repaid
@@ -266,7 +273,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         }
 
-       return true;
+        return true;
 
     }
 
@@ -285,6 +292,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Exchange the player shares
         setCurrentPlayer(startingPlayer);
         cgrSharesUsed = 0;
+
+        ReportBuffer.add("");
 
         do {
             player = getCurrentPlayer();
@@ -474,6 +483,21 @@ public class CGRFormationRound extends SwitchableUIRound {
         cgr.setFloated();
         ReportBuffer.add (LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
+        // Determine the new certificate limit.
+        // The number of available companies is 11,
+        // or 12 minus the number of closed companies, whichever is lower.
+        int numCompanies = Math.min(11, 12-mergingCompanies.size());
+        int numPlayers = gameManager.getNumberOfPlayers();
+        // Need some checks here...
+        int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
+        gameManager.setPlayerCertificateLimit(newCertLimit);
+        message = LocalText.getText("CertificateLimit",
+        		newCertLimit,
+        		numPlayers,
+        		numCompanies);
+        DisplayBuffer.add(message);
+        ReportBuffer.add(message);
+
          // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
         nonHomeTokens = new ArrayList<BaseToken>();
@@ -513,7 +537,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (comp.getBonuses() != null) {
 	            List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
 	            for (Bonus bonus : bonuses) {
-	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(), 
+	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),
                             bonus.getLocations()));
 	            	comp.removeBonus(bonus);
 	            }
@@ -521,6 +545,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         // Replace the home tokens
+        ReportBuffer.add("");
         for (BaseToken token : homeTokens) {
             city = (City) token.getHolder();
             hex = city.getHolder();
@@ -589,6 +614,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Check the trains, autodiscard any excess non-permanent trains
         int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
         List<TrainI> trains = cgr.getPortfolio().getTrainList();
+        if (cgr.getNumberOfTrains() > trainLimit) ReportBuffer.add("");
 outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             for (TrainI train : trains) {
                 if (!train.getType().isPermanent()) {
@@ -601,26 +627,12 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             break;
         }
 
-        // Determine the new certificate limit.
-        // The number of available companies is 11,
-        // or 12 minus the number of closed companies, whichever is lower.
-        int numCompanies = Math.min(11, 12-mergingCompanies.size());
-        int numPlayers = gameManager.getNumberOfPlayers();
-        // Need some checks here...
-        int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
-        gameManager.setPlayerCertificateLimit(newCertLimit);
-        message = LocalText.getText("CertificateLimit",
-        		newCertLimit,
-        		numPlayers,
-        		numCompanies);
-        DisplayBuffer.add(message);
-        ReportBuffer.add(message);
-
     }
 
    private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
         City city;
         MapHex hex;
+        ReportBuffer.add("");
         for (BaseToken token : exchangedTokens) {
             // Remove old token
             city = (City) token.getHolder();

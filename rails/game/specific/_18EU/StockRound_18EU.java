@@ -537,6 +537,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (cert != null) {
+        	ReportBuffer.add("");
             ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getName(),
                     minor.getName(),
@@ -553,6 +554,7 @@ public class StockRound_18EU extends StockRound {
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getName()));
             checkFlotation(major);
         } else {
+        	ReportBuffer.add("");
             ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getName(),
                     minor.getName(),

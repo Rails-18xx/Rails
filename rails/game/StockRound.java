@@ -20,6 +20,7 @@ public class StockRound extends Round {
     /* Transient memory (per round only) */
     protected int numberOfPlayers;
     protected Player currentPlayer;
+    protected Player startingPlayer;
 
     protected State companyBoughtThisTurnWrapper =
             new State("CompanyBoughtThisTurn", PublicCompany.class);
@@ -73,14 +74,16 @@ public class StockRound extends Round {
 
     public void start() {
 
-        ReportBuffer.add("\n" + LocalText.getText("StartStockRound",
-                         + getStockRoundNumber()));
+        ReportBuffer.add(LocalText.getText("StartStockRound",
+                         getStockRoundNumber()));
 
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
+        startingPlayer = getCurrentPlayer(); // For the Report
+        ReportBuffer.add(LocalText.getText("HasPriority",
+                startingPlayer.getName() ));
 
         initPlayer();
-        ReportBuffer.add(LocalText.getText("HasPriority",
-                currentPlayer.getName() ));
+
     }
 
     /*----- General methods -----*/
@@ -1187,6 +1190,7 @@ public class StockRound extends Round {
         companyBoughtThisTurnWrapper.set(null);
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);
+        if (currentPlayer == startingPlayer) ReportBuffer.add("");
 
     }
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.80 2009/11/26 20:14:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.81 2009/11/27 20:35:18 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -123,8 +123,6 @@ public class OperatingRound extends Round implements Observer {
     public OperatingRound(GameManagerI gameManager) {
 		super (gameManager);
 
-        thisOrNumber = gameManager.getCompositeORNumber();
-
         if (players == null) {
             players = gameManager.getPlayers();
             numberOfPlayers = players.size();
@@ -135,11 +133,17 @@ public class OperatingRound extends Round implements Observer {
 
     public void start(boolean operate) {
 
+        thisOrNumber = gameManager.getORId();
+
+        ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
+
+        int count = 0;
         for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) {
                 if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
                     CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
                     int revenue = priv.getRevenue();
+                    if (count++ == 0) ReportBuffer.add("");
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getName(),
                             Bank.format(revenue),
@@ -149,8 +153,6 @@ public class OperatingRound extends Round implements Observer {
 
             }
         }
-
-        ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
         if (operate) {
 
@@ -1008,6 +1010,9 @@ public class OperatingRound extends Round implements Observer {
 
     protected void initTurn() {
         log.debug("Starting turn of "+operatingCompany.getName());
+        ReportBuffer.add(LocalText.getText("CompanyOperates",
+        		operatingCompany.getName(),
+        		operatingCompany.getPresident().getName()));
         setCurrentPlayer(operatingCompany.getPresident());
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();

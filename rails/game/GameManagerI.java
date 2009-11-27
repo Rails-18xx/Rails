@@ -30,7 +30,9 @@ public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
      */
     public abstract void nextRound(RoundI round);
 
+    public String getORId ();
     public abstract String getCompositeORNumber();
+    public int getRelativeORNumber();
 
     public abstract int getSRNumber();
 

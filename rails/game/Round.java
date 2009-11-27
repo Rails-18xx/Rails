@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.29 2009/11/25 18:44:45 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.30 2009/11/27 20:35:18 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -182,6 +182,8 @@ public abstract class Round implements RoundI {
             int cityNumber;
             String[] ct;
             PublicCompanyI comp = action.getCompany();
+
+            ReportBuffer.add("");
 
             for (ExchangeableToken token : tokens) {
                 cityName = token.getCityName();
