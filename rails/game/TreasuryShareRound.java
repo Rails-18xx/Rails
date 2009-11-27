@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.14 2009/10/07 19:00:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.15 2009/11/27 20:30:56 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -476,6 +476,7 @@ public class TreasuryShareRound extends StockRound {
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 companyName,
                 numberSold,
+                company.getShareUnit(),
                 (numberSold * company.getShareUnit()),
                 companyName,
                 Bank.format(numberSold * price) ));
