@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.13 2009/11/28 22:41:04 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ReportWindow.java,v 1.14 2009/11/29 15:46:14 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -9,15 +9,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.DisplayBuffer;
-import rails.game.Game;
-import rails.game.GameManager;
 import rails.game.GameManagerI;
 import rails.game.ReportBuffer;
 import rails.ui.swing.elements.ActionMenuItem;
@@ -39,7 +35,8 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
     private ReportWindow messageWindow;
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu;
-    private JMenuItem saveItem, loadItem, printItem, findItem;
+    private JMenuItem saveItem, loadItem, printItem;
+    private JMenuItem findItem, findBackItem, findNextItem, findPrevItem;
 
     private GameManagerI gameManager;
     
@@ -52,7 +49,10 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
     protected static final String LOAD_CMD = "Load";
     protected static final String PRINT_CMD = "Print";
     protected static final String FIND_CMD = "Find";
-    
+    protected static final String FIND_BACK_CMD = "FindBack";
+    protected static final String FIND_NEXT_CMD = "FindNext";
+    protected static final String FIND_PREV_CMD = "FindPrev";
+  
     protected static Logger log =
         Logger.getLogger(ReportWindow.class.getPackage().getName());
 
@@ -104,7 +104,53 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
         saveItem.setEnabled(true);
         fileMenu.add(saveItem);
 
+        printItem = new ActionMenuItem(LocalText.getText("PRINT"));
+        printItem.setActionCommand(PRINT_CMD);
+        printItem.setMnemonic(KeyEvent.VK_P);
+        printItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+                ActionEvent.ALT_MASK));
+        printItem.addActionListener(this);
+        printItem.setEnabled(false);
+        fileMenu.add(printItem);
+
+        findItem = new ActionMenuItem(LocalText.getText("FIND"));
+        findItem.setActionCommand(FIND_CMD);
+        findItem.setMnemonic(KeyEvent.VK_F);
+        findItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+                ActionEvent.CTRL_MASK));
+        findItem.addActionListener(this);
+        findItem.setEnabled(true);
+        editMenu.add(findItem);
+
+        findBackItem = new ActionMenuItem(LocalText.getText("FIND_BACK"));
+        findBackItem.setActionCommand(FIND_BACK_CMD);
+        findBackItem.setMnemonic(KeyEvent.VK_B);
+        findBackItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+                ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        findBackItem.addActionListener(this);
+        findBackItem.setEnabled(true);
+        editMenu.add(findBackItem);
+
+        findNextItem = new ActionMenuItem(LocalText.getText("FIND_NEXT"));
+        findNextItem.setActionCommand(FIND_NEXT_CMD);
+        findNextItem.setMnemonic(KeyEvent.VK_N);
+        findNextItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+                ActionEvent.CTRL_MASK));
+        findNextItem.addActionListener(this);
+        findNextItem.setEnabled(true);
+        editMenu.add(findNextItem);
+
+        findPrevItem = new ActionMenuItem(LocalText.getText("FIND_PREV"));
+        findPrevItem.setActionCommand(FIND_PREV_CMD);
+        findPrevItem.setMnemonic(KeyEvent.VK_P);
+        findPrevItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+                ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        findPrevItem.addActionListener(this);
+        findPrevItem.setEnabled(true);
+        editMenu.add(findPrevItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         
         setJMenuBar(menuBar);
         
@@ -148,6 +194,14 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
             loadReportFile();
         } else if (SAVE_CMD.equalsIgnoreCase(command)) {
             saveReportFile();
+        } else if (FIND_CMD.equalsIgnoreCase(command)) {
+            findText(false);
+        } else if (FIND_BACK_CMD.equalsIgnoreCase(command)) {
+            findText(true);
+        } else if (FIND_NEXT_CMD.equalsIgnoreCase(command)) {
+            findNext(false);
+        } else if (FIND_PREV_CMD.equalsIgnoreCase(command)) {
+            findNext(true);
         }
     }
     
@@ -207,6 +261,39 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
                         e.getMessage(), "", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    
+    private void findText(boolean backwards) {
+        
+        String text = reportText.getText();
+        String target = JOptionPane.showInputDialog(reportText, 
+                LocalText.getText("EnterSearch"));
+        if (!Util.hasValue(target)) return;
+        
+        int startPos = editable 
+                ? reportText.getCaretPosition() 
+                : backwards ? text.length() : 0;
+        int foundPos = backwards
+                ? text.lastIndexOf(target, startPos)
+                : text.indexOf(target, startPos);
+        if (foundPos < 0) return;
+        
+        reportText.select(foundPos, foundPos + target.length());
+    }
+    
+    private void findNext(boolean backwards) {
+        
+        String text = reportText.getText();
+        String target = reportText.getSelectedText();
+        if (!Util.hasValue(target)) return;
+        
+        int startPos = reportText.getSelectionStart();
+        int foundPos = backwards
+                ? text.lastIndexOf(target, startPos-1)
+                : text.indexOf(target, startPos+1);
+        if (foundPos < 0) return;
+        
+        reportText.select(foundPos, foundPos + target.length());
     }
     
     public void keyPressed(KeyEvent e) {
