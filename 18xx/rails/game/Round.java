@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.30 2009/11/27 20:35:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.31 2009/12/07 17:50:38 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -212,6 +212,7 @@ public abstract class Round implements RoundI {
                 } else {
                     ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
                             comp.getName(),
+                            token.getOldCompanyName(),
                             city.getName()));
                 }
             }
