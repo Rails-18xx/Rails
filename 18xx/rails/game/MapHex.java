@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.31 2009/11/07 12:09:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.32 2009/12/07 17:47:29 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -699,6 +699,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             return false;
         } else {
             token.moveTo(city);
+            update();
             return true;
         }
     }
