@@ -1094,7 +1094,6 @@ public class StockRound extends Round {
                 ipoHasShare ? ipo.findCertificate(publicCompany,
                         false) : pool.findCertificate(publicCompany,
                         false);
-        //player.buy(cert, 0);
         cert.moveTo(player.getPortfolio());
         ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
                 player.getName(),
@@ -1103,6 +1102,9 @@ public class StockRound extends Round {
                 publicCompany.getName()));
         sp.setExercised();
         privateCompany.setClosed();
+
+        // Check if the company has floated
+        if (!publicCompany.hasFloated()) checkFlotation(publicCompany);
 
         return true;
     }
