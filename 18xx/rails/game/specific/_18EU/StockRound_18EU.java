@@ -550,6 +550,19 @@ public class StockRound_18EU extends StockRound {
                     major.getName(),
                     cert.getPortfolio().getName(),
                     minor.getName() ));
+            if (major != null) {
+            	if (action.getReplaceToken()) {
+                    ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                    		major.getName(),
+                            minor.getName(),
+                            homeHex.getName()));
+            	} else {
+                    ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
+                    		major.getName(),
+                    		minor.getName(),
+                    		homeHex.getName()));
+            	}
+            }
             cert.moveTo(currentPlayer.getPortfolio());
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getName()));
             checkFlotation(major);
