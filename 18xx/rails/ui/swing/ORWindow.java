@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.28 2009/11/27 20:31:50 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.29 2009/12/07 17:48:32 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -154,7 +154,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 		GameManager gameManager = (GameManager) gameUIManager.getGameManager();
 		String numORs = gameManager.getNumOfORs ();
 
-        /*if (!or.wasInterrupted())*/ orPanel.recreate(or);
+        orPanel.recreate(or);
         setTitle(LocalText.getText("MapWindowORTitle",
         		gameManager.getORId(),
         		String.valueOf(gameManager.getRelativeORNumber()),
@@ -170,6 +170,10 @@ public class ORWindow extends JFrame implements ActionPerformer {
     }
 
     public void updateStatus() {
+    	// Safety check. Do nothing if this method is called outside Operating Rounds,
+    	// for instance when a token is exchanged during a Stock Round.
+    	if (!(gameUIManager.getCurrentRound() instanceof OperatingRound)) return;
+
         orUIManager.updateStatus();
         requestFocus();
     }
