@@ -11,6 +11,7 @@
 		<Upgrade id="201,202" hex="C4,G10,H3,L7,M4,P13,Q2,R5,S8" />
 	</Tile>
 	<Tile id="-3"/>
+	<Tile id="-800"/>
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>

@@ -1,6 +1,6 @@
 <Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
     <!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
-    <Hex name="A4" port="yes" value="10" tile="-901" orientation="1"/>
+    <Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>
     <Hex name="B7" value="30,50" tile="-939" orientation="1" city="Hamburg"/>
     <Hex name="C4" label="Y" tile="-10" city="Amsterdam"/>
     <Hex name="C6" tile="-1" city="Bremen"/>
@@ -114,11 +114,11 @@
     <Hex name="T3" cost="60" tile="-1" city="Nice"/>
     <Hex name="T5" tile="-10" city="Genoa"/>
     <Hex name="T7" tile="-1" city="Bologna"/>
-    <Hex name="T9" port="yes" value="10" tile="-901" orientation="4"/>
-    <Hex name="U2" port="yes" value="10" tile="-901" orientation="4"/>
+    <Hex name="T9" port="yes" value="10" tile="-800" orientation="3"/>
+    <Hex name="U2" port="yes" value="10" tile="-800" orientation="3"/>
     <Hex name="U4" tile="0" />
     <Hex name="U6" tile="-1" city="Florence"/>
     <Hex name="U8" tile="0" />
-    <Hex name="V5" port="yes" value="10" tile="-901" orientation="4"/>
+    <Hex name="V5" port="yes" value="10" tile="-800" orientation="3"/>
     <Hex name="V7" label="V" value="30,50" tile="-903" orientation="4" city="Rome"/>
 </Map>
