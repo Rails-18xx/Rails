@@ -5,6 +5,9 @@
 	</Tile><Tile colour="fixed" id="-3" name="MF 3">
 		<Station id="city1" position="252" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side2"/>
+		<Track from="city1" gauge="normal" to="side3"/></Tile>
+	<Tile colour="fixed" id="-800">
+		<Station id="city1" position="302" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile><Tile colour="red" id="-901" name="OM 1 way">
 		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
