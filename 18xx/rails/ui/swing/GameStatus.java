@@ -503,6 +503,11 @@ public class GameStatus extends JPanel implements ActionListener {
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0);
 
+        // Train cost overview
+        String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
+        addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
+        		futureTrainsWidth + 2, 1, 0);
+
         dummyButton = new ClickField("", "", "", this, buySellGroup);
 
     }
