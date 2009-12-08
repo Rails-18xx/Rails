@@ -137,14 +137,6 @@ public abstract class StartRound extends Round implements StartRoundI {
              */
             possibleActions.clear();
             finishRound();
-       // } else if (!setPossibleActions()) {
-            /*
-             * If nobody can do anything, keep executing Operating and Start
-             * rounds until someone has got enough money to buy one of the
-             * remaining items. The game mechanism ensures that this will
-             * ultimately be possible.
-             */
-        //    finishRound();
         }
 
         return result;

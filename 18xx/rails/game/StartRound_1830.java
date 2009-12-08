@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.26 2009/11/27 20:35:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.27 2009/12/08 19:32:44 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -32,13 +32,35 @@ public class StartRound_1830 extends StartRound {
     }
 
     @Override
+    public boolean process(PossibleAction action) {
+
+        if (!super.process(action)) return false;
+
+        // Assign any further items that have been bid exactly once
+        // and don't need any further player intervention, such
+        // as setting a start price
+        StartItem item;
+        while ((item = startPacket.getFirstUnsoldItem()) != null
+        		&& item.getBidders() == 1 && item.needsPriceSetting() == null) {
+            assignItem(item.getBidder(), item, item.getBid(), 0);
+
+            // Check if this has exhausted the start packet
+            if (startPacket.areAllSold()) {
+            	finishRound();
+            	break;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public boolean setPossibleActions() {
 
         boolean passAllowed = true;
 
         possibleActions.clear();
 
-        if (startPacket.areAllSold()) return false;
+        //if (startPacket.areAllSold()) return false;  // SHOULDN'T GET HERE THEN
         if (currentPlayer == startPlayer) ReportBuffer.add("");
 
         while (possibleActions.isEmpty()) {
@@ -84,7 +106,8 @@ public class StartRound_1830 extends StartRound {
                             possibleActions.add(newItem);
                             break; // No more actions possible!
                         } else {
-                            // Otherwise, buy it now.
+                        	// ERROR, this should have been detected in process()!
+                        	log.error("??? Wrong place to assign item "+item.getName());
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
@@ -131,9 +154,9 @@ public class StartRound_1830 extends StartRound {
              * it is possible that the last unsold item was sold in the above
              * loop. go to next round if that happened
              */
-            if (gameManager.getStartPacket().areAllSold()) {
-                return false;
-            }
+            //if (gameManager.getStartPacket().areAllSold()) {
+            //    return false;
+            //}
 
             if (possibleActions.isEmpty()) {
                 numPasses.add(1);
