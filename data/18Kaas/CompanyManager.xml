@@ -20,7 +20,7 @@
 	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
     <Blocking hex="D15"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="D15" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -28,10 +28,10 @@
 	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
     <Blocking hex="K16"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="K16" extra="no" free="no"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" class="rails.game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="K16" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -39,7 +39,7 @@
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
     <Blocking hex="D9"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" class="rails.game.special.ExchangeForShare">
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
