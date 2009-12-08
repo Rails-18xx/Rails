@@ -1,7 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.9 2009/11/02 23:30:36 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.10 2009/12/08 19:31:49 evos Exp $*/
 package rails.ui.swing.hexmap;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 
 import rails.game.MapHex;
@@ -52,5 +52,44 @@ public class NSHexMap extends HexMap {
                 new Dimension((hexArray.length + 1) * 3 * scale,
                         (int) Math.round((hexArray[0].length + 1) * 2
                                          * GUIHex.SQRT3 * scale));
+    }
+
+    @Override
+	public void paint(Graphics g) {
+
+    	super.paint(g);
+        Graphics2D g2 = (Graphics2D) g;
+        String label;
+
+        boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
+        int xOffset = mapManager.letterAHasEvenNumbers() ? 1 : 0;
+        int xLeft = cx + 10;
+        int xRight = (cx + 5 + 3 * scale * hexArray.length);
+        int yTop = 20;
+        int yBottom = (int)(cy + 20 + 2 * hexArray[0].length * GUIHex.SQRT3 * scale);
+
+        for (int i = 1; i < hexArray.length; i++) {
+        	label = lettersGoHorizontal
+        			? String.valueOf((char)('@'+i))
+        			: String.valueOf(i);
+        	g2.drawString(label,
+        			(cx - 30 -3*label.length() + 3 * scale * (i + xOffset)),
+        			yTop);
+        	g2.drawString(label,
+        			(cx - 30 -3*label.length() + 3 * scale * (i + xOffset)),
+        			yBottom);
+        }
+
+        for (int j = 1; j < 2 * hexArray[0].length; j++) {
+        	label = lettersGoHorizontal
+					? String.valueOf(j)
+					: String.valueOf((char)('@'+j));
+        	g2.drawString(label,
+        			xLeft,
+        			(int)(cy + 56 + j * GUIHex.SQRT3 * scale));
+        	g2.drawString(label,
+        			xRight,
+        			(int)(cy + 56 + j * GUIHex.SQRT3 * scale));
+        }
     }
 }
