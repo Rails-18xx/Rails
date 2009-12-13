@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.33 2009/09/12 19:48:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.34 2009/12/13 16:39:47 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -216,19 +216,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     }
 
     public void redisplay() {
-        if (StatusWindow.useObserver) {
-            revalidate();
-        } else {
-            repaint();
-        }
+        revalidate();
     }
 
     private void deRegisterObservers() {
         log.debug("Deregistering observers");
-        if (StatusWindow.useObserver) {
-            for (ViewObject vo : observers) {
-                vo.deRegister();
-            }
+        for (ViewObject vo : observers) {
+            vo.deRegister();
         }
     }
 
@@ -490,7 +484,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         statusPanel.add(comp, gbc);
 
-        if (StatusWindow.useObserver && comp instanceof ViewObject
+        if (comp instanceof ViewObject
             && ((ViewObject) comp).getModel() != null) {
             observers.add((ViewObject) comp);
         }

@@ -1,9 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.7 2008/06/04 19:00:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.8 2009/12/13 16:39:48 evos Exp $*/
 package rails.game.model;
 
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -23,6 +21,12 @@ public abstract class ModelObject extends Observable {
     protected static Logger log =
             Logger.getLogger(ModelObject.class.getPackage().getName());
 
+    @Override
+	public void addObserver (Observer o) {
+    	super.addObserver(o);
+    	notifyViewObjects();
+    }
+
     /** Add a dependent model object */
     public void addDependent(ModelObject object) {
         if (dependents == null) dependents = new HashSet<ModelObject>();
@@ -38,14 +42,19 @@ public abstract class ModelObject extends Observable {
 
     private void notifyViewObjects() {
         setChanged();
-        notifyObservers(getText());
+        notifyObservers(getUpdate());
         clearChanged();
+    }
+
+    /** Default update is just text */
+    public Object getUpdate () {
+    	return getText();
     }
 
     /**
      * Optional method, to make a subclass-dependent selection of the way the
      * "value" will be composed. The default value is 0.
-     * 
+     *
      * @param option The selected
      */
     public void setOption(int option) {
@@ -78,7 +87,7 @@ public abstract class ModelObject extends Observable {
      * The object that is sent to the Observer along with a notification. The
      * default result is the Observable's toString(), but it can be overridden
      * where needed.
-     * 
+     *
      * @return
      */
     public abstract String getText();

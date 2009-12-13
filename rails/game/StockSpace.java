@@ -1,6 +1,8 @@
 package rails.game;
 
-import java.util.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -51,9 +53,9 @@ public class StockSpace extends ModelObject implements StockSpaceI {
     /*--- Token handling methods ---*/
     /**
      * Add a token at the end of the array (i.e. at the bottom of the pile)
-     * 
+     *
      * Always returns true;
-     * 
+     *
      * @param company The company object to add.
      */
     public boolean addToken(PublicCompanyI company) {
@@ -65,7 +67,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
 
     /**
      * Remove a token from the pile.
-     * 
+     *
      * @param company The company object to remove.
      * @return False if the token was not found.
      */
@@ -90,7 +92,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
 
     /**
      * Find the stack position of a company token
-     * 
+     *
      * @return Stock position: 0 = top, increasing towards the bottom. -1 if not
      * found.
      */
@@ -125,11 +127,11 @@ public class StockSpace extends ModelObject implements StockSpaceI {
     /**
      * @return The square's colour.
      */
-    public String getColour() {
+    public Color getColour() {
         if (type != null) {
             return type.getColour();
         } else {
-            return "";
+            return Color.WHITE;
         }
     }
 
@@ -253,11 +255,13 @@ public class StockSpace extends ModelObject implements StockSpaceI {
         return !tokens.isEmpty();
     }
 
-    public String getText() {
+    @Override
+	public String getText() {
         return Bank.format(price);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getText();
     }
 }

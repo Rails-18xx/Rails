@@ -1,13 +1,13 @@
 <StockMarket type="rectangular">
   <UpOrDownRight/>
-  <StockSpaceType name="yellow" colour="yellow">
+  <StockSpaceType name="yellow" colour="FFFF00">
     <NoCertLimit/>
   </StockSpaceType>
-  <StockSpaceType name="orange" colour="green">
+  <StockSpaceType name="orange" colour="00AA00">
     <NoCertLimit/>
     <NoHoldLimit/>
   </StockSpaceType>
-  <StockSpaceType name="brown" colour="brown">
+  <StockSpaceType name="brown" colour="884000">
     <NoCertLimit/>
     <NoHoldLimit/>
     <NoBuyLimit/>

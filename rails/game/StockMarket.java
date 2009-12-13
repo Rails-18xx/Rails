@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.23 2009/11/11 22:26:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.24 2009/12/13 16:39:49 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -19,6 +19,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     protected int numCols = 0;
     protected ArrayList<StockSpaceI> startSpaces = new ArrayList<StockSpaceI>();
     protected int[] startPrices;
+    protected StockSpaceTypeI defaultType;
 
     /* Game-specific flags */
     protected boolean upOrDownRight = false; /*
@@ -34,14 +35,22 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     ArrayList<PublicCertificate> ipoPile;
 
+    public static final String DEFAULT = "default";
+
     public StockMarket() {
+
     }
 
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        /* Read and configure the stock market space types */
+
+    	// Define a default stockspace type with colour white
+    	defaultType = new StockSpaceType(DEFAULT, StockSpaceType.WHITE);
+    	stockSpaceTypes.put (DEFAULT, defaultType);
+
+    	/* Read and configure the stock market space types */
         List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
 
         if (typeTags != null) {
@@ -98,6 +107,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
                 throw new ConfigurationException(LocalText.getText(
                         "StockSpaceTypeUndefined", type));
             }
+            if (type == null) type = defaultType;
 
             if (stockChartSpaces.get(name) != null) {
                 throw new ConfigurationException(LocalText.getText(
@@ -269,7 +279,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {}
         else if (row < numRows - 1 &&
         		(newsquare = getStockSpace(row + 1, col)) != null) {}
-        else { 
+        else {
             newsquare = oldsquare;
         }
         if (newsquare.closesCompany()) {

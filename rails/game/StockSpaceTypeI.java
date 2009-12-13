@@ -1,5 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceTypeI.java,v 1.3 2008/06/04 19:00:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceTypeI.java,v 1.4 2009/12/13 16:39:48 evos Exp $ */
 package rails.game;
+
+import java.awt.Color;
 
 /**
  * The interface for StockSpaceType.
@@ -43,7 +45,7 @@ public interface StockSpaceTypeI {
     /**
      * @return Color
      */
-    public abstract String getColour();
+    public abstract Color getColour();
 
     /**
      * @return Name

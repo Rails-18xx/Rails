@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.29 2009/11/27 20:32:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.30 2009/12/13 16:39:47 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -79,14 +79,6 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     private List<ActionMenuItem> specialActionItems =
             new ArrayList<ActionMenuItem>();
-
-    /**
-     * Selector for the pattern to be used in keeping the individual UI fields
-     * up-to-date: <br> - true: push changes (via the Observer/Observable
-     * pattern), <br> - false: pull everything on repaint. NOTE: currently,
-     * 'false' does not work for the stock chart.
-     */
-    public static boolean useObserver = true;
 
     protected static Logger log =
             Logger.getLogger(StatusWindow.class.getPackage().getName());
