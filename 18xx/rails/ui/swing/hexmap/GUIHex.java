@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.26 2009/12/13 16:39:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.27 2009/12/13 21:14:12 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -292,10 +292,7 @@ public class GUIHex implements ViewObject {
         paintOffStationTokens(g2);
 
         FontMetrics fontMetrics = g2.getFontMetrics();
-        if (getHexModel().getTileCost() > 0 /*
-                                             * && originalTileId ==
-                                             * currentTileId
-                                             */) {
+        if (getHexModel().getTileCost() > 0 ) {
             g2.drawString(
                     Bank.format(getHexModel().getTileCost()),
                     rectBound.x
@@ -305,8 +302,10 @@ public class GUIHex implements ViewObject {
                             + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
         }
 
-        Map<PublicCompanyI, City> homes;
-        if ((homes = getHexModel().getHomes()) != null) {
+        Map<PublicCompanyI, City> homes = getHexModel().getHomes();
+        if (homes  != null) {
+            //log.debug("+++ Home hex "+getName());
+            /*
             StringBuffer b = new StringBuffer();
             for (Iterator<PublicCompanyI> it = homes.keySet().iterator(); it.hasNext();) {
 
@@ -325,6 +324,28 @@ public class GUIHex implements ViewObject {
                             * 1 / 2,
                     rectBound.y
                             + ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
+            */
+            City city;
+            Point p;
+homes:      for (PublicCompanyI company : homes.keySet()) {
+                if (company.isClosed()) continue;
+                city = homes.get(company);
+                
+                // Only draw the company name if there isn't yet a token of that company
+                if (city.getTokens() != null) {
+                    for (TokenI token : city.getTokens()) {
+                        if (token instanceof BaseToken 
+                                && ((BaseToken)token).getCompany() == company) {
+                            continue homes;
+                        }
+                    }
+                }
+                p = getTokenOrigin (1, 0, getHexModel().getCities().size(), 
+                        city.getNumber()-1);
+                //log.debug("+++ Home of "+company.getName()+" hex"+getName()+" city"+city.getName()
+                //        + " x="+(p.x)+" y="+(p.y));
+                drawHome (g2, company, p);
+            }
         }
 
         if (getHexModel().isBlocked()) {
@@ -343,7 +364,7 @@ public class GUIHex implements ViewObject {
 																					   + ")"))
 										  * 1 / 2,
 										  rectBound.y
-										  + ((fontMetrics.getHeight() + rectBound.height) * 7 / 15));
+										  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
 						}
 					}
 				}
@@ -443,6 +464,25 @@ public class GUIHex implements ViewObject {
         token.setBounds(origin.x, origin.y, size.width, size.height);
 
         token.drawToken(g2);
+    }
+    
+    private void drawHome (Graphics2D g2, PublicCompanyI co, Point origin) {
+
+        Font oldFont = g2.getFont();
+        Color oldColor = g2.getColor();
+        
+        double tokenScale = 15.0 / 21.0;
+        String name = co.getName();
+    
+        Font font = GUIToken.getTokenFont(name.length());
+        g2.setFont(new Font("Helvetica", Font.BOLD,
+                (int) (font.getSize() * tokenScale)));
+        g2.setColor(Color.BLACK);
+        g2.drawString(name, (int) (origin.x + (12 - 3*name.length()) * tokenScale),
+                (int) (origin.y + 14 * tokenScale));
+    
+        g2.setColor(oldColor);
+        g2.setFont(oldFont);
     }
 
     private void drawBonusToken(Graphics2D g2, BonusToken bt, Point origin) {
@@ -703,8 +743,8 @@ public class GUIHex implements ViewObject {
 
             provisionalGUITile = null;
 
-            log.debug("GUIHex " + model.getName() + " updated: new tile "
-                      + currentTileId + "/" + currentTileOrientation);
+            //log.debug("GUIHex " + model.getName() + " updated: new tile "
+            //          + currentTileId + "/" + currentTileOrientation);
 
             if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
             	GameUIManager.instance.orWindow.updateStatus();
