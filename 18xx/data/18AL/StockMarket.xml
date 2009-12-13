@@ -1,5 +1,5 @@
 <StockMarket type="rectangular">
-  <StockSpaceType name="yellow" colour="yellow">
+  <StockSpaceType name="yellow" colour="FFFF00">
     <NoCertLimit/>
   </StockSpaceType>
 

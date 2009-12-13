@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.73 2009/11/26 20:13:19 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.74 2009/12/13 16:39:48 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -267,10 +267,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         /* Configure public company features */
         fgHexColour = tag.getAttributeAsString("fgColour", fgHexColour);
-        fgColour = new Color(Integer.parseInt(fgHexColour, 16));
+        //fgColour = new Color(Integer.parseInt(fgHexColour, 16));
+        fgColour = Util.parseColour(fgHexColour);
 
         bgHexColour = tag.getAttributeAsString("bgColour", bgHexColour);
-        bgColour = new Color(Integer.parseInt(bgHexColour, 16));
+        //bgColour = new Color(Integer.parseInt(bgHexColour, 16));
+        bgColour = Util.parseColour(bgHexColour);
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
 

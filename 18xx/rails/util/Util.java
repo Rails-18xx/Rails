@@ -1,15 +1,19 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.15 2009/09/25 19:13:01 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.16 2009/12/13 16:39:49 evos Exp $*/
 package rails.util;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import rails.game.ConfigurationException;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolderI;
 
 public final class Util {
-    // protected static Logger log = Game.getLogger();
+
+    protected static Logger log;
 
     /**
      * No-args private constructor, to prevent (meaningless) construction of one
@@ -77,6 +81,58 @@ public final class Util {
         for (T object : list) {
             object.moveTo(to);
         }
+
+    }
+
+    /**
+     * Parse a colour definition string.
+     * Currently supported formats:
+     *   "RRGGBB" - each character being a hexadecimal digit
+     *   "r,g,b"  - each letter representing an integer 0..255
+     * @param s
+     * @return
+     */
+    public static Color parseColour (String s) throws ConfigurationException{
+    	Color c = null;
+    	if (s.indexOf(',') == -1) {
+    		// Assume hexadecimal RRGGBB
+    		try {
+    			c = new Color (Integer.parseInt(s, 16));
+    		} catch (NumberFormatException e) {
+    			getLogger().error ("Invalid hex RGB colour: "+s, e);
+    			throw new ConfigurationException (e);
+    		}
+    	} else {
+    		// Assume decimal r,g,b
+    		try {
+    	    	String[] parts = s.split(",");
+    			c = new Color (Integer.parseInt(parts[0]),
+    						   Integer.parseInt(parts[1]),
+    						   Integer.parseInt(parts[2]));
+    		} catch (NumberFormatException e) {
+    			getLogger().error ("Invalid nummeric RGB colour: "+s, e);
+    			throw new ConfigurationException (e);
+    		}
+    	}
+    	//getLogger().debug("+++ String:"+s+" Color:"+c);
+    	return c;
+    }
+
+    /**
+     * Is a colour dark? (to check if FG colour needs be reversed)
+     */
+    public static boolean isDark(Color c) {
+    	if (c == null) return false;
+    	return Math.sqrt(0.241*c.getRed()*c.getRed()
+    					+ 0.691*c.getBlue()*c.getBlue()
+    					+ 0.068*c.getGreen()*c.getGreen()) < 128;
+    	// Copied this formula from
+    	// http://www.nbdtech.com/blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+    }
+
+    public static Logger getLogger () {
+    	if (log == null) log = Logger.getLogger(Util.class.getPackage().getName());
+    	return log;
 
     }
 }

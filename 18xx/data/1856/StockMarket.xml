@@ -1,8 +1,8 @@
 <StockMarket type="rectangular">
-  <StockSpaceType name="yellow" colour="yellow">
+  <StockSpaceType name="yellow" colour="FFFF00">
     <NoCertLimit/>
   </StockSpaceType>
-  <StockSpaceType name="orange" colour="brown">
+  <StockSpaceType name="orange" colour="884000">
     <NoCertLimit/>
     <NoHoldLimit/>
   </StockSpaceType>

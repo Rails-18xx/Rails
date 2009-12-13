@@ -54,7 +54,9 @@
     <Blocking hex="I13,I15"/>
   </Company>
   
-	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000FF">
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
     <Home hex="I15"/>
 	</Company>

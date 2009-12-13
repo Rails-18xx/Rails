@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.8 2009/01/07 21:03:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.9 2009/12/13 16:39:49 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -9,7 +9,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import rails.game.model.ModelObject;
-import rails.ui.swing.StatusWindow;
+import rails.game.model.ViewUpdate;
+import rails.util.Util;
 
 public class Field extends JLabel implements ViewObject {
 
@@ -22,6 +23,7 @@ public class Field extends JLabel implements ViewObject {
     private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);
 
     private ModelObject modelObject;
+    private Color normalBgColour = NORMAL_BG_COLOUR;
 
     private boolean pull = false;
 
@@ -42,9 +44,14 @@ public class Field extends JLabel implements ViewObject {
     }
 
     public Field(ModelObject modelObject) {
-        this(modelObject.getText());
+    	this("");
+        //this(modelObject.getText());
         this.modelObject = modelObject;
-        if (StatusWindow.useObserver) modelObject.addObserver(this);
+        //Object mu = modelObject.getUpdate();
+        //if (mu instanceof ViewUpdate) {
+        //	updateDetails ((ViewUpdate) mu);
+        //}
+        modelObject.addObserver(this);
     }
 
     public Field(ModelObject modelObject, boolean pull) {
@@ -63,23 +70,21 @@ public class Field extends JLabel implements ViewObject {
     }
 
     public void setModel(ModelObject m) {
-        if (StatusWindow.useObserver) modelObject.deleteObserver(this);
+        modelObject.deleteObserver(this);
         modelObject = m;
-        if (StatusWindow.useObserver) {
-            modelObject.addObserver(this);
-            update(null, null);
-        }
+        modelObject.addObserver(this);
+        update(null, null);
     }
 
     public void setHighlight(boolean highlight) {
-        setBackground(highlight ? HIGHLIGHT_BG_COLOUR : NORMAL_BG_COLOUR);
+        setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);
     }
 
     /** This method is mainly needed when NOT using the Observer pattern. */
 
     @Override
     public void paintComponent(Graphics g) {
-        if (modelObject != null && (pull || !StatusWindow.useObserver)) {
+        if (modelObject != null && pull) {
             setText(modelObject.getText());
         }
         super.paintComponent(g);
@@ -87,18 +92,30 @@ public class Field extends JLabel implements ViewObject {
 
     /** Needed to satisfy the Observer interface. */
     public void update(Observable o1, Object o2) {
-        if (StatusWindow.useObserver) {
-            if (o2 instanceof String) {
-                setText((String) o2);
-            } else {
-                setText(modelObject.toString());
-            }
+        if (o2 instanceof String) {
+            setText((String) o2);
+        } else if (o2 instanceof ViewUpdate) {
+        	updateDetails ((ViewUpdate)o2);
+        } else {
+            setText(modelObject.toString());
         }
+    }
+
+    protected void updateDetails (ViewUpdate vu) {
+    	for (String key : vu.getKeys()) {
+    		if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
+    			setText (vu.getText());
+    		} else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
+    			setBackground((Color)vu.getValue(key));
+           		normalBgColour = getBackground();
+           		setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+    		}
+    	}
     }
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
-        if (modelObject != null && StatusWindow.useObserver)
+        if (modelObject != null)
             modelObject.deleteObserver(this);
     }
 

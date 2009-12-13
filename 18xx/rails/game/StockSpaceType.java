@@ -1,5 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceType.java,v 1.3 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceType.java,v 1.4 2009/12/13 16:39:49 evos Exp $ */
 package rails.game;
+
+import java.awt.Color;
+
+import rails.util.Util;
 
 /**
  * Objects of this class represent a type of square on the StockMarket with
@@ -12,19 +16,24 @@ public class StockSpaceType implements StockSpaceTypeI {
 
     /*--- Instance attributes ---*/
     protected String name;
-    protected String colour;
+    protected String colourString;
+    protected Color colour;
     protected boolean noCertLimit = false; // In yellow zone
     protected boolean noHoldLimit = false; // In orange zone (1830)
     protected boolean noBuyLimit = false; // In brown zone (1830)
 
+    public static final String WHITE = "FFFFFF";
+
     /*--- Contructors ---*/
-    public StockSpaceType(String name) {
+    public StockSpaceType(String name) throws ConfigurationException {
         this(name, "");
     }
 
-    public StockSpaceType(String name, String colour) {
+    public StockSpaceType(String name, String colour) throws ConfigurationException {
         this.name = name;
-        this.colour = colour;
+        this.colourString = colour;
+        //this.colour = new Color(Integer.parseInt(colourString, 16));
+        this.colour = Util.parseColour(colourString);
     }
 
     /*--- Getters ---*/
@@ -38,7 +47,7 @@ public class StockSpaceType implements StockSpaceTypeI {
     /**
      * @return The square type's colour.
      */
-    public String getColour() {
+    public Color getColour() {
         return colour;
     }
 

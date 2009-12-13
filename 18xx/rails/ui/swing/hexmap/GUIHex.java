@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.25 2009/11/07 12:09:55 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.26 2009/12/13 16:39:48 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -10,7 +10,8 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.model.ModelObject;
-import rails.ui.swing.*;
+import rails.ui.swing.GUIToken;
+import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.ViewObject;
 import rails.util.Util;
 
@@ -162,9 +163,7 @@ public class GUIHex implements ViewObject {
         currentGUITile.setRotation(currentTileOrientation);
         setToolTip();
 
-        if (StatusWindow.useObserver) {
-            model.addObserver(this);
-        }
+        model.addObserver(this);
 
     }
 
@@ -678,7 +677,7 @@ public class GUIHex implements ViewObject {
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
-        if (model != null && StatusWindow.useObserver)
+        if (model != null)
             model.deleteObserver(this);
     }
 
@@ -706,7 +705,10 @@ public class GUIHex implements ViewObject {
 
             log.debug("GUIHex " + model.getName() + " updated: new tile "
                       + currentTileId + "/" + currentTileOrientation);
-            GameUIManager.instance.orWindow.updateStatus();
+
+            if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
+            	GameUIManager.instance.orWindow.updateStatus();
+            }
         } else {
             hexMap.repaint(getBounds());
         }

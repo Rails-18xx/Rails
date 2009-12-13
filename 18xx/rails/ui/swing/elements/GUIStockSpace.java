@@ -1,16 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.7 2009/10/31 17:08:27 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.8 2009/12/13 16:39:49 evos Exp $*/
 package rails.ui.swing.elements;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.util.List;
 import java.util.Observable;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
@@ -18,7 +13,7 @@ import rails.game.PublicCompanyI;
 import rails.game.StockSpaceI;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
-import rails.ui.swing.StatusWindow;
+import rails.util.Util;
 
 public class GUIStockSpace extends JLayeredPane implements ViewObject {
 
@@ -30,9 +25,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
     Dimension size = new Dimension(40, 40);
     List<PublicCompanyI> tokenList;
 
-    private static final Color BROWN = new Color(144, 72, 0);
     private static final Color LIGHT_GRAY = new Color(200, 200, 200);
-    private static final Color ORANGE = new Color(255, 180, 0);
 
     protected static Logger log =
             Logger.getLogger(GUIStockSpace.class.getPackage().getName());
@@ -52,7 +45,10 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
         if (model != null) {
 
             priceLabel.setText(Integer.toString(model.getPrice()));
-            priceLabel.setBackground(stringToColor(model.getColour()));
+            //priceLabel.setBackground(stringToColor(model.getColour()));
+            priceLabel.setBackground(model.getColour());
+            priceLabel.setForeground(Util.isDark(priceLabel.getBackground())
+            		? Color.WHITE : Color.BLACK);
             priceLabel.setVerticalTextPosition(SwingConstants.TOP);
 
             ((ModelObject) model).addObserver(this);
@@ -112,7 +108,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.ui.swing.elements.ViewObject#getModel()
      */
     public ModelObject getModel() {
@@ -121,58 +117,24 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.ui.swing.elements.ViewObject#deRegister()
      */
     public void deRegister() {
-        if (model != null && StatusWindow.useObserver)
+        if (model != null)
             ((ModelObject) model).deleteObserver(this);
 
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.rails.util.Observer#update(java.rails.util.Observable,
      * java.lang.Object)
      */
     public void update(Observable o1, Object o2) {
 
-        if (StatusWindow.useObserver) {
-            recreate();
-        }
-
-    }
-
-    /**
-     * Quick n' dirty method of converting strings to color objects. This has
-     * been replaced by using hex colors in the XML definitions.
-     * 
-     * @deprecated
-     */
-    private static Color stringToColor(String color) {
-        if (color.equalsIgnoreCase("yellow")) {
-            return Color.YELLOW;
-        } else if (color.equalsIgnoreCase("orange")) {
-            return ORANGE;
-        } else if (color.equalsIgnoreCase("brown")) {
-            return BROWN;
-        } else if (color.equalsIgnoreCase("red")) {
-            return Color.RED;
-        } else if (color.equalsIgnoreCase("green")) {
-            return Color.GREEN;
-        } else if (color.equalsIgnoreCase("blue")) {
-            return Color.BLUE;
-        } else if (color.equalsIgnoreCase("black")) {
-            return Color.BLACK;
-        } else if (color.equalsIgnoreCase("white")) {
-            return Color.WHITE;
-        } else if (color.equals("")) {
-            return Color.WHITE;
-        } else {
-            log.warn("Unknown color: " + color + ".");
-            return Color.MAGENTA;
-        }
+        recreate();
     }
 
 }

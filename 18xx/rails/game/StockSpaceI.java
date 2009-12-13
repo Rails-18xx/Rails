@@ -1,6 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.4 2008/06/04 19:00:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.5 2009/12/13 16:39:49 evos Exp $ */
 package rails.game;
 
+import java.awt.Color;
 import java.util.*;
 
 public interface StockSpaceI // extends TokenHolderI
@@ -52,7 +53,7 @@ public interface StockSpaceI // extends TokenHolderI
     /**
      * @return The square's colour.
      */
-    public abstract String getColour();
+    public abstract Color getColour();
 
     /**
      * @return TRUE if the rails.game ends if a company lands on this square.
