@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.7 2008/06/04 19:00:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.8 2009/12/13 21:13:39 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -20,8 +20,9 @@ public class GUIToken extends JPanel {
     public static final int DEFAULT_X_COORD = 1;
     public static final int DEFAULT_Y_COORD = 1;
 
-    private static Font smallTokenFont = new Font("Helvetica", Font.BOLD, 8);
-    private static Font tokenFont = new Font("Helvetica", Font.BOLD, 10);
+    private static final Font smallTokenFont = new Font("Helvetica", Font.BOLD, 8);
+    private static final Font tokenFont = new Font("Helvetica", Font.BOLD, 10);
+    private static final Font largeTokenFont = new Font("Helvetica", Font.BOLD, 12);
 
     public void paintComponent(Graphics g) {
         clear(g);
@@ -41,12 +42,12 @@ public class GUIToken extends JPanel {
         g2d.setColor(bgColor);
         g2d.fill(circle);
 
-        Font font = name.length() > 3 ? smallTokenFont : tokenFont;
+        Font font = getTokenFont(name.length());
         g2d.setFont(new Font("Helvetica", Font.BOLD,
                 (int) (font.getSize() * tokenScale)));
         g2d.setColor(fgColor);
         // g2d.drawString(name, 3, 14);
-        g2d.drawString(name, (int) (circle.x + 2 * tokenScale),
+        g2d.drawString(name, (int) (circle.x + (12 - 3*name.length()) * tokenScale),
                 (int) (circle.y + 14 * tokenScale));
 
         g2d.setColor(oldColor);
@@ -106,4 +107,13 @@ public class GUIToken extends JPanel {
         return name;
     }
 
+    public static Font getTokenFont (int size) {
+        if (size <= 2) {
+            return largeTokenFont;
+        } else if (size <= 4) {
+            return tokenFont;
+        } else {
+            return smallTokenFont;
+        }
+    }
 }
