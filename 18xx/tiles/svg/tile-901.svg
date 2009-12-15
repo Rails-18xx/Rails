@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
@@ -13,10 +13,11 @@
    preserveAspectRatio="none"
    id="svg5255"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
-   sodipodi:docname="tile-901.svg"
+   inkscape:version="0.46"
+   sodipodi:docname="tile-901a.svg"
    sodipodi:docbase="C:\Documents and Settings\lentz\workspace\18xx\tiles\svg"
-   version="1.0">
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata5282">
     <rdf:RDF>
@@ -29,9 +30,26 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs5280" />
+     id="defs5280"><inkscape:perspective
+   sodipodi:type="inkscape:persp3d"
+   inkscape:vp_x="0 : 50 : 1"
+   inkscape:vp_y="0 : 1000 : 0"
+   inkscape:vp_z="100 : 50 : 1"
+   inkscape:persp3d-origin="50 : 33.333333 : 1"
+   id="perspective2397" />
+
+
+
+
+
+
+
+
+
+
+</defs>
   <sodipodi:namedview
-     inkscape:window-height="540"
+     inkscape:window-height="675"
      inkscape:window-width="749"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -39,61 +57,39 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.52361111"
-     inkscape:cx="360"
-     inkscape:cy="-98.355438"
-     inkscape:window-x="154"
-     inkscape:window-y="154"
-     inkscape:current-layer="svg5255" />
+     inkscape:zoom="3.6574893"
+     inkscape:cx="73.988957"
+     inkscape:cy="-7.0871464"
+     inkscape:window-x="1347"
+     inkscape:window-y="33"
+     inkscape:current-layer="svg5255"
+     showgrid="false" />
   <title
      id="title5257">SVG drawing</title>
   <desc
      id="desc5259">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
   <g
-     transform="matrix(5.418114e-3,0,0,-6.213736e-3,-1.175565e-3,1.000871)"
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="g5263">
-<polygon
-   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
-   style="fill:#ff0000;fill-rule:nonzero;stroke:#ff0000;stroke-width:0;stroke-linejoin:round"
-   id="polygon5265" />
-<text
-   transform="matrix(1,0,0,-1,108.36,7.9141)"
-   style="font-size:8px;fill:#000000;stroke:none;font-family:&quot;Helvetica&quot;, sans-serif"
-   id="text5267">-901</text>
-
-
-<line
-   x1="78.5"
-   y1="80.5"
-   x2="106.5"
-   y2="80.5"
-   style="stroke:#ffffff;stroke-width:16"
-   id="line5269" />
-<line
-   x1="92.5"
-   y1="80.5"
-   x2="161.5"
-   y2="40.5"
-   style="stroke:#ffffff;stroke-width:16;stroke-linecap:round"
-   id="line5271" />
-<line
-   x1="92.5"
-   y1="80.5"
-   x2="161.5"
-   y2="40.5"
-   style="stroke-width:12;stroke-linecap:round"
-   id="line5273" />
-<line
-   x1="80.5"
-   y1="80.5"
-   x2="104.5"
-   y2="80.5"
-   style="stroke-width:12"
-   id="line5275" />
-<polygon
-   points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
-   style="stroke-width:1;stroke-linejoin:round"
-   id="polygon5277" />
-</g></svg>
+     id="g3213">
+    <polygon
+       transform="matrix(5.418114e-3,0,0,-6.213736e-3,-1.175565e-3,1.000871)"
+       points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="polygon5277" />
+    <polygon
+       transform="matrix(5.418114e-3,0,0,-6.213736e-3,-1.175565e-3,1.000871)"
+       points="46.5,160.5 138.5,160.5 184.5,80.5 138.5,0.5 46.5,0.5 0.5,80.5 46.5,160.5 "
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="polygon5265" />
+    <path
+       sodipodi:nodetypes="ccc"
+       id="path2406"
+       d="M 0.89103875,0.71994375 L 0.66193912,0.64215025 L 0.84027686,0.81465825"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.01;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       y="0.88868004"
+       x="0.62747878"
+       transform="scale(0.9337867,1.0709084)"
+       style="font-size:0.04641843px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="text5267">-901</text>
+  </g>
+</svg>
