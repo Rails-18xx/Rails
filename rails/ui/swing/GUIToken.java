@@ -1,9 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.8 2009/12/13 21:13:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.9 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
-import java.awt.geom.*;
-import javax.swing.*;
+import java.awt.geom.Ellipse2D;
+
+import javax.swing.JPanel;
 
 /**
  * This class draws a company's token.
@@ -24,7 +25,8 @@ public class GUIToken extends JPanel {
     private static final Font tokenFont = new Font("Helvetica", Font.BOLD, 10);
     private static final Font largeTokenFont = new Font("Helvetica", Font.BOLD, 12);
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         clear(g);
         Graphics2D g2d = (Graphics2D) g;
 
@@ -75,7 +77,7 @@ public class GUIToken extends JPanel {
         this(fc, bc, name, x, y, DEFAULT_DIAMETER);
     }
 
-    public GUIToken(Color fc, Color bc, String name, int x, int y,
+    public GUIToken(Color fc, Color bc, String name, int xCenter, int yCenter,
             double diameter) {
         super();
 
@@ -83,7 +85,8 @@ public class GUIToken extends JPanel {
         bgColor = bc;
         this.diameter = diameter;
 
-        circle = new Ellipse2D.Double(x, y, diameter, diameter);
+        circle = new Ellipse2D.Double(xCenter - 0.5*diameter,
+        		yCenter-0.5*diameter, diameter, diameter);
 
         this.setForeground(fgColor);
         this.setOpaque(false);
@@ -103,7 +106,8 @@ public class GUIToken extends JPanel {
         return fgColor;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return name;
     }
 

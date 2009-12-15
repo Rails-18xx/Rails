@@ -156,11 +156,13 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2SideC
           Revenue = 40
+          RevenuePosition = tp3SideE
         end
         item
           JunType = jtCity
           Position = tp2SideF
           Revenue = 40
+          RevenuePosition = tp3SideB
         end>
     end
     item
@@ -339,16 +341,15 @@ object TTilesWrapper
       Connections = <
         item
           Position1 = tpCenter
-          Position2 = tp4SideC
+          Position2 = tp4SideD
         end
         item
           Position1 = tpCenter
-          Position2 = tp4SideF
+          Position2 = tp4SideA
         end>
       Junctions = <
         item
           JunType = jtWhistlestop
-          Revenue = 10
         end>
     end
     item
@@ -1113,6 +1114,7 @@ object TTilesWrapper
           JunType = jtCity
           Position = tpCurve2LeftA
           Revenue = 40
+          RevenuePosition = tp3SideF
         end
         item
           JunType = jtCity
@@ -1719,7 +1721,7 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2CornerC
           Revenue = 40
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3CornerB
         end
         item
           JunType = jtCity
@@ -1806,13 +1808,13 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2CornerE
           Revenue = 60
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3SideC
         end
         item
           JunType = jtCity
           Position = tp2CornerA
           Revenue = 60
-          RevenuePosition = tp3CornerB
+          RevenuePosition = tp3SideB
         end>
     end
     item
@@ -6410,7 +6412,7 @@ object TTilesWrapper
           JunType = jtCity
           Position = tpCurve2RightC
           Revenue = 30
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3SideB
         end>
     end
     item
@@ -9941,7 +9943,7 @@ object TTilesWrapper
           JunType = jtWhistlestop
           Position = tp1SideB
           Revenue = 10
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3CornerC
         end
         item
           JunType = jtWhistlestop
@@ -9975,7 +9977,7 @@ object TTilesWrapper
           JunType = jtWhistlestop
           Position = tp1SideD
           Revenue = 10
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3CornerC
         end
         item
           JunType = jtWhistlestop
@@ -10050,7 +10052,7 @@ object TTilesWrapper
           JunType = jtWhistlestop
           Position = tp2CornerE
           Revenue = 10
-          RevenuePosition = tp3CornerD
+          RevenuePosition = tp3CornerF
         end>
     end
     item

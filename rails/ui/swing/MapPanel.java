@@ -1,18 +1,18 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.11 2009/11/02 23:30:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.12 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
+
+import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.*;
+import rails.game.MapManager;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
-import rails.ui.swing.hexmap.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
+import rails.ui.swing.hexmap.HexMap;
 
 /**
  * MapWindow class displays the Map Window. It's shocking, I know.
@@ -47,11 +47,12 @@ public class MapPanel extends JPanel {
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
         scrollPane = new JScrollPane(map);
-        scrollPane.setSize(map.getPreferredSize());
 
         add(scrollPane, BorderLayout.CENTER);
 
-        setSize(map.getPreferredSize().width, map.getPreferredSize().height);
+    	scrollPane.setSize(map.getPreferredSize());
+
+    	setSize(map.getPreferredSize().width, map.getPreferredSize().height);
         setLocation(25, 25);
     }
 
@@ -62,6 +63,14 @@ public class MapPanel extends JPanel {
     public <T extends LayToken> void setAllowedTokenLays(
             List<T> allowedTokenLays) {
         map.setAllowedTokenLays(allowedTokenLays);
+    }
+
+    public void zoomIn() {
+    	map.zoomIn();
+    }
+
+    public void zoomOut() {
+    	map.zoomOut();
     }
 
     public void keyPressed(KeyEvent e) {

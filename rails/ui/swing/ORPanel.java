@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.34 2009/12/13 16:39:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.35 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -51,6 +51,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JMenuItem remainingTilesMenuItem;
     private JMenu specialMenu;
     private JMenu loansMenu;
+    private JMenu zoomMenu;
+    private JMenuItem zoomIn, zoomOut;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
 
@@ -176,7 +178,7 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
         if (hasCompanyLoans) {
             loansMenu = new JMenu (LocalText.getText("LOANS"));
-            specialMenu.setEnabled(true);
+            loansMenu.setEnabled(true);
 
             takeLoans = new ActionMenuItem (LocalText.getText("TakeLoans"));
             takeLoans.addActionListener(this);
@@ -192,6 +194,18 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
 
             menuBar.add(loansMenu);
         }
+
+        zoomMenu = new JMenu("Zoom");
+        zoomMenu.setEnabled(true);
+        zoomIn = new JMenuItem("In");
+        zoomIn.addActionListener(this);
+        zoomIn.setEnabled(true);
+        zoomMenu.add(zoomIn);
+        zoomOut = new JMenuItem("Out");
+        zoomOut.addActionListener(this);
+        zoomOut.setEnabled(true);
+        zoomMenu.add(zoomOut);
+        menuBar.add(zoomMenu);
 
         add(menuBar, BorderLayout.NORTH);
 
@@ -528,6 +542,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             }
 
             orUIManager.processAction(command, executedActions);
+        } else if (source == zoomIn) {
+        	orWindow.getMapPanel().zoomIn();
+        } else if (source == zoomOut) {
+        	orWindow.getMapPanel().zoomOut();
         } else {
             orUIManager.processAction(command, null);
         }

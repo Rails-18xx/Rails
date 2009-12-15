@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.19 2009/11/05 22:50:38 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.20 2009/12/15 18:56:10 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -200,7 +200,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     private BufferedImage getHexImage(int tileId) {
-        return GameUIManager.getImageLoader().getTile(tileId);
+        return GameUIManager.getImageLoader().getTile(tileId, 10);
     }
 
     @Override

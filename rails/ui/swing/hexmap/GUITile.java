@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.18 2009/11/04 20:33:22 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.19 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -32,6 +32,7 @@ public class GUITile {
     protected double baseRotation;
 
     protected MapHex hex = null;
+    protected GUIHex guiHex = null;
 
     protected static ImageLoader imageLoader = GameUIManager.getImageLoader();
 
@@ -42,11 +43,11 @@ public class GUITile {
     protected static Logger log =
             Logger.getLogger(GUITile.class.getPackage().getName());
 
-    public GUITile(int tileId, MapHex hex) {
+    public GUITile(int tileId, GUIHex guiHex) {
+    	this.guiHex = guiHex;
         this.tileId = tileId;
-        this.hex = hex;
+        this.hex = (MapHex)guiHex.getModel();
         tile = GameManager.getInstance().getTileManager().getTile(tileId);
-        tileImage = imageLoader.getTile(tileId);
 
         if (hex.getTileOrientation() == MapHex.EW) {
             baseRotation = 0.5 * DEG60;
@@ -232,7 +233,11 @@ public class GUITile {
     }
 
     public void paintTile(Graphics2D g2, int x, int y) {
-        if (tileImage != null) {
+
+    	int zoomStep = guiHex.getHexMap().getZoomStep();
+        tileImage = imageLoader.getTile(tileId, zoomStep);
+
+    	if (tileImage != null) {
 
             double radians = baseRotation + rotation * DEG60;
             int xCenter =

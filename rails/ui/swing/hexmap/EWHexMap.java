@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.11 2009/12/08 19:31:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.12 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 import rails.game.MapHex;
+import rails.ui.swing.Scale;
 
 /**
  * Class EWHexMap displays a basic hex map with EW exit orientation.
@@ -14,12 +15,14 @@ public class EWHexMap extends HexMap {
     private static final long serialVersionUID = 1L;
 
     public EWHexMap() {
+    	scale = defaultScale = 2 * Scale.get();
         cx = scale / 2;
         cy = 0;
     }
 
     @Override
 	protected void setupHexesGUI() {
+
         hexes = new ArrayList<GUIHex>();
 
         hexArray = mapManager.getHexes();
@@ -45,12 +48,37 @@ public class EWHexMap extends HexMap {
                 }
             }
         }
+        setSize();
+
+    }
+    protected void setSize() {
         preferredSize =
                 new Dimension(
                         (int) Math.round((hexArray.length + 1) * GUIHex.SQRT3
-                                         * scale),
-                        (int) Math.round((hexArray[0].length + 1) * 1.5 * scale));
+                                         * scale * zoomFactor),
+                        (int) Math.round((hexArray[0].length + 1) * 1.5 * scale * zoomFactor));
     }
+
+
+	@Override
+	protected void scaleHexesGUI  () {
+
+        hexArray = mapManager.getHexes();
+        GUIHex hex;
+        for (int i = 0; i < hexArray.length; i++) {
+            for (int j = 0; j < hexArray[0].length; j++) {
+                hex = h[i][j];
+                if (hex != null) {
+                    hex.scaleHex(cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1))),
+                                 cy + j * 1.5 * scale,
+                                 scale, zoomFactor);
+
+                }
+            }
+        }
+
+        setSize();
+	}
 
     @Override
 	public void paint(Graphics g) {
