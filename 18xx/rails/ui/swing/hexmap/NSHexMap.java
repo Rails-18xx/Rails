@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.10 2009/12/08 19:31:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.11 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -17,13 +17,13 @@ public class NSHexMap extends HexMap {
     public NSHexMap() {
         cx = 0;
         cy = -scale / 2;
+        scale = defaultScale = Scale.get();
+
     }
 
     @Override
 	protected void setupHexesGUI() {
         hexes = new ArrayList<GUIHex>();
-
-        scale = Scale.get();
 
         hexArray = mapManager.getHexes();
         MapHex mh;
@@ -48,10 +48,33 @@ public class NSHexMap extends HexMap {
                 }
             }
         }
+        setSize();
+    }
+
+    protected void setSize() {
         preferredSize =
-                new Dimension((hexArray.length + 1) * 3 * scale,
+                new Dimension(
+                		(int) Math.round((hexArray.length + 1) * 3 * scale * zoomFactor),
                         (int) Math.round((hexArray[0].length + 1) * 2
-                                         * GUIHex.SQRT3 * scale));
+                                         * GUIHex.SQRT3 * scale * zoomFactor));
+    }
+
+	@Override
+	protected void scaleHexesGUI() {
+
+        hexArray = mapManager.getHexes();
+        GUIHex hex;
+        for (int i = 0; i < hexArray.length; i++) {
+            for (int j = 0; j < hexArray[0].length; j++) {
+                hex = h[i][j];
+                if (hex != null) {
+                    hex.scaleHex(cx + 3 * i * scale,
+                                 cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale,
+                                 scale, zoomFactor);
+                }
+            }
+        }
+        setSize();
     }
 
     @Override

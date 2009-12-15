@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.19 2009/11/06 20:23:53 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.20 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -12,7 +12,8 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.ui.swing.*;
+import rails.ui.swing.GameUIManager;
+import rails.ui.swing.ORUIManager;
 
 /**
  * Base class that stores common info for HexMap independant of Hex
@@ -29,6 +30,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     // Abstract Methods
     protected abstract void setupHexesGUI();
+    protected abstract void scaleHexesGUI();
 
     // GUI hexes need to be recreated for each object, since scale varies.
     protected GUIHex[][] h;
@@ -36,8 +38,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected MapHex[][] hexArray;
     protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
     protected ArrayList<GUIHex> hexes;
-    protected List<GUIBar> bars = new ArrayList<GUIBar>();
-    protected int scale = 2 * Scale.get();
+    protected int defaultScale;
+    protected int scale;
+    protected int zoomStep = 10;
+    protected double zoomFactor = 1.0;
     protected int cx;
     protected int cy;
     protected GUIHex selectedHex = null;
@@ -129,9 +133,32 @@ public abstract class HexMap extends JComponent implements MouseListener,
             }
 
         } catch (NullPointerException ex) {
-            // If we try to paint before something is loaded, just retry
-            // later.
+            // If we try to paint before something is loaded, just retry later.
         }
+    }
+
+    public void zoomIn () {
+    	zoomStep++;
+    	zoom();
+    }
+    public void zoomOut() {
+    	zoomStep--;
+    	zoom();
+    }
+
+    protected void zoom() {
+    	zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+    	setScale();
+    	scaleHexesGUI();
+    	revalidate();
+    }
+
+    protected void setScale() {
+    	scale = (int)(defaultScale * zoomFactor);
+    }
+
+    public int getZoomStep () {
+    	return zoomStep;
     }
 
     @Override

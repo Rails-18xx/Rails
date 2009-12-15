@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.27 2009/12/13 21:14:12 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.28 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -25,6 +25,11 @@ public class GUIHex implements ViewObject {
     public static double NORMAL_SCALE = 1.0;
     public static double SELECTED_SCALE = 0.8;
 
+    public static int NORMAL_TOKEN_SIZE = 15;
+
+    public static Color BAR_COLOUR = Color.BLUE;
+    public static int BAR_WIDTH = 5;
+
     public static void setScale(double scale) {
         NORMAL_SCALE = scale;
         SELECTED_SCALE = 0.8 * scale;
@@ -34,6 +39,10 @@ public class GUIHex implements ViewObject {
     protected GeneralPath innerHexagon;
     protected static final Color highlightColor = Color.red;
     protected Point center;
+    /** x and y coordinates on the map */
+    protected int x, y;
+    protected double zoomFactor = 1.0;
+    protected int tokenDiameter = NORMAL_TOKEN_SIZE;
 
     protected HexMap hexMap; // Containing this hex
     protected String hexName;
@@ -48,7 +57,7 @@ public class GUIHex implements ViewObject {
     protected boolean upgradeMustConnect;
 
     protected List<TokenI> offStationTokens;
-    protected List<GUIBar> bars;
+    protected List<Integer> barStartPoints;
 
     protected GUIToken provisionalGUIToken = null;
 
@@ -83,8 +92,19 @@ public class GUIHex implements ViewObject {
             Logger.getLogger(GUIHex.class.getPackage().getName());
 
     public GUIHex(HexMap hexMap, double cx, double cy, int scale,
-            double xCoord, double yCoord) {
+            int xCoord, int yCoord) {
         this.hexMap = hexMap;
+        this.x = xCoord;
+        this.y = yCoord;
+
+        scaleHex (cx, cy, scale, 1.0);
+
+    }
+
+    public void scaleHex (double cx, double cy, int scale, double zoomFactor) {
+
+    	this.zoomFactor = zoomFactor;
+    	tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
 
         if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
             len = scale;
@@ -153,13 +173,17 @@ public class GUIHex implements ViewObject {
         return this.model;
     }
 
+    public HexMap getHexMap() {
+    	return hexMap;
+    }
+
     public void setHexModel(MapHex model) {
         this.model = model;
         currentTile = model.getCurrentTile();
         hexName = model.getName();
         currentTileId = model.getCurrentTile().getId();
         currentTileOrientation = model.getCurrentTileRotation();
-        currentGUITile = new GUITile(currentTileId, model);
+        currentGUITile = new GUITile(currentTileId, this);
         currentGUITile.setRotation(currentTileOrientation);
         setToolTip();
 
@@ -169,15 +193,9 @@ public class GUIHex implements ViewObject {
 
     public void addBar (int orientation) {
     	orientation %= 6;
-    	if (bars == null) bars = new ArrayList<GUIBar>();
+    	if (barStartPoints == null) barStartPoints = new ArrayList<Integer>(2);
         int offset = hexMap.getMapManager().getTileOrientation() == MapHex.EW ? 0 : 4;
-    	int x1 = (int)xVertex[(offset+5-orientation)%6];
-    	int y1 = (int)yVertex[(offset+5-orientation)%6];
-    	int x2 = (int)xVertex[(offset+6-orientation)%6];
-    	int y2 = (int)yVertex[(offset+6-orientation)%6];
-    	GUIBar bar = new GUIBar (model.getName()+":"+orientation,
-    			x1, y1, x2, y2);
-    	bars.add(bar);
+        barStartPoints.add((offset+5-orientation)%6);
     }
 
     public Rectangle getBounds() {
@@ -330,17 +348,17 @@ public class GUIHex implements ViewObject {
 homes:      for (PublicCompanyI company : homes.keySet()) {
                 if (company.isClosed()) continue;
                 city = homes.get(company);
-                
+
                 // Only draw the company name if there isn't yet a token of that company
                 if (city.getTokens() != null) {
                     for (TokenI token : city.getTokens()) {
-                        if (token instanceof BaseToken 
+                        if (token instanceof BaseToken
                                 && ((BaseToken)token).getCompany() == company) {
                             continue homes;
                         }
                     }
                 }
-                p = getTokenOrigin (1, 0, getHexModel().getCities().size(), 
+                p = getTokenOrigin (1, 0, getHexModel().getCities().size(),
                         city.getNumber()-1);
                 //log.debug("+++ Home of "+company.getName()+" hex"+getName()+" city"+city.getName()
                 //        + " x="+(p.x)+" y="+(p.y));
@@ -382,11 +400,27 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
     }
 
     public void paintBars(Graphics g) {
-    	if (bars == null) return;
+    	if (barStartPoints == null) return;
         Graphics2D g2 = (Graphics2D) g;
-    	for (GUIBar bar : bars) {
-    		bar.drawBar(g2);
+    	for (int startPoint : barStartPoints) {
+    		drawBar(g2,
+    				(int)Math.round(xVertex[startPoint]),
+    				(int)Math.round(yVertex[startPoint]),
+    				(int)Math.round(xVertex[(startPoint+1)%6]),
+    				(int)Math.round(yVertex[(startPoint+1)%6]));
     	}
+    }
+
+    protected void drawBar(Graphics2D g2d, int x1, int y1, int x2, int y2) {
+        Color oldColor = g2d.getColor();
+        Stroke oldStroke = g2d.getStroke();
+
+        g2d.setColor(BAR_COLOUR);
+        g2d.setStroke(new BasicStroke(BAR_WIDTH));
+        g2d.drawLine(x1, y1, x2, y2);
+
+        g2d.setColor(oldColor);
+        g2d.setStroke(oldStroke);
     }
 
     private void paintStationTokens(Graphics2D g2) {
@@ -401,7 +435,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         for (int i = 0; i < tokens.size(); i++) {
             PublicCompanyI co = ((BaseToken) tokens.get(i)).getCompany();
             Point origin = getTokenOrigin(numTokens, i, 1, 0);
-            drawBaseToken(g2, co, origin);
+            drawBaseToken(g2, co, origin, tokenDiameter);
         }
     }
 
@@ -419,7 +453,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
             for (int j = 0; j < tokens.size(); j++) {
                 origin = getTokenOrigin(numTokens, j, numStations, i);
                 co = ((BaseToken) tokens.get(j)).getCompany();
-                drawBaseToken(g2, co, origin);
+                drawBaseToken(g2, co, origin, tokenDiameter);
             }
         }
     }
@@ -445,7 +479,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
             if (token instanceof BaseToken) {
 
                 PublicCompanyI co = ((BaseToken) token).getCompany();
-                drawBaseToken(g2, co, origin);
+                drawBaseToken(g2, co, origin, tokenDiameter);
 
             } else if (token instanceof BonusToken) {
 
@@ -455,32 +489,32 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         }
     }
 
-    private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point origin) {
-        Dimension size = new Dimension(40, 40);
+    private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point center, int diameter) {
 
         GUIToken token =
                 new GUIToken(co.getFgColour(), co.getBgColour(), co.getName(),
-                        origin.x, origin.y, 15);
-        token.setBounds(origin.x, origin.y, size.width, size.height);
+                        center.x, center.y, diameter);
+        token.setBounds(center.x-(int)(0.5*diameter), center.y-(int)(0.5*diameter),
+        		diameter, diameter);
 
         token.drawToken(g2);
     }
-    
+
     private void drawHome (Graphics2D g2, PublicCompanyI co, Point origin) {
 
         Font oldFont = g2.getFont();
         Color oldColor = g2.getColor();
-        
+
         double tokenScale = 15.0 / 21.0;
         String name = co.getName();
-    
+
         Font font = GUIToken.getTokenFont(name.length());
         g2.setFont(new Font("Helvetica", Font.BOLD,
                 (int) (font.getSize() * tokenScale)));
         g2.setColor(Color.BLACK);
         g2.drawString(name, (int) (origin.x + (12 - 3*name.length()) * tokenScale),
                 (int) (origin.y + 14 * tokenScale));
-    
+
         g2.setColor(oldColor);
         g2.setFont(oldFont);
     }
@@ -504,7 +538,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
 
     private Point getTokenOrigin(int numTokens, int currentToken,
             int numStations, int stationNumber) {
-        Point p = new Point(center.x - 8, center.y - 8);
+        Point p = new Point(center.x, center.y);
 
         int cityNumber = stationNumber + 1;
         Station station = model.getCity(cityNumber).getRelatedStation();
@@ -515,7 +549,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         double xx, yy;
         int positionCode = station.getPosition();
         if (positionCode != 0) {
-            y = 14;
+            y = 16 * zoomFactor;
             double r = Math.toRadians(30 * (positionCode / 50));
             xx = x * Math.cos(r) + y * Math.sin(r);
             yy = y * Math.cos(r) - x * Math.sin(r);
@@ -526,19 +560,19 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         // Correct for the number of base slots and the token number
         switch (station.getBaseSlots()) {
         case 2:
-            x += -8 + 16 * currentToken;
+            x += (-8 + 16 * currentToken) * zoomFactor;
             break;
         case 3:
             if (currentToken < 2) {
-                x += -8 + 16 * currentToken;
-                y += 8;
+                x += (-8 + 16 * currentToken) * zoomFactor;
+                y += 8 * zoomFactor;
             } else {
-                y -= 8;
+                y -= 8 * zoomFactor;
             }
             break;
         case 4:
-            x += -8 + 16 * currentToken % 2;
-            y += 8 - 16 * currentToken / 2;
+            x += (-8 + 16 * currentToken % 2) * zoomFactor;
+            y += (8 - 16 * currentToken / 2) * zoomFactor;
         }
 
         // Correct for the tile base and actual rotations
@@ -665,7 +699,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
     public boolean dropTile(int tileId, boolean upgradeMustConnect) {
         this.upgradeMustConnect = upgradeMustConnect;
 
-        provisionalGUITile = new GUITile(tileId, model);
+        provisionalGUITile = new GUITile(tileId, this);
         /* Check if we can find a valid orientation of this tile */
         if (provisionalGUITile.rotate(0, currentGUITile, upgradeMustConnect)) {
             /* If so, accept it */
@@ -735,7 +769,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
             String[] elements = ((String) notificationObject).split("/");
             currentTileId = Integer.parseInt(elements[0]);
             currentTileOrientation = Integer.parseInt(elements[1]);
-            currentGUITile = new GUITile(currentTileId, model);
+            currentGUITile = new GUITile(currentTileId, this);
             currentGUITile.setRotation(currentTileOrientation);
             currentTile = currentGUITile.getTile();
 
