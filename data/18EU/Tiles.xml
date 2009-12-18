@@ -5,8 +5,8 @@
 	</Tile><Tile colour="fixed" id="-3" name="MF 3">
 		<Station id="city1" position="252" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/></Tile>
-	<Tile colour="fixed" id="-800">
+		<Track from="city1" gauge="normal" to="side3"/>
+	</Tile><Tile colour="fixed" id="-800" name="Rostock">
 		<Station id="city1" position="302" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile><Tile colour="red" id="-901" name="OM 1 way">
@@ -22,10 +22,9 @@
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile><Tile colour="red" id="-939" name="Goderich">
-		<Station id="city1" position="201" type="OffMapCity" value="-1"/>
-		<Track from="side3" gauge="normal" to="city1"/>
-		<Track from="side2" gauge="normal" to="city1"/>
-		<Track from="side1" gauge="normal" to="city1"/>
+		<Track from="side3" gauge="normal" to="side1"/>
+		<Track from="side3" gauge="normal" to="side2"/>
+		<Track from="side2" gauge="normal" to="side1"/>
 	</Tile><Tile colour="yellow" id="-3005" name="B/V">
 		<Station id="city1" position="102" slots="1" type="City" value="30"/>
 		<Station id="city2" position="402" slots="1" type="City" value="30"/>
@@ -41,9 +40,9 @@
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side4"/>
 	</Tile><Tile colour="yellow" id="4" name="4">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side5"/>
+		<Station id="city1" position="0" type="Town"/>
+		<Track from="city1" gauge="normal" to="side3"/>
+		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile><Tile colour="yellow" id="7" name="7">
 		<Track from="side3" gauge="normal" to="side4"/>
 	</Tile><Tile colour="yellow" id="8" name="8">
