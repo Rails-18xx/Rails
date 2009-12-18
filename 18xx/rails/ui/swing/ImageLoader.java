@@ -1,11 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.13 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.14 2009/12/18 20:04:32 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.*;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -27,17 +25,22 @@ public class ImageLoader {
 
     private static Map<Integer, Document> svgMap;
     private static double[] zoomFactors = new double[21];
+    //private static Map<Integer, String> tileTypes = new HashMap<Integer, String>(64);
 
-    private static int svgWidth = 60;
-    private static int svgHeight = 55;
+    //private static int svgWidth = 60;
+    //private static int svgHeight = 55;
+    private static double svgWidth = 75;
+    private static double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
     private static String svgTileDir = "tiles/svg";
-    private static String gifTileDir = "tiles/images";
+    //private static String gifTileDir = "tiles/images";
     private static String tileRootDir = Config.get("tile.root_directory");
-    private static String preference = Config.get("tile.format_preference");
+    //private static String preference = Config.get("tile.format_preference");
     private static List<String> directories = new ArrayList<String>();
 
     static {
-        GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
+        //GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
+        //GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.163);
+        GUIHex.setScale(1.0);
     }
 
     private static Logger log =
@@ -70,9 +73,11 @@ public class ImageLoader {
         }
     }
 
+    /*
     private BufferedImage loadTile(int tileID, double zoomFactor) {
         BufferedImage image = null;
 
+        //String tileType;
         if (preference.equalsIgnoreCase("gif")) {
 
             image = getGIFTile(tileID);
@@ -80,6 +85,9 @@ public class ImageLoader {
                 // If loading the GIF fails, try loading the SVG.
                 log.warn("Attempting to load SVG version of tile " + tileID);
                 image = getSVGTile(tileID, zoomFactor);
+                //tileType = "svg";
+            } else {
+            	tileType = "gif";
             }
 
         } else {
@@ -89,10 +97,14 @@ public class ImageLoader {
                 // If loading the SVG fails, try loading the GIF.
                 log.warn("Attempting to load GIF version of tile " + tileID);
                 image = getGIFTile(tileID);
+                tileType = "gif";
+            } else {
+            	tileType = "svg";
             }
         }
+        //tileTypes.put(tileID, tileType);
         return image;
-    }
+    }*/
 
     private BufferedImage getSVGTile(int tileID, double zoomFactor) {
         String fn = "tile" + Integer.toString(tileID) + ".svg";
@@ -134,8 +146,8 @@ public class ImageLoader {
 	            svgMap.put(tileID, doc);
         	}
             BufferedImageTranscoder t = new BufferedImageTranscoder();
-            t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(svgWidth * zoomFactor));
-            t.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, new Float(svgHeight * zoomFactor));
+            t.addTranscodingHint(ImageTranscoder.KEY_MAX_WIDTH, new Float(svgWidth * zoomFactor));
+            t.addTranscodingHint(ImageTranscoder.KEY_MAX_HEIGHT, new Float(svgHeight * zoomFactor));
             TranscoderInput input = new TranscoderInput(svgMap.get(tileID));
             t.transcode(input, null);
             image = t.getImage();
@@ -149,6 +161,7 @@ public class ImageLoader {
         return image;
     }
 
+    /*
     private BufferedImage getGIFTile(int tileID) {
         String fn = "tile" + Integer.toString(tileID) + ".gif";
         //log.debug("Loading tile " + fn);
@@ -167,6 +180,7 @@ public class ImageLoader {
         }
         return image;
     }
+    */
 
     public BufferedImage getTile(int tileID, int zoomStep) {
 
@@ -177,7 +191,7 @@ public class ImageLoader {
         	tileMap.put(tileID, new HashMap<Integer, BufferedImage>(4));
     	}
     	if (!tileMap.get(tileID).containsKey(zoomStep)) {
-        	BufferedImage image = loadTile(tileID, getZoomFactor(zoomStep));
+        	BufferedImage image = getSVGTile(tileID, getZoomFactor(zoomStep));
         	tileMap.get(tileID).put(zoomStep, image);
         }
 
@@ -194,9 +208,13 @@ public class ImageLoader {
 
     }
 
+    //public String getTileType (int tileID) {
+    //	return tileTypes.get(tileID);
+    //}
+
     public ImageLoader() {
         directories.add(tileRootDir + svgTileDir);
-        directories.add(tileRootDir + gifTileDir);
+        //directories.add(tileRootDir + gifTileDir);
         directories.add(tileRootDir);
     }
 
