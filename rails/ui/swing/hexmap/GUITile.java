@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.19 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.20 2009/12/18 20:04:31 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -22,6 +22,9 @@ public class GUITile {
     protected int tileId;
 
     protected TileI tile = null;
+    protected String tileType = null;
+    //protected double xCenterRelativeLocation = SVG_X_CENTER_LOC;
+    //protected double yCenterRelativeLocation = SVG_Y_CENTER_LOC;
 
     protected BufferedImage tileImage = null;
 
@@ -39,6 +42,11 @@ public class GUITile {
     protected AffineTransform af = new AffineTransform();
 
     public static final double DEG60 = Math.PI / 3;
+
+    //public static final double DFLT_X_CENTER_LOC = 0.5;
+    //public static final double DFLT_Y_CENTER_LOC = 0.5;
+    public static final double SVG_X_CENTER_LOC = 0.489;
+    public static final double SVG_Y_CENTER_LOC = 0.426;
 
     protected static Logger log =
             Logger.getLogger(GUITile.class.getPackage().getName());
@@ -236,14 +244,21 @@ public class GUITile {
 
     	int zoomStep = guiHex.getHexMap().getZoomStep();
         tileImage = imageLoader.getTile(tileId, zoomStep);
+        //if (tileType == null) {
+        //	tileType = imageLoader.getTileType(tileId);
+        //	if (tileType.equalsIgnoreCase("svg")) {
+	    //    	xCenterRelativeLocation = SVG_X_CENTER_LOC;
+	    //    	yCenterRelativeLocation = SVG_Y_CENTER_LOC;
+        //	}
+        //}
 
     	if (tileImage != null) {
 
             double radians = baseRotation + rotation * DEG60;
-            int xCenter =
-                    (int) Math.round(tileImage.getWidth() * 0.5 * tileScale);
-            int yCenter =
-                    (int) Math.round(tileImage.getHeight() * 0.5 * tileScale);
+            int xCenter = (int) Math.round(tileImage.getWidth()
+                    * SVG_X_CENTER_LOC * tileScale);
+            int yCenter = (int) Math.round(tileImage.getHeight()
+            		* SVG_Y_CENTER_LOC * tileScale);
 
             af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
             af.scale(tileScale, tileScale);
