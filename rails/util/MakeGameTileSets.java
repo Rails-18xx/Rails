@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.7 2008/12/11 20:12:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.8 2009/12/18 20:03:52 evos Exp $*/
 package rails.util;
 
 import java.io.File;
@@ -78,16 +78,17 @@ public class MakeGameTileSets {
         }
 
         for (int i = 0; i < games.length; i++) {
-
+        	System.out.println("Preparing "+games[i]);
             makeTileSet(games[i], tileMap);
 
         }
-
+        System.out.println("Done");
     }
 
     private void makeTileSet(String gameName, Map tileMap)
             throws ConfigurationException {
 
+    	directories.clear();
         directories.add("data/" + gameName);
 
         // Open and read the tile set for this rails.game
@@ -119,6 +120,7 @@ public class MakeGameTileSets {
             for (int i = 0; i < tiles.getLength(); i++) {
 
                 tileName = ((Element) tiles.item(i)).getAttribute("id");
+                System.out.println("Tile "+tileName);
                 // Save the tile in a Map so that we can check completeness
                 // later.
                 tilesInSet.put(tileName, null);
