@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.28 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.29 2009/12/19 16:48:31 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -26,6 +26,8 @@ public class GUIHex implements ViewObject {
     public static double SELECTED_SCALE = 0.8;
 
     public static int NORMAL_TOKEN_SIZE = 15;
+    public static double TILE_GRID_SCALE = 14.0;
+    public static double CITY_SIZE = 16.0;
 
     public static Color BAR_COLOUR = Color.BLUE;
     public static int BAR_WIDTH = 5;
@@ -321,29 +323,9 @@ public class GUIHex implements ViewObject {
         }
 
         Map<PublicCompanyI, City> homes = getHexModel().getHomes();
+        
         if (homes  != null) {
-            //log.debug("+++ Home hex "+getName());
-            /*
-            StringBuffer b = new StringBuffer();
-            for (Iterator<PublicCompanyI> it = homes.keySet().iterator(); it.hasNext();) {
-
-                PublicCompanyI co = it.next();
-
-                if (!co.hasStarted() && !co.hasFloated()) {
-                    if (b.length() > 0) b.append(",");
-                    b.append(co.getName());
-                }
-            }
-            String label = b.toString();
-            g2.drawString(
-                    label,
-                    rectBound.x
-                            + (rectBound.width - fontMetrics.stringWidth(label))
-                            * 1 / 2,
-                    rectBound.y
-                            + ((fontMetrics.getHeight() + rectBound.height) * 3 / 10));
-            */
-            City city;
+           City city;
             Point p;
 homes:      for (PublicCompanyI company : homes.keySet()) {
                 if (company.isClosed()) continue;
@@ -358,7 +340,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
                         }
                     }
                 }
-                p = getTokenOrigin (1, 0, getHexModel().getCities().size(),
+                p = getTokenCenter (1, 0, getHexModel().getCities().size(),
                         city.getNumber()-1);
                 //log.debug("+++ Home of "+company.getName()+" hex"+getName()+" city"+city.getName()
                 //        + " x="+(p.x)+" y="+(p.y));
@@ -434,8 +416,8 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
 
         for (int i = 0; i < tokens.size(); i++) {
             PublicCompanyI co = ((BaseToken) tokens.get(i)).getCompany();
-            Point origin = getTokenOrigin(numTokens, i, 1, 0);
-            drawBaseToken(g2, co, origin, tokenDiameter);
+            Point center = getTokenCenter(numTokens, i, 1, 0);
+            drawBaseToken(g2, co, center, tokenDiameter);
         }
     }
 
@@ -451,7 +433,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
             numTokens = tokens.size();
 
             for (int j = 0; j < tokens.size(); j++) {
-                origin = getTokenOrigin(numTokens, j, numStations, i);
+                origin = getTokenCenter(numTokens, j, numStations, i);
                 co = ((BaseToken) tokens.get(j)).getCompany();
                 drawBaseToken(g2, co, origin, tokenDiameter);
             }
@@ -505,15 +487,15 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         Font oldFont = g2.getFont();
         Color oldColor = g2.getColor();
 
-        double tokenScale = 15.0 / 21.0;
+        double scale = 0.5 * zoomFactor;
         String name = co.getName();
 
         Font font = GUIToken.getTokenFont(name.length());
         g2.setFont(new Font("Helvetica", Font.BOLD,
-                (int) (font.getSize() * tokenScale)));
+                (int) (font.getSize() * zoomFactor * 0.75)));
         g2.setColor(Color.BLACK);
-        g2.drawString(name, (int) (origin.x + (12 - 3*name.length()) * tokenScale),
-                (int) (origin.y + 14 * tokenScale));
+        g2.drawString(name, (int) (origin.x + (-4 - 3*name.length()) * scale),
+                (int) (origin.y + 4 * scale));
 
         g2.setColor(oldColor);
         g2.setFont(oldFont);
@@ -536,7 +518,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         }
     }
 
-    private Point getTokenOrigin(int numTokens, int currentToken,
+    private Point getTokenCenter(int numTokens, int currentToken,
             int numStations, int stationNumber) {
         Point p = new Point(center.x, center.y);
 
@@ -549,7 +531,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         double xx, yy;
         int positionCode = station.getPosition();
         if (positionCode != 0) {
-            y = 16 * zoomFactor;
+            y = TILE_GRID_SCALE * zoomFactor;
             double r = Math.toRadians(30 * (positionCode / 50));
             xx = x * Math.cos(r) + y * Math.sin(r);
             yy = y * Math.cos(r) - x * Math.sin(r);
@@ -560,19 +542,19 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         // Correct for the number of base slots and the token number
         switch (station.getBaseSlots()) {
         case 2:
-            x += (-8 + 16 * currentToken) * zoomFactor;
+            x += (-0.5 + currentToken) * CITY_SIZE * zoomFactor;
             break;
         case 3:
             if (currentToken < 2) {
-                x += (-8 + 16 * currentToken) * zoomFactor;
-                y += 8 * zoomFactor;
+                x += (-0.5 + currentToken) * CITY_SIZE * zoomFactor;
+                y += -3 + 0.25 * SQRT3 * CITY_SIZE * zoomFactor;
             } else {
-                y -= 8 * zoomFactor;
+                y -= 3 + 0.5 * CITY_SIZE * zoomFactor;
             }
             break;
         case 4:
-            x += (-8 + 16 * currentToken % 2) * zoomFactor;
-            y += (8 - 16 * currentToken / 2) * zoomFactor;
+            x += (-0.5 + currentToken % 2) * CITY_SIZE * zoomFactor;
+            y += (0.5 - currentToken / 2) * CITY_SIZE * zoomFactor;
         }
 
         // Correct for the tile base and actual rotations

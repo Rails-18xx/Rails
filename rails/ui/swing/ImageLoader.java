@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.14 2009/12/18 20:04:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.15 2009/12/19 16:48:32 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.image.BufferedImage;
@@ -25,21 +25,14 @@ public class ImageLoader {
 
     private static Map<Integer, Document> svgMap;
     private static double[] zoomFactors = new double[21];
-    //private static Map<Integer, String> tileTypes = new HashMap<Integer, String>(64);
 
-    //private static int svgWidth = 60;
-    //private static int svgHeight = 55;
     private static double svgWidth = 75;
     private static double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
     private static String svgTileDir = "tiles/svg";
-    //private static String gifTileDir = "tiles/images";
     private static String tileRootDir = Config.get("tile.root_directory");
-    //private static String preference = Config.get("tile.format_preference");
     private static List<String> directories = new ArrayList<String>();
 
     static {
-        //GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.33);
-        //GUIHex.setScale(preference.equalsIgnoreCase("svg") ? 1.0 : 0.163);
         GUIHex.setScale(1.0);
     }
 
@@ -73,59 +66,12 @@ public class ImageLoader {
         }
     }
 
-    /*
-    private BufferedImage loadTile(int tileID, double zoomFactor) {
-        BufferedImage image = null;
-
-        //String tileType;
-        if (preference.equalsIgnoreCase("gif")) {
-
-            image = getGIFTile(tileID);
-            if (image == null) {
-                // If loading the GIF fails, try loading the SVG.
-                log.warn("Attempting to load SVG version of tile " + tileID);
-                image = getSVGTile(tileID, zoomFactor);
-                //tileType = "svg";
-            } else {
-            	tileType = "gif";
-            }
-
-        } else {
-
-            image = getSVGTile(tileID, zoomFactor);
-            if (image == null) {
-                // If loading the SVG fails, try loading the GIF.
-                log.warn("Attempting to load GIF version of tile " + tileID);
-                image = getGIFTile(tileID);
-                tileType = "gif";
-            } else {
-            	tileType = "svg";
-            }
-        }
-        //tileTypes.put(tileID, tileType);
-        return image;
-    }*/
-
     private BufferedImage getSVGTile(int tileID, double zoomFactor) {
         String fn = "tile" + Integer.toString(tileID) + ".svg";
-        //log.debug("Loading SVG tile " + fn);
 
         BufferedImage image = null;
 
         try {
-        	/*
-            InputStream stream = ResourceLoader.getInputStream(fn, directories);
-            if (stream != null) {
-                BufferedImageTranscoder t = new BufferedImageTranscoder();
-                t.addTranscodingHint(ImageTranscoder.KEY_WIDTH, new Float(
-                        svgWidth));
-                t.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, new Float(
-                        svgHeight));
-                TranscoderInput input = new TranscoderInput(stream);
-                t.transcode(input, null);
-                image = t.getImage();
-            }
-            */
         	// Experimental new version, that stacks the XML to allow zooming
         	if (svgMap == null) {
         		svgMap = new HashMap<Integer, Document>(64);
@@ -161,27 +107,6 @@ public class ImageLoader {
         return image;
     }
 
-    /*
-    private BufferedImage getGIFTile(int tileID) {
-        String fn = "tile" + Integer.toString(tileID) + ".gif";
-        //log.debug("Loading tile " + fn);
-
-        BufferedImage image = null;
-
-        try {
-
-            InputStream str = ResourceLoader.getInputStream(fn, directories);
-            if (str != null) {
-                image = ImageIO.read(str);
-            }
-        } catch (Exception e) {
-            log.error("Error loading file: " + fn + "\nLoad failed with " + e);
-            return null;
-        }
-        return image;
-    }
-    */
-
     public BufferedImage getTile(int tileID, int zoomStep) {
 
         if (tileMap == null) {
@@ -208,13 +133,8 @@ public class ImageLoader {
 
     }
 
-    //public String getTileType (int tileID) {
-    //	return tileTypes.get(tileID);
-    //}
-
     public ImageLoader() {
         directories.add(tileRootDir + svgTileDir);
-        //directories.add(tileRootDir + gifTileDir);
         directories.add(tileRootDir);
     }
 
