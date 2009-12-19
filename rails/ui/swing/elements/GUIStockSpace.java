@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.8 2009/12/13 16:39:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.9 2009/12/19 18:32:34 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -26,6 +26,11 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
     List<PublicCompanyI> tokenList;
 
     private static final Color LIGHT_GRAY = new Color(200, 200, 200);
+    
+    private static final int TOKEN_ORIGIN_X = 12;
+    private static final int TOKEN_ORIGIN_Y = 10;
+    private static final int TOKEN_INCREMENT_Y = 6;
+    private static final int TOKEN_DIAMETER = 20;
 
     protected static Logger log =
             Logger.getLogger(GUIStockSpace.class.getPackage().getName());
@@ -86,6 +91,9 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
 
     private void placeToken(List<PublicCompanyI> tokenList) {
 
+        int xCenter = TOKEN_ORIGIN_X;
+        int yCenter = TOKEN_ORIGIN_Y;
+        int diameter = TOKEN_DIAMETER;
         Point origin = new Point(16, 0);
         Dimension size = new Dimension(40, 40);
         Color bgColour;
@@ -98,11 +106,11 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
             bgColour = co.getBgColour();
             fgColour = co.getFgColour();
 
-            token = new GUIToken(fgColour, bgColour, co.getName());
+            token = new GUIToken(fgColour, bgColour, co.getName(), xCenter, yCenter, diameter);
             token.setBounds(origin.x, origin.y, size.width, size.height);
 
             add(token, new Integer(0), 0);
-            origin.y += 6;
+            yCenter += TOKEN_INCREMENT_Y;
         }
     }
 
