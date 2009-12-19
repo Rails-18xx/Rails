@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.9 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.10 2009/12/19 18:32:32 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -48,7 +48,6 @@ public class GUIToken extends JPanel {
         g2d.setFont(new Font("Helvetica", Font.BOLD,
                 (int) (font.getSize() * tokenScale)));
         g2d.setColor(fgColor);
-        // g2d.drawString(name, 3, 14);
         g2d.drawString(name, (int) (circle.x + (12 - 3*name.length()) * tokenScale),
                 (int) (circle.y + 14 * tokenScale));
 
