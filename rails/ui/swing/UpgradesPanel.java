@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.21 2009/12/20 15:35:56 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.22 2009/12/20 21:16:07 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -176,7 +176,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
 
-        repaint();
+        //repaint();
+        revalidate();
     }
 
     public void clear() {
