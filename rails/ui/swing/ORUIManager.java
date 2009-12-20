@@ -519,7 +519,7 @@ public class ORUIManager {
 
         // Check if the new tile must be connected to some other track
         boolean mustConnect =
-                tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOPUR_NAME)
+                tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
                 // Does not apply to the current company's home hex(es)
                         && !hex.getHexModel().isHome(orComp)
                         // Does not apply to special tile lays
