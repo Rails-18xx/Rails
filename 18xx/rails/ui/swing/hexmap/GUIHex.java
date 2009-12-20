@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.29 2009/12/19 16:48:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.30 2009/12/20 14:57:57 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -762,9 +762,9 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
             //log.debug("GUIHex " + model.getName() + " updated: new tile "
             //          + currentTileId + "/" + currentTileOrientation);
 
-            if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
-            	GameUIManager.instance.orWindow.updateStatus();
-            }
+            //if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
+            //	GameUIManager.instance.orWindow.updateStatus();
+            //}
         } else {
             hexMap.repaint(getBounds());
         }
