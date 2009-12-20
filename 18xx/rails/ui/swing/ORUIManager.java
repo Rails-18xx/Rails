@@ -1345,6 +1345,7 @@ public class ORUIManager {
                 upgradePanel.setDoneEnabled(true);
                 break;
             case SELECT_HEX_FOR_TOKEN:
+                upgradePanel.setTileUpgrades(null);
                 upgradePanel.setDoneEnabled(false);
                 upgradePanel.setCancelEnabled(true);
                 upgradePanel.setDoneText("LayToken");
