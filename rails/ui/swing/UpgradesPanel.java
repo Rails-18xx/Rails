@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.20 2009/12/15 18:56:10 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.21 2009/12/20 15:35:56 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -146,7 +146,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
             setSelectedToken();
 
-        } else if (orUIManager.tileUpgrades == null) {} else if (orUIManager.tileUpgrades.size() == 0) {
+        } else if (orUIManager.tileUpgrades == null) {
+            ;
+        } else if (orUIManager.tileUpgrades.size() == 0) {
             orUIManager.setMessage(LocalText.getText("NoTiles"));
         } else {
             for (TileI tile : orUIManager.tileUpgrades) {
