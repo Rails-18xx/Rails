@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.81 2009/11/27 20:35:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.82 2009/12/20 14:57:02 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -162,6 +162,11 @@ public class OperatingRound extends Round implements Observer {
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
             log.info("Initial operating sequence is "+msg.toString());
+
+            if (stepObject == null) {
+                stepObject = new IntegerState("ORStep", -1);
+                stepObject.addObserver(this);
+            }
 
             if (operatingCompanyArray.length > 0) {
 
@@ -1911,10 +1916,6 @@ public class OperatingRound extends Round implements Observer {
     protected void setStep(int step) {
         if (step == STEP_INITIAL) initTurn();
 
-        if (stepObject == null) {
-            stepObject = new IntegerState("ORStep", -1);
-            stepObject.addObserver(this);
-        }
         stepObject.set(step);
 
     }
