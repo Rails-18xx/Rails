@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.31 2009/11/17 19:31:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.32 2009/12/20 14:58:24 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -59,7 +59,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
     /** Preprinted pre-yellow tiles */
     public static final String WHITE_COLOUR_NAME = "white";
     public static final int WHITE_COLOUR_NUMBER = 0;
-    public static final String YELLOW_COLOPUR_NAME = "yellow";
+    public static final String YELLOW_COLOUR_NAME = "yellow";
     public static final int YELLOW_COLOUR_NUMBER = 1;
     public static final String GREEN_COLOUR_NAME = "green";
     public static final int GREEN_COLOUR_NUMBER = 2;
@@ -70,7 +70,7 @@ public class Tile extends ModelObject implements TileI, StationHolderI {
 
     protected static final List<String> VALID_COLOUR_NAMES =
             Arrays.asList(new String[] { RED_COLOUR_NAME, FIXED_COLOUR_NAME,
-                    WHITE_COLOUR_NAME, YELLOW_COLOPUR_NAME, GREEN_COLOUR_NAME,
+                    WHITE_COLOUR_NAME, YELLOW_COLOUR_NAME, GREEN_COLOUR_NAME,
                     BROWN_COLOUR_NAME, GREY_COLOUR_NAME });
 
     /**
