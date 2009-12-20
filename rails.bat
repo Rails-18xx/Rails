@@ -1,2 +1,2 @@
 
-java -jar rails-1.1.0.jar %1
+java -jar rails-1.1.1.jar %1
