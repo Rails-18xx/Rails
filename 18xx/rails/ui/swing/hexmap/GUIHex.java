@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.30 2009/12/20 14:57:57 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.31 2009/12/20 15:03:11 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -440,13 +440,8 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         }
     }
 
-    private static int[] offStationTokenX = new int[] { -20, 0 }; // Unclear
-                                                                    // why
-                                                                    // x=-10,y=-10
-                                                                    // puts it
-                                                                    // at the
-                                                                    // center.
-    private static int[] offStationTokenY = new int[] { -20, 0 };
+    private static int[] offStationTokenX = new int[] { -11, 0 };
+    private static int[] offStationTokenY = new int[] { -19, 0 };
 
     private void paintOffStationTokens(Graphics2D g2) {
         List<TokenI> tokens = getHexModel().getTokens();
