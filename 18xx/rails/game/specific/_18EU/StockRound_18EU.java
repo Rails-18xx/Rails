@@ -523,7 +523,7 @@ public class StockRound_18EU extends StockRound {
 
         if (major != null && action.getReplaceToken()) {
             if (homeHex.layBaseToken(major, homeCityNumber)) {
-                major.layBaseToken(homeHex, homeCityNumber);
+                major.layBaseToken(homeHex, 0);
             }
         }
 
