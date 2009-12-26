@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.26 2009/11/04 20:33:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.27 2009/12/26 12:48:02 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -182,11 +182,19 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         moveTo(GameManager.getInstance().getBank().getScrapHeap());
         ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 
-        // For 1856: buyable tokens move to Bank
+        // For 1856: buyable tokens still owned by the private will now
+        // become commonly buyable, i.e. owned by GameManager. 
+        // (Note: all such tokens will be made buyable from the Bank too,
+        // this is done in OperatingRound_1856).
+        List<SellBonusToken> moveToGM = new ArrayList<SellBonusToken>(4);
         for (SpecialPropertyI sp : specialProperties) {
         	if (sp instanceof SellBonusToken) {
-        		((SellBonusToken)sp).setSeller(GameManager.getInstance().getBank());
-        	}
+                moveToGM.add((SellBonusToken)sp);
+            }
+        }
+        for (SellBonusToken sbt : moveToGM) {
+            sbt.moveTo(GameManager.getInstance());
+            log.debug("SP "+sbt.getName()+" is now a common property");
         }
     }
 
