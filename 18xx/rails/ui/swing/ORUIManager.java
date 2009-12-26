@@ -1276,7 +1276,7 @@ public class ORUIManager {
                         LocalText.getText("BuyBonusToken",
                                 bbt.getName(),
                                 Bank.format(bbt.getValue()),
-                                bbt.getCompanyName(),
+                                bbt.getSellerName(),
                                 Bank.format(bbt.getPrice()) );
                 orPanel.addSpecialAction(bbt, text);
             }
