@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.2 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.3 2009/12/26 13:53:01 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -12,7 +12,6 @@ public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    //private PublicCompanyI seller = null;
     private State seller = null;
     private String name;
     private int price;
