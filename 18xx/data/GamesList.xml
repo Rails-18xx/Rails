@@ -53,6 +53,9 @@ Limitation:
 		<Description>1856 - Railroading in Upper Canada
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
+
+Limitation:
+- The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 		</Description>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
