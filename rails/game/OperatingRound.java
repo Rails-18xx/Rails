@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.83 2009/12/26 12:48:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.84 2009/12/26 13:44:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1977,51 +1977,56 @@ public class OperatingRound extends Round implements Observer {
             setTrainsToDiscard();
         }
 
-        setBonusTokenLays();
+        // The following additional "common" actions are only available if the
+        // primary action is not forced.
+        if (step >= 0) {
+            
+            setBonusTokenLays();
 
-        setDestinationActions();
-
-        setGameSpecificPossibleActions();
-
-        // Can private companies be bought?
-        if (getCurrentPhase().isPrivateSellingAllowed()) {
-
-            // Create a list of players with the current one in front
-            int currentPlayerIndex = operatingCompany.getPresident().getIndex();
-            Player player;
-            int minPrice, maxPrice;
-            for (int i = currentPlayerIndex; i < currentPlayerIndex
-                                                 + numberOfPlayers; i++) {
-                player = players.get(i % numberOfPlayers);
-                for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
-
-                    minPrice =
-                            (int) (privComp.getBasePrice() * operatingCompany.getLowerPrivatePriceFactor());
-                    maxPrice =
-                            (int) (privComp.getBasePrice() * operatingCompany.getUpperPrivatePriceFactor());
-                    possibleActions.add(new BuyPrivate(privComp, minPrice,
-                            maxPrice));
+            setDestinationActions();
+    
+            setGameSpecificPossibleActions();
+    
+            // Can private companies be bought?
+            if (getCurrentPhase().isPrivateSellingAllowed()) {
+    
+                // Create a list of players with the current one in front
+                int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+                Player player;
+                int minPrice, maxPrice;
+                for (int i = currentPlayerIndex; i < currentPlayerIndex
+                                                     + numberOfPlayers; i++) {
+                    player = players.get(i % numberOfPlayers);
+                    for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
+    
+                        minPrice =
+                                (int) (privComp.getBasePrice() * operatingCompany.getLowerPrivatePriceFactor());
+                        maxPrice =
+                                (int) (privComp.getBasePrice() * operatingCompany.getUpperPrivatePriceFactor());
+                        possibleActions.add(new BuyPrivate(privComp, minPrice,
+                                maxPrice));
+                    }
                 }
             }
-        }
-
-        // Are there any "common" special properties,
-        // i.e. properties that are available to everyone?
-        List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
-        if (commonSP != null) {
-        	SellBonusToken sbt;
-    loop:   for (SpecialPropertyI sp : commonSP) {
-    			if (sp instanceof SellBonusToken) {
-        			sbt = (SellBonusToken) sp;
-        			// Can't buy if already owned
-        			if (operatingCompany.getBonuses() != null) {
-        				for (Bonus bonus : operatingCompany.getBonuses()) {
-        					if (bonus.getName().equals(sp.getName())) continue loop;
-        				}
-        			}
-        			possibleActions.add (new BuyBonusToken (sbt));
-        		}
-        	}
+    
+            // Are there any "common" special properties,
+            // i.e. properties that are available to everyone?
+            List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
+            if (commonSP != null) {
+            	SellBonusToken sbt;
+        loop:   for (SpecialPropertyI sp : commonSP) {
+        			if (sp instanceof SellBonusToken) {
+            			sbt = (SellBonusToken) sp;
+            			// Can't buy if already owned
+            			if (operatingCompany.getBonuses() != null) {
+            				for (Bonus bonus : operatingCompany.getBonuses()) {
+            					if (bonus.getName().equals(sp.getName())) continue loop;
+            				}
+            			}
+            			possibleActions.add (new BuyBonusToken (sbt));
+            		}
+            	}
+            }
         }
 
         if (doneAllowed) {
