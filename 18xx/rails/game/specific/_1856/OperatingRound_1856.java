@@ -7,6 +7,8 @@ import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
+import rails.game.special.SellBonusToken;
+import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
@@ -360,10 +362,21 @@ public class OperatingRound_1856 extends OperatingRound {
 
         PhaseI postPhase = currentPhase;
 
-        if (postPhase != prePhase && postPhase.getName().equals("5")) {
-            finalLoanRepaymentPending.set(true);
-            playerToStartLoanRepayment
-                = gameManager.getPlayerByIndex(action.getPlayerIndex());
+        if (postPhase != prePhase) {
+            if (postPhase.getName().equals("5")) {
+                finalLoanRepaymentPending.set(true);
+                playerToStartLoanRepayment
+                    = gameManager.getPlayerByIndex(action.getPlayerIndex());
+            } else if (postPhase.getName().equals("4")) {
+                // Make Bridge and Tunnel tokens buyable from the Bank.
+                for (SpecialPropertyI sp : gameManager.getCommonSpecialProperties()) {
+                    if (sp instanceof SellBonusToken) {
+                        SellBonusToken sbt = (SellBonusToken)sp;
+                        sbt.setSeller(bank);
+                        log.debug("SP "+sp.getName()+" is now buyable from the Bank");
+                    }
+                }
+            }
         }
 
         return result;
