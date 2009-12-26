@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.2 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.3 2009/12/26 12:46:52 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -44,9 +44,11 @@ public class Bonus implements Closeable {
         return locations;
     }
 
-    public String getLocationNameString() {
+    public String getIdForView() {
 
-        if (locations == null || locations.isEmpty()) return "";
+        if (locations == null || locations.isEmpty()) {
+            return name.substring(0, 2);
+        }
         
         StringBuffer b = new StringBuffer();
         for (MapHex location : locations) {
@@ -99,7 +101,7 @@ public class Bonus implements Closeable {
 	@Override
 	public String toString() {
         return "Bonus "+name+" hex="
-               + getLocationNameString() + " value=" + value;
+               + getIdForView() + " value=" + value;
     }
 
 }

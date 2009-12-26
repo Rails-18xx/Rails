@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/BonusModel.java,v 1.1 2009/09/23 21:38:57 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/BonusModel.java,v 1.2 2009/12/26 12:46:52 evos Exp $*/
 package rails.game.model;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class BonusModel extends StringState {
     		if (b.length() > 14) {
     			b.append("<br>");
     		}
-    		b.append(bonus.getLocationNameString()).append("+").append(Bank.format(bonus.getValue()));
+    		b.append(bonus.getIdForView()).append("+").append(Bank.format(bonus.getValue()));
     	}
 
     	return b.toString();
