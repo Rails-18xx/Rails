@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.9 2009/11/07 12:10:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.10 2009/12/27 18:30:31 evos Exp $*/
 package rails.util;
 
 import java.io.FileNotFoundException;
@@ -35,10 +35,21 @@ public final class Config {
 
     public static void setConfigFile(String myConfigFile) {
         Config.myConfigFile = myConfigFile;
+        load();
     }
 
     public static String get(String key) {
 
+        if (prop.isEmpty() || !loaded) {
+            load();
+        }
+        if (prop.containsKey(key)) return prop.getProperty(key).trim();
+
+        return "";
+    }
+    
+    private static void load() {
+        
         if (prop.isEmpty() || !loaded) {
             /* List the property files to read here */
             load(myConfigFile, false);
@@ -46,9 +57,6 @@ public final class Config {
             setDefaults();
             loaded = true;
         }
-        if (prop.containsKey(key)) return prop.getProperty(key).trim();
-
-        return "";
     }
 
     /**
