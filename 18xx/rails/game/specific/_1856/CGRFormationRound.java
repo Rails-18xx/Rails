@@ -538,10 +538,16 @@ public class CGRFormationRound extends SwitchableUIRound {
             // Move any still valid bonuses
             if (comp.getBonuses() != null) {
 	            List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
-	            for (Bonus bonus : bonuses) {
+bonuses:        for (Bonus bonus : bonuses) {
+                    comp.removeBonus(bonus);
+                    // Only add if the CGR does not already have the same bonus
+                    if (cgr.getBonuses() != null) {
+                        for (Bonus b : cgr.getBonuses()) {
+                            if (b.equals(bonus)) continue bonuses;
+                        }
+                    }
 	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),
                             bonus.getLocations()));
-	            	comp.removeBonus(bonus);
 	            }
             }
         }
