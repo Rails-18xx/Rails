@@ -11,7 +11,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +41,7 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import rails.game.ConfigurationException;
+import rails.game.DisplayBuffer;
 import rails.game.Game;
 import rails.game.GameManager;
 import rails.game.action.PossibleAction;
@@ -49,8 +58,14 @@ implements ActionListener, KeyListener {
     private ListAndFixSavedFiles messageWindow;
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu;
-    private JMenuItem saveItem, loadItem, printItem;
-    private JMenuItem findItem, findBackItem, findNextItem, findPrevItem;
+    private JMenuItem saveItem, loadItem;
+    private JMenuItem trimItem;
+    
+    private List<Object> savedObjects = new ArrayList<Object>(512);
+    private List<PossibleAction> executedActions;
+    
+    private static String saveDirectory;
+    private String filepath;
 
     protected static Logger log =
         Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
@@ -77,7 +92,8 @@ implements ActionListener, KeyListener {
         /* Tell the properties loader to read this file. */
         Config.setConfigFile(myConfigFile);
         System.out.println("Configuration file = " + myConfigFile);
-        System.out.println("Save directory = " + Config.get("save.directory"));
+        saveDirectory = Config.get("save.directory");
+        System.out.println("Save directory = " + saveDirectory);
         
         new ListAndFixSavedFiles ();
         
@@ -132,16 +148,17 @@ implements ActionListener, KeyListener {
         saveItem.setEnabled(true);
         fileMenu.add(saveItem);
 
-        printItem = new ActionMenuItem(LocalText.getText("PRINT"));
-        printItem.setActionCommand("PRINT");
-        printItem.setMnemonic(KeyEvent.VK_P);
-        printItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+        trimItem = new ActionMenuItem("Trim");
+        trimItem.setActionCommand("TRIM");
+        trimItem.setMnemonic(KeyEvent.VK_T);
+        trimItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
                 ActionEvent.ALT_MASK));
-        printItem.addActionListener(this);
-        printItem.setEnabled(false);
-        fileMenu.add(printItem);
+        trimItem.addActionListener(this);
+        trimItem.setEnabled(true);
+        editMenu.add(trimItem);
 
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         
         setJMenuBar(menuBar);
         
@@ -149,22 +166,27 @@ implements ActionListener, KeyListener {
 
         setSize(400, 400);
         setLocation(600, 400);
-        setTitle(LocalText.getText("GameReportTitle"));
+        setTitle("List and fix saved files");
 
-        final JFrame frame = this;
         addKeyListener(this);
 
         
         setVisible(true);
 
-        String saveDirectory = Config.get("save.directory");
+        saveDirectory = Config.get("save.directory");
+        load();
+        
+    }
+    
+    private void load() {
+        
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(new File(saveDirectory));
 
         if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
             
             File selectedFile = jfc.getSelectedFile();
-            String filepath = selectedFile.getPath();
+            filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
  
             log.debug("Loading game from file " + filepath);
@@ -179,28 +201,36 @@ implements ActionListener, KeyListener {
                 // Allow for older saved file versions.
                 
                 Object object = ois.readObject();
+                savedObjects.add(object);
                 if (object instanceof String) {
                     add((String)object+" saved file "+filename);
                     object = ois.readObject();
+                    savedObjects.add(object);
                 } else {
                     add("Reading Rails (pre-1.0.7) saved file "+filename);
                 }
                 if (object instanceof String) {
                     add("File was saved at "+(String)object);
                     object = ois.readObject();
+                    savedObjects.add(object);
                 }
     
                 long versionID = (Long) object;
                 add("Saved versionID="+versionID+" (object="+object+")");
                 long saveFileVersionID = GameManager.saveFileVersionID;
                 String name = (String) ois.readObject();
+                savedObjects.add(name);
                 add("Saved game="+name);
+                
                 Map<String, String> selectedGameOptions =
                         (Map<String, String>) ois.readObject();
+                savedObjects.add(selectedGameOptions);
                 for (String key : selectedGameOptions.keySet()) {
                     add("Option "+key+"="+selectedGameOptions.get(key));
                 }
+                
                 List<String> playerNames = (List<String>) ois.readObject();
+                savedObjects.add(playerNames);
                 int i=1;
                 for (String player : playerNames) {
                     add("Player "+(i++)+": "+player);
@@ -212,8 +242,9 @@ implements ActionListener, KeyListener {
                     throw new ConfigurationException("Error in setting up " + name);
                 }
                 
-                List<PossibleAction> executedActions =
+                executedActions =
                         (List<PossibleAction>) ois.readObject();
+                savedObjects.add(executedActions);
                 i=1;
                 for (PossibleAction action : executedActions) {
                     add("Action "+(i++)+": "+action.toString());
@@ -247,9 +278,59 @@ implements ActionListener, KeyListener {
 
     public void actionPerformed(ActionEvent actor) {
         String command = actor.getActionCommand();
-        if ("LOAD".equalsIgnoreCase(command)) {
-       }
+        if ("TRIM".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter last action number to be retained");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    List<PossibleAction> toRemove = executedActions.subList(index, executedActions.size());
+                    toRemove.clear();
+                    
+                } catch (NumberFormatException e) {
+                    
+                }
+            }
+        } else if ("SAVE".equalsIgnoreCase(command)) {
+            save();
+        } else if ("LOAD".equalsIgnoreCase(command)) {
+            load();
+        }
     }
+    
+    private void save() {
+        JFileChooser jfc = new JFileChooser();
+        if (Util.hasValue(saveDirectory)) {
+            jfc.setCurrentDirectory(new File(saveDirectory));
+        }
+        if (Util.hasValue(filepath)) {
+            jfc.setSelectedFile(new File(filepath));
+        }
+        if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            filepath = selectedFile.getPath();
+            saveDirectory = selectedFile.getParent();
+             
+            try {
+                try {
+                    ObjectOutputStream oos =
+                            new ObjectOutputStream(new FileOutputStream(new File(
+                                    filepath)));
+                    for (Object object : savedObjects) {
+                        oos.writeObject(object);
+                    }
+                    oos.close();
+                } catch (IOException e) {
+                    log.error("Save failed", e);
+                    DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+                }
+           } catch (Exception e) {
+                System.out.println ("Error whilst writing file "+filepath);
+                e.printStackTrace();
+            }
+        }
+
+    }
+    
     public void keyPressed(KeyEvent e) {
     }
 
