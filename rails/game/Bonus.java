@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.3 2009/12/26 12:46:52 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.4 2009/12/27 23:16:35 evos Exp $ */
 package rails.game;
 
 import java.util.List;
+
+import rails.game.action.LayTile;
 
 /**
  * An object of class Bonus represent extra income for the owning company,
@@ -96,6 +98,11 @@ public class Bonus implements Closeable {
         if (removingObject instanceof Phase) {
             ((Phase) removingObject).addObjectToClose(this);
         }
+    }
+    
+    public boolean equals (Bonus b) {
+        return (b.name.equals(name))
+               && b.value == value;
     }
 
 	@Override
