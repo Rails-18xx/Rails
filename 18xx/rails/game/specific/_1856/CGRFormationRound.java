@@ -5,6 +5,7 @@ import java.util.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
+import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
@@ -25,6 +26,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private List<BaseToken> nonHomeTokens = null;
 
     private IntegerState stepObject = new IntegerState ("CGRFormStep", 0);
+    private BooleanState cgrHasDiscardedTrains = new BooleanState ("CGRDiscardedTrains", false);
 
     public static final int STEP_REPAY_LOANS = 1;
     public static final int STEP_DISCARD_TRAINS = 2;
@@ -707,7 +709,7 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
             trainsToDiscardFrom = cgr.getPortfolio().getTrainList();
             forcedTrainDiscard = true;
             return true;
-        } else {
+        } else if (!this.cgrHasDiscardedTrains.booleanValue()) {
             // Check if CGR still has non-permanent trains
             // these may be discarded voluntarily
             trainsToDiscardFrom = new ArrayList<TrainI>();
@@ -788,6 +790,8 @@ outer:  while (cgr.getNumberOfTrains() > trainLimit) {
                     companyName,
                     train.getName() ));
 
+        } else {
+            cgrHasDiscardedTrains.set(true);
         }
 
         return true;

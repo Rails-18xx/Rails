@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.84 2009/12/26 13:44:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.85 2009/12/27 18:30:11 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1513,7 +1513,7 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
 
-            if (train == null) {
+            if (train == null && action.isForced()) {
                 errMsg = LocalText.getText("NoTrainSpecified");
                 break;
             }
@@ -1533,7 +1533,7 @@ public class OperatingRound extends Round implements Observer {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
                     companyName,
-                    train.getName(),
+                    (train != null ?train.getName() : "?"),
                     errMsg ));
             return false;
         }
@@ -1554,7 +1554,7 @@ public class OperatingRound extends Round implements Observer {
             stepObject.set(STEP_BUY_TRAIN);
         }
 
-        setPossibleActions();
+        //setPossibleActions();
 
         return true;
     }

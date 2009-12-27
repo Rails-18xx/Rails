@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.10 2009/11/04 20:33:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.11 2009/12/27 18:30:11 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -74,9 +74,11 @@ public class DiscardTrain extends PossibleORAction {
         for (TrainI train : ownedTrains) {
             b.append(" ").append(train.getName());
         }
-        b.append(forced ? "," : ", not").append (" forced,");
+        b.append(forced ? "" : ", not").append (" forced");
         if (discardedTrain != null) {
-            b.append(" and discards ").append(discardedTrain.getName());
+            b.append(", discards ").append(discardedTrain.getName());
+        } else if ("".equalsIgnoreCase(getPlayerName())) {
+            b.append(", discards nothing");
         }
         return b.toString();
     }
