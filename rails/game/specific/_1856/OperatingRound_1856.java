@@ -63,7 +63,6 @@ public class OperatingRound_1856 extends OperatingRound {
                 return false;
             } else {
                 operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-
                 // 1856 special: check if the company has sold enough shares to operate
                 // This check does not apply to the CGR
                 if (operatingCompany instanceof PublicCompany_CGR) return true;
@@ -463,7 +462,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
     	// End of CGRFormationRound
         finalLoanRepaymentPending.set(false);
-        resetOperatingCompanies(mergingCompanies);
+        if (!resetOperatingCompanies(mergingCompanies)) return;
         if (operatingCompany != null) {
             setStep(STEP_INITIAL);
         } else {
@@ -472,7 +471,7 @@ public class OperatingRound_1856 extends OperatingRound {
         wasInterrupted.set(true);
     }
 
-    private void resetOperatingCompanies(List<PublicCompanyI> mergingCompanies) {
+    private boolean resetOperatingCompanies(List<PublicCompanyI> mergingCompanies) {
 
         List<PublicCompanyI> companies
                 = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
@@ -540,8 +539,9 @@ public class OperatingRound_1856 extends OperatingRound {
             log.debug ("Next operating company: "+operatingCompany.getName());
         } else {
         	finishOR();
+            return false;
         }
-
+        return true;
     }
 
     @Override
