@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.16 2009/12/13 16:39:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.17 2009/12/28 14:53:00 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -114,7 +114,6 @@ public final class Util {
     			throw new ConfigurationException (e);
     		}
     	}
-    	//getLogger().debug("+++ String:"+s+" Color:"+c);
     	return c;
     }
 

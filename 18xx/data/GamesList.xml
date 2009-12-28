@@ -58,6 +58,7 @@ Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 		</Description>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1870">

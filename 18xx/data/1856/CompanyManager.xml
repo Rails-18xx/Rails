@@ -76,7 +76,14 @@
 	  </SpecialProperty>
 	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
 		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
-		<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10" number="2"/>
+		<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
+			<IfOption name="UnlimitedBonusTokens" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedBonusTokens" value="no">
+				<Attributes amount="3"/>
+			</IfOption>
+		</SellBonusToken>
 	  </SpecialProperty>
 	</SpecialProperties>
   </Company>
@@ -88,7 +95,14 @@
 	  </SpecialProperty>
 	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
 		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
-		<SellBonusToken name="Tunnel" location="B13" price="50" value="10" number="2"/>
+		<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
+			<IfOption name="UnlimitedBonusTokens" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedBonusTokens" value="no">
+				<Attributes amount="3"/>
+			</IfOption>
+		</SellBonusToken>
 	  </SpecialProperty>
 	</SpecialProperties>
   </Company>
