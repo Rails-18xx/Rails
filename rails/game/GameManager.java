@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.71 2009/11/27 20:35:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.72 2009/12/28 13:19:21 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -1225,7 +1225,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
 	                    && sp.isExecutionable()
 	                    && (!sp.isExercised() || includeExercised)) {
-                    log.debug("Adding common SP: " + sp);
                     result.add((T) sp);
                 }
             }
