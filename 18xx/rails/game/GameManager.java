@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.72 2009/12/28 13:19:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.73 2009/12/28 14:50:04 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -783,6 +783,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     "ExecutedActions");
             if (moveStack.isOpen()) moveStack.finish();
         }
+        
+        DisplayBuffer.clear();
         return true;
     }
 
