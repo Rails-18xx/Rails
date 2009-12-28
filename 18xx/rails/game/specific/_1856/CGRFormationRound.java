@@ -81,13 +81,10 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         if (companiesToRepayLoans == null) {
+            ReportBuffer.add(LocalText.getText("DoesNotForm", cgr.getName()));
             finishRound();
             return;
         }
-
-        ReportBuffer.add(LocalText.getText("StartFormationRound",
-        		cgrName,
-                startingPlayer.getName()));
 
         setStep(STEP_REPAY_LOANS);
 
@@ -639,17 +636,21 @@ bonuses:        for (Bonus bonus : bonuses) {
         // Check the trains, autodiscard any excess non-permanent trains
         int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
         List<TrainI> trains = cgr.getPortfolio().getTrainList();
-        if (cgr.getNumberOfTrains() > trainLimit) ReportBuffer.add("");
-outer:  while (cgr.getNumberOfTrains() > trainLimit) {
+        if (cgr.getNumberOfTrains() > trainLimit) {
+            ReportBuffer.add("");
+            int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
+            List<TrainI> trainsToDiscard = new ArrayList<TrainI>(4);
             for (TrainI train : trains) {
                 if (!train.getType().isPermanent()) {
-                    train.moveTo(pool);
-                    ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                            cgrName, train.getName()));
-                    continue outer;
+                    trainsToDiscard.add(train);
+                    if (--numberToDiscard == 0) break;
                 }
             }
-            break;
+            for (TrainI train : trainsToDiscard) {
+                train.moveTo(pool);
+                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                        cgrName, train.getName()));
+            }
         }
 
     }
