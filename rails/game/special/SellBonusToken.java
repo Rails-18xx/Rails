@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.4 2009/12/28 13:21:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.5 2009/12/28 14:53:00 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class SellBonusToken extends SpecialProperty {
         if (price <= 0)
             throw new ConfigurationException("Price invalid ["+price+"] or missing");
 
-        maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("number", 1);
+        maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
         seller = new State ("SellerOf_"+name+"_Bonus", CashHolder.class);
         
@@ -54,6 +54,8 @@ public class SellBonusToken extends SpecialProperty {
     throws ConfigurationException {
         
         locations = gameManager.getMapManager().parseLocations(locationCodes);
+        
+        
     }
 
      @Override
@@ -65,6 +67,7 @@ public class SellBonusToken extends SpecialProperty {
         numberSold.add(-1);
     }
     
+    @Override
     public boolean isExercised () {
         return maxNumberToSell >= 0 && numberSold.intValue() >= maxNumberToSell;
     }
@@ -105,7 +108,7 @@ public class SellBonusToken extends SpecialProperty {
 	public String toString() {
         return "SellBonusToken comp=" + privateCompany.getName() + " hex="
                + locationCodes + " value=" + value + " price=" + price
-               + " sold="+numberSold.intValue();
+               + " max="+maxNumberToSell+" sold="+numberSold.intValue();
     }
 
 }

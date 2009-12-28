@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.11 2009/10/30 21:53:04 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.12 2009/12/28 14:53:00 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -298,11 +298,11 @@ return getAttributeAsInteger(name, 0);
 
                     String optionValue = gameOptions.get(name);
                     if (optionValue == null) {
-                         log.warn("GameOption " + name + "=" + value
-                                 + " but no assigned value found");
                         // Take the default value
-                        	optionValue =
-                                GameOption.getByName(name).getDefaultValue();
+                        optionValue =
+                            GameOption.getByName(name).getDefaultValue();
+                        log.warn("GameOption " + name + "=" + value
+                                 + " but no assigned value found, assumed "+optionValue);
 
                     }
                     if (optionValue.equalsIgnoreCase(value)) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.85 2009/12/27 18:30:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.86 2009/12/28 14:53:00 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2012,7 +2012,7 @@ public class OperatingRound extends Round implements Observer {
             // Are there any "common" special properties,
             // i.e. properties that are available to everyone?
             List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
-            if (commonSP != null) {
+             if (commonSP != null) {
             	SellBonusToken sbt;
         loop:   for (SpecialPropertyI sp : commonSP) {
         			if (sp instanceof SellBonusToken) {
