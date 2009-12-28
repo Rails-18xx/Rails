@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.18 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.19 2009/12/28 13:17:12 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -122,8 +122,12 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public void setExercised() {
-        exercised.set(true);
-        privateCompany.checkClosingIfExercised(false);
+        setExercised(true);
+    }
+    
+    public void setExercised (boolean value) {
+        exercised.set(value);
+        if (value) privateCompany.checkClosingIfExercised(false);
     }
 
     public boolean isExercised() {
