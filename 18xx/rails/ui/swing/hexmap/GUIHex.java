@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.31 2009/12/20 15:03:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.32 2009/12/28 14:52:05 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -342,8 +342,6 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
                 }
                 p = getTokenCenter (1, 0, getHexModel().getCities().size(),
                         city.getNumber()-1);
-                //log.debug("+++ Home of "+company.getName()+" hex"+getName()+" city"+city.getName()
-                //        + " x="+(p.x)+" y="+(p.y));
                 drawHome (g2, company, p);
             }
         }
@@ -357,14 +355,14 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
 					for (MapHex hex : blocked) {
 						if (getHexModel().equals(hex)) {
 							g2.drawString(
-										  "(" + p.getName() + ")",
-										  rectBound.x
-										  + (rectBound.width - fontMetrics.stringWidth("("
-																					   + p.getName()
-																					   + ")"))
-										  * 1 / 2,
-										  rectBound.y
-										  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
+								  "(" + p.getName() + ")",
+								  rectBound.x
+								  + (rectBound.width - fontMetrics.stringWidth("("
+										   + p.getName()
+										   + ")"))
+								  * 1 / 2,
+								  rectBound.y
+								  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
 						}
 					}
 				}
