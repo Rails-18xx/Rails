@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.74 2009/12/13 16:39:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.75 2009/12/28 13:21:13 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1532,6 +1532,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 	// This must be SellBonusToken - remember the owner!
                 	if (sp instanceof SellBonusToken) {
                 		((SellBonusToken)sp).setSeller(this);
+                        // Also note 1 has been used
+                        ((SellBonusToken)sp).setExercised();
                 	}
                 	spsToMoveToGM.add(sp);
                 }
@@ -1541,6 +1543,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
             for (SpecialPropertyI sp : spsToMoveToGM) {
                 sp.moveTo(gameManager);
+                log.debug("SP "+sp.getName()+" is now a common property");
             }
         }
 

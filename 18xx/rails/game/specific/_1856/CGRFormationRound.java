@@ -5,6 +5,8 @@ import java.util.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
+import rails.game.special.SellBonusToken;
+import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
@@ -543,7 +545,22 @@ bonuses:        for (Bonus bonus : bonuses) {
                     // Only add if the CGR does not already have the same bonus
                     if (cgr.getBonuses() != null) {
                         for (Bonus b : cgr.getBonuses()) {
-                            if (b.equals(bonus)) continue bonuses;
+                            if (b.equals(bonus)) {
+                                // Remove this duplicate bonus token.
+                                // Check if it should be made available again.
+                                List<SellBonusToken> commonSP = gameManager.getSpecialProperties(SellBonusToken.class, true);
+                                if (commonSP != null) {
+                                    for (SellBonusToken sp : commonSP) {
+                                        if (sp.getName().equalsIgnoreCase(b.getName())) {
+                                            sp.makeResellable();
+                                            log.debug("BonusToken "+b.getName()+" made sellable again");
+                                            break;
+                                        }
+                                    }
+                                }
+                                log.debug("Duplicate BonusToken "+b.getName()+" not added to "+cgrName);
+                                continue bonuses;
+                            }
                         }
                     }
 	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),

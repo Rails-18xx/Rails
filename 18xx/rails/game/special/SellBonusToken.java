@@ -1,9 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.3 2009/12/26 13:53:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.4 2009/12/28 13:21:12 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
 
 import rails.game.*;
+import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.Tag;
 import rails.util.Util;
@@ -17,7 +18,7 @@ public class SellBonusToken extends SpecialProperty {
     private int price;
     private int value;
     private int maxNumberToSell;
-    private int numberSold = 0;
+    private IntegerState numberSold;
 
     @Override
 	public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -45,6 +46,8 @@ public class SellBonusToken extends SpecialProperty {
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("number", 1);
 
         seller = new State ("SellerOf_"+name+"_Bonus", CashHolder.class);
+        
+        numberSold = new IntegerState ("Bonus_"+name+"_sold", 0);
     }
 
     public void finishConfiguration (GameManager gameManager) 
@@ -55,11 +58,17 @@ public class SellBonusToken extends SpecialProperty {
 
      @Override
 	public void setExercised () {
-    	numberSold++;
-    	if (maxNumberToSell >= 0 && numberSold >= maxNumberToSell) {
-    		super.setExercised();
-    	}
+    	numberSold.add(1);
     }
+     
+    public void makeResellable () {
+        numberSold.add(-1);
+    }
+    
+    public boolean isExercised () {
+        return maxNumberToSell >= 0 && numberSold.intValue() >= maxNumberToSell;
+    }
+    
     public boolean isExecutionable() {
         return true;
     }
@@ -95,7 +104,8 @@ public class SellBonusToken extends SpecialProperty {
 	@Override
 	public String toString() {
         return "SellBonusToken comp=" + privateCompany.getName() + " hex="
-               + locationCodes + " value=" + value + " price=" + price;
+               + locationCodes + " value=" + value + " price=" + price
+               + " sold="+numberSold.intValue();
     }
 
 }
