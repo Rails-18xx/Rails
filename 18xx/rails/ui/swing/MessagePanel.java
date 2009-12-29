@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.5 2008/06/04 19:00:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.6 2009/12/29 21:58:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -31,7 +31,7 @@ public class MessagePanel extends JPanel {
     }
 
     public void setMessage(String messageText) {
-        if (Util.hasValue(messageText)) {
+        if (messageText != null) {
             int lines = messageText.split("<[Bb][Rr]>").length + 1;
             setLines(lines);
             message.setText("<html><center>" + messageText + "</center></html>");
