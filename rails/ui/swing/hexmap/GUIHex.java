@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.32 2009/12/28 14:52:05 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.33 2009/12/29 22:10:01 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -602,37 +602,30 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         if (Util.hasValue(name)) {
             tt.append(" (").append(name).append(")");
         }
-        // The next line is a temporary development aid, that can be removed
-        // later.
-        /*
-         * tt.append(" <small>(") .append(model.getX()) .append(",")
-         * .append(model.getY()) .append(")</small>");
-         */
         tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
         // TEMPORARY
         tt.append("<small> rot=" + currentTileOrientation + "</small>");
-        if (currentTile.hasStations()) {
-            // for (Station st : currentTile.getStations())
+        if (currentTile.getColourName().equalsIgnoreCase(Tile.RED_COLOUR_NAME)) {
+            if (model.hasOffBoardValues()) {
+                tt.append("<br>Offboard value ");
+                tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
+                int[] values = model.getOffBoardValues();
+                for (int i = 0; i < values.length; i++) {
+                    if (i > 0) tt.append(",");
+                    tt.append(values[i]);
+                }
+                tt.append("]");
+            }
+        } else if (currentTile.hasStations()) {
             Station st;
             int cityNumber;
             for (City city : model.getCities()) {
                 cityNumber = city.getNumber();
                 st = city.getRelatedStation();
-                tt.append("<br>  ").append(st.getType()).append(" ").append(
-                        cityNumber) // .append("/").append(st.getNumber())
-                .append(" (").append(model.getConnectionString(cityNumber)).append(
-                        "): value ");
-                if (model.hasOffBoardValues()) {
-                    tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
-                    int[] values = model.getOffBoardValues();
-                    for (int i = 0; i < values.length; i++) {
-                        if (i > 0) tt.append(",");
-                        tt.append(values[i]);
-                    }
-                    tt.append("]");
-                } else {
-                    tt.append(st.getValue());
-                }
+                tt.append("<br>  ").append(st.getType()).append(" ").append(cityNumber)
+                    .append(" (").append(model.getConnectionString(cityNumber))
+                    .append("): value ");
+                tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
                     List<TokenI> tokens = model.getTokens(cityNumber);
