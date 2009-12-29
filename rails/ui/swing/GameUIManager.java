@@ -223,13 +223,20 @@ public class GameUIManager {
             } else if (StockRound.class.isAssignableFrom(currentRoundType)) {
 
                 log.debug("UI entering Stock Round");
+                orWindow.setVisible(false);
+                stockChart.setVisible(true);
 
             } else if (OperatingRound.class.isAssignableFrom(currentRoundType)) {
 
                 log.debug("UI entering Operating Round");
                 orUIManager.initOR((OperatingRound) currentRound);
+                orWindow.setVisible(true);
+                stockChart.setVisible(false);
+                
             } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
                 log.debug("UI entering switchable round type");
+                orWindow.setVisible(true);
+                stockChart.setVisible(true);
             }
         }
 
@@ -244,7 +251,7 @@ public class GameUIManager {
                     log.debug("Leaving Start Round UI type");
                 } else if (OperatingRound.class.isAssignableFrom(previousRoundUItype)) {
                     log.debug("Leaving Operating Round UI type");
-                    orWindow.setVisible(false);
+                    //orWindow.setVisible(false);
                 }
             }
 
@@ -253,21 +260,21 @@ public class GameUIManager {
 
                 log.debug("Entering Start Round UI type");
                 activeWindow = startRoundWindow;
-                stockChart.setVisible(false);
+                //stockChart.setVisible(false);
 
             } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
 
                 log.debug("Entering Stock Round UI type");
                 activeWindow = statusWindow;
-                stockChart.setVisible(true);
-                statusWindow.setVisible(true);
+                //stockChart.setVisible(true);
+                //statusWindow.setVisible(true);
 
             } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
 
                 log.debug("Entering Operating Round UI type ");
                 activeWindow = orWindow;
-                stockChart.setVisible(false);
-                orWindow.setVisible(true);
+                //stockChart.setVisible(false);
+                //orWindow.setVisible(true);
             }
         }
 
