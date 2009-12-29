@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.35 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.36 2009/12/29 21:58:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -509,6 +509,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);
+        undoButton.setEnabled(false);
+        redoButton.setEnabled(false);
 
         round = orUIManager.gameUIManager.getCurrentRound();
         if (!(round instanceof ShareSellingRound)) {
