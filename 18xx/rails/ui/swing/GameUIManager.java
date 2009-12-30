@@ -236,6 +236,7 @@ public class GameUIManager {
             } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
                 log.debug("UI entering switchable round type");
                 orWindow.setVisible(true);
+                statusWindow.pack();
                 stockChart.setVisible(true);
             }
         }
