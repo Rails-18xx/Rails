@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.32 2009/12/08 19:32:44 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.33 2009/12/30 11:32:31 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -341,6 +341,17 @@ public abstract class Round implements RoundI {
     }
 
     protected void finishRound() {
+        // TEMPORARY? Report financials
+        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+            if (c.hasFloated() && !c.isClosed()) {
+                ReportBuffer.add(LocalText.getText("Has", c.getName(), 
+                        Bank.format(c.getCash())));
+            }
+        }
+        for (Player p : playerManager.getPlayers()) {
+            ReportBuffer.add(LocalText.getText("Has", p.getName(), 
+                    Bank.format(p.getCash())));
+        }
         // Inform GameManager
         gameManager.nextRound(this);
     }
