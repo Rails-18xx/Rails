@@ -7,6 +7,7 @@ import java.util.List;
 
 import rails.game.CompanyManagerI;
 import rails.game.PublicCompanyI;
+import rails.util.Util;
 
 /** This class is needed until we have a means to determine reaching
  * destinations automatically.
@@ -87,12 +88,20 @@ public class ReachDestinations extends PossibleORAction {
         CompanyManagerI cmgr = getCompanyManager();
 
         possibleCompanies = new ArrayList<PublicCompanyI>();
-        for (String cname : possibleCompanyNames.split(",")) {
-            possibleCompanies.add(cmgr.getCompanyByName(cname));
+        if (Util.hasValue(possibleCompanyNames)) {
+            for (String cname : possibleCompanyNames.split(",")) {
+                if (!"".equals(cname)) {
+                    possibleCompanies.add(cmgr.getCompanyByName(cname));
+                }
+            }
         }
         reachedCompanies = new ArrayList<PublicCompanyI>();
-        for (String cname : reachedCompanyNames.split(",")) {
-            reachedCompanies.add(cmgr.getCompanyByName(cname));
+        if (Util.hasValue(reachedCompanyNames)) {
+            for (String cname : reachedCompanyNames.split(",")) {
+                if (!"".equals(cname)) {
+                    reachedCompanies.add(cmgr.getCompanyByName(cname));
+                }
+            }
         }
     }
 }
