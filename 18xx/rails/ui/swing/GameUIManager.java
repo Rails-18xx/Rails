@@ -411,6 +411,7 @@ public class GameUIManager {
 
         if (options.size() > 0) {
             orWindow.setVisible(true);
+            orWindow.toFront();
             boolean[] exchanged =
                 new CheckBoxDialog(orWindow.getORPanel(),
                         LocalText.getText("ExchangeTokens"),

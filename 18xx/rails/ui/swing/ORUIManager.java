@@ -442,6 +442,8 @@ public class ORUIManager {
         }
 
         if (options.size() > 0) {
+            orWindow.setVisible(true);
+            orWindow.toFront();
             boolean[] destined =
                 new CheckBoxDialog(orPanel,
                         LocalText.getText("DestinationsReached"),
