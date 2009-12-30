@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.38 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.39 2009/12/30 11:32:00 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -62,6 +62,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolderI {
     public boolean mustHaveOperatedToTradeShares();
 
     public boolean mayTradeShares();
+
+    public boolean mayBuyTrainType (TrainI train);
 
     /**
      * Start the company.

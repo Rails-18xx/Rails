@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.86 2009/12/28 14:53:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.87 2009/12/30 11:32:00 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -752,7 +752,7 @@ public class OperatingRound extends Round implements Observer {
                 sbt.getName(),
                 Bank.format(sbt.getValue()),
                 seller.getName(),
-                Bank.format(sbt.getValue())));
+                Bank.format(sbt.getPrice())));
 
         sbt.setExercised();
 
@@ -2098,6 +2098,7 @@ public class OperatingRound extends Round implements Observer {
             /* New trains */
             trains = trainMgr.getAvailableNewTrains();
             for (TrainI train : trains) {
+                if (!operatingCompany.mayBuyTrainType(train)) continue; 
                 if (!mayBuyMoreOfEachType
                     && trainsBoughtThisTurn.contains(train.getType())) {
                     continue;

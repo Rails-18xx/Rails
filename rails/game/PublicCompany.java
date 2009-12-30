@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.75 2009/12/28 13:21:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.76 2009/12/30 11:32:00 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -801,6 +801,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean mayTradeShares() {
         return mayTradeShares;
+    }
+    
+    /** Stub that allows exclusions such as that 1856 CGR may not buy a 4 */ 
+    public boolean mayBuyTrainType (TrainI train) {
+        return true;
     }
 
     public boolean mustHaveOperatedToTradeShares() {

@@ -54,6 +54,10 @@ public class PublicCompany_CGR extends PublicCompany {
     		return null;
     	}
 	}
+    
+    public boolean mayBuyTrainType (TrainI train) {
+        return !"4".equals(train.getName());
+    }
 
     @Override
 	public Player getPresident() {
