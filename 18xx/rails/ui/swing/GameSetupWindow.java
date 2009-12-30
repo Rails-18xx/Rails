@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.18 2009/11/25 18:48:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.19 2009/12/30 18:38:28 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -287,7 +287,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     } else {
                         optionsPane.setLayout(new GridLayout(
                                 (availableOptions.size() + 1), 1));
-                        optionsPane.add(new JLabel(LocalText.getText("Select",
+                        optionsPane.add(new JLabel(LocalText.getText("SelectSomething",
                                 option.getLocalisedName())));
                         JComboBox dropdown = new JComboBox();
                         for (String value : option.getAllowedValues()) {
