@@ -455,6 +455,11 @@ public class ORUIManager {
                     action.addReachedCompany(companies.get(index));
                 }
             }
+            
+            // Prevent that a null action gets processed
+            if (action.getReachedCompanies() == null
+                    || action.getReachedCompanies().isEmpty()) return;
+            
             if (orWindow.process(action)) {
                 updateMessage();
             }
