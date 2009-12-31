@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.30 2009/12/29 21:58:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.31 2009/12/31 09:58:18 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -119,7 +119,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
     public boolean process(PossibleAction action) {
 
         // Add the actor for safety checking in the server
-        action.setPlayerName(orPanel.getORPlayer());
+        if (action != null) action.setPlayerName(orPanel.getORPlayer());
         // Process the action
         boolean result = gameUIManager.processOnServer(action);
         // Display any error message
