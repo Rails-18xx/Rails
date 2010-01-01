@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.12 2009/10/07 19:00:37 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.13 2010/01/01 14:04:19 evos Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
@@ -49,6 +49,7 @@ public class State extends ModelObject implements StateI {
                       + " wrapper for object type " + clazz.getName() + " at:",
                     new Exception(""));
         }
+        update();
     }
 
     public void set(Object object) {
