@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeTokens.java,v 1.2 2009/08/03 21:26:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeTokens.java,v 1.3 2010/01/01 14:34:06 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -57,8 +57,13 @@ public class ExchangeTokens extends PossibleORAction {
 
         StringBuffer b = new StringBuffer();
         b.append("ExchangeTokens for "+companyName+":");
-        for (ExchangeableToken token : tokensToExchange) {
-            b.append(" ").append(token.toString());
+        if (tokensToExchange != null) {
+            for (ExchangeableToken token : tokensToExchange) {
+                b.append(" ").append(token.toString());
+            }
+        } else {
+            b.append ("-none?-");
+            log.error("No exchangable tokens found when expected - error seen during Undo CGR formation");
         }
         b.append(" min=").append (minNumberToExchange);
         b.append(" max=").append (maxNumberToExchange);
