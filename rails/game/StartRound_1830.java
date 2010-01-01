@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.27 2009/12/08 19:32:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.28 2010/01/01 18:57:21 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -150,14 +150,6 @@ public class StartRound_1830 extends StartRound {
 
             }
 
-            /*
-             * it is possible that the last unsold item was sold in the above
-             * loop. go to next round if that happened
-             */
-            //if (gameManager.getStartPacket().areAllSold()) {
-            //    return false;
-            //}
-
             if (possibleActions.isEmpty()) {
                 numPasses.add(1);
                 if (auctionItemState.getObject() == null) {
@@ -171,8 +163,8 @@ public class StartRound_1830 extends StartRound {
         if (passAllowed) {
             possibleActions.add(new NullAction(NullAction.PASS));
         }
-
-        return true;
+        
+       return true;
     }
 
     /*----- moveStack methods -----*/
