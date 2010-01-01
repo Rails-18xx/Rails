@@ -182,12 +182,14 @@ public class CGRFormationRound extends SwitchableUIRound {
                             numberOfLoans,
                             currentCompany.getName()),
                         false);
+                    currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 }
                 maxLoansToRepayByPresident = maxNumber;
                 break;
             } else {
                 // President cannot help, this company will merge into CGR anyway
                 mergingCompanies.add(currentCompany);
+                currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 message = LocalText.getText("WillMergeInto",
                         currentCompany.getName(),
                         PublicCompany_CGR.NAME);
@@ -266,6 +268,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
          if (action.getCompany().getCurrentNumberOfLoans() > 0) {
             mergingCompanies.add(currentCompany);
+            currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
             String message = LocalText.getText("WillMergeInto",
                     currentCompany.getName(),
                     PublicCompany_CGR.NAME);
