@@ -1203,6 +1203,7 @@ public class ORUIManager {
 
         } else if (possibleActions.contains(DiscardTrain.class)) {
 
+            gameUIManager.discardTrains(possibleActions.getType(DiscardTrain.class).get(0));
 
         } else if (possibleActions.contains(RepayLoans.class)) {
 
