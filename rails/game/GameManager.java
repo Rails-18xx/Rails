@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.73 2009/12/28 14:50:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.74 2010/01/01 18:58:43 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -740,7 +740,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         if (moveStack.isRedoable()) {
             possibleActions.add(new GameAction(GameAction.REDO));
         }
-        possibleActions.add(new GameAction(GameAction.SAVE));
 
         return result;
 
