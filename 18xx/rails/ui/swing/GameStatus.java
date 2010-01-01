@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.model.ModelObject;
+import rails.game.model.ViewUpdate;
+import rails.game.state.BooleanState;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
@@ -87,6 +90,11 @@ public class GameStatus extends JPanel implements ActionListener {
     protected Field futureTrains;
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
+    
+    /** 2D-array of fields to enable show/hide per row or column */
+    protected JComponent[][] fields;
+    /** Array of Observer objects to set row visibility */
+    protected RowVisibility[] rowVisibilityObservers;
 
     private Caption[] upperPlayerCaption;
     private Caption[] lowerPlayerCaption;
@@ -246,6 +254,9 @@ public class GameStatus extends JPanel implements ActionListener {
         futureTrainsYOffset = playerPrivatesYOffset;
         futureTrainsWidth = rightCompCaptionXOffset - futureTrainsXOffset;
 
+        fields = new JComponent[1+lastX][2+lastY];
+        rowVisibilityObservers = new RowVisibility[nc];
+        
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM);
         addField(new Caption(LocalText.getText("PLAYERS")),
@@ -306,6 +317,9 @@ public class GameStatus extends JPanel implements ActionListener {
         for (int i = 0; i < nc; i++) {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
+            rowVisibilityObservers[i] 
+                   = new RowVisibility (certPerPlayerYOffset + i, c.getClosedModel());
+            
             f = new Caption(c.getName());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
@@ -531,6 +545,7 @@ public class GameStatus extends JPanel implements ActionListener {
 
         add(comp, gbc);
 
+        if (fields[x][y] == null) fields[x][y] = comp;
     }
 
     public static GameStatus getInstance() {
@@ -750,16 +765,20 @@ public class GameStatus extends JPanel implements ActionListener {
             upperPlayerCaption[j].setHighlight(false);
             lowerPlayerCaption[j].setHighlight(false);
             for (i = 0; i < nc; i++) {
-                setPlayerCertButton(i, j, false);
+                if (rowVisibilityObservers[i].lastValue()) {
+                    setPlayerCertButton(i, j, false);
+                }
             }
         } else if (j == -1 && compCanHoldOwnShares) {
             treasurySharesCaption.setHighlight(false);
         }
         for (i = 0; i < nc; i++) {
-            setIPOCertButton(i, false);
-            setPoolCertButton(i, false);
-            setPlayerCertButton (i, actorIndex, false);
-            if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
+            if (rowVisibilityObservers[i].lastValue) {
+                setIPOCertButton(i, false);
+                setPoolCertButton(i, false);
+                setPlayerCertButton (i, actorIndex, false);
+                if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
+            }
         }
 
         this.actorIndex = actorIndex;
@@ -920,6 +939,53 @@ public class GameStatus extends JPanel implements ActionListener {
         }
         certInTreasury[i].setVisible(!clickable);
         certInTreasuryButton[i].setVisible(clickable);
+    }
+    
+    protected void setRowVisibility (int rowIndex, boolean value) {
+        for (int j=0; j < fields.length; j++) {
+            if (fields[j][rowIndex] != null) {
+                fields[j][rowIndex].setVisible(value);
+            }
+        }
+        parent.pack();
+    }
+    
+    class RowVisibility implements ViewObject
+    {
+        private ModelObject modelObject;
+        private int rowIndex;
+        private boolean lastValue;
+        
+        RowVisibility (int rowIndex, ModelObject model) {
+            this.modelObject = model;
+            this.rowIndex = rowIndex;
+            modelObject.addObserver(this);
+            lastValue = !((BooleanState)modelObject).booleanValue();
+        }
+        
+        protected boolean lastValue () {
+            return lastValue;
+        }
+        
+        /** Needed to satisfy the ViewObject interface. */
+        public ModelObject getModel() {
+            return modelObject;
+        }
+        
+        /** Needed to satisfy the Observer interface. 
+         * The closedObject model will send true if the company is closed. */
+        public void update(Observable o1, Object o2) {
+            if (o2 instanceof Boolean) {
+                lastValue = !(Boolean)o2;
+                setRowVisibility(rowIndex, lastValue);
+            }
+        }
+
+        /** Needed to satisfy the ViewObject interface. Currently not used. */
+        public void deRegister() {
+            if (modelObject != null)
+                modelObject.deleteObserver(this);
+        }
     }
 
 }
