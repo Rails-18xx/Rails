@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.14 2009/09/25 19:13:01 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.15 2010/01/01 18:57:56 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -86,6 +86,13 @@ public class PossibleActions {
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {
 
+        // Save is always allowed
+        if (checkedAction instanceof GameAction 
+                && ((GameAction)checkedAction).getMode() == GameAction.SAVE) {
+            return true;
+        }
+        
+        // Check if action accurs in the list of possible actions
         for (PossibleAction action : possibleActions) {
             if (action.equals(checkedAction)) {
                 return true;
