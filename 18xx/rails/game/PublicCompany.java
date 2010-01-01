@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.76 2009/12/30 11:32:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.77 2010/01/01 13:59:30 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -129,9 +129,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * company's first OR turn.
      */
     protected IntegerState extraTiles = null;
-
-    /** Is the company closed (or bankrupt)? */
-    protected boolean closed = false;
 
     /* Spendings in the current operating turn */
     protected MoneyModel privatesCostThisTurn;
@@ -929,6 +926,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Util.moveObjects(laidBaseTokens, this);
         stockMarket.close(this);
 
+    }
+    
+    public ModelObject getClosedModel () {
+        return closedObject;
     }
 
     /**
