@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/BooleanState.java,v 1.2 2008/06/04 19:00:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/BooleanState.java,v 1.3 2010/01/01 14:02:30 evos Exp $
  * 
  * Created on May 19, 2007
  * Change Log:
@@ -33,4 +33,11 @@ public class BooleanState extends State {
     public boolean booleanValue() {
         return ((Boolean) object).booleanValue();
     }
+    
+    /** Update is the boolean value */
+    public Object getUpdate () {
+        return object;
+    }
+
+ 
 }
