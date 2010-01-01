@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.30 2009/12/13 16:39:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.31 2010/01/01 18:59:20 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -104,6 +104,7 @@ public class StatusWindow extends JFrame implements ActionListener,
                 ActionEvent.ALT_MASK));
         saveItem.addActionListener(this);
         saveItem.setEnabled(true);
+        saveItem.setPossibleAction(new GameAction(GameAction.SAVE));
         fileMenu.add(saveItem);
 
         fileMenu.addSeparator();
@@ -288,9 +289,10 @@ public class StatusWindow extends JFrame implements ActionListener,
         if (gameActions != null) {
             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
-                case GameAction.SAVE:
-                    saveItem.setPossibleAction(na);
-                    break;
+                // SAVE is now enabled by default
+                //case GameAction.SAVE:
+                //    saveItem.setPossibleAction(na);
+                //    break;
                 case GameAction.UNDO:
                     undoItem.setEnabled(true);
                     undoItem.setPossibleAction(na);
