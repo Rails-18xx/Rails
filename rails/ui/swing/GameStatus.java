@@ -22,7 +22,7 @@ import rails.util.LocalText;
  * This class is incorporated into StatusWindow and displays the bulk of
  * rails.game status information.
  */
-public class GameStatus extends JPanel implements ActionListener {
+public class GameStatus extends JPanel implements ActionListener, RowHideable {
     private static final long serialVersionUID = 1L;
 
     private static final int NARROW_GAP = 1;
@@ -317,7 +317,7 @@ public class GameStatus extends JPanel implements ActionListener {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
             rowVisibilityObservers[i] 
-                   = new RowVisibility (certPerPlayerYOffset + i, c.getClosedModel());
+                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getClosedModel());
             boolean visible = !c.isClosed();
             
             f = new Caption(c.getName());
@@ -937,7 +937,7 @@ public class GameStatus extends JPanel implements ActionListener {
         certInTreasuryButton[i].setVisible(clickable);
     }
     
-    protected void setRowVisibility (int rowIndex, boolean value) {
+    public void setRowVisibility (int rowIndex, boolean value) {
         for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
@@ -946,42 +946,4 @@ public class GameStatus extends JPanel implements ActionListener {
         parent.pack();
     }
     
-    class RowVisibility implements ViewObject
-    {
-        private ModelObject modelObject;
-        private int rowIndex;
-        private boolean lastValue;
-        
-        RowVisibility (int rowIndex, ModelObject model) {
-            this.modelObject = model;
-            this.rowIndex = rowIndex;
-            modelObject.addObserver(this);
-            lastValue = !((BooleanState)modelObject).booleanValue();
-        }
-        
-        protected boolean lastValue () {
-            return lastValue;
-        }
-        
-        /** Needed to satisfy the ViewObject interface. */
-        public ModelObject getModel() {
-            return modelObject;
-        }
-        
-        /** Needed to satisfy the Observer interface. 
-         * The closedObject model will send true if the company is closed. */
-        public void update(Observable o1, Object o2) {
-            if (o2 instanceof Boolean) {
-                lastValue = !(Boolean)o2;
-                setRowVisibility(rowIndex, lastValue);
-            }
-        }
-
-        /** Needed to satisfy the ViewObject interface. Currently not used. */
-        public void deRegister() {
-            if (modelObject != null)
-                modelObject.deleteObserver(this);
-        }
-    }
-
 }
