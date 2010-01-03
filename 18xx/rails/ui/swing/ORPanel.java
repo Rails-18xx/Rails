@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.36 2009/12/29 21:58:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.37 2010/01/03 20:31:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -16,7 +16,8 @@ import rails.game.action.*;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
-public class ORPanel extends JPanel implements ActionListener, KeyListener {
+public class ORPanel extends JPanel 
+implements ActionListener, KeyListener, RowHideable {
 
     private static final long serialVersionUID = 1L;
     private static final int NARROW_GAP = 1;
@@ -113,6 +114,11 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     private JComponent f;
 
     private List<ViewObject> observers = new ArrayList<ViewObject>();
+
+    /** 2D-array of fields to enable show/hide per row or column */
+    protected JComponent[][] fields;
+    /** Array of Observer objects to set row visibility */
+    protected RowVisibility[] rowVisibilityObservers;
 
     // Current state
     private int playerIndex = -1;
@@ -309,8 +315,8 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         int lastXWidth = 0;
 
         /* Top titles */
-        addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2, WIDE_BOTTOM
-                                                                  + WIDE_RIGHT);
+        addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2, 
+                WIDE_BOTTOM + WIDE_RIGHT);
 
         presidentXOffset = currentXOffset += lastXWidth;
         presidentYOffset = leftCompNameYOffset;
@@ -388,26 +394,34 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
         addField(new Caption("Company"), rightCompNameXOffset, 0, 1, 2,
                 WIDE_BOTTOM);
 
+        fields = new JComponent[1+currentXOffset][2+nc];
+        rowVisibilityObservers = new RowVisibility[nc];
+        
         for (int i = 0; i < nc; i++) {
             c = companies[i];
+            rowVisibilityObservers[i] 
+                    = new RowVisibility (this, leftCompNameYOffset + i, c.getClosedModel());
+            observers.add(rowVisibilityObservers[i]);
+
+            boolean visible = !c.isClosed();
 
             f = leftCompName[i] = new Caption(c.getName());
             f.setBackground(c.getBgColour());
             f.setForeground(c.getFgColour());
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
-                    WIDE_RIGHT);
+                    WIDE_RIGHT, visible);
 
             f =
                     president[i] =
                             new Field(c.hasStarted() && !c.isClosed()
                                     ? c.getPresident().getNameAndPriority() : "");
-            addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0);
+            addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
-            addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0);
+            addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
 
             f = cash[i] = new Field(c.getCashModel());
-            addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {
                 f =
@@ -415,13 +429,13 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                                 new Field(
                                         c.getPortfolio().getPrivatesOwnedModel());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
-                        WIDE_RIGHT);
+                        WIDE_RIGHT, visible);
 
                 f =
                         newPrivatesCost[i] =
                                 new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
-                        WIDE_RIGHT);
+                        WIDE_RIGHT, visible);
             }
 
             if (hasCompanyLoans) {
@@ -431,56 +445,60 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
                 } else {
                     f = compLoans[i] = new Field ("");
                 }
-                addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT);
+                addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT, visible);
             }
 
             f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());
-            addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0);
+            addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0, visible);
 
             f = tileCost[i] = new Field(c.getTilesCostThisTurnModel());
-            addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             f = tokens[i] = new Field(c.getTokensLaidThisTurnModel());
-            addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0);
+            addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0, visible);
 
             f = tokenCost[i] = new Field(c.getTokensCostThisTurnModel());
-            addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0);
+            addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0, visible);
 
             f = tokensLeft[i] = new Field(c.getBaseTokensModel());
             addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1,
-                    bonusTokensExist ? 0 : WIDE_RIGHT);
+                    bonusTokensExist ? 0 : WIDE_RIGHT, visible);
 
             if (bonusTokensExist) {
                 f = tokenBonus[i] = new Field(c.getBonusTokensModel());
                 addField(f, tokensXOffset + 3, tokensYOffset + i, 1, 1,
-                        WIDE_RIGHT);
+                        WIDE_RIGHT, visible);
             }
 
             f = revenue[i] = new Field(c.getLastRevenueModel());
-            addField(f, revXOffset, revYOffset + i, 1, 1, 0);
+            addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
-            addField(f, revXOffset, revYOffset + i, 1, 1, 0);
+            addField(f, revXOffset, revYOffset + i, 1, 1, 0,  visible);
 
             f = decision[i] = new Field(c.getLastRevenueAllocationModel());
-            addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
             f = trains[i] = new Field(c.getPortfolio().getTrainsModel());
-            addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0);
+            addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0,  visible);
 
             f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel());
-            addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
             f = rightCompName[i] = new Caption(c.getName());
             f.setBackground(companies[i].getBgColour());
             f.setForeground(companies[i].getFgColour());
-            addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0);
+            addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
 
         }
 
     }
-
     private void addField(JComponent comp, int x, int y, int width, int height,
             int wideGapPositions) {
+        addField (comp, x, y, width, height, wideGapPositions, true);
+    }
+
+    private void addField(JComponent comp, int x, int y, int width, int height,
+            int wideGapPositions, boolean visible) {
 
         int padTop, padLeft, padBottom, padRight;
         gbc.gridx = x;
@@ -502,7 +520,10 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
             && ((ViewObject) comp).getModel() != null) {
             observers.add((ViewObject) comp);
         }
-    }
+
+        if (fields != null && fields[x][y] == null) fields[x][y] = comp;
+        comp.setVisible(visible);
+   }
 
     public void finish() {
 
@@ -802,5 +823,16 @@ public class ORPanel extends JPanel implements ActionListener, KeyListener {
     public PublicCompanyI[] getOperatingCompanies() {
         return companies;
     }
+
+    public void setRowVisibility (int rowIndex, boolean value) {
+
+        for (int j=0; j < fields.length; j++) {
+            if (fields[j][rowIndex] != null) {
+                fields[j][rowIndex].setVisible(value);
+            }
+        }
+        orWindow.pack();
+    }
+    
 
 }
