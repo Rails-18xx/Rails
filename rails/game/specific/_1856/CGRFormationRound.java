@@ -6,7 +6,6 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.special.SellBonusToken;
-import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
