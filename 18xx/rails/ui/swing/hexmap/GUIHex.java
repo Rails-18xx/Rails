@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.33 2009/12/29 22:10:01 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.34 2010/01/05 20:53:15 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
-import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.ViewObject;
 import rails.util.Util;
 
@@ -323,7 +322,7 @@ public class GUIHex implements ViewObject {
         }
 
         Map<PublicCompanyI, City> homes = getHexModel().getHomes();
-        
+
         if (homes  != null) {
            City city;
             Point p;

@@ -1,9 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.4 2009/12/27 23:16:35 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.5 2010/01/05 20:53:17 evos Exp $ */
 package rails.game;
 
 import java.util.List;
-
-import rails.game.action.LayTile;
 
 /**
  * An object of class Bonus represent extra income for the owning company,
@@ -51,7 +49,7 @@ public class Bonus implements Closeable {
         if (locations == null || locations.isEmpty()) {
             return name.substring(0, 2);
         }
-        
+
         StringBuffer b = new StringBuffer();
         for (MapHex location : locations) {
             if (b.length() > 0) b.append(",");
@@ -99,7 +97,7 @@ public class Bonus implements Closeable {
             ((Phase) removingObject).addObjectToClose(this);
         }
     }
-    
+
     public boolean equals (Bonus b) {
         return (b.name.equals(name))
                && b.value == value;
