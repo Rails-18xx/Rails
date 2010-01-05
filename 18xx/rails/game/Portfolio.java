@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.40 2009/11/05 22:50:37 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.41 2010/01/05 20:55:31 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -146,6 +146,9 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
         certificate.setPortfolio(this);
 
         getShareModel(certificate.getCompany()).addShare(certificate.getShare());
+        if (owner instanceof Player) {
+        	((Player)owner).updateWorth();
+        }
     }
 
     public boolean removePrivate(PrivateCompanyI privateCompany) {
@@ -174,6 +177,9 @@ public class Portfolio implements TokenHolderI, MoveableHolderI {
 
         getShareModel(certificate.getCompany()).addShare(
                 -certificate.getShare());
+        if (owner instanceof Player) {
+        	((Player)owner).updateWorth();
+        }
     }
 
     public ShareModel getShareModel(PublicCompanyI company) {

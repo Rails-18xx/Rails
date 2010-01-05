@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.22 2009/11/17 19:31:25 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.23 2010/01/05 20:55:32 evos Exp $ */
 package rails.game;
 
 import rails.game.model.*;
@@ -94,6 +94,10 @@ public class Player implements CashHolder, Comparable<Player> {
 
     public CalculatedMoneyModel getWorthModel() {
         return worth;
+    }
+
+    public void updateWorth () {
+    	worth.update();
     }
 
     public CertCountModel getCertCountModel() {
