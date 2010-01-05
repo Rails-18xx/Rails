@@ -1,10 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.6 2009/12/29 21:58:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.7 2010/01/05 20:54:05 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
 
-import rails.util.*;
+import javax.swing.*;
 
 public class MessagePanel extends JPanel {
     private static final long serialVersionUID = 1L;

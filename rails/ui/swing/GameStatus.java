@@ -1,10 +1,10 @@
 package rails.ui.swing;
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -13,8 +13,6 @@ import org.apache.log4j.Logger;
 import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.model.ModelObject;
-import rails.game.state.BooleanState;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
@@ -22,25 +20,14 @@ import rails.util.LocalText;
  * This class is incorporated into StatusWindow and displays the bulk of
  * rails.game status information.
  */
-public class GameStatus extends JPanel implements ActionListener, RowHideable {
+public class GameStatus extends GridPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
-
-    private static final int NARROW_GAP = 1;
-    private static final int WIDE_GAP = 3;
-    private static final int WIDE_LEFT = 1;
-    private static final int WIDE_RIGHT = 2;
-    private static final int WIDE_TOP = 4;
-    private static final int WIDE_BOTTOM = 8;
 
     private static final String BUY_FROM_IPO_CMD = "BuyFromIPO";
     private static final String BUY_FROM_POOL_CMD = "BuyFromPool";
     private static final String SELL_CMD = "Sell";
 
-    private static GameStatus gameStatus;
     protected StatusWindow parent;
-
-    private GridBagConstraints gbc;
-    private Color buttonHighlight = new Color(255, 160, 80);
 
     // Grid elements per function
     protected Field certPerPlayer[][];
@@ -89,23 +76,11 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
     protected Field futureTrains;
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
-    
-    /** 2D-array of fields to enable show/hide per row or column */
-    protected JComponent[][] fields;
-    /** Array of Observer objects to set row visibility */
-    protected RowVisibility[] rowVisibilityObservers;
 
     private Caption[] upperPlayerCaption;
     private Caption[] lowerPlayerCaption;
     private Caption treasurySharesCaption;
 
-    protected int np; // Number of players
-    protected GridBagLayout gb;
-
-    protected int nc; // Number of companies
-    protected Player[] players;
-    protected PublicCompanyI[] companies;
-    //protected CompanyManagerI cm;
     protected Portfolio ipo, pool;
 
     protected GameUIManager gameUIManager;
@@ -118,9 +93,6 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
     protected boolean compCanHoldOwnShares = false;
     protected boolean compCanHoldForeignShares = false; // NOT YET USED
     protected boolean hasCompanyLoans = false;
-
-    private PublicCompanyI c;
-    private JComponent f;
 
     // Current actor.
     // Players: 0, 1, 2, ...
@@ -143,10 +115,12 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
 
     public void init(StatusWindow parent, GameUIManager gameUIManager) {
 
-        gameStatus = this;
         this.parent = parent;
         this.gameUIManager = gameUIManager;
         bank = gameUIManager.getGameManager().getBank();
+
+        gridPanel = this;
+        parentFrame = parent;
 
         gb = new GridBagLayout();
         this.setLayout(gb);
@@ -255,7 +229,7 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
 
         fields = new JComponent[1+lastX][2+lastY];
         rowVisibilityObservers = new RowVisibility[nc];
-        
+
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("PLAYERS")),
@@ -316,10 +290,10 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
         for (int i = 0; i < nc; i++) {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
-            rowVisibilityObservers[i] 
+            rowVisibilityObservers[i]
                    = new RowVisibility (this, certPerPlayerYOffset + i, c.getClosedModel());
             boolean visible = !c.isClosed();
-            
+
             f = new Caption(c.getName());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
@@ -518,38 +492,6 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
 
-    }
-
-    private void addField(JComponent comp, int x, int y, int width, int height,
-            int wideGapPositions, boolean visible) {
-
-        int padTop, padLeft, padBottom, padRight;
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        gbc.gridheight = height;
-        gbc.weightx = gbc.weighty = 0.5;
-        gbc.fill = GridBagConstraints.BOTH;
-        padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
-        padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
-        padBottom =
-                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-        gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
-
-        add(comp, gbc);
-
-        if (fields[x][y] == null) fields[x][y] = comp;
-        comp.setVisible(visible);
-    }
-
-    public static GameStatus getInstance() {
-        return gameStatus;
-    }
-
-    @Override
-    public void repaint() {
-        super.repaint();
     }
 
     public void actionPerformed(ActionEvent actor) {
@@ -936,14 +878,5 @@ public class GameStatus extends JPanel implements ActionListener, RowHideable {
         certInTreasury[i].setVisible(visible && !clickable);
         certInTreasuryButton[i].setVisible(clickable);
     }
-    
-    public void setRowVisibility (int rowIndex, boolean value) {
-        for (int j=0; j < fields.length; j++) {
-            if (fields[j][rowIndex] != null) {
-                fields[j][rowIndex].setVisible(value);
-            }
-        }
-        parent.pack();
-    }
-    
+
 }
