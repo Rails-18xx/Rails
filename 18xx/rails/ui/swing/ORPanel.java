@@ -1,9 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.37 2010/01/03 20:31:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.38 2010/01/05 20:54:05 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -16,16 +15,10 @@ import rails.game.action.*;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
-public class ORPanel extends JPanel 
-implements ActionListener, KeyListener, RowHideable {
+public class ORPanel extends GridPanel
+implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
-    private static final int NARROW_GAP = 1;
-    private static final int WIDE_GAP = 3;
-    private static final int WIDE_LEFT = 1;
-    private static final int WIDE_RIGHT = 2;
-    private static final int WIDE_TOP = 4;
-    private static final int WIDE_BOTTOM = 8;
 
     public static final String BUY_PRIVATE_CMD = "BuyPrivate";
     public static final String BUY_TRAIN_CMD = "BuyTrain";
@@ -56,9 +49,6 @@ implements ActionListener, KeyListener, RowHideable {
     private JMenuItem zoomIn, zoomOut;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
-
-    private GridBagLayout gb;
-    private GridBagConstraints gbc;
 
     // Grid elements per function
     private Caption leftCompName[];
@@ -105,28 +95,11 @@ implements ActionListener, KeyListener, RowHideable {
     private ActionButton undoButton;
     private ActionButton redoButton;
 
-    private int nc = 0; // Number of companies
-
-    private Player[] players;
-    private PublicCompanyI[] companies;
-    private RoundI round;
-    private PublicCompanyI c;
-    private JComponent f;
-
-    private List<ViewObject> observers = new ArrayList<ViewObject>();
-
-    /** 2D-array of fields to enable show/hide per row or column */
-    protected JComponent[][] fields;
-    /** Array of Observer objects to set row visibility */
-    protected RowVisibility[] rowVisibilityObservers;
-
     // Current state
     private int playerIndex = -1;
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
-
-    private List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
     protected static Logger log =
             Logger.getLogger(ORPanel.class.getPackage().getName());
@@ -143,6 +116,9 @@ implements ActionListener, KeyListener, RowHideable {
         statusPanel.setLayout(gb);
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setOpaque(true);
+
+        gridPanel = statusPanel;
+        parentFrame = parent;
 
         round = gameUIManager.getCurrentRound();
         privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
@@ -223,7 +199,7 @@ implements ActionListener, KeyListener, RowHideable {
     public void recreate(OperatingRound or) {
         log.debug("ORPanel.recreate() called");
 
-        companies = (or).getOperatingCompanies();
+        companies = or.getOperatingCompanies();
         nc = companies.length;
 
         // Remove old fields. Don't forget to deregister the Observers
@@ -233,17 +209,6 @@ implements ActionListener, KeyListener, RowHideable {
         // Create new fields
         initFields();
         repaint();
-    }
-
-    public void redisplay() {
-        revalidate();
-    }
-
-    private void deRegisterObservers() {
-        log.debug("Deregistering observers");
-        for (ViewObject vo : observers) {
-            vo.deRegister();
-        }
     }
 
     private void initButtonPanel() {
@@ -315,7 +280,7 @@ implements ActionListener, KeyListener, RowHideable {
         int lastXWidth = 0;
 
         /* Top titles */
-        addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2, 
+        addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2,
                 WIDE_BOTTOM + WIDE_RIGHT);
 
         presidentXOffset = currentXOffset += lastXWidth;
@@ -396,10 +361,10 @@ implements ActionListener, KeyListener, RowHideable {
 
         fields = new JComponent[1+currentXOffset][2+nc];
         rowVisibilityObservers = new RowVisibility[nc];
-        
+
         for (int i = 0; i < nc; i++) {
             c = companies[i];
-            rowVisibilityObservers[i] 
+            rowVisibilityObservers[i]
                     = new RowVisibility (this, leftCompNameYOffset + i, c.getClosedModel());
             observers.add(rowVisibilityObservers[i]);
 
@@ -492,38 +457,6 @@ implements ActionListener, KeyListener, RowHideable {
         }
 
     }
-    private void addField(JComponent comp, int x, int y, int width, int height,
-            int wideGapPositions) {
-        addField (comp, x, y, width, height, wideGapPositions, true);
-    }
-
-    private void addField(JComponent comp, int x, int y, int width, int height,
-            int wideGapPositions, boolean visible) {
-
-        int padTop, padLeft, padBottom, padRight;
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        gbc.gridheight = height;
-        gbc.weightx = gbc.weighty = 0.5;
-        gbc.fill = GridBagConstraints.BOTH;
-        padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
-        padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
-        padBottom =
-                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-        gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
-
-        statusPanel.add(comp, gbc);
-
-        if (comp instanceof ViewObject
-            && ((ViewObject) comp).getModel() != null) {
-            observers.add((ViewObject) comp);
-        }
-
-        if (fields != null && fields[x][y] == null) fields[x][y] = comp;
-        comp.setVisible(visible);
-   }
 
     public void finish() {
 
@@ -805,34 +738,8 @@ implements ActionListener, KeyListener, RowHideable {
         s.setVisible(active);
     }
 
-    public void displayPopup(String text) {
-        JOptionPane.showMessageDialog(this, text);
-    }
-
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
-            e.consume();
-        }
-    }
-
-    public void keyReleased(KeyEvent e) {}
-
-    public void keyTyped(KeyEvent e) {}
-
     public PublicCompanyI[] getOperatingCompanies() {
         return companies;
     }
-
-    public void setRowVisibility (int rowIndex, boolean value) {
-
-        for (int j=0; j < fields.length; j++) {
-            if (fields[j][rowIndex] != null) {
-                fields[j][rowIndex].setVisible(value);
-            }
-        }
-        orWindow.pack();
-    }
-    
 
 }
