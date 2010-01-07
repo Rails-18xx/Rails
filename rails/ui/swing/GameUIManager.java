@@ -4,8 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
@@ -13,12 +12,13 @@ import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.CheckBoxDialog;
+import rails.ui.swing.elements.DialogOwner;
 import rails.util.*;
 
 /**
  * This class is called by main() and loads all of the UI components
  */
-public class GameUIManager {
+public class GameUIManager implements DialogOwner {
     public static GameUIManager instance = null;
 
     public StockChart stockChart;
@@ -27,6 +27,10 @@ public class GameUIManager {
     public ORUIManager orUIManager;
     public ORWindow orWindow; // TEMPORARY
     private StartRoundWindow startRoundWindow;
+
+    protected JDialog currentDialog = null;
+    protected PossibleAction currentDialogAction = null;
+
     public static ImageLoader imageLoader;
 
     private GameManagerI gameManager;
@@ -232,7 +236,7 @@ public class GameUIManager {
                 orUIManager.initOR((OperatingRound) currentRound);
                 orWindow.setVisible(true);
                 stockChart.setVisible(false);
-                
+
             } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
                 log.debug("UI entering switchable round type");
                 orWindow.setVisible(true);
@@ -349,6 +353,7 @@ public class GameUIManager {
                 "HAS_TOO_MANY_TRAINS",
                 playerName,
                 c.getName() );
+
         String discardedTrainName =
                 (String) JOptionPane.showInputDialog(orWindow,
                         prompt,
@@ -369,7 +374,7 @@ public class GameUIManager {
 
     public void exchangeTokens (ExchangeTokens action) {
 
-        int index, cityNumber;
+        int cityNumber;
         String prompt, cityName, hexName, oldCompName;
         String[] ct;
         MapHex hex;
@@ -413,19 +418,36 @@ public class GameUIManager {
         if (options.size() > 0) {
             orWindow.setVisible(true);
             orWindow.toFront();
-            boolean[] exchanged =
-                new CheckBoxDialog(orWindow.getORPanel(),
-                        LocalText.getText("ExchangeTokens"),
-                        prompt,
-                        options.toArray(new String[0]))
-                    .getSelectedOptions();
-            for (index=0; index < options.size(); index++) {
+
+            currentDialogAction = action;
+            currentDialog = new CheckBoxDialog(this,
+                    LocalText.getText("ExchangeTokens"),
+                    prompt,
+                    options.toArray(new String[0]));
+
+        }
+    }
+
+    public void dialogActionPerformed () {
+
+    	if (currentDialog instanceof CheckBoxDialog
+    			&& currentDialogAction instanceof ExchangeTokens) {
+
+    		CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+    		ExchangeTokens action = (ExchangeTokens) currentDialogAction;
+            boolean[] exchanged = dialog.getSelectedOptions();
+            String[] options = dialog.getOptions();
+
+            for (int index=0; index < options.length; index++) {
                 if (exchanged[index]) {
-                    oldTokens.get(index).setSelected(true);
+                    action.getTokensToExchange().get(index).setSelected(true);
                 }
             }
-            orWindow.process(action);
+        } else {
+            return;
         }
+
+        processOnServer(currentDialogAction);
     }
 
     public void saveGame(GameAction saveAction) {

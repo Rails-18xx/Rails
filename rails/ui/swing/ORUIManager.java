@@ -2,6 +2,7 @@ package rails.ui.swing;
 
 import java.util.*;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
@@ -10,12 +11,13 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.*;
 import rails.ui.swing.elements.CheckBoxDialog;
+import rails.ui.swing.elements.DialogOwner;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
 import rails.util.Util;
 
-public class ORUIManager {
+public class ORUIManager implements DialogOwner {
 
     protected ORWindow orWindow;
     protected ORPanel orPanel;
@@ -26,6 +28,9 @@ public class ORUIManager {
     private RemainingTilesWindow remainingTiles;
 
     public GameUIManager gameUIManager;
+
+    protected JDialog currentDialog = null;
+    protected PossibleAction currentDialogAction = null;
 
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
@@ -433,7 +438,6 @@ public class ORUIManager {
 
     protected void reachDestinations (ReachDestinations action) {
 
-        int index;
         List<String> options = new ArrayList<String>();
         List<PublicCompanyI> companies = action.getPossibleCompanies();
 
@@ -444,26 +448,41 @@ public class ORUIManager {
         if (options.size() > 0) {
             orWindow.setVisible(true);
             orWindow.toFront();
-            boolean[] destined =
-                new CheckBoxDialog(orPanel,
-                        LocalText.getText("DestinationsReached"),
-                        LocalText.getText("DestinationsReachedPrompt"),
-                        options.toArray(new String[0]))
-                    .getSelectedOptions();
-            for (index=0; index < options.size(); index++) {
+            
+            currentDialogAction = action;
+            currentDialog = new CheckBoxDialog(this,
+                    LocalText.getText("DestinationsReached"),
+                    LocalText.getText("DestinationsReachedPrompt"),
+                    options.toArray(new String[0]));
+        }
+    }
+            
+    public void dialogActionPerformed () {
+
+        if (currentDialog instanceof CheckBoxDialog
+                && currentDialogAction instanceof ReachDestinations) {
+            
+            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+            ReachDestinations action = (ReachDestinations) currentDialogAction;
+            
+            boolean[] destined = dialog.getSelectedOptions();
+            String[] options = dialog.getOptions();
+
+            for (int index=0; index < options.length; index++) {
                 if (destined[index]) {
-                    action.addReachedCompany(companies.get(index));
+                    action.addReachedCompany(action.getPossibleCompanies().get(index));
                 }
             }
-            
+    
             // Prevent that a null action gets processed
             if (action.getReachedCompanies() == null
                     || action.getReachedCompanies().isEmpty()) return;
-            
-            if (orWindow.process(action)) {
-                updateMessage();
-            }
+    
+        } else {
+            return;
         }
+        
+        gameUIManager.processOnServer(currentDialogAction);
     }
 
     public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
