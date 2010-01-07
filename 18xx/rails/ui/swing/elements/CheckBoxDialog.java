@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.3 2009/12/30 19:54:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.4 2010/01/07 20:48:13 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
@@ -15,6 +16,8 @@ import rails.util.LocalText;
 public class CheckBoxDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 1L;
+
+    protected DialogOwner owner = null;
     GridBagConstraints gc;
     JPanel optionsPane, buttonPane;
     JButton okButton, cancelButton;
@@ -31,14 +34,15 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(CheckBoxDialog.class.getPackage().getName());
 
-    public CheckBoxDialog(JComponent owner, String title, String message,
+    public CheckBoxDialog(DialogOwner owner, String title, String message,
             String[] options) {
         this (owner, title, message, options, null);
     }
-        
-    public CheckBoxDialog(JComponent owner, String title, String message,
+
+    public CheckBoxDialog(DialogOwner owner, String title, String message,
             String[] options, boolean[] selectedOptions) {
-        super((Frame) null, title, true); // Modal !?
+        super((Frame) null, title, false); // Modal !?
+        this.owner = owner;
         this.message = message;
         this.options = options;
         this.numOptions = options.length;
@@ -52,12 +56,16 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         pack();
 
         // Center on owner
+        /*
         int x =
                 (int) owner.getLocationOnScreen().getX()
                         + (owner.getWidth() - getWidth()) / 2;
         int y =
                 (int) owner.getLocationOnScreen().getY()
                         + (owner.getHeight() - getHeight()) / 2;
+                        */
+        int x = 400;
+        int y = 400;
         setLocation(x, y);
 
         setVisible(true);
@@ -125,6 +133,11 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         }
         setVisible(false);
         dispose();
+        owner.dialogActionPerformed ();
+    }
+
+    public String[] getOptions () {
+    	return options;
     }
 
     public synchronized boolean[] getSelectedOptions() {
