@@ -1,12 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.7 2009/01/15 20:53:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.8 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.List;
 
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
 
-public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolderI {
+public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder {
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";

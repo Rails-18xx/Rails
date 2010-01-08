@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.41 2010/01/05 20:55:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.42 2010/01/08 21:30:46 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -20,7 +20,7 @@ import rails.util.Util;
 /**
  * @author Erik
  */
-public class Portfolio implements TokenHolderI, MoveableHolderI {
+public class Portfolio implements TokenHolder, MoveableHolder {
 
     /** Owned private companies */
     protected List<PrivateCompanyI> privateCompanies =

@@ -7,10 +7,10 @@ import rails.common.Defs;
 import rails.game.action.PossibleAction;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveStack;
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
 
-public interface GameManagerI extends MoveableHolderI, ConfigurableComponentI {
+public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)

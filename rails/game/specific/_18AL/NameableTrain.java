@@ -2,7 +2,7 @@ package rails.game.specific._18AL;
 
 import rails.game.Train;
 import rails.game.TrainTypeI;
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.move.StateChange;
 import rails.game.state.State;
@@ -28,7 +28,7 @@ public class NameableTrain extends Train {
     }
 
     @Override
-    public void moveTo(MoveableHolderI to) {
+    public void moveTo(MoveableHolder to) {
         if (holder != to) {
             if (getNameToken() != null) {
                 setNameToken(null);

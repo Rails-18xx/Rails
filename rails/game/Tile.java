@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.32 2009/12/20 14:58:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.33 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import rails.game.model.ModelObject;
 import rails.util.LocalText;
 import rails.util.Tag;
 
-public class Tile extends ModelObject implements TileI, StationHolderI {
+public class Tile extends ModelObject implements TileI, StationHolder {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int id;
