@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.10 2009/11/04 20:33:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.11 2010/01/08 21:30:37 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.state.BooleanState;
 
 public abstract class Company implements CompanyI, ConfigurableComponentI,
@@ -122,7 +122,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
         value = i;
     }
 
-    public MoveableHolderI getHolder() {
+    public MoveableHolder getHolder() {
         return portfolio;
     }
 

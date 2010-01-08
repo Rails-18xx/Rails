@@ -1,10 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.6 2008/06/04 19:00:38 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.7 2010/01/08 21:30:54 evos Exp $ */
 package rails.game.special;
 
 import rails.game.ConfigurableComponentI;
 import rails.game.PrivateCompanyI;
 import rails.game.move.Moveable;
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 
 public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
@@ -38,6 +38,6 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public String getName();
 
-    public void moveTo(MoveableHolderI newHolder);
+    public void moveTo(MoveableHolder newHolder);
 
 }

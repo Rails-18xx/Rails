@@ -9,7 +9,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.LocalText;
 
-public abstract class StartRound extends Round implements StartRoundI {
+public abstract class StartRound extends Round {
 
     protected StartPacket startPacket = null;
     protected int[] itemIndex;

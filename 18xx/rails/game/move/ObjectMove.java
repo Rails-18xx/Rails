@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.6 2009/10/07 19:00:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.7 2010/01/08 21:31:00 evos Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -11,8 +11,8 @@ package rails.game.move;
 public class ObjectMove extends Move {
 
     Moveable moveableObject;
-    MoveableHolderI from;
-    MoveableHolderI to;
+    MoveableHolder from;
+    MoveableHolder to;
     String objectClassName;
 
     /**
@@ -28,8 +28,8 @@ public class ObjectMove extends Move {
      * @param to Where the moveableObject is moved to (e.g. a MapHex).
      */
 
-    public ObjectMove(Moveable moveableObject, MoveableHolderI from,
-            MoveableHolderI to) {
+    public ObjectMove(Moveable moveableObject, MoveableHolder from,
+            MoveableHolder to) {
 
         this.moveableObject = moveableObject;
         this.from = from;

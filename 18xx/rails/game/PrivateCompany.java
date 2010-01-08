@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.27 2009/12/26 12:48:02 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.28 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     }
 
-    public void moveTo(MoveableHolderI newHolder) {
+    public void moveTo(MoveableHolder newHolder) {
         new ObjectMove(this, portfolio, newHolder);
     }
 

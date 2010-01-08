@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TokenI.java,v 1.4 2008/06/04 19:00:32 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TokenI.java,v 1.5 2010/01/08 21:30:46 evos Exp $
  * 
  * Created on Jan 1, 2007
  * Change Log:
@@ -12,11 +12,11 @@ import rails.game.move.Moveable;
  */
 public interface TokenI extends Moveable {
 
-    public void setHolder(TokenHolderI holder);
+    public void setHolder(TokenHolder holder);
 
     public String getUniqueId();
 
-    public TokenHolderI getHolder();
+    public TokenHolder getHolder();
 
     public String getName();
 

@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.15 2009/11/04 20:33:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.16 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 
@@ -120,7 +120,7 @@ public class Train implements TrainI {
         holder = newHolder;
     }
 
-    public void moveTo(MoveableHolderI to) {
+    public void moveTo(MoveableHolder to) {
 
         new ObjectMove(this, holder, to);
 

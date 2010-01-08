@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.32 2009/12/07 17:47:29 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.33 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -37,7 +37,7 @@ import rails.util.Tag;
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
 public class MapHex extends ModelObject implements ConfigurableComponentI,
-        StationHolderI, TokenHolderI {
+        StationHolder, TokenHolder {
 
     public static final int EW = 0;
     public static final int NS = 1;
@@ -581,8 +581,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             }
 
             // Move the tokens
-            Map<TokenI, TokenHolderI> tokenDestinations =
-                    new HashMap<TokenI, TokenHolderI>();
+            Map<TokenI, TokenHolder> tokenDestinations =
+                    new HashMap<TokenI, TokenHolder>();
 
             for (City oldCity : cities) {
                 newCity = oldToNewCities.get(oldCity);

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.6 2009/09/08 21:48:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.7 2010/01/08 21:30:46 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -8,7 +8,7 @@ package rails.game;
 import java.util.HashMap;
 import java.util.Map;
 
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 
 /**
@@ -16,7 +16,7 @@ import rails.game.move.ObjectMove;
  */
 public abstract class Token implements TokenI {
 
-    protected TokenHolderI holder = null;
+    protected TokenHolder holder = null;
     protected String description = "";
     protected String uniqueId;
 
@@ -37,16 +37,16 @@ public abstract class Token implements TokenI {
         return uniqueId;
     }
 
-    public void setHolder(TokenHolderI holder) {
+    public void setHolder(TokenHolder holder) {
         this.holder = holder;
     }
 
-    public TokenHolderI getHolder() {
+    public TokenHolder getHolder() {
         return holder;
     }
 
-    public void moveTo(MoveableHolderI newHolder) {
-        if (newHolder instanceof TokenHolderI) {
+    public void moveTo(MoveableHolder newHolder) {
+        if (newHolder instanceof TokenHolder) {
             new ObjectMove(this, holder, newHolder);
         }
     }
@@ -63,7 +63,7 @@ public abstract class Token implements TokenI {
      * @param from
      * @param to
      */
-    public static void transfer(TokenI token, TokenHolderI from, TokenHolderI to) {
+    public static void transfer(TokenI token, TokenHolder from, TokenHolder to) {
         to.addToken(token);
         from.removeToken(token);
         token.setHolder(to);

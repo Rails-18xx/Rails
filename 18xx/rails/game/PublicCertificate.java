@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.16 2009/08/30 18:15:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.17 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.util.LocalText;
 
@@ -69,7 +69,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return certMap.get(certId);
     }
 
-    public void moveTo(MoveableHolderI newHolder) {
+    public void moveTo(MoveableHolder newHolder) {
         new ObjectMove(this, portfolio, newHolder);
     }
 
@@ -80,7 +80,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return portfolio;
     }
 
-    public MoveableHolderI getHolder() {
+    public MoveableHolder getHolder() {
         return portfolio;
     }
 

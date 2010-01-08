@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.19 2009/12/28 13:17:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.20 2010/01/08 21:30:53 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 import rails.util.Tag;
@@ -16,7 +16,7 @@ import rails.util.Util;
 public abstract class SpecialProperty implements SpecialPropertyI {
 
     protected PrivateCompanyI privateCompany;
-    protected MoveableHolderI holder = null;
+    protected MoveableHolder holder = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     protected boolean usableIfOwnedByPlayer = false;
@@ -89,7 +89,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         return privateCompany;
     }
 
-    public MoveableHolderI getHolder() {
+    public MoveableHolder getHolder() {
         return holder;
     }
 
@@ -154,7 +154,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
      * Move the special property to another holder.
      * Only to be used for special properties that have the "transfer" attribute.
      */
-    public void moveTo(MoveableHolderI newHolder) {
+    public void moveTo(MoveableHolder newHolder) {
     	if (transferText.equals("")) return;
         //if (newHolder instanceof Portfolio) {
             new ObjectMove(this, holder, newHolder);

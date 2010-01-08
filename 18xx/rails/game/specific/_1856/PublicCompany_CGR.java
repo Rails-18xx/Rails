@@ -114,7 +114,7 @@ public class PublicCompany_CGR extends PublicCompany {
             // Drop the last 10 shares
             List<PublicCertificateI>certs = new ArrayList<PublicCertificateI>(certificates);
             int share = 0;
-            MoveableHolderI scrapHeap = bank.getScrapHeap();
+            MoveableHolder scrapHeap = bank.getScrapHeap();
             for (PublicCertificateI cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);

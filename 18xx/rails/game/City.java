@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.8 2009/05/04 20:29:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.9 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import rails.util.Util;
  * 
  * @author Erik Vos
  */
-public class City implements TokenHolderI {
+public class City implements TokenHolder {
     private int number;
     private String uniqueId;
     private Station relatedStation;
