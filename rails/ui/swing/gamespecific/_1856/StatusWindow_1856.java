@@ -1,15 +1,14 @@
 package rails.ui.swing.gamespecific._1856;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
+import rails.ui.swing.elements.RadioButtonDialog2;
 import rails.util.LocalText;
+import rails.util.Util;
 
 public class StatusWindow_1856 extends StatusWindow {
 
@@ -35,6 +34,7 @@ public class StatusWindow_1856 extends StatusWindow {
             immediateAction = possibleActions.getType(ExchangeTokens.class).get(0);
         }
     }
+
 
     @Override
     public boolean processImmediateAction() {
@@ -73,25 +73,28 @@ public class StatusWindow_1856 extends StatusWindow {
         int minNumber = action.getMinNumber();
         int maxNumber = action.getMaxNumber();
         int loanAmount = action.getPrice();
-        int numberRepaid = 0;
 
-        List<String> options = new ArrayList<String>();
+        String[] options = new String[maxNumber-minNumber+1];
         for (int i=minNumber; i<=maxNumber; i++) {
             if (i == 0) {
-                options.add(LocalText.getText("None"));
+                options[i] = LocalText.getText("None");
             } else {
-                options.add(LocalText.getText("RepayLoan",
+                options[i] = LocalText.getText("RepayLoan",
                         i,
                         Bank.format(loanAmount),
-                        Bank.format(i * loanAmount)));
+                        Bank.format(i * loanAmount));
             }
         }
-        int displayBufSize = DisplayBuffer.getSize();
-        String[] message = new String[displayBufSize+1];
-        System.arraycopy (DisplayBuffer.get(),0,message,0,displayBufSize);
-        message[displayBufSize] = LocalText.getText("SelectLoansToRepay",
-                action.getCompanyName());
 
+        String message = LocalText.getText("SelectLoansToRepay",
+                action.getCompanyName());
+        String[] waitingMessages = DisplayBuffer.get();
+        if (waitingMessages != null) {
+        	message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
+        		+ "<br>" + message;
+        }
+
+        /*
         Object choice = JOptionPane.showInputDialog(this,
                 message,
                 LocalText.getText("Select"),
@@ -104,5 +107,34 @@ public class StatusWindow_1856 extends StatusWindow {
 
         action.setNumberTaken(numberRepaid);
         process (action);
+        */
+        RadioButtonDialog2 currentDialog = new RadioButtonDialog2 (this,
+        		LocalText.getText("Select"),
+        		message,
+        		options,
+        		0);
+        setCurrentDialog (currentDialog, action);
     }
+
+    @Override
+    public void dialogActionPerformed () {
+
+    	JDialog currentDialog = getCurrentDialog();
+    	PossibleAction currentDialogAction = getCurrentDialogAction();
+
+    	if (currentDialog instanceof RadioButtonDialog2
+    			&& currentDialogAction instanceof RepayLoans) {
+
+    		RadioButtonDialog2 dialog = (RadioButtonDialog2) currentDialog;
+    		RepayLoans action = (RepayLoans) currentDialogAction;
+            int selected = dialog.getSelectedOption();
+            action.setNumberTaken(selected);
+        } else {
+            return;
+        }
+
+        gameUIManager.processOnServer(currentDialogAction);
+    }
+
+
 }

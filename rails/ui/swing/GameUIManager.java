@@ -161,11 +161,9 @@ public class GameUIManager implements DialogOwner {
 
         statusWindow.setGameActions();
 
-        if (result) {
-            return activeWindow.processImmediateAction();
-        } else {
-            return false;
-        }
+        if (!result) return false;
+
+       	return activeWindow.processImmediateAction();
     }
 
     public void updateUI() {
@@ -419,11 +417,11 @@ public class GameUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
 
-            currentDialogAction = action;
-            currentDialog = new CheckBoxDialog(this,
+            CheckBoxDialog dialog = new CheckBoxDialog(this,
                     LocalText.getText("ExchangeTokens"),
                     prompt,
                     options.toArray(new String[0]));
+            setCurrentDialog (dialog, action);
 
         }
     }
@@ -438,16 +436,54 @@ public class GameUIManager implements DialogOwner {
             boolean[] exchanged = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
 
+            int numberSelected = 0;
+            for (int index=0; index < options.length; index++) {
+                if (exchanged[index]) {
+                    numberSelected++;
+                }
+            }
+
+            int minNumber = action.getMinNumberToExchange();
+            int maxNumber = action.getMaxNumberToExchange();
+            if (numberSelected < minNumber
+            		|| numberSelected > maxNumber) {
+            	if (minNumber == maxNumber) {
+            		JOptionPane.showMessageDialog(null,
+            				LocalText.getText("YouMustSelect1", minNumber));
+            	} else {
+            		JOptionPane.showMessageDialog(null,
+            				LocalText.getText("YouMustSelect2", minNumber, maxNumber));
+            	}
+            	exchangeTokens (action);
+            	return;
+
+            }
             for (int index=0; index < options.length; index++) {
                 if (exchanged[index]) {
                     action.getTokensToExchange().get(index).setSelected(true);
-                }
+               }
             }
         } else {
             return;
         }
 
         processOnServer(currentDialogAction);
+    }
+
+    public JDialog getCurrentDialog() {
+    	return currentDialog;
+    }
+
+    public PossibleAction getCurrentDialogAction () {
+    	return currentDialogAction;
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    	if (currentDialog != null) {
+    		currentDialog.dispose();
+    	}
+    	currentDialog = dialog;
+    	currentDialogAction = action;
     }
 
     public void saveGame(GameAction saveAction) {

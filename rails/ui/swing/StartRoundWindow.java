@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.33 2009/11/16 18:11:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.34 2010/01/08 21:27:54 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -78,7 +78,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private final StartItemAction[] actionableItems;
     private final StartPacket packet;
     private final int[] crossIndex;
-    private final StartRoundI round;
+    private final StartRound round;
     private final GameUIManager gameUIManager;
 
     private StartItem si;
