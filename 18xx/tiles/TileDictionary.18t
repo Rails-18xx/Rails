@@ -350,6 +350,7 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtWhistlestop
+          Revenue = 10
         end>
     end
     item

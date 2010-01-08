@@ -28,7 +28,7 @@ while (($file = readdir DIR)) {
 closedir DIR;
 
 # Notes on creating new tiles:
-# 1. In TileDesigner, save SVG tiles with size=170 and filename template=tile<c0>.
+# 1. In TileDesigner, export SVG tiles with size=170 and filename template=tile<c0>.
 #    Do this with ID checked into directory tiles/TDwithID, and again
 #    with ID unchecked into directory tiles/TDwoID.
 # 2. If the saved tiles turn out to invisible, use program FixInvisibility.pl
