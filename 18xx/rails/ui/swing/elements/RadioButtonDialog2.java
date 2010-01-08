@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.5 2010/01/08 21:27:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Attic/RadioButtonDialog2.java,v 1.1 2010/01/08 21:27:54 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -11,46 +11,36 @@ import org.apache.log4j.Logger;
 import rails.util.LocalText;
 
 /**
- * A generic dialog for presenting choices by checkboxes.
+ * A generic dialog for presenting choices by radio buttons.
  */
-public class CheckBoxDialog extends JDialog implements ActionListener {
+public class RadioButtonDialog2 extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-
-    protected DialogOwner owner = null;
     GridBagConstraints gc;
     JPanel optionsPane, buttonPane;
     JButton okButton, cancelButton;
-    JCheckBox[] checkBoxes;
+    JRadioButton[] choiceButtons;
     Dimension size, optSize;
     ButtonGroup group;
+    DialogOwner owner;
 
     String message;
     int numOptions;
     String[] options;
-    boolean selectedOptions[];
+    int selectedOption;
     int chosenOption = -1;
 
     protected static Logger log =
-            Logger.getLogger(CheckBoxDialog.class.getPackage().getName());
+            Logger.getLogger(RadioButtonDialog2.class.getPackage().getName());
 
-    public CheckBoxDialog(DialogOwner owner, String title, String message,
-            String[] options) {
-        this (owner, title, message, options, null);
-    }
-
-    public CheckBoxDialog(DialogOwner owner, String title, String message,
-            String[] options, boolean[] selectedOptions) {
+    public RadioButtonDialog2(DialogOwner owner, String title, String message,
+            String[] options, int selectedOption) {
         super((Frame) null, title, false); // Non-modal
         this.owner = owner;
         this.message = message;
         this.options = options;
         this.numOptions = options.length;
-        if (selectedOptions != null) {
-            this.selectedOptions = selectedOptions;
-        } else {
-            this.selectedOptions = new boolean[numOptions];
-        }
+        this.selectedOption = selectedOption;
 
         initialize();
         pack();
@@ -68,8 +58,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         int y = 400;
         setLocation(x, y);
 
-        setVisible(true);
-
+        this.setVisible(true);
     }
 
     private void initialize() {
@@ -83,26 +72,32 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         okButton.addActionListener(this);
         buttonPane.add(okButton);
 
-        cancelButton = new JButton(LocalText.getText("Cancel"));
-        cancelButton.setMnemonic(KeyEvent.VK_C);
-        cancelButton.addActionListener(this);
-        buttonPane.add(cancelButton);
+        if (selectedOption < 0) {
+        	// If an option has been preselected, selection is mandatory.
+	        cancelButton = new JButton(LocalText.getText("Cancel"));
+	        cancelButton.setMnemonic(KeyEvent.VK_C);
+	        cancelButton.addActionListener(this);
+	        buttonPane.add(cancelButton);
+        }
 
-        checkBoxes = new JCheckBox[numOptions];
+        choiceButtons = new JRadioButton[numOptions];
 
         this.getContentPane().setLayout(new GridBagLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         optionsPane.setLayout(new GridBagLayout());
+        // optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
         optionsPane.add(new JLabel(message), constraints(0, 0, 10, 10, 10, 10));
 
-        checkBoxes = new JCheckBox[numOptions];
+        choiceButtons = new JRadioButton[numOptions];
+        group = new ButtonGroup();
 
         for (int i = 0; i < numOptions; i++) {
-            checkBoxes[i] =
-                    new JCheckBox(options[i], selectedOptions[i]);
-            optionsPane.add(checkBoxes[i], constraints(0, 1 + i, 0, 0, 0, 0));
-            checkBoxes[i].setPreferredSize(size);
+            choiceButtons[i] =
+                    new JRadioButton(options[i], i == selectedOption);
+            optionsPane.add(choiceButtons[i], constraints(0, 1 + i, 0, 0, 0, 0));
+            choiceButtons[i].setPreferredSize(size);
+            group.add(choiceButtons[i]);
         }
 
         getContentPane().add(optionsPane, constraints(0, 0, 0, 0, 0, 0));
@@ -127,21 +122,20 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(okButton)) {
             for (int i = 0; i < numOptions; i++) {
-                selectedOptions[i] = checkBoxes[i].isSelected();
+                if (choiceButtons[i].isSelected()) {
+                    chosenOption = i;
+                    break;
+                }
             }
         } else if (arg0.getSource().equals(cancelButton)) {
-        	return;
+            return;
         }
-        setVisible(false);
-        dispose();
-        owner.dialogActionPerformed ();
+        this.setVisible(false);
+        this.dispose();
+        owner.dialogActionPerformed();
     }
 
-    public String[] getOptions () {
-    	return options;
-    }
-
-    public synchronized boolean[] getSelectedOptions() {
-        return selectedOptions;
+    public synchronized int getSelectedOption() {
+        return chosenOption;
     }
 }

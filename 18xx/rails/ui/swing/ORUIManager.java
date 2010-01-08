@@ -29,9 +29,6 @@ public class ORUIManager implements DialogOwner {
 
     public GameUIManager gameUIManager;
 
-    protected JDialog currentDialog = null;
-    protected PossibleAction currentDialogAction = null;
-
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
     private PublicCompanyI orComp;
@@ -448,23 +445,26 @@ public class ORUIManager implements DialogOwner {
         if (options.size() > 0) {
             orWindow.setVisible(true);
             orWindow.toFront();
-            
-            currentDialogAction = action;
-            currentDialog = new CheckBoxDialog(this,
+
+            CheckBoxDialog dialog = new CheckBoxDialog(this,
                     LocalText.getText("DestinationsReached"),
                     LocalText.getText("DestinationsReachedPrompt"),
                     options.toArray(new String[0]));
+            setCurrentDialog (dialog, action);
         }
     }
-            
+
     public void dialogActionPerformed () {
+
+    	JDialog currentDialog = getCurrentDialog();
+    	PossibleAction currentDialogAction = getCurrentDialogAction();
 
         if (currentDialog instanceof CheckBoxDialog
                 && currentDialogAction instanceof ReachDestinations) {
-            
+
             CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
             ReachDestinations action = (ReachDestinations) currentDialogAction;
-            
+
             boolean[] destined = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
 
@@ -473,16 +473,28 @@ public class ORUIManager implements DialogOwner {
                     action.addReachedCompany(action.getPossibleCompanies().get(index));
                 }
             }
-    
+
             // Prevent that a null action gets processed
             if (action.getReachedCompanies() == null
                     || action.getReachedCompanies().isEmpty()) return;
-    
+
         } else {
             return;
         }
-        
+
         gameUIManager.processOnServer(currentDialogAction);
+    }
+
+    public JDialog getCurrentDialog() {
+    	return gameUIManager.getCurrentDialog();
+    }
+
+    public PossibleAction getCurrentDialogAction () {
+    	return gameUIManager.getCurrentDialogAction();
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    	gameUIManager.setCurrentDialog(dialog, action);
     }
 
     public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
