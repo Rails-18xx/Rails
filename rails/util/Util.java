@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.17 2009/12/28 14:53:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.18 2010/01/08 21:26:14 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.ConfigurationException;
 import rails.game.move.Moveable;
-import rails.game.move.MoveableHolderI;
+import rails.game.move.MoveableHolder;
 
 public final class Util {
 
@@ -30,6 +30,15 @@ public final class Util {
         StringBuffer b = new StringBuffer(s1 != null ? s1 : "");
         if (b.length() > 0) b.append(delimiter);
         b.append(s2);
+        return b.toString();
+    }
+
+    public static String joinWithDelimiter (String[] sa, String delimiter) {
+        StringBuffer b = new StringBuffer();
+        for (String s : sa) {
+        	if (b.length() > 0) b.append(delimiter);
+        	b.append(s);
+        }
         return b.toString();
     }
 
@@ -70,7 +79,7 @@ public final class Util {
      * @param objects
      */
     public static <T extends Moveable> void moveObjects(List<T> objects,
-            MoveableHolderI to) {
+            MoveableHolder to) {
 
         if (objects == null || objects.isEmpty()) return;
 
