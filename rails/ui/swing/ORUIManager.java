@@ -1108,7 +1108,7 @@ public class ORUIManager implements DialogOwner {
                 }
             }
             Object choice = JOptionPane.showInputDialog(orWindow,
-                    LocalText.getText("SelectLoansToRepay"),
+                    LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
                     LocalText.getText("Select"),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
