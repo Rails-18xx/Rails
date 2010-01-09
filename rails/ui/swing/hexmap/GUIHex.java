@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.34 2010/01/05 20:53:15 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.35 2010/01/09 13:30:24 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -604,17 +604,16 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
         tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
         // TEMPORARY
         tt.append("<small> rot=" + currentTileOrientation + "</small>");
-        if (currentTile.getColourName().equalsIgnoreCase(Tile.RED_COLOUR_NAME)) {
-            if (model.hasOffBoardValues()) {
-                tt.append("<br>Offboard value ");
-                tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
-                int[] values = model.getOffBoardValues();
-                for (int i = 0; i < values.length; i++) {
-                    if (i > 0) tt.append(",");
-                    tt.append(values[i]);
-                }
-                tt.append("]");
+
+        if (model.hasOffBoardValues()) {
+            tt.append("<br>Value ");
+            tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
+            int[] values = model.getOffBoardValues();
+            for (int i = 0; i < values.length; i++) {
+                if (i > 0) tt.append(",");
+                tt.append(values[i]);
             }
+            tt.append("]");
         } else if (currentTile.hasStations()) {
             Station st;
             int cityNumber;
