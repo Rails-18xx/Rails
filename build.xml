@@ -9,7 +9,7 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.5"/>
     <property name="source" value="1.5"/>
-	<property name="version" value="1.1.1"/>
+	<property name="version" value="1.1.2"/>
     <path id="18xx.classpath">
         <pathelement location="classes"/>
         <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
