@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.5 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.6 2010/01/11 23:06:21 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
@@ -21,6 +22,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
     JRadioButton[] choiceButtons;
     Dimension size, optSize;
     ButtonGroup group;
+    DialogOwner owner;
 
     String message;
     int numOptions;
@@ -31,9 +33,10 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(RadioButtonDialog.class.getPackage().getName());
 
-    public RadioButtonDialog(JComponent owner, String title, String message,
+    public RadioButtonDialog(DialogOwner owner, String title, String message,
             String[] options, int selectedOption) {
-        super((Frame) null, title, true); // Modal !?
+        super((Frame) null, title, false); // Non-modal
+        this.owner = owner;
         this.message = message;
         this.options = options;
         this.numOptions = options.length;
@@ -43,12 +46,16 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
         pack();
 
         // Center on owner
+        /*
         int x =
                 (int) owner.getLocationOnScreen().getX()
                         + (owner.getWidth() - getWidth()) / 2;
         int y =
                 (int) owner.getLocationOnScreen().getY()
                         + (owner.getHeight() - getHeight()) / 2;
+                        */
+        int x = 400;
+        int y = 400;
         setLocation(x, y);
 
         this.setVisible(true);
@@ -65,10 +72,13 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
         okButton.addActionListener(this);
         buttonPane.add(okButton);
 
-        cancelButton = new JButton(LocalText.getText("Cancel"));
-        cancelButton.setMnemonic(KeyEvent.VK_C);
-        cancelButton.addActionListener(this);
-        buttonPane.add(cancelButton);
+        if (selectedOption < 0) {
+        	// If an option has been preselected, selection is mandatory.
+	        cancelButton = new JButton(LocalText.getText("Cancel"));
+	        cancelButton.setMnemonic(KeyEvent.VK_C);
+	        cancelButton.addActionListener(this);
+	        buttonPane.add(cancelButton);
+        }
 
         choiceButtons = new JRadioButton[numOptions];
 
@@ -118,14 +128,14 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (arg0.getSource().equals(cancelButton)) {
-            chosenOption = -1;
+            return;
         }
         this.setVisible(false);
         this.dispose();
-
+        owner.dialogActionPerformed();
     }
 
-    public int getSelectedOption() {
+    public synchronized int getSelectedOption() {
         return chosenOption;
     }
 }

@@ -10,8 +10,7 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.*;
-import rails.ui.swing.elements.CheckBoxDialog;
-import rails.ui.swing.elements.DialogOwner;
+import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
@@ -1095,31 +1094,28 @@ public class ORUIManager implements DialogOwner {
                             Bank.format(loanAmount),
                             Bank.format(minNumber * loanAmount)));
             numberRepaid = minNumber;
+            action.setNumberTaken(numberRepaid);
+            orWindow.process(action);
         } else {
-            List<String> options = new ArrayList<String>();
-            for (int i=minNumber; i<=maxNumber; i++) {
+            //List<String> options = new ArrayList<String>();
+        	String[] options = new String[maxNumber-minNumber+1];
+            for (int i=minNumber, j=0; i<=maxNumber; i++, j++) {
                 if (i == 0) {
-                    options.add(LocalText.getText("None"));
+                    options[j] = LocalText.getText("None");
                 } else {
-                    options.add(LocalText.getText("RepayLoan",
+                    options[j] = LocalText.getText("RepayLoan",
                             i,
                             Bank.format(loanAmount),
-                            Bank.format(i * loanAmount)));
+                            Bank.format(i * loanAmount));
                 }
             }
-            Object choice = JOptionPane.showInputDialog(orWindow,
+            RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+            		LocalText.getText("Select"),
                     LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
-                    LocalText.getText("Select"),
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options.toArray(),
-                    options.get(minNumber == 0 ? 1 : minNumber));
-
-            numberRepaid = minNumber + options.indexOf(choice);
-
+                               		options,
+            		0);
+            gameUIManager.setCurrentDialog (currentDialog, action);
         }
-        action.setNumberTaken(numberRepaid);
-        orWindow.process(action);
     }
 
     public void updateStatus() {
