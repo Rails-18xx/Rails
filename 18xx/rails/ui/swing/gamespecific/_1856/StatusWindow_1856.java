@@ -1,12 +1,10 @@
 package rails.ui.swing.gamespecific._1856;
 
-import javax.swing.JDialog;
-
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
-import rails.ui.swing.elements.RadioButtonDialog2;
+import rails.ui.swing.elements.RadioButtonDialog;
 import rails.util.LocalText;
 import rails.util.Util;
 
@@ -94,47 +92,12 @@ public class StatusWindow_1856 extends StatusWindow {
         		+ "<br>" + message;
         }
 
-        /*
-        Object choice = JOptionPane.showInputDialog(this,
-                message,
-                LocalText.getText("Select"),
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options.toArray(),
-                options.get(0));
-
-        numberRepaid = minNumber + options.indexOf(choice);
-
-        action.setNumberTaken(numberRepaid);
-        process (action);
-        */
-        RadioButtonDialog2 currentDialog = new RadioButtonDialog2 (this,
+       RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
         		LocalText.getText("Select"),
         		message,
         		options,
         		0);
-        setCurrentDialog (currentDialog, action);
+       gameUIManager.setCurrentDialog (currentDialog, action);
     }
-
-    @Override
-    public void dialogActionPerformed () {
-
-    	JDialog currentDialog = getCurrentDialog();
-    	PossibleAction currentDialogAction = getCurrentDialogAction();
-
-    	if (currentDialog instanceof RadioButtonDialog2
-    			&& currentDialogAction instanceof RepayLoans) {
-
-    		RadioButtonDialog2 dialog = (RadioButtonDialog2) currentDialog;
-    		RepayLoans action = (RepayLoans) currentDialogAction;
-            int selected = dialog.getSelectedOption();
-            action.setNumberTaken(selected);
-        } else {
-            return;
-        }
-
-        gameUIManager.processOnServer(currentDialogAction);
-    }
-
 
 }

@@ -625,13 +625,14 @@ public class GameStatus extends GridPanel implements ActionListener {
                 int index = 0;
                 if (options.size() > 1) {
                     if (startCompany) {
-                        index =
-                                new RadioButtonDialog(this,
-                                        LocalText.getText("PleaseSelect"),
-                                        LocalText.getText("WHICH_START_PRICE",
-                                                playerName,
-                                                companyName),
-                                        options.toArray(new String[0]), -1).getSelectedOption();
+                     	RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
+                                LocalText.getText("PleaseSelect"),
+                                LocalText.getText("WHICH_START_PRICE",
+                                        playerName,
+                                        companyName),
+                                options.toArray(new String[0]), -1);
+                    	gameUIManager.setCurrentDialog(dialog, actions.get(0));
+                    	return;
                     } else {
                         String sp =
                                 (String) JOptionPane.showInputDialog(this,

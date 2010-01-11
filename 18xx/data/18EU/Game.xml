@@ -13,6 +13,7 @@
 		<TreasuryShareLimit percentage="80"/>
 		<GameStatus class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
 		<StatusWindow class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
+		<GameUIManager class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

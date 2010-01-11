@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.32 2010/01/08 21:27:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.33 2010/01/11 23:06:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -14,7 +14,8 @@ import org.apache.log4j.Logger;
 import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
-import rails.ui.swing.elements.*;
+import rails.ui.swing.elements.ActionButton;
+import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.Config;
 import rails.util.LocalText;
 
@@ -23,7 +24,7 @@ import rails.util.LocalText;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow extends JFrame implements ActionListener,
-        KeyListener, ActionPerformer, DialogOwner {
+        KeyListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";
@@ -529,23 +530,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     public boolean processImmediateAction() {
         // No such actions here
         return true;
-    }
-
-    /** Stub */
-    public void dialogActionPerformed () {
-
-    }
-
-    public JDialog getCurrentDialog() {
-    	return gameUIManager.getCurrentDialog();
-    }
-
-    public PossibleAction getCurrentDialogAction () {
-    	return gameUIManager.getCurrentDialogAction();
-    }
-
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
-    	gameUIManager.setCurrentDialog(dialog, action);
     }
 
     public void displayServerMessage() {

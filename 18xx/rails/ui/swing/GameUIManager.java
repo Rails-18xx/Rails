@@ -11,8 +11,7 @@ import org.apache.log4j.Logger;
 import rails.common.Defs;
 import rails.game.*;
 import rails.game.action.*;
-import rails.ui.swing.elements.CheckBoxDialog;
-import rails.ui.swing.elements.DialogOwner;
+import rails.ui.swing.elements.*;
 import rails.util.*;
 
 /**
@@ -124,7 +123,10 @@ public class GameUIManager implements DialogOwner {
 
         // In some cases an Undo requires a different follow-up
         lastAction = action;
-        if (action != null) action.setActed();
+        if (action != null) {
+        	action.setActed();
+        	action.setPlayerName(getCurrentPlayer().getName());
+        }
 
         log.debug("==Passing to server: " + action);
 
@@ -427,45 +429,76 @@ public class GameUIManager implements DialogOwner {
     }
 
     public void dialogActionPerformed () {
+    	dialogActionPerformed(false);
+    }
 
-    	if (currentDialog instanceof CheckBoxDialog
-    			&& currentDialogAction instanceof ExchangeTokens) {
+    public void dialogActionPerformed (boolean ready) {
 
-    		CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-    		ExchangeTokens action = (ExchangeTokens) currentDialogAction;
-            boolean[] exchanged = dialog.getSelectedOptions();
-            String[] options = dialog.getOptions();
+    	if (!ready) {
 
-            int numberSelected = 0;
-            for (int index=0; index < options.length; index++) {
-                if (exchanged[index]) {
-                    numberSelected++;
-                }
-            }
+    		if (currentDialog instanceof RadioButtonDialog
+    				&& currentDialogAction instanceof StartCompany) {
 
-            int minNumber = action.getMinNumberToExchange();
-            int maxNumber = action.getMaxNumberToExchange();
-            if (numberSelected < minNumber
-            		|| numberSelected > maxNumber) {
-            	if (minNumber == maxNumber) {
-            		JOptionPane.showMessageDialog(null,
-            				LocalText.getText("YouMustSelect1", minNumber));
-            	} else {
-            		JOptionPane.showMessageDialog(null,
-            				LocalText.getText("YouMustSelect2", minNumber, maxNumber));
-            	}
-            	exchangeTokens (action);
-            	return;
+    			RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+    			StartCompany action = (StartCompany) currentDialogAction;
 
-            }
-            for (int index=0; index < options.length; index++) {
-                if (exchanged[index]) {
-                    action.getTokensToExchange().get(index).setSelected(true);
-               }
-            }
-        } else {
-            return;
-        }
+    			int index = dialog.getSelectedOption();
+    			if (index > 0) {
+    				int price = action.getStartPrices()[index];
+    				action.setStartPrice(price);
+    				action.setNumberBought(action.getCertificate().getShares());
+    			} else {
+    				// No selection done - no action
+    				return;
+    			}
+
+
+    		} else if (currentDialog instanceof CheckBoxDialog
+	    			&& currentDialogAction instanceof ExchangeTokens) {
+
+	    		CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+	    		ExchangeTokens action = (ExchangeTokens) currentDialogAction;
+	            boolean[] exchanged = dialog.getSelectedOptions();
+	            String[] options = dialog.getOptions();
+
+	            int numberSelected = 0;
+	            for (int index=0; index < options.length; index++) {
+	                if (exchanged[index]) {
+	                    numberSelected++;
+	                }
+	            }
+
+	            int minNumber = action.getMinNumberToExchange();
+	            int maxNumber = action.getMaxNumberToExchange();
+	            if (numberSelected < minNumber
+	            		|| numberSelected > maxNumber) {
+	            	if (minNumber == maxNumber) {
+	            		JOptionPane.showMessageDialog(null,
+	            				LocalText.getText("YouMustSelect1", minNumber));
+	            	} else {
+	            		JOptionPane.showMessageDialog(null,
+	            				LocalText.getText("YouMustSelect2", minNumber, maxNumber));
+	            	}
+	            	exchangeTokens (action);
+	            	return;
+
+	            }
+	            for (int index=0; index < options.length; index++) {
+	                if (exchanged[index]) {
+	                    action.getTokensToExchange().get(index).setSelected(true);
+	               }
+	            }
+	    	} else if (currentDialog instanceof RadioButtonDialog
+	        			&& currentDialogAction instanceof RepayLoans) {
+
+	        		RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+	        		RepayLoans action = (RepayLoans) currentDialogAction;
+	                int selected = dialog.getSelectedOption();
+	                action.setNumberTaken(action.getMinNumber() + selected);
+	        } else {
+	            return;
+	        }
+    	}
 
         processOnServer(currentDialogAction);
     }
