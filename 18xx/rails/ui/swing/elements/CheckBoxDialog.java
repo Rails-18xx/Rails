@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.5 2010/01/08 21:27:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.6 2010/01/14 20:45:09 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -69,7 +69,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         setLocation(x, y);
 
         setVisible(true);
-
+        setAlwaysOnTop(true);
     }
 
     private void initialize() {
@@ -90,8 +90,8 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
 
         checkBoxes = new JCheckBox[numOptions];
 
-        this.getContentPane().setLayout(new GridBagLayout());
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new GridBagLayout());
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         optionsPane.setLayout(new GridBagLayout());
         optionsPane.add(new JLabel(message), constraints(0, 0, 10, 10, 10, 10));
