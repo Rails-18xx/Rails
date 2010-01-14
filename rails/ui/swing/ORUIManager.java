@@ -108,8 +108,9 @@ public class ORUIManager implements DialogOwner {
 
     public void finish() {
         orWindow.finish();
-        orWindow.setVisible(false);
-
+        if (!(gameUIManager.getCurrentRound() instanceof ShareSellingRound)) {
+            setORCompanyTurn(-1);
+        }
     }
 
     public <T extends PossibleAction> void setMapRelatedActions(List<T> actions) {
@@ -1137,7 +1138,7 @@ public class ORUIManager implements DialogOwner {
 
         orStep = oRound.getStep();
         orComp = oRound.getOperatingCompany();
-        log.debug("Or comp index = " + orCompIndex);
+        log.debug("Or comp index = " + orCompIndex+" in round "+oRound.getRoundName());
         log.debug("OR company = " + orComp.getName());
         log.debug("OR step=" + orStep + " "
                   + (orStep >= 0 ? OperatingRound.stepNames[orStep] : ""));
@@ -1333,8 +1334,6 @@ public class ORUIManager implements DialogOwner {
     }
 
     public void setORCompanyTurn(int orCompIndex) {
-
-        orPanel.resetORCompanyTurn(orCompIndex);
 
         this.orCompIndex = orCompIndex;
         orComp = orCompIndex >= 0 ? companies[orCompIndex] : null;
