@@ -3,11 +3,9 @@ package rails.ui.swing.gamespecific._18EU;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import rails.game.City;
 import rails.game.PublicCompanyI;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
-import rails.game.specific._18EU.StartCompany_18EU;
 import rails.ui.swing.GameStatus;
 import rails.ui.swing.elements.RadioButtonDialog;
 import rails.util.LocalText;
@@ -81,56 +79,5 @@ public class GameStatus_18EU extends GameStatus {
         return null;
     }
 
-    /** Start a company - specific procedure for 18EU */
-    @Override
-    protected PossibleAction processGameSpecificFollowUpActions(
-            ActionEvent actor, PossibleAction chosenAction) {
-
-        if (chosenAction instanceof StartCompany_18EU) {
-
-            StartCompany_18EU action = (StartCompany_18EU) chosenAction;
-            List<PublicCompanyI> minors = //
-                    ((StartCompany_18EU) chosenAction).getMinorsToMerge();
-
-            if (minors != null && !minors.isEmpty()) {
-            	// Up to phase 6, a minor must be exchanged
-                String[] options = new String[minors.size()];
-                int i = 0;
-                for (PublicCompanyI minor : minors) {
-                    options[i++] =
-                            "Minor " + minor.getName() + " "
-                                    + minor.getLongName();
-                }
-                RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
-                		LocalText.getText("PleaseSelect"),
-                		LocalText.getText(
-                                "SelectMinorToMerge",
-                                action.getCertificate().getCompany().getName()),
-                                options, -1);
-            	gameUIManager.setCurrentDialog(dialog, action);
-            	return null;
-            } else {
-
-	            // From phase 6, no minors are involved, but a home station must be chosen
-	            List<City> cities = action.getAvailableHomeStations();
-	            if (cities != null && !cities.isEmpty()) {
-	                String[] options = new String[cities.size()];
-	                for (int i = 0; i < options.length; i++) {
-	                    options[i] = cities.get(i).toString();
-	                }
-	                RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
-	                		LocalText.getText("PleaseSelect"),
-	                		LocalText.getText(
-	                                "SelectMinorToMerge",
-	                                action.getCertificate().getCompany().getName()),
-	                                options, -1);
-	            	gameUIManager.setCurrentDialog(dialog, action);
-	            	return null;
-
-	            }
-            }
-        }
-        return chosenAction;
-    }
 
 }
