@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.9 2009/11/17 19:31:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.10 2010/01/14 20:55:13 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -120,12 +120,14 @@ public class OperatingRound_18EU extends OperatingRound {
         if (!canBuyTrainNow) return;
 
         /* Other company trains, sorted by president (current player first) */
-        if (currentPhase.isTrainTradingAllowed()) {
+        if (getCurrentPhase().isTrainTradingAllowed()) {
             PublicCompanyI c;
             BuyTrain bt;
             Player p;
             Portfolio pf;
             int index;
+            int numberOfPlayers = getNumberOfPlayers();
+
             // Set up a list per player of presided companies
             List<List<PublicCompanyI>> companiesPerPlayer =
                     new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
@@ -205,14 +207,15 @@ public class OperatingRound_18EU extends OperatingRound {
 
             // A Pullmann always goes first, and automatically.
             // If the last train is a Pullmann, discard it.
-            if ((numberOfTrains > comp.getTrainLimit(currentPhase.getIndex()) || numberOfTrains == 1)
+            if ((numberOfTrains > comp.getTrainLimit(getCurrentPhase().getIndex()) || numberOfTrains == 1)
                 && pullmann != null) {
                 pullmann.moveTo(pool);
+                numberOfTrains--;
             }
 
             // If we are still above the limit, make the list
             // of trains to select the discarded one from
-            if (numberOfTrains > comp.getTrainLimit(currentPhase.getIndex())) {
+            if (numberOfTrains > comp.getTrainLimit(getCurrentPhase().getIndex())) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
