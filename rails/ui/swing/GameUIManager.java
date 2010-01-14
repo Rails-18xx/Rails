@@ -8,7 +8,8 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
+import rails.common.GuiHints;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
@@ -32,12 +33,18 @@ public class GameUIManager implements DialogOwner {
 
     public static ImageLoader imageLoader;
 
-    private GameManagerI gameManager;
-    private PossibleAction lastAction;
-    private ActionPerformer activeWindow = null;
-    private RoundI currentRound;
-    private RoundI previousRound = null;
-    private StartRound startRound;
+    protected GameManagerI gameManager;
+    protected PossibleAction lastAction;
+    protected ActionPerformer activeWindow = null;
+    protected StartRound startRound;
+
+    protected RoundI currentRound;
+    protected RoundI previousRound;
+    protected Class<? extends RoundI> previousRoundType = null;
+    protected Class<? extends RoundI> currentRoundType = null;
+    protected GuiHints uiHints= null;
+    protected String previousRoundName;
+    protected String currentRoundName;
 
     protected static final String DEFAULT_SAVE_DIRECTORY = "save";
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
@@ -53,6 +60,10 @@ public class GameUIManager implements DialogOwner {
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
 
+    protected boolean previousStockChartVisibilityHint;
+    protected boolean previousStatusWindowVisibilityHint;
+    protected boolean previousORWindowVisibilityHint;
+
     protected static Logger log =
             Logger.getLogger(GameUIManager.class.getPackage().getName());
 
@@ -64,6 +75,7 @@ public class GameUIManager implements DialogOwner {
 
         instance = this;
         this.gameManager = gameManager;
+        uiHints = gameManager.getUIHints();
 
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
@@ -97,7 +109,7 @@ public class GameUIManager implements DialogOwner {
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
 
-        String statusWindowClassName = getClassName(Defs.ClassName.STATUS_WINDOW);
+        String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);
         try {
             Class<? extends StatusWindow> statusWindowClass =
                 Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
@@ -170,55 +182,49 @@ public class GameUIManager implements DialogOwner {
 
     public void updateUI() {
 
+        previousRoundType = currentRoundType;
+        previousRoundName = currentRoundName;
+        previousRound = currentRound;
+
         currentRound = gameManager.getCurrentRound();
+        currentRoundName = currentRound.toString();
 
-        log.debug("Current round=" + currentRound + ", previous round="
-                  + previousRound);
-        // Process consequences of a round type change to the UI
+        log.debug("Current round=" + currentRoundName + ", previous round="
+                  + previousRoundName);
 
-        Class<? extends RoundI> previousRoundType
-                = previousRound == null ? null : previousRound.getClass();
-        Class<? extends RoundI> currentRoundType
-                = currentRound.getClass();
-        Class<? extends RoundI> previousRoundUItype
-                = previousRound == null ? null : previousRound.getRoundTypeForUI();
-        Class<? extends RoundI> currentRoundUItype
-                = currentRound.getRoundTypeForUI();
-
-        /* Distinguish actual round type from visible round type.
-         * Actual round type is the class of the active Round subclass.
-         * Visible round type is the class of one of the three 'basic'
-         * round types: Start, Stock or Operating.
-         * The latter type determines what UI windows will become visible.
-         */
+        currentRoundType = uiHints.getCurrentRoundType();
 
         /* Process actual round type changes */
-        if (previousRound == null || !previousRound.equals(currentRound)) {
+        if (previousRoundType != currentRoundType) {
 
             /* Finish previous round UI processing */
-            if (previousRound != null) {
+            if (previousRoundType != null) {
 
                 if (StockRound.class.isAssignableFrom(previousRoundType)) {
-                    log.debug("UI leaving Stock Round");
+                    log.debug("UI leaving Stock Round "+previousRoundName);
                     statusWindow.finishRound();
                 } else if (StartRound.class.isAssignableFrom(previousRoundType)) {
-                    log.debug("UI leaving Start Round");
+                    log.debug("UI leaving Start Round "+previousRoundName);
                     if (startRoundWindow != null) {
                         startRoundWindow.close();
                         startRoundWindow = null;
                     }
                 } else if (OperatingRound.class.isAssignableFrom(previousRoundType)) {
-                    log.debug("UI leaving Operating Round");
+                    log.debug("UI leaving Operating Round "+previousRoundName);
                     orUIManager.finish();
                 } else if (SwitchableUIRound.class.isAssignableFrom(previousRoundType) ) {
-                    log.debug("UI leaving switchable round type");
+                    log.debug("UI leaving switchable round type "+previousRoundName);
                 }
             }
+
+        }
+
+        if (currentRound != previousRound) {
 
             // Start the new round UI processing
             if (StartRound.class.isAssignableFrom(currentRoundType)) {
 
-                log.debug("UI entering Start Round");
+                log.debug("UI entering Start Round "+currentRoundName);
                 startRound = (StartRound) currentRound;
                 if (startRoundWindow == null) {
                     startRoundWindow = new StartRoundWindow(startRound, this);
@@ -226,96 +232,108 @@ public class GameUIManager implements DialogOwner {
 
             } else if (StockRound.class.isAssignableFrom(currentRoundType)) {
 
-                log.debug("UI entering Stock Round");
-                orWindow.setVisible(false);
-                stockChart.setVisible(true);
+                log.debug("UI entering Stock Round "+currentRoundName);
 
             } else if (OperatingRound.class.isAssignableFrom(currentRoundType)) {
 
-                log.debug("UI entering Operating Round");
+                log.debug("UI entering Operating Round "+currentRoundName);
                 orUIManager.initOR((OperatingRound) currentRound);
-                orWindow.setVisible(true);
-                stockChart.setVisible(false);
 
             } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
-                log.debug("UI entering switchable round type");
-                orWindow.setVisible(true);
+                log.debug("UI entering switchable round type "+currentRoundName);
                 statusWindow.pack();
-                stockChart.setVisible(true);
             }
         }
 
         /* Process visible round type changes */
-        if (previousRoundUItype == null || !previousRoundUItype.equals(currentRoundUItype)) {
 
-            if (previousRoundUItype != null) {
-                // Finish the previous round UI aspects
-                if (StockRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Leaving Stock Round UI type");
-                } else if (StartRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Leaving Start Round UI type");
-                } else if (OperatingRound.class.isAssignableFrom(previousRoundUItype)) {
-                    log.debug("Leaving Operating Round UI type");
-                    //orWindow.setVisible(false);
+        // Visibility settings are handled first.
+        // Any window not represented in a setting is left unaffected.
+        // Each window set visible or already being visible will be put
+        // in front as well.
+        // As the settings are handled in which these have been entered,
+        // this means that this way the window top-to-bottom sequence
+        // can be influenced.
+        // To make this work, clearVisbilityHints() should be called
+        // before each sequence of settings (usually at the start of a round).
+        for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {
+        	switch (hint.getType()) {
+        	case STOCK_MARKET:
+                boolean stockChartVisibilityHint = hint.getVisibility();
+                if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
+                	stockChart.setVisible(stockChartVisibilityHint);
+                	previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
-            }
-
-            // Start the new round UI aspects
-             if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
-
-                log.debug("Entering Start Round UI type");
-                activeWindow = startRoundWindow;
-                //stockChart.setVisible(false);
-
-            } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
-
-                log.debug("Entering Stock Round UI type");
-                activeWindow = statusWindow;
-                //stockChart.setVisible(true);
-                //statusWindow.setVisible(true);
-
-            } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
-
-                log.debug("Entering Operating Round UI type ");
-                activeWindow = orWindow;
-                //stockChart.setVisible(false);
-                //orWindow.setVisible(true);
-            }
+            	if (stockChartVisibilityHint) stockChart.toFront();
+               break;
+        	case STATUS:
+                boolean statusWindowVisibilityHint = hint.getVisibility();
+                if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
+                	statusWindow.setVisible(statusWindowVisibilityHint);
+                	previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
+                }
+            	if (statusWindowVisibilityHint) statusWindow.toFront();
+                break;
+        	case MAP:
+                boolean orWindowVisibilityHint = hint.getVisibility();
+                if (orWindowVisibilityHint != previousORWindowVisibilityHint) {
+                	orWindow.setVisible(orWindowVisibilityHint);
+                	previousORWindowVisibilityHint = orWindowVisibilityHint;
+                }
+            	if (orWindowVisibilityHint) orWindow.toFront();
+                break;
+        	case START_ROUND:
+        		// Handled elsewhere
+        	}
         }
 
+        // Active window settings are handled last.
+        // Side effects: the active window is made visible and put on top.
+        if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {
+            log.debug("Entering Start Round UI type");
+            activeWindow = startRoundWindow;
+            startRoundWindow.setVisible(true);
+            startRoundWindow.toFront();
+
+        } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS) {
+
+            log.debug("Entering Stock Round UI type");
+            activeWindow = statusWindow;
+            statusWindow.setVisible(true);
+            statusWindow.toFront();
+
+        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP) {
+
+            log.debug("Entering Operating Round UI type ");
+            activeWindow = orWindow;
+            orWindow.setVisible(true);
+            orWindow.toFront();
+        }
+
+
+
         statusWindow.setupFor(currentRound);
-        previousRound = currentRound;
 
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
-        if (StartRound.class.isAssignableFrom(currentRoundUItype)) {
+        if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
 
             log.debug("Updating Start round window");
             startRoundWindow.updateStatus();
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
-        } else if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
+        } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
 
             log.debug("Updating Stock (status) round window");
             statusWindow.updateStatus();
 
-        } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
+        } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {
 
             log.debug("Updating Operating round window");
             orUIManager.updateStatus();
-
-        } else {
-            // Handle special rounds that do not fall in a standard category
-            // The round must indicate which main window to raise
-            if (StockRound.class.isAssignableFrom(currentRoundUItype)) {
-                log.debug("Updating switched Stock (status) round window");
-                activeWindow = statusWindow;
-            } else if (OperatingRound.class.isAssignableFrom(currentRoundUItype)) {
-                log.debug("Updating switched Operating round window");
-                activeWindow = orWindow;
-            }
-            updateStatus(activeWindow);
         }
+
+        updateStatus(activeWindow);
     }
 
     /** Stub, to be overridden in subclasses for special round types */
@@ -614,15 +632,15 @@ public class GameUIManager implements DialogOwner {
         return gameManager.getAllPublicCompanies();
     }
 
-    public String getClassName (Defs.ClassName key) {
+    public String getClassName (GuiDef.ClassName key) {
         return gameManager.getClassName(key);
     }
 
-    public Object getGameParameter (Defs.Parm key) {
-        return gameManager.getGameParameter(key);
+    public Object getGameParameter (GuiDef.Parm key) {
+        return gameManager.getGuiParameter(key);
     }
 
-    public boolean getGameParameterAsBoolean (Defs.Parm key) {
+    public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
         return (Boolean) getGameParameter(key);
     }
 
