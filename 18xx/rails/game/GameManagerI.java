@@ -3,7 +3,8 @@ package rails.game;
 import java.util.List;
 import java.util.Map;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
+import rails.common.GuiHints;
 import rails.game.action.PossibleAction;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveStack;
@@ -171,13 +172,15 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract boolean canAnyCompanyHoldShares();
 
-    public abstract String getClassName(Defs.ClassName key);
+    public abstract String getClassName(GuiDef.ClassName key);
 
     public abstract int getStockRoundSequenceRule();
 
     public abstract int getTreasuryShareLimit();
 
-    public abstract Object getGameParameter(Defs.Parm key);
+    public abstract Object getGuiParameter(GuiDef.Parm key);
+    public Object getGameParameter (GameDef.Parm key);
+    public void setGameParameter (GameDef.Parm key, Object value);
 
     public RoundI getInterruptedRound();
 
@@ -189,5 +192,6 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public MoveStack getMoveStack ();
 	public DisplayBuffer getDisplayBuffer();
 	public ReportBuffer getReportBuffer();
+	public GuiHints getUIHints();
 
 }
