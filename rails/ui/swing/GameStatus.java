@@ -10,7 +10,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
@@ -137,10 +137,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
 
-        hasParPrices = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_PAR_PRICE);
-        compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
-        compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
-        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
+        hasParPrices = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_PAR_PRICE);
+        compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
+        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
 
         ipo = bank.getIpo();
         pool = bank.getPool();

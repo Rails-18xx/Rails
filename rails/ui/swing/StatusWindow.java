@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.33 2010/01/11 23:06:08 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.34 2010/01/14 20:50:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.ActionButton;
@@ -214,7 +214,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     public void init(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
 
-        String gameStatusClassName = gameUIManager.getClassName(Defs.ClassName.GAME_STATUS);
+        String gameStatusClassName = gameUIManager.getClassName(GuiDef.ClassName.GAME_STATUS);
         try {
             Class<? extends GameStatus> gameStatusClass =
                 Class.forName(gameStatusClassName).asSubclass(GameStatus.class);

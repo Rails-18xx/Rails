@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.31 2009/12/31 09:58:18 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.32 2010/01/14 20:50:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.util.LocalText;
@@ -45,7 +45,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         super();
         this.gameUIManager = gameUIManager;
 
-        String orUIManagerClassName = gameUIManager.getClassName(Defs.ClassName.OR_UI_MANAGER);
+        String orUIManagerClassName = gameUIManager.getClassName(GuiDef.ClassName.OR_UI_MANAGER);
         try {
             Class<? extends ORUIManager> orUIManagerClass =
                 Class.forName(orUIManagerClassName).asSubclass(ORUIManager.class);
