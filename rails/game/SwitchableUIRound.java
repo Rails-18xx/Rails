@@ -5,12 +5,11 @@ package rails.game;
  * an SR-type UI and in other steps an OR-type UI should be displayed.
  * @author Erik Vos
  *
- */ 
+ */
 public abstract class SwitchableUIRound extends Round {
-    
+
     public SwitchableUIRound (GameManagerI gameManager) {
         super (gameManager);
-        setRoundTypeForUI(null);
     }
 
 }
