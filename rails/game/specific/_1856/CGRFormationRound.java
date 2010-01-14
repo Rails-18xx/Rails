@@ -2,6 +2,7 @@ package rails.game.specific._1856;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
@@ -42,6 +43,9 @@ public class CGRFormationRound extends SwitchableUIRound {
 
     public CGRFormationRound (GameManagerI gameManager) {
         super (gameManager);
+
+        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
+        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
     }
 
     @Override
@@ -63,6 +67,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         ReportBuffer.add(LocalText.getText("StartFormationRound",
         		cgrName,
                 startingPlayer.getName()));
+
+        guiHints.setCurrentRoundType(getClass());
 
         // Collect companies having loans
         for (PublicCompanyI company : getOperatingCompanies()) {
@@ -209,19 +215,19 @@ public class CGRFormationRound extends SwitchableUIRound {
                     maxLoansToRepayByPresident,
                     currentCompany.getValuePerLoan());
             possibleActions.add(action);
-            roundTypeForUI = StockRound_1856.class;
+            guiHints.setActivePanel(GuiDef.Panel.STATUS);
         } else if (step == STEP_EXCHANGE_TOKENS) {
             int numberToExchange = cgr.getNumberOfFreeBaseTokens();
             ExchangeTokens action = new ExchangeTokens (tokensToExchangeFrom,
                     numberToExchange, numberToExchange);
             action.setCompany(cgr);
             possibleActions.add(action);
-            roundTypeForUI = OperatingRound_1856.class;
+            guiHints.setActivePanel(GuiDef.Panel.STATUS);
         } else if (step == STEP_DISCARD_TRAINS) {
             DiscardTrain action = new DiscardTrain (cgr,
                     trainsToDiscardFrom, forcedTrainDiscard);
             possibleActions.add(action);
-            roundTypeForUI = OperatingRound_1856.class;
+            guiHints.setActivePanel(GuiDef.Panel.STATUS);
        }
         return true;
 
