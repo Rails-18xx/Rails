@@ -1,6 +1,6 @@
 package rails.util;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.Game;
 import rails.game.GameManagerI;
 import rails.ui.swing.GameSetupWindow;
@@ -62,7 +62,7 @@ public class RunGame {
 
     	GameManagerI gameManager = game.getGameManager();
     	GameUIManager gameUIManager;
-    	String gameUIManagerClassName = gameManager.getClassName(Defs.ClassName.GAME_UI_MANAGER);
+    	String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
 	    try {
 	        Class<? extends GameUIManager> gameUIManagerClass =
 	            Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);

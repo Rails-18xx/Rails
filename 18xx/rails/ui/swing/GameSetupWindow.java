@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.19 2009/12/30 18:38:28 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.20 2010/01/14 20:50:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.util.Config;
 import rails.util.LocalText;
@@ -390,7 +390,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
     private void startGameUIManager(Game game) {
         GameManagerI gameManager = game.getGameManager();
-        String gameUIManagerClassName = gameManager.getClassName(Defs.ClassName.GAME_UI_MANAGER);
+        String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);

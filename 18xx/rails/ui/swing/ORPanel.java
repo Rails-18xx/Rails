@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.38 2010/01/05 20:54:05 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.39 2010/01/14 20:50:08 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
@@ -121,9 +121,9 @@ implements ActionListener, KeyListener {
         parentFrame = parent;
 
         round = gameUIManager.getCurrentRound();
-        privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
-        bonusTokensExist = gameUIManager.getGameParameterAsBoolean(Defs.Parm.DO_BONUS_TOKENS_EXIST);
-        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(Defs.Parm.HAS_ANY_COMPANY_LOANS);
+        privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
+        bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
+        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -438,7 +438,8 @@ implements ActionListener, KeyListener {
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
-            addField(f, revXOffset, revYOffset + i, 1, 1, 0,  visible);
+            addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
+            revenue[i].addDependent(revenueSelect[i]);
 
             f = decision[i] = new Field(c.getLastRevenueAllocationModel());
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
@@ -466,10 +467,6 @@ implements ActionListener, KeyListener {
         undoButton.setEnabled(false);
         redoButton.setEnabled(false);
 
-        round = orUIManager.gameUIManager.getCurrentRound();
-        if (!(round instanceof ShareSellingRound)) {
-            orUIManager.setORCompanyTurn(-1);
-        }
     }
 
     public void actionPerformed(ActionEvent actor) {
