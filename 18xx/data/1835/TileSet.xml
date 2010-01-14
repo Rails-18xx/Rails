@@ -48,10 +48,10 @@
 	<Tile id="3" quantity="2" />
 	<Tile id="4" quantity="3" />
 	<Tile id="5" quantity="3" >
-		<Upgrade id="12,13,14,15,205,206" />
+		<Upgrade id="12,14,15,205,206" />
 	</Tile>
 	<Tile id="6" quantity="3" >
-		<Upgrade id="12,13,14,15,205" />
+		<Upgrade id="12,13,14,15,205,206" />
 	</Tile>
 	<Tile id="7" quantity="8">
 		<Upgrade id="18,26,27,28,29" />
