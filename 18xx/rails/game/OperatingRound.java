@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.88 2010/01/14 21:01:19 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.89 2010/01/14 22:10:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -395,16 +395,18 @@ public class OperatingRound extends Round implements Observer {
                 new CashMove(operatingCompany, bank, cost);
             operatingCompany.layTile(hex, tile, orientation, cost);
 
-            if (cost > 0) {
+            if (cost == 0) {
                 ReportBuffer.add(LocalText.getText("LaysTileAt",
                         companyName,
                         tile.getExternalId(),
-                        hex.getName() ));
+                        hex.getName(),
+                        hex.getOrientationName(orientation)));
             } else {
                 ReportBuffer.add(LocalText.getText("LaysTileAtFor",
                         companyName,
                         tile.getExternalId(),
                         hex.getName(),
+                        hex.getOrientationName(orientation),
                         Bank.format(cost) ));
             }
             hex.upgrade(action);
