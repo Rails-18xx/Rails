@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.6 2010/01/11 23:06:21 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.7 2010/01/14 20:44:45 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -58,7 +58,8 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
         int y = 400;
         setLocation(x, y);
 
-        this.setVisible(true);
+        setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initialize() {
@@ -82,8 +83,8 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
 
         choiceButtons = new JRadioButton[numOptions];
 
-        this.getContentPane().setLayout(new GridBagLayout());
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new GridBagLayout());
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         optionsPane.setLayout(new GridBagLayout());
         // optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -128,7 +129,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (arg0.getSource().equals(cancelButton)) {
-            return;
+            chosenOption = -1;
         }
         this.setVisible(false);
         this.dispose();
