@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.15 2010/01/01 18:57:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.16 2010/01/14 20:57:08 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 /**
  * This class manages the actions that the current user can execute at any point
  * in time. Each possible action is represented by an instance of a subclass of
- * PossibleAction. The complete set is stored in a Map per action (subclass)
- * type. <p>This class is implemented as a singleton to prevent multiple
+ * PossibleAction. The complete set is stored in aan ArrayList.
+ * <p>This class is implemented as a singleton to prevent multiple
  * instances lingering around, as there can only be one set of possible actions
  * at any point in time.
  *
@@ -87,11 +87,11 @@ public class PossibleActions {
     public boolean validate(PossibleAction checkedAction) {
 
         // Save is always allowed
-        if (checkedAction instanceof GameAction 
+        if (checkedAction instanceof GameAction
                 && ((GameAction)checkedAction).getMode() == GameAction.SAVE) {
             return true;
         }
-        
+
         // Check if action accurs in the list of possible actions
         for (PossibleAction action : possibleActions) {
             if (action.equals(checkedAction)) {
