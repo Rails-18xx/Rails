@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.87 2009/12/30 11:32:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.88 2010/01/14 21:01:19 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
@@ -13,7 +14,7 @@ import rails.util.LocalText;
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for
  * each new Operating Round. At the end of a round, the current instance should
- * be discarded. <p> Permanent memory is formed by static attributes.
+ * be discarded.
  */
 public class OperatingRound extends Round implements Observer {
 
@@ -22,8 +23,6 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean actionPossible = true;
 
-    protected String actionNotPossibleMessage = "";
-
     protected TreeMap<Integer, PublicCompanyI> operatingCompanies;
     protected List<PublicCompanyI> companiesOperatedThisRound
     	= new ArrayList<PublicCompanyI> ();
@@ -31,8 +30,6 @@ public class OperatingRound extends Round implements Observer {
     protected PublicCompanyI[] operatingCompanyArray;
 
     protected IntegerState operatingCompanyIndexObject;
-
-    protected int operatingCompanyIndex;
 
     protected PublicCompanyI operatingCompany;
 
@@ -60,28 +57,13 @@ public class OperatingRound extends Round implements Observer {
 
     protected Map<PublicCompanyI, Integer> loansThisRound = null;
 
-    protected PhaseI currentPhase;
-
     protected String thisOrNumber;
 
     protected PossibleAction selectedAction = null;
 
     protected PossibleAction savedAction = null;
 
-    protected int cashToBeRaisedByPresident = 0;
-
-    protected int splitRule = SPLIT_NOT_ALLOWED; // To be made configurable
-
-    /* Permanent memory */
-    static protected List<Player> players;
-
-    static protected int numberOfPlayers = 0;
-
-    /* Constants */
-    public static final int SPLIT_NOT_ALLOWED = 0;
-
-    public static final int SPLIT_ROUND_UP = 1; // More money to the
-    // shareholders
+    //protected int cashToBeRaisedByPresident = 0;
 
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
@@ -123,12 +105,11 @@ public class OperatingRound extends Round implements Observer {
     public OperatingRound(GameManagerI gameManager) {
 		super (gameManager);
 
-        if (players == null) {
-            players = gameManager.getPlayers();
-            numberOfPlayers = players.size();
-        }
-
         operatingCompanyArray = super.getOperatingCompanies();
+
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
     }
 
     public void start(boolean operate) {
@@ -322,7 +303,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (tile == null) break;
 
-            if (!currentPhase.isTileColourAllowed(tile.getColourName())) {
+            if (!getCurrentPhase().isTileColourAllowed(tile.getColourName())) {
                 errMsg =
                         LocalText.getText("TileNotYetAvailable",
                                 tile.getExternalId());
@@ -1032,8 +1013,6 @@ public class OperatingRound extends Round implements Observer {
     protected void prepareStep() {
         int step = stepObject.intValue();
 
-        currentPhase = gameManager.getCurrentPhase();
-
         if (step == STEP_LAY_TRACK) {
             getNormalTileLays();
         } else if (step == STEP_LAY_TOKEN) {
@@ -1062,7 +1041,7 @@ public class OperatingRound extends Round implements Observer {
     protected void getNormalTileLays() {
 
         tileLaysPerColour =
-                new HashMap<String, Integer>(currentPhase.getTileColours()); // Clone
+                new HashMap<String, Integer>(getCurrentPhase().getTileColours()); // Clone
         // it.
         int allowedNumber;
         for (String colour : tileLaysPerColour.keySet()) {
@@ -1257,13 +1236,14 @@ public class OperatingRound extends Round implements Observer {
             operatingCompanyIndexObject.add(1);
         }
 
-        operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
 
         if (operatingCompanyIndex >= operatingCompanyArray.length) {
             operatingCompany = null;
             return false;
         } else {
             operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+            log.debug("Operating company is "+operatingCompany.getName()+" in "+getRoundName());
             return true;
         }
     }
@@ -1294,6 +1274,7 @@ public class OperatingRound extends Round implements Observer {
         boolean presidentMustSellShares = false;
         int price = action.getPricePaid();
         int actualPresidentCash = 0;
+        int cashToBeRaisedByPresident = 0;
         Player currentPlayer = operatingCompany.getPresident();
 
         // Dummy loop to enable a quick jump out.
@@ -1454,10 +1435,9 @@ public class OperatingRound extends Round implements Observer {
 
         // Check if the phase has changed.
         gameManager.getTrainManager().checkTrainAvailability(train, oldHolder);
-        currentPhase = getCurrentPhase();
 
         // Check if any companies must discard trains
-        if (currentPhase != previousPhase && checkForExcessTrains()) {
+        if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
             stepObject.set(STEP_DISCARD_TRAINS);
         }
 
@@ -1469,7 +1449,7 @@ public class OperatingRound extends Round implements Observer {
         excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
         Player player;
         for (PublicCompanyI comp : operatingCompanyArray) {
-            if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(currentPhase.getIndex())) {
+            if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(getCurrentPhase().getIndex())) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
@@ -1603,7 +1583,7 @@ public class OperatingRound extends Round implements Observer {
             basePrice = privateCompany.getBasePrice();
 
             // Is private buying allowed?
-            if (!currentPhase.isPrivateSellingAllowed()) {
+            if (!getCurrentPhase().isPrivateSellingAllowed()) {
                 errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
                 break;
             }
@@ -1816,7 +1796,7 @@ public class OperatingRound extends Round implements Observer {
             int presCash = president.getCash();
             if (remainder > presCash) {
                 // Start a share selling round
-                cashToBeRaisedByPresident = remainder - presCash;
+                int cashToBeRaisedByPresident = remainder - presCash;
                 log.info("A share selling round must be started as the president cannot pay $"
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
@@ -1935,7 +1915,7 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public boolean setPossibleActions() {
 
-        operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
         operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
         /* Create a new list of possible actions for the UI */
@@ -1980,25 +1960,27 @@ public class OperatingRound extends Round implements Observer {
         // The following additional "common" actions are only available if the
         // primary action is not forced.
         if (step >= 0) {
-            
+
             setBonusTokenLays();
 
             setDestinationActions();
-    
+
             setGameSpecificPossibleActions();
-    
+
             // Can private companies be bought?
             if (getCurrentPhase().isPrivateSellingAllowed()) {
-    
+
                 // Create a list of players with the current one in front
                 int currentPlayerIndex = operatingCompany.getPresident().getIndex();
                 Player player;
                 int minPrice, maxPrice;
+                List<Player> players = getPlayers();
+                int numberOfPlayers = getNumberOfPlayers();
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
                                                      + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
                     for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
-    
+
                         minPrice =
                                 (int) (privComp.getBasePrice() * operatingCompany.getLowerPrivatePriceFactor());
                         maxPrice =
@@ -2008,7 +1990,7 @@ public class OperatingRound extends Round implements Observer {
                     }
                 }
             }
-    
+
             // Are there any "common" special properties,
             // i.e. properties that are available to everyone?
             List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
@@ -2090,15 +2072,15 @@ public class OperatingRound extends Round implements Observer {
 
         // First check if any more trains may be bought from the Bank
         // Postpone train limit checking, because an exchange might be possible
-        if (currentPhase.canBuyMoreTrainsPerTurn()
+        if (getCurrentPhase().canBuyMoreTrainsPerTurn()
             || trainsBoughtThisTurn.isEmpty()) {
             boolean mayBuyMoreOfEachType =
-                    currentPhase.canBuyMoreTrainsPerTypePerTurn();
+                    getCurrentPhase().canBuyMoreTrainsPerTypePerTurn();
 
             /* New trains */
             trains = trainMgr.getAvailableNewTrains();
             for (TrainI train : trains) {
-                if (!operatingCompany.mayBuyTrainType(train)) continue; 
+                if (!operatingCompany.mayBuyTrainType(train)) continue;
                 if (!mayBuyMoreOfEachType
                     && trainsBoughtThisTurn.contains(train.getType())) {
                     continue;
@@ -2178,12 +2160,14 @@ public class OperatingRound extends Round implements Observer {
         if (!canBuyTrainNow) return;
 
         /* Other company trains, sorted by president (current player first) */
-        if (currentPhase.isTrainTradingAllowed()) {
+        if (getCurrentPhase().isTrainTradingAllowed()) {
             PublicCompanyI c;
             BuyTrain bt;
             Player p;
             Portfolio pf;
             int index;
+            int numberOfPlayers = getNumberOfPlayers();
+
             // Set up a list per player of presided companies
             List<List<PublicCompanyI>> companiesPerPlayer =
                     new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
@@ -2254,7 +2238,7 @@ public class OperatingRound extends Round implements Observer {
         List<PublicCompanyI> list;
         int currentPlayerIndex = getCurrentPlayerIndex();
         for (int i = currentPlayerIndex; i < currentPlayerIndex
-                                             + numberOfPlayers; i++) {
+                                             + getNumberOfPlayers(); i++) {
             player = gameManager.getPlayerByIndex(i);
             if (excessTrainCompanies.containsKey(player)) {
                 list = excessTrainCompanies.get(player);
@@ -2269,10 +2253,6 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
         }
-    }
-
-    public int getCashToBeRaisedByPresident() {
-        return cashToBeRaisedByPresident;
     }
 
     /**

@@ -2,19 +2,21 @@ package rails.game.specific._1856;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.BooleanState;
+import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
 
     private BooleanState finalLoanRepaymentPending
         = new BooleanState ("LoanRepaymentPending", false);
+
     private Player playerToStartLoanRepayment = null;
 
     public static final int STEP_REPAY_LOANS = 6;
@@ -57,7 +59,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 operatingCompanyIndexObject.add(1);
             }
 
-            operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
 
             if (operatingCompanyIndex >= operatingCompanyArray.length) {
                 return false;
@@ -189,7 +191,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int presCash = president.getCash();
         if (remainder > presCash) {
             // Start a share selling round
-            cashToBeRaisedByPresident = remainder - presCash;
+            int cashToBeRaisedByPresident = remainder - presCash;
             log.info("A share selling round must be started as the president cannot pay $"
                     + remainder + " loan interest");
             log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
@@ -305,7 +307,7 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected void setGameSpecificPossibleActions() {
         // Take a loan
-        if (currentPhase.isLoanTakingAllowed()
+        if (getCurrentPhase().isLoanTakingAllowed()
             && operatingCompany.canLoan()
             && (loansThisRound == null
                 || !loansThisRound.containsKey(operatingCompany)
@@ -355,11 +357,11 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     public boolean buyTrain(BuyTrain action) {
 
-        PhaseI prePhase = currentPhase;
+        PhaseI prePhase = getCurrentPhase();
 
         boolean result = super.buyTrain(action);
 
-        PhaseI postPhase = currentPhase;
+        PhaseI postPhase = getCurrentPhase();
 
         if (postPhase != prePhase) {
             if (postPhase.getName().equals("5")) {
@@ -462,6 +464,8 @@ public class OperatingRound_1856 extends OperatingRound {
 
     	// End of CGRFormationRound
         finalLoanRepaymentPending.set(false);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
+
         if (!resetOperatingCompanies(mergingCompanies)) return;
         if (operatingCompany != null) {
             setStep(STEP_INITIAL);
@@ -509,6 +513,7 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         String message;
+        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
                 operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
