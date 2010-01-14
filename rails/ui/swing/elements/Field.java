@@ -1,9 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.9 2009/12/13 16:39:49 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.10 2010/01/14 20:45:43 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Observable;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -24,6 +24,8 @@ public class Field extends JLabel implements ViewObject {
 
     private ModelObject modelObject;
     private Color normalBgColour = NORMAL_BG_COLOUR;
+
+    private List<JComponent> dependents = null;
 
     private boolean pull = false;
 
@@ -115,8 +117,18 @@ public class Field extends JLabel implements ViewObject {
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
-        if (modelObject != null)
-            modelObject.deleteObserver(this);
+        if (modelObject != null) modelObject.deleteObserver(this);
+        dependents = null;
     }
+
+    public void addDependent (JComponent dependent) {
+    	if (dependents == null) dependents = new ArrayList<JComponent>(2);
+    	dependents.add(dependent);
+    }
+
+    public List<JComponent> getDependents () {
+    	return dependents;
+    }
+
 
 }
