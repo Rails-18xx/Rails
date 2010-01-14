@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.1 2010/01/05 20:54:05 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.2 2010/01/14 20:48:26 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.state.BooleanState;
+import rails.ui.swing.elements.Field;
 import rails.ui.swing.elements.ViewObject;
 
 public abstract class GridPanel extends JPanel
@@ -115,9 +116,17 @@ implements ActionListener, KeyListener {
 
     public void setRowVisibility (int rowIndex, boolean value) {
 
-        for (int j=0; j < fields.length; j++) {
+    	List<JComponent> dependents;
+
+    	for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
+                if (fields[j][rowIndex] instanceof Field
+                		&& (dependents = ((Field)fields[j][rowIndex]).getDependents()) != null) {
+                	for (JComponent dependent : dependents) {
+                		dependent.setVisible(value);
+                	}
+                }
             }
         }
         parentFrame.pack();
