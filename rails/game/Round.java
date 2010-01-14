@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.33 2009/12/30 11:32:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.34 2010/01/14 21:00:30 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.GuiHints;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.move.MoveStack;
@@ -22,6 +23,7 @@ import rails.util.LocalText;
 public abstract class Round implements RoundI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
+    protected GuiHints guiHints = null;
 
     protected static Logger log =
             Logger.getLogger(Round.class.getPackage().getName());
@@ -37,7 +39,7 @@ public abstract class Round implements RoundI {
     protected StockMarketI stockMarket = null;
     protected MapManager mapManager = null;
 
-    protected Class<? extends RoundI> roundTypeForUI = null;
+    //protected Class<? extends RoundI> roundTypeForUI = null;
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
 
     protected MoveStack moveStack = null;
@@ -52,23 +54,25 @@ public abstract class Round implements RoundI {
 
         this.gameManager = aGameManager;
 
-        if (aGameManager == null) {
+        if (gameManager == null) {
             companyManager = null;
         } else {
-            companyManager = aGameManager.getCompanyManager();
-            playerManager = aGameManager.getPlayerManager();
-            bank = aGameManager.getBank();
+            companyManager = gameManager.getCompanyManager();
+            playerManager = gameManager.getPlayerManager();
+            bank = gameManager.getBank();
             ipo = bank.getIpo();
             pool = bank.getPool();
             unavailable = bank.getUnavailable();
             scrapHeap = bank.getScrapHeap();
-            stockMarket = aGameManager.getStockMarket();
-            mapManager = aGameManager.getMapManager();
+            stockMarket = gameManager.getStockMarket();
+            mapManager = gameManager.getMapManager();
 
-            moveStack = aGameManager.getMoveStack();
+            moveStack = gameManager.getMoveStack();
         }
 
-        roundTypeForUI = getClass();
+        //roundTypeForUI = getClass();
+        guiHints = gameManager.getUIHints();
+        guiHints.setCurrentRoundType(getClass());
 	}
 
     /*
@@ -97,6 +101,14 @@ public abstract class Round implements RoundI {
         gameManager.setCurrentPlayer(player);
     }
 
+    protected List<Player> getPlayers() {
+    	return gameManager.getPlayers();
+    }
+
+    protected int getNumberOfPlayers() {
+    	return gameManager.getNumberOfPlayers();
+    }
+
     public PhaseI getCurrentPhase() {
         return gameManager.getCurrentPhase();
     }
@@ -111,9 +123,9 @@ public abstract class Round implements RoundI {
         return this.getClass();
     }
 
-    public void setRoundTypeForUI(Class<? extends RoundI> roundTypeForUI) {
-        this.roundTypeForUI = roundTypeForUI;
-    }
+    //public void setRoundTypeForUI(Class<? extends RoundI> roundTypeForUI) {
+    //    this.roundTypeForUI = roundTypeForUI;
+    //}
 
     public String getGameOption (String name) {
     	return gameManager.getGameOption(name);
@@ -344,12 +356,12 @@ public abstract class Round implements RoundI {
         // TEMPORARY? Report financials
         for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(LocalText.getText("Has", c.getName(), 
+                ReportBuffer.add(LocalText.getText("Has", c.getName(),
                         Bank.format(c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(LocalText.getText("Has", p.getName(), 
+            ReportBuffer.add(LocalText.getText("Has", p.getName(),
                     Bank.format(p.getCash())));
         }
         // Inform GameManager
