@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.74 2010/01/01 18:58:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.75 2010/01/14 21:02:39 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -9,7 +9,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
-import rails.common.Defs;
+import rails.common.GuiDef;
+import rails.common.GuiHints;
 import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
@@ -37,11 +38,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             OperatingRound.class;
 
     // Variable UI Class names
-    protected String gameUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_UI_MANAGER);
-    protected String orUIManagerClassName = Defs.getDefaultClassName(Defs.ClassName.OR_UI_MANAGER);
-    protected String gameStatusClassName = Defs.getDefaultClassName(Defs.ClassName.GAME_STATUS);
-    protected String statusWindowClassName = Defs.getDefaultClassName(Defs.ClassName.STATUS_WINDOW);
-    protected String orWindowClassName = Defs.getDefaultClassName(Defs.ClassName.OR_WINDOW);
+    protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
+    protected String orUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_UI_MANAGER);
+    protected String gameStatusClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_STATUS);
+    protected String statusWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.STATUS_WINDOW);
+    protected String orWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_WINDOW);
 
     protected PlayerManager playerManager;
     protected CompanyManagerI companyManager;
@@ -77,6 +78,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
 
+    protected EnumMap<GameDef.Parm, Object> gameParameters
+    		= new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+
     /**
      * Current round should not be set here but from within the Round classes.
      * This is because in some cases the round has already changed to another
@@ -98,11 +102,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean gameOver = false;
     protected boolean endedByBankruptcy = false;
 
-    /** Flags to be passed to the UI, aiding the layout definition */
-    protected EnumMap<Defs.Parm, Boolean> gameParameters =
-        new EnumMap<Defs.Parm, Boolean>(Defs.Parm.class);
+    /** UI display hints */
+    protected GuiHints guiHints;
 
-    protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
+    /** Flags to be passed to the UI, aiding the layout definition */
+    protected EnumMap<GuiDef.Parm, Boolean> guiParameters =
+        new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
+
+    //protected int stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
 
     /**
      * Map of GameManager instances.
@@ -191,6 +198,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     	gameManagerMap.put(GM_KEY, this);
     	displayBuffer = new DisplayBuffer();
     	reportBuffer = new ReportBuffer();
+    	guiHints = new GuiHints();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -231,7 +239,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
 
         // StockRound class and other properties
-        Tag srTag = tag.getChild("StockRound");
+        // Set default rule(s)
+       	gameParameters.put(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+       			GameDef.Parm.STOCK_ROUND_SEQUENCE.defaultValueAsInt());
+
+       	Tag srTag = tag.getChild("StockRound");
         if (srTag != null) {
             String srClassName =
                     srTag.getAttributeAsString("class", "rails.game.StockRound");
@@ -246,11 +258,17 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     srTag.getAttributeAsString("sequence");
             if (Util.hasValue(stockRoundSequenceRuleString)) {
                 if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
-                    stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
+                    //stockRoundSequenceRule = StockRound.SELL_BUY_SELL;
+                	gameParameters.put(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                			StockRound.SELL_BUY_SELL);
                 } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuy")) {
-                    stockRoundSequenceRule = StockRound.SELL_BUY;
+                    //stockRoundSequenceRule = StockRound.SELL_BUY;
+                	gameParameters.put(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                			StockRound.SELL_BUY);
                 } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuyOrBuySell")) {
-                    stockRoundSequenceRule = StockRound.SELL_BUY_OR_BUY_SELL;
+                    //stockRoundSequenceRule = StockRound.SELL_BUY_OR_BUY_SELL;
+                	gameParameters.put(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                			StockRound.SELL_BUY_OR_BUY_SELL);
                 }
             }
 
@@ -435,17 +453,17 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     private void setGameParameters () {
 
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-            if (company.hasParPrice()) gameParameters.put(Defs.Parm.HAS_ANY_PAR_PRICE, true);
-            if (company.canBuyPrivates()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
-            if (company.canHoldOwnShares()) gameParameters.put(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
-            if (company.getMaxNumberOfLoans() != 0) gameParameters.put(Defs.Parm.HAS_ANY_COMPANY_LOANS, true);
+            if (company.hasParPrice()) guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, true);
+            if (company.canBuyPrivates()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
+            if (company.canHoldOwnShares()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
+            if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);
         }
 
 loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
-                    gameParameters.put(Defs.Parm.DO_BONUS_TOKENS_EXIST, true);
+                    guiParameters.put(GuiDef.Parm.DO_BONUS_TOKENS_EXIST, true);
                     break loop;
                 }
             }
@@ -650,6 +668,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         boolean result = true;
 
         DisplayBuffer.clear();
+        guiHints.clearVisibilityHints();
 
         // The action is null only immediately after Load.
         if (action != null) {
@@ -782,7 +801,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     "ExecutedActions");
             if (moveStack.isOpen()) moveStack.finish();
         }
-        
+
         DisplayBuffer.clear();
         return true;
     }
@@ -819,6 +838,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void finishShareSellingRound() {
         setRound(interruptedRound);
+        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
         getCurrentRound().resume();
     }
 
@@ -827,6 +849,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void finishTreasuryShareRound() {
         setRound(interruptedRound);
+        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
         ((OperatingRound) getCurrentRound()).nextStep();
     }
 
@@ -1104,13 +1129,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#canAnyCompanyHoldShares()
      */
     public boolean canAnyCompanyHoldShares() {
-        return (Boolean) getGameParameter(Defs.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
+        return (Boolean) getGuiParameter(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getClassName(rails.common.Defs.ClassName)
      */
-    public String getClassName (Defs.ClassName key) {
+    public String getClassName (GuiDef.ClassName key) {
 
         switch (key) {
 
@@ -1135,7 +1160,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#getStockRoundSequenceRule()
      */
     public int getStockRoundSequenceRule() {
-        return stockRoundSequenceRule;
+        return (Integer) gameParameters.get(GameDef.Parm.STOCK_ROUND_SEQUENCE);
     }
 
     /* (non-Javadoc)
@@ -1148,7 +1173,19 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCommonParameter(rails.common.Defs.Parm)
      */
-    public Object getGameParameter (Defs.Parm key) {
+    public Object getGuiParameter (GuiDef.Parm key) {
+        if (guiParameters.containsKey(key)) {
+            return guiParameters.get(key);
+        } else {
+            return false;
+        }
+    }
+
+    public void setGameParameter (GameDef.Parm key, Object value) {
+    	gameParameters.put(key, value);
+    }
+
+    public Object getGameParameter (GameDef.Parm key) {
         if (gameParameters.containsKey(key)) {
             return gameParameters.get(key);
         } else {
@@ -1256,5 +1293,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
 	public ReportBuffer getReportBuffer() {
 		return reportBuffer;
+	}
+
+	public GuiHints getUIHints() {
+		return guiHints;
 	}
 }
