@@ -3,6 +3,7 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.model.ModelObject;
 import rails.game.state.IntegerState;
@@ -46,6 +47,11 @@ public abstract class StartRound extends Round {
 
         super (gameManager);
         this.startPacket = gameManager.getStartPacket();
+
+        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
+        guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
     }
 
     /**
@@ -299,7 +305,12 @@ public abstract class StartRound extends Round {
      */
     protected abstract boolean pass(String playerName);
 
-    /*----- Setting up the UI for the next action -----*/
+    @Override
+	protected void finishRound() {
+    	super.finishRound();
+    }
+
+    	/*----- Setting up the UI for the next action -----*/
 
    /**
      * Get the currentPlayer index in the player list (starting at 0).

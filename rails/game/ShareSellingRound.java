@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.26 2009/11/26 20:14:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.27 2010/01/14 20:59:19 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -7,6 +7,7 @@ package rails.game;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.state.IntegerState;
@@ -37,6 +38,8 @@ public class ShareSellingRound extends StockRound {
 
 		super (gameManager);
 		this.parentRound = parentRound;
+
+		guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
     public void start(Player sellingPlayer, int cashToRaise,
