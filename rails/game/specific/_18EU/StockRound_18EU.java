@@ -428,7 +428,6 @@ public class StockRound_18EU extends StockRound {
         } else {
             ReportBuffer.add(LocalText.getText("SelectedHomeBase",
                     company.getName(),
-                    homeHex.getName(),
                     selectedHomeCity.toString() ));
         }
 
