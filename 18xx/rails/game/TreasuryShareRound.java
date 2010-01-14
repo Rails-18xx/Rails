@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.15 2009/11/27 20:30:56 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.16 2010/01/14 20:57:23 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -7,6 +7,7 @@ package rails.game;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
@@ -44,6 +45,8 @@ public class TreasuryShareRound extends StockRound {
                         false);
 
         setCurrentPlayerIndex(sellingPlayer.getIndex());
+
+        guiHints.setActivePanel(GuiDef.Panel.STATUS);
 
     }
 

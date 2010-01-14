@@ -3,6 +3,7 @@ package rails.game.specific._18EU;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
@@ -18,6 +19,9 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
 
     public FinalMinorExchangeRound(GameManagerI aGameManager) {
         super (aGameManager);
+
+        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
+        guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
     public void start(Player playerToStartFMERound) {
