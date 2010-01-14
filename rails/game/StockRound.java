@@ -2,6 +2,7 @@ package rails.game;
 
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.move.DoubleMapChange;
@@ -46,15 +47,12 @@ public class StockRound extends Round {
     static protected final int SELL_BUY = 1;
     static protected final int SELL_BUY_OR_BUY_SELL = 2;
 
-    /* Action comnstants */
+    /* Action constants */
     static public final int BOUGHT = 0;
     static public final int SOLD = 1;
 
     /* Rules */
     protected int sequenceRule;
-    static protected boolean buySellInSameRound = true;
-    static protected boolean noSaleInFirstSR = false;
-    static protected boolean noSaleIfNotOperated = false;
 
 	/**
 	 * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
@@ -70,6 +68,9 @@ public class StockRound extends Round {
 
         sequenceRule = gameManager.getStockRoundSequenceRule();
 
+        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
+        guiHints.setActivePanel(GuiDef.Panel.STATUS);
 	}
 
     public void start() {
@@ -842,7 +843,7 @@ public class StockRound extends Round {
         while (true) {
 
             // Check everything
-            if (getStockRoundNumber() == 1 && noSaleInFirstSR) {
+            if (getStockRoundNumber() == 1 && noSaleInFirstSR()) {
                 errMsg = LocalText.getText("FirstSRNoSell");
                 break;
             }
@@ -1221,7 +1222,7 @@ public class StockRound extends Round {
      */
     public boolean mayCurrentPlayerSellAnything() {
 
-        if (getStockRoundNumber() == 1 && noSaleInFirstSR) return false;
+        if (getStockRoundNumber() == 1 && noSaleInFirstSR()) return false;
 
         if (companyBoughtThisTurnWrapper.getObject() != null
             && (sequenceRule == SELL_BUY_OR_BUY_SELL
@@ -1316,12 +1317,20 @@ public class StockRound extends Round {
     }
 
 
-    public static void setNoSaleInFirstSR() {
-        noSaleInFirstSR = true;
+    //public static void setNoSaleInFirstSR() {
+    //    noSaleInFirstSR = true;
+    //}
+
+    //public static void setNoSaleIfNotOperated() {
+    //    noSaleIfNotOperated = true;
+    //}
+
+    protected boolean noSaleInFirstSR() {
+    	return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR);
     }
 
-    public static void setNoSaleIfNotOperated() {
-        noSaleIfNotOperated = true;
+    protected boolean noSaleIfNotOperated() {
+    	return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED);
     }
 
     @Override
