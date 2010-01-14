@@ -82,7 +82,7 @@
 		<Upgrade id="42,43,46,47" />
 	</Tile>
 	<Tile id="25" quantity="1">
-		<Upgrade id="40" />
+		<Upgrade id="40,45,46" />
 	</Tile>
 	<Tile id="26" quantity="1">
 		<Upgrade id="42,44,45" />
