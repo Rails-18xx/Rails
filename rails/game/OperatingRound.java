@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.90 2010/01/15 19:55:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.91 2010/01/15 20:21:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2244,6 +2244,7 @@ public class OperatingRound extends Round implements Observer {
                                              + getNumberOfPlayers(); i++) {
             player = gameManager.getPlayerByIndex(i);
             if (excessTrainCompanies.containsKey(player)) {
+                setCurrentPlayer(player);
                 list = excessTrainCompanies.get(player);
                 for (PublicCompanyI comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
@@ -2251,7 +2252,6 @@ public class OperatingRound extends Round implements Observer {
                     // We handle one company at at time.
                     // We come back here until all excess trains have been
                     // discarded.
-                    setCurrentPlayer(player);
                     return;
                 }
             }
