@@ -3,10 +3,12 @@
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1835"/>
 		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
-		<PlayerShareLimit percentage="60"/>
-		<BankPoolLimit percentage="50"/>
-		<StockRound class="rails.game.specific._1835.StockRound_1835" 
-			sequence="SellBuySell"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="50"/>
+			<StockRound class="rails.game.specific._1835.StockRound_1835" 
+				sequence="SellBuySell"/>
+		</GameParameters>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="currentOR"/>
 			<!-- "Runs out"; when "broken", -1 is the limit -->

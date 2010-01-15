@@ -3,10 +3,12 @@
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1870"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<PlayerShareLimit percentage="60">
-			<PriceProtection/>
-		</PlayerShareLimit>
-		<BankPoolLimit percentage="50"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60">
+				<PriceProtection/>
+			</PlayerShareLimit>
+			<BankPoolLimit percentage="50"/>
+		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>
