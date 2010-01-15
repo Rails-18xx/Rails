@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.89 2010/01/14 22:10:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.90 2010/01/15 19:55:59 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2197,7 +2197,8 @@ public class OperatingRound extends Round implements Observer {
                     for (TrainI train : trains) {
                         if (train.isObsolete()) continue;
                         if (i != currentPlayerIndex
-                                    && trainMgr.buyAtFaceValueBetweenDifferentPresidents()
+                                    //&& trainMgr.buyAtFaceValueBetweenDifferentPresidents()
+                        			&& getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
                                 || operatingCompany.mustTradeTrainsAtFixedPrice()
                                 || company.mustTradeTrainsAtFixedPrice()) {
                             if (cash >= train.getCost()) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.15 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.16 2010/01/15 19:55:59 evos Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -16,7 +16,7 @@ import rails.util.Tag;
  */
 public class ComponentManager {
 
-    private static String gameName;
+    private String gameName;
 
     /** The name of the XML tag used to configure the ComponentManager. */
     public static final String ELEMENT_ID = "ComponentManager";
@@ -40,31 +40,18 @@ public class ComponentManager {
             Logger.getLogger(ComponentManager.class.getPackage().getName());
     protected static List<String> directories = new ArrayList<String>();
 
-    public static ComponentManager getInstance() throws ConfigurationException {
-        if (instance != null) {
-            return instance;
-        }
-        throw new ConfigurationException(
-                LocalText.getText("ComponentManagerNotYetConfigured"));
-    }
-
-    public static synchronized void configureInstance(String gameName, Tag tag,
+    public static synchronized ComponentManager configureInstance(String gameName, Tag tag,
     		Map<String, String> gameOptions)
             throws ConfigurationException {
-        if (instance != null) {
-            throw new ConfigurationException(
-                    LocalText.getText("ComponentManagerNotReconfigured"));
-        }
-        new ComponentManager(gameName, tag, gameOptions);
+        return new ComponentManager(gameName, tag, gameOptions);
     }
 
     private ComponentManager(String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
 
-        instance = this;
         this.gameOptions = gameOptions;
+        this.gameName = gameName;
 
-        ComponentManager.gameName = gameName;
         componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
         for (Tag component : componentTags) {
             String compName = component.getAttributeAsString("name");
@@ -104,7 +91,7 @@ public class ComponentManager {
         String file = componentTag.getAttributeAsString(COMPONENT_FILE_TAG);
 
         // Only one component per name.
-        if (instance.mComponentMap.get(name) != null) {
+        if (mComponentMap.get(name) != null) {
             throw new ConfigurationException(LocalText.getText(
                     "ComponentConfiguredTwice", name));
         }
@@ -136,9 +123,8 @@ public class ComponentManager {
         if (file != null) {
             directories.add("data/" + gameName);
             configElement = Tag.findTopTagInFile(file, directories, name);
+            configElement.setGameOptions(componentTag.getGameOptions());
         }
-
-        configElement.setGameOptions(gameOptions);
 
         try {
             component.configureFromXML(configElement);
@@ -148,7 +134,7 @@ public class ComponentManager {
         }
 
         // Add it to the map of known components.
-        instance.mComponentMap.put(name, component);
+        mComponentMap.put(name, component);
         log.debug(LocalText.getText("ComponentInitAs", name, clazz ));
 
     }
@@ -165,12 +151,5 @@ public class ComponentManager {
 
     private Map<String, ConfigurableComponentI> mComponentMap =
             new HashMap<String, ConfigurableComponentI>();
-
-    /** Remember our singleton instance. */
-    private static ComponentManager instance;
-
-    public static String getGameName() {
-        return gameName;
-    }
 
 }

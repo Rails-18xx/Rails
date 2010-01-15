@@ -11,7 +11,6 @@ import rails.util.*;
 public class Bank implements CashHolder, ConfigurableComponentI {
 
     /** Default limit of shares in the bank pool */
-    private static final int DEFAULT_POOL_SHARE_LIMIT = 50;
     private static final int DEFAULT_BANK_AMOUNT = 12000;
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
@@ -39,8 +38,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
      * rest is copied.
      */
     private String moneyFormat = null;
-
-    private int poolShareLimit = DEFAULT_POOL_SHARE_LIMIT;
 
     protected static Logger log =
             Logger.getLogger(Bank.class.getPackage().getName());
@@ -118,13 +115,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 }
 
     /**
-     * @param percentage of a company allowed to be in the Bank pool.
-     */
-    public void setPoolShareLimit(int percentage) {
-        poolShareLimit = percentage;
-    }
-
-    /**
      * @return IPO Portfolio
      */
     public Portfolio getIpo() {
@@ -200,15 +190,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 
     public ModelObject getCashModel() {
         return money;
-    }
-
-    /**
-     * Get the maximum share percentage that may be sold to the Bank Pool.
-     *
-     * @return The maximum percentage.
-     */
-    public int getPoolShareLimit() {
-        return poolShareLimit;
     }
 
     public static String format(int amount) {

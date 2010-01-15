@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.44 2010/01/14 21:03:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.45 2010/01/15 19:55:59 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -72,7 +72,6 @@ public class Game {
     public boolean setup() {
 
         try {
-            // Have the ComponentManager work through the other rails.game files
             componentManagerTag =
                     Tag.findTopTagInFile(GAME_XML_FILE, directories,
                             ComponentManager.ELEMENT_ID);
@@ -81,9 +80,9 @@ public class Game {
                         "No Game XML element found in file " + GAME_XML_FILE);
             }
 
-            ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
-
-            componentManager = ComponentManager.getInstance();
+            componentManagerTag.setGameOptions(gameOptions);
+            componentManager =
+            	ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
 
             log.info("========== Start of rails.game " + name + " ==========");
             log.info("Rails version "+version);

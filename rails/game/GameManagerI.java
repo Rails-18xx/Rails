@@ -166,17 +166,11 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 	public void setPlayerCertificateLimit(int newLimit);
 	public ModelObject getPlayerCertificateLimitModel ();
 
-    public int getPlayerShareLimit();
-
     public abstract String getHelp();
 
     public abstract boolean canAnyCompanyHoldShares();
 
     public abstract String getClassName(GuiDef.ClassName key);
-
-    public abstract int getStockRoundSequenceRule();
-
-    public abstract int getTreasuryShareLimit();
 
     public abstract Object getGuiParameter(GuiDef.Parm key);
     public Object getGameParameter (GameDef.Parm key);
@@ -188,7 +182,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public <T extends SpecialPropertyI> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised);
 
-    public String getKey ();
+    public String getGMKey ();
     public MoveStack getMoveStack ();
 	public DisplayBuffer getDisplayBuffer();
 	public ReportBuffer getReportBuffer();

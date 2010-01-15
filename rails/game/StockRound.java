@@ -66,7 +66,7 @@ public class StockRound extends Round {
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
 
-        sequenceRule = gameManager.getStockRoundSequenceRule();
+        sequenceRule = getGameParameterAsInt(GameDef.Parm.STOCK_ROUND_SEQUENCE);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
@@ -298,7 +298,8 @@ public class StockRound extends Round {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell, bank.getPoolShareLimit()
+                    Math.min(maxShareToSell,
+                    		getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -871,7 +872,8 @@ public class StockRound extends Round {
             }
 
             // The pool may not get over its limit.
-            if (pool.getShare(company) + numberToSell * company.getShareUnit() > bank.getPoolShareLimit()) {
+            if (pool.getShare(company) + numberToSell * company.getShareUnit()
+            		> getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
@@ -1073,7 +1075,7 @@ public class StockRound extends Round {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",
-                                String.valueOf(gameManager.getPlayerShareLimit()));
+                                String.valueOf(getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)));
                 break;
             }
             break;
@@ -1284,7 +1286,8 @@ public class StockRound extends Round {
         // Check for per-company share limit
         if (player.getPortfolio().getShare(company)
                 + number * company.getShareUnit()
-                > gameManager.getPlayerShareLimit()
+                //> gameManager.getPlayerShareLimit()
+                > getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
             && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
     }
@@ -1306,12 +1309,13 @@ public class StockRound extends Round {
             int shareSize) {
 
         int limit;
+        int playerShareLimit = getGameParameterAsInt (GameDef.Parm.PLAYER_SHARE_LIMIT);
         if (!company.hasStarted()) {
-            limit = gameManager.getPlayerShareLimit();
+            limit = playerShareLimit;
         } else {
             limit =
                     company.getCurrentSpace().isNoHoldLimit() ? 100
-                            : gameManager.getPlayerShareLimit();
+                            : playerShareLimit;
         }
         return (limit - player.getPortfolio().getShare(company)) / shareSize;
     }
