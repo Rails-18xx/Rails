@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.12 2009/12/28 14:53:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.13 2010/01/15 19:52:01 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -48,6 +48,10 @@ public class Tag {
 
     public void setGameOptions (Map<String, String> gameOptions) {
     	this.gameOptions = gameOptions;
+    }
+
+    public Map<String, String> getGameOptions () {
+    	return gameOptions;
     }
 
     public Map<String, List<Tag>> getChildren() throws ConfigurationException {
