@@ -4,16 +4,20 @@
 		<Game name="18EU"/>
 		<GameOption name="Extra3Trains" values="0,1,2"/>
 		<GameOption name="Extra4Trains" values="0,1"/>
-		<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
-			sequence="sellBuy"
-			skipFirst="yes"/>
-		<OperatingRound class="rails.game.specific._18EU.OperatingRound_18EU"/>
-		<PlayerShareLimit percentage="60"/>
-		<BankPoolLimit percentage="50"/>
-		<TreasuryShareLimit percentage="80"/>
-		<GameStatus class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
-		<StatusWindow class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
-		<GameUIManager class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
+		<GameParameters>
+			<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
+				sequence="sellBuy"
+				skipFirst="yes"/>
+			<OperatingRound class="rails.game.specific._18EU.OperatingRound_18EU"/>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="50"/>
+			<TreasuryShareLimit percentage="80"/>
+		</GameParameters>
+		<GuiClasses>
+			<GameStatus class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
+			<StatusWindow class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
+			<GameUIManager class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
+		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

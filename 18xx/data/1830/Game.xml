@@ -12,11 +12,22 @@
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
+		<!-- The options in Game.xml are not currently used.
+			 See GamesList.xml for the real ones.
+		--> 
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<PlayerShareLimit percentage="60"/>
-		<BankPoolLimit percentage="50"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60">
+				<!-- Option "NumberOfPlayers" is automatically set 
+					by the game engine -->
+				<IfOption name="NumberOfPlayers" value="2">
+					<Attributes percentage="70"/>
+				</IfOption>
+			</PlayerShareLimit>			
+			<BankPoolLimit percentage="50"/>
+		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

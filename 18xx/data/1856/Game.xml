@@ -4,12 +4,16 @@
 		<Game name="1856"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
-		<StockRound class="rails.game.specific._1856.StockRound_1856" 
-			sequence="SellBuyOrBuySell"/>
-		<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
-		<StatusWindow class="rails.ui.swing.gamespecific._1856.StatusWindow_1856"/>
-		<PlayerShareLimit percentage="60"/>
-		<BankPoolLimit percentage="50"/>
+		<GameParameters>
+			<StockRound class="rails.game.specific._1856.StockRound_1856" 
+				sequence="SellBuyOrBuySell"/>
+			<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="50"/>
+		</GameParameters>
+		<GuiClasses>
+			<StatusWindow class="rails.ui.swing.gamespecific._1856.StatusWindow_1856"/>
+		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>
