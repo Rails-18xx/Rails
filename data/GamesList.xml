@@ -10,6 +10,16 @@ Limitations:
 - The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 - Privates cannot be traded between players.
 		</Description>
+		<!-- GAME OPTIONS must have:
+			- a name, which must also exist as an entry in LocalText.properties,
+			- optionally 'type="toggle"', which has the effect that the
+			  selection uses a checkbox instead of a dropdown list.
+			  In this case, 'values' must be absent 
+			  (the allowed values are fixed to "yes,no").
+			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
+			- optionally, a default value (only affects a toggle;
+			  in a dropdown the first item is always the default).
+		-->
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
