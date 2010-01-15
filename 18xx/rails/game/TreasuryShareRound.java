@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.16 2010/01/14 20:57:23 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.17 2010/01/15 19:55:59 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -126,7 +126,7 @@ public class TreasuryShareRound extends StockRound {
             int ownedShare =
                     operatingCompany.getPortfolio().getShare(operatingCompany);
             // Max share that may be owned
-            int maxShare = gameManager.getTreasuryShareLimit();
+            int maxShare = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
             int maxBuyable =
                     (maxShare - ownedShare) / operatingCompany.getShareUnit();
@@ -178,7 +178,8 @@ public class TreasuryShareRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell, bank.getPoolShareLimit()
+                    Math.min(maxShareToSell,
+                    		getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -306,10 +307,12 @@ public class TreasuryShareRound extends StockRound {
             portfolio = operatingCompany.getPortfolio();
 
             // Check if company would exceed the per-company share limit
-            if (portfolio.getShare(company) + shares * company.getShareUnit() > gameManager.getTreasuryShareLimit()) {
+            int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
+            if (portfolio.getShare(company) + shares * company.getShareUnit()
+            		> treasuryShareLimit) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",
-                                String.valueOf(gameManager.getTreasuryShareLimit()));
+                                String.valueOf(treasuryShareLimit));
                 break;
             }
 
@@ -423,7 +426,8 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // The pool may not get over its limit.
-            if (pool.getShare(company) + numberToSell * company.getShareUnit() > bank.getPoolShareLimit()) {
+            if (pool.getShare(company) + numberToSell * company.getShareUnit()
+            		> getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

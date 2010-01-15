@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.34 2010/01/14 21:00:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.35 2010/01/15 19:55:59 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -398,6 +398,26 @@ public abstract class Round implements RoundI {
 
     public GameManagerI getGameManager() {
         return gameManager;
+    }
+
+    protected Object getGameParameter (GameDef.Parm key) {
+        return gameManager.getGameParameter(key);
+    }
+
+    public int getGameParameterAsInt (GameDef.Parm key) {
+    	if (key.defaultValue() instanceof Integer) {
+    		return (Integer) gameManager.getGameParameter(key);
+    	} else {
+    		return -1;
+    	}
+    }
+
+    public boolean getGameParameterAsBoolean (GameDef.Parm key) {
+    	if (key.defaultValue() instanceof Boolean) {
+    		return (Boolean) gameManager.getGameParameter(key);
+    	} else {
+    		return false;
+    	}
     }
 
     public String getRoundName() {

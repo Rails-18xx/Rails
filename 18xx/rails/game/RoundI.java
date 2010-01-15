@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.13 2009/11/25 18:44:45 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/RoundI.java,v 1.14 2010/01/15 19:55:59 evos Exp $ */
 package rails.game;
 
 import rails.game.action.PossibleAction;
@@ -29,5 +29,6 @@ public interface RoundI {
     public void resume();
 
     public String getRoundName();
+
 
 }

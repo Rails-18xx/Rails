@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.7 2009/11/27 20:34:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.8 2010/01/15 19:55:59 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -115,7 +115,7 @@ public final class ReportBuffer {
         /* Create the pathname */
         reportPathname =
                 reportDirectory + "/" + GameManager.getInstance().getGameName() + "_"
-                		+ GameManager.getInstance().getKey() + "_"
+                		+ GameManager.getInstance().getGMKey() + "_"
                         + dateFormat.format(new Date()) + "."
                         + reportFilenameExtension;
         log.debug("Report pathname is " + reportPathname);
