@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.11 2010/01/08 21:30:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.12 2010/01/16 21:15:58 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
@@ -14,6 +14,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
     protected CompanyTypeI type;
     protected int companyNumber; // For internal use
     protected Portfolio portfolio = null;
+    protected String infoText = "";
 
     /**
      * The value per certificate at the end of the rails.game. Default 0 (for
@@ -85,6 +86,10 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 
     public String getLongName() {
         return longName;
+    }
+    
+    public String getInfoText(){
+        return infoText;
     }
 
     /**

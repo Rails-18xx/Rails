@@ -53,10 +53,12 @@
 	</Company>
 	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
 		longName="Camden &amp; Amboy">
+		<Info key="ComesWithCertificate" parm="PRR,10"/>
         <Blocking hex="H18"/>
     </Company>
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
 		longName="Baltimore &amp; Ohio">
+		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
         <Blocking hex="I13,I15"/>
     </Company>
   

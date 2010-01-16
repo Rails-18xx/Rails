@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.29 2010/01/16 15:06:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.30 2010/01/16 21:16:14 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -69,6 +69,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     specialProperties.add(sp);
                     sp.configureFromXML(spTag);
                 }
+            }
+            
+            // Extra info text(usually related to extra-share special properties)
+            Tag infoTag = tag.getChild("Info");
+            if (infoTag != null) {
+                String infoKey = infoTag.getAttributeAsString("key");
+                String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
+                infoText = LocalText.getText(infoKey, (Object[])infoParms);
             }
 
             // Closing conditions

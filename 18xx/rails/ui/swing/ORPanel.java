@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.40 2010/01/16 15:06:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.41 2010/01/16 21:16:30 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -476,6 +476,7 @@ implements ActionListener, KeyListener {
         JMenu item;
         List<SpecialPropertyI> sps;
         StringBuffer b;
+        String info;
 
         for (PrivateCompanyI p : privates) {
             sps = p.getSpecialProperties();
@@ -483,7 +484,11 @@ implements ActionListener, KeyListener {
             if (Util.hasValue(p.getLongName())) {
                 b.append(p.getLongName());
             }
-            if (sps == null || sps.isEmpty()) {
+            info = p.getInfoText();
+            if (Util.hasValue(info)) {
+                if (b.length() > 6) b.append("<br>");
+                b.append(info);
+            } else if (sps == null || sps.isEmpty()) {
                 if (b.length() > 6) b.append("<br>");
                 b.append(LocalText.getText("NoSpecialProperty"));
             } else {
