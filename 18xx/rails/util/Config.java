@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.10 2009/12/27 18:30:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.11 2010/01/16 14:09:33 evos Exp $*/
 package rails.util;
 
 import java.io.FileNotFoundException;
@@ -19,7 +19,7 @@ public final class Config {
     /** Default property file name. */
     /* It will be reset from GameTest. */
     private static String myConfigFile = "my.properties";
-    private static String gamesConfigFile = "games.properties";
+    //private static String gamesConfigFile = "games.properties";
 
     /** One Properties object for all properties */
     private static Properties prop = new Properties();
@@ -53,7 +53,7 @@ public final class Config {
         if (prop.isEmpty() || !loaded) {
             /* List the property files to read here */
             load(myConfigFile, false);
-            load(gamesConfigFile, false);
+            //load(gamesConfigFile, false);
             setDefaults();
             loaded = true;
         }
