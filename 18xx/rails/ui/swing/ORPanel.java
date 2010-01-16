@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.39 2010/01/14 20:50:08 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.40 2010/01/16 15:06:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -12,8 +12,10 @@ import org.apache.log4j.Logger;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.special.SpecialPropertyI;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
+import rails.util.Util;
 
 public class ORPanel extends GridPanel
 implements ActionListener, KeyListener {
@@ -43,6 +45,7 @@ implements ActionListener, KeyListener {
     private JMenuBar menuBar;
     private JMenu infoMenu;
     private JMenuItem remainingTilesMenuItem;
+    private JMenu privatesInfoMenu;
     private JMenu specialMenu;
     private JMenu loansMenu;
     private JMenu zoomMenu;
@@ -152,6 +155,8 @@ implements ActionListener, KeyListener {
         infoMenu.add(remainingTilesMenuItem);
         menuBar.add(infoMenu);
 
+        addPrivatesInfo();
+        
         specialMenu = new JMenu(LocalText.getText("SPECIAL"));
         specialMenu.setBackground(Color.YELLOW);
         // Normally not seen because menu is not opaque
@@ -457,6 +462,41 @@ implements ActionListener, KeyListener {
 
         }
 
+    }
+    
+    protected void addPrivatesInfo () {
+        
+        List<PrivateCompanyI> privates = orWindow.gameUIManager.getGameManager().getAllPrivateCompanies();
+        if (privates == null || privates.isEmpty()) return;
+        
+        privatesInfoMenu = new JMenu(LocalText.getText("PRIVATES"));
+        privatesInfoMenu.setEnabled(true);
+        infoMenu.add(privatesInfoMenu);
+        
+        JMenu item;
+        List<SpecialPropertyI> sps;
+        StringBuffer b;
+
+        for (PrivateCompanyI p : privates) {
+            sps = p.getSpecialProperties();
+            b = new StringBuffer("<html>");
+            if (Util.hasValue(p.getLongName())) {
+                b.append(p.getLongName());
+            }
+            if (sps == null || sps.isEmpty()) {
+                if (b.length() > 6) b.append("<br>");
+                b.append(LocalText.getText("NoSpecialProperty"));
+            } else {
+                for (SpecialPropertyI sp : sps) {
+                    if (b.length() > 6) b.append("<br>");
+                    b.append(sp.toString());
+                }
+            }
+            item = new JMenu (p.getName());
+            item.setEnabled(true);
+            item.add(new JMenuItem(b.toString()));
+            privatesInfoMenu.add(item);
+        }
     }
 
     public void finish() {
