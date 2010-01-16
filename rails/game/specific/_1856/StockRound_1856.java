@@ -47,12 +47,12 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashHolder getSharePriceRecipient(PublicCertificateI cert, int price) {
+    protected CashHolder getSharePriceRecipient(PublicCertificateI cert, int cost) {
 
         CashHolder recipient;
         Portfolio oldHolder = (Portfolio) cert.getHolder();
 
-        if (price != 0
+        if (cost != 0
                 && !cert.getCompany().getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && oldHolder == ipo) {
 
@@ -66,8 +66,9 @@ public class StockRound_1856 extends StockRound {
                 if (comp.getUnsoldPercentage() <= 50
                         && !comp.hasReachedDestination()) {
                     recipient = oldHolder.getOwner(); // i.e. the Bank
-                    comp.addMoneyInEscrow(price);
+                    comp.addMoneyInEscrow(cost);
                     ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
+                            Bank.format(cost),
                             Bank.format(comp.getMoneyInEscrow()),
                             comp.getName() ));
                     break;
