@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.28 2010/01/08 21:30:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.29 2010/01/16 15:06:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
+            longName= tag.getAttributeAsString("longName", "");
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
             revenue = tag.getAttributeAsInteger("revenue", 0);
 

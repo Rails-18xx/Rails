@@ -17,19 +17,22 @@
 		<Certificate shares="1" number="8"/>
 		<Trains number="4,4,3,2"/>
 	</CompanyType>
-	<Company name="SVNRR" type="Private" basePrice="20" revenue="5">
-    <Blocking hex="G15"/>
-  </Company>
-	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
-    <Blocking hex="B20"/>
+	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"
+		longName="Schuylkill Valley Navigation &amp; Railroad Company">
+        <Blocking hex="G15"/>
+    </Company>
+	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"
+		longName="Champlain &amp; St.Lawrence">
+        <Blocking hex="B20"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="B20" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
-    <Blocking hex="F16"/>
+	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"
+		longName="Delaware &amp; Hudson">
+        <Blocking hex="F16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F16" extra="no" free="no"/>
@@ -39,20 +42,23 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
-    <Blocking hex="D18"/>
+	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"
+		longName="Mohawk &amp; Hudson">
+        <Blocking hex="D18"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25">
-    <Blocking hex="H18"/>
-  </Company>
-	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30">
-    <Blocking hex="I13,I15"/>
-  </Company>
+	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
+		longName="Camden &amp; Amboy">
+        <Blocking hex="H18"/>
+    </Company>
+	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
+		longName="Baltimore &amp; Ohio">
+        <Blocking hex="I13,I15"/>
+    </Company>
   
 	<!-- Note two supported colour specification formats:
 		RGB decimal with commas and RGB hexadecimal without commas -->
