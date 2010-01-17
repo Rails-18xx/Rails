@@ -461,7 +461,7 @@ public class GameUIManager implements DialogOwner {
     			StartCompany action = (StartCompany) currentDialogAction;
 
     			int index = dialog.getSelectedOption();
-    			if (index > 0) {
+    			if (index >= 0) {
     				int price = action.getStartPrices()[index];
     				action.setStartPrice(price);
     				action.setNumberBought(action.getCertificate().getShares());
