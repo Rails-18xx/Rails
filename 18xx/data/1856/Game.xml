@@ -6,7 +6,9 @@
 		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<GameParameters>
 			<StockRound class="rails.game.specific._1856.StockRound_1856" 
-				sequence="SellBuyOrBuySell"/>
+				sequence="SellBuyOrBuySell">
+		        <NoSaleInFirstSR/>
+			</StockRound>
 			<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>

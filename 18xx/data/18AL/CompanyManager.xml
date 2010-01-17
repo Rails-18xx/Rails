@@ -92,8 +92,4 @@
 		<Item name="M&amp;C" type="Private" basePrice="100"/>
 		<Item name="NDY" type="Private" basePrice="120"/>
 	</StartPacket>
-	<StockRoundRules>
-		<!-- Will probably move later to a GameManager XML-->
-		<NoSaleInFirstSR/>
-	</StockRoundRules>
 </CompanyManager>

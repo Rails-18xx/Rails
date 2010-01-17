@@ -113,9 +113,4 @@
     <Item name="14"   type="Minor" basePrice="100"/>
     <Item name="15"   type="Minor" basePrice="100"/>
   </StartPacket>
-  <StockRoundRules>
-		<!-- Will probably move later to a GameManager XML-->
-		<NoSaleInFirstSR/>
-		<NoSaleIfNotOperated/>
-	</StockRoundRules>
 </CompanyManager>

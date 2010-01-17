@@ -7,7 +7,10 @@
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
 			<StockRound class="rails.game.specific._1835.StockRound_1835" 
-				sequence="SellBuySell"/>
+				sequence="SellBuySell">
+		        <NoSaleInFirstSR/>
+		        <NoSaleIfNotOperated/>
+			</StockRound>
 		</GameParameters>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="currentOR"/>
