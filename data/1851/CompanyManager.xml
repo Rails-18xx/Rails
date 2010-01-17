@@ -73,10 +73,6 @@
 			</Item>
 		</IfOption>
 	</StartPacket>
-	<StockRoundRules>
-		<!-- Will probably move later to a GameManager XML-->
-		<NoSaleIfNotOperated/>
-	</StockRoundRules>
 	<BaseTokens>
 		<!-- Not sure if this belongs here -->
 		<LayCost method="sequence" cost="0"/>

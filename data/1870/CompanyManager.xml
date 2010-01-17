@@ -76,8 +76,4 @@
     <Item name="SLSF"  type="Public"  president="yes" basePrice="140"/>
     <Item name="MKT"   type="Private" basePrice="160"/>
   </StartPacket>
-	<StockRoundRules>
-		<!-- Will probably move later to a GameManager XML-->
-		<NoSaleInFirstSR/>
-	</StockRoundRules>
 </CompanyManager>

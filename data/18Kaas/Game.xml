@@ -6,6 +6,9 @@
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
+			<StockRound>
+				<NoSaleInFirstSR/>
+			</StockRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>

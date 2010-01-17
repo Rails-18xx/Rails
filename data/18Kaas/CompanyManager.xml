@@ -88,8 +88,4 @@
 			<SubItem name="B&amp;O" type="Public" president="yes"/>
 		</Item>
 	</StartPacket>
-	<StockRoundRules>
-		<!-- Will probably move later to a GameManager XML-->
-		<NoSaleInFirstSR/>
-	</StockRoundRules>
 </CompanyManager>

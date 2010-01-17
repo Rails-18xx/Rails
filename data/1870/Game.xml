@@ -8,6 +8,9 @@
 				<PriceProtection/>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
+	        <StockRound>
+		        <NoSaleInFirstSR/>
+	        </StockRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>

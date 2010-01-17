@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.76 2010/01/15 19:55:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.77 2010/01/17 14:05:48 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -277,7 +277,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 	            skipFirstStockRound =
 	                    srTag.getAttributeAsBoolean("skipFirst",
 	                            skipFirstStockRound);
-	        }
+
+                for (String ruleTagName : srTag.getChildren().keySet()) {
+                    if (ruleTagName.equals("NoSaleInFirstSR")) {
+                        setGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR, true);
+                    } else if (ruleTagName.equals("NoSaleIfNotOperated")) {
+                        setGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED, true);
+                    }
+
+                }
+        }
 
 	        // OperatingRound class
 	        Tag orTag = gameParmTag.getChild("OperatingRound");
