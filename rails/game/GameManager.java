@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.77 2010/01/17 14:05:48 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.78 2010/01/17 22:49:06 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -831,6 +831,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
 
         DisplayBuffer.clear();
+        guiHints.clearVisibilityHints();
+        
         return true;
     }
 
