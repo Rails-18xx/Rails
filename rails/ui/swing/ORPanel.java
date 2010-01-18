@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.41 2010/01/16 21:16:30 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.42 2010/01/18 18:47:29 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -46,6 +46,8 @@ implements ActionListener, KeyListener {
     private JMenu infoMenu;
     private JMenuItem remainingTilesMenuItem;
     private JMenu privatesInfoMenu;
+    private JMenu trainsInfoMenu;
+    private JMenu phasesInfoMenu;
     private JMenu specialMenu;
     private JMenu loansMenu;
     private JMenu zoomMenu;
@@ -156,7 +158,9 @@ implements ActionListener, KeyListener {
         menuBar.add(infoMenu);
 
         addPrivatesInfo();
-        
+        addTrainsInfo();
+        addPhasesInfo();
+
         specialMenu = new JMenu(LocalText.getText("SPECIAL"));
         specialMenu.setBackground(Color.YELLOW);
         // Normally not seen because menu is not opaque
@@ -463,38 +467,35 @@ implements ActionListener, KeyListener {
         }
 
     }
-    
+
     protected void addPrivatesInfo () {
-        
+
         List<PrivateCompanyI> privates = orWindow.gameUIManager.getGameManager().getAllPrivateCompanies();
         if (privates == null || privates.isEmpty()) return;
-        
+
         privatesInfoMenu = new JMenu(LocalText.getText("PRIVATES"));
         privatesInfoMenu.setEnabled(true);
         infoMenu.add(privatesInfoMenu);
-        
+
         JMenu item;
         List<SpecialPropertyI> sps;
-        StringBuffer b;
+        StringBuffer b = new StringBuffer("<html>");
         String info;
 
         for (PrivateCompanyI p : privates) {
             sps = p.getSpecialProperties();
-            b = new StringBuffer("<html>");
+            b.setLength(6);
             if (Util.hasValue(p.getLongName())) {
-                b.append(p.getLongName());
+                appendInfoText (b, p.getLongName());
             }
             info = p.getInfoText();
             if (Util.hasValue(info)) {
-                if (b.length() > 6) b.append("<br>");
-                b.append(info);
+                appendInfoText(b, info);
             } else if (sps == null || sps.isEmpty()) {
-                if (b.length() > 6) b.append("<br>");
-                b.append(LocalText.getText("NoSpecialProperty"));
+                appendInfoText(b, LocalText.getText("NoSpecialProperty"));
             } else {
                 for (SpecialPropertyI sp : sps) {
-                    if (b.length() > 6) b.append("<br>");
-                    b.append(sp.toString());
+                    appendInfoText(b, sp.toString());
                 }
             }
             item = new JMenu (p.getName());
@@ -502,6 +503,66 @@ implements ActionListener, KeyListener {
             item.add(new JMenuItem(b.toString()));
             privatesInfoMenu.add(item);
         }
+    }
+
+    protected void addTrainsInfo() {
+
+    	TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
+    	List<TrainTypeI> types = tm.getTrainTypes();
+        JMenu item;
+        StringBuffer b = new StringBuffer("<html>");
+
+        trainsInfoMenu = new JMenu(LocalText.getText("TRAINS"));
+        trainsInfoMenu.setEnabled(true);
+        infoMenu.add(trainsInfoMenu);
+
+        for (TrainTypeI type : types) {
+        	b.setLength(6);
+        	if (Util.hasValue(type.getStartedPhaseName())) {
+        		appendInfoText(b, LocalText.getText("StartsPhase", type.getStartedPhaseName()));
+        	}
+        	if (type.getRustedTrainType() != null) {
+        		appendInfoText(b, LocalText.getText("RustsTrains", type.getRustedTrainType().getName()));
+        	}
+        	if (type.getReleasedTrainType() != null) {
+        		appendInfoText(b, LocalText.getText("ReleasesTrains", type.getReleasedTrainType().getName()));
+        	}
+        	if (b.length() == 6) b.append(LocalText.getText("None"));
+
+            item = new JMenu (LocalText.getText("N_Train", type.getName()));
+            item.setEnabled(true);
+            item.add(new JMenuItem(b.toString()));
+            trainsInfoMenu.add(item);
+    	}
+    }
+
+    protected void addPhasesInfo() {
+
+    	PhaseManager pm = orWindow.getGameUIManager().getGameManager().getPhaseManager();
+    	List<Phase> phases = pm.getPhases();
+        JMenu item;
+        StringBuffer b = new StringBuffer("<html>");
+
+        phasesInfoMenu = new JMenu(LocalText.getText("Phases"));
+        phasesInfoMenu.setEnabled(true);
+        infoMenu.add(phasesInfoMenu);
+
+        for (Phase phase : phases) {
+        	b.setLength(6);
+        	appendInfoText(b, LocalText.getText("PhaseTileColours", phase.getTileColoursString()));
+        	appendInfoText(b, LocalText.getText("PhaseNumberOfORs", phase.getNumberOfOperatingRounds()));
+        	appendInfoText(b, LocalText.getText("PhaseOffBoardStep", phase.getOffBoardRevenueStep()));
+            item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
+            item.setEnabled(true);
+            item.add(new JMenuItem(b.toString()));
+            phasesInfoMenu.add(item);
+    	}
+    }
+
+    private void appendInfoText (StringBuffer b, String text) {
+    	if (text == null || text.length() == 0) return;
+    	if (b.length() > 6) b.append("<br>");
+    	b.append(text);
     }
 
     public void finish() {
