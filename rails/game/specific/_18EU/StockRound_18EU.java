@@ -667,7 +667,7 @@ public class StockRound_18EU extends StockRound {
     protected void finishTurn() {
 
         if (!discardingTrains.booleanValue()) {
-            super.setNextPlayer();
+            super.finishTurn();
         } else {
             PublicCompanyI comp =
                     discardingCompanies[discardingCompanyIndex.intValue()];

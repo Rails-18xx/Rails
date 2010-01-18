@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.35 2010/01/15 19:55:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.36 2010/01/18 18:49:20 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -11,8 +11,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.GuiHints;
 import rails.game.action.*;
-import rails.game.move.CashMove;
-import rails.game.move.MoveStack;
+import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
@@ -43,6 +42,12 @@ public abstract class Round implements RoundI {
     protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
 
     protected MoveStack moveStack = null;
+
+
+    /** Autopasses */
+    protected List<Player> autopasses = null;
+    protected List<Player> canRequestTurn = null;
+    protected List<Player> hasRequestedTurn = null;
 
 	/**
 	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
@@ -423,5 +428,45 @@ public abstract class Round implements RoundI {
     public String getRoundName() {
     	return this.getClass().getSimpleName();
     }
+
+    public boolean requestTurn (Player player) {
+    	if (canRequestTurn (player)) {
+    		if (hasRequestedTurn == null) hasRequestedTurn = new ArrayList<Player>(2);
+    		if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
+    		return true;
+    	}
+    	return false;
+    }
+
+    public boolean canRequestTurn (Player player) {
+    	return canRequestTurn != null && canRequestTurn.contains(player);
+    }
+
+    public void setCanRequestTurn (Player player, boolean value) {
+    	if (canRequestTurn == null) canRequestTurn = new ArrayList<Player>(4);
+    	if (value && !canRequestTurn.contains(player)) {
+    		new AddToList<Player>(canRequestTurn, player, "CanRequestTurn");
+    	} else if (!value && canRequestTurn.contains(player)) {
+    		new RemoveFromList<Player>(canRequestTurn, player, "CanRequestTurn");
+    	}
+    }
+
+    public void setAutopass (Player player, boolean value) {
+		if (autopasses == null) autopasses = new ArrayList<Player>(4);
+		if (value && !autopasses.contains(player)) {
+			new AddToList<Player>(autopasses, player, "Autopasses");
+		} else if (!value && autopasses.contains(player)) {
+			new RemoveFromList<Player>(autopasses, player, "Autopasses");
+		}
+	}
+
+    public boolean hasAutopassed (Player player) {
+    	return autopasses != null && autopasses.contains(player);
+    }
+
+    public List<Player> getAutopasses() {
+    	return autopasses;
+    }
+
 
 }
