@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.14 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.15 2010/01/18 18:47:16 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class Phase implements PhaseI {
 
     /** May company buy more than one Train of each type from the Bank per turn? */
     protected boolean oneTrainPerTypePerTurn = false;
-    
+
     /** Is loan taking allowed */
     protected boolean loanTakingAllowed = false;
 
@@ -125,11 +125,11 @@ public class Phase implements PhaseI {
                     trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
                             oneTrainPerTypePerTurn);
         }
-        
+
         Tag loansTag = tag.getChild("Loans");
         if (loansTag != null) {
             loanTakingAllowed = loansTag.getAttributeAsBoolean("allowed",
-                    loanTakingAllowed); 
+                    loanTakingAllowed);
         }
 
         Tag parameterTag = tag.getChild("Parameters");
@@ -161,6 +161,10 @@ public class Phase implements PhaseI {
 
     public Map<String, Integer> getTileColours() {
         return tileColours;
+    }
+
+    public String getTileColoursString() {
+    	return colourList;
     }
 
     public int getIndex() {
