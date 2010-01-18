@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.10 2010/01/14 20:55:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.11 2010/01/18 22:51:47 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -19,9 +19,6 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected BooleanState hasPullmannAtStart =
             new BooleanState("ORCompanyHasPullmannAtStart", false);
-
-    protected State playerToStartExchangeRound =
-            new State("PlayerToStartExchangeRound", Player.class);
 
     public OperatingRound_18EU (GameManagerI gameManager) {
         super (gameManager);
@@ -180,8 +177,8 @@ public class OperatingRound_18EU extends OperatingRound {
         // one to act in the Final Minor Exchange Round.
         if (result && gameManager.getPhaseManager().hasReachedPhase("5")
             && operatingCompanyArray[0].getTypeName().equals("Minor")
-            && playerToStartExchangeRound.getObject() == null) {
-            playerToStartExchangeRound.set(operatingCompany.getPresident());
+            && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
+            ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.getPresident());
         }
 
         return result;
@@ -225,10 +222,6 @@ public class OperatingRound_18EU extends OperatingRound {
             }
         }
         return !excessTrainCompanies.isEmpty();
-    }
-
-    public Player getPlayerToStartExchangeRound() {
-        return (Player) playerToStartExchangeRound.getObject();
     }
 
 }
