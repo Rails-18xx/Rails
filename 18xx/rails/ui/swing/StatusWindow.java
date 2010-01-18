@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.34 2010/01/14 20:50:08 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.35 2010/01/18 18:49:05 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -50,12 +50,14 @@ public class StatusWindow extends JFrame implements ActionListener,
     protected static final String DONE_CMD = "Done";
 
     protected static final String PASS_CMD = "Pass";
+    protected static final String AUTOPASS_CMD = "Autopass";
 
     protected JPanel buttonPanel;
 
     protected GameStatus gameStatus;
 
     protected ActionButton passButton;
+    protected ActionButton autopassButton;
 
     protected GameUIManager gameUIManager;
 
@@ -76,9 +78,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     private ActionMenuItem saveItem;
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
-
-    private List<ActionMenuItem> specialActionItems =
-            new ArrayList<ActionMenuItem>();
 
     protected static Logger log =
             Logger.getLogger(StatusWindow.class.getPackage().getName());
@@ -228,14 +227,16 @@ public class StatusWindow extends JFrame implements ActionListener,
         buttonPanel = new JPanel();
 
         passButton = new ActionButton(LocalText.getText("PASS"));
-
         passButton.setMnemonic(KeyEvent.VK_P);
-
         buttonPanel.add(passButton);
-
         passButton.setActionCommand(DONE_CMD);
-
         passButton.addActionListener(this);
+
+        autopassButton = new ActionButton(LocalText.getText("Autopass"));
+        autopassButton.setMnemonic(KeyEvent.VK_A);
+        buttonPanel.add(autopassButton);
+        autopassButton.setActionCommand(AUTOPASS_CMD);
+        autopassButton.addActionListener(this);
 
         setSize(800, 300);
         setLocation(25, 450);
@@ -384,6 +385,10 @@ public class StatusWindow extends JFrame implements ActionListener,
         }
 
         // New special action handling
+        List<ActionMenuItem> specialActionItems =
+            new ArrayList<ActionMenuItem>();
+
+        // Special properties
         List<UseSpecialProperty> sps =
                 possibleActions.getType(UseSpecialProperty.class);
         for (ActionMenuItem item : specialActionItems) {
@@ -400,12 +405,28 @@ public class StatusWindow extends JFrame implements ActionListener,
             specialActionItems.add(item);
             specialMenu.add(item);
         }
+
+        // Request turn
+        if (possibleActions.contains(RequestTurn.class)) {
+        	for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
+                ActionMenuItem item = new ActionMenuItem(action.toString());
+                item.addActionListener(this);
+                item.setEnabled(false);
+                item.addPossibleAction(action);
+                item.setEnabled(true);
+                specialActionItems.add(item);
+                specialMenu.add(item);
+        	}
+        }
+
+        // Must Special menu be enabled?
         boolean enabled = specialActionItems.size() > 0;
         specialMenu.setOpaque(enabled);
         specialMenu.setEnabled(enabled);
         specialMenu.repaint();
 
         passButton.setEnabled(false);
+        autopassButton.setEnabled(false);
 
         List<NullAction> inactiveItems =
                 possibleActions.getType(NullAction.class);
@@ -426,6 +447,10 @@ public class StatusWindow extends JFrame implements ActionListener,
                     passButton.setActionCommand(DONE_CMD);
                     passButton.setMnemonic(KeyEvent.VK_D);
                     passButton.setPossibleAction(na);
+                    break;
+                case NullAction.AUTOPASS:
+                    autopassButton.setEnabled(true);
+                    autopassButton.setPossibleAction(na);
                     break;
                 }
             }
@@ -480,13 +505,15 @@ public class StatusWindow extends JFrame implements ActionListener,
             process(executedAction);
         } else if (command.equals(SELL_CMD)) {
             process(executedAction);
-        } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)) {
+        } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)
+        		|| command.equals(AUTOPASS_CMD)) {
             if (gameUIManager.isGameOver()) {
                 System.exit(0);
             }
             process(executedAction);
 
-        } else if (executedAction instanceof UseSpecialProperty) {
+        } else if (executedAction instanceof UseSpecialProperty
+        		|| executedAction instanceof RequestTurn) {
             process(executedAction);
 
         } else if (command.equals(QUIT_CMD)) {

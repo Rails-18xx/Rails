@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.17 2010/01/15 19:55:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.18 2010/01/18 18:49:30 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -508,7 +508,8 @@ public class TreasuryShareRound extends StockRound {
      * @return False if an error is found.
      */
     @Override
-    public boolean done(String playerName) {
+    // Autopassing does not apply here
+    public boolean done(String playerName, boolean hasAutopassed) {
 
         currentPlayer = getCurrentPlayer();
 

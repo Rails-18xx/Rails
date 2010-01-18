@@ -4,8 +4,7 @@ import java.util.*;
 
 import rails.common.GuiDef;
 import rails.game.action.*;
-import rails.game.move.CashMove;
-import rails.game.move.DoubleMapChange;
+import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.LocalText;
@@ -40,7 +39,6 @@ public class StockRound extends Round {
     /** HashMap per player containing a HashMap per company */
     protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound =
             new HashMap<Player, HashMap<PublicCompanyI, Object>>();
-    /** HashMap per player */
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -111,7 +109,14 @@ public class StockRound extends Round {
                 possibleActions.add(new NullAction(NullAction.DONE));
             } else {
                 possibleActions.add(new NullAction(NullAction.PASS));
+                possibleActions.add(new NullAction(NullAction.AUTOPASS));
             }
+        }
+
+        if (getAutopasses() != null) {
+	        for (Player player : getAutopasses()) {
+	        	possibleActions.add(new RequestTurn(player));
+	        }
         }
 
         return true;
@@ -393,8 +398,11 @@ public class StockRound extends Round {
             switch (nullAction.getMode()) {
             case NullAction.PASS:
             case NullAction.DONE:
-                result = done(playerName);
+                result = done(playerName, false);
                 break;
+            case NullAction.AUTOPASS:
+                result = done(playerName, true);
+               	break;
             }
 
         } else if (action instanceof StartCompany) {
@@ -414,6 +422,10 @@ public class StockRound extends Round {
         } else if (action instanceof UseSpecialProperty) {
 
             result = useSpecialProperty((UseSpecialProperty) action);
+
+        } else if (action instanceof RequestTurn) {
+
+        	result = requestTurn ((RequestTurn)action);
 
         } else if (!!(result = processGameSpecificAction(action))) {
 
@@ -1118,9 +1130,9 @@ public class StockRound extends Round {
      * @param player Name of the passing player.
      * @return False if an error is found.
      */
-    public boolean done(String playerName) {
+    public boolean done(String playerName, boolean hasAutopassed) {
 
-        currentPlayer = getCurrentPlayer();
+        //currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getName())) {
             DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
@@ -1133,8 +1145,17 @@ public class StockRound extends Round {
             numPasses.set(0);
         } else {
             numPasses.add(1);
-            ReportBuffer.add(LocalText.getText("PASSES",
-                    currentPlayer.getName()));
+            if (hasAutopassed) {
+            	if (!hasAutopassed(currentPlayer)) {
+            		setAutopass (currentPlayer, true);
+            		setCanRequestTurn (currentPlayer, true);
+            	}
+                ReportBuffer.add(LocalText.getText("Autopasses",
+                        currentPlayer.getName()));
+            } else {
+            	ReportBuffer.add(LocalText.getText("PASSES",
+            			currentPlayer.getName()));
+            }
         }
 
         if (numPasses.intValue() >= numberOfPlayers) {
@@ -1175,9 +1196,35 @@ public class StockRound extends Round {
         return true;
     }
 
+    protected boolean requestTurn (RequestTurn action) {
+
+    	Player requestingPlayer = playerManager.getPlayerByName(action.getRequestingPlayerName());
+
+    	boolean result = canRequestTurn(requestingPlayer);
+
+    	if (!result) {
+            DisplayBuffer.add(LocalText.getText("CannotRequestTurn",
+            		requestingPlayer.getName()));
+            return false;
+    	}
+
+        moveStack.start(false);
+        if (hasAutopassed(requestingPlayer)) {
+        	setAutopass(requestingPlayer, false);
+        } else {
+        	new AddToList<Player>(hasRequestedTurn, requestingPlayer, "HasRequestedTurn");
+        }
+
+        return true;
+    }
+
     protected void finishTurn() {
         setNextPlayer();
         sellPrices.clear();
+        if (hasAutopassed(currentPlayer)) {
+        	// Process a pass for a player that has set Autopass
+        	done (currentPlayer.getName(), true);
+        }
     }
 
     /**
@@ -1286,7 +1333,6 @@ public class StockRound extends Round {
         // Check for per-company share limit
         if (player.getPortfolio().getShare(company)
                 + number * company.getShareUnit()
-                //> gameManager.getPlayerShareLimit()
                 > getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
             && !company.getCurrentSpace().isNoHoldLimit()) return false;
         return true;
@@ -1321,14 +1367,6 @@ public class StockRound extends Round {
     }
 
 
-    //public static void setNoSaleInFirstSR() {
-    //    noSaleInFirstSR = true;
-    //}
-
-    //public static void setNoSaleIfNotOperated() {
-    //    noSaleIfNotOperated = true;
-    //}
-
     protected boolean noSaleInFirstSR() {
     	return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR);
     }
@@ -1351,4 +1389,5 @@ public class StockRound extends Round {
 	public String getRoundName() {
     	return toString();
     }
+
 }

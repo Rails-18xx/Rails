@@ -95,7 +95,8 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     }
 
     @Override
-    public boolean done(String playerName) {
+    // Autopassing does not apply here
+    public boolean done(String playerName, boolean hasAutopassed) {
 
         moveStack.start(false);
 
