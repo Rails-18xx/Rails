@@ -98,10 +98,7 @@
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>
 		</Phase>
-		<Phase name="7">
-			<Tiles colour="yellow,green,brown"/>
-		</Phase>
-		<Phase name="4D">
+		<Phase name="8">
 			<Tiles colour="yellow,green,brown,grey"/>
 		</Phase>
 	</Component>
