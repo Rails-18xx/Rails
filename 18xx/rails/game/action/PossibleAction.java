@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.14 2009/10/30 21:53:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.15 2010/01/19 19:54:42 evos Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -80,6 +80,11 @@ public abstract class PossibleAction implements Serializable {
 
     protected CompanyManagerI getCompanyManager () {
     	return getGameManager().getCompanyManager();
+    }
+
+    /** Default version of an Menu item text. To be overridden where useful. */
+    public String toMenu() {
+    	return toString();
     }
 
     private void readObject(ObjectInputStream in) throws IOException,

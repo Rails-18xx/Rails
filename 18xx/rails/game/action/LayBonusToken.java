@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.7 2009/10/30 21:53:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.8 2010/01/19 19:54:38 evos Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -32,6 +32,11 @@ public class LayBonusToken extends LayToken {
         super(specialProperty);
         this.token = token;
         this.tokenId = token.getUniqueId();
+    }
+
+    public void finishConfiguration (GameManagerI gameManager)
+    throws ConfigurationException {
+    	token.prepareForRemoval(gameManager.getPhaseManager());
     }
 
     public BonusToken getToken() {

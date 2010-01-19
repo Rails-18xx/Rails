@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.15 2010/01/18 18:47:16 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.16 2010/01/19 19:54:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -218,9 +218,9 @@ public class Phase implements PhaseI {
 
     public void addObjectToClose(Closeable object) {
         if (closedObjects == null) {
-            closedObjects = new ArrayList<Closeable>();
+            closedObjects = new ArrayList<Closeable>(4);
         }
-        closedObjects.add(object);
+        if (!closedObjects.contains(object)) closedObjects.add(object);
     }
 
     public String getParameterAsString (String key) {
@@ -245,7 +245,11 @@ public class Phase implements PhaseI {
 
     }
 
-    @Override
+    public List<Closeable> getClosedObjects() {
+		return closedObjects;
+	}
+
+	@Override
     public String toString() {
         return name;
     }
