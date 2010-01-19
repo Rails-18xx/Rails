@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.18 2010/01/08 21:26:14 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.19 2010/01/19 19:50:03 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -142,5 +142,9 @@ public final class Util {
     	if (log == null) log = Logger.getLogger(Util.class.getPackage().getName());
     	return log;
 
+    }
+
+    public static String lowerCaseFirst (String text) {
+    	return text.substring(0, 1).toLowerCase() + text.substring(1);
     }
 }
