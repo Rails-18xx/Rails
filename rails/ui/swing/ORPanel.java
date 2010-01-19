@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.42 2010/01/18 18:47:29 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.43 2010/01/19 19:51:57 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -495,7 +495,7 @@ implements ActionListener, KeyListener {
                 appendInfoText(b, LocalText.getText("NoSpecialProperty"));
             } else {
                 for (SpecialPropertyI sp : sps) {
-                    appendInfoText(b, sp.toString());
+                    appendInfoText(b, sp.getInfo());
                 }
             }
             item = new JMenu (p.getName());
@@ -552,6 +552,14 @@ implements ActionListener, KeyListener {
         	appendInfoText(b, LocalText.getText("PhaseTileColours", phase.getTileColoursString()));
         	appendInfoText(b, LocalText.getText("PhaseNumberOfORs", phase.getNumberOfOperatingRounds()));
         	appendInfoText(b, LocalText.getText("PhaseOffBoardStep", phase.getOffBoardRevenueStep()));
+        	if (phase.doPrivatesClose()) {
+        		appendInfoText(b, LocalText.getText("PhaseClosesAllPrivates"));
+        	}
+        	if (phase.getClosedObjects() != null) {
+        		for (Closeable object : phase.getClosedObjects()) {
+        			appendInfoText(b, LocalText.getText("PhaseRemoves", Util.lowerCaseFirst(object.getInfo())));
+        		}
+        	}
             item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
             item.setEnabled(true);
             item.add(new JMenuItem(b.toString()));
