@@ -4,4 +4,6 @@ public interface Closeable {
 
     public void close();
 
+    public String getInfo();
+
 }
