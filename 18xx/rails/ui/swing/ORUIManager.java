@@ -184,10 +184,7 @@ public class ORUIManager implements DialogOwner {
         String extraMessage = "";
         if (localStep == ORUIManager.SELECT_HEX_FOR_TILE) {
             /* Compose prompt for tile laying */
-            int tileNumber;
             StringBuffer normalTileMessage = new StringBuffer(" ");
-            StringBuffer extraTileMessage = new StringBuffer(" ");
-            StringBuffer specialTiles = new StringBuffer("#");
 
             List<LayTile> tileLays = possibleActions.getType(LayTile.class);
             log.debug("There are " + tileLays.size() + " TileLay objects");
@@ -206,27 +203,7 @@ public class ORUIManager implements DialogOwner {
                  */
                 if (sp != null && sp instanceof SpecialTileLay) {
                     SpecialTileLay stl = (SpecialTileLay) sp;
-                    if (extraTileMessage.length() > 1)
-                        extraTileMessage.append(", ");
-                    extraTileMessage.append(stl.getLocationNameString()).append(
-                            " (").append(stl.isExtra() ? "" : "not ").append(
-                            "extra");
-                    for (MapHex hex : stl.getLocations()) {
-                        if (hex.getTileCost() > 0) {
-                            extraTileMessage.append(", ").append(
-                                    stl.isFree() ? "" : "not ").append(" free");
-                            break;
-                        }
-                    }
-                    extraTileMessage.append(")");
-                    if ((tileNumber = stl.getTileNumber()) > 0) {
-                        if (specialTiles.length() > 1)
-                            specialTiles.append(", ");
-                        specialTiles.append(tileNumber);
-                        if (Util.hasValue(stl.getName())) {
-                            specialTiles.insert(0, stl.getName() + " ");
-                        }
-                    }
+                    extraMessage += "<br>" + stl.getHelp();
                 } else if ((tileColours = tileLay.getTileColours()) != null) {
                     int number;
                     for (String colour : tileColours.keySet()) {
@@ -240,15 +217,6 @@ public class ORUIManager implements DialogOwner {
                     }
                 }
             }
-            if (specialTiles.length() > 1) {
-                extraMessage +=
-                        LocalText.getText("SpecialTile",
-                                specialTiles.toString(),
-                                extraTileMessage.toString() );
-            } else if (extraTileMessage.length() > 1) {
-                extraMessage +=
-                        LocalText.getText("ExtraTile", extraTileMessage);
-            }
             if (normalTileMessage.length() > 1) {
                 message +=
                         " "
@@ -261,7 +229,6 @@ public class ORUIManager implements DialogOwner {
             /* Compose prompt for token laying */
             String locations;
             StringBuffer normalTokenMessage = new StringBuffer(" ");
-            StringBuffer extraTokenMessage = new StringBuffer(" ");
 
             List<LayBaseToken> tokenLays =
                     possibleActions.getType(LayBaseToken.class);
@@ -271,24 +238,8 @@ public class ORUIManager implements DialogOwner {
 
                 log.debug("TokenLay object " + (++ii) + ": " + tokenLay);
                 sp = tokenLay.getSpecialProperty();
-                /*
-                 * A LayToken object contais either: 1. a special property
-                 * (specifying a location) 2. a location (perhaps a list of?)
-                 * where a token of a specified company (the currently operating
-                 * one) may be laid, or 3. null location and the currently
-                 * operating company. The last option is only a stopgap as we
-                 * can't yet determine connectivity.
-                 */
                 if (sp != null && sp instanceof SpecialTokenLay) {
-                    if (extraTokenMessage.length() > 1)
-                        extraTokenMessage.append(", ");
-                    extraTokenMessage.append(
-                            ((SpecialTokenLay) sp).getLocationCodeString()).append(
-                            " (").append(
-                            ((SpecialTokenLay) sp).isExtra() ? "" : "not ").append(
-                            "extra, ").append(
-                            ((SpecialTokenLay) sp).isFree() ? "" : "not ").append(
-                            "free)");
+                	extraMessage += "<br>" + sp.getHelp();
                 } else if ((locations = tokenLay.getLocationNameString()) != null) {
                     if (normalTokenMessage.length() > 1) {
                         normalTokenMessage.append(" ").append(
@@ -297,19 +248,13 @@ public class ORUIManager implements DialogOwner {
                     normalTokenMessage.append(locations);
                 }
             }
-            if (extraTokenMessage.length() > 1) {
-                extraMessage +=
-                        LocalText.getText("ExtraToken", extraTokenMessage);
-            }
             if (normalTokenMessage.length() > 1) {
-                message +=
-                        " "
-                                + LocalText.getText("NormalToken",
+                message += " " + LocalText.getText("NormalToken",
                                         normalTokenMessage);
             }
         }
         if (extraMessage.length() > 0) {
-            message += "<br><font color=\"red\">" + extraMessage + "</font>";
+            message += "<font color=\"red\">" + extraMessage + "</font>";
         }
 
         setMessage(message);
@@ -1293,12 +1238,12 @@ public class ORUIManager implements DialogOwner {
                     possibleActions.getType(LayBonusToken.class);
             for (LayBonusToken btAction : bonusTokenActions) {
                 SpecialTokenLay stl = btAction.getSpecialProperty();
-                BonusToken token = (BonusToken) stl.getToken();
-                String text =
-                        LocalText.getText("LayBonusToken",
-                                token.toString(),
-                                stl.getLocationCodeString() );
-                orPanel.addSpecialAction(btAction, text);
+                //BonusToken token = (BonusToken) stl.getToken();
+                //String text =
+                //        LocalText.getText("LayBonusToken",
+                //                token.toString(),
+                //                stl.getLocationCodeString() );
+                orPanel.addSpecialAction(btAction, stl.toMenu());
             }
         }
 
