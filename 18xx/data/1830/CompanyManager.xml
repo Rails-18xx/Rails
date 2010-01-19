@@ -26,7 +26,7 @@
         <Blocking hex="B20"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="B20" extra="yes"/>
+				<SpecialTileLay location="B20" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
