@@ -163,7 +163,6 @@ public class StockRound_18EU extends StockRound {
         for (String compName : map.keySet()) {
             certs = map.get(compName);
             if (certs == null || certs.isEmpty()) continue;
-            number = certs.size();
             cert = certs.get(0);
             comp = cert.getCompany();
             if (isSaleRecorded(currentPlayer, comp)) continue;
@@ -176,13 +175,9 @@ public class StockRound_18EU extends StockRound {
             }
 
             // Does the player have enough cash?
-            while (number > 0 && playerCash < number * price)
-                number--;
+            while (playerCash < price) continue;
 
-            if (number > 0) {
-                possibleActions.add(new BuyCertificate(cert, from, price,
-                        number));
-            }
+            possibleActions.add(new BuyCertificate(cert, from, price, 1));
         }
 
         // Get any shares in company treasuries that can be bought
