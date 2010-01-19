@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.78 2010/01/17 22:49:06 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.79 2010/01/19 19:53:53 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -124,7 +124,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * This is possible,because the server processes all player actions
      * in one thread. The key will be set in process(), which is where server
      * processing currently starts (in the future it will probably be moved
-     * to the communication interface that will be added by then). 
+     * to the communication interface that will be added by then).
      * The key can be retrieved (via NDC.peek()) anywhere.
      * <p>
      * For now, the key is a fixed string, but that may change in the future.
@@ -176,19 +176,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     /* Some standard tags for conditional attributes */
     public static final String VARIANT_KEY = "Variant";
-    /* No longer used (temporarily?)
-    public static final String OPTION_TAG = "GameOption";
-    public static final String IF_OPTION_TAG = "IfOption";
-    public static final String ATTRIBUTES_TAG = "Attributes";
-    */
 
     protected static Logger log =
             Logger.getLogger(GameManager.class.getPackage().getName());
 
-    /**
-     * Private constructor.
-     *
-     */
     public GameManager() {
     	gmName = GM_NAME;
     	gmKey = GM_KEY;
@@ -832,7 +823,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         DisplayBuffer.clear();
         guiHints.clearVisibilityHints();
-        
+
         return true;
     }
 
