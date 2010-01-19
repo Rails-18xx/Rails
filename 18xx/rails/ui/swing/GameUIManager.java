@@ -60,6 +60,8 @@ public class GameUIManager implements DialogOwner {
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
 
+    protected boolean configuredStockChartVisibility = false;
+
     protected boolean previousStockChartVisibilityHint;
     protected boolean previousStatusWindowVisibilityHint;
     protected boolean previousORWindowVisibilityHint;
@@ -99,6 +101,8 @@ public class GameUIManager implements DialogOwner {
         if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = "_" + saveSuffixSpec;
         }
+
+        configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
 
     }
 
@@ -259,12 +263,13 @@ public class GameUIManager implements DialogOwner {
         for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {
         	switch (hint.getType()) {
         	case STOCK_MARKET:
-                boolean stockChartVisibilityHint = hint.getVisibility();
+                boolean stockChartVisibilityHint = hint.getVisibility()
+                		|| configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
                 	stockChart.setVisible(stockChartVisibilityHint);
                 	previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
-            	if (stockChartVisibilityHint) stockChart.toFront();
+            	if (hint.getVisibility()) stockChart.toFront();
                break;
         	case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
@@ -299,6 +304,7 @@ public class GameUIManager implements DialogOwner {
 
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
+            stockChart.setVisible(true);
             statusWindow.setVisible(true);
             statusWindow.toFront();
 
@@ -513,12 +519,14 @@ public class GameUIManager implements DialogOwner {
 	        		RepayLoans action = (RepayLoans) currentDialogAction;
 	                int selected = dialog.getSelectedOption();
 	                action.setNumberTaken(action.getMinNumber() + selected);
+	    	} else if (currentDialog instanceof MessageDialog) {
+	    		// Nothing
 	        } else {
 	            return;
 	        }
     	}
 
-        processOnServer(currentDialogAction);
+        if (currentDialogAction != null) processOnServer(currentDialogAction);
     }
 
     public JDialog getCurrentDialog() {
