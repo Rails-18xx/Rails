@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.12 2009/11/04 20:33:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.13 2010/01/19 19:54:47 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -19,7 +19,7 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class BonusToken extends Token implements Closeable {
+public class BonusToken extends Token implements Closeable, ConfigurableComponentI  {
 
     int value;
     String name;
@@ -53,6 +53,10 @@ public class BonusToken extends Token implements Closeable {
         description = name + " +" + Bank.format(value) + " bonus token";
 
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
+    }
+
+    public void finishConfiguration(GameManagerI gameManager) {
+    	prepareForRemoval (gameManager.getPhaseManager());
     }
 
     /**
@@ -107,6 +111,10 @@ public class BonusToken extends Token implements Closeable {
     @Override
     public String toString() {
         return description;
+    }
+
+    public String getInfo () {
+    	return description;
     }
 
 }

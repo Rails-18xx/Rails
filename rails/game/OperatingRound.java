@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.91 2010/01/15 20:21:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.92 2010/01/19 19:54:50 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -107,7 +107,7 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompanyArray = super.getOperatingCompanies();
 
-        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+       	guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
     }

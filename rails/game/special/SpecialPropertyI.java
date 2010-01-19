@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.7 2010/01/08 21:30:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.8 2010/01/19 19:54:42 evos Exp $ */
 package rails.game.special;
 
 import rails.game.ConfigurableComponentI;
@@ -37,6 +37,8 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
     public String toMenu();
 
     public String getName();
+
+    public String getInfo();
 
     public void moveTo(MoveableHolder newHolder);
 

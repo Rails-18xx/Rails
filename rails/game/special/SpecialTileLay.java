@@ -1,12 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.7 2009/10/30 21:53:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.8 2010/01/19 19:54:43 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.util.*;
 
 public class SpecialTileLay extends SpecialProperty {
 
@@ -39,11 +38,27 @@ public class SpecialTileLay extends SpecialProperty {
         free = tileLayTag.getAttributeAsBoolean("free", free);
         closingValue =
                 tileLayTag.getAttributeAsInteger("closingValue", closingValue);
+
+        if (tileNumber > 0) {
+	    	description = LocalText.getText("LayNamedTileInfo",
+	    			tileNumber,
+	    			name,
+	    			locationCodes,
+	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+        } else {
+	    	description = LocalText.getText("LayTileInfo",
+	    			locationCodes,
+	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+        }
+
     }
-    
-    public void finishConfiguration (GameManagerI gameManager)
+
+    @Override
+	public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-        
+
         TileManager tmgr = gameManager.getTileManager();
         MapManager mmgr = gameManager.getMapManager();
         MapHex hex;
@@ -75,16 +90,6 @@ public class SpecialTileLay extends SpecialProperty {
         return free;
     }
 
-    /** @deprecated */
-    @Deprecated
-	public MapHex getLocation() {
-        if (locations != null) {
-            return locations.get(0);
-        } else {
-            return null;
-        }
-    }
-
     public List<MapHex> getLocations() {
         return locations;
     }
@@ -111,4 +116,13 @@ public class SpecialTileLay extends SpecialProperty {
                + locationCodes + " extra=" + extra + " cost=" + free;
     }
 
+    @Override
+	public String toMenu() {
+    	return description;
+    }
+
+    @Override
+	public String getInfo() {
+    	return description;
+    }
 }

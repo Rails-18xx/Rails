@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.5 2010/01/05 20:53:17 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.6 2010/01/19 19:54:53 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -109,4 +109,7 @@ public class Bonus implements Closeable {
                + getIdForView() + " value=" + value;
     }
 
+	public String getInfo() {
+		return toString();
+	}
 }

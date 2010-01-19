@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.11 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.12 2010/01/19 19:54:47 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
 
 import rails.game.*;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.util.*;
 
 public class SpecialTokenLay extends SpecialProperty {
     String locationCodes = null;
@@ -42,6 +41,10 @@ public class SpecialTokenLay extends SpecialProperty {
         String tokenClassName =
                 tokenLayTag.getAttributeAsString("class",
                         "rails.game.BaseToken");
+
+        String tokenName = "";
+        int tokenValue = 0;
+
         try {
             tokenClass = Class.forName(tokenClassName).asSubclass(Token.class);
             if (tokenClass == BonusToken.class) {
@@ -49,6 +52,8 @@ public class SpecialTokenLay extends SpecialProperty {
                 token = bToken;
                 bToken.configureFromXML(tokenLayTag);
 
+                tokenName = bToken.getName();
+                tokenValue = bToken.getValue();
                 numberAvailable =
                         tokenLayTag.getAttributeAsInteger("number",
                                 numberAvailable);
@@ -60,13 +65,29 @@ public class SpecialTokenLay extends SpecialProperty {
             throw new ConfigurationException("Cannot instantiate class "
                                              + tokenClassName, e);
         }
+
+        if (tokenClass == BaseToken.class) {
+        	description = LocalText.getText("LayBaseTokenInfo",
+        			locationCodes,
+        			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+        			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+        } else if (tokenClass == BonusToken.class) {
+        	description = LocalText.getText("LayBonusTokenInfo",
+        			tokenName,
+        			Bank.format(tokenValue),
+        			locationCodes);
+        }
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
 
         locations = gameManager.getMapManager().parseLocations(locationCodes);
+
+        if (token instanceof BonusToken) {
+        	((BonusToken)token).prepareForRemoval(gameManager.getPhaseManager());
+        }
     }
 
     public boolean isExecutionable() {
@@ -111,5 +132,15 @@ public class SpecialTokenLay extends SpecialProperty {
                + tokenClass.getSimpleName() + ": "
                + (token != null ? token.toString() : "") + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free;
+    }
+
+    @Override
+	public String toMenu() {
+    	return description;
+    }
+
+    @Override
+	public String getInfo() {
+    	return description;
     }
 }

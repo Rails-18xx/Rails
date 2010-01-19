@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.20 2010/01/08 21:30:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.21 2010/01/19 19:54:43 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -10,8 +10,7 @@ import rails.game.*;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.util.*;
 
 public abstract class SpecialProperty implements SpecialPropertyI {
 
@@ -28,6 +27,11 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
 
+    /** Optional descriptive text, for display in menus and info text.
+     * Subclasses may put real text in it.
+     */
+    protected String description = "";
+
     protected int uniqueId;
 
     /** To give subclasses access to the various 'managers' */
@@ -36,7 +40,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected static Map<Integer, SpecialPropertyI> spMap =
             new HashMap<Integer, SpecialPropertyI>();
     protected static int lastIndex = 0;
-    
+
     protected static Logger log =
         Logger.getLogger(SpecialProperty.class.getPackage().getName());
 
@@ -64,9 +68,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         transferText = tag.getAttributeAsString("transfer", "");
     }
 
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-        
+
     }
 
     public int getUniqueId() {
@@ -124,7 +128,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     public void setExercised() {
         setExercised(true);
     }
-    
+
     public void setExercised (boolean value) {
         exercised.set(value);
         if (value) privateCompany.checkClosingIfExercised(false);
@@ -173,5 +177,16 @@ public abstract class SpecialProperty implements SpecialPropertyI {
      */
     public String toMenu() {
         return toString();
+    }
+
+    /** Default Info text. To be overridden where useful. */
+    public String getInfo() {
+    	return toString();
+    }
+
+    /** Default Help text: "You can " + the menu description */
+    public String getHelp() {
+    	return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
+
     }
 }
