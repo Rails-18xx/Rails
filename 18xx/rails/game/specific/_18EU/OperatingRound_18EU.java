@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.11 2010/01/18 22:51:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.12 2010/01/19 19:52:30 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.util.*;
 import rails.game.*;
 import rails.game.action.BuyTrain;
 import rails.game.state.BooleanState;
-import rails.game.state.State;
 
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for
