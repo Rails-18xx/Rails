@@ -15,7 +15,6 @@ public class NameTrains extends SpecialProperty implements Moveable {
     private Class<?> tokenClass;
     private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
     private String name = "NameTrains";
-    private String description;
 
     @Override
 	public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -65,9 +64,10 @@ public class NameTrains extends SpecialProperty implements Moveable {
         description = description.replaceFirst(", $", "");
     }
 
-    public void finishConfiguration (GameManagerI gameManager) 
+    @Override
+	public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-        
+
         for (NamedTrainToken token : tokens) {
             token.finishConfiguration(gameManager);
         }
