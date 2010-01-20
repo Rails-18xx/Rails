@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.35 2010/01/18 18:49:05 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.36 2010/01/20 19:52:43 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -557,13 +557,6 @@ public class StatusWindow extends JFrame implements ActionListener,
     public boolean processImmediateAction() {
         // No such actions here
         return true;
-    }
-
-    public void displayServerMessage() {
-        String[] message = DisplayBuffer.get();
-        if (message != null) {
-            JOptionPane.showMessageDialog(this, message);
-        }
     }
 
     public void setPassButton(NullAction action) {

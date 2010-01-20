@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.32 2010/01/14 20:50:08 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.33 2010/01/20 19:52:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -14,7 +14,8 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
-import rails.game.*;
+import rails.game.GameManager;
+import rails.game.OperatingRound;
 import rails.game.action.*;
 import rails.util.LocalText;
 
@@ -123,7 +124,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         // Process the action
         boolean result = gameUIManager.processOnServer(action);
         // Display any error message
-        displayServerMessage();
+        //displayServerMessage();
 
         return result;
     }
@@ -131,13 +132,6 @@ public class ORWindow extends JFrame implements ActionPerformer {
     // Not yet used
     public boolean processImmediateAction() {
         return true;
-    }
-
-    public void displayServerMessage() {
-        String[] message = DisplayBuffer.get();
-        if (message != null) {
-            JOptionPane.showMessageDialog(this, message);
-        }
     }
 
     public void displayORUIMessage(String message) {
