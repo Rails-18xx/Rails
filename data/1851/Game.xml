@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1851"/>
+		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
