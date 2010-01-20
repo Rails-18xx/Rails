@@ -66,6 +66,8 @@ public class GameUIManager implements DialogOwner {
     protected boolean previousStatusWindowVisibilityHint;
     protected boolean previousORWindowVisibilityHint;
 
+    protected boolean previousResult;
+
     protected static Logger log =
             Logger.getLogger(GameUIManager.class.getPackage().getName());
 
@@ -131,34 +133,48 @@ public class GameUIManager implements DialogOwner {
 
     public void startLoadedGame() {
         gameUIInit();
-        processOnServer(null);
+        processOnServer(new NullAction(NullAction.START_GAME));
         statusWindow.setGameActions();
     }
 
     public boolean processOnServer(PossibleAction action) {
 
+    	boolean result = true;
+
         // In some cases an Undo requires a different follow-up
         lastAction = action;
-        if (action != null) {
+
+        if (action == null) {
+        	// If the action is null, we can skip processing
+        	// and continue with following up a previous action.
+        	// This occurs after a nonmodal Message dialog.
+        	result = previousResult;
+
+        } else {
         	action.setActed();
         	action.setPlayerName(getCurrentPlayer().getName());
+
+        	log.debug("==Passing to server: " + action);
+
+	        Player player = getCurrentPlayer();
+	        if (player != null) {
+	            action.setPlayerName(player.getName());
+	        }
+
+	        // Process the action on the server
+	        result = previousResult = gameManager.process(action);
+
+	        // Follow-up the result
+	        log.debug("==Result from server: " + result);
+	        reportWindow.addLog();
+	        if (DisplayBuffer.getAutoDisplay()) {
+	        	if (displayServerMessage()) {
+	        		// Interrupt processing.
+	        		// Will be continued via dialogActionPerformed().
+	        		return true;
+	        	}
+	        }
         }
-
-        log.debug("==Passing to server: " + action);
-
-        Player player = getCurrentPlayer();
-        if (action != null && player != null) {
-            action.setPlayerName(player.getName());
-        }
-
-        // Process the action on the server
-        boolean result = gameManager.process(action);
-
-        // Follow-up the result
-        log.debug("==Result from server: " + result);
-        if (DisplayBuffer.getAutoDisplay()) activeWindow.displayServerMessage();
-
-        reportWindow.addLog();
 
         // End of game checks
         if (gameManager.isGameOver()) {
@@ -183,6 +199,19 @@ public class GameUIManager implements DialogOwner {
 
        	return activeWindow.processImmediateAction();
     }
+
+    public boolean displayServerMessage() {
+        String[] message = DisplayBuffer.get();
+        if (message != null) {
+            setCurrentDialog(new MessageDialog(this,
+            		LocalText.getText("Message"),
+            		"<html>" + Util.joinWithDelimiter(message, "<br>")),
+            	null);
+            return true;
+        }
+        return false;
+    }
+
 
     public void updateUI() {
 
@@ -520,13 +549,14 @@ public class GameUIManager implements DialogOwner {
 	                int selected = dialog.getSelectedOption();
 	                action.setNumberTaken(action.getMinNumber() + selected);
 	    	} else if (currentDialog instanceof MessageDialog) {
-	    		// Nothing
+	    		// Nothing to do
+	    		currentDialogAction = null; // Should already be null
 	        } else {
 	            return;
 	        }
     	}
 
-        if (currentDialogAction != null) processOnServer(currentDialogAction);
+        processOnServer(currentDialogAction);
     }
 
     public JDialog getCurrentDialog() {

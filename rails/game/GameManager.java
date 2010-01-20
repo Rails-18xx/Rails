@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.79 2010/01/19 19:53:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.80 2010/01/20 19:52:44 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -689,8 +689,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         DisplayBuffer.clear();
         guiHints.clearVisibilityHints();
 
-        // The action is null only immediately after Load.
-        if (action != null) {
+        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.START_GAME) {
+            // Skip processing at game start after Load.
+        	// We're only here to create PossibleActions.
+        	result = true;
+
+        } else if (action != null) {
+        	// Should never be null.
 
             action.setActed();
             result = false;

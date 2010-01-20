@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.2 2010/01/14 20:48:26 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.3 2010/01/20 19:52:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -97,10 +97,6 @@ implements ActionListener, KeyListener {
 
         if (fields != null && fields[x][y] == null) fields[x][y] = comp;
         comp.setVisible(visible);
-    }
-
-    public void displayPopup(String text) {
-        JOptionPane.showMessageDialog(this, text);
     }
 
     public void keyPressed(KeyEvent e) {

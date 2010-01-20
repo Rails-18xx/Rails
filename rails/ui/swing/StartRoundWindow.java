@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.34 2010/01/08 21:27:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.35 2010/01/20 19:52:44 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -437,7 +437,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     spinnerModel.setStepSize(bidAction.getBidIncrement());
                     spinnerModel.setValue(mb);
                 } else {
-                    //itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBidding"));
                     itemNameButton[i].setPossibleAction(action);
                 }
                 bidAllowed = selected;
@@ -634,13 +633,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             return players[playerIndex].getName();
         else
             return "";
-    }
-
-    public void displayServerMessage() {
-        String[] message = DisplayBuffer.get();
-        if (message != null) {
-            JOptionPane.showMessageDialog(this, message);
-        }
     }
 
     private void setItemNameButton(int i, boolean clickable) {
