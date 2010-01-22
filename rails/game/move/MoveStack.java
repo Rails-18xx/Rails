@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.2 2009/11/26 20:14:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.3 2010/01/22 21:28:06 evos Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -152,6 +152,10 @@ public class MoveStack {
 
     public boolean isOpen() {
         return currentMoveSet != null;
+    }
+    
+    public int getIndex() {
+        return lastIndex + 1;
     }
 
 }
