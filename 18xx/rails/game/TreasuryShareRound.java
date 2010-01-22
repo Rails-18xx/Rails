@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.18 2010/01/18 18:49:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.19 2010/01/22 21:27:07 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -360,7 +360,7 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, cert.getShares(), false);
-            executeTradeCertificate(cert2, portfolio, shares * price);
+            executeTradeCertificate(cert2, portfolio, cert2.getShares() * price);
         }
 
         hasBought.set(true);
