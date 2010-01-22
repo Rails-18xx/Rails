@@ -167,13 +167,14 @@ public class GameUIManager implements DialogOwner {
 	        // Follow-up the result
 	        log.debug("==Result from server: " + result);
 	        reportWindow.addLog();
+	        /*
 	        if (DisplayBuffer.getAutoDisplay()) {
 	        	if (displayServerMessage()) {
 	        		// Interrupt processing.
 	        		// Will be continued via dialogActionPerformed().
 	        		return true;
 	        	}
-	        }
+	        }*/
         }
 
         // End of game checks
@@ -194,6 +195,15 @@ public class GameUIManager implements DialogOwner {
         updateUI();
 
         statusWindow.setGameActions();
+
+        // Is this perhaps the right place to display messages...?
+        if (DisplayBuffer.getAutoDisplay()) {
+        	if (displayServerMessage()) {
+        		// Interrupt processing.
+        		// Will be continued via dialogActionPerformed().
+        		return true;
+        	}
+        }
 
         if (!result) return false;
 
