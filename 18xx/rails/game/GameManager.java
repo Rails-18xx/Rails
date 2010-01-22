@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.80 2010/01/20 19:52:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.81 2010/01/22 21:21:15 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -205,17 +205,24 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         initGameParameters();
 
-        // Get any available game options
-        /* THIS IS NOT CURRENTLY USED, but I leave it in for another while (EV)
+        /* Check the game options provided with the game.
+         * These duplicate the game options in Game.xml, but are still
+         * required here to set default values when loading a game from
+         * a save file, as in that case the options in GamesList.xml are
+         * not included.
+         * */
         GameOption option;
         String optionName, optionType, optionValues, optionDefault;
         String optionNameParameters;
-        List<Tag> optionTags = tag.getChildren(OPTION_TAG);
+        List<Tag> optionTags = tag.getChildren("GameOption");
         if (optionTags != null) {
             for (Tag optionTag : optionTags) {
                 optionName = optionTag.getAttributeAsString("name");
                 if (optionName == null)
                     throw new ConfigurationException("GameOption without name");
+                if (gameOptions.containsKey(optionName)) continue;
+                
+                // Include missing option
                 option = new GameOption(optionName);
                 availableGameOptions.add(option);
                 optionNameParameters = optionTag.getAttributeAsString("parm");
@@ -227,12 +234,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 optionValues = optionTag.getAttributeAsString("values");
                 if (optionValues != null)
                     option.setAllowedValues(optionValues.split(","));
-                optionDefault = optionTag.getAttributeAsString("default");
+                optionDefault = optionTag.getAttributeAsString("default", "");
                 if (optionDefault != null)
                     option.setDefaultValue(optionDefault);
+                
+                gameOptions.put(optionName, optionDefault);
             }
         }
-        */
+        
 
         Tag gameParmTag = tag.getChild("GameParameters");
         if (gameParmTag != null) {
