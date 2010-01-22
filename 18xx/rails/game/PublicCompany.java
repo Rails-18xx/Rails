@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.77 2010/01/01 13:59:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.78 2010/01/22 21:23:43 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1324,7 +1324,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     @Override
     public String toString() {
-        return name + ", " + publicNumber + " of " + numberOfPublicCompanies;
+        return name;
     }
 
     /**
