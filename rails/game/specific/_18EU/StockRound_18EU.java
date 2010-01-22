@@ -175,7 +175,7 @@ public class StockRound_18EU extends StockRound {
             }
 
             // Does the player have enough cash?
-            while (playerCash < price) continue;
+            if (playerCash < price) continue;
 
             possibleActions.add(new BuyCertificate(cert, from, price, 1));
         }
