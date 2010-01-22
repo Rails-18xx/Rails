@@ -34,8 +34,8 @@ implements ActionListener, KeyListener {
     private static String saveDirectory;
     private String filepath;
 
-    protected static Logger log =
-        Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
+    protected static Logger log;
+    
 
     /**
      * @param args
@@ -56,6 +56,8 @@ implements ActionListener, KeyListener {
          * this MUST be done before updating Config)
          */
         System.setProperty("log4j.configuration", myConfigFile);
+        log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
+
         /* Tell the properties loader to read this file. */
         Config.setConfigFile(myConfigFile);
         System.out.println("Configuration file = " + myConfigFile);
@@ -212,7 +214,7 @@ implements ActionListener, KeyListener {
                 executedActions =
                         (List<PossibleAction>) ois.readObject();
                 savedObjects.add(executedActions);
-                i=1;
+                i=0;
                 for (PossibleAction action : executedActions) {
                     add("Action "+(i++)+": "+action.toString());
                 }
