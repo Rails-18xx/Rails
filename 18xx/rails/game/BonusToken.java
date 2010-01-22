@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.13 2010/01/19 19:54:47 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.14 2010/01/22 21:22:41 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -67,7 +67,9 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
     public void close() {
 
         new ObjectMove(this, holder, GameManager.getInstance().getBank().getScrapHeap());
-        user.removeBonus(name);
+        if (user != null) {
+        	user.removeBonus(name);
+        }
     }
 
     /**
