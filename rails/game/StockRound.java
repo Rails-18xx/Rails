@@ -1192,7 +1192,6 @@ public class StockRound extends Round {
             finishTurn();
 
         }
-
         return true;
     }
 
@@ -1219,6 +1218,7 @@ public class StockRound extends Round {
     }
 
     protected void finishTurn() {
+
         setNextPlayer();
         sellPrices.clear();
         if (hasAutopassed(currentPlayer)) {
