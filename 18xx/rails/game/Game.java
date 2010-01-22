@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.45 2010/01/15 19:55:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.46 2010/01/22 21:23:26 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -177,6 +177,8 @@ public class Game {
             String message =
                     LocalText.getText("GameSetupFailed", GAME_XML_FILE);
             log.fatal(message, e);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             DisplayBuffer.add(message + ":\n " + e.getMessage());
             return false;
         }
