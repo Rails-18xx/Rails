@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.34 2010/01/20 20:41:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.35 2010/01/22 21:26:22 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -201,7 +201,7 @@ public class Tile extends ModelObject implements TileI, StationHolder {
         quantity = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
         unlimited = (quantity == 99 || quantity == UNLIMITED_TILES
-                || setTag.getGameOptions().get("UnlimitedTiles").equalsIgnoreCase("yes"));
+                || "yes".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles")));
         if (unlimited) quantity = UNLIMITED_TILES;
         /* Multiple base tokens of one company allowed */
         allowsMultipleBasesOfOneCompany = setTag.hasChild(
