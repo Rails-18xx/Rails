@@ -26,327 +26,102 @@
 	</Tile>
 
 	<!-- Yellow tiles -->
-	<Tile id="3">
+	<Tile id="3" quantity="8">
 		<Upgrade id="141,142,143" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="8"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="4">
+	<Tile id="4" quantity="10">
 		<Upgrade id="141,142" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="10"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="7">
+	<Tile id="7" quantity="4">
 		<Upgrade id="80,82,83" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="8">
+	<Tile id="8" quantity="15">
 		<Upgrade id="80,81,82,83" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="15"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="9">
+	<Tile id="9" quantity="15">
 		<Upgrade id="82,83" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="15"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="57">
+	<Tile id="57" quantity="8">
 		<Upgrade id="14,15" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="8"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="58">
+	<Tile id="58" quantity="14">
 		<Upgrade id="141,142,143,144" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="14"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="201">
+	<Tile id="201" quantity="7">
 		<Upgrade id="576,577,578" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="7"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="202">
+	<Tile id="202" quantity="9">
 		<Upgrade id="576,577,578,579" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="9"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
 
 	<!-- Green tiles -->
-	<Tile id="14">
+	<Tile id="14" quantity="4">
 		<Upgrade id="611" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="15">
+	<Tile id="15" quantity="4">
 		<Upgrade id="611" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="80" pic="3080">
+	<Tile id="80" pic="3080" quantity="4">
 		<Upgrade id="545,546" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="81" pic="3081">
+	<Tile id="81" pic="3081" quantity="4">
 		<Upgrade id="546" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="82" pic="3082">
+	<Tile id="82" pic="3082" quantity="4">
 		<Upgrade id="544,545,546" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="83" pic="3083">
+	<Tile id="83" pic="3083" quantity="4">
 		<Upgrade id="544,545,546" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="141">
+	<Tile id="141" quantity="5">
 		<Upgrade id="145,146,147" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="5"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="142">
+	<Tile id="142" quantity="4">
 		<Upgrade id="145,146,147" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="143">
+	<Tile id="143" quantity="2">
 		<Upgrade id="146,147" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="2"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="144">
+	<Tile id="144" quantity="2">
 		<Upgrade id="147" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="2"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="576">
+	<Tile id="576" quantity="4">
 		<Upgrade id="582" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="577">
+	<Tile id="577" quantity="4">
 		<Upgrade id="582" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="578">
+	<Tile id="578" quantity="3">
 		<Upgrade id="582" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="3"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="579">
+	<Tile id="579" quantity="3">
 		<Upgrade id="582" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="3"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="580">
+	<Tile id="580" quantity="1">
 		<Upgrade id="583" />
 		<AllowsMultipleBasesOfOneCompany/>
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="1"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="581">
+	<Tile id="581" quantity="2">
 		<Upgrade id="584" />
 		<AllowsMultipleBasesOfOneCompany/>
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="2"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
 
 	<!-- Brown tiles -->
-	<Tile id="145">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="146">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="5"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="147">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="4"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="544">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="3"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="545">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="3"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="546">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="3"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="582">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="9"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="583">
+	<Tile id="145" quantity="4" />
+	<Tile id="146" quantity="5" />
+	<Tile id="147" quantity="4" />
+	<Tile id="544" quantity="3" />
+	<Tile id="545" quantity="3" />
+	<Tile id="546" quantity="3" />
+	<Tile id="582" quantity="9" />
+	<Tile id="583" quantity="1">
 		<AllowsMultipleBasesOfOneCompany/>
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="1"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
-	<Tile id="584">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="2"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
-	<Tile id="611">
+	<Tile id="584" quantity="2" />
+	<Tile id="611" quantity="8">
 		<Upgrade id="513" />
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="8"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
 	</Tile>
 
 	<!-- Grey tiles -->
-	<Tile id="513">
-		<IfOption name="UnlimitedTiles" value="no">
-			<Attributes quantity="5"/>
-		</IfOption>
-		<IfOption name="UnlimitedTiles" value="yes">
-			<Attributes quantity="-1"/>
-		</IfOption>
-	</Tile>
+	<Tile id="513" quantity="5" />
 </TileManager>

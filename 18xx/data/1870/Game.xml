@@ -2,7 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1870"/>
-		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">

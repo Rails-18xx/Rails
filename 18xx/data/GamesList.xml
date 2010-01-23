@@ -22,7 +22,6 @@ Limitations:
 		-->
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
@@ -47,7 +46,6 @@ For the start packet sale, three variants have been implemented:
 Variant selection effects on SR and OR have not been implemented yet.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
 	<Game name="1851">
@@ -58,7 +56,6 @@ Variant selection effects on SR and OR have not been implemented yet.
 Limitation:
 - No random assignment of private companies (players should do this off-line and enter the result)
 		</Description>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="1856">
@@ -70,9 +67,8 @@ Designed by Bill Dixon
 Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 		</Description>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
-		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 	<Game name="1870">
@@ -83,7 +79,6 @@ Designed by Bill Dixon
 
 Aspects not present in 1830 have not been implemented yet.
 		</Description>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
@@ -91,7 +86,6 @@ Aspects not present in 1830 have not been implemented yet.
 		<Note>Fully playable</Note>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Description>18AL  - The Railroads come to Alabama
 (c) 2000, 2004 Mark Derrick and John David Galt
@@ -115,7 +109,6 @@ Not yet implemented:
 		</Description>
 		<Option name="Extra3Trains" values="0,1,2" default="0"/>
 		<Option name="Extra4Trains" values="0,1" default="0"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	<Game name="18Kaas">
@@ -127,7 +120,6 @@ Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>

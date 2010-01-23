@@ -4,7 +4,6 @@
 		<Game name="18EU"/>
 		<GameOption name="Extra3Trains" values="0,1,2" default="0"/>
 		<GameOption name="Extra4Trains" values="0,1" default="0"/>
-		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameParameters>
 			<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
 				sequence="sellBuy"
