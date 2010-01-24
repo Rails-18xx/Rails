@@ -593,7 +593,7 @@ public class GameUIManager implements DialogOwner {
             filename = providedName;
         } else {
             if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {
-                saveSuffix = "_" + gameManager.getCurrentPlayer().getName();
+                saveSuffix = "_" + gameManager.getCurrentPlayer().getName().replaceAll("[^-\\w\\.]", "_");
             }
             filename =
                     saveDirectory + "/" + gameManager.getGameName() + "_"
