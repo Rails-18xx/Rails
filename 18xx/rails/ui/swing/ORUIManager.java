@@ -782,6 +782,10 @@ public class ORUIManager implements DialogOwner {
                         LocalText.getText("YOU_MAY_ADD_CASH",
                                 Bank.format(bTrain.getPresidentCashToAdd())));
             }
+            
+            if (bTrain.getExtraMessage() != null) {
+                b.append(" (").append(bTrain.getExtraMessage()+")");
+            }
             prompt = b.toString();
             prompts.add(prompt);
             promptToTrain.put(prompt, bTrain);
@@ -802,7 +806,7 @@ public class ORUIManager implements DialogOwner {
             msgbuf.append("</font>");
         }
         setMessage(msgbuf.toString());
-
+        
         String selectedActionText =
                 (String) JOptionPane.showInputDialog(orWindow,
                         LocalText.getText("BUY_WHICH_TRAIN"),
