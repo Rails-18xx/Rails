@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.92 2010/01/19 19:54:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.93 2010/01/24 16:21:28 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1311,7 +1311,7 @@ public class OperatingRound extends Round implements Observer {
 
             // Does the company have room for another train?
             int trainLimit = operatingCompany.getCurrentTrainLimit();
-            if (!isBelowTrainLimit() && !action.isForcedExchange()) {
+            if (!canBuyTrainNow() && !action.isForcedExchange()) {
                 errMsg =
                         LocalText.getText("WouldExceedTrainLimit",
                                 String.valueOf(trainLimit));
@@ -2067,7 +2067,7 @@ public class OperatingRound extends Round implements Observer {
                 operatingCompany.getPortfolio().getNumberOfTrains() > 0;
         boolean atTrainLimit =
                 operatingCompany.getNumberOfTrains() >= operatingCompany.getCurrentTrainLimit();
-        boolean canBuyTrainNow = isBelowTrainLimit();
+        boolean canBuyTrainNow = canBuyTrainNow();
         boolean presidentMayHelp = !hasTrains && operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
@@ -2232,6 +2232,17 @@ public class OperatingRound extends Round implements Observer {
      */
     protected boolean isBelowTrainLimit() {
         return operatingCompany.getNumberOfTrains() < operatingCompany.getCurrentTrainLimit();
+    }
+    
+    /**
+     * Can the company buy a train now?
+     * Normally only calls isBelowTrainLimit() to get the result.
+     * May be overridden if other considerations apply (such as
+     * having a Pullmann in 18EU).
+     * @return
+     */
+    protected boolean canBuyTrainNow () {
+        return isBelowTrainLimit();
     }
 
     protected void setTrainsToDiscard() {

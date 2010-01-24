@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.13 2009/11/25 18:45:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.14 2010/01/24 16:21:29 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -36,6 +36,8 @@ public class BuyTrain extends PossibleORAction {
 
     transient private SpecialTrainBuy specialProperty = null;
     private int specialPropertyId = 0;
+    
+    private String extraMessage = null;
 
     // User settings
     private int pricePaid = 0;
@@ -60,13 +62,7 @@ public class BuyTrain extends PossibleORAction {
             trainsForExchangeUniqueIds = new String[trains.size()];
             for (int i = 0; i < trains.size(); i++) {
                 trainsForExchangeUniqueIds[i] = trains.get(i).getName();
-                // TODO:
-                // Must
-                // be
-                // replaced
-                // by
-                // unique
-                // Ids
+                // TODO: Must be replaced by unique Ids
             }
         }
         return this;
@@ -92,8 +88,16 @@ public class BuyTrain extends PossibleORAction {
     public void setHasNoTrains(boolean hasNoTrains) {
 		this.hasNoTrains = hasNoTrains;
 	}
+    
+    public void setExtraMessage (String message) {
+        extraMessage = message;
+    }
 
-	/**
+	public String getExtraMessage() {
+        return extraMessage;
+    }
+
+    /**
      * @return Returns the specialProperty.
      */
     public SpecialTrainBuy getSpecialProperty() {
@@ -229,8 +233,6 @@ public class BuyTrain extends PossibleORAction {
 
         //in.defaultReadObject();
         // TEMPORARY Custom reading for backwards compatibility
-    	// TODO We need this code only until route checking is implemented,
-    	// as then it will be possible to detect route existence.
         ObjectInputStream.GetField fields = in.readFields();
         trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
         fromName = (String) fields.get("fromName", fromName);
@@ -245,6 +247,7 @@ public class BuyTrain extends PossibleORAction {
         pricePaid = fields.get("pricePaid", pricePaid);
         addedCash = fields.get("addedCash", addedCash);
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
+        extraMessage = (String) fields.get("extraMessage", extraMessage);
 
         GameManagerI gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
