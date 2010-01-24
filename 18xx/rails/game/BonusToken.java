@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.14 2010/01/22 21:22:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.15 2010/01/24 17:13:25 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -10,12 +10,10 @@ import rails.util.Tag;
 import rails.util.Util;
 
 /**
- * A BaseToken object represents a token that a operating public company can
- * place on the map to act as a rail building and train running starting point.
- * <p> The "Base" qualifier is used (more or less) consistently in this
- * rails.game program as it most closely the function of such a token: to act as
- * a base from which a company can operate. Other names used in various games
- * and discussions are "railhead", "station", "garrison", or just "token".
+ * A BonusToken object represents a token that a operating public company can
+ * place on the map to gain extra revenue or other privileges.
+ * <p>Such tokens are usually not placed in city slots, 
+ * which are intended for base tokens, but on some unoccupied part of a tile.  
  *
  * @author Erik Vos
  */
