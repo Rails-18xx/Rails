@@ -3121,6 +3121,12 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
+	<Tile colour="fixed" id="-1143" name="Bham1851">
+		<Station id="city1" position="0" type="Town"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side5"/>
+	</Tile>
 	<Tile colour="fixed" id="-114" name="Braunschweig">
 		<Station id="city1" position="501" slots="1" type="City" value="20"/>
 		<Track from="city1" gauge="normal" to="side4"/>

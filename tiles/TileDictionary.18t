@@ -13777,5 +13777,26 @@ object TTilesWrapper
           Position2 = tp4SideF
         end>
       Junctions = <>
+    end
+    item
+      Code = -1143
+      LongName = 'Bham1851'
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
     end>
 end

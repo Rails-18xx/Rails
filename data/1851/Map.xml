@@ -86,7 +86,7 @@
 	<Hex name="I17" tile="0" cost="60"/>
 	<Hex name="I19" tile="0" cost="60"/>
 	<Hex name="J6" tile="-902" orientation="4" value="30,40,50" city="Gulf"/>
-	<Hex name="J12" tile="-903" orientation="4" value="0,30,50" city="Birmingham"/>
+	<Hex name="J12" tile="-1143" orientation="0" value="0,30,50" city="Birmingham"/>
 	<Hex name="J14" tile="0"/>
 	<Hex name="J16" tile="0" cost="60"/>
 	<Hex name="J18" tile="-903" orientation="3" value="30,40,50" city="Atlanta"/>
