@@ -1,4 +1,4 @@
-$dir = "TileDictionary";
+$dir = $ARGV[0] || "TileDictionary";
 opendir (DIR, $dir) and print "Opened $dir\n" or die "Cannot open dir $dir: $!\n";
 while (($file = readdir DIR)) {
 	next unless $file =~/\.svg$/;
