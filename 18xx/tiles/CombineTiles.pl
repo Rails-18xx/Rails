@@ -41,7 +41,7 @@ closedir DIR;
 #    - To add the extra whitespace below the tile image that TileDesigner also adds
 #      (for unknown reasons), change the Height to 357.50.
 #    - Then save the tile.
-# 4. Use this program to combine tiles from the following directories:
+# 4. Use this program to combine tiles from the following directories into tiles/svg:
 #    - From tiles/TDwithID: all tiles with an ID > 0 (not preprinted tiles).
 #      These images have the id on the tile.
 #    - From tiles/TDwoID: all tiles with an ID <= 0 (preprinted tiles).
