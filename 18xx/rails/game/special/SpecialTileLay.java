@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.8 2010/01/19 19:54:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.9 2010/01/25 20:51:59 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class SpecialTileLay extends SpecialProperty {
         if (tileNumber > 0) {
 	    	description = LocalText.getText("LayNamedTileInfo",
 	    			tileNumber,
-	    			name,
+	    			name != null ? name : "",
 	    			locationCodes,
 	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
 	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
