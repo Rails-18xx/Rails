@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.14 2010/01/24 16:21:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.15 2010/01/26 19:50:28 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -116,7 +116,18 @@ public class BuyTrain extends PossibleORAction {
         return specialProperty != null;
     }
 
+    /** 
+     * To be used for all usage of train, also within this class. 
+     * After reloading the 2nd copy etc. of a train with unlimited quantity, 
+     * the train attribute will be null (because readObject() is called and the
+     * train is initiated before the actions have been executed - the second
+     * train is in this case only created after buying the first one).
+     * @return
+     */ 
     public TrainI getTrain() {
+        if (train == null) {
+            train = GameManager.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
+        }
         return train;
     }
 
@@ -157,11 +168,11 @@ public class BuyTrain extends PossibleORAction {
 	}
 
 	public Portfolio getHolder() {
-        return train.getHolder();
+        return getTrain().getHolder();
     }
 
     public CashHolder getOwner() {
-        return train.getOwner();
+        return getTrain().getOwner();
     }
 
     public int getAddedCash() {
@@ -195,7 +206,7 @@ public class BuyTrain extends PossibleORAction {
 
         StringBuffer b = new StringBuffer();
         b.append(company.getName());
-        b.append(": buy ").append(train.getName());
+        b.append(": buy ").append(getTrain().getName());
         b.append("-train from ").append(from.getName());
         if (fixedCost > 0) {
             b.append(" for ").append(Bank.format(fixedCost));
@@ -223,7 +234,7 @@ public class BuyTrain extends PossibleORAction {
     public boolean equals(PossibleAction action) {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
-        return a.train == train && a.from == from && a.fixedCost == fixedCost
+        return a.getTrain() == getTrain() && a.from == from && a.fixedCost == fixedCost
                && a.trainsForExchange == trainsForExchange;
     }
 
@@ -253,6 +264,7 @@ public class BuyTrain extends PossibleORAction {
         TrainManager trainManager = gameManager.getTrainManager();
 
         train = trainManager.getTrainByUniqueId(trainUniqueId);
+        log.debug("--- Train with uid="+trainUniqueId+" is "+train, new Exception ("X"));
         from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
