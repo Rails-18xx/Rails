@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.15 2010/01/26 19:50:28 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.16 2010/01/26 20:09:39 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -264,7 +264,9 @@ public class BuyTrain extends PossibleORAction {
         TrainManager trainManager = gameManager.getTrainManager();
 
         train = trainManager.getTrainByUniqueId(trainUniqueId);
-        log.debug("--- Train with uid="+trainUniqueId+" is "+train, new Exception ("X"));
+        // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
+        // Set getTrain() for how this is fixed.
+        
         from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
