@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.13 2010/01/24 16:21:28 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.14 2010/01/26 19:50:45 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -173,7 +173,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (mustDiscardPullmann) {
             TrainI pullmann = operatingCompany.getPortfolio().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
-                pullmann.moveTo(scrapHeap);
+                pullmann.moveTo(pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         operatingCompany.getName(),
                         pullmann.getName() ));
