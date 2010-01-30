@@ -10,6 +10,9 @@
     <property name="target" value="1.5"/>
     <property name="source" value="1.5"/>
 	<property name="version" value="1.1.2"/>
+	<taskdef name="jarbundler" 
+		classpath="ant/jarbundler-2.1.0/jarbundler-2.1.0.jar"
+		classname="net.sourceforge.jarbundler.JarBundler" />
     <path id="18xx.classpath">
         <pathelement location="classes"/>
         <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
@@ -23,6 +26,7 @@
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
                 <exclude name="tools/**"/>
+                <exclude name="images/**"/>
             </fileset>
         </copy>
     </target>
@@ -30,7 +34,10 @@
         <delete dir="classes"/>
     	<delete dir="jar"/>
     </target>
-    <target depends="clean" name="cleanall"/>
+    <target depends="clean" name="cleanall">
+		<delete dir="rails-${version}"/>
+		<delete dir="rails-mac-${version}"/>
+	</target>
     <target depends="build-subprojects,build-project,build-release" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
@@ -69,6 +76,7 @@
             	<exclude name="html/*"/>
             	<exclude name="lib/**"/>
             	<exclude name="rails-${version}/**"/>
+            	<exclude name="rails-*-${version}/**"/>
             	<exclude name="rails.bat"/>
             	<exclude name="rails.sh"/>
             	<exclude name=".project"/>
@@ -98,6 +106,28 @@
 				<attribute name="Class-Path" value="./my.properties ./LocalisedText.properties ./lib/log4j-1.2/log4j-1.2.14.jar ./lib/batik-1.6/lib/batik-transcoder.jar ./lib/batik-1.6/batik.jar ./lib/batik-1.6/lib/batik-util.jar ./lib/batik-1.6/lib/batik-script.jar ./lib/batik-1.6/lib/batik-bridge.jar ./lib/batik-1.6/lib/batik-ext.jar ./lib/batik-1.6/lib/batik-awt-util.jar ./lib/batik-1.6/lib/batik-dom.jar ./lib/batik-1.6/lib/batik-gvt.jar" />
 			</manifest>
 		</jar>
+	</target>
+	<target name="build-mac">
+		<mkdir dir="rails-mac-${version}" />
+		<copy includeemptydirs="false" todir="rails-mac-${version}">
+			<fileset dir=".">
+				<include name="LICENSE"/>
+				<include name="README"/>
+				<include name="AUTHORS"/>
+				<include name="my.properties"/>
+			</fileset>
+		</copy>
+		<jarbundler dir="rails-mac-${version}"
+			name="Rails"
+			mainclass="rails.util.RunGame" 
+			icon="images/icon/rails.icns"
+			version="${version}">
+			<jarfileset dir="rails-${version}">
+				<include name="rails-${version}.jar"/>
+				<include name="lib/**"/>
+			</jarfileset>
+			<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
+		</jarbundler>
 	</target>
     <target name="RunGame">
         <java classname="rails.util.RunGame" failonerror="true" fork="yes">
