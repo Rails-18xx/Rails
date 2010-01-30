@@ -22,6 +22,7 @@
             <fileset dir=".">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
+                <exclude name="tools/**"/>
             </fileset>
         </copy>
     </target>
