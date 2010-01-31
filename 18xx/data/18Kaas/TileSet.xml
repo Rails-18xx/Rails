@@ -53,7 +53,7 @@
 	<!-- Green tiles -->
 	<Tile id="14" quantity="3">
 		<Upgrade id="63" hex="!I12"/>
-    <Upgrade id="9220" hex="I12"/>
+		<Upgrade id="9220" hex="I12"/>
 	</Tile>
 	<Tile id="15" quantity="2">
 		<Upgrade id="63" />
@@ -113,7 +113,7 @@
 	<Tile id="9997" quantity="1" />
 	<Tile id="62" quantity="1" />
 	<Tile id="63" quantity="3" />
-  <Tile id="9220" quantity="1" />
+	<Tile id="9220" quantity="1" />
 	<Tile id="64" quantity="1" />
 	<Tile id="65" quantity="1" />
 	<Tile id="66" quantity="1" />

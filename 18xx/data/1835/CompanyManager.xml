@@ -1,43 +1,43 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <CompanyType name="Private" class="rails.game.PrivateCompany">
-  </CompanyType>
-  <CompanyType name="Minor" class="rails.game.PublicCompany">
-    <ShareUnit percentage="100"/>
-    <Certificate type="President" shares="1"/>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	</CompanyType>
+	<CompanyType name="Minor" class="rails.game.PublicCompany">
+		<ShareUnit percentage="100"/>
+		<Certificate type="President" shares="1"/>
 	<StockPrice market="no"/>
 	<BaseTokens>
 		<LayCost method="distance" cost="20"/>
 	</BaseTokens>
 	<Payout split="always"/>
 	<Trains number="2,2,1" mandatory="no"/>
-  </CompanyType>
-  <CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
-    <PoolPaysOut/>
-    <Float percentage="50"/>
-    <StockPrice par="yes"/>
-    <ShareUnit percentage="10"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="8"/>
-    <!--NumberOfTileLays colour="yellow" phase="2" number="2"/-->
-    <TileLays>
+	</CompanyType>
+	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
+		<PoolPaysOut/>
+		<Float percentage="50"/>
+		<StockPrice par="yes"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<!--NumberOfTileLays colour="yellow" phase="2" number="2"/-->
+		<TileLays>
 		<Number colour="yellow" phase="2" number="2"/>
-    </TileLays>
+		</TileLays>
 	<Capitalisation type="incremental"/>
 	<Trains number="4,4,3,2"/>
-  </CompanyType>
-  
-  <Company name="NF"  longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
+	</CompanyType>
+	
+	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="L14" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
-    <ClosingConditions>
-		<SpecialProperties condition="ifExercised"/>
-    </ClosingConditions>
-  </Company>
-  <Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10">
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="OBB" longname="Ostbayerische Bahn" type="Private" basePrice="120" revenue="10">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="M15" extra="yes" free="yes" />
@@ -46,11 +46,11 @@
 				<SpecialTileLay location="M17" extra="yes" free="yes" />
 			</SpecialProperty>
 		</SpecialProperties>
-    <ClosingConditions>
-		<SpecialProperties condition="ifAllExercised"/>
-    </ClosingConditions>
-  </Company>
-  <Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
+		<ClosingConditions>
+			<SpecialProperties condition="ifAllExercised"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="J6" extra="yes" free="yes" />
@@ -59,144 +59,144 @@
 				<SpecialTokenLay location="J6" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
-    <ClosingConditions>
-		<SpecialProperties condition="ifAllExercised"/>
-    </ClosingConditions>
-  </Company>
-  <Company name="LD"  longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
-  <Company name="BB"  longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
- 		<SpecialProperties>
+		<ClosingConditions>
+			<SpecialProperties condition="ifAllExercised"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="LD"	longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
+	<Company name="BB"	longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
+		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="HB"  longname="Hannoversche Bahn" type="Private" basePrice="160" revenue="30">
- 		<SpecialProperties>
+	</Company>
+	<Company name="HB"	longname="Hannoversche Bahn" type="Private" basePrice="160" revenue="30">
+		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
-    <Home hex="H2"/>
-    <SpecialProperties>
+	</Company>
+	<Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
+		<Home hex="H2"/>
+		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
-    <Home hex="E19" city="1"/>
+	</Company>
+	<Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
+		<Home hex="E19" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="phase=4" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
-    <Home hex="F14"/>
+	</Company>
+	<Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
+		<Home hex="F14"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
-    <Home hex="G5"/>
+	</Company>
+	<Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
+		<Home hex="G5"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
-    <Home hex="E19" city="2"/>
+	</Company>
+	<Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
+		<Home hex="E19" city="2"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
-  <Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
-    <Home hex="C11" city="1"/>
+	</Company>
+	<Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
+		<Home hex="C11" city="1"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
 			</SpecialProperty>
 		</SpecialProperties>
-  </Company>
+	</Company>
 
-  <Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" tokens="5" fgColour="FFFFFF" bgColour="0000FF">
-    <Home hex="O15"/>
-  </Company>
-  <Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
-    <Home hex="H16"/>
-	  <FirstTrainCloses type="Private" name="LD"/>
-  </Company>
-  <Company name="Bad" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="FFFFFF" bgColour="808000">
-    <Home hex="L6"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="6"/>
-    <Certificate shares="2" number="1"/>
-  </Company>
-  <Company name="Wrt" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="FFFF00">
-    <Home hex="M9"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="6"/>
-    <Certificate shares="2" number="1"/>
-  </Company>
-  <Company name="Hes" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="00CC00">
-    <Home hex="J8"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="6"/>
-    <Certificate shares="2" number="1"/>
-  </Company>
-  <Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5" available="no" tokens="2" fgColour="FFFFFF" bgColour="800080">
-    <Home hex="C13"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="2" number="2"/>
-    <Certificate shares="1" number="4"/>
-  </Company>
-  <Company name="Old" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" available="no" tokens="2" fgColour="000000" bgColour="C0C0C0">
-    <Home hex="D6"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="2" number="2"/>
-    <Certificate shares="1" number="4"/>
-  </Company>
-  <Company name="Pr" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000">
-    <ShareUnit percentage="5"/>
-    <Float percentage="10"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="2" number="3"/>
-    <Certificate shares="2" number="4" status="reserved"/>
-    <Certificate shares="1" number="4" status="reserved"/>
+	<Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" tokens="5" fgColour="FFFFFF" bgColour="0000FF">
+		<Home hex="O15"/>
+	</Company>
+	<Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="H16"/>
+		<FirstTrainCloses type="Private" name="LD"/>
+	</Company>
+	<Company name="Bad" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="FFFFFF" bgColour="808000">
+		<Home hex="L6"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="6"/>
+		<Certificate shares="2" number="1"/>
+	</Company>
+	<Company name="Wrt" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="FFFF00">
+		<Home hex="M9"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="6"/>
+		<Certificate shares="2" number="1"/>
+	</Company>
+	<Company name="Hes" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="00CC00">
+		<Home hex="J8"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="6"/>
+		<Certificate shares="2" number="1"/>
+	</Company>
+	<Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5" available="no" tokens="2" fgColour="FFFFFF" bgColour="800080">
+		<Home hex="C13"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="2" number="2"/>
+		<Certificate shares="1" number="4"/>
+	</Company>
+	<Company name="Old" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" available="no" tokens="2" fgColour="000000" bgColour="C0C0C0">
+		<Home hex="D6"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="2" number="2"/>
+		<Certificate shares="1" number="4"/>
+	</Company>
+	<Company name="Pr" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000">
+		<ShareUnit percentage="5"/>
+		<Float percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="2" number="3"/>
+		<Certificate shares="2" number="4" status="reserved"/>
+		<Certificate shares="1" number="4" status="reserved"/>
 	<TrainLimit number="0,0,4,3"/>
-  </Company>
-  
-  <StartPacket roundClass="rails.game.StartRound_1835" variant="Snake">
-    <Item name="NF"   type="Private" basePrice="100" row="1">
-      <SubItem name="Bay" type="Major"/>
-    </Item>
-    <Item name="M1"   type="Minor" basePrice="80" row="2"/>
-    <Item name="LD"   type="Private" basePrice="190" row="2">
-      <SubItem name="Sax" type="Major" president="yes"/>
-    </Item>
-    <Item name="M2"   type="Minor" basePrice="170" row="2"/>
-    <Item name="M3"   type="Minor" basePrice="80" row="3"/>
-    <Item name="M4"   type="Minor" basePrice="160" row="3"/>
-    <Item name="Bay"  type="Major" president="yes" basePrice="184" row="3"/>
-    <Item name="BB"   type="Private" basePrice="130" row="3"/>
-    <Item name="HB"   type="Private" basePrice="160" row="4"/>
-    <Item name="M5"   type="Minor" basePrice="80" row="4"/>
-    <Item name="M6"   type="Minor" basePrice="80" row="4"/>
-    <Item name="OBB"  type="Private" basePrice="120" row="4">
-      <SubItem name="Bay" type="Major"/>
-    </Item>
-    <Item name="PfB"  type="Private" basePrice="150" row="4">
-      <SubItem name="Bay" type="Major"/>
-    </Item>
-  </StartPacket>
+	</Company>
+	
+	<StartPacket roundClass="rails.game.StartRound_1835" variant="Snake">
+		<Item name="NF"		type="Private" basePrice="100" row="1">
+			<SubItem name="Bay" type="Major"/>
+		</Item>
+		<Item name="M1"		type="Minor" basePrice="80" row="2"/>
+		<Item name="LD"		type="Private" basePrice="190" row="2">
+			<SubItem name="Sax" type="Major" president="yes"/>
+		</Item>
+		<Item name="M2"		type="Minor" basePrice="170" row="2"/>
+		<Item name="M3"		type="Minor" basePrice="80" row="3"/>
+		<Item name="M4"		type="Minor" basePrice="160" row="3"/>
+		<Item name="Bay"	type="Major" president="yes" basePrice="184" row="3"/>
+		<Item name="BB"		type="Private" basePrice="130" row="3"/>
+		<Item name="HB"		type="Private" basePrice="160" row="4"/>
+		<Item name="M5"		type="Minor" basePrice="80" row="4"/>
+		<Item name="M6"		type="Minor" basePrice="80" row="4"/>
+		<Item name="OBB"	type="Private" basePrice="120" row="4">
+			<SubItem name="Bay" type="Major"/>
+		</Item>
+		<Item name="PfB"	type="Private" basePrice="150" row="4">
+			<SubItem name="Bay" type="Major"/>
+		</Item>
+	</StartPacket>
 	<BaseTokens>
 		<!-- Not sure if this belongs here -->
 		<LayCost method="distance" cost="20"/>

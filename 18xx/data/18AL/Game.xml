@@ -11,8 +11,8 @@
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
 			<StockRound>
-		         <NoSaleInFirstSR/>
-	        </StockRound>
+				 <NoSaleInFirstSR/>
+			</StockRound>
 		</GameParameters>
 		<GuiClasses>
 			<ORUIManager class="rails.ui.swing.gamespecific._18AL.ORUIManager_18AL"/>

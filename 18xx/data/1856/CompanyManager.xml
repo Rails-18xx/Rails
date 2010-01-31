@@ -1,166 +1,166 @@
 <?xml version="1.0"?>
 <CompanyManager>
-  <CompanyType name="Private" class="rails.game.PrivateCompany">
-  </CompanyType>
-  <CompanyType name="Public" class="rails.game.specific._1856.PublicCompany_1856">
-    <CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
-    <PoolPaysOut/>
-    <ShareUnit percentage="10"/>
-    <Certificate type="President" shares="2"/>
-    <Certificate shares="1" number="8"/>
-	<Capitalisation type="whenBought"/>
-	<BaseTokens>
-		<LayCost method="sequence" cost="0,40,100"/>
-	</BaseTokens>
-	<Trains number="4,4,3,2"/>
-	<Loans value="100" perRound="1" interest="10"/>
-	<!-- Number of loans is undefined and handled in the code -->
-  </CompanyType>
-  <CompanyType name="State" class="rails.game.specific._1856.PublicCompany_CGR">
-    <PoolPaysOut/>
-    <ShareUnit percentage="5"/>
-    <Certificate type="President" shares="2" certificateCount="1"/>
-    <Certificate shares="1" number="18" certificateCount="0.5"/>
-	<BaseTokens>
-		<LayCost method="sequence" cost="0,40,100"/>
-	</BaseTokens>
-	<Trains number="0,0,0,3"/>
-	<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
-  </CompanyType>
-  
-  <Company name="Flos" type="Private" basePrice="20" revenue="5">
-    <Blocking hex="L3"/>
-  </Company>
-  <Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
-    <Blocking hex="I12"/>
-	<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-			<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
-		</SpecialProperty>
-		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
-			<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
-		</SpecialProperty>
-	</SpecialProperties>
-	<ClosingConditions>
-		<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
-	</ClosingConditions>
-  </Company>
-  <Company name="TCC" type="Private" basePrice="50" revenue="10">
-    <Blocking hex="H11"/>
-	<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-			<SpecialTileLay location="H11" connected="no" extra="yes"/>
-		</SpecialProperty>
-	</SpecialProperties>
-  </Company>
-  <Company name="Ship" type="Private" basePrice="70" revenue="15">
-	<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByCompany" 
-			when="anyTimeDuringORTurn" 
-			class="rails.game.special.SpecialTokenLay">
-			<SpecialTokenLay class="rails.game.BonusToken" 
-					location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
-				<BonusToken name="Port" value="20" removed="Phase:6"/>
-			</SpecialTokenLay>
-		</SpecialProperty>
-	</SpecialProperties>
-	<ClosingConditions>
-		<SpecialProperties condition="ifExercised"/>
-	</ClosingConditions>
-  </Company>
-  <Company name="Brdg" type="Private" basePrice="100" revenue="20">
-	<SpecialProperties>
-	  <SpecialProperty condition="ifOwnedByCompany"	when="revenueStep" 
-			class="rails.game.special.LocatedBonus" transfer="toCompany">
-		<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
-	  </SpecialProperty>
-	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
-		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
-		<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
-			<IfOption name="UnlimitedBonusTokens" value="yes">
-				<Attributes amount="-1"/>
-			</IfOption>
-			<IfOption name="UnlimitedBonusTokens" value="no">
-				<Attributes amount="3"/>
-			</IfOption>
-		</SellBonusToken>
-	  </SpecialProperty>
-	</SpecialProperties>
-  </Company>
-  <Company name="Tunn" type="Private" basePrice="100" revenue="20">
-	<SpecialProperties>
-	  <SpecialProperty condition="ifOwnedByCompany"	when="revenueStep" 
-			class="rails.game.special.LocatedBonus" transfer="toCompany">
-		<LocatedBonus name="Tunnel" location="B13" value="10"/>
-	  </SpecialProperty>
-	  <SpecialProperty condition="ifOwnedByCompany"	when="anyTimeDuringOR" 
-		  class="rails.game.special.SellBonusToken" transfer="toGameManager">
-		<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
-			<IfOption name="UnlimitedBonusTokens" value="yes">
-				<Attributes amount="-1"/>
-			</IfOption>
-			<IfOption name="UnlimitedBonusTokens" value="no">
-				<Attributes amount="3"/>
-			</IfOption>
-		</SellBonusToken>
-	  </SpecialProperty>
-	</SpecialProperties>
-  </Company>
-  
-  <Company name="GT"  type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
-    <Home hex="P9"/>
-    <Destination hex="K8"/>
-  </Company>
-  <Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
-    <Home hex="L15"/>
-    <Destination hex="J11"/>
-  </Company>
-  <Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
-    <Home hex="J15"/>
-    <Destination hex="N17"/>
-  </Company>
-  <Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
-    <Home hex="C14"/>
-    <Destination hex="F17"/>
-  </Company>
-  <Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
-    <Home hex="J11"/>
-    <Destination hex="F9"/>
-  </Company>
-  <Company name="WR"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
-    <Home hex="O16"/>
-    <Destination hex="L15"/>
-  </Company>
-  <Company name="CV"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
-    <Home hex="N11"/>
-    <Destination hex="I14"/>
-  </Company>
-  <Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
-    <Home hex="M4"/>
-    <Destination hex="N11"/>
-  </Company>
-  <Company name="CA"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
-    <Home hex="D17"/>
-    <Destination hex="H15"/>
-  </Company>
-  <Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
-  </Company>
-  <Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
-    <Home hex="K8"/>
-    <Destination hex="H5"/>
-  </Company>
-  <Company name="GW"  type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
-    <Home hex="F15"/>
-    <Destination hex="A20"/>
-  </Company>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.specific._1856.PublicCompany_1856">
+		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<PoolPaysOut/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Capitalisation type="whenBought"/>
+		<BaseTokens>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains number="4,4,3,2"/>
+		<Loans value="100" perRound="1" interest="10"/>
+		<!-- Number of loans is undefined and handled in the code -->
+	</CompanyType>
+	<CompanyType name="State" class="rails.game.specific._1856.PublicCompany_CGR">
+		<PoolPaysOut/>
+		<ShareUnit percentage="5"/>
+		<Certificate type="President" shares="2" certificateCount="1"/>
+		<Certificate shares="1" number="18" certificateCount="0.5"/>
+		<BaseTokens>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains number="0,0,0,3"/>
+		<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
+	</CompanyType>
+	
+	<Company name="Flos" type="Private" basePrice="20" revenue="5">
+		<Blocking hex="L3"/>
+	</Company>
+	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
+		<Blocking hex="I12"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
+				<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+		<ClosingConditions>
+			<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="TCC" type="Private" basePrice="50" revenue="10">
+		<Blocking hex="H11"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="H11" connected="no" extra="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="Ship" type="Private" basePrice="70" revenue="15">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" 
+				when="anyTimeDuringORTurn" 
+				class="rails.game.special.SpecialTokenLay">
+				<SpecialTokenLay class="rails.game.BonusToken" 
+						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
+					<BonusToken name="Port" value="20" removed="Phase:6"/>
+				</SpecialTokenLay>
+			</SpecialProperty>
+		</SpecialProperties>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="Brdg" type="Private" basePrice="100" revenue="20">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
+				class="rails.game.special.LocatedBonus" transfer="toCompany">
+			<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
+				class="rails.game.special.SellBonusToken" transfer="toGameManager">
+			<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
+				<IfOption name="UnlimitedBonusTokens" value="yes">
+					<Attributes amount="-1"/>
+				</IfOption>
+				<IfOption name="UnlimitedBonusTokens" value="no">
+					<Attributes amount="3"/>
+				</IfOption>
+			</SellBonusToken>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="Tunn" type="Private" basePrice="100" revenue="20">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
+				class="rails.game.special.LocatedBonus" transfer="toCompany">
+			<LocatedBonus name="Tunnel" location="B13" value="10"/>
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
+				class="rails.game.special.SellBonusToken" transfer="toGameManager">
+			<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
+				<IfOption name="UnlimitedBonusTokens" value="yes">
+					<Attributes amount="-1"/>
+				</IfOption>
+				<IfOption name="UnlimitedBonusTokens" value="no">
+					<Attributes amount="3"/>
+				</IfOption>
+			</SellBonusToken>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	
+	<Company name="GT"	type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="P9"/>
+		<Destination hex="K8"/>
+	</Company>
+	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
+		<Home hex="L15"/>
+		<Destination hex="J11"/>
+	</Company>
+	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
+		<Home hex="J15"/>
+		<Destination hex="N17"/>
+	</Company>
+	<Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
+		<Home hex="C14"/>
+		<Destination hex="F17"/>
+	</Company>
+	<Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
+		<Home hex="J11"/>
+		<Destination hex="F9"/>
+	</Company>
+	<Company name="WR"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
+		<Home hex="O16"/>
+		<Destination hex="L15"/>
+	</Company>
+	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
+		<Home hex="N11"/>
+		<Destination hex="I14"/>
+	</Company>
+	<Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
+		<Home hex="M4"/>
+		<Destination hex="N11"/>
+	</Company>
+	<Company name="CA"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="D17"/>
+		<Destination hex="H15"/>
+	</Company>
+	<Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
+	</Company>
+	<Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
+		<Home hex="K8"/>
+		<Destination hex="H5"/>
+	</Company>
+	<Company name="GW"	type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
+		<Home hex="F15"/>
+		<Destination hex="A20"/>
+	</Company>
 
-  <StartPacket roundClass="rails.game.StartRound_1830">
-	<Bidding initial="5" minimum="5" increment="1"/>
-    <Item name="Flos"      type="Private" basePrice="20"/>
-    <Item name="W&amp;SR" type="Private" basePrice="40"/>
-    <Item name="TCC"   type="Private" basePrice="50"/>
-    <Item name="Ship"   type="Private" basePrice="70"/>
-    <Item name="Brdg"   type="Private" basePrice="100"/>
-    <Item name="Tunn"   type="Private" basePrice="100"/>
-  </StartPacket>
+	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="Flos"     type="Private" basePrice="20"/>
+		<Item name="W&amp;SR" type="Private" basePrice="40"/>
+		<Item name="TCC"      type="Private" basePrice="50"/>
+		<Item name="Ship"     type="Private" basePrice="70"/>
+		<Item name="Brdg"     type="Private" basePrice="100"/>
+		<Item name="Tunn"     type="Private" basePrice="100"/>
+	</StartPacket>
 </CompanyManager>

@@ -7,23 +7,23 @@
 		<PoolPaysOut/>
 		<Float percentage="60"/>
 		<ShareUnit percentage="10"/>
-        <BaseTokens>
+		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
-`		    <HomeBase lay="firstOR"/>
+			<HomeBase lay="firstOR"/>
 			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
-	        <LayCost method="sequence" cost="0,40,100"/>
-        </BaseTokens>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<Trains number="4,4,3,2"/>
 	</CompanyType>
 	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"
-		longName="Schuylkill Valley Navigation &amp; Railroad Company">
-        <Blocking hex="G15"/>
-    </Company>
+			longName="Schuylkill Valley Navigation &amp; Railroad Company">
+		<Blocking hex="G15"/>
+	</Company>
 	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"
-		longName="Champlain &amp; St.Lawrence">
-        <Blocking hex="B20"/>
+			longName="Champlain &amp; St.Lawrence">
+		<Blocking hex="B20"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="B20" extra="yes" free="yes"/>
@@ -32,7 +32,7 @@
 	</Company>
 	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"
 		longName="Delaware &amp; Hudson">
-        <Blocking hex="F16"/>
+		<Blocking hex="F16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F16" extra="no" free="no"/>
@@ -44,7 +44,7 @@
 	</Company>
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"
 		longName="Mohawk &amp; Hudson">
-        <Blocking hex="D18"/>
+		<Blocking hex="D18"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
@@ -54,41 +54,41 @@
 	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
 		longName="Camden &amp; Amboy">
 		<Info key="ComesWithCertificate" parm="PRR,10"/>
-        <Blocking hex="H18"/>
-    </Company>
+		<Blocking hex="H18"/>
+	</Company>
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
 		longName="Baltimore &amp; Ohio">
 		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
-        <Blocking hex="I13,I15"/>
-    </Company>
-  
+		<Blocking hex="I13,I15"/>
+	</Company>
+	
 	<!-- Note two supported colour specification formats:
-		RGB decimal with commas and RGB hexadecimal without commas -->
+	     RGB decimal with commas and RGB hexadecimal without commas -->
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
-    <Home hex="I15"/>
+		<Home hex="I15"/>
 	</Company>
 	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000">
-    <Home hex="H12"/>
+		<Home hex="H12"/>
 	</Company>
 	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000">
-    <Home hex="G19" city="2"/>
-  </Company>
+		<Home hex="G19" city="2"/>
+	</Company>
 	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000">
-    <Home hex="E19"/>
-  </Company>
-  <Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00">
-    <Home hex="E11"/>
-  </Company>
+		<Home hex="E19"/>
+	</Company>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00">
+		<Home hex="E11"/>
+	</Company>
 	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060">
-    <Home hex="E23"/>
-  </Company>
+		<Home hex="E23"/>
+	</Company>
 	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF">
-    <Home hex="F6"/>
-  </Company>
+		<Home hex="F6"/>
+	</Company>
 	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000">
-    <Home hex="A19"/>
-  </Company>
+		<Home hex="A19"/>
+	</Company>
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="SVNRR" type="Private" basePrice="20"/>

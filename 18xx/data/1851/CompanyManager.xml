@@ -13,10 +13,10 @@
 		<Trains number="4,4,3,2"/>
 		<BaseTokens>
 			<BuyCost initialTokenCost="100"/>
-		    <HomeBase lay="whenFloated"/>
+			<HomeBase lay="whenFloated"/>
 		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
-	    <!--NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/-->
+		<!--NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/-->
 		<TileLays>
 			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
 		</TileLays>
