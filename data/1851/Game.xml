@@ -8,7 +8,7 @@
 			<BankPoolLimit percentage="50"/>
 			<TreasuryShareLimit percentage="50"/>
 			<StockRound sequence="SellBuy">
-		        <NoSaleIfNotOperated/>
+				<NoSaleIfNotOperated/>
 			</StockRound>
 		</GameParameters>
 		<EndOfGame>

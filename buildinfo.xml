@@ -9,8 +9,8 @@
 package rails.util;
 
 public class BuildInfo {
-	public static final String buildDate = "${TODAY}";
+    public static final String buildDate = "${TODAY}";
 }
-		</echo>
+</echo>
 	</target>
 </project>

@@ -9,8 +9,8 @@
 			<BankPoolLimit percentage="50"/>
 			<StockRound class="rails.game.specific._1835.StockRound_1835" 
 				sequence="SellBuySell">
-		        <NoSaleInFirstSR/>
-		        <NoSaleIfNotOperated/>
+				<NoSaleInFirstSR/>
+				<NoSaleIfNotOperated/>
 			</StockRound>
 		</GameParameters>
 		<EndOfGame>

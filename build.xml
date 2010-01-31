@@ -1,92 +1,92 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
+			  Any modifications will be overwritten.
+			  To include a user specific buildfile here, simply create one in the same
+			  directory with the processing instruction <?eclipse.ant.import?>
+			  as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="18xx">
-    <property environment="env"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.5"/>
-    <property name="source" value="1.5"/>
+	<property environment="env"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.5"/>
+	<property name="source" value="1.5"/>
 	<property name="version" value="1.1.2"/>
 	<taskdef name="jarbundler" 
 		classpath="tools/lib/jarbundler-2.1.0.jar"
 		classname="net.sourceforge.jarbundler.JarBundler" />
-    <path id="18xx.classpath">
-        <pathelement location="classes"/>
-        <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
-        <pathelement location="lib/batik-1.6/batik-rasterizer.jar"/>
-        <pathelement location="lib/batik-1.6/batik.jar"/>
-    </path>
-    <target depends="clean" name="init">
-        <mkdir dir="classes"/>
-        <copy includeemptydirs="false" todir="classes">
-            <fileset dir=".">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-                <exclude name="tools/**"/>
-                <exclude name="images/**"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="classes"/>
-    	<delete dir="jar"/>
-    </target>
-    <target depends="clean" name="cleanall">
+	<path id="18xx.classpath">
+		<pathelement location="classes"/>
+		<pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
+		<pathelement location="lib/batik-1.6/batik-rasterizer.jar"/>
+		<pathelement location="lib/batik-1.6/batik.jar"/>
+	</path>
+	<target depends="clean" name="init">
+		<mkdir dir="classes"/>
+		<copy includeemptydirs="false" todir="classes">
+			<fileset dir=".">
+				<exclude name="**/*.launch"/>
+				<exclude name="**/*.java"/>
+				<exclude name="tools/**"/>
+				<exclude name="images/**"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="classes"/>
+		<delete dir="jar"/>
+	</target>
+	<target depends="clean" name="cleanall">
 		<delete dir="rails-${version}"/>
 		<delete dir="rails-mac-${version}"/>
 		<delete file="18xx.log"/>
 	</target>
-    <target depends="build-subprojects,build-project,build-release" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
-            <src path="."/>
-            <classpath refid="18xx.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
+	<target depends="build-subprojects,build-project,build-release" name="build"/>
+	<target name="build-subprojects"/>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
+			<src path="."/>
+			<classpath refid="18xx.classpath"/>
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar"/>
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+		<antcall target="build"/>
+	</target>
 	<target name="build-release">
-        <mkdir dir="jar"/>
-        <copy includeemptydirs="false" todir="jar">
-            <fileset dir="classes">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            	<exclude name="rails/test/*"/>
-            	<exclude name="18xx.log"/>
-            	<exclude name="build.xml"/>
-            	<exclude name="buildinfo.xml"/>
-            	<exclude name="manifest"/>
-            	<exclude name="doc/*"/>
-            	<exclude name="html/*"/>
-            	<exclude name="lib/**"/>
-            	<exclude name="rails-${version}/**"/>
-            	<exclude name="rails-*-${version}/**"/>
-            	<exclude name="rails.bat"/>
-            	<exclude name="rails.sh"/>
-            	<exclude name=".project"/>
-            	<exclude name=".classpath"/>
-            	<exclude name="**/CVS/*"/>
-            	<exclude name="**/.settings/*"/>
-            	<exclude name="**/rails-${version}.jar"/>
-            </fileset>
-        </copy>
+		<mkdir dir="jar"/>
+		<copy includeemptydirs="false" todir="jar">
+			<fileset dir="classes">
+				<exclude name="**/*.launch"/>
+				<exclude name="**/*.java"/>
+				<exclude name="rails/test/*"/>
+				<exclude name="18xx.log"/>
+				<exclude name="build.xml"/>
+				<exclude name="buildinfo.xml"/>
+				<exclude name="manifest"/>
+				<exclude name="doc/*"/>
+				<exclude name="html/*"/>
+				<exclude name="lib/**"/>
+				<exclude name="rails-${version}/**"/>
+				<exclude name="rails-*-${version}/**"/>
+				<exclude name="rails.bat"/>
+				<exclude name="rails.sh"/>
+				<exclude name=".project"/>
+				<exclude name=".classpath"/>
+				<exclude name="**/CVS/*"/>
+				<exclude name="**/.settings/*"/>
+				<exclude name="**/rails-${version}.jar"/>
+			</fileset>
+		</copy>
 		<mkdir dir="rails-${version}"/>
 		<copy includeemptydirs="false" todir="rails-${version}">
 			<fileset dir=".">
@@ -130,9 +130,9 @@
 			<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
 		</jarbundler>
 	</target>
-    <target name="RunGame">
-        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
-            <classpath refid="18xx.classpath"/>
-        </java>
-    </target>
+	<target name="RunGame">
+		<java classname="rails.util.RunGame" failonerror="true" fork="yes">
+			<classpath refid="18xx.classpath"/>
+		</java>
+	</target>
 </project>

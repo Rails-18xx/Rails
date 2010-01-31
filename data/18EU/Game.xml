@@ -9,8 +9,8 @@
 			<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
 				sequence="sellBuy"
 				skipFirst="yes">
-		        <NoSaleInFirstSR/>
-		        <NoSaleIfNotOperated/>
+				<NoSaleInFirstSR/>
+				<NoSaleIfNotOperated/>
 			</StockRound>
 			<OperatingRound class="rails.game.specific._18EU.OperatingRound_18EU"/>
 			<PlayerShareLimit percentage="60"/>

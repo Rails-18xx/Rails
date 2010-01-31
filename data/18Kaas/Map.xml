@@ -32,8 +32,8 @@
 	<Hex name="F19" tile="-8" orientation="3"/>
 	<Hex name="G6" tile="0" cost="80"/>
 	<Hex name="G8" tile="-11" cost="80" label="B+" city="Haarlem"/>
-	<Hex name="G10" tile="-22" orientation="5"  city="Amsterdam"/><!-- not the right tile! TBD -->
-	<Hex name="G12" tile="0" cost="80"/><!-- not the right tile, should be empty yellow-->
+	<Hex name="G10" tile="-22" orientation="5"  city="Amsterdam"/><!-- TODO: not the right tile! TBD -->
+	<Hex name="G12" tile="0" cost="80"/><!-- FIXME: not the right tile, should be empty yellow-->
 	<Hex name="G14" tile="0"/>
 	<Hex name="G16" tile="-20" cost="80" label="OO" city="Apeldoorn/Deventer"/>
 	<Hex name="G18" tile="-20" label="OO" city="Hengelo/Enschede"/>
@@ -69,7 +69,7 @@
 	<Hex name="K14" tile="0"/>
 	<Hex name="K16" tile="-10" cost="120" city="Venlo"/>
 	<Hex name="K18" tile="-901" orientation="2" value="2" city="Ruhrgebied"/>
-    <Hex name="L1" tile="-901" orientation="5" value="10,60" city="Engeland"/>
+	<Hex name="L1" tile="-901" orientation="5" value="10,60" city="Engeland"/>
 	<Hex name="L3" tile="-10"/>
 	<Hex name="L5" tile="0"/>
 	<Hex name="L7" tile="-8" orientation="4"/>
