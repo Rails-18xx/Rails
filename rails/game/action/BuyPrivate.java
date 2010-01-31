@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.6 2009/10/29 19:41:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.7 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -68,7 +68,7 @@ public class BuyPrivate extends PossibleORAction {
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof BuyPrivate)) return false;
         BuyPrivate a = (BuyPrivate) action;
         return a.privateCompany == privateCompany
@@ -77,7 +77,7 @@ public class BuyPrivate extends PossibleORAction {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "BuyPrivate " + privateCompany.getName() + " holder="
                + privateCompany.getPortfolio().getName();
     }

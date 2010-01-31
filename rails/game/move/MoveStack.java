@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.3 2010/01/22 21:28:06 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveStack.java,v 1.4 2010/01/31 22:22:30 macfreek Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -106,8 +106,8 @@ public class MoveStack {
 
     public boolean undoMoveSet (boolean forced) {
         if (lastIndex >= 0 && lastIndex < moveStack.size()
-        		&& (forced || moveStack.get(lastIndex).isUndoableByPlayer())
-        		&& currentMoveSet == null) {
+                && (forced || moveStack.get(lastIndex).isUndoableByPlayer())
+                && currentMoveSet == null) {
             MoveSet undoAction;
             do {
                 ReportBuffer.add(LocalText.getText("UNDO"));

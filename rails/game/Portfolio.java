@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.42 2010/01/08 21:30:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.43 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -147,7 +147,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
         getShareModel(certificate.getCompany()).addShare(certificate.getShare());
         if (owner instanceof Player) {
-        	((Player)owner).updateWorth();
+            ((Player)owner).updateWorth();
         }
     }
 
@@ -178,7 +178,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         getShareModel(certificate.getCompany()).addShare(
                 -certificate.getShare());
         if (owner instanceof Player) {
-        	((Player)owner).updateWorth();
+            ((Player)owner).updateWorth();
         }
     }
 
@@ -466,7 +466,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     public String makeAbbreviatedListOfTrains() {
 
-    	if (trains == null || trains.isEmpty()) return "";
+        if (trains == null || trains.isEmpty()) return "";
 
         StringBuffer b = new StringBuffer();
         List<TrainI> trainsOfType;
@@ -496,18 +496,18 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public String makeFullListOfTrains() {
 
-    	if (trains == null || trains.isEmpty()) return "";
+        if (trains == null || trains.isEmpty()) return "";
 
         List<TrainI> trainsOfType;
         StringBuffer b = new StringBuffer();
 
         for (TrainTypeI type : GameManager.getInstance().getTrainManager().getTrainTypes()) {
-        	trainsOfType = trainsPerType.get(type);
+            trainsOfType = trainsPerType.get(type);
             if (trainsOfType != null && !trainsOfType.isEmpty()) {
-            	for (TrainI train : trainsOfType) {
-	                if (b.length() > 0) b.append(" ");
-	                b.append(train.getName());
-            	}
+                for (TrainI train : trainsOfType) {
+                    if (b.length() > 0) b.append(" ");
+                    b.append(train.getName());
+                }
             }
         }
 
@@ -523,7 +523,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public boolean addSpecialProperty(SpecialPropertyI property) {
 
-    	boolean result = false;
+        boolean result = false;
 
         if (specialProperties == null) {
             specialProperties = new ArrayList<SpecialPropertyI>(2);
@@ -533,16 +533,16 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         // Special case for bonuses with predefined locations
         // TODO Does this belong here?
         if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
-        	PublicCompanyI company = (PublicCompanyI)owner;
-        	LocatedBonus locBonus = (LocatedBonus)property;
-        	Bonus bonus = new Bonus(company, locBonus.getName(), locBonus.getValue(),
-        			locBonus.getLocations());
-        	company.addBonus(bonus);
-        	ReportBuffer.add(LocalText.getText("AcquiresBonus",
-        			owner.getName(),
-        			locBonus.getName(),
-        			Bank.format(locBonus.getValue()),
-        			locBonus.getLocationNameString()));
+            PublicCompanyI company = (PublicCompanyI)owner;
+            LocatedBonus locBonus = (LocatedBonus)property;
+            Bonus bonus = new Bonus(company, locBonus.getName(), locBonus.getValue(),
+                    locBonus.getLocations());
+            company.addBonus(bonus);
+            ReportBuffer.add(LocalText.getText("AcquiresBonus",
+                    owner.getName(),
+                    locBonus.getName(),
+                    Bank.format(locBonus.getValue()),
+                    locBonus.getLocationNameString()));
         }
 
         return result;
@@ -556,7 +556,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public boolean removeSpecialProperty(SpecialPropertyI property) {
 
-    	boolean result = false;
+        boolean result = false;
 
         if (specialProperties != null) {
             result = specialProperties.remove(property);
@@ -564,9 +564,9 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             // Special case for bonuses with predefined locations
             // TODO Does this belong here?
             if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
-            	PublicCompanyI company = (PublicCompanyI)owner;
-            	LocatedBonus locBonus = (LocatedBonus)property;
-            	company.removeBonus(locBonus.getName());
+                PublicCompanyI company = (PublicCompanyI)owner;
+                LocatedBonus locBonus = (LocatedBonus)property;
+                company.removeBonus(locBonus.getName());
             }
         }
 

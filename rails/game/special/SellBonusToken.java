@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.5 2009/12/28 14:53:00 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.6 2010/01/31 22:22:30 macfreek Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class SellBonusToken extends SpecialProperty {
     private IntegerState numberSold;
 
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
 
         Tag sellBonusTokenTag = tag.getChild("SellBonusToken");
@@ -59,8 +59,8 @@ public class SellBonusToken extends SpecialProperty {
     }
 
      @Override
-	public void setExercised () {
-    	numberSold.add(1);
+    public void setExercised () {
+        numberSold.add(1);
     }
      
     public void makeResellable () {
@@ -97,15 +97,15 @@ public class SellBonusToken extends SpecialProperty {
     }
 
     public CashHolder getSeller() {
-		return (CashHolder) seller.getObject();
-	}
+        return (CashHolder) seller.getObject();
+    }
 
-	public void setSeller(CashHolder seller) {
-		this.seller.set(seller);
-	}
+    public void setSeller(CashHolder seller) {
+        this.seller.set(seller);
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         return "SellBonusToken comp=" + privateCompany.getName() + " hex="
                + locationCodes + " value=" + value + " price=" + price
                + " max="+maxNumberToSell+" sold="+numberSold.intValue();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.43 2010/01/19 19:51:57 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.44 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -414,7 +414,7 @@ implements ActionListener, KeyListener {
 
             if (hasCompanyLoans) {
                 //if (c.canLoan()) {
-            	if (c.getLoanValueModel() != null) {
+                if (c.getLoanValueModel() != null) {
                     f = compLoans[i] = new Field (c.getLoanValueModel());
                 } else {
                     f = compLoans[i] = new Field ("");
@@ -507,8 +507,8 @@ implements ActionListener, KeyListener {
 
     protected void addTrainsInfo() {
 
-    	TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
-    	List<TrainTypeI> types = tm.getTrainTypes();
+        TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
+        List<TrainTypeI> types = tm.getTrainTypes();
         JMenu item;
         StringBuffer b = new StringBuffer("<html>");
 
@@ -517,29 +517,29 @@ implements ActionListener, KeyListener {
         infoMenu.add(trainsInfoMenu);
 
         for (TrainTypeI type : types) {
-        	b.setLength(6);
-        	if (Util.hasValue(type.getStartedPhaseName())) {
-        		appendInfoText(b, LocalText.getText("StartsPhase", type.getStartedPhaseName()));
-        	}
-        	if (type.getRustedTrainType() != null) {
-        		appendInfoText(b, LocalText.getText("RustsTrains", type.getRustedTrainType().getName()));
-        	}
-        	if (type.getReleasedTrainType() != null) {
-        		appendInfoText(b, LocalText.getText("ReleasesTrains", type.getReleasedTrainType().getName()));
-        	}
-        	if (b.length() == 6) b.append(LocalText.getText("None"));
+            b.setLength(6);
+            if (Util.hasValue(type.getStartedPhaseName())) {
+                appendInfoText(b, LocalText.getText("StartsPhase", type.getStartedPhaseName()));
+            }
+            if (type.getRustedTrainType() != null) {
+                appendInfoText(b, LocalText.getText("RustsTrains", type.getRustedTrainType().getName()));
+            }
+            if (type.getReleasedTrainType() != null) {
+                appendInfoText(b, LocalText.getText("ReleasesTrains", type.getReleasedTrainType().getName()));
+            }
+            if (b.length() == 6) b.append(LocalText.getText("None"));
 
             item = new JMenu (LocalText.getText("N_Train", type.getName()));
             item.setEnabled(true);
             item.add(new JMenuItem(b.toString()));
             trainsInfoMenu.add(item);
-    	}
+        }
     }
 
     protected void addPhasesInfo() {
 
-    	PhaseManager pm = orWindow.getGameUIManager().getGameManager().getPhaseManager();
-    	List<Phase> phases = pm.getPhases();
+        PhaseManager pm = orWindow.getGameUIManager().getGameManager().getPhaseManager();
+        List<Phase> phases = pm.getPhases();
         JMenu item;
         StringBuffer b = new StringBuffer("<html>");
 
@@ -548,29 +548,29 @@ implements ActionListener, KeyListener {
         infoMenu.add(phasesInfoMenu);
 
         for (Phase phase : phases) {
-        	b.setLength(6);
-        	appendInfoText(b, LocalText.getText("PhaseTileColours", phase.getTileColoursString()));
-        	appendInfoText(b, LocalText.getText("PhaseNumberOfORs", phase.getNumberOfOperatingRounds()));
-        	appendInfoText(b, LocalText.getText("PhaseOffBoardStep", phase.getOffBoardRevenueStep()));
-        	if (phase.doPrivatesClose()) {
-        		appendInfoText(b, LocalText.getText("PhaseClosesAllPrivates"));
-        	}
-        	if (phase.getClosedObjects() != null) {
-        		for (Closeable object : phase.getClosedObjects()) {
-        			appendInfoText(b, LocalText.getText("PhaseRemoves", Util.lowerCaseFirst(object.getInfo())));
-        		}
-        	}
+            b.setLength(6);
+            appendInfoText(b, LocalText.getText("PhaseTileColours", phase.getTileColoursString()));
+            appendInfoText(b, LocalText.getText("PhaseNumberOfORs", phase.getNumberOfOperatingRounds()));
+            appendInfoText(b, LocalText.getText("PhaseOffBoardStep", phase.getOffBoardRevenueStep()));
+            if (phase.doPrivatesClose()) {
+                appendInfoText(b, LocalText.getText("PhaseClosesAllPrivates"));
+            }
+            if (phase.getClosedObjects() != null) {
+                for (Closeable object : phase.getClosedObjects()) {
+                    appendInfoText(b, LocalText.getText("PhaseRemoves", Util.lowerCaseFirst(object.getInfo())));
+                }
+            }
             item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
             item.setEnabled(true);
             item.add(new JMenuItem(b.toString()));
             phasesInfoMenu.add(item);
-    	}
+        }
     }
 
     private void appendInfoText (StringBuffer b, String text) {
-    	if (text == null || text.length() == 0) return;
-    	if (b.length() > 6) b.append("<br>");
-    	b.append(text);
+        if (text == null || text.length() == 0) return;
+        if (b.length() > 6) b.append("<br>");
+        b.append(text);
     }
 
     public void finish() {
@@ -610,9 +610,9 @@ implements ActionListener, KeyListener {
 
             orUIManager.processAction(command, executedActions);
         } else if (source == zoomIn) {
-        	orWindow.getMapPanel().zoomIn();
+            orWindow.getMapPanel().zoomIn();
         } else if (source == zoomOut) {
-        	orWindow.getMapPanel().zoomOut();
+            orWindow.getMapPanel().zoomOut();
         } else {
             orUIManager.processAction(command, null);
         }

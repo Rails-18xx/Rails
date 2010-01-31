@@ -21,7 +21,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
     private String cgrName = PublicCompany_CGR.NAME;
     private PublicCompany_CGR cgr
-    	= (PublicCompany_CGR)gameManager.getCompanyManager().getCompanyByName(cgrName);
+        = (PublicCompany_CGR)gameManager.getCompanyManager().getCompanyByName(cgrName);
     private List<TrainI> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
@@ -35,10 +35,10 @@ public class CGRFormationRound extends SwitchableUIRound {
     public static final int STEP_EXCHANGE_TOKENS = 3;
 
     private static int[][] certLimitsTable = {
-    	{10, 13, 15, 18, 20, 22, 25, 28},
-    	{8, 10, 12, 14, 16, 18, 20, 22},
-    	{7, 8, 10, 11, 13, 15, 16, 18},
-    	{6, 7, 8, 10, 11, 12, 14, 15}
+        {10, 13, 15, 18, 20, 22, 25, 28},
+        {8, 10, 12, 14, 16, 18, 20, 22},
+        {7, 8, 10, 11, 13, 15, 16, 18},
+        {6, 7, 8, 10, 11, 12, 14, 15}
     };
 
     public CGRFormationRound (GameManagerI gameManager) {
@@ -65,7 +65,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         companiesToRepayLoans = null;
 
         ReportBuffer.add(LocalText.getText("StartFormationRound",
-        		cgrName,
+                cgrName,
                 startingPlayer.getName()));
 
         guiHints.setCurrentRoundType(getClass());
@@ -166,7 +166,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             // If that was all, we're done with this company
             numberOfLoans = currentCompany.getCurrentNumberOfLoans();
             if (numberOfLoans == 0) {
-            	continue;
+                continue;
             }
 
             // Check the president's cash
@@ -423,22 +423,22 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
         certs = new ArrayList<PublicCertificateI>
-        		(unavailable.getCertificatesPerCompany(PublicCompany_CGR.NAME));
+                (unavailable.getCertificatesPerCompany(PublicCompany_CGR.NAME));
         for (PublicCertificateI cert : certs) {
             cert.moveTo(ipo);
         }
 
         // Assign the new president
         if (newPresident.getPortfolio().getShare(cgr) == cgr.getShareUnit()) {
-        	// Nobody has 2 shares, then takes the first player who has got one share
-        	log.debug("Nobody has two shares, creating a temp.pres.: "+firstCGRowner.getName());
-        	cgr.setTemporaryPresident(firstCGRowner);
-        	newPresident = firstCGRowner;
+            // Nobody has 2 shares, then takes the first player who has got one share
+            log.debug("Nobody has two shares, creating a temp.pres.: "+firstCGRowner.getName());
+            cgr.setTemporaryPresident(firstCGRowner);
+            newPresident = firstCGRowner;
         } else if (temporaryPresident != null && temporaryPresident != newPresident) {
-        	log.debug("Moving pres.share from "+temporaryPresident.getName()
-        			+" to "+newPresident.getName());
-        		temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
-        				newPresident.getPortfolio());
+            log.debug("Moving pres.share from "+temporaryPresident.getName()
+                    +" to "+newPresident.getName());
+                temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
+                        newPresident.getPortfolio());
         }
 
         newPresident.getPortfolio().getShareModel(cgr).setShare();
@@ -481,7 +481,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
-                		PublicCompany_CGR.NAME,
+                        PublicCompany_CGR.NAME,
                         Bank.format(startSpace.getPrice()),
                         startSpace.getName());
                 DisplayBuffer.add(message);
@@ -501,9 +501,9 @@ public class CGRFormationRound extends SwitchableUIRound {
         int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
         gameManager.setPlayerCertificateLimit(newCertLimit);
         message = LocalText.getText("CertificateLimit",
-        		newCertLimit,
-        		numPlayers,
-        		numCompanies);
+                newCertLimit,
+                numPlayers,
+                numCompanies);
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
 
@@ -515,7 +515,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         City city;
         for (PublicCompanyI comp : mergingCompanies) {
 
-        	// Exchange home tokens and collect non-home tokens
+            // Exchange home tokens and collect non-home tokens
             for (TokenI token :comp.getTokens()) {
                 if (token instanceof BaseToken) {
                     bt = (BaseToken) token;
@@ -544,7 +544,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             // Move any still valid bonuses
             if (comp.getBonuses() != null) {
-	            List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
+                List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
 bonuses:        for (Bonus bonus : bonuses) {
                     comp.removeBonus(bonus);
                     // Only add if the CGR does not already have the same bonus
@@ -568,9 +568,9 @@ bonuses:        for (Bonus bonus : bonuses) {
                             }
                         }
                     }
-	            	cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),
+                    cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),
                             bonus.getLocations()));
-	            }
+                }
             }
         }
 
@@ -682,7 +682,7 @@ bonuses:        for (Bonus bonus : bonuses) {
     }
 
     @Override
-	public boolean process (PossibleAction action) {
+    public boolean process (PossibleAction action) {
 
         boolean result = true;
 
@@ -830,10 +830,10 @@ bonuses:        for (Bonus bonus : bonuses) {
     }
 
     public List<PublicCompanyI> getMergingCompanies() {
-		return mergingCompanies;
-	}
+        return mergingCompanies;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "1856 CGRFormationRound";
     }

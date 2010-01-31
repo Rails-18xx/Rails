@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Move.java,v 1.3 2009/09/23 21:38:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/Move.java,v 1.4 2010/01/31 22:22:30 macfreek Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -17,10 +17,10 @@ import rails.game.model.ModelObject;
  */
 public abstract class Move {
 
-	/** Any ModelObjects that need be updated.
-	 * Will only be used by subclasses where it matters.
-	 */
-	protected List<ModelObject> models = null;
+    /** Any ModelObjects that need be updated.
+     * Will only be used by subclasses where it matters.
+     */
+    protected List<ModelObject> models = null;
 
     protected static Logger log =
             Logger.getLogger(Move.class.getPackage().getName());
@@ -30,16 +30,16 @@ public abstract class Move {
     public abstract boolean undo();
 
     public void registerModelToUpdate (ModelObject model) {
-    	if (models == null) models = new ArrayList<ModelObject>(2);
-    	models.add(model);
+        if (models == null) models = new ArrayList<ModelObject>(2);
+        models.add(model);
     }
 
     // Could also be built into execute() and update()
     public void updateModels () {
-    	if (models != null) {
-    		for (ModelObject model : models) {
-    			model.update();
-    		}
-    	}
+        if (models != null) {
+            for (ModelObject model : models) {
+                model.update();
+            }
+        }
     }
 }

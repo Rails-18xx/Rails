@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.7 2009/11/04 20:33:22 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.8 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
 
 import rails.game.Portfolio;
@@ -15,7 +15,7 @@ public class TrainsModel extends ModelObject {
     }
 
     @Override
-	public String getText() {
+    public String getText() {
         if (option == FULL_LIST) {
             return portfolio.makeFullListOfTrains();
         } else if (option == ABBR_LIST) {

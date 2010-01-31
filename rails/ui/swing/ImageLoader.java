@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.15 2009/12/19 16:48:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ImageLoader.java,v 1.16 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.image.BufferedImage;
@@ -72,25 +72,25 @@ public class ImageLoader {
         BufferedImage image = null;
 
         try {
-        	// Experimental new version, that stacks the XML to allow zooming
-        	if (svgMap == null) {
-        		svgMap = new HashMap<Integer, Document>(64);
-        	}
-        	if (!svgMap.containsKey(tileID)) {
- 	            Document doc = null;
-	            // Step 1: create a DocumentBuilderFactory and setNamespaceAware
-	            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	            dbf.setNamespaceAware(true);
-	            // Step 2: create a DocumentBuilder
-	            DocumentBuilder db = dbf.newDocumentBuilder();
+            // Experimental new version, that stacks the XML to allow zooming
+            if (svgMap == null) {
+                svgMap = new HashMap<Integer, Document>(64);
+            }
+            if (!svgMap.containsKey(tileID)) {
+                 Document doc = null;
+                // Step 1: create a DocumentBuilderFactory and setNamespaceAware
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(true);
+                // Step 2: create a DocumentBuilder
+                DocumentBuilder db = dbf.newDocumentBuilder();
 
-	            // Step 3: parse the input file to get a Document object
-	            doc =
-	                    db.parse(ResourceLoader.getInputStream(fn,
-	                            directories));
-	            // Cache the doc
-	            svgMap.put(tileID, doc);
-        	}
+                // Step 3: parse the input file to get a Document object
+                doc =
+                        db.parse(ResourceLoader.getInputStream(fn,
+                                directories));
+                // Cache the doc
+                svgMap.put(tileID, doc);
+            }
             BufferedImageTranscoder t = new BufferedImageTranscoder();
             t.addTranscodingHint(ImageTranscoder.KEY_MAX_WIDTH, new Float(svgWidth * zoomFactor));
             t.addTranscodingHint(ImageTranscoder.KEY_MAX_HEIGHT, new Float(svgHeight * zoomFactor));
@@ -110,26 +110,26 @@ public class ImageLoader {
     public BufferedImage getTile(int tileID, int zoomStep) {
 
         if (tileMap == null) {
-        	tileMap = new HashMap<Integer, Map<Integer, BufferedImage>>(64);
+            tileMap = new HashMap<Integer, Map<Integer, BufferedImage>>(64);
         }
         if (!tileMap.containsKey(tileID)) {
-        	tileMap.put(tileID, new HashMap<Integer, BufferedImage>(4));
-    	}
-    	if (!tileMap.get(tileID).containsKey(zoomStep)) {
-        	BufferedImage image = getSVGTile(tileID, getZoomFactor(zoomStep));
-        	tileMap.get(tileID).put(zoomStep, image);
+            tileMap.put(tileID, new HashMap<Integer, BufferedImage>(4));
+        }
+        if (!tileMap.get(tileID).containsKey(zoomStep)) {
+            BufferedImage image = getSVGTile(tileID, getZoomFactor(zoomStep));
+            tileMap.get(tileID).put(zoomStep, image);
         }
 
         return tileMap.get(tileID).get(zoomStep);
     }
 
     public double getZoomFactor (int zoomStep) {
-    	if (zoomStep < 0) zoomStep = 0;
-    	else if (zoomStep > 20) zoomStep = 20;
-    	if (zoomFactors[zoomStep] == 0.0) {
-    		zoomFactors[zoomStep] = 1.0 * Math.pow(2.0, 0.25*(zoomStep-10));
-    	}
-    	return zoomFactors[zoomStep];
+        if (zoomStep < 0) zoomStep = 0;
+        else if (zoomStep > 20) zoomStep = 20;
+        if (zoomFactors[zoomStep] == 0.0) {
+            zoomFactors[zoomStep] = 1.0 * Math.pow(2.0, 0.25*(zoomStep-10));
+        }
+        return zoomFactors[zoomStep];
 
     }
 

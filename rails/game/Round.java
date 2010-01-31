@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.36 2010/01/18 18:49:20 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.37 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -49,13 +49,13 @@ public abstract class Round implements RoundI {
     protected List<Player> canRequestTurn = null;
     protected List<Player> hasRequestedTurn = null;
 
-	/**
-	 * Constructor with the GameManager, will call setGameManager with the parameter to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Round Class
-	 *
-	 */
-	public Round (GameManagerI aGameManager) {
+    /**
+     * Constructor with the GameManager, will call setGameManager with the parameter to initialize
+     *
+     * @param aGameManager The GameManager Object needed to initialize the Round Class
+     *
+     */
+    public Round (GameManagerI aGameManager) {
 
         this.gameManager = aGameManager;
 
@@ -78,7 +78,7 @@ public abstract class Round implements RoundI {
         //roundTypeForUI = getClass();
         guiHints = gameManager.getUIHints();
         guiHints.setCurrentRoundType(getClass());
-	}
+    }
 
     /*
      * (non-Javadoc)
@@ -107,11 +107,11 @@ public abstract class Round implements RoundI {
     }
 
     protected List<Player> getPlayers() {
-    	return gameManager.getPlayers();
+        return gameManager.getPlayers();
     }
 
     protected int getNumberOfPlayers() {
-    	return gameManager.getNumberOfPlayers();
+        return gameManager.getNumberOfPlayers();
     }
 
     public PhaseI getCurrentPhase() {
@@ -133,7 +133,7 @@ public abstract class Round implements RoundI {
     //}
 
     public String getGameOption (String name) {
-    	return gameManager.getGameOption(name);
+        return gameManager.getGameOption(name);
     }
      /*
      * (non-Javadoc)
@@ -410,62 +410,62 @@ public abstract class Round implements RoundI {
     }
 
     public int getGameParameterAsInt (GameDef.Parm key) {
-    	if (key.defaultValue() instanceof Integer) {
-    		return (Integer) gameManager.getGameParameter(key);
-    	} else {
-    		return -1;
-    	}
+        if (key.defaultValue() instanceof Integer) {
+            return (Integer) gameManager.getGameParameter(key);
+        } else {
+            return -1;
+        }
     }
 
     public boolean getGameParameterAsBoolean (GameDef.Parm key) {
-    	if (key.defaultValue() instanceof Boolean) {
-    		return (Boolean) gameManager.getGameParameter(key);
-    	} else {
-    		return false;
-    	}
+        if (key.defaultValue() instanceof Boolean) {
+            return (Boolean) gameManager.getGameParameter(key);
+        } else {
+            return false;
+        }
     }
 
     public String getRoundName() {
-    	return this.getClass().getSimpleName();
+        return this.getClass().getSimpleName();
     }
 
     public boolean requestTurn (Player player) {
-    	if (canRequestTurn (player)) {
-    		if (hasRequestedTurn == null) hasRequestedTurn = new ArrayList<Player>(2);
-    		if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
-    		return true;
-    	}
-    	return false;
+        if (canRequestTurn (player)) {
+            if (hasRequestedTurn == null) hasRequestedTurn = new ArrayList<Player>(2);
+            if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
+            return true;
+        }
+        return false;
     }
 
     public boolean canRequestTurn (Player player) {
-    	return canRequestTurn != null && canRequestTurn.contains(player);
+        return canRequestTurn != null && canRequestTurn.contains(player);
     }
 
     public void setCanRequestTurn (Player player, boolean value) {
-    	if (canRequestTurn == null) canRequestTurn = new ArrayList<Player>(4);
-    	if (value && !canRequestTurn.contains(player)) {
-    		new AddToList<Player>(canRequestTurn, player, "CanRequestTurn");
-    	} else if (!value && canRequestTurn.contains(player)) {
-    		new RemoveFromList<Player>(canRequestTurn, player, "CanRequestTurn");
-    	}
+        if (canRequestTurn == null) canRequestTurn = new ArrayList<Player>(4);
+        if (value && !canRequestTurn.contains(player)) {
+            new AddToList<Player>(canRequestTurn, player, "CanRequestTurn");
+        } else if (!value && canRequestTurn.contains(player)) {
+            new RemoveFromList<Player>(canRequestTurn, player, "CanRequestTurn");
+        }
     }
 
     public void setAutopass (Player player, boolean value) {
-		if (autopasses == null) autopasses = new ArrayList<Player>(4);
-		if (value && !autopasses.contains(player)) {
-			new AddToList<Player>(autopasses, player, "Autopasses");
-		} else if (!value && autopasses.contains(player)) {
-			new RemoveFromList<Player>(autopasses, player, "Autopasses");
-		}
-	}
+        if (autopasses == null) autopasses = new ArrayList<Player>(4);
+        if (value && !autopasses.contains(player)) {
+            new AddToList<Player>(autopasses, player, "Autopasses");
+        } else if (!value && autopasses.contains(player)) {
+            new RemoveFromList<Player>(autopasses, player, "Autopasses");
+        }
+    }
 
     public boolean hasAutopassed (Player player) {
-    	return autopasses != null && autopasses.contains(player);
+        return autopasses != null && autopasses.contains(player);
     }
 
     public List<Player> getAutopasses() {
-    	return autopasses;
+        return autopasses;
     }
 
 

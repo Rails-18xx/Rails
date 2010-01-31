@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.7 2010/01/08 21:31:00 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/ObjectMove.java,v 1.8 2010/01/31 22:22:30 macfreek Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -40,21 +40,21 @@ public class ObjectMove extends Move {
     }
 
     @Override
-	public boolean execute() {
+    public boolean execute() {
 
-    	return (from == null || from.removeObject(moveableObject))
+        return (from == null || from.removeObject(moveableObject))
                && to.addObject(moveableObject);
     }
 
     @Override
-	public boolean undo() {
+    public boolean undo() {
 
         return to.removeObject(moveableObject)
                && (from == null || from.addObject(moveableObject));
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         if (moveableObject == null) log.error("Token is null");
         if (from == null) log.warn("From is null");
         if (to == null) log.error("To is null");

@@ -256,12 +256,12 @@ public class StockSpace extends ModelObject implements StockSpaceI {
     }
 
     @Override
-	public String getText() {
+    public String getText() {
         return Bank.format(price);
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return getText();
     }
 }

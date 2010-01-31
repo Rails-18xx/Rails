@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.35 2010/01/20 19:52:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.36 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -467,8 +467,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         buyButton.setEnabled(buyAllowed);
         if (includeBidding) {
-        	bidButton.setEnabled(bidAllowed);
-        	bidAmount.setEnabled(bidAllowed);
+            bidButton.setEnabled(bidAllowed);
+            bidAmount.setEnabled(bidAllowed);
         }
         passButton.setEnabled(passAllowed);
 

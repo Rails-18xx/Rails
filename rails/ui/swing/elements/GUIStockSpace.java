@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.9 2009/12/19 18:32:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.10 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -53,7 +53,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
             //priceLabel.setBackground(stringToColor(model.getColour()));
             priceLabel.setBackground(model.getColour());
             priceLabel.setForeground(Util.isDark(priceLabel.getBackground())
-            		? Color.WHITE : Color.BLACK);
+                    ? Color.WHITE : Color.BLACK);
             priceLabel.setVerticalTextPosition(SwingConstants.TOP);
 
             ((ModelObject) model).addObserver(this);

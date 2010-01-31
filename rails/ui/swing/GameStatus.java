@@ -389,11 +389,11 @@ public class GameStatus extends GridPanel implements ActionListener {
                         0, visible);
             }
             if (hasCompanyLoans) {
-            	if (c.getLoanValueModel() != null) {
-            		f = compLoans[i] = new Field (c.getLoanValueModel());
-            	} else {
-            		f = compLoans[i] = new Field ("");
-            	}
+                if (c.getLoanValueModel() != null) {
+                    f = compLoans[i] = new Field (c.getLoanValueModel());
+                } else {
+                    f = compLoans[i] = new Field ("");
+                }
                 addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0, visible);
             }
 
@@ -488,7 +488,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Train cost overview
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
         addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
-        		futureTrainsWidth + 2, 1, 0, true);
+                futureTrainsWidth + 2, 1, 0, true);
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
 
@@ -625,14 +625,14 @@ public class GameStatus extends GridPanel implements ActionListener {
                 int index = 0;
                 if (options.size() > 1) {
                     if (startCompany) {
-                     	RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
+                         RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
                                 LocalText.getText("PleaseSelect"),
                                 LocalText.getText("WHICH_START_PRICE",
                                         playerName,
                                         companyName),
                                 options.toArray(new String[0]), -1);
-                    	gameUIManager.setCurrentDialog(dialog, actions.get(0));
-                    	return;
+                        gameUIManager.setCurrentDialog(dialog, actions.get(0));
+                        return;
                     } else {
                         String sp =
                                 (String) JOptionPane.showInputDialog(this,

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.78 2010/01/22 21:23:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.79 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -550,9 +550,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag optionsTag = tag.getChild("Options");
         if (optionsTag != null) {
-        	mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean
-        		("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
-        	canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
+            mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean
+                ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
+            canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
     }
 
@@ -654,7 +654,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             cert = certificates.get(i);
             cert.setUniqueId(name, i);
             cert.setInitiallyAvailable(cert.isInitiallyAvailable()
-            		&& this.certsAreInitiallyAvailable);
+                    && this.certsAreInitiallyAvailable);
         }
 
         BaseToken token;
@@ -915,7 +915,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Portfolio scrapHeap = bank.getScrapHeap();
         for (PublicCertificateI cert : certificates) {
             if (cert.getHolder() != scrapHeap) {
-            	cert.moveTo(scrapHeap);
+                cert.moveTo(scrapHeap);
             }
         }
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
@@ -1085,7 +1085,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void setCertificates(List<PublicCertificateI> list) {
         certificates = new ArrayList<PublicCertificateI>();
         for (PublicCertificateI cert : list) {
-        	certificates.add(new PublicCertificate(cert));
+            certificates.add(new PublicCertificate(cert));
         }
     }
 
@@ -1235,8 +1235,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (!sharesPerRecipient.containsKey(recipient)) {
                 sharesPerRecipient.put(recipient, cert.getShares());
             } else {
-            	sharesPerRecipient.put(recipient,
-            		sharesPerRecipient.get(recipient) + cert.getShares());
+                sharesPerRecipient.put(recipient,
+                    sharesPerRecipient.get(recipient) + cert.getShares());
             }
         }
 
@@ -1246,10 +1246,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
             shares = (sharesPerRecipient.get(recipient));
             part = (int) Math.ceil(amount * shares * shareUnit.intValue() / 100.0);
             ReportBuffer.add(LocalText.getText("Payout",
-            		recipient.getName(),
-            		Bank.format(part),
-            		shares,
-            		shareUnit.intValue()));
+                    recipient.getName(),
+                    Bank.format(part),
+                    shares,
+                    shareUnit.intValue()));
             new CashMove(bank, recipient, part);
         }
 
@@ -1489,7 +1489,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void buyTrain(TrainI train, int price) {
         if (train.getOwner() instanceof PublicCompanyI) {
-        	((MoneyModel)((PublicCompanyI)train.getOwner()).getTrainsSpentThisTurnModel()).add(-price);
+            ((MoneyModel)((PublicCompanyI)train.getOwner()).getTrainsSpentThisTurnModel()).add(-price);
         }
         portfolio.buyTrain(train, price);
         trainsCostThisTurn.add(price);
@@ -1530,18 +1530,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
             List<SpecialPropertyI> spsToMoveHere =
                     new ArrayList<SpecialPropertyI>(2);
             List<SpecialPropertyI> spsToMoveToGM =
-                	new ArrayList<SpecialPropertyI>(2);
+                    new ArrayList<SpecialPropertyI>(2);
             for (SpecialPropertyI sp : sps) {
                 if (sp.getTransferText().equalsIgnoreCase("toCompany")) {
                     spsToMoveHere.add(sp);
                 } else if (sp.getTransferText().equalsIgnoreCase("toGameManager")) {
-                	// This must be SellBonusToken - remember the owner!
-                	if (sp instanceof SellBonusToken) {
-                		((SellBonusToken)sp).setSeller(this);
+                    // This must be SellBonusToken - remember the owner!
+                    if (sp instanceof SellBonusToken) {
+                        ((SellBonusToken)sp).setSeller(this);
                         // Also note 1 has been used
                         ((SellBonusToken)sp).setExercised();
-                	}
-                	spsToMoveToGM.add(sp);
+                    }
+                    spsToMoveToGM.add(sp);
                 }
             }
             for (SpecialPropertyI sp : spsToMoveHere) {
@@ -1623,33 +1623,33 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean addBonus(Bonus bonus) {
-    	if (bonuses == null) {
-    		bonuses = new ArrayList<Bonus>(2);
+        if (bonuses == null) {
+            bonuses = new ArrayList<Bonus>(2);
             bonusValue.set(bonuses);
-    	}
+        }
         new AddToList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
         return true;
     }
 
     public boolean removeBonus(Bonus bonus) {
-    	new RemoveFromList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
+        new RemoveFromList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
         return true;
     }
 
     public boolean removeBonus (String name) {
-    	if (bonuses != null && !bonuses.isEmpty()) {
-    		for(Bonus bonus : bonuses) {
-    			if (bonus.getName().equals(name)) return removeBonus(bonus);
-    		}
-    	}
-    	return false;
+        if (bonuses != null && !bonuses.isEmpty()) {
+            for(Bonus bonus : bonuses) {
+                if (bonus.getName().equals(name)) return removeBonus(bonus);
+            }
+        }
+        return false;
     }
 
     public List<Bonus> getBonuses() {
-		return bonuses;
-	}
+        return bonuses;
+    }
 
-	public BonusModel getBonusTokensModel() {
+    public BonusModel getBonusTokensModel() {
         return bonusValue;
     }
 
@@ -1781,7 +1781,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean mustTradeTrainsAtFixedPrice() {
-    	return mustTradeTrainsAtFixedPrice;
+        return mustTradeTrainsAtFixedPrice;
     }
 
     public int getCurrentNumberOfLoans() {
@@ -1822,10 +1822,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean canClose() {
-		return canClose;
-	}
+        return canClose;
+    }
 
-	@Override
+    @Override
     public Object clone() {
 
         Object clone = null;
@@ -1847,9 +1847,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return clone;
     }
 
-	/** Extra codes to be added to the president's indicator in the Game Status window.
-	 * Normally nothing (see 1856 CGR for an exception). */
-	public String getExtraShareMarks () {
-		return "";
-	}
+    /** Extra codes to be added to the president's indicator in the Game Status window.
+     * Normally nothing (see 1856 CGR for an exception). */
+    public String getExtraShareMarks () {
+        return "";
+    }
 }

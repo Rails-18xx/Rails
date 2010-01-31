@@ -139,7 +139,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void addPortfolio (Portfolio portfolio);
     public Portfolio getPortfolioByName (String name);
 
-    	/**
+        /**
      * @return the StartPacket
      */
     public abstract StartPacket getStartPacket();
@@ -163,8 +163,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public String getGameOption (String key);
 
     public int getPlayerCertificateLimit();
-	public void setPlayerCertificateLimit(int newLimit);
-	public ModelObject getPlayerCertificateLimitModel ();
+    public void setPlayerCertificateLimit(int newLimit);
+    public ModelObject getPlayerCertificateLimitModel ();
 
     public abstract String getHelp();
 
@@ -184,8 +184,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public String getGMKey ();
     public MoveStack getMoveStack ();
-	public DisplayBuffer getDisplayBuffer();
-	public ReportBuffer getReportBuffer();
-	public GuiHints getUIHints();
+    public DisplayBuffer getDisplayBuffer();
+    public ReportBuffer getReportBuffer();
+    public GuiHints getUIHints();
 
 }

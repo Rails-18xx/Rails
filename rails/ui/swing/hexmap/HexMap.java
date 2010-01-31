@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.20 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.21 2010/01/31 22:22:36 macfreek Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -77,15 +77,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     public void setupBars() {
-    	List<Integer> barSides;
-    	for (GUIHex hex : hexes) {
-    		barSides = hex.getHexModel().getImpassableSides();
-    		if (barSides != null) {
-    			for (int k : barSides) {
-    				if (k < 3) hex.addBar (k);
-    			}
-    		}
-    	}
+        List<Integer> barSides;
+        for (GUIHex hex : hexes) {
+            barSides = hex.getHexModel().getImpassableSides();
+            if (barSides != null) {
+                for (int k : barSides) {
+                    if (k < 3) hex.addBar (k);
+                }
+            }
+        }
     }
 
     GUIHex getHexContainingPoint(Point point) {
@@ -103,7 +103,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     @Override
-	public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         try {
@@ -138,31 +138,31 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     public void zoomIn () {
-    	zoomStep++;
-    	zoom();
+        zoomStep++;
+        zoom();
     }
     public void zoomOut() {
-    	zoomStep--;
-    	zoom();
+        zoomStep--;
+        zoom();
     }
 
     protected void zoom() {
-    	zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
-    	setScale();
-    	scaleHexesGUI();
-    	revalidate();
+        zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+        setScale();
+        scaleHexesGUI();
+        revalidate();
     }
 
     protected void setScale() {
-    	scale = (int)(defaultScale * zoomFactor);
+        scale = (int)(defaultScale * zoomFactor);
     }
 
     public int getZoomStep () {
-    	return zoomStep;
+        return zoomStep;
     }
 
     @Override
-	public Dimension getMinimumSize() {
+    public Dimension getMinimumSize() {
         Dimension dim = new Dimension();
         Rectangle r = (h[h.length][h[0].length]).getBounds();
         dim.height = r.height + 40;
@@ -171,7 +171,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     @Override
-	public Dimension getPreferredSize() {
+    public Dimension getPreferredSize() {
         return preferredSize;
     }
 
@@ -327,21 +327,21 @@ public abstract class HexMap extends JComponent implements MouseListener,
      * @return The current Phase object.
      */
     public PhaseI getPhase () {
-    	if (orUIManager != null) {
-    		//return orUIManager.getGameUIManager().getGameManager().getPhaseManager().getCurrentPhase();
-    		GameUIManager u = orUIManager.getGameUIManager();
-    		GameManagerI g = u.getGameManager();
-    		PhaseManager p = g.getPhaseManager();
-    		return p.getCurrentPhase();
-    	}
-    	return null;
+        if (orUIManager != null) {
+            //return orUIManager.getGameUIManager().getGameManager().getPhaseManager().getCurrentPhase();
+            GameUIManager u = orUIManager.getGameUIManager();
+            GameManagerI g = u.getGameManager();
+            PhaseManager p = g.getPhaseManager();
+            return p.getCurrentPhase();
+        }
+        return null;
     }
 
     public MapManager getMapManager() {
-		return mapManager;
-	}
+        return mapManager;
+    }
 
-	public void mouseClicked(MouseEvent arg0) {
+    public void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
 

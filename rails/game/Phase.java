@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.16 2010/01/19 19:54:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -164,7 +164,7 @@ public class Phase implements PhaseI {
     }
 
     public String getTileColoursString() {
-    	return colourList;
+        return colourList;
     }
 
     public int getIndex() {
@@ -246,10 +246,10 @@ public class Phase implements PhaseI {
     }
 
     public List<Closeable> getClosedObjects() {
-		return closedObjects;
-	}
+        return closedObjects;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return name;
     }

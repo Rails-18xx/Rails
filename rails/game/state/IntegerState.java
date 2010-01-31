@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/IntegerState.java,v 1.4 2009/09/04 18:35:53 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/IntegerState.java,v 1.5 2010/01/31 22:22:33 macfreek Exp $
  *
  * Created on May 19, 2007
  * Change Log:
@@ -41,7 +41,7 @@ public class IntegerState extends State {
     }
 
     @Override
-	public String getText() {
-    	return ""+intValue();
+    public String getText() {
+        return ""+intValue();
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.5 2009/10/30 21:53:04 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.6 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -64,7 +64,7 @@ public class LayBaseToken extends LayToken {
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof LayBaseToken)) return false;
         LayBaseToken a = (LayBaseToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
@@ -74,7 +74,7 @@ public class LayBaseToken extends LayToken {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         StringBuffer b = new StringBuffer("LayBaseToken ");
         if (chosenHex == null) {
             b.append("type=").append(type).append(" location=").append(

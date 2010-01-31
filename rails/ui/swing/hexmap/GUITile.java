@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.21 2009/12/19 16:48:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.22 2010/01/31 22:22:36 macfreek Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -48,7 +48,7 @@ public class GUITile {
             Logger.getLogger(GUITile.class.getPackage().getName());
 
     public GUITile(int tileId, GUIHex guiHex) {
-    	this.guiHex = guiHex;
+        this.guiHex = guiHex;
         this.tileId = tileId;
         this.hex = (MapHex)guiHex.getModel();
         tile = GameManager.getInstance().getTileManager().getTile(tileId);
@@ -238,16 +238,16 @@ public class GUITile {
 
     public void paintTile(Graphics2D g2, int x, int y) {
 
-    	int zoomStep = guiHex.getHexMap().getZoomStep();
+        int zoomStep = guiHex.getHexMap().getZoomStep();
         tileImage = imageLoader.getTile(tileId, zoomStep);
 
-    	if (tileImage != null) {
+        if (tileImage != null) {
 
             double radians = baseRotation + rotation * DEG60;
             int xCenter = (int) Math.round(tileImage.getWidth()
                     * SVG_X_CENTER_LOC * tileScale);
             int yCenter = (int) Math.round(tileImage.getHeight()
-            		* SVG_Y_CENTER_LOC * tileScale);
+                    * SVG_Y_CENTER_LOC * tileScale);
 
             af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
             af.scale(tileScale, tileScale);

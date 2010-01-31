@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.22 2009/11/27 20:35:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.23 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -90,9 +90,9 @@ public class StartRound_1835 extends StartRound {
                     // Allow all items in the top row.
                     buyable = true;
                 } else if (row == minRow + 1 && items == 1) {
-					// Allow the first item in the next row if the
-					// top row has only one item.
-					buyable = true;
+                    // Allow the first item in the next row if the
+                    // top row has only one item.
+                    buyable = true;
                 }
             }
             if (buyable) {

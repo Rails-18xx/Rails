@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/DisplayBuffer.java,v 1.8 2009/10/08 21:14:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/DisplayBuffer.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -23,12 +23,12 @@ public final class DisplayBuffer {
             Logger.getLogger(DisplayBuffer.class.getPackage().getName());
 
     public DisplayBuffer() {
-    	if (!initialQueue.isEmpty()) {
-    		for (String s : initialQueue) {
-    			addMessage (s, true);
-    		}
-    		initialQueue.clear();
-    	}
+        if (!initialQueue.isEmpty()) {
+            for (String s : initialQueue) {
+                addMessage (s, true);
+            }
+            initialQueue.clear();
+        }
     }
 
     /**
@@ -45,26 +45,26 @@ public final class DisplayBuffer {
      * console)
      */
     public static void add(String message) {
-    	add (message, true);
+        add (message, true);
     }
 
     public static void add(String message, boolean autoDisplay) {
-    	GameManagerI gm = GameManager.getInstance();
-    	DisplayBuffer instance = null;
-    	if (gm != null) instance = gm.getDisplayBuffer();
-    	if (gm == null || instance == null) {
-    		// Queue in a static buffer until the instance is created
-    		initialQueue.add(message);
-    	} else {
-    		instance.addMessage(message, autoDisplay);
-    	}
+        GameManagerI gm = GameManager.getInstance();
+        DisplayBuffer instance = null;
+        if (gm != null) instance = gm.getDisplayBuffer();
+        if (gm == null || instance == null) {
+            // Queue in a static buffer until the instance is created
+            initialQueue.add(message);
+        } else {
+            instance.addMessage(message, autoDisplay);
+        }
     }
 
     private void addMessage (String message, boolean autoDisplay) {
-    	DisplayBuffer instance = getInstance();
-    	instance.autoDisplay = autoDisplay;
+        DisplayBuffer instance = getInstance();
+        instance.autoDisplay = autoDisplay;
         if (Util.hasValue(message)) {
-        	instance.displayBuffer.add(message);
+            instance.displayBuffer.add(message);
             /* Also log the message (don't remove this,
              * otherwise the message will not be logged during a reload,
              * which may hinder troubleshooting) */
@@ -73,12 +73,12 @@ public final class DisplayBuffer {
     }
 
     private static DisplayBuffer getInstance() {
-    	return GameManager.getInstance().getDisplayBuffer();
+        return GameManager.getInstance().getDisplayBuffer();
     }
 
     /** Get the current message buffer, and clear it */
     public static String[] get() {
-    	DisplayBuffer instance = getInstance();
+        DisplayBuffer instance = getInstance();
         if (instance.displayBuffer.size() > 0) {
             String[] message = instance.displayBuffer.toArray(new String[0]);
             instance.displayBuffer.clear();

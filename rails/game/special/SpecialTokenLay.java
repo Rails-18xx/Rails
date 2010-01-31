@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.12 2010/01/19 19:54:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.13 2010/01/31 22:22:30 macfreek Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class SpecialTokenLay extends SpecialProperty {
     int numberUsed = 0;
 
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
 
@@ -67,15 +67,15 @@ public class SpecialTokenLay extends SpecialProperty {
         }
 
         if (tokenClass == BaseToken.class) {
-        	description = LocalText.getText("LayBaseTokenInfo",
-        			locationCodes,
-        			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-        			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+            description = LocalText.getText("LayBaseTokenInfo",
+                    locationCodes,
+                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
         } else if (tokenClass == BonusToken.class) {
-        	description = LocalText.getText("LayBonusTokenInfo",
-        			tokenName,
-        			Bank.format(tokenValue),
-        			locationCodes);
+            description = LocalText.getText("LayBonusTokenInfo",
+                    tokenName,
+                    Bank.format(tokenValue),
+                    locationCodes);
         }
     }
 
@@ -86,7 +86,7 @@ public class SpecialTokenLay extends SpecialProperty {
         locations = gameManager.getMapManager().parseLocations(locationCodes);
 
         if (token instanceof BonusToken) {
-        	((BonusToken)token).prepareForRemoval(gameManager.getPhaseManager());
+            ((BonusToken)token).prepareForRemoval(gameManager.getPhaseManager());
         }
     }
 
@@ -127,7 +127,7 @@ public class SpecialTokenLay extends SpecialProperty {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "SpecialTokenLay comp=" + privateCompany.getName() + " type="
                + tokenClass.getSimpleName() + ": "
                + (token != null ? token.toString() : "") + " hex="
@@ -135,12 +135,12 @@ public class SpecialTokenLay extends SpecialProperty {
     }
 
     @Override
-	public String toMenu() {
-    	return description;
+    public String toMenu() {
+        return description;
     }
 
     @Override
-	public String getInfo() {
-    	return description;
+    public String getInfo() {
+        return description;
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.81 2010/01/22 21:21:15 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.82 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -64,10 +64,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     /** Map relating portfolio names and objects, to enable deserialization */
     protected Map<String, Portfolio> portfolioMap =
-    	new HashMap<String, Portfolio> ();
+        new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-    		= new IntegerState ("PlayerCertificateLimit", 0);
+            = new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -77,7 +77,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean gameEndsAfterSetOfORs = true;
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
-    		= new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+            = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -130,7 +130,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * For now, the key is a fixed string, but that may change in the future.
      */
     protected static Map<String, GameManagerI> gameManagerMap
-    	= new HashMap<String, GameManagerI>();
+        = new HashMap<String, GameManagerI>();
 
     /**
      * The temporary fixed key to the currently single GameManager instance
@@ -181,14 +181,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Logger.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
-    	gmName = GM_NAME;
-    	gmKey = GM_KEY;
-    	NDC.clear();
-    	NDC.push (GM_KEY);
-    	gameManagerMap.put(GM_KEY, this);
-    	displayBuffer = new DisplayBuffer();
-    	reportBuffer = new ReportBuffer();
-    	guiHints = new GuiHints();
+        gmName = GM_NAME;
+        gmKey = GM_KEY;
+        NDC.clear();
+        NDC.push (GM_KEY);
+        gameManagerMap.put(GM_KEY, this);
+        displayBuffer = new DisplayBuffer();
+        reportBuffer = new ReportBuffer();
+        guiHints = new GuiHints();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -247,36 +247,36 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (gameParmTag != null) {
 
 
-	        // StockRound class and other properties
-	       	Tag srTag = gameParmTag.getChild("StockRound");
-	        if (srTag != null) {
-	            String srClassName =
-	                    srTag.getAttributeAsString("class", "rails.game.StockRound");
-	            try {
-	                stockRoundClass =
-	                        Class.forName(srClassName).asSubclass(StockRound.class);
-	            } catch (ClassNotFoundException e) {
-	                throw new ConfigurationException("Cannot find class "
-	                                                 + srClassName, e);
-	            }
-	            String stockRoundSequenceRuleString =
-	                    srTag.getAttributeAsString("sequence");
-	            if (Util.hasValue(stockRoundSequenceRuleString)) {
-	                if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
-	                	setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
-	                			StockRound.SELL_BUY_SELL);
-	                } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuy")) {
-	                	setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
-	                			StockRound.SELL_BUY);
-	                } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuyOrBuySell")) {
-	                	setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
-	                			StockRound.SELL_BUY_OR_BUY_SELL);
-	                }
-	            }
+            // StockRound class and other properties
+               Tag srTag = gameParmTag.getChild("StockRound");
+            if (srTag != null) {
+                String srClassName =
+                        srTag.getAttributeAsString("class", "rails.game.StockRound");
+                try {
+                    stockRoundClass =
+                            Class.forName(srClassName).asSubclass(StockRound.class);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot find class "
+                                                     + srClassName, e);
+                }
+                String stockRoundSequenceRuleString =
+                        srTag.getAttributeAsString("sequence");
+                if (Util.hasValue(stockRoundSequenceRuleString)) {
+                    if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
+                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                                StockRound.SELL_BUY_SELL);
+                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuy")) {
+                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                                StockRound.SELL_BUY);
+                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuyOrBuySell")) {
+                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
+                                StockRound.SELL_BUY_OR_BUY_SELL);
+                    }
+                }
 
-	            skipFirstStockRound =
-	                    srTag.getAttributeAsBoolean("skipFirst",
-	                            skipFirstStockRound);
+                skipFirstStockRound =
+                        srTag.getAttributeAsBoolean("skipFirst",
+                                skipFirstStockRound);
 
                 for (String ruleTagName : srTag.getChildren().keySet()) {
                     if (ruleTagName.equals("NoSaleInFirstSR")) {
@@ -288,45 +288,45 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 }
         }
 
-	        // OperatingRound class
-	        Tag orTag = gameParmTag.getChild("OperatingRound");
-	        if (orTag != null) {
-	            String orClassName =
-	                    orTag.getAttributeAsString("class",
-	                            "rails.game.OperatingRound");
-	            try {
-	                operatingRoundClass =
-	                        Class.forName(orClassName).asSubclass(
-	                                OperatingRound.class);
-	            } catch (ClassNotFoundException e) {
-	                throw new ConfigurationException("Cannot find class "
-	                                                 + orClassName, e);
-	            }
-	        }
+            // OperatingRound class
+            Tag orTag = gameParmTag.getChild("OperatingRound");
+            if (orTag != null) {
+                String orClassName =
+                        orTag.getAttributeAsString("class",
+                                "rails.game.OperatingRound");
+                try {
+                    operatingRoundClass =
+                            Class.forName(orClassName).asSubclass(
+                                    OperatingRound.class);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot find class "
+                                                     + orClassName, e);
+                }
+            }
 
-	        /* Max. % of shares of one company that a player may hold */
-	        Tag shareLimitTag = gameParmTag.getChild("PlayerShareLimit");
-	        if (shareLimitTag != null) {
-	        	setGameParameter (GameDef.Parm.PLAYER_SHARE_LIMIT,
-	        			shareLimitTag.getAttributeAsInteger("percentage",
-	        					GameDef.Parm.PLAYER_SHARE_LIMIT.defaultValueAsInt()));
-	        }
+            /* Max. % of shares of one company that a player may hold */
+            Tag shareLimitTag = gameParmTag.getChild("PlayerShareLimit");
+            if (shareLimitTag != null) {
+                setGameParameter (GameDef.Parm.PLAYER_SHARE_LIMIT,
+                        shareLimitTag.getAttributeAsInteger("percentage",
+                                GameDef.Parm.PLAYER_SHARE_LIMIT.defaultValueAsInt()));
+            }
 
-	        /* Max. % of shares of one company that the bank pool may hold */
-	        Tag poolLimitTag = gameParmTag.getChild("BankPoolShareLimit");
-	        if (poolLimitTag != null) {
-	        	setGameParameter (GameDef.Parm.POOL_SHARE_LIMIT,
-	        			shareLimitTag.getAttributeAsInteger("percentage",
-	        					GameDef.Parm.POOL_SHARE_LIMIT.defaultValueAsInt()));
-	        }
+            /* Max. % of shares of one company that the bank pool may hold */
+            Tag poolLimitTag = gameParmTag.getChild("BankPoolShareLimit");
+            if (poolLimitTag != null) {
+                setGameParameter (GameDef.Parm.POOL_SHARE_LIMIT,
+                        shareLimitTag.getAttributeAsInteger("percentage",
+                                GameDef.Parm.POOL_SHARE_LIMIT.defaultValueAsInt()));
+            }
 
-	        /* Max. % of own shares that a company treasury may hold */
-	        Tag treasuryLimitTag = gameParmTag.getChild("TreasuryShareLimit");
-	        if (treasuryLimitTag != null) {
-	        	setGameParameter (GameDef.Parm.TREASURY_SHARE_LIMIT,
-	        			shareLimitTag.getAttributeAsInteger("percentage",
-	        					GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt()));
-	        }
+            /* Max. % of own shares that a company treasury may hold */
+            Tag treasuryLimitTag = gameParmTag.getChild("TreasuryShareLimit");
+            if (treasuryLimitTag != null) {
+                setGameParameter (GameDef.Parm.TREASURY_SHARE_LIMIT,
+                        shareLimitTag.getAttributeAsInteger("percentage",
+                                GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt()));
+            }
         }
 
 
@@ -353,52 +353,52 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         Tag guiClassesTag = tag.getChild("GuiClasses");
         if (guiClassesTag != null) {
 
-	        // GameUIManager class
-	        Tag gameUIMgrTag = guiClassesTag.getChild("GameUIManager");
-	        if (gameUIMgrTag != null) {
-	            gameUIManagerClassName =
-	                    gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
-	            // Check instantiatability (not sure if this belongs here)
-	            canClassBeInstantiated (gameUIManagerClassName);
-	        }
+            // GameUIManager class
+            Tag gameUIMgrTag = guiClassesTag.getChild("GameUIManager");
+            if (gameUIMgrTag != null) {
+                gameUIManagerClassName =
+                        gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (gameUIManagerClassName);
+            }
 
-	        // ORUIManager class
-	        Tag orMgrTag = guiClassesTag.getChild("ORUIManager");
-	        if (orMgrTag != null) {
-	            orUIManagerClassName =
-	                    orMgrTag.getAttributeAsString("class", orUIManagerClassName);
-	            // Check instantiatability (not sure if this belongs here)
-	            canClassBeInstantiated (orUIManagerClassName);
-	        }
+            // ORUIManager class
+            Tag orMgrTag = guiClassesTag.getChild("ORUIManager");
+            if (orMgrTag != null) {
+                orUIManagerClassName =
+                        orMgrTag.getAttributeAsString("class", orUIManagerClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (orUIManagerClassName);
+            }
 
-	        // GameStatus class
-	        Tag gameStatusTag = guiClassesTag.getChild("GameStatus");
-	        if (gameStatusTag != null) {
-	            gameStatusClassName =
-	                    gameStatusTag.getAttributeAsString("class", gameStatusClassName);
-	            // Check instantiatability (not sure if this belongs here)
-	            canClassBeInstantiated (gameStatusClassName);
-	        }
+            // GameStatus class
+            Tag gameStatusTag = guiClassesTag.getChild("GameStatus");
+            if (gameStatusTag != null) {
+                gameStatusClassName =
+                        gameStatusTag.getAttributeAsString("class", gameStatusClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (gameStatusClassName);
+            }
 
-	        // StatusWindow class
-	        Tag statusWindowTag = guiClassesTag.getChild("StatusWindow");
-	        if (statusWindowTag != null) {
-	            statusWindowClassName =
-	                    statusWindowTag.getAttributeAsString("class",
-	                            statusWindowClassName);
-	            // Check instantiatability (not sure if this belongs here)
-	            canClassBeInstantiated (statusWindowClassName);
-	        }
+            // StatusWindow class
+            Tag statusWindowTag = guiClassesTag.getChild("StatusWindow");
+            if (statusWindowTag != null) {
+                statusWindowClassName =
+                        statusWindowTag.getAttributeAsString("class",
+                                statusWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (statusWindowClassName);
+            }
 
-	        // ORWindow class
-	        Tag orWindowTag = guiClassesTag.getChild("ORWindow");
-	        if (orWindowTag != null) {
-	            orWindowClassName =
-	                orWindowTag.getAttributeAsString("class",
-	                        orWindowClassName);
-	            // Check instantiatability (not sure if this belongs here)
-	            canClassBeInstantiated (orWindowClassName);
-	        }
+            // ORWindow class
+            Tag orWindowTag = guiClassesTag.getChild("ORWindow");
+            if (orWindowTag != null) {
+                orWindowClassName =
+                    orWindowTag.getAttributeAsString("class",
+                            orWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (orWindowClassName);
+            }
         }
     }
 
@@ -424,7 +424,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @see rails.game.GameManagerI#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
      */
     public void init(String gameName,
-    		PlayerManager playerManager,
+            PlayerManager playerManager,
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
             TrainManager trainManager,
@@ -432,7 +432,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             MapManager mapManager,
             TileManager tileManager,
             Bank bank) {
-    	this.gameName = gameName;
+        this.gameName = gameName;
         this.playerManager = playerManager;
         this.companyManager = companyManager;
         this.phaseManager = phaseManager;
@@ -453,8 +453,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     public void startGame(Map<String,String> gameOptions) {
 
-    	this.gameOptions = gameOptions;
-    	setGuiParameters();
+        this.gameOptions = gameOptions;
+        setGuiParameters();
 
         if (startPacket == null)
             startPacket = companyManager.getStartPacket(StartPacket.DEFAULT_NAME);
@@ -494,16 +494,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     private void initGameParameters() {
 
-    	for (GameDef.Parm parm : GameDef.Parm.values()) {
-    		gameParameters.put(parm, parm.defaultValue());
-    	}
+        for (GameDef.Parm parm : GameDef.Parm.values()) {
+            gameParameters.put(parm, parm.defaultValue());
+        }
     }
 
     /**
      * @return instance of GameManager
      */
     public static GameManagerI getInstance () {
-    	return gameManagerMap.get(NDC.peek());
+        return gameManagerMap.get(NDC.peek());
     }
 
     /* (non-Javadoc)
@@ -636,11 +636,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public String getORId () {
-    	if (showCompositeORNumber) {
-    		return getCompositeORNumber();
-    	} else {
-    		return String.valueOf(absoluteORNumber.intValue());
-    	}
+        if (showCompositeORNumber) {
+            return getCompositeORNumber();
+        } else {
+            return String.valueOf(absoluteORNumber.intValue());
+        }
     }
 
     /* (non-Javadoc)
@@ -651,12 +651,12 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public int getRelativeORNumber() {
-    	return relativeORNumber.intValue();
+        return relativeORNumber.intValue();
     }
 
-	public String getNumOfORs () {
-		return new Integer(numOfORs).toString();
-	}
+    public String getNumOfORs () {
+        return new Integer(numOfORs).toString();
+    }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getSRNumber()
@@ -690,8 +690,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public boolean process(PossibleAction action) {
 
-    	NDC.clear();
-    	NDC.push (GM_KEY);
+        NDC.clear();
+        NDC.push (GM_KEY);
 
         boolean result = true;
 
@@ -700,11 +700,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.START_GAME) {
             // Skip processing at game start after Load.
-        	// We're only here to create PossibleActions.
-        	result = true;
+            // We're only here to create PossibleActions.
+            result = true;
 
         } else if (action != null) {
-        	// Should never be null.
+            // Should never be null.
 
             action.setActed();
             result = false;
@@ -770,11 +770,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         // moveStack closing is done here to allow state changes to occur
         // when setting possible actions
         if (action != null) {
-        	if (result && !(action instanceof GameAction)) {
-        		if (moveStack.isOpen()) moveStack.finish();
-	        } else {
-	            if (moveStack.isOpen()) moveStack.cancel();
-	        }
+            if (result && !(action instanceof GameAction)) {
+                if (moveStack.isOpen()) moveStack.finish();
+            } else {
+                if (moveStack.isOpen()) moveStack.cancel();
+            }
         }
 
         for (PossibleAction pa : possibleActions.getList()) {
@@ -804,7 +804,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         for (PossibleAction action : actions) {
 
-        	DisplayBuffer.clear();
+            DisplayBuffer.clear();
             // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
             if (!possibleActions.contains(action.getClass())
                     && possibleActions.contains(RepayLoans.class)) {
@@ -817,13 +817,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             try {
                 log.debug("Action: " + action);
                 if (!getCurrentRound().process(action)) {
-                	String msg = "Player "+action.getPlayerName()+"\'s action \""
-                		+action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
-                		+" is considered invalid by the game engine";
-                	log.error(msg);
-                	DisplayBuffer.add(msg);
+                    String msg = "Player "+action.getPlayerName()+"\'s action \""
+                        +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
+                        +" is considered invalid by the game engine";
+                    log.error(msg);
+                    DisplayBuffer.add(msg);
                     if (moveStack.isOpen()) moveStack.finish();
-                	return false;
+                    return false;
                 }
                 getCurrentRound().setPossibleActions();
             } catch (Exception e) {
@@ -1041,16 +1041,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public int getPlayerCertificateLimit() {
-		return playerCertificateLimit.intValue();
-	}
+        return playerCertificateLimit.intValue();
+    }
 
-	public void setPlayerCertificateLimit(int newLimit) {
-		playerCertificateLimit.set (newLimit);
-	}
+    public void setPlayerCertificateLimit(int newLimit) {
+        playerCertificateLimit.set (newLimit);
+    }
 
-	public IntegerState getPlayerCertificateLimitModel () {
-		return playerCertificateLimit;
-	}
+    public IntegerState getPlayerCertificateLimitModel () {
+        return playerCertificateLimit;
+    }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getAllPublicCompanies()
@@ -1083,11 +1083,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public void addPortfolio (Portfolio portfolio) {
-    	portfolioMap.put(portfolio.getName(), portfolio);
+        portfolioMap.put(portfolio.getName(), portfolio);
     }
 
     public Portfolio getPortfolioByName (String name) {
-    	return portfolioMap.get(name);
+        return portfolioMap.get(name);
     }
 
     /* (non-Javadoc)
@@ -1106,7 +1106,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public String getGameName () {
-    	return gameName;
+        return gameName;
     }
 
     public PlayerManager getPlayerManager() {
@@ -1130,11 +1130,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public Bank getBank () {
-    	return bank;
+        return bank;
     }
 
     public String getGameOption (String key) {
-    	return gameOptions.get(key);
+        return gameOptions.get(key);
     }
 
     // TODO Should be removed
@@ -1199,7 +1199,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public void setGameParameter (GameDef.Parm key, Object value) {
-    	gameParameters.put(key, value);
+        gameParameters.put(key, value);
     }
 
     public Object getGameParameter (GameDef.Parm key) {
@@ -1245,7 +1245,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public boolean addSpecialProperty(SpecialPropertyI property) {
 
         if (commonSpecialProperties == null) {
-        	commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
+            commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
         }
         return commonSpecialProperties.add(property);
     }
@@ -1266,7 +1266,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     public List<SpecialPropertyI> getCommonSpecialProperties () {
-    	return getSpecialProperties (null, false);
+        return getSpecialProperties (null, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -1278,8 +1278,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         if (commonSpecialProperties != null) {
             for (SpecialPropertyI sp : commonSpecialProperties) {
                 if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
-	                    && sp.isExecutionable()
-	                    && (!sp.isExercised() || includeExercised)) {
+                        && sp.isExecutionable()
+                        && (!sp.isExercised() || includeExercised)) {
                     result.add((T) sp);
                 }
             }
@@ -1293,26 +1293,26 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * but that will change whenever a multi-game server will be implemented.
      */
     public String getName () {
-    	return gmName;
+        return gmName;
     }
 
     public String getGMKey () {
-    	return gmKey;
+        return gmKey;
     }
 
     public MoveStack getMoveStack () {
-    	return moveStack;
+        return moveStack;
     }
 
-	public DisplayBuffer getDisplayBuffer() {
-		return displayBuffer;
-	}
+    public DisplayBuffer getDisplayBuffer() {
+        return displayBuffer;
+    }
 
-	public ReportBuffer getReportBuffer() {
-		return reportBuffer;
-	}
+    public ReportBuffer getReportBuffer() {
+        return reportBuffer;
+    }
 
-	public GuiHints getUIHints() {
-		return guiHints;
-	}
+    public GuiHints getUIHints() {
+        return guiHints;
+    }
 }

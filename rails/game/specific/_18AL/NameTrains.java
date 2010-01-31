@@ -17,7 +17,7 @@ public class NameTrains extends SpecialProperty implements Moveable {
     private String name = "NameTrains";
 
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
 
@@ -65,7 +65,7 @@ public class NameTrains extends SpecialProperty implements Moveable {
     }
 
     @Override
-	public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
 
         for (NamedTrainToken token : tokens) {
@@ -93,12 +93,12 @@ public class NameTrains extends SpecialProperty implements Moveable {
     }
 
     @Override
-	public String toMenu() {
+    public String toMenu() {
         return description;
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return description;
     }
 

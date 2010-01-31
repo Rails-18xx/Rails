@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.16 2010/01/26 20:09:39 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -86,14 +86,14 @@ public class BuyTrain extends PossibleORAction {
     }
 
     public void setHasNoTrains(boolean hasNoTrains) {
-		this.hasNoTrains = hasNoTrains;
-	}
+        this.hasNoTrains = hasNoTrains;
+    }
     
     public void setExtraMessage (String message) {
         extraMessage = message;
     }
 
-	public String getExtraMessage() {
+    public String getExtraMessage() {
         return extraMessage;
     }
 
@@ -164,10 +164,10 @@ public class BuyTrain extends PossibleORAction {
     }
 
     public boolean hasNoTrains() {
-		return hasNoTrains;
-	}
+        return hasNoTrains;
+    }
 
-	public Portfolio getHolder() {
+    public Portfolio getHolder() {
         return getTrain().getHolder();
     }
 

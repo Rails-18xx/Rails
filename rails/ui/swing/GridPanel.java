@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.3 2010/01/20 19:52:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.4 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -112,16 +112,16 @@ implements ActionListener, KeyListener {
 
     public void setRowVisibility (int rowIndex, boolean value) {
 
-    	List<JComponent> dependents;
+        List<JComponent> dependents;
 
-    	for (int j=0; j < fields.length; j++) {
+        for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
                 if (fields[j][rowIndex] instanceof Field
-                		&& (dependents = ((Field)fields[j][rowIndex]).getDependents()) != null) {
-                	for (JComponent dependent : dependents) {
-                		dependent.setVisible(value);
-                	}
+                        && (dependents = ((Field)fields[j][rowIndex]).getDependents()) != null) {
+                    for (JComponent dependent : dependents) {
+                        dependent.setVisible(value);
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.28 2010/01/01 18:57:21 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.29 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -41,13 +41,13 @@ public class StartRound_1830 extends StartRound {
         // as setting a start price
         StartItem item;
         while ((item = startPacket.getFirstUnsoldItem()) != null
-        		&& item.getBidders() == 1 && item.needsPriceSetting() == null) {
+                && item.getBidders() == 1 && item.needsPriceSetting() == null) {
             assignItem(item.getBidder(), item, item.getBid(), 0);
 
             // Check if this has exhausted the start packet
             if (startPacket.areAllSold()) {
-            	finishRound();
-            	break;
+                finishRound();
+                break;
             }
         }
         return true;
@@ -106,8 +106,8 @@ public class StartRound_1830 extends StartRound {
                             possibleActions.add(newItem);
                             break; // No more actions possible!
                         } else {
-                        	// ERROR, this should have been detected in process()!
-                        	log.error("??? Wrong place to assign item "+item.getName());
+                            // ERROR, this should have been detected in process()!
+                            log.error("??? Wrong place to assign item "+item.getName());
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
@@ -322,10 +322,10 @@ public class StartRound_1830 extends StartRound {
             } else {
                 // More than one left: find next bidder
 
-            	if (GameOption.OPTION_VALUE_YES.equalsIgnoreCase(getGameOption("LeaveAuctionOnPass"))) {
-            		// Game option: player to leave auction after a pass (default no).
-            		auctionItem.setBid(-1, player);
-            	}
+                if (GameOption.OPTION_VALUE_YES.equalsIgnoreCase(getGameOption("LeaveAuctionOnPass"))) {
+                    // Game option: player to leave auction after a pass (default no).
+                    auctionItem.setBid(-1, player);
+                }
 
                 setNextBiddingPlayer(auctionItem,
                         getCurrentPlayerIndex());

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.6 2009/11/04 20:33:22 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/CashMove.java,v 1.7 2010/01/31 22:22:30 macfreek Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -35,14 +35,14 @@ public class CashMove extends Move {
     }
 
     @Override
-	public boolean execute() {
+    public boolean execute() {
 
         transferCash(from, to, amount);
         return true;
     }
 
     @Override
-	public boolean undo() {
+    public boolean undo() {
 
         transferCash(to, from, amount);
         return true;
@@ -54,7 +54,7 @@ public class CashMove extends Move {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "CashMove: " + Bank.format(amount) + " from " + from.getName()
                + " to " + to.getName();
     }

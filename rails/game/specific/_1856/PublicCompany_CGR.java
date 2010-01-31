@@ -9,7 +9,7 @@ import rails.game.state.*;
 
 public class PublicCompany_CGR extends PublicCompany {
 
-	public static final String NAME = "CGR";
+    public static final String NAME = "CGR";
 
     /** Special rules apply before CGR has got its first permanent train */
     private BooleanState hadPermanentTrain;
@@ -44,39 +44,39 @@ public class PublicCompany_CGR extends PublicCompany {
     }
 
     public boolean hasTemporaryPresident () {
-    	return getTemporaryPresident() != null;
+        return getTemporaryPresident() != null;
     }
 
     public Player getTemporaryPresident() {
-    	if (temporaryPresident != null) {
-    		return (Player) temporaryPresident.getObject();
-    	} else {
-    		return null;
-    	}
-	}
+        if (temporaryPresident != null) {
+            return (Player) temporaryPresident.getObject();
+        } else {
+            return null;
+        }
+    }
     
     public boolean mayBuyTrainType (TrainI train) {
         return !"4".equals(train.getName());
     }
 
     @Override
-	public Player getPresident() {
-    	if (hasTemporaryPresident()) {
-    		return getTemporaryPresident();
-    	} else {
-    		return super.getPresident();
-    	}
+    public Player getPresident() {
+        if (hasTemporaryPresident()) {
+            return getTemporaryPresident();
+        } else {
+            return super.getPresident();
+        }
     }
 
-	public void setTemporaryPresident(Player temporaryPresident) {
-		if (this.temporaryPresident == null) {
-			this.temporaryPresident = new State ("CGR_TempPres", Player.class);
-		}
-		this.temporaryPresident.set(temporaryPresident);
-	}
+    public void setTemporaryPresident(Player temporaryPresident) {
+        if (this.temporaryPresident == null) {
+            this.temporaryPresident = new State ("CGR_TempPres", Player.class);
+        }
+        this.temporaryPresident.set(temporaryPresident);
+    }
 
-	@Override
-	public boolean canRunTrains() {
+    @Override
+    public boolean canRunTrains() {
         if (!hadPermanentTrain()) {
             return true;
         }
@@ -93,7 +93,7 @@ public class PublicCompany_CGR extends PublicCompany {
      * @param The revenue amount.
      */
     @Override
-	public void withhold(int amount) {
+    public void withhold(int amount) {
         if (amount > 0) new CashMove(bank, this, amount);
         if (hasStockPrice && !runsWithBorrowedTrain()) {
             stockMarket.withhold(this);
@@ -141,7 +141,7 @@ public class PublicCompany_CGR extends PublicCompany {
     }
 
     @Override
-	public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
+    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
             StockMarketI stockMarket) {
 
         if (actionPerformed == StockRound.SOLD) {
@@ -163,7 +163,7 @@ public class PublicCompany_CGR extends PublicCompany {
     }
 
     @Override
-	public void setOperated() {
+    public void setOperated() {
         super.setOperated();
 
         // Reset the share selling counts
@@ -173,16 +173,16 @@ public class PublicCompany_CGR extends PublicCompany {
     }
 
     @Override
-	public boolean mustOwnATrain() {
-    	if (!hadPermanentTrain()) {
-    		return false;
-    	} else {
-    		return super.mustOwnATrain();
-    	}
+    public boolean mustOwnATrain() {
+        if (!hadPermanentTrain()) {
+            return false;
+        } else {
+            return super.mustOwnATrain();
+        }
     }
 
     @Override
-	public String getExtraShareMarks () {
-    	return (hasTemporaryPresident() ? "T" : "");
+    public String getExtraShareMarks () {
+        return (hasTemporaryPresident() ? "T" : "");
     }
 }

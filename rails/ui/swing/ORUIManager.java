@@ -82,7 +82,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     public void setGameUIManager (GameUIManager gameUIManager) {
-    	this.gameUIManager = gameUIManager;
+        this.gameUIManager = gameUIManager;
     }
 
     public void init(ORWindow orWindow) {
@@ -239,7 +239,7 @@ public class ORUIManager implements DialogOwner {
                 log.debug("TokenLay object " + (++ii) + ": " + tokenLay);
                 sp = tokenLay.getSpecialProperty();
                 if (sp != null && sp instanceof SpecialTokenLay) {
-                	extraMessage += "<br>" + sp.getHelp();
+                    extraMessage += "<br>" + sp.getHelp();
                 } else if ((locations = tokenLay.getLocationNameString()) != null) {
                     if (normalTokenMessage.length() > 1) {
                         normalTokenMessage.append(" ").append(
@@ -285,7 +285,7 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == BuyBonusToken.class) {
 
-            	buyBonusToken ((BuyBonusToken)actions.get(0));
+                buyBonusToken ((BuyBonusToken)actions.get(0));
 
             } else if (actionType == NullAction.class
                        || actionType == GameAction.class) {
@@ -375,7 +375,7 @@ public class ORUIManager implements DialogOwner {
 
     private void buyBonusToken (BuyBonusToken action) {
 
-    	orWindow.process(action);
+        orWindow.process(action);
     }
 
     protected void reachDestinations (ReachDestinations action) {
@@ -401,8 +401,8 @@ public class ORUIManager implements DialogOwner {
 
     public void dialogActionPerformed () {
 
-    	JDialog currentDialog = getCurrentDialog();
-    	PossibleAction currentDialogAction = getCurrentDialogAction();
+        JDialog currentDialog = getCurrentDialog();
+        PossibleAction currentDialogAction = getCurrentDialogAction();
 
         if (currentDialog instanceof CheckBoxDialog
                 && currentDialogAction instanceof ReachDestinations) {
@@ -431,15 +431,15 @@ public class ORUIManager implements DialogOwner {
     }
 
     public JDialog getCurrentDialog() {
-    	return gameUIManager.getCurrentDialog();
+        return gameUIManager.getCurrentDialog();
     }
 
     public PossibleAction getCurrentDialogAction () {
-    	return gameUIManager.getCurrentDialogAction();
+        return gameUIManager.getCurrentDialogAction();
     }
 
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
-    	gameUIManager.setCurrentDialog(dialog, action);
+        gameUIManager.setCurrentDialog(dialog, action);
     }
 
     public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
@@ -623,19 +623,19 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.isEmpty()) {
                     return;
                 }
-					// If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
-				if (prompts.size() > 1) {
-					String selected =
+                    // If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
+                if (prompts.size() > 1) {
+                    String selected =
                        (String) JOptionPane.showInputDialog(orWindow,
-														 LocalText.getText("SelectStationForToken"),
-														 LocalText.getText("WhichStation"),
-														 JOptionPane.PLAIN_MESSAGE, null,
-														 prompts.toArray(), prompts.get(0));
-					if (selected == null) return;
-					station = promptToCityMap.get(selected).getNumber();
-				} else {
-					station = promptToCityMap.get(prompts.toArray() [0]).getNumber();
-				}
+                                                         LocalText.getText("SelectStationForToken"),
+                                                         LocalText.getText("WhichStation"),
+                                                         JOptionPane.PLAIN_MESSAGE, null,
+                                                         prompts.toArray(), prompts.get(0));
+                    if (selected == null) return;
+                    station = promptToCityMap.get(selected).getNumber();
+                } else {
+                    station = promptToCityMap.get(prompts.toArray() [0]).getNumber();
+                }
             }
 
             allowance.setChosenHex(selectedHex.getHexModel());
@@ -689,18 +689,18 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.isEmpty()) {
                     continue;
                 }
-				if (prompts.size () > 1) {
-					String selected =
-					(String) JOptionPane.showInputDialog(orWindow,
-														 LocalText.getText("SelectStationForToken"),
-														 LocalText.getText("WhichStation"),
-														 JOptionPane.PLAIN_MESSAGE, null,
-														 prompts.toArray(), prompts.get(0));
-					if (selected == null) return;
-					action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
-				} else {
-					action.addRelayBaseToken(company.getName(), promptToCityMap.get(prompts.toArray() [0]));
-				}
+                if (prompts.size () > 1) {
+                    String selected =
+                    (String) JOptionPane.showInputDialog(orWindow,
+                            							 LocalText.getText("SelectStationForToken"),
+                            							 LocalText.getText("WhichStation"),
+                            							 JOptionPane.PLAIN_MESSAGE, null,
+                            							 prompts.toArray(), prompts.get(0));
+                    if (selected == null) return;
+                    action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
+                } else {
+                    action.addRelayBaseToken(company.getName(), promptToCityMap.get(prompts.toArray() [0]));
+                }
            }
         }
     }
@@ -1048,7 +1048,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.process(action);
         } else {
             //List<String> options = new ArrayList<String>();
-        	String[] options = new String[maxNumber-minNumber+1];
+            String[] options = new String[maxNumber-minNumber+1];
             for (int i=minNumber, j=0; i<=maxNumber; i++, j++) {
                 if (i == 0) {
                     options[j] = LocalText.getText("None");
@@ -1060,10 +1060,10 @@ public class ORUIManager implements DialogOwner {
                 }
             }
             RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
-            		LocalText.getText("Select"),
+                    LocalText.getText("Select"),
                     LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
-                               		options,
-            		0);
+                                       options,
+                    0);
             gameUIManager.setCurrentDialog (currentDialog, action);
         }
     }
@@ -1168,12 +1168,12 @@ public class ORUIManager implements DialogOwner {
 
             // TEMPORARY extra message about having no route
             for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
-	            if (bTrain.hasNoTrains()) {
-	                b.append("<br><font color=\"red\">");
-	                b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
-	                b.append("</font>");
-	                break;
-	            }
+                if (bTrain.hasNoTrains()) {
+                    b.append("<br><font color=\"red\">");
+                    b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    b.append("</font>");
+                    break;
+                }
             }
 
             setMessage(b.toString());
@@ -1391,7 +1391,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     public GameUIManager getGameUIManager () {
-    	return gameUIManager;
+        return gameUIManager;
     }
 
     private void displayRemainingTiles() {

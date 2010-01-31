@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/AddToList.java,v 1.4 2009/09/23 21:38:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/AddToList.java,v 1.5 2010/01/31 22:22:29 macfreek Exp $
  *
  * Created on 18-Jul-2006
  * Change Log:
@@ -33,21 +33,21 @@ public class AddToList<E> extends Move {
     }
 
     @Override
-	public boolean execute() {
+    public boolean execute() {
         list.add(object);
         updateModels();
         return true;
     }
 
     @Override
-	public boolean undo() {
+    public boolean undo() {
         list.remove(object);
         updateModels();
         return true;
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "AddToList " + listName + ": " + object.toString();
     }
 

@@ -88,15 +88,15 @@ public class StatusWindow_1856 extends StatusWindow {
                 action.getCompanyName());
         String[] waitingMessages = DisplayBuffer.get();
         if (waitingMessages != null) {
-        	message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
-        		+ "<br>" + message;
+            message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
+                + "<br>" + message;
         }
 
        RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
-        		LocalText.getText("Select"),
-        		message,
-        		options,
-        		0);
+                LocalText.getText("Select"),
+                message,
+                options,
+                0);
        gameUIManager.setCurrentDialog (currentDialog, action);
     }
 

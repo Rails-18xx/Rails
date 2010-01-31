@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.10 2010/01/14 20:45:43 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.11 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -46,7 +46,7 @@ public class Field extends JLabel implements ViewObject {
     }
 
     public Field(ModelObject modelObject) {
-    	this("");
+        this("");
         //this(modelObject.getText());
         this.modelObject = modelObject;
         //Object mu = modelObject.getUpdate();
@@ -97,22 +97,22 @@ public class Field extends JLabel implements ViewObject {
         if (o2 instanceof String) {
             setText((String) o2);
         } else if (o2 instanceof ViewUpdate) {
-        	updateDetails ((ViewUpdate)o2);
+            updateDetails ((ViewUpdate)o2);
         } else {
             setText(modelObject.toString());
         }
     }
 
     protected void updateDetails (ViewUpdate vu) {
-    	for (String key : vu.getKeys()) {
-    		if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
-    			setText (vu.getText());
-    		} else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
-    			setBackground((Color)vu.getValue(key));
-           		normalBgColour = getBackground();
-           		setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
-    		}
-    	}
+        for (String key : vu.getKeys()) {
+            if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
+                setText (vu.getText());
+            } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
+                setBackground((Color)vu.getValue(key));
+                   normalBgColour = getBackground();
+                   setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+            }
+        }
     }
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
@@ -122,12 +122,12 @@ public class Field extends JLabel implements ViewObject {
     }
 
     public void addDependent (JComponent dependent) {
-    	if (dependents == null) dependents = new ArrayList<JComponent>(2);
-    	dependents.add(dependent);
+        if (dependents == null) dependents = new ArrayList<JComponent>(2);
+        dependents.add(dependent);
     }
 
     public List<JComponent> getDependents () {
-    	return dependents;
+        return dependents;
     }
 
 
