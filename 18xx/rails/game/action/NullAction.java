@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.9 2010/01/20 19:50:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.10 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.action;
 
 public class NullAction extends PossibleAction {
@@ -28,14 +28,14 @@ public class NullAction extends PossibleAction {
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof NullAction)) return false;
         NullAction a = (NullAction) action;
         return a.mode == mode;
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return name[mode];
     }
 }

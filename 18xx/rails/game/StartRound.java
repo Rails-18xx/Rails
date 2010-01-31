@@ -306,11 +306,11 @@ public abstract class StartRound extends Round {
     protected abstract boolean pass(String playerName);
 
     @Override
-	protected void finishRound() {
-    	super.finishRound();
+    protected void finishRound() {
+        super.finishRound();
     }
 
-    	/*----- Setting up the UI for the next action -----*/
+        /*----- Setting up the UI for the next action -----*/
 
    /**
      * Get the currentPlayer index in the player list (starting at 0).

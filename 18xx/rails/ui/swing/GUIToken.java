@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.10 2009/12/19 18:32:32 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.11 2010/01/31 22:22:33 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -26,7 +26,7 @@ public class GUIToken extends JPanel {
     private static final Font largeTokenFont = new Font("Helvetica", Font.BOLD, 12);
 
     @Override
-	public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         clear(g);
         Graphics2D g2d = (Graphics2D) g;
 
@@ -85,7 +85,7 @@ public class GUIToken extends JPanel {
         this.diameter = diameter;
 
         circle = new Ellipse2D.Double(xCenter - 0.5*diameter,
-        		yCenter-0.5*diameter, diameter, diameter);
+                yCenter-0.5*diameter, diameter, diameter);
 
         this.setForeground(fgColor);
         this.setOpaque(false);
@@ -106,7 +106,7 @@ public class GUIToken extends JPanel {
     }
 
     @Override
-	public String getName() {
+    public String getName() {
         return name;
     }
 

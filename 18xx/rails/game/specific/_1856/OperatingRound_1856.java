@@ -115,21 +115,21 @@ public class OperatingRound_1856 extends OperatingRound {
             if (operatingCompany instanceof PublicCompany_CGR
                     && ((PublicCompany_CGR)operatingCompany).runsWithBorrowedTrain()) {
                 DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
-                		PublicCompany_CGR.NAME, "D"));
+                        PublicCompany_CGR.NAME, "D"));
                 possibleActions.add(new SetDividend(
                         operatingCompany.getLastRevenue(), true,
                         new int[] {SetDividend.WITHHOLD }));
             } else {
 
-	            int[] allowedRevenueActions =
-	                    operatingCompany.isSplitAlways()
-	                            ? new int[] { SetDividend.SPLIT }
-	                            : operatingCompany.isSplitAllowed()
-	                                    ? new int[] { SetDividend.PAYOUT,
-	                                            SetDividend.SPLIT,
-	                                            SetDividend.WITHHOLD }
-	                                    : new int[] { SetDividend.PAYOUT,
-	                                            SetDividend.WITHHOLD };
+                int[] allowedRevenueActions =
+                        operatingCompany.isSplitAlways()
+                                ? new int[] { SetDividend.SPLIT }
+                                : operatingCompany.isSplitAllowed()
+                                        ? new int[] { SetDividend.PAYOUT,
+                                                SetDividend.SPLIT,
+                                                SetDividend.WITHHOLD }
+                                        : new int[] { SetDividend.PAYOUT,
+                                                SetDividend.WITHHOLD };
 
                 // Check if any loan interest can be paid
                 if (operatingCompany.canLoan()) {
@@ -141,10 +141,10 @@ public class OperatingRound_1856 extends OperatingRound {
                     }
                 }
 
-	            possibleActions.add(new SetDividend(
-	                    operatingCompany.getLastRevenue(), true,
-	                    allowedRevenueActions,
-	                    requiredCash));
+                possibleActions.add(new SetDividend(
+                        operatingCompany.getLastRevenue(), true,
+                        allowedRevenueActions,
+                        requiredCash));
             }
 
             // UI directions:
@@ -462,7 +462,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
     public void resume (List<PublicCompanyI> mergingCompanies) {
 
-    	// End of CGRFormationRound
+        // End of CGRFormationRound
         finalLoanRepaymentPending.set(false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
 
@@ -483,7 +483,7 @@ public class OperatingRound_1856 extends OperatingRound {
         boolean cgrCanOperate = cgr.hasStarted();
 
         for (PublicCompanyI company : mergingCompanies) {
-       		if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
+               if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
         }
 
         // Find the first company that has not yet operated
@@ -532,8 +532,8 @@ public class OperatingRound_1856 extends OperatingRound {
             message = LocalText.getText("DoesNotForm", cgr.getName());
         }
         ReportBuffer.add(LocalText.getText("EndOfFormationRound",
-        		cgr.getName(),
-        		getRoundName()));
+                cgr.getName(),
+                getRoundName()));
         ReportBuffer.add (message);
         DisplayBuffer.add(message);
 
@@ -543,7 +543,7 @@ public class OperatingRound_1856 extends OperatingRound {
             operatingCompanyIndexObject.set(operatingCompanyIndex);
             log.debug ("Next operating company: "+operatingCompany.getName());
         } else {
-        	finishOR();
+            finishOR();
             return false;
         }
         return true;

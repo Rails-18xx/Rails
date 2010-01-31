@@ -18,66 +18,66 @@ public class GuiHints implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-	/** What round type is currently active in the engine? */
-	private Class<? extends RoundI> currentRoundType = null;
+    /** What round type is currently active in the engine? */
+    private Class<? extends RoundI> currentRoundType = null;
 
-	/** Which windows should be visible? */
-	private List<VisibilityHint> visibilityHints;
+    /** Which windows should be visible? */
+    private List<VisibilityHint> visibilityHints;
 
-	/** Which window type is active and should be on top? */
-	private GuiDef.Panel activePanel;
+    /** Which window type is active and should be on top? */
+    private GuiDef.Panel activePanel;
 
-	public Class<? extends RoundI> getCurrentRoundType() {
-		return currentRoundType;
-	}
+    public Class<? extends RoundI> getCurrentRoundType() {
+        return currentRoundType;
+    }
 
-	public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
-		this.currentRoundType = currentRoundType;
-	}
+    public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
+        this.currentRoundType = currentRoundType;
+    }
 
-	public List<VisibilityHint> getVisibilityHints() {
-		return visibilityHints;
-	}
+    public List<VisibilityHint> getVisibilityHints() {
+        return visibilityHints;
+    }
 
-	public void setVisibilityHint(GuiDef.Panel type, boolean visibility) {
-		if (visibilityHints == null) {
-			visibilityHints = new ArrayList<VisibilityHint>(4);
-		}
-		visibilityHints.add (new VisibilityHint(type, visibility));
-	}
+    public void setVisibilityHint(GuiDef.Panel type, boolean visibility) {
+        if (visibilityHints == null) {
+            visibilityHints = new ArrayList<VisibilityHint>(4);
+        }
+        visibilityHints.add (new VisibilityHint(type, visibility));
+    }
 
-	public void clearVisibilityHints () {
-		if (visibilityHints == null) {
-			visibilityHints = new ArrayList<VisibilityHint>(4);
-		} else {
-			visibilityHints.clear();
-		}
-	}
+    public void clearVisibilityHints () {
+        if (visibilityHints == null) {
+            visibilityHints = new ArrayList<VisibilityHint>(4);
+        } else {
+            visibilityHints.clear();
+        }
+    }
 
-	public GuiDef.Panel getActivePanel() {
-		return activePanel;
-	}
+    public GuiDef.Panel getActivePanel() {
+        return activePanel;
+    }
 
-	public void setActivePanel(GuiDef.Panel activePanel) {
-		this.activePanel = activePanel;
-	}
+    public void setActivePanel(GuiDef.Panel activePanel) {
+        this.activePanel = activePanel;
+    }
 
-	public class VisibilityHint {
+    public class VisibilityHint {
 
-		GuiDef.Panel type;
-		boolean visibility;
+        GuiDef.Panel type;
+        boolean visibility;
 
-		VisibilityHint (GuiDef.Panel type, boolean visibility) {
-			this.type = type;
-			this.visibility = visibility;
-		}
+        VisibilityHint (GuiDef.Panel type, boolean visibility) {
+            this.type = type;
+            this.visibility = visibility;
+        }
 
-		public GuiDef.Panel getType() {
-			return type;
-		}
+        public GuiDef.Panel getType() {
+            return type;
+        }
 
-		public boolean getVisibility() {
-			return visibility;
-		}
-	}
+        public boolean getVisibility() {
+            return visibility;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.16 2010/01/15 19:55:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -41,7 +41,7 @@ public class ComponentManager {
     protected static List<String> directories = new ArrayList<String>();
 
     public static synchronized ComponentManager configureInstance(String gameName, Tag tag,
-    		Map<String, String> gameOptions)
+            Map<String, String> gameOptions)
             throws ConfigurationException {
         return new ComponentManager(gameName, tag, gameOptions);
     }

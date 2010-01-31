@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.35 2010/01/22 21:26:22 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.36 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -374,12 +374,12 @@ public class Tile extends ModelObject implements TileI, StationHolder {
 
     /** Get a delimited list of all possible upgrades, regardless current phase */
     public String getUpgradesString(MapHex hex) {
-    	StringBuffer b = new StringBuffer();
-    	TileI tile;
+        StringBuffer b = new StringBuffer();
+        TileI tile;
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
             if (upgrade.isAllowedForHex(hex)) {
-            	if (b.length() > 0) b.append(",");
+                if (b.length() > 0) b.append(",");
                 b.append(tile.getExternalId());
             }
         }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.9 2010/01/25 20:51:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.10 2010/01/31 22:22:30 macfreek Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class SpecialTileLay extends SpecialProperty {
     boolean free = false;
 
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
 
         Tag tileLayTag = tag.getChild("SpecialTileLay");
@@ -40,23 +40,23 @@ public class SpecialTileLay extends SpecialProperty {
                 tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileNumber > 0) {
-	    	description = LocalText.getText("LayNamedTileInfo",
-	    			tileNumber,
-	    			name != null ? name : "",
-	    			locationCodes,
-	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+            description = LocalText.getText("LayNamedTileInfo",
+                    tileNumber,
+                    name != null ? name : "",
+                    locationCodes,
+                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
         } else {
-	    	description = LocalText.getText("LayTileInfo",
-	    			locationCodes,
-	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+            description = LocalText.getText("LayTileInfo",
+                    locationCodes,
+                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
         }
 
     }
 
     @Override
-	public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
 
         TileManager tmgr = gameManager.getTileManager();
@@ -111,18 +111,18 @@ public class SpecialTileLay extends SpecialProperty {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "SpecialTileLay comp=" + privateCompany.getName() + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free;
     }
 
     @Override
-	public String toMenu() {
-    	return description;
+    public String toMenu() {
+        return description;
     }
 
     @Override
-	public String getInfo() {
-    	return description;
+    public String getInfo() {
+        return description;
     }
 }

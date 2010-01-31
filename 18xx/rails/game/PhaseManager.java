@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.19 2010/01/18 18:46:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.20 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -49,7 +49,7 @@ public class PhaseManager implements ConfigurableComponentI {
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
-    	this.gameManager = gameManager;
+        this.gameManager = gameManager;
         PhaseI initialPhase = phaseList.get(0);
         setPhase(initialPhase);
     }
@@ -87,7 +87,7 @@ public class PhaseManager implements ConfigurableComponentI {
     }
 
     public List<Phase> getPhases() {
-    	return phaseList;
+        return phaseList;
     }
 
 }

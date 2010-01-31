@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.21 2010/01/19 19:54:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.22 2010/01/31 22:22:30 macfreek Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -159,14 +159,14 @@ public abstract class SpecialProperty implements SpecialPropertyI {
      * Only to be used for special properties that have the "transfer" attribute.
      */
     public void moveTo(MoveableHolder newHolder) {
-    	if (transferText.equals("")) return;
+        if (transferText.equals("")) return;
         //if (newHolder instanceof Portfolio) {
             new ObjectMove(this, holder, newHolder);
         //}
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return getClass().getSimpleName() + " of private "
                + privateCompany.getName();
     }
@@ -181,12 +181,12 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     /** Default Info text. To be overridden where useful. */
     public String getInfo() {
-    	return toString();
+        return toString();
     }
 
     /** Default Help text: "You can " + the menu description */
     public String getHelp() {
-    	return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
+        return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
 
     }
 }

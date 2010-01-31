@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.8 2009/12/13 16:39:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ModelObject.java,v 1.9 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
 
 import java.util.*;
@@ -22,9 +22,9 @@ public abstract class ModelObject extends Observable {
             Logger.getLogger(ModelObject.class.getPackage().getName());
 
     @Override
-	public void addObserver (Observer o) {
-    	super.addObserver(o);
-    	notifyViewObjects();
+    public void addObserver (Observer o) {
+        super.addObserver(o);
+        notifyViewObjects();
     }
 
     /** Add a dependent model object */
@@ -48,7 +48,7 @@ public abstract class ModelObject extends Observable {
 
     /** Default update is just text */
     public Object getUpdate () {
-    	return getText();
+        return getText();
     }
 
     /**

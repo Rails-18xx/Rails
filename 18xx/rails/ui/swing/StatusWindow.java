@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.36 2010/01/20 19:52:43 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.37 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -202,7 +202,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         setJMenuBar(menuBar);
 
         if ("yes".equalsIgnoreCase(Config.get("report.window.open"))) {
-        	enableCheckBoxMenuItem(REPORT_CMD);
+            enableCheckBoxMenuItem(REPORT_CMD);
         }
 }
 
@@ -408,7 +408,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         // Request turn
         if (possibleActions.contains(RequestTurn.class)) {
-        	for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
+            for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
                 ActionMenuItem item = new ActionMenuItem(action.toString());
                 item.addActionListener(this);
                 item.setEnabled(false);
@@ -416,7 +416,7 @@ public class StatusWindow extends JFrame implements ActionListener,
                 item.setEnabled(true);
                 specialActionItems.add(item);
                 specialMenu.add(item);
-        	}
+            }
         }
 
         // Must Special menu be enabled?
@@ -506,14 +506,14 @@ public class StatusWindow extends JFrame implements ActionListener,
         } else if (command.equals(SELL_CMD)) {
             process(executedAction);
         } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)
-        		|| command.equals(AUTOPASS_CMD)) {
+                || command.equals(AUTOPASS_CMD)) {
             if (gameUIManager.isGameOver()) {
                 System.exit(0);
             }
             process(executedAction);
 
         } else if (executedAction instanceof UseSpecialProperty
-        		|| executedAction instanceof RequestTurn) {
+                || executedAction instanceof RequestTurn) {
             process(executedAction);
 
         } else if (command.equals(QUIT_CMD)) {

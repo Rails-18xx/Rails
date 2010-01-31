@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.13 2009/12/18 20:04:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.14 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -51,9 +51,9 @@ public class MapPanel extends JPanel {
 
         add(scrollPane, BorderLayout.CENTER);
 
-    	scrollPane.setSize(map.getPreferredSize());
+        scrollPane.setSize(map.getPreferredSize());
 
-    	setSize(map.getPreferredSize().width, map.getPreferredSize().height);
+        setSize(map.getPreferredSize().width, map.getPreferredSize().height);
         setLocation(25, 25);
     }
 
@@ -67,11 +67,11 @@ public class MapPanel extends JPanel {
     }
 
     public void zoomIn() {
-    	map.zoomIn();
+        map.zoomIn();
     }
 
     public void zoomOut() {
-    	map.zoomOut();
+        map.zoomOut();
     }
 
     public void keyPressed(KeyEvent e) {

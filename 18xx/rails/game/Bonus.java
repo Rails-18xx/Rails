@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.6 2010/01/19 19:54:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.7 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Bonus implements Closeable {
 
-	private PublicCompanyI owner;
+    private PublicCompanyI owner;
     private List<MapHex> locations = null;
     private String name;
     private int value;
@@ -37,10 +37,10 @@ public class Bonus implements Closeable {
     }
 
     public PublicCompanyI getOwner() {
-		return owner;
-	}
+        return owner;
+    }
 
-	public List<MapHex> getLocations() {
+    public List<MapHex> getLocations() {
         return locations;
     }
 
@@ -86,11 +86,11 @@ public class Bonus implements Closeable {
         if (removingObjectDesc == null) return;
 
         if (removingObject == null) {
-	        String[] spec = removingObjectDesc.split(":");
-	        if (spec[0].equalsIgnoreCase("Phase")) {
-	            removingObject =
-	                    phaseManager.getPhaseByName(spec[1]);
-	        }
+            String[] spec = removingObjectDesc.split(":");
+            if (spec[0].equalsIgnoreCase("Phase")) {
+                removingObject =
+                        phaseManager.getPhaseByName(spec[1]);
+            }
         }
 
         if (removingObject instanceof Phase) {
@@ -103,13 +103,13 @@ public class Bonus implements Closeable {
                && b.value == value;
     }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         return "Bonus "+name+" hex="
                + getIdForView() + " value=" + value;
     }
 
-	public String getInfo() {
-		return toString();
-	}
+    public String getInfo() {
+        return toString();
+    }
 }

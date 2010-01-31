@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.19 2010/01/22 21:27:07 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.20 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -22,17 +22,17 @@ public class TreasuryShareRound extends StockRound {
     private final BooleanState hasBought;
     private final BooleanState hasSold;
 
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
-	 * and other parameters used by the Treasury Share Round Class
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-	 * @param operatingCompany The PublicCompanyI Object that is selling shares
-	 *
-	 */
+    /**
+     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
+     * and other parameters used by the Treasury Share Round Class
+     *
+     * @param aGameManager The GameManager Object needed to initialize the StockRound Class
+     * @param operatingCompany The PublicCompanyI Object that is selling shares
+     *
+     */
     public TreasuryShareRound(GameManagerI aGameManager,
                              RoundI parentRound) {
-		super (aGameManager);
+        super (aGameManager);
 
         operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
@@ -179,7 +179,7 @@ public class TreasuryShareRound extends StockRound {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                     Math.min(maxShareToSell,
-                    		getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                            getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -309,7 +309,7 @@ public class TreasuryShareRound extends StockRound {
             // Check if company would exceed the per-company share limit
             int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
             if (portfolio.getShare(company) + shares * company.getShareUnit()
-            		> treasuryShareLimit) {
+                    > treasuryShareLimit) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",
                                 String.valueOf(treasuryShareLimit));
@@ -427,7 +427,7 @@ public class TreasuryShareRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-            		> getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

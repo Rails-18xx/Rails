@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.8 2010/01/19 19:54:38 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -36,7 +36,7 @@ public class LayBonusToken extends LayToken {
 
     public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-    	token.prepareForRemoval(gameManager.getPhaseManager());
+        token.prepareForRemoval(gameManager.getPhaseManager());
     }
 
     public BonusToken getToken() {
@@ -44,7 +44,7 @@ public class LayBonusToken extends LayToken {
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof LayBonusToken)) return false;
         LayBonusToken a = (LayBonusToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
@@ -52,7 +52,7 @@ public class LayBonusToken extends LayToken {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         StringBuffer b = new StringBuffer("LayBonusToken ");
         if (chosenHex == null) {
             b.append(" location=").append(locationNames).append(" spec.prop=").append(

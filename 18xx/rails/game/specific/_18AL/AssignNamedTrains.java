@@ -63,12 +63,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
     }
 
     @Override
-	public String toMenu() {
+    public String toMenu() {
         return ((NameTrains) specialProperty).toMenu();
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         StringBuffer b = new StringBuffer("AssignNamedTrains ");
         for (NamedTrainToken token : ((NameTrains) getSpecialProperty()).getTokens()) {
             b.append(token.toString()).append(",");

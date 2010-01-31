@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.30 2010/01/16 21:16:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.31 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -184,9 +184,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     @Override
     public void setClosed() {
 
-    	if (isClosed()) return;
+        if (isClosed()) return;
 
-    	super.setClosed();
+        super.setClosed();
         unblockHexes();
         moveTo(GameManager.getInstance().getBank().getScrapHeap());
         ReportBuffer.add(LocalText.getText("PrivateCloses", name));
@@ -197,7 +197,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         // this is done in OperatingRound_1856).
         List<SellBonusToken> moveToGM = new ArrayList<SellBonusToken>(4);
         for (SpecialPropertyI sp : specialProperties) {
-        	if (sp instanceof SellBonusToken) {
+            if (sp instanceof SellBonusToken) {
                 moveToGM.add((SellBonusToken)sp);
             }
         }

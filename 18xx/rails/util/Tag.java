@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.14 2010/01/22 21:44:34 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.15 2010/01/31 22:22:37 macfreek Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -42,16 +42,16 @@ public class Tag {
     }
 
     public Tag (Element element, Map<String, String> gameOptions) {
-    	this (element);
-    	this.gameOptions = gameOptions;
+        this (element);
+        this.gameOptions = gameOptions;
     }
 
     public void setGameOptions (Map<String, String> gameOptions) {
-    	this.gameOptions = gameOptions;
+        this.gameOptions = gameOptions;
     }
 
     public Map<String, String> getGameOptions () {
-    	return gameOptions;
+        return gameOptions;
     }
 
     public Map<String, List<Tag>> getChildren() throws ConfigurationException {
@@ -296,8 +296,8 @@ return getAttributeAsInteger(name, 0);
                     // Check if the option has been chosen; if not, skip the
                     // rest
                     if (gameOptions == null) {
-                    	throw new ConfigurationException (
-                    			"No GameOptions available in tag "+element.getNodeName());
+                        throw new ConfigurationException (
+                                "No GameOptions available in tag "+element.getNodeName());
                     }
 
                     String optionValue = gameOptions.get(name);

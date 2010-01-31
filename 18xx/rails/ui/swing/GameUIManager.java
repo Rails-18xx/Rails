@@ -139,42 +139,42 @@ public class GameUIManager implements DialogOwner {
 
     public boolean processOnServer(PossibleAction action) {
 
-    	boolean result = true;
+        boolean result = true;
 
         // In some cases an Undo requires a different follow-up
         lastAction = action;
 
         if (action == null) {
-        	// If the action is null, we can skip processing
-        	// and continue with following up a previous action.
-        	// This occurs after a nonmodal Message dialog.
-        	result = previousResult;
+            // If the action is null, we can skip processing
+            // and continue with following up a previous action.
+            // This occurs after a nonmodal Message dialog.
+            result = previousResult;
 
         } else {
-        	action.setActed();
-        	action.setPlayerName(getCurrentPlayer().getName());
+            action.setActed();
+            action.setPlayerName(getCurrentPlayer().getName());
 
-        	log.debug("==Passing to server: " + action);
+            log.debug("==Passing to server: " + action);
 
-	        Player player = getCurrentPlayer();
-	        if (player != null) {
-	            action.setPlayerName(player.getName());
-	        }
+            Player player = getCurrentPlayer();
+            if (player != null) {
+                action.setPlayerName(player.getName());
+            }
 
-	        // Process the action on the server
-	        result = previousResult = gameManager.process(action);
+            // Process the action on the server
+            result = previousResult = gameManager.process(action);
 
-	        // Follow-up the result
-	        log.debug("==Result from server: " + result);
-	        reportWindow.addLog();
-	        /*
-	        if (DisplayBuffer.getAutoDisplay()) {
-	        	if (displayServerMessage()) {
-	        		// Interrupt processing.
-	        		// Will be continued via dialogActionPerformed().
-	        		return true;
-	        	}
-	        }*/
+            // Follow-up the result
+            log.debug("==Result from server: " + result);
+            reportWindow.addLog();
+            /*
+            if (DisplayBuffer.getAutoDisplay()) {
+                if (displayServerMessage()) {
+                    // Interrupt processing.
+                    // Will be continued via dialogActionPerformed().
+                    return true;
+                }
+            }*/
         }
 
         // End of game checks
@@ -198,25 +198,25 @@ public class GameUIManager implements DialogOwner {
 
         // Is this perhaps the right place to display messages...?
         if (DisplayBuffer.getAutoDisplay()) {
-        	if (displayServerMessage()) {
-        		// Interrupt processing.
-        		// Will be continued via dialogActionPerformed().
-        		return true;
-        	}
+            if (displayServerMessage()) {
+                // Interrupt processing.
+                // Will be continued via dialogActionPerformed().
+                return true;
+            }
         }
 
         if (!result) return false;
 
-       	return activeWindow.processImmediateAction();
+           return activeWindow.processImmediateAction();
     }
 
     public boolean displayServerMessage() {
         String[] message = DisplayBuffer.get();
         if (message != null) {
             setCurrentDialog(new MessageDialog(this,
-            		LocalText.getText("Message"),
-            		"<html>" + Util.joinWithDelimiter(message, "<br>")),
-            	null);
+                    LocalText.getText("Message"),
+                    "<html>" + Util.joinWithDelimiter(message, "<br>")),
+                null);
             return true;
         }
         return false;
@@ -300,35 +300,35 @@ public class GameUIManager implements DialogOwner {
         // To make this work, clearVisbilityHints() should be called
         // before each sequence of settings (usually at the start of a round).
         for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {
-        	switch (hint.getType()) {
-        	case STOCK_MARKET:
+            switch (hint.getType()) {
+            case STOCK_MARKET:
                 boolean stockChartVisibilityHint = hint.getVisibility()
-                		|| configuredStockChartVisibility;
+                        || configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
-                	stockChart.setVisible(stockChartVisibilityHint);
-                	previousStockChartVisibilityHint = stockChartVisibilityHint;
+                    stockChart.setVisible(stockChartVisibilityHint);
+                    previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
-            	if (hint.getVisibility()) stockChart.toFront();
+                if (hint.getVisibility()) stockChart.toFront();
                break;
-        	case STATUS:
+            case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
                 if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
-                	statusWindow.setVisible(statusWindowVisibilityHint);
-                	previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
+                    statusWindow.setVisible(statusWindowVisibilityHint);
+                    previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
                 }
-            	if (statusWindowVisibilityHint) statusWindow.toFront();
+                if (statusWindowVisibilityHint) statusWindow.toFront();
                 break;
-        	case MAP:
+            case MAP:
                 boolean orWindowVisibilityHint = hint.getVisibility();
                 if (orWindowVisibilityHint != previousORWindowVisibilityHint) {
-                	orWindow.setVisible(orWindowVisibilityHint);
-                	previousORWindowVisibilityHint = orWindowVisibilityHint;
+                    orWindow.setVisible(orWindowVisibilityHint);
+                    previousORWindowVisibilityHint = orWindowVisibilityHint;
                 }
-            	if (orWindowVisibilityHint) orWindow.toFront();
+                if (orWindowVisibilityHint) orWindow.toFront();
                 break;
-        	case START_ROUND:
-        		// Handled elsewhere
-        	}
+            case START_ROUND:
+                // Handled elsewhere
+            }
         }
 
         // Active window settings are handled last.
@@ -492,97 +492,97 @@ public class GameUIManager implements DialogOwner {
     }
 
     public void dialogActionPerformed () {
-    	dialogActionPerformed(false);
+        dialogActionPerformed(false);
     }
 
     public void dialogActionPerformed (boolean ready) {
 
-    	if (!ready) {
+        if (!ready) {
 
-    		if (currentDialog instanceof RadioButtonDialog
-    				&& currentDialogAction instanceof StartCompany) {
+            if (currentDialog instanceof RadioButtonDialog
+                    && currentDialogAction instanceof StartCompany) {
 
-    			RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-    			StartCompany action = (StartCompany) currentDialogAction;
+                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                StartCompany action = (StartCompany) currentDialogAction;
 
-    			int index = dialog.getSelectedOption();
-    			if (index >= 0) {
-    				int price = action.getStartPrices()[index];
-    				action.setStartPrice(price);
-    				action.setNumberBought(action.getCertificate().getShares());
-    			} else {
-    				// No selection done - no action
-    				return;
-    			}
+                int index = dialog.getSelectedOption();
+                if (index >= 0) {
+                    int price = action.getStartPrices()[index];
+                    action.setStartPrice(price);
+                    action.setNumberBought(action.getCertificate().getShares());
+                } else {
+                    // No selection done - no action
+                    return;
+                }
 
 
-    		} else if (currentDialog instanceof CheckBoxDialog
-	    			&& currentDialogAction instanceof ExchangeTokens) {
+            } else if (currentDialog instanceof CheckBoxDialog
+                    && currentDialogAction instanceof ExchangeTokens) {
 
-	    		CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-	    		ExchangeTokens action = (ExchangeTokens) currentDialogAction;
-	            boolean[] exchanged = dialog.getSelectedOptions();
-	            String[] options = dialog.getOptions();
+                CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+                ExchangeTokens action = (ExchangeTokens) currentDialogAction;
+                boolean[] exchanged = dialog.getSelectedOptions();
+                String[] options = dialog.getOptions();
 
-	            int numberSelected = 0;
-	            for (int index=0; index < options.length; index++) {
-	                if (exchanged[index]) {
-	                    numberSelected++;
-	                }
-	            }
+                int numberSelected = 0;
+                for (int index=0; index < options.length; index++) {
+                    if (exchanged[index]) {
+                        numberSelected++;
+                    }
+                }
 
-	            int minNumber = action.getMinNumberToExchange();
-	            int maxNumber = action.getMaxNumberToExchange();
-	            if (numberSelected < minNumber
-	            		|| numberSelected > maxNumber) {
-	            	if (minNumber == maxNumber) {
-	            		JOptionPane.showMessageDialog(null,
-	            				LocalText.getText("YouMustSelect1", minNumber));
-	            	} else {
-	            		JOptionPane.showMessageDialog(null,
-	            				LocalText.getText("YouMustSelect2", minNumber, maxNumber));
-	            	}
-	            	exchangeTokens (action);
-	            	return;
+                int minNumber = action.getMinNumberToExchange();
+                int maxNumber = action.getMaxNumberToExchange();
+                if (numberSelected < minNumber
+                        || numberSelected > maxNumber) {
+                    if (minNumber == maxNumber) {
+                        JOptionPane.showMessageDialog(null,
+                                LocalText.getText("YouMustSelect1", minNumber));
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                LocalText.getText("YouMustSelect2", minNumber, maxNumber));
+                    }
+                    exchangeTokens (action);
+                    return;
 
-	            }
-	            for (int index=0; index < options.length; index++) {
-	                if (exchanged[index]) {
-	                    action.getTokensToExchange().get(index).setSelected(true);
-	               }
-	            }
-	    	} else if (currentDialog instanceof RadioButtonDialog
-	        			&& currentDialogAction instanceof RepayLoans) {
+                }
+                for (int index=0; index < options.length; index++) {
+                    if (exchanged[index]) {
+                        action.getTokensToExchange().get(index).setSelected(true);
+                   }
+                }
+            } else if (currentDialog instanceof RadioButtonDialog
+                        && currentDialogAction instanceof RepayLoans) {
 
-	        		RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-	        		RepayLoans action = (RepayLoans) currentDialogAction;
-	                int selected = dialog.getSelectedOption();
-	                action.setNumberTaken(action.getMinNumber() + selected);
-	    	} else if (currentDialog instanceof MessageDialog) {
-	    		// Nothing to do
-	    		currentDialogAction = null; // Should already be null
-	        } else {
-	            return;
-	        }
-    	}
+                    RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                    RepayLoans action = (RepayLoans) currentDialogAction;
+                    int selected = dialog.getSelectedOption();
+                    action.setNumberTaken(action.getMinNumber() + selected);
+            } else if (currentDialog instanceof MessageDialog) {
+                // Nothing to do
+                currentDialogAction = null; // Should already be null
+            } else {
+                return;
+            }
+        }
 
         processOnServer(currentDialogAction);
     }
 
     public JDialog getCurrentDialog() {
-    	return currentDialog;
+        return currentDialog;
     }
 
     public PossibleAction getCurrentDialogAction () {
-    	return currentDialogAction;
+        return currentDialogAction;
     }
 
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
-    	if (currentDialog != null) {
-    		currentDialog.dispose();
-    	}
-    	currentDialog = dialog;
-    	currentDialogAction = action;
+        if (currentDialog != null) {
+            currentDialog.dispose();
+        }
+        currentDialog = dialog;
+        currentDialogAction = action;
     }
 
     public void saveGame(GameAction saveAction) {

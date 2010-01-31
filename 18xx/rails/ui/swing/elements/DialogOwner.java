@@ -6,11 +6,11 @@ import rails.game.action.PossibleAction;
 
 public interface DialogOwner {
 
-	public void dialogActionPerformed ();
+    public void dialogActionPerformed ();
 
-	public JDialog getCurrentDialog();
+    public JDialog getCurrentDialog();
 
-	public PossibleAction getCurrentDialogAction();
+    public PossibleAction getCurrentDialogAction();
 
-	public void setCurrentDialog (JDialog dialog, PossibleAction action);
+    public void setCurrentDialog (JDialog dialog, PossibleAction action);
 }

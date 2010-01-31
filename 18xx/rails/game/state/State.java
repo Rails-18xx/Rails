@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.14 2010/01/01 14:34:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/State.java,v 1.15 2010/01/31 22:22:33 macfreek Exp $*/
 package rails.game.state;
 
 import org.apache.log4j.Logger;
@@ -75,7 +75,7 @@ public class State extends ModelObject implements StateI {
     }
 
     @Override
-	public String getText() {
+    public String getText() {
         if (object != null) {
             return object.toString();
         } else {
@@ -84,7 +84,7 @@ public class State extends ModelObject implements StateI {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return name;
     }
 

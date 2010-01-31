@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.33 2010/01/20 19:52:44 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.34 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -145,14 +145,14 @@ public class ORWindow extends JFrame implements ActionPerformer {
     }
 
     public void activate(OperatingRound or) {
-		GameManager gameManager = (GameManager) gameUIManager.getGameManager();
-		String numORs = gameManager.getNumOfORs ();
+        GameManager gameManager = (GameManager) gameUIManager.getGameManager();
+        String numORs = gameManager.getNumOfORs ();
 
         orPanel.recreate(or);
         setTitle(LocalText.getText("MapWindowORTitle",
-        		gameManager.getORId(),
-        		String.valueOf(gameManager.getRelativeORNumber()),
-        		numORs ));
+                gameManager.getORId(),
+                String.valueOf(gameManager.getRelativeORNumber()),
+                numORs ));
         pack();
         if (lastBounds != null) {
             Rectangle newBounds = getBounds();
@@ -164,9 +164,9 @@ public class ORWindow extends JFrame implements ActionPerformer {
     }
 
     public void updateStatus() {
-    	// Safety check. Do nothing if this method is called outside Operating Rounds,
-    	// for instance when a token is exchanged during a Stock Round.
-    	if (!(gameUIManager.getCurrentRound() instanceof OperatingRound)) return;
+        // Safety check. Do nothing if this method is called outside Operating Rounds,
+        // for instance when a token is exchanged during a Stock Round.
+        if (!(gameUIManager.getCurrentRound() instanceof OperatingRound)) return;
 
         orUIManager.updateStatus();
         requestFocus();

@@ -26,15 +26,15 @@ public class StockRound_18EU extends StockRound {
             new BooleanState("DiscardingTrains", false);
     protected boolean phase5Reached = false;
 
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
-	 *
-	 */
-	public StockRound_18EU (GameManagerI aGameManager) {
-		super (aGameManager);
-	}
+    /**
+     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+     *
+     * @param aGameManager The GameManager Object needed to initialize the Stock Round
+     *
+     */
+    public StockRound_18EU (GameManagerI aGameManager) {
+        super (aGameManager);
+    }
 
     @Override
     public void start() {
@@ -531,7 +531,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (cert != null) {
-        	ReportBuffer.add("");
+            ReportBuffer.add("");
             ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getName(),
                     minor.getName(),
@@ -545,23 +545,23 @@ public class StockRound_18EU extends StockRound {
                     cert.getPortfolio().getName(),
                     minor.getName() ));
             if (major != null) {
-            	if (action.getReplaceToken()) {
+                if (action.getReplaceToken()) {
                     ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
-                    		major.getName(),
+                            major.getName(),
                             minor.getName(),
                             homeHex.getName()));
-            	} else {
+                } else {
                     ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
-                    		major.getName(),
-                    		minor.getName(),
-                    		homeHex.getName()));
-            	}
+                            major.getName(),
+                            minor.getName(),
+                            homeHex.getName()));
+                }
             }
             cert.moveTo(currentPlayer.getPortfolio());
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getName()));
             checkFlotation(major);
         } else {
-        	ReportBuffer.add("");
+            ReportBuffer.add("");
             ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getName(),
                     minor.getName(),

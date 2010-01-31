@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.13 2009/11/26 20:14:30 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MoveSet.java,v 1.14 2010/01/31 22:22:30 macfreek Exp $
  *
  * Created on 17-Jul-2006
  * Change Log:
@@ -30,7 +30,7 @@ public class MoveSet {
     }
 
     protected void addMove (Move move) {
-    	moves.add(move);
+        moves.add(move);
         log.debug("Done: " + move);
     }
 
@@ -45,8 +45,8 @@ public class MoveSet {
     protected void unexecute() {
 
         // Create a reversed move list
-    	List<Move> reversedMoves = new ArrayList<Move>(moves);
-    	Collections.reverse(reversedMoves);
+        List<Move> reversedMoves = new ArrayList<Move>(moves);
+        Collections.reverse(reversedMoves);
         for (Move move : reversedMoves) {
             move.undo();
             log.debug("Undone: " + move);
@@ -62,7 +62,7 @@ public class MoveSet {
     }
 
     protected boolean isLinkedToPreviousMove() {
-    	return linkedToPreviousMoveSet;
+        return linkedToPreviousMoveSet;
     }
 
     protected boolean isUndoableByPlayer () {
@@ -72,20 +72,20 @@ public class MoveSet {
     /* Static methods to enable access from anywhere */
 
     protected static void add (Move move) {
-    	move.execute();
+        move.execute();
 
-    	MoveStack moveStack = getMoveStack();
-    	if (moveStack != null) moveStack.addMove(move);
+        MoveStack moveStack = getMoveStack();
+        if (moveStack != null) moveStack.addMove(move);
     }
 
     private static MoveStack getMoveStack () {
-    	GameManagerI gameManager = GameManager.getInstance();
-    	if (gameManager != null) {
-    		return gameManager.getMoveStack();
-    	} else {
-    		// No GM during game setup; no problem, as MoveSets are not yet enabled then.
-    		return null;
-    	}
+        GameManagerI gameManager = GameManager.getInstance();
+        if (gameManager != null) {
+            return gameManager.getMoveStack();
+        } else {
+            // No GM during game setup; no problem, as MoveSets are not yet enabled then.
+            return null;
+        }
     }
 
 }

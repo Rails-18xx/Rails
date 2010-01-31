@@ -45,9 +45,9 @@ public class GuiDef {
      */
     public enum Panel {
 
-    	START_ROUND,
-    	STATUS,
-    	MAP,
-    	STOCK_MARKET
+        START_ROUND,
+        STATUS,
+        MAP,
+        STOCK_MARKET
     }
 }

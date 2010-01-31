@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.35 2010/01/09 13:30:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.36 2010/01/31 22:22:36 macfreek Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -104,8 +104,8 @@ public class GUIHex implements ViewObject {
 
     public void scaleHex (double cx, double cy, int scale, double zoomFactor) {
 
-    	this.zoomFactor = zoomFactor;
-    	tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
+        this.zoomFactor = zoomFactor;
+        tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
 
         if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
             len = scale;
@@ -175,7 +175,7 @@ public class GUIHex implements ViewObject {
     }
 
     public HexMap getHexMap() {
-    	return hexMap;
+        return hexMap;
     }
 
     public void setHexModel(MapHex model) {
@@ -193,8 +193,8 @@ public class GUIHex implements ViewObject {
     }
 
     public void addBar (int orientation) {
-    	orientation %= 6;
-    	if (barStartPoints == null) barStartPoints = new ArrayList<Integer>(2);
+        orientation %= 6;
+        if (barStartPoints == null) barStartPoints = new ArrayList<Integer>(2);
         int offset = hexMap.getMapManager().getTileOrientation() == MapHex.EW ? 0 : 4;
         barStartPoints.add((offset+5-orientation)%6);
     }
@@ -350,21 +350,21 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
                     GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompanyI p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();
-				if (blocked != null) {
-					for (MapHex hex : blocked) {
-						if (getHexModel().equals(hex)) {
-							g2.drawString(
-								  "(" + p.getName() + ")",
-								  rectBound.x
-								  + (rectBound.width - fontMetrics.stringWidth("("
-										   + p.getName()
-										   + ")"))
-								  * 1 / 2,
-								  rectBound.y
-								  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
-						}
-					}
-				}
+                if (blocked != null) {
+                    for (MapHex hex : blocked) {
+                        if (getHexModel().equals(hex)) {
+                            g2.drawString(
+                                  "(" + p.getName() + ")",
+                                  rectBound.x
+                                  + (rectBound.width - fontMetrics.stringWidth("("
+                                           + p.getName()
+                                           + ")"))
+                                  * 1 / 2,
+                                  rectBound.y
+                                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
+                        }
+                    }
+                }
             }
         }
 
@@ -379,15 +379,15 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
     }
 
     public void paintBars(Graphics g) {
-    	if (barStartPoints == null) return;
+        if (barStartPoints == null) return;
         Graphics2D g2 = (Graphics2D) g;
-    	for (int startPoint : barStartPoints) {
-    		drawBar(g2,
-    				(int)Math.round(xVertex[startPoint]),
-    				(int)Math.round(yVertex[startPoint]),
-    				(int)Math.round(xVertex[(startPoint+1)%6]),
-    				(int)Math.round(yVertex[(startPoint+1)%6]));
-    	}
+        for (int startPoint : barStartPoints) {
+            drawBar(g2,
+                    (int)Math.round(xVertex[startPoint]),
+                    (int)Math.round(yVertex[startPoint]),
+                    (int)Math.round(xVertex[(startPoint+1)%6]),
+                    (int)Math.round(yVertex[(startPoint+1)%6]));
+        }
     }
 
     protected void drawBar(Graphics2D g2d, int x1, int y1, int x2, int y2) {
@@ -469,7 +469,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
                 new GUIToken(co.getFgColour(), co.getBgColour(), co.getName(),
                         center.x, center.y, diameter);
         token.setBounds(center.x-(int)(0.5*diameter), center.y-(int)(0.5*diameter),
-        		diameter, diameter);
+                diameter, diameter);
 
         token.drawToken(g2);
     }

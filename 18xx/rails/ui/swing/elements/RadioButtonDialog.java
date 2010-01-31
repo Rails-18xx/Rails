@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.7 2010/01/14 20:44:45 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/RadioButtonDialog.java,v 1.8 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -74,11 +74,11 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
         buttonPane.add(okButton);
 
         if (selectedOption < 0) {
-        	// If an option has been preselected, selection is mandatory.
-	        cancelButton = new JButton(LocalText.getText("Cancel"));
-	        cancelButton.setMnemonic(KeyEvent.VK_C);
-	        cancelButton.addActionListener(this);
-	        buttonPane.add(cancelButton);
+            // If an option has been preselected, selection is mandatory.
+            cancelButton = new JButton(LocalText.getText("Cancel"));
+            cancelButton.setMnemonic(KeyEvent.VK_C);
+            cancelButton.addActionListener(this);
+            buttonPane.add(cancelButton);
         }
 
         choiceButtons = new JRadioButton[numOptions];

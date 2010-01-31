@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.15 2010/01/19 19:54:42 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.16 2010/01/31 22:22:29 macfreek Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -37,7 +37,7 @@ public abstract class PossibleAction implements Serializable {
      */
     public PossibleAction() {
 
-    	gameManager = GameManager.getInstance();
+        gameManager = GameManager.getInstance();
         Player player = gameManager.getCurrentPlayer();
         if (player != null) {
             playerName = player.getName();
@@ -75,22 +75,22 @@ public abstract class PossibleAction implements Serializable {
     public abstract boolean equals(PossibleAction pa);
 
     protected GameManagerI getGameManager() {
-    	return GameManager.getInstance();
+        return GameManager.getInstance();
     }
 
     protected CompanyManagerI getCompanyManager () {
-    	return getGameManager().getCompanyManager();
+        return getGameManager().getCompanyManager();
     }
 
     /** Default version of an Menu item text. To be overridden where useful. */
     public String toMenu() {
-    	return toString();
+        return toString();
     }
 
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-    	gameManager = GameManager.getInstance();
+        gameManager = GameManager.getInstance();
 
     }
 }

@@ -52,14 +52,14 @@ public class StockRound extends Round {
     /* Rules */
     protected int sequenceRule;
 
-	/**
-	 * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Round Class
-	 *
-	 */
-	public StockRound (GameManagerI aGameManager) {
-		super (aGameManager);
+    /**
+     * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
+     *
+     * @param aGameManager The GameManager Object needed to initialize the Round Class
+     *
+     */
+    public StockRound (GameManagerI aGameManager) {
+        super (aGameManager);
 
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
@@ -69,7 +69,7 @@ public class StockRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
-	}
+    }
 
     public void start() {
 
@@ -114,9 +114,9 @@ public class StockRound extends Round {
         }
 
         if (getAutopasses() != null) {
-	        for (Player player : getAutopasses()) {
-	        	possibleActions.add(new RequestTurn(player));
-	        }
+            for (Player player : getAutopasses()) {
+                possibleActions.add(new RequestTurn(player));
+            }
         }
 
         return true;
@@ -304,7 +304,7 @@ public class StockRound extends Round {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                     Math.min(maxShareToSell,
-                    		getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                            getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -402,7 +402,7 @@ public class StockRound extends Round {
                 break;
             case NullAction.AUTOPASS:
                 result = done(playerName, true);
-               	break;
+                   break;
             }
 
         } else if (action instanceof StartCompany) {
@@ -425,7 +425,7 @@ public class StockRound extends Round {
 
         } else if (action instanceof RequestTurn) {
 
-        	result = requestTurn ((RequestTurn)action);
+            result = requestTurn ((RequestTurn)action);
 
         } else if (!!(result = processGameSpecificAction(action))) {
 
@@ -885,7 +885,7 @@ public class StockRound extends Round {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-            		> getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
@@ -1146,15 +1146,15 @@ public class StockRound extends Round {
         } else {
             numPasses.add(1);
             if (hasAutopassed) {
-            	if (!hasAutopassed(currentPlayer)) {
-            		setAutopass (currentPlayer, true);
-            		setCanRequestTurn (currentPlayer, true);
-            	}
+                if (!hasAutopassed(currentPlayer)) {
+                    setAutopass (currentPlayer, true);
+                    setCanRequestTurn (currentPlayer, true);
+                }
                 ReportBuffer.add(LocalText.getText("Autopasses",
                         currentPlayer.getName()));
             } else {
-            	ReportBuffer.add(LocalText.getText("PASSES",
-            			currentPlayer.getName()));
+                ReportBuffer.add(LocalText.getText("PASSES",
+                        currentPlayer.getName()));
             }
         }
 
@@ -1197,21 +1197,21 @@ public class StockRound extends Round {
 
     protected boolean requestTurn (RequestTurn action) {
 
-    	Player requestingPlayer = playerManager.getPlayerByName(action.getRequestingPlayerName());
+        Player requestingPlayer = playerManager.getPlayerByName(action.getRequestingPlayerName());
 
-    	boolean result = canRequestTurn(requestingPlayer);
+        boolean result = canRequestTurn(requestingPlayer);
 
-    	if (!result) {
+        if (!result) {
             DisplayBuffer.add(LocalText.getText("CannotRequestTurn",
-            		requestingPlayer.getName()));
+                    requestingPlayer.getName()));
             return false;
-    	}
+        }
 
         moveStack.start(false);
         if (hasAutopassed(requestingPlayer)) {
-        	setAutopass(requestingPlayer, false);
+            setAutopass(requestingPlayer, false);
         } else {
-        	new AddToList<Player>(hasRequestedTurn, requestingPlayer, "HasRequestedTurn");
+            new AddToList<Player>(hasRequestedTurn, requestingPlayer, "HasRequestedTurn");
         }
 
         return true;
@@ -1222,8 +1222,8 @@ public class StockRound extends Round {
         setNextPlayer();
         sellPrices.clear();
         if (hasAutopassed(currentPlayer)) {
-        	// Process a pass for a player that has set Autopass
-        	done (currentPlayer.getName(), true);
+            // Process a pass for a player that has set Autopass
+            done (currentPlayer.getName(), true);
         }
     }
 
@@ -1368,11 +1368,11 @@ public class StockRound extends Round {
 
 
     protected boolean noSaleInFirstSR() {
-    	return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR);
+        return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR);
     }
 
     protected boolean noSaleIfNotOperated() {
-    	return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED);
+        return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED);
     }
 
     @Override
@@ -1386,8 +1386,8 @@ public class StockRound extends Round {
     }
 
     @Override
-	public String getRoundName() {
-    	return toString();
+    public String getRoundName() {
+        return toString();
     }
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.2 2009/10/31 17:08:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.3 2010/01/31 22:22:30 macfreek Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class LocatedBonus extends SpecialProperty {
     int value;
 
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
 
@@ -69,8 +69,8 @@ public class LocatedBonus extends SpecialProperty {
     }
 
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         return "LocatedBonus "+name+" comp=" + privateCompany.getName() + " hex="
                + locationCodes + " value=" + value;
     }

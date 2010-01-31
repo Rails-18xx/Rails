@@ -9,15 +9,15 @@ import rails.util.LocalText;
 
 public class StockRound_1835 extends StockRound {
 
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
-	 *
-	 */
-	public StockRound_1835 (GameManagerI aGameManager) {
-		super (aGameManager);
-	}
+    /**
+     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+     *
+     * @param aGameManager The GameManager Object needed to initialize the Stock Round
+     *
+     */
+    public StockRound_1835 (GameManagerI aGameManager) {
+        super (aGameManager);
+    }
 
     /**
      * The company release rules for 1835.

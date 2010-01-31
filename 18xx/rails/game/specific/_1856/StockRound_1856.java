@@ -6,15 +6,15 @@ import rails.util.LocalText;
 
 public class StockRound_1856 extends StockRound {
 
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the Stock Round
-	 *
-	 */
-	public StockRound_1856 (GameManagerI aGameManager) {
-		super (aGameManager);
-	}
+    /**
+     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
+     *
+     * @param aGameManager The GameManager Object needed to initialize the Stock Round
+     *
+     */
+    public StockRound_1856 (GameManagerI aGameManager) {
+        super (aGameManager);
+    }
 
     /**
      * Special 1856 code to check for company flotation.
@@ -94,22 +94,22 @@ public class StockRound_1856 extends StockRound {
     protected void gameSpecificChecks (Portfolio boughtFrom,
             PublicCompanyI company) {
 
-    	if (company.getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
-    			&& ((PublicCompany_CGR)company).hasTemporaryPresident()) {
-    		log.debug("Resetting temp. president");
+        if (company.getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
+                && ((PublicCompany_CGR)company).hasTemporaryPresident()) {
+            log.debug("Resetting temp. president");
             ipo.swapPresidentCertificate(company,
                     currentPlayer.getPortfolio());
             Player oldPresident = company.getPresident();
-    		((PublicCompany_CGR)company).setTemporaryPresident(null);
-    		company.getPresident().getPortfolio().getShareModel(company).update();
-    		if (currentPlayer != oldPresident) {
-    			oldPresident.getPortfolio().getShareModel(company).update();
-    		}
-    	}
+            ((PublicCompany_CGR)company).setTemporaryPresident(null);
+            company.getPresident().getPortfolio().getShareModel(company).update();
+            if (currentPlayer != oldPresident) {
+                oldPresident.getPortfolio().getShareModel(company).update();
+            }
+        }
     }
 
-   	@Override
-	public void resume() {
+       @Override
+    public void resume() {
     }
 
     /** Check if the player is president of CGR and must buy a second share */

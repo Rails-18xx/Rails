@@ -21,13 +21,13 @@ public class ServerToClient implements Serializable {
 
     private GuiHints guiHints = null;
 
-	public GuiHints getUiHints() {
-		return guiHints;
-	}
+    public GuiHints getUiHints() {
+        return guiHints;
+    }
 
-	public void setUiHints(GuiHints guiHints) {
-		this.guiHints = guiHints;
-	}
+    public void setUiHints(GuiHints guiHints) {
+        this.guiHints = guiHints;
+    }
 
 
 }

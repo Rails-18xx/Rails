@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.28 2010/01/15 19:55:59 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.29 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -23,23 +23,23 @@ public class ShareSellingRound extends StockRound {
     IntegerState cashToRaise;
     PublicCompanyI unsellableCompany = null;
 
-	/**
-	 * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
-	 * and other parameters used by the Share Selling Round Class
-	 *
-	 * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-	 * @param compNeedingTraing The PublicCompanyI Object that needs to buy the train,
-	 *        who is limited on selling shares of
-	 * @param cashToRaise The amount of cash needed to be raised during the special sell-off
-	 *
-	 */
+    /**
+     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
+     * and other parameters used by the Share Selling Round Class
+     *
+     * @param aGameManager The GameManager Object needed to initialize the StockRound Class
+     * @param compNeedingTraing The PublicCompanyI Object that needs to buy the train,
+     *        who is limited on selling shares of
+     * @param cashToRaise The amount of cash needed to be raised during the special sell-off
+     *
+     */
     public ShareSellingRound(GameManagerI gameManager,
             RoundI parentRound) {
 
-		super (gameManager);
-		this.parentRound = parentRound;
+        super (gameManager);
+        this.parentRound = parentRound;
 
-		guiHints.setActivePanel(GuiDef.Panel.STATUS);
+        guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
     public void start(Player sellingPlayer, int cashToRaise,
@@ -118,7 +118,7 @@ public class ShareSellingRound extends StockRound {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                     Math.min(maxShareToSell,
-                    		getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                            getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                                              - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -239,7 +239,7 @@ public class ShareSellingRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-            		> getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

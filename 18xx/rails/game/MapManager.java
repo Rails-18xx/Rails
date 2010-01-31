@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.13 2009/11/06 20:23:53 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.14 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -123,8 +123,8 @@ public class MapManager implements ConfigurableComponentI {
                             nb.setNeighbor(k + 3, hex);
                         }
                         if (hex.isImpassable(nb) || nb.isImpassable(hex)) {
-                        	hex.addImpassableSide(k);
-                        	//nb.addImpassableSide(k+3);
+                            hex.addImpassableSide(k);
+                            //nb.addImpassableSide(k+3);
                         }
                     }
 

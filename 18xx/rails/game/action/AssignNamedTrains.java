@@ -21,7 +21,7 @@ public class AssignNamedTrains extends PossibleAction {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         StringBuffer b = new StringBuffer("AssignNamedTrains ");
         for (NamedTrainToken token : namedTrainsSpecialProperty.getTokens()) {
             b.append(token.toString()).append(",");

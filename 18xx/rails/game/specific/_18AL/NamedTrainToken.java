@@ -65,7 +65,7 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return description;
     }
 

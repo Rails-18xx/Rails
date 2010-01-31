@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.27 2009/11/05 22:50:37 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.28 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -224,7 +224,7 @@ implements TrainTypeI {
 
     public void finishConfiguration (GameManagerI gameManager) {
 
-    	trainManager = gameManager.getTrainManager();
+        trainManager = gameManager.getTrainManager();
         index = trainManager.getTrainTypes().indexOf(this);
 
         Portfolio unavailable = gameManager.getBank().getUnavailable();
@@ -471,8 +471,8 @@ implements TrainTypeI {
         return index;
     }
 
-	public TrainManager getTrainManager() {
-		return trainManager;
-	}
+    public TrainManager getTrainManager() {
+        return trainManager;
+    }
 
 }

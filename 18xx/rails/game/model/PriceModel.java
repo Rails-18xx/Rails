@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/PriceModel.java,v 1.8 2009/12/13 16:39:48 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/PriceModel.java,v 1.9 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
 
 import rails.game.*;
@@ -29,17 +29,17 @@ public class PriceModel extends ModelObject implements StateI {
     }
 
     @Override
-	public Object getUpdate() {
-    	if (stockPrice != null) {
-    		return new ViewUpdate(getText())
-    				.addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
-    	} else {
-    		return getText();
-    	}
+    public Object getUpdate() {
+        if (stockPrice != null) {
+            return new ViewUpdate(getText())
+                    .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
+        } else {
+            return getText();
+        }
     }
 
     @Override
-	public String getText() {
+    public String getText() {
         if (stockPrice != null) {
             return Bank.format(stockPrice.getPrice()) + " ("
                    + stockPrice.getName() + ")";

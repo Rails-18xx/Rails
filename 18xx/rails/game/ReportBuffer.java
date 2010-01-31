@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.8 2010/01/15 19:55:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -33,12 +33,12 @@ public final class ReportBuffer {
     }
 
     public ReportBuffer() {
-    	if (!initialQueue.isEmpty()) {
-    		for (String s : initialQueue) {
-    			addMessage (s);
-    		}
-    		initialQueue.clear();
-    	}
+        if (!initialQueue.isEmpty()) {
+            for (String s : initialQueue) {
+                addMessage (s);
+            }
+            initialQueue.clear();
+        }
     }
 
     /**
@@ -50,15 +50,15 @@ public final class ReportBuffer {
 
     /** Add a message to the log buffer (and display it on the console) */
     public static void add(String message) {
-    	GameManagerI gm = GameManager.getInstance();
-    	ReportBuffer instance = null;
-    	if (gm != null) instance = gm.getReportBuffer();
-    	if (gm == null || instance == null) {
-    		// Queue in a static buffer until the instance is created
-    		initialQueue.add(message);
-    	} else {
-    		instance.addMessage(message);
-    	}
+        GameManagerI gm = GameManager.getInstance();
+        ReportBuffer instance = null;
+        if (gm != null) instance = gm.getReportBuffer();
+        if (gm == null || instance == null) {
+            // Queue in a static buffer until the instance is created
+            initialQueue.add(message);
+        } else {
+            instance.addMessage(message);
+        }
     }
 
     private void addMessage (String message) {
@@ -73,14 +73,14 @@ public final class ReportBuffer {
 
     /** Get the current log buffer, and clear it */
     public static String get() {
-    	ReportBuffer instance = getInstance();
+        ReportBuffer instance = getInstance();
         String result = instance.reportBuffer.toString();
         instance.reportBuffer = new StringBuffer();
         return result;
     }
 
     private static ReportBuffer getInstance() {
-    	return GameManager.getInstance().getReportBuffer();
+        return GameManager.getInstance().getReportBuffer();
     }
 
     private void writeToReport(String message) {
@@ -115,7 +115,7 @@ public final class ReportBuffer {
         /* Create the pathname */
         reportPathname =
                 reportDirectory + "/" + GameManager.getInstance().getGameName() + "_"
-                		+ GameManager.getInstance().getGMKey() + "_"
+                        + GameManager.getInstance().getGMKey() + "_"
                         + dateFormat.format(new Date()) + "."
                         + reportFilenameExtension;
         log.debug("Report pathname is " + reportPathname);
@@ -137,7 +137,7 @@ public final class ReportBuffer {
     }
 
     public static void getAllWaiting () {
-    	ReportBuffer instance = getInstance();
+        ReportBuffer instance = getInstance();
         for (String message : instance.waitQueue) {
             instance.addMessage (message);
         }

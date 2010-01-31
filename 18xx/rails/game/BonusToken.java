@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.15 2010/01/24 17:13:25 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.16 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -54,7 +54,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
     }
 
     public void finishConfiguration(GameManagerI gameManager) {
-    	prepareForRemoval (gameManager.getPhaseManager());
+        prepareForRemoval (gameManager.getPhaseManager());
     }
 
     /**
@@ -66,7 +66,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
 
         new ObjectMove(this, holder, GameManager.getInstance().getBank().getScrapHeap());
         if (user != null) {
-        	user.removeBonus(name);
+            user.removeBonus(name);
         }
     }
 
@@ -80,11 +80,11 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         if (removingObjectDesc == null) return;
 
         if (removingObject == null) {
-	        String[] spec = removingObjectDesc.split(":");
-	        if (spec[0].equalsIgnoreCase("Phase")) {
-	            removingObject =
-	                    phaseManager.getPhaseByName(spec[1]);
-	        }
+            String[] spec = removingObjectDesc.split(":");
+            if (spec[0].equalsIgnoreCase("Phase")) {
+                removingObject =
+                        phaseManager.getPhaseByName(spec[1]);
+            }
         }
 
         if (removingObject instanceof Phase) {
@@ -114,7 +114,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
     }
 
     public String getInfo () {
-    	return description;
+        return description;
     }
 
 }

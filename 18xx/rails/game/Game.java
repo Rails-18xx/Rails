@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.46 2010/01/22 21:23:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.47 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -59,11 +59,11 @@ public class Game {
 
     public String  start() {
 
-    	if (players.size() < playerManager.minPlayers
-    			|| players.size() > playerManager.maxPlayers) {
-    		return name+" is not configured to be played with "+players.size()+" players\n"
-    				+ "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
-    	}
+        if (players.size() < playerManager.minPlayers
+                || players.size() > playerManager.maxPlayers) {
+            return name+" is not configured to be played with "+players.size()+" players\n"
+                    + "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
+        }
 
         gameManager.startGame(gameOptions);
         return null;
@@ -82,7 +82,7 @@ public class Game {
 
             componentManagerTag.setGameOptions(gameOptions);
             componentManager =
-            	ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
+                ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
 
             log.info("========== Start of rails.game " + name + " ==========");
             log.info("Rails version "+version);
@@ -203,14 +203,14 @@ public class Game {
             // Allow for older saved file versions.
             Object object = ois.readObject();
             if (object instanceof String) {
-            	log.info("Reading Rails "+(String)object+" saved file "+filename);
-            	object = ois.readObject();
+                log.info("Reading Rails "+(String)object+" saved file "+filename);
+                object = ois.readObject();
             } else {
-            	log.info("Reading Rails (pre-1.0.7) saved file "+filename);
+                log.info("Reading Rails (pre-1.0.7) saved file "+filename);
             }
             if (object instanceof String) {
-            	log.info("File was saved at "+(String)object);
-            	object = ois.readObject();
+                log.info("File was saved at "+(String)object);
+                object = ois.readObject();
             }
 
             long versionID = (Long) object;

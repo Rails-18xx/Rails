@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.6 2009/10/29 19:41:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.7 2010/01/31 22:22:29 macfreek Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -92,7 +92,7 @@ public class SellShares extends PossibleAction {
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof SellShares)) return false;
         SellShares a = (SellShares) action;
         return a.getCompanyName().equals(companyName)
@@ -102,7 +102,7 @@ public class SellShares extends PossibleAction {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "SellShares: "
                + (numberSold > 0 ? numberSold : "max " + maximumNumber)
                + " of " + share + "% " + companyName + " at "

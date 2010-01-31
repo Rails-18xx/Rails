@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.3 2009/11/04 20:33:21 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.4 2010/01/31 22:22:28 macfreek Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -38,8 +38,8 @@ public class BuyBonusToken extends PossibleORAction {
      */
     public BuyBonusToken(SellBonusToken specialProperty) {
 
-    	this.specialProperty = specialProperty;
-    	this.specialPropertyId = specialProperty.getUniqueId();
+        this.specialProperty = specialProperty;
+        this.specialPropertyId = specialProperty.getUniqueId();
         this.privateCompany = specialProperty.getCompany();
         this.privateCompanyName = privateCompany.getName();
         this.seller = specialProperty.getSeller();
@@ -58,55 +58,55 @@ public class BuyBonusToken extends PossibleORAction {
     }
 
     public String getPrivateCompanyName() {
-		return privateCompanyName;
-	}
+        return privateCompanyName;
+    }
 
-	public CashHolder getSeller() {
-		return seller;
-	}
+    public CashHolder getSeller() {
+        return seller;
+    }
 
-	public String getSellerName() {
-		return sellerName;
-	}
+    public String getSellerName() {
+        return sellerName;
+    }
 
-	public SellBonusToken getSpecialProperty() {
-		return specialProperty;
-	}
+    public SellBonusToken getSpecialProperty() {
+        return specialProperty;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public int getValue() {
+        return value;
+    }
 
-	public String getLocationString() {
-		return locationString;
-	}
+    public String getLocationString() {
+        return locationString;
+    }
 
-	public int getPrice() {
+    public int getPrice() {
         return price;
     }
 
     @Override
-	public boolean equals(PossibleAction action) {
+    public boolean equals(PossibleAction action) {
         if (!(action instanceof BuyBonusToken)) return false;
         BuyBonusToken a = (BuyBonusToken) action;
         return a.privateCompany == privateCompany
-        		&& a.name.equals(name)
+                && a.name.equals(name)
                 && a.price == price
                 && a.value == value
                 && a.locationString.equals(locationString);
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return "BuyBonusToken " + privateCompanyName
-        		+ " owner=" + sellerName
-        		+ " price=" + price
-        		+ " value=" + value
-        		+ " locations=" + locationString;
+                + " owner=" + sellerName
+                + " price=" + price
+                + " value=" + value
+                + " locations=" + locationString;
     }
 
     /** Deserialize */
@@ -118,10 +118,10 @@ public class BuyBonusToken extends PossibleORAction {
         privateCompany =
                 getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
-        	seller = gameManager.getBank();
+            seller = gameManager.getBank();
         } else if (sellerName != null) {
-        	seller =
-        		getCompanyManager().getPublicCompany(sellerName);
+            seller =
+                getCompanyManager().getPublicCompany(sellerName);
         }
         if (specialPropertyId > 0) {
             specialProperty =
