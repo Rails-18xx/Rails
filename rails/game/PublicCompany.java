@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.79 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.80 2010/02/02 20:00:03 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1032,6 +1032,21 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
+    public void updatePlayersWorth() {
+        
+        Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
+        Player owner;
+        for (PublicCertificateI cert : certificates) {
+            if (cert.getHolder() instanceof Portfolio
+                    && ((Portfolio)cert.getHolder()).getOwner() instanceof Player) {
+                owner = (Player)((Portfolio)cert.getHolder()).getOwner();
+                if (!done.containsKey(owner)) {
+                    owner.updateWorth();
+                    done.put(owner, true);
+                }
+            }
+        }
+    }
 
     /**
      * Add a given amount to the company treasury.
