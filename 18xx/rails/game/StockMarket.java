@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.25 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.26 2010/02/02 20:00:20 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -325,9 +325,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     public void processMove(PublicCompanyI company, StockSpaceI from,
             StockSpaceI to) {
-        // To be written to a log file in the future.
         if (from != null) from.removeToken(company);
         if (to != null) to.addToken(company);
+        company.updatePlayersWorth();
     }
 
     /**
