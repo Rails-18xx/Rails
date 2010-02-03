@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<CompanyManager>
+ <!-- 	Specific PrivateCompany to avoid closing of Uno-Takamatsu Ferry -->
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<IfOption name="BeginnerGame" value="no">
+			<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		</IfOption>
+		<PoolPaysOut/>
+		<Float percentage="50"/>
+		<ShareUnit percentage="10"/>
+        <BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+`		    <HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+	        <LayCost method="sequence" cost="0,40"/>
+        </BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains number="4,4,3,2"/>
+	</CompanyType>
+	<IfOption name="BeginnerGame" value="yes">
+		<Company name="A" type="Private" basePrice="20" revenue="5"
+			longName="Takamatsu E-Railroad">
+		</Company>
+		<Company name="B" type="Private" basePrice="40" revenue="15"
+			longName="Mitsubishi Ferry">
+		</Company>
+		<Company name="C" type="Private" basePrice="40" revenue="15"
+			longName="Ehime Railway" >
+		</Company>
+		<Company name="D" type="Private" basePrice="60" revenue="20"
+			longName="Sumitomo Mines Railway">
+		</Company>
+		<Company name="E" type="Private" basePrice="60" revenue="20"
+			longName="Dougo Railway">
+		</Company>
+		<Company name="F" type="Private" basePrice="90" revenue="25"
+			longName="South Iyo Railway">
+		</Company>
+	</IfOption>
+	<IfOption name="BeginnerGame" value="no">
+		<Company name="A" type="Private" basePrice="20" revenue="5"
+			longName="Takamatsu E-Railroad">
+			<Blocking hex="K4"/>
+	<!--                 no special property -->
+		</Company>
+		<Company name="B" type="Private" basePrice="30" revenue="5"
+			longName="Mitsubishi Ferry">
+			<SpecialProperties>
+				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
+				</SpecialProperty>
+<!-- 				TODO: Additional Property required: -->
+<!--				<SpecialProperty condition="ifOwnedByPlayer" when="betweenOR" class="rails.game.special.SpecialTileLay">
+					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
+				</SpecialProperty>  -->
+			</SpecialProperties>
+		</Company>
+		<Company name="C" type="Private" basePrice="40" revenue="10"
+			longName="Ehime Railway" >
+			<Blocking hex="C4"/>
+			<SpecialProperties>
+				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+					<SpecialTileLay location="C4" extra="yes" free="yes"/>
+				</SpecialProperty>
+<!-- 				TODO: Correct Property would look like: -->
+<!--				<SpecialProperty condition="PlayerAfterSellToPublic" when="immediate" class="rails.game.special.SpecialTileLay">
+					<SpecialTileLay location="C4" extra="yes" free="yes"/>
+				</SpecialProperty>-->
+			</SpecialProperties>
+		</Company>
+		<Company name="D" type="Private" basePrice="50" revenue="15"
+			longName="Sumitomo Mines Railway">
+			<SpecialProperties>
+				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" permanent="yes" class="rails.game.special.SpecialTileLay">
+					<SpecialTileLay location="A8,B9,C6,D5,D7,E4,E6,F5,F7,G6,G8,H9,H11,H13" extra="no" free="yes" connected="yes"/>
+				</SpecialProperty>
+			</SpecialProperties>
+		</Company>
+		<Company name="E" type="Private" basePrice="60" revenue="15"
+			longName="Dougo Railway">
+			<SpecialProperties>
+				<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
+					<ExchangeForShare company="IR" share="10"/>
+				</SpecialProperty>
+			</SpecialProperties>
+		</Company>
+		<Company name="F" type="Private" basePrice="80" revenue="20"
+			longName="South Iyo Railway">
+	<!--                 no special property, no blocking hex -->
+		</Company>
+		<Company name="G" type="Private" basePrice="150" revenue="30,50"
+			longName="Uno-Takamatsu Ferry">
+			<ClosingConditions>
+					<PreventClosing condition="ifOwnedByPlayer"/>
+			</ClosingConditions>
+		</Company>
+	</IfOption>
+		
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="AR" longname="Awa Railroad" type="Public" tokens="2" fgColour="255,255,255" bgColour="220,0,0">
+	    <Home hex="K8"/> <!--Tokushima-->
+ 	</Company>
+	<Company name="IR" longname="Iyo Railway" type="Public" tokens="2" fgColour="0,0,0" bgColour="230,150,85">
+    <Home hex="E2"/>  <!--Matsuyama-->
+	</Company>
+	<Company name="SR" longname="Sanuki Railway" type="Public" tokens="2" fgColour="255,255,255" bgColour="30,30,255">
+    <Home hex="I2"/>  <!--Marugame-->
+  </Company>
+	<Company name="KO" longname="Takamatsu &amp; Kotohira Electric Railway" type="Public" tokens="2" fgColour="0,0,0" bgColour="235,130,175">
+    <Home hex="K4"/>  <!--Takamatsu-->
+  </Company>
+  <Company name="TR" longname="Tosa Electric Railway" type="Public" tokens="3" fgColour="255,255,255" bgColour="25,175,25">
+    <Home hex="F9"/> <!--Kouchi-->
+  </Company>
+	<Company name="KU" longname="Tosa Kuroshio Railway" type="Public" tokens="1" fgColour="255,255,255" bgColour="175,25,255">
+    <Home hex="C10"/> <!--Kubokawa-->
+  </Company>
+	<Company name="UR" longname="Uwajima Railway" type="Public" tokens="3" fgColour="255,255,255" bgColour="140,70,20">
+    <Home hex="B7"/> <!--Uwajima-->
+  </Company>
+	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<IfOption name="BeginnerGame" value="yes">
+			<IfOption name="NumberOfPlayers" value="2">
+				<Item name="E" type="Private" basePrice="60"/>
+				<Item name="F" type="Private" basePrice="90"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="3">
+				<Item name="C" type="Private" basePrice="40"/>
+				<Item name="E" type="Private" basePrice="60"/>
+				<Item name="F" type="Private" basePrice="90"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="4">
+				<Item name="C" type="Private" basePrice="40"/>
+				<Item name="D" type="Private" basePrice="60"/>
+				<Item name="E" type="Private" basePrice="60"/>
+				<Item name="F" type="Private" basePrice="90"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="5">
+				<Item name="B" type="Private" basePrice="40"/>
+				<Item name="C" type="Private" basePrice="40"/>
+				<Item name="D" type="Private" basePrice="60"/>
+				<Item name="E" type="Private" basePrice="60"/>
+				<Item name="F" type="Private" basePrice="90"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="6">
+				<Item name="A" type="Private" basePrice="20"/>
+				<Item name="B" type="Private" basePrice="40"/>
+				<Item name="C" type="Private" basePrice="40"/>
+				<Item name="D" type="Private" basePrice="60"/>
+				<Item name="E" type="Private" basePrice="60"/>
+				<Item name="F" type="Private" basePrice="90"/>
+			</IfOption>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Item name="A" type="Private" basePrice="20"/>
+			<Item name="B" type="Private" basePrice="30"/>
+			<Item name="C" type="Private" basePrice="40"/>
+			<Item name="D" type="Private" basePrice="50"/>
+			<Item name="E" type="Private" basePrice="60"/>
+			<IfOption name="NumberOfPlayers" value="3">
+				<Item name="F" type="Private" basePrice="80"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="4">
+				<Item name="F" type="Private" basePrice="80"/>
+				<Item name="G" type="Private" basePrice="150"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="5">
+				<Item name="F" type="Private" basePrice="80"/>
+				<Item name="G" type="Private" basePrice="150"/>
+			</IfOption>
+			<IfOption name="NumberOfPlayers" value="6">
+				<Item name="F" type="Private" basePrice="80"/>
+				<Item name="G" type="Private" basePrice="150"/>
+			</IfOption>
+		</IfOption>
+	</StartPacket>
+</CompanyManager>

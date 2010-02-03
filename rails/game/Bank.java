@@ -199,5 +199,14 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         if (amount < 0) result = result.replaceFirst("(.+)-", "-$1");
         return result;
     }
-
+    // start sfy 1889 for integerarrays
+    public static String formatIntegerArray(int[] amountList) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < amountList.length;++i) {
+            if (!(i == 0)) result.append(",");
+            result.append(format(amountList[i]));
+        }
+        return result.toString();
+    }
+    // end sfy 1889
 }

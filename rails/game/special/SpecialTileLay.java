@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.10 2010/01/31 22:22:30 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.11 2010/02/03 05:37:55 wakko666 Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -16,9 +16,10 @@ public class SpecialTileLay extends SpecialProperty {
     String name;
     boolean extra = false;
     boolean free = false;
+    boolean connected = false; /* sfy 1889 extension */
 
     @Override
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+	public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
 
         Tag tileLayTag = tag.getChild("SpecialTileLay");
@@ -36,27 +37,34 @@ public class SpecialTileLay extends SpecialProperty {
 
         extra = tileLayTag.getAttributeAsBoolean("extra", extra);
         free = tileLayTag.getAttributeAsBoolean("free", free);
+        connected = tileLayTag.getAttributeAsBoolean("connected", connected); /* sfy 1889 extension */
         closingValue =
                 tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileNumber > 0) {
-            description = LocalText.getText("LayNamedTileInfo",
-                    tileNumber,
-                    name != null ? name : "",
-                    locationCodes,
-                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+	    	description = LocalText.getText("LayNamedTileInfo",
+	    			tileNumber,
+	    			name != null ? name : "",
+	    			locationCodes,
+	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+                    (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
+                    /* sfy 1889 extension */
+	    	        );
         } else {
-            description = LocalText.getText("LayTileInfo",
-                    locationCodes,
-                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
+	    	description = LocalText.getText("LayTileInfo",
+	    			locationCodes,
+	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+                    (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
+                    /* sfy 1889 extension */
+                    );
         }
 
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager)
+	public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
 
         TileManager tmgr = gameManager.getTileManager();
@@ -89,6 +97,10 @@ public class SpecialTileLay extends SpecialProperty {
     public boolean isFree() {
         return free;
     }
+    // sfy 1889
+    public boolean requiresConnection() {
+        return connected;
+    }
 
     public List<MapHex> getLocations() {
         return locations;
@@ -111,18 +123,18 @@ public class SpecialTileLay extends SpecialProperty {
     }
 
     @Override
-    public String toString() {
+	public String toString() {
         return "SpecialTileLay comp=" + privateCompany.getName() + " hex="
-               + locationCodes + " extra=" + extra + " cost=" + free;
+               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
     @Override
-    public String toMenu() {
-        return description;
+	public String toMenu() {
+    	return description;
     }
 
     @Override
-    public String getInfo() {
-        return description;
+	public String getInfo() {
+    	return description;
     }
 }

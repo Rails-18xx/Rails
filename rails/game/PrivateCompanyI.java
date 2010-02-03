@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.8 2010/01/08 21:30:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.9 2010/02/03 05:37:54 wakko666 Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -24,7 +24,9 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder {
     /**
      * @return
      */
-    public int getRevenue();
+    // sfy 1889: changed to IntegerArray
+    public int[] getRevenue();
+    public int getRevenueByPhase(PhaseI phase);
 
     /**
      * @return ArrayList of all special properties we have.
@@ -35,6 +37,10 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder {
 
     public void setHolder(Portfolio portfolio);
 
+    // sfy 1889: check if closeable
+    public boolean isCloseable();
+    public List<String> getPreventClosingConditions();
+    
     // Methods related to closure when special properties are exercised.
     public boolean closesIfAllExercised();
     public boolean closesIfAnyExercised();

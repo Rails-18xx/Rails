@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.31 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.32 2010/02/03 05:37:54 wakko666 Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -15,7 +15,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected int privateNumber; // For internal use
 
     protected int basePrice = 0;
-    protected int revenue = 0;
+    // list of revenue sfy 1889
+    protected int[] revenue;
     protected List<SpecialPropertyI> specialProperties = null;
     protected String auctionType;
 
@@ -25,6 +26,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected boolean closeIfAllExercised = false;
     protected boolean closeIfAnyExercised = false;
     protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
+    // Prevent closing conditions sfy 1889
+    protected List<String> preventClosingConditions = null;
 
     protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
@@ -42,7 +45,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         try {
             longName= tag.getAttributeAsString("longName", "");
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
-            revenue = tag.getAttributeAsInteger("revenue", 0);
+
+            // sfy 1889 changed to IntegerArray
+            revenue = tag.getAttributeAsIntegerArray("revenue", new int[0]);
 
             // Blocked hexes (until bought by a company)
             Tag blockedTag = tag.getChild("Blocking");
@@ -102,9 +107,18 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("atEndOfORTurn");
                     }
                 }
+                /* start sfy 1889 */
+                List<Tag> preventTags = closureTag.getChildren("PreventClosing");
+                if (preventTags != null) {
+                    for (Tag preventTag: preventTags) {
+                        String conditionText = preventTag.getAttributeAsString("condition");
+                        if (conditionText != null) { 
+                            preventClosingConditions.add(conditionText);
+                        }
+                    }
+                }
+                /* end sfy 1889 */
             }
-
-
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
                                              + name, e);
@@ -136,7 +150,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         super.init(name, type);
 
         specialProperties = new ArrayList<SpecialPropertyI>();
-
+        
+        /* start sfy 1889 */
+        preventClosingConditions = new ArrayList<String>();
     }
 
     public void moveTo(MoveableHolder newHolder) {
@@ -160,10 +176,22 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /**
      * @return Revenue
      */
-    public int getRevenue() {
+    public int[] getRevenue() {
         return revenue;
     }
-
+    
+    //  start: sfy 1889: new method
+    public int getRevenueByPhase(PhaseI phase){
+        if (phase != null) {
+            return revenue[Math.min(
+                    revenue.length,
+                    phase.getPrivatesRevenueStep()) - 1];
+        } else {
+            return 0;
+        }
+    }
+    // end: sfy 1889
+    
     /**
      * @return Phase this Private closes
      */
@@ -184,9 +212,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     @Override
     public void setClosed() {
 
-        if (isClosed()) return;
-
-        super.setClosed();
+    	if (isClosed()) return;
+        if (!isCloseable()) return; /* sfy 1889 */
+    	
+    	super.setClosed();
         unblockHexes();
         moveTo(GameManager.getInstance().getBank().getScrapHeap());
         ReportBuffer.add(LocalText.getText("PrivateCloses", name));
@@ -206,7 +235,28 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             log.debug("SP "+sbt.getName()+" is now a common property");
         }
     }
-
+    
+    /* start sfy 1889 */
+    public boolean isCloseable() {
+      
+      if (preventClosingConditions.isEmpty()) return true;
+        
+      if (preventClosingConditions.contains("doesNotClose")) {
+          log.debug("Private Company "+getName()+" does not close (unconditional).");
+          return false;
+      }
+      if (preventClosingConditions.contains("ifOwnedByPlayer")
+              && portfolio.getOwner() instanceof Player) {
+          log.debug("Private Company "+getName()+" does not close, as it is owned by a player.");
+          return false;
+      }
+      return true;
+    }
+    public List<String> getPreventClosingConditions() {
+        return preventClosingConditions;
+    }
+    /* end sfy 1889 */
+    
     /**
      * @param i
      */

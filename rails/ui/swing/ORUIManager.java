@@ -528,7 +528,10 @@ public class ORUIManager implements DialogOwner {
         MapHex mapHex = hex.getHexModel();
         for (LayTile action : possibleActions.getType(LayTile.class)) {
             if (action.getType() == LayTile.SPECIAL_PROPERTY
-                && action.getSpecialProperty().getLocations().contains(mapHex)) {
+                    && !action.getSpecialProperty().requiresConnection() // sfy 1889
+                    && action.getSpecialProperty().getLocations().contains(mapHex)
+                )
+            {
                 // log.debug(hex.getName()+" is a special property target");
                 return true;
             }

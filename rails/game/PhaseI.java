@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseI.java,v 1.7 2009/08/28 20:49:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseI.java,v 1.8 2010/02/03 05:37:54 wakko666 Exp $ */
 package rails.game;
 
 import java.util.Map;
@@ -18,6 +18,8 @@ public interface PhaseI extends ConfigurableComponentI {
     public boolean doPrivatesClose();
 
     public boolean isPrivateSellingAllowed();
+    
+    public int getPrivatesRevenueStep(); // sfy 1889
 
     public boolean isTrainTradingAllowed();
 

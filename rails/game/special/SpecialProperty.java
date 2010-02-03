@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.22 2010/01/31 22:22:30 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.23 2010/02/03 05:37:55 wakko666 Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -24,6 +24,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected String conditionText = "";
     protected String whenText = "";
     protected String transferText = "";
+    protected boolean permanent = false;
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
 
@@ -66,6 +67,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         // to be interpreted...
 
         transferText = tag.getAttributeAsString("transfer", "");
+        
+        // sfy 1889
+        permanent = tag.getAttributeAsBoolean("permanent", false);  
     }
 
     public void finishConfiguration (GameManagerI gameManager)
@@ -130,6 +134,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public void setExercised (boolean value) {
+        if (permanent) return; // sfy 1889 
         exercised.set(value);
         if (value) privateCompany.checkClosingIfExercised(false);
     }

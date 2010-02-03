@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.18 2010/02/03 05:37:54 wakko666 Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -24,6 +24,8 @@ public class Phase implements PhaseI {
     protected int numberOfOperatingRounds = 1;
 
     protected int offBoardRevenueStep = 1;
+    
+    protected int privatesRevenueStep = 1; // sfy 1889
 
     protected boolean trainTradingAllowed = false;
 
@@ -62,6 +64,7 @@ public class Phase implements PhaseI {
             privateSellingAllowed = defaults.privateSellingAllowed;
             numberOfOperatingRounds = defaults.numberOfOperatingRounds;
             offBoardRevenueStep = defaults.offBoardRevenueStep;
+            privatesRevenueStep = defaults.privatesRevenueStep;
             trainTradingAllowed = defaults.trainTradingAllowed;
             oneTrainPerTurn = defaults.oneTrainPerTurn;
             oneTrainPerTypePerTurn = defaults.oneTrainPerTypePerTurn;
@@ -95,6 +98,7 @@ public class Phase implements PhaseI {
                     privatesTag.getAttributeAsBoolean("sellingAllowed",
                             privateSellingAllowed);
             privatesClose = privatesTag.getAttributeAsBoolean("close", false);
+            privatesRevenueStep = privatesTag.getAttributeAsInteger("revenueStep", privatesRevenueStep); // sfy 1889
         }
 
         // Operating rounds
@@ -188,7 +192,10 @@ public class Phase implements PhaseI {
     public boolean isPrivateSellingAllowed() {
         return privateSellingAllowed;
     }
-
+    // sfy 1889
+    public int getPrivatesRevenueStep() {
+        return privatesRevenueStep;
+    }
     public boolean isTrainTradingAllowed() {
         return trainTradingAllowed;
     }
