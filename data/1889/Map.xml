@@ -2,7 +2,7 @@
 	<Hex name="A8" tile="0" cost="80"/>
 	<Hex name="A10" tile="-10" city="Sukomo"/>
 		
-	<Hex name="B3" tile="-890030" orientation="0" city="Yawatahama"/> <!--NEW TILE:-890030-->
+	<Hex name="B3" tile="-89030" orientation="0" city="Yawatahama"/> <!--NEW TILE:-890030-->
 	<Hex name="B5" tile="0"/>
 	<Hex name="B7" tile="-89511" orientation="0" city="Uwajima"/>  <!--NEW TILE:-89511-->
 	<Hex name="B9" tile="0" cost="80"/>
@@ -34,7 +34,7 @@
 	<Hex name="G8" tile="0" cost="80"/>
 	<Hex name="G10" tile="-1" city="Nangoku"/>
 	<Hex name="G12" tile="-10" city="Nahari"/>
-	<Hex name="G14" tile="-890031" orientation="0" city="Muroto"/>  <!--NEW TILE:-890031-->
+	<Hex name="G14" tile="-89031" orientation="0" city="Muroto"/>  <!--NEW TILE:-890031-->
 
 	<Hex name="H3" tile="0"/>
 	<Hex name="H5" tile="0" cost="80" label="River"/>
