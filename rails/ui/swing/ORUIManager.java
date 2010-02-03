@@ -627,13 +627,13 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.size() > 1) {
                     String selected =
                        (String) JOptionPane.showInputDialog(orWindow,
-                                                         LocalText.getText("SelectStationForToken",
-                                                        		 action.getPlayerName(),
-                                                        		 selectedHex.getName(),
-                                                        		 action.getCompanyName()),
-                                                         LocalText.getText("WhichStation"),
-                                                         JOptionPane.PLAIN_MESSAGE, null,
-                                                         prompts.toArray(), prompts.get(0));
+                                 LocalText.getText("SelectStationForToken",
+                                		 action.getPlayerName(),
+                                		 selectedHex.getName(),
+                                		 action.getCompanyName()),
+                                 LocalText.getText("WhichStation"),
+                                 JOptionPane.PLAIN_MESSAGE, null,
+                                 prompts.toArray(), prompts.get(0));
                     if (selected == null) return;
                     station = promptToCityMap.get(selected).getNumber();
                 } else {
