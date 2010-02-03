@@ -78,7 +78,7 @@
 		<Home hex="E19"/>
 	</Company>
 	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00">
-		<Home hex="E11"/>
+		<Home hex="E11" city="0"/>
 	</Company>
 	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060">
 		<Home hex="E23"/>
