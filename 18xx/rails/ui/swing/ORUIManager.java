@@ -528,10 +528,7 @@ public class ORUIManager implements DialogOwner {
         MapHex mapHex = hex.getHexModel();
         for (LayTile action : possibleActions.getType(LayTile.class)) {
             if (action.getType() == LayTile.SPECIAL_PROPERTY
-                    && !action.getSpecialProperty().requiresConnection() // sfy 1889
-                    && action.getSpecialProperty().getLocations().contains(mapHex)
-                )
-            {
+                && action.getSpecialProperty().getLocations().contains(mapHex)) {
                 // log.debug(hex.getName()+" is a special property target");
                 return true;
             }
@@ -630,7 +627,10 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.size() > 1) {
                     String selected =
                        (String) JOptionPane.showInputDialog(orWindow,
-                                                         LocalText.getText("SelectStationForToken"),
+                                                         LocalText.getText("SelectStationForToken",
+                                                        		 action.getPlayerName(),
+                                                        		 selectedHex.getName(),
+                                                        		 action.getCompanyName()),
                                                          LocalText.getText("WhichStation"),
                                                          JOptionPane.PLAIN_MESSAGE, null,
                                                          prompts.toArray(), prompts.get(0));
@@ -785,7 +785,7 @@ public class ORUIManager implements DialogOwner {
                         LocalText.getText("YOU_MAY_ADD_CASH",
                                 Bank.format(bTrain.getPresidentCashToAdd())));
             }
-            
+
             if (bTrain.getExtraMessage() != null) {
                 b.append(" (").append(bTrain.getExtraMessage()+")");
             }
@@ -809,7 +809,7 @@ public class ORUIManager implements DialogOwner {
             msgbuf.append("</font>");
         }
         setMessage(msgbuf.toString());
-        
+
         String selectedActionText =
                 (String) JOptionPane.showInputDialog(orWindow,
                         LocalText.getText("BUY_WHICH_TRAIN"),
@@ -1117,6 +1117,15 @@ public class ORUIManager implements DialogOwner {
         } else if (possibleActions.contains(LayBaseToken.class)) {
 
             orWindow.requestFocus();
+
+            // Check first action.
+            // If it's to lay a home token, handle that here
+            LayBaseToken lbt = possibleActions.getType(LayBaseToken.class).get(0);
+            if (lbt.getType() == LayBaseToken.HOME_CITY) {
+            	map.setSelectedHex(map.getHexByName(lbt.getChosenHex().getName()));
+            	layBaseToken (lbt);
+            	return;
+            }
 
             // Include bonus tokens
             List<LayToken> possibleTokenLays =

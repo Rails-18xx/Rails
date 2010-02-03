@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.6 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.7 2010/02/03 20:16:40 evos Exp $
  *
  * Created on 14-Sep-2006
  * Change Log:
@@ -25,6 +25,7 @@ public class LayBaseToken extends LayToken {
     public final static int GENERIC = 0; // Stop-gap only
     public final static int LOCATION_SPECIFIC = 1; // Valid hex
     public final static int SPECIAL_PROPERTY = 2; // Directed by a special
+    public final static int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
     // property
 
     protected int type = 0;
@@ -49,6 +50,12 @@ public class LayBaseToken extends LayToken {
     public LayBaseToken(SpecialTokenLay specialProperty) {
         super(specialProperty);
         type = SPECIAL_PROPERTY;
+    }
+
+    public LayBaseToken (MapHex hex) {
+    	super (hex);
+    	setChosenHex (hex);
+    	type = HOME_CITY;
     }
 
     public int getChosenStation() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.34 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.35 2010/02/03 20:16:40 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -845,7 +845,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         if (cities.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
-            homes.put(company, cities.get(cityNumber - 1));
+            homes.put(company, cities.get(Math.max(cityNumber - 1, 0)));
         }
     }
 

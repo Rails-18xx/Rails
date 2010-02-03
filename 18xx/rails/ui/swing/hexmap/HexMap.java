@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.21 2010/01/31 22:22:36 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.22 2010/02/03 20:16:40 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -200,6 +200,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public GUIHex getSelectedHex() {
         return selectedHex;
+    }
+
+    public void setSelectedHex (GUIHex hex) {
+    	selectedHex = hex;
     }
 
     public boolean isAHexSelected() // Not used
