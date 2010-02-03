@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.94 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.95 2010/02/03 05:37:54 wakko666 Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -123,7 +123,7 @@ public class OperatingRound extends Round implements Observer {
             if (!priv.isClosed()) {
                 if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
                     CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
-                    int revenue = priv.getRevenue();
+                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getName(),

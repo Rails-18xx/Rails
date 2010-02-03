@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.36 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.37 2010/02/03 05:37:55 wakko666 Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -657,7 +657,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             b.append (item.getPrimary().toString());
             if (item.getPrimary() instanceof PrivateCompany) {
                 PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Bank.format(priv.getRevenue()));
+                b.append ("<br>Revenue: ").append(Bank.formatIntegerArray(priv.getRevenue()));
                 List<MapHex> blockedHexes = priv.getBlockedHexes();
                 if (blockedHexes == null) {
                 } else if (blockedHexes.size() == 1) {
@@ -674,6 +674,15 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                         b.append("<br>").append(sp.toString());
                    }
                 }
+                // sfy 1889
+                List<String> preventClosingConditions = priv.getPreventClosingConditions();
+                if (!preventClosingConditions.isEmpty()) {
+                    b.append("<br><b>Prevent closing conditions:</b>");
+                    for (String condition : preventClosingConditions) {
+                        b.append("<br>").append(condition);
+                   }
+                }
+                
             }
             if (item.getSecondary() != null) {
                 b.append("<br><b>Also contains:</b><br>");

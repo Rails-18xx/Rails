@@ -87,7 +87,25 @@ Aspects not present in 1830 have not been implemented yet.
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
-	<Game name="18AL">
+	
+        <Game name="1889">
+		<Note>Only Beginner fully playable</Note>
+		<Description>1889 - History of Shikoku Railways
+(c) 2003-2006 Yasutaka Ikeda
+Published by Wild Heaven Productions and Deep Thought Games
+
+Limitations:
+- Enforced share selling allows change of director in other company (see rule 10.6.2)
+- Special properties of privates not implemented yet (Advanced Game only)
+
+		</Description>
+		<Players minimum="2" maximum="6"/>
+                <Option name="BeginnerGame" type="toggle" default="yes" />
+		<Option name="WithOptional6Train" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+	</Game>
+	
+		<Game name="18AL">
 		<Note>Fully playable</Note>
 		<Description>18AL  - The Railroads come to Alabama
 (c) 2000, 2004 Mark Derrick and John David Galt
