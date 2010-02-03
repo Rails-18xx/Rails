@@ -13798,5 +13798,374 @@ object TTilesWrapper
         item
           JunType = jtWhistlestop
         end>
+    end
+    item
+      Code = -89030
+      LongName = '1889 B3'
+      Category = 'Yawatahama'
+      CategoryPosition = tp1CornerC
+      Connections = <
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerD
+          Revenue = 20
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -89511
+      LongName = '1889 Uwajima B7'
+      Category = 'Uwajima'
+      CategoryPosition = tpCurve2LeftD
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = -89015
+      LongName = '1889 Kouchi  F9'
+      Category = 'Kouchi'
+      CategoryPosition = tpCurve2LeftD
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -89031
+      LongName = '1889 G14'
+      Category = 'Muroto'
+      CategoryPosition = tp1SideB
+      Connections = <
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerB
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -89010
+      LongName = '1889 Kotohira I4'
+      Category = 'Kotohira'
+      CategoryPosition = tp3SideA
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -89012
+      LongName = '1889 Takamatsu K5'
+      Category = 'Takamatsu'
+      CategoryPosition = tpCurve2LeftA
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -89115
+      LongName = '1889 Ohzu C4'
+      Category = 'Ohzu'
+      CategoryPosition = tp2SideD
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+          RevenuePosition = tp3SideA
+        end>
+    end
+    item
+      Code = 437
+      LongName = '1889 Port'
+      Category = 'Port'
+      CategoryPosition = tp2CornerB
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 30
+        end>
+    end
+    item
+      Code = 438
+      LongName = '1889 Kotohira yellow'
+      Category = 'Kotohira'
+      CategoryPosition = tp3SideA
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 40
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 439
+      LongName = '1889 Kotohira green'
+      Category = 'Kotohira'
+      CategoryPosition = tp3SideA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 440
+      LongName = '1889 Takamatsu green'
+      Category = 'Takamatsu'
+      CategoryPosition = tp3SideA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 40
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = 448
+      LongName = '1889 dc K brown'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 465
+      LongName = '1889 Kouchi brown '
+      Category = 'Kouchi'
+      CategoryPosition = tp3SideA
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 60
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 466
+      LongName = '1889 Takamatsu brown'
+      Category = 'Takamatsu'
+      CategoryPosition = tpCurve2LeftA
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 60
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = 492
+      LongName = '1889 Kotohira brown'
+      Category = 'Kotohira'
+      CategoryPosition = tp3SideA
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 80
+          RevenuePosition = tp3CornerF
+        end>
     end>
 end
