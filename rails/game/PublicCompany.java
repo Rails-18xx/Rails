@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.80 2010/02/02 20:00:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.81 2010/02/03 20:16:40 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -799,8 +799,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean mayTradeShares() {
         return mayTradeShares;
     }
-    
-    /** Stub that allows exclusions such as that 1856 CGR may not buy a 4 */ 
+
+    /** Stub that allows exclusions such as that 1856 CGR may not buy a 4 */
     public boolean mayBuyTrainType (TrainI train) {
         return true;
     }
@@ -828,7 +828,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         } else {
             start(startSpace);
         }
-
     }
 
     /**
@@ -927,7 +926,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         stockMarket.close(this);
 
     }
-    
+
     public ModelObject getClosedModel () {
         return closedObject;
     }
@@ -1033,7 +1032,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public void updatePlayersWorth() {
-        
+
         Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
         Player owner;
         for (PublicCertificateI cert : certificates) {
@@ -1672,6 +1671,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return laidBaseTokens.size() > 0;
     }
 
+    // Return value is not used
     public boolean layHomeBaseTokens() {
 
         // TODO Assume for now that companies have only one home base.
@@ -1679,8 +1679,22 @@ public class PublicCompany extends Company implements PublicCompanyI {
         // TODO This does not yet cover cases where the user
         // has a choice, such in 1830 Erie.
         if (hasLaidHomeBaseTokens()) return true;
+
+        if (homeCityNumber == 0) {
+        	// This applies to cases like 1830 Erie and 1856 THB.
+        	// On a trackless tile it does not matter, but if
+        	// the tile has track (such as the green OO tile),
+        	// the player must select a city.
+        	Map<Integer, List<Track>> tracks
+        			= homeHex.getCurrentTile().getTracksPerStationMap();
+        	if (tracks == null || tracks.isEmpty()) {
+        		homeCityNumber = 1;
+        	} else {
+        		return false;
+        	}
+        }
         log.debug(name + " lays home base on " + homeHex.getName() + " city "
-                  + homeCityNumber);
+                + homeCityNumber);
         return homeHex.layBaseToken(this, homeCityNumber);
     }
 

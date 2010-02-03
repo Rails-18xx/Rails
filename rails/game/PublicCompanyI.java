@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.43 2010/02/02 19:59:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.44 2010/02/03 20:16:40 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -297,6 +297,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public ModelObject getTokensCostThisTurnModel();
 
     public boolean layHomeBaseTokens();
+    public boolean hasLaidHomeBaseTokens();
 
     public BaseToken getFreeToken();
 
@@ -351,7 +352,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public int sharesOwnedByPlayers();
     public String getExtraShareMarks ();
-    
+
     public ModelObject getClosedModel ();
 
 

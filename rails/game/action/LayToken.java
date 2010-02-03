@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.9 2008/06/04 19:00:29 evos Exp $
- * 
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.10 2010/02/03 20:16:38 evos Exp $
+ *
  * Created on 14-Sep-2006
  * Change Log:
  */
 package rails.game.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.MapHex;
@@ -55,6 +56,12 @@ public abstract class LayToken extends PossibleORAction {
         this.specialPropertyId = specialProperty.getUniqueId();
     }
 
+    public LayToken (MapHex hex) {
+    	this.locations = new ArrayList<MapHex>(1);
+    	locations.add(hex);
+        buildLocationNameString();
+    }
+
     /**
      * @return Returns the chosenHex.
      */
@@ -89,7 +96,8 @@ public abstract class LayToken extends PossibleORAction {
      * @deprecated
      * @return Returns the location.
      */
-    public MapHex getLocation() {
+    @Deprecated
+	public MapHex getLocation() {
         if (locations != null) {
             return locations.get(0);
         } else {

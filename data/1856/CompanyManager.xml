@@ -112,7 +112,7 @@
 		<Destination hex="K8"/>
 	</Company>
 	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
-		<Home hex="L15"/>
+		<Home hex="L15" city="0"/><!-- City to be selected in first turn-->
 		<Destination hex="J11"/>
 	</Company>
 	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">

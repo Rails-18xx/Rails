@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.95 2010/02/03 05:37:54 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.96 2010/02/03 20:16:40 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -492,8 +492,8 @@ public class OperatingRound extends Round implements Observer {
         while (true) {
 
             // Checks
-            // Must be correct step
-            if (getStep() != STEP_LAY_TOKEN) {
+            // Must be correct step (exception: home base lay)
+            if (getStep() != STEP_LAY_TOKEN && action.getType() != LayBaseToken.HOME_CITY) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }
@@ -564,6 +564,9 @@ public class OperatingRound extends Round implements Observer {
             /* TODO: the false return value must be impossible. */
 
             operatingCompany.layBaseToken(hex, cost);
+
+            // If this is a home base token lay, stop here
+            if (action.getType() == LayBaseToken.HOME_CITY) return true;
 
             if (cost > 0) {
                 new CashMove(operatingCompany, bank, cost);
@@ -1925,16 +1928,25 @@ public class OperatingRound extends Round implements Observer {
         selectedAction = null;
 
         int step = getStep();
+        boolean forced = false;
 
         if (step == STEP_LAY_TRACK) {
-            setNormalTileLays();
-            setSpecialTileLays();
-            log.debug("Normal tile lays: " + currentNormalTileLays.size());
-            log.debug("Special tile lays: " + currentSpecialTileLays.size());
 
-            possibleActions.addAll(currentNormalTileLays);
-            possibleActions.addAll(currentSpecialTileLays);
-            possibleActions.add(new NullAction(NullAction.SKIP));
+        	if (!operatingCompany.hasLaidHomeBaseTokens()) {
+        		// This can occur if the home hex has two cities and track,
+        		// such as the green OO tile #59
+        		possibleActions.add(new LayBaseToken (operatingCompany.getHomeHex()));
+        		forced = true;
+        	} else {
+	            setNormalTileLays();
+	            setSpecialTileLays();
+	            log.debug("Normal tile lays: " + currentNormalTileLays.size());
+	            log.debug("Special tile lays: " + currentSpecialTileLays.size());
+
+	            possibleActions.addAll(currentNormalTileLays);
+	            possibleActions.addAll(currentSpecialTileLays);
+	            possibleActions.add(new NullAction(NullAction.SKIP));
+        	}
 
         } else if (step == STEP_LAY_TOKEN) {
             setNormalTokenLays();
@@ -1961,7 +1973,7 @@ public class OperatingRound extends Round implements Observer {
 
         // The following additional "common" actions are only available if the
         // primary action is not forced.
-        if (step >= 0) {
+        if (step >= 0 && !forced) {
 
             setBonusTokenLays();
 
@@ -2233,7 +2245,7 @@ public class OperatingRound extends Round implements Observer {
     protected boolean isBelowTrainLimit() {
         return operatingCompany.getNumberOfTrains() < operatingCompany.getCurrentTrainLimit();
     }
-    
+
     /**
      * Can the company buy a train now?
      * Normally only calls isBelowTrainLimit() to get the result.
