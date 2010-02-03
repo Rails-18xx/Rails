@@ -45,7 +45,7 @@
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
 		<Bank amount="7000"/>
-		<Money format="¥@"/>
+		<Money format="&#xa5;@"/>
 	</Component>
 	<Component name="TileManager" class="rails.game.TileManager" 
 		file="TileSet.xml"/>
