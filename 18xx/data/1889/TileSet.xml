@@ -15,8 +15,8 @@
 	
 	<!--	Map: Fixed -->
 	<Tile id="-8"/> <!--shallow curve-->
-	<Tile id="-890030"/> <!--NEW TILE B3-->
-	<Tile id="-890031"/> <!--NEW TILE G14-->
+	<Tile id="-89030"/> <!--NEW TILE B3-->
+	<Tile id="-89031"/> <!--NEW TILE G14-->
 	<Tile id="-89511"/> <!--NEW TILE B7-->
 	<Tile id="-902"/> <!--red off-board destinations-->
 	
