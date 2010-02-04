@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.28 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.29 2010/02/04 22:15:56 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -292,7 +292,7 @@ implements TrainTypeI {
      * @return Returns the firstExchange.
      */
     public boolean nextCanBeExchanged() {
-        return firstCanBeExchanged && numberBoughtFromIPO.intValue() == 0;
+        return firstCanBeExchanged/* && numberBoughtFromIPO.intValue() == 0*/;
     }
 
     public void addToBoughtFromIPO() {
