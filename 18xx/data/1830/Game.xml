@@ -96,7 +96,7 @@
 			<IfOption name="UnlimitedTopTrains" value="no">
 				<Attributes amount="6"/>
 			</IfOption>
-			<ExchangeFirst cost="800"/>
+			<Exchange cost="800"/>
 		</Train>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
