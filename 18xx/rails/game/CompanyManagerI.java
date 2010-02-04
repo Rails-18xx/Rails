@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.13 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.14 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -55,6 +55,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
     CompanyI getCompany(String type, String name);
 
     public PublicCompanyI getCompanyByName(String name);
+    public List<CompanyTypeI> getCompanyTypes();
 
     public void closeAllPrivates();
 

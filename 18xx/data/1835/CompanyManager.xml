@@ -63,7 +63,9 @@
 			<SpecialProperties condition="ifAllExercised"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="LD"	longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20"/>
+	<Company name="LD"	longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20">
+		<Info key="ComesWithPresidency" parm="Sax,20"/>
+	</Company>
 	<Company name="BB"	longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
@@ -80,6 +82,10 @@
 	</Company>
 	<Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
 		<Home hex="H2"/>
+		<!-- The Minor Special Properties may be replaced by some other device, 
+			as Public Companies normally have no special properties.
+			PLEASE no not use these until further notice. -->
+		<Info key="SwapPrivateForCertificate" parm="M1,5,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -88,6 +94,7 @@
 	</Company>
 	<Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
 		<Home hex="E19" city="1"/>
+		<Info key="SwapPrivateForCertificate" parm="M2,10,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="phase=4" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
@@ -96,6 +103,7 @@
 	</Company>
 	<Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
 		<Home hex="F14"/>
+		<Info key="SwapPrivateForCertificate" parm="M3,5,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -104,6 +112,7 @@
 	</Company>
 	<Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
 		<Home hex="G5"/>
+		<Info key="SwapPrivateForCertificate" parm="M4,10,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="10"/>
@@ -112,6 +121,7 @@
 	</Company>
 	<Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
 		<Home hex="E19" city="2"/>
+		<Info key="SwapPrivateForCertificate" parm="M5,5,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>
@@ -120,6 +130,7 @@
 	</Company>
 	<Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
 		<Home hex="C11" city="1"/>
+		<Info key="SwapPrivateForCertificate" parm="M6,5,Pr"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifStarted" when="exchangeRound" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="Pr" share="5"/>

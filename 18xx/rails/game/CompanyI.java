@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.6 2010/01/16 21:16:14 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.7 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 /**
@@ -21,7 +21,7 @@ public interface CompanyI extends ConfigurableComponentI {
 
     /**
      * Returns the name of the Company
-     * 
+     *
      * @return the name of the Company
      */
     public String getName();
@@ -29,17 +29,17 @@ public interface CompanyI extends ConfigurableComponentI {
     public String getLongName();
 
     public String getInfoText();
-    
+
     /**
      * Returns the CompanyType of the Company
-     * 
+     *
      * @return the type of the Company
      */
     CompanyTypeI getType();
 
     /**
      * Returns the type name of the Company
-     * 
+     *
      * @return type name
      */
     public String getTypeName();

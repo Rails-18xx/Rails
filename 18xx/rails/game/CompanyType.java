@@ -1,5 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.10 2009/10/31 17:08:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.11 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rails.util.LocalText;
 import rails.util.Tag;
@@ -22,7 +25,9 @@ public class CompanyType implements CompanyTypeI {
     protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
 
     private CompanyI dummyCompany;
-    
+
+    protected List<CompanyI> companies = new ArrayList<CompanyI>();
+
     /**
      * The constructor.
      *
@@ -59,11 +64,11 @@ public class CompanyType implements CompanyTypeI {
          */
 
     }
-    
+
     public void finishConfiguration (GameManagerI gameManager) {
-        
+
     }
-    
+
     public CompanyI createCompany(String name, Tag tag)
             throws ConfigurationException {
         CompanyI newCompany = null;
@@ -74,6 +79,7 @@ public class CompanyType implements CompanyTypeI {
             }
             newCompany.init(name, this);
             newCompany.configureFromXML(tag);
+            companies.add(newCompany);
         } catch (CloneNotSupportedException e) {
             DisplayBuffer.add(LocalText.getText("CantCloneCompany",
                     name, this.name ));
@@ -100,7 +106,11 @@ public class CompanyType implements CompanyTypeI {
         return className;
     }
 
-    public void setCapitalisation(int mode) {
+    public List<CompanyI> getCompanies() {
+		return companies;
+	}
+
+	public void setCapitalisation(int mode) {
         this.capitalisation = mode;
     }
 

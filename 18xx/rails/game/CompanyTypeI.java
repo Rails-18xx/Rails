@@ -1,5 +1,7 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.5 2008/06/04 19:00:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.6 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
+
+import java.util.List;
 
 import rails.util.Tag;
 
@@ -38,6 +40,8 @@ public interface CompanyTypeI extends ConfigurableComponentI {
      * @return class name
      */
     public String getClassName();
+
+    public List<CompanyI> getCompanies();
 
     public void setCapitalisation(int mode);
 

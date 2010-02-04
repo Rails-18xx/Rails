@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.44 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.45 2010/02/04 21:27:59 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -157,7 +157,7 @@ implements ActionListener, KeyListener {
         infoMenu.add(remainingTilesMenuItem);
         menuBar.add(infoMenu);
 
-        addPrivatesInfo();
+        addCompanyInfo();
         addTrainsInfo();
         addPhasesInfo();
 
@@ -468,41 +468,28 @@ implements ActionListener, KeyListener {
 
     }
 
-    protected void addPrivatesInfo () {
+    protected void addCompanyInfo() {
 
-        List<PrivateCompanyI> privates = orWindow.gameUIManager.getGameManager().getAllPrivateCompanies();
-        if (privates == null || privates.isEmpty()) return;
+    	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+    	List<CompanyTypeI> comps = cm.getCompanyTypes();
+    	JMenu compMenu, menu, item;
+        
+        compMenu = new JMenu(LocalText.getText("Companies"));
+        compMenu.setEnabled(true);
+        infoMenu.add(compMenu);
 
-        privatesInfoMenu = new JMenu(LocalText.getText("PRIVATES"));
-        privatesInfoMenu.setEnabled(true);
-        infoMenu.add(privatesInfoMenu);
+    	for (CompanyTypeI type : comps) {
+    		menu = new JMenu (LocalText.getText(type.getName()));
+    		menu.setEnabled(true);
+            compMenu.add(menu);
 
-        JMenu item;
-        List<SpecialPropertyI> sps;
-        StringBuffer b = new StringBuffer("<html>");
-        String info;
-
-        for (PrivateCompanyI p : privates) {
-            sps = p.getSpecialProperties();
-            b.setLength(6);
-            if (Util.hasValue(p.getLongName())) {
-                appendInfoText (b, p.getLongName());
-            }
-            info = p.getInfoText();
-            if (Util.hasValue(info)) {
-                appendInfoText(b, info);
-            } else if (sps == null || sps.isEmpty()) {
-                appendInfoText(b, LocalText.getText("NoSpecialProperty"));
-            } else {
-                for (SpecialPropertyI sp : sps) {
-                    appendInfoText(b, sp.getInfo());
-                }
-            }
-            item = new JMenu (p.getName());
-            item.setEnabled(true);
-            item.add(new JMenuItem(b.toString()));
-            privatesInfoMenu.add(item);
-        }
+    		for (CompanyI comp : type.getCompanies()) {
+    			item = new JMenu(comp.getName());
+    			item.setEnabled(true);
+    			item.add(new JMenuItem(comp.getInfoText()));
+    			menu.add(item);
+    		}
+    	}
     }
 
     protected void addTrainsInfo() {
