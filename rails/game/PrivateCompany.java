@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.32 2010/02/03 05:37:54 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.33 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -43,7 +43,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
-            longName= tag.getAttributeAsString("longName", "");
+            longName= tag.getAttributeAsString("longname", name);
+            infoText = "<html>"+longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
 
             // sfy 1889 changed to IntegerArray
@@ -54,6 +55,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             if (blockedTag != null) {
                 blockedHexesString =
                         blockedTag.getAttributeAsString("hex");
+                infoText += "<br>Blocking "+blockedHexesString;
             }
 
             // Special properties
@@ -73,15 +75,16 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     sp.setCompany(this);
                     specialProperties.add(sp);
                     sp.configureFromXML(spTag);
+                    infoText += "<br>" + sp.getInfo();
                 }
             }
-            
+
             // Extra info text(usually related to extra-share special properties)
             Tag infoTag = tag.getChild("Info");
             if (infoTag != null) {
                 String infoKey = infoTag.getAttributeAsString("key");
                 String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
-                infoText = LocalText.getText(infoKey, (Object[])infoParms);
+                infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
             }
 
             // Closing conditions
@@ -114,7 +117,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         String conditionText = preventTag.getAttributeAsString("condition");
                         if (conditionText != null) { 
                             preventClosingConditions.add(conditionText);
-                        }
+            }
                     }
                 }
                 /* end sfy 1889 */
@@ -146,11 +149,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-    public void init(String name, CompanyTypeI type) {
+	public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
         specialProperties = new ArrayList<SpecialPropertyI>();
-        
+
         /* start sfy 1889 */
         preventClosingConditions = new ArrayList<String>();
     }
@@ -179,7 +182,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public int[] getRevenue() {
         return revenue;
     }
-    
+
     //  start: sfy 1889: new method
     public int getRevenueByPhase(PhaseI phase){
         if (phase != null) {
@@ -212,16 +215,16 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     @Override
     public void setClosed() {
 
-    	if (isClosed()) return;
+        if (isClosed()) return;
         if (!isCloseable()) return; /* sfy 1889 */
-    	
-    	super.setClosed();
+
+        super.setClosed();
         unblockHexes();
         moveTo(GameManager.getInstance().getBank().getScrapHeap());
         ReportBuffer.add(LocalText.getText("PrivateCloses", name));
 
         // For 1856: buyable tokens still owned by the private will now
-        // become commonly buyable, i.e. owned by GameManager. 
+        // become commonly buyable, i.e. owned by GameManager.
         // (Note: all such tokens will be made buyable from the Bank too,
         // this is done in OperatingRound_1856).
         List<SellBonusToken> moveToGM = new ArrayList<SellBonusToken>(4);
@@ -235,7 +238,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             log.debug("SP "+sbt.getName()+" is now a common property");
         }
     }
-    
+
     /* start sfy 1889 */
     public boolean isCloseable() {
       

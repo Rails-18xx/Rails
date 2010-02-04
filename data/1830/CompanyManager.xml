@@ -18,11 +18,11 @@
 		<Trains number="4,4,3,2"/>
 	</CompanyType>
 	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"
-			longName="Schuylkill Valley Navigation &amp; Railroad Company">
+			longname="Schuylkill Valley Navigation &amp; Railroad Company">
 		<Blocking hex="G15"/>
 	</Company>
 	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"
-			longName="Champlain &amp; St.Lawrence">
+			longname="Champlain &amp; St.Lawrence">
 		<Blocking hex="B20"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
@@ -31,7 +31,7 @@
 		</SpecialProperties>
 	</Company>
 	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"
-		longName="Delaware &amp; Hudson">
+		longname="Delaware &amp; Hudson">
 		<Blocking hex="F16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
@@ -43,7 +43,7 @@
 		</SpecialProperties>
 	</Company>
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"
-		longName="Mohawk &amp; Hudson">
+		longname="Mohawk &amp; Hudson">
 		<Blocking hex="D18"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
@@ -52,41 +52,49 @@
 		</SpecialProperties>
 	</Company>
 	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
-		longName="Camden &amp; Amboy">
+		longname="Camden &amp; Amboy">
 		<Info key="ComesWithCertificate" parm="PRR,10"/>
 		<Blocking hex="H18"/>
 	</Company>
 	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
-		longName="Baltimore &amp; Ohio">
+		longname="Baltimore &amp; Ohio">
 		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
 		<Blocking hex="I13,I15"/>
 	</Company>
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255">
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
+			longname="Baltimore &amp; Ohio">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
 		<Home hex="I15"/>
 	</Company>
-	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000">
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
+			longname="Pennsylvania Railroad">
 		<Home hex="H12"/>
 	</Company>
-	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000">
+	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+			longname="New York, New Haven &amp; Hartford">
 		<Home hex="G19" city="2"/>
 	</Company>
-	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000">
+	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+			longname="New York Central">
 		<Home hex="E19"/>
 	</Company>
-	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00">
-		<Home hex="E11" city="0"/>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+			longname="Erie Railroad">
+		<Home hex="E11"/>
 	</Company>
-	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060">
+	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+			longname="Boston &amp; Maine">
 		<Home hex="E23"/>
 	</Company>
-	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF">
+	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
+			longname="Chesapeake &amp; Ohio">
 		<Home hex="F6"/>
 	</Company>
-	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000">
+	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
+			longname="Canadian Pacific Railroad">
 		<Home hex="A19"/>
 	</Company>
 	<StartPacket roundClass="rails.game.StartRound_1830">

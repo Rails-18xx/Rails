@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.81 2010/02/03 20:16:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.82 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -261,6 +261,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         longName = tag.getAttributeAsString("longname", name);
+        infoText = "<html>"+longName;
 
         /* Configure public company features */
         fgHexColour = tag.getAttributeAsString("fgColour", fgHexColour);
@@ -292,11 +293,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (homeBaseTag != null) {
             homeHexName = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
+            infoText += "<br>Home=" + homeHexName;
         }
 
         Tag destinationTag = tag.getChild("Destination");
         if (destinationTag != null) {
             destinationHexName = destinationTag.getAttributeAsString("hex");
+            infoText += " Destination="+destinationHexName;
         }
 
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
@@ -316,6 +319,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 throw new ConfigurationException(
                         "Upper private price factor missing");
             upperPrivatePriceFactor = Float.parseFloat(upper);
+        }
+
+        // Extra info text(usually related to extra-share special properties)
+        Tag infoTag = tag.getChild("Info");
+        if (infoTag != null) {
+            String infoKey = infoTag.getAttributeAsString("key");
+            String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
+            infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
         }
 
         // TODO Normally set in the default train type. May be wrong place.
@@ -558,7 +569,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-    public void init(String name, CompanyTypeI type) {
+	public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
         this.portfolio = new Portfolio(name, this);
