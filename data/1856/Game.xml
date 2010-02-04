@@ -53,7 +53,7 @@
 			rustedTrain="3" releasedTrain="D"/>
 		<Train name="D" majorStops="99" cost="1100" amount="-1" startPhase="6"
 			rustedTrain="4">
-			<ExchangeFirst cost="750"/>
+			<Exchange cost="750"/>
 		</Train>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">

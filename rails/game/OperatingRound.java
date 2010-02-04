@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.96 2010/02/03 20:16:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.97 2010/02/04 22:23:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2113,7 +2113,7 @@ public class OperatingRound extends Round implements Observer {
                 }
                 // Even at train limit, exchange is allowed (per 1856)
                 if (train.canBeExchanged() && hasTrains) {
-                    cost = train.getType().getFirstExchangeCost();
+                    cost = train.getType().getExchangeCost();
                     if (cost <= cash) {
                         List<TrainI> exchangeableTrains =
                                 operatingCompany.getPortfolio().getUniqueTrains();

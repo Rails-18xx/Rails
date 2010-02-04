@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.12 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.13 2010/02/04 22:22:59 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI
@@ -31,7 +31,7 @@ extends ConfigurableComponentI, Cloneable {
     /**
      * @return Returns the firstExchangeCost.
      */
-    public int getFirstExchangeCost();
+    public int getExchangeCost();
 
     /**
      * @return Returns the majorStops.

@@ -69,7 +69,7 @@
 			</IfOption>
 			<Reach countTowns="no"/>
 			<Score cities="double"/>
-			<ExchangeFirst cost="800"/>
+			<Exchange cost="800"/>
 		</Train>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">

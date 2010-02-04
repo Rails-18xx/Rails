@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.29 2010/02/04 22:15:56 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.30 2010/02/04 22:23:01 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ implements TrainTypeI {
     private String scoreCities = "single";
     protected int cityScoreFactor = 1;
 
-    protected boolean firstCanBeExchanged = false;
+    protected boolean canBeExchanged = false;
     protected IntegerState numberBoughtFromIPO;
 
     protected boolean obsoleting = false;
@@ -53,7 +53,7 @@ implements TrainTypeI {
     protected int cost;
     protected int majorStops;
     protected int minorStops;
-    protected int firstExchangeCost;
+    protected int exchangeCost;
 
     protected String startedPhaseName = null;
     // Phase startedPhase;
@@ -180,10 +180,10 @@ implements TrainTypeI {
         }
 
         // Exchangeable
-        Tag swapTag = tag.getChild("ExchangeFirst");
+        Tag swapTag = tag.getChild("Exchange");
         if (swapTag != null) {
-            firstExchangeCost = swapTag.getAttributeAsInteger("cost", 0);
-            firstCanBeExchanged = (firstExchangeCost > 0);
+            exchangeCost = swapTag.getAttributeAsInteger("cost", 0);
+            canBeExchanged = (exchangeCost > 0);
         }
 
         if (real) {
@@ -292,7 +292,7 @@ implements TrainTypeI {
      * @return Returns the firstExchange.
      */
     public boolean nextCanBeExchanged() {
-        return firstCanBeExchanged/* && numberBoughtFromIPO.intValue() == 0*/;
+        return canBeExchanged/* && numberBoughtFromIPO.intValue() == 0*/;
     }
 
     public void addToBoughtFromIPO() {
@@ -306,8 +306,8 @@ implements TrainTypeI {
     /**
      * @return Returns the firstExchangeCost.
      */
-    public int getFirstExchangeCost() {
-        return firstExchangeCost;
+    public int getExchangeCost() {
+        return exchangeCost;
     }
 
     /**
