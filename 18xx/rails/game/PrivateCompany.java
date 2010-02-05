@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.33 2010/02/04 21:27:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.34 2010/02/05 19:55:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             if (blockedTag != null) {
                 blockedHexesString =
                         blockedTag.getAttributeAsString("hex");
-                infoText += "<br>Blocking "+blockedHexesString;
+                infoText += "<br>Blocking: "+blockedHexesString;
             }
 
             // Special properties
@@ -115,7 +115,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 if (preventTags != null) {
                     for (Tag preventTag: preventTags) {
                         String conditionText = preventTag.getAttributeAsString("condition");
-                        if (conditionText != null) { 
+                        if (conditionText != null) {
                             preventClosingConditions.add(conditionText);
             }
                     }
@@ -194,7 +194,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
     }
     // end: sfy 1889
-    
+
     /**
      * @return Phase this Private closes
      */
@@ -241,9 +241,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     /* start sfy 1889 */
     public boolean isCloseable() {
-      
+
       if (preventClosingConditions.isEmpty()) return true;
-        
+
       if (preventClosingConditions.contains("doesNotClose")) {
           log.debug("Private Company "+getName()+" does not close (unconditional).");
           return false;
@@ -259,7 +259,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         return preventClosingConditions;
     }
     /* end sfy 1889 */
-    
+
     /**
      * @param i
      */
