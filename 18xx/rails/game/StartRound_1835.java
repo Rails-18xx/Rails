@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.23 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.24 2010/02/05 19:58:18 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -54,13 +54,6 @@ public class StartRound_1835 extends StartRound {
 
     }
 
-    /**
-     * Get a list of items that may be bought immediately. <p> In an 1835-style
-     * auction this method will usually return several items.
-     *
-     * @return An array of start items that can be bought.
-     */
-    // public StartItem[] getBuyableItems() {return null;}
     @Override
     public boolean setPossibleActions() {
 
@@ -130,11 +123,18 @@ public class StartRound_1835 extends StartRound {
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
-                if (numPasses.intValue() == numPlayers) {
+                if (numPasses.intValue() >= numPlayers) {
                     /*
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
                      */
+                	numPasses.set(0);
+                	finishRound();
+
+                	// This code may be called recursively.
+                	// Jump out as soon as we have something to do
+                	if (!possibleActions.isEmpty()) break;
+
                     return false;
                 }
                 setNextPlayer();
