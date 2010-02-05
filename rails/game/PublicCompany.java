@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.82 2010/02/04 21:27:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.83 2010/02/05 19:56:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -293,13 +293,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (homeBaseTag != null) {
             homeHexName = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
-            infoText += "<br>Home=" + homeHexName;
         }
 
         Tag destinationTag = tag.getChild("Destination");
         if (destinationTag != null) {
             destinationHexName = destinationTag.getAttributeAsString("hex");
-            infoText += " Destination="+destinationHexName;
         }
 
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
@@ -682,6 +680,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                                                  + homeHexName
                                                  + " for company " + name);
             }
+            infoText += "<br>Home: " + homeHex.getInfo();
         }
 
         if (destinationHexName != null) {
@@ -693,6 +692,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                                                  + destinationHexName
                                                  + " for company " + name);
             }
+            infoText += "<br>Destination: "+destinationHex.getInfo();
         }
 
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
