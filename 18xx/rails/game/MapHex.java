@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.35 2010/02/03 20:16:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.36 2010/02/05 19:55:01 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,8 +11,7 @@ import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
-import rails.util.LocalText;
-import rails.util.Tag;
+import rails.util.*;
 
 /**
  * Represents a Hex on the Map from the Model side.
@@ -63,6 +62,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     protected int currentTileRotation;
     protected int[] tileCost;
     protected String cityName;
+    protected String infoText;
 
     /** Neighbouring hexes <i>to which track may be laid</i>. */
     protected MapHex[] neighbours = new MapHex[6];
@@ -106,7 +106,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Pattern namePattern = Pattern.compile("(\\D)(\\d+)");
 
-        name = tag.getAttributeAsString("name");
+        infoText = name = tag.getAttributeAsString("name");
         Matcher m = namePattern.matcher(name);
         if (!m.matches()) {
             throw new ConfigurationException("Invalid name format: " + name);
@@ -167,6 +167,9 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
         // City name
         cityName = tag.getAttributeAsString("city", "");
+        if (Util.hasValue(cityName)) {
+        	infoText += " " + cityName;
+        }
 
     }
 
@@ -924,6 +927,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     public String getCityName() {
         return cityName;
+    }
+
+    public String getInfo () {
+    	return infoText;
     }
 
     public boolean equals(MapHex hex) {
