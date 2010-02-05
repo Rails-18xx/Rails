@@ -94,11 +94,15 @@ public class StockRound extends Round {
     @Override
     public boolean setPossibleActions() {
 
-        boolean passAllowed = true;
-
-        setBuyableCerts();
+        boolean passAllowed = false;
 
         setSellableShares();
+        
+        if (isPlayerOverLimits (currentPlayer)) return true;
+        
+        passAllowed = true;
+
+        setBuyableCerts();
 
         setSpecialActions();
 
