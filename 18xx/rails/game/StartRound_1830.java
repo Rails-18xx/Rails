@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.29 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.30 2010/02/05 19:57:26 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -60,7 +60,6 @@ public class StartRound_1830 extends StartRound {
 
         possibleActions.clear();
 
-        //if (startPacket.areAllSold()) return false;  // SHOULDN'T GET HERE THEN
         if (currentPlayer == startPlayer) ReportBuffer.add("");
 
         while (possibleActions.isEmpty()) {
@@ -163,7 +162,7 @@ public class StartRound_1830 extends StartRound {
         if (passAllowed) {
             possibleActions.add(new NullAction(NullAction.PASS));
         }
-        
+
        return true;
     }
 
