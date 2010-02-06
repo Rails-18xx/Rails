@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.34 2010/02/05 19:55:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.35 2010/02/06 14:57:31 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -242,7 +242,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /* start sfy 1889 */
     public boolean isCloseable() {
 
-      if (preventClosingConditions.isEmpty()) return true;
+      if ((preventClosingConditions == null) || preventClosingConditions.isEmpty()) return true;
 
       if (preventClosingConditions.contains("doesNotClose")) {
           log.debug("Private Company "+getName()+" does not close (unconditional).");
@@ -255,6 +255,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
       }
       return true;
     }
+    
     public List<String> getPreventClosingConditions() {
         return preventClosingConditions;
     }
