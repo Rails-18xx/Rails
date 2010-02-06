@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.5 2009/10/31 17:08:27 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.6 2010/02/06 23:45:04 evos Exp $
  * 
  * Created on 14-Sep-2006
  * Change Log:
@@ -12,6 +12,8 @@ import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
 
 /**
+ * This class can only be used to offer a Special Property to the UI that does
+ * NOT need any return parameters. Example: the M&H/NYC swap in 1830.
  * @author Erik Vos
  */
 public class UseSpecialProperty extends PossibleORAction {
