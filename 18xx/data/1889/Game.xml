@@ -26,7 +26,7 @@
 				</IfOption>
 			</PlayerShareLimit>			
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
+			<StockRound sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
 			</StockRound>
 		</GameParameters>
