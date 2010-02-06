@@ -46,7 +46,7 @@
 		longname="Mohawk &amp; Hudson">
 		<Blocking hex="D18"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>

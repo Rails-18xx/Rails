@@ -39,7 +39,7 @@
 	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20">
 		<Blocking hex="D9"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
