@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.23 2010/02/03 05:37:55 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.24 2010/02/06 23:48:26 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -18,8 +18,14 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected MoveableHolder holder = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
+    
+    /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
     protected boolean usableIfOwnedByCompany = false;
+    protected boolean usableDuringSR = false;
+    protected boolean usableDuringOR = false;
+    protected boolean usableDuringTileLayingStep = false;
+    protected boolean usableDuringTokenLayingStep = false;
 
     protected String conditionText = "";
     protected String whenText = "";
@@ -64,7 +70,12 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         if (!Util.hasValue(whenText))
             throw new ConfigurationException(
                     "Missing condition in private special property");
-        // to be interpreted...
+        setUsableDuringSR(whenText.equalsIgnoreCase("anyTurn") 
+                || whenText.equalsIgnoreCase("srTurn"));
+        setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn") 
+                || whenText.equalsIgnoreCase("orTurn"));
+        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileLayingStep"));
+        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tokenLayingStep"));
 
         transferText = tag.getAttributeAsString("transfer", "");
         
@@ -127,6 +138,39 @@ public abstract class SpecialProperty implements SpecialPropertyI {
      */
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer) {
         this.usableIfOwnedByPlayer = usableIfOwnedByPlayer;
+    }
+    
+
+    public boolean isUsableDuringOR() {
+        return usableDuringOR;
+    }
+
+    public void setUsableDuringOR(boolean usableDuringOR) {
+        this.usableDuringOR = usableDuringOR;
+    }
+
+    public boolean isUsableDuringSR() {
+        return usableDuringSR;
+    }
+
+    public void setUsableDuringSR(boolean usableDuringSR) {
+        this.usableDuringSR = usableDuringSR;
+    }
+
+    public boolean isUsableDuringTileLayingStep() {
+        return usableDuringTileLayingStep;
+    }
+
+    public void setUsableDuringTileLayingStep(boolean usableDuringTileLayingStep) {
+        this.usableDuringTileLayingStep = usableDuringTileLayingStep;
+    }
+
+    public boolean isUsableDuringTokenLayingStep() {
+        return usableDuringTokenLayingStep;
+    }
+
+    public void setUsableDuringTokenLayingStep(boolean usableDuringTokenLayingStep) {
+        this.usableDuringTokenLayingStep = usableDuringTokenLayingStep;
     }
 
     public void setExercised() {

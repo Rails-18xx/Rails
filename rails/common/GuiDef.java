@@ -20,7 +20,7 @@ public class GuiDef {
         public String getDefaultClassName () {
             return defaultClassName;
         }
-   }
+    }
 
     public static String getDefaultClassName (ClassName key) {
         return key.getDefaultClassName();
@@ -50,4 +50,5 @@ public class GuiDef {
         MAP,
         STOCK_MARKET
     }
-}
+    
+ }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.8 2010/01/19 19:54:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.9 2010/02/06 23:48:26 evos Exp $ */
 package rails.game.special;
 
 import rails.game.ConfigurableComponentI;
@@ -21,6 +21,22 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
     public boolean isUsableIfOwnedByPlayer();
 
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer);
+
+    public boolean isUsableDuringOR();
+
+    public void setUsableDuringOR(boolean usableDuringOR);
+
+    public boolean isUsableDuringSR();
+
+    public void setUsableDuringSR(boolean usableDuringSR);
+
+    public boolean isUsableDuringTileLayingStep();
+
+    public void setUsableDuringTileLayingStep(boolean usableDuringTileLayingStep);
+
+    public boolean isUsableDuringTokenLayingStep();
+
+    public void setUsableDuringTokenLayingStep(boolean usableDuringTokenLayingStep);
 
     public void setExercised();
 
