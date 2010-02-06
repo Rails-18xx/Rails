@@ -82,7 +82,7 @@
 		<Company name="E" type="Private" basePrice="60" revenue="15"
 			longName="Dougo Railway">
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByPlayer" when="anyTime" class="rails.game.special.ExchangeForShare">
+				<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
 					<ExchangeForShare company="IR" share="10"/>
 				</SpecialProperty>
 			</SpecialProperties>
