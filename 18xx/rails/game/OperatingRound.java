@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.97 2010/02/04 22:23:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.98 2010/02/06 23:48:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,7 +8,9 @@ import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
 import rails.game.special.*;
+import rails.game.state.EnumState;
 import rails.game.state.IntegerState;
+import rails.game.state.State;
 import rails.util.LocalText;
 
 /**
@@ -19,7 +21,7 @@ import rails.util.LocalText;
 public class OperatingRound extends Round implements Observer {
 
     /* Transient memory (per round only) */
-    protected IntegerState stepObject;
+    protected EnumState<GameDef.OrStep> stepObject;
 
     protected boolean actionPossible = true;
 
@@ -63,29 +65,18 @@ public class OperatingRound extends Round implements Observer {
 
     protected PossibleAction savedAction = null;
 
-    //protected int cashToBeRaisedByPresident = 0;
-
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
-    public static final int STEP_INITIAL = 0;
-
-    public static final int STEP_LAY_TRACK = 0;
-
-    public static final int STEP_LAY_TOKEN = 1;
-
-    public static final int STEP_CALC_REVENUE = 2;
-
-    public static final int STEP_PAYOUT = 3;
-
-    public static final int STEP_BUY_TRAIN = 4;
-
-    public static final int STEP_TRADE_SHARES = 5;
-
-    public static int STEP_FINAL = 6;
-
-    protected static int[] steps =
-            new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN, STEP_CALC_REVENUE,
-                    STEP_PAYOUT, STEP_BUY_TRAIN, STEP_TRADE_SHARES, STEP_FINAL };
+    protected static GameDef.OrStep[] steps =
+            new GameDef.OrStep[] {
+                GameDef.OrStep.INITIAL,
+                GameDef.OrStep.LAY_TRACK, 
+                GameDef.OrStep.LAY_TOKEN, 
+                GameDef.OrStep.CALC_REVENUE,
+                GameDef.OrStep.PAYOUT, 
+                GameDef.OrStep.BUY_TRAIN, 
+                GameDef.OrStep.TRADE_SHARES, 
+                GameDef.OrStep.FINAL };
 
     // side steps
     public static final int STEP_DISCARD_TRAINS = -2;
@@ -93,10 +84,6 @@ public class OperatingRound extends Round implements Observer {
     protected boolean doneAllowed = false;
 
     protected TrainManager trainManager = gameManager.getTrainManager();
-
-    public static String[] stepNames =
-            new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
-                    "BuyTrain", "TradeShares", "Final" };
 
     /**
      * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
@@ -107,7 +94,7 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompanyArray = super.getOperatingCompanies();
 
-           guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
     }
@@ -137,7 +124,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (operate) {
 
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             for (PublicCompanyI company : operatingCompanyArray) {
                 msg.append(",").append(company.getName());
             }
@@ -145,14 +132,14 @@ public class OperatingRound extends Round implements Observer {
             log.info("Initial operating sequence is "+msg.toString());
 
             if (stepObject == null) {
-                stepObject = new IntegerState("ORStep", -1);
+                stepObject = new EnumState<GameDef.OrStep>("ORStep",  GameDef.OrStep.INITIAL);
                 stepObject.addObserver(this);
             }
 
             if (operatingCompanyArray.length > 0) {
 
                 if (setNextOperatingCompany(true)) {
-                    setStep(STEP_INITIAL);
+                    setStep(GameDef.OrStep.INITIAL);
                     return;
                 }
             }
@@ -296,7 +283,7 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             // Must be correct step
-            if (getStep() != STEP_LAY_TRACK) {
+            if (getStep() != GameDef.OrStep.LAY_TRACK) {
                 errMsg = LocalText.getText("WrongActionNoTileLay");
                 break;
             }
@@ -492,8 +479,10 @@ public class OperatingRound extends Round implements Observer {
         while (true) {
 
             // Checks
-            // Must be correct step (exception: home base lay)
-            if (getStep() != STEP_LAY_TOKEN && action.getType() != LayBaseToken.HOME_CITY) {
+            // Must be correct step (exception: home base lay & some special token lay)
+            if (getStep() != GameDef.OrStep.LAY_TOKEN 
+                    && action.getType() != LayBaseToken.HOME_CITY
+                    && action.getType() != LayBaseToken.SPECIAL_PROPERTY) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }
@@ -588,6 +577,10 @@ public class OperatingRound extends Round implements Observer {
                           + (extra ? "" : " not") + " extra");
 
             }
+            
+            // Jump out if we aren't in the token laying step
+            if (getStep() != GameDef.OrStep.LAY_TOKEN) return true;
+            
             if (!extra) {
                 currentNormalTokenLays.clear();
                 log.debug("This was a normal token lay");
@@ -795,7 +788,7 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             // Must be correct step
-            if (getStep() != STEP_CALC_REVENUE) {
+            if (getStep() != GameDef.OrStep.CALC_REVENUE) {
                 errMsg = LocalText.getText("WrongActionNoRevenue");
                 break;
             }
@@ -914,7 +907,7 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.getPortfolio().rustObsoleteTrains();
 
         // We have done the payout step, so continue from there
-        nextStep(STEP_PAYOUT);
+        nextStep(GameDef.OrStep.PAYOUT);
     }
 
     /** Default version, to be overridden if need be */
@@ -938,7 +931,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /** Take the next step after a given one (see nextStep()) */
-    protected void nextStep(int step) {
+    protected void nextStep(GameDef.OrStep step) {
         // Cycle through the steps until we reach one where a user action is
         // expected.
         int stepIndex;
@@ -947,14 +940,14 @@ public class OperatingRound extends Round implements Observer {
         }
         while (++stepIndex < steps.length) {
             step = steps[stepIndex];
-            log.debug("Step " + stepNames[step]);
+            log.debug("Step " + step);
 
-            if (step == STEP_LAY_TOKEN
+            if (step == GameDef.OrStep.LAY_TOKEN
                 && operatingCompany.getNumberOfFreeBaseTokens() == 0) {
                 continue;
             }
 
-            if (step == STEP_CALC_REVENUE) {
+            if (step == GameDef.OrStep.CALC_REVENUE) {
 
                 if (!operatingCompany.canRunTrains()) {
                     // No trains, then the revenue is zero.
@@ -965,12 +958,12 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            if (step == STEP_PAYOUT) {
+            if (step == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
                continue;
             }
 
-            if (step == STEP_TRADE_SHARES) {
+            if (step == GameDef.OrStep.TRADE_SHARES) {
 
                 // Is company allowed to trade trasury shares?
                 if (!operatingCompany.mayTradeShares()
@@ -988,7 +981,7 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        if (step == STEP_FINAL) {
+        if (step == GameDef.OrStep.FINAL) {
             finishTurn();
         } else {
             setStep(step);
@@ -997,7 +990,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /** Stub, can be overridden in subclasses to check for extra steps */
-    protected boolean gameSpecificNextStep (int step) {
+    protected boolean gameSpecificNextStep (GameDef.OrStep step) {
         return true;
     }
 
@@ -1009,6 +1002,7 @@ public class OperatingRound extends Round implements Observer {
         setCurrentPlayer(operatingCompany.getPresident());
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();
+        setStep (GameDef.OrStep.LAY_TRACK);
     }
 
     /**
@@ -1016,11 +1010,11 @@ public class OperatingRound extends Round implements Observer {
      * updateStatus(), which is called after each user action)
      */
     protected void prepareStep() {
-        int step = stepObject.intValue();
+        GameDef.OrStep step = stepObject.value();
 
-        if (step == STEP_LAY_TRACK) {
+        if (step == GameDef.OrStep.LAY_TRACK) {
             getNormalTileLays();
-        } else if (step == STEP_LAY_TOKEN) {
+        } else if (step == GameDef.OrStep.LAY_TOKEN) {
 
         } else {
             currentSpecialProperties = null;
@@ -1160,7 +1154,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     public void skip() {
-        log.debug("Skip step " + stepObject.intValue());
+        log.debug("Skip step " + stepObject.value());
         moveStack.start(true);
         nextStep();
     }
@@ -1192,7 +1186,7 @@ public class OperatingRound extends Round implements Observer {
 
         nextStep();
 
-        if (getStep() == STEP_FINAL) {
+        if (getStep() == GameDef.OrStep.FINAL) {
             finishTurn();
         }
 
@@ -1213,7 +1207,7 @@ public class OperatingRound extends Round implements Observer {
         if (!finishTurnSpecials()) return;
 
         if (setNextOperatingCompany(false)) {
-            setStep(STEP_INITIAL);
+            setStep(GameDef.OrStep.INITIAL);
         } else {
             finishOR();
         }
@@ -1286,7 +1280,7 @@ public class OperatingRound extends Round implements Observer {
         while (true) {
             // Checks
             // Must be correct step
-            if (getStep() != STEP_BUY_TRAIN) {
+            if (getStep() != GameDef.OrStep.BUY_TRAIN) {
                 errMsg = LocalText.getText("WrongActionNoTrainBuyingCost");
                 break;
             }
@@ -1493,7 +1487,8 @@ public class OperatingRound extends Round implements Observer {
         while (true) {
             // Checks
             // Must be correct step
-            if (getStep() != STEP_BUY_TRAIN && getStep() != STEP_DISCARD_TRAINS) {
+            if (getStep() != GameDef.OrStep.BUY_TRAIN 
+                    && getStep() != GameDef.OrStep.DISCARD_TRAINS) {
                 errMsg = LocalText.getText("WrongActionNoDiscardTrain");
                 break;
             }
@@ -1536,7 +1531,7 @@ public class OperatingRound extends Round implements Observer {
         // Check if any more companies must discard trains,
         // otherwise continue train buying
         if (!checkForExcessTrains()) {
-            stepObject.set(STEP_BUY_TRAIN);
+            stepObject.set(GameDef.OrStep.BUY_TRAIN);
         }
 
         //setPossibleActions();
@@ -1889,8 +1884,8 @@ public class OperatingRound extends Round implements Observer {
      *
      * @return The number that defines the next action.
      */
-    public int getStep() {
-        return stepObject.intValue();
+    public GameDef.OrStep getStep() {
+        return (GameDef.OrStep) stepObject.getObject();
     }
 
     /**
@@ -1900,9 +1895,8 @@ public class OperatingRound extends Round implements Observer {
      *
      * @param step
      */
-    protected void setStep(int step) {
-        if (step == STEP_INITIAL) initTurn();
-
+    protected void setStep(GameDef.OrStep step) {
+        
         stepObject.set(step);
 
     }
@@ -1927,10 +1921,15 @@ public class OperatingRound extends Round implements Observer {
         possibleActions.clear();
         selectedAction = null;
 
-        int step = getStep();
         boolean forced = false;
+        
+        if (getStep() == GameDef.OrStep.INITIAL) {
+            initTurn();
+            setStep (GameDef.OrStep.LAY_TRACK);
+        }
 
-        if (step == STEP_LAY_TRACK) {
+        GameDef.OrStep step = getStep();
+        if (step == GameDef.OrStep.LAY_TRACK) {
 
         	if (!operatingCompany.hasLaidHomeBaseTokens()) {
         		// This can occur if the home hex has two cities and track,
@@ -1948,7 +1947,7 @@ public class OperatingRound extends Round implements Observer {
 	            possibleActions.add(new NullAction(NullAction.SKIP));
         	}
 
-        } else if (step == STEP_LAY_TOKEN) {
+        } else if (step == GameDef.OrStep.LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
             log.debug("Normal token lays: " + currentNormalTokenLays.size());
@@ -1957,9 +1956,9 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
             possibleActions.add(new NullAction(NullAction.SKIP));
-        } else if (step == STEP_CALC_REVENUE) {
+        } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
-        } else if (step == STEP_BUY_TRAIN) {
+        } else if (step == GameDef.OrStep.BUY_TRAIN) {
             setBuyableTrains();
             // TODO Need route checking here.
             // TEMPORARILY allow not buying a train if none owned
@@ -1967,13 +1966,15 @@ public class OperatingRound extends Round implements Observer {
             //        || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
                         doneAllowed = true;
             //}
-        } else if (step == STEP_DISCARD_TRAINS) {
+        } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
+            
+            forced = true;
             setTrainsToDiscard();
         }
 
         // The following additional "common" actions are only available if the
         // primary action is not forced.
-        if (step >= 0 && !forced) {
+        if (!forced) {
 
             setBonusTokenLays();
 
@@ -2020,6 +2021,35 @@ public class OperatingRound extends Round implements Observer {
                             }
                         }
                         possibleActions.add (new BuyBonusToken (sbt));
+                    }
+                }
+            }
+             
+            // Are there other step-independent special properties owned by the company?
+            List<SpecialPropertyI> orsps = operatingCompany.getPortfolio().getAllSpecialProperties();
+            if (orsps != null) {
+                for (SpecialPropertyI sp : orsps) {
+                    if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
+                            && sp.isUsableDuringOR()) {
+                        if (sp instanceof SpecialTokenLay) {
+                            possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
+                        } else {
+                            possibleActions.add(new UseSpecialProperty(sp));
+                        }
+                    }
+                }
+            }
+            // Are there other step-independent special properties owned by teh president?
+            orsps = getCurrentPlayer().getPortfolio().getAllSpecialProperties();
+            if (orsps != null) {
+                for (SpecialPropertyI sp : orsps) {
+                    if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
+                            && sp.isUsableDuringOR()) {
+                        if (sp instanceof SpecialTokenLay) {
+                            possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
+                        } else {
+                            possibleActions.add(new UseSpecialProperty(sp));
+                        }
                     }
                 }
             }
@@ -2307,7 +2337,7 @@ public class OperatingRound extends Round implements Observer {
     /* TODO This is just a start of a possible approach to a Help system */
     @Override
     public String getHelp() {
-        int step = getStep();
+        GameDef.OrStep step = getStep();
         StringBuffer b = new StringBuffer();
         b.append("<big>Operating round: ").append(thisOrNumber).append(
                 "</big><br>");
@@ -2315,28 +2345,35 @@ public class OperatingRound extends Round implements Observer {
                 "</b> (president ").append(getCurrentPlayer().getName()).append(
                 ") has the turn.");
         b.append("<br><br>Currently allowed actions:");
-        if (step == STEP_LAY_TRACK) {
+        switch (step) {
+        case LAY_TRACK:
             b.append("<br> - Lay a tile");
             b.append("<br> - Press 'Done' if you do not want to lay a tile");
-        } else if (step == STEP_LAY_TOKEN) {
+            break;
+        case LAY_TOKEN:
             b.append("<br> - Lay a base token or press Done");
             b.append("<br> - Press 'Done' if you do not want to lay a base");
-        } else if (step == STEP_CALC_REVENUE) {
+            break;
+        case CALC_REVENUE:
             b.append("<br> - Enter new revenue amount");
             b.append("<br> - Press 'Done' if your revenue is zero");
-        } else if (step == STEP_PAYOUT) {
+            break;
+        case PAYOUT:
             b.append("<br> - Choose how the revenue will be paid out");
-        } else if (step == STEP_BUY_TRAIN) {
+            break;
+        case BUY_TRAIN:
             b.append("<br> - Buy one or more trains");
             b.append("<br> - Press 'Done' to finish your turn");
+            break;
         }
+        
         /* TODO: The below if needs be refined. */
         if (getCurrentPhase().isPrivateSellingAllowed()
-            && step != STEP_PAYOUT) {
+            && step != GameDef.OrStep.PAYOUT) {
             b.append("<br> - Buy one or more Privates");
         }
 
-        if (step == STEP_LAY_TRACK) {
+        if (step == GameDef.OrStep.LAY_TRACK) {
             b.append("<br><br><b>Tile laying</b> proceeds as follows:");
             b.append("<br><br> 1. On the map, select the hex that you want to lay a new tile upon.");
             b.append("<br>If tile laying is allowed on this hex, the current tile will shrink a bit <br>and a red background will show up around its edges;");

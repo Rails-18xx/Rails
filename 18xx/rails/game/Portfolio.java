@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.43 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.44 2010/02/06 23:48:26 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -622,8 +622,19 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /**
      * @return ArrayList of all special properties we have.
      */
-    public List<SpecialPropertyI> getSpecialProperties() {
+    public List<SpecialPropertyI> getPersistentSpecialProperties() {
         return specialProperties;
+    }
+    
+    public List<SpecialPropertyI> getAllSpecialProperties() {
+        List<SpecialPropertyI> sps = new ArrayList<SpecialPropertyI>();
+        if (specialProperties != null) sps.addAll(specialProperties);
+        for (PrivateCompanyI priv : privateCompanies) {
+            if (priv.getSpecialProperties() != null) {
+                sps.addAll(priv.getSpecialProperties());
+            }
+        }
+        return sps;
     }
 
     /**
@@ -654,7 +665,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
                         && (!sp.isExercised() || includeExercised)
                         && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Adding private SP: " + sp);
+                        log.debug("Portfolio "+name+" has SP " + sp);
                         result.add((T) sp);
                     }
                 }
@@ -668,7 +679,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
                         && (!sp.isExercised() || includeExercised)
                         && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
                             || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Adding persistent SP: " + sp);
+                        log.debug("Portfolio "+name+" has persistent SP " + sp);
                         result.add((T) sp);
                     }
                 }

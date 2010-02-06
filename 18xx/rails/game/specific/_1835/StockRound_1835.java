@@ -22,7 +22,7 @@ public class StockRound_1835 extends StockRound {
     /**
      * The company release rules for 1835.
      *
-     * For now these rules are hardcoded (which makes this code vulnerablt
+     * For now these rules are hardcoded (which makes this code vulnerable
      * to company name changes!). It did not seem worthwhile to
      * invent come complex XML for the unique 1835 rules on this matter.
      *

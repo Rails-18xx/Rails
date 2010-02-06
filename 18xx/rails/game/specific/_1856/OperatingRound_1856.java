@@ -19,20 +19,20 @@ public class OperatingRound_1856 extends OperatingRound {
 
     private Player playerToStartLoanRepayment = null;
 
-    public static final int STEP_REPAY_LOANS = 6;
-
     static {
-        STEP_FINAL = 7;
 
-        steps =
-                new int[] { STEP_LAY_TRACK, STEP_LAY_TOKEN, STEP_CALC_REVENUE,
-                        STEP_PAYOUT, STEP_BUY_TRAIN, STEP_TRADE_SHARES,
-                        STEP_REPAY_LOANS, STEP_FINAL };
-
-        stepNames =
-                new String[] { "LayTrack", "LayToken", "EnterRevenue", "Payout",
-                        "BuyTrain", "TradeShares", "RepayLoans", "Final" };
-    }
+        steps = new GameDef.OrStep[] { 
+                GameDef.OrStep.INITIAL,
+                GameDef.OrStep.LAY_TRACK,
+                GameDef.OrStep.LAY_TOKEN,
+                GameDef.OrStep.CALC_REVENUE,
+                GameDef.OrStep.PAYOUT, 
+                GameDef.OrStep.BUY_TRAIN, 
+                GameDef.OrStep.TRADE_SHARES,
+                GameDef.OrStep.REPAY_LOANS, 
+                GameDef.OrStep.FINAL 
+        };
+   }
 
     public OperatingRound_1856 (GameManagerI gameManager) {
         super (gameManager);
@@ -318,7 +318,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     1, operatingCompany.getValuePerLoan()));
         }
 
-        if (getStep() == STEP_REPAY_LOANS) {
+        if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
             if (operatingCompany.getMaxNumberOfLoans() != 0
@@ -420,7 +420,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int amount = super.calculateLoanAmount(numberOfLoans);
 
         // Deduct interest immediately?
-        if (stepObject.intValue() > STEP_PAYOUT) {
+        if (((GameDef.OrStep) stepObject.getObject()).compareTo(GameDef.OrStep.PAYOUT) > 0) {
             amount -= calculateLoanInterest(numberOfLoans);
         }
 
@@ -435,9 +435,9 @@ public class OperatingRound_1856 extends OperatingRound {
     }
 
     @Override
-    protected boolean gameSpecificNextStep (int step) {
+    protected boolean gameSpecificNextStep (GameDef.OrStep step) {
 
-        if (step == STEP_REPAY_LOANS) {
+        if (step == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
             if (operatingCompany.getMaxNumberOfLoans() == 0
@@ -468,7 +468,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         if (!resetOperatingCompanies(mergingCompanies)) return;
         if (operatingCompany != null) {
-            setStep(STEP_INITIAL);
+            setStep(GameDef.OrStep.INITIAL);
         } else {
             finishOR();
         }

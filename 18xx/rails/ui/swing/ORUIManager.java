@@ -33,7 +33,7 @@ public class ORUIManager implements DialogOwner {
     private PublicCompanyI orComp;
     private int orCompIndex;
 
-    private int orStep;
+    private GameDef.OrStep orStep;
     private int localStep;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
@@ -282,6 +282,14 @@ public class ORUIManager implements DialogOwner {
             } else if (actionType == LayBonusToken.class) {
 
                 prepareBonusToken((LayBonusToken) actions.get(0));
+                
+            } else if (actionType == LayBaseToken.class) {
+                
+                /* Only used outside the token laying step */
+                // Can currently handle only one location!
+                LayBaseToken lbt = (LayBaseToken) actions.get(0);
+                map.selectHex(map.getHexByName(lbt.getLocations().get(0).getName()));
+                layBaseToken (lbt);
 
             } else if (actionType == BuyBonusToken.class) {
 
@@ -303,6 +311,11 @@ public class ORUIManager implements DialogOwner {
             } else if (actionType == RepayLoans.class) {
 
                 repayLoans ((RepayLoans)actions.get(0));
+                
+            } else if (actionType == UseSpecialProperty.class) {
+                
+                useSpecialProperty ((UseSpecialProperty)actions.get(0));
+                
             }
 
         } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
@@ -1070,6 +1083,14 @@ public class ORUIManager implements DialogOwner {
             gameUIManager.setCurrentDialog (currentDialog, action);
         }
     }
+    
+    /** Used to process some special properties from the 'Special' menu */
+    /* In fact currently not used */
+    protected void useSpecialProperty (UseSpecialProperty action) {
+        
+        gameUIManager.processOnServer(action);
+        
+    }
 
     public void updateStatus() {
 
@@ -1092,8 +1113,7 @@ public class ORUIManager implements DialogOwner {
         orComp = oRound.getOperatingCompany();
         log.debug("Or comp index = " + orCompIndex+" in round "+oRound.getRoundName());
         log.debug("OR company = " + orComp.getName());
-        log.debug("OR step=" + orStep + " "
-                  + (orStep >= 0 ? OperatingRound.stepNames[orStep] : ""));
+        log.debug("OR step=" + orStep);
 
         if (oRound.getOperatingCompanyIndex() != orCompIndex) {
             if (orCompIndex >= 0) orPanel.finishORCompanyTurn(orCompIndex);
@@ -1105,7 +1125,8 @@ public class ORUIManager implements DialogOwner {
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
-        if (possibleActions.contains(LayTile.class)) {
+        //if (possibleActions.contains(LayTile.class)) {
+        if (orStep == GameDef.OrStep.LAY_TRACK) {
 
             orPanel.initTileLayingStep();
 
@@ -1114,7 +1135,8 @@ public class ORUIManager implements DialogOwner {
             log.debug("Tiles can be laid");
             mapRelatedActions.addAll(possibleActions.getType(LayTile.class));
 
-        } else if (possibleActions.contains(LayBaseToken.class)) {
+        //} else if (possibleActions.contains(LayBaseToken.class)) {
+        } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
 
             orWindow.requestFocus();
 
@@ -1198,7 +1220,7 @@ public class ORUIManager implements DialogOwner {
 
             orPanel.enableLoanRepayment (possibleActions.getType(RepayLoans.class).get(0));
 
-        } else if (orStep == OperatingRound.STEP_FINAL) {
+        } else if (orStep == GameDef.OrStep.FINAL) {
             // Does not occur???
             orPanel.finishORCompanyTurn(orCompIndex);
         }
@@ -1206,7 +1228,7 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(TakeLoans.class)) {
             orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
         }
-
+        
         setMapRelatedActions(mapRelatedActions);
 
         GameAction undoAction = null;
@@ -1245,21 +1267,16 @@ public class ORUIManager implements DialogOwner {
 
         orPanel.initSpecialActions();
 
-        // Bonus tokens can be laid anytime, so we must also handle
-        // these outside the token laying step.
-        if (possibleActions.contains(LayBonusToken.class)
-            && !possibleActions.contains(LayBaseToken.class)) {
+        // Bonus tokens (and sometimes base tokens) can be laid anytime, 
+        // so we must also handle these outside the token laying step.
+        if (possibleActions.contains(LayToken.class)
+                && orStep != GameDef.OrStep.LAY_TOKEN) {
 
-            List<LayBonusToken> bonusTokenActions =
-                    possibleActions.getType(LayBonusToken.class);
-            for (LayBonusToken btAction : bonusTokenActions) {
-                SpecialTokenLay stl = btAction.getSpecialProperty();
-                //BonusToken token = (BonusToken) stl.getToken();
-                //String text =
-                //        LocalText.getText("LayBonusToken",
-                //                token.toString(),
-                //                stl.getLocationCodeString() );
-                orPanel.addSpecialAction(btAction, stl.toMenu());
+            List<LayToken> tokenActions =
+                    possibleActions.getType(LayToken.class);
+            for (LayToken tAction : tokenActions) {
+                SpecialTokenLay stl = tAction.getSpecialProperty();
+                orPanel.addSpecialAction(tAction, stl.toMenu());
             }
         }
 
@@ -1283,6 +1300,16 @@ public class ORUIManager implements DialogOwner {
             orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
                     LocalText.getText("DestinationsReached"));
         }
+        
+        // Any other special properties, to be shown in the "Special" menu.
+        // (Currently not used)
+        if (possibleActions.contains(UseSpecialProperty.class)) {
+            for (UseSpecialProperty usp : possibleActions.getType(UseSpecialProperty.class)) {
+                SpecialPropertyI sp = usp.getSpecialProperty();
+                orPanel.addSpecialAction(usp, sp.getInfo());
+            }
+        }
+
 
         checkForGameSpecificActions();
 

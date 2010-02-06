@@ -383,7 +383,9 @@ public class StockRound extends Round {
                 currentPlayer.getPortfolio().getSpecialProperties(
                         SpecialProperty.class, false);
         for (SpecialPropertyI sp : sps) {
-            possibleActions.add(new UseSpecialProperty(sp));
+            if (sp.isUsableDuringSR()) {
+                possibleActions.add(new UseSpecialProperty(sp));
+            }
         }
     }
 
