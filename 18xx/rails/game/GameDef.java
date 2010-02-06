@@ -29,4 +29,25 @@ public class GameDef {
         public int defaultValueAsInt() { return (Integer) defaultValue; }
     }
 
+    /**
+     * OR step values
+     * @author Erik
+     */
+    public enum OrStep {
+        
+        INITIAL,
+        LAY_TRACK,
+        LAY_TOKEN,
+        CALC_REVENUE,
+        PAYOUT,
+        BUY_TRAIN,
+        TRADE_SHARES,
+        REPAY_LOANS,
+        FINAL,
+        
+        /* Out-of-sequence steps*/
+        DISCARD_TRAINS;
+        
+    }
+
 }
