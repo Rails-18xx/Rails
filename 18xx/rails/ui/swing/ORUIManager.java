@@ -1140,15 +1140,6 @@ public class ORUIManager implements DialogOwner {
 
             orWindow.requestFocus();
 
-            // Check first action.
-            // If it's to lay a home token, handle that here
-            LayBaseToken lbt = possibleActions.getType(LayBaseToken.class).get(0);
-            if (lbt.getType() == LayBaseToken.HOME_CITY) {
-            	map.setSelectedHex(map.getHexByName(lbt.getChosenHex().getName()));
-            	layBaseToken (lbt);
-            	return;
-            }
-
             // Include bonus tokens
             List<LayToken> possibleTokenLays =
                     possibleActions.getType(LayToken.class);
@@ -1275,8 +1266,18 @@ public class ORUIManager implements DialogOwner {
             List<LayToken> tokenActions =
                     possibleActions.getType(LayToken.class);
             for (LayToken tAction : tokenActions) {
+                
+                if (tAction instanceof LayBaseToken 
+                        && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
+                    // Forced action: select home city
+                    LayBaseToken lbt = (LayBaseToken)tAction;
+                    map.setSelectedHex(map.getHexByName(lbt.getChosenHex().getName()));
+                    layBaseToken (lbt);
+                    return;
+                   
+                }
                 SpecialTokenLay stl = tAction.getSpecialProperty();
-                orPanel.addSpecialAction(tAction, stl.toMenu());
+                if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
             }
         }
 
