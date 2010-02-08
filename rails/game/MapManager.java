@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.14 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.15 2010/02/08 21:20:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import rails.util.Tag;
 
@@ -33,6 +35,9 @@ public class MapManager implements ConfigurableComponentI {
             new int[] { 0, -1, 0, +1, +1, +1 };
     protected static final int[] yDeltaEW = new int[] { +1, 0, -1, -1, 0, +1 };
 
+    protected static Logger log =
+        Logger.getLogger(MapManager.class.getPackage().getName());
+    
     public MapManager() {
     }
 
