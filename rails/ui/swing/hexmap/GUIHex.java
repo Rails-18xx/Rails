@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.36 2010/01/31 22:22:36 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.37 2010/02/08 21:24:01 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -331,14 +331,8 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
                 city = homes.get(company);
 
                 // Only draw the company name if there isn't yet a token of that company
-                if (city.getTokens() != null) {
-                    for (TokenI token : city.getTokens()) {
-                        if (token instanceof BaseToken
-                                && ((BaseToken)token).getCompany() == company) {
-                            continue homes;
-                        }
-                    }
-                }
+                if (model.hasTokenOfCompany(company)) continue homes;
+                
                 p = getTokenCenter (1, 0, getHexModel().getCities().size(),
                         city.getNumber()-1);
                 drawHome (g2, company, p);
@@ -403,6 +397,7 @@ homes:      for (PublicCompanyI company : homes.keySet()) {
     }
 
     private void paintStationTokens(Graphics2D g2) {
+        
         if (getHexModel().getCities().size() > 1) {
             paintSplitStations(g2);
             return;
