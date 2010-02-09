@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.44 2010/02/03 20:16:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.45 2010/02/09 20:02:02 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -58,6 +58,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      * @return
      */
     public boolean canBuyPrivates();
+    public boolean canUseSpecialProperties();
 
     public boolean mustHaveOperatedToTradeShares();
 
@@ -253,7 +254,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
             StockMarketI stockMarket);
 
     public void updatePlayersWorth();
-    
+
     public boolean isSplitAllowed();
 
     public boolean isSplitAlways();
