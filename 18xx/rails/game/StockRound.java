@@ -97,9 +97,9 @@ public class StockRound extends Round {
         boolean passAllowed = false;
 
         setSellableShares();
-        
+
         if (isPlayerOverLimits (currentPlayer)) return true;
-        
+
         passAllowed = true;
 
         setBuyableCerts();
@@ -208,44 +208,74 @@ public class StockRound extends Round {
         from = pool;
         Map<String, List<PublicCertificateI>> map =
                 from.getCertsPerCompanyMap();
+        /* Allow for multiple share unit certificates (e.g. 1835) */
+        PublicCertificateI[] uniqueCerts;
+        int[] numberOfCerts;
+        int shares;
+        int shareUnit;
+        int maxNumberOfSharesToBuy;
 
         for (String compName : map.keySet()) {
             certs = map.get(compName);
             if (certs == null || certs.isEmpty()) continue;
-            number = certs.size();
-            cert = certs.get(0);
-            comp = cert.getCompany();
-            if (isSaleRecorded(currentPlayer, comp)) continue;
-            if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
-                    cert.getShare()) < 1) continue;
+
+            comp = certs.get(0).getCompany();
             stockSpace = comp.getCurrentSpace();
             price = stockSpace.getPrice();
+            shareUnit = comp.getShareUnit();
+            maxNumberOfSharesToBuy
+            	= maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
 
+            /* Checks if the player can buy any shares of this company */
+            if (maxNumberOfSharesToBuy < 1) continue;
+            if (isSaleRecorded(currentPlayer, comp)) continue;
             if (companyBoughtThisTurn != null) {
                 // If a cert was bought before, only brown zone ones can be
                 // bought again in the same turn
                 if (comp != companyBoughtThisTurn) continue;
                 if (!stockSpace.isNoBuyLimit()) continue;
             }
-            /* Only certs in the brown zone may be bought all at once */
-            if (!stockSpace.isNoBuyLimit()) {
-                number = 1;
-                /* Would the player exceed the per-company share hold limit? */
-                if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
 
-                /* Would the player exceed the total certificate limit? */
-                if (!stockSpace.isNoCertLimit()
-                    && !mayPlayerBuyCertificate(currentPlayer, comp, number))
-                    continue;
+            /* Check what share multiples are available
+             * Normally only 1, but 1 and 2 in 1835. Allow up to 4.
+             */
+            uniqueCerts = new PublicCertificateI[5];
+            numberOfCerts = new int[5];
+            for (PublicCertificateI cert2 : certs) {
+            	shares = cert2.getShares();
+                if (maxNumberOfSharesToBuy < shares) continue;
+            	numberOfCerts[shares]++;
+            	if (uniqueCerts[shares] != null) continue;
+            	uniqueCerts[shares] = cert2;
             }
 
-            // Does the player have enough cash?
-            while (number > 0 && playerCash < number * price)
-                number--;
+            /* Create a BuyCertificate action per share size */
+            for (shares = 1; shares < 5; shares++) {
+	            /* Only certs in the brown zone may be bought all at once */
+	            number = numberOfCerts[shares];
+	            if (number == 0) continue;
 
-            if (number > 0) {
-                possibleActions.add(new BuyCertificate(cert, from, price,
-                        number));
+	            if (!stockSpace.isNoBuyLimit()) {
+	                number = 1;
+	                /* Would the player exceed the per-company share hold limit? */
+	                if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
+
+	                /* Would the player exceed the total certificate limit? */
+	                if (!stockSpace.isNoCertLimit()
+	                    && !mayPlayerBuyCertificate(currentPlayer, comp, number))
+	                    continue;
+	            }
+
+	            // Does the player have enough cash?
+	            while (number > 0 && playerCash < number * price * shares) {
+	                number--;
+	            }
+
+	            if (number > 0) {
+	                possibleActions.add(new BuyCertificate(uniqueCerts[shares],
+	                		from, price,
+	                        number));
+	            }
             }
         }
 
@@ -338,7 +368,7 @@ public class StockRound extends Round {
              * Check what share units the player actually owns. In some games
              * (e.g. 1835) companies may have different ordinary shares: 5% and
              * 10%, or 10% and 20%. The president's share counts as a multiple
-             * of the lowest ordinary share unit type.
+             * of the smallest ordinary share unit type.
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
