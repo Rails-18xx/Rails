@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.83 2010/02/05 19:56:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.84 2010/02/09 20:02:02 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -146,6 +146,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected boolean canBuyStock = false;
 
     protected boolean canBuyPrivates = false;
+
+    protected boolean canUseSpecialProperties = false;
 
     /**
      * Minimum price for buying privates, to be multiplied by the original price
@@ -318,6 +320,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         "Upper private price factor missing");
             upperPrivatePriceFactor = Float.parseFloat(upper);
         }
+
+        Tag canUseSpecTag = tag.getChild("CanUseSpecialProperties");
+        if (canUseSpecTag != null) canUseSpecialProperties = true;
 
         // Extra info text(usually related to extra-share special properties)
         Tag infoTag = tag.getChild("Info");
@@ -1338,7 +1343,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return canBuyPrivates;
     }
 
-    /**
+    public boolean canUseSpecialProperties() {
+		return canUseSpecialProperties;
+	}
+
+	/**
      * Get the unit of share.
      *
      * @return The percentage of ownership that is called "one share".
