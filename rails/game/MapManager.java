@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.15 2010/02/08 21:20:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.16 2010/02/09 20:00:40 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -37,7 +37,7 @@ public class MapManager implements ConfigurableComponentI {
 
     protected static Logger log =
         Logger.getLogger(MapManager.class.getPackage().getName());
-    
+
     public MapManager() {
     }
 
@@ -213,5 +213,57 @@ public class MapManager implements ConfigurableComponentI {
         return locations;
     }
 
+    /**
+     * Calculate the distance between two hexes as in 1835,
+     * i.e. as "the crow without a passport flies".
+     * @param hex1
+     * @param hex2
+     * @return
+     */
+    public int getHexDistance (MapHex hex1, MapHex hex2) {
+    	Map<MapHex, Integer> passed = new HashMap<MapHex, Integer>();
+    	return calculateHexDistance (hex1, hex2, 1, passed);
+    }
 
+    /** Helper method to calculate the distance between two hexes.
+     * Called recursively. */
+    private int calculateHexDistance (MapHex hex1, MapHex hex2, int depth,
+    		Map<MapHex, Integer> passed) {
+
+    	/* Map to sort the neighbours (roughly) into decreasing distance */
+    	SortedMap<Integer, MapHex> neighbours = new TreeMap<Integer, MapHex>();
+
+    	for (MapHex hex3 : hex1.getNeighbors()) {
+
+    		if (hex3 == null) continue;
+
+    		// Are we finished?
+    		if (hex3 == hex2) {
+				return 1;
+    		}
+
+    		if (passed.containsKey(hex3) && passed.get(hex3) < depth - 1) {
+    			// Backtrack
+    			return -1;
+    		}
+
+    		// Sort neighbours on decreasing (rough) distance
+        	int distance = Math.abs(hex2.getX() - hex3.getX())
+				+ Math.abs(hex2.getY() - hex3.getY());
+        	neighbours.put(distance, hex3);
+    	}
+		passed.put (hex1, depth);
+		for (MapHex neighbour : neighbours.values()) {
+    		if (passed.containsKey(neighbour)) continue;
+    		int result = calculateHexDistance (neighbour, hex2, depth+1, passed);
+    		if (result < 0) {
+    			return 0; // Continue backtracking
+    		} else if (result > 0) {
+    			return result + 1;
+    		}
+    		// Continue loop if result == 0
+    	}
+		// Should never get here
+    	return 0;
+    }
 }
