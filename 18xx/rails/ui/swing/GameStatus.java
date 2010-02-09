@@ -522,7 +522,9 @@ public class GameStatus extends GridPanel implements ActionListener {
 
                     for (int i = 1; i <= sale.getMaximumNumber(); i++) {
                         options.add(LocalText.getText("SellShares",
-                                (i * sale.getShare()),
+                        		i,
+                                sale.getShare(),
+                                i * sale.getShare(),
                                 sale.getCompanyName(),
                                 Bank.format(i * sale.getShareUnits()
                                                     * sale.getPrice()) ));
