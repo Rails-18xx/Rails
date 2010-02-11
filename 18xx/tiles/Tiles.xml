@@ -84,7 +84,7 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 	</Tile>
 	<Tile colour="yellow" id="4" name="4">
-		<Station id="city1" position="0" type="Town"/>
+		<Station id="city1" position="0" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile>
@@ -3325,6 +3325,12 @@
 		<Track from="side1" gauge="normal" to="side0"/>
 		<Track from="side0" gauge="normal" to="side5"/>
 	</Tile>
+	<Tile colour="fixed" id="-1143" name="Bham1851">
+		<Station id="city1" position="0" type="Town"/>
+		<Track from="side5" gauge="normal" to="city1"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+	</Tile>
 	<Tile colour="fixed" id="-89030" name="1889 B3">
 		<Station id="city1" position="252" type="Town" value="20"/>
 		<Track from="city1" gauge="normal" to="side3"/>
@@ -3411,5 +3417,11 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side5"/>
+	</Tile>
+	<Tile colour="yellow" id="-56001" name="Toronto">
+		<Station id="city1" position="102" slots="1" type="City" value="30"/>
+		<Station id="city2" position="402" slots="1" type="City" value="30"/>
+		<Track from="city2" gauge="normal" to="side4"/>
+		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile>
 </Tiles>

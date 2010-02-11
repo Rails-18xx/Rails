@@ -78,7 +78,7 @@
 	<Hex name="N3" tile="-10" label="L" cost="40"/>
 	<Hex name="N7" tile="0"/>
 	<Hex name="N9" tile="-1"/>
-	<Hex name="N11" tile="-21" orientation="2" city="Toronto"/><!-- home city to be defined -->
+	<Hex name="N11" tile="-56001" orientation="0" city="Toronto"/><!-- home city to be defined -->
 	<Hex name="N15" tile="0" cost="40"/>
 	<Hex name="N17" tile="-20" city="Welland"/>
 	<Hex name="N19" tile="0" cost="40"/>

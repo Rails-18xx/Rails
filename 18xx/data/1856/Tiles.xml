@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Tiles><Tile colour="white" id="0" name="empty"/><Tile colour="white" id="-1" name="1 village">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Tiles><Tile colour="white" id="0" name="empty"/><Tile colour="white" id="-1" name="1 village">
 		<Station id="city1" position="002" type="Town"/>
 	</Tile><Tile colour="white" id="-2" name="2 villages">
 		<Station id="city1" position="102" type="Town"/>
@@ -12,11 +12,11 @@
 	</Tile><Tile colour="yellow" id="-20" name="2 cities">
 		<Station id="city1" position="002" slots="1" type="City"/>
 		<Station id="city2" position="302" slots="1" type="City"/>
-	</Tile><Tile colour="yellow" id="-21" name="NY">
-		<Station id="city1" position="202" slots="1" type="City" value="40"/>
-		<Station id="city2" position="502" slots="1" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city2" gauge="normal" to="side5"/>
+	</Tile><Tile colour="yellow" id="-56001" name="Toronto">
+		<Station id="city1" position="102" slots="1" type="City" value="30"/>
+		<Station id="city2" position="402" slots="1" type="City" value="30"/>
+		<Track from="city2" gauge="normal" to="side4"/>
+		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile><Tile colour="red" id="-901" name="OM 1 way">
 		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
 		<Track from="city1" gauge="normal" to="side2"/>

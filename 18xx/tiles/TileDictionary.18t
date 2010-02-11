@@ -14167,5 +14167,34 @@ object TTilesWrapper
           Revenue = 80
           RevenuePosition = tp3CornerF
         end>
+    end
+    item
+      Code = -56001
+      LongName = 'Toronto'
+      Category = 'Toronto'
+      CategoryPosition = tp3SideA
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2SideE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp2SideB
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideB
+          Revenue = 30
+          RevenuePosition = tp3SideF
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideE
+          Revenue = 30
+          RevenuePosition = tp3SideC
+        end>
     end>
 end

@@ -454,6 +454,10 @@
 			<junction>
 				<junType>jtWhistlestop</junType>
 				<position>tpCenter</position>
+				<revenue>
+					<value>10</value>
+					<position>tp3CornerA</position>
+				</revenue>
 			</junction>
 		</junctions>
 		<connections>
@@ -18933,7 +18937,36 @@
 			</connection>
 		</connections>
 	</tile>
-		<tile>
+	<tile>
+		<ID>-1143</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>Bham1851</name>
+		<junctions>
+			<junction>
+				<junType>jtWhistlestop</junType>
+				<position>tpCenter</position>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideF</position1>
+				<position2>tpCenter</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideA</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideB</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
 		<ID>-89030</ID>
 		<shape>tsHexagon</shape>
 		<level>tlMapFixed</level>
@@ -19096,7 +19129,7 @@
 	<tile>
 		<ID>-89012</ID>
 		<shape>tsHexagon</shape>
-		<level>tlYellow</level>
+		<level>tlMapUpgradableToGreen</level>
 		<name>1889 Takamatsu K5</name>
 		<category>
 			<value>Takamatsu</value>
@@ -19133,7 +19166,7 @@
 	<tile>
 		<ID>-89115</ID>
 		<shape>tsHexagon</shape>
-		<level>tlYellow</level>
+		<level>tlMapUpgradableToGreen</level>
 		<name>1889 Ohzu C4</name>
 		<category>
 			<value>Ohzu</value>
@@ -19461,6 +19494,46 @@
 				<conType>ctNormal</conType>
 				<position1>tpCenter</position1>
 				<position2>tp4SideF</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-56001</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapUpgradableToGreen</level>
+		<name>Toronto</name>
+		<category>
+			<value>Toronto</value>
+			<position>tp3SideA</position>
+		</category>
+		<junctions>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tp2SideB</position>
+				<revenue>
+					<value>30</value>
+					<position>tp3SideF</position>
+				</revenue>
+			</junction>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tp2SideE</position>
+				<revenue>
+					<value>30</value>
+					<position>tp3SideC</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp2SideE</position1>
+				<position2>tp4SideE</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp2SideB</position1>
+				<position2>tp4SideB</position2>
 			</connection>
 		</connections>
 	</tile>
