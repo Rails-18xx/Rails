@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.45 2010/02/09 20:02:02 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.46 2010/02/14 20:48:02 stefanfrey Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -286,13 +286,17 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public ModelObject getPrivatesSpentThisTurnModel();
 
     public void layTile(MapHex hex, TileI tile, int orientation, int cost);
-
+    
+    public void layTileInNoMapMode(int cost);
+    
     public ModelObject getTilesLaidThisTurnModel();
 
     public ModelObject getTilesCostThisTurnModel();
 
     public void layBaseToken(MapHex hex, int cost);
 
+    public void layBaseTokenInNoMapMode(int cost);
+    
     public ModelObject getTokensLaidThisTurnModel();
 
     public ModelObject getTokensCostThisTurnModel();

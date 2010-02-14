@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.45 2010/02/04 21:27:59 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.46 2010/02/14 20:48:21 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -22,6 +22,7 @@ implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String OPERATING_COST_CMD = "OperatingCost";
     public static final String BUY_PRIVATE_CMD = "BuyPrivate";
     public static final String BUY_TRAIN_CMD = "BuyTrain";
     private static final String WITHHOLD_CMD = "Withhold";
@@ -93,7 +94,8 @@ implements ActionListener, KeyListener {
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
             privatesCaption, loansCaption;
-
+    
+    private ActionButton buttonOC; // sfy: button for operating costs 
     private ActionButton button1;
     private ActionButton button2;
     private ActionButton button3;
@@ -126,6 +128,7 @@ implements ActionListener, KeyListener {
         parentFrame = parent;
 
         round = gameUIManager.getCurrentRound();
+//        noMapMode = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.NO_MAP_MODE);
         privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
@@ -222,6 +225,15 @@ implements ActionListener, KeyListener {
 
     private void initButtonPanel() {
         buttonPanel = new JPanel();
+
+        // sfy: operatingcosts button
+        buttonOC = new ActionButton(LocalText.getText("OCButtonLabel"));
+        buttonOC.setActionCommand(OPERATING_COST_CMD);
+        buttonOC.setMnemonic(KeyEvent.VK_O);
+        buttonOC.addActionListener(this);
+        buttonOC.setEnabled(false);
+        buttonOC.setVisible(false);
+        buttonPanel.add(buttonOC);
 
         button1 = new ActionButton(LocalText.getText("LayTile"));
         button1.setActionCommand(LAY_TILE_CMD);
@@ -562,6 +574,7 @@ implements ActionListener, KeyListener {
 
     public void finish() {
 
+        buttonOC.setEnabled(false); // operatingcosts sfy
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);
@@ -645,9 +658,12 @@ implements ActionListener, KeyListener {
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
 
+        buttonOC.clearPossibleActions();
         button1.clearPossibleActions();
         button2.clearPossibleActions();
         button3.clearPossibleActions();
+
+        buttonOC.setEnabled(false);
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);
@@ -680,7 +696,7 @@ implements ActionListener, KeyListener {
         button1.setEnabled(true);
         button1.setVisible(true);
     }
-
+    
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
 
@@ -737,6 +753,16 @@ implements ActionListener, KeyListener {
         button1.setEnabled(enabled);
         button1.setVisible(true);
     }
+
+    // operating costs sfy
+    public void initOperatingCosts(boolean enabled) {
+        
+        buttonOC.setEnabled(enabled);
+        buttonOC.setVisible(enabled);
+        tileCaption.setHighlight(enabled);
+        tokenCaption.setHighlight(enabled);
+    }
+    
 
     public void initPrivateBuying(boolean enabled) {
 

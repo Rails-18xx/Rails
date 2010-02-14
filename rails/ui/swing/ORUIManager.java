@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.correct.*;
 import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
@@ -317,6 +318,10 @@ public class ORUIManager implements DialogOwner {
                 useSpecialProperty ((UseSpecialProperty)actions.get(0));
                 
             }
+
+        } else if (command.equals(ORPanel.OPERATING_COST_CMD)) {
+
+            operatingCosts();
 
         } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
 
@@ -747,6 +752,63 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    public void operatingCosts(){
+        
+        List<String> textOC = new ArrayList<String>();
+        List<OperatingCost> actionOC = possibleActions.getType(OperatingCost.class);
+        
+        for (OperatingCost ac:actionOC) {
+            
+            int suggestedCost = ac.getAmount();
+            String suggestedCostText;
+            if (suggestedCost == 0)
+                suggestedCostText = LocalText.getText("OCAmountEntry");
+            else
+                suggestedCostText = Bank.format(suggestedCost);
+            
+            OperatingCost.OCType t = ac.getOCType();
+            if (t == OperatingCost.OCType.LAY_TILE) 
+                textOC.add(LocalText.getText("OCLayTile", 
+                    suggestedCostText ));
+            
+            if (t == OperatingCost.OCType.LAY_BASE_TOKEN) 
+                textOC.add(LocalText.getText("OCLayBaseToken", 
+                    suggestedCostText ));
+        }
+        
+        if (!textOC.isEmpty()) {
+            String chosenOption = (String) JOptionPane.showInputDialog(orWindow, 
+                    LocalText.getText("OCSelectMessage"),
+                    LocalText.getText("OCSelectTitle"),
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    textOC.toArray(), textOC.get(0));
+            if (chosenOption != null) {
+                int index = textOC.indexOf(chosenOption);
+                OperatingCost chosenAction = actionOC.get(index);
+                if (chosenAction.getAmount() == 0) {
+                    String costString = (String) JOptionPane.showInputDialog(orWindow,
+                            LocalText.getText("OCDialogMessage", chosenOption),
+                            LocalText.getText("OCDialogTitle"),
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            null, chosenAction.getAmount());
+                    int cost;
+                    try {
+                        cost = Integer.parseInt(costString);
+                    } catch (NumberFormatException e) {
+                        cost = 0;
+                    }
+                    chosenAction.setAmount(cost);
+                } else {
+                    chosenAction.setAmount(chosenAction.getAmount());
+                }
+                
+                if (orWindow.process(chosenAction)) {
+                    updateMessage();
+                }
+            }
+        }
+    }
+    
     public void buyTrain() {
 
         List<String> prompts = new ArrayList<String>();
@@ -1125,6 +1187,9 @@ public class ORUIManager implements DialogOwner {
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
+        // sfy operating costs
+        orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
+        
         //if (possibleActions.contains(LayTile.class)) {
         if (orStep == GameDef.OrStep.LAY_TRACK) {
 
