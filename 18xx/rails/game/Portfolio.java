@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.44 2010/02/06 23:48:26 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.45 2010/02/14 20:47:45 stefanfrey Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -591,6 +591,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             return true;
         } else if (object instanceof SpecialPropertyI) {
             return addSpecialProperty((SpecialPropertyI) object);
+        } else if (object instanceof TokenI) {
+            return addToken((TokenI) object);
         } else {
             return false;
         }
@@ -614,6 +616,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             return true;
         } else if (object instanceof SpecialPropertyI) {
             return removeSpecialProperty((SpecialPropertyI) object);
+        } else if (object instanceof TokenI) {
+            return removeToken((TokenI) object);
         } else {
             return false;
         }

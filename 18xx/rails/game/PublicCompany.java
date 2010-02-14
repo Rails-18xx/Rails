@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.84 2010/02/09 20:02:02 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.85 2010/02/14 20:48:02 stefanfrey Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1606,7 +1606,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
             extraTiles.add(-1);
         }
     }
-
+    
+    @Override
+    public void layTileInNoMapMode(int cost) {
+        if (cost > 0) tilesCostThisTurn.add(cost);
+        tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
+    }
+    
     public ModelObject getTilesLaidThisTurnModel() {
         return tilesLaidThisTurn;
     }
@@ -1620,6 +1626,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
         String tokenLaid = hex.getName();
         tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
         if (cost > 0) tokensCostThisTurn.add(cost);
+    }
+    
+    @Override
+    public void layBaseTokenInNoMapMode(int cost) {
+        if (cost > 0) tokensCostThisTurn.add(cost);
+        tokensLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
 
     /**

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.16 2010/02/09 20:00:40 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.17 2010/02/14 20:47:34 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -23,6 +23,9 @@ public class MapManager implements ConfigurableComponentI {
     protected MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
     protected int maxX, maxY;
+    
+    // upgrade costs on the map for noMapMode
+    protected SortedSet<Integer> possibleTileCosts;
 
     protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
     protected static final int[] yXEvenDeltaNS =
@@ -79,14 +82,20 @@ public class MapManager implements ConfigurableComponentI {
         MapHex hex;
         maxX = 0;
         maxY = 0;
+        possibleTileCosts = new TreeSet<Integer>();
         for (Tag hexTag : hexTags) {
             hex = new MapHex(this);
             hex.configureFromXML(hexTag);
             mHexes.put(hex.getName(), hex);
             maxX = Math.max(maxX, hex.getX());
             maxY = Math.max(maxY, hex.getY());
+            int[] tileCosts = hex.getTileCostAsArray();
+            for (int i=0; i<tileCosts.length; i++){
+                possibleTileCosts.add(tileCosts[i]);
+            }
         }
-
+        log.debug("Possible tileCosts on map are "+possibleTileCosts);
+        
         hexes = new MapHex[1 + maxX][1 + maxY];
 
         for (String hexName : mHexes.keySet()) {
@@ -192,6 +201,10 @@ public class MapManager implements ConfigurableComponentI {
             stations.addAll(hex.getCities());
         }
         return stations;
+    }
+
+    public SortedSet<Integer> getPossibleTileCosts() {
+        return possibleTileCosts;
     }
 
     public List<MapHex> parseLocations (String locationCodes)

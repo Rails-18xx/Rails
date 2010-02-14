@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.98 2010/02/06 23:48:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.99 2010/02/14 20:47:45 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import rails.common.GuiDef;
 import rails.game.action.*;
+import rails.game.correct.*;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
 import rails.game.special.*;
@@ -25,6 +26,9 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean actionPossible = true;
 
+    /* sfy: using rails without map support */
+    protected boolean noMapMode = false;
+    
     protected TreeMap<Integer, PublicCompanyI> operatingCompanies;
     protected List<PublicCompanyI> companiesOperatedThisRound
         = new ArrayList<PublicCompanyI> ();
@@ -67,7 +71,7 @@ public class OperatingRound extends Round implements Observer {
 
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
-    protected static GameDef.OrStep[] steps =
+      protected static GameDef.OrStep[] steps =
             new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
                 GameDef.OrStep.LAY_TRACK, 
@@ -93,7 +97,10 @@ public class OperatingRound extends Round implements Observer {
         super (gameManager);
 
         operatingCompanyArray = super.getOperatingCompanies();
-
+        
+        // sfy NoMapMode
+        noMapMode = GameOption.convertValueToBoolean("NoMapMode", getGameOption("NoMapMode"));
+        
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
@@ -138,7 +145,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (operatingCompanyArray.length > 0) {
 
-                if (setNextOperatingCompany(true)) {
+                if (setNextOperatingCompany(true)){
                     setStep(GameDef.OrStep.INITIAL);
                     return;
                 }
@@ -192,6 +199,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof BuyBonusToken) {
 
             result = buyBonusToken((BuyBonusToken) selectedAction);
+
+        } else if (selectedAction instanceof CorrectCashI) {
+            // includes OperatingCost
+            result = executeCorrectCash((CorrectCashI) selectedAction);
 
         } else if (selectedAction instanceof SetDividend) {
 
@@ -555,7 +566,9 @@ public class OperatingRound extends Round implements Observer {
             operatingCompany.layBaseToken(hex, cost);
 
             // If this is a home base token lay, stop here
-            if (action.getType() == LayBaseToken.HOME_CITY) return true;
+            if (action.getType() == LayBaseToken.HOME_CITY) {
+                return true;
+            }
 
             if (cost > 0) {
                 new CashMove(operatingCompany, bank, cost);
@@ -737,6 +750,9 @@ public class OperatingRound extends Round implements Observer {
 
         return true;
     }
+    
+    
+    
     public boolean setRevenueAndDividend(SetDividend action) {
 
         String errMsg = validateSetRevenueAndDividend (action);
@@ -920,6 +936,92 @@ public class OperatingRound extends Round implements Observer {
         return action.getActualRevenue();
     }
 
+    public boolean executeCorrectCash(CorrectCashI action){
+
+        CashHolder ch = action.getCashHolder();
+        int amount = action.getAmount();
+        int cost = -amount; // costs are minus of CashCorrectamount
+
+        // operating costs related stuff
+        boolean flagOC = false;
+        OperatingCost actionOC = null;
+        OperatingCost.OCType typeOC = null;
+        PublicCompanyI pc = null;
+        String textError = "CCExecutionError";
+        
+        if (action instanceof OperatingCost) {
+            flagOC = true;
+            actionOC = (OperatingCost) action;
+            typeOC = actionOC.getOCType(); 
+            pc = (PublicCompanyI) ch;
+            textError = "OCExecutionError";
+        }
+        
+        String errMsg = null;
+
+        while (true) {
+            if ((amount + ch.getCash()) < 0) {
+                errMsg =
+                    LocalText.getText("NotEnoughMoney", 
+                            ch.getName(),
+                            Bank.format(ch.getCash()),
+                            Bank.format(cost) 
+                    );
+                break;
+            }
+            if (flagOC && (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) && (pc.getNumberOfFreeBaseTokens() == 0)) {
+                errMsg = 
+                    LocalText.getText("HasNoTokensLeft", ch.getName());
+                break;
+            }
+            break;
+        }
+        
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText(textError,
+                    ch.getName(),
+                    errMsg));
+            return false;
+        }
+        
+        moveStack.start(true);
+
+        if (amount < 0) {
+            // negative amounts: remove cash from cashholder
+            new CashMove(ch, bank, cost);
+        } else if (amount > 0) {
+            // positive amounts: add cash to cashholder
+            new CashMove(bank, ch, amount);
+        }
+
+        if (flagOC) {
+            
+            if (typeOC == OperatingCost.OCType.LAY_TILE) {
+                pc.layTileInNoMapMode(cost);
+                ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
+                        pc.getName(),
+                        Bank.format(cost) ));
+            }
+            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
+                // move token to Bank
+                BaseToken token = pc.getFreeToken();
+                if (token == null) {
+                    log.error("Company " + pc.getName() + " has no free token");
+                    return false;
+                } else {
+                    token.moveTo(bank.getUnavailable());
+                }
+                pc.layBaseTokenInNoMapMode(cost);
+                ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
+                        pc.getName(),
+                        Bank.format(cost) ));
+            }
+        }
+        
+        return true;
+    }
+    
+    
     /**
      * Internal method: change the OR state to the next step. If the currently
      * Operating Company is done, notify this.
@@ -1000,9 +1102,20 @@ public class OperatingRound extends Round implements Observer {
                 operatingCompany.getName(),
                 operatingCompany.getPresident().getName()));
         setCurrentPlayer(operatingCompany.getPresident());
+        
+        if (noMapMode && !operatingCompany.hasLaidHomeBaseTokens()){
+            // Lay base token in noMapMode
+            BaseToken token = operatingCompany.getFreeToken();
+            if (token == null) {
+                log.error("Company " + operatingCompany.getName() + " has no free token to lay base token");
+            } else {
+                log.debug("Company " + operatingCompany.getName() + " lays base token in nomap mode");
+                token.moveTo(bank.getUnavailable());
+            }
+        }
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();
-        setStep (GameDef.OrStep.LAY_TRACK);
+//        setStep (GameDef.OrStep.LAY_TRACK); duplication
     }
 
     /**
@@ -1925,7 +2038,11 @@ public class OperatingRound extends Round implements Observer {
         
         if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
-            setStep (GameDef.OrStep.LAY_TRACK);
+            if (noMapMode) {
+                nextStep (GameDef.OrStep.LAY_TOKEN);
+            } else {
+                setStep (GameDef.OrStep.LAY_TRACK);
+            }
         }
 
         GameDef.OrStep step = getStep();
@@ -1958,6 +2075,8 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.add(new NullAction(NullAction.SKIP));
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
+            if (noMapMode) 
+                prepareOperatingCostsAction();
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
             setBuyableTrains();
             // TODO Need route checking here.
@@ -1966,6 +2085,9 @@ public class OperatingRound extends Round implements Observer {
             //        || operatingCompany.getPortfolio().getNumberOfTrains() > 0) {
                         doneAllowed = true;
             //}
+            if (noMapMode && (operatingCompany.getLastRevenue() == 0)) 
+               prepareOperatingCostsAction();
+
         } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
             
             forced = true;
@@ -2087,6 +2209,32 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.add(new SetDividend(
                     operatingCompany.getLastRevenue(), true,
                     allowedRevenueActions));
+        }
+    }
+    
+    protected void prepareOperatingCostsAction() {
+
+        // LayTile Actions
+        for (Integer tc: mapManager.getPossibleTileCosts()) {
+            possibleActions.add(new OperatingCost(
+                    operatingCompany, OperatingCost.OCType.LAY_TILE, tc
+                ));
+        }
+        // LayBaseToken Actions
+        if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
+            possibleActions.add(new OperatingCost(
+                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN,   
+                    operatingCompany.getBaseTokenLayCost()
+                ));
+        }
+        // Default Actions
+        possibleActions.add(new OperatingCost(
+                operatingCompany, OperatingCost.OCType.LAY_TILE, 0
+            ));
+        if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
+            possibleActions.add(new OperatingCost(
+                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0
+                ));
         }
     }
 

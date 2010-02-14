@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.36 2010/02/05 19:55:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.37 2010/02/14 20:47:45 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -333,6 +333,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         } else {
             return 0;
         }
+    }
+    
+    public int[] getTileCostAsArray(){
+        return tileCost;
     }
 
     /**

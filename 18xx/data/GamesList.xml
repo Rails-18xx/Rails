@@ -20,6 +20,7 @@ Limitations:
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
@@ -101,9 +102,10 @@ selling player.
 - Forced Selling: Change of director in other company is not prevented by Rails (see rule 10.6.2)
 		</Description>
 		<Players minimum="2" maximum="6"/>
-                <Option name="BeginnerGame" type="toggle" default="no" />
+		<Option name="NoMapMode" type="toggle" default="yes" />
+        <Option name="BeginnerGame" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
-		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
 	</Game>
 	
 		<Game name="18AL">
