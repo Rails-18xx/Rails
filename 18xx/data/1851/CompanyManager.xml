@@ -22,35 +22,42 @@
 		</TileLays>
 		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
-	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5"/>
-	<Company name="M&amp;C" type="Private" basePrice="50" revenue="10"/>
-	<Company name="ET&amp;WNC" type="Private" basePrice="80" revenue="15"/>
-	<Company name="O&amp;W" type="Private" basePrice="210" revenue="20"/>
-	<Company name="CNO&amp;TP" type="Private" basePrice="240" revenue="25"/>
+	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5" longname="Lexington &amp; Ohio Railroad">
+		<Info key="ComesWithPresidency" parm="L&amp;N,20"></Info></Company>
+	<Company name="M&amp;C" type="Private" basePrice="50" revenue="10"
+		longname="Memphis &amp; Charleston Railroad" />
+	<Company name="ET&amp;WNC" type="Private" basePrice="80"
+		revenue="15" longname="East Tennessee &amp; Western North Carolina Railroad" />
+	<Company name="O&amp;W" type="Private" basePrice="210" revenue="20"
+		longname="Oneida &amp; Western Railroad" >
+		<Info key="ComesWithCertificate" parm="L&amp;N,10"></Info></Company>
+	<Company name="CNO&amp;TP" type="Private" basePrice="240"
+		revenue="25" longname="Cincinnati, New Orleans &amp; Texas Pacific Railroad" >
+		<Info key="ComesWithCertificate" parm="L&amp;N,10"></Info></Company>
 
-	<Company name="GM&amp;O" type="Public" tokens="4" fgColour="000000" 
-		bgColour="FF0000">
-		<Home hex="G7"/>
+	<Company name="GM&amp;O" type="Public" tokens="4" fgColour="000000"
+		bgColour="FF0000" longname="Gulf, Mobile &amp; Ohio Railroad">
+		<Home hex="G7" />
 	</Company>
-	<Company name="IC" type="Public" tokens="4" fgColour="000000" 
-		bgColour="FFFFCC">
-		<Home hex="A5"/>
+	<Company name="IC" type="Public" tokens="4" fgColour="000000"
+		bgColour="FFFFCC" longname="Illinois Central Railroad">
+		<Home hex="A5" />
 	</Company>
-	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000" 
-		bgColour="4444FF">
-		<Home hex="B16" city="1"/>
+	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000"
+		bgColour="4444FF" longname="Louisville &amp; Nashville Railroad">
+		<Home hex="B16" city="1" />
 	</Company>
-	<Company name="Dixie" type="Public" tokens="4" fgColour="000000" 
-		bgColour="FFFF00">
-		<Home hex="H16"/>
+	<Company name="Dixie" type="Public" tokens="4" fgColour="000000"
+		bgColour="FFFF00" longname="Nashville, Chattanooga &amp; St. Louis Railroad">
+		<Home hex="H16" />
 	</Company>
-	<Company name="SR" type="Public" tokens="4" fgColour="000000" 
-		bgColour="DDFFDD">
-		<Home hex="F20"/>
+	<Company name="SR" type="Public" tokens="4" fgColour="000000"
+		bgColour="DDFFDD" longname="Southern Railway">
+		<Home hex="F20" />
 	</Company>
-	<Company name="TC" type="Public" tokens="4" fgColour="000000" 
-		bgColour="DDDDDD">
-		<Home hex="F12"/>
+	<Company name="TC" type="Public" tokens="4" fgColour="000000"
+		bgColour="DDDDDD" longname="Tennessee Central Railroad">
+		<Home hex="F12" />
 	</Company>
 
 	<StartPacket roundClass="rails.game.specific._1851.StartRound_1851">
