@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.21 2010/01/31 22:22:34 macfreek Exp $*/
+    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.22 2010/02/15 23:15:13 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -26,7 +26,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     GridBagConstraints gc;
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
     JButton newButton, loadButton, quitButton, optionButton, infoButton;
-    JButton creditsButton;
+    JButton creditsButton, randomizeButton;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
     JTextField[] playerNameFields = new JTextField[Player.MAX_PLAYERS];
@@ -258,7 +258,25 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
                     break;
                 }
+            } 
+        } else if (arg0.getSource().equals(randomizeButton)) {
+            // randomize the order of the players
+            if (playerNameFields.length > 0) { 
+                List<String> playerList = new ArrayList<String>();
+                for (int i = 0; i < playerNameFields.length; i++) {
+                    if (playerNameFields[i] != null
+                        && playerNameFields[i].getText().length() > 0) { 
+                            playerList.add(playerNameFields[i].getText());
+                            playerNameFields[i].setText("");
+                    }
+                }
+                Collections.shuffle(playerList);
+                for (int i = 0; i < playerList.size(); i++) {
+                    playerNameFields[i].setText(playerList.get(i));
+                    
+                }
             }
+            fillPlayersPane();
         }
     }
 
@@ -425,7 +443,12 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         playersPane.setLayout(new GridLayout(maxPlayers + 1, 0));
         playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
         playersPane.add(new JLabel("Players:"));
-        playersPane.add(new JLabel(""));
+//        playersPane.add(new JLabel("")); replaced by randomize button
+
+        randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
+        randomizeButton.setMnemonic(KeyEvent.VK_R);
+        randomizeButton.addActionListener(this);
+        playersPane.add(randomizeButton);
 
         for (int i = 0; i < GamesInfo.getMaxPlayers(gameName); i++) {
             playerBoxes[i] = new JComboBox();
