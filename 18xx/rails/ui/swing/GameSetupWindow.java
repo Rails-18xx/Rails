@@ -1,4 +1,4 @@
-    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.22 2010/02/15 23:15:13 stefanfrey Exp $*/
+    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.23 2010/02/15 23:30:13 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -276,7 +276,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     
                 }
             }
-            fillPlayersPane();
         }
     }
 
