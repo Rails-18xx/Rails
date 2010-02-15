@@ -20,53 +20,68 @@
 		<Trains number="4,4,3,2"/>
 	</CompanyType>
 	
-	<Company name="GRSC"  type="Private" basePrice="20" revenue="5"/>
-	<Company name="Brdg"  type="Private" basePrice="40" revenue="10"/>
-	<Company name="Cattl" type="Private" tokens="1" basePrice="50" revenue="10"/>
-	<Company name="Gulf"  type="Private" tokens="2" tokenValue="20/10,10" basePrice="80" revenue="15"/>
-	<Company name="MKT"   type="Private" basePrice="160" revenue="20"/>
-	
-	<Company name="KATY" type="Public" tokens="4" fgColour="FFFFFF" bgColour="00FF00">
-		<Home hex="B11"/>
-		<Destination hex="N1"/>
+	<Company name="GRSC"  type="Private" basePrice="20" revenue="5" longname="Great River Shipping Company"/>
+	<Company name="Brdg" type="Private" basePrice="40" revenue="10"
+		longname="Mississippi River Bridge Company" />
+	<Company name="Cattl" type="Private" tokens="1" basePrice="50"
+		revenue="10" longname="The Southern Cattle Company" />
+	<Company name="Gulf" type="Private" tokens="2" tokenValue="20/10,10"
+		basePrice="80" revenue="15" longname="The Gulf Shipping Company" />
+	<Company name="MKT" type="Private" basePrice="160" revenue="20"
+		longname="Missouri-Kansas-Texas Railroad">
+		<Info key="ComesWithCertificate" parm="KATY,10"></Info></Company>
+
+	<Company name="KATY" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="00FF00" longname="Missouri-Kansas-Texas Railroad">
+		<Home hex="B11" ></Home>
+		<Destination hex="N1" />
 	</Company>
-	<Company name="MP"   type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000">
-		<Home hex="C18"/>
-		<Destination hex="J5"/>
+	<Company name="MP" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="FF0000" longname="Missouri Pacific Railroad">
+		<Home hex="C18" />
+		<Destination hex="J5" />
 	</Company>
-	<Company name="ATSF" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF">
-		<Home hex="B9"/>
-		<Destination hex="N1"/>
+	<Company name="ATSF" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="0000FF" longname="Atchison, Topeka &amp; Santa Fe Railway">
+		<Home hex="B9" />
+		<Destination hex="N1" />
 	</Company>
-	<Company name="SP"   type="Public" tokens="4" fgColour="FF8000" bgColour="000000">
-		<Home hex="N1"/>
-		<Destination hex="N17"/>
+	<Company name="SP" type="Public" tokens="4" fgColour="FF8000"
+		bgColour="000000" longname="Southern Pacific Railroad">
+		<Home hex="N1" />
+		<Destination hex="N17" />
 	</Company>
-	<Company name="GMO"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="ff0040">
-		<Home hex="M20"/>
-		<Destination hex="C18"/>
+	<Company name="GMO" type="Public" tokens="3" fgColour="FFFFFF"
+		bgColour="ff0040" longname="Gulf, Mobile &amp; Ohio Railroad">
+		<Home hex="M20" />
+		<Destination hex="C18" />
 	</Company>
-	<Company name="SLSF" type="Public" tokens="4" fgColour="FFFFFF" bgColour="d04000" floatPerc="20">
-		<Home hex="E12"/>
-		<Destination hex="M22"/>
+	<Company name="SLSF" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="d04000" floatPerc="20" longname="St. Louis-San Francisco Railway">
+		<Home hex="E12" />
+		<Destination hex="M22" />
 	</Company>
-	<Company name="TP"   type="Public" tokens="3" fgColour="FFFFFF" bgColour="000000">
-		<Home hex="J5"/>
-		<Destination hex="N17"/>
+	<Company name="TP" type="Public" tokens="3" fgColour="FFFFFF"
+		bgColour="000000" longname="Texas &amp; Pacific Railway">
+		<Home hex="J5" />
+		<Destination hex="N17" />
 	</Company>
-	<Company name="FW"   type="Public" tokens="3" fgColour="FF0000" bgColour="000000">
-		<Home hex="J3"/>
-		<Destination hex="A2"/>
+	<Company name="FW" type="Public" tokens="3" fgColour="FF0000"
+		bgColour="000000" longname="Fort Worth &amp; Denver City Railway">
+		<Home hex="J3"></Home>
+		<Destination hex="A2" />
 	</Company>
-	<Company name="SSW"  type="Public" tokens="3" fgColour="FFFFFF" bgColour="6000ff">
-		<Home hex="H17"/>
-		<Destination hex="J3"/>
+	<Company name="SSW" type="Public" tokens="3" fgColour="FFFFFF"
+		bgColour="6000ff" longname="St. Louis Southwestern Railway">
+		<Home hex="H17" />
+		<Destination hex="J3" />
 	</Company>
-	<Company name="IC"   type="Public" tokens="3" fgColour="000000" bgColour="c0ff40">
-		<Home hex="K16"/>
-		<Destination hex="A22"/>
+	<Company name="IC" type="Public" tokens="3" fgColour="000000"
+		bgColour="c0ff40" longname="Illinois Central Railroad">
+		<Home hex="K16" />
+		<Destination hex="A22" />
 	</Company>
-	
+
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="GRSC"  type="Private" basePrice="20"/>
