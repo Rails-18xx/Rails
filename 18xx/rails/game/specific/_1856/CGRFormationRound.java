@@ -65,8 +65,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         companiesToRepayLoans = null;
 
         ReportBuffer.add(LocalText.getText("StartFormationRound",
-                cgrName,
-                startingPlayer.getName()));
+                cgrName));
+        ReportBuffer.add(LocalText.getText("StartingPlayer", startingPlayer.getName()));
 
         guiHints.setCurrentRoundType(getClass());
 
