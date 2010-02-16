@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.37 2010/02/08 21:24:01 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.38 2010/02/16 20:21:59 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -326,13 +326,13 @@ public class GUIHex implements ViewObject {
         if (homes  != null) {
            City city;
             Point p;
-homes:      for (PublicCompanyI company : homes.keySet()) {
+            for (PublicCompanyI company : homes.keySet()) {
                 if (company.isClosed()) continue;
-                city = homes.get(company);
 
                 // Only draw the company name if there isn't yet a token of that company
-                if (model.hasTokenOfCompany(company)) continue homes;
+                if (model.hasTokenOfCompany(company)) continue;
                 
+                city = homes.get(company);
                 p = getTokenCenter (1, 0, getHexModel().getCities().size(),
                         city.getNumber()-1);
                 drawHome (g2, company, p);

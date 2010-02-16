@@ -72,7 +72,6 @@ public class StockRound_18EU extends StockRound {
         StockSpaceI stockSpace;
         Portfolio from;
         int price;
-        int number;
 
         // 18EU special: until phase 5, we can only
         // start a company by trading in a Minor
