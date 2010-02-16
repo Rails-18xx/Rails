@@ -674,11 +674,7 @@ public class StockRound extends Round {
                 break;
             }
 
-            // The presidents share may not be in IPO
-            //if (company.getPresidentsShare().getHolder() == ipo) {
-            // There is an exception for 1856 CGR. Just chech 'started',
-            // but even this might not be true for e.g. 1835 Prussi
-            if (!company.hasStarted()) {
+            if (!company.isBuyable()) {
                 errMsg = LocalText.getText("NotYetStarted", companyName);
                 break;
             }
@@ -993,8 +989,9 @@ public class StockRound extends Round {
         StockSpaceI sellPrice;
         int price;
 
+        boolean soldBefore = sellPrices.containsKey(companyName);
         // Get the sell price (does not change within a turn)
-        if (sellPrices.containsKey(companyName)) {
+        if (soldBefore) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
             sellPrice = company.getCurrentSpace();
@@ -1042,7 +1039,7 @@ public class StockRound extends Round {
                 executeTradeCertificate(cert, pool, cert.getShares() * price);
             }
         }
-        company.adjustSharePrice (SOLD, numberSold, gameManager.getStockMarket());
+        adjustSharePrice (company, numberSold, soldBefore);
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
@@ -1069,6 +1066,10 @@ public class StockRound extends Round {
         setPriority();
 
         return true;
+    }
+    
+    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+        company.adjustSharePrice (SOLD, numberSold, gameManager.getStockMarket());
     }
 
     public boolean useSpecialProperty(UseSpecialProperty action) {

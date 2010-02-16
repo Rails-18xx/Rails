@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.85 2010/02/14 20:48:02 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.86 2010/02/16 20:15:57 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -110,6 +110,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Has the company already operated? */
     protected BooleanState hasOperated = null;
+
+    /** Are company shares buyable (i.e. before started)? */
+    protected BooleanState buyable = null;
 
     /**
      * A map per tile colour. Each entry contains a map per phase, of which each
@@ -585,6 +588,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         hasStarted = new BooleanState(name + "_hasStarted", false);
         hasFloated = new BooleanState(name + "_hasFloated", false);
         hasOperated = new BooleanState(name + "_hasOperated", false);
+        buyable = new BooleanState(name + "_isBuyable", false);
 
         allBaseTokens = new ArrayList<TokenI>();
         freeBaseTokens = new ArrayList<TokenI>();
@@ -828,6 +832,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void start(StockSpaceI startSpace) {
 
         hasStarted.set(true);
+        buyable.set(true);
         setParSpace(startSpace);
         // The current price is set via the Stock Market
         stockMarket.start(this, startSpace);
@@ -854,6 +859,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             start (getStartSpace());
         } else {
             hasStarted.set(true);
+            buyable.set(true);
             if (homeBaseTokensLayTime == WHEN_STARTED) {
                 layHomeBaseTokens();
             }
@@ -875,7 +881,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return hasStarted.booleanValue();
     }
 
-    /**
+    /** Make company shares buyable. Only useful where shares become
+     * buyable before the company has started (e.g. 1835 Prussian).
+     * */
+	public void setBuyable(boolean buyable) {
+		this.buyable.set(buyable);
+	}
+
+	public boolean isBuyable() {
+		return buyable.booleanValue();
+	}
+
+	/**
      * Float the company, put its initial cash in the treasury.
      */
     public void setFloated() {
@@ -1606,8 +1623,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             extraTiles.add(-1);
         }
     }
-    
-    @Override
+
     public void layTileInNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.add(cost);
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
@@ -1627,8 +1643,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
         if (cost > 0) tokensCostThisTurn.add(cost);
     }
-    
-    @Override
+
     public void layBaseTokenInNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.add(cost);
         tokensLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");

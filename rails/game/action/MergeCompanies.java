@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.6 2009/10/29 19:41:29 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.7 2010/02/16 20:16:07 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -8,6 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import rails.game.*;
@@ -57,6 +58,11 @@ public class MergeCompanies extends PossibleAction {
             }
         }
         targetCompanyNames = b.toString();
+    }
+    
+    public MergeCompanies(PublicCompanyI mergingCompany,
+            PublicCompanyI targetCompany) {
+        this (mergingCompany, Arrays.asList(new PublicCompanyI[] {targetCompany}));
     }
 
     /** Required for deserialization */
