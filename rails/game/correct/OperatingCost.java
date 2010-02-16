@@ -58,7 +58,6 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
    }
    
    
-   @Override
    public boolean isInCorrectionMenu(){
        return inCorrectionMenu;
    }
@@ -66,23 +65,21 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
        inCorrectionMenu = menu;
    }
 
-   @Override
    public CashHolder getCashHolder() {
        return operatingCompany;
    }
-   @Override
+
    public String getCashHolderName() {
        return operatingCompanyName;
    }
 
-   @Override
-   public int getAmount() {
+    public int getAmount() {
        if (acted)
            return -operatingCost;
        else
            return suggestedCost;
    }
-   @Override
+
    public void setAmount(int amount) {
        acted=true;
        operatingCost = amount;

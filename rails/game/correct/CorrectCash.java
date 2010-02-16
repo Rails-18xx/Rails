@@ -62,7 +62,6 @@ public class CorrectCash extends PossibleAction implements CorrectCashI, Correct
    }
    
    
-   @Override
    public boolean isInCorrectionMenu(){
        return inCorrectionMenu;
    }
@@ -70,20 +69,19 @@ public class CorrectCash extends PossibleAction implements CorrectCashI, Correct
        inCorrectionMenu = menu;
    }
 
-   @Override
    public CashHolder getCashHolder() {
        return correctCashHolder;
    }
-   @Override
+
    public String getCashHolderName() {
        return cashHolderName;
    }
 
-   @Override
+
    public int getAmount() {
        return correctAmount;
    }
-   @Override
+
    public void setAmount(int amount) {
        correctAmount = amount;
    }
