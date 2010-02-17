@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.101 2010/02/17 22:02:47 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.102 2010/02/17 22:15:46 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -81,9 +81,6 @@ public class OperatingRound extends Round implements Observer {
                 GameDef.OrStep.BUY_TRAIN, 
                 GameDef.OrStep.TRADE_SHARES, 
                 GameDef.OrStep.FINAL };
-
-    // side steps
-    public static final int STEP_DISCARD_TRAINS = -2;
 
     protected boolean doneAllowed = false;
 
@@ -1574,7 +1571,7 @@ public class OperatingRound extends Round implements Observer {
 
         // Check if any companies must discard trains
         if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
-            stepObject.set(STEP_DISCARD_TRAINS);
+            stepObject.set(GameDef.OrStep.DISCARD_TRAINS);
         }
 
         return true;
