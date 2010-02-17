@@ -35,6 +35,7 @@ public class GameDef {
      */
     public enum OrStep {
         
+        /* In-sequence steps */
         INITIAL,
         LAY_TRACK,
         LAY_TOKEN,
