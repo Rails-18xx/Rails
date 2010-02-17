@@ -9,7 +9,7 @@ import rails.game.*;
  *
  */
 
-interface CorrectionAction {
+public interface CorrectionAction {
     
     public boolean isInCorrectionMenu();
     

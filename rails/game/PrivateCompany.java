@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.35 2010/02/06 14:57:31 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.36 2010/02/17 22:02:52 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -216,7 +216,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void setClosed() {
 
         if (isClosed()) return;
-        if (!isCloseable()) return; /* sfy 1889 */
+//        if (!isCloseable()) return;  /* moved hat to call in closeAllPrivates, to allow other closing actions */
 
         super.setClosed();
         unblockHexes();
