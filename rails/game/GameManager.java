@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.82 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.83 2010/02/17 00:22:15 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -490,6 +490,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
 
         }
+        
+        if (GameOption.convertValueToBoolean("NoMapMode", getGameOption("NoMapMode")))
+            guiParameters.put(GuiDef.Parm.NO_MAP_MODE, true);
+        
     }
 
     private void initGameParameters() {

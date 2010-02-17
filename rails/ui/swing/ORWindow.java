@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.34 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.35 2010/02/17 00:21:33 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -79,7 +79,14 @@ public class ORWindow extends JFrame implements ActionPerformer {
         setTitle(LocalText.getText("MapWindowTitle"));
         setLocation(10, 10);
         setVisible(false);
-        setSize(800, 600);
+
+        // make map and upgrade panels invisible for noMapMode
+        if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.NO_MAP_MODE)) {
+            mapPanel.setVisible(false);
+            upgradePanel.setVisible(false);
+            setSize(800, 500);
+        } else
+            setSize(800, 600);
 
         final JFrame frame = this;
         addWindowListener(new WindowAdapter() {
