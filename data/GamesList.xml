@@ -102,7 +102,7 @@ selling player.
 - Forced Selling: Change of director in other company is not prevented by Rails (see rule 10.6.2)
 		</Description>
 		<Players minimum="2" maximum="6"/>
-		<Option name="NoMapMode" type="toggle" default="yes" />
+		<Option name="NoMapMode" type="toggle" default="no" />
         <Option name="BeginnerGame" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
@@ -136,6 +136,7 @@ Not yet implemented:
 		</Description>
 		<Option name="Extra3Trains" values="0,1,2" default="0"/>
 		<Option name="Extra4Trains" values="0,1" default="0"/>
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
