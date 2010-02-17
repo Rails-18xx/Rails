@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.30 2010/02/05 19:57:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.31 2010/02/17 22:01:43 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -187,7 +187,7 @@ public class StartRound_1830 extends StartRound {
 
             // Check player
             if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
                 break;
             }
             // Check item
@@ -285,7 +285,7 @@ public class StartRound_1830 extends StartRound {
 
             // Check player
             if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
                 break;
             }
             break;
