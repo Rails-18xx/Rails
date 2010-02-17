@@ -509,7 +509,7 @@ public class StockRound extends Round {
             // Check everything
             // Only the player that has the turn may buy
             if (!playerName.equals(currentPlayer.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
                 break;
             }
 
@@ -654,7 +654,7 @@ public class StockRound extends Round {
             // Check everything
             // Only the player that has the turn may buy
             if (!playerName.equals(currentPlayer.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
                 break;
             }
 
@@ -1172,7 +1172,7 @@ public class StockRound extends Round {
         //currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getName())) {
-            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
+            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName, currentPlayer.getName()));
             return false;
         }
 

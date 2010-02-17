@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.20 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.21 2010/02/17 22:01:44 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -260,7 +260,7 @@ public class TreasuryShareRound extends StockRound {
             // Check everything
             // Only the player that has the turn may act
             if (!playerName.equals(currentPlayer.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
                 break;
             }
 
@@ -514,7 +514,7 @@ public class TreasuryShareRound extends StockRound {
         currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getName())) {
-            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName));
+            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName, currentPlayer.getName()));
             return false;
         }
 

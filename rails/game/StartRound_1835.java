@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.24 2010/02/05 19:58:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.25 2010/02/17 22:01:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -227,7 +227,7 @@ public class StartRound_1835 extends StartRound {
 
             // Check player
             if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName);
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
                 break;
             }
             break;
