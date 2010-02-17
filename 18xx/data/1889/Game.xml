@@ -15,7 +15,7 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="NoMapMode" type="toggle" default="yes" />
+		<GameOption name="NoMapMode" type="toggle" default="no" />
         <GameOption name="BeginnerGame" type="toggle" default="no" />
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
