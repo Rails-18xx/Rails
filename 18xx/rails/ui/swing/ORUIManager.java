@@ -317,6 +317,10 @@ public class ORUIManager implements DialogOwner {
                 
                 useSpecialProperty ((UseSpecialProperty)actions.get(0));
                 
+            } else if (actions.get(0) instanceof CorrectionAction) {
+                
+                processCorrectionAction((CorrectionAction)actions.get(0));
+                
             }
 
         } else if (command.equals(ORPanel.OPERATING_COST_CMD)) {
@@ -1154,6 +1158,13 @@ public class ORUIManager implements DialogOwner {
         
     }
 
+    protected void processCorrectionAction(CorrectionAction action) {
+
+        gameUIManager.processOnServer((PossibleAction)action);
+        
+    }
+    
+    
     public void updateStatus() {
 
         updateStatus(null);
@@ -1375,7 +1386,18 @@ public class ORUIManager implements DialogOwner {
                 orPanel.addSpecialAction(usp, sp.getInfo());
             }
         }
-
+        
+        // Close Private
+        if (possibleActions.contains(ClosePrivate.class)) {
+            for (ClosePrivate action: possibleActions.getType(ClosePrivate.class)) {
+                if (!action.isInCorrectionMenu())
+                    orPanel.addSpecialAction(action, action.getInfo());
+            }
+        }
+        
+        // Correction Actions
+        
+        
 
         checkForGameSpecificActions();
 

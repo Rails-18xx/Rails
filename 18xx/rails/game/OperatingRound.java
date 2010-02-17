@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.100 2010/02/16 20:15:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.101 2010/02/17 22:02:47 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -235,6 +235,10 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof ExchangeTokens) {
 
             result = exchangeTokens ((ExchangeTokens)selectedAction);
+
+        } else if (selectedAction instanceof ClosePrivate) {
+
+            result = executeClosePrivate((ClosePrivate)selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -936,7 +940,7 @@ public class OperatingRound extends Round implements Observer {
         return action.getActualRevenue();
     }
 
-    public boolean executeCorrectCash(CorrectCashI action){
+    protected boolean executeCorrectCash(CorrectCashI action){
 
         CashHolder ch = action.getCashHolder();
         int amount = action.getAmount();
@@ -1021,6 +1025,26 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
     
+    protected boolean executeClosePrivate(ClosePrivate action) {
+    
+        PrivateCompanyI priv = action.getPrivateCompany();
+        
+        String errMsg = null;
+
+        if (priv.isClosed())
+            errMsg = LocalText.getText("PrivateAlreadyClosed", priv.getName());
+        
+        if (errMsg != null) {
+            DisplayBuffer.add(errMsg);
+            return false;
+        }
+
+        moveStack.start(true);
+        
+        priv.setClosed();
+        
+        return true;
+    }
     
     /**
      * Internal method: change the OR state to the next step. If the currently
@@ -2076,7 +2100,7 @@ public class OperatingRound extends Round implements Observer {
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
             if (noMapMode) 
-                prepareOperatingCostsAction();
+                prepareNoMapActions();
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
             setBuyableTrains();
             // TODO Need route checking here.
@@ -2086,7 +2110,7 @@ public class OperatingRound extends Round implements Observer {
                         doneAllowed = true;
             //}
             if (noMapMode && (operatingCompany.getLastRevenue() == 0)) 
-               prepareOperatingCostsAction();
+               prepareNoMapActions();
 
         } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
             
@@ -2212,7 +2236,7 @@ public class OperatingRound extends Round implements Observer {
         }
     }
     
-    protected void prepareOperatingCostsAction() {
+    protected void prepareNoMapActions() {
 
         // LayTile Actions
         for (Integer tc: mapManager.getPossibleTileCosts()) {
@@ -2220,6 +2244,7 @@ public class OperatingRound extends Round implements Observer {
                     operatingCompany, OperatingCost.OCType.LAY_TILE, tc
                 ));
         }
+        
         // LayBaseToken Actions
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
             possibleActions.add(new OperatingCost(
@@ -2227,14 +2252,22 @@ public class OperatingRound extends Round implements Observer {
                     operatingCompany.getBaseTokenLayCost()
                 ));
         }
-        // Default Actions
+
+        // Default OperatingCost Actions
         possibleActions.add(new OperatingCost(
                 operatingCompany, OperatingCost.OCType.LAY_TILE, 0
             ));
-        if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
+        if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
+                && operatingCompany.getBaseTokenLayCost() != 0) {
             possibleActions.add(new OperatingCost(
                     operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0
                 ));
+        }
+
+        // Private Company Closure
+        for (PrivateCompanyI priv: companyManager.getAllPrivateCompanies()) {
+            if ((!priv.isClosed()) && (priv.closesIfAllExercised() || priv.closesIfAnyExercised()))
+                possibleActions.add(new ClosePrivate(priv));
         }
     }
 

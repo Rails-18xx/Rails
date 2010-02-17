@@ -8,8 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
- * Correction action that changes the cash position of a cashholder.
- * 
+ * Correction action that mirrors operating actions like tile and token lays, but
+ * only changes the cash position of a cashholder.
+ * (Extends PossibleAction instead of PossibleORAction to allow for generalization)
  * @author Stefan Frey
  */
 public class OperatingCost extends PossibleAction implements CorrectCashI, CorrectionAction {
@@ -61,9 +62,11 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
    public boolean isInCorrectionMenu(){
        return inCorrectionMenu;
    }
+
    public void setCorrectionMenu(boolean menu){
        inCorrectionMenu = menu;
    }
+
 
    public CashHolder getCashHolder() {
        return operatingCompany;
@@ -73,7 +76,7 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
        return operatingCompanyName;
    }
 
-    public int getAmount() {
+   public int getAmount() {
        if (acted)
            return -operatingCost;
        else

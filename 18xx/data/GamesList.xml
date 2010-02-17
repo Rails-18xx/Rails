@@ -71,6 +71,7 @@ Designed by Bill Dixon
 Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 		</Description>
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
