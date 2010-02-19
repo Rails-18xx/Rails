@@ -13,7 +13,7 @@
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
-			<BankBreaks limit="0" finish="OR"/>
+			<BankBreaks limit="0" finish="CurrentOR"/>
 			<!-- 0 = "Runs out"; -1 = "broken" -->
 		</EndOfGame>
 	</Component>
