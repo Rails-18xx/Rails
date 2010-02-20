@@ -25,6 +25,7 @@
 		</BaseTokens>
 		<Capitalisation type="incremental"/>
 		<Trains number="4,4,3,2"/>
+        <CanUseSpecialProperties/>
 	</CompanyType>
 	
 	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
