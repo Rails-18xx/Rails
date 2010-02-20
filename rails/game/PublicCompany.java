@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.86 2010/02/16 20:15:57 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.87 2010/02/20 12:34:50 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -30,6 +30,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;
     protected static final int START_OF_FIRST_OR = 2;
+    
+    // Base token lay cost calculation methods
+    public static final String BASE_COST_SEQUENCE = "sequence";
+    public static final String BASE_COST_DISTANCE = "distance";
 
     protected static final String[] tokenLayTimeNames =
             new String[] { "whenStarted", "whenFloated", "firstOR" };
@@ -516,7 +520,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 baseTokenLayCostMethod =
                         layCostTag.getAttributeAsString("method",
                                 baseTokenLayCostMethod);
-                // Must validate the cost method!
+                if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_SEQUENCE)) {
+                    baseTokenLayCostMethod = BASE_COST_SEQUENCE;
+                } else if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_DISTANCE)) {
+                    baseTokenLayCostMethod = BASE_COST_DISTANCE;
+                } else {
+                    throw new ConfigurationException(
+                            "Invalid base token lay cost calculation method: "
+                            + baseTokenLayCostMethod);
+                }
 
                 baseTokenLayCost =
                         layCostTag.getAttributeAsIntegerArray("cost");
@@ -1650,25 +1662,55 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * Calculate the cost of laying a token. Currently hardcoded for the
-     * "sequence" method. The other token layong costing methods will be
-     * implemented later.
-     *
-     * @param index The sequence number of the token that the company is laying.
+     * Calculate the cost of laying a token, given the hex where 
+     * the token is laid. This only makes a diofference for de "distance" method.
+     * @param hex The hex where the token is to be laid. 
      * @return The cost of laying that token.
      */
-    public int getBaseTokenLayCost() {
+    public int getBaseTokenLayCost(MapHex hex) {
 
         if (baseTokenLayCost == null) return 0;
 
-        int index = getNumberOfLaidBaseTokens();
-
-        if (index >= baseTokenLayCost.length) {
-            index = baseTokenLayCost.length - 1;
-        } else if (index < 0) {
-            index = 0;
+        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+            int index = getNumberOfLaidBaseTokens();
+    
+            if (index >= baseTokenLayCost.length) {
+                index = baseTokenLayCost.length - 1;
+            } else if (index < 0) {
+                index = 0;
+            }
+            return baseTokenLayCost[index];
+        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+            if (hex == null) {
+                return baseTokenLayCost[0];
+            } else {
+                return mapManager.getHexDistance(hex, homeHex) * baseTokenLayCost[0];
+            }
+        } else {
+            return 0;
         }
-        return baseTokenLayCost[index];
+    }
+    
+    /** Return all possible token lay costs to be incurred for the
+     * company's next token lay. In the "distance" method, this will be an array.
+     * @return
+     */
+    public int[] getBaseTokenLayCosts () {
+        
+        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+            return new int[] {getBaseTokenLayCost(null)};
+        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+            int[] distances = mapManager.getCityDistances(homeHex);
+            int[] costs = new int[distances.length];
+            int i = 0;
+            for (int distance : distances) {
+                costs[i++] = distance * baseTokenLayCost[0];
+            }
+            return costs;
+        } else {
+            return new int[] {0};
+        }
+        
     }
 
     public ModelObject getTokensLaidThisTurnModel() {

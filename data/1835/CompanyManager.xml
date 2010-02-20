@@ -5,11 +5,8 @@
 	<CompanyType name="Minor" class="rails.game.PublicCompany">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
-	<StockPrice market="no"/>
-	<BaseTokens>
-		<LayCost method="distance" cost="20"/>
-	</BaseTokens>
-	<Payout split="always"/>
+		<StockPrice market="no"/>
+		<Payout split="always"/>
 	<Trains number="2,2,1" mandatory="no"/>
 	</CompanyType>
 	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
@@ -21,10 +18,13 @@
 		<Certificate shares="1" number="8"/>
 		<!--NumberOfTileLays colour="yellow" phase="2" number="2"/-->
 		<TileLays>
-		<Number colour="yellow" phase="2" number="2"/>
+			<Number colour="yellow" phase="2" number="2"/>
 		</TileLays>
-	<Capitalisation type="incremental"/>
-	<Trains number="4,4,3,2"/>
+		<BaseTokens>
+			<LayCost method="distance" cost="20"/>
+		</BaseTokens>
+		<Capitalisation type="incremental"/>
+		<Trains number="4,4,3,2"/>
 	</CompanyType>
 	
 	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">

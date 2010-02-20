@@ -48,6 +48,7 @@ For the start packet sale, three variants have been implemented:
 Variant selection effects on SR and OR have not been implemented yet.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>

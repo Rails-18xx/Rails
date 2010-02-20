@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.17 2010/02/14 20:47:34 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.18 2010/02/20 12:34:43 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -236,6 +236,40 @@ public class MapManager implements ConfigurableComponentI {
     public int getHexDistance (MapHex hex1, MapHex hex2) {
     	Map<MapHex, Integer> passed = new HashMap<MapHex, Integer>();
     	return calculateHexDistance (hex1, hex2, 1, passed);
+    }
+    
+    /** Cache to hold distances between tokenable cities */
+    private Map<MapHex, int[]> distanceMap;
+    
+    /** 
+     * Calculate the distances between a given tokenable city hex
+     * and all other tokenable city hexes. 
+     * <p> The array is cached, so it need be calculated only once.
+     * @param hex Start hex
+     * @return Sorted int array containing all occurring distances only once. 
+     */
+    public int[] getCityDistances (MapHex hex) {
+log.debug("+++ Checking distances from "+hex.getName());        
+        if (!hex.getCurrentTile().hasStations()) return new int[0];
+        if (distanceMap == null) distanceMap = new HashMap<MapHex, int[]> ();
+        if (distanceMap.containsKey(hex)) return distanceMap.get(hex);
+        
+        int distance;
+        Set<Integer> distancesSet = new TreeSet<Integer> (); 
+        for (MapHex hex2 : mHexes.values()) {
+log.debug("--- Checking other hex "+hex2.getName());
+            if (!hex2.getCurrentTile().hasStations()) continue;
+            distance = getHexDistance (hex, hex2);
+            distancesSet.add(distance);
+log.debug("=== Distance is "+distance);
+        }
+        int[] distances = new int[distancesSet.size()];
+        int i=0;
+        for (int distance2 : distancesSet) {
+            distances[i++] = distance2;
+        }
+        distanceMap.put(hex, distances);
+        return distances;
     }
 
     /** Helper method to calculate the distance between two hexes.

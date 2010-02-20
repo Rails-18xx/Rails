@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.47 2010/02/16 20:15:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.48 2010/02/20 12:34:46 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -153,7 +153,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public int getBaseTokensBuyCost();
 
-    public int getBaseTokenLayCost();
+    public int getBaseTokenLayCost(MapHex hex);
+    public int[] getBaseTokenLayCosts();
 
     public boolean canHoldOwnShares();
 

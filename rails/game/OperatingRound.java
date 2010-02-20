@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.102 2010/02/17 22:15:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.103 2010/02/20 12:34:46 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -536,7 +536,7 @@ public class OperatingRound extends Round implements Observer {
                 if (stl != null) extra = stl.isExtra();
             }
 
-            cost = operatingCompany.getBaseTokenLayCost();
+            cost = operatingCompany.getBaseTokenLayCost(hex);
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
@@ -2244,10 +2244,13 @@ public class OperatingRound extends Round implements Observer {
         
         // LayBaseToken Actions
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
-            possibleActions.add(new OperatingCost(
-                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN,   
-                    operatingCompany.getBaseTokenLayCost()
-                ));
+            int[] costs = operatingCompany.getBaseTokenLayCosts();
+            for (int cost : costs) {
+                possibleActions.add(new OperatingCost(
+                        operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN,   
+                        cost
+                    ));
+            }
         }
 
         // Default OperatingCost Actions
@@ -2255,7 +2258,7 @@ public class OperatingRound extends Round implements Observer {
                 operatingCompany, OperatingCost.OCType.LAY_TILE, 0
             ));
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
-                && operatingCompany.getBaseTokenLayCost() != 0) {
+                && operatingCompany.getBaseTokenLayCost(null) != 0) {
             possibleActions.add(new OperatingCost(
                     operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0
                 ));

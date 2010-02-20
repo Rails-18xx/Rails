@@ -1,14 +1,18 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager"  class="rails.game.GameManager">
+	<!--Component name="GameManager"  class="rails.game.specific._1835.GameManager_1835"-->
 		<Game name="1835"/>
 		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
+		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
-			<StockRound class="rails.game.specific._1835.StockRound_1835" 
+			<StockRound class="rails.game.StockRound" 
 				sequence="SellBuySell">
+			<!--StockRound class="rails.game.specific._1835.StockRound_1835" 
+				sequence="SellBuySell"-->
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
@@ -48,7 +52,7 @@
 		<Train name="4" majorStops="4" cost="360" amount="3" startPhase="4"
 			rustedTrain="2"/>
 		<Train name="4+4" majorStops="4" minorStops="4" cost="440" amount="1"
-			rustedTrain="2+2"/>
+			startPhase="4+4" rustedTrain="2+2"/>
 		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
 		<Train name="5+5" majorStops="5" minorStops="5" cost="600" amount="1"/>
 		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
@@ -68,6 +72,9 @@
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="4+4">
 			<Tiles colour="yellow,green"/>
 		</Phase>
 		<Phase name="5">
