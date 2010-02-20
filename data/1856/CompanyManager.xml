@@ -15,6 +15,7 @@
 		<Trains number="4,4,3,2"/>
 		<Loans value="100" perRound="1" interest="10"/>
 		<!-- Number of loans is undefined and handled in the code -->
+        <CanUseSpecialProperties/>
 	</CompanyType>
 	<CompanyType name="State" class="rails.game.specific._1856.PublicCompany_CGR">
 		<PoolPaysOut/>

@@ -13,6 +13,7 @@
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Trains number="4,4,3,2"/>
+        <CanUseSpecialProperties/>
 	</CompanyType>
 	<Company name="SVNRR" type="Private" basePrice="20" revenue="5">
 		<Blocking hex="H9"/>
