@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.18 2010/02/20 12:34:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.19 2010/02/20 12:42:54 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -249,7 +249,7 @@ public class MapManager implements ConfigurableComponentI {
      * @return Sorted int array containing all occurring distances only once. 
      */
     public int[] getCityDistances (MapHex hex) {
-log.debug("+++ Checking distances from "+hex.getName());        
+
         if (!hex.getCurrentTile().hasStations()) return new int[0];
         if (distanceMap == null) distanceMap = new HashMap<MapHex, int[]> ();
         if (distanceMap.containsKey(hex)) return distanceMap.get(hex);
@@ -257,11 +257,9 @@ log.debug("+++ Checking distances from "+hex.getName());
         int distance;
         Set<Integer> distancesSet = new TreeSet<Integer> (); 
         for (MapHex hex2 : mHexes.values()) {
-log.debug("--- Checking other hex "+hex2.getName());
             if (!hex2.getCurrentTile().hasStations()) continue;
             distance = getHexDistance (hex, hex2);
             distancesSet.add(distance);
-log.debug("=== Distance is "+distance);
         }
         int[] distances = new int[distancesSet.size()];
         int i=0;
