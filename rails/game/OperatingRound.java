@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.103 2010/02/20 12:34:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.104 2010/02/20 23:08:42 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -599,8 +599,12 @@ public class OperatingRound extends Round implements Observer {
                 currentNormalTokenLays.clear();
                 log.debug("This was a normal token lay");
             }
+            
             if (currentNormalTokenLays.isEmpty()) {
                 log.debug("No more normal token lays are allowed");
+            } else if (operatingCompany.getNumberOfFreeBaseTokens() == 0) {
+                log.debug("Normal token lay allowed by no more tokens");
+                currentNormalTokenLays.clear();
             } else {
                 log.debug("A normal token lay is still allowed");
             }
@@ -1202,11 +1206,8 @@ public class OperatingRound extends Round implements Observer {
 
         /* Special-property tile lays */
         currentSpecialTileLays.clear();
-        /*
-         * In 1835, this only applies to major companies. TODO: For now,
-         * hardcode this, but it must become configurable later.
-         */
-        if (operatingCompany.getType().getName().equals("Minor")) return;
+
+        if (!operatingCompany.canUseSpecialProperties()) return;
 
         for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
             if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
@@ -1242,6 +1243,8 @@ public class OperatingRound extends Round implements Observer {
         /* Special-property tile lays */
         currentSpecialTokenLays.clear();
 
+        if (!operatingCompany.canUseSpecialProperties()) return;
+        
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
@@ -2149,49 +2152,56 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            // Are there any "common" special properties,
-            // i.e. properties that are available to everyone?
-            List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
-             if (commonSP != null) {
-                SellBonusToken sbt;
-        loop:   for (SpecialPropertyI sp : commonSP) {
-                    if (sp instanceof SellBonusToken) {
-                        sbt = (SellBonusToken) sp;
-                        // Can't buy if already owned
-                        if (operatingCompany.getBonuses() != null) {
-                            for (Bonus bonus : operatingCompany.getBonuses()) {
-                                if (bonus.getName().equals(sp.getName())) continue loop;
+            if (operatingCompany.canUseSpecialProperties()) {
+            
+                // Are there any "common" special properties,
+                // i.e. properties that are available to everyone?
+                List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
+                 if (commonSP != null) {
+                    SellBonusToken sbt;
+            loop:   for (SpecialPropertyI sp : commonSP) {
+                        if (sp instanceof SellBonusToken) {
+                            sbt = (SellBonusToken) sp;
+                            // Can't buy if already owned
+                            if (operatingCompany.getBonuses() != null) {
+                                for (Bonus bonus : operatingCompany.getBonuses()) {
+                                    if (bonus.getName().equals(sp.getName())) continue loop;
+                                }
+                            }
+                            possibleActions.add (new BuyBonusToken (sbt));
+                        }
+                    }
+                }
+                 
+                // Are there other step-independent special properties owned by the company?
+                List<SpecialPropertyI> orsps = operatingCompany.getPortfolio().getAllSpecialProperties();
+                if (orsps != null) {
+                    for (SpecialPropertyI sp : orsps) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
+                                && sp.isUsableDuringOR()) {
+                            if (sp instanceof SpecialTokenLay) {
+                                if (getStep() != GameDef.OrStep.LAY_TOKEN) {
+                                    possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
+                                }
+                           } else {
+                                possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
-                        possibleActions.add (new BuyBonusToken (sbt));
                     }
                 }
-            }
-             
-            // Are there other step-independent special properties owned by the company?
-            List<SpecialPropertyI> orsps = operatingCompany.getPortfolio().getAllSpecialProperties();
-            if (orsps != null) {
-                for (SpecialPropertyI sp : orsps) {
-                    if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
-                            && sp.isUsableDuringOR()) {
-                        if (sp instanceof SpecialTokenLay) {
-                            possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
-                        } else {
-                            possibleActions.add(new UseSpecialProperty(sp));
-                        }
-                    }
-                }
-            }
-            // Are there other step-independent special properties owned by teh president?
-            orsps = getCurrentPlayer().getPortfolio().getAllSpecialProperties();
-            if (orsps != null) {
-                for (SpecialPropertyI sp : orsps) {
-                    if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
-                            && sp.isUsableDuringOR()) {
-                        if (sp instanceof SpecialTokenLay) {
-                            possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
-                        } else {
-                            possibleActions.add(new UseSpecialProperty(sp));
+                // Are there other step-independent special properties owned by the president?
+                orsps = getCurrentPlayer().getPortfolio().getAllSpecialProperties();
+                if (orsps != null) {
+                    for (SpecialPropertyI sp : orsps) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
+                                && sp.isUsableDuringOR()) {
+                            if (sp instanceof SpecialTokenLay) {
+                                if (getStep() != GameDef.OrStep.LAY_TOKEN) {
+                                    possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
+                                }
+                            } else {
+                                possibleActions.add(new UseSpecialProperty(sp));
+                            }
                         }
                     }
                 }
