@@ -10,10 +10,9 @@ import java.io.ObjectInputStream;
 /**
  * Correction action that mirrors operating actions like tile and token lays, but
  * only changes the cash position of a cashholder.
- * (Extends PossibleAction instead of PossibleORAction to allow for generalization)
  * @author Stefan Frey
  */
-public class OperatingCost extends PossibleAction implements CorrectCashI, CorrectionAction {
+public class OperatingCost extends CorrectionAction implements CorrectCashI {
 
     public enum OCType {LAY_TILE, LAY_BASE_TOKEN};
     
@@ -21,9 +20,6 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
     public static final long serialVersionUID = 1L;
     
     /* Preconditions */
-    
-    /** shows in correction menu */
-    private boolean inCorrectionMenu;
     
     /** operating Company */
     transient private PublicCompanyI operatingCompany; 
@@ -40,6 +36,9 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
     /** maximum costs */
     private int maximumCost;
     
+    /** allow free entry */
+    private boolean freeEntryAllowed;
+    
     /* Postconditions */
 
     /** selected cash amount */
@@ -50,30 +49,25 @@ public class OperatingCost extends PossibleAction implements CorrectCashI, Corre
     * 
     * @param pc Public Company
     */
-   public OperatingCost(PublicCompanyI pc, OCType ot, int ocCosts) {
+   public OperatingCost(PublicCompanyI pc, OCType ot, int ocCosts, boolean freeEntry) {
        operatingCompany = pc;
        operatingCompanyName = pc.getName();
        operatingCostType = ot;
        suggestedCost = ocCosts;
+       freeEntryAllowed = freeEntry;
        maximumCost = pc.getCash();
    }
    
-   
-   public boolean isInCorrectionMenu(){
-       return inCorrectionMenu;
-   }
-
-   public void setCorrectionMenu(boolean menu){
-       inCorrectionMenu = menu;
-   }
-
-
    public CashHolder getCashHolder() {
        return operatingCompany;
    }
 
    public String getCashHolderName() {
        return operatingCompanyName;
+   }
+   
+   public boolean isFreeEntryAllowed() {
+       return freeEntryAllowed;
    }
 
    public int getAmount() {
