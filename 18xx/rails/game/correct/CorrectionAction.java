@@ -1,16 +1,26 @@
 package rails.game.correct;
 
-import rails.game.*;
+import rails.game.action.PossibleAction;;
 /**
- * Interface to implement for all non-correction action.
- * 
+ * Base class for all actions that correct the state of the game
+ * that violate the ruleset.
  * 
  * @author freystef
  *
  */
 
-public interface CorrectionAction {
+public abstract class CorrectionAction extends PossibleAction {
     
-    public boolean isInCorrectionMenu();
+    /** shows in correction menu */
+    protected boolean inCorrectionMenu;
+
+    
+    public boolean isInCorrectionMenu(){
+            return inCorrectionMenu;
+    }
+    
+    public void setCorrectionMenu(boolean menu){
+        inCorrectionMenu = menu;
+    }
     
 }

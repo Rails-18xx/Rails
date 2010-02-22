@@ -763,12 +763,11 @@ public class ORUIManager implements DialogOwner {
         
         for (OperatingCost ac:actionOC) {
             
-            int suggestedCost = ac.getAmount();
             String suggestedCostText;
-            if (suggestedCost == 0)
+            if (ac.isFreeEntryAllowed())
                 suggestedCostText = LocalText.getText("OCAmountEntry");
             else
-                suggestedCostText = Bank.format(suggestedCost);
+                suggestedCostText = Bank.format(ac.getAmount());
             
             OperatingCost.OCType t = ac.getOCType();
             if (t == OperatingCost.OCType.LAY_TILE) 
@@ -789,7 +788,7 @@ public class ORUIManager implements DialogOwner {
             if (chosenOption != null) {
                 int index = textOC.indexOf(chosenOption);
                 OperatingCost chosenAction = actionOC.get(index);
-                if (chosenAction.getAmount() == 0) {
+                if (chosenAction.isFreeEntryAllowed()) {
                     String costString = (String) JOptionPane.showInputDialog(orWindow,
                             LocalText.getText("OCDialogMessage", chosenOption),
                             LocalText.getText("OCDialogTitle"),
@@ -1160,7 +1159,7 @@ public class ORUIManager implements DialogOwner {
 
     protected void processCorrectionAction(CorrectionAction action) {
 
-        gameUIManager.processOnServer((PossibleAction)action);
+        gameUIManager.processOnServer(action);
         
     }
     

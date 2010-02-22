@@ -13,16 +13,13 @@ import java.util.*;
  * 
  * @author Stefan Frey
  */
-public class CorrectCash extends PossibleAction implements CorrectCashI, CorrectionAction {
+public class CorrectCash extends CorrectionAction implements CorrectCashI {
 
     /** The Constant serialVersionUID. */
     public static final long serialVersionUID = 1L;
     
     /* Preconditions */
-    
-    /** shows in correction menu */
-    private boolean inCorrectionMenu;
-    
+   
     /** cash holder */
     transient private CashHolder correctCashHolder; 
 
@@ -62,13 +59,6 @@ public class CorrectCash extends PossibleAction implements CorrectCashI, Correct
    }
    
    
-   public boolean isInCorrectionMenu(){
-       return inCorrectionMenu;
-   }
-   public void setCorrectionMenu(boolean menu){
-       inCorrectionMenu = menu;
-   }
-
    public CashHolder getCashHolder() {
        return correctCashHolder;
    }

@@ -11,15 +11,12 @@ import rails.util.Util;
  * Correction action that allows the closure of a private company.
  */
 
-public class ClosePrivate extends PossibleAction implements CorrectionAction {
+public class ClosePrivate extends CorrectionAction {
 
     private static final long serialVersionUID = 1L;
 
     /* Preconditions */
     
-    /** shows in correction menu */
-    private boolean inCorrectionMenu;
-
     /** private company to close */
     private PrivateCompanyI privateCompany;
     
@@ -33,13 +30,6 @@ public class ClosePrivate extends PossibleAction implements CorrectionAction {
         privateCompanyName = priv.getName();
     }
     
-    public boolean isInCorrectionMenu(){
-        return inCorrectionMenu;
-    }
-    public void setCorrectionMenu(boolean menu){
-        inCorrectionMenu = menu;
-    }
-
     public PrivateCompanyI getPrivateCompany() {
         return privateCompany;
     }

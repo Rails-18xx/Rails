@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.104 2010/02/20 23:08:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.105 2010/02/22 22:48:18 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2247,8 +2247,9 @@ public class OperatingRound extends Round implements Observer {
 
         // LayTile Actions
         for (Integer tc: mapManager.getPossibleTileCosts()) {
-            possibleActions.add(new OperatingCost(
-                    operatingCompany, OperatingCost.OCType.LAY_TILE, tc
+            if (tc <= operatingCompany.getCash())  
+                possibleActions.add(new OperatingCost(
+                    operatingCompany, OperatingCost.OCType.LAY_TILE, tc, false
                 ));
         }
         
@@ -2256,22 +2257,23 @@ public class OperatingRound extends Round implements Observer {
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
             int[] costs = operatingCompany.getBaseTokenLayCosts();
             for (int cost : costs) {
-                possibleActions.add(new OperatingCost(
+                if ((cost <= operatingCompany.getCash()) && (cost != 0 || costs.length == 1)) // distance method returns home base, but in sequence costs can be zero 
+                    possibleActions.add(new OperatingCost(
                         operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN,   
-                        cost
+                        cost, false
                     ));
             }
         }
 
         // Default OperatingCost Actions
         possibleActions.add(new OperatingCost(
-                operatingCompany, OperatingCost.OCType.LAY_TILE, 0
+                operatingCompany, OperatingCost.OCType.LAY_TILE, 0, true
             ));
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
                 && operatingCompany.getBaseTokenLayCost(null) != 0) {
             possibleActions.add(new OperatingCost(
-                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0
-                ));
+                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0, true
+                    ));
         }
 
         // Private Company Closure
