@@ -15,75 +15,92 @@
 		<Trains number="4,4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
-	<Company name="Tusc" type="Private" basePrice="20" revenue="5"/>
-	<Company name="S&amp;NA" type="Private" basePrice="40" revenue="10">
+	<Company name="Tusc" type="Private" basePrice="20" revenue="5" longname="Tuscumbia Railway"/>
+	<Company name="S&amp;NA" type="Private" basePrice="40" revenue="10"
+		longname="South &amp; North Alabama Railroad">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" 
-				when="anyTimeDuringORTurn" 
+			<SpecialProperty condition="ifOwnedByCompany"
+				when="anyTimeDuringORTurn"
 				class="rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="rails.game.BonusToken" 
-						location="E6,G4,G6,H3,H5" connected="yes" extra="yes">
-					<BonusToken name="Coalfield" value="10" removed="Phase:6"/>
+				<SpecialTokenLay class="rails.game.BonusToken"
+					location="E6,G4,G6,H3,H5" connected="yes" extra="yes">
+					<BonusToken name="Coalfield" value="10"
+						removed="Phase:6" />
 				</SpecialTokenLay>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="B&amp;SLC" type="Private" basePrice="70" revenue="15">
+	<Company name="B&amp;SLC" type="Private" basePrice="70" revenue="15"
+		longname="Brown &amp; Sons Lumber Co.">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" 
-				class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay tile="445" name="Lumber Terminal" location="G2,M2,N5,O4,P5" 
-					connected="no" free="yes" extra="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany"
+				when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay tile="445" name="Lumber Terminal"
+					location="G2,M2,N5,O4,P5" connected="no" free="yes" extra="yes" />
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M&amp;C" type="Private" basePrice="100" revenue="20">
+	<Company name="M&amp;C" type="Private" basePrice="100" revenue="20"
+		longname="Memphis &amp; Charleston Railroad">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringORTurn"
-				class="rails.game.specific._18AL.NameTrains"
-				transfer="toCompany">
-				<NameTrains class="rails.game.specific._18AL.NamedTrainToken">
-					<NamedTrainToken name="RELee" longName="&quot;Robert E. Lee&quot; (Bir-Atl)" value="20" ifRouteIncludes="G4,G8"/>
-					<NamedTrainToken name="PanAm" longName="&quot;Pan American&quot; (Nas-Mob)" value="40" ifRouteIncludes="A4,Q2"/>
+			<SpecialProperty condition="ifOwnedByCompany"
+				when="anyTimeDuringORTurn"
+				class="rails.game.specific._18AL.NameTrains" transfer="toCompany">
+				<NameTrains
+					class="rails.game.specific._18AL.NamedTrainToken">
+					<NamedTrainToken name="RELee"
+						longName="&quot;Robert E. Lee&quot; (Bir-Atl)" value="20"
+						ifRouteIncludes="G4,G8" />
+					<NamedTrainToken name="PanAm"
+						longName="&quot;Pan American&quot; (Nas-Mob)" value="40"
+						ifRouteIncludes="A4,Q2" />
 				</NameTrains>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="NDY" type="Private" basePrice="120" revenue="20">
+	<Company name="NDY" type="Private" basePrice="120" revenue="20"
+		longname="New Decatur Yards">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="duringTrainBuyingStep"
+			<SpecialProperty condition="ifOwnedByCompany"
+				when="duringTrainBuyingStep"
 				class="rails.game.special.SpecialTrainBuy" closeIfExercised="yes">
-				<SpecialTrainBuy trainType="any" deduction="50%"/>
+				<SpecialTrainBuy trainType="any" deduction="50%" />
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
+			<SpecialProperties condition="ifExercised" />
 		</ClosingConditions>
 	</Company>
-	
-	<Company name="WRA" type="Public" tokens="4" fgColour="000000" bgColour="FF8000">
-		<Home hex="L5"/>
-		<Destination hex="J7"/>
+
+	<Company name="WRA" type="Public" tokens="4" fgColour="000000"
+		bgColour="FF8000" longname="Western Railway of Alabama">
+		<Home hex="L5" />
+		<Destination hex="J7" />
 	</Company>
-	<Company name="TAG" type="Public" tokens="2" fgColour="FFFFFF" bgColour="800080">
-		<Home hex="E6"/>
-		<Destination hex="G4"/>
+	<Company name="TAG" type="Public" tokens="2" fgColour="FFFFFF"
+		bgColour="800080" longname="Tennessee, Alabama &amp; Georgia Railroad">
+		<Home hex="E6" />
+		<Destination hex="G4" />
 	</Company>
-	<Company name="M&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="00FF00">
-		<Home hex="Q2"/>
-		<Destination hex="K2"/>
+	<Company name="M&amp;O" type="Public" tokens="4" fgColour="000000"
+		bgColour="00FF00" longname="Mobile &amp; Ohio Railroad">
+		<Home hex="Q2" />
+		<Destination hex="K2" />
 	</Company>
-	<Company name="ATN" type="Public" tokens="3" fgColour="000000" bgColour="808080">
-		<Home hex="F1"/>
-		<Destination hex="L1"/>
+	<Company name="ATN" type="Public" tokens="3" fgColour="000000"
+		bgColour="808080" longname="Alabama, Tennessee, &amp; Northern Railroad">
+		<Home hex="F1" />
+		<Destination hex="L1" />
 	</Company>
-	<Company name="AB&amp;C" type="Public" tokens="2" fgColour="000000" bgColour="FFFF00">
-		<Home hex="G6"/>
-		<Destination hex="G4"/>
+	<Company name="AB&amp;C" type="Public" tokens="2" fgColour="000000"
+		bgColour="FFFF00" longname="Atlanta, Birmingham, &amp; Coast Railroad">
+		<Home hex="G6" />
+		<Destination hex="G4" />
 	</Company>
-	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000" bgColour="FF0000">
-		<Home hex="A4"/>
-		<Destination hex="G4"/>
+	<Company name="L&amp;N" type="Public" tokens="4" fgColour="000000"
+		bgColour="FF0000" longname="Louisville &amp; Nashville Railroad">
+		<Home hex="A4" />
+		<Destination hex="G4" />
 	</Company>
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
