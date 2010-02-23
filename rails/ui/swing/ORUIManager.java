@@ -1378,7 +1378,7 @@ public class ORUIManager implements DialogOwner {
         }
         
         // Any other special properties, to be shown in the "Special" menu.
-        // (Currently not used)
+        // Example: 18AL AssignNamedTrains
         if (possibleActions.contains(UseSpecialProperty.class)) {
             for (UseSpecialProperty usp : possibleActions.getType(UseSpecialProperty.class)) {
                 SpecialPropertyI sp = usp.getSpecialProperty();
