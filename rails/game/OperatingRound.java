@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.105 2010/02/22 22:48:18 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.106 2010/02/23 22:21:39 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -96,7 +96,7 @@ public class OperatingRound extends Round implements Observer {
         operatingCompanyArray = super.getOperatingCompanies();
         
         // sfy NoMapMode
-        noMapMode = GameOption.convertValueToBoolean("NoMapMode", getGameOption("NoMapMode"));
+        noMapMode = GameOption.convertValueToBoolean(getGameOption("NoMapMode"));
         
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
