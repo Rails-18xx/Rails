@@ -8,6 +8,7 @@ import rails.ui.swing.ORUIManager;
 
 public class ORUIManager_18AL extends ORUIManager {
 
+    /*
     @Override
     protected void checkForGameSpecificActions() {
 
@@ -20,6 +21,7 @@ public class ORUIManager_18AL extends ORUIManager {
             }
         }
     }
+    */
 
     protected boolean processGameSpecificActions(List<PossibleAction> actions) {
 
