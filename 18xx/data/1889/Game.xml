@@ -128,8 +128,9 @@
 		</Phase>
 		<Phase name="D">
 			<Tiles colour="yellow,green,brown"/>
-<!-- 			TODO: Offboard revenue only for diesels changes, other trains remain at step 2  -->
-<!-- 			<OffBoardRevenue step="3"/> -->
+<!-- 			TODO: Offboard revenue only for diesels changes, other trains remain at step 2,
+				but not relevant as long as revenue calculation is not supported. -->
+			<OffBoardRevenue step="3"/>
 		</Phase>
 	</Component>
 </ComponentManager>
