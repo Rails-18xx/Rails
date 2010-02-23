@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.10 2010/02/14 20:48:02 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.11 2010/02/23 22:21:39 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -102,9 +102,8 @@ public class GameOption {
     }
 
     /** Get GameOption Value as Boolean Value */
-    public static boolean convertValueToBoolean(String name, String value) {
+    public static boolean convertValueToBoolean(String value) {
         return value != null 
-            && optionsMap.get(name).isBoolean 
             && OPTION_VALUE_YES.equalsIgnoreCase(value);
     }
 }

@@ -49,27 +49,21 @@
 		</Company>
 		<Company name="B" type="Private" basePrice="30" revenue="5"
 			longName="Mitsubishi Ferry">
+<!-- 			Handling of special property outside of players public company turn is done in OperatingRound_1889, coded against name "B" -->
 			<SpecialProperties>
 				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
 				</SpecialProperty>
-<!-- 				TODO: Additional Property required: -->
-<!--				<SpecialProperty condition="ifOwnedByPlayer" when="betweenOR" class="rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
-				</SpecialProperty>  -->
 			</SpecialProperties>
 		</Company>
 		<Company name="C" type="Private" basePrice="40" revenue="10"
 			longName="Ehime Railway" >
 			<Blocking hex="C4"/>
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+<!-- 			Timing of special property is done in OperatingRound_1889, coded against name "C" -->
+				<SpecialProperty condition="specific" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 					<SpecialTileLay location="C4" extra="yes" free="yes"/>
 				</SpecialProperty>
-<!-- 				TODO: Correct Property would look like: -->
-<!--				<SpecialProperty condition="PlayerAfterSellToPublic" when="immediate" class="rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="C4" extra="yes" free="yes"/>
-				</SpecialProperty>-->
 			</SpecialProperties>
 		</Company>
 		<Company name="D" type="Private" basePrice="50" revenue="15"

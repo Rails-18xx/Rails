@@ -92,15 +92,12 @@ Aspects not present in 1830 have not been implemented yet.
 	</Game>
 	
 	<Game name="1889">
-		<Note>Fully playable (see Description)</Note>
+		<Note>Fully playable</Note>
 		<Description>1889 - History of Shikoku Railways
 (c) 2003-2006 Yasutaka Ikeda
 Published by Wild Heaven Productions and Deep Thought Games
 
-Limitations:
-- Private B: Building of Port tile only possible at the tile laying step of a public company with the same owner.
-- Private C: Laying of green tile on C4 only possible at the tile laying step of the new company owner, not immediately after sale by 
-selling player.
+Limitation:
 - Forced Selling: Change of director in other company is not prevented by Rails (see rule 10.6.2)
 		</Description>
 		<Players minimum="2" maximum="6"/>
