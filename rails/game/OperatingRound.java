@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.106 2010/02/23 22:21:39 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.107 2010/02/24 21:09:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -197,9 +197,9 @@ public class OperatingRound extends Round implements Observer {
 
             result = buyBonusToken((BuyBonusToken) selectedAction);
 
-        } else if (selectedAction instanceof CorrectCashI) {
-            // includes OperatingCost
-            result = executeCorrectCash((CorrectCashI) selectedAction);
+        } else if (selectedAction instanceof OperatingCost) {
+
+            result = executeOperatingCost((OperatingCost) selectedAction);
 
         } else if (selectedAction instanceof SetDividend) {
 
@@ -941,86 +941,78 @@ public class OperatingRound extends Round implements Observer {
         return action.getActualRevenue();
     }
 
-    protected boolean executeCorrectCash(CorrectCashI action){
+    protected boolean executeOperatingCost(OperatingCost action){
 
-        CashHolder ch = action.getCashHolder();
+        String companyName = action.getCompanyName();
+        OperatingCost.OCType typeOC = action.getOCType(); 
+
         int amount = action.getAmount();
-        int cost = -amount; // costs are minus of CashCorrectamount
-
-        // operating costs related stuff
-        boolean flagOC = false;
-        OperatingCost actionOC = null;
-        OperatingCost.OCType typeOC = null;
-        PublicCompanyI pc = null;
-        String textError = "CCExecutionError";
-        
-        if (action instanceof OperatingCost) {
-            flagOC = true;
-            actionOC = (OperatingCost) action;
-            typeOC = actionOC.getOCType(); 
-            pc = (PublicCompanyI) ch;
-            textError = "OCExecutionError";
-        }
         
         String errMsg = null;
 
         while (true) {
-            if ((amount + ch.getCash()) < 0) {
+            // Must be correct company.
+            if (!companyName.equals(operatingCompany.getName())) {
+                errMsg =
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                operatingCompany.getName() );
+                break;
+            }
+            // amount is available
+            if ((amount + operatingCompany.getCash()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
-                            ch.getName(),
-                            Bank.format(ch.getCash()),
-                            Bank.format(cost) 
+                            companyName,
+                            Bank.format(operatingCompany.getCash()),
+                            Bank.format(amount) 
                     );
                 break;
             }
-            if (flagOC && (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) && (pc.getNumberOfFreeBaseTokens() == 0)) {
+            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN && operatingCompany.getNumberOfFreeBaseTokens() == 0) {
                 errMsg = 
-                    LocalText.getText("HasNoTokensLeft", ch.getName());
+                    LocalText.getText("HasNoTokensLeft", companyName);
                 break;
             }
             break;
         }
         
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText(textError,
-                    ch.getName(),
+            DisplayBuffer.add(LocalText.getText("OCExecutionError",
+                    companyName,
                     errMsg));
             return false;
         }
         
         moveStack.start(true);
 
-        if (amount < 0) {
-            // negative amounts: remove cash from cashholder
-            new CashMove(ch, bank, cost);
+        if (amount > 0) {
+            // positive amounts: remove cash from cashholder
+            new CashMove(operatingCompany, bank, amount);
         } else if (amount > 0) {
-            // positive amounts: add cash to cashholder
-            new CashMove(bank, ch, amount);
+            // negative amounts: add cash to cashholder
+            new CashMove(bank, operatingCompany, -amount);
         }
 
-        if (flagOC) {
-            
-            if (typeOC == OperatingCost.OCType.LAY_TILE) {
-                pc.layTileInNoMapMode(cost);
-                ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
-                        pc.getName(),
-                        Bank.format(cost) ));
+        if (typeOC == OperatingCost.OCType.LAY_TILE) {
+            operatingCompany.layTileInNoMapMode(amount);
+            ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
+                    operatingCompany.getName(),
+                    Bank.format(amount) ));
+        }
+        if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
+            // move token to Bank
+            BaseToken token = operatingCompany.getFreeToken();
+            if (token == null) {
+                log.error("Company " + operatingCompany.getName() + " has no free token");
+                return false;
+            } else {
+                token.moveTo(bank.getUnavailable());
             }
-            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
-                // move token to Bank
-                BaseToken token = pc.getFreeToken();
-                if (token == null) {
-                    log.error("Company " + pc.getName() + " has no free token");
-                    return false;
-                } else {
-                    token.moveTo(bank.getUnavailable());
-                }
-                pc.layBaseTokenInNoMapMode(cost);
-                ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
-                        pc.getName(),
-                        Bank.format(cost) ));
-            }
+            operatingCompany.layBaseTokenInNoMapMode(amount);
+            ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
+                    operatingCompany.getName(),
+                    Bank.format(amount) ));
         }
         
         return true;
@@ -1046,6 +1038,92 @@ public class OperatingRound extends Round implements Observer {
         
         return true;
     }
+
+//    protected boolean executeCorrectCash(CorrectCashI action){
+//
+//        CashHolder ch = action.getCashHolder();
+//        int amount = action.getAmount();
+//        int cost = -amount; // costs are minus of CashCorrectamount
+//
+//        // operating costs related stuff
+//        boolean flagOC = false;
+//        OperatingCost actionOC = null;
+//        OperatingCost.OCType typeOC = null;
+//        PublicCompanyI pc = null;
+//        String textError = "CCExecutionError";
+//        
+//        if (action instanceof OperatingCost) {
+//            flagOC = true;
+//            actionOC = (OperatingCost) action;
+//            typeOC = actionOC.getOCType(); 
+//            pc = (PublicCompanyI) ch;
+//            textError = "OCExecutionError";
+//        }
+//        
+//        String errMsg = null;
+//
+//        while (true) {
+//            if ((amount + ch.getCash()) < 0) {
+//                errMsg =
+//                    LocalText.getText("NotEnoughMoney", 
+//                            ch.getName(),
+//                            Bank.format(ch.getCash()),
+//                            Bank.format(cost) 
+//                    );
+//                break;
+//            }
+//            if (flagOC && (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) && (pc.getNumberOfFreeBaseTokens() == 0)) {
+//                errMsg = 
+//                    LocalText.getText("HasNoTokensLeft", ch.getName());
+//                break;
+//            }
+//            break;
+//        }
+//        
+//        if (errMsg != null) {
+//            DisplayBuffer.add(LocalText.getText(textError,
+//                    ch.getName(),
+//                    errMsg));
+//            return false;
+//        }
+//        
+//        moveStack.start(true);
+//
+//        if (amount < 0) {
+//            // negative amounts: remove cash from cashholder
+//            new CashMove(ch, bank, cost);
+//        } else if (amount > 0) {
+//            // positive amounts: add cash to cashholder
+//            new CashMove(bank, ch, amount);
+//        }
+//
+//        if (flagOC) {
+//            
+//            if (typeOC == OperatingCost.OCType.LAY_TILE) {
+//                pc.layTileInNoMapMode(cost);
+//                ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
+//                        pc.getName(),
+//                        Bank.format(cost) ));
+//            }
+//            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
+//                // move token to Bank
+//                BaseToken token = pc.getFreeToken();
+//                if (token == null) {
+//                    log.error("Company " + pc.getName() + " has no free token");
+//                    return false;
+//                } else {
+//                    token.moveTo(bank.getUnavailable());
+//                }
+//                pc.layBaseTokenInNoMapMode(cost);
+//                ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
+//                        pc.getName(),
+//                        Bank.format(cost) ));
+//            }
+//        }
+//        
+//        return true;
+//    }
+
     
     /**
      * Internal method: change the OR state to the next step. If the currently
@@ -2248,9 +2326,7 @@ public class OperatingRound extends Round implements Observer {
         // LayTile Actions
         for (Integer tc: mapManager.getPossibleTileCosts()) {
             if (tc <= operatingCompany.getCash())  
-                possibleActions.add(new OperatingCost(
-                    operatingCompany, OperatingCost.OCType.LAY_TILE, tc, false
-                ));
+                possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_TILE, tc, false));
         }
         
         // LayBaseToken Actions
@@ -2258,22 +2334,17 @@ public class OperatingRound extends Round implements Observer {
             int[] costs = operatingCompany.getBaseTokenLayCosts();
             for (int cost : costs) {
                 if ((cost <= operatingCompany.getCash()) && (cost != 0 || costs.length == 1)) // distance method returns home base, but in sequence costs can be zero 
-                    possibleActions.add(new OperatingCost(
-                        operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN,   
-                        cost, false
-                    ));
+                    possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, cost, false));
             }
         }
 
         // Default OperatingCost Actions
         possibleActions.add(new OperatingCost(
-                operatingCompany, OperatingCost.OCType.LAY_TILE, 0, true
+                OperatingCost.OCType.LAY_TILE, 0, true
             ));
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
                 && operatingCompany.getBaseTokenLayCost(null) != 0) {
-            possibleActions.add(new OperatingCost(
-                    operatingCompany, OperatingCost.OCType.LAY_BASE_TOKEN, 0, true
-                    ));
+            possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, 0, true));
         }
 
         // Private Company Closure

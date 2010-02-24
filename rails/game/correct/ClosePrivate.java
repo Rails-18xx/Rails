@@ -8,12 +8,13 @@ import rails.game.action.PossibleAction;
 import rails.util.Util;
 
 /**
- * Correction action that allows the closure of a private company.
+ * Action that allows the closure of a private company
+ * used for NoMapMode
  */
 
-public class ClosePrivate extends CorrectionAction {
+public class ClosePrivate extends PossibleAction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /* Preconditions */
     
@@ -45,9 +46,7 @@ public class ClosePrivate extends CorrectionAction {
     public boolean equals(PossibleAction action) {
         if (!(action instanceof ClosePrivate)) return false;
         ClosePrivate a = (ClosePrivate) action;
-        return (a.privateCompany == this.privateCompany &&
-                a.inCorrectionMenu == this.inCorrectionMenu
-        );
+        return (a.privateCompany == this.privateCompany);
     }
 
     @Override
@@ -57,7 +56,6 @@ public class ClosePrivate extends CorrectionAction {
             b.append(" (not acted)");
             if (privateCompany != null)
                 b.append(", privateCompany="+privateCompany);
-            b.append(", inCorrectionMenu="+inCorrectionMenu);
         } else {
             b.append(" (acted)");
             if (privateCompany != null)
