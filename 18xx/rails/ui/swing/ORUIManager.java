@@ -1389,8 +1389,7 @@ public class ORUIManager implements DialogOwner {
         // Close Private
         if (possibleActions.contains(ClosePrivate.class)) {
             for (ClosePrivate action: possibleActions.getType(ClosePrivate.class)) {
-                if (!action.isInCorrectionMenu())
-                    orPanel.addSpecialAction(action, action.getInfo());
+                orPanel.addSpecialAction(action, action.getInfo());
             }
         }
         

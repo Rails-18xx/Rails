@@ -2,30 +2,26 @@ package rails.game.correct;
 
 import rails.game.*;
 import rails.game.action.PossibleAction;
+import rails.game.action.PossibleORAction;
 import rails.util.Util;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
- * Correction action that mirrors operating actions like tile and token lays, but
- * only changes the cash position of a cashholder.
+ * OR action for no map mode 
+ * mirrors operating actions like tile and token lays, but
+ * only changes the cash position of the public company
  * @author Stefan Frey
  */
-public class OperatingCost extends CorrectionAction implements CorrectCashI {
+public class OperatingCost extends PossibleORAction {
 
     public enum OCType {LAY_TILE, LAY_BASE_TOKEN};
     
     /** The Constant serialVersionUID. */
-    public static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 2L;
     
     /* Preconditions */
-    
-    /** operating Company */
-    transient private PublicCompanyI operatingCompany; 
-
-    /** converted to name */
-    private String operatingCompanyName; 
 
     /** operating cost type (as tile lay, token lay etc.) */
     private OCType operatingCostType;
@@ -49,21 +45,14 @@ public class OperatingCost extends CorrectionAction implements CorrectCashI {
     * 
     * @param pc Public Company
     */
-   public OperatingCost(PublicCompanyI pc, OCType ot, int ocCosts, boolean freeEntry) {
-       operatingCompany = pc;
-       operatingCompanyName = pc.getName();
+   public OperatingCost(OCType ot, int ocCosts, boolean freeEntry) {
+       
+       super();
+
        operatingCostType = ot;
        suggestedCost = ocCosts;
        freeEntryAllowed = freeEntry;
-       maximumCost = pc.getCash();
-   }
-   
-   public CashHolder getCashHolder() {
-       return operatingCompany;
-   }
-
-   public String getCashHolderName() {
-       return operatingCompanyName;
+       maximumCost = company.getCash();
    }
    
    public boolean isFreeEntryAllowed() {
@@ -72,7 +61,7 @@ public class OperatingCost extends CorrectionAction implements CorrectCashI {
 
    public int getAmount() {
        if (acted)
-           return -operatingCost;
+           return operatingCost;
        else
            return suggestedCost;
    }
@@ -89,11 +78,10 @@ public class OperatingCost extends CorrectionAction implements CorrectCashI {
     public boolean equals(PossibleAction action) {
         if (!(action instanceof OperatingCost)) return false;
         OperatingCost a = (OperatingCost) action;
-        return (a.operatingCompany == this.operatingCompany &&
+        return (a.company == this.company &&
                 a.operatingCostType == this.operatingCostType &&
                 a.suggestedCost == this.suggestedCost &&
-                a.maximumCost == this.maximumCost &&
-                a.inCorrectionMenu == this.inCorrectionMenu
+                a.maximumCost == this.maximumCost
         );
     }
     @Override
@@ -101,16 +89,15 @@ public class OperatingCost extends CorrectionAction implements CorrectCashI {
         StringBuffer b = new StringBuffer("OperatingCost");
         if (!acted) {
             b.append(" (not acted)");
-            if (operatingCompany != null)
-                b.append(", operatingCompany="+operatingCompany);
+            if (company != null)
+                b.append(", company="+company);
             b.append(", operatingCostType="+operatingCostType);
             b.append(", suggestedCost="+suggestedCost);
             b.append(", maximumCost="+maximumCost);
-            b.append(", inCorrectionMenu="+inCorrectionMenu);
         } else {
             b.append(" (acted)");
-            if (operatingCompany != null)
-                b.append(", operatingCompany="+operatingCompany);
+            if (company != null)
+                b.append(", company="+company);
             b.append(", operatingCostType="+operatingCostType);
             b.append(", operatingCost="+operatingCost);
         }
@@ -121,7 +108,7 @@ public class OperatingCost extends CorrectionAction implements CorrectCashI {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        if (Util.hasValue(operatingCompanyName))
-                operatingCompany = getCompanyManager().getCompanyByName(operatingCompanyName);
+        if (Util.hasValue(companyName))
+                company = getCompanyManager().getCompanyByName(companyName);
     }
 }
