@@ -94,6 +94,9 @@ public class StockRound extends Round {
     @Override
     public boolean setPossibleActions() {
 
+        // fix of the forced undo bug
+        currentPlayer = getCurrentPlayer();
+        
         boolean passAllowed = false;
 
         setSellableShares();
