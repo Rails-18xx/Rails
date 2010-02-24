@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.38 2010/02/16 20:16:07 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.39 2010/02/24 22:10:45 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,6 +11,7 @@ import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
+import rails.game.state.BooleanState;
 import rails.util.*;
 
 /**
@@ -83,7 +84,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     protected List<City> cities;
     protected Map<Integer, City> mCities;
 
-    protected boolean isBlocked = false;
+    /*
+     * changed to state variable to fix undo bug #2954645 
+     * null as default implies false - see isBlocked()
+     */
+    private BooleanState isBlockedState = null; 
 
     protected Map<PublicCompanyI, City> homes;
     protected List<PublicCompanyI> destinations;
@@ -883,18 +888,24 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
      * @return Returns the isBlocked.
      */
     public boolean isBlocked() {
-        return isBlocked;
+        if (isBlockedState == null)
+            return false;
+        else
+            return isBlockedState.booleanValue();
     }
 
     /**
-     * @param isBlocked The isBlocked to set.
+     * @param isBlocked The isBlocked to set (state variable)
      */
     public void setBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
+        if (isBlockedState == null)
+            isBlockedState = new BooleanState("isBlocked", isBlocked);
+        else
+            isBlockedState.set(isBlocked);
     }
 
     public boolean isUpgradeableNow() {
-        if (isBlocked) {
+        if (isBlocked()) {
             log.debug("Hex " + name + " is blocked");
             return false;
         }
