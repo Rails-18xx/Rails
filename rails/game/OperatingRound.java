@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.108 2010/02/26 08:04:14 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.109 2010/02/26 08:51:08 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2041,7 +2041,8 @@ public class OperatingRound extends Round implements Observer {
 
         if (repayment > 0) executeRepayLoans (action);
 
-        doneAllowed = true;
+        // doneAllowed = true; 
+        // has no effect, overwritten in setPossibleActions(), fix of bug 2954654
 
         return true;
     }
@@ -2143,6 +2144,7 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public boolean setPossibleActions() {
 
+        
         int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
         operatingCompany = operatingCompanyArray[operatingCompanyIndex];
 
@@ -2151,6 +2153,7 @@ public class OperatingRound extends Round implements Observer {
         selectedAction = null;
 
         boolean forced = false;
+        doneAllowed = false; // set default (fix of bug  2954654)
         
         if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
