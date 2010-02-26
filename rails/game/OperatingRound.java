@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.107 2010/02/24 21:09:23 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.108 2010/02/26 08:04:14 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.EnumState;
 import rails.game.state.IntegerState;
-import rails.game.state.State;
+import rails.game.state.GenericState;
 import rails.util.LocalText;
 
 /**
@@ -46,8 +46,9 @@ public class OperatingRound extends Round implements Observer {
 
     protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
 
-    protected Map<String, Integer> tileLaysPerColour =
-            new HashMap<String, Integer>();
+//    protected Map<String, Integer> tileLaysPerColour =
+//            new HashMap<String, Integer>();
+    protected GenericState<Map<String,Integer>> tileLaysPerColourState = null;
 
     protected List<LayBaseToken> currentNormalTokenLays =
             new ArrayList<LayBaseToken>();
@@ -445,7 +446,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected boolean checkNormalTileLay(TileI tile, boolean update) {
-
+        
+        Map<String,Integer> tileLaysPerColour = tileLaysPerColourState.getObject();
+        
         if (tileLaysPerColour.isEmpty()) return false;
         String colour = tile.getColourName();
 
@@ -462,16 +465,21 @@ public class OperatingRound extends Round implements Observer {
          * all normal tile lays have been consumed. 2. If any colour is laid, no
          * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
          */
+        
+        Map<String,Integer> tileLaysPerColourUpdated = new HashMap<String, Integer>(); // new (empty) map
+        
         if (oldAllowedNumber <= 1) {
-            tileLaysPerColour.clear();
+//            tileLaysPerColour.clear();
             log.debug("No more normal tile lays allowed");
             currentNormalTileLays.clear();
         } else {
-            tileLaysPerColour.clear(); // Remove all other colours
-            tileLaysPerColour.put(colour, new Integer(oldAllowedNumber - 1));
+//            tileLaysPerColour.clear(); // Remove all other colours
+            tileLaysPerColourUpdated.put(colour, new Integer(oldAllowedNumber - 1));
             log.debug((oldAllowedNumber - 1) + " more " + colour
                       + " tile lays allowed");
         }
+        
+        tileLaysPerColourState.set(tileLaysPerColourUpdated);
 
         return true;
     }
@@ -1229,7 +1237,7 @@ public class OperatingRound extends Round implements Observer {
         GameDef.OrStep step = stepObject.value();
 
         if (step == GameDef.OrStep.LAY_TRACK) {
-            getNormalTileLays();
+//            getNormalTileLays();
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
 
         } else {
@@ -1255,21 +1263,27 @@ public class OperatingRound extends Round implements Observer {
      */
     protected void getNormalTileLays() {
 
-        tileLaysPerColour =
+        Map<String,Integer> tileLaysPerColour =
                 new HashMap<String, Integer>(getCurrentPhase().getTileColours()); // Clone
-        // it.
+        
         int allowedNumber;
         for (String colour : tileLaysPerColour.keySet()) {
             allowedNumber = operatingCompany.getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
             tileLaysPerColour.put(colour, new Integer(allowedNumber));
         }
+
+        // store state
+        tileLaysPerColourState = new GenericState<Map<String,Integer>>("tileLaysPerColour", tileLaysPerColour);
     }
 
     protected void setNormalTileLays() {
 
         /* Normal tile lays */
         currentNormalTileLays.clear();
+        
+        Map<String,Integer> tileLaysPerColour = (Map<String,Integer>)(tileLaysPerColourState.getObject());
+        
         if (!tileLaysPerColour.isEmpty()) {
             currentNormalTileLays.add(new LayTile(tileLaysPerColour));
         }
@@ -2143,6 +2157,7 @@ public class OperatingRound extends Round implements Observer {
             if (noMapMode) {
                 nextStep (GameDef.OrStep.LAY_TOKEN);
             } else {
+                getNormalTileLays(); // new: only called once per turn ?
                 setStep (GameDef.OrStep.LAY_TRACK);
             }
         }
