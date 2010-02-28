@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.7 2010/02/16 20:16:07 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.8 2010/02/28 21:38:06 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import rails.game.*;
+import rails.game.action.PossibleAction;
 
 /**
  * @author Erik Vos

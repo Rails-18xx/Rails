@@ -498,8 +498,10 @@ public class GameUIManager implements DialogOwner {
     public void dialogActionPerformed (boolean ready) {
 
         if (!ready) {
-
-            if (currentDialog instanceof RadioButtonDialog
+            
+            if (checkGameSpecificDialogAction()) {
+                ;
+            } else if (currentDialog instanceof RadioButtonDialog
                     && currentDialogAction instanceof StartCompany) {
 
                 RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
@@ -567,6 +569,11 @@ public class GameUIManager implements DialogOwner {
         }
 
         processOnServer(currentDialogAction);
+    }
+
+    /** Stub, can be overridden by subclasses */
+    protected boolean checkGameSpecificDialogAction() {
+        return false;
     }
 
     public JDialog getCurrentDialog() {

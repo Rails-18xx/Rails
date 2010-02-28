@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.3 2010/01/31 22:22:30 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.4 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -71,7 +71,7 @@ public class LocatedBonus extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "LocatedBonus "+name+" comp=" + privateCompany.getName() + " hex="
+        return "LocatedBonus "+name+" comp=" + originalCompany.getName() + " hex="
                + locationCodes + " value=" + value;
     }
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.109 2010/02/26 08:51:08 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.110 2010/02/28 21:38:05 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1640,7 +1640,7 @@ public class OperatingRound extends Round implements Observer {
                     train.getName(),
                     oldHolder.getName(),
                     Bank.format(price),
-                    stb.getCompany().getName() ));
+                    stb.getOriginalCompany().getName() ));
         }
 
         operatingCompany.buyTrain(train, price);

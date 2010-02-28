@@ -850,7 +850,7 @@ public class ORUIManager implements DialogOwner {
             }
             if (bTrain.hasSpecialProperty()) {
                 String priv =
-                        (bTrain.getSpecialProperty()).getCompany().getName();
+                        (bTrain.getSpecialProperty()).getOriginalCompany().getName();
                 b.append(" ").append(LocalText.getText("USING_SP", priv));
                 usingPrivates += ", " + priv;
             }

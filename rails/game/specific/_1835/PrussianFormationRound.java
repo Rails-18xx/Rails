@@ -4,9 +4,12 @@ import java.util.List;
 
 import rails.common.GuiDef;
 import rails.game.*;
-import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
-import rails.game.action.StartCompany;
+import rails.game.action.PossibleAction;
+import rails.game.move.MoveSet;
+import rails.game.special.ExchangeForShare;
+import rails.game.special.SpecialPropertyI;
+import rails.game.specific._1856.PublicCompany_CGR;
 import rails.util.LocalText;
 
 public class PrussianFormationRound extends StockRound {
@@ -63,15 +66,143 @@ public class PrussianFormationRound extends StockRound {
             ReportBuffer.add(LocalText.getText("StartingPlayer", 
                     getCurrentPlayer().getName()));
 
-            possibleActions.add(new MergeCompanies(m2, prussian));
+            possibleActions.add(new FoldIntoPrussian(m2));
             
-            if (!forcedStart) {
-                possibleActions.add(new NullAction(NullAction.PASS));
+        } else if (step == Step.MERGE) {
+            SpecialPropertyI sp;
+            for (PrivateCompanyI company : currentPlayer.getPortfolio().getPrivateCompanies()) {
+                sp = company.getSpecialProperties().get(0);
+                if (sp instanceof ExchangeForShare) {
+                    possibleActions.add(new FoldIntoPrussian(company));
+                }
+            }
+            PublicCompanyI company;
+            List<SpecialPropertyI> sps;
+            for (PublicCertificateI cert : currentPlayer.getPortfolio().getCertificates()) {
+                if (!cert.isPresidentShare()) continue;
+                company = cert.getCompany();
+                sps = company.getSpecialProperties();
+                if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                    possibleActions.add(new FoldIntoPrussian(company));
+                }
             }
         }
         
         return true;
         
+    }
+    
+    protected boolean processGameSpecificAction(PossibleAction action) {
+
+        if (action instanceof FoldIntoPrussian) {
+            
+            FoldIntoPrussian a = (FoldIntoPrussian) action;
+            List<CompanyI> folded = a.getFoldedCompanies();
+            
+            if (step == Step.START) {
+                if (folded.isEmpty() || !startPrussian(a)) {
+                    finishRound();
+                } else {
+                    step = Step.MERGE;
+                }
+            } else if (step == Step.MERGE) {
+                if (!folded.isEmpty()) mergeIntoPrussian (a);
+            }
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean startPrussian (FoldIntoPrussian action) {
+        
+        // Validate
+        String errMsg = null;
+        
+        while (true) {
+            if (!(M2_ID.equals(action.getFoldedCompanyNames()))) {
+                errMsg = LocalText.getText("WrongCompany", 
+                        action.getFoldedCompanyNames(),
+                        M2_ID);
+                break;
+            }
+            break;
+        }
+        
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotMerge",
+                    action.getFoldedCompanyNames(),
+                    PR_ID,
+                    errMsg));
+            return false;
+        }
+ 
+        moveStack.start(false);
+        
+        // Execute
+        prussian.start();
+        String message = LocalText.getText("START_MERGED_COMPANY",
+                PR_ID,
+                Bank.format(prussian.getIPOPrice()),
+                prussian.getStartSpace());
+        ReportBuffer.add(message);
+        
+        executeExchange (action.getFoldedCompanies(), true);
+        
+        return true;
+    }
+    
+ private boolean mergeIntoPrussian (FoldIntoPrussian action) {
+        
+        // Validate
+        String errMsg = null;
+        
+        while (true) {
+            break;
+        }
+        
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotMerge",
+                    action.getFoldedCompanyNames(),
+                    PR_ID,
+                    errMsg));
+            return false;
+        }
+ 
+        moveStack.start(false);
+        
+        // Execute
+        executeExchange (action.getFoldedCompanies(), true);
+        
+        return true;
+    }
+
+ private void executeExchange (List<CompanyI> companies, boolean president) {
+        
+        ExchangeForShare efs;
+        PublicCertificateI cert;
+        for (CompanyI company : companies) {
+            // Shortcut, sp should be checked
+            efs = (ExchangeForShare) company.getSpecialProperties().get(0);
+            cert = unavailable.findCertificate(prussian, efs.getShare(), president);
+            cert.moveTo(currentPlayer.getPortfolio());
+            company.setClosed();
+            ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+                    currentPlayer.getName(),
+                    company.getName(),
+                    PR_ID,
+                    company instanceof PrivateCompanyI ? "no" 
+                            : Bank.format(((PublicCompanyI)company).getCash()),
+                    company instanceof PrivateCompanyI ? "no" 
+                            : ((PublicCompanyI)company).getPortfolio().getTrainList().size()));
+            ReportBuffer.add(LocalText.getText("GetShareForMinor",
+                    currentPlayer.getName(),
+                    cert.getShare(),
+                    PR_ID,
+                    ipo.getName(),
+                    company.getName() ));
+        }
     }
     
     public static boolean prussianIsComplete(GameManagerI gameManager) {

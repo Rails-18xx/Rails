@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.48 2010/02/20 12:34:46 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.49 2010/02/28 21:38:05 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -215,7 +215,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public int getFloatPercentage();
 
-    public Portfolio getPortfolio();
+    //public Portfolio getPortfolio();
 
     public void payout(int amount);
 

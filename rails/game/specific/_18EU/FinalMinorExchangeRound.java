@@ -9,6 +9,7 @@ import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
 import rails.util.LocalText;
 
+
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
  * new Stock Round. At the end of a round, the current instance should be

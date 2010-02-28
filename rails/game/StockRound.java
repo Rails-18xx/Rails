@@ -1096,7 +1096,7 @@ public class StockRound extends Round {
 
         PublicCompanyI publicCompany =
                 companyManager.getPublicCompany(sp.getPublicCompanyName());
-        PrivateCompanyI privateCompany = sp.getCompany();
+        CompanyI privateCompany = sp.getOriginalCompany();
         Portfolio portfolio = privateCompany.getPortfolio();
         Player player = null;
         String errMsg = null;
