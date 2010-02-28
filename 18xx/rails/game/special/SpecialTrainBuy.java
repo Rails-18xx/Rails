@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.3 2009/10/03 14:00:06 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.4 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -109,7 +109,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public String toString() {
-        return "SpecialTrainBuy comp=" + privateCompany.getName() + " extra="
+        return "SpecialTrainBuy comp=" + originalCompany.getName() + " extra="
                + extra + " deduction=" + deductionString;
     }
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.36 2010/02/17 22:02:52 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.37 2010/02/28 21:38:05 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -10,14 +10,13 @@ import rails.game.special.SpecialPropertyI;
 import rails.util.*;
 
 public class PrivateCompany extends Company implements PrivateCompanyI {
-
+    
     protected static int numberOfPrivateCompanies = 0;
     protected int privateNumber; // For internal use
 
     protected int basePrice = 0;
     // list of revenue sfy 1889
     protected int[] revenue;
-    protected List<SpecialPropertyI> specialProperties = null;
     protected String auctionType;
 
     // Closing conditions
@@ -43,6 +42,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
+            
+            // For special properties (now included in Company).
+            super.configureFromXML(tag);
+            
             longName= tag.getAttributeAsString("longname", name);
             infoText = "<html>"+longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
@@ -59,26 +62,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             }
 
             // Special properties
-            Tag spsTag = tag.getChild("SpecialProperties");
-            if (spsTag != null) {
-
-                List<Tag> spTags = spsTag.getChildren("SpecialProperty");
-                String className;
-                for (Tag spTag : spTags) {
-                    className = spTag.getAttributeAsString("class");
-                    if (!Util.hasValue(className))
-                        throw new ConfigurationException(
-                                "Missing class in private special property");
-
-                    SpecialPropertyI sp =
-                            (SpecialPropertyI) Class.forName(className).newInstance();
-                    sp.setCompany(this);
-                    specialProperties.add(sp);
-                    sp.configureFromXML(spTag);
-                    infoText += "<br>" + sp.getInfo();
-                }
-            }
-
             // Extra info text(usually related to extra-share special properties)
             Tag infoTag = tag.getChild("Info");
             if (infoTag != null) {
@@ -331,22 +314,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         } else {
             return false;
         }
-    }
-
-    /**
-     * @return ArrayList of all special properties we have.
-     */
-    public List<SpecialPropertyI> getSpecialProperties() {
-        return specialProperties;
-    }
-
-    /**
-     * Do we have any special properties?
-     *
-     * @return Boolean
-     */
-    public boolean hasSpecialProperties() {
-        return specialProperties != null && !specialProperties.isEmpty();
     }
 
     public List<MapHex> getBlockedHexes() {

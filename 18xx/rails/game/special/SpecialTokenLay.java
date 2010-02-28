@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.13 2010/01/31 22:22:30 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.14 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -128,7 +128,7 @@ public class SpecialTokenLay extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "SpecialTokenLay comp=" + privateCompany.getName() + " type="
+        return "SpecialTokenLay comp=" + originalCompany.getName() + " type="
                + tokenClass.getSimpleName() + ": "
                + (token != null ? token.toString() : "") + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free;

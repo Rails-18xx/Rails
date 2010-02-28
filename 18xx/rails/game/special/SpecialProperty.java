@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.24 2010/02/06 23:48:26 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.25 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import rails.util.*;
 
 public abstract class SpecialProperty implements SpecialPropertyI {
 
-    protected PrivateCompanyI privateCompany;
+    protected CompanyI originalCompany;
     protected MoveableHolder holder = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
@@ -96,16 +96,16 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         return spMap.get(i);
     }
 
-    public void setCompany(PrivateCompanyI company) {
-        privateCompany = company;
+    public void setCompany(CompanyI company) {
+        originalCompany = company;
         holder = company;
         exercised =
                 new BooleanState(company.getName() + "_SP_" + uniqueId
                                  + "_Exercised", false);
     }
 
-    public PrivateCompanyI getCompany() {
-        return privateCompany;
+    public CompanyI getOriginalCompany() {
+        return originalCompany;
     }
 
     public MoveableHolder getHolder() {
@@ -180,7 +180,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     public void setExercised (boolean value) {
         if (permanent) return; // sfy 1889 
         exercised.set(value);
-        if (value) privateCompany.checkClosingIfExercised(false);
+        if (value && originalCompany instanceof PrivateCompanyI) {
+            ((PrivateCompanyI)originalCompany).checkClosingIfExercised(false);
+        }
     }
 
     public boolean isExercised() {
@@ -217,7 +219,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " of private "
-               + privateCompany.getName();
+               + originalCompany.getName();
     }
 
     /**

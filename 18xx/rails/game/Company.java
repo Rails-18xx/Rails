@@ -1,10 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.13 2010/02/04 21:27:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.14 2010/02/28 21:38:04 evos Exp $ */
 package rails.game;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import rails.game.move.MoveableHolder;
+import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
+import rails.util.Tag;
+import rails.util.Util;
 
 public abstract class Company implements CompanyI, ConfigurableComponentI,
         Cloneable {
@@ -28,7 +34,10 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
     protected int certLimitCount = 2;
 
     protected BooleanState closedObject;
-
+    
+    // Moved here from PrivayeCOmpany on behalf of 1835
+    protected List<SpecialPropertyI> specialProperties = null;
+    
     protected static Logger log =
             Logger.getLogger(Company.class.getPackage().getName());
 
@@ -39,6 +48,62 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
         this.name = name;
         this.type = type;
         closedObject = new BooleanState(name + "_Closed", false);
+    }
+
+    /** Only to be called from subclasses */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        
+        // Special properties
+        Tag spsTag = tag.getChild("SpecialProperties");
+        if (spsTag != null) {
+
+            List<Tag> spTags = spsTag.getChildren("SpecialProperty");
+            String className;
+            for (Tag spTag : spTags) {
+                className = spTag.getAttributeAsString("class");
+                if (!Util.hasValue(className))
+                    throw new ConfigurationException(
+                            "Missing class in private special property");
+                SpecialPropertyI sp = null;
+                try {
+                    sp = (SpecialPropertyI) Class.forName(className).newInstance();
+                } catch (Exception e) {
+                    log.fatal ("Cannot instantiate "+className, e);
+                    System.exit(-1);
+                }
+                sp.setCompany(this);
+                if (specialProperties == null) specialProperties = new ArrayList<SpecialPropertyI>(2);
+                specialProperties.add(sp);
+                sp.configureFromXML(spTag);
+                infoText += "<br>" + sp.getInfo();
+            }
+        }
+    }
+    
+    /**
+     * @return ArrayList of all special properties we have.
+     */
+    public List<SpecialPropertyI> getSpecialProperties() {
+        return specialProperties;
+    }
+
+    /**
+     * Do we have any special properties?
+     *
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+        return specialProperties != null && !specialProperties.isEmpty();
+    }
+
+    /**
+     * Get the Portfolio of this company, containing all privates and
+     * certificates owned..
+     *
+     * @return The Portfolio of this company.
+     */
+    public Portfolio getPortfolio() {
+        return portfolio;
     }
 
     /**
@@ -159,4 +224,14 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
         return false;
     }
 
+    public static String joinNamesWithDelimiter (List<CompanyI> companies, String delimiter) {
+        StringBuilder b = new StringBuilder("");
+        if (companies != null) {
+            for (CompanyI company : companies) {
+                if (b.length() > 0) b.append(delimiter);
+                b.append(company.getName());
+            }
+        }
+        return b.toString();
+    }
 }

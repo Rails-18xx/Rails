@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.6 2010/01/31 22:22:30 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.7 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -106,7 +106,7 @@ public class SellBonusToken extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "SellBonusToken comp=" + privateCompany.getName() + " hex="
+        return "SellBonusToken comp=" + originalCompany.getName() + " hex="
                + locationCodes + " value=" + value + " price=" + price
                + " max="+maxNumberToSell+" sold="+numberSold.intValue();
     }

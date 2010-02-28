@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.4 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.5 2010/02/28 21:38:06 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -40,7 +40,7 @@ public class BuyBonusToken extends PossibleORAction {
 
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
-        this.privateCompany = specialProperty.getCompany();
+        this.privateCompany = (PrivateCompanyI) specialProperty.getOriginalCompany();
         this.privateCompanyName = privateCompany.getName();
         this.seller = specialProperty.getSeller();
         if (seller != null) this.sellerName = seller.getName();

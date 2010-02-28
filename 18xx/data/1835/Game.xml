@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager"  class="rails.game.GameManager">
-	<!--Component name="GameManager"  class="rails.game.specific._1835.GameManager_1835"-->
+	<!--Component name="GameManager"  class="rails.game.GameManager"-->
+	<Component name="GameManager"  class="rails.game.specific._1835.GameManager_1835">
 		<Game name="1835"/>
 		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />
@@ -15,6 +15,10 @@
 				<NoSaleIfNotOperated/>
 			</StockRound>
 		</GameParameters>
+		<GuiClasses>
+			<StatusWindow class="rails.ui.swing.gamespecific._1835.StatusWindow_1835"/>
+			<GameUIManager class="rails.ui.swing.gamespecific._1835.GameUIManager_1835"/>
+		</GuiClasses>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="currentOR"/>
 			<!-- "Runs out"; when "broken", -1 is the limit -->

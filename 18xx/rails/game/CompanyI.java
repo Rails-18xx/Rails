@@ -1,10 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.7 2010/02/04 21:27:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyI.java,v 1.8 2010/02/28 21:38:05 evos Exp $ */
 package rails.game;
+
+import java.util.List;
+
+import rails.game.move.MoveableHolder;
+import rails.game.special.SpecialPropertyI;
 
 /**
  * To be implemented by any Company object.
  */
-public interface CompanyI extends ConfigurableComponentI {
+public interface CompanyI extends ConfigurableComponentI, MoveableHolder {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -17,7 +22,25 @@ public interface CompanyI extends ConfigurableComponentI {
 
     void init(String name, CompanyTypeI type);
 
-    // void configureFromXML (Element element) throws ConfigurationException;
+    /**
+     * @return ArrayList of all special properties we have.
+     */
+    public List<SpecialPropertyI> getSpecialProperties();
+
+    /**
+     * Do we have any special properties?
+     *
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties();
+
+    /**
+     * Get the Portfolio of this company, containing all privates and
+     * certificates owned..
+     *
+     * @return The Portfolio of this company.
+     */
+    public Portfolio getPortfolio();
 
     /**
      * Returns the name of the Company

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.16 2010/02/04 21:27:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.17 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -31,14 +31,7 @@ public class ExchangeForShare extends SpecialProperty {
 
     public boolean isExecutionable() {
 
-        return privateCompany.getPortfolio().getOwner() instanceof Player;
-    }
-
-    /**
-     * @return Returns the privateCompany.
-     */
-    public PrivateCompanyI getPrivateCompany() {
-        return privateCompany;
+        return holder instanceof Player;
     }
 
     /**
@@ -61,14 +54,14 @@ public class ExchangeForShare extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "Swap " + privateCompany.getName() + " for " + share
+        return "Swap " + originalCompany.getName() + " for " + share
                + "% share of " + publicCompanyName;
     }
 
     @Override
     public String toMenu() {
         return LocalText.getText("SwapPrivateForCertificate",
-                privateCompany.getName(),
+                originalCompany.getName(),
                 share,
                 publicCompanyName );
     }

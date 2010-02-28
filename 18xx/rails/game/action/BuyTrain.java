@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.18 2010/02/28 21:38:06 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -215,7 +215,7 @@ public class BuyTrain extends PossibleORAction {
             if (pricePaid > 0) b.append(" - paid: ").append(Bank.format(pricePaid));
         }
         if (specialProperty != null) {
-            b.append(" using ").append(specialProperty.getCompany().getName());
+            b.append(" using ").append(specialProperty.getOriginalCompany().getName());
         }
         if (isForExchange()) {
             b.append(forcedExchange ? " (forced exchange)" : " (exchanged)");

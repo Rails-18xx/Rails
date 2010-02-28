@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.87 2010/02/20 12:34:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.88 2010/02/28 21:38:04 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -186,7 +186,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     boolean certsAreInitiallyAvailable = true;
 
     /** Privates and Certificates owned by the public company */
-    protected Portfolio portfolio;
+    //protected Portfolio portfolio;
 
     /** What percentage of ownership constitutes "one share" */
     protected IntegerState shareUnit;
@@ -269,6 +269,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
+        super.configureFromXML(tag);
+        
         longName = tag.getAttributeAsString("longname", name);
         infoText = "<html>"+longName;
 
@@ -1168,16 +1170,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (certificates == null)
             certificates = new ArrayList<PublicCertificateI>();
         certificates.add(certificate);
-    }
-
-    /**
-     * Get the Portfolio of this company, containing all privates and
-     * certificates owned..
-     *
-     * @return The Portfolio of this company.
-     */
-    public Portfolio getPortfolio() {
-        return portfolio;
     }
 
     /**

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.20 2010/01/31 22:22:37 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.21 2010/02/28 21:38:06 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -34,7 +34,7 @@ public final class Util {
     }
 
     public static String joinWithDelimiter (String[] sa, String delimiter) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (String s : sa) {
             if (b.length() > 0) b.append(delimiter);
             b.append(s);

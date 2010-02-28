@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.11 2010/02/03 05:37:55 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.12 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class SpecialTileLay extends SpecialProperty {
 
     @Override
 	public String toString() {
-        return "SpecialTileLay comp=" + privateCompany.getName() + " hex="
+        return "SpecialTileLay comp=" + originalCompany.getName() + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
