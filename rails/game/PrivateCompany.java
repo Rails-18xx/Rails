@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.37 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.38 2010/03/01 22:27:32 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -43,9 +43,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         /* Configure private company features */
         try {
             
-            // For special properties (now included in Company).
-            super.configureFromXML(tag);
-            
             longName= tag.getAttributeAsString("longname", name);
             infoText = "<html>"+longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
@@ -70,6 +67,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
             }
 
+            
+            // For special properties (now included in Company).
+            super.configureFromXML(tag);
+            
             // Closing conditions
             // Currently only used to handle closure following laying
             // tiles and/or tokens because of special properties.
@@ -128,7 +129,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 hex.setBlocked(true);
             }
         }
-}
+
+        infoText += parentInfoText;
+        parentInfoText = "";
+    }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
