@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.88 2010/02/28 21:38:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.89 2010/03/01 22:27:31 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -269,8 +269,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
-        super.configureFromXML(tag);
-        
         longName = tag.getAttributeAsString("longname", name);
         infoText = "<html>"+longName;
 
@@ -341,6 +339,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
             infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
         }
 
+        // Special properties (as in the 1835 black minors)
+        super.configureFromXML(tag);
+        
         // TODO Normally set in the default train type. May be wrong place.
         // Ridiculous to reparse with each train type.
         poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
@@ -724,6 +725,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                             privateToCloseOnFirstTrainName);
         }
 
+        infoText += parentInfoText;
+        parentInfoText = "";
     }
 
     /** Reset turn objects */

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.14 2010/02/28 21:38:04 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.15 2010/03/01 22:27:30 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
     protected int companyNumber; // For internal use
     protected Portfolio portfolio = null;
     protected String infoText = "";
+    protected String parentInfoText = "";
 
     /**
      * The value per certificate at the end of the rails.game. Default 0 (for
@@ -75,7 +76,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
                 if (specialProperties == null) specialProperties = new ArrayList<SpecialPropertyI>(2);
                 specialProperties.add(sp);
                 sp.configureFromXML(spTag);
-                infoText += "<br>" + sp.getInfo();
+                parentInfoText += "<br>" + sp.getInfo();
             }
         }
     }
