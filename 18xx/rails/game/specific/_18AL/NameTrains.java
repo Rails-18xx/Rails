@@ -3,10 +3,12 @@ package rails.game.specific._18AL;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.Bank;
 import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.move.Moveable;
 import rails.game.special.SpecialProperty;
+import rails.util.LocalText;
 import rails.util.Tag;
 
 public class NameTrains extends SpecialProperty implements Moveable {
@@ -55,7 +57,7 @@ public class NameTrains extends SpecialProperty implements Moveable {
                         (NamedTrainToken) tokenClass.newInstance();
                 tokens.add(token);
                 token.configureFromXML(tokenTag);
-                description += token.getLongName() + ", ";
+                description += token.getLongName() + ": " + Bank.format(token.getValue()) + ", ";
             } catch (Exception e) {
                 throw new ConfigurationException("Cannot instantiate class "
                                                  + tokenClassName, e);
@@ -101,5 +103,13 @@ public class NameTrains extends SpecialProperty implements Moveable {
     public String toString() {
         return description;
     }
-
+    
+    @Override
+    public String getInfo() {
+        String infoText = LocalText.getText("SpecialNameTrains",
+                tokens.size());
+        infoText += "<br>" + description;
+        infoText.replaceFirst("NameTrains: ", "");
+        return infoText;
+    }
 }
