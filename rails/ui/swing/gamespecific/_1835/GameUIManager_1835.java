@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.CompanyI;
-import rails.game.action.ExchangeTokens;
 import rails.game.specific._1835.FoldIntoPrussian;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.CheckBoxDialog;

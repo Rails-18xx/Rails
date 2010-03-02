@@ -6,7 +6,6 @@ import rails.util.Util;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.*;
 
 /**
  * Correction action that changes the cash position of a cashholder.

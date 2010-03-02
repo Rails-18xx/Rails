@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.46 2010/02/14 20:48:21 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.47 2010/03/02 22:15:40 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.special.SpecialPropertyI;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 import rails.util.Util;
@@ -46,7 +45,6 @@ implements ActionListener, KeyListener {
     private JMenuBar menuBar;
     private JMenu infoMenu;
     private JMenuItem remainingTilesMenuItem;
-    private JMenu privatesInfoMenu;
     private JMenu trainsInfoMenu;
     private JMenu phasesInfoMenu;
     private JMenu specialMenu;
