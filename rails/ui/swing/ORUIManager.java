@@ -1382,7 +1382,7 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(UseSpecialProperty.class)) {
             for (UseSpecialProperty usp : possibleActions.getType(UseSpecialProperty.class)) {
                 SpecialPropertyI sp = usp.getSpecialProperty();
-                orPanel.addSpecialAction(usp, sp.getInfo());
+                orPanel.addSpecialAction(usp, sp.toMenu());
             }
         }
         

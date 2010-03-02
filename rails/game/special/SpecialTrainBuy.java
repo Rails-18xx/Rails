@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.4 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.5 2010/03/02 21:14:16 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
+import rails.util.LocalText;
 import rails.util.Tag;
 import rails.util.Util;
 
@@ -112,5 +113,23 @@ public class SpecialTrainBuy extends SpecialProperty {
         return "SpecialTrainBuy comp=" + originalCompany.getName() + " extra="
                + extra + " deduction=" + deductionString;
     }
-
+    
+    @Override
+    public String toMenu() {
+        if (trainTypeName.equals("")) {
+            return LocalText.getText("SpecialTrainBuyAny",
+                    deductionString,
+                    originalCompany.getName());
+        }
+        else {
+            return LocalText.getText("SpecialTrainBuy",
+                    trainTypeName,
+                    deductionString,
+                    originalCompany.getName());
+        }        
+    }
+    
+    public String getInfo() {
+        return toMenu();
+    }
 }
