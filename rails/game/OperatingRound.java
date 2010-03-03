@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.111 2010/03/03 00:44:51 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.112 2010/03/03 21:34:11 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.EnumState;
 import rails.game.state.IntegerState;
-import rails.game.state.GenericState;
+//import rails.game.state.GenericState;
 import rails.util.LocalText;
 
 /**
@@ -46,9 +46,9 @@ public class OperatingRound extends Round implements Observer {
 
     protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
 
-//    protected Map<String, Integer> tileLaysPerColour =
-//            new HashMap<String, Integer>();
-    protected GenericState<Map<String,Integer>> tileLaysPerColourState = null;
+    protected Map<String, Integer> tileLaysPerColour =
+            new HashMap<String, Integer>();
+//    protected GenericState<Map<String,Integer>> tileLaysPerColourState = null;
 
     protected List<LayBaseToken> currentNormalTokenLays =
             new ArrayList<LayBaseToken>();
@@ -447,13 +447,15 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean checkNormalTileLay(TileI tile, boolean update) {
         
-        Map<String,Integer> tileLaysPerColour = tileLaysPerColourState.getObject();
+//        Map<String,Integer> tileLaysPerColour = tileLaysPerColourState.getObject();
         
-        if (tileLaysPerColour.isEmpty()) return false;
-        String colour = tile.getColourName();
+//        if (tileLaysPerColour.isEmpty()) return false;
 
+        String colour = tile.getColourName();
         Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
+
         if (oldAllowedNumberObject == null) return false;
+        
         int oldAllowedNumber = oldAllowedNumberObject.intValue();
         if (oldAllowedNumber <= 0) return false;
 
@@ -466,20 +468,27 @@ public class OperatingRound extends Round implements Observer {
          * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
          */
         
-        Map<String,Integer> tileLaysPerColourUpdated = new HashMap<String, Integer>(); // new (empty) map
+//        Map<String,Integer> tileLaysPerColourUpdated = new HashMap<String, Integer>(); // new (empty) map
         
         if (oldAllowedNumber <= 1) {
-//            tileLaysPerColour.clear();
+            for (String key:tileLaysPerColour.keySet()) 
+                new MapChange<String,Integer>(tileLaysPerColour, key, new Integer(0));
             log.debug("No more normal tile lays allowed");
             currentNormalTileLays.clear();
         } else {
-//            tileLaysPerColour.clear(); // Remove all other colours
-            tileLaysPerColourUpdated.put(colour, new Integer(oldAllowedNumber - 1));
-            log.debug((oldAllowedNumber - 1) + " more " + colour
+//            tileLaysPerColourUpdated.put(colour, new Integer(oldAllowedNumber - 1));
+            for (String key:tileLaysPerColour.keySet()) 
+                if (colour.equals(key))
+                    new MapChange<String,Integer>
+                        (tileLaysPerColour, colour, new Integer(oldAllowedNumber-1));
+                else
+                    new MapChange<String,Integer>(tileLaysPerColour, key, new Integer(0));
+
+                log.debug((oldAllowedNumber - 1) + " more " + colour
                       + " tile lays allowed");
         }
         
-        tileLaysPerColourState.set(tileLaysPerColourUpdated);
+//        tileLaysPerColourState.set(tileLaysPerColourUpdated);
 
         return true;
     }
@@ -1177,7 +1186,8 @@ public class OperatingRound extends Round implements Observer {
      */
     protected void getNormalTileLays() {
 
-        Map<String,Integer> tileLaysPerColour =
+//        Map<String,Integer>
+        tileLaysPerColour =
                 new HashMap<String, Integer>(getCurrentPhase().getTileColours()); // Clone
         
         int allowedNumber;
@@ -1188,7 +1198,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // store state
-        tileLaysPerColourState = new GenericState<Map<String,Integer>>("tileLaysPerColour", tileLaysPerColour);
+//        tileLaysPerColourState = new GenericState<Map<String,Integer>>("tileLaysPerColour", tileLaysPerColour);
     }
 
     protected void setNormalTileLays() {
@@ -1196,9 +1206,13 @@ public class OperatingRound extends Round implements Observer {
         /* Normal tile lays */
         currentNormalTileLays.clear();
         
-        Map<String,Integer> tileLaysPerColour = (Map<String,Integer>)(tileLaysPerColourState.getObject());
-        
-        if (!tileLaysPerColour.isEmpty()) {
+//        Map<String,Integer> tileLaysPerColour = (Map<String,Integer>)(tileLaysPerColourState.getObject());
+
+        int sumLays = 0;
+        for (Integer i: tileLaysPerColour.values())
+            sumLays = sumLays + i;
+        if (sumLays != 0) {
+//        if (!tileLaysPerColour.isEmpty()) {
             currentNormalTileLays.add(new LayTile(tileLaysPerColour));
         }
 
