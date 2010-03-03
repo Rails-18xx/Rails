@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.correct.CashCorrectionAction;
 import rails.ui.swing.elements.*;
 import rails.util.LocalText;
 
@@ -26,6 +27,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     private static final String BUY_FROM_IPO_CMD = "BuyFromIPO";
     private static final String BUY_FROM_POOL_CMD = "BuyFromPool";
     private static final String SELL_CMD = "Sell";
+    private static final String CASH_CORRECT_CMD = "CorrectCash";
 
     protected StatusWindow parent;
 
@@ -47,6 +49,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Field currPrice[];
     protected int currPriceXOffset, currPriceYOffset;
     protected Field compCash[];
+    protected ClickField compCashButton[];
     protected int compCashXOffset, compCashYOffset;
     protected Field compRevenue[];
     protected int compRevenueXOffset, compRevenueYOffset;
@@ -59,6 +62,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Field compLoans[];
     protected int compLoansXOffset, compLoansYOffset;
     protected Field playerCash[];
+    protected ClickField playerCashButton[];
     protected int playerCashXOffset, playerCashYOffset;
     protected Field playerPrivates[];
     protected int playerPrivatesXOffset, playerPrivatesYOffset;
@@ -158,6 +162,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         parPrice = new Field[nc];
         currPrice = new Field[nc];
         compCash = new Field[nc];
+        compCashButton = new ClickField[nc];
         compRevenue = new Field[nc];
         compTrains = new Field[nc];
         compTokens = new Field[nc];
@@ -165,6 +170,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         compLoans = new Field[nc];
 
         playerCash = new Field[np];
+        playerCashButton = new ClickField[np];
         playerPrivates = new Field[np];
         playerWorth = new Field[np];
         playerCertCount = new Field[np];
@@ -370,6 +376,15 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             f = compCash[i] = new Field(c.getCashModel());
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
+            f =
+                compCashButton[i] =
+                        new ClickField(
+                                compCash[i].getText(),
+                                CASH_CORRECT_CMD,
+                                LocalText.getText("CorrectCashToolTip"),
+                                this, buySellGroup);
+            addField(f, compCashXOffset, compCashYOffset + i, 1, 1,
+                WIDE_RIGHT, false);
 
             f = compRevenue[i] = new Field(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
@@ -411,10 +426,19 @@ public class GameStatus extends GridPanel implements ActionListener {
             f = playerCash[i] = new Field(players[i].getCashModel());
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
                     WIDE_TOP, true);
+            f =
+                playerCashButton[i] =
+                        new ClickField(
+                                playerCash[i].getText(),
+                                CASH_CORRECT_CMD,
+                                LocalText.getText("CorrectCashToolTip"),
+                                this, buySellGroup);
+            addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
+                    WIDE_TOP, false);
         }
 
         addField(new Caption("Privates"), 0, playerPrivatesYOffset, 1, 1,
-                WIDE_RIGHT, true);
+                WIDE_RIGHT, false);
         for (int i = 0; i < np; i++) {
             f =
                     playerPrivates[i] =
@@ -647,7 +671,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                         options.get(0));
                         index = options.indexOf(sp);
                     }
-                } else if (options.size() == 1) {
+                }  else if (options.size() == 1) {
                     int result =
                             JOptionPane.showConfirmDialog(this, options.get(0),
                                     LocalText.getText("PleaseConfirm"),
@@ -665,8 +689,21 @@ public class GameStatus extends GridPanel implements ActionListener {
                     chosenAction = buyActions.get(index);
                     ((BuyCertificate) chosenAction).setNumberBought(buyAmounts.get(index));
                 }
-            } else {
-
+            } else if (actions.get(0) instanceof CashCorrectionAction) {
+                CashCorrectionAction cca = (CashCorrectionAction)actions.get(0);
+                String amountString = (String) JOptionPane.showInputDialog(this,
+                        LocalText.getText("CorrectCashDialogMessage", cca.getCashHolderName()),
+                        LocalText.getText("CorrectCashDialogTitle"),
+                        JOptionPane.QUESTION_MESSAGE, null, null, 0);
+                int amount;
+                try {
+                    amount = Integer.parseInt(amountString);
+                } catch (NumberFormatException e) {
+                    amount = 0;
+                }
+                cca.setAmount(amount);
+                chosenAction = cca;
+            }  else {
                 chosenAction =
                         processGameSpecificActions(actor, actions.get(0));
 
@@ -784,6 +821,40 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     }
 
+    /**
+     * Initializes the CashCorrectionActions
+     */
+    public void initCashCorrectionActions() {
+        
+        // Clear all buttons
+        for (int i = 0; i < nc; i++) {
+            setCompanyCashButton(i, false, null);
+        }
+        for (int j = 0; j < np; j++) {
+            setPlayerCashButton(j, false, null);
+        }
+        
+        List<CashCorrectionAction> actions =
+            possibleActions.getType(CashCorrectionAction.class);
+
+        if (actions != null) {
+            for (CashCorrectionAction a : actions) {
+                CashHolder ch = a.getCashHolder();
+                if (ch instanceof PublicCompanyI) {
+                    PublicCompanyI pc = (PublicCompanyI)ch;
+                    int i = pc.getPublicNumber();
+                    setCompanyCashButton(i, true, a);
+                }
+                if (ch instanceof Player) {
+                    Player p = (Player)ch;
+                    int i = playerIndex.get(p);
+                    setPlayerCashButton(i, true, a);
+                }
+            }
+        }
+
+    }
+    
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
@@ -881,5 +952,33 @@ public class GameStatus extends GridPanel implements ActionListener {
         certInTreasury[i].setVisible(visible && !clickable);
         certInTreasuryButton[i].setVisible(clickable);
     }
+    
+    private void setCompanyCashButton(int i, boolean clickable, PossibleAction action){
+        boolean visible = rowVisibilityObservers[i].lastValue();
 
+        if (clickable) {
+            compCashButton[i].setText(compCash[i].getText());
+        } else {
+            compCashButton[i].clearPossibleActions();
+        }
+        compCash[i].setVisible(visible && !clickable);
+        compCashButton[i].setVisible(visible && clickable);
+
+        if (action != null)
+            compCashButton[i].addPossibleAction(action);
+    }
+
+    private void setPlayerCashButton(int i, boolean clickable, PossibleAction action){
+
+        if (clickable) {
+            playerCashButton[i].setText(playerCash[i].getText());
+        } else {
+            playerCashButton[i].clearPossibleActions();
+        }
+        playerCash[i].setVisible(!clickable);
+        playerCashButton[i].setVisible(clickable);
+        
+        if (action != null)
+            playerCashButton[i].addPossibleAction(action);
+    }
 }

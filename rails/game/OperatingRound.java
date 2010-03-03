@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.110 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.111 2010/03/03 00:44:51 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1046,92 +1046,6 @@ public class OperatingRound extends Round implements Observer {
         
         return true;
     }
-
-//    protected boolean executeCorrectCash(CorrectCashI action){
-//
-//        CashHolder ch = action.getCashHolder();
-//        int amount = action.getAmount();
-//        int cost = -amount; // costs are minus of CashCorrectamount
-//
-//        // operating costs related stuff
-//        boolean flagOC = false;
-//        OperatingCost actionOC = null;
-//        OperatingCost.OCType typeOC = null;
-//        PublicCompanyI pc = null;
-//        String textError = "CCExecutionError";
-//        
-//        if (action instanceof OperatingCost) {
-//            flagOC = true;
-//            actionOC = (OperatingCost) action;
-//            typeOC = actionOC.getOCType(); 
-//            pc = (PublicCompanyI) ch;
-//            textError = "OCExecutionError";
-//        }
-//        
-//        String errMsg = null;
-//
-//        while (true) {
-//            if ((amount + ch.getCash()) < 0) {
-//                errMsg =
-//                    LocalText.getText("NotEnoughMoney", 
-//                            ch.getName(),
-//                            Bank.format(ch.getCash()),
-//                            Bank.format(cost) 
-//                    );
-//                break;
-//            }
-//            if (flagOC && (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) && (pc.getNumberOfFreeBaseTokens() == 0)) {
-//                errMsg = 
-//                    LocalText.getText("HasNoTokensLeft", ch.getName());
-//                break;
-//            }
-//            break;
-//        }
-//        
-//        if (errMsg != null) {
-//            DisplayBuffer.add(LocalText.getText(textError,
-//                    ch.getName(),
-//                    errMsg));
-//            return false;
-//        }
-//        
-//        moveStack.start(true);
-//
-//        if (amount < 0) {
-//            // negative amounts: remove cash from cashholder
-//            new CashMove(ch, bank, cost);
-//        } else if (amount > 0) {
-//            // positive amounts: add cash to cashholder
-//            new CashMove(bank, ch, amount);
-//        }
-//
-//        if (flagOC) {
-//            
-//            if (typeOC == OperatingCost.OCType.LAY_TILE) {
-//                pc.layTileInNoMapMode(cost);
-//                ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
-//                        pc.getName(),
-//                        Bank.format(cost) ));
-//            }
-//            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
-//                // move token to Bank
-//                BaseToken token = pc.getFreeToken();
-//                if (token == null) {
-//                    log.error("Company " + pc.getName() + " has no free token");
-//                    return false;
-//                } else {
-//                    token.moveTo(bank.getUnavailable());
-//                }
-//                pc.layBaseTokenInNoMapMode(cost);
-//                ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
-//                        pc.getName(),
-//                        Bank.format(cost) ));
-//            }
-//        }
-//        
-//        return true;
-//    }
-
     
     /**
      * Internal method: change the OR state to the next step. If the currently

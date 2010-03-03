@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.84 2010/02/23 22:21:39 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.85 2010/03/03 00:45:06 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -12,6 +12,7 @@ import org.apache.log4j.NDC;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.game.action.*;
+import rails.game.correct.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
@@ -78,6 +79,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+    
+    protected EnumSet<CorrectionType> activeCorrections 
+        = EnumSet.noneOf(CorrectionType.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -757,7 +761,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 }
 
                 // All other actions: process per round
-                result = getCurrentRound().process(action);
+                result = processCorrectionActions(action) ||  getCurrentRound().process(action);
                 break;
             }
 
@@ -781,10 +785,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
         }
 
-        for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
-                      + pa.toString());
-        }
+        setCorrectionActions();
 
         // Add the Undo/Redo possibleActions here.
         if (moveStack.isUndoableByPlayer()) {
@@ -797,8 +798,78 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             possibleActions.add(new GameAction(GameAction.REDO));
         }
 
+        
+        // logging of game actions activated 
+        for (PossibleAction pa : possibleActions.getList()) {
+            log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
+                      + pa.toString());
+        }
+
         return result;
 
+    }
+    
+    /**
+     * Adds all Game actions
+     * Examples are: undo/redo/corrections
+     */
+    private void setCorrectionActions(){
+
+        // If any Correction is active
+        if (!activeCorrections.isEmpty()) {
+            // remove all other actions
+            possibleActions.clear();
+            // and set GuiHints for corrections - removed
+        }
+        
+        // CorrectionMode Actions
+        EnumSet<CorrectionType> possibleCorrections = EnumSet.allOf(CorrectionType.class);
+        for (CorrectionType ct:possibleCorrections)
+                possibleActions.add(
+                        new CorrectionModeAction(ct, activeCorrections.contains(ct)));
+        
+        // Correction Actions
+        for (CorrectionType ct:activeCorrections) {
+                        CorrectionManager cm = ct.getManager(this);
+                        possibleActions.addAll(cm.createCorrections());
+        }
+    }
+    
+    private boolean processCorrectionActions(PossibleAction a){
+
+       boolean result = false;
+       
+       if (a instanceof CorrectionModeAction) {
+            CorrectionModeAction cma = (CorrectionModeAction)a;
+            CorrectionType ct = cma.getCorrection();
+            moveStack.start(false);
+            new SetChange<CorrectionType>
+                (activeCorrections, ct, !cma.isActive());
+            if (!cma.isActive()) {
+                String text = LocalText.getText("CorrectionModeActivate",
+                        getCurrentPlayer().getName(),
+                        LocalText.getText(ct.name())
+                );
+                ReportBuffer.add(text);
+                DisplayBuffer.add(text);
+            }
+            else {
+                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
+                        getCurrentPlayer().getName(),
+                        LocalText.getText(ct.name())
+                ));
+            }
+            result = true;
+        }
+        
+       if (a instanceof CorrectionAction) {
+            CorrectionAction ca= (CorrectionAction)a;
+            CorrectionType ct = ca.getCorrectionType();
+            CorrectionManager cm = ct.getManager(this);
+            result = cm.executeCorrection(ca);
+        }
+       
+        return result;
     }
 
     /* (non-Javadoc)
@@ -816,11 +887,12 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 log.debug("Action DONE inserted");
                 getCurrentRound().process(new NullAction (NullAction.DONE));
                 getCurrentRound().setPossibleActions();
+                setCorrectionActions();
             }
 
             try {
                 log.debug("Action: " + action);
-                if (!getCurrentRound().process(action)) {
+                if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
                     String msg = "Player "+action.getPlayerName()+"\'s action \""
                         +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
                         +" is considered invalid by the game engine";
@@ -830,6 +902,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     return false;
                 }
                 getCurrentRound().setPossibleActions();
+                setCorrectionActions();
+                
             } catch (Exception e) {
                 log.debug("Error while reprocessing " + action.toString(), e);
                 throw new Exception("Reload failure", e);

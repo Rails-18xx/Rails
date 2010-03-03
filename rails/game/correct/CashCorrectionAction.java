@@ -12,7 +12,7 @@ import java.io.ObjectInputStream;
  * 
  * @author Stefan Frey
  */
-public class CorrectCash extends CorrectionAction implements CorrectCashI {
+public class CashCorrectionAction extends CorrectionAction {
 
     /** The Constant serialVersionUID. */
     public static final long serialVersionUID = 1L;
@@ -39,22 +39,24 @@ public class CorrectCash extends CorrectionAction implements CorrectCashI {
     * 
     * @param pl Player
     */
-   public CorrectCash(Player pl) {
+   public CashCorrectionAction(Player pl) {
        correctCashHolder = pl;
        cashHolderName = pl.getName();
        cashHolderType = "Player";
        maximumNegative = pl.getCash();
+       setCorrectionType(CorrectionType.CORRECT_CASH);
    }
    /**
     * Instantiates a new correct cash
     * 
     * @param pc Public Company
     */
-   public CorrectCash(PublicCompanyI pc) {
+   public CashCorrectionAction(PublicCompanyI pc) {
        correctCashHolder = pc;
        cashHolderName = pc.getName();
        cashHolderType = "PublicCompany";
        maximumNegative = pc.getCash();
+       setCorrectionType(CorrectionType.CORRECT_CASH);
    }
    
    
@@ -66,6 +68,9 @@ public class CorrectCash extends CorrectionAction implements CorrectCashI {
        return cashHolderName;
    }
 
+   public int getMaximumNegative(){
+       return maximumNegative;
+   }
 
    public int getAmount() {
        return correctAmount;
@@ -77,27 +82,25 @@ public class CorrectCash extends CorrectionAction implements CorrectCashI {
     
     @Override
     public boolean equals(PossibleAction action) {
-        if (!(action instanceof CorrectCash)) return false;
-        CorrectCash a = (CorrectCash) action;
+        if (!(action instanceof CashCorrectionAction)) return false;
+        CashCorrectionAction a = (CashCorrectionAction) action;
         return (a.correctCashHolder == this.correctCashHolder &&
-                a.maximumNegative == this.maximumNegative &&
-                a.inCorrectionMenu == this.inCorrectionMenu
+                a.maximumNegative == this.maximumNegative
         );
     }
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("CorrectCash");
+        StringBuffer b = new StringBuffer("CashCorrectionAction ");
         if (acted) {
-            b.append("Not Acted");
+            b.append("(Acted)");
             if (correctCashHolder != null)
-                b.append("correctCashHolder="+correctCashHolder);
-            b.append("maximumNegative="+maximumNegative);
-            b.append("inCorrectionMenu="+inCorrectionMenu);
+                b.append(", correctCashHolder="+correctCashHolder);
+            b.append(", correctAmount="+correctAmount);
         } else {
-            b.append("Acted");
+            b.append("(Not Acted)");
             if (correctCashHolder != null)
-                b.append("correctCashHolder="+correctCashHolder);
-            b.append("correctAmount="+correctAmount);
+                b.append(", correctCashHolder="+correctCashHolder);
+            b.append(", maximumNegative="+maximumNegative);
         }
         return b.toString();
     }
@@ -106,10 +109,10 @@ public class CorrectCash extends CorrectionAction implements CorrectCashI {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        if (Util.hasValue(cashHolderName) && Util.hasValue(cashHolderType)) {
-            if (cashHolderType == "Player")
+        if (Util.hasValue(cashHolderType) && Util.hasValue(cashHolderName)) {
+            if (cashHolderType.equals("Player"))
                 correctCashHolder = getGameManager().getPlayerManager().getPlayerByName(cashHolderName);
-            else if (cashHolderType == "PublicCompany")
+            else if (cashHolderType.equals("PublicCompany"))
                 correctCashHolder = getCompanyManager().getCompanyByName(cashHolderName);
         }
     }

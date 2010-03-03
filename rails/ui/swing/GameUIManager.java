@@ -195,6 +195,7 @@ public class GameUIManager implements DialogOwner {
         updateUI();
 
         statusWindow.setGameActions();
+        statusWindow.setCorrectionMenu();
 
         // Is this perhaps the right place to display messages...?
         if (DisplayBuffer.getAutoDisplay()) {
