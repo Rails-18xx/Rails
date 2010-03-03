@@ -2,8 +2,7 @@ package rails.game.correct;
 
 import rails.game.action.PossibleAction;;
 /**
- * Base class for all actions that correct the state of the game
- * that violate the ruleset.
+ * Base class for all actions that correct the state of the game. 
  * 
  * @author freystef
  *
@@ -11,16 +10,12 @@ import rails.game.action.PossibleAction;;
 
 public abstract class CorrectionAction extends PossibleAction {
     
-    /** shows in correction menu */
-    protected boolean inCorrectionMenu;
-
+    private CorrectionType correctionType;
     
-    public boolean isInCorrectionMenu(){
-            return inCorrectionMenu;
+    public CorrectionType getCorrectionType() {
+        return correctionType;
     }
-    
-    public void setCorrectionMenu(boolean menu){
-        inCorrectionMenu = menu;
+    public void setCorrectionType(CorrectionType correctionType) {
+        this.correctionType = correctionType;
     }
-    
 }

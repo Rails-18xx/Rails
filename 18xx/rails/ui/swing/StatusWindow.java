@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.37 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.38 2010/03/03 00:44:38 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -14,8 +14,10 @@ import org.apache.log4j.Logger;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.correct.*;
 import rails.ui.swing.elements.ActionButton;
 import rails.ui.swing.elements.ActionMenuItem;
+import rails.ui.swing.elements.ActionCheckBoxMenuItem;
 import rails.util.Config;
 import rails.util.LocalText;
 
@@ -71,7 +73,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     private JMenuBar menuBar;
 
     private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
-            specialMenu;
+            specialMenu, correctionMenu;
 
     private JMenuItem menuItem;
 
@@ -191,6 +193,12 @@ public class StatusWindow extends JFrame implements ActionListener,
         redoItem2.addActionListener(this);
         redoItem2.setEnabled(false);
         moderatorMenu.add(redoItem2);
+
+        correctionMenu = new JMenu(LocalText.getText("CorrectionMainMenu"));
+        correctionMenu.setName(LocalText.getText("CorrectionMainMenu"));
+        correctionMenu.setMnemonic(KeyEvent.VK_C);
+        correctionMenu.setEnabled(false);
+        moderatorMenu.add(correctionMenu);
 
         menuBar.add(moderatorMenu);
 
@@ -312,7 +320,29 @@ public class StatusWindow extends JFrame implements ActionListener,
             }
         }
     }
+    
+    public void setCorrectionMenu() {
 
+        // Update the menu
+        correctionMenu.removeAll();
+        correctionMenu.setEnabled(false);
+
+        List<CorrectionModeAction> corrections =
+                possibleActions.getType(CorrectionModeAction.class);
+        if (corrections != null) {
+            for (CorrectionModeAction a : corrections) {
+                ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem (
+                        LocalText.getText(a.getCorrectionName()));
+                item.addActionListener(this);
+                item.addPossibleAction(a);
+                item.setEnabled(true);
+                item.setSelected(a.isActive());
+                correctionMenu.add(item);
+            }
+            correctionMenu.setEnabled(true);
+        }
+    }
+    
     public void setupFor(RoundI round) {
 
         currentRound = round;
@@ -330,6 +360,10 @@ public class StatusWindow extends JFrame implements ActionListener,
     }
 
     public void updateStatus() {
+        
+        // correction actions always possible
+        gameStatus.initCashCorrectionActions();
+        
         if (!(currentRound instanceof StockRound)) {
             return;
         }
