@@ -947,23 +947,27 @@ public class StockRound extends Round {
             if (numberToSell > 0 && presCert != null
                 && numberToSell <= presCert.getShares()) {
                 // More to sell and we are President: see if we can dump it.
-                Player otherPlayer;
+            	// search for the player with the most shares (fix of bug 2962977)
+            	int requiredShares = presCert.getShare();
+            	Player potentialDirector = null;
                 for (int i = currentIndex + 1; i < currentIndex
                                                    + numberOfPlayers; i++) {
-                    otherPlayer = gameManager.getPlayerByIndex(i);
-                    if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
+                    Player otherPlayer = gameManager.getPlayerByIndex(i);
+                    int otherPlayerShares = otherPlayer.getPortfolio().getShare(company);
+                    if (otherPlayerShares >= requiredShares) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
                             || otherPlayer.getPortfolio().ownsCertificates(
                                     company, 1, false) >= 1) {
-                            // The poor sod.
-                            dumpedPlayer = otherPlayer;
-                            presSharesToSell = numberToSell;
-                            numberToSell = 0;
-                            break;
+                        	potentialDirector = otherPlayer;
+                        	requiredShares = otherPlayerShares + 1;
                         }
                     }
                 }
+                // The poor sod.
+                dumpedPlayer = potentialDirector;
+                presSharesToSell = numberToSell;
+                numberToSell = 0;
             }
             // Check if we could sell them all
             if (numberToSell > 0) {
