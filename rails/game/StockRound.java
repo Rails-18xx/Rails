@@ -96,7 +96,7 @@ public class StockRound extends Round {
 
         // fix of the forced undo bug
         currentPlayer = getCurrentPlayer();
-        
+
         boolean passAllowed = false;
 
         setSellableShares();
@@ -150,6 +150,7 @@ public class StockRound extends Round {
         Portfolio from;
         int price;
         int number;
+        int unitsForPrice;
 
         int playerCash = currentPlayer.getCash();
 
@@ -169,20 +170,21 @@ public class StockRound extends Round {
                 /* Only the top certificate is buyable from the IPO */
                 cert = certs.get(0);
                 comp = cert.getCompany();
+                unitsForPrice = comp.getShareUnitsForSharePrice();
                 if (isSaleRecorded(currentPlayer, comp)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1) continue;
                 shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
-                    price = comp.getIPOPrice();
+                    price = comp.getIPOPrice() / unitsForPrice;
                     if (price <= playerCash) {
                         possibleActions.add(new BuyCertificate(cert, from,
                                 price));
                     }
                 } else if (!comp.hasStarted()) {
                     if (comp.getIPOPrice() != 0) {
-                        price = comp.getIPOPrice() * cert.getShares();
+                        price = comp.getIPOPrice() * cert.getShares() / unitsForPrice;
                         if (price <= playerCash) {
                             possibleActions.add(new StartCompany(cert, price));
                         }
@@ -224,10 +226,11 @@ public class StockRound extends Round {
 
             comp = certs.get(0).getCompany();
             stockSpace = comp.getCurrentSpace();
-            price = stockSpace.getPrice();
+            unitsForPrice = comp.getShareUnitsForSharePrice();
+            price = stockSpace.getPrice() / unitsForPrice;
             shareUnit = comp.getShareUnit();
             maxNumberOfSharesToBuy
-            	= maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
+                = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
@@ -245,40 +248,40 @@ public class StockRound extends Round {
             uniqueCerts = new PublicCertificateI[5];
             numberOfCerts = new int[5];
             for (PublicCertificateI cert2 : certs) {
-            	shares = cert2.getShares();
+                shares = cert2.getShares();
                 if (maxNumberOfSharesToBuy < shares) continue;
-            	numberOfCerts[shares]++;
-            	if (uniqueCerts[shares] != null) continue;
-            	uniqueCerts[shares] = cert2;
+                numberOfCerts[shares]++;
+                if (uniqueCerts[shares] != null) continue;
+                uniqueCerts[shares] = cert2;
             }
 
             /* Create a BuyCertificate action per share size */
             for (shares = 1; shares < 5; shares++) {
-	            /* Only certs in the brown zone may be bought all at once */
-	            number = numberOfCerts[shares];
-	            if (number == 0) continue;
+                /* Only certs in the brown zone may be bought all at once */
+                number = numberOfCerts[shares];
+                if (number == 0) continue;
 
-	            if (!stockSpace.isNoBuyLimit()) {
-	                number = 1;
-	                /* Would the player exceed the per-company share hold limit? */
-	                if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
+                if (!stockSpace.isNoBuyLimit()) {
+                    number = 1;
+                    /* Would the player exceed the per-company share hold limit? */
+                    if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
 
-	                /* Would the player exceed the total certificate limit? */
-	                if (!stockSpace.isNoCertLimit()
-	                    && !mayPlayerBuyCertificate(currentPlayer, comp, number))
-	                    continue;
-	            }
+                    /* Would the player exceed the total certificate limit? */
+                    if (!stockSpace.isNoCertLimit()
+                        && !mayPlayerBuyCertificate(currentPlayer, comp, number))
+                        continue;
+                }
 
-	            // Does the player have enough cash?
-	            while (number > 0 && playerCash < number * price * shares) {
-	                number--;
-	            }
+                // Does the player have enough cash?
+                while (number > 0 && playerCash < number * price * shares) {
+                    number--;
+                }
 
-	            if (number > 0) {
-	                possibleActions.add(new BuyCertificate(uniqueCerts[shares],
-	                		from, price,
-	                        number));
-	            }
+                if (number > 0) {
+                    possibleActions.add(new BuyCertificate(uniqueCerts[shares],
+                            from, price,
+                            number));
+                }
             }
         }
 
@@ -395,6 +398,7 @@ public class StockRound extends Round {
             } else {
                 price = company.getMarketPrice();
             }
+            price /= company.getShareUnitsForSharePrice();
 
             for (int i = 1; i <= 4; i++) {
                 number = shareCountPerUnit[i];
@@ -736,7 +740,7 @@ public class StockRound extends Round {
             }
 
             price = currentSpace.getPrice();
-            cost = shares * price;
+            cost = shares * price / company.getShareUnitsForSharePrice();
 
             // Check if the Player has the money.
             if (currentPlayer.getCash() < cost) {
@@ -947,27 +951,23 @@ public class StockRound extends Round {
             if (numberToSell > 0 && presCert != null
                 && numberToSell <= presCert.getShares()) {
                 // More to sell and we are President: see if we can dump it.
-            	// search for the player with the most shares (fix of bug 2962977)
-            	int requiredShares = presCert.getShare();
-            	Player potentialDirector = null;
+                Player otherPlayer;
                 for (int i = currentIndex + 1; i < currentIndex
                                                    + numberOfPlayers; i++) {
-                    Player otherPlayer = gameManager.getPlayerByIndex(i);
-                    int otherPlayerShares = otherPlayer.getPortfolio().getShare(company);
-                    if (otherPlayerShares >= requiredShares) {
+                    otherPlayer = gameManager.getPlayerByIndex(i);
+                    if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
                             || otherPlayer.getPortfolio().ownsCertificates(
                                     company, 1, false) >= 1) {
-                        	potentialDirector = otherPlayer;
-                        	requiredShares = otherPlayerShares + 1;
+                            // The poor sod.
+                            dumpedPlayer = otherPlayer;
+                            presSharesToSell = numberToSell;
+                            numberToSell = 0;
+                            break;
                         }
                     }
                 }
-                // The poor sod.
-                dumpedPlayer = potentialDirector;
-                presSharesToSell = numberToSell;
-                numberToSell = 0;
             }
             // Check if we could sell them all
             if (numberToSell > 0) {
@@ -1002,7 +1002,7 @@ public class StockRound extends Round {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
             sellPrice = company.getCurrentSpace();
-            price = sellPrice.getPrice();
+            price = sellPrice.getPrice() / company.getShareUnitsForSharePrice();
             sellPrices.put(companyName, sellPrice);
         }
 
@@ -1074,7 +1074,7 @@ public class StockRound extends Round {
 
         return true;
     }
-    
+
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
         company.adjustSharePrice (SOLD, numberSold, gameManager.getStockMarket());
     }
