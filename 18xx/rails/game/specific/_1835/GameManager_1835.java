@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.2 2010/03/04 22:08:23 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.3 2010/03/04 22:12:41 evos Exp $ */
 package rails.game.specific._1835;
 
 import rails.game.*;
