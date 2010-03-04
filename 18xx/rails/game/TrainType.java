@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.30 2010/02/04 22:23:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.31 2010/03/04 22:08:09 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -8,8 +8,7 @@ import org.apache.log4j.Logger;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
-import rails.util.Tag;
+import rails.util.*;
 
 public class TrainType
 implements TrainTypeI {
@@ -475,4 +474,26 @@ implements TrainTypeI {
         return trainManager;
     }
 
+    public String getInfo() {
+        StringBuilder b = new StringBuilder ("<html>");
+        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), amount));
+        if (Util.hasValue(startedPhaseName)) {
+            appendInfoText(b, LocalText.getText("StartsPhase", startedPhaseName));
+        }
+        if (rustedTrainTypeName != null) {
+            appendInfoText(b, LocalText.getText("RustsTrains", rustedTrainTypeName));
+        }
+        if (releasedTrainTypeName != null) {
+            appendInfoText(b, LocalText.getText("ReleasesTrains", releasedTrainTypeName));
+        }
+        if (b.length() == 6) b.append(LocalText.getText("None"));
+
+        return b.toString();
+    }
+
+    private void appendInfoText (StringBuilder b, String text) {
+        if (text == null || text.length() == 0) return;
+        if (b.length() > 6) b.append("<br>");
+        b.append(text);
+    }
 }

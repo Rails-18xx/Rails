@@ -509,10 +509,12 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
 
-        // Train cost overview
+        // Train cost overview - removed, now added to Info menu
+        /*
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
         addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
                 futureTrainsWidth + 2, 1, 0, true);
+        */
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
 
@@ -671,7 +673,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                         options.get(0));
                         index = options.indexOf(sp);
                     }
-                }  else if (options.size() == 1) {
+                } else if (options.size() == 1) {
                     int result =
                             JOptionPane.showConfirmDialog(this, options.get(0),
                                     LocalText.getText("PleaseConfirm"),
@@ -703,7 +705,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
                 cca.setAmount(amount);
                 chosenAction = cca;
-            }  else {
+            } else {
+
                 chosenAction =
                         processGameSpecificActions(actor, actions.get(0));
 
@@ -952,7 +955,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         certInTreasury[i].setVisible(visible && !clickable);
         certInTreasuryButton[i].setVisible(clickable);
     }
-    
+
     private void setCompanyCashButton(int i, boolean clickable, PossibleAction action){
         boolean visible = rowVisibilityObservers[i].lastValue();
 
@@ -960,10 +963,9 @@ public class GameStatus extends GridPanel implements ActionListener {
             compCashButton[i].setText(compCash[i].getText());
         } else {
             compCashButton[i].clearPossibleActions();
-        }
+}
         compCash[i].setVisible(visible && !clickable);
         compCashButton[i].setVisible(visible && clickable);
-
         if (action != null)
             compCashButton[i].addPossibleAction(action);
     }

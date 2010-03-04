@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.89 2010/03/01 22:27:31 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.90 2010/03/04 22:08:09 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -30,7 +30,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;
     protected static final int START_OF_FIRST_OR = 2;
-    
+
     // Base token lay cost calculation methods
     public static final String BASE_COST_SEQUENCE = "sequence";
     public static final String BASE_COST_DISTANCE = "distance";
@@ -191,6 +191,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** What percentage of ownership constitutes "one share" */
     protected IntegerState shareUnit;
 
+    /** What number of share units relates to the share price
+     * (normally 1, but 2 for 1835 Prussian)
+     */
+    protected int shareUnitsForSharePrice = 1;
+
     /** At what percentage sold does the company float */
     protected int floatPerc = 0;
 
@@ -267,7 +272,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
      */
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+    @Override
+	public void configureFromXML(Tag tag) throws ConfigurationException {
 
         longName = tag.getAttributeAsString("longname", name);
         infoText = "<html>"+longName;
@@ -296,6 +302,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (shareUnitTag != null) {
             shareUnit = new IntegerState (name+"_ShareUnit",
                     shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
+            shareUnitsForSharePrice
+            	= shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
         }
 
         Tag homeBaseTag = tag.getChild("Home");
@@ -341,7 +349,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         // Special properties (as in the 1835 black minors)
         super.configureFromXML(tag);
-        
+
         // TODO Normally set in the default train type. May be wrong place.
         // Ridiculous to reparse with each train type.
         poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
@@ -1380,7 +1388,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return shareUnit.intValue();
     }
 
-    @Override
+    public int getShareUnitsForSharePrice() {
+		return shareUnitsForSharePrice;
+	}
+
+	@Override
     public String toString() {
         return name;
     }
@@ -1635,7 +1647,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (cost > 0) tilesCostThisTurn.add(cost);
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
-    
+
     public ModelObject getTilesLaidThisTurnModel() {
         return tilesLaidThisTurn;
     }
@@ -1657,9 +1669,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * Calculate the cost of laying a token, given the hex where 
+     * Calculate the cost of laying a token, given the hex where
      * the token is laid. This only makes a diofference for de "distance" method.
-     * @param hex The hex where the token is to be laid. 
+     * @param hex The hex where the token is to be laid.
      * @return The cost of laying that token.
      */
     public int getBaseTokenLayCost(MapHex hex) {
@@ -1668,7 +1680,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             int index = getNumberOfLaidBaseTokens();
-    
+
             if (index >= baseTokenLayCost.length) {
                 index = baseTokenLayCost.length - 1;
             } else if (index < 0) {
@@ -1685,13 +1697,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
             return 0;
         }
     }
-    
+
     /** Return all possible token lay costs to be incurred for the
      * company's next token lay. In the "distance" method, this will be an array.
      * @return
      */
     public int[] getBaseTokenLayCosts () {
-        
+
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             return new int[] {getBaseTokenLayCost(null)};
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
@@ -1705,7 +1717,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         } else {
             return new int[] {0};
         }
-        
+
     }
 
     public ModelObject getTokensLaidThisTurnModel() {

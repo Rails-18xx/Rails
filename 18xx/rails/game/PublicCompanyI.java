@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.49 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.50 2010/03/04 22:08:09 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -231,6 +231,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit();
+    public int getShareUnitsForSharePrice();
 
     /**
      * @return Returns the lowerPrivatePriceFactor.
@@ -291,7 +292,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public void layTile(MapHex hex, TileI tile, int orientation, int cost);
 
     public void layTileInNoMapMode(int cost);
-    
+
     public ModelObject getTilesLaidThisTurnModel();
 
     public ModelObject getTilesCostThisTurnModel();
@@ -299,7 +300,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public void layBaseToken(MapHex hex, int cost);
 
     public void layBaseTokenInNoMapMode(int cost);
-    
+
     public ModelObject getTokensLaidThisTurnModel();
 
     public ModelObject getTokensCostThisTurnModel();
