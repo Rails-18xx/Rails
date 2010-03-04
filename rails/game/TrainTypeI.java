@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.13 2010/02/04 22:22:59 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.14 2010/03/04 22:08:09 evos Exp $ */
 package rails.game;
 
 public interface TrainTypeI
@@ -108,4 +108,6 @@ extends ConfigurableComponentI, Cloneable {
     public int getIndex();
 
     public TrainManager getTrainManager();
+    public String getInfo();
+
 }

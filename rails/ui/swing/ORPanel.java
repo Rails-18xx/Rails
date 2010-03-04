@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.47 2010/03/02 22:15:40 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.48 2010/03/04 22:08:24 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -92,8 +92,8 @@ implements ActionListener, KeyListener {
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
             privatesCaption, loansCaption;
-    
-    private ActionButton buttonOC; // sfy: button for operating costs 
+
+    private ActionButton buttonOC; // sfy: button for operating costs
     private ActionButton button1;
     private ActionButton button2;
     private ActionButton button3;
@@ -483,7 +483,7 @@ implements ActionListener, KeyListener {
     	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
     	List<CompanyTypeI> comps = cm.getCompanyTypes();
     	JMenu compMenu, menu, item;
-        
+
         compMenu = new JMenu(LocalText.getText("Companies"));
         compMenu.setEnabled(true);
         infoMenu.add(compMenu);
@@ -507,28 +507,15 @@ implements ActionListener, KeyListener {
         TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
         List<TrainTypeI> types = tm.getTrainTypes();
         JMenu item;
-        StringBuffer b = new StringBuffer("<html>");
 
         trainsInfoMenu = new JMenu(LocalText.getText("TRAINS"));
         trainsInfoMenu.setEnabled(true);
         infoMenu.add(trainsInfoMenu);
 
         for (TrainTypeI type : types) {
-            b.setLength(6);
-            if (Util.hasValue(type.getStartedPhaseName())) {
-                appendInfoText(b, LocalText.getText("StartsPhase", type.getStartedPhaseName()));
-            }
-            if (type.getRustedTrainType() != null) {
-                appendInfoText(b, LocalText.getText("RustsTrains", type.getRustedTrainType().getName()));
-            }
-            if (type.getReleasedTrainType() != null) {
-                appendInfoText(b, LocalText.getText("ReleasesTrains", type.getReleasedTrainType().getName()));
-            }
-            if (b.length() == 6) b.append(LocalText.getText("None"));
-
             item = new JMenu (LocalText.getText("N_Train", type.getName()));
             item.setEnabled(true);
-            item.add(new JMenuItem(b.toString()));
+            item.add(new JMenuItem(type.getInfo()));
             trainsInfoMenu.add(item);
         }
     }
@@ -694,7 +681,7 @@ implements ActionListener, KeyListener {
         button1.setEnabled(true);
         button1.setVisible(true);
     }
-    
+
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
 
@@ -754,13 +741,13 @@ implements ActionListener, KeyListener {
 
     // operating costs sfy
     public void initOperatingCosts(boolean enabled) {
-        
+
         buttonOC.setEnabled(enabled);
         buttonOC.setVisible(enabled);
         tileCaption.setHighlight(enabled);
         tokenCaption.setHighlight(enabled);
     }
-    
+
 
     public void initPrivateBuying(boolean enabled) {
 

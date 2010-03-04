@@ -5,9 +5,8 @@ import java.util.List;
 import javax.swing.JDialog;
 
 import rails.game.*;
-import rails.game.specific._1835.FoldIntoPrussian;
-import rails.game.specific._1835.PrussianFormationRound;
-import rails.game.specific._1835.StockRound_1835;
+import rails.game.special.ExchangeForShare;
+import rails.game.specific._1835.*;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StatusWindow;
 import rails.ui.swing.elements.CheckBoxDialog;
@@ -15,7 +14,7 @@ import rails.ui.swing.elements.ConfirmationDialog;
 import rails.util.LocalText;
 
 public class StatusWindow_1835 extends StatusWindow {
-    
+
     PublicCompanyI prussian;
 
     private static final long serialVersionUID = 1L;
@@ -23,8 +22,9 @@ public class StatusWindow_1835 extends StatusWindow {
     public StatusWindow_1835() {
         super();
     }
-    
-    public void init (GameUIManager gameUIManager) {
+
+    @Override
+	public void init (GameUIManager gameUIManager) {
         super.init(gameUIManager);
         prussian = gameUIManager.getGameManager().getCompanyManager().getCompanyByName(StockRound_1835.PR_ID);
     }
@@ -62,20 +62,27 @@ public class StatusWindow_1835 extends StatusWindow {
 
         List<CompanyI> foldables = action.getFoldableCompanies();
         JDialog currentDialog;
-        
+
         if (foldables.get(0).getName().equals("M2")) {
             // Ask if the Prussian should be started
             currentDialog = new ConfirmationDialog (gameUIManager,
                     LocalText.getText("Select"),
-                    LocalText.getText("MergeMinorConfirm", 
+                    LocalText.getText("MergeMinorConfirm",
                             "M2", StockRound_1835.PR_ID),
                     "Yes",
                     "No" );
         } else {
             // Ask if any other prePrussians should be folded
             String[] options = new String[foldables.size()];
-            for (int i=0; i<=options.length; i++) {
-                options[i] = foldables.get(i).getName();
+            CompanyI company;
+            for (int i=0; i<options.length; i++) {
+            	company = foldables.get(i);
+            	options[i] = LocalText.getText("MergeOption",
+            			company.getName(),
+            			company.getLongName(),
+            			prussian.getName(),
+            			((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
+            			);
             }
             currentDialog = new CheckBoxDialog (gameUIManager,
                     LocalText.getText("Select"),
