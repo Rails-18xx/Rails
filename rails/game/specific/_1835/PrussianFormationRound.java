@@ -1,12 +1,18 @@
 package rails.game.specific._1835;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import rails.common.GuiDef;
 import rails.game.*;
+import rails.game.action.ExchangeableToken;
 import rails.game.action.PossibleAction;
+import rails.game.move.CashMove;
 import rails.game.special.ExchangeForShare;
+import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 
@@ -170,7 +176,6 @@ public class PrussianFormationRound extends StockRound {
 
         // Execute
         prussian.start();
-        prussian.setFloated();
         ((GameManager_1835)gameManager).setPrussianFormationStartingPlayer(currentPlayer);
         String message = LocalText.getText("START_MERGED_COMPANY",
                 PR_ID,
@@ -179,6 +184,7 @@ public class PrussianFormationRound extends StockRound {
         ReportBuffer.add(message);
 
         executeExchange (action.getFoldedCompanies(), true);
+        prussian.setFloated();
 
         return true;
     }
@@ -218,7 +224,7 @@ public class PrussianFormationRound extends StockRound {
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
             cert.moveTo(currentPlayer.getPortfolio());
-            company.setClosed();
+            //company.setClosed();
             ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getName(),
                     company.getName(),
@@ -233,8 +239,63 @@ public class PrussianFormationRound extends StockRound {
                     PR_ID,
                     ipo.getName(),
                     company.getName() ));
+            
+            
+            if (company instanceof PublicCompanyI) {
+
+                PublicCompanyI minor = (PublicCompanyI) company;
+        
+                // Replace the home token
+                BaseToken token = (BaseToken) minor.getTokens().get(0);
+                City city = (City) token.getHolder();
+                MapHex hex = city.getHolder();
+                token.moveTo(minor);
+                if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
+                    /* TODO: the false return value must be impossible. */
+                    ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                            PR_ID, minor.getName(),
+                            city.getName()));
+                    
+                    prussian.layBaseToken(hex, 0);
+                }
+        
+                // Move any cash
+                if (minor.getCash() > 0) {
+                    new CashMove (minor, prussian, minor.getCash());
+                }
+        
+                // Move any trains
+                List<TrainI> trains = new ArrayList<TrainI> (minor.getPortfolio().getTrainList());
+                for (TrainI train : trains) {
+                    train.moveTo(prussian.getPortfolio());
+                }
+            }
+
+            // Close the merged companies
+            company.setClosed();
+        }
+
+        // Check the trains, autodiscard any excess non-permanent trains
+        int trainLimit = prussian.getTrainLimit(gameManager.getCurrentPlayerIndex());
+        List<TrainI> trains = prussian.getPortfolio().getTrainList();
+        if (prussian.getNumberOfTrains() > trainLimit) {
+            ReportBuffer.add("");
+            int numberToDiscard = prussian.getNumberOfTrains() - trainLimit;
+            List<TrainI> trainsToDiscard = new ArrayList<TrainI>(4);
+            for (TrainI train : trains) {
+                if (!train.getType().isPermanent()) {
+                    trainsToDiscard.add(train);
+                    if (--numberToDiscard == 0) break;
+                }
+            }
+            for (TrainI train : trainsToDiscard) {
+                train.moveTo(pool);
+                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                        PR_ID, train.getName()));
+            }
         }
     }
+
 
     public static boolean prussianIsComplete(GameManagerI gameManager) {
         List<PublicCertificateI> unissued
