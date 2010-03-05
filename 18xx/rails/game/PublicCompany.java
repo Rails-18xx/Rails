@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.90 2010/03/04 22:08:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.91 2010/03/05 20:17:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1691,7 +1691,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (hex == null) {
                 return baseTokenLayCost[0];
             } else {
-                return mapManager.getHexDistance(hex, homeHex) * baseTokenLayCost[0];
+                return mapManager.getHexDistance(homeHex, hex) * baseTokenLayCost[0];
             }
         } else {
             return 0;
