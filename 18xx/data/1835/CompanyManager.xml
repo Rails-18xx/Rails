@@ -54,10 +54,10 @@
 	<Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="J6" extra="yes" free="yes" />
+				<SpecialTileLay location="L6" extra="yes" free="yes" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="J6" extra="yes" free="yes"/>
+				<SpecialTokenLay location="L6" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
