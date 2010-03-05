@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.19 2010/02/20 12:42:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.20 2010/03/05 20:17:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class MapManager implements ConfigurableComponentI {
     protected MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
     protected int maxX, maxY;
-    
+
     // upgrade costs on the map for noMapMode
     protected SortedSet<Integer> possibleTileCosts;
 
@@ -95,7 +95,7 @@ public class MapManager implements ConfigurableComponentI {
             }
         }
         log.debug("Possible tileCosts on map are "+possibleTileCosts);
-        
+
         hexes = new MapHex[1 + maxX][1 + maxY];
 
         for (String hexName : mHexes.keySet()) {
@@ -234,28 +234,54 @@ public class MapManager implements ConfigurableComponentI {
      * @return
      */
     public int getHexDistance (MapHex hex1, MapHex hex2) {
-    	Map<MapHex, Integer> passed = new HashMap<MapHex, Integer>();
-    	return calculateHexDistance (hex1, hex2, 1, passed);
+
+    	if (distances == null) distances = new HashMap<MapHex, Map<MapHex, Integer>> ();
+    	if (distances.get(hex1) == null) {
+    		distances.put(hex1, new HashMap<MapHex, Integer>());
+    		calculateHexDistances(hex1, hex1, 0);
+    	}
+    	return distances.get(hex1).get(hex2);
     }
-    
-    /** Cache to hold distances between tokenable cities */
-    private Map<MapHex, int[]> distanceMap;
-    
-    /** 
+
+    private void calculateHexDistances (MapHex hex1, MapHex hex2, int depth) {
+
+		if (distances.get(hex1).get(hex2) == null) {
+			distances.get(hex1).put(hex2, depth);
+		} else {
+			if (distances.get(hex1).get(hex2) <= depth) return;
+			distances.get(hex1).put(hex2, depth);
+		}
+
+    	for (MapHex hex3 : hex2.getNeighbors()) {
+    		if (hex3 == null) continue;
+    		if (distances.get(hex1).get(hex3) == null) {
+    			calculateHexDistances (hex1, hex3, depth+1);
+    		} else if (distances.get(hex1).get(hex3) > depth+1) {
+    			calculateHexDistances (hex1, hex3, depth+1);
+    		}
+    	}
+    }
+
+    /** Cache to hold all unique distance values of tokenable cities from a given hex */
+    private Map<MapHex, int[]> uniqueCityDistances;
+    /** Cache to hold all minimal hex distances from given hexes */
+    private Map<MapHex, Map<MapHex, Integer>> distances;
+
+    /**
      * Calculate the distances between a given tokenable city hex
-     * and all other tokenable city hexes. 
+     * and all other tokenable city hexes.
      * <p> The array is cached, so it need be calculated only once.
      * @param hex Start hex
-     * @return Sorted int array containing all occurring distances only once. 
+     * @return Sorted int array containing all occurring distances only once.
      */
     public int[] getCityDistances (MapHex hex) {
 
         if (!hex.getCurrentTile().hasStations()) return new int[0];
-        if (distanceMap == null) distanceMap = new HashMap<MapHex, int[]> ();
-        if (distanceMap.containsKey(hex)) return distanceMap.get(hex);
-        
+        if (uniqueCityDistances == null) uniqueCityDistances = new HashMap<MapHex, int[]> ();
+        if (uniqueCityDistances.containsKey(hex)) return uniqueCityDistances.get(hex);
+
         int distance;
-        Set<Integer> distancesSet = new TreeSet<Integer> (); 
+        Set<Integer> distancesSet = new TreeSet<Integer> ();
         for (MapHex hex2 : mHexes.values()) {
             if (!hex2.getCurrentTile().hasStations()) continue;
             distance = getHexDistance (hex, hex2);
@@ -266,49 +292,8 @@ public class MapManager implements ConfigurableComponentI {
         for (int distance2 : distancesSet) {
             distances[i++] = distance2;
         }
-        distanceMap.put(hex, distances);
+        uniqueCityDistances.put(hex, distances);
         return distances;
     }
 
-    /** Helper method to calculate the distance between two hexes.
-     * Called recursively. */
-    private int calculateHexDistance (MapHex hex1, MapHex hex2, int depth,
-    		Map<MapHex, Integer> passed) {
-
-    	/* Map to sort the neighbours (roughly) into decreasing distance */
-    	SortedMap<Integer, MapHex> neighbours = new TreeMap<Integer, MapHex>();
-
-    	for (MapHex hex3 : hex1.getNeighbors()) {
-
-    		if (hex3 == null) continue;
-
-    		// Are we finished?
-    		if (hex3 == hex2) {
-				return 1;
-    		}
-
-    		if (passed.containsKey(hex3) && passed.get(hex3) < depth - 1) {
-    			// Backtrack
-    			return -1;
-    		}
-
-    		// Sort neighbours on decreasing (rough) distance
-        	int distance = Math.abs(hex2.getX() - hex3.getX())
-				+ Math.abs(hex2.getY() - hex3.getY());
-        	neighbours.put(distance, hex3);
-    	}
-		passed.put (hex1, depth);
-		for (MapHex neighbour : neighbours.values()) {
-    		if (passed.containsKey(neighbour)) continue;
-    		int result = calculateHexDistance (neighbour, hex2, depth+1, passed);
-    		if (result < 0) {
-    			return 0; // Continue backtracking
-    		} else if (result > 0) {
-    			return result + 1;
-    		}
-    		// Continue loop if result == 0
-    	}
-		// Should never get here
-    	return 0;
-    }
 }
