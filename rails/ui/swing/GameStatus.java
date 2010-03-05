@@ -509,12 +509,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
 
-        // Train cost overview - removed, now added to Info menu
-        /*
+        // Train cost overview 
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
         addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
                 futureTrainsWidth + 2, 1, 0, true);
-        */
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
 
