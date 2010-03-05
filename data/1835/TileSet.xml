@@ -43,10 +43,18 @@
 	<Tile id="-901"/>
 	
 	<!-- yellow tiles -->
-	<Tile id="1" quantity="1" />
-	<Tile id="2" quantity="1" />
-	<Tile id="3" quantity="2" />
-	<Tile id="4" quantity="3" />
+	<Tile id="1" quantity="1">
+        <Upgrade id="88"/>
+    </Tile>
+	<Tile id="2" quantity="1">
+        <Upgrade id="87"/>
+    </Tile>
+	<Tile id="3" quantity="2">
+        <Upgrade id="87,88,204"/>
+    </Tile>
+	<Tile id="4" quantity="3">
+        <Upgrade id="87,88,204"/>
+    </Tile>
 	<Tile id="5" quantity="3" >
 		<Upgrade id="12,14,15,205,206" />
 	</Tile>
@@ -62,13 +70,21 @@
 	<Tile id="9" quantity="12">
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
-	<Tile id="55" quantity="1" />
-	<Tile id="56" quantity="1" />
+	<Tile id="55" quantity="1">
+        <Upgrade id="88"/>
+    </Tile>
+	<Tile id="56" quantity="1">
+        <Upgrade id="87"/>
+    </Tile>
 	<Tile id="57" quantity="2">
 		<Upgrade id="14,15,205,206" />
 	</Tile>
-	<Tile id="58" quantity="4" />
-	<Tile id="69" quantity="2" />
+	<Tile id="58" quantity="4">
+        <Upgrade id="87,88,203,204"/>
+    </Tile>
+	<Tile id="69" quantity="2">
+        <Upgrade id="204"/>
+    </Tile>
 	<Tile id="201" quantity="2">
 		<Upgrade id="207,208" />
 	</Tile>
@@ -83,12 +99,8 @@
 	<Tile id="13" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="14" quantity="2">
-		<Upgrade id="63" />
-	</Tile>
-	<Tile id="15" quantity="2">
-		<Upgrade id="63" />
-	</Tile>
+	<Tile id="14" quantity="2"/>
+	<Tile id="15" quantity="2"/>
 	<Tile id="16" quantity="2">
 		<Upgrade id="43,70" />
 	</Tile>
@@ -108,7 +120,7 @@
 		<Upgrade id="42,43,46,47" />
 	</Tile>
 	<Tile id="25" quantity="3">
-		<Upgrade id="40" />
+		<Upgrade id="40,45,46"/>
 	</Tile>
 	<Tile id="26" quantity="2">
 		<Upgrade id="42,44,45" />
@@ -141,12 +153,24 @@
 	<Tile id="209" quantity="1">
 		<Upgrade id="220" />
 	</Tile>
-	<Tile id="210" quantity="1" />
-	<Tile id="211" quantity="1" />
-	<Tile id="212" quantity="1" />
-	<Tile id="213" quantity="1" />
-	<Tile id="214" quantity="1" />
-	<Tile id="215" quantity="1" />
+	<Tile id="210" quantity="1">
+        <Upgrade id="217"/>
+    </Tile>
+	<Tile id="211" quantity="1">
+        <Upgrade id="217"/>
+    </Tile>
+	<Tile id="212" quantity="1">
+        <Upgrade id="218"/>
+    </Tile>
+	<Tile id="213" quantity="1">
+        <Upgrade id="218"/>
+    </Tile>
+	<Tile id="214" quantity="1">
+        <Upgrade id="219"/>
+    </Tile>
+	<Tile id="215" quantity="1">
+        <Upgrade id="218"/>
+    </Tile>
 
 	<!-- Brown tiles -->
 	<Tile id="39" quantity="1" />
