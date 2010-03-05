@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.18 2010/02/28 21:38:06 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.19 2010/03/05 20:49:41 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -26,7 +26,7 @@ public class BuyTrain extends PossibleORAction {
     transient private Portfolio from;
     private String fromName;
     private int fixedCost = 0;
-    private boolean hasNoTrains = false; // TODO Remove once route checking exists
+    private boolean forcedBuyIfNoRoute = false; // TODO Remove once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
     private boolean forcedExchange = false;
@@ -85,8 +85,8 @@ public class BuyTrain extends PossibleORAction {
         return this;
     }
 
-    public void setHasNoTrains(boolean hasNoTrains) {
-        this.hasNoTrains = hasNoTrains;
+    public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
+        this.forcedBuyIfNoRoute = hasNoTrains;
     }
     
     public void setExtraMessage (String message) {
@@ -163,8 +163,8 @@ public class BuyTrain extends PossibleORAction {
         return presidentCashToAdd;
     }
 
-    public boolean hasNoTrains() {
-        return hasNoTrains;
+    public boolean isForcedBuyIfNoRoute() {
+        return forcedBuyIfNoRoute;
     }
 
     public Portfolio getHolder() {
@@ -248,7 +248,7 @@ public class BuyTrain extends PossibleORAction {
         trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
         fromName = (String) fields.get("fromName", fromName);
         fixedCost = fields.get("fixedCost", fixedCost);
-        hasNoTrains = fields.get("hasNoTrains", hasNoTrains);//TEMPORARY
+        forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);//TEMPORARY
         trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
         forcedExchange = fields.get("forcedExchange", forcedExchange);
         presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);

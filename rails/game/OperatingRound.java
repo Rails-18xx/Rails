@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.112 2010/03/03 21:34:11 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.113 2010/03/05 20:49:41 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -48,7 +48,6 @@ public class OperatingRound extends Round implements Observer {
 
     protected Map<String, Integer> tileLaysPerColour =
             new HashMap<String, Integer>();
-//    protected GenericState<Map<String,Integer>> tileLaysPerColourState = null;
 
     protected List<LayBaseToken> currentNormalTokenLays =
             new ArrayList<LayBaseToken>();
@@ -2343,7 +2342,7 @@ public class OperatingRound extends Round implements Observer {
                 if (cost <= cash) {
                     if (canBuyTrainNow) {
                         BuyTrain action = new BuyTrain(train, ipo, cost);
-                        action.setHasNoTrains(!hasTrains); // TEMPORARY
+                        action.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
                         possibleActions.add(action);
                     }
                 } else if (costOfCheapestTrain == 0
@@ -2376,7 +2375,7 @@ public class OperatingRound extends Round implements Observer {
                     if (reducedPrice > cash) continue;
                     BuyTrain bt = new BuyTrain(train, ipo, reducedPrice);
                     bt.setSpecialProperty(stb);
-                    bt.setHasNoTrains(!hasTrains); // TEMPORARY
+                    bt.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
                     possibleActions.add(bt);
                 }
 
@@ -2393,7 +2392,7 @@ public class OperatingRound extends Round implements Observer {
                 cost = train.getCost();
                 if (cost <= cash) {
                     BuyTrain bt = new BuyTrain(train, pool, cost);
-                    bt.setHasNoTrains(!hasTrains); // TEMPORARY
+                    bt.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
                     possibleActions.add(bt);
                 } else if (costOfCheapestTrain == 0
                            || cost < costOfCheapestTrain) {
@@ -2406,7 +2405,7 @@ public class OperatingRound extends Round implements Observer {
                 BuyTrain bt = new BuyTrain(cheapestTrain,
                         cheapestTrain.getHolder(), costOfCheapestTrain);
                 bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
-                bt.setHasNoTrains(!hasTrains); // TODO TEMPORARY
+                bt.setForcedBuyIfNoRoute(presidentMayHelp); // TODO TEMPORARY
                 possibleActions.add(bt);
             }
         }
