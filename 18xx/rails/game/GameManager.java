@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.85 2010/03/03 00:45:06 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.86 2010/03/06 18:28:41 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -605,7 +605,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         OperatingRound or = createRound(operatingRoundClass);
         if (operate) absoluteORNumber.add(1);
-        or.start(operate);
+        or.start();
     }
 
     protected <T extends RoundI> T createRound (Class<T> roundClass) {

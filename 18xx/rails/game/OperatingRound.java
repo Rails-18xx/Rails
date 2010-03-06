@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.113 2010/03/05 20:49:41 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.114 2010/03/06 18:28:41 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,7 +11,6 @@ import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.EnumState;
 import rails.game.state.IntegerState;
-//import rails.game.state.GenericState;
 import rails.util.LocalText;
 
 /**
@@ -103,7 +102,7 @@ public class OperatingRound extends Round implements Observer {
         guiHints.setActivePanel(GuiDef.Panel.MAP);
     }
 
-    public void start(boolean operate) {
+    public void start() {
 
         thisOrNumber = gameManager.getORId();
 
@@ -126,7 +125,7 @@ public class OperatingRound extends Round implements Observer {
             }
         }
 
-        if (operate) {
+        if (operatingCompanyArray.length > 0) {
 
             StringBuilder msg = new StringBuilder();
             for (PublicCompanyI company : operatingCompanyArray) {
@@ -140,14 +139,10 @@ public class OperatingRound extends Round implements Observer {
                 stepObject.addObserver(this);
             }
 
-            if (operatingCompanyArray.length > 0) {
-
-                if (setNextOperatingCompany(true)){
-                    setStep(GameDef.OrStep.INITIAL);
-                    return;
-                }
+            if (setNextOperatingCompany(true)){
+                setStep(GameDef.OrStep.INITIAL);
             }
-
+            return;
         }
 
         // No operating companies yet: close the round.
