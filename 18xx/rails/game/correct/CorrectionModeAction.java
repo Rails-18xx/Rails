@@ -13,14 +13,11 @@ import java.io.ObjectInputStream;
  *
  */
 
-public class CorrectionModeAction extends PossibleAction {
+public class CorrectionModeAction extends CorrectionAction {
     
     public static final long serialVersionUID = 1L;
 
-    // pre-conditions: type and state
-    transient protected CorrectionType correction;
-    protected String correctionName;
-    
+    // pre-conditions:  state
     protected boolean active;
     
     // post-conditions: none (except isActed!)
@@ -29,17 +26,9 @@ public class CorrectionModeAction extends PossibleAction {
      * Initializes with all possible correction types
      */
     public CorrectionModeAction(CorrectionType correction, boolean active) {
-        this.correction = correction;
+        this.correctionType = correction;
         correctionName = correction.name();
         this.active = active;
-    }
-
-    public CorrectionType getCorrection() {
-        return correction;
-    }
-
-    public String getCorrectionName() {
-        return correctionName;
     }
     
     public boolean isActive() {
@@ -54,7 +43,7 @@ public class CorrectionModeAction extends PossibleAction {
     public boolean equals(PossibleAction action) {
         if (!(action instanceof CorrectionModeAction)) return false;
         CorrectionModeAction a = (CorrectionModeAction) action;
-        return (a.correction == this.correction && a.active == this.active);
+        return (a.correctionType == this.correctionType && a.active == this.active);
     }
 
     @Override
@@ -62,13 +51,13 @@ public class CorrectionModeAction extends PossibleAction {
         StringBuffer b = new StringBuffer("CorrectionModeAction");
         if (!acted) {
             b.append(" (not acted)");
-            if (correction != null)
-                b.append(", correction="+correction);
+            if (correctionType != null)
+                b.append(", correctionType="+correctionType);
                 b.append(", current state="+active);
         } else {
             b.append(" (acted)");
-            if (correction != null)
-                b.append(", correction="+correction);
+            if (correctionType != null)
+                b.append(", correctionType="+correctionType);
                 b.append(", previous state="+active);
         }
         return b.toString();
@@ -79,7 +68,7 @@ public class CorrectionModeAction extends PossibleAction {
             ClassNotFoundException {
         in.defaultReadObject();
         if (Util.hasValue(correctionName))
-                correction = CorrectionType.valueOf(correctionName);
+                correctionType = CorrectionType.valueOf(correctionName);
     }
 
     

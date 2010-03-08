@@ -825,7 +825,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     /**
      * Initializes the CashCorrectionActions
      */
-    public void initCashCorrectionActions() {
+    public boolean initCashCorrectionActions() {
         
         // Clear all buttons
         for (int i = 0; i < nc; i++) {
@@ -854,6 +854,8 @@ public class GameStatus extends GridPanel implements ActionListener {
             }
         }
 
+        return (actions != null && !actions.isEmpty());
+    
     }
     
     public void setPriorityPlayer(int index) {

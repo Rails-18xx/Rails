@@ -332,6 +332,12 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
+        boolean correctionOverride = statusWindow.setupFor(currentRound);
+
+        if (correctionOverride) {
+            log.debug("Correction overrides active window: status window active");
+        }
+
         // Active window settings are handled last.
         // Side effects: the active window is made visible and put on top.
         if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {
@@ -340,7 +346,7 @@ public class GameUIManager implements DialogOwner {
             startRoundWindow.setVisible(true);
             startRoundWindow.toFront();
 
-        } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS) {
+        } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
 
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
@@ -348,18 +354,15 @@ public class GameUIManager implements DialogOwner {
             statusWindow.setVisible(true);
             statusWindow.toFront();
 
-        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP) {
+        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  && !correctionOverride) {
 
             log.debug("Entering Operating Round UI type ");
             activeWindow = orWindow;
             orWindow.setVisible(true);
             orWindow.toFront();
         }
-
-
-
-        statusWindow.setupFor(currentRound);
-
+            
+        
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
@@ -369,6 +372,7 @@ public class GameUIManager implements DialogOwner {
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
+//        } else {
 
             log.debug("Updating Stock (status) round window");
             statusWindow.updateStatus();

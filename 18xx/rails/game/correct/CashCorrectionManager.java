@@ -2,36 +2,53 @@ package rails.game.correct;
 
 import rails.game.*;
 import rails.game.move.CashMove;
+import rails.game.move.StateChange;
+import rails.game.state.BooleanState;
 import rails.util.*;
 import java.util.*;
 
 public final class CashCorrectionManager implements CorrectionManager {
 
+    private static CashCorrectionManager ccm;
+    
     private GameManager gameManager;
-
+    
+    private BooleanState active;
+    
     private CashCorrectionManager() {
     }
     
     public static CorrectionManager getInstance(GameManager gm) {
-        CashCorrectionManager manager = new CashCorrectionManager();
-        manager.gameManager = gm;
-        return manager;
+        if (ccm == null) {
+            ccm = new CashCorrectionManager();
+            ccm.gameManager = gm;
+            ccm.active = new BooleanState("CASH_CORRECT", false);
+        }
+        return ccm;
     }
+    
+    public boolean isActive(){
+        return active.booleanValue();
+    }
+    
     
     public List<CorrectionAction> createCorrections() {
         List<CorrectionAction> actions = new ArrayList<CorrectionAction>();
         
-        List<Player> players = gameManager.getPlayers();
-        for(Player pl:players){
-            actions.add(new CashCorrectionAction(pl));
-        }
+        if (isActive()) {
+            List<Player> players = gameManager.getPlayers();
+            for(Player pl:players){
+                actions.add(new CashCorrectionAction(pl));
+            }
 
-        List<PublicCompanyI> publicCompanies = gameManager.getAllPublicCompanies();
-        for(PublicCompanyI pc:publicCompanies){
-            if (pc.hasFloated())
-                actions.add(new CashCorrectionAction(pc));
+            List<PublicCompanyI> publicCompanies = gameManager.getAllPublicCompanies();
+            for(PublicCompanyI pc:publicCompanies){
+                if (pc.hasFloated() && !pc.isClosed())
+                    actions.add(new CashCorrectionAction(pc));
+            }
         }
-        
+        actions.add(new CorrectionModeAction(CorrectionType.CORRECT_CASH, isActive()));
+
         return actions;
     }
 
@@ -39,7 +56,26 @@ public final class CashCorrectionManager implements CorrectionManager {
 
         boolean result = false;
         
-        if (action instanceof CashCorrectionAction) {
+        if (action instanceof CorrectionModeAction) {
+            gameManager.getMoveStack().start(false);
+            if (!isActive()) {
+                String text = LocalText.getText("CorrectionModeActivate",
+                        gameManager.getCurrentPlayer().getName(),
+                        LocalText.getText("CORRECT_CASH")
+                );
+                ReportBuffer.add(text);
+                DisplayBuffer.add(text);
+            }
+            else {
+                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
+                        gameManager.getCurrentPlayer().getName(),
+                        LocalText.getText("CORRECT_CASH"))
+                );
+            }
+            new StateChange(active, !isActive());
+            
+            result = true;
+        } else if (action instanceof CashCorrectionAction) {
             CashCorrectionAction cashAction=(CashCorrectionAction)action;
 
             CashHolder ch = cashAction.getCashHolder();
@@ -47,6 +83,12 @@ public final class CashCorrectionManager implements CorrectionManager {
             
             String errMsg = null;
 
+            while (true) {
+                if (amount == 0 ) {
+                    errMsg =
+                        LocalText.getText("CorrectCashZero");
+                    break;
+                }
             if ((amount + ch.getCash()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
@@ -54,6 +96,9 @@ public final class CashCorrectionManager implements CorrectionManager {
                             Bank.format(ch.getCash()),
                             Bank.format(-amount) 
                     );
+                break;
+            }
+             break;   
             }
 
             if (errMsg != null) {

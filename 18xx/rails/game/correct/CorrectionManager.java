@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface CorrectionManager {
     
+    public boolean isActive();
+    
     public List<CorrectionAction> createCorrections();
     
     public boolean executeCorrection(CorrectionAction action);

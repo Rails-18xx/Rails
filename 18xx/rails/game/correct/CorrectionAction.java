@@ -10,11 +10,17 @@ import rails.game.action.PossibleAction;;
 
 public abstract class CorrectionAction extends PossibleAction {
     
-    private CorrectionType correctionType;
+    transient protected CorrectionType correctionType;
+    protected String correctionName;
     
     public CorrectionType getCorrectionType() {
         return correctionType;
     }
+    
+    public String getCorrectionName() {
+        return correctionName;
+    }
+    
     public void setCorrectionType(CorrectionType correctionType) {
         this.correctionType = correctionType;
     }
