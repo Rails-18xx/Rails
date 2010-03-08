@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.38 2010/03/03 00:44:38 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.39 2010/03/08 20:33:27 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -343,7 +343,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         }
     }
     
-    public void setupFor(RoundI round) {
+    public boolean setupFor(RoundI round) {
 
         currentRound = round;
 
@@ -357,15 +357,15 @@ public class StatusWindow extends JFrame implements ActionListener,
             enableCheckBoxMenuItem(MAP_CMD);
             disableCheckBoxMenuItem(MARKET_CMD);
         }
+
+        // correction actions always possible
+        return gameStatus.initCashCorrectionActions();
+        
     }
 
     public void updateStatus() {
-        
-        // correction actions always possible
-        gameStatus.initCashCorrectionActions();
-        
-        if (!(currentRound instanceof StockRound)) {
-            return;
+
+        if (!(currentRound instanceof StockRound)) { return;
         }
 
         if (currentRound instanceof TreasuryShareRound) {

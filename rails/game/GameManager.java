@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.86 2010/03/06 18:28:41 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.87 2010/03/08 20:33:27 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -80,8 +80,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
     
-    protected EnumSet<CorrectionType> activeCorrections 
-        = EnumSet.noneOf(CorrectionType.class);
+//    protected EnumSet<CorrectionType> activeCorrections 
+//        = EnumSet.noneOf(CorrectionType.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -816,22 +816,29 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     private void setCorrectionActions(){
 
         // If any Correction is active
-        if (!activeCorrections.isEmpty()) {
-            // remove all other actions
-            possibleActions.clear();
-            // and set GuiHints for corrections - removed
+        for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
+            CorrectionManager cm = ct.getManager(this);
+            if (cm.isActive()) {
+                possibleActions.clear();
+            }
+            
         }
+//        if (!activeCorrections.isEmpty()) {
+//            // remove all other actions
+//            possibleActions.clear();
+//            // and set GuiHints for corrections - removed
+//        }
         
         // CorrectionMode Actions
-        EnumSet<CorrectionType> possibleCorrections = EnumSet.allOf(CorrectionType.class);
-        for (CorrectionType ct:possibleCorrections)
-                possibleActions.add(
-                        new CorrectionModeAction(ct, activeCorrections.contains(ct)));
+//        EnumSet<CorrectionType> possibleCorrections = EnumSet.allOf(CorrectionType.class);
+//        for (CorrectionType ct:possibleCorrections)
+//                possibleActions.add(
+//                        new CorrectionModeAction(ct, activeCorrections.contains(ct)));
         
         // Correction Actions
-        for (CorrectionType ct:activeCorrections) {
-                        CorrectionManager cm = ct.getManager(this);
-                        possibleActions.addAll(cm.createCorrections());
+        for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
+            CorrectionManager cm = ct.getManager(this);
+            possibleActions.addAll(cm.createCorrections());
         }
     }
     
@@ -839,28 +846,28 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
        boolean result = false;
        
-       if (a instanceof CorrectionModeAction) {
-            CorrectionModeAction cma = (CorrectionModeAction)a;
-            CorrectionType ct = cma.getCorrection();
-            moveStack.start(false);
-            new SetChange<CorrectionType>
-                (activeCorrections, ct, !cma.isActive());
-            if (!cma.isActive()) {
-                String text = LocalText.getText("CorrectionModeActivate",
-                        getCurrentPlayer().getName(),
-                        LocalText.getText(ct.name())
-                );
-                ReportBuffer.add(text);
-                DisplayBuffer.add(text);
-            }
-            else {
-                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-                        getCurrentPlayer().getName(),
-                        LocalText.getText(ct.name())
-                ));
-            }
-            result = true;
-        }
+//       if (a instanceof CorrectionModeAction) {
+//            CorrectionModeAction cma = (CorrectionModeAction)a;
+//            CorrectionType ct = cma.getCorrection();
+//            moveStack.start(false);
+//            new SetChange<CorrectionType>
+//                (activeCorrections, ct, !cma.isActive());
+//            if (!cma.isActive()) {
+//                String text = LocalText.getText("CorrectionModeActivate",
+//                        getCurrentPlayer().getName(),
+//                        LocalText.getText(ct.name())
+//                );
+//                ReportBuffer.add(text);
+//                DisplayBuffer.add(text);
+//            }
+//            else {
+//                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
+//                        getCurrentPlayer().getName(),
+//                        LocalText.getText(ct.name())
+//                ));
+//            }
+//            result = true;
+//        }
         
        if (a instanceof CorrectionAction) {
             CorrectionAction ca= (CorrectionAction)a;

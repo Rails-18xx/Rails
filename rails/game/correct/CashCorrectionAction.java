@@ -109,6 +109,10 @@ public class CashCorrectionAction extends CorrectionAction {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
+        
+        if (Util.hasValue(correctionName))
+            correctionType = CorrectionType.valueOf(correctionName);
+
         if (Util.hasValue(cashHolderType) && Util.hasValue(cashHolderName)) {
             if (cashHolderType.equals("Player"))
                 correctCashHolder = getGameManager().getPlayerManager().getPlayerByName(cashHolderName);
