@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18Kaas"/>
+		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
@@ -55,8 +56,15 @@
 		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4"
 			rustedTrain="2"/>
 		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
-		<Train name="6" majorStops="6" cost="630" amount="2" startPhase="6"
-			rustedTrain="3" releasedTrain="D"/>
+		<Train name="6" majorStops="6" cost="630" startPhase="6"
+			rustedTrain="3" releasedTrain="D">
+			<IfOption name="WithOptional6Train" value="yes">
+				<Attributes amount="3"/>
+			</IfOption>
+			<IfOption name="WithOptional6Train" value="no">
+				<Attributes amount="2"/>
+			</IfOption>
+		</Train>
 		<Train name="D" majorStops="99" cost="1100" amount="6" startPhase="D"
 			rustedTrain="4">
 			<Exchange cost="800"/>
