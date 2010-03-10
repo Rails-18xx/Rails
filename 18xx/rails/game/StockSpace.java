@@ -65,6 +65,13 @@ public class StockSpace extends ModelObject implements StockSpaceI {
         return true;
     }
 
+    public boolean addTokenAtStackPosition(PublicCompanyI company, int stackPosition) {
+        log.debug(company.getName() + " price token added to " + name + "  at stack position "+stackPosition);
+        tokens.add(stackPosition, company);
+        update();
+        return true;
+    }
+
     /**
      * Remove a token from the pile.
      *

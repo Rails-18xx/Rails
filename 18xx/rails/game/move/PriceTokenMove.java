@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.6 2010/01/31 22:22:30 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/PriceTokenMove.java,v 1.7 2010/03/10 17:26:49 stefanfrey Exp $
  *
  * Created on 22-Jul-2006
  * Change Log:
@@ -14,6 +14,7 @@ public class PriceTokenMove extends Move {
 
     private PublicCompanyI company;
     private StockSpaceI from, to;
+    private int fromStackPosition;
     private StockMarketI stockMarket = null;
 
     public PriceTokenMove(PublicCompanyI company, StockSpaceI from,
@@ -21,6 +22,10 @@ public class PriceTokenMove extends Move {
         this.company = company;
         this.from = from;
         this.to = to;
+        if (from != null) 
+            fromStackPosition = from.getStackPosition(company);
+        else
+            fromStackPosition = 0;
         this.stockMarket = stockMarket;
 
         MoveSet.add(this);
@@ -34,14 +39,14 @@ public class PriceTokenMove extends Move {
 
     @Override
     public boolean undo() {
-        stockMarket.processMove(company, to, from);
+        stockMarket.processMoveToStackPosition(company, to, from, fromStackPosition);
         return true;
     }
 
     @Override
     public String toString() {
-        return "PriceTokenMove: " + company.getName() + " from " + from
-               + " to " + to;
+        return "PriceTokenMove: " + company.getName() + " from " + from + " (at stack "
+            + fromStackPosition + ") to " + to;
     }
 
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.5 2009/12/13 16:39:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockSpaceI.java,v 1.6 2010/03/10 17:26:49 stefanfrey Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -147,6 +147,8 @@ public interface StockSpaceI // extends TokenHolderI
 
     public boolean addToken(PublicCompanyI company);
 
+    public boolean addTokenAtStackPosition(PublicCompanyI company, int stackPosition);
+    
     public boolean removeToken(PublicCompanyI company);
 
     public boolean hasTokens();
