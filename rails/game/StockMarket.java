@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.26 2010/02/02 20:00:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.27 2010/03/10 17:26:45 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -327,6 +327,13 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             StockSpaceI to) {
         if (from != null) from.removeToken(company);
         if (to != null) to.addToken(company);
+        company.updatePlayersWorth();
+    }
+
+    public void processMoveToStackPosition(PublicCompanyI company, StockSpaceI from,
+            StockSpaceI to, int toStackPosition) {
+        if (from != null) from.removeToken(company);
+        if (to != null) to.addTokenAtStackPosition(company, toStackPosition);
         company.updatePlayersWorth();
     }
 

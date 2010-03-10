@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.9 2009/10/09 20:20:34 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarketI.java,v 1.10 2010/03/10 17:26:49 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -46,4 +46,6 @@ public interface StockMarketI extends ConfigurableComponentI {
     public void processMove(PublicCompanyI company, StockSpaceI from,
             StockSpaceI to);
 
+    public void processMoveToStackPosition(PublicCompanyI company, StockSpaceI from,
+            StockSpaceI to, int toStackPosition);
 }
