@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.87 2010/03/08 20:33:27 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.88 2010/03/10 21:02:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -154,7 +154,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * The DisplayBuffer instance collects messages to be displayed in the UI.
      */
     protected DisplayBuffer displayBuffer;
-
+    /**
+     * nextPlayerMessages collects all messages to be displayed to the next player
+     */
+    protected List<String> nextPlayerMessages = new ArrayList<String>();
+    
     /**
      * The ReportBuffer collectes messages to be shown in the Game Report.
      */
@@ -920,7 +924,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             if (moveStack.isOpen()) moveStack.finish();
         }
 
-        DisplayBuffer.clear();
+//        DisplayBuffer.clear(); 
+//        previous line removed to allow display of nextPlayerMessages
         guiHints.clearVisibilityHints();
 
         return true;
@@ -1061,13 +1066,23 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
-        currentPlayer.set(players.get(currentPlayerIndex));
+//        currentPlayer.set(players.get(currentPlayerIndex));
+//      changed to activate nextPlayerMessages
+        setCurrentPlayer(players.get(currentPlayerIndex));
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#setCurrentPlayer(rails.game.Player)
      */
     public void setCurrentPlayer(Player player) {
+        // transfer messages for the next player to the display buffer
+        if ((Player)currentPlayer.getObject() != player && !nextPlayerMessages.isEmpty()) {
+            DisplayBuffer.add(
+                    LocalText.getText("NextPlayerMessage", getCurrentPlayer().getName()));
+            for (String s:nextPlayerMessages)
+                DisplayBuffer.add(s);
+            nextPlayerMessages.clear();
+        }
         currentPlayer.set(player);
     }
 
@@ -1392,11 +1407,18 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public DisplayBuffer getDisplayBuffer() {
         return displayBuffer;
     }
+    
+    public void addToNextPlayerMessages(String s, boolean undoable) {
+        if (undoable) 
+            new AddToList<String>(nextPlayerMessages, s, "nextPlayerMessages");
+        else
+            nextPlayerMessages.add(s);
+    }
 
     public ReportBuffer getReportBuffer() {
         return reportBuffer;
     }
-
+    
     public GuiHints getUIHints() {
         return guiHints;
     }

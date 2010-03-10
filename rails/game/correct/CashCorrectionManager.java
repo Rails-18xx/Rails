@@ -112,19 +112,23 @@ public final class CashCorrectionManager implements CorrectionManager {
 
                 Bank bank = gameManager.getBank();
 
+                String msg;
                 if (amount < 0) {
                     // negative amounts: remove cash from cashholder
                     new CashMove(ch, bank , -amount);
-                    ReportBuffer.add(LocalText.getText("CorrectCashSubstractMoney",
+                    
+                    msg = LocalText.getText("CorrectCashSubstractMoney",
                             ch.getName(),
-                            Bank.format(-amount) ));
-                } else if (amount > 0) {
+                            Bank.format(-amount) );
+                } else {
                     // positive amounts: add cash to cashholder
                     new CashMove(bank, ch, amount);
-                    ReportBuffer.add(LocalText.getText("CorrectCashAddMoney",
+                    msg = LocalText.getText("CorrectCashAddMoney",
                             ch.getName(),
-                            Bank.format(amount) ));
+                            Bank.format(amount));
                 }
+                ReportBuffer.add(msg);
+                gameManager.addToNextPlayerMessages(msg, true);
                 result = true;
             }
         }
