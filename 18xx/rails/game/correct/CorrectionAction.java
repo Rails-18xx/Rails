@@ -10,9 +10,12 @@ import rails.game.action.PossibleAction;;
 
 public abstract class CorrectionAction extends PossibleAction {
     
+
     transient protected CorrectionType correctionType;
     protected String correctionName;
     
+    public static final long serialVersionUID = 3L;
+
     public CorrectionType getCorrectionType() {
         return correctionType;
     }
@@ -23,5 +26,6 @@ public abstract class CorrectionAction extends PossibleAction {
     
     public void setCorrectionType(CorrectionType correctionType) {
         this.correctionType = correctionType;
+        this.correctionName = correctionType.name();
     }
 }
