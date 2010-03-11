@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.22 2010/02/03 20:16:40 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.23 2010/03/11 20:38:00 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -46,6 +46,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected int cy;
     protected GUIHex selectedHex = null;
     protected Dimension preferredSize;
+    protected int minX, minY, maxX, maxY;
+    protected int minCol, maxCol, minRow, maxRow;
 
     /** A list of all allowed tile lays */
     /* (may be redundant) */
@@ -66,6 +68,14 @@ public abstract class HexMap extends JComponent implements MouseListener,
     public void init(ORUIManager orUIManager, MapManager mapManager) {
         this.orUIManager = orUIManager;
         this.mapManager = mapManager;
+        minX = mapManager.getMinX();
+        minY = mapManager.getMinY();
+        maxX = mapManager.getMaxX();
+        maxY = mapManager.getMaxY();
+        minRow = mapManager.getMinRow();
+        minCol = mapManager.getMinCol();
+        maxRow = mapManager.getMaxRow();
+        maxCol = mapManager.getMaxCol();
         setupHexes();
     }
 
@@ -161,14 +171,16 @@ public abstract class HexMap extends JComponent implements MouseListener,
         return zoomStep;
     }
 
+    /*
     @Override
     public Dimension getMinimumSize() {
         Dimension dim = new Dimension();
         Rectangle r = (h[h.length][h[0].length]).getBounds();
-        dim.height = r.height + 40;
-        dim.width = r.width + 100;
+        dim.height = (maxRow-minRow) + 40;
+        dim.width = (maxCol-minCol) + 100;
         return dim;
     }
+    */
 
     @Override
     public Dimension getPreferredSize() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.20 2010/03/05 20:17:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.21 2010/03/11 20:38:20 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -22,7 +22,8 @@ public class MapManager implements ConfigurableComponentI {
 
     protected MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
-    protected int maxX, maxY;
+    protected int minX, minY, maxX, maxY;
+    protected int minCol, maxCol, minRow, maxRow;
 
     // upgrade costs on the map for noMapMode
     protected SortedSet<Integer> possibleTileCosts;
@@ -80,15 +81,21 @@ public class MapManager implements ConfigurableComponentI {
 
         List<Tag> hexTags = tag.getChildren("Hex");
         MapHex hex;
-        maxX = 0;
-        maxY = 0;
+        minX = minY = minCol = minRow = 9999;
+        maxX = maxY = maxCol = maxRow = -9999;
         possibleTileCosts = new TreeSet<Integer>();
         for (Tag hexTag : hexTags) {
             hex = new MapHex(this);
             hex.configureFromXML(hexTag);
             mHexes.put(hex.getName(), hex);
+            minX = Math.min(minX, hex.getX());
+            minY = Math.min(minY, hex.getY());
             maxX = Math.max(maxX, hex.getX());
             maxY = Math.max(maxY, hex.getY());
+            minCol = Math.min(minCol, hex.getColumn());
+            minRow = Math.min(minRow, hex.getRow());
+            maxCol = Math.max(maxCol, hex.getColumn());
+            maxRow = Math.max(maxRow, hex.getRow());
             int[] tileCosts = hex.getTileCostAsArray();
             for (int i=0; i<tileCosts.length; i++){
                 possibleTileCosts.add(tileCosts[i]);
@@ -116,8 +123,8 @@ public class MapManager implements ConfigurableComponentI {
         }
 
         // Initialise the neighbours
-        for (i = 0; i <= maxX; i++) {
-            for (j = 0; j <= maxY; j++) {
+        for (i = minX; i <= maxX; i++) {
+            for (j = minY; j <= maxY; j++) {
                 if ((hex = hexes[i][j]) == null) continue;
 
                 for (k = 0; k < 6; k++) {
@@ -128,7 +135,7 @@ public class MapManager implements ConfigurableComponentI {
                         dx = xDeltaNS[k];
                         dy = (i % 2 == 0 ? yXEvenDeltaNS[k] : yXOddDeltaNS[k]);
                     }
-                    if (i + dx >= 0 && i + dx <= maxX && j + dy >= 0
+                    if (i + dx >= minX && i + dx <= maxX && j + dy >= minY
                         && j + dy <= maxY
                         && (nb = hexes[i + dx][j + dy]) != null) {
                         if (hex.isNeighbour(nb, k)
@@ -182,6 +189,38 @@ public class MapManager implements ConfigurableComponentI {
      */
     public MapHex[][] getHexes() {
         return hexes;
+    }
+
+    public int getMinX() {
+        return minX;
+    }
+
+    public int getMinY() {
+        return minY;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public int getMaxCol() {
+        return maxCol;
+    }
+
+    public int getMaxRow() {
+        return maxRow;
+    }
+
+    public int getMinCol() {
+        return minCol;
+    }
+
+    public int getMinRow() {
+        return minRow;
     }
 
     /**

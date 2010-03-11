@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.12 2010/01/31 22:22:36 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.13 2010/03/11 20:38:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -27,17 +27,21 @@ public class NSHexMap extends HexMap {
 
         hexArray = mapManager.getHexes();
         MapHex mh;
+        int ii, jj;
+        
         h = new GUIHex[hexArray.length][hexArray[0].length];
-        for (int i = 0; i < hexArray.length; i++) {
-            for (int j = 0; j < hexArray[0].length; j++) {
+        for (int i = minX; i < hexArray.length; i++) {
+            ii = i - minX + 1;
+            for (int j = minY; j < hexArray[0].length; j++) {
+                jj = j - minY + 1;
                 mh = hexArray[i][j];
                 if (mh != null) {
                     GUIHex hex =
-                            new GUIHex(this, Math.round(cx + 3 * i
+                            new GUIHex(this, Math.round(cx + 3 * ii
                                                               * scale),
-                                    (int) Math.round(cy + (2 * j + (i & 1))
+                                    (int) Math.round(cy + (2 * jj + (ii & 1))
                                                      * GUIHex.SQRT3 * scale),
-                                    scale, i, j);
+                                    scale, ii, jj);
 
                     hex.setHexModel(mh);
                     hex.originalTileId = hex.currentTileId;
@@ -64,12 +68,16 @@ public class NSHexMap extends HexMap {
 
         hexArray = mapManager.getHexes();
         GUIHex hex;
+        int ii, jj;
+        
         for (int i = 0; i < hexArray.length; i++) {
+            ii = i = minX + 1;
             for (int j = 0; j < hexArray[0].length; j++) {
+                jj = j - minY + 1;
                 hex = h[i][j];
                 if (hex != null) {
-                    hex.scaleHex(cx + 3 * i * scale,
-                                 cy + (2 * j + (i & 1)) * GUIHex.SQRT3 * scale,
+                    hex.scaleHex(cx + 3 * ii * scale,
+                                 cy + (2 * jj + (ii & 1)) * GUIHex.SQRT3 * scale,
                                  scale, zoomFactor);
                 }
             }
@@ -83,6 +91,7 @@ public class NSHexMap extends HexMap {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         String label;
+        int ii, jj;
 
         boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
         int xOffset = mapManager.letterAHasEvenNumbers() ? 1 : 0;
@@ -92,27 +101,29 @@ public class NSHexMap extends HexMap {
         int yBottom = (int)(cy + 20 + 2 * hexArray[0].length * GUIHex.SQRT3 * scale);
 
         for (int i = 1; i < hexArray.length; i++) {
+            ii = i - minX + 1;
             label = lettersGoHorizontal
                     ? String.valueOf((char)('@'+i))
                     : String.valueOf(i);
             g2.drawString(label,
-                    (cx - 30 -3*label.length() + 3 * scale * (i + xOffset)),
+                    (cx - 30 -3*label.length() + 3 * scale * (ii + xOffset)),
                     yTop);
             g2.drawString(label,
-                    (cx - 30 -3*label.length() + 3 * scale * (i + xOffset)),
+                    (cx - 30 -3*label.length() + 3 * scale * (ii + xOffset)),
                     yBottom);
         }
 
         for (int j = 1; j < 2 * hexArray[0].length; j++) {
+            jj = j - minY + 1;
             label = lettersGoHorizontal
                     ? String.valueOf(j)
                     : String.valueOf((char)('@'+j));
             g2.drawString(label,
                     xLeft,
-                    (int)(cy + 56 + j * GUIHex.SQRT3 * scale));
+                    (int)(cy + 56 + jj * GUIHex.SQRT3 * scale));
             g2.drawString(label,
                     xRight,
-                    (int)(cy + 56 + j * GUIHex.SQRT3 * scale));
+                    (int)(cy + 56 + jj * GUIHex.SQRT3 * scale));
         }
     }
 }
