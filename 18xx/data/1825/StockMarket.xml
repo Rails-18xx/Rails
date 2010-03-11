@@ -1,0 +1,38 @@
+<StockMarket type="linear">
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+  
+  <StockSpace name="A1" price="0"/>
+  <StockSpace name="B1" price="5"/>
+  <StockSpace name="C1" price="10"/>
+  <StockSpace name="D1" price="16"/>
+  <StockSpace name="E1" price="24"></StockSpace>
+  <StockSpace name="F1" price="34"/>
+  <StockSpace name="G1" price="42"/>
+  <StockSpace name="H1" price="49"/>
+  <StockSpace name="I1" price="55" />
+  <StockSpace name="J1" price="61"></StockSpace>
+  <StockSpace name="A2" price="67">
+  	<StartSpace></StartSpace></StockSpace>
+  <StockSpace name="B2" price="71">
+  	<StartSpace></StartSpace></StockSpace>
+  <StockSpace name="C2" price="76">
+  	<StartSpace></StartSpace></StockSpace>
+  <StockSpace name="D2" price="82"/>
+  <StockSpace name="E2" price="90">
+  	<StartSpace></StartSpace></StockSpace>
+  <StockSpace name="F2" price="100">
+  	<StartSpace></StartSpace></StockSpace>
+  <StockSpace name="G2" price="112"/>
+  <StockSpace name="H2" price="126" />
+  <StockSpace name="I2" price="142" />
+  <StockSpace name="A3" price="160"/>
+  <StockSpace name="B3" price="180"/>
+  <StockSpace name="C3" price="205"></StockSpace>
+  <StockSpace name="D3" price="230"/>
+  <StockSpace name="E3" price="255"/>
+  <StockSpace name="F3" price="280"/>
+  <StockSpace name="G3" price="300"/>
+  <StockSpace name="H3" price="320"/>
+  <StockSpace name="I3" price="340" />
+</StockMarket>
