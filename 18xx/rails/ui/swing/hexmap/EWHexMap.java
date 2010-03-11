@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.13 2010/01/31 22:22:36 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.14 2010/03/11 20:38:19 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -16,8 +16,9 @@ public class EWHexMap extends HexMap {
 
     public EWHexMap() {
         scale = defaultScale = 2 * Scale.get();
-        cx = scale / 2;
-        cy = 0;
+        //cx = scale / 2;
+        cx = -scale/2;
+        cy = scale/2;
     }
 
     @Override
@@ -27,17 +28,21 @@ public class EWHexMap extends HexMap {
 
         hexArray = mapManager.getHexes();
         MapHex mh;
+        int ii, jj;
+        
         h = new GUIHex[hexArray.length][hexArray[0].length];
-        for (int i = 0; i < hexArray.length; i++) {
-            for (int j = 0; j < hexArray[0].length; j++) {
+        for (int i = minX; i < hexArray.length; i++) {
+            ii = i - minX + 1;
+            for (int j = minY; j < hexArray[0].length; j++) {
+                jj = j - minY + 1;
                 mh = hexArray[i][j];
                 if (mh != null) {
                     GUIHex hex =
                             new GUIHex(
                                     this,
                                     (cx + scale
-                                          * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1)))),
-                                    (cy + j * 1.5 * scale), scale, i, j);
+                                          * ((GUIHex.SQRT3 * ii) + (GUIHex.SQRT3 / 2 * (j & 1)))),
+                                    (cy + jj * 1.5 * scale), scale, ii, jj);
 
                     hex.setHexModel(mh);
                     hex.originalTileId = hex.currentTileId;
@@ -54,9 +59,9 @@ public class EWHexMap extends HexMap {
     protected void setSize() {
         preferredSize =
                 new Dimension(
-                        (int) Math.round((hexArray.length + 1) * GUIHex.SQRT3
+                        (int) Math.round((maxX-minX + 3) * GUIHex.SQRT3
                                          * scale * zoomFactor),
-                        (int) Math.round((hexArray[0].length + 1) * 1.5 * scale * zoomFactor));
+                        (int) Math.round((maxY-minY + 3) * 1.5 * scale * zoomFactor));
     }
 
 
@@ -65,12 +70,15 @@ public class EWHexMap extends HexMap {
 
         hexArray = mapManager.getHexes();
         GUIHex hex;
-        for (int i = 0; i < hexArray.length; i++) {
-            for (int j = 0; j < hexArray[0].length; j++) {
+        int ii, jj;
+        for (int i = minX; i < hexArray.length; i++) {
+            ii = i - minX + 1;
+            for (int j = minY; j < hexArray[0].length; j++) {
+                jj = j - minY + 1;
                 hex = h[i][j];
                 if (hex != null) {
-                    hex.scaleHex(cx + scale * ((GUIHex.SQRT3 * i) + (GUIHex.SQRT3 / 2 * (j & 1))),
-                                 cy + j * 1.5 * scale,
+                    hex.scaleHex(cx + scale * ((GUIHex.SQRT3 * ii) + (GUIHex.SQRT3 / 2 * (jj & 1))),
+                                 cy + jj * 1.5 * scale,
                                  scale, zoomFactor);
 
                 }
@@ -86,36 +94,39 @@ public class EWHexMap extends HexMap {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         String label;
+        int ii, jj;
 
         boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
-        int xOffset = mapManager.letterAHasEvenNumbers() ? 1 : 0;
-        int xLeft = cx + 10;
-        int xRight = (int)(cx + 5 + scale * (GUIHex.SQRT3/2 * 2*hexArray.length));
-        int yTop = cy + 10;
-        int yBottom = (int)(cy - 10 + hexArray[0].length * 1.5 * scale);
+        int xOffset = (mapManager.letterAHasEvenNumbers() ? 0 : 1) + (minCol % 2);
+        int xLeft = cx + scale;
+        int xRight = (int)(cx + scale * (3 + GUIHex.SQRT3/2 * (maxCol-minCol+1)));
+        int yTop = cy;
+        int yBottom = (int)(cy + scale + (maxRow-minRow+1) * 1.5 * scale);
 
-        for (int i = 1; i < 2*hexArray.length; i++) {
+        for (int i = minCol; i <= maxCol; i++) {
+            ii = i - minCol + 1;
             label = lettersGoHorizontal
                     ? String.valueOf((char)('@'+i))
                     : String.valueOf(i);
             g2.drawString(label,
-                    (int) (cx + (26-3*label.length()) + scale * (GUIHex.SQRT3/2 * (i + xOffset))),
+                    (int) (cx + (26-3*label.length()) + scale * (GUIHex.SQRT3/2 * (ii + xOffset))),
                     yTop);
             g2.drawString(label,
-                    (int) (cx + (26-3*label.length()) + scale * (GUIHex.SQRT3/2 * (i + xOffset))),
+                    (int) (cx + (26-3*label.length()) + scale * (GUIHex.SQRT3/2 * (ii + xOffset))),
                     yBottom);
         }
 
-        for (int j = 1; j < hexArray[0].length; j++) {
+        for (int j = minRow; j <= maxRow; j++) {
+            jj = j - minRow + 1;
             label = lettersGoHorizontal
                     ? String.valueOf(j)
                     : String.valueOf((char)('@'+j));
             g2.drawString(label,
                     xLeft,
-                    (int)(cy - 10 + j * 1.5 * scale));
+                    (int)(cy - 10 + jj * 1.5 * scale));
             g2.drawString(label,
                     xRight,
-                    (int)(cy - 10 + j * 1.5 * scale));
+                    (int)(cy - 10 + jj * 1.5 * scale));
         }
 
 
