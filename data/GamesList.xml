@@ -1,8 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Supported games -->
 <GamesList>
-	<Game name="1830">
-		<Note>Fully playable</Note>
-		<Description>1830 - The Game of Railroads and Robber Barons
+  <Game name="1825">
+    <Note>Experimental</Note>
+    <Description>1825 Unit 1
+(c) 1994 Hartland Trefoil Ltd.
+Designed by Francis Tresham
+
+Limitation: 
+- No random assignment of private companies (players should do this off-line and enter the result)	
+		</Description>
+    <Players minimum="3" maximum="5" /><Option name="UnlimitedTiles" type="toggle" default="no">
+</Option>
+  </Game>
+  <Game name="1830">
+    <Note>Fully playable</Note>
+    <Description>1830 - The Game of Railroads and Robber Barons
 (c) 1986 The Avalon Hill Game Company
 Designed by Francis Tresham and Bruce Shelley
 			
@@ -152,6 +165,7 @@ Should work, but has not been extensively tested. Limitations as with 1830.
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
+	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
 that are collectively known as the "18xx" railway game system.		
 Rails is a Sourceforge project.
