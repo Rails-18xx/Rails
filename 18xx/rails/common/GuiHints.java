@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.GameDef;
 import rails.game.RoundI;
+import rails.game.move.StateChange;
+import rails.game.state.EnumState;
+import rails.game.state.GenericState;
 
 /**
  * This class contains hints from the server (game engine) to the client (GUI)
@@ -19,20 +23,24 @@ public class GuiHints implements Serializable {
     public static final long serialVersionUID = 1L;
 
     /** What round type is currently active in the engine? */
-    private Class<? extends RoundI> currentRoundType = null;
+    private GenericState<Class<? extends RoundI>> currentRoundType = null;
 
     /** Which windows should be visible? */
     private List<VisibilityHint> visibilityHints;
 
     /** Which window type is active and should be on top? */
-    private GuiDef.Panel activePanel;
+    private EnumState<GuiDef.Panel> activePanel = null;
 
     public Class<? extends RoundI> getCurrentRoundType() {
-        return currentRoundType;
+        return currentRoundType.getObject();
     }
 
     public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
-        this.currentRoundType = currentRoundType;
+        if (this.currentRoundType == null)
+            this.currentRoundType = new GenericState<Class<? extends RoundI>>
+                        ("CurrentRoundType",  currentRoundType);
+        else
+            new StateChange(this.currentRoundType, currentRoundType);
     }
 
     public List<VisibilityHint> getVisibilityHints() {
@@ -55,11 +63,14 @@ public class GuiHints implements Serializable {
     }
 
     public GuiDef.Panel getActivePanel() {
-        return activePanel;
+        return (GuiDef.Panel)activePanel.getObject();
     }
 
     public void setActivePanel(GuiDef.Panel activePanel) {
-        this.activePanel = activePanel;
+        if (this.activePanel == null)
+            this.activePanel = new EnumState<GuiDef.Panel>("ActivePanel",  activePanel);
+        else
+            new StateChange(this.activePanel, activePanel);
     }
 
     public class VisibilityHint {
