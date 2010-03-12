@@ -119,7 +119,7 @@
 	<Tile id="63" quantity="7" />
 	<Tile id="70" quantity="1" />
 	<Tile id="1444" extId="444" quantity="2"><!--Missing!-->
-		<Upgrade id="446" />
+		<Upgrade id="446" hex="G4"/>
 	</Tile>
 	
 	<!-- Grey tiles -->
