@@ -400,13 +400,21 @@ public class StockRound extends Round {
             }
             price /= company.getShareUnitsForSharePrice();
 
+            /* Allow for different share units (as in 1835) */
             for (int i = 1; i <= 4; i++) {
                 number = shareCountPerUnit[i];
                 if (number == 0) continue;
                 number =
                         Math.min(number, maxShareToSell
                                          / (i * company.getShareUnit()));
-                if (number == 0) continue;
+
+                /* In some games (1856), a just bought share may not be sold */
+                // This code ignores the possibility of different share units
+                if ((Boolean)gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT)
+                		&& company.equals(companyBoughtThisTurnWrapper.getObject())) {
+                	number--;
+                }
+                if (number <= 0) continue;
 
                 possibleActions.add(new SellShares(compName, i, number, price));
 

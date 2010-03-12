@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.89 2010/03/12 17:18:47 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.90 2010/03/12 20:28:27 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -80,8 +80,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
-    
-//    protected EnumSet<CorrectionType> activeCorrections 
+
+//    protected EnumSet<CorrectionType> activeCorrections
 //        = EnumSet.noneOf(CorrectionType.class);
 
     /**
@@ -159,7 +159,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
     protected List<String> nextPlayerMessages = new ArrayList<String>();
-    
+
     /**
      * The ReportBuffer collectes messages to be shown in the Game Report.
      */
@@ -230,7 +230,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 if (optionName == null)
                     throw new ConfigurationException("GameOption without name");
                 if (gameOptions.containsKey(optionName)) continue;
-                
+
                 // Include missing option
                 option = new GameOption(optionName);
                 availableGameOptions.add(option);
@@ -246,11 +246,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 optionDefault = optionTag.getAttributeAsString("default", "");
                 if (optionDefault != null)
                     option.setDefaultValue(optionDefault);
-                
+
                 gameOptions.put(optionName, optionDefault);
             }
         }
-        
+
 
         Tag gameParmTag = tag.getChild("GameParameters");
         if (gameParmTag != null) {
@@ -292,6 +292,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                         setGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR, true);
                     } else if (ruleTagName.equals("NoSaleIfNotOperated")) {
                         setGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED, true);
+                    } else if (ruleTagName.equals("NoSaleOfJustBoughtShare")) {
+                        setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT, true);
                     }
 
                 }
@@ -499,10 +501,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
 
         }
-        
+
         if (GameOption.convertValueToBoolean(getGameOption("NoMapMode")))
             guiParameters.put(GuiDef.Parm.NO_MAP_MODE, true);
-        
+
     }
 
     private void initGameParameters() {
@@ -803,8 +805,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             possibleActions.add(new GameAction(GameAction.REDO));
         }
 
-        
-        // logging of game actions activated 
+
+        // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
                       + pa.toString());
@@ -813,7 +815,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return result;
 
     }
-    
+
     /**
      * Adds all Game actions
      * Examples are: undo/redo/corrections
@@ -826,31 +828,31 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             if (cm.isActive()) {
                 possibleActions.clear();
             }
-            
+
         }
 //        if (!activeCorrections.isEmpty()) {
 //            // remove all other actions
 //            possibleActions.clear();
 //            // and set GuiHints for corrections - removed
 //        }
-        
+
         // CorrectionMode Actions
 //        EnumSet<CorrectionType> possibleCorrections = EnumSet.allOf(CorrectionType.class);
 //        for (CorrectionType ct:possibleCorrections)
 //                possibleActions.add(
 //                        new CorrectionModeAction(ct, activeCorrections.contains(ct)));
-        
+
         // Correction Actions
         for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
             CorrectionManager cm = ct.getManager(this);
             possibleActions.addAll(cm.createCorrections());
         }
     }
-    
+
     private boolean processCorrectionActions(PossibleAction a){
 
        boolean result = false;
-       
+
 //       if (a instanceof CorrectionModeAction) {
 //            CorrectionModeAction cma = (CorrectionModeAction)a;
 //            CorrectionType ct = cma.getCorrection();
@@ -873,14 +875,14 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 //            }
 //            result = true;
 //        }
-        
+
        if (a instanceof CorrectionAction) {
             CorrectionAction ca= (CorrectionAction)a;
             CorrectionType ct = ca.getCorrectionType();
             CorrectionManager cm = ct.getManager(this);
             result = cm.executeCorrection(ca);
         }
-       
+
         return result;
     }
 
@@ -915,7 +917,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 }
                 getCurrentRound().setPossibleActions();
                 setCorrectionActions();
-                
+
             } catch (Exception e) {
                 log.debug("Error while reprocessing " + action.toString(), e);
                 throw new Exception("Reload failure", e);
@@ -925,7 +927,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             if (moveStack.isOpen()) moveStack.finish();
         }
 
-//        DisplayBuffer.clear(); 
+//        DisplayBuffer.clear();
 //        previous line removed to allow display of nextPlayerMessages
         guiHints.clearVisibilityHints();
 
@@ -1408,9 +1410,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public DisplayBuffer getDisplayBuffer() {
         return displayBuffer;
     }
-    
+
     public void addToNextPlayerMessages(String s, boolean undoable) {
-        if (undoable) 
+        if (undoable)
             new AddToList<String>(nextPlayerMessages, s, "nextPlayerMessages");
         else
             nextPlayerMessages.add(s);
@@ -1419,7 +1421,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public ReportBuffer getReportBuffer() {
         return reportBuffer;
     }
-    
+
     public GuiHints getUIHints() {
         return guiHints;
     }
