@@ -17,7 +17,8 @@ public class GameDef {
         POOL_SHARE_LIMIT(50),
         TREASURY_SHARE_LIMIT(50),
         FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),
-        SKIP_FIRST_STOCK_ROUND(false);
+        SKIP_FIRST_STOCK_ROUND(false),
+        NO_SALE_OF_JUST_BOUGHT_CERT(false);
 
         private Object defaultValue;
 
@@ -34,7 +35,7 @@ public class GameDef {
      * @author Erik
      */
     public enum OrStep {
-        
+
         /* In-sequence steps */
         INITIAL,
         LAY_TRACK,
@@ -45,10 +46,10 @@ public class GameDef {
         TRADE_SHARES,
         REPAY_LOANS,
         FINAL,
-        
+
         /* Out-of-sequence steps*/
         DISCARD_TRAINS;
-        
+
     }
 
 }

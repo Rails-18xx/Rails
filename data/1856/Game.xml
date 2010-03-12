@@ -10,6 +10,7 @@
 			<StockRound class="rails.game.specific._1856.StockRound_1856" 
 				sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
+				<NoSaleOfJustBoughtShare/>
 			</StockRound>
 			<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
 			<PlayerShareLimit percentage="60"/>
