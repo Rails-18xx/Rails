@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.88 2010/03/10 21:02:13 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.89 2010/03/12 17:18:47 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -16,6 +16,7 @@ import rails.game.correct.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
+import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.util.*;
@@ -101,8 +102,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             new IntegerState("RelativeORNumber");
     protected int numOfORs;
 
-    protected boolean gameOver = false;
-    protected boolean endedByBankruptcy = false;
+    protected BooleanState gameOver = new BooleanState("GameOver" ,false);
+    protected BooleanState endedByBankruptcy = new BooleanState("EndedByBankruptcy", false);
 
     /** UI display hints */
     protected GuiHints guiHints;
@@ -984,7 +985,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#registerBankruptcy()
      */
     public void registerBankruptcy() {
-        endedByBankruptcy = true;
+        endedByBankruptcy.set(true);
         String message =
                 LocalText.getText("PlayerIsBankrupt",
                         getCurrentPlayer().getName());
@@ -996,9 +997,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     private void finishGame() {
-        gameOver = true;
+        gameOver.set(true);
         ReportBuffer.add(LocalText.getText("GameOver"));
-        currentRound.set(null);
+        createRound(EndOfGameRound.class);
 
         logGameReport();
     }
@@ -1007,7 +1008,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      * @see rails.game.GameManagerI#isGameOver()
      */
     public boolean isGameOver() {
-        return gameOver;
+        return gameOver.booleanValue();
     }
 
     /* (non-Javadoc)
