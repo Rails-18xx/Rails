@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.114 2010/03/06 18:28:41 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.115 2010/03/12 07:30:24 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2279,13 +2279,13 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Default OperatingCost Actions
-        possibleActions.add(new OperatingCost(
-                OperatingCost.OCType.LAY_TILE, 0, true
-            ));
-        if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
-                && operatingCompany.getBaseTokenLayCost(null) != 0) {
-            possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, 0, true));
-        }
+//        possibleActions.add(new OperatingCost(
+//                OperatingCost.OCType.LAY_TILE, 0, true
+//            ));
+//        if (operatingCompany.getNumberOfFreeBaseTokens() != 0 
+//                && operatingCompany.getBaseTokenLayCost(null) != 0) {
+//            possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, 0, true));
+//        }
 
         // Private Company Closure
         for (PrivateCompanyI priv: companyManager.getAllPrivateCompanies()) {
