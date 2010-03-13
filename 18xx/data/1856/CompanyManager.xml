@@ -133,7 +133,7 @@
 		<Destination hex="L15"/>
 	</Company>
 	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
-		<Home hex="N11"/>
+		<Home hex="N11" city="2"/>
 		<Destination hex="I14"/>
 	</Company>
 	<Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
