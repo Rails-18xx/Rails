@@ -465,6 +465,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // End of CGRFormationRound
         finalLoanRepaymentPending.set(false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
+        guiHints.setCurrentRoundType(getClass());
 
         if (!resetOperatingCompanies(mergingCompanies)) return;
         if (operatingCompany != null) {
