@@ -95,7 +95,7 @@ public class PublicCompany_CGR extends PublicCompany {
     @Override
     public void withhold(int amount) {
         if (amount > 0) new CashMove(bank, this, amount);
-        if (hasStockPrice && !runsWithBorrowedTrain()) {
+        if (hasStockPrice && canSharePriceVary.booleanValue()) {
             stockMarket.withhold(this);
         }
     }
