@@ -70,14 +70,16 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      */
     public abstract boolean isGameOver();
 
-    public abstract void logGameReport();
+    public void setGameOverReportedUI(boolean b);
+
+    public boolean getGameOverReportedUI();
 
     /**
      * Create a HTML-formatted rails.game status report.
      *
      * @return
      */
-    public abstract String getGameReport();
+    public abstract List<String> getGameReport();
 
     /**
      * Should be called whenever a Phase changes. The effect on the number of

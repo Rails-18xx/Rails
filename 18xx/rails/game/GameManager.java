@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.91 2010/03/14 08:06:41 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.92 2010/03/14 13:10:15 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -103,6 +103,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected int numOfORs;
 
     protected BooleanState gameOver = new BooleanState("GameOver" ,false);
+    protected Boolean gameOverReportedUI = false;
     protected BooleanState endedByBankruptcy = new BooleanState("EndedByBankruptcy", false);
 
     /** UI display hints */
@@ -792,7 +793,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
         }
 
-        setCorrectionActions();
+        if (!isGameOver()) setCorrectionActions();
 
         // Add the Undo/Redo possibleActions here.
         if (moveStack.isUndoableByPlayer()) {
@@ -901,7 +902,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 log.debug("Action DONE inserted");
                 getCurrentRound().process(new NullAction (NullAction.DONE));
                 getCurrentRound().setPossibleActions();
-                setCorrectionActions();
+                if (!isGameOver()) setCorrectionActions();
             }
 
             try {
@@ -916,7 +917,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     return false;
                 }
                 getCurrentRound().setPossibleActions();
-                setCorrectionActions();
+                if (!isGameOver()) setCorrectionActions();
 
             } catch (Exception e) {
                 log.debug("Error while reprocessing " + action.toString(), e);
@@ -1012,10 +1013,21 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     private void finishGame() {
         gameOver.set(true);
-        ReportBuffer.add(LocalText.getText("GameOver"));
-        createRound(EndOfGameRound.class);
 
-        logGameReport();
+        String message = LocalText.getText("GameOver");
+        ReportBuffer.add(message);
+        DisplayBuffer.add(message);
+
+        List<String> gameReport = getGameReport();
+        StringBuilder report = new StringBuilder();
+        for (String s:gameReport)
+            report.append(s);
+        ReportBuffer.add(report.toString());
+        
+        // activate gameReport for UI
+        setGameOverReportedUI(false);
+
+        createRound(EndOfGameRound.class);
     }
 
     /* (non-Javadoc)
@@ -1024,21 +1036,21 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public boolean isGameOver() {
         return gameOver.booleanValue();
     }
-
-    /* (non-Javadoc)
-     * @see rails.game.GameManagerI#logGameReport()
-     */
-    public void logGameReport() {
-
-        ReportBuffer.add(getGameReport());
+    
+    public void setGameOverReportedUI(boolean b){
+        gameOverReportedUI = b;
     }
 
+    public boolean getGameOverReportedUI(){
+        return(gameOverReportedUI);
+    }
+    
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getGameReport()
      */
-    public String getGameReport() {
+    public List<String> getGameReport() {
 
-        StringBuffer b = new StringBuffer();
+        List<String> b = new ArrayList<String>();
 
         /* Sort players by total worth */
         List<Player> rankedPlayers = new ArrayList<Player>();
@@ -1049,17 +1061,17 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         /* Report winner */
         Player winner = rankedPlayers.get(0);
-        b.append("The winner is " + winner.getName() + "!");
+        b.add(LocalText.getText("EoGWinner") + winner.getName() 
+                + "! \n\n"+ LocalText.getText("EoGFinalRanking") + " :");
 
         /* Report final ranking */
-        b.append("\n\nThe final ranking is:");
         int i = 0;
         for (Player p : rankedPlayers) {
-            b.append("\n" + (++i) + ". " + Bank.format(p.getWorth()) + " "
+            b.add("\n" + (++i) + ". " + Bank.format(p.getWorth()) + " "
                      + p.getName());
         }
 
-        return b.toString();
+        return b;
     }
 
     /* (non-Javadoc)

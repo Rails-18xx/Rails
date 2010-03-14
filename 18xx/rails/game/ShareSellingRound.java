@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.29 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.30 2010/03/14 13:10:15 stefanfrey Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -74,7 +74,7 @@ public class ShareSellingRound extends StockRound {
         setSellableShares();
 
         if (possibleActions.isEmpty() && cashToRaise.intValue() > 0) {
-            DisplayBuffer.add(LocalText.getText("YouAreBankrupt",
+            DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
                     Bank.format(cashToRaise.intValue())));
 
             gameManager.registerBankruptcy();
