@@ -695,6 +695,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                         LocalText.getText("CorrectCashDialogMessage", cca.getCashHolderName()),
                         LocalText.getText("CorrectCashDialogTitle"),
                         JOptionPane.QUESTION_MESSAGE, null, null, 0);
+                if (amountString.substring(0,1).equals("+"))
+                    amountString = amountString.substring(1);
                 int amount;
                 try {
                     amount = Integer.parseInt(amountString);
