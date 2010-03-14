@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.90 2010/03/12 20:28:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.91 2010/03/14 08:06:41 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -996,6 +996,18 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         if (gameEndsWithBankruptcy) {
             finishGame();
         }
+    }
+    
+    public void registerBrokenBank(){
+        ReportBuffer.add(LocalText.getText("BankIsBrokenReportText"));
+        String msgContinue;
+        if (gameEndsAfterSetOfORs)
+            msgContinue = LocalText.getText("bankIsBrokenPlaySetOfORs");
+        else
+            msgContinue = LocalText.getText("bankIsBrokenPlayOnlyOR");
+        String msg = LocalText.getText("BankIsBrokenDisplayText", msgContinue);
+        DisplayBuffer.add(msg);
+        addToNextPlayerMessages(msg, true);
     }
 
     private void finishGame() {

@@ -7,6 +7,7 @@ import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.game.action.PossibleAction;
 import rails.game.model.ModelObject;
+import rails.game.move.AddToList;
 import rails.game.move.MoveStack;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
@@ -59,6 +60,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public abstract void finishTreasuryShareRound();
 
     public abstract void registerBankruptcy();
+
+    public abstract void registerBrokenBank();
 
     /**
      * To be called by the UI to check if the rails.game is over.
@@ -185,6 +188,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public String getGMKey ();
     public MoveStack getMoveStack ();
     public DisplayBuffer getDisplayBuffer();
+    public void addToNextPlayerMessages(String s, boolean undoable); 
     public ReportBuffer getReportBuffer();
     public GuiHints getUIHints();
 
