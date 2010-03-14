@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.115 2010/03/12 07:30:24 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.116 2010/03/14 14:21:24 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2271,13 +2271,27 @@ public class OperatingRound extends Round implements Observer {
         
         // LayBaseToken Actions
         if (operatingCompany.getNumberOfFreeBaseTokens() != 0) {
-            int[] costs = operatingCompany.getBaseTokenLayCosts();
-            for (int cost : costs) {
-                if ((cost <= operatingCompany.getCash()) && (cost != 0 || costs.length == 1)) // distance method returns home base, but in sequence costs can be zero 
+            int[] costsArray = operatingCompany.getBaseTokenLayCosts();
+
+            // change to set to allow for identity and ordering
+            Set<Integer> costsSet = new TreeSet<Integer>();
+            for (int cost:costsArray) 
+                if (!(cost == 0 && costsArray.length != 1)) // fix for sequence based home token 
+                    costsSet.add(cost);
+
+            // SpecialTokenLay Actions - workaround for a better handling of those later
+            for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
+                log.debug("Special tokenlay property: " + stl);
+                if (stl.getTokenClass().equals(BaseToken.class) && stl.isFree()) 
+                    costsSet.add(0);
+            }
+            
+            for (int cost : costsSet) {
+                if (cost <= operatingCompany.getCash()) // distance method returns home base, but in sequence costsSet can be zero 
                     possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, cost, false));
             }
         }
-
+        
         // Default OperatingCost Actions
 //        possibleActions.add(new OperatingCost(
 //                OperatingCost.OCType.LAY_TILE, 0, true
