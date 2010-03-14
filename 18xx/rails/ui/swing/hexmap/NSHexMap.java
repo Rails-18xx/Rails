@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.13 2010/03/11 20:38:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.14 2010/03/14 09:14:04 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -71,7 +71,7 @@ public class NSHexMap extends HexMap {
         int ii, jj;
         
         for (int i = 0; i < hexArray.length; i++) {
-            ii = i = minX + 1;
+            ii = i - minX + 1;
             for (int j = 0; j < hexArray[0].length; j++) {
                 jj = j - minY + 1;
                 hex = h[i][j];
