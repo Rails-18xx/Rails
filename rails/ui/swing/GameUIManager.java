@@ -178,13 +178,13 @@ public class GameUIManager implements DialogOwner {
         }
 
         // End of game checks
-        if (gameManager.isGameOver()) {
-
-            statusWindow.reportGameOver();
-
-            return true;
-
-        } 
+//        if (gameManager.isGameOver()) {
+//
+//            statusWindow.reportGameOver();
+//
+//            return true;
+//
+//        } 
 //        else if (gameManager.getBank().isJustBroken()) {
 //
 //            statusWindow.reportBankBroken();
@@ -206,6 +206,9 @@ public class GameUIManager implements DialogOwner {
                 return true;
             }
         }
+        
+        // display the end of game report
+        if (gameManager.isGameOver()) statusWindow.endOfGameReport();
 
         if (!result) return false;
 
@@ -334,6 +337,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         boolean correctionOverride = statusWindow.setupFor(currentRound);
+        correctionOverride = false;
 
         if (correctionOverride) {
             log.debug("Correction overrides active window: status window active");

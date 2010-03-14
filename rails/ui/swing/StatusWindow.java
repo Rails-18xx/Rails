@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.39 2010/03/08 20:33:27 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.40 2010/03/14 13:10:15 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.*;
@@ -323,13 +324,16 @@ public class StatusWindow extends JFrame implements ActionListener,
     
     public void setCorrectionMenu() {
 
-        // Update the menu
+        // Update the correction  menu
         correctionMenu.removeAll();
         correctionMenu.setEnabled(false);
 
+        // currently only shows CorrectionModeActions 
         List<CorrectionModeAction> corrections =
                 possibleActions.getType(CorrectionModeAction.class);
-        if (corrections != null) {
+        
+        
+        if (corrections != null && !corrections.isEmpty()) {
             for (CorrectionModeAction a : corrections) {
                 ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem (
                         LocalText.getText(a.getCorrectionName()));
@@ -365,8 +369,8 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public void updateStatus() {
 
-        if (!(currentRound instanceof StockRound)) { return;
-        }
+        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound)) 
+            return;
 
         if (currentRound instanceof TreasuryShareRound) {
 
@@ -387,27 +391,29 @@ public class StatusWindow extends JFrame implements ActionListener,
             int cash =
                     ((ShareSellingRound) currentRound).getRemainingCashToRaise();
             if (!possibleActions.contains(SellShares.class)) {
-                JOptionPane.showMessageDialog(this, LocalText.getText(
-                        "YouAreBankrupt", Bank.format(cash)), "",
-                        JOptionPane.OK_OPTION);
+// should not occur anymore
+//                JOptionPane.showMessageDialog(this, LocalText.getText(
+//                        "YouMustRaiseCashButCannot", Bank.format(cash)), "",
+//                        JOptionPane.OK_OPTION);
                 /*
                  * For now assume that this ends the game (not true in all
                  * games)
+                 * sfy: changed now
                  */
-                JOptionPane.showMessageDialog(this,
-                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
+//                JOptionPane.showMessageDialog(this,
+//                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
                 /*
                  * All other wrapping up has already been done when calling
                  * getSellableCertificates, so we can just finish now.
                  */
-                finish();
-                return;
+//                finish();
+//                return;
             } else {
                 JOptionPane.showMessageDialog(this, LocalText.getText(
                         "YouMustRaiseCash", Bank.format(cash)), "",
                         JOptionPane.OK_OPTION);
             }
-        } else if (!updateGameSpecificSettings()) {
+        } else if (currentRound instanceof StockRound && !updateGameSpecificSettings()) {
 
             setTitle(LocalText.getText(
                     "STOCK_ROUND_TITLE",
@@ -490,6 +496,8 @@ public class StatusWindow extends JFrame implements ActionListener,
             }
         }
 
+        if (currentRound instanceof EndOfGameRound) endOfGame();
+        
         pack();
 
         toFront();
@@ -637,45 +645,53 @@ public class StatusWindow extends JFrame implements ActionListener,
         passButton.setEnabled(false);
     }
 
-    public void reportGameOver() {
-        /* End of rails.game checks */
-
-        JOptionPane.showMessageDialog(this, "GAME OVER", "",
-                JOptionPane.OK_OPTION);
-        JOptionPane.showMessageDialog(this,
-                GameManager.getInstance().getGameReport(), "",
-                JOptionPane.OK_OPTION);
-        /*
-         * All other wrapping up has already been done when calling
-         * getSellableCertificates, so we can just finish now.
-         */
-        finish();
-    }
-
-    public void reportBankBroken() {
-
-        /* The message must become configuration-depedent */
-        JOptionPane.showMessageDialog(this,
-                "Bank is broken. The rails.game will be over after the current set of ORs.");
-    }
-
     /**
-     * Finish the application.
+     * End of Game processing
      */
-    public void finish() {
-        setVisible(true);
-        gameUIManager.reportWindow.setVisible(true);
-        gameUIManager.stockChart.setVisible(true);
+    public void endOfGame() {
+//        setVisible(true);
+//        gameUIManager.reportWindow.setVisible(true);
+//        gameUIManager.stockChart.setVisible(true);
+        
+        setTitle(LocalText.getText("EoGTitle"));
 
-        /* Disable all buttons */
+        // Enable Passbutton
         passButton.setEnabled(true);
         passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
+        
         gameUIManager.orWindow.finish();
-
-        toFront();
-
     }
 
+    public void endOfGameReport() {
+
+        GameManagerI gm = GameManager.getInstance();
+        
+        if (gm.getGameOverReportedUI()) 
+            return;
+        else
+            gm.setGameOverReportedUI(true);
+        
+        JOptionPane.showMessageDialog(this,
+                LocalText.getText("EoGPressButton"),
+                LocalText.getText("EoGFinalRanking"),
+                JOptionPane.PLAIN_MESSAGE
+        );
+        
+        // show game report line by line
+        List<String> gameReport = GameManager.getInstance().getGameReport();
+        Collections.reverse(gameReport);
+        
+        StringBuilder report = new StringBuilder();
+        for (String s:gameReport) {
+            report.insert(0, s);
+            JOptionPane.showMessageDialog(this, 
+                    report,
+                    LocalText.getText("EoGFinalRanking"),
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        }
+    }
+    
     public void keyReleased(KeyEvent e) {}
 
     public void keyPressed(KeyEvent e) {
