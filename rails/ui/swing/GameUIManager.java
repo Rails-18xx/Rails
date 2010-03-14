@@ -184,11 +184,12 @@ public class GameUIManager implements DialogOwner {
 
             return true;
 
-        } else if (gameManager.getBank().isJustBroken()) {
-
-            statusWindow.reportBankBroken();
-
-        }
+        } 
+//        else if (gameManager.getBank().isJustBroken()) {
+//
+//            statusWindow.reportBankBroken();
+//
+//        }
 
         // Check in which round we are now,
         // and make sure that the right window is active.

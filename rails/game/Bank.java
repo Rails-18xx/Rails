@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.model.CashModel;
 import rails.game.model.ModelObject;
+import rails.game.state.BooleanState;
 import rails.util.*;
 
 public class Bank implements CashHolder, ConfigurableComponentI {
@@ -29,9 +30,9 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private static Bank instance = null;
 
     /** Is the bank broken (remains true once set) */
-    private boolean broken = false;
-    /** Is the bank just broken (returns true exactly once) */
-    private boolean brokenReported = false;
+    private BooleanState broken = new BooleanState("Bank.broken", false);
+//    /** Is the bank just broken (returns true exactly once) */
+//    private BooleanState brokenReported = new BooleanState("Bank.brokenReported", false);
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -142,22 +143,22 @@ public class Bank implements CashHolder, ConfigurableComponentI {
          * Check if the bank has broken. In some games <0 could apply, so this
          * will become configurable.
          */
-        if (money.getCash() <= 0 && !broken) {
-            broken = true;
-            ReportBuffer.add(LocalText.getText("BankIsBroken"));
+        if (money.getCash() <= 0 && !broken.booleanValue()) {
+            broken.set(true);
+            GameManager.getInstance().registerBrokenBank();
         }
         return negative;
     }
 
     public boolean isBroken() {
-        return broken;
+        return broken.booleanValue();
     }
 
-    public boolean isJustBroken() {
-        boolean result = broken && !brokenReported;
-        brokenReported = true;
-        return result;
-    }
+//    public boolean isJustBroken() {
+//        boolean result = broken.booleanValue() && !brokenReported.booleanValue();
+//        brokenReported.set(true);
+//        return result;
+//    }
 
     /**
      * @return Portfolio of stock in Bank Pool
