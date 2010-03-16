@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.25 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.26 2010/03/16 21:22:13 evos Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -106,6 +106,10 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public CompanyI getOriginalCompany() {
         return originalCompany;
+    }
+
+    public void setHolder(MoveableHolder holder) {
+        this.holder = holder;
     }
 
     public MoveableHolder getHolder() {

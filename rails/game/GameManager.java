@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.92 2010/03/14 13:10:15 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.93 2010/03/16 21:22:17 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -1349,7 +1349,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public boolean addObject(Moveable object) {
         if (object instanceof SpecialPropertyI) {
-            return addSpecialProperty((SpecialPropertyI) object);
+            SpecialPropertyI sp = (SpecialPropertyI) object;
+            sp.setHolder(null);
+            return addSpecialProperty(sp);
         } else {
             return false;
         }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.15 2010/03/01 22:27:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.16 2010/03/16 21:22:17 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -19,7 +19,13 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
     protected String longName;
     protected CompanyTypeI type;
     protected int companyNumber; // For internal use
+    
+    /* Note: portfolio is used in two ways:
+     * In private companies, it is primarily the portfolio that holds this private.
+     * In public companies, it is the portfolio of this company.
+     * This contradictory use needs to be disentangled. */
     protected Portfolio portfolio = null;
+
     protected String infoText = "";
     protected String parentInfoText = "";
 
