@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.17 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.18 2010/03/16 21:22:13 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -31,7 +31,7 @@ public class ExchangeForShare extends SpecialProperty {
 
     public boolean isExecutionable() {
 
-        return holder instanceof Player;
+        return originalCompany.getPortfolio().getOwner() instanceof Player;
     }
 
     /**

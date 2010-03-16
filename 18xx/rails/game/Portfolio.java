@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.45 2010/02/14 20:47:45 stefanfrey Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.46 2010/03/16 21:22:17 evos Exp $
  *
  * Created on 09-Apr-2005 by Erik Vos
  *
@@ -459,9 +459,6 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /**
      * Make an abbreviated list of trains, like "2(6) 3(5)" etc, to show in the
      * IPO.
-     *
-     * @param holder The Portfolio for which this list will be made (always
-     * IPO).
      */
 
     public String makeAbbreviatedListOfTrains() {
@@ -491,8 +488,6 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /**
      * Make a full list of trains, like "2 2 3 3", to show in any field
      * describing train possessions, except the IPO.
-     *
-     * @param holder The Portfolio for which this list will be made.
      */
     public String makeFullListOfTrains() {
 
@@ -529,6 +524,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             specialProperties = new ArrayList<SpecialPropertyI>(2);
         }
         result = specialProperties.add(property);
+        property.setHolder(this);
 
         // Special case for bonuses with predefined locations
         // TODO Does this belong here?

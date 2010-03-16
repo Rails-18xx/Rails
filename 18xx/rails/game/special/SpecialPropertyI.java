@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.11 2010/03/02 22:15:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.12 2010/03/16 21:21:59 evos Exp $ */
 package rails.game.special;
 
 import rails.game.CompanyI;
@@ -12,6 +12,9 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public CompanyI getOriginalCompany();
 
+    public void setHolder(MoveableHolder holder);
+    public MoveableHolder getHolder();
+    
     public boolean isExecutionable();
 
     public boolean isUsableIfOwnedByCompany();
