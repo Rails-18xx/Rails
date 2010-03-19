@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.116 2010/03/14 14:21:24 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.117 2010/03/19 20:37:53 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1965,6 +1965,10 @@ public class OperatingRound extends Round implements Observer {
 
         // doneAllowed = true; 
         // has no effect, overwritten in setPossibleActions(), fix of bug 2954654
+        
+        if (operatingCompany.getCurrentNumberOfLoans() == 0) {
+            nextStep();
+        }
 
         return true;
     }

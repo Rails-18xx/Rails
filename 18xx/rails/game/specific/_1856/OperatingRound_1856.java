@@ -350,6 +350,10 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 // Step may only be skipped if repayment is optional
                 if (minNumber == 0) doneAllowed = true;
+                
+            } else {
+                // No (more) loans
+                doneAllowed = true;
             }
         }
     }
