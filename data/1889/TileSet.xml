@@ -84,7 +84,7 @@
 		<IfOption name="BeginnerGame" value="no">
 			<Attributes quantity="2"/>
 		</IfOption>
-		<Upgrade id="14,15"/>
+		<Upgrade id="14,15,205,206"/>
 	</Tile>
 	<Tile id="58">
 		<Attributes quantity="3"/>
@@ -92,7 +92,7 @@
 	<Tile id="437"> <!--NEW TILE: Port-->
 		<Attributes quantity="1"/>
 	</Tile>
-	<Tile id="438"> <!--NEW TILE: I4 TODO: 80 costs to upgrade-->
+	<Tile id="438"> <!--NEW TILE: I4 -->
 		<Attributes quantity="1"/>
 		<Upgrade id="439"/>
 	</Tile>
@@ -171,7 +171,7 @@
 		<Attributes quantity="1"/>
 		<Upgrade id="448,611"/>
 	</Tile>
-	<Tile id="439"> <!--NEW TILE: I4 TODO: costs 80 to upgrade -->
+	<Tile id="439"> <!--NEW TILE: I4 -->
 		<Attributes quantity="1"/>
 		<Upgrade id="492"/>
 	</Tile>
