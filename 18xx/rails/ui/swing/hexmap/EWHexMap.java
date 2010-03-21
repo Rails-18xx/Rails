@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.14 2010/03/11 20:38:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.15 2010/03/21 12:55:33 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -77,7 +77,7 @@ public class EWHexMap extends HexMap {
                 jj = j - minY + 1;
                 hex = h[i][j];
                 if (hex != null) {
-                    hex.scaleHex(cx + scale * ((GUIHex.SQRT3 * ii) + (GUIHex.SQRT3 / 2 * (jj & 1))),
+                    hex.scaleHex(cx + scale * ((GUIHex.SQRT3 * ii) + (GUIHex.SQRT3 / 2 * (j & 1))),
                                  cy + jj * 1.5 * scale,
                                  scale, zoomFactor);
 
