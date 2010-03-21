@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.48 2010/03/04 22:08:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.49 2010/03/21 17:43:50 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -541,8 +541,13 @@ implements ActionListener, KeyListener {
             }
             if (phase.getClosedObjects() != null) {
                 for (Closeable object : phase.getClosedObjects()) {
-                    appendInfoText(b, LocalText.getText("PhaseRemoves", Util.lowerCaseFirst(object.getInfo())));
+                    if (Util.hasValue(object.getClosingInfo())) {
+                        appendInfoText(b, LocalText.getText("PhaseRemoves", Util.lowerCaseFirst(object.getClosingInfo())));
+                    }
                 }
+            }
+            if (Util.hasValue(phase.getInfo())) {
+                appendInfoText(b, phase.getInfo());
             }
             item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
             item.setEnabled(true);

@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.18 2010/02/03 05:37:54 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.19 2010/03/21 17:43:50 evos Exp $ */
 package rails.game;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.util.LocalText;
 import rails.util.Tag;
 
 public class Phase implements PhaseI {
@@ -44,6 +45,8 @@ public class Phase implements PhaseI {
     /** Items to close if a phase gets activated */
     protected List<Closeable> closedObjects = null;
 
+    protected String extraInfo = "";
+    
     /** A HashMap to contain phase-dependent parameters
      * by name and value.
      */
@@ -144,6 +147,15 @@ public class Phase implements PhaseI {
                 parameters.put (key, attributes.get(key));
             }
         }
+
+        // Extra info text(usually related to extra-share special properties)
+        Tag infoTag = tag.getChild("Info");
+        if (infoTag != null) {
+            String infoKey = infoTag.getAttributeAsString("key");
+            String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
+            extraInfo += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
+        }
+
     }
 
     public void finishConfiguration (GameManagerI gameManager) {}
@@ -157,6 +169,10 @@ public class Phase implements PhaseI {
                 object.close();
             }
         }
+    }
+    
+    public String getInfo() {
+        return extraInfo;
     }
 
     public boolean isTileColourAllowed(String tileColour) {

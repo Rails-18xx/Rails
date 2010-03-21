@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.38 2010/03/01 22:27:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.39 2010/03/21 17:43:50 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -27,6 +27,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
     // Prevent closing conditions sfy 1889
     protected List<String> preventClosingConditions = null;
+    // Close at start of phase
+    protected String closeAtPhaseName = null;
 
     protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
@@ -58,7 +60,6 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 infoText += "<br>Blocking: "+blockedHexesString;
             }
 
-            // Special properties
             // Extra info text(usually related to extra-share special properties)
             Tag infoTag = tag.getChild("Info");
             if (infoTag != null) {
@@ -101,10 +102,16 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         String conditionText = preventTag.getAttributeAsString("condition");
                         if (conditionText != null) {
                             preventClosingConditions.add(conditionText);
-            }
+                        }
                     }
                 }
                 /* end sfy 1889 */
+                
+                // Close at start of phase
+                Tag closeTag = closureTag.getChild("Phase");
+                if (closeTag != null) {
+                    closeAtPhaseName = closeTag.getText();
+                }
             }
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
@@ -132,6 +139,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
         infoText += parentInfoText;
         parentInfoText = "";
+        
+        if (Util.hasValue(closeAtPhaseName)) {
+            PhaseI closingPhase = gameManager.getPhaseManager().getPhaseByName(closeAtPhaseName);
+            if (closingPhase != null) {
+                closingPhase.addObjectToClose(this);
+            }
+        }
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -190,7 +204,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     /**
-     * @return Portfolio of this Private
+     * @return Portfolio (holder) of this Private
      */
     public Portfolio getPortfolio() {
         return portfolio;
@@ -358,5 +372,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
     }
 
+    public String getClosingInfo() {
+        return null;
+    }
 
+    public void close() {
+        setClosed();
+    }
 }

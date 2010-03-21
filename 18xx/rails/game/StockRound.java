@@ -1310,6 +1310,11 @@ public class StockRound extends Round {
         gameManager.setPriorityPlayer();
     }
 
+    public void setCurrentPlayer(Player player) {
+        super.setCurrentPlayer(player);
+        currentPlayer = player;
+    }
+
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**

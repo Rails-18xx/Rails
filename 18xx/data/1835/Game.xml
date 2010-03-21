@@ -82,8 +82,9 @@
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
 			<OperatingRounds number="3"/>
-			<Privates close="yes"/>
+			<!--Privates close="yes"/-->
 			<OffBoardRevenue step="3"/>
+            <Info key="PhaseClosesAllPrivates"/>
 		</Phase>
 		<Phase name="6">
 			<Tiles colour="yellow,green,brown"/>

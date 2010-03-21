@@ -1,6 +1,7 @@
 package rails.game.specific._1835;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import rails.util.LocalText;
 public class PrussianFormationRound extends StockRound {
 
     private PublicCompanyI prussian;
+    private PublicCompanyI m2;
     private PhaseI phase;
 
 	private boolean startPr;
@@ -50,19 +52,49 @@ public class PrussianFormationRound extends StockRound {
         prussian = companyManager.getCompanyByName(PR_ID);
         phase = getCurrentPhase();
 		startPr = !prussian.hasStarted();
-        forcedStart = phase.getName().equals("4+4");
+        forcedMerge = phase.getName().equals("5");
+        forcedStart = phase.getName().equals("4+4") || forcedMerge;
  		mergePr = !prussianIsComplete(gameManager);
- 		forcedMerge = phase.getName().equals("5");
 
         ReportBuffer.add(LocalText.getText("StartFormationRound", PR_ID));
         log.debug("StartPr="+startPr+" forcedStart="+forcedStart
         		+" mergePr="+mergePr+" forcedMerge="+forcedMerge);
 
         step = startPr ? Step.START : Step.MERGE;
+        
+        if (step == Step.START) {
+            m2 = companyManager.getCompanyByName(M2_ID);
+            setCurrentPlayer(m2.getPresident());
+            ((GameManager_1835)gameManager).setPrussianFormationStartingPlayer(currentPlayer);
+            if (forcedStart) {
+                executeStartPrussian(true);
+                step = Step.MERGE;
+            }
+        }
+        
         if (step == Step.MERGE) {
-        	startingPlayer
-        		= ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
-        	setCurrentPlayer(startingPlayer);
+            startingPlayer
+                    = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
+            setCurrentPlayer(startingPlayer);
+            if (forcedMerge) {
+                List<SpecialPropertyI> sps;
+                List<CompanyI> foldables = new ArrayList<CompanyI> ();
+                for (PrivateCompanyI company : gameManager.getAllPrivateCompanies()) {
+                    sps = company.getSpecialProperties();
+                    if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                        foldables.add(company);
+                    }
+                }
+                for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
+                    if (company.isClosed()) continue;
+                    sps = company.getSpecialProperties();
+                    if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                        foldables.add(company);
+                    }
+                }
+                executeExchange (foldables, false, true);
+                finishRound();
+            }
         }
     }
 
@@ -70,7 +102,6 @@ public class PrussianFormationRound extends StockRound {
 	public boolean setPossibleActions() {
 
         if (step == Step.START) {
-            PublicCompanyI m2 = companyManager.getCompanyByName(M2_ID);
             Player m2Owner = m2.getPresident();
             startingPlayer = m2Owner;
             setCurrentPlayer(m2Owner);
@@ -128,7 +159,7 @@ public class PrussianFormationRound extends StockRound {
             List<CompanyI> folded = a.getFoldedCompanies();
 
             if (step == Step.START) {
-                if (folded.isEmpty() || !startPrussian(a)) {
+                if (folded == null || folded.isEmpty() || !startPrussian(a)) {
                     finishRound();
                 } else {
                     step = Step.MERGE;
@@ -174,22 +205,26 @@ public class PrussianFormationRound extends StockRound {
 
         moveStack.start(false);
 
-        // Execute
+        executeStartPrussian(false);
+
+        return true;
+    }
+    
+    private void executeStartPrussian (boolean display) {
+        
         prussian.start();
-        ((GameManager_1835)gameManager).setPrussianFormationStartingPlayer(currentPlayer);
         String message = LocalText.getText("START_MERGED_COMPANY",
                 PR_ID,
                 Bank.format(prussian.getIPOPrice()),
                 prussian.getStartSpace());
         ReportBuffer.add(message);
+        if (display) DisplayBuffer.add(message);
 
-        executeExchange (action.getFoldedCompanies(), true);
+        executeExchange (Arrays.asList(new CompanyI[]{m2}), true, false);
         prussian.setFloated();
-
-        return true;
     }
 
- private boolean mergeIntoPrussian (FoldIntoPrussian action) {
+    private boolean mergeIntoPrussian (FoldIntoPrussian action) {
 
         // Validate
         String errMsg = null;
@@ -209,37 +244,48 @@ public class PrussianFormationRound extends StockRound {
         moveStack.start(false);
 
         // Execute
-        executeExchange (action.getFoldedCompanies(), false);
+        executeExchange (action.getFoldedCompanies(), false, false);
 
         return true;
     }
 
- private void executeExchange (List<CompanyI> companies, boolean president) {
+ private void executeExchange (List<CompanyI> companies, boolean president,
+         boolean display) {
 
         ExchangeForShare efs;
         PublicCertificateI cert;
+        Player player;
         for (CompanyI company : companies) {
+            log.debug("Merging company "+company.getName());
+            if (company instanceof PrivateCompanyI) {
+                player = (Player)((PrivateCompanyI)company).getPortfolio().getOwner();
+            } else {
+                player = ((PublicCompanyI)company).getPresident();
+            }
             // Shortcut, sp should be checked
             efs = (ExchangeForShare) company.getSpecialProperties().get(0);
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
-            cert.moveTo(currentPlayer.getPortfolio());
+            cert.moveTo(player.getPortfolio());
             //company.setClosed();
-            ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
-                    currentPlayer.getName(),
+            String message = LocalText.getText("MERGE_MINOR_LOG",
+                    player.getName(),
                     company.getName(),
                     PR_ID,
                     company instanceof PrivateCompanyI ? "no"
                             : Bank.format(((PublicCompanyI)company).getCash()),
                     company instanceof PrivateCompanyI ? "no"
-                            : ((PublicCompanyI)company).getPortfolio().getTrainList().size()));
-            ReportBuffer.add(LocalText.getText("GetShareForMinor",
-                    currentPlayer.getName(),
+                            : ((PublicCompanyI)company).getPortfolio().getTrainList().size());
+            ReportBuffer.add(message);
+            if (display) DisplayBuffer.add (message);
+            message = LocalText.getText("GetShareForMinor",
+                    player.getName(),
                     cert.getShare(),
                     PR_ID,
                     ipo.getName(),
-                    company.getName() ));
-            
+                    company.getName());
+            ReportBuffer.add(message);
+            if (display) DisplayBuffer.add (message);
             
             if (company instanceof PublicCompanyI) {
 
@@ -252,9 +298,11 @@ public class PrussianFormationRound extends StockRound {
                 token.moveTo(minor);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
                     /* TODO: the false return value must be impossible. */
-                    ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                    message =LocalText.getText("ExchangesBaseToken",
                             PR_ID, minor.getName(),
-                            city.getName()));
+                            city.getName());
+                            ReportBuffer.add(message);
+                            if (display) DisplayBuffer.add (message);
                     
                     prussian.layBaseToken(hex, 0);
                 }
