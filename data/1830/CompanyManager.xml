@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <CompanyManager>
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
 	</CompanyType>
 	<CompanyType name="Public" class="rails.game.PublicCompany">
 		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>

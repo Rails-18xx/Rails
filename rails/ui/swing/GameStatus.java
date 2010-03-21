@@ -798,7 +798,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     index = company.getPublicNumber();
                     if (j >= 0) {
                         setPlayerCertButton(index, j, true, share);
-                    } else if (j == -1) {
+                    } else if (j == -1 && compCanHoldOwnShares) {
                         setTreasuryCertButton(index, true, share);
                     }
                 }

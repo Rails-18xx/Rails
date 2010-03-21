@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.16 2010/01/31 22:22:28 macfreek Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.17 2010/03/21 17:43:50 evos Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -113,7 +113,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         return description;
     }
 
-    public String getInfo () {
+    public String getClosingInfo () {
         return description;
     }
 

@@ -121,7 +121,7 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-			<Privates close="yes"/>
+			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>

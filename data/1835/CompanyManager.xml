@@ -39,6 +39,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
+            <Phase>5</Phase>
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
@@ -52,6 +53,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
+            <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
 		</ClosingConditions>
 	</Company>
@@ -65,11 +67,15 @@
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
+            <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
 		</ClosingConditions>
 	</Company>
 	<Company name="LD"	longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20">
 		<Info key="ComesWithPresidency" parm="Sax,20"/>
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
 	</Company>
 	<Company name="BB"	longname="Braunschweigische Bahn" type="Private" basePrice="130" revenue="25">
 		<SpecialProperties>
