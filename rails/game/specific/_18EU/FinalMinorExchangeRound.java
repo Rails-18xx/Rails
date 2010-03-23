@@ -26,8 +26,8 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     }
 
     public void start(Player playerToStartFMERound) {
-        ReportBuffer.add("\n"
-                         + LocalText.getText("StartFinalMinorExchangeRound"));
+        ReportBuffer.add("");
+        ReportBuffer.add(LocalText.getText("StartFinalMinorExchangeRound"));
 
         setCurrentPlayerIndex(playerToStartFMERound.getIndex());
         initPlayer();

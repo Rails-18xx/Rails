@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ReportBuffer.java,v 1.10 2010/03/23 18:45:15 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -14,23 +14,43 @@ import rails.util.Util;
 /**
  * Class to write a log, and also to maintain a log message stack for writing to
  * the UI.
+ * 
+ * Each gameManager has one unique ReportBuffer, which is used by the public static methods.
+ * Messages before the creation of that buffer are kept in an internal initial queue.
+ * 
+ * Also used for regression testing comparing the output of the report buffer.
+ * 
  */
 public final class ReportBuffer {
-    protected static String reportDirectory = null;
-    protected String reportPathname = null;
-    protected PrintWriter report = null;
-    protected static boolean wantReport = false;
-    protected static List<String> initialQueue = new ArrayList<String>();
+    /**
+     * A stack for displaying messages in the Log Window. Such messages are
+     * intended to record the progress of the rails.game and can be used as a
+     * rails.game report.
+     */
+    private List<String> reportQueue = new ArrayList<String>();
+    
+    /** Another stack for messages that must "wait" for other messages */
+    private List<String> waitQueue = new ArrayList<String> ();
 
+    private String reportPathname = null;
+    private PrintWriter report = null;
+
+    /** Initial queue for all messages, before the ReportBuffer for the GameManager is created */
+    private static List<String> initialQueue = new ArrayList<String>();
+
+    private static boolean wantReport = false;
+    private static String reportDirectory = null;
     private static final String DEFAULT_DTS_PATTERN = "yyyyMMdd_HHmm";
     private static final String DEFAULT_REPORT_EXTENSION = "txt";
-    protected static Logger log =
-        Logger.getLogger(ReportBuffer.class.getPackage().getName());
 
     static {
         reportDirectory = Config.get("report.directory");
         wantReport = Util.hasValue(reportDirectory);
     }
+
+    private static Logger log =
+        Logger.getLogger(ReportBuffer.class.getPackage().getName());
+
 
     public ReportBuffer() {
         if (!initialQueue.isEmpty()) {
@@ -41,48 +61,27 @@ public final class ReportBuffer {
         }
     }
 
-    /**
-     * A buffer for displaying messages in the Log Window. Such messages are
-     * intended to record the progress of the rails.game and can be used as a
-     * rails.game report.
-     */
-    private StringBuffer reportBuffer = new StringBuffer();
 
-    /** Add a message to the log buffer (and display it on the console) */
-    public static void add(String message) {
-        GameManagerI gm = GameManager.getInstance();
-        ReportBuffer instance = null;
-        if (gm != null) instance = gm.getReportBuffer();
-        if (gm == null || instance == null) {
-            // Queue in a static buffer until the instance is created
-            initialQueue.add(message);
-        } else {
-            instance.addMessage(message);
-        }
+    private List<String> getReportQueue() {
+        return reportQueue;
     }
 
+    private void clearReportQueue() {
+        reportQueue.clear();
+    }
+    
     private void addMessage (String message) {
         if (message != null) {
-            reportBuffer.append(message).append("\n");
+            if (message.equals(""))
+                message = "---"; // workaround for testing
+            reportQueue.add(message);
             /* Also log the message */
             if (message.length() > 0) log.info(message);
             /* Also write it to the report file, if requested */
             if (wantReport) writeToReport(message);
         }
     }
-
-    /** Get the current log buffer, and clear it */
-    public static String get() {
-        ReportBuffer instance = getInstance();
-        String result = instance.reportBuffer.toString();
-        instance.reportBuffer = new StringBuffer();
-        return result;
-    }
-
-    private static ReportBuffer getInstance() {
-        return GameManager.getInstance().getReportBuffer();
-    }
-
+    
     private void writeToReport(String message) {
 
         /* Get out if we don't want a report */
@@ -129,8 +128,60 @@ public final class ReportBuffer {
         }
     }
 
-    /* A stack for messages that must "wait" for other messages */
-    private List<String> waitQueue = new ArrayList<String> ();
+
+    /** Get the current log buffer, and clear it */
+    public static String get() {
+        ReportBuffer instance = getInstance();
+        
+        // convert to String
+        StringBuffer result = new StringBuffer();
+        for (String msg:instance.getReportQueue()) 
+          result.append(msg).append("\n");
+
+        // clear current queue
+        instance.clearReportQueue();
+        
+        return result.toString();
+    }
+
+    /** Add a message to the log buffer (and display it on the console) */
+    public static void add(String message) {
+        GameManagerI gm = GameManager.getInstance();
+        ReportBuffer instance = null;
+        if (gm != null) instance = gm.getReportBuffer();
+        if (gm == null || instance == null) {
+            // Queue in a static buffer until the instance is created
+            initialQueue.add(message);
+        } else {
+            instance.addMessage(message);
+        }
+    }
+
+   /** return the current buffer as list */
+    public static List<String> getAsList() {
+        ReportBuffer instance = getInstance();
+        
+        if (instance == null) 
+            return initialQueue;
+        else
+            return instance.getReportQueue();
+    }
+    
+    /** clear the current buffer */
+    public static void clear() {
+        ReportBuffer instance = getInstance();
+        
+        if (instance == null) 
+            initialQueue.clear();
+        else
+            instance.clearReportQueue();
+    }
+    
+    private static ReportBuffer getInstance() {
+        return GameManager.getInstance().getReportBuffer();
+    }
+
+
 
     public static void addWaiting (String string) {
         getInstance().waitQueue.add (string);

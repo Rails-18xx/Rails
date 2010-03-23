@@ -19,7 +19,8 @@ public class OperatingRound_1856 extends OperatingRound {
 
     private Player playerToStartLoanRepayment = null;
 
-    static {
+//    static
+    {
 
         steps = new GameDef.OrStep[] { 
                 GameDef.OrStep.INITIAL,

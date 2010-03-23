@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.118 2010/03/19 20:51:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.119 2010/03/23 18:44:44 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -70,7 +70,8 @@ public class OperatingRound extends Round implements Observer {
 
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
-      protected static GameDef.OrStep[] steps =
+//      protected static GameDef.OrStep[] steps =
+          protected GameDef.OrStep[] steps =
             new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
                 GameDef.OrStep.LAY_TRACK, 

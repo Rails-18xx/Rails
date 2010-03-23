@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.16 2010/03/16 21:22:17 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.17 2010/03/23 18:44:38 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import rails.util.Tag;
 import rails.util.Util;
 
 public abstract class Company implements CompanyI, ConfigurableComponentI,
-        Cloneable {
+        Cloneable, Comparable<Company> {
 
     protected String name;
     protected String longName;
@@ -229,6 +229,17 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
             && this.type.equals(company.getType())) return true;
 
         return false;
+    }
+    
+    public int compareTo(Company otherCompany){
+        int result;
+        // compare typeNames first
+        result = this.getTypeName().compareTo(otherCompany.getTypeName());
+        // if same typeName then name
+        if (result == 0) 
+            result = this.getName().compareTo(otherCompany.getName());
+
+        return result;
     }
 
     public static String joinNamesWithDelimiter (List<CompanyI> companies, String delimiter) {

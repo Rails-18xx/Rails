@@ -19,7 +19,7 @@ public final class CashCorrectionManager implements CorrectionManager {
     }
     
     public static CorrectionManager getInstance(GameManager gm) {
-        if (ccm == null) {
+        if (ccm == null || ccm.gameManager != gm) {
             ccm = new CashCorrectionManager();
             ccm.gameManager = gm;
             ccm.active = new BooleanState("CASH_CORRECT", false);

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.91 2010/03/05 20:17:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.92 2010/03/23 18:44:58 stefanfrey Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1303,7 +1303,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Calculate, round up, report and add the cash
-        for (CashHolder recipient : sharesPerRecipient.keySet()) {
+        
+        // Define a precise sequence for the reporting
+        Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
+        for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
             if (recipient instanceof Bank) continue;
             shares = (sharesPerRecipient.get(recipient));
             part = (int) Math.ceil(amount * shares * shareUnit.intValue() / 100.0);

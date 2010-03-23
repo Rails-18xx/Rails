@@ -135,4 +135,23 @@
 			<classpath refid="18xx.classpath"/>
 		</java>
 	</target>
+	<target name="TestGames">
+		<property name="test.xml.dir" value="test/xml"/>
+		<property name="test.report.dir" value="test/report"/>
+		<mkdir dir="${test.xml.dir}"/>
+		<mkdir dir="${test.report.dir}"/>
+		<junit>
+				<classpath refid="18xx.classpath"/>
+				<formatter type="brief" usefile="false" />
+				<formatter type="xml" />
+				<test name ="test.TestGameBuilder" todir="${test.xml.dir}"/>
+		</junit>
+		<junitreport todir="${test.xml.dir}">
+			<fileset dir="${test.xml.dir}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report format="noframes" todir="${test.report.dir}"/>	
+			</junitreport>
+	</target>	
+	
 </project>
