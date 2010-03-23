@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.93 2010/03/16 21:22:17 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.94 2010/03/23 18:44:55 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -1018,11 +1018,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         ReportBuffer.add(message);
         DisplayBuffer.add(message);
 
+        ReportBuffer.add("");
+        
         List<String> gameReport = getGameReport();
-        StringBuilder report = new StringBuilder();
         for (String s:gameReport)
-            report.append(s);
-        ReportBuffer.add(report.toString());
+            ReportBuffer.add(s);
         
         // activate gameReport for UI
         setGameOverReportedUI(false);
@@ -1061,13 +1061,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         /* Report winner */
         Player winner = rankedPlayers.get(0);
-        b.add(LocalText.getText("EoGWinner") + winner.getName() 
-                + "! \n\n"+ LocalText.getText("EoGFinalRanking") + " :");
+        b.add(LocalText.getText("EoGWinner") + winner.getName()+ "!");
+        b.add(LocalText.getText("EoGFinalRanking") + " :");
 
         /* Report final ranking */
         int i = 0;
         for (Player p : rankedPlayers) {
-            b.add("\n" + (++i) + ". " + Bank.format(p.getWorth()) + " "
+            b.add((++i) + ". " + Bank.format(p.getWorth()) + " "
                      + p.getName());
         }
 

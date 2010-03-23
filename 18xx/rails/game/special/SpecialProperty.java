@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.26 2010/03/16 21:22:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.27 2010/03/23 18:45:23 stefanfrey Exp $ */
 package rails.game.special;
 
 import java.util.HashMap;
@@ -51,6 +51,13 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected static Logger log =
         Logger.getLogger(SpecialProperty.class.getPackage().getName());
 
+    // initialize the special properties static variables
+    public static void init() {
+        spMap = new HashMap<Integer, SpecialPropertyI>();
+        lastIndex = 0;
+        log.debug("Init special property static variables");
+    }
+    
     public SpecialProperty() {
         uniqueId = ++lastIndex;
         spMap.put(uniqueId, this);

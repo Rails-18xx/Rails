@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.52 2010/03/21 17:30:06 wakko666 Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.53 2010/03/23 18:44:37 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.game.action.PossibleAction;
+import rails.game.special.SpecialProperty;
 import rails.util.LocalText;
 import rails.util.Tag;
 
@@ -88,6 +89,10 @@ public class Game {
             log.info("Rails version "+version);
             ReportBuffer.add(LocalText.getText("GameIs", name));
 
+            // set special properties and token static variables
+            SpecialProperty.init();
+            Token.init();
+            
             // Have the ComponentManager work through the other rails.game files
             componentManager.finishPreparation();
 

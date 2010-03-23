@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.7 2010/01/08 21:30:46 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Token.java,v 1.8 2010/03/23 18:44:55 stefanfrey Exp $
  *
  * Created on Jan 1, 2007
  * Change Log:
@@ -7,6 +7,8 @@ package rails.game;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
@@ -23,10 +25,20 @@ public abstract class Token implements TokenI {
     private static Map<String, TokenI> tokenMap = new HashMap<String, TokenI>();
     private static int index = 0;
 
+    protected static Logger log =
+        Logger.getLogger(Token.class.getPackage().getName());
+
     public Token() {
 
         uniqueId = "Token_" + (index++);
         tokenMap.put(uniqueId, this);
+    }
+
+    // initialize the special properties static variables
+    public static void init() {
+        tokenMap = new HashMap<String, TokenI>();
+        index = 0;
+        log.debug("Init token static variables");
     }
 
     public static TokenI getByUniqueId(String id) {

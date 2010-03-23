@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.24 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.25 2010/03/23 18:44:30 stefanfrey Exp $ */
 package rails.game;
 
 import rails.game.model.*;
@@ -176,8 +176,14 @@ public class Player implements CashHolder, Comparable<Player> {
     /**
      * Compare Players by their total worth, in descending order. This method
      * implements the Comparable interface.
+     * second level decision is by name
      */
     public int compareTo(Player p) {
-        return -new Integer(getWorth()).compareTo(new Integer(p.getWorth()));
+        // first by wealth
+        int result = -new Integer(getWorth()).compareTo(new Integer(p.getWorth()));
+        // then by name
+        if (result == 0)
+            result = getName().compareTo(p.getName());
+        return result;
     }
 }

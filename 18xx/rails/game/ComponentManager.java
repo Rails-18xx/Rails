@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.17 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.18 2010/03/23 18:45:16 stefanfrey Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -38,7 +38,8 @@ public class ComponentManager {
 
     protected static Logger log =
             Logger.getLogger(ComponentManager.class.getPackage().getName());
-    protected static List<String> directories = new ArrayList<String>();
+//    protected static List<String> directories = new ArrayList<String>();
+    protected List<String> directories = new ArrayList<String>();
 
     public static synchronized ComponentManager configureInstance(String gameName, Tag tag,
             Map<String, String> gameOptions)

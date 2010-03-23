@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.6 2009/01/11 17:23:21 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.7 2010/03/23 18:45:16 stefanfrey Exp $*/
 package rails.util;
 
 import java.text.MessageFormat;
@@ -37,7 +37,7 @@ public class LocalText extends ResourceBundle {
         String result = "";
 
         if (key == null || key.length() == 0) return "";
-
+        
         /* Load the texts */
         if (localisedText == null) {
             /*
@@ -82,6 +82,16 @@ public class LocalText extends ResourceBundle {
                 e.printStackTrace();
             }
         }
+      
+        // special treatment for test
+        if (localeCode.equals("te_st0")) {
+            StringBuffer s = new StringBuffer(key);
+            if (parameters != null)
+                for (Object o:parameters)
+                    s.append("," + o.toString());
+            return s.toString();
+        }
+        
         /* Find the text */
         try {
             result = localisedText.getString(key);
