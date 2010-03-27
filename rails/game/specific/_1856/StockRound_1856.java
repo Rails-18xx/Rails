@@ -2,9 +2,14 @@ package rails.game.specific._1856;
 
 import rails.game.*;
 import rails.game.action.BuyCertificate;
+import rails.game.state.IntegerState;
 import rails.util.LocalText;
 
 public class StockRound_1856 extends StockRound {
+
+    /* Cope with multiple 5% share sales in one turn */
+    private IntegerState sharesSoldSoFar;
+    private IntegerState squaresDownSoFar;
 
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
@@ -14,7 +19,10 @@ public class StockRound_1856 extends StockRound {
      */
     public StockRound_1856 (GameManagerI aGameManager) {
         super (aGameManager);
-    }
+
+        sharesSoldSoFar = new IntegerState("CGR_SharesSoldSoFar", 0);
+        squaresDownSoFar = new IntegerState("CGR_SquaresDownSoFar", 0);
+}
 
     /**
      * Special 1856 code to check for company flotation.
@@ -43,6 +51,34 @@ public class StockRound_1856 extends StockRound {
             if (!company.hasFloated()) {
                 floatCompany(company);
             }
+        }
+    }
+
+    protected void initPlayer() {
+        super.initPlayer();
+        sharesSoldSoFar.set(0);
+        squaresDownSoFar.set(0);
+    }
+
+    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+        
+        if (company instanceof PublicCompany_CGR) {
+            if (company.canSharePriceVary()) {
+                int numberOfSpaces;
+                if (company.getShareUnit() == 5) {
+                    // Take care for selling 5% shares in multiple blocks per turn
+                    numberOfSpaces
+                        = (sharesSoldSoFar.intValue() + numberSold)/2
+                        - squaresDownSoFar.intValue();
+                    sharesSoldSoFar.add(numberSold);
+                    squaresDownSoFar.add(numberOfSpaces);
+                } else {
+                    numberOfSpaces = numberSold;
+                }
+                stockMarket.sell(company, numberOfSpaces);
+            }
+        } else {
+            super.adjustSharePrice (company, numberSold, soldBefore);
         }
     }
 

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.92 2010/03/23 18:44:58 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.93 2010/03/27 18:27:08 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1078,15 +1078,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public StockSpaceI getCurrentSpace() {
         return currentPrice != null ? currentPrice.getPrice() : null;
-    }
-
-    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
-            StockMarketI stockMarket) {
-        if (actionPerformed == StockRound.SOLD) {
-            if (canSharePriceVary()) {
-                stockMarket.sell(this, numberOfSharesSold);
-            }
-        }
     }
 
     public void updatePlayersWorth() {
