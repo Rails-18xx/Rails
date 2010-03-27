@@ -2,18 +2,13 @@ package rails.game.specific._1835;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 import rails.common.GuiDef;
 import rails.game.*;
-import rails.game.action.ExchangeableToken;
 import rails.game.action.PossibleAction;
 import rails.game.move.CashMove;
 import rails.game.special.ExchangeForShare;
-import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.util.LocalText;
 
@@ -156,24 +151,24 @@ public class PrussianFormationRound extends StockRound {
         if (action instanceof FoldIntoPrussian) {
 
             FoldIntoPrussian a = (FoldIntoPrussian) action;
-            List<CompanyI> folded = a.getFoldedCompanies();
-
+ 
             if (step == Step.START) {
-                if (folded == null || folded.isEmpty() || !startPrussian(a)) {
+                if (!startPrussian(a)) {
                     finishRound();
                 } else {
                     step = Step.MERGE;
                 }
             } else if (step == Step.MERGE) {
-                if (!folded.isEmpty()) mergeIntoPrussian (a);
+                
+                mergeIntoPrussian (a);
+
+            	// No merge options for the current player, try the next one
+            	setNextPlayer();
+            	if (getCurrentPlayer() == startingPlayer) {
+            		finishRound();
+            	}
+
             }
-
-        	// No merge options for the current player, try the next one
-        	setNextPlayer();
-        	if (getCurrentPlayer() == startingPlayer) {
-        		finishRound();
-        	}
-
             return true;
         } else {
             return false;
@@ -185,7 +180,10 @@ public class PrussianFormationRound extends StockRound {
         // Validate
         String errMsg = null;
 
-        while (true) {
+        List<CompanyI> folded = action.getFoldedCompanies();
+        boolean folding = folded != null && !folded.isEmpty();
+
+        while (folding) {
             if (!(M2_ID.equals(action.getFoldedCompanyNames()))) {
                 errMsg = LocalText.getText("WrongCompany",
                         action.getFoldedCompanyNames(),
@@ -205,9 +203,9 @@ public class PrussianFormationRound extends StockRound {
 
         moveStack.start(false);
 
-        executeStartPrussian(false);
+        if (folding) executeStartPrussian(false);
 
-        return true;
+        return folding;
     }
     
     private void executeStartPrussian (boolean display) {
@@ -229,7 +227,10 @@ public class PrussianFormationRound extends StockRound {
         // Validate
         String errMsg = null;
 
-        while (true) {
+        List<CompanyI> folded = action.getFoldedCompanies();
+        boolean folding = folded != null && !folded.isEmpty();
+        
+        while (folding) {
             break;
         }
 
@@ -244,12 +245,12 @@ public class PrussianFormationRound extends StockRound {
         moveStack.start(false);
 
         // Execute
-        executeExchange (action.getFoldedCompanies(), false, false);
+        if (folding) executeExchange (action.getFoldedCompanies(), false, false);
 
-        return true;
+        return folding;
     }
 
- private void executeExchange (List<CompanyI> companies, boolean president,
+    private void executeExchange (List<CompanyI> companies, boolean president,
          boolean display) {
 
         ExchangeForShare efs;
