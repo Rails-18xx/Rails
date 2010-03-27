@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.94 2010/03/23 18:44:55 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.95 2010/03/27 18:44:24 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -651,6 +651,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return round;
     }
 
+    /** Stub, can be overridden in subclasses with actual actions */
+    public void newPhaseChecks (RoundI round) {
+        
+    }
+    
     public String getORId () {
         if (showCompositeORNumber) {
             return getCompositeORNumber();

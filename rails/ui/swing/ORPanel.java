@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.49 2010/03/21 17:43:50 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.50 2010/03/27 18:44:24 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -828,7 +828,9 @@ implements ActionListener, KeyListener {
 
     public void finishORCompanyTurn(int orCompIndex) {
 
-        president[orCompIndex].setHighlight(false);
+        for (Field field : president) {
+            field.setHighlight(false);
+        }
 
         button1.setEnabled(false);
 

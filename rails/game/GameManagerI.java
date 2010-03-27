@@ -31,6 +31,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      * @param round The object that represents the finishing round.
      */
     public abstract void nextRound(RoundI round);
+    public void newPhaseChecks (RoundI round);
 
     public String getORId ();
     public abstract String getCompositeORNumber();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.119 2010/03/23 18:44:44 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.120 2010/03/27 18:44:24 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1585,13 +1585,16 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Check if the phase has changed.
-        gameManager.getTrainManager().checkTrainAvailability(train, oldHolder);
+        TrainManager tm = gameManager.getTrainManager();
+        tm.checkTrainAvailability(train, oldHolder);
 
         // Check if any companies must discard trains
         if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
             stepObject.set(GameDef.OrStep.DISCARD_TRAINS);
         }
 
+        if (tm.hasPhaseChanged()) gameManager.newPhaseChecks(this);
+        
         return true;
     }
 
@@ -1622,9 +1625,15 @@ public class OperatingRound extends Round implements Observer {
             executeSetRevenueAndDividend ((SetDividend) savedAction);
         } else if (savedAction instanceof RepayLoans) {
             executeRepayLoans ((RepayLoans) savedAction);
+        } else if (savedAction == null) {
+            //nextStep();
         }
         savedAction = null;
         wasInterrupted.set(true);
+
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
     }
 
     public boolean discardTrain(DiscardTrain action) {
