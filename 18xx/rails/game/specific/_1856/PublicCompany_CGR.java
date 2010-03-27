@@ -29,9 +29,6 @@ public class PublicCompany_CGR extends PublicCompany {
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
-
-        sharesSoldSoFar = new IntegerState(name+"_SharesSoldSoFar", 0);
-        squaresDownSoFar = new IntegerState(name+"_SquaresDownSoFar", 0);
     }
 
     public boolean hadPermanentTrain() {
@@ -138,38 +135,6 @@ public class PublicCompany_CGR extends PublicCompany {
             }
         }
 
-    }
-
-    @Override
-    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
-            StockMarketI stockMarket) {
-
-        if (actionPerformed == StockRound.SOLD) {
-            if (canSharePriceVary()) {
-                int numberOfSpaces;
-                if (shareUnit.intValue() == 5) {
-                    // Take care for selling 5% shares in multiple blocks per turn
-                    numberOfSpaces
-                        = (sharesSoldSoFar.intValue() + numberOfSharesSold)/2
-                        - squaresDownSoFar.intValue();
-                    sharesSoldSoFar.add(numberOfSharesSold);
-                    squaresDownSoFar.add(numberOfSpaces);
-                } else {
-                    numberOfSpaces = numberOfSharesSold;
-                }
-                stockMarket.sell(this, numberOfSpaces);
-            }
-        }
-    }
-
-    @Override
-    public void setOperated() {
-        super.setOperated();
-
-        // Reset the share selling counts
-        // TODO Should this be a generic function?
-        sharesSoldSoFar.set(0);
-        squaresDownSoFar.set(0);
     }
 
     @Override

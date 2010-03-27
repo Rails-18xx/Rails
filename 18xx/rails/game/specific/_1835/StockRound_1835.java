@@ -33,7 +33,7 @@ public class StockRound_1835 extends StockRound {
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
-            company.adjustSharePrice (SOLD, 1, gameManager.getStockMarket());
+            super.adjustSharePrice (company, 1, soldBefore);
         }
     }
 

@@ -1088,7 +1088,10 @@ public class StockRound extends Round {
     }
 
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
-        company.adjustSharePrice (SOLD, numberSold, gameManager.getStockMarket());
+    
+        if (company.canSharePriceVary()) {
+            stockMarket.sell(company, numberSold);
+        }
     }
 
     public boolean useSpecialProperty(UseSpecialProperty action) {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.50 2010/03/04 22:08:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.51 2010/03/27 18:27:08 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -253,9 +253,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public boolean hasParPrice();
 
     public boolean canSharePriceVary();
-
-    public void adjustSharePrice (int actionPerformed, int numberOfSharesSold,
-            StockMarketI stockMarket);
 
     public void updatePlayersWorth();
 
