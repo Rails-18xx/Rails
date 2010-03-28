@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -9,7 +10,7 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -200,7 +201,15 @@ public final class TestGameBuilder extends TestCase {
             chooser.setCurrentDirectory(new File(rootPath));
             chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             chooser.setMultiSelectionEnabled(true);
-            chooser.setFileFilter(new FileNameExtensionFilter("Rails save files (*.rails)", "rails"));
+// Java 6:  chooser.setFileFilter(new FileNameExtensionFilter("Rails save files (*.rails)", "rails"));
+            chooser.setFileFilter(new FileFilter() {
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().endsWith("." + Config.get("save.filename.extension"));
+                  } 
+                public String getDescription()  {
+                    return "Rails save files (*."+ Config.get("save.filename.extension") + ")" ;
+                }
+            });
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.showDialog(panel, "Select");
             File[] files = chooser.getSelectedFiles();
