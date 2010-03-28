@@ -92,12 +92,12 @@ public class CashCorrectionAction extends CorrectionAction {
     public String toString() {
         StringBuffer b = new StringBuffer("CashCorrectionAction ");
         if (acted) {
-            b.append("(Acted)");
+            b.append(" (acted)");
             if (correctCashHolder != null)
                 b.append(", correctCashHolder="+correctCashHolder);
             b.append(", correctAmount="+correctAmount);
         } else {
-            b.append("(Not Acted)");
+            b.append(" (not acted)");
             if (correctCashHolder != null)
                 b.append(", correctCashHolder="+correctCashHolder);
             b.append(", maximumNegative="+maximumNegative);

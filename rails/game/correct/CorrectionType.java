@@ -7,14 +7,14 @@ import rails.game.GameManager;
 */
 public enum CorrectionType {
     CORRECT_CASH {
-        public CorrectionManager getManager(GameManager gm)
-            {return CashCorrectionManager.getInstance(gm);}
-        };
-//     CORRECT_MAP ("CorrectName") {
-//            CorrectionManager getManager(GameManager gm)
-//                {return MapCorrectionManager.getInstance(gm);}
-//            };
-
-    public abstract CorrectionManager getManager(GameManager gm);
+        public CorrectionManagerI newCorrectionManager(GameManager gm)
+        {return new CashCorrectionManager(gm);}
+    },
+    CORRECT_MAP {
+        public CorrectionManagerI newCorrectionManager(GameManager gm)
+        {return new MapCorrectionManager(gm);}
+    }
+    ;
+    public abstract CorrectionManagerI newCorrectionManager(GameManager gm);
 
 }

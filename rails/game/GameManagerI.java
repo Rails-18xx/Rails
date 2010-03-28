@@ -6,6 +6,8 @@ import java.util.Map;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.game.action.PossibleAction;
+import rails.game.correct.CorrectionManagerI;
+import rails.game.correct.CorrectionType;
 import rails.game.model.ModelObject;
 import rails.game.move.AddToList;
 import rails.game.move.MoveStack;
@@ -194,5 +196,6 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void addToNextPlayerMessages(String s, boolean undoable); 
     public ReportBuffer getReportBuffer();
     public GuiHints getUIHints();
-
+    
+    public CorrectionManagerI getCorrectionManager(CorrectionType ct);
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.24 2010/02/28 21:38:04 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.25 2010/03/28 17:05:56 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.correct.CorrectionAction;
+import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
@@ -22,6 +24,7 @@ import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
+    
     private ORUIManager orUIManager;
     private List<ActionLabel> tokenLabels;
     private int selectedTokenIndex;
@@ -29,7 +32,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     static private Color defaultLabelBgColour = new JLabel("").getBackground();
     static private Color selectedLabelBgColour = new Color(255, 220, 150);
-
+    private static final int defaultNbPanelElements = 15;
+    
     private JPanel upgradePanel;
     private JScrollPane scrollPane;
     private Dimension preferredSize = new Dimension(100, 200);
@@ -58,7 +62,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.setOpaque(true);
         upgradePanel.setBackground(Color.DARK_GRAY);
         upgradePanel.setBorder(border);
-        upgradePanel.setLayout(new GridLayout(15, 1));
+        upgradePanel.setLayout(new GridLayout(defaultNbPanelElements, 1));
 
         scrollPane = new JScrollPane(upgradePanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -99,9 +103,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             }
         }
     }
-
+    
     public void showUpgrades() {
         upgradePanel.removeAll();
+        
+        // reset to the number of elements
+        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
+        panelLayout.setRows(defaultNbPanelElements);
+
         if (tokenMode && possibleTokenLays != null
             && possibleTokenLays.size() > 0) {
 
@@ -180,6 +189,54 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         revalidate();
     }
 
+    // populate version for corrections
+    public void showCorrectionUpgrades() {
+        upgradePanel.removeAll();
+        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
+        List<TileI> tiles = orUIManager.tileUpgrades;
+        
+        if (tiles == null || tiles.size() == 0) {
+            // reset to the number of elements
+            panelLayout.setRows(defaultNbPanelElements);
+            // set to position 0
+            scrollPane.getVerticalScrollBar().setValue(0);
+        } else {
+            // set to the max of available or the default number of elements
+            panelLayout.setRows(Math.max(tiles.size() + 2, defaultNbPanelElements));
+            for (TileI tile : tiles) {
+
+                BufferedImage hexImage = getHexImage(tile.getId());
+                ImageIcon hexIcon = new ImageIcon(hexImage);
+
+                // Cheap n' Easy rescaling.
+                hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
+                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                        Image.SCALE_SMOOTH));
+
+                HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
+                hexLabel.setName(tile.getName());
+                if (tile.getExternalId() > 0)
+                    hexLabel.setText("" + tile.getExternalId());
+                else
+                    hexLabel.setText("");
+                hexLabel.setOpaque(true);
+                hexLabel.setVisible(true);
+                hexLabel.setBorder(border);
+                hexLabel.addMouseListener(this);
+
+                upgradePanel.add(hexLabel);
+            }
+        }
+
+        upgradePanel.add(doneButton);
+        upgradePanel.add(cancelButton);
+
+//      repaint();
+        revalidate();
+    }
+
+    
     public void clear() {
         upgradePanel.removeAll();
         upgradePanel.add(doneButton);
