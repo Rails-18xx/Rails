@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.40 2010/03/14 13:10:15 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.41 2010/03/28 20:14:19 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -662,6 +662,10 @@ public class StatusWindow extends JFrame implements ActionListener,
         gameUIManager.orWindow.finish();
     }
 
+    public Player getCurrentPlayer () {
+        return gameUIManager.getCurrentPlayer();
+    }
+    
     public void endOfGameReport() {
 
         GameManagerI gm = GameManager.getInstance();

@@ -30,7 +30,7 @@ public class PrussianFormationRound extends StockRound {
 
     Step step;
 
-	public static String PR_ID = "Pr";
+	public static String PR_ID = StockRound_1835.PR_ID;
     public static String M2_ID = "M2";
 
     public PrussianFormationRound (GameManagerI gameManager) {
@@ -351,6 +351,7 @@ public class PrussianFormationRound extends StockRound {
                 = gameManager.getBank().getUnavailable().getCertificatesPerCompany(PR_ID);
         return unissued == null || unissued.isEmpty();
     }
+    
     @Override
     public String toString() {
         return "1835 PrussianFormationRound";

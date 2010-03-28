@@ -33,7 +33,6 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      * @param round The object that represents the finishing round.
      */
     public abstract void nextRound(RoundI round);
-    public void newPhaseChecks (RoundI round);
 
     public String getORId ();
     public abstract String getCompositeORNumber();
@@ -196,6 +195,6 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void addToNextPlayerMessages(String s, boolean undoable); 
     public ReportBuffer getReportBuffer();
     public GuiHints getUIHints();
-    
+
     public CorrectionManagerI getCorrectionManager(CorrectionType ct);
 }
