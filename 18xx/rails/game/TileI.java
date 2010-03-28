@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.16 2009/10/30 21:53:03 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.17 2010/03/28 17:05:55 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -44,6 +44,8 @@ public interface TileI {
     public boolean allowsMultipleBasesOfOneCompany();
 
     public List<TileI> getUpgrades(MapHex hex, PhaseI phase);
+
+    public List<TileI> getAllUpgrades();
 
     public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase);
 

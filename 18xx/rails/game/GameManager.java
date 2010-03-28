@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.95 2010/03/27 18:44:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.96 2010/03/28 17:05:55 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -54,6 +54,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected Bank bank;
+    
+    // map of correctionManagers
+    protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
+        new HashMap<CorrectionType, CorrectionManagerI>();
 
     protected String gameName;
     protected Map<String, String> gameOptions;
@@ -778,7 +782,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 break;
             }
 
-            if (result && !(action instanceof GameAction)) {
+            if (result && !(action instanceof GameAction) && action.hasActed()) {
                 new AddToList<PossibleAction>(executedActions, action,
                         "ExecutedActions");
             }
@@ -791,7 +795,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         // moveStack closing is done here to allow state changes to occur
         // when setting possible actions
         if (action != null) {
-            if (result && !(action instanceof GameAction)) {
+            if (result && !(action instanceof GameAction) && action.hasActed()) {
                 if (moveStack.isOpen()) moveStack.finish();
             } else {
                 if (moveStack.isOpen()) moveStack.cancel();
@@ -830,27 +834,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         // If any Correction is active
         for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
-            CorrectionManager cm = ct.getManager(this);
+            CorrectionManagerI cm = getCorrectionManager(ct);
             if (cm.isActive()) {
                 possibleActions.clear();
             }
 
         }
-//        if (!activeCorrections.isEmpty()) {
-//            // remove all other actions
-//            possibleActions.clear();
-//            // and set GuiHints for corrections - removed
-//        }
-
-        // CorrectionMode Actions
-//        EnumSet<CorrectionType> possibleCorrections = EnumSet.allOf(CorrectionType.class);
-//        for (CorrectionType ct:possibleCorrections)
-//                possibleActions.add(
-//                        new CorrectionModeAction(ct, activeCorrections.contains(ct)));
 
         // Correction Actions
         for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
-            CorrectionManager cm = ct.getManager(this);
+            CorrectionManagerI cm = getCorrectionManager(ct);
             possibleActions.addAll(cm.createCorrections());
         }
     }
@@ -859,33 +852,10 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
        boolean result = false;
 
-//       if (a instanceof CorrectionModeAction) {
-//            CorrectionModeAction cma = (CorrectionModeAction)a;
-//            CorrectionType ct = cma.getCorrection();
-//            moveStack.start(false);
-//            new SetChange<CorrectionType>
-//                (activeCorrections, ct, !cma.isActive());
-//            if (!cma.isActive()) {
-//                String text = LocalText.getText("CorrectionModeActivate",
-//                        getCurrentPlayer().getName(),
-//                        LocalText.getText(ct.name())
-//                );
-//                ReportBuffer.add(text);
-//                DisplayBuffer.add(text);
-//            }
-//            else {
-//                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-//                        getCurrentPlayer().getName(),
-//                        LocalText.getText(ct.name())
-//                ));
-//            }
-//            result = true;
-//        }
-
        if (a instanceof CorrectionAction) {
             CorrectionAction ca= (CorrectionAction)a;
             CorrectionType ct = ca.getCorrectionType();
-            CorrectionManager cm = ct.getManager(this);
+            CorrectionManagerI cm = getCorrectionManager(ct);
             result = cm.executeCorrection(ca);
         }
 
@@ -1456,4 +1426,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public GuiHints getUIHints() {
         return guiHints;
     }
+    
+    public CorrectionManagerI getCorrectionManager(CorrectionType ct) {
+        CorrectionManagerI cm = correctionManagers.get(ct);
+        if (cm == null) {
+            cm=ct.newCorrectionManager(this);
+            correctionManagers.put(ct, cm);
+            log.debug("Added CorrectionManager for " + ct);
+        }
+        return cm;
+    }
+   
 }
+

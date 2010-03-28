@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.36 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.37 2010/03/28 17:05:55 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import rails.game.model.ModelObject;
 import rails.util.LocalText;
 import rails.util.Tag;
 
-public class Tile extends ModelObject implements TileI, StationHolder {
+public class Tile extends ModelObject implements TileI, StationHolder, Comparable<TileI> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int id;
@@ -372,6 +372,20 @@ public class Tile extends ModelObject implements TileI, StationHolder {
         return upgr;
     }
 
+    /**
+     * Get all possible upgrades for a specific tile 
+     *
+     * @return A List of valid upgrade TileI objects.
+     */
+    
+    public List<TileI> getAllUpgrades() {
+        List<TileI> upgr = new ArrayList<TileI>();
+        for (Upgrade upgrade : upgrades) {
+            upgr.add(upgrade.getTile());
+        }
+        return upgr;
+    }
+
     /** Get a delimited list of all possible upgrades, regardless current phase */
     public String getUpgradesString(MapHex hex) {
         StringBuffer b = new StringBuffer();
@@ -460,7 +474,23 @@ public class Tile extends ModelObject implements TileI, StationHolder {
     public int getQuantity() {
         return quantity;
     }
+    
+    @Override
+    public String toString() {
+        return "Tile Id=" + externalId;
+    }
 
+    /** ordering of tiles based first on colour, then on external id */
+    public int compareTo(TileI anotherTile) {
+        Integer colour = this.getColourNumber();
+        int result = colour.compareTo(anotherTile.getColourNumber());
+        if (result == 0) { 
+            Integer externalId  = this.getExternalId();
+            result = externalId.compareTo(anotherTile.getExternalId());
+        }
+        return result;
+    }
+    
     protected class Upgrade {
 
         /** The upgrade tile id */

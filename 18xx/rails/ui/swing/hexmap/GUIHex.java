@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.38 2010/02/16 20:21:59 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.39 2010/03/28 17:05:55 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -504,6 +504,10 @@ public class GUIHex implements ViewObject {
             provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
         }
     }
+    
+    public void forcedRotateTile() {
+        provisionalGUITile.setRotation(provisionalGUITile.getRotation() + 1);
+    }
 
     private Point getTokenCenter(int numTokens, int currentToken,
             int numStations, int stationNumber) {
@@ -673,6 +677,14 @@ public class GUIHex implements ViewObject {
             return false;
         }
 
+    }
+    
+    /** forces the tile to drop */
+    public void forcedDropTile(int tileId, int orientation) {
+        provisionalGUITile = new GUITile(tileId, this);
+        provisionalGUITile.setRotation(orientation);
+        provisionalGUITile.setScale(SELECTED_SCALE);
+        toolTip = "Click to rotate";
     }
 
     public void removeTile() {

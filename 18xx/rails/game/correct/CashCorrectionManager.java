@@ -2,38 +2,18 @@ package rails.game.correct;
 
 import rails.game.*;
 import rails.game.move.CashMove;
-import rails.game.move.StateChange;
-import rails.game.state.BooleanState;
 import rails.util.*;
 import java.util.*;
 
-public final class CashCorrectionManager implements CorrectionManager {
-
-    private static CashCorrectionManager ccm;
+public final class CashCorrectionManager extends CorrectionManager {
     
-    private GameManager gameManager;
-    
-    private BooleanState active;
-    
-    private CashCorrectionManager() {
+    protected CashCorrectionManager(GameManager gm) {
+        super(gm, CorrectionType.CORRECT_CASH);
     }
     
-    public static CorrectionManager getInstance(GameManager gm) {
-        if (ccm == null || ccm.gameManager != gm) {
-            ccm = new CashCorrectionManager();
-            ccm.gameManager = gm;
-            ccm.active = new BooleanState("CASH_CORRECT", false);
-        }
-        return ccm;
-    }
-    
-    public boolean isActive(){
-        return active.booleanValue();
-    }
-    
-    
+    @Override
     public List<CorrectionAction> createCorrections() {
-        List<CorrectionAction> actions = new ArrayList<CorrectionAction>();
+        List<CorrectionAction> actions = super.createCorrections();
         
         if (isActive()) {
             List<Player> players = gameManager.getPlayers();
@@ -47,48 +27,33 @@ public final class CashCorrectionManager implements CorrectionManager {
                     actions.add(new CashCorrectionAction(pc));
             }
         }
-        actions.add(new CorrectionModeAction(CorrectionType.CORRECT_CASH, isActive()));
 
         return actions;
     }
+    
+    @Override
+    public boolean executeCorrection(CorrectionAction action){
+        if (action instanceof CashCorrectionAction)
+            return execute((CashCorrectionAction) action);
+        else
+             return super.executeCorrection(action);
+    }
 
-    public boolean executeCorrection(CorrectionAction action) {
+    private boolean execute(CashCorrectionAction cashAction) {
 
         boolean result = false;
-        
-        if (action instanceof CorrectionModeAction) {
-            gameManager.getMoveStack().start(false);
-            if (!isActive()) {
-                String text = LocalText.getText("CorrectionModeActivate",
-                        gameManager.getCurrentPlayer().getName(),
-                        LocalText.getText("CORRECT_CASH")
-                );
-                ReportBuffer.add(text);
-                DisplayBuffer.add(text);
-            }
-            else {
-                ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-                        gameManager.getCurrentPlayer().getName(),
-                        LocalText.getText("CORRECT_CASH"))
-                );
-            }
-            new StateChange(active, !isActive());
-            
-            result = true;
-        } else if (action instanceof CashCorrectionAction) {
-            CashCorrectionAction cashAction=(CashCorrectionAction)action;
 
-            CashHolder ch = cashAction.getCashHolder();
-            int amount = cashAction.getAmount();
-            
-            String errMsg = null;
+        CashHolder ch = cashAction.getCashHolder();
+        int amount = cashAction.getAmount();
 
-            while (true) {
-                if (amount == 0 ) {
-                    errMsg =
-                        LocalText.getText("CorrectCashZero");
-                    break;
-                }
+        String errMsg = null;
+
+        while (true) {
+            if (amount == 0 ) {
+                errMsg =
+                    LocalText.getText("CorrectCashZero");
+                break;
+            }
             if ((amount + ch.getCash()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
@@ -98,39 +63,38 @@ public final class CashCorrectionManager implements CorrectionManager {
                     );
                 break;
             }
-             break;   
-            }
+            break;   
+        }
 
-            if (errMsg != null) {
-                DisplayBuffer.add(LocalText.getText("CorrectCashError",
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CorrectCashError",
+                    ch.getName(),
+                    errMsg));
+            result = true;
+        } else {
+            // no error occured 
+            gameManager.getMoveStack().start(false);
+
+            Bank bank = gameManager.getBank();
+
+            String msg;
+            if (amount < 0) {
+                // negative amounts: remove cash from cashholder
+                new CashMove(ch, bank , -amount);
+
+                msg = LocalText.getText("CorrectCashSubstractMoney",
                         ch.getName(),
-                        errMsg));
-                result = true;
+                        Bank.format(-amount) );
             } else {
-                // no error occured 
-                gameManager.getMoveStack().start(false);
-
-                Bank bank = gameManager.getBank();
-
-                String msg;
-                if (amount < 0) {
-                    // negative amounts: remove cash from cashholder
-                    new CashMove(ch, bank , -amount);
-                    
-                    msg = LocalText.getText("CorrectCashSubstractMoney",
-                            ch.getName(),
-                            Bank.format(-amount) );
-                } else {
-                    // positive amounts: add cash to cashholder
-                    new CashMove(bank, ch, amount);
-                    msg = LocalText.getText("CorrectCashAddMoney",
-                            ch.getName(),
-                            Bank.format(amount));
-                }
-                ReportBuffer.add(msg);
-                gameManager.addToNextPlayerMessages(msg, true);
-                result = true;
+                // positive amounts: add cash to cashholder
+                new CashMove(bank, ch, amount);
+                msg = LocalText.getText("CorrectCashAddMoney",
+                        ch.getName(),
+                        Bank.format(amount));
             }
+            ReportBuffer.add(msg);
+            gameManager.addToNextPlayerMessages(msg, true);
+            result = true;
         }
     
        return result;

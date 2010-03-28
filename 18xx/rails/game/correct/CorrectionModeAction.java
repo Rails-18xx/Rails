@@ -43,7 +43,8 @@ public class CorrectionModeAction extends CorrectionAction {
     public boolean equals(PossibleAction action) {
         if (!(action instanceof CorrectionModeAction)) return false;
         CorrectionModeAction a = (CorrectionModeAction) action;
-        return (a.correctionType == this.correctionType && a.active == this.active);
+        return (a.correctionType.equals(this.correctionType) && 
+                    a.isActive() == this.isActive());
     }
 
     @Override

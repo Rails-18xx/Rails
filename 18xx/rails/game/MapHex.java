@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.39 2010/02/24 22:10:45 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.40 2010/03/28 17:05:55 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -61,6 +61,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     protected int preprintedTileId;
     protected TileI currentTile;
     protected int currentTileRotation;
+    protected int preprintedTileRotation;
     protected int[] tileCost;
     protected String cityName;
     protected String infoText;
@@ -162,7 +163,8 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
         preprintedTileId = tag.getAttributeAsInteger("tile", -999);
 
-        currentTileRotation = tag.getAttributeAsInteger("orientation", 0);
+        preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
+        currentTileRotation  = preprintedTileRotation;
 
         impassable = tag.getAttributeAsString("impassable");
         tileCost = tag.getAttributeAsIntegerArray("cost", new int[0]);
@@ -288,6 +290,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public int getPreprintedTileId() {
         return preprintedTileId;
     }
+    
+    public int getPreprintedTileRotation() {
+        return preprintedTileRotation;
+    }
 
     /**
      * @return Returns the image file name for the tile.
@@ -345,18 +351,28 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     }
 
     /**
-     * Prepare a tile upgrade. The actual tile replacement is done in
-     * replaceTile(), via a TileMove object.
+     * new wrapper function for the LayTile action that calls the actual
+     * upgrade mehod
+     * @param action executed LayTile action
      */
     public void upgrade(LayTile action) {
         TileI newTile = action.getLaidTile();
         int newRotation = action.getOrientation();
+        Map<String, Integer> relaidTokens = action.getRelaidBaseTokens();
+        
+        upgrade(newTile, newRotation, relaidTokens);
+    }
+    
+    /**
+     * Prepare a tile upgrade. The actual tile replacement is done in
+     * replaceTile(), via a TileMove object.
+     */
+    public void upgrade(TileI newTile, int newRotation, Map<String, Integer> relaidTokens) {
 
         City newCity;
         String newTracks;
         List<City> newCities;
 
-        Map<String, Integer> relaidTokens = action.getRelaidBaseTokens();
         if (relaidTokens == null) relaidTokens = new HashMap<String, Integer>();
 
         if (currentTile.getNumStations() == newTile.getNumStations()) {
