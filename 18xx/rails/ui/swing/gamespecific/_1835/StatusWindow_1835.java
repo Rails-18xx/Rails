@@ -68,9 +68,10 @@ public class StatusWindow_1835 extends StatusWindow {
             currentDialog = new ConfirmationDialog (gameUIManager,
                     LocalText.getText("Select"),
                     LocalText.getText("MergeMinorConfirm",
-                            "M2", StockRound_1835.PR_ID),
+                            getCurrentPlayer().getName(),
+                            PrussianFormationRound.M2_ID, StockRound_1835.PR_ID),
                     "Yes",
-                    "No" );
+                    "No");
         } else {
             // Ask if any other prePrussians should be folded
             String[] options = new String[foldables.size()];
@@ -86,7 +87,9 @@ public class StatusWindow_1835 extends StatusWindow {
             }
             currentDialog = new CheckBoxDialog (gameUIManager,
                     LocalText.getText("Select"),
-                    LocalText.getText("SelectCompaniesToFold", prussian.getLongName()),
+                    LocalText.getText("SelectCompaniesToFold", 
+                            getCurrentPlayer().getName(),
+                            prussian.getLongName()),
                     options);
         }
         gameUIManager.setCurrentDialog (currentDialog, action);

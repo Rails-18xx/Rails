@@ -14,6 +14,7 @@
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
+			<OperatingRound class="rails.game.specific._1835.OperatingRound_1835"/>
 		</GameParameters>
 		<GuiClasses>
 			<StatusWindow class="rails.ui.swing.gamespecific._1835.StatusWindow_1835"/>

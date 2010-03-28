@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.120 2010/03/27 18:44:24 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.121 2010/03/28 20:14:20 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1318,7 +1318,6 @@ public class OperatingRound extends Round implements Observer {
      * @return False if an error is found.
      */
     public boolean done() {
-        String errMsg = null;
 
          if (operatingCompany.getPortfolio().getNumberOfTrains() == 0
             && operatingCompany.mustOwnATrain()) {
@@ -1593,7 +1592,7 @@ public class OperatingRound extends Round implements Observer {
             stepObject.set(GameDef.OrStep.DISCARD_TRAINS);
         }
 
-        if (tm.hasPhaseChanged()) gameManager.newPhaseChecks(this);
+        if (tm.hasPhaseChanged()) newPhaseChecks();
         
         return true;
     }
@@ -1616,6 +1615,10 @@ public class OperatingRound extends Round implements Observer {
         return !excessTrainCompanies.isEmpty();
     }
 
+    /** Stub */
+    protected void newPhaseChecks() {
+    }
+    
     @Override
     public void resume() {
 

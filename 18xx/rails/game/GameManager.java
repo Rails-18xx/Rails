@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.96 2010/03/28 17:05:55 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.97 2010/03/28 20:14:20 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -54,7 +54,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected Bank bank;
-    
+
     // map of correctionManagers
     protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
@@ -655,11 +655,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return round;
     }
 
-    /** Stub, can be overridden in subclasses with actual actions */
-    public void newPhaseChecks (RoundI round) {
-        
-    }
-    
     public String getORId () {
         if (showCompositeORNumber) {
             return getCompositeORNumber();
@@ -1433,9 +1428,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             cm=ct.newCorrectionManager(this);
             correctionManagers.put(ct, cm);
             log.debug("Added CorrectionManager for " + ct);
-        }
+}
         return cm;
     }
-   
 }
 

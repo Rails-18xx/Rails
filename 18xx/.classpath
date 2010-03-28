@@ -30,5 +30,6 @@
 	<classpathentry path="lib/batik-1.6/batik-svgpp.jar" exported="true" kind="lib"/>
 	<classpathentry path="lib/batik-1.6/batik-ttf2svg.jar" exported="true" kind="lib"/>
 	<classpathentry path="lib/log4j-1.2/log4j-1.2.14.jar" exported="true" kind="lib"/>
+	<classpathentry path="C:/Java/eclipse521/plugins/org.junit_3.8.2.v20090203-1005/junit.jar" kind="lib"/>
 	<classpathentry path="classes" kind="output"/>
 </classpath>

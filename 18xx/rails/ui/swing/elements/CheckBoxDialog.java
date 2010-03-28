@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.7 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.8 2010/03/28 20:14:20 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -130,7 +130,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
                 selectedOptions[i] = checkBoxes[i].isSelected();
             }
         } else if (arg0.getSource().equals(cancelButton)) {
-            return;
+        //    return;
         }
         setVisible(false);
         dispose();
