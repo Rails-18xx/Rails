@@ -1,0 +1,5 @@
+Author: Justin Rebelo
+4 players
+Bank runs out of money
+Ends: OR6_2
+Date: 2010/03/18
