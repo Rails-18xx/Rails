@@ -1,0 +1,625 @@
+GameIs,1851
+PlayerIs,1,Chris Brooks
+PlayerIs,2,Matt Riley
+PlayerIs,3,Mike Deans
+PlayerIs,4,Chris Shaffer
+PlayerIs,5,JD Huntington
+PlayerCash,$400
+BankHas,$6040
+StartOfPhase,2
+BankSizeIs,$6040
+StartOfInitialRound
+HasPriority,Chris Brooks
+BuysItemFor,Chris Brooks,ET&WNC,$80
+BuysItemFor,Matt Riley,L&O,$200
+ALSO_GETS,Matt Riley,PRES_CERT_NAME,L&N,20
+BuysItemFor,Mike Deans,CNO&TP,$240
+ALSO_GETS,Mike Deans,CERT_NAME,L&N,10
+BuysItemFor,Chris Shaffer,M&C,$50
+BuysItemFor,JD Huntington,O&W,$210
+ALSO_GETS,JD Huntington,CERT_NAME,L&N,10
+---
+Has,Chris Brooks,$320
+Has,Matt Riley,$200
+Has,Mike Deans,$160
+Has,Chris Shaffer,$350
+Has,JD Huntington,$190
+StartStockRound,1
+HasPriority,Chris Brooks
+---
+PASSES,Chris Brooks
+PASSES,Matt Riley
+BUY_SHARE_LOG,Mike Deans,10,L&N,IPO,$100
+PRICE_MOVES_LOG,L&N,$100,E3,$110,E2
+FloatsWithCash,L&N,$400
+START_COMPANY_LOG,Chris Shaffer,TC,$70,$140,2,20,BANK
+BUY_SHARE_LOG,JD Huntington,10,L&N,L&N,$110
+---
+BUY_SHARE_LOG,Chris Brooks,10,TC,IPO,$70
+BUY_SHARE_LOG,Matt Riley,10,L&N,L&N,$110
+PASSES,Mike Deans
+BUY_SHARE_LOG,Chris Shaffer,10,TC,IPO,$70
+BUY_SHARE_LOG,JD Huntington,10,TC,IPO,$70
+PRICE_MOVES_LOG,TC,$70,C5,$75,C4
+FloatsWithCash,TC,$250
+---
+BUY_SHARE_LOG,Chris Brooks,10,TC,TC,$75
+BUY_SHARE_LOG,Matt Riley,10,TC,TC,$75
+PASSES,Mike Deans
+BUY_SHARE_LOG,Chris Shaffer,10,TC,TC,$75
+PASSES,JD Huntington
+---
+BUY_SHARE_LOG,Chris Brooks,10,TC,TC,$75
+PASSES,Matt Riley
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+PASSES,JD Huntington
+---
+BUY_SHARE_LOG,Chris Brooks,10,TC,TC,$75
+PASSES,Matt Riley
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+PASSES,JD Huntington
+---
+PASSES,Chris Brooks
+END_SR,1
+PRICE_MOVES_LOG,TC,$75,C4,$82,C3
+SoldOut,TC,$75,C4,$82,C3
+---
+Has,L&N,$620
+Has,TC,$625
+Has,Chris Brooks,$25
+Has,Matt Riley,$15
+Has,Mike Deans,$60
+Has,Chris Shaffer,$65
+Has,JD Huntington,$10
+START_OR,1.1
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Matt Riley
+LaysTileAt,L&N,9,C15,SW
+CompanyDoesNotPayDividend,L&N
+PRICE_MOVES_LOG,L&N,$110,E2,$100,D2
+BuysTrain,L&N,2,IPO,$100
+FirstTrainBought,2
+BuysTrain,L&N,2,IPO,$100
+CompanyOperates,TC,Chris Shaffer
+LaysTileAtFor,TC,202,F12,E,$40
+CompanyDoesNotPayDividend,TC
+PRICE_MOVES_LOG,TC,$82,C3,$75,B3
+BuysTrain,TC,2,IPO,$100
+EndOfOperatingRound,1.1
+---
+Has,L&N,$420
+Has,TC,$485
+Has,Chris Brooks,$40
+Has,Matt Riley,$20
+Has,Mike Deans,$85
+Has,Chris Shaffer,$75
+Has,JD Huntington,$30
+StartStockRound,2
+HasPriority,Matt Riley
+---
+PASSES,Matt Riley
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+PASSES,JD Huntington
+PASSES,Chris Brooks
+END_SR,2
+PRICE_MOVES_LOG,TC,$75,B3,$82,B2
+SoldOut,TC,$75,B3,$82,B2
+---
+Has,L&N,$420
+Has,TC,$485
+Has,Chris Brooks,$40
+Has,Matt Riley,$20
+Has,Mike Deans,$85
+Has,Chris Shaffer,$75
+Has,JD Huntington,$30
+START_OR,2.1
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Matt Riley
+LaysTileAt,L&N,57,D14,SW
+LAYS_FREE_TOKEN_ON,L&N,D14
+CompanyRevenue,L&N,$80
+CompanyPaysOutFull,L&N,$80
+Payout,Matt Riley,$24,3,10
+Payout,Mike Deans,$16,2,10
+Payout,JD Huntington,$16,2,10
+Payout,L&N,$24,3,10
+CompanyOperates,TC,Chris Shaffer
+LaysTileAt,TC,9,E13,SW
+CompanyRevenue,TC,$50
+CompanyPaysOutFull,TC,$50
+Payout,Matt Riley,$5,1,10
+Payout,JD Huntington,$5,1,10
+Payout,Chris Brooks,$20,4,10
+Payout,Chris Shaffer,$20,4,10
+BuysTrain,TC,2,IPO,$100
+BuysTrain,TC,2,IPO,$100
+All 2-trains are sold out, 3-trains now available
+BuysTrain,TC,3,IPO,$200
+FirstTrainBought,3
+StartOfPhase,3
+EndOfOperatingRound,2.1
+---
+Has,L&N,$444
+Has,TC,$85
+Has,Chris Brooks,$75
+Has,Matt Riley,$54
+Has,Mike Deans,$126
+Has,Chris Shaffer,$105
+Has,JD Huntington,$71
+StartStockRound,3
+HasPriority,Matt Riley
+---
+PASSES,Matt Riley
+BUY_SHARE_LOG,Mike Deans,10,L&N,L&N,$100
+SELL_SHARES_LOG,Chris Shaffer,4,10,40,TC,$328
+IS_NOW_PRES_OF,Chris Brooks,TC
+PRICE_MOVES_LOG,TC,$82,B2,$60,B6
+START_COMPANY_LOG,Chris Shaffer,GM&O,$82,$164,2,20,BANK
+BUY_SHARE_LOG,JD Huntington,10,TC,Pool,$60
+BUY_SHARE_LOG,Chris Brooks,10,TC,Pool,$60
+---
+PASSES,Matt Riley
+PASSES,Mike Deans
+BUY_SHARE_LOG,Chris Shaffer,10,GM&O,IPO,$82
+Autopasses,JD Huntington
+PASSES,Chris Brooks
+---
+PASSES,Matt Riley
+SELL_SHARE_LOG,Mike Deans,10,L&N,$100
+PRICE_MOVES_LOG,L&N,$100,D2,$90,D3
+BUY_SHARE_LOG,Mike Deans,10,TC,Pool,$60
+BUY_SHARE_LOG,Chris Shaffer,10,GM&O,IPO,$82
+Autopasses,JD Huntington
+PASSES,Chris Brooks
+---
+PASSES,Matt Riley
+BUY_SHARE_LOG,Mike Deans,10,TC,Pool,$60
+BUY_SHARE_LOG,Chris Shaffer,10,GM&O,IPO,$82
+PRICE_MOVES_LOG,GM&O,$82,D4,$90,D3
+FloatsWithCash,GM&O,$310
+Autopasses,JD Huntington
+PASSES,Chris Brooks
+---
+PASSES,Matt Riley
+Autopasses,Mike Deans
+PASSES,Chris Shaffer
+END_SR,3
+PRICE_MOVES_LOG,TC,$60,B6,$65,B5
+SoldOut,TC,$60,B6,$65,B5
+---
+Has,GM&O,$310
+Has,L&N,$544
+Has,TC,$85
+Has,Chris Brooks,$15
+Has,Matt Riley,$54
+Has,Mike Deans,$6
+Has,Chris Shaffer,$23
+Has,JD Huntington,$11
+START_OR,3.1
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Matt Riley
+LaysTileAt,L&N,511,B16,W
+CompanyRevenue,L&N,$110
+CompanyPaysOutFull,L&N,$110
+Payout,Matt Riley,$33,3,10
+Payout,Mike Deans,$22,2,10
+Payout,JD Huntington,$22,2,10
+Payout,L&N,$22,2,10
+PRICE_MOVES_LOG,L&N,$90,D3,$100,E3
+BuysTrain,L&N,3,IPO,$200
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,57,G7,NW
+LaysTileAt,GM&O,5,F6,W
+LAYS_FREE_TOKEN_ON,GM&O,F6
+CompanyDoesNotPayDividend,GM&O
+PRICE_MOVES_LOG,GM&O,$90,D3,$82,C3
+BuysTrain,GM&O,3,IPO,$200
+CompanyOperates,TC,Chris Brooks
+LaysTileAtFor,TC,6,B18,E,$40
+LaysTileAt,TC,8,A19,SW
+LAYS_FREE_TOKEN_ON,TC,B18
+CompanyRevenue,TC,$190
+CompanyPaysOutFull,TC,$190
+Payout,Matt Riley,$19,1,10
+Payout,Mike Deans,$38,2,10
+Payout,JD Huntington,$38,2,10
+Payout,Chris Brooks,$95,5,10
+PRICE_MOVES_LOG,TC,$65,B5,$70,C5
+EndOfOperatingRound,3.1
+---
+Has,GM&O,$110
+Has,L&N,$366
+Has,TC,$45
+Has,Chris Brooks,$125
+Has,Matt Riley,$111
+Has,Mike Deans,$91
+Has,Chris Shaffer,$33
+Has,JD Huntington,$91
+START_OR,3.2
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Matt Riley
+LaysTileAt,L&N,619,B18,SW
+CompanyRevenue,L&N,$220
+CompanyPaysOutFull,L&N,$220
+Payout,Mike Deans,$44,2,10
+Payout,Matt Riley,$66,3,10
+Payout,JD Huntington,$44,2,10
+Payout,L&N,$44,2,10
+PRICE_MOVES_LOG,L&N,$100,E3,$110,F3
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,9,G5,SW
+LaysTileAtFor,GM&O,202,H4,E,$60
+LAYS_FREE_TOKEN_ON,GM&O,H4
+CompanyRevenue,GM&O,$70
+CompanyPaysOutFull,GM&O,$70
+Payout,Chris Shaffer,$35,5,10
+Payout,GM&O,$35,5,10
+CompanyOperates,TC,Chris Brooks
+LaysTileAt,TC,14,D14,SW
+LAYS_FREE_TOKEN_ON,TC,D14
+CompanyRevenue,TC,$270
+CompanyPaysOutFull,TC,$270
+Payout,Matt Riley,$27,1,10
+Payout,Mike Deans,$54,2,10
+Payout,JD Huntington,$54,2,10
+Payout,Chris Brooks,$135,5,10
+PRICE_MOVES_LOG,TC,$70,C5,$75,D5
+EndOfOperatingRound,3.2
+---
+Has,GM&O,$85
+Has,L&N,$410
+Has,TC,$45
+Has,Chris Brooks,$275
+Has,Matt Riley,$209
+Has,Mike Deans,$214
+Has,Chris Shaffer,$78
+Has,JD Huntington,$209
+StartStockRound,4
+HasPriority,JD Huntington
+---
+SELL_SHARE_LOG,JD Huntington,10,L&N,$110
+PRICE_MOVES_LOG,L&N,$110,F3,$100,F4
+SELL_SHARES_LOG,JD Huntington,2,10,20,TC,$150
+PRICE_MOVES_LOG,TC,$75,D5,$65,D7
+START_COMPANY_LOG,JD Huntington,Dixie,$90,$180,2,20,BANK
+BUY_SHARE_LOG,Chris Brooks,10,TC,Pool,$65
+BUY_SHARE_LOG,Matt Riley,10,L&N,Pool,$100
+BUY_SHARE_LOG,Mike Deans,10,L&N,Pool,$100
+BUY_SHARE_LOG,Chris Shaffer,10,TC,Pool,$65
+---
+BUY_SHARE_LOG,JD Huntington,10,Dixie,IPO,$90
+BUY_SHARE_LOG,Chris Brooks,10,Dixie,IPO,$90
+BUY_SHARE_LOG,Matt Riley,10,GM&O,GM&O,$82
+BUY_SHARE_LOG,Mike Deans,10,L&N,L&N,$100
+PASSES,Chris Shaffer
+---
+BUY_SHARE_LOG,JD Huntington,10,Dixie,IPO,$90
+PRICE_MOVES_LOG,Dixie,$90,E4,$100,E3
+FloatsWithCash,Dixie,$350
+BUY_SHARE_LOG,Chris Brooks,10,Dixie,Dixie,$100
+PASSES,Matt Riley
+SELL_SHARES_LOG,Mike Deans,2,10,20,TC,$130
+PRICE_STAYS_LOG,TC,$65,D7
+BUY_SHARE_LOG,Mike Deans,10,L&N,L&N,$100
+IS_NOW_PRES_OF,Mike Deans,L&N
+PASSES,Chris Shaffer
+---
+BUY_SHARE_LOG,JD Huntington,10,Dixie,Dixie,$100
+Autopasses,Chris Brooks
+PASSES,Matt Riley
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+---
+PASSES,JD Huntington
+END_SR,4
+PRICE_MOVES_LOG,L&N,$100,F4,$110,F3
+SoldOut,L&N,$100,F4,$110,F3
+---
+Has,GM&O,$167
+Has,L&N,$610
+Has,Dixie,$550
+Has,TC,$45
+Has,Chris Brooks,$20
+Has,Matt Riley,$27
+Has,Mike Deans,$44
+Has,Chris Shaffer,$13
+Has,JD Huntington,$9
+START_OR,4.1
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Mike Deans
+LaysTileAt,L&N,511,F12,SW
+LAYS_FREE_TOKEN_ON,L&N,F12
+CompanyRevenue,L&N,$250
+CompanyPaysOutFull,L&N,$250
+Payout,Mike Deans,$125,5,10
+Payout,JD Huntington,$25,1,10
+Payout,Matt Riley,$100,4,10
+PRICE_MOVES_LOG,L&N,$110,F3,$122,G3
+BuysTrain,L&N,3,IPO,$200
+All 3-trains are sold out, 4-trains now available
+CompanyOperates,Dixie,JD Huntington
+LaysTileAtFor,Dixie,202,H16,NW,$40
+LaysTileAtFor,Dixie,9,I17,NW,$60
+CompanyDoesNotPayDividend,Dixie
+PRICE_MOVES_LOG,Dixie,$100,E3,$90,D3
+BuysTrain,Dixie,4,IPO,$300
+FirstTrainBought,4
+StartOfPhase,4
+TrainsRusted,2
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,9,H8,NW
+LaysTileAt,GM&O,8,I9,NW
+CompanyRevenue,GM&O,$80
+CompanyPaysOutFull,GM&O,$80
+Payout,Matt Riley,$8,1,10
+Payout,Chris Shaffer,$40,5,10
+Payout,GM&O,$32,4,10
+CompanyOperates,TC,Chris Brooks
+LaysTileAt,TC,7,D16,SW
+LaysTileAt,TC,8,E15,NE
+CompanyRevenue,TC,$120
+CompanyWithholds,TC,$120
+PRICE_MOVES_LOG,TC,$65,D7,$60,C7
+EndOfOperatingRound,4.1
+---
+Has,GM&O,$199
+Has,L&N,$410
+Has,Dixie,$150
+Has,TC,$165
+Has,Chris Brooks,$35
+Has,Matt Riley,$140
+Has,Mike Deans,$194
+Has,Chris Shaffer,$63
+Has,JD Huntington,$54
+START_OR,4.2
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Mike Deans
+LaysTileAt,L&N,9,G13,NW
+LaysTileAt,L&N,8,H14,NW
+CompanyRevenue,L&N,$230
+CompanyPaysOutFull,L&N,$230
+Payout,Mike Deans,$115,5,10
+Payout,Matt Riley,$92,4,10
+Payout,JD Huntington,$23,1,10
+PRICE_MOVES_LOG,L&N,$122,G3,$135,H3
+BuysTrain,L&N,4,IPO,$300
+CompanyOperates,Dixie,JD Huntington
+LaysTileAt,Dixie,511,H16,SW
+CompanyRevenue,Dixie,$120
+CompanyPaysOutFull,Dixie,$120
+Payout,JD Huntington,$60,5,10
+Payout,Chris Brooks,$24,2,10
+Payout,Dixie,$36,3,10
+PRICE_MOVES_LOG,Dixie,$90,D3,$100,E3
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,511,H4,SW
+CompanyRevenue,GM&O,$90
+CompanyPaysOutFull,GM&O,$90
+Payout,Matt Riley,$9,1,10
+Payout,Chris Shaffer,$45,5,10
+Payout,GM&O,$36,4,10
+PRICE_MOVES_LOG,GM&O,$82,C3,$90,D3
+CompanyOperates,TC,Chris Brooks
+LaysTileAt,TC,57,F16,NW
+LaysTileAt,TC,8,G17,SW
+CompanyRevenue,TC,$120
+CompanyWithholds,TC,$120
+PRICE_MOVES_LOG,TC,$60,C7,$50,B7
+EndOfOperatingRound,4.2
+---
+Has,GM&O,$235
+Has,L&N,$110
+Has,Dixie,$186
+Has,TC,$285
+Has,Chris Brooks,$74
+Has,Matt Riley,$246
+Has,Mike Deans,$334
+Has,Chris Shaffer,$118
+Has,JD Huntington,$157
+StartStockRound,5
+HasPriority,Chris Brooks
+---
+PASSES,Chris Brooks
+BUY_SHARE_LOG,Matt Riley,10,Dixie,Dixie,$100
+BUY_SHARE_LOG,Mike Deans,10,Dixie,Dixie,$100
+BUY_SHARE_LOG,Chris Shaffer,10,GM&O,GM&O,$90
+BUY_SHARE_LOG,JD Huntington,10,Dixie,Dixie,$100
+---
+Autopasses,Chris Brooks
+BUY_SHARE_LOG,Matt Riley,10,GM&O,GM&O,$90
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+PASSES,JD Huntington
+---
+Autopasses,Chris Brooks
+BUY_SHARE_LOG,Matt Riley,10,TC,Pool,$50
+PASSES,Mike Deans
+PASSES,Chris Shaffer
+PASSES,JD Huntington
+---
+Autopasses,Chris Brooks
+PASSES,Matt Riley
+END_SR,5
+PRICE_MOVES_LOG,L&N,$135,H3,$150,H2
+SoldOut,L&N,$135,H3,$150,H2
+PRICE_MOVES_LOG,Dixie,$100,E3,$110,E2
+SoldOut,Dixie,$100,E3,$110,E2
+---
+Has,GM&O,$415
+Has,L&N,$110
+Has,Dixie,$486
+Has,TC,$285
+Has,Chris Brooks,$74
+Has,Matt Riley,$6
+Has,Mike Deans,$234
+Has,Chris Shaffer,$28
+Has,JD Huntington,$57
+START_OR,5.1
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Mike Deans
+LaysTileAt,L&N,7,A15,E
+LaysTileAtFor,L&N,8,A17,W,$40
+LAYS_FREE_TOKEN_ON,L&N,H16
+CompanyRevenue,L&N,$400
+CompanySplits,L&N,$400
+L&N receives $200
+Payout,Mike Deans,$100,5,10
+Payout,Matt Riley,$80,4,10
+Payout,JD Huntington,$20,1,10
+PRICE_MOVES_LOG,L&N,$150,H2,$165,I2
+CompanyOperates,Dixie,JD Huntington
+LaysTileAt,Dixie,25,H14,E
+CompanyRevenue,Dixie,$130
+CompanySplits,Dixie,$130
+Dixie receives $60
+Payout,Mike Deans,$7,1,10
+Payout,Matt Riley,$7,1,10
+Payout,JD Huntington,$42,6,10
+Payout,Chris Brooks,$14,2,10
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,8,I11,SE
+LaysTileAtFor,GM&O,5,I13,W,$40
+LAYS_FREE_TOKEN_ON,GM&O,I13
+CompanyRevenue,GM&O,$100
+CompanyPaysOutFull,GM&O,$100
+Payout,Matt Riley,$20,2,10
+Payout,Chris Shaffer,$60,6,10
+Payout,GM&O,$20,2,10
+PRICE_MOVES_LOG,GM&O,$90,D3,$100,E3
+CompanyOperates,TC,Chris Brooks
+LaysTileAt,TC,7,F10,E
+LaysTileAt,TC,9,G11,NW
+CompanyRevenue,TC,$120
+CompanySplits,TC,$120
+TC receives $60
+Payout,Matt Riley,$12,2,10
+Payout,Chris Shaffer,$6,1,10
+Payout,Chris Brooks,$36,6,10
+PRICE_MOVES_LOG,TC,$50,B7,$60,C7
+BuysTrain,TC,4,IPO,$300
+All 4-trains are sold out, 5-trains now available
+EndOfOperatingRound,5.1
+---
+Has,GM&O,$395
+Has,L&N,$270
+Has,Dixie,$546
+Has,TC,$45
+Has,Chris Brooks,$139
+Has,Matt Riley,$130
+Has,Mike Deans,$366
+Has,Chris Shaffer,$104
+Has,JD Huntington,$139
+START_OR,5.2
+---
+ReceivesFor,Matt Riley,$5,L&O
+ReceivesFor,Chris Shaffer,$10,M&C
+ReceivesFor,Chris Brooks,$15,ET&WNC
+ReceivesFor,JD Huntington,$20,O&W
+ReceivesFor,Mike Deans,$25,CNO&TP
+CompanyOperates,L&N,Mike Deans
+LaysTileAt,L&N,8,C19,SW
+LaysTileAtFor,L&N,8,D18,NE,$60
+CompanyRevenue,L&N,$400
+CompanySplits,L&N,$400
+L&N receives $200
+Payout,Mike Deans,$100,5,10
+Payout,Matt Riley,$80,4,10
+Payout,JD Huntington,$20,1,10
+PRICE_MOVES_LOG,L&N,$165,I2,$180,J2
+CompanyOperates,Dixie,JD Huntington
+LaysTileAt,Dixie,14,I13,NW
+LAYS_FREE_TOKEN_ON,Dixie,I13
+CompanyRevenue,Dixie,$140
+CompanyPaysOutFull,Dixie,$140
+Payout,Mike Deans,$14,1,10
+Payout,Matt Riley,$14,1,10
+Payout,JD Huntington,$84,6,10
+Payout,Chris Brooks,$28,2,10
+PRICE_MOVES_LOG,Dixie,$110,E2,$122,F2
+BuysTrain,Dixie,5,IPO,$500
+FirstTrainBought,5
+StartOfPhase,5
+PrivateCloses,L&O
+PrivateCloses,M&C
+PrivateCloses,ET&WNC
+PrivateCloses,O&W
+PrivateCloses,CNO&TP
+CompanyDiscardsTrain,L&N,3
+CompanyOperates,GM&O,Chris Shaffer
+LaysTileAt,GM&O,15,F6,NE
+CompanyRevenue,GM&O,$110
+CompanyPaysOutFull,GM&O,$110
+Payout,Matt Riley,$22,2,10
+Payout,Chris Shaffer,$66,6,10
+Payout,GM&O,$22,2,10
+PRICE_MOVES_LOG,GM&O,$100,E3,$110,F3
+CompanyOperates,TC,Chris Brooks
+LaysTileAt,TC,619,F16,NE
+CompanyRevenue,TC,$280
+CompanyPaysOutFull,TC,$280
+Payout,Matt Riley,$56,2,10
+Payout,Chris Shaffer,$28,1,10
+Payout,Chris Brooks,$168,6,10
+PRICE_MOVES_LOG,TC,$60,C7,$65,D7
+EndOfOperatingRound,5.2
+---
+Has,GM&O,$417
+Has,L&N,$410
+Has,Dixie,$46
+Has,TC,$45
+Has,Chris Brooks,$350
+Has,Matt Riley,$307
+Has,Mike Deans,$505
+Has,Chris Shaffer,$208
+Has,JD Huntington,$263
+StartStockRound,6
+HasPriority,Mike Deans
+---
+START_COMPANY_LOG,Mike Deans,SR,$100,$200,2,20,BANK
+BUY_SHARE_LOG,Chris Shaffer,10,SR,IPO,$100
+BUY_SHARE_LOG,JD Huntington,10,SR,IPO,$100
+START_COMPANY_LOG,Chris Brooks,IC,$82,$164,2,20,BANK
+BUY_SHARE_LOG,Matt Riley,10,SR,IPO,$100
+PRICE_MOVES_LOG,SR,$100,E3,$110,E2
+FloatsWithCash,SR,$400
+---
+BUY_SHARE_LOG,Mike Deans,10,SR,SR,$110
+BUY_SHARE_LOG,Chris Shaffer,10,TC,Pool,$65
