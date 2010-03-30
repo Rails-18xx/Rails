@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.25 2010/02/17 22:01:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.26 2010/03/30 21:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -41,6 +41,11 @@ public class StartRound_1835 extends StartRound {
         super.start();
         startRoundNumber.add(1);
 
+        if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
+            setCurrentPlayerIndex (numPlayers-1);
+        }
+
+            
         if (!setPossibleActions()) {
             /*
              * If nobody can do anything, keep executing Operating and Start
@@ -179,7 +184,7 @@ public class StartRound_1835 extends StartRound {
             int newIndex;
 
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-                /* Reverse ordee in the first cycle only */
+                /* Reverse order in the first cycle only */
                 newIndex =
                         cycleNumber == 0 ? numPlayers - 1 - turnIndex
                                 : turnIndex;
