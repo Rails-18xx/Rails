@@ -24,10 +24,10 @@ import rails.util.LocalText;
 public class GameStatus extends GridPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
 
-    private static final String BUY_FROM_IPO_CMD = "BuyFromIPO";
-    private static final String BUY_FROM_POOL_CMD = "BuyFromPool";
-    private static final String SELL_CMD = "Sell";
-    private static final String CASH_CORRECT_CMD = "CorrectCash";
+    protected static final String BUY_FROM_IPO_CMD = "BuyFromIPO";
+    protected static final String BUY_FROM_POOL_CMD = "BuyFromPool";
+    protected static final String SELL_CMD = "Sell";
+    protected static final String CASH_CORRECT_CMD = "CorrectCash";
 
     protected StatusWindow parent;
 
@@ -81,9 +81,9 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
 
-    private Caption[] upperPlayerCaption;
-    private Caption[] lowerPlayerCaption;
-    private Caption treasurySharesCaption;
+    protected Caption[] upperPlayerCaption;
+    protected Caption[] lowerPlayerCaption;
+    protected Caption treasurySharesCaption;
 
     protected Portfolio ipo, pool;
 
@@ -515,9 +515,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                 futureTrainsWidth + 2, 1, 0, true);
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
-
     }
-
+    
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
         List<PossibleAction> actions;
@@ -771,6 +770,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             PublicCertificateI cert;
             Portfolio holder;
             int index;
+            CashHolder owner;
 
             List<BuyCertificate> buyableCerts =
                     possibleActions.getType(BuyCertificate.class);
@@ -779,11 +779,14 @@ public class GameStatus extends GridPanel implements ActionListener {
                     cert = bCert.getCertificate();
                     index = cert.getCompany().getPublicNumber();
                     holder = bCert.getFromPortfolio();
+                    owner = holder.getOwner();
                     if (holder == ipo) {
                         setIPOCertButton(index, true, bCert);
                     } else if (holder == pool) {
                         setPoolCertButton(index, true, bCert);
-                    } else if (compCanHoldOwnShares) {
+                    } else if (owner instanceof Player) {
+                        setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);
+                    } else if (owner instanceof PublicCompanyI && compCanHoldOwnShares) {
                         setTreasuryCertButton(index, true, bCert);
                     }
                 }
@@ -880,8 +883,14 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (j < 0) return;
         setPlayerCertButton(i, j, clickable);
         if (clickable && o != null) {
-            if (o instanceof PossibleAction)
+            if (o instanceof PossibleAction) {
                 certPerPlayerButton[i][j].addPossibleAction((PossibleAction) o);
+                if (o instanceof SellShares) {
+                    certPerPlayerButton[i][j].setToolTipText(LocalText.getText("ClickForSell"));
+                } else if (o instanceof BuyCertificate) {
+                    certPerPlayerButton[i][j].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
+                }
+            }
         }
     }
 
@@ -898,7 +907,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         certPerPlayerButton[i][j].setVisible(visible && clickable);
     }
 
-    private void setIPOCertButton(int i, boolean clickable, Object o) {
+    protected void setIPOCertButton(int i, boolean clickable, Object o) {
 
         setIPOCertButton(i, clickable);
         if (clickable && o != null) {
@@ -907,7 +916,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
     }
 
-    private void setIPOCertButton(int i, boolean clickable) {
+    protected void setIPOCertButton(int i, boolean clickable) {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInIPOButton[i].setText(certInIPO[i].getText());
@@ -918,7 +927,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         certInIPOButton[i].setVisible(visible && clickable);
     }
 
-    private void setPoolCertButton(int i, boolean clickable, Object o) {
+    protected void setPoolCertButton(int i, boolean clickable, Object o) {
 
         setPoolCertButton(i, clickable);
         if (clickable && o != null) {
@@ -927,7 +936,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
     }
 
-    private void setPoolCertButton(int i, boolean clickable) {
+    protected void setPoolCertButton(int i, boolean clickable) {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInPoolButton[i].setText(certInPool[i].getText());
@@ -938,7 +947,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         certInPoolButton[i].setVisible(visible && clickable);
     }
 
-    private void setTreasuryCertButton(int i, boolean clickable, Object o) {
+    protected void setTreasuryCertButton(int i, boolean clickable, Object o) {
 
         setTreasuryCertButton(i, clickable);
         if (clickable && o != null) {
@@ -947,7 +956,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
     }
 
-    private void setTreasuryCertButton(int i, boolean clickable) {
+    protected void setTreasuryCertButton(int i, boolean clickable) {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInTreasuryButton[i].setText(certInTreasury[i].getText());
@@ -958,7 +967,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         certInTreasuryButton[i].setVisible(clickable);
     }
 
-    private void setCompanyCashButton(int i, boolean clickable, PossibleAction action){
+    protected void setCompanyCashButton(int i, boolean clickable, PossibleAction action){
         boolean visible = rowVisibilityObservers[i].lastValue();
 
         if (clickable) {
@@ -972,7 +981,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             compCashButton[i].addPossibleAction(action);
     }
 
-    private void setPlayerCashButton(int i, boolean clickable, PossibleAction action){
+    protected void setPlayerCashButton(int i, boolean clickable, PossibleAction action){
 
         if (clickable) {
             playerCashButton[i].setText(playerCash[i].getText());
