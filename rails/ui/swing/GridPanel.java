@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.5 2010/03/14 12:26:59 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.6 2010/04/02 20:03:54 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -127,7 +127,7 @@ implements ActionListener, KeyListener {
         }
     }
 
-    class RowVisibility implements ViewObject {
+    public class RowVisibility implements ViewObject {
 
         private GridPanel parent;
         private ModelObject modelObject;

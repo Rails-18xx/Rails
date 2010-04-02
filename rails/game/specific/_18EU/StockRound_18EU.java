@@ -189,7 +189,7 @@ public class StockRound_18EU extends StockRound {
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
-                if (!mayPlayerBuyCompanyShare(currentPlayer, company, 1)) continue;
+                if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();

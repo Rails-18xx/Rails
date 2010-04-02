@@ -264,7 +264,7 @@ public class StockRound extends Round {
                 if (!stockSpace.isNoBuyLimit()) {
                     number = 1;
                     /* Would the player exceed the per-company share hold limit? */
-                    if (!mayPlayerBuyCompanyShare(currentPlayer, comp, number)) continue;
+                    if (!checkAgainstHoldLimit(currentPlayer, comp, number)) continue;
 
                     /* Would the player exceed the total certificate limit? */
                     if (!stockSpace.isNoCertLimit()
@@ -295,7 +295,7 @@ public class StockRound extends Round {
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
-                if (!mayPlayerBuyCompanyShare(currentPlayer, company, 1)) continue;
+                if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         certs.get(0).getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
@@ -740,14 +740,15 @@ public class StockRound extends Round {
 
             // Check if player would exceed the per-company share limit
             if (!currentSpace.isNoHoldLimit()
-                && !mayPlayerBuyCompanyShare(currentPlayer, company, shares)) {
-                errMsg =
-                        currentPlayer.getName()
-                                + LocalText.getText("WouldExceedHoldLimit");
+                && !checkAgainstHoldLimit(currentPlayer, company, shares)) {
+                errMsg = LocalText.getText("WouldExceedHoldLimit", 
+                                        currentPlayer.getName(),
+                                        GameDef.Parm.PLAYER_SHARE_LIMIT.defaultValueAsInt());
                 break;
             }
 
-            price = currentSpace.getPrice();
+            //price = currentSpace.getPrice();
+            price = getBuyPrice (action, currentSpace);
             cost = shares * price / company.getShareUnitsForSharePrice();
 
             // Check if the Player has the money.
@@ -831,6 +832,11 @@ public class StockRound extends Round {
     protected void gameSpecificChecks(Portfolio boughtFrom,
             PublicCompanyI company) {
 
+    }
+    
+    /** Allow different price setting in subclasses (i.e. 1835 Nationalisation) */
+    protected int getBuyPrice (BuyCertificate action, StockSpaceI currentSpace) {
+        return currentSpace.getPrice();
     }
 
    /**
@@ -1142,7 +1148,7 @@ public class StockRound extends Round {
                 break;
             }
             /* Check if the player has room for a share of this company */
-            if (!mayPlayerBuyCompanyShare(player, publicCompany, 1)) {
+            if (!checkAgainstHoldLimit(player, publicCompany, 1)) {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",
@@ -1363,7 +1369,7 @@ public class StockRound extends Round {
         // Over the hold limit of any company?
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
-                && !mayPlayerBuyCompanyShare(player, company, 0)) return true;
+                && !checkAgainstHoldLimit(player, company, 0)) return true;
         }
 
         return false;
@@ -1389,11 +1395,13 @@ public class StockRound extends Round {
      * company, given the "hold limit" per company, that is the percentage of
      * shares of one company that a player may hold (typically 60%).
      *
+     * @param player the buying player
      * @param company The company from which to buy
-     * @param number The number of shares (usually 1 but not always so).
+     * @param number The number of shares (usually 1 but not always so)
      * @return True if it is allowed.
      */
-    public boolean mayPlayerBuyCompanyShare(Player player, PublicCompanyI company, int number) {
+    public boolean checkAgainstHoldLimit(Player player, PublicCompanyI company, 
+            int number) {
         // Check for per-company share limit
         if (player.getPortfolio().getShare(company)
                 + number * company.getShareUnit()

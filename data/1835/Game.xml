@@ -7,7 +7,7 @@
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameParameters>
-			<PlayerShareLimit percentage="60"/>
+			<PlayerShareLimit percentage="100"/>
 			<BankPoolLimit percentage="50"/>
 			<StockRound class="rails.game.specific._1835.StockRound_1835" 
 				sequence="SellBuySell">

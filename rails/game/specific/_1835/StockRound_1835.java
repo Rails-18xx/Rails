@@ -4,7 +4,11 @@
  */
 package rails.game.specific._1835;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rails.game.*;
+import rails.game.action.BuyCertificate;
 import rails.util.LocalText;
 
 public class StockRound_1835 extends StockRound {
@@ -28,6 +32,56 @@ public class StockRound_1835 extends StockRound {
         super (aGameManager);
     }
     
+    /** Add nationalisations */
+    protected void setGameSpecificActions() {
+        if (!mayCurrentPlayerBuyAnything()) return;
+        if (companyBoughtThisTurnWrapper.getObject() != null) return;
+        
+        List<Player> otherPlayers = new ArrayList<Player>();
+        Portfolio holder;
+        CashHolder owner;
+        Player otherPlayer;
+        int price;
+        int cash = currentPlayer.getCash();
+       
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if (!company.getTypeName().equalsIgnoreCase("Major")) continue;
+            if (!company.hasFloated()) continue;
+            if (company.getPresident() != currentPlayer) continue;
+            if (currentPlayer.getPortfolio().getShare(company) >= 55) {
+                otherPlayers.clear();
+                for (PublicCertificateI cert : company.getCertificates()) {
+                    holder = (Portfolio)cert.getHolder();
+                    owner = holder.getOwner();
+                    if (owner instanceof Player) {
+                        otherPlayer = (Player) owner;
+                        if (!otherPlayers.contains(otherPlayer)) {
+                            price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
+                            if (price <= cash) {
+                                possibleActions.add(new BuyCertificate (cert, holder,
+                                    (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
+                                    1));
+                            }
+                            otherPlayers.add(otherPlayer);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean checkAgainstHoldLimit(Player player, PublicCompanyI company, int number) {
+        return true;
+    }
+
+    protected int getBuyPrice (BuyCertificate action, StockSpaceI currentSpace) {
+        int price = currentSpace.getPrice();
+        if (action.getFromPortfolio().getOwner() instanceof Player) {
+            price *= 1.5;
+        }
+        return price;
+    }
+ 
     /** Share price goes down 1 space for any number of shares sold.
      */
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
