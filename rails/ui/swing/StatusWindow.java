@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.41 2010/03/28 20:14:19 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.42 2010/04/04 22:02:53 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -33,6 +33,8 @@ public class StatusWindow extends JFrame implements ActionListener,
     protected static final String QUIT_CMD = "Quit";
 
     protected static final String SAVE_CMD = "Save";
+
+    protected static final String EXPORT_CMD = "Export";
 
     protected static final String UNDO_CMD = "Undo";
 
@@ -78,7 +80,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     private JMenuItem menuItem;
 
-    private ActionMenuItem saveItem;
+    private ActionMenuItem saveItem, exportItem;
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
@@ -108,6 +110,13 @@ public class StatusWindow extends JFrame implements ActionListener,
         saveItem.setEnabled(true);
         saveItem.setPossibleAction(new GameAction(GameAction.SAVE));
         fileMenu.add(saveItem);
+
+        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
+        exportItem.setActionCommand(EXPORT_CMD);
+        exportItem.addActionListener(this);
+        exportItem.setEnabled(true);
+        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
+        fileMenu.add(exportItem);
 
         fileMenu.addSeparator();
 
@@ -574,7 +583,9 @@ public class StatusWindow extends JFrame implements ActionListener,
             case GameAction.SAVE:
                 gameUIManager.saveGame((GameAction) executedAction);
                 break;
-
+            case GameAction.EXPORT:
+                gameUIManager.exportGame((GameAction) executedAction);
+                break;
             case GameAction.UNDO:
             case GameAction.FORCED_UNDO:
             case GameAction.REDO:

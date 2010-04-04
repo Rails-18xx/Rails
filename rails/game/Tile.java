@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.37 2010/03/28 17:05:55 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.38 2010/04/04 22:02:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -424,6 +424,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         return stations;
     }
 
+    public List<Track> getTracks() {
+        return tracks;
+    }
+    
     public Map<Integer, List<Track>> getTracksPerStationMap() {
         return tracksPerStation;
     }

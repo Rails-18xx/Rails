@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.17 2010/03/28 17:05:55 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.18 2010/04/04 22:02:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -32,6 +32,8 @@ public interface TileI {
     public String getName();
 
     public boolean hasTracks(int sideNumber);
+
+    public List<Track> getTracks();
 
     public List<Track> getTracksPerSide(int sideNumber);
 
