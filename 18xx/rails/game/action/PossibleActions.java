@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.16 2010/01/14 20:57:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.17 2010/04/04 22:02:53 stefanfrey Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -88,7 +88,8 @@ public class PossibleActions {
 
         // Save is always allowed
         if (checkedAction instanceof GameAction
-                && ((GameAction)checkedAction).getMode() == GameAction.SAVE) {
+                && (((GameAction)checkedAction).getMode() == GameAction.SAVE
+                || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
             return true;
         }
 

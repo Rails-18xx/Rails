@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.21 2010/03/11 20:38:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.22 2010/04/04 22:02:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -189,6 +189,10 @@ public class MapManager implements ConfigurableComponentI {
      */
     public MapHex[][] getHexes() {
         return hexes;
+    }
+    
+    public List<MapHex> getHexesAsList() {
+        return new ArrayList<MapHex>(mHexes.values());
     }
 
     public int getMinX() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.50 2010/03/27 18:44:24 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.51 2010/04/04 22:02:53 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -9,6 +9,9 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import org.jgrapht.graph.SimpleGraph;
+
+import rails.algorithms.*;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
@@ -33,6 +36,7 @@ implements ActionListener, KeyListener {
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
     public static final String REM_TILES_CMD = "RemainingTiles";
+    private static final String NETWORK_INFO_CMD = "NetworkInfo";
     public static final String TAKE_LOANS_CMD = "TakeLoans";
     public static final String REPAY_LOANS_CMD = "RepayLoans";
 
@@ -161,6 +165,7 @@ implements ActionListener, KeyListener {
         addCompanyInfo();
         addTrainsInfo();
         addPhasesInfo();
+        addNetworkInfo();
 
         specialMenu = new JMenu(LocalText.getText("SPECIAL"));
         specialMenu.setBackground(Color.YELLOW);
@@ -556,6 +561,46 @@ implements ActionListener, KeyListener {
         }
     }
 
+    protected void addNetworkInfo() {
+        CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+
+        JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
+        networkMenu.setEnabled(true);
+        infoMenu.add(networkMenu);
+        
+        JMenuItem item = new JMenuItem("All");
+        item.addActionListener(this);
+        item.setActionCommand(NETWORK_INFO_CMD);
+        networkMenu.add(item);
+        
+        for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
+            if (!comp.hasFloated() || comp.isClosed()) continue;
+            item = new JMenuItem(comp.getName());
+            item.addActionListener(this);
+            item.setActionCommand(NETWORK_INFO_CMD);
+            networkMenu.add(item);
+        }
+    }
+    
+    protected void executeNetworkInfo(String companyName) {
+
+        MapManager mapManager = orUIManager.getGameUIManager().getGameManager().getMapManager();
+        
+        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
+        nwGraph.generateGraph(mapManager.getHexesAsList());
+        SimpleGraph<NetworkVertex, NetworkEdge> graph;
+        graph = nwGraph.getMapGraph();
+        
+        if (!companyName.equals("All")) {
+            CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+            PublicCompanyI company = cm.getCompanyByName(companyName);
+            graph = nwGraph.getRailRoadGraph(company);
+        }
+        NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
+        NetworkGraphBuilder.optimizeGraph(graph);
+        NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
+    }
+    
     private void appendInfoText (StringBuffer b, String text) {
         if (text == null || text.length() == 0) return;
         if (b.length() > 6) b.append("<br>");
@@ -603,10 +648,12 @@ implements ActionListener, KeyListener {
             orWindow.getMapPanel().zoomIn();
         } else if (source == zoomOut) {
             orWindow.getMapPanel().zoomOut();
+        } else if (command == NETWORK_INFO_CMD) {
+            JMenuItem item = (JMenuItem)actor.getSource();
+            executeNetworkInfo(item.getText());
         } else {
             orUIManager.processAction(command, null);
         }
-
     }
 
     public int getRevenue(int orCompIndex) {

@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.97 2010/03/28 20:14:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.98 2010/04/04 22:02:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
@@ -54,7 +55,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected Bank bank;
-
+    
     // map of correctionManagers
     protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
@@ -655,6 +656,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return round;
     }
 
+    /** Stub, can be overridden in subclasses with actual actions */
+    public void newPhaseChecks (RoundI round) {
+        
+    }
+    
     public String getORId () {
         if (showCompositeORNumber) {
             return getCompositeORNumber();
@@ -766,6 +772,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     case GameAction.REDO:
                         moveStack.redoMoveSet();
                         result = true;
+                        break;
+                    case GameAction.EXPORT:
+                        result = export(gameAction);
                         break;
                     }
                     if (result) break;
@@ -932,6 +941,39 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return result;
     }
 
+    protected boolean export(GameAction exportAction) {
+        
+        String filename = exportAction.getFilepath();
+        boolean result = false;
+
+        try {
+            PrintWriter pw = new PrintWriter(filename);
+            
+            // write map information
+            MapHex[][] allHexes =mapManager.getHexes();
+            
+            for (MapHex[] hexRow:allHexes)
+                for (MapHex hex:hexRow)
+                    if (hex != null) {
+                        pw.println(hex.getName() + "," + hex.getCurrentTile().getExternalId() + "," 
+                               + hex.getCurrentTileRotation() + "," 
+                               + hex.getOrientationName(hex.getCurrentTileRotation())
+                        ) ;
+                    }
+            
+            pw.close();
+            result = true;
+            
+            
+        } catch (IOException e) {
+            log.error("Save failed", e);
+            DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+        }
+        
+        return result;
+    }
+    
+    
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#finishShareSellingRound()
      */
@@ -1431,5 +1473,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 }
         return cm;
     }
+   
 }
 
