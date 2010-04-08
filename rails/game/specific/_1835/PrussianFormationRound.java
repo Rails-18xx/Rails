@@ -30,9 +30,9 @@ public class PrussianFormationRound extends StockRound {
 
     Step step;
 
-	public static String PR_ID = StockRound_1835.PR_ID;
-    public static String M2_ID = "M2";
-
+	public static String PR_ID = GameManager_1835.PR_ID;
+    public static String M2_ID = GameManager_1835.M2_ID;
+    
     public PrussianFormationRound (GameManagerI gameManager) {
         super (gameManager);
 
@@ -187,7 +187,7 @@ public class PrussianFormationRound extends StockRound {
             if (!(M2_ID.equals(action.getFoldedCompanyNames()))) {
                 errMsg = LocalText.getText("WrongCompany",
                         action.getFoldedCompanyNames(),
-                        M2_ID);
+                        GameManager_1835.M2_ID);
                 break;
             }
             break;

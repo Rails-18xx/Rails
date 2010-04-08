@@ -26,7 +26,7 @@ public class StatusWindow_1835 extends StatusWindow {
     @Override
 	public void init (GameUIManager gameUIManager) {
         super.init(gameUIManager);
-        prussian = gameUIManager.getGameManager().getCompanyManager().getCompanyByName(StockRound_1835.PR_ID);
+        prussian = gameUIManager.getGameManager().getCompanyManager().getCompanyByName(GameManager_1835.PR_ID);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class StatusWindow_1835 extends StatusWindow {
                     LocalText.getText("Select"),
                     LocalText.getText("MergeMinorConfirm",
                             getCurrentPlayer().getName(),
-                            PrussianFormationRound.M2_ID, StockRound_1835.PR_ID),
+                            GameManager_1835.M2_ID, GameManager_1835.PR_ID),
                     "Yes",
                     "No");
         } else {
