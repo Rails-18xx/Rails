@@ -187,7 +187,6 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         iterator = new NetworkIterator(mapGraph, getVertex(hex, station));
     }
     
-    @Override
     public Iterator<NetworkVertex> iterator() {
         return iterator; 
     }
