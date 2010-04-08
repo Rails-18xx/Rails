@@ -13,15 +13,6 @@ import rails.util.LocalText;
 
 public class StockRound_1835 extends StockRound {
     
-    public static String BY_ID="Bay";
-    public static String SX_ID="Sax";
-    public static String BA_ID="Bad";
-    public static String HE_ID="Hes";
-    public static String WT_ID="Wrt";
-    public static String MS_ID="MS";
-    public static String OL_ID="Old";
-    public static String PR_ID="Pr";
-
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
      *
@@ -112,22 +103,22 @@ public class StockRound_1835 extends StockRound {
 
         // Check for group releases
         if (sharesInIPO == 0) {
-            if (name.equals(SX_ID) &&
-                ipo.getShare(companyManager.getCompanyByName(BY_ID)) == 0
-            || name.equals(BY_ID) &&
-                ipo.getShare(companyManager.getCompanyByName(SX_ID)) == 0) {
+            if (name.equals(GameManager_1835.SX_ID) &&
+                ipo.getShare(companyManager.getCompanyByName(GameManager_1835.BY_ID)) == 0
+            || name.equals(GameManager_1835.BY_ID) &&
+                ipo.getShare(companyManager.getCompanyByName(GameManager_1835.SX_ID)) == 0) {
                 // Group 1 sold out: release Badische
-                releaseCompanyShares (companyManager.getCompanyByName(BA_ID));
+                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.BA_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
-                        "All", BA_ID));
-            } else if (name.equals(BA_ID) || name.equals(WT_ID) || name.equals(HE_ID)) {
-                if (ipo.getShare(companyManager.getCompanyByName(BA_ID)) == 0
-                        && ipo.getShare(companyManager.getCompanyByName(WT_ID)) == 0
-                        && ipo.getShare(companyManager.getCompanyByName(HE_ID)) == 0) {
+                        "All", GameManager_1835.BA_ID));
+            } else if (name.equals(GameManager_1835.BA_ID) || name.equals(GameManager_1835.WT_ID) || name.equals(GameManager_1835.HE_ID)) {
+                if (ipo.getShare(companyManager.getCompanyByName(GameManager_1835.BA_ID)) == 0
+                        && ipo.getShare(companyManager.getCompanyByName(GameManager_1835.WT_ID)) == 0
+                        && ipo.getShare(companyManager.getCompanyByName(GameManager_1835.HE_ID)) == 0) {
                     // Group 2 sold out: release MS
-                    releaseCompanyShares (companyManager.getCompanyByName(MS_ID));
+                    releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.MS_ID));
                     ReportBuffer.add (LocalText.getText("SharesReleased",
-                            "All", MS_ID));
+                            "All", GameManager_1835.MS_ID));
                 }
             }
         }
@@ -136,31 +127,31 @@ public class StockRound_1835 extends StockRound {
         /* We leave out the Bayern/Sachsen connection, as the latter
          * will always be available at the start of SR1.
          */
-        if (name.equals(BA_ID)) {
+        if (name.equals(GameManager_1835.BA_ID)) {
             if (sharesInIPO == 50) {  // 50% sold: release Wurttemberg
-                releaseCompanyShares (companyManager.getCompanyByName(WT_ID));
+                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.WT_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
-                        "All", WT_ID));
+                        "All", GameManager_1835.WT_ID));
             } else if (sharesInIPO == 80) {
                 // President sold: release four 10% Prussian shares
-            	gameManager.getCompanyManager().getPublicCompany(PR_ID).setBuyable(true);
+            	gameManager.getCompanyManager().getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
                 for (int i=0; i<4; i++) {
-                    unavailable.getCertOfType(PR_ID+"_10%").moveTo(ipo);
+                    unavailable.getCertOfType(GameManager_1835.PR_ID+"_10%").moveTo(ipo);
                 }
                 ReportBuffer.add (LocalText.getText("SharesReleased",
-                        "4 10%", PR_ID));
+                        "4 10%", GameManager_1835.PR_ID));
             }
-        } else if (name.equals(WT_ID)) { //Wurttembergische
+        } else if (name.equals(GameManager_1835.WT_ID)) { //Wurttembergische
             if (sharesInIPO == 50) {  // 50% sold: release Hessische
-                releaseCompanyShares (companyManager.getCompanyByName(HE_ID));
+                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.HE_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
-                        "All", HE_ID));
+                        "All", GameManager_1835.HE_ID));
             }
-        } else if (name.equals(MS_ID)) { // Mecklenburg/Schwerin
+        } else if (name.equals(GameManager_1835.MS_ID)) { // Mecklenburg/Schwerin
             if (sharesInIPO == 40) {  // 60% sold: release Oldenburg
-                releaseCompanyShares (companyManager.getCompanyByName(OL_ID));
+                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.OL_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
-                        "All", OL_ID));
+                        "All", GameManager_1835.OL_ID));
             }
         }
     }

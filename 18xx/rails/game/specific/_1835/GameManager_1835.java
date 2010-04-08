@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.5 2010/03/28 20:14:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.6 2010/04/08 21:23:47 evos Exp $ */
 package rails.game.specific._1835;
 
 import rails.game.*;
@@ -8,6 +8,16 @@ public class GameManager_1835 extends GameManager {
 	public static String PR_NAME = PrussianFormationRound.PR_ID;
 	private RoundI previousRound = null;
 	private Player prFormStartingPlayer = null;
+    
+    public static String M2_ID = "M2";
+    public static String PR_ID = "Pr";
+    public static String OL_ID = "Old";
+    public static String MS_ID = "MS";
+    public static String WT_ID = "Wrt";
+    public static String HE_ID = "Hes";
+    public static String BA_ID = "Bad";
+    public static String SX_ID = "Sax";
+    public static String BY_ID = "Bay";
 
     public GameManager_1835() {
     	super();
