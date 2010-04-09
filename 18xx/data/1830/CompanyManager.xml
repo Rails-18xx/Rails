@@ -101,7 +101,13 @@
 			longname="Canadian Pacific Railroad">
 		<Home hex="A19"/>
 	</Company>
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<IfOption name="Variant" value="Pere Marquette">
+		<Company name="PM" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
+				longname="Pere Marquette">
+			<Home hex="E5"/>
+		</Company>
+	</IfOption>
+		<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>
