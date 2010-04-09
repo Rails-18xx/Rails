@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.40 2010/03/28 17:05:55 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.41 2010/04/09 17:49:31 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -936,6 +936,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         }
         log.debug("No tile on hex " + name);
         return false;
+    }
+
+    public boolean isUpgradeableNow(PhaseI currentPhase) {
+        return (isUpgradeableNow() & !this.getCurrentTile().getValidUpgrades(this,
+                currentPhase).isEmpty());
     }
 
     public boolean hasOffBoardValues() {

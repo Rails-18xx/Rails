@@ -180,7 +180,7 @@ public class NetworkIterator extends
     
     private void addUnseenChildrenOf(NetworkVertex vertex, VisitColor previousColor) {
 
-        if (vertex.isFullyTokened() && !vertex.hasCompanyToken(company)) return;
+        if (company != null && !vertex.canCompanyRunThrough(company)) return;
         
         for (NetworkEdge edge : graph.edgesOf(vertex)) {
             
