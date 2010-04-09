@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.39 2010/03/28 17:05:55 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.40 2010/04/09 07:20:27 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -39,6 +39,7 @@ public class GUIHex implements ViewObject {
     protected MapHex model;
     protected GeneralPath innerHexagon;
     protected static final Color highlightColor = Color.red;
+    protected static final Color upgradableColor = Color.magenta;
     protected Point center;
     /** x and y coordinates on the map */
     protected int x, y;
@@ -88,6 +89,7 @@ public class GUIHex implements ViewObject {
     static boolean useOverlay = true;
     // Selection is in-between GUI and rails.game state.
     private boolean selected;
+    private boolean selectable;
 
     protected static Logger log =
             Logger.getLogger(GUIHex.class.getPackage().getName());
@@ -223,7 +225,7 @@ public class GUIHex implements ViewObject {
         this.selected = selected;
         if (selected) {
             currentGUITile.setScale(SELECTED_SCALE);
-        } else {
+        } else if (!isSelectable()) {
             currentGUITile.setScale(NORMAL_SCALE);
             provisionalGUITile = null;
         }
@@ -231,6 +233,20 @@ public class GUIHex implements ViewObject {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+        if (selectable) {
+            currentGUITile.setScale(SELECTED_SCALE);
+        } else {
+            currentGUITile.setScale(NORMAL_SCALE);
+            provisionalGUITile = null;
+        }
+    }
+    
+    public boolean isSelectable() {
+        return selectable;
     }
 
     static boolean getAntialias() {
@@ -295,8 +311,11 @@ public class GUIHex implements ViewObject {
         }
 
         Color terrainColor = Color.WHITE;
-        if (isSelected()) {
-            g2.setColor(highlightColor);
+        if (isSelected() || isSelectable()) {
+            if (isSelected())
+                g2.setColor(highlightColor);
+            else
+                g2.setColor(upgradableColor);
             g2.fill(hexagon);
 
             g2.setColor(terrainColor);

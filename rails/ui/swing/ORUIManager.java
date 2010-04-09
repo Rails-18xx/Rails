@@ -6,7 +6,11 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.graph.SimpleGraph;
 
+import rails.algorithms.NetworkEdge;
+import rails.algorithms.NetworkGraphBuilder;
+import rails.algorithms.NetworkVertex;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
@@ -45,6 +49,7 @@ public class ORUIManager implements DialogOwner {
     private boolean tileLayingEnabled = false;
     public List<LayTile> allowedTileLays = new ArrayList<LayTile>();
     public List<TileI> tileUpgrades;
+    private List<MapHex> hexUpgrades;
 
     private boolean tokenLayingEnabled = false;
     public List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
@@ -120,6 +125,15 @@ public class ORUIManager implements DialogOwner {
         }
     }
     
+    private SimpleGraph<NetworkVertex, NetworkEdge> getCompanyGraph(){
+        MapManager mapManager = gameUIManager.getGameManager().getMapManager();
+        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
+        nwGraph.generateGraph(mapManager.getHexesAsList());
+        SimpleGraph<NetworkVertex, NetworkEdge> graph =
+            nwGraph.getRailRoadGraph(orComp);
+        return graph;
+    }
+    
     public <T extends PossibleAction> void setMapRelatedActions(List<T> actions) {
 
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
@@ -136,35 +150,66 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
+        // moved the check for finishing steps to the beginning
+        if (allowedTileLays.size() == 0 && tileLayingEnabled) {
+            /* Finish tile laying step */
+            if (selectedHex != null) {
+                selectedHex.removeTile();
+                selectedHex.setSelected(false);
+                mapPanel.getMap().repaint(selectedHex.getBounds());
+                selectedHex = null;
+            }
+            // remove selectable indications
+            for (MapHex hex:hexUpgrades) {
+                GUIHex guiHex = map.getHexByName(hex.getName());
+                guiHex.setSelectable(false);
+                mapPanel.getMap().repaint(guiHex.getBounds());
+            }
+            hexUpgrades = null;
+        }
+       
+        if (allowedTokenLays.size() == 0 && tokenLayingEnabled) {
+            /* Finish token laying step */
+            if (selectedHex != null) {
+                selectedHex.removeToken();
+                selectedHex.setSelected(false);
+                mapPanel.getMap().repaint(selectedHex.getBounds());
+                selectedHex = null;
+            }
+            // remove selectable indications
+            for (MapHex hex:hexUpgrades) {
+                GUIHex guiHex = map.getHexByName(hex.getName());
+                guiHex.setSelectable(false);
+                mapPanel.getMap().repaint(guiHex.getBounds());
+            }
+            hexUpgrades = null;
+        }
+        
         if (allowedTileLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TILE;
             mapPanel.setAllowedTileLays(allowedTileLays);
-        } else {
-            if (tileLayingEnabled) {
-                /* Finish tile laying step */
-                if (selectedHex != null) {
-                    selectedHex.removeTile();
-                    selectedHex.setSelected(false);
-                    mapPanel.getMap().repaint(selectedHex.getBounds());
-                    selectedHex = null;
+            // generate network graph to indicate the allowed tiles
+            hexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
+            for (MapHex hex:hexUpgrades) {
+                if (hex.isUpgradeableNow()){
+                    GUIHex guiHex = map.getHexByName(hex.getName());
+                    guiHex.setSelectable(true);
                 }
             }
         }
-
+        
         if (allowedTokenLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TOKEN;
             mapPanel.setAllowedTokenLays(allowedTokenLays);
-        } else {
-            if (tokenLayingEnabled) {
-                /* Finish token laying step */
-                if (selectedHex != null) {
-                    selectedHex.removeToken();
-                    selectedHex.setSelected(false);
-                    mapPanel.getMap().repaint(selectedHex.getBounds());
-                    selectedHex = null;
+            // generate network graph to indicate the token lays
+            hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), true);
+            for (MapHex hex:hexUpgrades) {
+                if (hex.hasTokenSlotsLeft()){
+                    GUIHex guiHex = map.getHexByName(hex.getName());
+                    guiHex.setSelectable(true);
                 }
             }
-        }
+        } 
         
         setLocalStep(nextSubStep);
         tileLayingEnabled = allowedTileLays.size() > 0;

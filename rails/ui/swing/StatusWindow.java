@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.42 2010/04/04 22:02:53 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.43 2010/04/09 07:20:27 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -698,7 +698,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         
         StringBuilder report = new StringBuilder();
         for (String s:gameReport) {
-            report.insert(0, s);
+            report.insert(0, s + "\n");
             JOptionPane.showMessageDialog(this, 
                     report,
                     LocalText.getText("EoGFinalRanking"),

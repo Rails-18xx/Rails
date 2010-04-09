@@ -207,6 +207,28 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapVertexes.get(hex.getName() + "." + side);
     }
 
+    public static List<MapHex> getMapHexes(Graph<NetworkVertex, NetworkEdge> graph){
+        List<MapHex> hexes = new ArrayList<MapHex>();
+        for(NetworkVertex vertex:graph.vertexSet()) {
+            if (vertex.isStation() || vertex.isSide()) {
+                hexes.add(vertex.getHex());
+            }
+        }
+        return hexes;
+    }
+    
+    public static List<MapHex> getStationHexes(Graph<NetworkVertex, NetworkEdge> graph,
+                                boolean tokenable){
+        List<MapHex> hexes = new ArrayList<MapHex>();
+        for(NetworkVertex vertex:graph.vertexSet()) {
+            if (vertex.isStation() && !(tokenable && vertex.isFullyTokened())) {
+                hexes.add(vertex.getHex());
+            }
+        }
+        return hexes;
+    }
+    
+    
     public static void optimizeGraph(Graph<NetworkVertex, NetworkEdge> graph) {
         while (removeVertexes(graph));
     }

@@ -36,7 +36,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.station = station;
         this.side = 0;
         
-        if (station.getBaseSlots() == 0){
+        String t = station.getType();
+        if (t.equals(Station.TOWN)){
             this.tokenable = false;
         } else {
             this.tokenable = true;
@@ -51,10 +52,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                     break;
                 }
             }
-            if (tokens == null)
-                this.companiesHaveToken = null;
-            else {
-                this.companiesHaveToken = new HashSet<PublicCompanyI>();
+            this.companiesHaveToken = new HashSet<PublicCompanyI>();
+            if (tokens != null) {
                 for (TokenI token:tokens) {
                     if (token instanceof BaseToken) {
                         BaseToken baseToken = (BaseToken)token;
