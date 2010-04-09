@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.6 2010/04/08 21:23:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.7 2010/04/09 21:26:11 evos Exp $ */
 package rails.game.specific._1835;
 
 import rails.game.*;
@@ -63,4 +63,15 @@ public class GameManager_1835 extends GameManager {
 	public Player getPrussianFormationStartingPlayer() {
     	return prFormStartingPlayer;
     }
+    
+    public int getPlayerCertificateLimit(Player player) {
+        int limit = playerCertificateLimit.intValue();
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if (company.getTypeName().equalsIgnoreCase("Major")
+                    && company.getPresident() == player 
+                    && player.getPortfolio().getShare(company) >= 80) limit++;
+        }
+        return limit;
+    }
+
 }
