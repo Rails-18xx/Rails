@@ -188,23 +188,81 @@ public class ORUIManager implements DialogOwner {
         if (allowedTileLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TILE;
             mapPanel.setAllowedTileLays(allowedTileLays);
-            // generate network graph to indicate the allowed tiles
-            hexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
-            for (MapHex hex:hexUpgrades) {
-                if (hex.isUpgradeableNow()){
+            // if  hexupgrades is not null, then remove indicators
+            if (hexUpgrades != null) {
+                for (MapHex hex:hexUpgrades) {
                     GUIHex guiHex = map.getHexByName(hex.getName());
-                    guiHex.setSelectable(true);
+                    guiHex.setSelectable(false);
                 }
+            }
+
+            // check actions for allowed hexes
+            boolean mapHexes = false;
+            hexUpgrades = new ArrayList<MapHex>();
+            for (LayTile layTile:allowedTileLays) {
+                switch (layTile.getType()) {
+                case (LayTile.GENERIC):
+                    mapHexes = true;
+                    break;
+                case (LayTile.SPECIAL_PROPERTY):
+                    SpecialPropertyI sp = layTile.getSpecialProperty();
+                    if (sp == null || !(sp instanceof SpecialTileLay) || 
+                            ((SpecialTileLay)sp).requiresConnection()) 
+                        break;
+                case (LayTile.LOCATION_SPECIFIC):
+                    if (layTile.getLocations() != null)
+                        hexUpgrades.addAll(layTile.getLocations());
+                }
+            }
+            
+            // standard upgrades
+            if (mapHexes) {
+                // generate network graph to indicate the allowed tiles
+                List<MapHex> mapHexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
+                for (MapHex hex:mapHexUpgrades) {
+                    if (hex.isUpgradeableNow(gameUIManager.getCurrentPhase()))
+                        hexUpgrades.add(hex);
+                }
+            }
+            
+            // activate upgrades
+            for (MapHex hex:hexUpgrades) {
+                GUIHex guiHex = map.getHexByName(hex.getName());
+                guiHex.setSelectable(true);
             }
         }
         
         if (allowedTokenLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TOKEN;
             mapPanel.setAllowedTokenLays(allowedTokenLays);
-            // generate network graph to indicate the token lays
-            hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), true);
-            for (MapHex hex:hexUpgrades) {
-                if (hex.hasTokenSlotsLeft()){
+            // if  hexupgrades is not null, then remove indicators
+            if (hexUpgrades != null) {
+                for (MapHex hex:hexUpgrades) {
+                    GUIHex guiHex = map.getHexByName(hex.getName());
+                    guiHex.setSelectable(false);
+                }
+            }
+
+            // check actions for allowed hexes
+            boolean mapHexes = false;
+            hexUpgrades = new ArrayList<MapHex>();
+            for (LayToken layToken:allowedTokenLays) {
+                SpecialPropertyI sp = layToken.getSpecialProperty();
+                if (sp == null) {
+                    mapHexes = true;
+                } else if (layToken.getLocations() != null)
+                    hexUpgrades.addAll(layToken.getLocations());
+            }
+            
+            // standard tokens
+            if (mapHexes) {
+                // generate network graph to indicate the token lays
+                hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), orComp);
+                for (LayToken layToken:allowedTokenLays) {
+                    if (layToken.getLocations() != null)
+                        hexUpgrades.addAll(layToken.getLocations());
+                }
+                for (MapHex hex:hexUpgrades) {
                     GUIHex guiHex = map.getHexByName(hex.getName());
                     guiHex.setSelectable(true);
                 }

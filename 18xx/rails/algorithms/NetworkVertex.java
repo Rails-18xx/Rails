@@ -107,13 +107,35 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public int getSide(){
         return side;
     }
-    
+    /**
+     * Checks if a vertex is fully tokened
+     * If it cannot be tokened, always returns false
+     */
     public boolean isFullyTokened(){
-        return tokenable && companiesHaveToken.size() == tokenSlots;
+        return tokenable && companiesHaveToken.size() >= tokenSlots;
     }
-
+    
+    /**
+     * Checks if a public company can pass through a vertex
+     */
+    public boolean canCompanyRunThrough(PublicCompanyI company) {
+        return !isFullyTokened() || companiesHaveToken.contains(company);
+    }
+    
+    /**
+     * Checks if a vertex contains a token of the given public company
+     */
     public boolean hasCompanyToken(PublicCompanyI company) {
         return !(company == null) && companiesHaveToken.contains(company);
+    }
+
+    /**
+     * Checks if a given company can add a token
+     * 
+     */
+    public boolean canCompanyAddToken(PublicCompanyI company) {
+        return (tokenable && companiesHaveToken.size() < tokenSlots  && company != null &&
+            !companiesHaveToken.contains(company));
     }
     
     public String printTokens(){

@@ -91,8 +91,12 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkVertex endVertex = getVertexRotated(hex, points[1]);
                 log.debug("Track: " + track);
                 NetworkEdge edge =  new NetworkEdge(startVertex, endVertex, false);
-                mapGraph.addEdge(startVertex, endVertex, edge);
-                log.debug("Added edge " + edge.getConnection());
+                if (startVertex == endVertex) {
+                    log.error("Track " + track + " on hex " + hex + "has identical start/end");
+                } else {
+                    mapGraph.addEdge(startVertex, endVertex, edge);
+                    log.debug("Added edge " + edge.getConnection());
+                }
             }
 
             // and connect to neighbouring hexes (for sides 0-2)
@@ -218,10 +222,10 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
     
     public static List<MapHex> getStationHexes(Graph<NetworkVertex, NetworkEdge> graph,
-                                boolean tokenable){
+                                PublicCompanyI company){
         List<MapHex> hexes = new ArrayList<MapHex>();
         for(NetworkVertex vertex:graph.vertexSet()) {
-            if (vertex.isStation() && !(tokenable && vertex.isFullyTokened())) {
+            if (vertex.canCompanyAddToken(company)) {
                 hexes.add(vertex.getHex());
             }
         }
