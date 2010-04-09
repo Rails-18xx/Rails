@@ -33,6 +33,7 @@ Limitations:
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
+		<Option name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
