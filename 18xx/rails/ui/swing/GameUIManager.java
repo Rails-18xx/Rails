@@ -605,25 +605,25 @@ public class GameUIManager implements DialogOwner {
     public void exportGame(GameAction exportAction) {
         JFileChooser jfc = new JFileChooser();
         String filename;
-        if (providedName != null) 
+        if (providedName != null) {
             filename = providedName;
-        else {
+        } else {
             filename = saveDirectory + "/" + gameManager.getGameName() + "_"
             + saveDateTimeFormat.format(new Date())
             + saveSuffix + ".txt";
+        }
 
-            File proposedFile = new File(filename);
-            jfc.setSelectedFile(proposedFile);
-            if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                String filepath = selectedFile.getPath();
-                saveDirectory = selectedFile.getParent();
-                if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {
-                    providedName = filepath;
-                }
-                exportAction.setFilepath(filepath);
-                processOnServer(exportAction);
+        File proposedFile = new File(filename);
+        jfc.setSelectedFile(proposedFile);
+        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            String filepath = selectedFile.getPath();
+            saveDirectory = selectedFile.getParent();
+            if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {
+                providedName = filepath;
             }
+            exportAction.setFilepath(filepath);
+            processOnServer(exportAction);
         }
     }
     
