@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.98 2010/04/04 22:02:53 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.99 2010/04/09 21:26:12 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -1179,7 +1179,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         return playerNames;
     }
 
-    public int getPlayerCertificateLimit() {
+    public int getPlayerCertificateLimit(Player player) {
         return playerCertificateLimit.intValue();
     }
 

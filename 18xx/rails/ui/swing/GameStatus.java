@@ -752,7 +752,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (i = 0; i < nc; i++) {
             setIPOCertButton(i, false);
             setPoolCertButton(i, false);
-            setPlayerCertButton (i, actorIndex, false);
+            for (j=0; j < np; j++) setPlayerCertButton (i, j, false);
             if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
         }
 

@@ -734,7 +734,7 @@ public class StockRound extends Round {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedCertLimit",
-                                        String.valueOf(gameManager.getPlayerCertificateLimit()));
+                                        String.valueOf(gameManager.getPlayerCertificateLimit(currentPlayer)));
                 break;
             }
 
@@ -1363,7 +1363,7 @@ public class StockRound extends Round {
     protected boolean isPlayerOverLimits(Player player) {
 
         // Over the total certificate hold Limit?
-        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit())
+        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit(player))
             return true;
 
         // Over the hold limit of any company?
@@ -1385,7 +1385,7 @@ public class StockRound extends Round {
     public boolean mayPlayerBuyCertificate(Player player, PublicCompanyI comp, int number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
-        if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit())
+        if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit(player))
             return false;
         return true;
     }

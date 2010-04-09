@@ -9,7 +9,6 @@ import rails.game.action.PossibleAction;
 import rails.game.correct.CorrectionManagerI;
 import rails.game.correct.CorrectionType;
 import rails.game.model.ModelObject;
-import rails.game.move.AddToList;
 import rails.game.move.MoveStack;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
@@ -169,7 +168,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public String getGameName ();
     public String getGameOption (String key);
 
-    public int getPlayerCertificateLimit();
+    public int getPlayerCertificateLimit(Player player);
     public void setPlayerCertificateLimit(int newLimit);
     public ModelObject getPlayerCertificateLimitModel ();
 
