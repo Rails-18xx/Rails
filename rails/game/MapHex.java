@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.41 2010/04/09 17:49:31 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.42 2010/04/11 15:49:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -89,7 +89,18 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
      * changed to state variable to fix undo bug #2954645 
      * null as default implies false - see isBlocked()
      */
-    private BooleanState isBlockedState = null; 
+    private BooleanState isBlockedForTileLays = null;
+    
+    /** 
+     * Is the hex initially blocked for token lays (e.g. when a home base
+     * must first be laid)? <p>
+     * NOTE:<br>null means: blocked unless there is more free space than unlaid home bases,<br>
+     * false means: blocked unless there is any free space.<br>
+     * This makes a difference for 1835 Berlin, which is home to PR, but 
+     * the absence of a PR token does not block the third slot 
+     * when the green tile is laid. 
+     */
+    private BooleanState isBlockedForTokenLays = null;
 
     protected Map<PublicCompanyI, City> homes;
     protected List<PublicCompanyI> destinations;
@@ -176,6 +187,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         cityName = tag.getAttributeAsString("city", "");
         if (Util.hasValue(cityName)) {
         	infoText += " " + cityName;
+        }
+        
+        if (tag.getAttributeAsString("unlaidHomeBlocksTokens") != null) {
+            setBlockedForTokenLays(tag.getAttributeAsBoolean("unlaidHomeBlocksTokens", false));
         }
 
     }
@@ -728,6 +743,15 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         } else {
             token.moveTo(city);
             update();
+            
+            if (isHomeFor(company) 
+                    && isBlockedForTokenLays != null 
+                    && isBlockedForTokenLays.booleanValue()) {
+                // Assume that there is only one home base on such a tile,
+                // so we don't need to check for other ones
+                isBlockedForTokenLays.set(false);
+            }
+            
             return true;
         }
     }
@@ -881,7 +905,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         return homes;
     }
 
-    public boolean isHome(PublicCompanyI company) {
+    public boolean isHomeFor(PublicCompanyI company) {
         boolean result = homes != null && homes.get(company) != null;
         return result;
     }
@@ -901,27 +925,27 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     }
 
     /**
-     * @return Returns the isBlocked.
+     * @return Returns false if no tiles may yet be laid on this hex.
      */
-    public boolean isBlocked() {
-        if (isBlockedState == null)
+    public boolean isBlockedForTileLays() {
+        if (isBlockedForTileLays == null)
             return false;
         else
-            return isBlockedState.booleanValue();
+            return isBlockedForTileLays.booleanValue();
     }
 
     /**
      * @param isBlocked The isBlocked to set (state variable)
      */
-    public void setBlocked(boolean isBlocked) {
-        if (isBlockedState == null)
-            isBlockedState = new BooleanState("isBlocked", isBlocked);
+    public void setBlockedForTileLays(boolean isBlocked) {
+        if (isBlockedForTileLays == null)
+            isBlockedForTileLays = new BooleanState(name+"_IsBlockedForTileLays", isBlocked);
         else
-            isBlockedState.set(isBlocked);
+            isBlockedForTileLays.set(isBlocked);
     }
 
     public boolean isUpgradeableNow() {
-        if (isBlocked()) {
+        if (isBlockedForTileLays()) {
             log.debug("Hex " + name + " is blocked");
             return false;
         }
@@ -941,6 +965,45 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public boolean isUpgradeableNow(PhaseI currentPhase) {
         return (isUpgradeableNow() & !this.getCurrentTile().getValidUpgrades(this,
                 currentPhase).isEmpty());
+    }
+
+    /**
+     * @return Returns false if no base tokens may yet be laid on this hex and station.
+     * NOTE: this method currently only checks for prohibitions caused
+     * by the presence of unlaid hoem base tokens.
+     * It does NOT (yet) check for free space.
+     */
+    public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
+        if (isHomeFor(company))
+            // Company can always lay a home base
+            return false;
+        else if (isBlockedForTokenLays != null) {
+            // if true: token lay blocked because a required home base is not yet laid
+            // if false: token lay allowed if there is any free space
+            // Free space is not checked here (yet)
+            return isBlockedForTokenLays.booleanValue();
+        } else if (homes != null && !homes.isEmpty()) {
+            // Check if this token lay does not block an unlaid home base
+            for (City city : homes.values()) {
+                if (cityNumber == city.getNumber()
+                        // Assume that a city is never home to more than one company
+                        && city.getTokens().isEmpty()
+                        && city.getTokenSlotsLeft() < 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param isBlocked The isBlocked to set (state variable)
+     */
+    public void setBlockedForTokenLays(boolean isBlocked) {
+        if (isBlockedForTokenLays == null)
+            isBlockedForTokenLays = new BooleanState(name+"_IsBlockedForTokenLays", isBlocked);
+        else
+            isBlockedForTokenLays.set(isBlocked);
     }
 
     public boolean hasOffBoardValues() {

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.121 2010/03/28 20:14:20 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.122 2010/04/11 15:49:47 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -515,6 +515,11 @@ public class OperatingRound extends Round implements Observer {
                 errMsg = LocalText.getText("HasNoTokensLeft", companyName);
                 break;
             }
+            
+            if (!isTokenLayAllowed (operatingCompany, hex, station)) {
+                errMsg = LocalText.getText("BaseTokenSlotIsReserved");
+                break;
+            }
 
             if (!hex.hasTokenSlotsLeft(station)) {
                 errMsg = LocalText.getText("CityHasNoEmptySlots");
@@ -533,7 +538,7 @@ public class OperatingRound extends Round implements Observer {
                                 companyName );
                 break;
             }
-
+            
             if (action != null) {
                 List<MapHex> locations = action.getLocations();
                 if (locations != null && locations.size() > 0
@@ -2502,6 +2507,42 @@ public class OperatingRound extends Round implements Observer {
      */
     protected boolean isBelowTrainLimit() {
         return operatingCompany.getNumberOfTrains() < operatingCompany.getCurrentTrainLimit();
+    }
+
+    /** Reports if a tile lay is allowed by a certain company on a certain hex
+     * <p>
+     * This method can be used both in retricting possible actions
+     * and in validating submitted actions.
+     * <p> Currently, only a few standard checks are included.
+     * This method can be extended to perform other generic checks, 
+     * such as if a route exists, 
+     * and possibly in subclasses for game-specific checks.
+     * @param company The company laying a tile.
+     * @param hex The hex on which a tile is laid.
+     * @param orientation The orientation in which the tile is laid (-1 is any).
+     */
+    protected boolean isTileLayAllowed (PublicCompanyI company,
+            MapHex hex, int orientation) {
+        return !hex.isBlockedForTileLays();
+    }
+
+    /** Reports if a token lay is allowed by a certain company on a certain hex and city
+     * <p> 
+     * This method can be used both in retricting possible actions
+     * and in validating submitted actions.
+     * <p> Currently, only a few standard checks are included.
+     * This method can be extended to perform other generic checks, 
+     * such as if a route exists, 
+     * and possibly in subclasses for game-specific checks.
+     *  
+     * @param company The company laying a tile.
+     * @param hex The hex on which a tile is laid.
+     * @param station The number of the station/city on which the token 
+     * is to be laid (0 if any or immaterial).
+     */
+    protected boolean isTokenLayAllowed (PublicCompanyI company,
+            MapHex hex, int station) {
+        return !hex.isBlockedForTokenLays(company, station);
     }
 
     /**

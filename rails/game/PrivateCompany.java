@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.39 2010/03/21 17:43:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.40 2010/04/11 15:49:47 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             for (String hexName : blockedHexesString.split(",")) {
                 MapHex hex = mapManager.getHex(hexName);
                 blockedHexes.add(hex);
-                hex.setBlocked(true);
+                hex.setBlockedForTileLays(true);
             }
         }
 
@@ -287,7 +287,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected void unblockHexes() {
         if (blockedHexes != null) {
             for (MapHex hex : blockedHexes) {
-                hex.setBlocked(false);
+                hex.setBlockedForTileLays(false);
             }
         }
     }
