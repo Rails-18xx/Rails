@@ -70,6 +70,7 @@ public class OperatingRound_1835 extends OperatingRound {
         return result;
     }
 
+    /*
     public boolean layBaseToken(LayBaseToken action) {
 
         // No tokens may be laid on the BA home hex before BA has done so  
@@ -89,6 +90,7 @@ public class OperatingRound_1835 extends OperatingRound {
             return super.layBaseToken(action);
         }
     }
+     */
     
     protected void newPhaseChecks() {
         PhaseI phase = getCurrentPhase();

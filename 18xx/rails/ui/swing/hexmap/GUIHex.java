@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.40 2010/04/09 07:20:27 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.41 2010/04/11 15:49:47 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -358,7 +358,7 @@ public class GUIHex implements ViewObject {
             }
         }
 
-        if (getHexModel().isBlocked()) {
+        if (getHexModel().isBlockedForTileLays()) {
             List<PrivateCompanyI> privates =
                     GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompanyI p : privates) {

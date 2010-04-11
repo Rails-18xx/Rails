@@ -33,7 +33,7 @@
 	<Hex name="E13" tile="0"/>
 	<Hex name="E15" tile="0" cost="50"/>
 	<Hex name="E17" tile="0"/>
-	<Hex name="E19" tile="-806" city="Berlin"/>
+	<Hex name="E19" tile="-806" city="Berlin" unlaidHomeBlocksTokens="no"/>
 	<Hex name="E21" tile="-143" orientation="3"/>
 	<Hex name="F4" tile="-1"/>
 	<Hex name="F6" tile="-1"/>
@@ -92,7 +92,7 @@
 	<Hex name="K15" tile="0" cost="70"/>
 	<Hex name="L2" tile="-1"/>
 	<Hex name="L4" tile="0"/>
-	<Hex name="L6" tile="-807" city="Ludwigshafen/Mannheim"/>
+	<Hex name="L6" tile="-807" city="Ludwigshafen/Mannheim" unlaidHomeBlocksTokens="yes"/>
 	<Hex name="L8" tile="-2"/>
 	<Hex name="L10" tile="0"/>
 	<Hex name="L12" tile="0"/>
