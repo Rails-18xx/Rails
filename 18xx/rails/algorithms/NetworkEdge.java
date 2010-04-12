@@ -6,12 +6,25 @@ public final class NetworkEdge {
 
     private final NetworkVertex target;
     
-    private final boolean autoEdge;
+    private final boolean greedy;
     
-    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean autoEdge) {
+    private final int distance;
+    
+    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy) {
         this.source = source;
         this.target = target;
-        this.autoEdge = autoEdge;
+        this.greedy = greedy;
+        if (greedy)
+            this.distance = 1;
+        else
+            this.distance = 0;
+    }
+    
+    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy, int distance) {
+        this.source = source;
+        this.target = target;
+        this.greedy = greedy;
+        this.distance = distance;
     }
     
     public NetworkVertex getSource() {
@@ -22,10 +35,14 @@ public final class NetworkEdge {
         return target;
     }
 
-    public boolean isAutoEdge() {
-        return autoEdge;
+    public boolean isGreedy() {
+        return greedy;
     }
   
+    public int getDistance() {
+        return distance;
+    }
+    
     public String getConnection() {
       return source + " - >" + target;
     }
@@ -33,9 +50,10 @@ public final class NetworkEdge {
     @Override
     // set to "" to faciltate visual graph
     public String toString() {
-        if (!autoEdge)
-            return "***";
+        if (!greedy)
+            return "*** / " + distance;
         else
-          return "";
+          return "" + distance;
     }
+    
 }
