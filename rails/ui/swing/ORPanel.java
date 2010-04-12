@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.51 2010/04/04 22:02:53 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.52 2010/04/12 17:37:33 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -583,22 +583,59 @@ implements ActionListener, KeyListener {
     }
     
     protected void executeNetworkInfo(String companyName) {
-
-        MapManager mapManager = orUIManager.getGameUIManager().getGameManager().getMapManager();
+        GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
+        MapManager mapManager = gm.getMapManager();
         
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
         SimpleGraph<NetworkVertex, NetworkEdge> graph;
         graph = nwGraph.getMapGraph();
         
-        if (!companyName.equals("All")) {
-            CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+        if (companyName.equals("All")) {
+            NetworkGraphBuilder.visualize(graph, "Map Network");
+            NetworkGraphBuilder.optimizeGraph(graph);
+            NetworkGraphBuilder.visualize(graph, "Optimized Map Network");
+        } else {
+            CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getCompanyByName(companyName);
             graph = nwGraph.getRailRoadGraph(company);
+
+            NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
+            NetworkGraphBuilder.optimizeGraph(graph);
+            NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
+
+            // revenue calculation example
+            RevenueAdapter ra = new RevenueAdapter(graph);
+            
+            // get trains
+            company.getPortfolio().getTrainList();
+            for (TrainI train:company.getPortfolio().getTrainList())
+                ra.addTrain(train);
+            
+            boolean anotherTrain = true;
+            while (anotherTrain) {
+                // create results
+                ra.populateRevenueCalculator(company, gm.getCurrentPhase());
+                log.info("Revenue Adapter:" + ra);
+                
+                int revenueValue = ra.calculateRevenue();
+                log.info("Revenue Value:" + revenueValue);
+                log.info("Revenue run:" + ra.getOptimalRun());
+                JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
+                        "\n RevenueRun = " + ra.getOptimalRun());
+
+                String trainsToAdd =
+                    JOptionPane.showInputDialog(orWindow, "Another train",
+                    "Add another train to run?",
+                    JOptionPane.QUESTION_MESSAGE);
+                if (trainsToAdd.equals("")) {
+                    anotherTrain = false;
+                } else {
+                    ra.addTrainByString(trainsToAdd);
+                    ra.refreshRevenueCalculator();
+                }
+            }
         }
-        NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
-        NetworkGraphBuilder.optimizeGraph(graph);
-        NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
     }
     
     private void appendInfoText (StringBuffer b, String text) {

@@ -253,9 +253,10 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkEdge[] edges = graph.edgesOf(vertex).toArray(new NetworkEdge[2]);
                 NetworkVertex firstVertex = Graphs.getOppositeVertex(graph, edges[0], vertex);
                 NetworkVertex secondVertex = Graphs.getOppositeVertex(graph, edges[1], vertex);
-                boolean autoEdge = edges[0].isAutoEdge() || edges[1].isAutoEdge();
+                boolean greedy = edges[0].isGreedy() || edges[1].isGreedy();
+                int distance = edges[0].getDistance() + edges[1].getDistance();
                 graph.addEdge(firstVertex, secondVertex,
-                        new NetworkEdge(firstVertex, secondVertex, autoEdge));
+                        new NetworkEdge(firstVertex, secondVertex, greedy, distance));
                 // remove vertex
                 graph.removeVertex(vertex);
                 removed = true;

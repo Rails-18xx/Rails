@@ -7,6 +7,7 @@ import java.util.Set;
 import rails.game.BaseToken;
 import rails.game.City;
 import rails.game.MapHex;
+import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
 import rails.game.TokenI;
@@ -96,6 +97,19 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return type == VertexType.HQ;
     }
 
+    public boolean isTownType(){
+        return isStation() && station.getType().equals(Station.TOWN);
+    }
+
+    public boolean isCityType(){
+        return isStation() && 
+            (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA));
+    }
+    
+    public boolean isOffBoardType() {
+        return isStation() && station.getType().equals(Station.OFF_MAP_AREA);
+    }
+    
     public MapHex getHex(){
         return hex;
     }
@@ -107,6 +121,17 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public int getSide(){
         return side;
     }
+    
+    public int getValue(PhaseI phase){
+        if (isOffBoardType()) {
+            return hex.getCurrentOffBoardValue(phase);
+        } else if (isStation()) {
+            return station.getValue();
+        } else {
+            return 0;
+        }
+    }
+    
     /**
      * Checks if a vertex is fully tokened
      * If it cannot be tokened, always returns false

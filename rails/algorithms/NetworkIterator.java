@@ -184,7 +184,7 @@ public class NetworkIterator extends
         
         for (NetworkEdge edge : graph.edgesOf(vertex)) {
             
-            if (previousColor == VisitColor.WHITE || edge.isAutoEdge()) {  
+            if (previousColor == VisitColor.WHITE || edge.isGreedy()) {  
 
                 NetworkVertex oppositeV = Graphs.getOppositeVertex(graph, edge, vertex);
                 if (isSeenVertex(oppositeV)) {
@@ -206,7 +206,7 @@ public class NetworkIterator extends
     /** copy of standard dfs */
     private void encounterVertex(NetworkVertex vertex, NetworkEdge edge) {
         VisitColor color = VisitColor.WHITE;
-        if (vertex.isSide() && !edge.isAutoEdge())
+        if (vertex.isSide() && !edge.isGreedy())
             color = VisitColor.YELLOW;
         putSeenData(vertex, color);
         stack.add(vertex);
