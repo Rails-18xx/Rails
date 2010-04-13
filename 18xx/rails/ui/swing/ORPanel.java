@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.52 2010/04/12 17:37:33 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.53 2010/04/13 23:21:13 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.Graph;
 
 import rails.algorithms.*;
 import rails.common.GuiDef;
@@ -588,25 +588,33 @@ implements ActionListener, KeyListener {
         
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
-        SimpleGraph<NetworkVertex, NetworkEdge> graph;
-        graph = nwGraph.getMapGraph();
+        Graph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
         
         if (companyName.equals("All")) {
-            NetworkGraphBuilder.visualize(graph, "Map Network");
-            NetworkGraphBuilder.optimizeGraph(graph);
-            NetworkGraphBuilder.visualize(graph, "Optimized Map Network");
+            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
+            mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+            NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getCompanyByName(companyName);
-            graph = nwGraph.getRailRoadGraph(company);
+            Graph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
 
             NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
-            NetworkGraphBuilder.optimizeGraph(graph);
+            graph = NetworkGraphBuilder.optimizeGraph(graph);
             NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
 
             // revenue calculation example
-            RevenueAdapter ra = new RevenueAdapter(graph);
-            
+            mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+            RevenueAdapter ra = new RevenueAdapter(mapGraph);
+            // set tokens
+            List<TokenI> tokens = company.getTokens();
+            for (TokenI token:tokens){
+                NetworkVertex vertex = nwGraph.getVertex(token);
+                if (vertex != null) ra.addStartVertex(vertex);
+            }
+            // run on railroad graph, does not work so far, thus use map graph
+            // RevenueAdapter ra = new RevenueAdapter(graph);
+
             // get trains
             company.getPortfolio().getTrainList();
             for (TrainI train:company.getPortfolio().getTrainList())
@@ -615,9 +623,10 @@ implements ActionListener, KeyListener {
             boolean anotherTrain = true;
             while (anotherTrain) {
                 // create results
+//                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"));
                 ra.populateRevenueCalculator(company, gm.getCurrentPhase());
+                ra.activateRevenuePrediction();
                 log.info("Revenue Adapter:" + ra);
-                
                 int revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
                 log.info("Revenue run:" + ra.getOptimalRun());
@@ -628,7 +637,7 @@ implements ActionListener, KeyListener {
                     JOptionPane.showInputDialog(orWindow, "Another train",
                     "Add another train to run?",
                     JOptionPane.QUESTION_MESSAGE);
-                if (trainsToAdd.equals("")) {
+                if (trainsToAdd == null || trainsToAdd.equals("")) {
                     anotherTrain = false;
                 } else {
                     ra.addTrainByString(trainsToAdd);

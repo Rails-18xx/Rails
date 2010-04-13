@@ -6,7 +6,7 @@ public final class NetworkEdge {
 
     private final NetworkVertex target;
     
-    private final boolean greedy;
+    private boolean greedy;
     
     private final int distance;
     
@@ -39,6 +39,10 @@ public final class NetworkEdge {
         return greedy;
     }
   
+    public void setGreedy(boolean greedy) {
+       this.greedy = greedy;
+    }
+    
     public int getDistance() {
         return distance;
     }
