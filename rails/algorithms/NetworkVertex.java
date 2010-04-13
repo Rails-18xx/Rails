@@ -1,5 +1,7 @@
 package rails.algorithms;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,15 +29,23 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     private final Station station;
     private final int side;
     
+    private PhaseI phase;
+    
     private boolean tokenable;
     private Set<PublicCompanyI> companiesHaveToken;
     private int tokenSlots;
 
     public NetworkVertex(MapHex hex, Station station) {
+        this(hex, station, null);
+    }
+    
+    public NetworkVertex(MapHex hex, Station station, PhaseI phase) {
         this.type = VertexType.STATION;
         this.hex = hex;
         this.station = station;
         this.side = 0;
+        
+        this.phase = phase;
         
         String t = station.getType();
         if (t.equals(Station.TOWN)){
@@ -70,6 +80,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.hex = hex;
         this.station = null;
         this.side = (side % 6);
+        
+        this.phase = null;
         this.tokenable = false;
         this.companiesHaveToken = null;
         this.tokenSlots = 0;
@@ -80,6 +92,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.hex = null;
         this.station = null;
         this.side = 0;
+        
+        this.phase = null;
         this.tokenable = false;
         this.companiesHaveToken = null;
         this.tokenSlots = 0;
@@ -130,6 +144,18 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         } else {
             return 0;
         }
+    }
+    
+    public int getValue() {
+        return getValue(this.phase);
+    }
+
+    public PhaseI getPhase(){
+        return phase;
+    }
+    
+    public void setPhase(PhaseI phase){
+        this.phase = phase;
     }
     
     /**
@@ -198,6 +224,21 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     
     public int compareTo(NetworkVertex otherVertex) {
         return this.getIdentifier().compareTo(otherVertex.getIdentifier());
+    }
+    
+    public static final class ValueOrder implements Comparator<NetworkVertex> {
+        
+        public int compare(NetworkVertex vA, NetworkVertex vB) {
+            int result = -((Integer)vA.getValue()).compareTo(vB.getValue()); // compare by value, descending
+            if (result == 0)
+                result = vA.compareTo(vB); // otherwise use natural ordering
+            return result;
+        }
+    }
+
+    public static void setPhaseForAll(Collection<NetworkVertex> vertexes, PhaseI phase) {
+        for (NetworkVertex v:vertexes)
+            v.setPhase(phase);
     }
     
 }

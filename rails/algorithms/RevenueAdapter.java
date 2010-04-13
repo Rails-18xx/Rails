@@ -1,6 +1,8 @@
 package rails.algorithms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ public class RevenueAdapter {
     
     private List<NetworkVertex> vertexes;
     private List<NetworkEdge> edges;
+    private List<NetworkVertex> startVertexes;
     private List<NetworkTrain> trains;
     
     public RevenueAdapter(Graph<NetworkVertex, NetworkEdge> graph){
@@ -29,6 +32,7 @@ public class RevenueAdapter {
         this.vertexes = new ArrayList<NetworkVertex>(graph.vertexSet());
         this.edges = new ArrayList<NetworkEdge>(graph.edgeSet());
         this.trains = new ArrayList<NetworkTrain>();
+        this.startVertexes = new ArrayList<NetworkVertex>();
     }
     
     public void initRevenueCalculator(){
@@ -47,23 +51,62 @@ public class RevenueAdapter {
         rc = null;
     }
     
+    
+    private int[] revenueList(List<NetworkVertex> vertexes, int maxLength) {
+        Collections.sort(vertexes, new NetworkVertex.ValueOrder());
+        
+        int[] revenue = new int[maxLength + 1];
+        revenue[0] = 0;
+        for (int j=1; j <= maxLength; j++) {
+            revenue[j] = revenue[j-1] + vertexes.get(j-1).getValue();
+        }
+        
+        return revenue;
+    }
+    
+    public void activateRevenuePrediction() {
+        
+        // separate vertexes
+        List<NetworkVertex> cities = new ArrayList<NetworkVertex>();
+        List<NetworkVertex> towns = new ArrayList<NetworkVertex>();
+        for (NetworkVertex vertex: vertexes) {
+            if (vertex.isCityType()) cities.add(vertex);
+            if (vertex.isTownType()) towns.add(vertex);
+        }
+        
+        // check train lengths
+        int maxCityLength = 0, maxTownLength = 0;
+        for (NetworkTrain train: trains) {
+            maxCityLength = Math.max(maxCityLength, train.getCities());
+            maxTownLength = Math.max(maxTownLength, train.getTowns());
+        }
+        
+        // get max revenue results
+        int[] maxCityRevenues = revenueList(cities, maxCityLength);
+        int[] maxTownRevenues = revenueList(towns, maxTownLength);
+
+        // set revenue results in revenue calculator
+        rc.setPredictionData(maxCityRevenues, maxTownRevenues);
+    }
+    
+    
     public void populateRevenueCalculator(PublicCompanyI company, PhaseI phase){
         if (rc == null) initRevenueCalculator();
-        
+
         // set vertexes
+
+        // Define ordering on vertexes by value
+        NetworkVertex.setPhaseForAll(vertexes, phase);
+        Collections.sort(vertexes, new NetworkVertex.ValueOrder());
+        
         for (int id=0; id < vertexes.size(); id++){ 
             NetworkVertex v = vertexes.get(id);
             if (v.isHQ()) {
-            // HQ is not added to list, but used to assign startVertexes 
-                List<NetworkVertex> hqNeighbors = Graphs.neighborListOf(graph, v);
-                int[] startVertexes = new int[hqNeighbors.size()];
-                for (int j=0; j < hqNeighbors.size(); j++) {
-                    startVertexes[j] = vertexes.lastIndexOf(hqNeighbors.get(j));
-                }
-                rc.setStartVertexes(startVertexes);
+            // HQ is not added to list, but used to assign startVertexes
+                startVertexes.addAll(Graphs.neighborListOf(graph, v));
             } else {
                 // prepare values
-                int value = v.getValue(phase);
+                int value = v.getValue();
                 boolean city = v.isCityType();
                 boolean town = v.isTownType();
                 int j = 0, e[] = new int[maxNeighbors];
@@ -74,11 +117,21 @@ public class RevenueAdapter {
                         }
                     }
                 }
+                // sort by value order
+                Arrays.sort(e, 0, j);
                 e[j] = -1; // stop 
                 rc.setVertex(id, value, city, town, e);
             }
         }
-            
+
+        // set startVertexes
+        int[] sv = new int[startVertexes.size()];
+        for (int j=0; j < startVertexes.size(); j++) {
+            sv[j] = vertexes.lastIndexOf(startVertexes.get(j));
+        }
+        Arrays.sort(sv); // sort by value order 
+        rc.setStartVertexes(sv);
+
         // set edges
         for (int id=0; id < edges.size(); id++) {
             // prepare values
@@ -114,8 +167,10 @@ public class RevenueAdapter {
         int multiplyTowns = railsTrain.getTownScoreFactor();
         String trainName = railsTrain.getName();
         
-        NetworkTrain networkTrain = new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns, trainName); 
-        trains.add(networkTrain);
+        if (cities > 0 || towns > 0) { // protection against pullman
+            NetworkTrain networkTrain = new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns, trainName); 
+            trains.add(networkTrain);
+        }
     }
     
     public void addTrainByString(String trainString) {
@@ -144,6 +199,10 @@ public class RevenueAdapter {
         }
         NetworkTrain networkTrain = new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns, t); 
         trains.add(networkTrain);
+    }
+    
+    public void addStartVertex(NetworkVertex v) {
+        startVertexes.add(v);
     }
     
     public Map<NetworkTrain, List<NetworkVertex>> getOptimalRun() {

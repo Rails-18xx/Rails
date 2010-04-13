@@ -23,6 +23,18 @@ public final class NetworkTrain {
         rc.setTrain(trainId, cities, towns, townsCostNothing, multiplyCities, multiplyTowns);
     }
 
+    int getCities(){
+        return cities;
+    }
+    
+    int getTowns() {
+        return towns;
+    }
+    
+    int calculateRevenue(int[] cityValues, int[] townValues) {
+        return cityValues[cities] * multiplyCities + townValues[towns] * multiplyTowns; 
+    }
+    
     public String toString() {
         return trainName;
     }

@@ -19,6 +19,7 @@ import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.Subgraph;
 
@@ -162,13 +163,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
         
         for (TokenI token:tokens){
-            if (!(token instanceof BaseToken)) continue;
-            TokenHolder holder = token.getHolder();
-            if (!(holder instanceof City)) continue;
-            City city = (City)holder;
-            MapHex hex = city.getHolder();
-            Station station = city.getRelatedStation();
-            NetworkVertex vertex = getVertex(hex, station);
+            NetworkVertex vertex = getVertex(token);
+            if (vertex == null) continue;
             vertexes.add(vertex);
             // add connection to graph
             graph.addVertex(vertex);
@@ -193,6 +189,16 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     
     public Iterator<NetworkVertex> iterator() {
         return iterator; 
+    }
+    
+    public NetworkVertex getVertex(TokenI token) {
+        if (!(token instanceof BaseToken)) return null;
+        TokenHolder holder = token.getHolder();
+        if (!(holder instanceof City)) return null;
+        City city = (City)holder;
+        MapHex hex = city.getHolder();
+        Station station = city.getRelatedStation();
+        return getVertex(hex, station);
     }
     
     private NetworkVertex getVertex(MapHex hex, Station station) {
@@ -233,8 +239,25 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
     
     
-    public static void optimizeGraph(Graph<NetworkVertex, NetworkEdge> graph) {
+    public static Graph<NetworkVertex, NetworkEdge> optimizeGraph(Graph<NetworkVertex, NetworkEdge> graph) {
+        
+        // convert graph
+//        Graph<NetworkVertex, NetworkEdge> graph = new Multigraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
+//        Graphs.addGraph(graph, graphIn);
+        
+        // increase greedness
+        for (NetworkEdge edge:graph.edgeSet()) {
+            NetworkVertex source = edge.getSource();
+            NetworkVertex target = edge.getTarget();
+            if ((source.isSide() && graph.edgesOf(source).size() == 2 || source.isStation()) &&
+                    target.isSide() && graph.edgesOf(target).size() == 2 || target.isStation()) {
+                edge.setGreedy(true);
+            }
+        }
+      
         while (removeVertexes(graph));
+        
+        return graph;
     }
     
     /** remove deadend and vertex with only two edges */ 
@@ -242,25 +265,45 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         
         boolean removed = false;
         for (NetworkVertex vertex:graph.vertexSet()) {
-            if (!vertex.isSide()) continue;
+            Set<NetworkEdge> vertexEdges = graph.edgesOf(vertex);
             
-            if (graph.edgesOf(vertex).size() == 1) { 
+            // remove singletons
+            if (vertexEdges.size() == 0) {
                 graph.removeVertex(vertex);
                 removed = true;
                 break;
-            } else  if (graph.edgesOf(vertex).size() == 2) { // vertex is not necessary
-                // reconnect
-                NetworkEdge[] edges = graph.edgesOf(vertex).toArray(new NetworkEdge[2]);
-                NetworkVertex firstVertex = Graphs.getOppositeVertex(graph, edges[0], vertex);
-                NetworkVertex secondVertex = Graphs.getOppositeVertex(graph, edges[1], vertex);
-                boolean greedy = edges[0].isGreedy() || edges[1].isGreedy();
-                int distance = edges[0].getDistance() + edges[1].getDistance();
-                graph.addEdge(firstVertex, secondVertex,
-                        new NetworkEdge(firstVertex, secondVertex, greedy, distance));
-                // remove vertex
+            }
+            
+            // the following only for side vertexes
+            if (!vertex.isSide()) continue;
+
+            if (vertexEdges.size() == 1) { 
                 graph.removeVertex(vertex);
                 removed = true;
                 break;
+            } else  if (vertexEdges.size() == 2) { // vertex is not necessary
+                NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
+                if (edges[0].isGreedy() == edges[1].isGreedy()) {
+                    if (!edges[0].isGreedy()) {
+                        // two non greedy edges indicate a deadend
+                        graph.removeVertex(vertex);
+                        removed = true;
+                        break;
+                    } 
+                    // greedy case:
+                    NetworkVertex firstVertex = Graphs.getOppositeVertex(graph, edges[0], vertex);
+                    NetworkVertex secondVertex = Graphs.getOppositeVertex(graph, edges[1], vertex);
+                    // merge greed edges if the vertexes are not already connected
+                    if (edges[0].isGreedy() && !graph.containsEdge(firstVertex, secondVertex)) {
+                        int distance = edges[0].getDistance() + edges[1].getDistance();
+                        graph.addEdge(firstVertex, secondVertex,
+                                new NetworkEdge(firstVertex, secondVertex, true, distance));
+                        // remove vertex
+                        graph.removeVertex(vertex);
+                        removed = true;
+                        break;
+                    }
+                }
             }
         }     
         return removed;
