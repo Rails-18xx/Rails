@@ -1,0 +1,5 @@
+Author: Phil Davies
+3 players
+State: in progress
+Date: 2010-04-10
+Rails 1.2
