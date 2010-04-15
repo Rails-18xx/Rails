@@ -21,7 +21,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
     private String cgrName = PublicCompany_CGR.NAME;
     private PublicCompany_CGR cgr
-        = (PublicCompany_CGR)gameManager.getCompanyManager().getCompanyByName(cgrName);
+        = (PublicCompany_CGR)gameManager.getCompanyManager().getPublicCompany(cgrName);
     private List<TrainI> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;

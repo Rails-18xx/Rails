@@ -104,19 +104,19 @@ public class StockRound_1835 extends StockRound {
         // Check for group releases
         if (sharesInIPO == 0) {
             if (name.equals(GameManager_1835.SX_ID) &&
-                ipo.getShare(companyManager.getCompanyByName(GameManager_1835.BY_ID)) == 0
+                ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BY_ID)) == 0
             || name.equals(GameManager_1835.BY_ID) &&
-                ipo.getShare(companyManager.getCompanyByName(GameManager_1835.SX_ID)) == 0) {
+                ipo.getShare(companyManager.getPublicCompany(GameManager_1835.SX_ID)) == 0) {
                 // Group 1 sold out: release Badische
-                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.BA_ID));
+                releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.BA_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "All", GameManager_1835.BA_ID));
             } else if (name.equals(GameManager_1835.BA_ID) || name.equals(GameManager_1835.WT_ID) || name.equals(GameManager_1835.HE_ID)) {
-                if (ipo.getShare(companyManager.getCompanyByName(GameManager_1835.BA_ID)) == 0
-                        && ipo.getShare(companyManager.getCompanyByName(GameManager_1835.WT_ID)) == 0
-                        && ipo.getShare(companyManager.getCompanyByName(GameManager_1835.HE_ID)) == 0) {
+                if (ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BA_ID)) == 0
+                        && ipo.getShare(companyManager.getPublicCompany(GameManager_1835.WT_ID)) == 0
+                        && ipo.getShare(companyManager.getPublicCompany(GameManager_1835.HE_ID)) == 0) {
                     // Group 2 sold out: release MS
-                    releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.MS_ID));
+                    releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.MS_ID));
                     ReportBuffer.add (LocalText.getText("SharesReleased",
                             "All", GameManager_1835.MS_ID));
                 }
@@ -129,7 +129,7 @@ public class StockRound_1835 extends StockRound {
          */
         if (name.equals(GameManager_1835.BA_ID)) {
             if (sharesInIPO == 50) {  // 50% sold: release Wurttemberg
-                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.WT_ID));
+                releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.WT_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "All", GameManager_1835.WT_ID));
             } else if (sharesInIPO == 80) {
@@ -143,13 +143,13 @@ public class StockRound_1835 extends StockRound {
             }
         } else if (name.equals(GameManager_1835.WT_ID)) { //Wurttembergische
             if (sharesInIPO == 50) {  // 50% sold: release Hessische
-                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.HE_ID));
+                releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.HE_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "All", GameManager_1835.HE_ID));
             }
         } else if (name.equals(GameManager_1835.MS_ID)) { // Mecklenburg/Schwerin
             if (sharesInIPO == 40) {  // 60% sold: release Oldenburg
-                releaseCompanyShares (companyManager.getCompanyByName(GameManager_1835.OL_ID));
+                releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.OL_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "All", GameManager_1835.OL_ID));
             }

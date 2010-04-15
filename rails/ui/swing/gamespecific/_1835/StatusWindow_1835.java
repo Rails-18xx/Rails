@@ -26,7 +26,7 @@ public class StatusWindow_1835 extends StatusWindow {
     @Override
 	public void init (GameUIManager gameUIManager) {
         super.init(gameUIManager);
-        prussian = gameUIManager.getGameManager().getCompanyManager().getCompanyByName(GameManager_1835.PR_ID);
+        prussian = gameUIManager.getGameManager().getCompanyManager().getPublicCompany(GameManager_1835.PR_ID);
     }
 
     @Override

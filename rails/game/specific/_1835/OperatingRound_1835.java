@@ -119,7 +119,4 @@ public class OperatingRound_1835 extends OperatingRound {
         }
         return result;
     }
-
-
-
 }

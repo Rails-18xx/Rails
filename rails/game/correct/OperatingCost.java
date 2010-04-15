@@ -108,6 +108,6 @@ public class OperatingCost extends PossibleORAction {
             ClassNotFoundException {
         in.defaultReadObject();
         if (Util.hasValue(companyName))
-                company = getCompanyManager().getCompanyByName(companyName);
+                company = getCompanyManager().getPublicCompany(companyName);
     }
 }
