@@ -2,8 +2,8 @@ package rails.algorithms;
 
 public final class NetworkTrain {
 
-    private final int cities;
-    private final int towns;
+    private int cities;
+    private int towns;
     private final boolean townsCostNothing;
     private final int multiplyCities;
     private final int multiplyTowns;
@@ -27,8 +27,16 @@ public final class NetworkTrain {
         return cities;
     }
     
+    void setCities(int cities){
+        this.cities = cities;
+    }
+    
     int getTowns() {
         return towns;
+    }
+    
+    void setTowns(int towns){
+        this.towns = towns;
     }
     
     int calculateRevenue(int[] cityValues, int[] townValues) {

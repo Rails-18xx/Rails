@@ -1,5 +1,6 @@
 package rails.algorithms;
 
+import java.awt.EventQueue;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -54,6 +55,9 @@ final class RevenueCalculator {
     private int[] maxCityRevenues;
     private int[] maxTownRevenues;
     private int[] maxTrainRevenues;
+    
+    // revenue listener
+    private RevenueListener revenueListener;
     
     
     protected static Logger log =
@@ -127,6 +131,10 @@ final class RevenueCalculator {
     
     int[][] getOptimalRun() {
         return currentBestRun;
+    }
+
+    void addRevenueListener(RevenueListener listener) {
+        this.revenueListener = listener;
     }
     
     int calculateRevenue(int startTrain, int finalTrain) {
@@ -405,6 +413,13 @@ final class RevenueCalculator {
                         break;
                     }
             log.info("RC: Found better run with " + totalValue);
+            // inform revenue listener
+            EventQueue.invokeLater(
+                    new Runnable() {
+                        public void run() {
+                            revenueListener.revenueUpdate(currentBestValue, false);
+                        }
+                    });
         }
     }
     
@@ -451,6 +466,7 @@ final class RevenueCalculator {
 
         return terminate;
     }
+    
     
     
     

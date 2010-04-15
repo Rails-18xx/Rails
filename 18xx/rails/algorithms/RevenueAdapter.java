@@ -7,14 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 
+import rails.game.GameManager;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
+import rails.game.TokenI;
 import rails.game.TrainI;
 
-public class RevenueAdapter {
+
+public class RevenueAdapter implements Runnable {
 
     private Graph<NetworkVertex, NetworkEdge> graph;
     
@@ -74,9 +79,21 @@ public class RevenueAdapter {
             if (vertex.isTownType()) towns.add(vertex);
         }
         
+        int maxCities = cities.size();
+        int maxTowns = towns.size();
+        
         // check train lengths
         int maxCityLength = 0, maxTownLength = 0;
         for (NetworkTrain train: trains) {
+            int increaseTowns = 0;
+            if (train.getCities() > maxCities) {
+                increaseTowns = maxCities - train.getCities();
+                train.setCities(maxCities);
+            }
+            int trainTowns = train.getTowns() + increaseTowns;
+            if (trainTowns > maxTowns) {
+                train.setTowns(maxTowns);
+            }
             maxCityLength = Math.max(maxCityLength, train.getCities());
             maxTownLength = Math.max(maxTownLength, train.getTowns());
         }
@@ -220,6 +237,7 @@ public class RevenueAdapter {
         return optimalRun;
     }
     
+    
     public int calculateRevenue() {
         return calculateRevenue(0, trains.size() - 1);
     }
@@ -228,14 +246,24 @@ public class RevenueAdapter {
         if (startTrain < 0 || finalTrain >= trains.size() || startTrain > finalTrain) return -1;
         return rc.calculateRevenue(startTrain, finalTrain);
     }
+
+
+    public void addRevenueListener(RevenueListener listener) {
+        rc.addRevenueListener(listener);
+    }
+    
+    public void run() {
+        calculateRevenue(0, trains.size() -1);
+    }
     
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("RevenueCalculator:" + rc);
-        buffer.append("Vertexes:" + vertexes);
-        buffer.append("Edges:" + edges);
+        buffer.append("RevenueCalculator: \n" + rc);
+        buffer.append("\n Vertexes: \n" + vertexes);
+        buffer.append("\n Edges: \n" + edges);
         return buffer.toString();
     }
+
     
 }
