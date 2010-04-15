@@ -485,7 +485,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         List<PublicCompanyI> companies
                 = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
-        PublicCompanyI cgr = companyManager.getCompanyByName(PublicCompany_CGR.NAME);
+        PublicCompanyI cgr = companyManager.getPublicCompany(PublicCompany_CGR.NAME);
         boolean cgrCanOperate = cgr.hasStarted();
 
         for (PublicCompanyI company : mergingCompanies) {

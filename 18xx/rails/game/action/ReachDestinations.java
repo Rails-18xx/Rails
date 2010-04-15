@@ -91,7 +91,7 @@ public class ReachDestinations extends PossibleORAction {
         if (Util.hasValue(possibleCompanyNames)) {
             for (String cname : possibleCompanyNames.split(",")) {
                 if (!"".equals(cname)) {
-                    possibleCompanies.add(cmgr.getCompanyByName(cname));
+                    possibleCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class ReachDestinations extends PossibleORAction {
         if (Util.hasValue(reachedCompanyNames)) {
             for (String cname : reachedCompanyNames.split(",")) {
                 if (!"".equals(cname)) {
-                    reachedCompanies.add(cmgr.getCompanyByName(cname));
+                    reachedCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }
         }

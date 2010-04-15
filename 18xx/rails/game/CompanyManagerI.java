@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.14 2010/02/04 21:27:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.15 2010/04/15 19:49:50 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -52,9 +52,9 @@ public interface CompanyManagerI extends ConfigurableComponentI {
      * @param name The name of the Company
      * @return The company object, or null if not found.
      */
-    CompanyI getCompany(String type, String name);
+    public CompanyI getCompany(String type, String name);
 
-    public PublicCompanyI getCompanyByName(String name);
+    //public PublicCompanyI getCompanyByName(String name);
     public List<CompanyTypeI> getCompanyTypes();
 
     public void closeAllPrivates();

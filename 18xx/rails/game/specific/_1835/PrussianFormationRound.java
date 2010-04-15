@@ -30,8 +30,8 @@ public class PrussianFormationRound extends StockRound {
 
     Step step;
 
-	public static String PR_ID = GameManager_1835.PR_ID;
-    public static String M2_ID = GameManager_1835.M2_ID;
+	private static String PR_ID = GameManager_1835.PR_ID;
+    private static String M2_ID = GameManager_1835.M2_ID;
     
     public PrussianFormationRound (GameManagerI gameManager) {
         super (gameManager);
@@ -44,7 +44,7 @@ public class PrussianFormationRound extends StockRound {
  	@Override
 	public void start() {
 
-        prussian = companyManager.getCompanyByName(PR_ID);
+        prussian = companyManager.getPublicCompany(PR_ID);
         phase = getCurrentPhase();
 		startPr = !prussian.hasStarted();
         forcedMerge = phase.getName().equals("5");
@@ -58,7 +58,7 @@ public class PrussianFormationRound extends StockRound {
         step = startPr ? Step.START : Step.MERGE;
         
         if (step == Step.START) {
-            m2 = companyManager.getCompanyByName(M2_ID);
+            m2 = companyManager.getPublicCompany(M2_ID);
             setCurrentPlayer(m2.getPresident());
             ((GameManager_1835)gameManager).setPrussianFormationStartingPlayer(currentPlayer);
             if (forcedStart) {
@@ -347,9 +347,17 @@ public class PrussianFormationRound extends StockRound {
 
 
     public static boolean prussianIsComplete(GameManagerI gameManager) {
+        
+        for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
+            if (!company.getTypeName().equalsIgnoreCase("Minor")) continue;
+            if (!company.isClosed()) return false;  
+        }
+        return true;
+        /*
         List<PublicCertificateI> unissued
                 = gameManager.getBank().getUnavailable().getCertificatesPerCompany(PR_ID);
         return unissued == null || unissued.isEmpty();
+        */
     }
     
     @Override

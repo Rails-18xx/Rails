@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.53 2010/04/13 23:21:13 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.54 2010/04/15 19:49:50 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -596,7 +596,7 @@ implements ActionListener, KeyListener {
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
-            PublicCompanyI company = cm.getCompanyByName(companyName);
+            PublicCompanyI company = cm.getPublicCompany(companyName);
             Graph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
 
             NetworkGraphBuilder.visualize(graph, "Network of " + companyName);

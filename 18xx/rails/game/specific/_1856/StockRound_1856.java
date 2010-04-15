@@ -153,7 +153,7 @@ public class StockRound_1856 extends StockRound {
     public boolean setPossibleActions() {
 
         PublicCompany_CGR cgr =
-            (PublicCompany_CGR)companyManager.getCompanyByName(PublicCompany_CGR.NAME);
+            (PublicCompany_CGR)companyManager.getPublicCompany(PublicCompany_CGR.NAME);
         if (cgr.hasStarted() && cgr.getPresident() == currentPlayer
                 && cgr.hasTemporaryPresident()) {
 

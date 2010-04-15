@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.7 2010/04/09 21:26:11 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.8 2010/04/15 19:49:50 evos Exp $ */
 package rails.game.specific._1835;
 
 import rails.game.*;
 
 public class GameManager_1835 extends GameManager {
 
-	public static String PR_NAME = PrussianFormationRound.PR_ID;
 	private RoundI previousRound = null;
 	private Player prFormStartingPlayer = null;
     

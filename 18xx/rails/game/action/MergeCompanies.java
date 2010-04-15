@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.8 2010/02/28 21:38:06 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.9 2010/04/15 19:49:50 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -134,21 +134,21 @@ public class MergeCompanies extends PossibleAction {
 
         CompanyManagerI cmgr = getCompanyManager();
 
-        mergingCompany = cmgr.getCompanyByName(mergingCompanyName);
+        mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
 
         targetCompanies = new ArrayList<PublicCompanyI>();
         for (String name : targetCompanyNames.split(",")) {
             if (name.equals("null")) {
                 targetCompanies.add(null);
             } else {
-                targetCompanies.add(cmgr.getCompanyByName(name));
+                targetCompanies.add(cmgr.getPublicCompany(name));
             }
         }
 
         if (selectedTargetCompanyName != null
             && !selectedTargetCompanyName.equals("null")) {
             selectedTargetCompany =
-                    cmgr.getCompanyByName(selectedTargetCompanyName);
+                    cmgr.getPublicCompany(selectedTargetCompanyName);
         }
     }
 }
