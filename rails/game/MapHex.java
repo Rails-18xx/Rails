@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.42 2010/04/11 15:49:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.43 2010/04/15 19:49:02 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -974,6 +974,7 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
      * It does NOT (yet) check for free space.
      */
     public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
+        
         if (isHomeFor(company))
             // Company can always lay a home base
             return false;
@@ -983,8 +984,11 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
             // Free space is not checked here (yet)
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
+            City city;
             // Check if this token lay does not block an unlaid home base
-            for (City city : homes.values()) {
+            for (PublicCompanyI comp : homes.keySet()) {
+                if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
+                city = homes.get(comp);
                 if (cityNumber == city.getNumber()
                         // Assume that a city is never home to more than one company
                         && city.getTokens().isEmpty()
