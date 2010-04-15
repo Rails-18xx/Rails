@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.54 2010/04/15 19:49:50 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.55 2010/04/15 21:46:28 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -20,7 +20,7 @@ import rails.util.LocalText;
 import rails.util.Util;
 
 public class ORPanel extends GridPanel
-implements ActionListener, KeyListener {
+implements ActionListener, KeyListener, RevenueListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -736,8 +736,9 @@ implements ActionListener, KeyListener {
         }
     }
 
-    public void initORCompanyTurn(int orCompIndex) {
+    public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
 
+        this.orComp = orComp;
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
 
@@ -770,6 +771,7 @@ implements ActionListener, KeyListener {
 
         revenueCaption.setHighlight(true);
         revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], true);
 
         button1.setText(LocalText.getText("SET_REVENUE"));
@@ -778,8 +780,56 @@ implements ActionListener, KeyListener {
         button1.setMnemonic(KeyEvent.VK_R);
         button1.setEnabled(true);
         button1.setVisible(true);
+
+    
+        // initialize and start the revenue adapter
+        RevenueAdapter ra = initRevenueCalculation(orComp);
+        
+        new Thread(ra).start();
     }
 
+    private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
+
+        GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
+        MapManager mapManager = gm.getMapManager();
+
+        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
+        nwGraph.generateGraph(mapManager.getHexesAsList());
+        Graph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
+
+        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+
+        // revenue calculation example
+        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+        RevenueAdapter ra = new RevenueAdapter(mapGraph);
+
+        // set tokens
+        List<TokenI> tokens = company.getTokens();
+        for (TokenI token:tokens){
+            NetworkVertex vertex = nwGraph.getVertex(token);
+            if (vertex != null) ra.addStartVertex(vertex);
+        }
+    
+        // run on railroad graph, does not work so far, thus use map graph
+        // RevenueAdapter ra = new RevenueAdapter(graph);
+
+        // get trains
+        company.getPortfolio().getTrainList();
+        for (TrainI train:company.getPortfolio().getTrainList()) {
+            ra.addTrain(train);
+        }
+
+        ra.populateRevenueCalculator(company, gm.getCurrentPhase());
+        ra.activateRevenuePrediction();
+        ra.addRevenueListener(this);
+
+        return ra;
+    }
+    
+    public void revenueUpdate(int revenue, boolean finalResult) {
+        revenueSelect[orCompIndex].setValue(revenue);
+    }
+    
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
 
@@ -950,5 +1000,6 @@ implements ActionListener, KeyListener {
     public PublicCompanyI[] getOperatingCompanies() {
         return companies;
     }
+
 
 }

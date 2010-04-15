@@ -1363,7 +1363,7 @@ public class ORUIManager implements DialogOwner {
             setORCompanyTurn(oRound.getOperatingCompanyIndex());
         }
 
-        orPanel.initORCompanyTurn(orCompIndex);
+        orPanel.initORCompanyTurn(orComp, orCompIndex);
 
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
