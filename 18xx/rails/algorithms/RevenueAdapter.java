@@ -1,5 +1,6 @@
 package rails.algorithms;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 
 import rails.game.GameManager;
+import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.TokenI;
@@ -31,6 +33,10 @@ public class RevenueAdapter implements Runnable {
     private List<NetworkVertex> startVertexes;
     private List<NetworkTrain> trains;
     
+    // revenue listener
+    private RevenueListener revenueListener;
+
+    
     public RevenueAdapter(Graph<NetworkVertex, NetworkEdge> graph){
         this.graph = graph;
         
@@ -48,7 +54,7 @@ public class RevenueAdapter implements Runnable {
                 if (!vertex.isHQ())
                     maxNeighbors = Math.max(maxNeighbors,
                         graph.edgesOf(vertex).size());
-            this.rc = new RevenueCalculator(vertexes.size(), ++maxNeighbors, trains.size()); // increase maxEdges to allow for cutoff
+            this.rc = new RevenueCalculator(this, vertexes.size(), ++maxNeighbors, trains.size()); // increase maxEdges to allow for cutoff
         }
     }
     
@@ -249,12 +255,59 @@ public class RevenueAdapter implements Runnable {
 
 
     public void addRevenueListener(RevenueListener listener) {
-        rc.addRevenueListener(listener);
+        this.revenueListener = listener;
+    }
+
+    void notifyRevenueListener(final int revenue, final boolean finalResult) {
+        if (revenueListener == null) return;
+        
+        EventQueue.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        revenueListener.revenueUpdate(revenue, finalResult);
+                    }
+                });
     }
     
     public void run() {
         calculateRevenue(0, trains.size() -1);
     }
+    
+    public void removeRevenueListener() {
+        // only removes revenueListener
+        revenueListener = null;
+    }
+    
+    public String getOptimalRunPrettyPrint() {
+        StringBuffer runPrettyPrint = new StringBuffer();
+        Map<NetworkTrain, List<NetworkVertex>> run = getOptimalRun();
+        
+        for (NetworkTrain train:run.keySet()) {
+            runPrettyPrint.append("Train " + train + ": ");
+            MapHex currentHex = null;
+            NetworkVertex startVertex = null;
+            for (NetworkVertex vertex:run.get(train)) {
+                if (startVertex == null) {
+                    currentHex = vertex.getHex();
+                    startVertex = vertex;
+                    runPrettyPrint.append(vertex.getHex().getName() + "(");
+                } else if (startVertex == vertex) {
+                    currentHex = vertex.getHex();
+                    runPrettyPrint.append(") / " + vertex.getHex().getName() + "(0");
+                    continue;
+                } else if (vertex.getHex() != currentHex) {
+                    currentHex = vertex.getHex();
+                    runPrettyPrint.append("), " + vertex.getHex().getName() + "(");
+                } else {
+                    runPrettyPrint.append(",");
+                }
+                runPrettyPrint.append(vertex.getVertexName());
+            }
+            runPrettyPrint.append(")\n");
+        }
+        return runPrettyPrint.toString();
+    }
+    
     
     @Override
     public String toString() {

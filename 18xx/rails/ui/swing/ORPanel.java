@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.55 2010/04/15 21:46:28 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.56 2010/04/16 16:38:21 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -109,6 +109,9 @@ implements ActionListener, KeyListener, RevenueListener {
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
+    
+    private RevenueAdapter revenueAdapter = null;
+    private Thread revenueThread = null;
 
     protected static Logger log =
             Logger.getLogger(ORPanel.class.getPackage().getName());
@@ -781,11 +784,10 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(true);
         button1.setVisible(true);
 
-    
         // initialize and start the revenue adapter
-        RevenueAdapter ra = initRevenueCalculation(orComp);
-        
-        new Thread(ra).start();
+        revenueAdapter = initRevenueCalculation(orComp);
+        revenueThread = new Thread(revenueAdapter);
+        revenueThread.start();
     }
 
     private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
@@ -826,9 +828,21 @@ implements ActionListener, KeyListener, RevenueListener {
         return ra;
     }
     
-    public void revenueUpdate(int revenue, boolean finalResult) {
-        revenueSelect[orCompIndex].setValue(revenue);
+    public void revenueUpdate(int bestRevenue, boolean finalResult) {
+        revenueSelect[orCompIndex].setValue(bestRevenue);
+        if (finalResult) {
+            JOptionPane.showMessageDialog(orWindow, "Best Run Value = " + bestRevenue +
+                    "\n" + revenueAdapter.getOptimalRunPrettyPrint());
+        }
     }
+    
+    public void stopRevenueUpdate() {
+        revenueAdapter.removeRevenueListener();
+        revenueAdapter = null;
+        revenueThread.interrupt();
+        revenueThread = null;
+    }
+    
     
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {

@@ -473,6 +473,7 @@ public class ORUIManager implements DialogOwner {
 
         if (command.equals(ORPanel.SET_REVENUE_CMD)) {
             amount = orPanel.getRevenue(orCompIndex);
+            orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is " + amount);
             action.setActualRevenue(amount);
             if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
