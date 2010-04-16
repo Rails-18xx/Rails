@@ -1,6 +1,5 @@
 package rails.algorithms;
 
-import java.awt.EventQueue;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -56,16 +55,18 @@ final class RevenueCalculator {
     private int[] maxTownRevenues;
     private int[] maxTrainRevenues;
     
-    // revenue listener
-    private RevenueListener revenueListener;
+    // revenue Adapter
+    private RevenueAdapter revenueAdapter;
     
+    private boolean stopped;
     
     protected static Logger log =
         Logger.getLogger(RevenueCalculator.class.getPackage().getName());
 
     
-    public RevenueCalculator (int nbVertexes, int maxNeighbors, int nbTrains) {
+    public RevenueCalculator (RevenueAdapter revenueAdapter, int nbVertexes, int maxNeighbors, int nbTrains) {
         
+        this.revenueAdapter = revenueAdapter;
         this.nbVertexes = nbVertexes;
         this.maxNeighbors = maxNeighbors;
         this.nbTrains = nbTrains;
@@ -98,6 +99,7 @@ final class RevenueCalculator {
         trainStartEdge = new int[nbTrains];
         
         currentBestRun = new int[nbTrains][nbVertexes];
+        
     }
 
     void setVertex(int id, int value, boolean city, boolean town, int[]neighbors) {
@@ -132,13 +134,15 @@ final class RevenueCalculator {
     int[][] getOptimalRun() {
         return currentBestRun;
     }
-
-    void addRevenueListener(RevenueListener listener) {
-        this.revenueListener = listener;
+    
+    private void notifyRevenueAdapter(final int revenue, final boolean finalResult) {
+        revenueAdapter.notifyRevenueListener(revenue, finalResult);
     }
     
     int calculateRevenue(int startTrain, int finalTrain) {
         log.info("RC: calculateRevenue trains from " + startTrain + " to " + finalTrain);
+        
+        stopped = false;
         
         // initialize maximum train revenues 
         maxTrainRevenues = new int[nbTrains];
@@ -149,6 +153,10 @@ final class RevenueCalculator {
         
         this.finalTrain = finalTrain;
         runTrain(startTrain);
+
+        // inform revenue listener via adapter
+        notifyRevenueAdapter(currentBestValue, true);
+
         return currentBestValue;
     }
     
@@ -413,13 +421,8 @@ final class RevenueCalculator {
                         break;
                     }
             log.info("RC: Found better run with " + totalValue);
-            // inform revenue listener
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            revenueListener.revenueUpdate(currentBestValue, false);
-                        }
-                    });
+            // inform revenue listener via adapter
+            notifyRevenueAdapter(currentBestValue, false);
         }
     }
     

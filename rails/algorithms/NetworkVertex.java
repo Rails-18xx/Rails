@@ -208,6 +208,21 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             return "HQ";
     }
     
+    public String getVertexName(){
+        StringBuffer name = new StringBuffer();
+        if (isStation()) {
+//            if (hex.getCityName() != null && !hex.getCityName().equals(""))
+//                name.append(hex.getCityName());
+//            else
+//                name.append("Station");
+//            if (station.getNumber() != 1) 
+//                name.append("." +  station.getNumber());
+            name.append(this.getValue());
+        }  else
+            name.append(hex.getOrientationName(side));
+        return name.toString();
+    }
+    
     @Override
     public String toString(){
         StringBuffer message = new StringBuffer();
