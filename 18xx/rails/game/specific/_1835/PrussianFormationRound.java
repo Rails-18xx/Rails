@@ -299,7 +299,7 @@ public class PrussianFormationRound extends StockRound {
                 token.moveTo(minor);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
                     /* TODO: the false return value must be impossible. */
-                    message =LocalText.getText("ExchangesBaseToken",
+                    message = LocalText.getText("ExchangesBaseToken",
                             PR_ID, minor.getName(),
                             city.getName());
                             ReportBuffer.add(message);
@@ -345,6 +345,10 @@ public class PrussianFormationRound extends StockRound {
         }
     }
 
+    protected void finishRound() {
+        if (prussian.hasStarted()) prussian.checkPresidency();
+        super.finishRound();
+    }
 
     public static boolean prussianIsComplete(GameManagerI gameManager) {
         
@@ -353,11 +357,6 @@ public class PrussianFormationRound extends StockRound {
             if (!company.isClosed()) return false;  
         }
         return true;
-        /*
-        List<PublicCertificateI> unissued
-                = gameManager.getBank().getUnavailable().getCertificatesPerCompany(PR_ID);
-        return unissued == null || unissued.isEmpty();
-        */
     }
     
     @Override

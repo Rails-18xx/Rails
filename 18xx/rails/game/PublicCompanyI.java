@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.51 2010/03/27 18:27:08 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.52 2010/04/18 20:52:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -263,6 +263,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public void checkPresidencyOnSale(Player seller);
 
     public void checkPresidencyOnBuy(Player buyer);
+    public void checkPresidency ();
 
     public int getCapitalisation();
 
