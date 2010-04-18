@@ -44,6 +44,7 @@
 	<Hex name="F16" tile="0"/>
 	<Hex name="F18" tile="0"/>
 	<Hex name="F20" tile="0"/>
+	<Hex name="G1" tile="-7"/>
 	<Hex name="G3" tile="-807" cost="50" city="Essen/Duisburg"/>
 	<Hex name="G5" tile="-10" city="Dortmund"/>
 	<Hex name="G7" tile="0"/>
