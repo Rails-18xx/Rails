@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.11 2010/04/11 15:49:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/City.java,v 1.12 2010/04/18 15:08:57 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.game.move.Moveable;
+import rails.game.state.GenericState;
 import rails.util.Util;
 
 /**
@@ -28,7 +29,8 @@ import rails.util.Util;
 public class City implements TokenHolder {
     private int number;
     private String uniqueId;
-    private Station relatedStation;
+    //private Station relatedStation;
+    private GenericState<Station> relatedStation;
     private int slots;
     private ArrayList<TokenI> tokens;
     private MapHex mapHex;
@@ -40,12 +42,13 @@ public class City implements TokenHolder {
     public City(MapHex mapHex, int number, Station station) {
         this.mapHex = mapHex;
         this.number = number;
-        this.relatedStation = station;
-
+        
         uniqueId = mapHex.getName() + "_" + number;
-        slots = relatedStation.getBaseSlots();
+        relatedStation = new GenericState<Station>("City_"+uniqueId+"_station", station);
+        setRelatedStation(station);
 
-        tokens = new ArrayList<TokenI>(slots);
+
+        tokens = new ArrayList<TokenI>(4);
     }
 
     public String getName() {
@@ -65,11 +68,12 @@ public class City implements TokenHolder {
     }
 
     public Station getRelatedStation() {
-        return relatedStation;
+        return relatedStation.getObject();
     }
 
     public void setRelatedStation(Station relatedStation) {
-        this.relatedStation = relatedStation;
+        this.relatedStation.set(relatedStation);
+        slots = relatedStation.getBaseSlots();
         trackEdges =
                 mapHex.getConnectionString(mapHex.getCurrentTile(),
                         mapHex.getCurrentTileRotation(),
