@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.93 2010/03/27 18:27:08 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.94 2010/04/18 20:52:32 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1500,6 +1500,34 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         name ));
             }
         }
+    }
+    
+    /** A generic presidency check. Perhaps it can replace the above two methods. */
+    public void checkPresidency () {
+        
+        Player president = getPresident();
+        int presIndex = president.getIndex();
+        int presShare = president.getPortfolio().getShare(this);
+        
+        GameManagerI gmgr = GameManager.getInstance();
+        Player player;
+        int share;
+
+        for (int i = presIndex + 1; i < presIndex
+                                        + gmgr.getNumberOfPlayers(); i++) {
+            player = gmgr.getPlayerByIndex(i);
+            share = player.getPortfolio().getShare(this);
+            if (share > presShare) {
+                // Hand presidency to the first player with a higher share
+                president.getPortfolio().swapPresidentCertificate(this,
+                        player.getPortfolio());
+                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                        player.getName(),
+                        name ));
+                return;
+            }
+        }
+        
     }
 
     /**
