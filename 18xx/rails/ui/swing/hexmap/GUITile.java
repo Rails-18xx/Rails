@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.22 2010/01/31 22:22:36 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.23 2010/04/18 15:09:58 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -137,6 +137,7 @@ public class GUITile {
                                     oldCities.put(prevTileSide,
                                         oldTrack.getEndPoint(prevTileSide));
                                 } else {
+                                    // Downgraded
                                     // Assume there are only two exits
                                     // (this is the only known case for downgrading:
                                     // #3->#7, #4->#9, #58->#8).
@@ -189,21 +190,21 @@ public class GUITile {
                         lll = (6 + l - prevTileRotation) % 6;
                         if (oldCities.get(lll) == null) continue;
                         // If new tile is missing a connection, skip
-                        log.debug("Found " + oldCities.get(kk) + " & "
-                                  + oldCities.get(ll));
-                        log.debug("Check " + newCities.get(kk) + " & "
+                        log.debug("Found " + oldCities.get(kkk) + " & "
+                                  + oldCities.get(lll));
+                        log.debug("Check " + newCities.get(kkk) + " & "
                                   + newCities.get(ll));
                         if (newCities.get(kk) == null
                             || newCities.get(ll) == null) continue rot;
                         // If connected cities do not correspond, skip
-                        // log.debug("Compare
-                        // "+oldCities.get(kkk)+"/"+oldCities.get(lll)
-                        // +" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
-                        // if ((oldCities.get(kkk).equals(oldCities.get(lll)))
-                        // != (newCities.get(kk).equals(newCities.get(ll)))) {
-                        // log.debug("No match!");
-                        // continue rot;
-                        // }
+                        // (this is the "OO brown upgrade get-right" feature)
+                        log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
+                                +" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
+                        if ((oldCities.get(kkk).equals(oldCities.get(lll)))
+                                != (newCities.get(kk).equals(newCities.get(ll)))) {
+                            log.debug("No match!");
+                            continue rot;
+                        }
                     }
                 }
 
