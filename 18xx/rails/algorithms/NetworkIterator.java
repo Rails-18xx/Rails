@@ -25,18 +25,11 @@ public class NetworkIterator extends
          * Vertex has not been returned via iterator yet.
          */
         WHITE,
-
-        /**
-         * Vertex has not been returned via iterator yet, but has to use autoedge
-         */
-        YELLOW,
-
-        /**
-         * Vertex has been returned via iterator, but we're
-         * not done with all of its out-edges yet.
-         */
+        /** 
+        * Vertex has been returned via iterator, but we're
+        * not done with all of its out-edges yet.
+        */
         GRAY,
-        
         /**
          * Vertex has been returned via iterator, and we're
          * done with all of its out-edges.
@@ -49,6 +42,7 @@ public class NetworkIterator extends
      * some additional traversal info regarding each vertex.
      */
     private Map<NetworkVertex, VisitColor> seen = new HashMap<NetworkVertex, VisitColor>();
+    private Map<NetworkVertex, Boolean> mustUseGreedy = new HashMap<NetworkVertex, Boolean>();
     private NetworkVertex startVertex;
 
     private final PublicCompanyI company;
@@ -147,9 +141,9 @@ public class NetworkIterator extends
      *
      * @return <tt>true</tt> if vertex has already been seen
      */
-    private boolean isSeenVertex(NetworkVertex vertex)
+    private boolean isSeenVertex(NetworkVertex vertex, boolean mustUseGreedy)
     {
-        return seen.containsKey(vertex);
+        return seen.containsKey(vertex) && (mustUseGreedy || !this.mustUseGreedy.get(vertex) );
     }
     
     /**
@@ -187,7 +181,7 @@ public class NetworkIterator extends
             if (previousColor == VisitColor.WHITE || edge.isGreedy()) {  
 
                 NetworkVertex oppositeV = Graphs.getOppositeVertex(graph, edge, vertex);
-                if (isSeenVertex(oppositeV)) {
+                if (isSeenVertex(oppositeV, vertex.isSide() && !edge.isGreedy() )) {
                     encounterVertexAgain(oppositeV, edge);
                 } else {
                     encounterVertex(oppositeV, edge);
@@ -205,18 +199,16 @@ public class NetworkIterator extends
 
     /** copy of standard dfs */
     private void encounterVertex(NetworkVertex vertex, NetworkEdge edge) {
-        VisitColor color = VisitColor.WHITE;
-        if (vertex.isSide() && !edge.isGreedy())
-            color = VisitColor.YELLOW;
-        putSeenData(vertex, color);
+        putSeenData(vertex, VisitColor.WHITE);
+        mustUseGreedy.put(vertex, vertex.isSide() && !edge.isGreedy());
         stack.add(vertex);
-        log.debug("Iterator: Added to stack " + vertex + " with color " + color);
+        log.debug("Iterator: Added to stack " + vertex);
     }
 
     /** copy of standard dfs */
     private void encounterVertexAgain(NetworkVertex vertex, NetworkEdge edge) {
         VisitColor color = getSeenData(vertex);
-        if (color != VisitColor.WHITE && color != VisitColor.YELLOW) {
+        if (color != VisitColor.WHITE) {
             // We've already visited this vertex; no need to mess with the
             // stack (either it's BLACK and not there at all, or it's GRAY
             // and therefore just a sentinel).
@@ -288,7 +280,8 @@ public class NetworkIterator extends
     private void recordFinish()
     {
         NetworkVertex v = popStack();
-        putSeenData(v, VisitColor.BLACK);
+        if (getSeenData(v) == VisitColor.WHITE)
+            putSeenData(v, VisitColor.BLACK);
         finishVertex(v);
     }
 }
