@@ -60,6 +60,8 @@ public class RevenueAdapter implements Runnable {
     
     public void refreshRevenueCalculator() {
         rc = null;
+        // refresh startVertexes
+        this.startVertexes = new ArrayList<NetworkVertex>();
     }
     
     
@@ -75,7 +77,7 @@ public class RevenueAdapter implements Runnable {
         return revenue;
     }
     
-    public void activateRevenuePrediction() {
+    private void prepareRevenuePrediction(boolean activatePrediction) {
         
         // separate vertexes
         List<NetworkVertex> cities = new ArrayList<NetworkVertex>();
@@ -91,33 +93,34 @@ public class RevenueAdapter implements Runnable {
         // check train lengths
         int maxCityLength = 0, maxTownLength = 0;
         for (NetworkTrain train: trains) {
-            int increaseTowns = 0;
+            int trainTowns = train.getTowns();
             if (train.getCities() > maxCities) {
-                increaseTowns = maxCities - train.getCities();
+                trainTowns = trainTowns+ train.getCities() - maxCities;
                 train.setCities(maxCities);
             }
-            int trainTowns = train.getTowns() + increaseTowns;
-            if (trainTowns > maxTowns) {
-                train.setTowns(maxTowns);
-            }
+            train.setTowns(Math.min(trainTowns, maxTowns));
+
             maxCityLength = Math.max(maxCityLength, train.getCities());
             maxTownLength = Math.max(maxTownLength, train.getTowns());
         }
         
-        // get max revenue results
-        int[] maxCityRevenues = revenueList(cities, maxCityLength);
-        int[] maxTownRevenues = revenueList(towns, maxTownLength);
+        if (activatePrediction) {
+            // get max revenue results
+            int[] maxCityRevenues = revenueList(cities, maxCityLength);
+            int[] maxTownRevenues = revenueList(towns, maxTownLength);
 
-        // set revenue results in revenue calculator
-        rc.setPredictionData(maxCityRevenues, maxTownRevenues);
+            // set revenue results in revenue calculator
+            rc.setPredictionData(maxCityRevenues, maxTownRevenues);
+        }
     }
     
     
-    public void populateRevenueCalculator(PublicCompanyI company, PhaseI phase){
+    public void populateRevenueCalculator(PublicCompanyI company, PhaseI phase, boolean activatePrediction){
         if (rc == null) initRevenueCalculator();
 
-        // set vertexes
-
+        // prepare and optionaly activate revenue prediction
+        prepareRevenuePrediction(activatePrediction);
+        
         // Define ordering on vertexes by value
         NetworkVertex.setPhaseForAll(vertexes, phase);
         Collections.sort(vertexes, new NetworkVertex.ValueOrder());
