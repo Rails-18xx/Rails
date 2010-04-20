@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.42 2010/04/20 19:45:40 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.43 2010/04/20 20:17:51 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -22,6 +22,7 @@ public class GUIHex implements ViewObject {
 
     public static final double SQRT3 = Math.sqrt(3.0);
     public static double NORMAL_SCALE = 1.0;
+    public static double SELECTABLE_SCALE = 0.9;
     public static double SELECTED_SCALE = 0.8;
 
     public static int NORMAL_TOKEN_SIZE = 15;
@@ -33,13 +34,15 @@ public class GUIHex implements ViewObject {
 
     public static void setScale(double scale) {
         NORMAL_SCALE = scale;
+        SELECTABLE_SCALE = 0.9 * scale;
         SELECTED_SCALE = 0.8 * scale;
     }
 
     protected MapHex model;
-    protected GeneralPath innerHexagon;
+    protected GeneralPath innerHexagonSelected;
+    protected GeneralPath innerHexagonSelectable;
     protected static final Color highlightColor = Color.red;
-    protected static final Color upgradableColor = Color.magenta;
+    protected static final Color selectableColor = Color.red;
     protected Point center;
     /** x and y coordinates on the map */
     protected int x, y;
@@ -153,10 +156,15 @@ public class GUIHex implements ViewObject {
                 new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
                         (yVertex[0] + yVertex[3]) / 2.0);
 
-        final double innerScale = 0.8;
+        innerHexagonSelected = defineInnerHexagon(0.8, center2D);
+        innerHexagonSelectable = defineInnerHexagon(0.9, center2D);
+    }
+    
+    private GeneralPath defineInnerHexagon(double innerScale, Point2D.Double center2D) {
+    
         AffineTransform at =
                 AffineTransform.getScaleInstance(innerScale, innerScale);
-        innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
+        GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
 
         // Translate innerHexagon to make it concentric.
         Rectangle2D innerBounds = innerHexagon.getBounds2D();
@@ -170,6 +178,18 @@ public class GUIHex implements ViewObject {
                         center2D.getY() - innerCenter.getY());
         innerHexagon.transform(at);
 
+        return innerHexagon;
+    }
+    
+    /**
+     * returns point that corresponds to the definition as networkvertex
+     */
+    public Point getHexPoint(int side){
+        if (side >= 0) { // side
+            return new Point((int) xVertex[side],(int) yVertex[side]);
+        } else { // station
+            return getTokenCenter(0, 0, 0, -side);
+        }
     }
 
     public MapHex getHexModel() {
@@ -253,7 +273,7 @@ public class GUIHex implements ViewObject {
     public void setSelectable(boolean selectable) {
         this.selectable = selectable;
         if (selectable) {
-            currentGUITile.setScale(SELECTED_SCALE);
+            currentGUITile.setScale(SELECTABLE_SCALE);
         } else {
             currentGUITile.setScale(NORMAL_SCALE);
             provisionalGUITile = null;
@@ -326,18 +346,24 @@ public class GUIHex implements ViewObject {
         }
 
         Color terrainColor = Color.WHITE;
-        if (isSelected() || isSelectable()) {
-            if (isSelected())
-                g2.setColor(highlightColor);
-            else
-                g2.setColor(upgradableColor);
+        if (isSelected()) {
+            g2.setColor(highlightColor);
             g2.fill(hexagon);
 
             g2.setColor(terrainColor);
-            g2.fill(innerHexagon);
+            g2.fill(innerHexagonSelected);
 
             g2.setColor(Color.black);
-            g2.draw(innerHexagon);
+            g2.draw(innerHexagonSelected);
+        } else if (isSelectable()) {
+            g2.setColor(selectableColor);
+            g2.fill(hexagon);
+
+            g2.setColor(terrainColor);
+            g2.fill(innerHexagonSelectable);
+
+            g2.setColor(Color.black);
+            g2.draw(innerHexagonSelectable);
         }
 
         paintOverlay(g2);
