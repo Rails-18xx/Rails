@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.31 2010/02/17 22:01:43 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.32 2010/04/20 19:21:27 evos Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -318,6 +318,8 @@ public class StartRound_1830 extends StartRound {
                 }
                 auctionItemState.set(null);
                 numPasses.set(0);
+                // Next turn goes to priority holder
+                setPriorityPlayer(); // EV - Added to fix bug 2989440
             } else {
                 // More than one left: find next bidder
 
