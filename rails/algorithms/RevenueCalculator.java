@@ -29,7 +29,7 @@ final class RevenueCalculator {
     // static train data
     private final int[] trainMaxCities;
     private final int[] trainMaxTowns;
-    private final boolean[] trainTownsCostNothing;
+    private final boolean[] trainIgnoreTowns;
     private final int[] trainMultiplyCities;
     private final int[] trainMultiplyTowns;
     
@@ -64,6 +64,14 @@ final class RevenueCalculator {
     // revenue Adapter
     private RevenueAdapter revenueAdapter;
     
+    // termination results
+    private static enum Terminated {
+        WithEvaluation,
+        WithoutEvaluation,
+        NotYet
+        
+    }
+    
     protected static Logger log =
         Logger.getLogger(RevenueCalculator.class.getPackage().getName());
 
@@ -89,7 +97,7 @@ final class RevenueCalculator {
         
         trainCities = new int[nbTrains];
         trainTowns = new int[nbTrains];
-        trainTownsCostNothing = new boolean[nbTrains];
+        trainIgnoreTowns = new boolean[nbTrains];
         trainMultiplyCities = new int[nbTrains];
         trainMultiplyTowns = new int[nbTrains];
         
@@ -124,10 +132,10 @@ final class RevenueCalculator {
         edgeDistance[vertexLo][vertexHi] = distance;
     }
     
-    void setTrain(int id, int cities, int towns, boolean townsCostNothing, int multiplyCities, int multiplyTowns) {
+    void setTrain(int id, int cities, int towns, boolean ingoreTowns, int multiplyCities, int multiplyTowns) {
         trainMaxCities[id] = cities;
         trainMaxTowns[id] = towns;
-        trainTownsCostNothing[id] = townsCostNothing;
+        trainIgnoreTowns[id] = ingoreTowns;
         trainMultiplyCities[id] = multiplyCities;
         trainMultiplyTowns[id] = multiplyTowns;
     }
@@ -197,28 +205,27 @@ final class RevenueCalculator {
             log.debug("RC: Using startVertex nr. " + i + " for train " + trainId);
 
             // encounterVertex adds value and returns true if value vertex
-            boolean trainTerminated = false; 
-            if (encounterVertex(trainId, vertexId, true)) {
-                if (useRevenuePrediction && predictRevenues(trainId)) {
+            Terminated trainTerminated = Terminated.NotYet; 
+            boolean valueStation = encounterVertex(trainId, vertexId, true);
+            if (valueStation) {
+                // check usual train termination
+                trainTerminated = trainTerminated(trainId);
+                if (trainTerminated == Terminated.WithoutEvaluation || 
+                        trainTerminated == Terminated.NotYet && useRevenuePrediction && predictRevenues(trainId)) {
                     // cannot beat current best value => leave immediately
                     encounterVertex(trainId, vertexId, false);
                     log.debug("RC: finished startVertex " + vertexId + " for train " +trainId);
                     continue;
-                } else  {
-                    // check usual train termination
-                    trainTerminated = trainTerminated(trainId);
                 }
             }
             
             // and all edges of it
-            boolean evaluateResult = true;
-            if (!trainTerminated) {
+            if (trainTerminated == Terminated.NotYet) {
                 for (int j = 0; j < maxNeighbors; j++) {
                     int neighborId = vertexNeighbors[vertexId][j];
                     log.debug("RC: Testing Neighbor Nr. " + j + " of startVertex is " + neighborId);
                     if (neighborId == -1) break; // no more neighbors
                     if (travelEdge(vertexId, neighborId, true)) {
-                        evaluateResult = false;
                         trainStartEdge[trainId] = j; // store edge
                         nextVertex(trainId, neighborId, vertexId);
                     }
@@ -226,7 +233,7 @@ final class RevenueCalculator {
             }
 
             // no more edges to find
-            finalizeVertex(trainId, vertexId, evaluateResult);
+            finalizeVertex(trainId, vertexId, valueStation);
             encounterVertex(trainId, vertexId, false);
             log.debug("RC: finished startVertex " + vertexId + " for train " +trainId);
         }
@@ -269,22 +276,22 @@ final class RevenueCalculator {
     private void nextVertex(int trainId, int vertexId, int previousId) {
 
         // 1. encounterVertex adds value and returns true if value vertex
-        boolean trainTerminated = false; 
-        if (encounterVertex(trainId, vertexId, true)) {
-            if (useRevenuePrediction && predictRevenues(trainId)) {
+        Terminated trainTerminated = Terminated.NotYet; 
+        boolean valueStation = encounterVertex(trainId, vertexId, true);
+        if (valueStation) {
+            // check usual train termination
+            trainTerminated = trainTerminated(trainId);
+            if (trainTerminated == Terminated.WithoutEvaluation ||
+                    trainTerminated == Terminated.NotYet && useRevenuePrediction && predictRevenues(trainId)) {
                 // cannot beat current best value => leave immediately
                 encounterVertex(trainId, vertexId, false);
                 returnEdge(trainId);
                 return;
-            } else  {
-                // check usual train termination
-                trainTerminated = trainTerminated(trainId);
             }
         }
         
         // 2a. visit neighbors, if train has not terminated
-        boolean evaluateResult = true;
-        if (!trainTerminated) {
+        if (trainTerminated == Terminated.NotYet) {
             for (int j = 0; j < maxNeighbors; j++) {
                 int neighborId = vertexNeighbors[vertexId][j];
                 log.debug("RC: Testing Neighbor Nr. " + j + " of " + vertexId + " is " + neighborId);
@@ -294,18 +301,17 @@ final class RevenueCalculator {
                     continue;
                 }
                 if (travelEdge(vertexId, neighborId, edgeGreedy[previousId][vertexId])) {
-                    evaluateResult = false;
                     nextVertex(trainId, neighborId, vertexId);
                 }
             }
             // 2b. restart at startVertex for bottom part
-            if (trainBottomPos[trainId] == 0 && (vertexCity[vertexId] || vertexTown[vertexId])){
+            if (valueStation && trainBottomPos[trainId] == 0 && (vertexCity[vertexId] || vertexTown[vertexId])){
                 runBottom(trainId);
             }
         }
         
         // 3. no more edges to visit from here => evaluate or start new train
-        finalizeVertex(trainId, vertexId, evaluateResult);
+        finalizeVertex(trainId, vertexId, valueStation);
         
         // 4. then leave that vertex
         encounterVertex(trainId, vertexId, false);
@@ -325,7 +331,7 @@ final class RevenueCalculator {
                 trainCities[trainId]++;
                 trainCurrentValue[trainId] += vertexValue[vertexId] * trainMultiplyCities[trainId];
                 valueVertex = true;
-            } else if (vertexTown[vertexId]) {
+            } else if (vertexTown[vertexId] && !trainIgnoreTowns[trainId]) {
                 trainTowns[trainId]++;
                 trainCurrentValue[trainId] += vertexValue[vertexId] * trainMultiplyTowns[trainId];
                 valueVertex = true;
@@ -337,7 +343,7 @@ final class RevenueCalculator {
                 trainCities[trainId]--;
                 trainCurrentValue[trainId] -= vertexValue[vertexId] * trainMultiplyCities[trainId];
                 valueVertex = true;
-            } else if (vertexTown[vertexId]) {
+            } else if (vertexTown[vertexId] && !trainIgnoreTowns[trainId] ) {
                 trainTowns[trainId]--;
                 trainCurrentValue[trainId] -= vertexValue[vertexId] * trainMultiplyTowns[trainId];
                 valueVertex = true;
@@ -393,25 +399,25 @@ final class RevenueCalculator {
         }
     }
     
-    private boolean trainTerminated(int trainId) {
-        boolean terminated;
-        if (trainTownsCostNothing[trainId]) {
-            terminated = trainCities[trainId] == trainMaxCities[trainId];
+    private Terminated trainTerminated(int trainId) {
+        Terminated terminated = Terminated.NotYet;
+        if (trainIgnoreTowns[trainId]) {
+            // express trains
+            if (trainCities[trainId] == trainMaxCities[trainId])
+                terminated = Terminated.WithEvaluation;
         } else if (trainTowns[trainId] == 0) {
             // default train
-            terminated = trainCities[trainId] + trainTowns[trainId] == trainMaxCities[trainId];
+            if (trainCities[trainId] + trainTowns[trainId] == trainMaxCities[trainId])
+                terminated = Terminated.WithEvaluation;
         } else {
             // plus trains
-            int townDiff = trainMaxTowns[trainId] - trainTowns[trainId];
-            if (townDiff > 0) {
-                terminated = false;
-            } else if (townDiff == 0) {
-                terminated = trainCities[trainId] == trainMaxCities[trainId];
-            } else { // negative townDiff, thus too many towns already visited
-                terminated = trainCities[trainId] == trainMaxCities[trainId] + townDiff;
-            }
+            if (trainCities[trainId] > trainMaxCities[trainId]){
+                terminated = Terminated.WithoutEvaluation;
+            } else if (trainCities[trainId] + trainTowns[trainId] == 
+                trainMaxCities[trainId] + trainMaxTowns[trainId] )
+                terminated = Terminated.WithEvaluation;
         }
-        if (terminated) {
+        if (terminated != Terminated.NotYet) {
             log.debug ("RC: Train " + trainId + " has terminated: " +
             		"cities = " + trainCities[trainId] + " towns = " + trainTowns[trainId] +
             		"maxCities = " + trainMaxCities[trainId] + "maxTowns = " + trainMaxTowns[trainId]);
@@ -473,10 +479,7 @@ final class RevenueCalculator {
             } else if (j > trainId) { // train is in the future => use maximum values
                 trainValue =  maxTrainRevenues[j];
             } else { // the current train
-                if (trainTownsCostNothing[j]) {
-                    // still TODO
-                    trainValue = 0;
-                } else if (trainTowns[j] == 0) {
+                if (trainMaxTowns[j] == 0) {
                     // default train
                     trainValue = trainCurrentValue[j] + 
                     maxCityRevenues[trainMaxCities[j] - trainCities[j]] * trainMultiplyCities[j];
@@ -523,6 +526,7 @@ final class RevenueCalculator {
         buffer.append("startVertexes:" + Arrays.toString(startVertexes) + "\n"); 
         buffer.append("trainMaxCities:" + Arrays.toString(trainMaxCities) + "\n"); 
         buffer.append("trainMaxTowns:" + Arrays.toString(trainMaxTowns) + "\n"); 
+        buffer.append("trainIgnoreTowns:" + Arrays.toString(trainIgnoreTowns) + "\n"); 
         buffer.append("maxCityRevenues:" + Arrays.toString(maxCityRevenues) + "\n"); 
         buffer.append("maxTownRevenues:" + Arrays.toString(maxTownRevenues) + "\n"); 
       
