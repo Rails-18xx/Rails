@@ -1,5 +1,6 @@
 package rails.algorithms;
 
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,6 +14,8 @@ import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
 import rails.game.TokenI;
+import rails.ui.swing.hexmap.GUIHex;
+import rails.ui.swing.hexmap.HexMap;
 
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
@@ -27,6 +30,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     private final MapHex hex;
     
     private final Station station;
+    private final City city;
     private final int side;
     
     private PhaseI phase;
@@ -50,19 +54,23 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         String t = station.getType();
         if (t.equals(Station.TOWN)){
             this.tokenable = false;
+            this.city = null;
         } else {
             this.tokenable = true;
             // find tokens
             List<TokenI> tokens = null;
             this.tokenSlots = 0;
             List<City> cities = hex.getCities();
+            City foundCity = null;
             for (City city:cities) {
                 if (station == city.getRelatedStation()) {
+                    foundCity = city;
                     tokens = city.getTokens();
                     this.tokenSlots = city.getSlots();
                     break;
                 }
             }
+            this.city = foundCity;
             this.companiesHaveToken = new HashSet<PublicCompanyI>();
             if (tokens != null) {
                 for (TokenI token:tokens) {
@@ -79,6 +87,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.type = VertexType.SIDE;
         this.hex = hex;
         this.station = null;
+        this.city = null;
         this.side = (side % 6);
         
         this.phase = null;
@@ -91,6 +100,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.type = VertexType.HQ;
         this.hex = null;
         this.station = null;
+        this.city = null;
         this.side = 0;
         
         this.phase = null;
@@ -131,6 +141,11 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public Station getStation(){
         return station;
     }
+    
+    public City getCity() {
+        return city;
+    }
+    
     
     public int getSide(){
         return side;
@@ -255,5 +270,19 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         for (NetworkVertex v:vertexes)
             v.setPhase(phase);
     }
+
+    public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
+        GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
+        if (vertex.isCityType()) {
+            return guiHex.getCityPoint2D(vertex.getCity());
+        } else if (vertex.isTownType()) {
+            return guiHex.getCenterPoint2D();
+        } else if (vertex.isSide()) {
+            return guiHex.getSidePoint2D(vertex.getSide());
+        } else {
+            return null;
+        }
+    }
+    
     
 }

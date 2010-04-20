@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.57 2010/04/19 19:35:38 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.58 2010/04/20 19:45:40 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
 import java.util.List;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
+import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
 import rails.util.Util;
 
@@ -602,9 +604,9 @@ implements ActionListener, KeyListener, RevenueListener {
             PublicCompanyI company = cm.getPublicCompany(companyName);
             Graph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
 
-            NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
+//            NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
             graph = NetworkGraphBuilder.optimizeGraph(graph);
-            NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
+//            NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
 
             // revenue calculation example on mapGraph
 //            mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
@@ -625,23 +627,27 @@ implements ActionListener, KeyListener, RevenueListener {
             
             boolean anotherTrain = true;
             while (anotherTrain) {
+                int revenueValue;
                 // create results
 //                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), false);
-                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), false);
-                log.info("Revenue Adapter:" + ra);
-                int revenueValue = ra.calculateRevenue();
-                log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue run:" + ra.getOptimalRunPrettyPrint());
-                JOptionPane.showMessageDialog(orWindow, "Without Prediction: RevenueValue = " + revenueValue +
-                        "\n RevenueRun = " + ra.getOptimalRunPrettyPrint());
+//                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), false);
+//                log.info("Revenue Adapter:" + ra);
+//                revenueValue = ra.calculateRevenue();
+//                log.info("Revenue Value:" + revenueValue);
+//                log.info("Revenue run:" + ra.getOptimalRunPrettyPrint());
+//                JOptionPane.showMessageDialog(orWindow, "Without Prediction: RevenueValue = " + revenueValue +
+//                        "\n RevenueRun = " + ra.getOptimalRunPrettyPrint());
+//
+//                ra.refreshRevenueCalculator();
 
-                ra.refreshRevenueCalculator();
-//                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
-                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
+                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
+//                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
                 log.info("Revenue Adapter:" + ra);
                 revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
                 log.info("Revenue run:" + ra.getOptimalRunPrettyPrint());
+                ra.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
                 JOptionPane.showMessageDialog(orWindow, "With Prediction: RevenueValue = " + revenueValue +
                         "\n RevenueRun = " + ra.getOptimalRunPrettyPrint());
 
@@ -839,12 +845,15 @@ implements ActionListener, KeyListener, RevenueListener {
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
         revenueSelect[orCompIndex].setValue(bestRevenue);
         if (finalResult) {
+            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
             JOptionPane.showMessageDialog(orWindow, "Best Run Value = " + bestRevenue +
                     "\n" + revenueAdapter.getOptimalRunPrettyPrint());
         }
     }
     
     public void stopRevenueUpdate() {
+        orUIManager.getMap().setTrainPaths(null);
         revenueAdapter.removeRevenueListener();
         revenueAdapter = null;
         revenueThread.interrupt();

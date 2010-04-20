@@ -1,6 +1,9 @@
 package rails.algorithms;
 
 import java.awt.EventQueue;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +22,7 @@ import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.TokenI;
 import rails.game.TrainI;
+import rails.ui.swing.hexmap.HexMap;
 
 
 public class RevenueAdapter implements Runnable {
@@ -202,7 +206,7 @@ public class RevenueAdapter implements Runnable {
     public void addTrainByString(String trainString) {
         String t = trainString.trim();
         
-        int cities = 0; int towns = 0; boolean townsCostNothing = false; int multiplyCities = 1; int multiplyTowns = 1;
+        int cities = 0; int towns = 0; boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
         if (t.equals("D")) {
             cities = 99; // diesel
         } else if (t.contains("+")) {
@@ -211,19 +215,19 @@ public class RevenueAdapter implements Runnable {
         } else if (t.contains("E")) {
             // express train
             cities = Integer.parseInt(t.replace("E", ""));
-            townsCostNothing = true;
+            ignoreTowns = true;
             multiplyTowns = 0;
         } else if (t.contains("D")) {
             // double (express) train
             cities = Integer.parseInt(t.replace("D", ""));
-            townsCostNothing = true;
+            ignoreTowns = true;
             multiplyCities = 2;
             multiplyTowns = 0;
         } else { 
             // default train
             cities = Integer.parseInt(t);
         }
-        NetworkTrain networkTrain = new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns, t); 
+        NetworkTrain networkTrain = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, multiplyTowns, t); 
         trains.add(networkTrain);
     }
     
@@ -311,6 +315,30 @@ public class RevenueAdapter implements Runnable {
         return runPrettyPrint.toString();
     }
     
+    public void drawOptimalRunAsPath(HexMap map) {
+        List<GeneralPath> pathList = new ArrayList<GeneralPath>();
+        Map<NetworkTrain, List<NetworkVertex>> run = getOptimalRun();
+        
+        for (NetworkTrain train:run.keySet()) {
+            GeneralPath path = new GeneralPath();
+            NetworkVertex startVertex = null;
+            for (NetworkVertex vertex:run.get(train)) {
+                Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
+                if (startVertex == null) {
+                    startVertex = vertex;
+                    path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+                    continue;
+                } else if (startVertex == vertex) {
+                    path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+                    continue;
+                } 
+                if (vertexPoint != null)
+                    path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+            }
+            pathList.add(path);
+        }
+        map.setTrainPaths(pathList);
+    }
     
     @Override
     public String toString() {

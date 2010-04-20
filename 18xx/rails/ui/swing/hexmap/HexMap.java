@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.23 2010/03/11 20:38:00 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.24 2010/04/20 19:45:40 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
 import java.util.*;
 import java.util.List;
 
@@ -64,7 +65,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
 
     protected boolean bonusTokenLayingEnabled = false;
-
+    
+    /** list of generalpath elements to indicate train runs */
+    protected List<GeneralPath> trainPaths;
+    protected Color[] trainColors = new Color[]{Color.CYAN, Color.PINK, Color.ORANGE, Color.GRAY};
+    protected Stroke trainStroke = new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+        
     public void init(ORUIManager orUIManager, MapManager mapManager) {
         this.orUIManager = orUIManager;
         this.mapManager = mapManager;
@@ -140,6 +146,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
                         hexrect.height)) {
                     hex.paintBars(g);
                 }
+            }
+            
+            // paint train paths
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(trainStroke);
+            int color = 0;
+            for (GeneralPath path:trainPaths) {
+                g2.setColor(trainColors[color++ % trainColors.length]);
+                g2.draw(path);
             }
 
         } catch (NullPointerException ex) {
@@ -337,6 +352,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
         return allowances;
     }
 
+    public void setTrainPaths(List<GeneralPath> trainPaths) {
+        this.trainPaths = trainPaths;
+    }
+    
     /**
      * Off-board tiles must be able to retrieve the current phase.
      *

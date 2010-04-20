@@ -1,5 +1,11 @@
 package rails.algorithms;
 
+import java.awt.Shape;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+
+import rails.ui.swing.hexmap.HexMap;
+
 public final class NetworkEdge {
     
     private final NetworkVertex source;
@@ -50,7 +56,7 @@ public final class NetworkEdge {
     public String getConnection() {
       return source + " - >" + target;
     }
-    
+
     @Override
     // set to "" to faciltate visual graph
     public String toString() {
@@ -59,5 +65,18 @@ public final class NetworkEdge {
         else
           return "" + distance;
     }
+    
+    public static Shape getEdgeShape(HexMap map, NetworkEdge edge){
+        Point2D source = NetworkVertex.getVertexPoint2D(map, edge.getSource());
+        Point2D target = NetworkVertex.getVertexPoint2D(map, edge.getTarget());
+        Shape edgeShape;
+        if (source != null && target != null) {
+            edgeShape = new Line2D.Double(source, target);
+        } else {
+            edgeShape = null;
+        }
+        return edgeShape;
+    }
+
     
 }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.41 2010/04/11 15:49:47 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.42 2010/04/20 19:45:40 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -180,6 +180,21 @@ public class GUIHex implements ViewObject {
         return hexMap;
     }
 
+    public Point2D getCityPoint2D(City city){
+        Point tokenPoint = getTokenCenter(0, 1, 0, city.getNumber() - 1);
+        return new Point2D.Double(tokenPoint.getX(), tokenPoint.getY());
+    }
+
+    public Point2D getSidePoint2D(int side){
+        side = (5-side);
+        return new Point2D.Double((xVertex[side] + xVertex[(side+1)%6])/2, 
+                    (yVertex[side] + yVertex[(side+1)%6])/2);
+    }
+    
+    public Point2D getCenterPoint2D() {
+        return center;
+    }
+    
     public void setHexModel(MapHex model) {
         this.model = model;
         currentTile = model.getCurrentTile();
