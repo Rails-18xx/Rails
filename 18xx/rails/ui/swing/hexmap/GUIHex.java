@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.43 2010/04/20 20:17:51 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.44 2010/04/20 22:07:09 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -206,7 +206,6 @@ public class GUIHex implements ViewObject {
     }
 
     public Point2D getSidePoint2D(int side){
-        side = (5-side);
         return new Point2D.Double((xVertex[side] + xVertex[(side+1)%6])/2, 
                     (yVertex[side] + yVertex[(side+1)%6])/2);
     }

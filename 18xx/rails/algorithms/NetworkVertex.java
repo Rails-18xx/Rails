@@ -14,6 +14,7 @@ import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
 import rails.game.TokenI;
+import rails.ui.swing.hexmap.EWHexMap;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 
@@ -278,7 +279,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         } else if (vertex.isTownType()) {
             return guiHex.getCenterPoint2D();
         } else if (vertex.isSide()) {
-            return guiHex.getSidePoint2D(vertex.getSide());
+            if (map instanceof EWHexMap) 
+                return guiHex.getSidePoint2D(5-vertex.getSide());
+            else
+                return guiHex.getSidePoint2D((3+vertex.getSide())%6);
         } else {
             return null;
         }
