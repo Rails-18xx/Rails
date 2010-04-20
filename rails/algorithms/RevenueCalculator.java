@@ -211,7 +211,8 @@ final class RevenueCalculator {
                 // check usual train termination
                 trainTerminated = trainTerminated(trainId);
                 if (trainTerminated == Terminated.WithoutEvaluation || 
-                        trainTerminated == Terminated.NotYet && useRevenuePrediction && predictRevenues(trainId)) {
+//                        trainTerminated == Terminated.NotYet && 
+                        useRevenuePrediction && predictRevenues(trainId)) {
                     // cannot beat current best value => leave immediately
                     encounterVertex(trainId, vertexId, false);
                     log.debug("RC: finished startVertex " + vertexId + " for train " +trainId);
@@ -282,7 +283,8 @@ final class RevenueCalculator {
             // check usual train termination
             trainTerminated = trainTerminated(trainId);
             if (trainTerminated == Terminated.WithoutEvaluation ||
-                    trainTerminated == Terminated.NotYet && useRevenuePrediction && predictRevenues(trainId)) {
+//                    trainTerminated == Terminated.NotYet &&
+                    useRevenuePrediction && predictRevenues(trainId)) {
                 // cannot beat current best value => leave immediately
                 encounterVertex(trainId, vertexId, false);
                 returnEdge(trainId);
@@ -479,12 +481,16 @@ final class RevenueCalculator {
             } else if (j > trainId) { // train is in the future => use maximum values
                 trainValue =  maxTrainRevenues[j];
             } else { // the current train
-                if (trainMaxTowns[j] == 0) {
+                if (trainIgnoreTowns[j]) {
+                    // express train
+                    trainValue = trainCurrentValue[j] + 
+                    maxCityRevenues[trainMaxCities[j] - trainCities[j] ] * trainMultiplyCities[j];
+                } else if (trainMaxTowns[j] == 0) {
                     // default train
                     trainValue = trainCurrentValue[j] + 
-                    maxCityRevenues[trainMaxCities[j] - trainCities[j]] * trainMultiplyCities[j];
+                    maxCityRevenues[trainMaxCities[j] - trainCities[j] - trainTowns[j] ] * trainMultiplyCities[j];
                 } else {
-                    // plus trains
+                    // plus trains (or capped default trains)
                     int townDiff = trainMaxTowns[j] - trainTowns[j];
                     if (townDiff > 0) {
                         trainValue = trainCurrentValue[j] + 
