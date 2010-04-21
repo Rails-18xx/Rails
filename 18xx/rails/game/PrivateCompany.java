@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.40 2010/04/11 15:49:47 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.41 2010/04/21 19:16:44 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected List<String> preventClosingConditions = null;
     // Close at start of phase
     protected String closeAtPhaseName = null;
-
-    protected String blockedHexesString = null;
+    
+    protected String blockedHexesString = null; 
     protected List<MapHex> blockedHexes = null;
 
     public PrivateCompany() {
@@ -92,7 +92,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     }
                     String whenAttribute = spTag.getAttributeAsString("when");
                     if (whenAttribute != null) {
-                        closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("atEndOfORTurn");
+                        closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("endOfORTurn");
                     }
                 }
                 /* start sfy 1889 */
@@ -350,9 +350,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         return closeAtEndOfTurn;
     }
 
-    public void checkClosingIfExercised (boolean endOfOR) {
+    public void checkClosingIfExercised (boolean endOfTurn) {
 
-        if (isClosed() || endOfOR != closeAtEndOfTurn) return;
+        if (isClosed() || endOfTurn != closeAtEndOfTurn) return;
 
         if (closeIfAllExercised) {
             for (SpecialPropertyI sp : specialProperties) {
