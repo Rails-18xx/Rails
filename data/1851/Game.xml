@@ -4,6 +4,7 @@
 		<Game name="1851"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
+		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
@@ -57,8 +58,15 @@
 		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
 			rustedTrain="3"/>
-		<Train name="8" majorStops="8" cost="800" amount="4" startPhase="8" 
-			rustedTrain="4"/>
+		<Train name="8" majorStops="8" cost="800" startPhase="8" 
+			rustedTrain="4">
+            			<IfOption name="UnlimitedTopTrains" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedTopTrains" value="no">
+				<Attributes amount="4"/>
+			</IfOption>
+        </Train>
 		<TrainBuyingRules>
 			<FaceValueIfDifferentPresidents/>
 		</TrainBuyingRules>

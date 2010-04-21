@@ -76,6 +76,7 @@ Limitation:
 		</Description>
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 	<Game name="1856">
