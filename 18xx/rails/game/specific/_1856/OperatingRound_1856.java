@@ -22,16 +22,16 @@ public class OperatingRound_1856 extends OperatingRound {
 //    static
     {
 
-        steps = new GameDef.OrStep[] { 
+        steps = new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
                 GameDef.OrStep.LAY_TRACK,
                 GameDef.OrStep.LAY_TOKEN,
                 GameDef.OrStep.CALC_REVENUE,
-                GameDef.OrStep.PAYOUT, 
-                GameDef.OrStep.BUY_TRAIN, 
+                GameDef.OrStep.PAYOUT,
+                GameDef.OrStep.BUY_TRAIN,
                 GameDef.OrStep.TRADE_SHARES,
-                GameDef.OrStep.REPAY_LOANS, 
-                GameDef.OrStep.FINAL 
+                GameDef.OrStep.REPAY_LOANS,
+                GameDef.OrStep.FINAL
         };
    }
 
@@ -73,8 +73,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 if (operatingCompany.isClosed()) continue;
 
                 if (!operatingCompany.hasOperated()) {
-                    int soldPercentage
-                        = 100 - operatingCompany.getUnsoldPercentage();
+                    int soldPercentage = getSoldPercentage (operatingCompany);
 
                     TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
                     int trainNumber;
@@ -351,7 +350,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 // Step may only be skipped if repayment is optional
                 if (minNumber == 0) doneAllowed = true;
-                
+
             } else {
                 // No (more) loans
                 doneAllowed = true;

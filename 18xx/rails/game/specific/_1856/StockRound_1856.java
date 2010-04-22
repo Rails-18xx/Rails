@@ -34,7 +34,7 @@ public class StockRound_1856 extends StockRound {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        int unsoldPercentage = company.getUnsoldPercentage();
+        int soldPercentage = getSoldPercentage(company);
 
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int trainNumberAtStart = comp.getTrainNumberAvailableAtStart();
@@ -42,7 +42,7 @@ public class StockRound_1856 extends StockRound {
 
         log.debug ("Floatpercentage is "+floatPercentage);
 
-        if (unsoldPercentage <= 100 - floatPercentage) {
+        if (soldPercentage >= floatPercentage) {
             // Company floats.
             // In 1856 this does not mean that the company will operate,
             // only that it will be added to the list of companies
@@ -54,14 +54,16 @@ public class StockRound_1856 extends StockRound {
         }
     }
 
-    protected void initPlayer() {
+    @Override
+	protected void initPlayer() {
         super.initPlayer();
         sharesSoldSoFar.set(0);
         squaresDownSoFar.set(0);
     }
 
-    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
-        
+    @Override
+	protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+
         if (company instanceof PublicCompany_CGR) {
             if (company.canSharePriceVary()) {
                 int numberOfSpaces;
@@ -99,9 +101,9 @@ public class StockRound_1856 extends StockRound {
             case 3:
             case 4:
                 // Note, that the share has not yet been moved
-                if (comp.getUnsoldPercentage() <= 50
+                if (getSoldPercentage(comp) >= 50
                         && !comp.hasReachedDestination()) {
-                    recipient = oldHolder.getOwner(); // i.e. the Bank
+                    recipient = bank;
                     comp.addMoneyInEscrow(cost);
                     ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
                             Bank.format(cost),
@@ -111,11 +113,11 @@ public class StockRound_1856 extends StockRound {
                 }
                 // fall through
             case 5:
-                recipient = (cert).getCompany();
+                recipient = comp;
                 break;
             case 6:
             default:
-                recipient = oldHolder.getOwner();
+                recipient = bank;
             }
         } else {
             recipient = oldHolder.getOwner();
