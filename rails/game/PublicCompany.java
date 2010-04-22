@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.94 2010/04/18 20:52:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.95 2010/04/22 19:09:58 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1294,7 +1294,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Calculate, round up, report and add the cash
-        
+
         // Define a precise sequence for the reporting
         Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
         for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
@@ -1501,14 +1501,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
     }
-    
+
     /** A generic presidency check. Perhaps it can replace the above two methods. */
     public void checkPresidency () {
-        
+
         Player president = getPresident();
         int presIndex = president.getIndex();
         int presShare = president.getPortfolio().getShare(this);
-        
+
         GameManagerI gmgr = GameManager.getInstance();
         Player player;
         int share;
@@ -1527,18 +1527,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 return;
             }
         }
-        
-    }
 
-    /**
-     * Return the unsold share percentage. It is calculated as the sum of the
-     * percentages in IPO and in the company treasury. <p>The latter percentage
-     * can only be nonzero in games where companies can hold their own shares,
-     * and will only truly represent the "unsold" percentage until the company
-     * has floated (in many games companies can buy and sell their own shares).
-     */
-    public int getUnsoldPercentage() {
-        return bank.getIpo().getShare(this) + portfolio.getShare(this);
     }
 
     /**

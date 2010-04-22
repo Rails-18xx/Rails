@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.38 2010/02/05 19:57:06 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.39 2010/04/22 19:09:58 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -289,11 +289,30 @@ public abstract class Round implements RoundI {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        int unsoldPercentage = company.getUnsoldPercentage();
-        if (unsoldPercentage <= 100 - company.getFloatPercentage()) {
+        if (getSoldPercentage(company) >= company.getFloatPercentage()) {
             // Company floats
             floatCompany(company);
         }
+    }
+
+    /** Determine sold percentage for floating purposes */
+    protected int getSoldPercentage (PublicCompanyI company) {
+
+    	int soldPercentage = 0;
+    	for (PublicCertificateI cert : company.getCertificates()) {
+    		if (certCountsAsSold(cert)) {
+    			soldPercentage += cert.getShare();
+    		}
+    	}
+    	return soldPercentage;
+    }
+
+    /** Can be subclassed for games with special rules */
+    protected boolean certCountsAsSold (PublicCertificateI cert) {
+    	Portfolio holder = cert.getPortfolio();
+    	CashHolder owner = holder.getOwner();
+    	return owner instanceof Player
+    		|| holder == pool;
     }
 
     /**
@@ -306,7 +325,7 @@ public abstract class Round implements RoundI {
     protected void floatCompany(PublicCompanyI company) {
 
         // Move cash and shares where required
-        int unsoldPercentage = company.getUnsoldPercentage();
+        int soldPercentage = getSoldPercentage(company);
         int cash = 0;
         int capitalisationMode = company.getCapitalisation();
         if (company.hasStockPrice()) {
@@ -317,7 +336,7 @@ public abstract class Round implements RoundI {
                 capFactor = 100 / shareUnit;
             } else if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL) {
                 // Incremental capitalisation as in 1851
-                capFactor = (100 - unsoldPercentage) / shareUnit;
+                capFactor = soldPercentage / shareUnit;
             } else if (capitalisationMode == PublicCompanyI.CAPITALISE_WHEN_BOUGHT) {
                 // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
                 capFactor = 0;

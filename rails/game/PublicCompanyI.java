@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.52 2010/04/18 20:52:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.53 2010/04/22 19:09:58 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -157,8 +157,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public int[] getBaseTokenLayCosts();
 
     public boolean canHoldOwnShares();
-
-    public int getUnsoldPercentage();
 
     /**
      * Get a list of this company's certificates.
