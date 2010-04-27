@@ -49,7 +49,7 @@
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
-			<Reach base="stops" countTowns="yes"/>
+			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
 		</Defaults>
 		<Train name="2" majorStops="2" cost="100" amount="15"/>
