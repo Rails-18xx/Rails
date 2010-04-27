@@ -239,7 +239,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
     
     
-    public static Graph<NetworkVertex, NetworkEdge> optimizeGraph(Graph<NetworkVertex, NetworkEdge> graph) {
+    public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(SimpleGraph<NetworkVertex, NetworkEdge> graph) {
         
         // convert graph
 //        Graph<NetworkVertex, NetworkEdge> graph = new Multigraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
@@ -296,8 +296,15 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     // merge greed edges if the vertexes are not already connected
                     if (edges[0].isGreedy() && !graph.containsEdge(firstVertex, secondVertex)) {
                         int distance = edges[0].getDistance() + edges[1].getDistance();
-                        graph.addEdge(firstVertex, secondVertex,
-                                new NetworkEdge(firstVertex, secondVertex, true, distance));
+                        List<NetworkVertex> hiddenVertexes = new ArrayList<NetworkVertex>();
+                        hiddenVertexes.addAll(edges[0].getHiddenVertexes());
+                        hiddenVertexes.add(vertex);
+                        hiddenVertexes.addAll(edges[1].getHiddenVertexes());
+                        NetworkEdge newEdge = 
+                                new NetworkEdge(firstVertex, secondVertex, true, distance, hiddenVertexes);
+                        graph.addEdge(firstVertex, secondVertex, newEdge);
+                        log.info("NGB: Merged Edges removed Vertex = " + vertex);
+                        log.info("NGB: New Edge = " + newEdge.getConnection() + " with hidden Vertexes " + newEdge.getHiddenVertexes());
                         // remove vertex
                         graph.removeVertex(vertex);
                         removed = true;

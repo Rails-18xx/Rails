@@ -4,7 +4,7 @@ public final class NetworkTrain {
 
     private int cities;
     private int towns;
-    private final boolean townsCostNothing;
+    private final boolean ignoreTowns;
     private final int multiplyCities;
     private final int multiplyTowns;
     private final String trainName;
@@ -13,14 +13,14 @@ public final class NetworkTrain {
             int multiplyCities, int multiplyTowns, String trainName) {
         this.cities = cities;
         this.towns = towns;
-        this.townsCostNothing = townsCostNothing;
+        this.ignoreTowns = townsCostNothing;
         this.multiplyCities = multiplyCities;
         this.multiplyTowns = multiplyTowns;
         this.trainName = trainName;
     }
 
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
-        rc.setTrain(trainId, cities, towns, townsCostNothing, multiplyCities, multiplyTowns);
+        rc.setTrain(trainId, cities, towns, ignoreTowns, multiplyCities, multiplyTowns);
     }
 
     int getCities(){

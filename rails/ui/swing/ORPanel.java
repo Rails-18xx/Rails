@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.58 2010/04/20 19:45:40 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.59 2010/04/27 23:24:50 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -11,6 +11,7 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
 import rails.common.GuiDef;
@@ -593,7 +594,7 @@ implements ActionListener, KeyListener, RevenueListener {
         
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
-        Graph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
+        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
         
         if (companyName.equals("All")) {
             NetworkGraphBuilder.visualize(mapGraph, "Map Network");
@@ -602,7 +603,7 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
-            Graph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
+            SimpleGraph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
 
 //            NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
             graph = NetworkGraphBuilder.optimizeGraph(graph);
@@ -640,8 +641,8 @@ implements ActionListener, KeyListener, RevenueListener {
 //
 //                ra.refreshRevenueCalculator();
 
-                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
-//                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
+//                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
+                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
                 log.info("Revenue Adapter:" + ra);
                 revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
@@ -812,7 +813,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
-        Graph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
+        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
 
         mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
 

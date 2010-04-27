@@ -3,6 +3,8 @@ package rails.algorithms;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import rails.ui.swing.hexmap.HexMap;
 
@@ -16,6 +18,9 @@ public final class NetworkEdge {
     
     private final int distance;
     
+    private final List<NetworkVertex> hiddenVertexes;
+    // list of vertexes that were merged into the 
+    
     public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy) {
         this.source = source;
         this.target = target;
@@ -24,13 +29,16 @@ public final class NetworkEdge {
             this.distance = 1;
         else
             this.distance = 0;
+        hiddenVertexes = new ArrayList<NetworkVertex>();
     }
     
-    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy, int distance) {
+    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy, 
+                int distance, List<NetworkVertex> hiddenVertexes) {
         this.source = source;
         this.target = target;
         this.greedy = greedy;
         this.distance = distance;
+        this.hiddenVertexes = hiddenVertexes;
     }
     
     public NetworkVertex getSource() {
@@ -51,6 +59,10 @@ public final class NetworkEdge {
     
     public int getDistance() {
         return distance;
+    }
+    
+    public List<NetworkVertex> getHiddenVertexes() {
+        return hiddenVertexes;
     }
     
     public String getConnection() {

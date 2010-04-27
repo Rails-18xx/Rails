@@ -1,7 +1,6 @@
 package rails.algorithms;
 
 import java.awt.EventQueue;
-import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -11,23 +10,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.SwingUtilities;
 
-import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.graph.SimpleGraph;
 
-import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
-import rails.game.TokenI;
 import rails.game.TrainI;
 import rails.ui.swing.hexmap.HexMap;
 
 
 public class RevenueAdapter implements Runnable {
 
-    private Graph<NetworkVertex, NetworkEdge> graph;
+    private SimpleGraph<NetworkVertex, NetworkEdge> graph;
     
     private RevenueCalculator rc;
     private int maxNeighbors;
@@ -41,7 +37,7 @@ public class RevenueAdapter implements Runnable {
     private RevenueListener revenueListener;
 
     
-    public RevenueAdapter(Graph<NetworkVertex, NetworkEdge> graph){
+    public RevenueAdapter(SimpleGraph<NetworkVertex, NetworkEdge> graph){
         this.graph = graph;
         
         this.vertexes = new ArrayList<NetworkVertex>(graph.vertexSet());
@@ -108,14 +104,14 @@ public class RevenueAdapter implements Runnable {
             maxTownLength = Math.max(maxTownLength, train.getTowns());
         }
         
-        if (activatePrediction) {
-            // get max revenue results
-            int[] maxCityRevenues = revenueList(cities, maxCityLength);
-            int[] maxTownRevenues = revenueList(towns, maxTownLength);
-
-            // set revenue results in revenue calculator
-            rc.setPredictionData(maxCityRevenues, maxTownRevenues);
-        }
+//        if (activatePrediction) {
+//            // get max revenue results
+//            int[] maxCityRevenues = revenueList(cities, maxCityLength);
+//            int[] maxTownRevenues = revenueList(towns, maxTownLength);
+//
+//            // set revenue results in revenue calculator
+//            rc.setPredictionData(maxCityRevenues, maxTownRevenues);
+//        }
     }
     
     
@@ -257,6 +253,7 @@ public class RevenueAdapter implements Runnable {
     
     public int calculateRevenue(int startTrain, int finalTrain) {
         if (startTrain < 0 || finalTrain >= trains.size() || startTrain > finalTrain) return -1;
+        rc.initialPredictionRuns(startTrain, finalTrain);
         return rc.calculateRevenue(startTrain, finalTrain);
     }
 
@@ -322,18 +319,36 @@ public class RevenueAdapter implements Runnable {
         for (NetworkTrain train:run.keySet()) {
             GeneralPath path = new GeneralPath();
             NetworkVertex startVertex = null;
+            NetworkVertex previousVertex = null;
             for (NetworkVertex vertex:run.get(train)) {
                 Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
                 if (startVertex == null) {
                     startVertex = vertex;
+                    previousVertex = vertex;
                     path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
                     continue;
                 } else if (startVertex == vertex) {
                     path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+                    previousVertex = vertex;
                     continue;
                 } 
-                if (vertexPoint != null)
+                // draw hidden vertexes
+//                NetworkEdge edge = graph.getEdge(previousVertex, vertex);
+//                if (edge != null) {
+//                    edge = graph.getEdge(vertex, previousVertex);
+//                }
+//                if (edge != null) {
+//                    List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
+//                    for (NetworkVertex v:hiddenVertexes) {
+//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
+//                        if (vPoint != null) {
+//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
+//                        }
+//                    }
+//                }
+                if (vertexPoint != null) {
                     path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+                }
             }
             pathList.add(path);
         }
