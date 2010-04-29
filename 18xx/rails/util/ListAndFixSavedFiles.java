@@ -26,11 +26,15 @@ implements ActionListener, KeyListener {
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu;
     private JMenuItem saveItem, loadItem;
-    private JMenuItem trimItem;
+    private JMenuItem trimItem, deleteItem;
 
+    private StringBuffer headerText = new StringBuffer();
+    
     private List<Object> savedObjects = new ArrayList<Object>(512);
     private List<PossibleAction> executedActions;
-
+    
+    private int vbarPos;
+    
     private static String saveDirectory;
     private String filepath;
 
@@ -126,6 +130,15 @@ implements ActionListener, KeyListener {
         trimItem.setEnabled(true);
         editMenu.add(trimItem);
 
+        deleteItem = new ActionMenuItem("Delete");
+        deleteItem.setActionCommand("DELETE");
+        deleteItem.setMnemonic(KeyEvent.VK_D);
+        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+                ActionEvent.ALT_MASK));
+        deleteItem.addActionListener(this);
+        deleteItem.setEnabled(true);
+        editMenu.add(deleteItem);
+
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
 
@@ -143,6 +156,7 @@ implements ActionListener, KeyListener {
         setVisible(true);
 
         saveDirectory = Config.get("save.directory");
+        
         load();
 
     }
@@ -214,10 +228,9 @@ implements ActionListener, KeyListener {
                 executedActions =
                         (List<PossibleAction>) ois.readObject();
                 savedObjects.add(executedActions);
-                i=0;
-                for (PossibleAction action : executedActions) {
-                    add("Action "+(i++)+": "+action.toString());
-                }
+                
+                setReportText(true);
+
                 ois.close();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -229,16 +242,35 @@ implements ActionListener, KeyListener {
 
     public void add (String text) {
         if (text.length() > 0) {
-            reportText.append(text);
-            reportText.append("\n");
-            scrollDown();
+            headerText.append(text);
+            headerText.append("\n");
         }
     }
+    
+    private void setReportText(boolean initial) {
+        if (initial)
+            vbarPos = -1;
+        else
+            vbarPos = this.vbar.getValue();
+        
+        reportText.setText(headerText.toString());
+        // append actionText
+        int i=0;
+        for (PossibleAction action : executedActions) {
+            reportText.append("Action "+(i++)+": "+action.toString());
+            reportText.append("\n");
+        }
+        scrollDown(vbarPos);
+    }
+    
 
-    public void scrollDown () {
+    public void scrollDown (int pos) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+                if (vbarPos == -1)
+                    messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+                else
+                    messageWindow.vbar.setValue(vbarPos);
             }
         });
     }
@@ -254,7 +286,18 @@ implements ActionListener, KeyListener {
                     int index = Integer.parseInt(result);
                     List<PossibleAction> toRemove = executedActions.subList(index, executedActions.size());
                     toRemove.clear();
+                    setReportText(false);
+                } catch (NumberFormatException e) {
 
+                }
+            }
+        } else if ("DELETE".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number to be deleted");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    executedActions.remove(index);
+                    setReportText(false);
                 } catch (NumberFormatException e) {
 
                 }
