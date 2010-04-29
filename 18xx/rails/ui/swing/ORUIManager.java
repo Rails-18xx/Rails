@@ -1369,12 +1369,18 @@ public class ORUIManager implements DialogOwner {
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
-        // sfy operating costs
+        // initialize operating costs actions
         orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
         
-        // MapTileCorrection Actions
+        // initial deactivation of MapTileCorrection Actions 
         mapCorrectionEnabled = false;
         mapCorrectionAction = null;
+        
+        // initial deactivation of revenue calculation
+        if (!possibleActions.contains(SetDividend.class)) {
+            orPanel.stopRevenueUpdate();
+        }
+        
         if (possibleActions.contains(MapCorrectionAction.class)) {
             orPanel.initTileLayingStep();
             orWindow.requestFocus();

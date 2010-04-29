@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.59 2010/04/27 23:24:50 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.60 2010/04/29 19:47:32 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -711,8 +711,16 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.processAction(command, executedActions);
         } else if (source == zoomIn) {
             orWindow.getMapPanel().zoomIn();
+            if (revenueAdapter != null) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
         } else if (source == zoomOut) {
             orWindow.getMapPanel().zoomOut();
+            if (revenueAdapter != null) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
         } else if (command == NETWORK_INFO_CMD) {
             JMenuItem item = (JMenuItem)actor.getSource();
             executeNetworkInfo(item.getText());
@@ -813,23 +821,26 @@ implements ActionListener, KeyListener, RevenueListener {
 
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
-        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
-
-        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-
-        // revenue calculation example
-        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-        RevenueAdapter ra = new RevenueAdapter(mapGraph);
-
-        // set tokens
-        List<TokenI> tokens = company.getTokens();
-        for (TokenI token:tokens){
-            NetworkVertex vertex = nwGraph.getVertex(token);
-            if (vertex != null) ra.addStartVertex(vertex);
-        }
+        // run on mapgraph
+//        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
+//
+//        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+//
+//        // revenue calculation example
+//        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
+//        RevenueAdapter ra = new RevenueAdapter(mapGraph);
+//
+//        // set tokens
+//        List<TokenI> tokens = company.getTokens();
+//        for (TokenI token:tokens){
+//            NetworkVertex vertex = nwGraph.getVertex(token);
+//            if (vertex != null) ra.addStartVertex(vertex);
+//        }
     
         // run on railroad graph, does not work so far, thus use map graph
-        // RevenueAdapter ra = new RevenueAdapter(graph);
+        SimpleGraph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
+        graph = NetworkGraphBuilder.optimizeGraph(graph);
+        RevenueAdapter ra = new RevenueAdapter(graph);
 
         // get trains
         company.getPortfolio().getTrainList();
@@ -855,10 +866,14 @@ implements ActionListener, KeyListener, RevenueListener {
     
     public void stopRevenueUpdate() {
         orUIManager.getMap().setTrainPaths(null);
-        revenueAdapter.removeRevenueListener();
-        revenueAdapter = null;
-        revenueThread.interrupt();
-        revenueThread = null;
+        if (revenueThread != null) {
+            revenueThread.interrupt();
+            revenueThread = null;
+        }
+        if (revenueAdapter != null) {
+            revenueAdapter.removeRevenueListener();
+            revenueAdapter = null;
+        }
     }
     
     
