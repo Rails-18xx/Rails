@@ -8,9 +8,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.SimpleGraph;
 
-import rails.algorithms.NetworkEdge;
-import rails.algorithms.NetworkGraphBuilder;
-import rails.algorithms.NetworkVertex;
+import rails.algorithms.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
@@ -59,7 +57,7 @@ public class ORUIManager implements DialogOwner {
     // map corrections
     private boolean mapCorrectionEnabled = false;
     private MapCorrectionAction mapCorrectionAction = null;
-    
+
     /**
      * Will be set true if a cancelled action does not need to be reported to
      * the server, because it does not change the OR turn step. For instance, if
@@ -124,7 +122,7 @@ public class ORUIManager implements DialogOwner {
             setORCompanyTurn(-1);
         }
     }
-    
+
     private SimpleGraph<NetworkVertex, NetworkEdge> getCompanyGraph(){
         MapManager mapManager = gameUIManager.getGameManager().getMapManager();
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
@@ -133,7 +131,7 @@ public class ORUIManager implements DialogOwner {
             nwGraph.getRailRoadGraph(orComp);
         return graph;
     }
-    
+
     public <T extends PossibleAction> void setMapRelatedActions(List<T> actions) {
 
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
@@ -141,7 +139,7 @@ public class ORUIManager implements DialogOwner {
 
         allowedTileLays.clear();
         allowedTokenLays.clear();
-        
+
         for (T action : actions) {
             if (action instanceof LayTile) {
                 allowedTileLays.add((LayTile) action);
@@ -167,7 +165,7 @@ public class ORUIManager implements DialogOwner {
             }
             hexUpgrades = null;
         }
-       
+
         if (allowedTokenLays.size() == 0 && tokenLayingEnabled) {
             /* Finish token laying step */
             if (selectedHex != null) {
@@ -184,7 +182,7 @@ public class ORUIManager implements DialogOwner {
             }
             hexUpgrades = null;
         }
-        
+
         if (allowedTileLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TILE;
             mapPanel.setAllowedTileLays(allowedTileLays);
@@ -206,15 +204,15 @@ public class ORUIManager implements DialogOwner {
                     break;
                 case (LayTile.SPECIAL_PROPERTY):
                     SpecialPropertyI sp = layTile.getSpecialProperty();
-                    if (sp == null || !(sp instanceof SpecialTileLay) || 
-                            ((SpecialTileLay)sp).requiresConnection()) 
+                    if (sp == null || !(sp instanceof SpecialTileLay) ||
+                            ((SpecialTileLay)sp).requiresConnection())
                         break;
                 case (LayTile.LOCATION_SPECIFIC):
                     if (layTile.getLocations() != null)
                         hexUpgrades.addAll(layTile.getLocations());
                 }
             }
-            
+
             // standard upgrades
             if (mapHexes) {
                 // generate network graph to indicate the allowed tiles
@@ -224,14 +222,14 @@ public class ORUIManager implements DialogOwner {
                         hexUpgrades.add(hex);
                 }
             }
-            
+
             // activate upgrades
             for (MapHex hex:hexUpgrades) {
                 GUIHex guiHex = map.getHexByName(hex.getName());
                 guiHex.setSelectable(true);
             }
         }
-        
+
         if (allowedTokenLays.size() > 0) {
             nextSubStep = ORUIManager.SELECT_HEX_FOR_TOKEN;
             mapPanel.setAllowedTokenLays(allowedTokenLays);
@@ -253,7 +251,7 @@ public class ORUIManager implements DialogOwner {
                 } else if (layToken.getLocations() != null)
                     hexUpgrades.addAll(layToken.getLocations());
             }
-            
+
             // standard tokens
             if (mapHexes) {
                 // generate network graph to indicate the token lays
@@ -267,8 +265,8 @@ public class ORUIManager implements DialogOwner {
                     guiHex.setSelectable(true);
                 }
             }
-        } 
-        
+        }
+
         setLocalStep(nextSubStep);
         tileLayingEnabled = allowedTileLays.size() > 0;
         tokenLayingEnabled = allowedTokenLays.size() > 0;
@@ -298,7 +296,7 @@ public class ORUIManager implements DialogOwner {
             if (mapCorrectionAction != null)
                 extraMessage = LocalText.getText("CorrectMap" + mapCorrectionAction.getStep().name());
         }
-        
+
         if (localStep == ORUIManager.SELECT_HEX_FOR_TILE) {
             /* Compose prompt for tile laying */
             StringBuffer normalTileMessage = new StringBuffer(" ");
@@ -399,9 +397,9 @@ public class ORUIManager implements DialogOwner {
             } else if (actionType == LayBonusToken.class) {
 
                 prepareBonusToken((LayBonusToken) actions.get(0));
-                
+
             } else if (actionType == LayBaseToken.class) {
-                
+
                 /* Only used outside the token laying step */
                 // Can currently handle only one location!
                 LayBaseToken lbt = (LayBaseToken) actions.get(0);
@@ -428,15 +426,15 @@ public class ORUIManager implements DialogOwner {
             } else if (actionType == RepayLoans.class) {
 
                 repayLoans ((RepayLoans)actions.get(0));
-                
+
             } else if (actionType == UseSpecialProperty.class) {
-                
+
                 useSpecialProperty ((UseSpecialProperty)actions.get(0));
-                
+
             } else if (actions.get(0) instanceof CorrectionAction) {
-                
+
                 processCorrectionAction((CorrectionAction)actions.get(0));
-                
+
             }
 
         } else if (command.equals(ORPanel.OPERATING_COST_CMD)) {
@@ -594,12 +592,12 @@ public class ORUIManager implements DialogOwner {
                 if (clickedHex == selectedHex) {
                     selectedHex.forcedRotateTile();
                     map.repaint(selectedHex.getBounds());
-                } else 
+                } else
                     checkClickedHex = true;
                 break;
             }
             if (checkClickedHex && clickedHex !=null && clickedHex != selectedHex) {
-                map.selectHex(clickedHex); 
+                map.selectHex(clickedHex);
                 mapCorrectionAction.selectHex(clickedHex.getHexModel());
                 orWindow.process(mapCorrectionAction);
             }
@@ -782,9 +780,9 @@ public class ORUIManager implements DialogOwner {
                                 "SelectStationForTokenOption",
                                         city.getNumber(),
                                         ((MapHex) selectedHex.getModel()).getConnectionString(
-                                        selectedHex.getCurrentTile(),
-                                        ((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
-                                        city.getNumber())) ;
+                                        		selectedHex.getCurrentTile(),
+                                        		((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
+                                        		city.getRelatedStation().getNumber())) ;
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, city);
                     }
@@ -904,30 +902,30 @@ public class ORUIManager implements DialogOwner {
     }
 
     public void operatingCosts(){
-        
+
         List<String> textOC = new ArrayList<String>();
         List<OperatingCost> actionOC = possibleActions.getType(OperatingCost.class);
-        
+
         for (OperatingCost ac:actionOC) {
-            
+
             String suggestedCostText;
             if (ac.isFreeEntryAllowed())
                 suggestedCostText = LocalText.getText("OCAmountEntry");
             else
                 suggestedCostText = Bank.format(ac.getAmount());
-            
+
             OperatingCost.OCType t = ac.getOCType();
-            if (t == OperatingCost.OCType.LAY_TILE) 
-                textOC.add(LocalText.getText("OCLayTile", 
+            if (t == OperatingCost.OCType.LAY_TILE)
+                textOC.add(LocalText.getText("OCLayTile",
                     suggestedCostText ));
-            
-            if (t == OperatingCost.OCType.LAY_BASE_TOKEN) 
-                textOC.add(LocalText.getText("OCLayBaseToken", 
+
+            if (t == OperatingCost.OCType.LAY_BASE_TOKEN)
+                textOC.add(LocalText.getText("OCLayBaseToken",
                     suggestedCostText ));
         }
-        
+
         if (!textOC.isEmpty()) {
-            String chosenOption = (String) JOptionPane.showInputDialog(orWindow, 
+            String chosenOption = (String) JOptionPane.showInputDialog(orWindow,
                     LocalText.getText("OCSelectMessage"),
                     LocalText.getText("OCSelectTitle"),
                     JOptionPane.QUESTION_MESSAGE, null,
@@ -951,14 +949,14 @@ public class ORUIManager implements DialogOwner {
                 } else {
                     chosenAction.setAmount(chosenAction.getAmount());
                 }
-                
+
                 if (orWindow.process(chosenAction)) {
                     updateMessage();
                 }
             }
         }
     }
-    
+
     public void buyTrain() {
 
         List<String> prompts = new ArrayList<String>();
@@ -1211,7 +1209,7 @@ public class ORUIManager implements DialogOwner {
             }
             return;
         }
-        
+
         if (tileLayingEnabled) {
             if (selectedHex == null) {
                 orWindow.displayORUIMessage(LocalText.getText("SelectAHexForToken"));
@@ -1320,22 +1318,22 @@ public class ORUIManager implements DialogOwner {
             gameUIManager.setCurrentDialog (currentDialog, action);
         }
     }
-    
+
     /** Used to process some special properties from the 'Special' menu */
     /* In fact currently not used */
     protected void useSpecialProperty (UseSpecialProperty action) {
-        
+
         gameUIManager.processOnServer(action);
-        
+
     }
 
     protected void processCorrectionAction(CorrectionAction action) {
 
         gameUIManager.processOnServer(action);
-        
+
     }
-    
-    
+
+
     public void updateStatus() {
 
         updateStatus(null);
@@ -1371,7 +1369,7 @@ public class ORUIManager implements DialogOwner {
 
         // initialize operating costs actions
         orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
-        
+
         // initial deactivation of MapTileCorrection Actions 
         mapCorrectionEnabled = false;
         mapCorrectionAction = null;
@@ -1387,7 +1385,7 @@ public class ORUIManager implements DialogOwner {
 
             MapCorrectionAction action = (MapCorrectionAction)
                     (possibleActions.getType(MapCorrectionAction.class)).get(0);
-            
+
             mapCorrectionEnabled = true;
             mapCorrectionAction = action;
             updateUpgradesPanel(action);
@@ -1485,7 +1483,7 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(TakeLoans.class)) {
             orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
         }
-        
+
         if (!mapCorrectionEnabled)
             setMapRelatedActions(mapRelatedActions);
 
@@ -1525,7 +1523,7 @@ public class ORUIManager implements DialogOwner {
 
         orPanel.initSpecialActions();
 
-        // Bonus tokens (and sometimes base tokens) can be laid anytime, 
+        // Bonus tokens (and sometimes base tokens) can be laid anytime,
         // so we must also handle these outside the token laying step.
         if (possibleActions.contains(LayToken.class)
                 && orStep != GameDef.OrStep.LAY_TOKEN) {
@@ -1533,15 +1531,15 @@ public class ORUIManager implements DialogOwner {
             List<LayToken> tokenActions =
                     possibleActions.getType(LayToken.class);
             for (LayToken tAction : tokenActions) {
-                
-                if (tAction instanceof LayBaseToken 
+
+                if (tAction instanceof LayBaseToken
                         && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
                     // Forced action: select home city
                     LayBaseToken lbt = (LayBaseToken)tAction;
                     map.setSelectedHex(map.getHexByName(lbt.getChosenHex().getName()));
                     layBaseToken (lbt);
                     return;
-                   
+
                 }
                 SpecialTokenLay stl = tAction.getSpecialProperty();
                 if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
@@ -1568,7 +1566,7 @@ public class ORUIManager implements DialogOwner {
             orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
                     LocalText.getText("DestinationsReached"));
         }
-        
+
         // Any other special properties, to be shown in the "Special" menu.
         // Example: 18AL AssignNamedTrains
         if (possibleActions.contains(UseSpecialProperty.class)) {
@@ -1577,14 +1575,14 @@ public class ORUIManager implements DialogOwner {
                 orPanel.addSpecialAction(usp, sp.toMenu());
             }
         }
-        
+
         // Close Private
         if (possibleActions.contains(ClosePrivate.class)) {
             for (ClosePrivate action: possibleActions.getType(ClosePrivate.class)) {
                 orPanel.addSpecialAction(action, action.getInfo());
             }
         }
-        
+
 
         checkForGameSpecificActions();
 
@@ -1682,10 +1680,10 @@ public class ORUIManager implements DialogOwner {
         upgradePanel.showUpgrades(); // ??
 
     }
-    
+
     public void updateUpgradesPanel(MapCorrectionAction action) {
         setLocalStep(MAP_CORRECTION);
-        
+
         switch (action.getStep()) {
         case SELECT_HEX:
             // done text will be used by token lay
@@ -1723,7 +1721,7 @@ public class ORUIManager implements DialogOwner {
             }
             break;
         }
-        
+
         log.debug("Active map tile correction");
         upgradePanel.showCorrectionUpgrades();
     }
