@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.24 2010/04/20 19:45:40 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.25 2010/04/29 19:47:32 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -69,7 +69,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
     /** list of generalpath elements to indicate train runs */
     protected List<GeneralPath> trainPaths;
     protected Color[] trainColors = new Color[]{Color.CYAN, Color.PINK, Color.ORANGE, Color.GRAY};
-    protected Stroke trainStroke = new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+    protected int strokeWidth = 5;
+    protected int strokeCap = BasicStroke.CAP_ROUND;
+    protected int strokeJoin = BasicStroke.JOIN_BEVEL;
         
     public void init(ORUIManager orUIManager, MapManager mapManager) {
         this.orUIManager = orUIManager;
@@ -150,6 +152,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
             
             // paint train paths
             Graphics2D g2 = (Graphics2D) g;
+            Stroke trainStroke = 
+                new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
             g2.setStroke(trainStroke);
             int color = 0;
             for (GeneralPath path:trainPaths) {

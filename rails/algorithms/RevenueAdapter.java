@@ -335,10 +335,8 @@ public class RevenueAdapter implements Runnable {
                 // draw hidden vertexes
 //                NetworkEdge edge = graph.getEdge(previousVertex, vertex);
 //                if (edge != null) {
-//                    edge = graph.getEdge(vertex, previousVertex);
-//                }
-//                if (edge != null) {
 //                    List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
+////                    if (edge.getTarget() == vertex) Collections.reverse(hiddenVertexes);
 //                    for (NetworkVertex v:hiddenVertexes) {
 //                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
 //                        if (vPoint != null) {
@@ -349,6 +347,7 @@ public class RevenueAdapter implements Runnable {
                 if (vertexPoint != null) {
                     path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
                 }
+                previousVertex = vertex;
             }
             pathList.add(path);
         }
