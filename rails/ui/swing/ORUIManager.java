@@ -1079,28 +1079,29 @@ public class ORUIManager implements DialogOwner {
         TrainI exchangedTrain = null;
         if (train != null && buyAction.isForExchange()) {
             List<TrainI> oldTrains = buyAction.getTrainsForExchange();
-            List<String> oldTrainOptions =
-                    new ArrayList<String>(oldTrains.size());
-            String[] options = new String[oldTrains.size() + 1];
-            int jj = 0;
-            if (!buyAction.isForcedExchange()) {
-                options[jj++] = LocalText.getText("None");
-            }
-            for (int j = 0; j < oldTrains.size(); j++) {
-                options[jj + j] =
-                        LocalText.getText("N_Train", oldTrains.get(j).getName());
-                oldTrainOptions.add(options[jj + j]);
-            }
-            String exchangedTrainName =
-                    (String) JOptionPane.showInputDialog(orWindow,
-                            LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                    Bank.format(price)),
-                            LocalText.getText("WHICH_TRAIN_EXCHANGE"),
-                            JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[0]);
-            int index = oldTrainOptions.indexOf(exchangedTrainName);
-            if (index >= 0) {
-                exchangedTrain = oldTrains.get(index);
+            if (oldTrains.size() == 1) {
+                exchangedTrain = oldTrains.get(0);
+            } else {
+                List<String> oldTrainOptions =
+                        new ArrayList<String>(oldTrains.size());
+                String[] options = new String[oldTrains.size() + 1];
+                int jj = 0;
+                for (int j = 0; j < oldTrains.size(); j++) {
+                    options[jj + j] =
+                            LocalText.getText("N_Train", oldTrains.get(j).getName());
+                    oldTrainOptions.add(options[jj + j]);
+                }
+                String exchangedTrainName =
+                        (String) JOptionPane.showInputDialog(orWindow,
+                                LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
+                                        Bank.format(price)),
+                                LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
+                                JOptionPane.QUESTION_MESSAGE, null, options,
+                                options[0]);
+                int index = oldTrainOptions.indexOf(exchangedTrainName);
+                if (index >= 0) {
+                    exchangedTrain = oldTrains.get(index);
+                }
             }
         }
 
