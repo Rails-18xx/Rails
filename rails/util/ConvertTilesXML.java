@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.9 2008/06/04 19:00:39 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ConvertTilesXML.java,v 1.10 2010/04/30 15:22:42 evos Exp $*/
 package rails.util;
 
 import java.io.File;
@@ -25,11 +25,15 @@ public class ConvertTilesXML {
 
     private static List<String> directories = new ArrayList<String>();
     private static String inputFilePath = "TileDictionary.xml";
+    private static String handmadeFilePath = "HandmadeTiles.xml";
     private static String outputFilePath = "Tiles.xml";
 
     private static Map<String, String> colourMap, gaugeMap, sidesMap, cityMap;
     private static Map<String, String[]> stationMap;
     private static Map<String, String> junctionPosition;
+    
+    private static Map<Integer, Element> handmadeTiles
+        = new HashMap<Integer, Element>();
 
     /** Maps non-edge non-station junctions to tracks ending there. */
     private static Map<String, List<Element>> unresolvedTrack;
@@ -161,10 +165,20 @@ public class ConvertTilesXML {
     }
 
     private ConvertTilesXML() throws ConfigurationException {
+        
+        int tileId;
 
         directories.add("tiles");
-        Element inputTopElement =
-                Tag.findTopTagInFile(inputFilePath, directories, "tiles").getElement();
+        
+        Tag handmadeTopTag = 
+            Tag.findTopTagInFile(handmadeFilePath, directories, "Tiles");
+        for (Tag tag : handmadeTopTag.getChildren("Tile")) {
+            tileId = tag.getAttributeAsInteger("id");
+            handmadeTiles.put(tileId, tag.getElement());
+        }
+        
+        Tag inputTopElement =
+                Tag.findTopTagInFile(inputFilePath, directories, "tiles");
 
         try {
             DocumentBuilderFactory factory =
@@ -186,15 +200,22 @@ public class ConvertTilesXML {
 
     }
 
-    private void convertXML(Element inputElement, Document outputDoc)
+    private void convertXML(Tag inputTag, Document outputDoc)
             throws ConfigurationException {
-
-        NodeList children = inputElement.getElementsByTagName("tile");
-        for (int i = 0; i < children.getLength(); i++) {
-            Element inputTile = (Element) children.item(i);
-            Element outputTile = outputDoc.createElement("Tile");
-            outputDoc.getDocumentElement().appendChild(outputTile);
-            convertTile(inputTile, outputTile);
+        
+        for (Tag tag : inputTag.getChildren("tile")) {
+            int tileId = Integer.parseInt(tag.getChild("ID").getText());
+            if (handmadeTiles.containsKey(tileId)) {
+                Element outputTile = handmadeTiles.get(tileId);
+                Node dup = outputDoc.importNode(outputTile, true);
+                outputDoc.getDocumentElement().appendChild(dup);
+                System.out.println("Copied handmade tile #"+tileId);
+            } else {
+                Element inputTile = tag.getElement();
+                Element outputTile = outputDoc.createElement("Tile");
+                outputDoc.getDocumentElement().appendChild(outputTile);
+                convertTile(inputTile, outputTile);
+            }
         }
 
     }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.15 2010/01/31 22:22:37 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.16 2010/04/30 15:22:42 evos Exp $*/
 package rails.util;
 
 import java.io.IOException;
@@ -382,13 +382,6 @@ return getAttributeAsInteger(name, 0);
                                          + filename);
     }
 
-    /**
-     * @deprecated This is a stop-gap, needed until all XML parsing code has
-     * been converted to use Tag. This method is now only called from
-     * some external utilities.
-     * @return
-     */
-    @Deprecated
     public Element getElement() {
         return element;
     }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Tiles>
+    <Tile colour="red" id="-939" name="Goderich">
+        <Station id="city1" position="0" type="City" slots="0" value="-1"/>
+        <Track from="side1" gauge="normal" to="city1"/>
+        <Track from="side2" gauge="normal" to="city1"/>
+        <Track from="side3" gauge="normal" to="city1"/>
+    </Tile>
+</Tiles>
