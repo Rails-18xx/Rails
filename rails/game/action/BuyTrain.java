@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.19 2010/03/05 20:49:41 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.20 2010/04/30 09:35:36 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -29,7 +29,10 @@ public class BuyTrain extends PossibleORAction {
     private boolean forcedBuyIfNoRoute = false; // TODO Remove once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
+    
+    /** Obsolete, but left in for backwards compatibility of saved files */
     private boolean forcedExchange = false;
+    
     private boolean presidentMustAddCash = false;
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
@@ -80,10 +83,10 @@ public class BuyTrain extends PossibleORAction {
         return this;
     }
 
-    public BuyTrain setForcedExchange(boolean value) {
-        forcedExchange = value;
-        return this;
-    }
+    //public BuyTrain setForcedExchange(boolean value) {
+    //    forcedExchange = value;
+    //    return this;
+    //}
 
     public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
         this.forcedBuyIfNoRoute = hasNoTrains;
@@ -147,9 +150,9 @@ public class BuyTrain extends PossibleORAction {
         return trainsForExchange;
     }
 
-    public boolean isForcedExchange() {
-        return forcedExchange;
-    }
+    //public boolean isForcedExchange() {
+    //    return forcedExchange;
+    //}
 
     public boolean mustPresidentAddCash() {
         return presidentMustAddCash;

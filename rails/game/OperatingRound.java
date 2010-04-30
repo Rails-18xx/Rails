@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.123 2010/04/21 19:16:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.124 2010/04/30 09:35:35 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1464,7 +1464,7 @@ public class OperatingRound extends Round implements Observer {
 
             // Does the company have room for another train?
             int trainLimit = operatingCompany.getCurrentTrainLimit();
-            if (!canBuyTrainNow() && !action.isForcedExchange()) {
+            if (!canBuyTrainNow() && !action.isForExchange()) {
                 errMsg =
                         LocalText.getText("WouldExceedTrainLimit",
                                 String.valueOf(trainLimit));
@@ -2340,8 +2340,6 @@ public class OperatingRound extends Round implements Observer {
 
         boolean hasTrains =
                 operatingCompany.getPortfolio().getNumberOfTrains() > 0;
-        boolean atTrainLimit =
-                operatingCompany.getNumberOfTrains() >= operatingCompany.getCurrentTrainLimit();
         boolean canBuyTrainNow = canBuyTrainNow();
         boolean presidentMayHelp = !hasTrains && operatingCompany.mustOwnATrain();
         TrainI cheapestTrain = null;
@@ -2382,7 +2380,7 @@ public class OperatingRound extends Round implements Observer {
                                 operatingCompany.getPortfolio().getUniqueTrains();
                         BuyTrain action = new BuyTrain(train, ipo, cost);
                         action.setTrainsForExchange(exchangeableTrains);
-                        if (atTrainLimit) action.setForcedExchange(true);
+                        //if (atTrainLimit) action.setForcedExchange(true);
                         possibleActions.add(action);
                         canBuyTrainNow = true;
                     }
