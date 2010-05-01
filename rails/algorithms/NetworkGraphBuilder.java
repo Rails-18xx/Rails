@@ -291,23 +291,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                         break;
                     } 
                     // greedy case:
-                    NetworkVertex firstVertex = Graphs.getOppositeVertex(graph, edges[0], vertex);
-                    NetworkVertex secondVertex = Graphs.getOppositeVertex(graph, edges[1], vertex);
                     // merge greed edges if the vertexes are not already connected
-                    if (edges[0].isGreedy() && !graph.containsEdge(firstVertex, secondVertex)) {
-                        int distance = edges[0].getDistance() + edges[1].getDistance();
-                        List<NetworkVertex> hiddenVertexes = new ArrayList<NetworkVertex>();
-                        hiddenVertexes.addAll(edges[0].getHiddenVertexes());
-                        hiddenVertexes.add(vertex);
-                        hiddenVertexes.addAll(edges[1].getHiddenVertexes());
-                        NetworkEdge newEdge = 
-                                new NetworkEdge(firstVertex, secondVertex, true, distance, hiddenVertexes);
-                        graph.addEdge(firstVertex, secondVertex, newEdge);
-                        log.info("NGB: Merged Edges removed Vertex = " + vertex);
-                        log.info("NGB: New Edge = " + newEdge.getConnection() + " with hidden Vertexes " + newEdge.getHiddenVertexes());
-                        // remove vertex
-                        graph.removeVertex(vertex);
-                        removed = true;
+                    if (edges[0].isGreedy()) {
+                        removed = NetworkEdge.mergeEdges(graph, edges[0], edges[1]);
                         break;
                     }
                 }

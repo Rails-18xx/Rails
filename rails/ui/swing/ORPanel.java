@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.60 2010/04/29 19:47:32 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.61 2010/05/01 16:07:05 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -663,6 +663,7 @@ implements ActionListener, KeyListener, RevenueListener {
                     ra.refreshRevenueCalculator();
                 }
             }
+            revenueAdapter = ra;
         }
     }
     

@@ -314,7 +314,7 @@ final class RevenueCalculator {
             }
 
             // no more edges to find
-            finalizeVertex(trainId, vertexId, valueStation);
+            finalizeVertex(trainId, vertexId);
             encounterVertex(trainId, vertexId, false);
             // keep them on the visited vertex list to avoid route duplication
             trainVisited[trainId][vertexId] = true;
@@ -401,7 +401,8 @@ final class RevenueCalculator {
         }
         
         // 3. no more edges to visit from here => evaluate or start new train
-        finalizeVertex(trainId, vertexId, valueStation);
+        if (valueStation)
+            finalizeVertex(trainId, vertexId);
         
         // 4. then leave that vertex
         encounterVertex(trainId, vertexId, false);
@@ -511,11 +512,11 @@ final class RevenueCalculator {
         return terminated;
     }
     
-    private void finalizeVertex(int trainId, int vertexId, boolean evaluate) {
+    private void finalizeVertex(int trainId, int vertexId) {
         log.debug("RC: No more edges found at " + vertexId + " for train " + trainId);
         
         if (trainId == finalTrain) {
-            if (evaluate) evaluateResults();
+            evaluateResults();
         } else {
             runTrain(trainId + 1);
         }
