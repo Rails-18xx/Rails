@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.41 2010/04/21 19:16:44 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.42 2010/05/01 16:08:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected List<String> preventClosingConditions = null;
     // Close at start of phase
     protected String closeAtPhaseName = null;
+    // Manual close possible
+    protected boolean closeManually = false;
     
     protected String blockedHexesString = null; 
     protected List<MapHex> blockedHexes = null;
@@ -95,7 +97,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("endOfORTurn");
                     }
                 }
-                /* start sfy 1889 */
+            
+                /* conditions that prevent closing */
                 List<Tag> preventTags = closureTag.getChildren("PreventClosing");
                 if (preventTags != null) {
                     for (Tag preventTag: preventTags) {
@@ -105,7 +108,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         }
                     }
                 }
-                /* end sfy 1889 */
+                
+                /* allow manual closure */
+                Tag manualTag = closureTag.getChild("CloseManually");
+                if (manualTag != null) {
+                    closeManually = true;
+                }
                 
                 // Close at start of phase
                 Tag closeTag = closureTag.getChild("Phase");
@@ -348,6 +356,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     public boolean closesAtEndOfTurn() {
         return closeAtEndOfTurn;
+    }
+    
+    public boolean closesManually() {
+        return closeManually;
     }
 
     public void checkClosingIfExercised (boolean endOfTurn) {

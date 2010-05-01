@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.11 2010/03/21 17:43:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompanyI.java,v 1.12 2010/05/01 16:08:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -39,5 +39,6 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder, 
     public boolean closesIfAllExercised();
     public boolean closesIfAnyExercised();
     public boolean closesAtEndOfTurn();
+    public boolean closesManually();
     public void checkClosingIfExercised(boolean endOfOR);
 }
