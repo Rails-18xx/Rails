@@ -1,419 +1,508 @@
-<?xml version="1.0" encoding="UTF-8"?><Tiles><Tile colour="white" id="0" name="empty"/><Tile colour="white" id="-1" name="1 village">
-		<Station id="city1" position="002" type="Town"/>
-	</Tile><Tile colour="white" id="-2" name="2 villages">
-		<Station id="city1" position="102" type="Town"/>
-		<Station id="city2" position="302" type="Town"/>
-	</Tile><Tile colour="fixed" id="-3" name="MF 3">
-		<Station id="city1" position="252" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="fixed" id="-7" name="MF 7">
-		<Track from="side2" gauge="normal" to="side1"/>
-	</Tile><Tile colour="fixed" id="-8" name="MF 8">
-		<Track from="side2" gauge="normal" to="side0"/>
-	</Tile><Tile colour="white" id="-10" name="1 city">
-		<Station id="city1" position="302" slots="1" type="City"/>
-	</Tile><Tile colour="fixed" id="-39" name="-39">
-		<Track from="side3" gauge="normal" to="side1"/>
-		<Track from="side1" gauge="normal" to="side2"/>
-		<Track from="side2" gauge="normal" to="side3"/>
-	</Tile><Tile colour="fixed" id="-41" name="-41">
-		<Track from="side0" gauge="normal" to="side3"/>
-		<Track from="side4" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side3"/>
-	</Tile><Tile colour="fixed" id="-58" name="MF 58">
-		<Station id="city1" position="301" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-	</Tile><Tile colour="fixed" id="-114" name="Braunschweig">
-		<Station id="city1" position="501" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="side2" gauge="normal" to="side2"/>
-	</Tile><Tile colour="fixed" id="-143" name="-143">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="fixed" id="-800" name="Rostock">
-		<Station id="city1" position="302" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="fixed" id="-801" name="Emden">
-		<Station id="city1" position="352" type="Town" value="10"/>
-		<Station id="city2" position="202" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city2" gauge="normal" to="side2"/>
-	</Tile><Tile colour="fixed" id="-802" name="Bremerhaven">
-		<Station id="city1" position="101" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="side3" gauge="normal" to="side4"/>
-	</Tile><Tile colour="green" id="-803" name="Hamburg">
-		<Station id="city1" position="502" slots="1" type="City" value="20"/>
-		<Station id="city2" position="052" slots="1" type="City" value="40"/>
-		<Station id="city3" position="302" slots="1" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side1"/>
-		<Track from="city3" gauge="normal" to="side3"/>
-	</Tile><Tile colour="fixed" id="-804" name="Schwerin">
-		<Station id="city1" position="002" slots="1" type="City" value="10"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="fixed" id="-805" name="Oldenburg">
-		<Station id="city1" position="051" slots="1" type="City" value="10"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="-806" name="Berlin">
-		<Station id="city1" position="402" slots="1" type="City" value="30"/>
-		<Station id="city2" position="001" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-	</Tile><Tile colour="yellow" id="-807" name="XX">
-		<Station id="city1" position="102" slots="1" type="City"/>
-		<Station id="city2" position="302" slots="1" type="City"/>
-	</Tile><Tile colour="fixed" id="-808" name="Koblenz">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="side1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="green" id="-809" name="Frankfurt">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="green" id="-810" name="Nurnberg">
-		<Station id="city1" position="552" slots="1" type="City" value="30"/>
-		<Station id="city2" position="252" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city2" gauge="normal" to="side2"/>
-		<Track from="city2" gauge="normal" to="side3"/>
-	</Tile><Tile colour="red" id="-901" name="OM 1 way">
-		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="1" name="1">
-		<Station id="city1" position="408" type="Town" value="10"/>
-		<Station id="city2" position="108" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side1"/>
-		<Track from="city2" gauge="normal" to="side3"/>
-	</Tile><Tile colour="yellow" id="2" name="2">
-		<Station id="city1" position="302" type="Town" value="10"/>
-		<Station id="city2" position="109" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side1"/>
-		<Track from="city2" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="3" name="3">
-		<Station id="city1" position="352" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-	</Tile><Tile colour="yellow" id="4" name="4">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-	</Tile><Tile colour="yellow" id="5" name="5">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="6" name="6">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="7" name="7">
-		<Track from="side3" gauge="normal" to="side4"/>
-	</Tile><Tile colour="yellow" id="8" name="8">
-		<Track from="side3" gauge="normal" to="side5"/>
-	</Tile><Tile colour="yellow" id="9" name="9">
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="yellow" id="55" name="55">
-		<Station id="city1" position="202" type="Town" value="10"/>
-		<Station id="city2" position="302" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city2" gauge="normal" to="side3"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-	</Tile><Tile colour="yellow" id="56" name="56">
-		<Station id="city1" position="407" type="Town" value="10"/>
-		<Station id="city2" position="108" type="Town" value="10"/>
-		<Track from="city2" gauge="normal" to="side1"/>
-		<Track from="city2" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="yellow" id="57" name="57">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-	</Tile><Tile colour="yellow" id="58" name="58">
-		<Station id="city1" position="401" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="yellow" id="69" name="69">
-		<Station id="city1" position="407" type="Town" value="10"/>
-		<Station id="city2" position="002" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side3"/>
-	</Tile><Tile colour="yellow" id="201" name="201">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="yellow" id="202" name="202">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-	</Tile><Tile colour="green" id="12" name="12">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile><Tile colour="green" id="13" name="13">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-	</Tile><Tile colour="green" id="14" name="14">
-		<Station id="city1" position="0" slots="2" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="15" name="15">
-		<Station id="city1" position="0" slots="2" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="16" name="16">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side4" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="18" name="18">
-		<Track from="side3" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="19" name="19">
-		<Track from="side5" gauge="normal" to="side1"/>
-		<Track from="side0" gauge="normal" to="side3"/>
-	</Tile><Tile colour="green" id="20" name="20">
-		<Track from="side1" gauge="normal" to="side4"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="23" name="23">
-		<Track from="side4" gauge="normal" to="side0"/>
-		<Track from="side0" gauge="normal" to="side3"/>
-	</Tile><Tile colour="green" id="24" name="24">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="25" name="25">
-		<Track from="side1" gauge="normal" to="side3"/>
-		<Track from="side3" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="26" name="26">
-		<Track from="side5" gauge="normal" to="side0"/>
-		<Track from="side0" gauge="normal" to="side3"/>
-	</Tile><Tile colour="green" id="27" name="27">
-		<Track from="side3" gauge="normal" to="side4"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="green" id="28" name="28">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side4" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="29" name="29">
-		<Track from="side3" gauge="normal" to="side4"/>
-		<Track from="side3" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="87" name="87">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="88" name="88">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="203" name="203">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-	</Tile><Tile colour="green" id="204" name="204">
-		<Station id="city1" position="0" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="205" name="205">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="206" name="206">
-		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="207" name="207">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="208" name="208">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="209" name="209">
-		<Station id="city1" position="0" slots="3" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="210" name="210">
-		<Station id="city1" position="502" slots="1" type="City" value="30"/>
-		<Station id="city2" position="052" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side1"/>
-	</Tile><Tile colour="green" id="211" name="211">
-		<Station id="city1" position="252" slots="1" type="City" value="30"/>
-		<Station id="city2" position="452" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city2" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="212" name="212">
-		<Station id="city1" position="152" slots="1" type="City" value="30"/>
-		<Station id="city2" position="452" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city2" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="213" name="213">
-		<Station id="city1" position="151" slots="1" type="City" value="30"/>
-		<Station id="city2" position="452" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city2" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="214" name="214">
-		<Station id="city1" position="251" slots="1" type="City" value="30"/>
-		<Station id="city2" position="552" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side5"/>
-	</Tile><Tile colour="green" id="215" name="215">
-		<Station id="city1" position="507" slots="1" type="City" value="30"/>
-		<Station id="city2" position="207" slots="1" type="City" value="30"/>
-		<Track from="city2" gauge="normal" to="side0"/>
-		<Track from="city2" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="39" name="39">
-		<Track from="side3" gauge="normal" to="side4"/>
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side4" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="40" name="40">
-		<Track from="side1" gauge="normal" to="side3"/>
-		<Track from="side1" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="41" name="41">
-		<Track from="side4" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side3"/>
-		<Track from="side0" gauge="normal" to="side3"/>
-	</Tile><Tile colour="brown" id="42" name="42">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-		<Track from="side5" gauge="normal" to="side0"/>
-	</Tile><Tile colour="brown" id="43" name="43">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side5"/>
-		<Track from="side4" gauge="normal" to="side0"/>
-	</Tile><Tile colour="brown" id="44" name="44">
-		<Track from="side3" gauge="normal" to="side0"/>
-		<Track from="side1" gauge="normal" to="side0"/>
-		<Track from="side3" gauge="normal" to="side4"/>
-		<Track from="side1" gauge="normal" to="side4"/>
-	</Tile><Tile colour="brown" id="45" name="45">
-		<Track from="side1" gauge="normal" to="side5"/>
-		<Track from="side1" gauge="normal" to="side3"/>
-		<Track from="side5" gauge="normal" to="side0"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="brown" id="46" name="46">
-		<Track from="side1" gauge="normal" to="side5"/>
-		<Track from="side1" gauge="normal" to="side0"/>
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side0"/>
-	</Tile><Tile colour="brown" id="47" name="47">
-		<Track from="side3" gauge="normal" to="side0"/>
-		<Track from="side3" gauge="normal" to="side1"/>
-		<Track from="side4" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side1"/>
-	</Tile><Tile colour="brown" id="63" name="63">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="70" name="70">
-		<Track from="side3" gauge="normal" to="side5"/>
-		<Track from="side3" gauge="normal" to="side4"/>
-		<Track from="side5" gauge="normal" to="side0"/>
-		<Track from="side4" gauge="normal" to="side0"/>
-	</Tile><Tile colour="brown" id="216" name="216">
-		<Station id="city1" position="0" slots="2" type="City" value="50"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="217" name="217">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="218" name="218">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="219" name="219">
-		<Station id="city1" position="0" slots="2" type="City" value="40"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="220" name="220">
-		<Station id="city1" position="0" slots="3" type="City" value="60"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile><Tile colour="brown" id="221" name="221">
-		<Station id="city1" position="0" slots="3" type="City" value="60"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile></Tiles>
+<?xml version="1.0" encoding="UTF-8"?>
+<Tiles>
+    <Tile colour="white" id="0" name="empty"/>
+    <Tile colour="white" id="-1" name="1 village">
+        <Station id="city1" position="002" type="Town"/>
+    </Tile>
+    <Tile colour="white" id="-2" name="2 villages">
+        <Station id="city1" position="102" type="Town"/>
+        <Station id="city2" position="302" type="Town"/>
+    </Tile>
+    <Tile colour="fixed" id="-3" name="MF 3">
+        <Station id="city1" position="252" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="fixed" id="-7" name="MF 7">
+        <Track from="side2" gauge="normal" to="side1"/>
+    </Tile>
+    <Tile colour="fixed" id="-8" name="MF 8">
+        <Track from="side2" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="white" id="-10" name="1 city">
+        <Station id="city1" position="302" slots="1" type="City"/>
+    </Tile>
+    <Tile colour="fixed" id="-39" name="-39">
+        <Track from="side3" gauge="normal" to="side1"/>
+        <Track from="side1" gauge="normal" to="side2"/>
+        <Track from="side2" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="fixed" id="-41" name="-41">
+        <Track from="side0" gauge="normal" to="side3"/>
+        <Track from="side4" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="fixed" id="-58" name="MF 58">
+        <Station id="city1" position="301" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="fixed" id="-114" name="Braunschweig">
+        <Station id="city1" position="501" slots="1" type="City" value="20"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="side2" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="fixed" id="-143" name="-143">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="fixed" id="-800" name="Rostock">
+        <Station id="city1" position="302" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="fixed" id="-801" name="Emden">
+        <Station id="city1" position="352" type="Town" value="10"/>
+        <Station id="city2" position="202" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city2" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="fixed" id="-802" name="Bremerhaven">
+        <Station id="city1" position="101" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="side3" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="green" id="-803" name="Hamburg">
+        <Station id="city1" position="502" slots="1" type="City" value="40"/>
+        <Station id="city2" position="052" slots="1" type="City" value="40"/>
+        <Station id="city3" position="302" slots="1" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side1"/>
+        <Track from="city3" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="fixed" id="-804" name="Schwerin">
+        <Station id="city1" position="002" slots="1" type="City" value="10"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="fixed" id="-805" name="Oldenburg">
+        <Station id="city1" position="051" slots="1" type="City" value="10"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="-806" name="Berlin">
+        <Station id="city1" position="402" slots="1" type="City" value="30"/>
+        <Station id="city2" position="001" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="yellow" id="-807" name="XX">
+        <Station id="city1" position="102" slots="1" type="City"/>
+        <Station id="city2" position="302" slots="1" type="City"/>
+    </Tile>
+    <Tile colour="fixed" id="-808" name="Koblenz">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="side1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="green" id="-809" name="Frankfurt">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="-810" name="Nurnberg">
+        <Station id="city1" position="552" slots="1" type="City" value="30"/>
+        <Station id="city2" position="252" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city2" gauge="normal" to="side2"/>
+        <Track from="city2" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="red" id="-901" name="OM 1 way">
+        <Station id="city1" position="0" type="OffMapCity" value="-1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="1" name="1">
+        <Station id="city1" position="408" type="Town" value="10"/>
+        <Station id="city2" position="108" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side1"/>
+        <Track from="city2" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="yellow" id="2" name="2">
+        <Station id="city1" position="302" type="Town" value="10"/>
+        <Station id="city2" position="109" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side1"/>
+        <Track from="city2" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="3" name="3">
+        <Station id="city1" position="352" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="yellow" id="4" name="4">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="yellow" id="5" name="5">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="6" name="6">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="7" name="7">
+        <Track from="side3" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="yellow" id="8" name="8">
+        <Track from="side3" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="yellow" id="9" name="9">
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="yellow" id="55" name="55">
+        <Station id="city1" position="202" type="Town" value="10"/>
+        <Station id="city2" position="302" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city2" gauge="normal" to="side3"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="yellow" id="56" name="56">
+        <Station id="city1" position="407" type="Town" value="10"/>
+        <Station id="city2" position="108" type="Town" value="10"/>
+        <Track from="city2" gauge="normal" to="side1"/>
+        <Track from="city2" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="57" name="57">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="yellow" id="58" name="58">
+        <Station id="city1" position="401" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="yellow" id="69" name="69">
+        <Station id="city1" position="407" type="Town" value="10"/>
+        <Station id="city2" position="002" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="yellow" id="201" name="201">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="yellow" id="202" name="202">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+    </Tile>
+    <Tile colour="green" id="12" name="12">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="13" name="13">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="green" id="14" name="14">
+        <Station id="city1" position="0" slots="2" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="15" name="15">
+        <Station id="city1" position="0" slots="2" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="16" name="16">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side4" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="18" name="18">
+        <Track from="side3" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="19" name="19">
+        <Track from="side5" gauge="normal" to="side1"/>
+        <Track from="side0" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="20" name="20">
+        <Track from="side1" gauge="normal" to="side4"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="23" name="23">
+        <Track from="side4" gauge="normal" to="side0"/>
+        <Track from="side0" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="24" name="24">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="25" name="25">
+        <Track from="side1" gauge="normal" to="side3"/>
+        <Track from="side3" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="26" name="26">
+        <Track from="side5" gauge="normal" to="side0"/>
+        <Track from="side0" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="27" name="27">
+        <Track from="side3" gauge="normal" to="side4"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="28" name="28">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side4" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="29" name="29">
+        <Track from="side3" gauge="normal" to="side4"/>
+        <Track from="side3" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="87" name="87">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="88" name="88">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="203" name="203">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="green" id="204" name="204">
+        <Station id="city1" position="0" type="Town" value="10"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="205" name="205">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="206" name="206">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="207" name="207">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="208" name="208">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="209" name="209">
+        <Station id="city1" position="0" slots="3" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="210" name="210">
+        <Station id="city1" position="502" slots="1" type="City" value="30"/>
+        <Station id="city2" position="052" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side1"/>
+    </Tile>
+    <Tile colour="green" id="211" name="211">
+        <Station id="city1" position="252" slots="1" type="City" value="30"/>
+        <Station id="city2" position="452" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city2" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="212" name="212">
+        <Station id="city1" position="152" slots="1" type="City" value="30"/>
+        <Station id="city2" position="452" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city2" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="213" name="213">
+        <Station id="city1" position="151" slots="1" type="City" value="30"/>
+        <Station id="city2" position="452" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city2" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="214" name="214">
+        <Station id="city1" position="251" slots="1" type="City" value="30"/>
+        <Station id="city2" position="552" slots="1" type="City" value="30"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="green" id="215" name="215">
+        <Station id="city1" position="507" slots="1" type="City" value="30"/>
+        <Station id="city2" position="207" slots="1" type="City" value="30"/>
+        <Track from="city2" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="39" name="39">
+        <Track from="side3" gauge="normal" to="side4"/>
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side4" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="40" name="40">
+        <Track from="side1" gauge="normal" to="side3"/>
+        <Track from="side1" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="41" name="41">
+        <Track from="side4" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side3"/>
+        <Track from="side0" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="brown" id="42" name="42">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+        <Track from="side5" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="43" name="43">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side5"/>
+        <Track from="side4" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="44" name="44">
+        <Track from="side3" gauge="normal" to="side0"/>
+        <Track from="side1" gauge="normal" to="side0"/>
+        <Track from="side3" gauge="normal" to="side4"/>
+        <Track from="side1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="brown" id="45" name="45">
+        <Track from="side1" gauge="normal" to="side5"/>
+        <Track from="side1" gauge="normal" to="side3"/>
+        <Track from="side5" gauge="normal" to="side0"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="46" name="46">
+        <Track from="side1" gauge="normal" to="side5"/>
+        <Track from="side1" gauge="normal" to="side0"/>
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="47" name="47">
+        <Track from="side3" gauge="normal" to="side0"/>
+        <Track from="side3" gauge="normal" to="side1"/>
+        <Track from="side4" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side1"/>
+    </Tile>
+    <Tile colour="brown" id="63" name="63">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="70" name="70">
+        <Track from="side3" gauge="normal" to="side5"/>
+        <Track from="side3" gauge="normal" to="side4"/>
+        <Track from="side5" gauge="normal" to="side0"/>
+        <Track from="side4" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="216" name="216">
+        <Station id="city1" position="0" slots="2" type="City" value="50"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="217" name="217">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="218" name="218">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="219" name="219">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="220" name="220">
+        <Station id="city1" position="0" slots="3" type="City" value="60"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="221" name="221">
+        <Station id="city1" position="0" slots="3" type="City" value="60"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+</Tiles>
