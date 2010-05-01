@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.124 2010/04/30 09:35:35 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.125 2010/05/01 16:08:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -2161,6 +2161,12 @@ public class OperatingRound extends Round implements Observer {
 
             setGameSpecificPossibleActions();
 
+            // Private Company manually closure
+            for (PrivateCompanyI priv: companyManager.getAllPrivateCompanies()) {
+                if (!priv.isClosed() && priv.closesManually())
+                    possibleActions.add(new ClosePrivate(priv));
+            }
+
             // Can private companies be bought?
             if (getCurrentPhase().isPrivateSellingAllowed()) {
 
@@ -2316,11 +2322,6 @@ public class OperatingRound extends Round implements Observer {
 //            possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, 0, true));
 //        }
 
-        // Private Company Closure
-        for (PrivateCompanyI priv: companyManager.getAllPrivateCompanies()) {
-            if ((!priv.isClosed()) && (priv.closesIfAllExercised() || priv.closesIfAnyExercised()))
-                possibleActions.add(new ClosePrivate(priv));
-        }
     }
 
     /**
