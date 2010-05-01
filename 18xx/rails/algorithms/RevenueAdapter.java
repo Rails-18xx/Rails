@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import org.apache.log4j.Logger;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -23,6 +24,9 @@ import rails.ui.swing.hexmap.HexMap;
 
 public class RevenueAdapter implements Runnable {
 
+    protected static Logger log =
+        Logger.getLogger(RevenueAdapter.class.getPackage().getName());
+    
     private SimpleGraph<NetworkVertex, NetworkEdge> graph;
     
     private RevenueCalculator rc;
@@ -321,6 +325,7 @@ public class RevenueAdapter implements Runnable {
             NetworkVertex startVertex = null;
             NetworkVertex previousVertex = null;
             for (NetworkVertex vertex:run.get(train)) {
+                log.debug("RA: Next vertex " + vertex);
                 Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
                 if (startVertex == null) {
                     startVertex = vertex;
@@ -333,17 +338,28 @@ public class RevenueAdapter implements Runnable {
                     continue;
                 } 
                 // draw hidden vertexes
-//                NetworkEdge edge = graph.getEdge(previousVertex, vertex);
-//                if (edge != null) {
-//                    List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
-////                    if (edge.getTarget() == vertex) Collections.reverse(hiddenVertexes);
-//                    for (NetworkVertex v:hiddenVertexes) {
-//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
-//                        if (vPoint != null) {
-//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
-//                        }
-//                    }
-//                }
+                NetworkEdge edge = graph.getEdge(previousVertex, vertex);
+                if (edge != null) {
+                    log.debug("RA: draw edge "+ edge.toFullInfoString());
+                    List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
+                    if (edge.getSource() == vertex) {
+                        log.debug("RA: reverse hiddenVertexes");
+                        for (int i = hiddenVertexes.size() - 1; i >= 0; i--) {
+                            NetworkVertex v = hiddenVertexes.get(i);
+                            Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
+                            if (vPoint != null) {
+                                path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
+                            }
+                        }
+                    } else {
+                        for (NetworkVertex v:hiddenVertexes) {
+                            Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
+                            if (vPoint != null) {
+                                path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
+                            }
+                        }
+                    }
+                }
                 if (vertexPoint != null) {
                     path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
                 }
