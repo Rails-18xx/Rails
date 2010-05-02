@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.125 2010/05/01 16:08:13 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.126 2010/05/02 17:32:04 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1036,8 +1036,10 @@ public class OperatingRound extends Round implements Observer {
     }
     
     protected boolean executeClosePrivate(ClosePrivate action) {
-    
+        
         PrivateCompanyI priv = action.getPrivateCompany();
+
+        log.debug("Executed close private action for private " + priv.getName());
         
         String errMsg = null;
 

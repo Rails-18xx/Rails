@@ -8,8 +8,7 @@ import rails.game.action.PossibleAction;
 import rails.util.Util;
 
 /**
- * Action that allows the closure of a private company
- * used for NoMapMode
+ * Action that allows manual closure of a private company
  */
 
 public class ClosePrivate extends PossibleAction {
