@@ -411,7 +411,7 @@ public class ORUIManager implements DialogOwner {
                 buyBonusToken ((BuyBonusToken)actions.get(0));
 
             } else if (actionType == NullAction.class
-                       || actionType == GameAction.class) {
+                       || actionType == GameAction.class ) {
 
                 orWindow.process(actions.get(0));
 
@@ -434,6 +434,10 @@ public class ORUIManager implements DialogOwner {
             } else if (actions.get(0) instanceof CorrectionAction) {
 
                 processCorrectionAction((CorrectionAction)actions.get(0));
+
+            } else if (actionType == ClosePrivate.class) {
+
+                gameUIManager.processOnServer(actions.get(0));
 
             }
 
