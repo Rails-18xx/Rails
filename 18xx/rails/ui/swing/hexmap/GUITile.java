@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.23 2010/04/18 15:09:58 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.24 2010/05/02 20:18:31 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -198,6 +198,8 @@ public class GUITile {
                             || newCities.get(ll) == null) continue rot;
                         // If connected cities do not correspond, skip
                         // (this is the "OO brown upgrade get-right" feature)
+                        // Only apply this check if the number of cities has not decreased
+                        if (getTile().getNumStations() < prevTile.getNumStations()) continue;
                         log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
                                 +" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
                         if ((oldCities.get(kkk).equals(oldCities.get(lll)))
