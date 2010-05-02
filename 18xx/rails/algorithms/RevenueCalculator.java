@@ -139,11 +139,14 @@ final class RevenueCalculator {
         trainIgnoreMinors[id] = ignoreMinors;
         
         for (int j=0; j < nbVertexes; j++) {
-            if (vertexMajor[id]) {
+            if (vertexMajor[j]) {
                 vertexValueByTrain[j][id] = vertexValueByTrain[j][id] * multiplyMajors;
-            }
-            if (vertexMinor[id]) {
-                vertexValueByTrain[j][id] = vertexValueByTrain[j][id] * multiplyMinors;
+            } else if (vertexMinor[j]) {
+                if (ignoreMinors) {
+                    vertexValueByTrain[j][id] = 0;
+                } else {
+                    vertexValueByTrain[j][id] = vertexValueByTrain[j][id] * multiplyMinors;
+                }
             }
         }
     }
@@ -159,18 +162,22 @@ final class RevenueCalculator {
         return nbEvaluations;
     }
     
+    String getStatistics() {
+        StringBuffer statistics = new StringBuffer();
+        statistics.append(nbEvaluations + " evaluations");
+        if (useRevenuePrediction)
+            statistics.append(", " + nbPredictions + " predictions");
+        statistics.append(" and " + nbEdges + " edges travelled.");
+        return statistics.toString();
+    }
+    
     private void notifyRevenueAdapter(final int revenue, final boolean finalResult) {
         String modifier;
         if (finalResult)
             modifier = "final";
         else
             modifier = "new best";
-        StringBuffer statistics = new StringBuffer();
-        statistics.append(nbEvaluations + " evaluations");
-        if (useRevenuePrediction)
-            statistics.append(", " + nbPredictions + " predictions");
-        statistics.append(" and " + nbEdges + " edges travelled.");
-        log.info("Report " + modifier + " result of " +  revenue + " after " + statistics.toString());
+        log.info("Report " + modifier + " result of " +  revenue + " after " + getStatistics());
         revenueAdapter.notifyRevenueListener(revenue, finalResult);
     }
 
@@ -214,6 +221,8 @@ final class RevenueCalculator {
     void initialPredictionRuns(int startTrain, int finalTrain) {
         
         if (startTrain > finalTrain) return;
+
+        nbEvaluations = 0; nbPredictions = 0; nbEdges = 0;
        
         useRevenuePrediction = true;
         this.maxCumulatedTrainRevenues = new int[nbTrains];
@@ -232,7 +241,8 @@ final class RevenueCalculator {
             this.finalTrain = j;
             currentBestValue = 0;
             runTrain(j);
-            log.info("RC: Best prediction run of train number " + j + " value = " + currentBestValue);
+            log.info("RC: Best prediction run of train number " + j + " value = " + currentBestValue + 
+                " after " + getStatistics());
             maxSingleTrainRevenues[j] = currentBestValue;
             cumulatedRevenues +=  currentBestValue;
             maxCumulatedTrainRevenues[j] = cumulatedRevenues;
@@ -246,7 +256,8 @@ final class RevenueCalculator {
             this.startTrain = j;
             currentBestValue = 0;
             runTrain(j);
-            log.info("RC: Best prediction run until train nb. " + j + " value = " + currentBestValue);
+            log.info("RC: Best prediction run until train nb. " + j + " value = " + currentBestValue +
+                " after " + getStatistics());
             maxCumulatedTrainRevenues[j] = currentBestValue;
             maxCumulatedTrainRevenues[j-1] = currentBestValue  + maxSingleTrainRevenues[j-1];
         }
@@ -254,8 +265,6 @@ final class RevenueCalculator {
     
     int calculateRevenue(int startTrain, int finalTrain) {
         log.info("RC: calculateRevenue trains from " + startTrain + " to " + finalTrain);
-        
-        nbEvaluations = 0; nbPredictions = 0; nbEdges = 0;
 
         this.startTrain = startTrain;
         this.finalTrain = finalTrain;
