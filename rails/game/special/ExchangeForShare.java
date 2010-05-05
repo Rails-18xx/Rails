@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.18 2010/03/16 21:22:13 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.19 2010/05/05 21:37:18 evos Exp $ */
 package rails.game.special;
 
 import rails.game.*;
@@ -8,7 +8,7 @@ public class ExchangeForShare extends SpecialProperty {
 
     /** The public company of which a share can be obtained. */
     String publicCompanyName;
-    PublicCompanyI publicCompany;
+
     /** The share size */
     int share;
 
