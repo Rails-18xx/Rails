@@ -1,14 +1,29 @@
 package rails.game.specific._1835;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import rails.game.Bank;
+import rails.game.CashHolder;
 import rails.game.DisplayBuffer;
 import rails.game.GameDef;
 import rails.game.GameManagerI;
 import rails.game.OperatingRound;
 import rails.game.PhaseI;
+import rails.game.Player;
+import rails.game.Portfolio;
+import rails.game.PrivateCompanyI;
+import rails.game.PublicCompanyI;
+import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
-import rails.game.action.LayBaseToken;
 import rails.game.action.LayTile;
+import rails.game.move.CashMove;
+import rails.game.move.MapChange;
+import rails.game.special.ExchangeForShare;
+import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
@@ -19,11 +34,109 @@ public class OperatingRound_1835 extends OperatingRound {
             = new BooleanState ("NeedPrussianFormationCall", false);
     private BooleanState hasLaidExtraOBBTile
             = new BooleanState ("HasLaidExtraOBBTile", false);
+    
+    /** 
+     * Registry of percentage of PR revenue to be denied per player
+     * because of having produced revenue in the same OR.
+     */
+    private Map<Player, Integer> deniedIncomeShare;
 
     public OperatingRound_1835 (GameManagerI gameManager) {
         super (gameManager);
+        deniedIncomeShare = new HashMap<Player, Integer> ();
     }
 
+    protected void privatesPayOut() {
+        int count = 0;
+        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
+            if (!priv.isClosed()) {
+                if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
+                    CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
+                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
+                    if (count++ == 0) ReportBuffer.add("");
+                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                            recipient.getName(),
+                            Bank.format(revenue),
+                            priv.getName()));
+                    new CashMove(bank, recipient, revenue);
+                    
+                    /* Register black private equivalent PR share value 
+                     * so it can be subtracted if PR operates */
+                    if (recipient instanceof Player && priv.getSpecialProperties() != null
+                            && priv.getSpecialProperties().size() > 0) {
+                        SpecialPropertyI sp = priv.getSpecialProperties().get(0);
+                        if (sp instanceof ExchangeForShare) {
+                            ExchangeForShare efs = (ExchangeForShare) sp;
+                            if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+                                int share = efs.getShare();
+                                Player player = (Player) recipient;
+                                if (!deniedIncomeShare.containsKey(player)) {
+                                    //deniedIncomeShare.put(player, share);
+                                    new MapChange<Player, Integer> (deniedIncomeShare, player, share);
+                                } else {
+                                    //deniedIncomeShare.put(player, share + deniedIncomeShare.get(player));
+                                    new MapChange<Player, Integer> (deniedIncomeShare, player, 
+                                            share + deniedIncomeShare.get(player));
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    @Override
+    public void resume() {
+        
+        PublicCompanyI prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
+        
+        if (prussian.hasFloated() && !prussian.hasOperated()
+                // PR has just started. Check if it can operate this round
+                // That's only the case if M1 has just bought 
+                // the first 4-train or 4+4-train
+                && operatingCompany == companyManager.getPublicCompany("M1")) {
+            log.debug("M2 has not operated: PR can operate");
+            
+            // Insert the Prussian before the first major company
+            // with a lower current price that hoas not yet operated
+            // and isn't currently operating
+            
+            int index = 0;
+            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+            for (PublicCompanyI company : getOperatingCompanies()) {
+                if (index > operatingCompanyIndex
+                        && company.hasStockPrice() 
+                        && company.hasFloated()
+                        && !company.isClosed()
+                        && company != operatingCompany
+                        && company.getCurrentSpace().getPrice() 
+                            < prussian.getCurrentSpace().getPrice()) {
+                    log.debug("PR will operate before "+company.getName());
+                    break;
+                }
+                index++;
+            }
+            // Insert PR at the found index (possibly at the end)
+            List<PublicCompanyI> companies
+                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
+            companies.add(index, prussian);
+            operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
+            log.debug("PR will operate at order position "+index);
+
+        } else {
+            
+            log.debug("M2 has operated: PR cannot operate");
+               
+        }
+        
+        guiHints.setCurrentRoundType(getClass());
+        super.resume();
+    }
+    
     protected void setSpecialTileLays() {
 
         /* Special-property tile lays */
@@ -70,28 +183,6 @@ public class OperatingRound_1835 extends OperatingRound {
         return result;
     }
 
-    /*
-    public boolean layBaseToken(LayBaseToken action) {
-
-        // No tokens may be laid on the BA home hex before BA has done so  
-        if (action.getChosenHex().getName().equalsIgnoreCase("L6")
-                && !action.getCompanyName().equalsIgnoreCase(GameManager_1835.BA_ID)
-                && !gameManager.getCompanyManager().getCompanyByName(GameManager_1835.BA_ID)
-                        .hasLaidHomeBaseTokens()) {
-            String errMsg = LocalText.getText("NotYetOperated", GameManager_1835.BA_ID);
-            DisplayBuffer.add(LocalText.getText("CannotLayBaseTokenOn",
-                    action.getCompanyName(),
-                    action.getChosenHex().getName(),
-                    Bank.format(0),
-                    errMsg ));
-            return false;
-           
-        } else {
-            return super.layBaseToken(action);
-        }
-    }
-     */
-    
     protected void newPhaseChecks() {
         PhaseI phase = getCurrentPhase();
         if (phase.getName().equals("4") || phase.getName().equals("4+4")

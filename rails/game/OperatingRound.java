@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.126 2010/05/02 17:32:04 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.127 2010/05/05 21:44:51 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -28,7 +28,6 @@ public class OperatingRound extends Round implements Observer {
     /* sfy: using rails without map support */
     protected boolean noMapMode = false;
     
-    protected TreeMap<Integer, PublicCompanyI> operatingCompanies;
     protected List<PublicCompanyI> companiesOperatedThisRound
         = new ArrayList<PublicCompanyI> ();
 
@@ -109,23 +108,8 @@ public class OperatingRound extends Round implements Observer {
 
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
-        int count = 0;
-        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
-            if (!priv.isClosed()) {
-                if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
-                    CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
-                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
-                    if (count++ == 0) ReportBuffer.add("");
-                    ReportBuffer.add(LocalText.getText("ReceivesFor",
-                            recipient.getName(),
-                            Bank.format(revenue),
-                            priv.getName()));
-                    new CashMove(bank, recipient, revenue);
-                }
-
-            }
-        }
-
+        privatesPayOut();
+        
         if (operatingCompanyArray.length > 0) {
 
             StringBuilder msg = new StringBuilder();
@@ -153,6 +137,25 @@ public class OperatingRound extends Round implements Observer {
         finishRound();
     }
 
+    protected void privatesPayOut() {
+        int count = 0;
+        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
+            if (!priv.isClosed()) {
+                if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
+                    CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
+                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
+                    if (count++ == 0) ReportBuffer.add("");
+                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                            recipient.getName(),
+                            Bank.format(revenue),
+                            priv.getName()));
+                    new CashMove(bank, recipient, revenue);
+                }
+
+            }
+        }
+
+    }
 
     /*----- METHODS THAT PROCESS PLAYER ACTIONS -----*/
 
@@ -1174,10 +1177,13 @@ public class OperatingRound extends Round implements Observer {
     protected <T extends SpecialPropertyI> List<T> getSpecialProperties(
             Class<T> clazz) {
         List<T> specialProperties = new ArrayList<T>();
-        specialProperties.addAll(operatingCompany.getPortfolio().getSpecialProperties(
-                clazz, false));
-        specialProperties.addAll(operatingCompany.getPresident().getPortfolio().getSpecialProperties(
-                clazz, false));
+        if (!operatingCompany.isClosed()) {
+            // OC may have closed itself (e.g. in 1835 when M2 buys 1st 4T and starts PR)
+            specialProperties.addAll(operatingCompany.getPortfolio().getSpecialProperties(
+                    clazz, false));
+            specialProperties.addAll(operatingCompany.getPresident().getPortfolio().getSpecialProperties(
+                    clazz, false));
+        }
         return specialProperties;
     }
 
@@ -1387,6 +1393,7 @@ public class OperatingRound extends Round implements Observer {
             operatingCompanyIndexObject =
                     new IntegerState("OperatingCompanyIndex");
         }
+        /*
         if (initial) {
             operatingCompanyIndexObject.set(0);
         } else {
@@ -1403,6 +1410,30 @@ public class OperatingRound extends Round implements Observer {
             log.debug("Operating company is "+operatingCompany.getName()+" in "+getRoundName());
             return true;
         }
+        */
+        // The above logic doesn't work if companies have closed in the meantime.
+        // The new logic below originates from OperatingRound_1856
+        while (true) {
+            if (initial) {
+                operatingCompanyIndexObject.set(0);
+                initial = false;
+            } else {
+                operatingCompanyIndexObject.add(1);
+            }
+
+            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+
+            if (operatingCompanyIndex >= operatingCompanyArray.length) {
+                return false;
+            } else {
+                operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+
+                if (operatingCompany.isClosed()) continue;
+
+                return true;
+            }
+        }
+
     }
 
     protected void finishOR() {
@@ -2462,7 +2493,8 @@ public class OperatingRound extends Round implements Observer {
             }
             // Scan trains per company per player, operating company president
             // first
-            int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+            //int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+            int currentPlayerIndex = getCurrentPlayer().getIndex();
             for (int i = currentPlayerIndex; i < currentPlayerIndex
                                                  + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
