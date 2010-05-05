@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.3 2009/09/23 21:38:57 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/MapChange.java,v 1.4 2010/05/05 21:36:59 evos Exp $
  *
  * Created on 19-Jul-2006
  * Change Log:
@@ -8,8 +8,7 @@ package rails.game.move;
 import java.util.Map;
 
 /**
- * This Move class handles adding an entry to a 2-D Map (a Map of Maps, or a
- * matrix). An Undo will remove the second key, but not the first key.
+ * This Move class handles adding an entry to a Map.
  *
  * @author Erik Vos
  */
