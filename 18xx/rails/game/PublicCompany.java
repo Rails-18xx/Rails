@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.95 2010/04/22 19:09:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.96 2010/05/07 20:03:49 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1244,70 +1244,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return lastRevenueAllocation;
     }
 
-/** Split a dividend. TODO Optional rounding down the payout
-     *
-     * @param amount
-     */
-    public void splitRevenue(int amount) {
-
-        if (amount > 0) {
-            // Withhold half of it
-            // For now, hardcode the rule that payout is rounded up.
-            int withheld =
-                    (amount / (2 * getNumberOfShares())) * getNumberOfShares();
-            new CashMove(bank, this, withheld);
-            ReportBuffer.add(name + " receives " + Bank.format(withheld));
-
-            // Payout the remainder
-            int payed = amount - withheld;
-            payout(payed);
-        }
-
-    }
-
     /**
-     * Distribute the dividend amongst the shareholders.
+     * Determine if the price token must be moved after a dividend payout.
      *
      * @param amount
      */
     public void payout(int amount) {
 
         if (amount == 0) return;
-
-        int part;
-        int shares;
-        Map<CashHolder, Integer> sharesPerRecipient = new HashMap<CashHolder, Integer>();
-
-        // Changed to accomodate the CGR 5% share roundup rule.
-        // For now it is assumed, that actual payouts are always rounded up
-        // (the withheld half of split revenues is not handled here, see splitRevenue()).
-
-        // First count the shares per recipient
-        for (PublicCertificateI cert : certificates) {
-            CashHolder recipient = getBeneficiary(cert);
-            if (!sharesPerRecipient.containsKey(recipient)) {
-                sharesPerRecipient.put(recipient, cert.getShares());
-            } else {
-                sharesPerRecipient.put(recipient,
-                    sharesPerRecipient.get(recipient) + cert.getShares());
-            }
-        }
-
-        // Calculate, round up, report and add the cash
-
-        // Define a precise sequence for the reporting
-        Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
-        for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
-            if (recipient instanceof Bank) continue;
-            shares = (sharesPerRecipient.get(recipient));
-            part = (int) Math.ceil(amount * shares * shareUnit.intValue() / 100.0);
-            ReportBuffer.add(LocalText.getText("Payout",
-                    recipient.getName(),
-                    Bank.format(part),
-                    shares,
-                    shareUnit.intValue()));
-            new CashMove(bank, recipient, part);
-        }
 
         // Move the token
         if (hasStockPrice
@@ -1318,27 +1262,22 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    /** Who gets the per-share revenue? */
-    protected CashHolder getBeneficiary(PublicCertificateI cert) {
+    public boolean paysOutToTreasury (PublicCertificateI cert) {
 
         Portfolio holder = cert.getPortfolio();
-        CashHolder beneficiary = holder.getOwner();
-        // Special cases apply if the holder is the IPO or the Pool
         if (holder == bank.getIpo() && ipoPaysOut
                 || holder == bank.getPool() && poolPaysOut) {
-            beneficiary = this;
+            return true;
         }
-        return beneficiary;
+        return false;
     }
 
     /**
-     * Withhold a given amount of revenue (and store it).
+     * Determine if the price token must be moved after a withheld dividend.
      *
      * @param The revenue amount.
      */
     public void withhold(int amount) {
-        if (amount > 0) new CashMove(bank, this, amount);
-        // Move the token
         if (hasStockPrice) stockMarket.withhold(this);
     }
 

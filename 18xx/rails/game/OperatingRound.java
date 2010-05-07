@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.127 2010/05/05 21:44:51 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.128 2010/05/07 20:03:49 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -12,6 +12,7 @@ import rails.game.special.*;
 import rails.game.state.EnumState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
+import rails.util.SequenceUtil;
 
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for
@@ -918,21 +919,21 @@ public class OperatingRound extends Round implements Observer {
 
             ReportBuffer.add(LocalText.getText("CompanyDoesNotPayDividend",
                     operatingCompany.getName()));
-            operatingCompany.withhold(amount);
+            withhold(amount);
 
         } else if (revenueAllocation == SetDividend.PAYOUT) {
 
             ReportBuffer.add(LocalText.getText("CompanyPaysOutFull",
                     operatingCompany.getName(), Bank.format(amount) ));
 
-            operatingCompany.payout(amount);
+            payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
             ReportBuffer.add(LocalText.getText("CompanySplits",
                     operatingCompany.getName(), Bank.format(amount) ));
 
-            operatingCompany.splitRevenue(amount);
+            splitRevenue(amount);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
 
@@ -940,7 +941,7 @@ public class OperatingRound extends Round implements Observer {
                     operatingCompany.getName(),
                     Bank.format(amount) ));
 
-            operatingCompany.withhold(amount);
+            withhold(amount);
 
         }
 
@@ -950,6 +951,108 @@ public class OperatingRound extends Round implements Observer {
         // We have done the payout step, so continue from there
         nextStep(GameDef.OrStep.PAYOUT);
     }
+
+    /**
+     * Distribute the dividend amongst the shareholders.
+     *
+     * @param amount
+     */
+    public void payout(int amount) {
+
+        if (amount == 0) return;
+
+        int part;
+        int shares;
+
+        Map<CashHolder, Integer> sharesPerRecipient = countSharesPerRecipient();
+
+        // Calculate, round up, report and add the cash
+
+        // Define a precise sequence for the reporting
+        Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
+        for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
+            if (recipient instanceof Bank) continue;
+            shares = (sharesPerRecipient.get(recipient));
+            if (shares == 0) continue;
+            part = (int) Math.ceil(amount * shares * operatingCompany.getShareUnit() / 100.0);
+            ReportBuffer.add(LocalText.getText("Payout",
+                    recipient.getName(),
+                    Bank.format(part),
+                    shares,
+                    operatingCompany.getShareUnit()));
+            new CashMove(bank, recipient, part);
+        }
+
+        // Move the token
+        operatingCompany.payout(amount);
+
+    }
+    
+    protected  Map<CashHolder, Integer>  countSharesPerRecipient () {
+        
+        Map<CashHolder, Integer> sharesPerRecipient = new HashMap<CashHolder, Integer>();
+
+        // Changed to accomodate the CGR 5% share roundup rule.
+        // For now it is assumed, that actual payouts are always rounded up
+        // (the withheld half of split revenues is not handled here, see splitRevenue()).
+
+        // First count the shares per recipient
+        for (PublicCertificateI cert : operatingCompany.getCertificates()) {
+            CashHolder recipient = getBeneficiary(cert);
+            if (!sharesPerRecipient.containsKey(recipient)) {
+                sharesPerRecipient.put(recipient, cert.getShares());
+            } else {
+                sharesPerRecipient.put(recipient,
+                    sharesPerRecipient.get(recipient) + cert.getShares());
+            }
+        }
+        return sharesPerRecipient;
+    }
+
+    /** Who gets the per-share revenue? */
+    protected CashHolder getBeneficiary(PublicCertificateI cert) {
+
+        Portfolio holder = cert.getPortfolio();
+        CashHolder beneficiary = holder.getOwner();
+        // Special cases apply if the holder is the IPO or the Pool
+        if (operatingCompany.paysOutToTreasury(cert)) {
+            beneficiary = operatingCompany;
+        }
+        return beneficiary;
+    }
+
+    /**
+     * Withhold a given amount of revenue (and store it).
+     *
+     * @param The revenue amount.
+     */
+    public void withhold(int amount) {
+        if (amount > 0) new CashMove(bank, operatingCompany, amount);
+        // Move the token
+        operatingCompany.withhold(amount);
+    }
+
+    /** Split a dividend. TODO Optional rounding down the payout
+    *
+    * @param amount
+    */
+   public void splitRevenue(int amount) {
+
+       if (amount > 0) {
+           // Withhold half of it
+           // For now, hardcode the rule that payout is rounded up.
+           int numberOfShares = operatingCompany.getNumberOfShares();
+           int withheld =
+                   (amount / (2 * numberOfShares)) * numberOfShares;
+           new CashMove(bank, operatingCompany, withheld);
+           ReportBuffer.add(operatingCompany.getName() + " receives " + Bank.format(withheld));
+
+           // Payout the remainder
+           int payed = amount - withheld;
+           payout(payed);
+       }
+
+   }
 
     /** Default version, to be overridden if need be */
     protected int checkForDeductions (SetDividend action) {
@@ -1154,7 +1257,6 @@ public class OperatingRound extends Round implements Observer {
         }
         operatingCompany.initTurn();
         trainsBoughtThisTurn.clear();
-//        setStep (GameDef.OrStep.LAY_TRACK); duplication
     }
 
     /**

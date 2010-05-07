@@ -8,6 +8,7 @@ import java.util.List;
 
 import rails.game.*;
 import rails.game.action.PossibleAction;
+import rails.util.Util;
 
 public class FoldIntoPrussian extends PossibleAction {
 
@@ -89,7 +90,7 @@ public class FoldIntoPrussian extends PossibleAction {
                 foldableCompanies.add(cmgr.getPublicCompany(name));
             }
         }
-        if (foldedCompanyNames != null) {
+        if (Util.hasValue(foldedCompanyNames)) {
             foldedCompanies = new ArrayList<CompanyI>();
             for (String name : foldedCompanyNames.split(",")) {
                 foldedCompanies.add(cmgr.getPublicCompany(name));

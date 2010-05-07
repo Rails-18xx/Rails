@@ -231,6 +231,7 @@ public class PrussianFormationRound extends StockRound {
         boolean folding = folded != null && !folded.isEmpty();
         
         while (folding) {
+            // TODO Some validation needed
             break;
         }
 
@@ -245,7 +246,7 @@ public class PrussianFormationRound extends StockRound {
         moveStack.start(false);
 
         // Execute
-        if (folding) executeExchange (action.getFoldedCompanies(), false, false);
+        if (folding) executeExchange (folded, false, false);
 
         return folding;
     }
