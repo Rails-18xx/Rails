@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.53 2010/04/22 19:09:58 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.54 2010/05/07 20:03:49 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -213,13 +213,11 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public int getFloatPercentage();
 
-    //public Portfolio getPortfolio();
-
     public void payout(int amount);
 
-    public void splitRevenue(int amount);
-
     public void withhold(int amount);
+
+    public boolean paysOutToTreasury (PublicCertificateI cert);
 
     public boolean isSoldOut();
 
@@ -230,6 +228,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      */
     public int getShareUnit();
     public int getShareUnitsForSharePrice();
+    public int getNumberOfShares();
 
     /**
      * @return Returns the lowerPrivatePriceFactor.

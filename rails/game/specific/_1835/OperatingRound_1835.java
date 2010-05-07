@@ -16,6 +16,7 @@ import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
+import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
@@ -70,14 +71,7 @@ public class OperatingRound_1835 extends OperatingRound {
                             if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
                                 int share = efs.getShare();
                                 Player player = (Player) recipient;
-                                if (!deniedIncomeShare.containsKey(player)) {
-                                    //deniedIncomeShare.put(player, share);
-                                    new MapChange<Player, Integer> (deniedIncomeShare, player, share);
-                                } else {
-                                    //deniedIncomeShare.put(player, share + deniedIncomeShare.get(player));
-                                    new MapChange<Player, Integer> (deniedIncomeShare, player, 
-                                            share + deniedIncomeShare.get(player));
-                                }
+                                addIncomeDenialShare (player, share);
                             }
                             
                         }
@@ -89,6 +83,56 @@ public class OperatingRound_1835 extends OperatingRound {
 
     }
 
+    private void addIncomeDenialShare (Player player, int share) {
+        
+        if (!deniedIncomeShare.containsKey(player)) {
+            new MapChange<Player, Integer> (deniedIncomeShare, player, share);
+        } else {
+            new MapChange<Player, Integer> (deniedIncomeShare, player, 
+                    share + deniedIncomeShare.get(player));
+        }
+        //log.debug("+++ Denied "+share+"% share of PR income to "+player.getName());
+    }
+
+    /** Count the number of shares per revenue recipient<p>
+     * A special rule applies to 1835 to prevent black privates and minors providing
+     * income twice during an OR.
+     */
+    protected  Map<CashHolder, Integer>  countSharesPerRecipient () {
+        
+        Map<CashHolder, Integer> sharesPerRecipient = super.countSharesPerRecipient();
+        
+        if (operatingCompany.getName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+            for (Player player : deniedIncomeShare.keySet()) {
+                int share = deniedIncomeShare.get(player);
+                int shares = share / operatingCompany.getShareUnit();
+                sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
+                ReportBuffer.add(LocalText.getText("NoIncomeForPreviousOperation",
+                        player.getName(),
+                        share,
+                        GameManager_1835.PR_ID));
+                
+            }
+        }
+        
+        return sharesPerRecipient;
+    }
+
+     /** 
+      * Register black minors as having operated 
+     * for the purpose of denying income after conversion to a PR share
+     */
+    protected void initTurn() {
+        
+        super.initTurn();
+
+        List<SpecialPropertyI> sps = operatingCompany.getSpecialProperties();
+        if (sps != null && !sps.isEmpty()) {
+            ExchangeForShare efs = (ExchangeForShare) sps.get(0);
+            addIncomeDenialShare (operatingCompany.getPresident(), efs.getShare());
+        }
+    }
+    
     @Override
     public void resume() {
         
