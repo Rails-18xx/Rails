@@ -64,6 +64,9 @@ Variant selection effects on SR and OR have not been implemented yet.
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
+		<Option name="LDIncome" values="20M,30M" default="20M"/>
+		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
 	<Game name="1851">
