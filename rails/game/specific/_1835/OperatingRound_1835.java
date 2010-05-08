@@ -52,10 +52,18 @@ public class OperatingRound_1835 extends OperatingRound {
 
     /** Can a public company operate? (1835 special version) */
     protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
-        return company.hasFloated() && !company.isClosed()
-                // 1835 special: in some variants minors don't run if BY has not floated
-                && (!gameManager.getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
-                        || companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated());
+        if (!company.hasFloated() || company.isClosed()) {
+            return false;
+        }
+        // 1835 specials
+        // Majors always operate
+        if (company.hasStockPrice()) return true;
+        // In some variants minors don't run if BY has not floated
+        if (gameManager.getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
+                || gameManager.getGameOption("MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
+            return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
+        }
+        return true;
     }
 
     protected void privatesPayOut() {
