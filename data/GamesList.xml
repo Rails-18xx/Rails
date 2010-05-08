@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Supported games -->
 <GamesList>
-  <Game name="1825">
-    <Note>Experimental</Note>
-    <Description>1825 Unit 1
-(c) 1994 Hartland Trefoil Ltd.
-Designed by Francis Tresham
-
-Limitation: 
-- No random assignment of private companies (players should do this off-line and enter the result)	
-		</Description>
-    <Players minimum="3" maximum="5" /><Option name="UnlimitedTiles" type="toggle" default="no">
-</Option>
-  </Game>
   <Game name="1830">
     <Note>Fully playable</Note>
     <Description>1830 - The Game of Railroads and Robber Barons
@@ -41,34 +29,7 @@ Limitations:
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
-	<Game name="1835">
-		<Note>Partly playable</Note>
-		<Description>1835 (Germany)
-Designed by Michael Meier-Bachl
-Published 1990 by Hans im Glück Verlag
 
-Initial version.
-Rules not yet implemented include:
-	- Sequential availability of companies. All companies are buyable from the start, including the Prussian.
-	- Prussian formation.
-	- Distance-based token cost.
-	- ... etc.
-
-For the start packet sale, three variants have been implemented:
-	- Standard
-	- Clemens
-	- Snake
-
-Variant selection effects on SR and OR have not been implemented yet.
-		</Description>
-		<Option name="Variant" values="Standard,Clemens,Snake"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
-		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
-		<Option name="LDIncome" values="20M,30M" default="20M"/>
-		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
-		<Players minimum="3" maximum="7"/>
-	</Game>
 	<Game name="1851">
 		<Note>Fully playable</Note>
 		<Description>1851 - The Railroads come to Kentucky &amp; Tennessee
@@ -82,6 +43,7 @@ Limitation:
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
+
 	<Game name="1856">
 		<Note>Fully playable</Note>
 		<Description>1856 - Railroading in Upper Canada
@@ -97,19 +59,7 @@ Limitation:
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
-	<Game name="1870">
-		<Note>Partly playable</Note>
-		<Description>1870 - Railroading across the Trans Mississippi
-(c) 1992, 1995 Mayfair Games, Inc.
-Designed by Bill Dixon
 
-Aspects not present in 1830 have not been implemented yet.
-		</Description>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Players minimum="2" maximum="6"/>
-	</Game>
-	
 	<Game name="1889">
 		<Note>Fully playable</Note>
 		<Description>1889 - History of Shikoku Railways
@@ -126,7 +76,7 @@ Limitation:
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
 	</Game>
 	
-		<Game name="18AL">
+	<Game name="18AL">
 		<Note>Fully playable</Note>
 		<Description>18AL  - The Railroads come to Alabama
 (c) 2000, 2004 Mark Derrick and John David Galt
@@ -143,6 +93,7 @@ Limitation:
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
+
 	<Game name="18EU">
 		<Note>Fully playable</Note>
 		<Description>18EU - A century of railroading in Europe
@@ -158,6 +109,7 @@ Not yet implemented:
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
+
 	<Game name="18Kaas">
 		<Note>Fully playable</Note>
 		<Description>18Kaas (Netherlands)
@@ -172,6 +124,58 @@ Should work, but has not been extensively tested. Limitations as with 1830.
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
+
+	<Game name="1835">
+		<Note>Almost playable</Note>
+		<Description>1835 (Germany)
+Designed by Michael Meier-Bachl
+Published 1990 by Hans im Glück Verlag
+
+Three variants have been implemented:
+	- Standard
+	- Clemens
+	- Snake
+
+Known bugs:
+    - Game hangs in OR if Start Packet has not been sold and minors run. 
+      Workaround: select option "Minors don't run if BY has not floated".
+    - OBB and PfB do not always close when required. 
+      Workaround: use Correction mode.
+		</Description>
+		<Option name="Variant" values="Standard,Clemens,Snake"/>
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
+		<Option name="LDIncome" values="20M,30M" default="20M"/>
+		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
+		<Players minimum="3" maximum="7"/>
+	</Game>
+
+	<Game name="1870">
+		<Note>Partly playable</Note>
+		<Description>1870 - Railroading across the Trans Mississippi
+(c) 1992, 1995 Mayfair Games, Inc.
+Designed by Bill Dixon
+
+Aspects not present in 1830 have not been implemented yet.
+		</Description>
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Players minimum="2" maximum="6"/>
+	</Game>
+	
+  <Game name="1825">
+    <Note>Experimental</Note>
+    <Description>1825 Unit 1
+(c) 1994 Hartland Trefoil Ltd.
+Designed by Francis Tresham
+
+Limitation: 
+- No random assignment of private companies (players should do this off-line and enter the result)	
+		</Description>
+    <Players minimum="3" maximum="5" /><Option name="UnlimitedTiles" type="toggle" default="no">
+</Option>
+  </Game>
 	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
 that are collectively known as the "18xx" railway game system.		
