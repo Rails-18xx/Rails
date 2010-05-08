@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.39 2010/04/22 19:09:58 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.40 2010/05/08 13:57:31 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -260,7 +260,8 @@ public abstract class Round implements RoundI {
         int key;
         int minorNo = 0;
         for (PublicCompanyI company : companies) {
-            if (!company.hasFloated() || company.isClosed()) continue;
+            if (!canCompanyOperateThisRound(company)) continue;
+            
             // Key must put companies in reverse operating order, because sort
             // is ascending.
             if (company.hasStockPrice()) {
@@ -279,6 +280,11 @@ public abstract class Round implements RoundI {
         return operatingCompanies.values().toArray(new PublicCompanyI[0]);
     }
 
+    /** Can a public company operate? (Default version) */
+    protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
+        return company.hasFloated() && !company.isClosed();
+    }
+    
     /**
      * Check if a company must be floated, and if so, do it. <p>This method is
      * included here because it is used in various types of Round.

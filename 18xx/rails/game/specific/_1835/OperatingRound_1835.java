@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import rails.game.Bank;
 import rails.game.CashHolder;
 import rails.game.DisplayBuffer;
 import rails.game.GameDef;
 import rails.game.GameManagerI;
+import rails.game.GameOption;
 import rails.game.OperatingRound;
 import rails.game.PhaseI;
 import rails.game.Player;
@@ -19,6 +21,7 @@ import rails.game.PrivateCompanyI;
 import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
+import rails.game.StockSpaceI;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.move.CashMove;
@@ -45,6 +48,14 @@ public class OperatingRound_1835 extends OperatingRound {
     public OperatingRound_1835 (GameManagerI gameManager) {
         super (gameManager);
         deniedIncomeShare = new HashMap<Player, Integer> ();
+    }
+
+    /** Can a public company operate? (1835 special version) */
+    protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
+        return company.hasFloated() && !company.isClosed()
+                // 1835 special: in some variants minors don't run if BY has not floated
+                && (!gameManager.getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
+                        || companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated());
     }
 
     protected void privatesPayOut() {
