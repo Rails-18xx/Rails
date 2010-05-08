@@ -71,7 +71,13 @@
 			<SpecialProperties condition="ifAllExercised"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="LD"	longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20">
+	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190">
+        <IfOption name="LDIncome" value="20M">
+			<Attributes revenue="20"/>
+        </IfOption>
+        <IfOption name="LDIncome" value="30M">
+			<Attributes revenue="30"/>
+        </IfOption>
 		<Info key="ComesWithPresidency" parm="Sax,20"/>
 		<ClosingConditions>
             <Phase>5</Phase>
@@ -151,6 +157,9 @@
 
 	<Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" tokens="5" fgColour="FFFFFF" bgColour="0000FF">
 		<Home hex="O15"/>
+        <IfOption name="BYFloatsAt" value="20%">
+            <Float percentage="20"/>
+        </IfOption>
 	</Company>
 	<Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
 		<Home hex="H16"/>

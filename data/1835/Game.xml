@@ -6,6 +6,9 @@
 		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
+		<GameOption name="BYFloatsAt" values="50%,20%" default="50%"/>
+		<GameOption name="LDIncome" values="20M,30M" default="20M"/>
+		<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="100"/>
 			<BankPoolLimit percentage="50"/>
