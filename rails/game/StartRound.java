@@ -61,7 +61,7 @@ public abstract class StartRound extends Round {
      */
     public void start() {
 
-        this.variant = gameManager.getGameOption(GameManager.VARIANT_KEY);
+        this.variant = gameManager.getGameOption(GameOption.VARIANT);
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
 

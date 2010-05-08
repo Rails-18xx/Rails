@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.11 2010/02/23 22:21:39 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.12 2010/05/08 13:56:30 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -22,6 +22,10 @@ public class GameOption {
 
     // A default option that will always be set
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
+    
+    // Some other common game options
+    public static final String VARIANT = "Variant"; 
+        
 
     public GameOption(String name) {
         this.name = name;

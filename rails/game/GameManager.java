@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.99 2010/04/09 21:26:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.100 2010/05/08 13:56:30 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -188,9 +188,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
             new ArrayList<GameOption>();
-
-    /* Some standard tags for conditional attributes */
-    public static final String VARIANT_KEY = "Variant";
 
     protected static Logger log =
             Logger.getLogger(GameManager.class.getPackage().getName());
