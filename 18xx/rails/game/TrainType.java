@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.31 2010/03/04 22:08:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.32 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -495,5 +495,9 @@ implements TrainTypeI {
         if (text == null || text.length() == 0) return;
         if (b.length() > 6) b.append("<br>");
         b.append(text);
+    }
+    
+    public String toString() {
+        return name;
     }
 }

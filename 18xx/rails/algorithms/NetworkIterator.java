@@ -27,7 +27,6 @@ public class NetworkIterator extends
     private List<Boolean> greedyStack = new ArrayList<Boolean>();
     private Map<NetworkVertex, greedyState> seen = new HashMap<NetworkVertex, greedyState>();
 
-    private final PublicCompanyI company;
     private final Graph<NetworkVertex, NetworkEdge> graph;
 
     protected static Logger log =
@@ -54,7 +53,6 @@ public class NetworkIterator extends
 
         this.graph = graph;
         this.startVertex = startVertex;
-        this.company = company;
     }
     
     
@@ -150,7 +148,7 @@ public class NetworkIterator extends
     
     private void addUnseenChildrenOf(NetworkVertex vertex, boolean greedy) {
 
-        if (company != null && !vertex.canCompanyRunThrough(company)) return;
+        if (vertex.isSink()) return;
 
         for (NetworkEdge edge : graph.edgesOf(vertex)) {
             if (!greedy || edge.isGreedy()) {

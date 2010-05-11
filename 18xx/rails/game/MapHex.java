@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.43 2010/04/15 19:49:02 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.44 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import rails.algorithms.RevenueBonusTemplate;
 import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
@@ -107,6 +108,9 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
     protected List<TokenI> offStationTokens;
+    
+    /** Storage of revenueBonus that are bound to the hex */
+    protected List<RevenueBonusTemplate> revenueBonuses = null;
 
     protected MapManager mapManager = null;
 
@@ -192,7 +196,15 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         if (tag.getAttributeAsString("unlaidHomeBlocksTokens") != null) {
             setBlockedForTokenLays(tag.getAttributeAsBoolean("unlaidHomeBlocksTokens", false));
         }
-
+        
+        // revenue bonus
+        List<Tag> bonusTags = tag.getChildren("RevenueBonus");
+        if (bonusTags != null) {
+            revenueBonuses = new ArrayList<RevenueBonusTemplate>();
+            for (Tag bonusTag:bonusTags) {
+                revenueBonuses.add(new RevenueBonusTemplate(bonusTag));
+            }
+        }
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
@@ -891,6 +903,16 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     public City getCity(int cityNumber) {
         return mCities.get(cityNumber);
     }
+    
+    public City getRelatedCity(Station station) {
+        City foundCity = null;
+        for (City city:mCities.values()) {
+            if (station == city.getRelatedStation()) {
+                foundCity = city;
+            }
+        }
+        return foundCity;
+    }
 
     public void addHome(PublicCompanyI company, int cityNumber) {
         if (homes == null) homes = new HashMap<PublicCompanyI, City>();
@@ -1036,6 +1058,10 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     	return infoText;
     }
 
+    public List<RevenueBonusTemplate> getRevenueBonuses() {
+        return revenueBonuses;
+    }
+    
     public boolean equals(MapHex hex) {
         if (hex.getName().equals(getName()) && hex.row == row
             && hex.column == column) return true;

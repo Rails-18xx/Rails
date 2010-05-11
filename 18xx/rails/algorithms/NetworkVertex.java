@@ -3,87 +3,69 @@ package rails.algorithms;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import rails.game.BaseToken;
+import org.apache.log4j.Logger;
+
 import rails.game.City;
 import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
-import rails.game.TokenI;
 import rails.ui.swing.hexmap.EWHexMap;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
+    protected static Logger log =
+        Logger.getLogger(NetworkVertex.class.getPackage().getName());
+
     private static enum VertexType {
         STATION,
         SIDE,
-        HQ
+        HQ,
     }
-    
+
+    // vertex types and flag for virtual (thus not related to a rails object)
     private final VertexType type;
-    
+    private final boolean virtual;
+
+    // vertex properties (for virtual vertexes)
+    private final String virtualId;
+
+    // general vertex properties
+    private boolean major = false;
+    private boolean minor = false;
+    private int value = 0;
+    private boolean sink = false;
+    private String cityName = null;
+
+    // references to rails objects, if not virtual
     private final MapHex hex;
     
     private final Station station;
     private final City city;
     private final int side;
     
-    private PhaseI phase;
     
-    private boolean tokenable;
-    private Set<PublicCompanyI> companiesHaveToken;
-    private int tokenSlots;
-
+    /** constructor for station on mapHex */
     public NetworkVertex(MapHex hex, Station station) {
-        this(hex, station, null);
-    }
-    
-    public NetworkVertex(MapHex hex, Station station, PhaseI phase) {
         this.type = VertexType.STATION;
         this.hex = hex;
         this.station = station;
-        this.side = 0;
-        
-        this.phase = phase;
-        
-        String t = station.getType();
-        if (t.equals(Station.TOWN)){
-            this.tokenable = false;
-            this.city = null;
+        this.side = -1;
+        this.city = hex.getRelatedCity(station);
+        if (city != null) {
+            log.info("Found city " + city);
         } else {
-            this.tokenable = true;
-            // find tokens
-            List<TokenI> tokens = null;
-            this.tokenSlots = 0;
-            List<City> cities = hex.getCities();
-            City foundCity = null;
-            for (City city:cities) {
-                if (station == city.getRelatedStation()) {
-                    foundCity = city;
-                    tokens = city.getTokens();
-                    this.tokenSlots = city.getSlots();
-                    break;
-                }
-            }
-            this.city = foundCity;
-            this.companiesHaveToken = new HashSet<PublicCompanyI>();
-            if (tokens != null) {
-                for (TokenI token:tokens) {
-                    if (token instanceof BaseToken) {
-                        BaseToken baseToken = (BaseToken)token;
-                        this.companiesHaveToken.add(baseToken.getCompany());
-                    }
-                }
-            }
+            log.info("No city found");
         }
+
+        this.virtual = false;
+        this.virtualId = null;
     }
     
+    /** constructor for side on mapHex */
     public NetworkVertex(MapHex hex, int side) {
         this.type = VertexType.SIDE;
         this.hex = hex;
@@ -91,23 +73,39 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.city = null;
         this.side = (side % 6);
         
-        this.phase = null;
-        this.tokenable = false;
-        this.companiesHaveToken = null;
-        this.tokenSlots = 0;
+        this.virtual = false;
+        this.virtualId = null;
     }
     
+    /**  constructor for public company hq */
     public NetworkVertex(PublicCompanyI company) {
-        this.type = VertexType.HQ;
+        this(VertexType.HQ, "HQ");
+    }
+    
+    private NetworkVertex(VertexType type, String name) {
+        this.type = type;
         this.hex = null;
         this.station = null;
         this.city = null;
-        this.side = 0;
-        
-        this.phase = null;
-        this.tokenable = false;
-        this.companiesHaveToken = null;
-        this.tokenSlots = 0;
+        this.side = -1;
+
+        this.virtual = true;
+        this.virtualId = name;
+    }
+    
+    /** factory method for virtual vertex
+    */
+    public static NetworkVertex getVirtualVertex(VertexType type, String name) {
+        NetworkVertex vertex = new NetworkVertex(type, name);
+        return vertex;
+    }
+
+    void addToRevenueCalculator(RevenueCalculator rc, int vertexId) {
+        rc.setVertex(vertexId, major, minor);
+    }
+
+    public boolean isVirtual() {
+        return virtual;
     }
     
     public boolean isStation(){
@@ -122,19 +120,69 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return type == VertexType.HQ;
     }
 
-    public boolean isTownType(){
-        return isStation() && station.getType().equals(Station.TOWN);
+    
+    public boolean isMajor(){
+        return major;
     }
 
-    public boolean isCityType(){
-        return isStation() && 
-            (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA));
+    public NetworkVertex setMajor(boolean major) {
+        this.major = major;
+        return this;
     }
     
-    public boolean isOffBoardType() {
-        return isStation() && station.getType().equals(Station.OFF_MAP_AREA);
+    public boolean isMinor(){
+        return minor;
+    }
+
+    public NetworkVertex setMinor(boolean minor) {
+        this.minor = minor;
+        return this;
+    }
+
+    public int getValue() {
+        return value;
     }
     
+    public int getValueByTrain(NetworkTrain train) {
+        int valueByTrain;
+        if (major) {
+            valueByTrain = value * train.getMultiplyMajors();
+        } else if (minor) {
+            if (train.ignoresMinors()) {
+                valueByTrain = 0;
+            } else {
+                valueByTrain = value * train.getMultiplyMinors();
+            }
+        } else {
+            valueByTrain = value;
+        }
+        return valueByTrain;
+    }
+    
+    public NetworkVertex setValue(int value) {
+        this.value = value;
+        return this;
+    }
+    
+    public boolean isSink() {
+        return sink;
+    }
+    
+    public NetworkVertex setSink(boolean sink) {
+        this.sink = sink;
+        return this;
+    }
+    
+    public String getCityName() {
+        return cityName;
+    }
+    
+    public NetworkVertex setCityName(String locationName) {
+        this.cityName = locationName;
+        return this;
+    }
+    
+    // getter for rails objects
     public MapHex getHex(){
         return hex;
     }
@@ -147,72 +195,54 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return city;
     }
     
-    
     public int getSide(){
         return side;
     }
+
     
-    public int getValue(PhaseI phase){
-        if (isOffBoardType()) {
-            return hex.getCurrentOffBoardValue(phase);
-        } else if (isStation()) {
-            return station.getValue();
+    /** 
+     * Initialize for rails vertexes
+     */
+    public void initRailsVertex(PublicCompanyI company) {
+        // side vertices use the defaults, virtuals cannot use this function
+        if (virtual || type == VertexType.SIDE) return;
+        
+        log.info("Init of vertex " + this);
+        
+        // check if it is a major or minor
+        if (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA)) {
+            major = true;
+        } else if (station.getType().equals(Station.TOWN) || station.getType().equals(Station.PORT)
+                || station.getType().equals(Station.HALT)) {
+            minor = true;
+        }
+        
+        // check if it is a sink 
+        if (company == null) { // if company == null, then all sinks are deactivated
+            sink = false;
+        } else if (station.getType().equals(Station.OFF_MAP_AREA) || 
+                station.getType().equals(Station.CITY) && !city.hasTokenSlotsLeft() && !city.hasTokenOf(company)) { 
+            sink = true;
+        }
+        
+        // define locationName
+        if (station.getType().equals(Station.OFF_MAP_AREA)) {
+            cityName = hex.getCityName();
         } else {
-            return 0;
+            cityName = station.getCityName();
         }
     }
     
-    public int getValue() {
-        return getValue(this.phase);
-    }
+    public void setRailsVertexValue(PhaseI phase) {
+        // side vertices and  virtuals cannot use this function
+        if (virtual || type == VertexType.SIDE) return;
 
-    public PhaseI getPhase(){
-        return phase;
-    }
-    
-    public void setPhase(PhaseI phase){
-        this.phase = phase;
-    }
-    
-    /**
-     * Checks if a vertex is fully tokened
-     * If it cannot be tokened, always returns false
-     */
-    public boolean isFullyTokened(){
-        return tokenable && companiesHaveToken.size() >= tokenSlots;
-    }
-    
-    /**
-     * Checks if a public company can pass through a vertex
-     */
-    public boolean canCompanyRunThrough(PublicCompanyI company) {
-        return !isFullyTokened() || companiesHaveToken.contains(company);
-    }
-    
-    /**
-     * Checks if a vertex contains a token of the given public company
-     */
-    public boolean hasCompanyToken(PublicCompanyI company) {
-        return !(company == null) && companiesHaveToken.contains(company);
-    }
-
-    /**
-     * Checks if a given company can add a token
-     * 
-     */
-    public boolean canCompanyAddToken(PublicCompanyI company) {
-        return (tokenable && companiesHaveToken.size() < tokenSlots  && company != null &&
-            !companiesHaveToken.contains(company));
-    }
-    
-    public String printTokens(){
-        if (!tokenable) return "Not tokenable";
-        
-        StringBuffer result = new StringBuffer("Tokens:");
-        for (PublicCompanyI company:companiesHaveToken)
-            result.append(" " + company.getName());
-        if (isFullyTokened()) result.append(", fully tokened"); 
-        return result.toString();
+        // define value
+        if (station.getType().equals(Station.OFF_MAP_AREA)) {
+            value = hex.getCurrentOffBoardValue(phase);
+        } else {
+            value = station.getValue();
+        }
     }
     
     public String getIdentifier(){
@@ -224,21 +254,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             return "HQ";
     }
     
-    public String getVertexName(){
-        StringBuffer name = new StringBuffer();
-        if (isStation()) {
-//            if (hex.getCityName() != null && !hex.getCityName().equals(""))
-//                name.append(hex.getCityName());
-//            else
-//                name.append("Station");
-//            if (station.getNumber() != 1) 
-//                name.append("." +  station.getNumber());
-            name.append(this.getValue());
-        }  else
-            name.append(hex.getOrientationName(side));
-        return name.toString();
-    }
-    
     @Override
     public String toString(){
         StringBuffer message = new StringBuffer();
@@ -248,7 +263,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             message.append(hex.getName() + "." + hex.getOrientationName(side));
         else 
             message.append("HQ");
-        if (isFullyTokened())
+        if (isSink())
             message.append("/*");
         return message.toString();
     }
@@ -267,16 +282,21 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
     }
 
-    public static void setPhaseForAll(Collection<NetworkVertex> vertexes, PhaseI phase) {
-        for (NetworkVertex v:vertexes)
-            v.setPhase(phase);
+    public static void initAllRailsVertices(Collection<NetworkVertex> vertices, 
+            PublicCompanyI company,  PhaseI phase) {
+        for (NetworkVertex v:vertices) {
+            if (company != null)
+                v.initRailsVertex(company);
+            if (phase != null)
+                v.setRailsVertexValue(phase);
+        }
     }
 
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
         GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
-        if (vertex.isCityType()) {
+        if (vertex.isMajor()) {
             return guiHex.getCityPoint2D(vertex.getCity());
-        } else if (vertex.isTownType()) {
+        } else if (vertex.isMinor()) {
             return guiHex.getCenterPoint2D();
         } else if (vertex.isSide()) {
             if (map instanceof EWHexMap) 

@@ -23,7 +23,9 @@
 	<Hex name="E6" tile="0" cost="80"/>
 	<Hex name="E8" tile="0"/>
 
-	<Hex name="F1" tile="-902" orientation="2" value="30,60,100" city="Imabari"/> <!-- TODO: 3rd value is for diesel only-->
+	<Hex name="F1" tile="-902" orientation="2" value="30,60" city="Imabari">
+	<RevenueBonus value="40"> <Vertex id="-1"/> <Train type="D"/> </RevenueBonus>
+	</Hex>
 	<Hex name="F3" tile="-10" city="Saijou"/>
 	<Hex name="F5" tile="0" cost="80"/>
 	<Hex name="F7" tile="0" cost="80"/>
@@ -50,7 +52,9 @@
 	<Hex name="I10" tile="0"/>
 	<Hex name="I12" tile="-1" city="Muki"/>
 
-	<Hex name="J1" tile="-902" orientation="2" value="20,40,80" city="Sakaide &amp; Okoyama"/> <!-- TODO: 3rd value is for diesel only-->
+	<Hex name="J1" tile="-902" orientation="2" value="20,40" city="Sakaide &amp; Okoyama"> 
+	<RevenueBonus value="40"> <Vertex id="-1"/> <Train type="D"/> </RevenueBonus>
+	</Hex>
 	<Hex name="J3" tile="0"/>
 	<Hex name="J5" tile="-1" city="Ritsurin Kouen"/>
 	<Hex name="J7" tile="-8" orientation="2" label="River"/>
@@ -61,6 +65,8 @@
 	<Hex name="K6" tile="0" cost="80" lablel="River"/>
 	<Hex name="K8" tile="-10" city="Tokushima"/>
 
-	<Hex name="L7" tile="-902" orientation="3" value="20,40,80" city="Naruto &amp; Awaji"/> <!-- TODO: 3rd value is for diesel only-->
+	<Hex name="L7" tile="-902" orientation="3" value="20,40" city="Naruto &amp; Awaji"> 
+	<RevenueBonus value="40"> <Vertex id="-1"/> <Train type="D"/> </RevenueBonus>
+	</Hex>
 
 </Map>
