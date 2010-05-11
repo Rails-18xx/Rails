@@ -19,7 +19,6 @@ import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.Subgraph;
 
@@ -29,6 +28,7 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
 import rails.game.City;
+import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
@@ -43,14 +43,16 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         Logger.getLogger(NetworkGraphBuilder.class.getPackage().getName());
     
     private SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;  
+
     private Map<String, NetworkVertex> mapVertexes;
+    
     private NetworkIterator iterator;
     
     public NetworkGraphBuilder() {
         this.mapGraph = null;
     }
 
-    public void generateGraph(List<MapHex> mHexes) {
+    public void generateGraph(List<MapHex> mHexes ) {
         
         mapGraph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         mapVertexes = new HashMap<String, NetworkVertex> ();
@@ -66,7 +68,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkVertex stationVertex = new NetworkVertex(hex, station);
                 mapGraph.addVertex(stationVertex);
                 mapVertexes.put(stationVertex.getIdentifier(), stationVertex);
-                log.debug("Added " + stationVertex + " / " + stationVertex.printTokens());
+                log.info("Added " + stationVertex);
             }
             
             // get tracks per side to add that vertex
@@ -75,7 +77,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     NetworkVertex sideVertex = new NetworkVertex(hex, side + hex.getCurrentTileRotation());
                     mapGraph.addVertex(sideVertex);
                     mapVertexes.put(sideVertex.getIdentifier(), sideVertex);
-                    log.debug("Added " + sideVertex);
+                    log.info("Added " + sideVertex);
                 }
         }
         
@@ -90,13 +92,13 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 int[] points = track.points();
                 NetworkVertex startVertex = getVertexRotated(hex, points[0]);
                 NetworkVertex endVertex = getVertexRotated(hex, points[1]);
-                log.debug("Track: " + track);
+                log.info("Track: " + track);
                 NetworkEdge edge =  new NetworkEdge(startVertex, endVertex, false);
                 if (startVertex == endVertex) {
                     log.error("Track " + track + " on hex " + hex + "has identical start/end");
                 } else {
                     mapGraph.addEdge(startVertex, endVertex, edge);
-                    log.debug("Added edge " + edge.getConnection());
+                    log.info("Added edge " + edge.getConnection());
                 }
             }
 
@@ -105,42 +107,42 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkVertex vertex = getVertex(hex, side);
                 MapHex neighborHex = hex.getNeighbor(side);
                 if (neighborHex == null) {
-                    log.debug("No connection for Hex " + hex.getName() + " at "
+                    log.info("No connection for Hex " + hex.getName() + " at "
                             + hex.getOrientationName(side) + ", No Neighbor");
                     continue;
                 }
                 NetworkVertex otherVertex = getVertex(neighborHex, side + 3);
                 if (vertex == null && otherVertex == null){
-                    log.debug("Hex " + hex.getName() + " has no track at "
+                    log.info("Hex " + hex.getName() + " has no track at "
                             + hex.getOrientationName(side));
-                    log.debug("And Hex " + neighborHex.getName() + " has no track at "
+                    log.info("And Hex " + neighborHex.getName() + " has no track at "
                             + neighborHex.getOrientationName(side + 3));
                     continue;
                 }
                 else if (vertex == null && otherVertex != null) { 
-                    log.debug("Deadend connection for Hex " + neighborHex.getName() + " at "
+                    log.info("Deadend connection for Hex " + neighborHex.getName() + " at "
                             + neighborHex.getOrientationName(side + 3) + ", NeighborHex "
                             + hex.getName() + " has no track at side " +
                             hex.getOrientationName(side));
                     vertex = new NetworkVertex(hex, side);
                     mapGraph.addVertex(vertex);
                     mapVertexes.put(vertex.getIdentifier(), vertex);
-                    log.debug("Added deadend vertex " + vertex);
+                    log.info("Added deadend vertex " + vertex);
                 }
                 else if (otherVertex == null)  {
-                    log.debug("Deadend connection for Hex " + hex.getName() + " at "
+                    log.info("Deadend connection for Hex " + hex.getName() + " at "
                             + hex.getOrientationName(side) + ", NeighborHex "
                             + neighborHex.getName() + " has no track at side " +
                             neighborHex.getOrientationName(side+3));
                     otherVertex = new NetworkVertex(neighborHex, side + 3);
                     mapGraph.addVertex(otherVertex);
                     mapVertexes.put(otherVertex.getIdentifier(), otherVertex);
-                    log.debug("Added deadend vertex " + otherVertex);
+                    log.info("Added deadend vertex " + otherVertex);
                 }
                 NetworkEdge edge =  new NetworkEdge(vertex, otherVertex, true);
                 mapGraph.addEdge(vertex, otherVertex, 
                         edge);
-                log.debug("Added edge " + edge.getConnection());
+                log.info("Added edge " + edge.getConnection());
             }
         }
     }        
@@ -151,6 +153,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
 
     public SimpleGraph<NetworkVertex, NetworkEdge> getRailRoadGraph(PublicCompanyI company) {
+
+        // set sinks on mapgraph
+        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), company, null);
         
         // initialized simple graph
         SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
@@ -179,6 +184,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
             (mapGraph, vertexes);
         // now add all vertexes and edges to the graph
         Graphs.addGraph(graph, subGraph);
+
+        // deactivate sinks on mapgraph
+        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), null, null);
         
         return graph;
     }
@@ -189,6 +197,10 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     
     public Iterator<NetworkVertex> iterator() {
         return iterator; 
+    }
+    
+    public NetworkVertex getVertexByIdentifier(String identVertex) {
+        return mapVertexes.get(identVertex);
     }
     
     public NetworkVertex getVertex(TokenI token) {
@@ -205,7 +217,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapVertexes.get(hex.getName() + "." + -station.getNumber());
     }
     
-    private NetworkVertex getVertex(MapHex hex, int side) {
+    public NetworkVertex getVertex(MapHex hex, int side) {
         if (side >= 0)
             side = side % 6;
         return mapVertexes.get(hex.getName() + "." + side);
@@ -231,7 +243,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                                 PublicCompanyI company){
         List<MapHex> hexes = new ArrayList<MapHex>();
         for(NetworkVertex vertex:graph.vertexSet()) {
-            if (vertex.canCompanyAddToken(company)) {
+            City city = vertex.getCity();
+            if (city != null && city.hasTokenSlotsLeft()) {
                 hexes.add(vertex.getHex());
             }
         }
@@ -294,7 +307,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     // merge greed edges if the vertexes are not already connected
                     if (edges[0].isGreedy()) {
                         removed = NetworkEdge.mergeEdges(graph, edges[0], edges[1]);
-                        break;
+                        if (removed) break;
                     }
                 }
             }

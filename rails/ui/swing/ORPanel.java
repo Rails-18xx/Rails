@@ -1,16 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.61 2010/05/01 16:07:05 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.62 2010/05/11 21:47:21 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.GeneralPath;
 import java.util.List;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
@@ -18,7 +16,6 @@ import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
-import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
 import rails.util.Util;
 
@@ -603,23 +600,7 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
-            SimpleGraph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
-
-//            NetworkGraphBuilder.visualize(graph, "Network of " + companyName);
-            graph = NetworkGraphBuilder.optimizeGraph(graph);
-//            NetworkGraphBuilder.visualize(graph, "Optimized Network of " + companyName);
-
-            // revenue calculation example on mapGraph
-//            mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-//            RevenueAdapter ra = new RevenueAdapter(mapGraph);
-//            // set tokens
-//            List<TokenI> tokens = company.getTokens();
-//            for (TokenI token:tokens){
-//                NetworkVertex vertex = nwGraph.getVertex(token);
-//                if (vertex != null) ra.addStartVertex(vertex);
-//            }
-//             run on railroad graph
-             RevenueAdapter ra = new RevenueAdapter(graph);
+            RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company);
 
             // get trains
             company.getPortfolio().getTrainList();
@@ -642,15 +623,15 @@ implements ActionListener, KeyListener, RevenueListener {
 //                ra.refreshRevenueCalculator();
 
 //                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
-                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
+                ra.populateRevenueCalculator(gm.getCurrentPhase(), true);
                 log.info("Revenue Adapter:" + ra);
                 revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue run:" + ra.getOptimalRunPrettyPrint());
+                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
-                JOptionPane.showMessageDialog(orWindow, "With Prediction: RevenueValue = " + revenueValue +
-                        "\n RevenueRun = " + ra.getOptimalRunPrettyPrint());
+                JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
+                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint());
 
                 String trainsToAdd =
                     JOptionPane.showInputDialog(orWindow, "Another train",
@@ -839,9 +820,7 @@ implements ActionListener, KeyListener, RevenueListener {
 //        }
     
         // run on railroad graph, does not work so far, thus use map graph
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = nwGraph.getRailRoadGraph(company);
-        graph = NetworkGraphBuilder.optimizeGraph(graph);
-        RevenueAdapter ra = new RevenueAdapter(graph);
+        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company);
 
         // get trains
         company.getPortfolio().getTrainList();
@@ -849,7 +828,7 @@ implements ActionListener, KeyListener, RevenueListener {
             ra.addTrain(train);
         }
 
-        ra.populateRevenueCalculator(company, gm.getCurrentPhase(), true);
+        ra.populateRevenueCalculator(gm.getCurrentPhase(), true);
         ra.addRevenueListener(this);
 
         return ra;

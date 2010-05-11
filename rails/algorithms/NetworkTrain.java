@@ -1,46 +1,81 @@
 package rails.algorithms;
 
+import rails.game.TrainI;
+import rails.game.TrainTypeI;
+
 public final class NetworkTrain {
 
-    private int cities;
-    private int towns;
-    private final boolean ignoreTowns;
-    private final int multiplyCities;
-    private final int multiplyTowns;
+    private int majors;
+    private int minors;
+    private final boolean ignoreMinors;
+    private final int multiplyMajors;
+    private final int multiplyMinors;
     private final String trainName;
+    private final TrainTypeI railsTrainType;
     
-    NetworkTrain(int cities, int towns, boolean townsCostNothing,
-            int multiplyCities, int multiplyTowns, String trainName) {
-        this.cities = cities;
-        this.towns = towns;
-        this.ignoreTowns = townsCostNothing;
-        this.multiplyCities = multiplyCities;
-        this.multiplyTowns = multiplyTowns;
+    NetworkTrain(int majors, int minors, boolean ignoreMinors,
+            int multiplyMajors, int multiplyMinors, String trainName,
+            TrainTypeI trainType) {
+        this.majors = majors;
+        this.minors = minors;
+        this.ignoreMinors = ignoreMinors;
+        this.multiplyMajors = multiplyMajors;
+        this.multiplyMinors = multiplyMinors;
         this.trainName = trainName;
+        this.railsTrainType = trainType;
     }
 
+    static NetworkTrain createFromRailsTrain(TrainI railsTrain){
+        int cities = railsTrain.getMajorStops();
+        int towns = railsTrain.getMinorStops();
+        boolean townsCostNothing = (railsTrain.getTownCountIndicator() == 0);
+        int multiplyCities = railsTrain.getCityScoreFactor();
+        int multiplyTowns = railsTrain.getTownScoreFactor();
+        String trainName = railsTrain.getName();
+        TrainTypeI trainType = railsTrain.getType();
+
+        if (cities == 0 && towns == 0) {
+            return null;// protection against pullman
+        } else {
+            return new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns,
+                trainName, trainType); 
+        }
+    }
+    
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
-        rc.setTrain(trainId, cities, towns, ignoreTowns, multiplyCities, multiplyTowns);
+        rc.setTrain(trainId, majors, minors, ignoreMinors);
     }
 
-    int getCities(){
-        return cities;
+    int getMajors(){
+        return majors;
     }
     
-    void setCities(int cities){
-        this.cities = cities;
+    void setMajors(int majors){
+        this.majors = majors;
     }
     
-    int getTowns() {
-        return towns;
+    int getMinors() {
+        return minors;
     }
     
-    void setTowns(int towns){
-        this.towns = towns;
+    void setMinors(int minors){
+        this.minors = minors;
     }
     
-    int calculateRevenue(int[] cityValues, int[] townValues) {
-        return cityValues[cities] * multiplyCities + townValues[towns] * multiplyTowns; 
+    int getMultiplyMajors() {
+        return multiplyMajors;
+    }
+    
+    int getMultiplyMinors() {
+        return multiplyMinors;
+    }
+    
+    boolean ignoresMinors() {
+        return ignoreMinors;
+    }
+    
+    TrainTypeI getRailsTrainType() {
+        return railsTrainType;
     }
     
     public String toString() {

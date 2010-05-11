@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.38 2010/04/04 22:02:53 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.39 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -126,7 +126,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         Map<String, Station> stationMap = new HashMap<String, Station>();
         if (stationTags != null) {
             tracksPerStation = new HashMap<Integer, List<Track>>();
-            String sid, type;
+            String sid, type, cityName;
             int number, value, slots, position;
             Station station;
             for (Tag stationTag : stationTags) {
@@ -148,9 +148,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 value = stationTag.getAttributeAsInteger("value", 0);
                 slots = stationTag.getAttributeAsInteger("slots", 0);
                 position = stationTag.getAttributeAsInteger("position", 0);
+                cityName = stationTag.getAttributeAsString("city");
                 station =
                         new Station(this, number, sid, type, value, slots,
-                                position);
+                                position, cityName);
                 stations.add(station);
                 stationMap.put(sid, station);
             }

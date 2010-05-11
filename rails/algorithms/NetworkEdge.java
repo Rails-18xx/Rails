@@ -26,7 +26,7 @@ public final class NetworkEdge {
     private final int distance;
     
     private final List<NetworkVertex> hiddenVertexes;
-    // list of vertexes that were merged into the 
+    // list of vertexes that were merged into the edge
     
     public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy) {
         this.source = source;

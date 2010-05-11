@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.11 2009/09/25 19:13:01 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.12 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.Arrays;
@@ -30,6 +30,7 @@ public class Station {
     private int baseSlots;
     private TileI tile;
     private int position;
+    private String cityName;
     private int x;
     private int y;
 
@@ -54,7 +55,7 @@ public class Station {
     }
 
     public Station(TileI tile, int number, String id, String type, int value,
-            int slots, int position) {
+            int slots, int position, String cityName) {
         this.tile = tile;
         this.number = number;
         this.id = id;
@@ -62,6 +63,7 @@ public class Station {
         this.value = value;
         this.baseSlots = slots;
         this.position = position;
+        this.cityName = cityName;
         convertPosition();
         // log.debug(toString()+": x="+x+" y="+y);
     }
@@ -69,6 +71,10 @@ public class Station {
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
                + tile.getName();
+    }
+    
+    public String getCityName() {
+        return cityName;
     }
 
     /**
