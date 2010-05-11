@@ -33,7 +33,7 @@
 	<StockSpace name="B9" price="35" type="orange"/>
 	<StockSpace name="B10" price="30" type="orange"/>
 	<StockSpace name="B11" price="0">
-		<closesCompany/>
+		<ClosesCompany/>
 	</StockSpace>
 	<StockSpace name="C1" price="80" />
 	<StockSpace name="C2" price="75" />
