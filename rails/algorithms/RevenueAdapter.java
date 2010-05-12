@@ -215,8 +215,7 @@ public class RevenueAdapter implements Runnable {
                     neighborsArray[j++] = vertexes.indexOf(n);
                 }
                 // sort by value order
-                neighborsArray = Arrays.copyOfRange(neighborsArray, 0, j);
-                Arrays.sort(neighborsArray);
+                Arrays.sort(neighborsArray, 0, j);
                 rc.setVertexNeighbors(id, neighborsArray);
             }
             // set blocks
