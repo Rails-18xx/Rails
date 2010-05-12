@@ -139,7 +139,7 @@ public class RevenueAdapter implements Runnable {
                     maxNeighbors = Math.max(maxNeighbors,
                         graph.edgesOf(vertex).size());
             log.info("maxNeighbors = " + maxNeighbors);
-            this.rc = new RevenueCalculator(this, vertexes.size(), maxNeighbors, maxBlocks, trains.size()); 
+            this.rc = new RevenueCalculator(this, vertexes.size(), edges.size(), maxNeighbors, maxBlocks, trains.size()); 
         }
     }
     
@@ -216,7 +216,13 @@ public class RevenueAdapter implements Runnable {
                 }
                 // sort by value order
                 Arrays.sort(neighborsArray, 0, j);
-                rc.setVertexNeighbors(id, neighborsArray);
+                // define according edges
+                int[] edgesArray = new int[j];
+                for (int e=0; e < j; e++) {
+                    NetworkVertex n = vertexes.get(neighborsArray[e]);
+                    edgesArray[e] = edges.indexOf(graph.getEdge(v, n));
+                }
+                rc.setVertexNeighbors(id, neighborsArray, edgesArray);
             }
             // set blocks
             if (vertexVisitSets.containsKey(v)) {
@@ -240,14 +246,9 @@ public class RevenueAdapter implements Runnable {
         for (int id=0; id < edges.size(); id++) {
             // prepare values
             NetworkEdge e = edges.get(id);
-            int vA = vertexes.lastIndexOf(e.getSource());
-            int vB = vertexes.lastIndexOf(e.getTarget());
             boolean greedy = e.isGreedy();
             int distance = e.getDistance();
-            rc.setEdge(vA, vB,
-                    greedy, distance);
-            rc.setEdge(vB, vA,
-                    greedy, distance);
+            rc.setEdge(id, greedy, distance);
         }
         
         // set trains
