@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.128 2010/05/07 20:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.129 2010/05/13 09:51:32 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1641,6 +1641,18 @@ public class OperatingRound extends Round implements Observer {
                                     companyName,
                                     Bank.format(operatingCompany.getCash()),
                                     Bank.format(price) );
+                    break;
+                }
+            }
+            
+            if (action.isForExchange()) {
+                if (exchangedTrain == null) {
+                    errMsg = LocalText.getText("NoExchangedTrainSpecified");
+                    break;
+                } else if (operatingCompany.getPortfolio().getTrainOfType(exchangedTrain.getType()) == null) {
+                    errMsg = LocalText.getText("CompanyDoesNotOwnTrain", 
+                            operatingCompany.getName(),
+                            exchangedTrain.getName());
                     break;
                 }
             }
