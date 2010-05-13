@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.20 2010/04/30 09:35:36 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.21 2010/05/13 09:51:32 evos Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -215,20 +215,24 @@ public class BuyTrain extends PossibleORAction {
             b.append(" for ").append(Bank.format(fixedCost));
         } else {
             b.append(" for any amount");
-            if (pricePaid > 0) b.append(" - paid: ").append(Bank.format(pricePaid));
         }
         if (specialProperty != null) {
             b.append(" using ").append(specialProperty.getOriginalCompany().getName());
         }
         if (isForExchange()) {
-            b.append(forcedExchange ? " (forced exchange)" : " (exchanged)");
+            b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
         }
-        if (presidentMustAddCash)
+        if (presidentMustAddCash) {
             b.append(" must add cash ").append(Bank.format(presidentCashToAdd));
-        else if (presidentMayAddCash)
+        } else if (presidentMayAddCash) {
             b.append(" may add cash up to ").append(
                     Bank.format(presidentCashToAdd));
-        if (pricePaid > 0) b.append(" - paid: ").append(Bank.format(pricePaid));
+        }
+        if (acted) {
+            b.append(" - paid: ").append(Bank.format(pricePaid));
+            if (addedCash > 0) b.append(" pres.cash added: "+Bank.format(addedCash));
+            if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getName()+"-train");
+        }
 
         return b.toString();
     }

@@ -1088,7 +1088,7 @@ public class ORUIManager implements DialogOwner {
             } else {
                 List<String> oldTrainOptions =
                         new ArrayList<String>(oldTrains.size());
-                String[] options = new String[oldTrains.size() + 1];
+                String[] options = new String[oldTrains.size()];
                 int jj = 0;
                 for (int j = 0; j < oldTrains.size(); j++) {
                     options[jj + j] =
@@ -1102,9 +1102,15 @@ public class ORUIManager implements DialogOwner {
                                 LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
-                int index = oldTrainOptions.indexOf(exchangedTrainName);
-                if (index >= 0) {
-                    exchangedTrain = oldTrains.get(index);
+                if (exchangedTrainName != null) {
+                    int index = oldTrainOptions.indexOf(exchangedTrainName);
+                    if (index >= 0) {
+                        exchangedTrain = oldTrains.get(index);
+                    }
+                }
+                if (exchangedTrain == null) {
+                    // No valid train selected - cancel the buy action
+                    train = null;
                 }
             }
         }
