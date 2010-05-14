@@ -1,9 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.18 2010/04/04 22:02:53 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.19 2010/05/14 15:19:57 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
 import java.util.Map;
 
+import rails.algorithms.RevenueBonusTemplate;
 import rails.util.Tag;
 
 public interface TileI {
@@ -68,4 +69,7 @@ public interface TileI {
     public int countFreeTiles();
 
     public int getQuantity();
+
+    public List<RevenueBonusTemplate> getRevenueBonuses();
+
 }

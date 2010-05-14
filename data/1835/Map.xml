@@ -107,7 +107,7 @@
 	<Hex name="M15" tile="-1" cost="50"/>
 	<Hex name="M17" tile="0" cost="50"/>
 	<Hex name="M19" tile="-3" orientation="1"/>
-	<Hex name="N4" tile="-901" orientation="5" value="0,50,0"/>
+	<Hex name="N4" tile="-901" orientation="5" value="0,50,0" city="Elsas/Lothringen"/>
 	<Hex name="N6" tile="-41"/>
 	<Hex name="N8" tile="0" cost="70"/>
 	<Hex name="N10" tile="-2"/>

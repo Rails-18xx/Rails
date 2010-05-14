@@ -1,9 +1,14 @@
 package rails.algorithms;
 
+import org.apache.log4j.Logger;
+
 import rails.game.TrainI;
 import rails.game.TrainTypeI;
 
 public final class NetworkTrain {
+
+    protected static Logger log =
+        Logger.getLogger(NetworkTrain.class.getPackage().getName());
 
     private int majors;
     private int minors;
@@ -40,6 +45,35 @@ public final class NetworkTrain {
             return new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns,
                 trainName, trainType); 
         }
+    }
+    
+    static NetworkTrain createFromString(String trainString) {
+        String t = trainString.trim();
+        int cities = 0; int towns = 0; boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
+        if (t.equals("D")) {
+            log.info("RA: found Diesel train");
+            cities = 99;
+        } else if (t.contains("+")) {
+            log.info("RA: found Plus train");
+            cities = Integer.parseInt(t.split("\\+")[0]); // + train
+            towns = Integer.parseInt(t.split("\\+")[1]);
+        } else if (t.contains("E")) {
+            log.info("RA: found Express train");
+            cities = Integer.parseInt(t.replace("E", ""));
+            ignoreTowns = true;
+            multiplyTowns = 0;
+        } else if (t.contains("D")) {
+            log.info("RA: found Double Express train");
+            cities = Integer.parseInt(t.replace("D", ""));
+            ignoreTowns = true;
+            multiplyCities = 2;
+            multiplyTowns = 0;
+        } else { 
+            log.info("RA: found Default train");
+            cities = Integer.parseInt(t);
+        }
+        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, multiplyTowns, t, null); 
+        return train;
     }
     
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {

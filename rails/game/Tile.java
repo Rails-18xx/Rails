@@ -1,10 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.39 2010/05/11 21:47:21 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.40 2010/05/14 15:19:57 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import rails.algorithms.RevenueBonusTemplate;
 import rails.game.model.ModelObject;
 import rails.util.LocalText;
 import rails.util.Tag;
@@ -81,6 +82,9 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     protected static final int TILE_NUMBER_OFFSET = 2;
 
     private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
+
+    /** Storage of revenueBonus that are bound to the tile */
+    protected List<RevenueBonusTemplate> revenueBonuses = null;
 
     public Tile(Integer id) {
         this.id = id;
@@ -268,7 +272,16 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                         relayBaseTokensOnUpgrade);
              }
         }
-
+        
+        // revenue bonus
+        List<Tag> bonusTags = setTag.getChildren("RevenueBonus");
+        if (bonusTags != null) {
+            revenueBonuses = new ArrayList<RevenueBonusTemplate>();
+            for (Tag bonusTag:bonusTags) {
+                revenueBonuses.add(new RevenueBonusTemplate(bonusTag));
+            }
+        }
+ 
     }
 
     public void finishConfiguration (TileManager tileManager)
@@ -479,7 +492,11 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     public int getQuantity() {
         return quantity;
     }
-    
+
+    public List<RevenueBonusTemplate> getRevenueBonuses() {
+        return revenueBonuses;
+    }
+
     @Override
     public String toString() {
         return "Tile Id=" + externalId;

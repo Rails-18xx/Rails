@@ -3,6 +3,7 @@ package rails.algorithms;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,6 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
 import rails.game.City;
-import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
@@ -152,7 +152,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapGraph;
     }
 
-    public SimpleGraph<NetworkVertex, NetworkEdge> getRailRoadGraph(PublicCompanyI company) {
+    public SimpleGraph<NetworkVertex, NetworkEdge> getRailRoadGraph(PublicCompanyI company, boolean addHQ) {
 
         // set sinks on mapgraph
         NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), company, null);
@@ -164,12 +164,10 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         graph.addVertex(hqVertex);
         
         // create vertex set for subgraph
-        List<TokenI> tokens = company.getTokens();
+        List<NetworkVertex> tokenVertexes = getCompanyBaseTokenVertexes(company);
         Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
         
-        for (TokenI token:tokens){
-            NetworkVertex vertex = getVertex(token);
-            if (vertex == null) continue;
+        for (NetworkVertex vertex:tokenVertexes){
             vertexes.add(vertex);
             // add connection to graph
             graph.addVertex(vertex);
@@ -185,10 +183,23 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         // now add all vertexes and edges to the graph
         Graphs.addGraph(graph, subGraph);
 
+        // if addHQ is not set remove HQ vertex
+        if (!addHQ) graph.removeVertex(hqVertex);
+        
         // deactivate sinks on mapgraph
         NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), null, null);
         
         return graph;
+    }
+    
+    public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompanyI company) {
+        List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
+        for (TokenI token:company.getTokens()){
+            NetworkVertex vertex = getVertex(token);
+            if (vertex == null) continue;
+            vertexes.add(vertex);
+        }
+        return vertexes;
     }
     
     public void setIteratorStart(MapHex hex, Station station) {
@@ -251,14 +262,19 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return hexes;
     }
     
+    public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(
+            SimpleGraph<NetworkVertex, NetworkEdge> inGraph) {
+        return optimizeGraph(inGraph, new ArrayList<NetworkVertex>());
+    }
     
-    public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(SimpleGraph<NetworkVertex, NetworkEdge> graph) {
+    public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(
+            SimpleGraph<NetworkVertex, NetworkEdge> inGraph, Collection<NetworkVertex> protectedVertices) {
         
-        // convert graph
-//        Graph<NetworkVertex, NetworkEdge> graph = new Multigraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
-//        Graphs.addGraph(graph, graphIn);
-        
-        // increase greedness
+        // clone graph
+       SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
+       Graphs.addGraph(graph, inGraph);
+ 
+       // increase greedness
         for (NetworkEdge edge:graph.edgeSet()) {
             NetworkVertex source = edge.getSource();
             NetworkVertex target = edge.getTarget();
@@ -268,13 +284,14 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
             }
         }
       
-        while (removeVertexes(graph));
+        while (removeVertexes(graph, protectedVertices));
         
         return graph;
     }
     
     /** remove deadend and vertex with only two edges */ 
-    private static boolean removeVertexes(Graph<NetworkVertex, NetworkEdge> graph){
+    private static boolean removeVertexes(SimpleGraph<NetworkVertex, NetworkEdge> graph,
+            Collection<NetworkVertex> protectedVertices){
         
         boolean removed = false;
         for (NetworkVertex vertex:graph.vertexSet()) {
@@ -294,7 +311,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 graph.removeVertex(vertex);
                 removed = true;
                 break;
-            } else  if (vertexEdges.size() == 2) { // vertex is not necessary
+            } // vertex is not necessary and not on the protected list
+                else if (vertexEdges.size() == 2 && !protectedVertices.contains(vertex)) { 
                 NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
                 if (edges[0].isGreedy() == edges[1].isGreedy()) {
                     if (!edges[0].isGreedy()) {
