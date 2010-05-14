@@ -27,6 +27,9 @@ public class RevenueBonusTemplate {
     // bonus value
     private final int value;
 
+    // bonus name
+    private final String name;
+    
     // template condition attributes
     private final List<Integer> identVertices;
     private final List<String> identTrainTypes;
@@ -36,6 +39,7 @@ public class RevenueBonusTemplate {
     ConfigurationException {
      
         value = tag.getAttributeAsInteger("value");
+        name = tag.getAttributeAsString("name");
 
         identVertices = new ArrayList<Integer>();
         identTrainTypes = new ArrayList<String>();
@@ -78,7 +82,7 @@ public class RevenueBonusTemplate {
 
     public RevenueBonus toRevenueBonus(MapHex hex, GameManagerI gm, NetworkGraphBuilder ngb) {
         log.info("Convert " + this);
-        RevenueBonus bonus = new RevenueBonus(value);
+        RevenueBonus bonus = new RevenueBonus(value, name);
         if (!convertVertices(bonus, ngb, hex)) {
             log.info("Not all vertices found");
             return null; 
@@ -120,7 +124,12 @@ public class RevenueBonusTemplate {
     }
     public String toString() {
         StringBuffer s = new StringBuffer();
-        s.append("RevenueBonusTemplate with value " + value);
+        s.append("RevenueBonusTemplate");
+        if (name == null) 
+            s.append (" unnamed");
+        else
+            s.append(" name = " + name);
+        s.append(", value " + value);
         s.append(", identVertices = " + identVertices);
         s.append(", identTrainTypes = " + identTrainTypes);
         s.append(", identPhases = " + identPhases);

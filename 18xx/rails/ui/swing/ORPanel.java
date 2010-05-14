@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.62 2010/05/11 21:47:21 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.63 2010/05/14 15:19:58 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -600,30 +600,13 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
-            RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company);
-
-            // get trains
-            company.getPortfolio().getTrainList();
-            for (TrainI train:company.getPortfolio().getTrainList())
-                ra.addTrain(train);
+            RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
+            ra.populateFromRails();
             
             boolean anotherTrain = true;
             while (anotherTrain) {
                 int revenueValue;
-                // create results
-//                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), false);
-//                ra.populateRevenueCalculator(company, gm.getCurrentPhase(), false);
-//                log.info("Revenue Adapter:" + ra);
-//                revenueValue = ra.calculateRevenue();
-//                log.info("Revenue Value:" + revenueValue);
-//                log.info("Revenue run:" + ra.getOptimalRunPrettyPrint());
-//                JOptionPane.showMessageDialog(orWindow, "Without Prediction: RevenueValue = " + revenueValue +
-//                        "\n RevenueRun = " + ra.getOptimalRunPrettyPrint());
-//
-//                ra.refreshRevenueCalculator();
-
-//                ra.populateRevenueCalculator(company, gm.getPhaseManager().getPhaseByName("8"), true);
-                ra.populateRevenueCalculator(gm.getCurrentPhase(), true);
+                ra.initRevenueCalculator();
                 log.info("Revenue Adapter:" + ra);
                 revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
@@ -641,7 +624,6 @@ implements ActionListener, KeyListener, RevenueListener {
                     anotherTrain = false;
                 } else {
                     ra.addTrainByString(trainsToAdd);
-                    ra.refreshRevenueCalculator();
                 }
             }
             revenueAdapter = ra;
@@ -803,32 +785,9 @@ implements ActionListener, KeyListener, RevenueListener {
 
         NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
         nwGraph.generateGraph(mapManager.getHexesAsList());
-        // run on mapgraph
-//        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
-//
-//        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-//
-//        // revenue calculation example
-//        mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-//        RevenueAdapter ra = new RevenueAdapter(mapGraph);
-//
-//        // set tokens
-//        List<TokenI> tokens = company.getTokens();
-//        for (TokenI token:tokens){
-//            NetworkVertex vertex = nwGraph.getVertex(token);
-//            if (vertex != null) ra.addStartVertex(vertex);
-//        }
-    
-        // run on railroad graph, does not work so far, thus use map graph
-        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company);
-
-        // get trains
-        company.getPortfolio().getTrainList();
-        for (TrainI train:company.getPortfolio().getTrainList()) {
-            ra.addTrain(train);
-        }
-
-        ra.populateRevenueCalculator(gm.getCurrentPhase(), true);
+        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
+        ra.populateFromRails();
+        ra.initRevenueCalculator();
         ra.addRevenueListener(this);
 
         return ra;
