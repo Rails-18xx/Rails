@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.40 2010/05/08 13:57:31 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.41 2010/05/15 16:36:09 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -249,17 +249,15 @@ public abstract class Round implements RoundI {
         return false;
     }
 
-    /** Get the operating companies in their current acting order */
-    public PublicCompanyI[] getOperatingCompanies() {
+    /** Set the operating companies in their current acting order */
+    public List<PublicCompanyI> setOperatingCompanies() {
 
-        List<PublicCompanyI> companies =
-                companyManager.getAllPublicCompanies();
         Map<Integer, PublicCompanyI> operatingCompanies =
                 new TreeMap<Integer, PublicCompanyI>();
         StockSpaceI space;
         int key;
         int minorNo = 0;
-        for (PublicCompanyI company : companies) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (!canCompanyOperateThisRound(company)) continue;
             
             // Key must put companies in reverse operating order, because sort
@@ -277,7 +275,7 @@ public abstract class Round implements RoundI {
             operatingCompanies.put(new Integer(key), company);
         }
 
-        return operatingCompanies.values().toArray(new PublicCompanyI[0]);
+        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
     }
 
     /** Can a public company operate? (Default version) */

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.14 2010/01/26 19:50:45 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.15 2010/05/15 16:36:09 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -113,7 +113,6 @@ public class OperatingRound_18EU extends OperatingRound {
 
         /* Other company trains, sorted by president (current player first) */
         if (getCurrentPhase().isTrainTradingAllowed()) {
-            PublicCompanyI c;
             Player p;
             Portfolio pf;
             int index;
@@ -126,8 +125,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
             List<PublicCompanyI> companies;
             // Sort out which players preside over wich companies.
-            for (int j = 0; j < operatingCompanyArray.length; j++) {
-                c = operatingCompanyArray[j];
+            for (PublicCompanyI c : operatingCompanies) {
                 if (c == operatingCompany) continue;
                 p = c.getPresident();
                 index = p.getIndex();
@@ -186,7 +184,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
         if (result && gameManager.getPhaseManager().hasReachedPhase("5")
-            && operatingCompanyArray[0].getTypeName().equals("Minor")
+            && operatingCompanies.get(0).getTypeName().equalsIgnoreCase("Minor")
             && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
             ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.getPresident());
         }
@@ -205,7 +203,7 @@ public class OperatingRound_18EU extends OperatingRound {
         Portfolio portfolio;
         int numberOfTrains;
 
-        for (PublicCompanyI comp : operatingCompanyArray) {
+        for (PublicCompanyI comp : operatingCompanies) {
             portfolio = comp.getPortfolio();
             numberOfTrains = portfolio.getNumberOfTrains();
 

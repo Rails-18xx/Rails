@@ -691,11 +691,8 @@ public class StockRound_18EU extends StockRound {
 
             discardingTrains.set(true);
 
-            // Make up a list of train discarding companies in sequence of the
-            // last OR
-            // TODO: this disregards any changes in the operating sequence
-            // during the last OR. This is probably wrong.
-            PublicCompanyI[] operatingCompanies = getOperatingCompanies();
+            // Make up a list of train discarding companies in operating sequence.
+            PublicCompanyI[] operatingCompanies = setOperatingCompanies().toArray(new PublicCompanyI[0]);
             discardingCompanies =
                     new PublicCompanyI[compWithExcessTrains.size()];
             for (int i = 0, j = 0; i < operatingCompanies.length; i++) {

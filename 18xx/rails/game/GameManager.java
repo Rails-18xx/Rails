@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.100 2010/05/08 13:56:30 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.101 2010/05/15 16:36:09 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -1005,6 +1005,44 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         DisplayBuffer.add(message);
         if (gameEndsWithBankruptcy) {
             finishGame();
+        } else {
+            Player player, newPresident;
+            int numberOfPlayers = getNumberOfPlayers();
+            int maxShare;
+            int share;
+            
+            // Assume default case as in 18EU: all assets to Bank/Pool
+            Player bankrupter = getCurrentPlayer();
+            new CashMove (bankrupter, bank, bankrupter.getCash());
+            Portfolio bpf = bankrupter.getPortfolio();
+            List<PublicCompanyI> presidencies = new ArrayList<PublicCompanyI>();
+            for (PublicCertificateI cert : bpf.getCertificates()) {
+                if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
+            }
+            for (PublicCompanyI company : presidencies) {
+                // Check if the presidency is dumped on someone
+                newPresident = null;
+                maxShare = 0;
+                for (int index=getCurrentPlayerIndex()+1; 
+                        index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
+                    player = getPlayerByIndex(index%numberOfPlayers);
+                    share = player.getPortfolio().getShare(company);
+                    if (share >= company.getPresidentsShare().getShare()
+                            && (share > maxShare)) {
+                        maxShare = share;
+                        newPresident = player;
+                    }
+                }
+                if (newPresident != null) {
+                    bankrupter.getPortfolio().swapPresidentCertificate(company, 
+                            newPresident.getPortfolio());
+                } else {
+                    company.setClosed();
+                    // TODO: can be restarted (in 18EU)
+                }
+            }
+            // Dump all shares
+            Util.moveObjects(bankrupter.getPortfolio().getCertificates(), bank.getPool());
         }
     }
     

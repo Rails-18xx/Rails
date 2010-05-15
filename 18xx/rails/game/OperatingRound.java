@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.129 2010/05/13 09:51:32 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.130 2010/05/15 16:36:09 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -10,6 +10,7 @@ import rails.game.move.CashMove;
 import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.EnumState;
+import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 import rails.util.LocalText;
 import rails.util.SequenceUtil;
@@ -32,11 +33,12 @@ public class OperatingRound extends Round implements Observer {
     protected List<PublicCompanyI> companiesOperatedThisRound
         = new ArrayList<PublicCompanyI> ();
 
-    protected PublicCompanyI[] operatingCompanyArray;
+    protected List<PublicCompanyI> operatingCompanies;
 
-    protected IntegerState operatingCompanyIndexObject;
+    //protected IntegerState operatingCompanyIndexObject;
 
-    protected PublicCompanyI operatingCompany;
+    protected GenericState<PublicCompanyI> operatingCompanyObject;
+    protected PublicCompanyI operatingCompany = null;
 
     // Non-persistent lists (are recreated after each user action)
     protected List<SpecialPropertyI> currentSpecialProperties = null;
@@ -93,7 +95,7 @@ public class OperatingRound extends Round implements Observer {
     public OperatingRound(GameManagerI gameManager) {
         super (gameManager);
 
-        operatingCompanyArray = super.getOperatingCompanies();
+        operatingCompanies = setOperatingCompanies();
         
         // sfy NoMapMode
         noMapMode = GameOption.convertValueToBoolean(getGameOption("NoMapMode"));
@@ -111,10 +113,10 @@ public class OperatingRound extends Round implements Observer {
 
         privatesPayOut();
         
-        if (operatingCompanyArray.length > 0) {
+        if (operatingCompanies.size() > 0) {
 
             StringBuilder msg = new StringBuilder();
-            for (PublicCompanyI company : operatingCompanyArray) {
+            for (PublicCompanyI company : operatingCompanies) {
                 msg.append(",").append(company.getName());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
@@ -1490,52 +1492,32 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean setNextOperatingCompany(boolean initial) {
 
-
-        if (operatingCompanyIndexObject == null) {
-            operatingCompanyIndexObject =
-                    new IntegerState("OperatingCompanyIndex");
-        }
-        /*
-        if (initial) {
-            operatingCompanyIndexObject.set(0);
-        } else {
-            operatingCompanyIndexObject.add(1);
-        }
-
-        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-
-        if (operatingCompanyIndex >= operatingCompanyArray.length) {
-            operatingCompany = null;
-            return false;
-        } else {
-            operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-            log.debug("Operating company is "+operatingCompany.getName()+" in "+getRoundName());
-            return true;
-        }
-        */
-        // The above logic doesn't work if companies have closed in the meantime.
-        // The new logic below originates from OperatingRound_1856
         while (true) {
-            if (initial) {
-                operatingCompanyIndexObject.set(0);
+            if (initial || operatingCompany == null || operatingCompanyObject == null) {
+                setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
-                operatingCompanyIndexObject.add(1);
+                int index = operatingCompanies.indexOf(operatingCompany);
+                if (++index >= operatingCompanies.size()) {
+                    return false;
+                }
+                setOperatingCompany(operatingCompanies.get(index));
             }
 
-            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+            if (operatingCompany.isClosed()) continue;
 
-            if (operatingCompanyIndex >= operatingCompanyArray.length) {
-                return false;
-            } else {
-                operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-
-                if (operatingCompany.isClosed()) continue;
-
-                return true;
-            }
+            return true;
         }
-
+    }
+    
+    protected void setOperatingCompany (PublicCompanyI company) {
+        if (operatingCompanyObject == null) {
+            operatingCompanyObject =
+                new GenericState<PublicCompanyI>("OperatingCompanyIndex", company);
+        } else {
+            operatingCompanyObject.set(company);
+        }
+        operatingCompany = company;
     }
 
     protected void finishOR() {
@@ -1753,7 +1735,7 @@ public class OperatingRound extends Round implements Observer {
 
         excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
         Player player;
-        for (PublicCompanyI comp : operatingCompanyArray) {
+        for (PublicCompanyI comp : operatingCompanies) {
             if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(getCurrentPhase().getIndex())) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
@@ -2185,12 +2167,11 @@ public class OperatingRound extends Round implements Observer {
      * @return The currently operating company object.
      */
     public PublicCompanyI getOperatingCompany() {
-        return operatingCompany;
+        return operatingCompanyObject.getObject();
     }
-
-    @Override
-    public PublicCompanyI[] getOperatingCompanies() {
-        return operatingCompanyArray;
+    
+    public List<PublicCompanyI> getOperatingCompanies() {
+        return operatingCompanies;
     }
 
     /**
@@ -2216,7 +2197,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     public int getOperatingCompanyIndex() {
-        return operatingCompanyIndexObject.intValue();
+        return operatingCompanies.indexOf(getOperatingCompany());
     }
 
     /**
@@ -2228,9 +2209,7 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public boolean setPossibleActions() {
 
-        
-        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-        operatingCompany = operatingCompanyArray[operatingCompanyIndex];
+        operatingCompany = getOperatingCompany();
 
         /* Create a new list of possible actions for the UI */
         possibleActions.clear();
@@ -2584,7 +2563,6 @@ public class OperatingRound extends Round implements Observer {
 
         /* Other company trains, sorted by president (current player first) */
         if (getCurrentPhase().isTrainTradingAllowed()) {
-            PublicCompanyI c;
             BuyTrain bt;
             Player p;
             Portfolio pf;
@@ -2598,8 +2576,7 @@ public class OperatingRound extends Round implements Observer {
                 companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
             List<PublicCompanyI> companies;
             // Sort out which players preside over which companies.
-            for (int j = 0; j < operatingCompanyArray.length; j++) {
-                c = operatingCompanyArray[j];
+            for (PublicCompanyI c : getOperatingCompanies()) {
                 if (c.isClosed() || c == operatingCompany) continue;
                 p = c.getPresident();
                 index = p.getIndex();

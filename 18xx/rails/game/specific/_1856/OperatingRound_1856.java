@@ -46,61 +46,53 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected boolean setNextOperatingCompany(boolean initial) {
 
-
-        if (operatingCompanyIndexObject == null) {
-            operatingCompanyIndexObject =
-                    new IntegerState("OperatingCompanyIndex");
-        }
-
+        //log.debug("+++ old OC is "+(operatingCompany!=null?operatingCompany.getName():"null"));
         while (true) {
-            if (initial) {
-                operatingCompanyIndexObject.set(0);
+            if (initial || operatingCompany == null || operatingCompanyObject == null) {
+                setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
-                operatingCompanyIndexObject.add(1);
-            }
-
-            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-
-            if (operatingCompanyIndex >= operatingCompanyArray.length) {
-                return false;
-            } else {
-                operatingCompany = operatingCompanyArray[operatingCompanyIndex];
-                // 1856 special: check if the company has sold enough shares to operate
-                // This check does not apply to the CGR
-                if (operatingCompany instanceof PublicCompany_CGR) return true;
-
-                if (operatingCompany.isClosed()) continue;
-
-                if (!operatingCompany.hasOperated()) {
-                    int soldPercentage = getSoldPercentage (operatingCompany);
-
-                    TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
-                    int trainNumber;
-                    try {
-                        trainNumber = Integer.parseInt(nextAvailableTrain.getName());
-                    } catch (NumberFormatException e) {
-                        trainNumber = 6; // Diesel!
-                    }
-                    int floatPercentage = 10 * trainNumber;
-
-                    log.debug ("Float percentage is "+floatPercentage
-                            +" sold percentage is "+soldPercentage);
-
-
-                    if (soldPercentage < floatPercentage) {
-                        DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
-                                operatingCompany.getName(),
-                                String.valueOf(soldPercentage),
-                                String.valueOf(floatPercentage)
-                        ));
-                        // Company may not yet operate
-                        continue;
-                    }
-
+                int index = operatingCompanies.indexOf(operatingCompany);
+                if (++index >= operatingCompanies.size()) {
+                    return false;
                 }
-                return true;
+                setOperatingCompany(operatingCompanies.get(index));
             }
+
+            // 1856 special: check if the company has sold enough shares to operate
+            // This check does not apply to the CGR
+            if (operatingCompany instanceof PublicCompany_CGR) return true;
+
+            if (operatingCompany.isClosed()) continue;
+
+            if (!operatingCompany.hasOperated()) {
+                int soldPercentage = getSoldPercentage (operatingCompany);
+
+                TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
+                int trainNumber;
+                try {
+                    trainNumber = Integer.parseInt(nextAvailableTrain.getName());
+                } catch (NumberFormatException e) {
+                    trainNumber = 6; // Diesel!
+                }
+                int floatPercentage = 10 * trainNumber;
+
+                log.debug ("Float percentage is "+floatPercentage
+                        +" sold percentage is "+soldPercentage);
+
+
+                if (soldPercentage < floatPercentage) {
+                    DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
+                            operatingCompany.getName(),
+                            String.valueOf(soldPercentage),
+                            String.valueOf(floatPercentage)
+                    ));
+                    // Company may not yet operate
+                    continue;
+                }
+            }
+            //log.debug("+++ new OC is "+(operatingCompany!=null?operatingCompany.getName():"null"));
+            return true;
         }
     }
 
@@ -277,7 +269,7 @@ public class OperatingRound_1856 extends OperatingRound {
     protected void setDestinationActions() {
 
         List<PublicCompanyI> possibleDestinations = new ArrayList<PublicCompanyI>();
-        for (PublicCompanyI comp : operatingCompanyArray) {
+        for (PublicCompanyI comp : operatingCompanies) {
             if (comp.hasDestination()
                     && ((PublicCompany_1856)comp).getTrainNumberAvailableAtStart() < 5
                     && !comp.hasReachedDestination()) {
@@ -472,7 +464,7 @@ public class OperatingRound_1856 extends OperatingRound {
         guiHints.setCurrentRoundType(getClass());
 
         if (!resetOperatingCompanies(mergingCompanies)) return;
-        if (operatingCompany != null) {
+        if (getOperatingCompany() != null) {
             setStep(GameDef.OrStep.INITIAL);
         } else {
             finishOR();
@@ -482,10 +474,9 @@ public class OperatingRound_1856 extends OperatingRound {
 
     private boolean resetOperatingCompanies(List<PublicCompanyI> mergingCompanies) {
 
-        List<PublicCompanyI> companies
-                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
         PublicCompanyI cgr = companyManager.getPublicCompany(PublicCompany_CGR.NAME);
         boolean cgrCanOperate = cgr.hasStarted();
+        boolean roundFinished = false;
 
         for (PublicCompanyI company : mergingCompanies) {
                if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
@@ -493,8 +484,8 @@ public class OperatingRound_1856 extends OperatingRound {
 
         // Find the first company that has not yet operated
         // and is not closed.
-        while (setNextOperatingCompany(false)
-                && operatingCompany.isClosed());
+        //while (setNextOperatingCompany(false)
+        //        && operatingCompany.isClosed());
 
         // Remove closed companies from the operating company list
         // (PLEASE leave this code in case we need it; it works)
@@ -509,7 +500,7 @@ public class OperatingRound_1856 extends OperatingRound {
         //    operatingCompanyIndex = companies.indexOf(operatingCompany);
         //}
 
-        for (PublicCompanyI c : companies) {
+        for (PublicCompanyI c : operatingCompanies) {
             if (c.isClosed()) {
                 log.info(c.getName()+" is closed");
             } else {
@@ -518,20 +509,16 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         String message;
-        int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
+        int operatingCompanyIndex = getOperatingCompanyIndex();
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
                 operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
-                companies.add(operatingCompanyIndex, cgr);
-                operatingCompany = cgr;
-                operatingCompanyIndex = companies.indexOf(operatingCompany);
+                operatingCompanies.add(operatingCompanyIndex, cgr);
+                setOperatingCompany(cgr);
                 message = LocalText.getText("CanOperate", cgr.getName());
             } else {
                 message = LocalText.getText("CannotOperate", cgr.getName());
-                // Find the first company that has not yet operated
-                // and is not closed.
-                while (setNextOperatingCompany(false)
-                        && operatingCompany.isClosed());
+                roundFinished = !setNextOperatingCompany(false);
            }
         } else {
             message = LocalText.getText("DoesNotForm", cgr.getName());
@@ -542,10 +529,9 @@ public class OperatingRound_1856 extends OperatingRound {
         ReportBuffer.add (message);
         DisplayBuffer.add(message);
 
-        operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
-
-        if (operatingCompanyIndex < operatingCompanyArray.length) {
-            operatingCompanyIndexObject.set(operatingCompanyIndex);
+        // Find the first company that has not yet operated
+        // and is not closed.
+        if (!roundFinished) {
             log.debug ("Next operating company: "+operatingCompany.getName());
         } else {
             finishOR();

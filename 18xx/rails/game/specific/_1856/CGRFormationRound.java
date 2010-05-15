@@ -71,7 +71,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         guiHints.setCurrentRoundType(getClass());
 
         // Collect companies having loans
-        for (PublicCompanyI company : getOperatingCompanies()) {
+        for (PublicCompanyI company : setOperatingCompanies()) {
             if (company.getCurrentNumberOfLoans() > 0) {
                 if (companiesToRepayLoans == null) {
                     companiesToRepayLoans
