@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.25 2010/04/29 19:47:32 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.26 2010/05/15 22:44:46 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -15,6 +15,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.ORUIManager;
+import rails.util.*;
 
 /**
  * Base class that stores common info for HexMap independant of Hex
@@ -68,11 +69,28 @@ public abstract class HexMap extends JComponent implements MouseListener,
     
     /** list of generalpath elements to indicate train runs */
     protected List<GeneralPath> trainPaths;
-    protected Color[] trainColors = new Color[]{Color.CYAN, Color.PINK, Color.ORANGE, Color.GRAY};
+    
+    private static Color colour1, colour2, colour3, colour4;
+    protected Color[] trainColors = new Color[4];
     protected int strokeWidth = 5;
     protected int strokeCap = BasicStroke.CAP_ROUND;
     protected int strokeJoin = BasicStroke.JOIN_BEVEL;
         
+    static {
+        try {
+            colour1 = Util.parseColour(Config.get("route.colour.1", null));
+            colour2 = Util.parseColour(Config.get("route.colour.2", null));
+            colour3 = Util.parseColour(Config.get("route.colour.3", null));
+            colour4 = Util.parseColour(Config.get("route.colour.4", null));
+        } catch (ConfigurationException e) {
+        } finally {
+            if (colour1 == null) colour1 = Color.CYAN;
+            if (colour2 == null) colour2 = Color.PINK;
+            if (colour3 == null) colour3 = Color.ORANGE;
+            if (colour4 == null) colour4 = Color.GRAY;
+        }
+    }
+    
     public void init(ORUIManager orUIManager, MapManager mapManager) {
         this.orUIManager = orUIManager;
         this.mapManager = mapManager;
@@ -85,6 +103,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
         maxRow = mapManager.getMaxRow();
         maxCol = mapManager.getMaxCol();
         setupHexes();
+        
+        trainColors = new Color[]{colour1, colour2, colour3, colour4};
     }
 
     public void setupHexes() {
