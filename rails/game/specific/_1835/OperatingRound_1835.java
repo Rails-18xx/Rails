@@ -169,8 +169,8 @@ public class OperatingRound_1835 extends OperatingRound {
             // and isn't currently operating
             
             int index = 0;
-            int operatingCompanyIndex = operatingCompanyIndexObject.intValue();
-            for (PublicCompanyI company : getOperatingCompanies()) {
+            int operatingCompanyIndex = getOperatingCompanyIndex();
+            for (PublicCompanyI company : setOperatingCompanies()) {
                 if (index > operatingCompanyIndex
                         && company.hasStockPrice() 
                         && company.hasFloated()
@@ -184,10 +184,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 index++;
             }
             // Insert PR at the found index (possibly at the end)
-            List<PublicCompanyI> companies
-                = new ArrayList<PublicCompanyI>(Arrays.asList(operatingCompanyArray));
-            companies.add(index, prussian);
-            operatingCompanyArray = companies.toArray(new PublicCompanyI[0]);
+            operatingCompanies.add(index, prussian);
             log.debug("PR will operate at order position "+index);
 
         } else {

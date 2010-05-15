@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.63 2010/05/14 15:19:58 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.64 2010/05/15 16:36:09 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -144,7 +144,7 @@ implements ActionListener, KeyListener, RevenueListener {
         players = gameUIManager.getPlayers().toArray(new Player[0]);
 
         if (round instanceof OperatingRound) {
-            companies = ((OperatingRound) round).getOperatingCompanies();
+            companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompanyI[0]);
             nc = companies.length;
         }
 
@@ -217,7 +217,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void recreate(OperatingRound or) {
         log.debug("ORPanel.recreate() called");
 
-        companies = or.getOperatingCompanies();
+        companies = or.getOperatingCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
 
         // Remove old fields. Don't forget to deregister the Observers
@@ -602,7 +602,7 @@ implements ActionListener, KeyListener, RevenueListener {
             PublicCompanyI company = cm.getPublicCompany(companyName);
             RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
             ra.populateFromRails();
-            
+
             boolean anotherTrain = true;
             while (anotherTrain) {
                 int revenueValue;

@@ -111,7 +111,7 @@ public class ORUIManager implements DialogOwner {
 
     public void initOR(OperatingRound or) {
         oRound = or;
-        companies = (oRound).getOperatingCompanies();
+        companies = (oRound).getOperatingCompanies().toArray(new PublicCompanyI[0]);
         map.updateOffBoardToolTips();
         orWindow.activate(oRound);
     }
@@ -1102,9 +1102,15 @@ public class ORUIManager implements DialogOwner {
                                 LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
-                int index = oldTrainOptions.indexOf(exchangedTrainName);
-                if (index >= 0) {
-                    exchangedTrain = oldTrains.get(index);
+                if (exchangedTrainName != null) {
+                    int index = oldTrainOptions.indexOf(exchangedTrainName);
+                    if (index >= 0) {
+                        exchangedTrain = oldTrains.get(index);
+                    }
+                }
+                if (exchangedTrain == null) {
+                    // No valid train selected - cancel the buy action
+                    train = null;
                 }
             }
         }
