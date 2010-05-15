@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.40 2010/05/14 15:19:57 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.41 2010/05/15 19:05:39 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
     // Upgrade instances
-    private String upgradesString = "";
+    //private String upgradesString = "";
     @SuppressWarnings("unchecked")
     private final List[] tracksPerSide = new ArrayList[6];
     // N.B. Cannot parametrise collection array
@@ -43,6 +43,8 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     private int quantity;
     private boolean unlimited = false;
     private boolean allowsMultipleBasesOfOneCompany = false;
+    /** Fixed orientation; -1 if free to rotate */
+    private int fixedOrientation = -1;
 
     public static final int UNLIMITED_TILES = -1;
 
@@ -124,7 +126,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                         colourName ));
         }
         colourNumber -= TILE_NUMBER_OFFSET;
-
+        
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();
@@ -212,6 +214,8 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         allowsMultipleBasesOfOneCompany = setTag.hasChild(
                 "AllowsMultipleBasesOfOneCompany");
 
+        fixedOrientation = setTag.getAttributeAsInteger("orientation", fixedOrientation);
+
         /* Upgrades */
         List<Tag> upgradeTags = setTag.getChildren("Upgrade");
 
@@ -224,7 +228,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
             for (Tag upgradeTag : upgradeTags) {
                 ids = upgradeTag.getAttributeAsString("id");
-                upgradesString = ids; // TEMPORARY
+                //upgradesString = ids; // TEMPORARY
                 List<Upgrade> newUpgrades = new ArrayList<Upgrade>();
 
                 if (ids != null) {
@@ -491,6 +495,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     public int getQuantity() {
         return quantity;
+    }
+    
+    public int getFixedOrientation () {
+        return fixedOrientation;
     }
 
     public List<RevenueBonusTemplate> getRevenueBonuses() {

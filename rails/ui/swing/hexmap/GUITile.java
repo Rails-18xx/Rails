@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.24 2010/05/02 20:18:31 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUITile.java,v 1.25 2010/05/15 19:05:39 evos Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.Graphics2D;
@@ -80,6 +80,12 @@ public class GUITile {
         MapHex nHex;
 
         boolean connected;
+        
+        int fixedRotation = getTile().getFixedOrientation();
+        if (fixedRotation >= 0) {
+            setRotation (fixedRotation);
+            return true;
+        }
 
         /* Loop through all possible rotations */
         rot: for (i = initial; i < 6; i++) {

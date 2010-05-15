@@ -189,7 +189,7 @@
 	<Tile id="218" quantity="2" />
 	<Tile id="219" quantity="2" />
 	<Tile id="220" quantity="1" />
-	<Tile id="221" quantity="1" >
+	<Tile id="221" quantity="1"  orientation="0">
 		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="2"/> </RevenueBonus>
 		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="3"/> </RevenueBonus>
 		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="4"/> </RevenueBonus>
