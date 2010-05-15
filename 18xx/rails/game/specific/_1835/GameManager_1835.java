@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.8 2010/04/15 19:49:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1835/GameManager_1835.java,v 1.9 2010/05/15 19:05:39 evos Exp $ */
 package rails.game.specific._1835;
 
 import rails.game.*;
@@ -36,12 +36,11 @@ public class GameManager_1835 extends GameManager {
             }
         } else {
         	PhaseI phase = getCurrentPhase();
-        	if (phase.getName().equals("4") || phase.getName().equals("4+4")
-                    || phase.getName().equals("5")) {
-        		if (!PrussianFormationRound.prussianIsComplete(this)) {
-        			previousRound = round;
-        			startPrussianFormationRound (null);
-        		}
+        	if ((phase.getName().equals("4") || phase.getName().equals("4+4")
+        	                || phase.getName().equals("5"))
+        	            && !PrussianFormationRound.prussianIsComplete(this)) {
+    			previousRound = round;
+    			startPrussianFormationRound (null);
         	} else {
         		super.nextRound(round);
         	}

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.19 2010/05/14 15:19:57 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.20 2010/05/15 19:05:39 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -69,6 +69,7 @@ public interface TileI {
     public int countFreeTiles();
 
     public int getQuantity();
+    public int getFixedOrientation ();
 
     public List<RevenueBonusTemplate> getRevenueBonuses();
 
