@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.11 2010/01/16 14:09:33 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.12 2010/05/15 22:44:46 evos Exp $*/
 package rails.util;
 
 import java.io.FileNotFoundException;
@@ -46,6 +46,16 @@ public final class Config {
         if (prop.containsKey(key)) return prop.getProperty(key).trim();
 
         return "";
+    }
+    
+    public static String get(String key, String defaultValue) {
+
+        if (prop.isEmpty() || !loaded) {
+            load();
+        }
+        if (prop.containsKey(key)) return prop.getProperty(key).trim();
+
+        return defaultValue;
     }
     
     private static void load() {
