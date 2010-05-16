@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.21 2010/02/28 21:38:06 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.22 2010/05/16 20:57:40 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -103,7 +103,8 @@ public final class Util {
      */
     public static Color parseColour (String s) throws ConfigurationException{
         Color c = null;
-        if (s.indexOf(',') == -1) {
+        if (!Util.hasValue(s)) {
+        } else if (s.indexOf(',') == -1) {
             // Assume hexadecimal RRGGBB
             try {
                 c = new Color (Integer.parseInt(s, 16));
