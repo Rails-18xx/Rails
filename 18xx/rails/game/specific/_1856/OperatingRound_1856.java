@@ -513,7 +513,7 @@ public class OperatingRound_1856 extends OperatingRound {
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
                 operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
-                operatingCompanies.add(operatingCompanyIndex, cgr);
+                operatingCompanies.add(operatingCompanyIndex+1, cgr);
                 setOperatingCompany(cgr);
                 message = LocalText.getText("CanOperate", cgr.getName());
             } else {
@@ -522,6 +522,7 @@ public class OperatingRound_1856 extends OperatingRound {
            }
         } else {
             message = LocalText.getText("DoesNotForm", cgr.getName());
+            roundFinished = !setNextOperatingCompany(false);
         }
         ReportBuffer.add(LocalText.getText("EndOfFormationRound",
                 cgr.getName(),
