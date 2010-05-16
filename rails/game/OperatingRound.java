@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.130 2010/05/15 16:36:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.131 2010/05/16 20:59:12 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -504,6 +504,12 @@ public class OperatingRound extends Round implements Observer {
         MapHex hex = action.getChosenHex();
         int station = action.getChosenStation();
         String companyName = operatingCompany.getName();
+        
+        // TEMPORARY FIX to enable fixing invalidated saved files
+        //if ("N11".equals(hex.getName()) && station == 2) {
+        //    station = 1;
+        //    action.setChosenStation(1);
+        //}
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1466,9 +1472,10 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.setOperated();
         companiesOperatedThisRound.add(operatingCompany);
 
-        // Check if any privates must be closed
-        // (now only applies to 1856 W&SR)
-        for (PrivateCompanyI priv : operatingCompany.getPortfolio().getPrivateCompanies()) {
+        // Check if any privates must be closed (now only applies to 1856 W&SR)
+        // Copy list first to avoid concurrent modifications
+        for (PrivateCompanyI priv : 
+                new ArrayList<PrivateCompanyI> (operatingCompany.getPortfolio().getPrivateCompanies())) {
             priv.checkClosingIfExercised(true);
         }
 
@@ -1630,6 +1637,9 @@ public class OperatingRound extends Round implements Observer {
             if (action.isForExchange()) {
                 if (exchangedTrain == null) {
                     errMsg = LocalText.getText("NoExchangedTrainSpecified");
+                    // TEMPORARY FIX to clean up invalidated saved files - DOES NOT WORK!!??
+                    //exchangedTrain = operatingCompany.getPortfolio().getTrainList().get(0);
+                    //action.setExchangedTrain(exchangedTrain);
                     break;
                 } else if (operatingCompany.getPortfolio().getTrainOfType(exchangedTrain.getType()) == null) {
                     errMsg = LocalText.getText("CompanyDoesNotOwnTrain", 
