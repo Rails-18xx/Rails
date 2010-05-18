@@ -1,4 +1,4 @@
-    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.23 2010/02/15 23:30:13 stefanfrey Exp $*/
+    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.24 2010/05/18 04:13:48 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -210,6 +210,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     JOptionPane.showMessageDialog(this,
                             DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
                 }
+            } else { // cancel pressed
+                return;
             }
 
             startGameUIManager(game);
