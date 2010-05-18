@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.25 2010/03/23 18:44:30 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.26 2010/05/18 22:07:18 evos Exp $ */
 package rails.game;
 
 import rails.game.model.*;
+import rails.game.state.BooleanState;
 
 /**
  * Player class holds all player-specific data
@@ -24,6 +25,7 @@ public class Player implements CashHolder, Comparable<Player> {
     private MoneyModel blockedCash;
     private CalculatedMoneyModel freeCash;
     private CalculatedMoneyModel worth;
+    private BooleanState bankrupt;
 
     private boolean hasBoughtStockThisTurn = false;
 
@@ -39,6 +41,7 @@ public class Player implements CashHolder, Comparable<Player> {
         blockedCash.setOption(MoneyModel.SUPPRESS_ZERO);
         worth = new CalculatedMoneyModel(this, "getWorth");
         wallet.addDependent(worth);
+        bankrupt = new BooleanState (name+"_isBankrupt", false);
     }
 
     /**
@@ -171,6 +174,14 @@ public class Player implements CashHolder, Comparable<Player> {
 
     public int getIndex() {
         return index;
+    }
+
+    public void setBankrupt () {
+    	bankrupt.set(true);
+    }
+
+    public boolean isBankrupt () {
+    	return bankrupt.booleanValue();
     }
 
     /**

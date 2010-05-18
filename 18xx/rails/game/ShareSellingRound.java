@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.31 2010/03/27 18:27:08 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.32 2010/05/18 22:07:18 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -78,7 +78,7 @@ public class ShareSellingRound extends StockRound {
                     Bank.format(cashToRaise.intValue())));
 
             gameManager.registerBankruptcy();
-            return false;
+            if (gameManager.isGameOver()) return false;
         }
 
         for (PossibleAction pa : possibleActions.getList()) {

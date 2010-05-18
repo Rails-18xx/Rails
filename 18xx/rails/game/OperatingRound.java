@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.131 2010/05/16 20:59:12 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.132 2010/05/18 22:07:18 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -11,7 +11,6 @@ import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.EnumState;
 import rails.game.state.GenericState;
-import rails.game.state.IntegerState;
 import rails.util.LocalText;
 import rails.util.SequenceUtil;
 
