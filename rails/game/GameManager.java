@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.102 2010/05/18 04:12:23 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.103 2010/05/18 22:07:18 evos Exp $ */
 package rails.game;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
@@ -57,7 +56,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected TileManager tileManager;
     protected RevenueManager revenueManager;
     protected Bank bank;
-    
+
     // map of correctionManagers
     protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
@@ -659,9 +658,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     /** Stub, can be overridden in subclasses with actual actions */
     public void newPhaseChecks (RoundI round) {
-        
+
     }
-    
+
     public String getORId () {
         if (showCompositeORNumber) {
             return getCompositeORNumber();
@@ -943,38 +942,38 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     protected boolean export(GameAction exportAction) {
-        
+
         String filename = exportAction.getFilepath();
         boolean result = false;
 
         try {
             PrintWriter pw = new PrintWriter(filename);
-            
+
             // write map information
             MapHex[][] allHexes =mapManager.getHexes();
-            
+
             for (MapHex[] hexRow:allHexes)
                 for (MapHex hex:hexRow)
                     if (hex != null) {
-                        pw.println(hex.getName() + "," + hex.getCurrentTile().getExternalId() + "," 
-                               + hex.getCurrentTileRotation() + "," 
+                        pw.println(hex.getName() + "," + hex.getCurrentTile().getExternalId() + ","
+                               + hex.getCurrentTileRotation() + ","
                                + hex.getOrientationName(hex.getCurrentTileRotation())
                         ) ;
                     }
-            
+
             pw.close();
             result = true;
-            
-            
+
+
         } catch (IOException e) {
             log.error("Save failed", e);
             DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
         }
-        
+
         return result;
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#finishShareSellingRound()
      */
@@ -1014,7 +1013,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             int numberOfPlayers = getNumberOfPlayers();
             int maxShare;
             int share;
-            
+
             // Assume default case as in 18EU: all assets to Bank/Pool
             Player bankrupter = getCurrentPlayer();
             new CashMove (bankrupter, bank, bankrupter.getCash());
@@ -1027,7 +1026,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 // Check if the presidency is dumped on someone
                 newPresident = null;
                 maxShare = 0;
-                for (int index=getCurrentPlayerIndex()+1; 
+                for (int index=getCurrentPlayerIndex()+1;
                         index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
                     player = getPlayerByIndex(index%numberOfPlayers);
                     share = player.getPortfolio().getShare(company);
@@ -1038,7 +1037,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     }
                 }
                 if (newPresident != null) {
-                    bankrupter.getPortfolio().swapPresidentCertificate(company, 
+                    bankrupter.getPortfolio().swapPresidentCertificate(company,
                             newPresident.getPortfolio());
                 } else {
                     company.setClosed();
@@ -1047,9 +1046,16 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
             // Dump all shares
             Util.moveObjects(bankrupter.getPortfolio().getCertificates(), bank.getPool());
+
+            bankrupter.setBankrupt();
+
+            // Finish the share selling round
+            if (getCurrentRound() instanceof ShareSellingRound) {
+            	finishShareSellingRound();
+            }
         }
     }
-    
+
     public void registerBrokenBank(){
         ReportBuffer.add(LocalText.getText("BankIsBrokenReportText"));
         String msgContinue;
@@ -1070,11 +1076,11 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         DisplayBuffer.add(message);
 
         ReportBuffer.add("");
-        
+
         List<String> gameReport = getGameReport();
         for (String s:gameReport)
             ReportBuffer.add(s);
-        
+
         // activate gameReport for UI
         setGameOverReportedUI(false);
 
@@ -1087,7 +1093,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public boolean isGameOver() {
         return gameOver.booleanValue();
     }
-    
+
     public void setGameOverReportedUI(boolean b){
         gameOverReportedUI = b;
     }
@@ -1095,7 +1101,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public boolean getGameOverReportedUI(){
         return(gameOverReportedUI);
     }
-    
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getGameReport()
      */
@@ -1256,7 +1262,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void setNextPlayer() {
         int currentPlayerIndex = getCurrentPlayerIndex();
-        currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
+        do {
+        	currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
+        } while (players.get(currentPlayerIndex).isBankrupt());
         setCurrentPlayerIndex(currentPlayerIndex);
     }
 
@@ -1509,7 +1517,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public GuiHints getUIHints() {
         return guiHints;
     }
-    
+
     public CorrectionManagerI getCorrectionManager(CorrectionType ct) {
         CorrectionManagerI cm = correctionManagers.get(ct);
         if (cm == null) {
@@ -1519,6 +1527,6 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 }
         return cm;
     }
-   
+
 }
 

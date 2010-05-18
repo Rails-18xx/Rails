@@ -104,6 +104,7 @@ Published 2004 by Deep Thought Games, LLC
  
 Not yet implemented:
 - High mountain yellow to green upgrade cost ($60)
+- Bankruptcy rules (game currently hangs when a player goes bankrupt)
 		</Description>
 		<Option name="Extra3Trains" values="0,1,2" default="0"/>
 		<Option name="Extra4Trains" values="0,1" default="0"/>
