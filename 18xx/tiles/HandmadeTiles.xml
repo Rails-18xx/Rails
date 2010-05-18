@@ -6,4 +6,10 @@
         <Track from="side2" gauge="normal" to="city1"/>
         <Track from="side3" gauge="normal" to="city1"/>
     </Tile>
+    <Tile colour="yellow" id="-806" name="Berlin">
+        <Station id="city1" position="402" slots="1" type="City" city="Berlin" value="30"/>
+        <Station id="city2" position="001" slots="1" type="City" city="Berlin" value="30"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city2" gauge="normal" to="side5"/>
+    </Tile>
 </Tiles>
