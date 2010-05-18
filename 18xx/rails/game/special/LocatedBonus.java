@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.4 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.5 2010/05/18 21:36:12 stefanfrey Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -42,9 +42,9 @@ public class LocatedBonus extends SpecialProperty {
             throw new ConfigurationException("Value invalid ["+value+"] or missing");
     }
 
-    public void finishConfiguration (GameManager gameManager) 
+    @Override
+    public void finishConfiguration (GameManagerI gameManager) 
     throws ConfigurationException {
-        
         locations = gameManager.getMapManager().parseLocations(locationCodes);
     }
 

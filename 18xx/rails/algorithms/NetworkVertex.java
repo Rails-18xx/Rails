@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -296,7 +297,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 v.setRailsVertexValue(phase);
         }
     }
-
     
     /**
      * replaces one vertex by another for a network graph
@@ -319,8 +319,22 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // remove old vertex
         return graph.removeVertex(oldVertex);
     }
-
-
+    
+    /**
+     * Returns all vertices in a specified collection of hexes
+     */
+    public static Set<NetworkVertex> getVerticesByHex(Collection<NetworkVertex> vertices, Collection<MapHex> hexes) {
+        log.info("hexes = " + hexes);
+        Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
+        for (NetworkVertex vertex:vertices) {
+            if (vertex.getHex() != null && hexes.contains(vertex.getHex())) {
+                hexVertices.add(vertex);
+            }
+        }
+        return hexVertices;
+    }
+    
+    
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
         GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
         if (vertex.isMajor()) {

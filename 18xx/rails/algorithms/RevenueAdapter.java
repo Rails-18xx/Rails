@@ -78,6 +78,10 @@ public final class RevenueAdapter implements Runnable {
         this.protectedVertices = new HashSet<NetworkVertex>();
     }
     
+    public PublicCompanyI getCompany() {
+        return company;
+    }
+    
     public PhaseI getPhase() {
         return phase;
     }
@@ -186,8 +190,9 @@ public final class RevenueAdapter implements Runnable {
         }
 
         // add all static modifiers
-        gameManager.getRevenueManager().callStaticModifiers(this);
-
+        if (gameManager.getRevenueManager() != null) {
+            gameManager.getRevenueManager().callStaticModifiers(this);
+        }
     }
     private void defineVertexVisitSets() {
         // define map of all locationNames 

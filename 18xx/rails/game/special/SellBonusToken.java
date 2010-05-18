@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.7 2010/02/28 21:38:05 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.8 2010/05/18 21:36:12 stefanfrey Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -50,7 +50,8 @@ public class SellBonusToken extends SpecialProperty {
         numberSold = new IntegerState ("Bonus_"+name+"_sold", 0);
     }
 
-    public void finishConfiguration (GameManager gameManager) 
+    @Override
+    public void finishConfiguration (GameManagerI gameManager) 
     throws ConfigurationException {
         
         locations = gameManager.getMapManager().parseLocations(locationCodes);

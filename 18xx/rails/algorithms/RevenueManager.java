@@ -39,26 +39,27 @@ public final class RevenueManager implements ConfigurableComponentI {
         // define static modifiers
         List<Tag> modifierTags = tag.getChildren("StaticModifier");
         
-        for (Tag modifierTag:modifierTags) {
-            // get classname
-            String className = modifierTag.getAttributeAsString("class");
-            if (className == null) {
-                throw new ConfigurationException(LocalText.getText(
-                        "ComponentHasNoClass", "StaticModifier"));
+        if (modifierTags != null) {
+            for (Tag modifierTag:modifierTags) {
+                // get classname
+                String className = modifierTag.getAttributeAsString("class");
+                if (className == null) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "ComponentHasNoClass", "StaticModifier"));
+                }
+                // create modifier
+                RevenueStaticModifier modifier;
+                try {
+                    modifier = (RevenueStaticModifier) Class.forName(className).newInstance();
+                } catch (Exception e) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "ClassCannotBeInstantiated", className), e);
+                }
+                // add them to the revenueManager
+                staticModifiers.add(modifier);
+                log.info("Added modifier " + className);
             }
-            // create modifier
-            RevenueStaticModifier modifier;
-            try {
-                modifier = (RevenueStaticModifier) Class.forName(className).newInstance();
-            } catch (Exception e) {
-                throw new ConfigurationException(LocalText.getText(
-                        "ClassCannotBeInstantiated", className), e);
-            }
-            // add them to the revenueManager
-            staticModifiers.add(modifier);
-            log.info("Added modifier " + className);
         }
-        
     }
 
     public void finishConfiguration(GameManagerI parent)
@@ -68,6 +69,11 @@ public final class RevenueManager implements ConfigurableComponentI {
                 ((ConfigurableComponentI)modifier).finishConfiguration(parent);
             }
         }
+    }
+    
+    public void addStaticModifier(RevenueStaticModifier modifier) {
+        staticModifiers.add(modifier);
+        log.info("Added modifier " + modifier);
     }
     
     void callStaticModifiers(RevenueAdapter revenueAdapter) {
