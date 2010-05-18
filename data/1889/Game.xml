@@ -19,12 +19,15 @@
         <GameOption name="BeginnerGame" type="toggle" default="no" />
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
+		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 
 					by the game engine -->
 				<IfOption name="NumberOfPlayers" value="2">
-					<Attributes percentage="70"/>
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
 				</IfOption>
 			</PlayerShareLimit>			
 			<BankPoolLimit percentage="50"/>
