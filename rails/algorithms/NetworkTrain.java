@@ -28,21 +28,28 @@ public final class NetworkTrain {
         this.multiplyMinors = multiplyMinors;
         this.trainName = trainName;
         this.railsTrainType = trainType;
+        log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
     }
 
     static NetworkTrain createFromRailsTrain(TrainI railsTrain){
-        int cities = railsTrain.getMajorStops();
-        int towns = railsTrain.getMinorStops();
-        boolean townsCostNothing = (railsTrain.getTownCountIndicator() == 0);
-        int multiplyCities = railsTrain.getCityScoreFactor();
-        int multiplyTowns = railsTrain.getTownScoreFactor();
+        int majors = railsTrain.getMajorStops();
+        int minors = railsTrain.getMinorStops();
+        if (railsTrain.getTownCountIndicator() == 0) {
+            minors = 999;
+        }
+        int multiplyMajors = railsTrain.getCityScoreFactor();
+        int multiplyMinors = railsTrain.getTownScoreFactor();
+        boolean ignoreMinors = false;
+        if (multiplyMinors == 0){
+            ignoreMinors = true;
+        }
         String trainName = railsTrain.getName();
         TrainTypeI trainType = railsTrain.getType();
 
-        if (cities == 0 && towns == 0) {
+        if (majors == -1) {
             return null;// protection against pullman
         } else {
-            return new NetworkTrain(cities, towns, townsCostNothing, multiplyCities, multiplyTowns,
+            return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 trainName, trainType); 
         }
     }
@@ -64,7 +71,7 @@ public final class NetworkTrain {
             multiplyTowns = 0;
         } else if (t.contains("D")) {
             log.info("RA: found Double Express train");
-            cities = Integer.parseInt(t.replace("D", ""));
+            cities = Integer.parseInt(t.replace("D",  ""));
             ignoreTowns = true;
             multiplyCities = 2;
             multiplyTowns = 0;
@@ -110,6 +117,16 @@ public final class NetworkTrain {
     
     TrainTypeI getRailsTrainType() {
         return railsTrainType;
+    }
+
+    public String attributes() {
+       StringBuffer attributes = new StringBuffer();
+       attributes.append("majors = " + majors);
+       attributes.append(", minors = " + minors);
+       attributes.append(", ignoreMinors = " + ignoreMinors);
+       attributes.append(", mulitplyMajors = " + multiplyMajors);
+       attributes.append(", mulitplyMinors = " + multiplyMinors);
+       return attributes.toString(); 
     }
     
     public String toString() {

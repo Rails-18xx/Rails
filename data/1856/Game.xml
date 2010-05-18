@@ -88,4 +88,6 @@
 			<OffBoardRevenue step="3"/>
 		</Phase>
 	</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+	</Component>
 </ComponentManager>

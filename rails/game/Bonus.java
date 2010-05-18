@@ -1,7 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.8 2010/03/21 17:43:50 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.9 2010/05/18 21:36:12 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import rails.algorithms.NetworkVertex;
+import rails.algorithms.RevenueAdapter;
+import rails.algorithms.RevenueBonus;
+import rails.algorithms.RevenueStaticModifier;
 
 /**
  * An object of class Bonus represent extra income for the owning company,
@@ -15,7 +23,7 @@ import java.util.List;
  * @author VosE
  *
  */
-public class Bonus implements Closeable {
+public class Bonus implements Closeable, RevenueStaticModifier {
 
     private PublicCompanyI owner;
     private List<MapHex> locations = null;
@@ -30,6 +38,9 @@ public class Bonus implements Closeable {
         this.name = name;
         this.value = value;
         this.locations = locations;
+    
+        // add them to the call list of the RevenueManager
+        GameManager.getInstance().getRevenueManager().addStaticModifier(this);
     }
 
     public boolean isExecutionable() {
@@ -111,5 +122,22 @@ public class Bonus implements Closeable {
 
     public String getClosingInfo() {
         return toString();
+    }
+
+    /**
+     * Add bonus value to revenue calculator
+     */
+    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+        // 1. check operating company
+        if (owner != revenueAdapter.getCompany()) return;
+        
+        // 2. find vertices to hex
+        Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHex(revenueAdapter.getVertices(), locations);
+        for (NetworkVertex bonusVertex:bonusVertices) {
+            if (!bonusVertex.isStation()) continue;
+            RevenueBonus bonus = new RevenueBonus(value, name);
+            bonus.addVertex(bonusVertex);
+            revenueAdapter.addRevenueBonus(bonus);
+        }
     }
 }
