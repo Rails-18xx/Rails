@@ -3,6 +3,7 @@ package rails.game;
 import java.util.List;
 import java.util.Map;
 
+import rails.algorithms.RevenueManager;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.game.action.PossibleAction;
@@ -21,7 +22,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public abstract void init(String gameName, PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,
             TrainManager trainManager, StockMarketI stockMarket,
-            MapManager mapManager, TileManager tileManager, Bank bank);
+            MapManager mapManager, TileManager tileManager,
+            RevenueManager revenueManager, Bank bank);
     public abstract void startGame(Map<String, String> gameOptions);
 
     public abstract CompanyManagerI getCompanyManager();
@@ -163,6 +165,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public TileManager getTileManager();
     public StockMarketI getStockMarket();
     public MapManager getMapManager();
+    public RevenueManager getRevenueManager();
     public Bank getBank ();
 
     public String getGameName ();

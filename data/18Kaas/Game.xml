@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18Kaas"/>
+		<GameOption name="RuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
@@ -100,5 +101,8 @@
 		<Phase name="D">
 			<Tiles colour="yellow,green,brown"/>
 		</Phase>
+	</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<StaticModifier class="rails.game.specific._18Kaas.RuhrRevenueModifier" /> 
 	</Component>
 </ComponentManager>

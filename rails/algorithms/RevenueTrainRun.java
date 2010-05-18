@@ -18,7 +18,7 @@ import rails.ui.swing.hexmap.HexMap;
  */
 public class RevenueTrainRun {
 
-    private static final int PRETTY_PRINT_LENGTH = 80;
+    private static final int PRETTY_PRINT_LENGTH = 100;
     
     protected static Logger log =
         Logger.getLogger(RevenueTrainRun.class.getPackage().getName());
@@ -47,6 +47,12 @@ public class RevenueTrainRun {
             if (startVertex == vertex) continue;
             if (startVertex == null) startVertex = vertex;
             value += revenueAdapter.getVertexValue(vertex, train, revenueAdapter.getPhase());
+        }
+        // check revenueBonuses (complex)
+        for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
+            if (bonus.checkComplexBonus(vertices, train.getRailsTrainType(), revenueAdapter.getPhase())) {
+                value += bonus.getValue();
+            }
         }
         return value;
     }
@@ -101,10 +107,10 @@ public class RevenueTrainRun {
         // check revenueBonuses (complex)
         for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
             if (bonus.checkComplexBonus(vertices, train.getRailsTrainType(), revenueAdapter.getPhase())) {
-                runPrettyPrint.append(", " + bonus.getName() + "(" + bonus.getValue() + ")");
+                runPrettyPrint.append(" + ");
+                runPrettyPrint.append(bonus.getName() + "(" + bonus.getValue() + ")");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
             }
-
         }
 
         runPrettyPrint.append("\n");

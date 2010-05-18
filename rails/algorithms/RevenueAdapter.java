@@ -82,10 +82,14 @@ public final class RevenueAdapter implements Runnable {
         return phase;
     }
     
+    public SimpleGraph<NetworkVertex,NetworkEdge> getGraph() {
+        return graph;
+    }
+    
     public Set<NetworkVertex> getVertices() {
         return graph.vertexSet();
     }
-    
+   
     public Set<NetworkEdge> getEdges() {
         return graph.edgeSet();
     }
@@ -162,7 +166,10 @@ public final class RevenueAdapter implements Runnable {
     public void populateFromRails() {
         // define graph, without HQ
         graph = graphBuilder.getRailRoadGraph(company, false);
-        
+
+        // initialize vertices
+        NetworkVertex.initAllRailsVertices(graph.vertexSet(), company, phase);
+
         // define startVertexes
         startVertices.addAll(graphBuilder.getCompanyBaseTokenVertexes(company));
         
@@ -177,6 +184,9 @@ public final class RevenueAdapter implements Runnable {
         for (TrainI train:company.getPortfolio().getTrainList()) {
             addTrain(train);
         }
+
+        // add all static modifiers
+        gameManager.getRevenueManager().callStaticModifiers(this);
 
     }
     private void defineVertexVisitSets() {
@@ -229,12 +239,12 @@ public final class RevenueAdapter implements Runnable {
 
     
     public void initRevenueCalculator(){
+        
         // optimize graph (optimizeGraph clones the graph)
         rcGraph = NetworkGraphBuilder.optimizeGraph(graph, protectedVertices);
         
         // define the vertices and edges lists
         rcVertices = new ArrayList<NetworkVertex>(rcGraph.vertexSet());
-        NetworkVertex.initAllRailsVertices(rcVertices, company, phase);
         // define ordering on vertexes by value
         Collections.sort(rcVertices, new NetworkVertex.ValueOrder());
         rcEdges = new ArrayList<NetworkEdge>(rcGraph.edgeSet());

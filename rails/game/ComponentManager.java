@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.18 2010/03/23 18:45:16 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.19 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.lang.reflect.Constructor;
@@ -85,7 +85,7 @@ public class ComponentManager {
                     LocalText.getText("UnnamedComponent"));
         }
         String clazz = componentTag.getAttributeAsString(COMPONENT_CLASS_TAG);
-        if (name == null) {
+        if (clazz == null) {
             throw new ConfigurationException(LocalText.getText(
                     "ComponentHasNoClass", name));
         }

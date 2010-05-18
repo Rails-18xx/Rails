@@ -27,6 +27,7 @@ Limitations:
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 
@@ -74,6 +75,7 @@ Limitation:
         <Option name="BeginnerGame" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	</Game>
 	
 	<Game name="18AL">
@@ -117,6 +119,7 @@ Not yet implemented:
 
 Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
+		<Option name="RuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>

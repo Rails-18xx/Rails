@@ -540,7 +540,7 @@ final class RevenueCalculator {
         // check vertex sets
         for (int j=0; j < vertexNbVisitSets[vertexId]; j++) {
             trainVisited[trainId][vertexVisitSets[vertexId][j]] = arrive;
-            log.info("RC: visited = " + arrive + " for vertex " + vertexVisitSets[vertexId][j] + " due to block rule");
+            log.debug("RC: visited = " + arrive + " for vertex " + vertexVisitSets[vertexId][j] + " due to block rule");
         }
         
         // check bonus sets

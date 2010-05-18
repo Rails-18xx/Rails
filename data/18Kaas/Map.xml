@@ -61,14 +61,14 @@
 	<Hex name="J11" tile="0" cost="80"/>
 	<Hex name="J13" tile="0"/>
 	<Hex name="J15" tile="0" cost="80"/>
-	<Hex name="J17" tile="-902" orientation="3" value="2" city="Ruhrgebied"/>
+	<Hex name="J17" tile="-902" orientation="3" value="0" city="Ruhrgebied"/>
 	<Hex name="K6" tile="0" cost="80"/>
 	<Hex name="K8" tile="-11" orientation="5" label="B" city="Breda"/>
 	<Hex name="K10" tile="0"/>
 	<Hex name="K12" tile="-20" label="OO" city="Tilburg/Eindhoven"/>
 	<Hex name="K14" tile="0"/>
 	<Hex name="K16" tile="-10" cost="120" city="Venlo"/>
-	<Hex name="K18" tile="-901" orientation="2" value="2" city="Ruhrgebied"/>
+	<Hex name="K18" tile="-901" orientation="2" value="0" city="Ruhrgebied"/>
 	<Hex name="L1" tile="-901" orientation="5" value="10,60" city="Engeland"/>
 	<Hex name="L3" tile="-10"/>
 	<Hex name="L5" tile="0"/>

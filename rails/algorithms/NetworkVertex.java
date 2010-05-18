@@ -3,8 +3,11 @@ package rails.algorithms;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.graph.SimpleGraph;
 
 import rails.game.City;
 import rails.game.MapHex;
@@ -20,7 +23,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     protected static Logger log =
         Logger.getLogger(NetworkVertex.class.getPackage().getName());
 
-    private static enum VertexType {
+    public static enum VertexType {
         STATION,
         SIDE,
         HQ,
@@ -257,8 +260,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     @Override
     public String toString(){
         StringBuffer message = new StringBuffer();
-        if (isStation()) 
-            message.append( hex.getName() + "." + station.getNumber());
+        if (isVirtual())
+            message.append(virtualId);
+        else if (isStation()) 
+            message.append(hex.getName() + "." + station.getNumber());
         else if (isSide())
             message.append(hex.getName() + "." + hex.getOrientationName(side));
         else 
@@ -291,6 +296,30 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 v.setRailsVertexValue(phase);
         }
     }
+
+    
+    /**
+     * replaces one vertex by another for a network graph
+     * copies all edges
+     */
+    public static boolean replaceVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph, 
+            NetworkVertex oldVertex, NetworkVertex newVertex) {
+        // add new vertex
+        graph.addVertex(newVertex);
+        // replace old edges
+        Set<NetworkEdge> oldEdges = graph.edgesOf(oldVertex);
+        for (NetworkEdge oldEdge:oldEdges) {
+            NetworkEdge newEdge = NetworkEdge.replaceVertex(oldEdge, oldVertex, newVertex);
+            if (newEdge.getSource() == newVertex) {
+                graph.addEdge(newVertex, newEdge.getTarget(), newEdge);
+            } else {
+                graph.addEdge(newEdge.getSource(), newVertex, newEdge);
+            }
+        }
+        // remove old vertex
+        return graph.removeVertex(oldVertex);
+    }
+
 
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
         GUIHex guiHex = map.getHexByName(vertex.getHex().getName());

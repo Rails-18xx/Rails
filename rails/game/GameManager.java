@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.101 2010/05/15 16:36:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.102 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -10,6 +10,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
+import rails.algorithms.RevenueManager;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.game.action.*;
@@ -54,6 +55,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
     protected TileManager tileManager;
+    protected RevenueManager revenueManager;
     protected Bank bank;
     
     // map of correctionManagers
@@ -445,6 +447,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             StockMarketI stockMarket,
             MapManager mapManager,
             TileManager tileManager,
+            RevenueManager revenueManager,
             Bank bank) {
         this.gameName = gameName;
         this.playerManager = playerManager;
@@ -454,6 +457,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         this.stockMarket = stockMarket;
         this.mapManager = mapManager;
         this.tileManager = tileManager;
+        this.revenueManager = revenueManager;
         this.bank = bank;
 
         players = playerManager.getPlayers();
@@ -1301,6 +1305,13 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     public TileManager getTileManager() {
         return tileManager;
+    }
+
+    /**
+     * The RevenueManager is optional, thus a null reference might be returned
+     */
+    public RevenueManager getRevenueManager() {
+        return revenueManager;
     }
 
     public Bank getBank () {
