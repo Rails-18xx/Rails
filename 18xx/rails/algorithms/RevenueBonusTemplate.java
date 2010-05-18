@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.game.ConfigurableComponentI;
 import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
@@ -19,31 +20,31 @@ import rails.util.Tag;
  * will be converted to a true RevenueBonus object during each revenue calculation
  * @author freystef
  */
-public class RevenueBonusTemplate {
+public final class RevenueBonusTemplate implements ConfigurableComponentI {
 
     protected static Logger log =
         Logger.getLogger(RevenueBonusTemplate.class.getPackage().getName());
 
     // bonus value
-    private final int value;
+    private int value;
 
     // bonus name
-    private final String name;
+    private String name;
     
     // template condition attributes
     private final List<Integer> identVertices;
     private final List<String> identTrainTypes;
     private final List<String> identPhases;
 
-    public RevenueBonusTemplate(Tag tag) throws
-    ConfigurationException {
-     
-        value = tag.getAttributeAsInteger("value");
-        name = tag.getAttributeAsString("name");
-
+    public RevenueBonusTemplate() {
         identVertices = new ArrayList<Integer>();
         identTrainTypes = new ArrayList<String>();
         identPhases = new ArrayList<String>();
+    }
+
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        value = tag.getAttributeAsInteger("value");
+        name = tag.getAttributeAsString("name");
 
         // check for vertices
         List<Tag> vertexTags = tag.getChildren("Vertex");
@@ -77,9 +78,18 @@ public class RevenueBonusTemplate {
                 }
             }
         }
-        log.info("Created " + this);
+        log.info("Configured " + this);
+        
     }
 
+    /**
+     * is not used, use toRevenueBonus instead
+     */
+    public void finishConfiguration(GameManagerI parent)
+            throws ConfigurationException {
+        throw new ConfigurationException("Use toRevenueBonus");
+    }
+    
     public RevenueBonus toRevenueBonus(MapHex hex, GameManagerI gm, NetworkGraphBuilder ngb) {
         log.info("Convert " + this);
         RevenueBonus bonus = new RevenueBonus(value, name);
@@ -135,4 +145,5 @@ public class RevenueBonusTemplate {
         s.append(", identPhases = " + identPhases);
         return s.toString();
     }
+
 }

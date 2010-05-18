@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.53 2010/03/23 18:44:37 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.54 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.algorithms.RevenueManager;
 import rails.game.action.PossibleAction;
 import rails.game.special.SpecialProperty;
 import rails.util.LocalText;
@@ -24,6 +25,7 @@ public class Game {
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
     protected TileManager tileManager;
+    protected RevenueManager revenueManager;
     protected Bank bank;
     protected String name;
     protected Tag componentManagerTag;
@@ -161,6 +163,15 @@ public class Game {
                         "No TileManager XML element found in file "
                                 + GAME_XML_FILE);
             }
+            
+            revenueManager =
+                (RevenueManager) componentManager.findComponent("RevenueManager");
+            // revenueManager is optional so far
+//            if (revenueManager == null) {
+//                throw new ConfigurationException(
+//                        "No RevenueManager XML element found in file "
+//                                + GAME_XML_FILE);
+//            }
 
             /*
              * Initialisations that involve relations between components can
@@ -169,7 +180,7 @@ public class Game {
             playerManager.setPlayers(players, bank);
             gameManager.init(name, playerManager, companyManager,
                     phaseManager, trainManager, stockMarket, mapManager,
-                    tileManager, bank);
+                    tileManager, revenueManager, bank);
 
             companyManager.finishConfiguration(gameManager);
             trainManager.finishConfiguration(gameManager);
@@ -178,6 +189,8 @@ public class Game {
             bank.finishConfiguration(gameManager);
             stockMarket.finishConfiguration(gameManager);
             tileManager.finishConfiguration(gameManager);
+            if (revenueManager != null) 
+                revenueManager.finishConfiguration(gameManager);
         } catch (Exception e) {
             String message =
                     LocalText.getText("GameSetupFailed", GAME_XML_FILE);

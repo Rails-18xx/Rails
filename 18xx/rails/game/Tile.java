@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.41 2010/05/15 19:05:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.42 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -282,7 +282,9 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         if (bonusTags != null) {
             revenueBonuses = new ArrayList<RevenueBonusTemplate>();
             for (Tag bonusTag:bonusTags) {
-                revenueBonuses.add(new RevenueBonusTemplate(bonusTag));
+                RevenueBonusTemplate bonus = new RevenueBonusTemplate();
+                bonus.configureFromXML(bonusTag);
+                revenueBonuses.add(bonus);
             }
         }
  

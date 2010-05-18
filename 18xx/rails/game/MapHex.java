@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.44 2010/05/11 21:47:21 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.45 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -202,7 +202,9 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         if (bonusTags != null) {
             revenueBonuses = new ArrayList<RevenueBonusTemplate>();
             for (Tag bonusTag:bonusTags) {
-                revenueBonuses.add(new RevenueBonusTemplate(bonusTag));
+                RevenueBonusTemplate bonus = new RevenueBonusTemplate();
+                bonus.configureFromXML(bonusTag);
+                revenueBonuses.add(bonus);
             }
         }
     }

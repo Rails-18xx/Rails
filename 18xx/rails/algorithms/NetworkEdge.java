@@ -162,6 +162,23 @@ public final class NetworkEdge {
         return true;
     }
 
+    /**
+     * for a given edge it replaces one of the vertices by a different one
+     * otherwise copies all edge attributes
+     * @return copied edge with replaced vertex, null if oldVertex is neither source, nor target
+     */
+    public static NetworkEdge replaceVertex(NetworkEdge edge, NetworkVertex oldVertex, NetworkVertex newVertex) {
+        NetworkEdge newEdge;
+        if (edge.source == oldVertex) {
+            newEdge= new NetworkEdge(newVertex, edge.target, edge.greedy, edge.distance, edge.hiddenVertexes);
+        } else if (edge.target == oldVertex) {
+            newEdge= new NetworkEdge(edge.source, newVertex, edge.greedy, edge.distance, edge.hiddenVertexes);
+        } else {
+            newEdge = null;
+        }
+        return newEdge;
+    }
+
     public static Shape getEdgeShape(HexMap map, NetworkEdge edge){
         Point2D source = NetworkVertex.getVertexPoint2D(map, edge.getSource());
         Point2D target = NetworkVertex.getVertexPoint2D(map, edge.getTarget());
@@ -174,5 +191,6 @@ public final class NetworkEdge {
         return edgeShape;
     }
 
+    
     
 }
