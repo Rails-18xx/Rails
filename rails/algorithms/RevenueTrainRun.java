@@ -57,6 +57,14 @@ public class RevenueTrainRun {
         return value;
     }
 
+    private String prettyPrintHexName(NetworkVertex vertex) {
+        if (vertex.isVirtual()) {
+            return vertex.getIdentifier();
+        } else {
+            return vertex.getHex().getName();
+        }
+    }
+    
     private int prettyPrintNewLine(StringBuffer runPrettyPrint, int multiple, int initLength) {
         if (runPrettyPrint.length() / PRETTY_PRINT_LENGTH != multiple) {
             multiple = runPrettyPrint.length() / PRETTY_PRINT_LENGTH;
@@ -78,18 +86,18 @@ public class RevenueTrainRun {
             if (startVertex == null) {
                 currentHex = vertex.getHex();
                 startVertex = vertex;
-                runPrettyPrint.append(vertex.getHex().getName() + "(");
+                runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
             } else if (startVertex == vertex) {
                 currentHex = vertex.getHex();
                 runPrettyPrint.append(") / ");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
-                runPrettyPrint.append(vertex.getHex().getName() + "(0");
+                runPrettyPrint.append(prettyPrintHexName(vertex) + "(0");
                 continue;
             } else if (vertex.getHex() != currentHex) {
                 currentHex = vertex.getHex();
                 runPrettyPrint.append("), ");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
-                runPrettyPrint.append(vertex.getHex().getName() + "(");
+                runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
             } else {
                 runPrettyPrint.append(",");
             }

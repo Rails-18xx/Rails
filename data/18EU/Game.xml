@@ -103,4 +103,7 @@
 			<Tiles colour="yellow,green,brown,grey"/>
 		</Phase>
 	</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<StaticModifier class="rails.game.specific._18EU.OffBoardRevenueModifier" /> 
+	</Component>
 </ComponentManager>

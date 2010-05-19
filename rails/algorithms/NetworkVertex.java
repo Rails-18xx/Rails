@@ -1,6 +1,7 @@
 package rails.algorithms;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -108,6 +109,17 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         rc.setVertex(vertexId, major, minor);
     }
 
+    public String getIdentifier(){
+        if (virtual)
+            return virtualId;
+        else if (isStation())
+            return hex.getName() + "." + -station.getNumber();
+        else if (isSide())
+            return hex.getName() + "." + side; 
+        else
+            return null;
+    }
+
     public boolean isVirtual() {
         return virtual;
     }
@@ -124,6 +136,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return type == VertexType.HQ;
     }
 
+    public VertexType getType() {
+        return type;
+    }
+    
     
     public boolean isMajor(){
         return major;
@@ -202,7 +218,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public int getSide(){
         return side;
     }
-
+ 
     
     /** 
      * Initialize for rails vertexes
@@ -225,7 +241,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (company == null) { // if company == null, then all sinks are deactivated
             sink = false;
         } else if (station.getType().equals(Station.OFF_MAP_AREA) || 
-                station.getType().equals(Station.CITY) && !city.hasTokenSlotsLeft() && !city.hasTokenOf(company)) { 
+                station.getType().equals(Station.CITY) && !city.hasTokenSlotsLeft() && city.getSlots() != 0 && !city.hasTokenOf(company)) { 
             sink = true;
         }
         
@@ -242,21 +258,13 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return;
 
         // define value
-        if (station.getType().equals(Station.OFF_MAP_AREA)) {
+        if (station.getType().equals(Station.OFF_MAP_AREA) || station.getValue() == -1) {
             value = hex.getCurrentOffBoardValue(phase);
         } else {
             value = station.getValue();
         }
     }
     
-    public String getIdentifier(){
-        if (isStation())
-            return hex.getName() + "." + -station.getNumber();
-        else if (isSide())
-            return hex.getName() + "." + side; 
-        else
-            return "HQ";
-    }
     
     @Override
     public String toString(){
@@ -299,6 +307,40 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
     
     /**
+     * creates a new virtual vertex with identical properties and links
+     */
+    public static NetworkVertex duplicateVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph, 
+            NetworkVertex vertex, String newIdentifier, boolean addOldVertexAsHidden) {
+        // create new vertex
+        NetworkVertex newVertex = NetworkVertex.getVirtualVertex(vertex.type, newIdentifier); 
+        // copy values
+        newVertex.major = vertex.major;
+        newVertex.minor = vertex.minor;
+        newVertex.value = vertex.value;
+        newVertex.sink = vertex.sink;
+        newVertex.cityName = vertex.cityName;
+        graph.addVertex(newVertex);
+        // copy edges
+        Set<NetworkEdge> edges = graph.edgesOf(vertex);
+        for (NetworkEdge edge:edges) {
+            List<NetworkVertex> hiddenVertices;
+            if (edge.getSource() == vertex) {
+                 hiddenVertices = edge.getHiddenVertexes();
+                if (addOldVertexAsHidden) hiddenVertices.add(vertex);
+                NetworkEdge newEdge = new NetworkEdge(newVertex, edge.getTarget(), edge.isGreedy(), edge.getDistance(), hiddenVertices);
+                graph.addEdge(newVertex, edge.getTarget(), newEdge);
+            } else {
+                hiddenVertices = new ArrayList<NetworkVertex>();
+                if (addOldVertexAsHidden) hiddenVertices.add(vertex);
+                hiddenVertices.addAll(edge.getHiddenVertexes());
+                NetworkEdge newEdge = new NetworkEdge(edge.getSource(), newVertex, edge.isGreedy(), edge.getDistance(), edge.getHiddenVertexes());
+                graph.addEdge(newEdge.getSource(), newVertex, newEdge);
+            }
+        }
+        return newVertex;
+    }
+    
+    /**
      * replaces one vertex by another for a network graph
      * copies all edges
      */
@@ -323,8 +365,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     /**
      * Returns all vertices in a specified collection of hexes
      */
-    public static Set<NetworkVertex> getVerticesByHex(Collection<NetworkVertex> vertices, Collection<MapHex> hexes) {
-        log.info("hexes = " + hexes);
+    public static Set<NetworkVertex> getVerticesByHexes(Collection<NetworkVertex> vertices, Collection<MapHex> hexes) {
         Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:vertices) {
             if (vertex.getHex() != null && hexes.contains(vertex.getHex())) {
@@ -334,8 +375,18 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return hexVertices;
     }
     
+    public static NetworkVertex getVertexByIdentifier(Collection<NetworkVertex> vertices, String identifier) {
+        for (NetworkVertex vertex:vertices) {
+            if (vertex.getIdentifier().equals(identifier)) {
+                return vertex;
+            }
+        }
+        return null;
+    }
     
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
+        if (vertex.isVirtual()) return null;
+        
         GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
         if (vertex.isMajor()) {
             return guiHex.getCityPoint2D(vertex.getCity());

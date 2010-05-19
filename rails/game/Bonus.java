@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.9 2010/05/18 21:36:12 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.10 2010/05/19 20:14:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -132,7 +132,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         if (owner != revenueAdapter.getCompany()) return;
         
         // 2. find vertices to hex
-        Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHex(revenueAdapter.getVertices(), locations);
+        Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
         for (NetworkVertex bonusVertex:bonusVertices) {
             if (!bonusVertex.isStation()) continue;
             RevenueBonus bonus = new RevenueBonus(value, name);

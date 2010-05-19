@@ -33,8 +33,8 @@ public final class RevenueAdapter implements Runnable {
     
     // define VertexVisitSet
     public class VertexVisit {
-        Set<NetworkVertex> set;
-        VertexVisit() {set = new HashSet<NetworkVertex>();}
+        public Set<NetworkVertex> set;
+        public VertexVisit() {set = new HashSet<NetworkVertex>();}
         public String toString() {
             return "VertexVisit Set:" + set;
         }
