@@ -1,10 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.10 2010/05/19 20:14:13 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.11 2010/05/20 23:13:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
@@ -83,8 +82,9 @@ public class Bonus implements Closeable, RevenueStaticModifier {
      * See prepareForRemovel().
      */
     public void close() {
-
         owner.removeBonus(name);
+        // remove it from the call list of the RevenueManager
+        GameManager.getInstance().getRevenueManager().removeStaticModifier(this);
     }
 
     /**

@@ -1,8 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.64 2010/05/15 16:36:09 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.65 2010/05/20 23:13:21 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -600,15 +601,18 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
-            RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
-            ra.populateFromRails();
-
+            List<String> addTrainList = new ArrayList<String>();
             boolean anotherTrain = true;
+            RevenueAdapter ra = null;
             while (anotherTrain) {
-                int revenueValue;
+                ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
+                ra.populateFromRails();
+                for (String addTrain:addTrainList) {
+                    ra.addTrainByString(addTrain);
+                }
                 ra.initRevenueCalculator();
                 log.info("Revenue Adapter:" + ra);
-                revenueValue = ra.calculateRevenue();
+                int revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
                 log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
@@ -616,15 +620,16 @@ implements ActionListener, KeyListener, RevenueListener {
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
                         "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint());
 
-                String trainsToAdd =
+                String trainString =
                     JOptionPane.showInputDialog(orWindow, "Another train",
                     "Add another train to run?",
                     JOptionPane.QUESTION_MESSAGE);
-                if (trainsToAdd == null || trainsToAdd.equals("")) {
+                if (trainString == null || trainString.equals("")) {
                     anotherTrain = false;
                 } else {
-                    ra.addTrainByString(trainsToAdd);
+                    addTrainList.add(trainString);
                 }
+
             }
             revenueAdapter = ra;
         }

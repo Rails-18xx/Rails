@@ -35,8 +35,12 @@ public class RevenueTrainRun {
         vertices = new ArrayList<NetworkVertex>();
     }
     
-    void addVertex(NetworkVertex vertex)  {
-        vertices.add(vertex);
+    public List<NetworkVertex> getVertices() {
+        return vertices;
+    }
+    
+    public NetworkTrain getTrain() {
+        return train;
     }
     
     int getRunValue() {
@@ -56,6 +60,10 @@ public class RevenueTrainRun {
         return value;
     }
 
+    void addVertex(NetworkVertex vertex)  {
+        vertices.add(vertex);
+    }
+    
     private String prettyPrintHexName(NetworkVertex vertex) {
         if (vertex.isVirtual()) {
             return vertex.getIdentifier();

@@ -88,6 +88,9 @@ final class RevenueCalculator {
     // revenue Adapter
     private RevenueAdapter revenueAdapter;
     
+    // activate dynamic revenue modifiers
+    private boolean callDynamicModifiers;
+    
     // termination results
     private static enum Terminated {
         WithEvaluation,
@@ -154,6 +157,8 @@ final class RevenueCalculator {
         currentBestRun = new int[nbTrains][nbVertexes + 1];
         
         useRevenuePrediction = false;
+        
+        callDynamicModifiers = false;
     }
 
     void setVertex(int id, boolean major, boolean minor, boolean sink) {
@@ -220,9 +225,28 @@ final class RevenueCalculator {
         bonusActiveForTrain[id] = bonusForTrain;
     }
     
+    void setDynamicModifiers(boolean activate) {
+        callDynamicModifiers = activate;
+    }
+    
     int[][] getOptimalRun() {
         log.info("RC: currentBestRun = " + Arrays.deepToString(currentBestRun));
         return currentBestRun;
+    }
+    
+    int[][] getCurrentRun() {
+        int[][] currentRun = new int[nbTrains][nbVertexes+1];
+        for (int j = startTrainSet; j <= finalTrainSet; j++) {
+            for (int v = 0; v < nbVertexes + 1; v++) {
+                if (v < trainStackPos[j]) {
+                    currentRun[j][v] = trainVertexStack[j][v];
+                } else {
+                    currentRun[j][v] = -1; // terminator
+                    break;
+                }
+            }
+        }
+        return currentRun;
     }
     
     int getNumberOfEvaluations() {
@@ -679,6 +703,8 @@ final class RevenueCalculator {
 //                    totalValue += trainCurrentValue[j];
 //            }
         }
+
+        if (callDynamicModifiers) totalValue += revenueAdapter.dynamicEvaluation();
         
         nbEvaluations++;
         log.debug("RC: current total value " + totalValue);
@@ -746,6 +772,8 @@ final class RevenueCalculator {
 //            }
         }
 
+        if (callDynamicModifiers) totalValue += revenueAdapter.dynamicPrediction();
+        
         nbPredictions++;
         
         boolean terminate = (totalValue <= currentBestValue);

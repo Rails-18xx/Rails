@@ -2,7 +2,6 @@ package rails.algorithms;
 
 import java.awt.EventQueue;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,6 +59,8 @@ public final class RevenueAdapter implements Runnable {
     private List<NetworkVertex> rcVertices;
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
+    private Set<RevenueDynamicModifier> dynamicModifiers;
+    
     
     // revenue listener to communicate results
     private RevenueListener revenueListener;
@@ -134,6 +135,10 @@ public final class RevenueAdapter implements Runnable {
             return true;
         }
     }
+    
+    public void removeTrain(NetworkTrain train) {
+        trains.remove(train);
+    }
 
     public boolean addTrainByString(String trainString) {
         TrainTypeI trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
@@ -193,7 +198,9 @@ public final class RevenueAdapter implements Runnable {
         if (gameManager.getRevenueManager() != null) {
             gameManager.getRevenueManager().callStaticModifiers(this);
         }
+
     }
+
     private void defineVertexVisitSets() {
         // define map of all locationNames 
         Map<String, VertexVisit> locations = new HashMap<String, VertexVisit>();
@@ -244,10 +251,17 @@ public final class RevenueAdapter implements Runnable {
 
     
     public void initRevenueCalculator(){
+
+        // add all dynamic modifiers
+        if (gameManager.getRevenueManager() != null) {
+            dynamicModifiers = gameManager.getRevenueManager().callDynamicModifiers(this);
+        } else {
+            dynamicModifiers = null;
+        }
         
         // optimize graph (optimizeGraph clones the graph)
         rcGraph = NetworkGraphBuilder.optimizeGraph(graph, protectedVertices);
-        
+   
         // define the vertices and edges lists
         rcVertices = new ArrayList<NetworkVertex>(rcGraph.vertexSet());
         // define ordering on vertexes by value
@@ -395,6 +409,8 @@ public final class RevenueAdapter implements Runnable {
             if (bonus.addToRevenueCalculator(rc, id, rcVertices, trains, phase)) id ++;
         }
         
+        // activate dynamic modifiers
+        rc.setDynamicModifiers(dynamicModifiers != null);
     }
 
     public int getVertexValue(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {
@@ -457,8 +473,35 @@ public final class RevenueAdapter implements Runnable {
         optimalRun = convertRcRun(rc.getOptimalRun());
         return value;
     }
+    
     public  List<RevenueTrainRun> getOptimalRun() {
         return optimalRun;
+    }
+    
+    public List<RevenueTrainRun> getCurrentRun() {
+        return convertRcRun(rc.getCurrentRun());
+    }
+    
+    /**
+     * is called by rc for dynamic evaluations
+     */
+    int dynamicEvaluation() {
+        int value = 0;
+        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+            value += modifier.evaluationValue(this);
+        }
+        return value;
+    }
+    
+    /**
+     * is called by rc for dynamic predictions
+     */
+    int dynamicPrediction() {
+        int value = 0;
+        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+            value += modifier.predictionValue(this);
+        }
+        return value;
     }
 
     public void addRevenueListener(RevenueListener listener) {
@@ -493,6 +536,11 @@ public final class RevenueAdapter implements Runnable {
         for (RevenueTrainRun run:optimalRun) {
             runPrettyPrint.append(run.prettyPrint());
         }
+        // add dynamic Modifier
+        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+            runPrettyPrint.append(modifier.prettyPrint(this));
+        }
+        
         return runPrettyPrint.toString();
     }
     
