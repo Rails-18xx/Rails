@@ -334,23 +334,25 @@ public final class RevenueAdapter implements Runnable {
                 rc.setVertexValue(id, trainId, getVertexValue(v, train, phase));
             }
             
-            // set neighbors
-            if (!v.isSink()) {
-                List<NetworkVertex> neighbors = Graphs.neighborListOf(rcGraph, v); 
-                int j=0, neighborsArray[] = new int[neighbors.size()];
-                for (NetworkVertex n:neighbors){
-                    neighborsArray[j++] = rcVertices.indexOf(n);
-                }
-                // sort by value orderboolean activatePrediction
-                Arrays.sort(neighborsArray, 0, j);
-                // define according edges
-                int[] edgesArray = new int[j];
-                for (int e=0; e < j; e++) {
-                    NetworkVertex n = rcVertices.get(neighborsArray[e]);
-                    edgesArray[e] = rcEdges.indexOf(rcGraph.getEdge(v, n));
-                }
-                rc.setVertexNeighbors(id, neighborsArray, edgesArray);
+            // set neighbors, now regardless of sink property
+            // this is covered by the vertex attribute
+            // and required for startvertices that are sinks themselves
+//            if (!v.isSink()) {
+            List<NetworkVertex> neighbors = Graphs.neighborListOf(rcGraph, v); 
+            int j=0, neighborsArray[] = new int[neighbors.size()];
+            for (NetworkVertex n:neighbors){
+                neighborsArray[j++] = rcVertices.indexOf(n);
             }
+            // sort by value orderboolean activatePrediction
+            Arrays.sort(neighborsArray, 0, j);
+            // define according edges
+            int[] edgesArray = new int[j];
+            for (int e=0; e < j; e++) {
+                NetworkVertex n = rcVertices.get(neighborsArray[e]);
+                edgesArray[e] = rcEdges.indexOf(rcGraph.getEdge(v, n));
+            }
+            rc.setVertexNeighbors(id, neighborsArray, edgesArray);
+//            }
         }
 
         // set startVertexes
@@ -402,7 +404,7 @@ public final class RevenueAdapter implements Runnable {
         
         // add potential revenueBonuses
         for (RevenueBonus bonus:revenueBonuses) {
-            if (bonus.checkSimpleBonus(vertex, train.getRailsTrainType(), phase)) {
+            if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {
                 value += bonus.getValue();
             }
         }
@@ -418,7 +420,7 @@ public final class RevenueAdapter implements Runnable {
         
         // add potential revenueBonuses
         for (RevenueBonus bonus:revenueBonuses) {
-            if (bonus.checkSimpleBonus(vertex, train.getRailsTrainType(), phase)) {
+            if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {
                 s.append("+" + bonus.getValue());
             }
         }

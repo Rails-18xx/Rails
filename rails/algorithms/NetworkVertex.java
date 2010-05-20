@@ -106,7 +106,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
 
     void addToRevenueCalculator(RevenueCalculator rc, int vertexId) {
-        rc.setVertex(vertexId, major, minor);
+        rc.setVertex(vertexId, major, minor, sink);
     }
 
     public String getIdentifier(){
@@ -258,7 +258,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return;
 
         // define value
-        if (station.getType().equals(Station.OFF_MAP_AREA) || station.getValue() == -1) {
+//      if (station.getType().equals(Station.OFF_MAP_AREA) || station.getValue() == -1) {
+        if (hex.hasOffBoardValues()) {
             value = hex.getCurrentOffBoardValue(phase);
         } else {
             value = station.getValue();
@@ -333,7 +334,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 hiddenVertices = new ArrayList<NetworkVertex>();
                 if (addOldVertexAsHidden) hiddenVertices.add(vertex);
                 hiddenVertices.addAll(edge.getHiddenVertexes());
-                NetworkEdge newEdge = new NetworkEdge(edge.getSource(), newVertex, edge.isGreedy(), edge.getDistance(), edge.getHiddenVertexes());
+                NetworkEdge newEdge = new NetworkEdge(edge.getSource(), newVertex, edge.isGreedy(), edge.getDistance(), hiddenVertices);
                 graph.addEdge(newEdge.getSource(), newVertex, newEdge);
             }
         }

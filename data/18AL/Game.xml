@@ -104,5 +104,6 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<StaticModifier class="rails.game.specific._18AL.NamedTrainRevenueModifier" /> 
 	</Component>
 </ComponentManager>

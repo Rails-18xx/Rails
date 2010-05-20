@@ -168,6 +168,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
         
         for (NetworkVertex vertex:tokenVertexes){
+            // allow to leave tokenVertices even if those are sinks
+            boolean storeSink = vertex.isSink(); vertex.setSink(false);
             vertexes.add(vertex);
             // add connection to graph
             graph.addVertex(vertex);
@@ -175,6 +177,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
             NetworkIterator iterator = new NetworkIterator(mapGraph, vertex, company);
             for (;iterator.hasNext();)
                 vertexes.add(iterator.next());
+            // restore sink property
+            vertex.setSink(storeSink);
         }
 
         Subgraph<NetworkVertex, NetworkEdge, SimpleGraph<NetworkVertex, NetworkEdge>> subGraph = 

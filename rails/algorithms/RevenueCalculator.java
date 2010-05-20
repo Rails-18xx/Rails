@@ -15,6 +15,7 @@ final class RevenueCalculator {
     private final int[][] vertexValueByTrain; // dimensions: vertexId, trainId
     private final boolean[] vertexMajor;
     private final boolean[] vertexMinor;
+    private final boolean[] vertexSink;
     private final int[] vertexNbNeighbors;
     private final int[] vertexNbVisitSets;
     private final int[] vertexNbBonusSets;
@@ -37,15 +38,17 @@ final class RevenueCalculator {
     // static train data
     private final int[] trainMaxMajors;
     private final int[] trainMaxMinors;
+    private final int[] trainMaxBonuses;
     private final boolean[] trainIgnoreMinors;
     
     // dynamic train data
     private final int[] trainCurrentValue;
     private final int[] trainMajors;
     private final int[] trainMinors;
+    private final int[] trainBonuses; // counts the number of bonuses received
     private final boolean[][] trainVisited;
     private final int[][] trainVertexStack;
-    private final int[][] trainEdgeStack;
+//    private final int[][] trainEdgeStack;
     private final int[] trainStackPos;
     private final int [] trainBottomPos;
     private final int [] trainStartEdge;
@@ -113,6 +116,7 @@ final class RevenueCalculator {
         vertexValueByTrain = new int[nbVertexes][nbTrains];
         vertexMajor = new boolean[nbVertexes];
         vertexMinor = new boolean[nbVertexes];
+        vertexSink = new boolean[nbVertexes];
         vertexNbNeighbors = new int[nbVertexes];
         vertexNbVisitSets = new int[nbVertexes];
         vertexNbBonusSets = new int[nbVertexes];
@@ -127,15 +131,17 @@ final class RevenueCalculator {
         
         trainMaxMajors = new int[nbTrains];
         trainMaxMinors = new int[nbTrains];
+        trainMaxBonuses = new int[nbTrains]; // only required for revenue prediction
         trainIgnoreMinors = new boolean[nbTrains];
         
         trainCurrentValue = new int[nbTrains];
         trainMajors = new int[nbTrains];
         trainMinors = new int[nbTrains];
+        trainBonuses = new int[nbTrains];
         trainVisited = new boolean[nbTrains][nbVertexes];
         trainVertexStack = new int[nbTrains][nbVertexes + 1];
         // increase necessary due to buttom train
-        trainEdgeStack = new int[nbTrains][nbVertexes + 1];
+//        trainEdgeStack = new int[nbTrains][nbVertexes + 1];
         trainStackPos = new int[nbTrains];
         trainBottomPos = new int[nbTrains];
         trainStartEdge = new int[nbTrains];
@@ -150,9 +156,10 @@ final class RevenueCalculator {
         useRevenuePrediction = false;
     }
 
-    void setVertex(int id, boolean major, boolean minor) {
+    void setVertex(int id, boolean major, boolean minor, boolean sink) {
         vertexMajor[id] = major;
         vertexMinor[id] = minor;
+        vertexSink[id] = sink;
         // default neighbors && visit and bonus sets
         vertexNbNeighbors[id] = 0;
         vertexNbVisitSets[id] = 0;
@@ -186,6 +193,7 @@ final class RevenueCalculator {
     void setTrain(int id, int majors, int minors, boolean ignoreMinors) {
         trainMaxMajors[id] = majors;
         trainMaxMinors[id] = minors;
+        trainMaxBonuses[id] = 0;
         trainIgnoreMinors[id] = ignoreMinors;
     }
     
@@ -248,7 +256,7 @@ final class RevenueCalculator {
             cumulatedRevenues += values[values.length - j];
             bestRevenues[j] = cumulatedRevenues;
         }
-        log.info(Arrays.toString(bestRevenues));
+        log.debug("Best Revenues = " + Arrays.toString(bestRevenues));
         return bestRevenues;
     }
     
@@ -257,24 +265,42 @@ final class RevenueCalculator {
       // intialize values
         maxMajorRevenues = new int[nbTrains][nbVertexes];
         maxMinorRevenues = new int[nbTrains][nbVertexes];
+        maxBonusRevenues = new int[nbTrains][nbVertexes + nbBonuses];
+        int cumulatedRevenues = 0;
         for (int t=startTrain; t <= finalTrain; t++) {
             int[] majorValues = new int[nbVertexes];
             int[] minorValues = new int[nbVertexes];
-            int[] bonusValues = new int[nbVertexes];
+            int[] bonusValues = new int[nbVertexes + nbBonuses];
             int major = 0, minor = 0, bonus = 0;
+            // scan vertices for values
             for (int v=0; v < nbVertexes; v++) {
                 if (vertexValueByTrain[v][t] == 0) continue;
-                if (vertexMajor[v])
+                if (vertexMajor[v]) {
                     majorValues[major++] = vertexValueByTrain[v][t];
-                else if (vertexMinor[v])
+                } else if (vertexMinor[v]) {
                     minorValues[minor++] = vertexValueByTrain[v][t];
-                else
+                } else { // define it as bonus
                     bonusValues[bonus++] = vertexValueByTrain[v][t];
+                }
             }
+            // add the (complex) bonuses
+            for (int b=0; b < nbBonuses; b++) {
+                if (bonusValue[b] <= 0 || !bonusActiveForTrain[b][t]) continue;
+                bonusValues[bonus++] = bonusValue[b];
+            }
+            trainMaxBonuses[t] = bonus;
+
             maxMajorRevenues[t] = bestRevenues(majorValues, trainMaxMajors[t]);
             maxMinorRevenues[t] = bestRevenues(minorValues, trainMaxMinors[t]);
-            maxCumulatedTrainRevenues[t] = maxMajorRevenues[t][trainMaxMajors[t]] + maxMinorRevenues[t][trainMaxMinors[t]];
+            maxBonusRevenues[t] = bestRevenues(bonusValues, trainMaxBonuses[t]);
+            cumulatedRevenues += maxMajorRevenues[t][trainMaxMajors[t]] + maxMinorRevenues[t][trainMaxMinors[t]] 
+                     + maxBonusRevenues[t][trainMaxBonuses[t]];
+            maxCumulatedTrainRevenues[t] = cumulatedRevenues;
         }
+        log.info("maxMajorRevenues = " + Arrays.deepToString(maxMajorRevenues));
+        log.info("maxMinorRevenues = " + Arrays.deepToString(maxMinorRevenues));
+        log.info("maxBonusRevenues = " + Arrays.deepToString(maxBonusRevenues));
+        log.info("maxCumulatedTrainRevenues = " + Arrays.toString(maxCumulatedTrainRevenues));
     }
     
     void initialPredictionRuns(int startTrain, int finalTrain) {
@@ -312,6 +338,7 @@ final class RevenueCalculator {
             cumulatedRevenues +=  maxSingleTrainRevenues[j];
             maxCumulatedTrainRevenues[j] = cumulatedRevenues;
         }
+        log.info("maxCumulatedTrainRevenues = " + Arrays.toString(maxCumulatedTrainRevenues));
         
         if (startTrain == finalTrain - 1) return;
 
@@ -325,6 +352,7 @@ final class RevenueCalculator {
                 " after " + getStatistics());
             maxCumulatedTrainRevenues[j] = currentBestValue;
             maxCumulatedTrainRevenues[j-1] = currentBestValue  + maxSingleTrainRevenues[j-1];
+            log.info("maxCumulatedTrainRevenues = " + Arrays.toString(maxCumulatedTrainRevenues));
         }
     }
     
@@ -360,6 +388,7 @@ final class RevenueCalculator {
         // initialize train lengths
         trainMajors[trainId] = trainMaxMajors[trainId];
         trainMinors[trainId] = trainMaxMinors[trainId];
+        trainBonuses[trainId] = trainMaxBonuses[trainId];
         
         // initialize the positions
         trainStackPos[trainId] = 0;
@@ -392,6 +421,7 @@ final class RevenueCalculator {
             }
 
             // then try all edges of it
+            // for startVertices the sink property is ignored
             for (int j = 0; j < vertexNbNeighbors[vertexId]; j++) {
                 int edgeId = vertexEdges[vertexId][j];
                 if (edgeUsed[edgeId]) continue; 
@@ -404,6 +434,7 @@ final class RevenueCalculator {
                 if (travelEdge(trainId, edgeId, true)) {
                     trainStartEdge[trainId] = j; // store start edge
                     nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
+                    returnEdge(edgeId);
                 }
             }
 
@@ -429,12 +460,17 @@ final class RevenueCalculator {
     private void runBottom(int trainId) {
         log.debug("RC: runBottom " +trainId);
         
-        trainBottomPos[trainId] = trainStackPos[trainId]; // store the stack position where bottom starts
-        log.debug("RC: Restart at bottom at stack position " + trainBottomPos[trainId]);
-        
-        // use startvertex
+        // use startvertex, check if it is a sink
         int vertexId = trainVertexStack[trainId][0];
-        trainVertexStack[trainId][trainStackPos[trainId]++] = vertexId; // push to stack
+        if (vertexSink[vertexId]) {
+            log.debug("RC: startvertex is sink, finished bottom of " + trainId);
+            return;
+        }
+                
+        // push to stack
+        trainBottomPos[trainId] = trainStackPos[trainId]; // store the stack position where bottom starts
+        trainVertexStack[trainId][trainStackPos[trainId]++] = vertexId;
+        log.debug("RC: Restart at bottom at stack position " + trainBottomPos[trainId]);
         
         for (int j = trainStartEdge[trainId] + 1; j < vertexNbNeighbors[vertexId]; j++) {
             int edgeId = vertexEdges[vertexId][j]; 
@@ -447,6 +483,7 @@ final class RevenueCalculator {
             }
             if (travelEdge(trainId, edgeId, true)) {
                 nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
+                returnEdge(edgeId);
             }
         }
         
@@ -470,24 +507,27 @@ final class RevenueCalculator {
                     useRevenuePrediction && predictRevenues(trainId)) {
                 // cannot beat current best value => leave immediately
                 encounterVertex(trainId, vertexId, false);
-                returnEdge(trainId);
+//                returnEdge(trainId);
                 return;
             }
         }
         
-        // 2a. visit neighbors, if train has not terminated
+        // 2a. visit neighbors, if train has not terminated and vertex is not a sink
         if (trainTerminated == Terminated.NotYet) {
-            for (int j = 0; j < vertexNbNeighbors[vertexId]; j++) {
-                int edgeId = vertexEdges[vertexId][j];
-                if (edgeUsed[edgeId]) continue;
-                int neighborId = vertexNeighbors[vertexId][j];
-                log.debug("RC: Testing Neighbor Nr. " + j + " of " + vertexId + " is " + neighborId);
-                if (trainVisited[trainId][neighborId]) {
-                    log.debug("RC: Hex already visited");
-                    continue;
-                }
-                if (travelEdge(trainId, edgeId, previousGreedy)) {
-                    nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
+            if (!vertexSink[vertexId]) {
+                for (int j = 0; j < vertexNbNeighbors[vertexId]; j++) {
+                    int edgeId = vertexEdges[vertexId][j];
+                    if (edgeUsed[edgeId]) continue;
+                    int neighborId = vertexNeighbors[vertexId][j];
+                    log.debug("RC: Testing Neighbor Nr. " + j + " of " + vertexId + " is " + neighborId);
+                    if (trainVisited[trainId][neighborId]) {
+                        log.debug("RC: Hex already visited");
+                        continue;
+                    }
+                    if (travelEdge(trainId, edgeId, previousGreedy)) {
+                        nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
+                        returnEdge(edgeId);
+                    }
                 }
             }
             // 2b. restart at startVertex for bottom part
@@ -502,7 +542,7 @@ final class RevenueCalculator {
         
         // 4. then leave that vertex
         encounterVertex(trainId, vertexId, false);
-        returnEdge(trainId);
+//        returnEdge(trainId);
     }
     
     private boolean encounterVertex(int trainId, int vertexId, boolean arrive) {
@@ -552,11 +592,13 @@ final class RevenueCalculator {
                 log.debug("RC: Decreased bonus " + bonusId + " to " + bonusTrainVertices[bonusId][trainId]);
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
                    trainCurrentValue[trainId] += bonusValue[bonusId];
+                   if (bonusValue[bonusId] > 0) trainBonuses[trainId]--; 
                    log.debug("RC: Added bonus " + bonusId + " with value " + bonusValue[bonusId]);
                 }
             } else {
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
                     trainCurrentValue[trainId] -= bonusValue[bonusId];
+                    if (bonusValue[bonusId] > 0) trainBonuses[trainId]++; 
                     log.debug("RC: Removed bonus " + bonusId + " with value " + bonusValue[bonusId]);
                  }
                 bonusTrainVertices[bonusId][trainId]++;
@@ -564,6 +606,7 @@ final class RevenueCalculator {
             }
         }
         
+        log.debug("RC: stationVertex = " + stationVertex);
         log.debug("RC: Count Visits = " + countVisits);
         return stationVertex;
     }
@@ -572,7 +615,7 @@ final class RevenueCalculator {
         if (previousGreedy || edgeGreedy[edgeId]) {
             log.debug("RC: Travel edge id " + edgeId);
             edgeUsed[edgeId] = true;
-            trainEdgeStack[trainId][trainStackPos[trainId]] = edgeId;
+//            trainEdgeStack[trainId][trainStackPos[trainId]] = edgeId;
             countEdges++; nbEdgesTravelled++;
             log.debug("RC: Count Edges = " + countEdges);
             return true;
@@ -582,28 +625,14 @@ final class RevenueCalculator {
         }
     }
 
-    private void returnEdge(int trainId) {
-        int stackPos = trainStackPos[trainId];
-        log.debug("RC: Tries to clear edge at stack position " + stackPos + " of train " + trainId);
-        
-        if (stackPos == 0) {
-            log.debug("RC: Position zero has not to be cleared");
-            return;
-        }
-        
-        if (stackPos == trainBottomPos[trainId]) {
-            log.debug("RC: Replace start Vertex for bottom position");
-        }
-        
-        int edgeId = trainEdgeStack[trainId][stackPos];
-        
+    private void returnEdge(int edgeId) {
         if (edgeUsed[edgeId]) {
             edgeUsed[edgeId] = false;
             countEdges--;
             log.debug("RC: Cleared edge id " + edgeId);
             log.debug("RC: Count Edges = " + countEdges);
         } else {
-            log.debug ("RC: Error return edge id used: " + edgeId);
+            log.debug("RC: Error return edge id used: " + edgeId);
         }
     }
     
@@ -694,6 +723,10 @@ final class RevenueCalculator {
             } else { // <= 0
                 trainValue += maxMajorRevenues[trainId][trainMajors[trainId] + trainMinors[trainId]]; 
             }
+        }
+        // add potential bonuses
+        if (trainBonuses[trainId] != 0) {
+            trainValue += maxBonusRevenues[trainId][trainBonuses[trainId]];
         }
         log.debug("RC: Current train has predicted  value of " + trainValue);
 
