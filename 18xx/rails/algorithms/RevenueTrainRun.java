@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.MapHex;
 import rails.ui.swing.hexmap.HexMap;
 
 /**
@@ -50,7 +49,7 @@ public class RevenueTrainRun {
         }
         // check revenueBonuses (complex)
         for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
-            if (bonus.checkComplexBonus(vertices, train.getRailsTrainType(), revenueAdapter.getPhase())) {
+            if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
                 value += bonus.getValue();
             }
         }
@@ -80,21 +79,21 @@ public class RevenueTrainRun {
         runPrettyPrint.append("Train " + train + ": " + getRunValue() + " -> ");
         int initLength = runPrettyPrint.length();
         int multiple = runPrettyPrint.length() / PRETTY_PRINT_LENGTH;
-        MapHex currentHex = null;
+        String currentHexName = null;
         NetworkVertex startVertex = null;
         for (NetworkVertex vertex:vertices) {
             if (startVertex == null) {
-                currentHex = vertex.getHex();
+                currentHexName = prettyPrintHexName(vertex);
                 startVertex = vertex;
                 runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
             } else if (startVertex == vertex) {
-                currentHex = vertex.getHex();
+                currentHexName = prettyPrintHexName(vertex);
                 runPrettyPrint.append(") / ");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
                 runPrettyPrint.append(prettyPrintHexName(vertex) + "(0");
                 continue;
-            } else if (vertex.getHex() != currentHex) {
-                currentHex = vertex.getHex();
+            } else if (!currentHexName.equals(prettyPrintHexName(vertex))) {
+                currentHexName = prettyPrintHexName(vertex);
                 runPrettyPrint.append("), ");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
                 runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
@@ -104,17 +103,17 @@ public class RevenueTrainRun {
             if (vertex.isStation()) {
                 runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
             }  else {
-                runPrettyPrint.append(currentHex.getOrientationName(vertex.getSide()));
+                runPrettyPrint.append(vertex.getHex().getOrientationName(vertex.getSide()));
             }
         }
         
-        if (currentHex != null) {
+        if (currentHexName != null) {
             runPrettyPrint.append(")");
         }
         
         // check revenueBonuses (complex)
         for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
-            if (bonus.checkComplexBonus(vertices, train.getRailsTrainType(), revenueAdapter.getPhase())) {
+            if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
                 runPrettyPrint.append(" + ");
                 runPrettyPrint.append(bonus.getName() + "(" + bonus.getValue() + ")");
                 multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);

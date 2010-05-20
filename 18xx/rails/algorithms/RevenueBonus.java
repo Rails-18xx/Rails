@@ -1,11 +1,13 @@
 package rails.algorithms;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
 import rails.game.PhaseI;
+import rails.game.TrainI;
 import rails.game.TrainTypeI;
 
 public final class RevenueBonus {
@@ -22,6 +24,7 @@ public final class RevenueBonus {
     // internal attributes
     private List<NetworkVertex> vertices;
     private List<TrainTypeI> trainTypes;
+    private List<TrainI> trains;
     private List<PhaseI> phases;
     
     public RevenueBonus(int value, String name) {
@@ -30,15 +33,24 @@ public final class RevenueBonus {
      
         vertices = new ArrayList<NetworkVertex>();
         trainTypes = new ArrayList<TrainTypeI>();
+        trains = new ArrayList<TrainI>();
         phases = new ArrayList<PhaseI>();
     }
     
     public void addVertex(NetworkVertex vertex) {
         vertices.add(vertex);
     }
+    
+    public void addVertices(Collection<NetworkVertex> vertices) {
+        this.vertices.addAll(vertices);
+    }
 
     public void addTrainType(TrainTypeI trainType) {
         trainTypes.add(trainType);
+    }
+    
+    public void addTrain(TrainI train) {
+        trains.add(train);
     }
     
     public void addPhase(PhaseI phase) {
@@ -61,6 +73,10 @@ public final class RevenueBonus {
         return trainTypes;
     }
 
+    public List<TrainI> getTrains() {
+        return trains;
+    }
+    
     public List<PhaseI> getPhases() {
         return phases;
     }
@@ -81,7 +97,7 @@ public final class RevenueBonus {
         
         boolean[] trainsArray = new boolean[trains.size()];
         for (int j=0; j < trains.size(); j++) {
-            trainsArray[j] = checkConditions(trains.get(j).getRailsTrainType(), phase);
+            trainsArray[j] = checkConditions(trains.get(j).getRailsTrain(), phase);
         }
         
         log.info("Add revenueBonus to RC, id = " + bonusId + ", bonus = " + this);
@@ -91,12 +107,12 @@ public final class RevenueBonus {
         return true;
     }
     
-    public boolean checkSimpleBonus(NetworkVertex vertex, TrainTypeI trainType, PhaseI phase) {
-        return (isSimpleBonus() && vertices.contains(vertex) && checkConditions(trainType, phase));
+    public boolean checkSimpleBonus(NetworkVertex vertex, TrainI train, PhaseI phase) {
+        return (isSimpleBonus() && vertices.contains(vertex) && checkConditions(train, phase));
     }
     
-    public boolean checkComplexBonus(List<NetworkVertex> visitVertices, TrainTypeI trainType, PhaseI phase) {
-        boolean result = !isSimpleBonus() && checkConditions(trainType, phase);
+    public boolean checkComplexBonus(List<NetworkVertex> visitVertices, TrainI train, PhaseI phase) {
+        boolean result = !isSimpleBonus() && checkConditions(train, phase);
         if (result) {
             for (NetworkVertex vertex:vertices) {
                 if (!visitVertices.contains(vertex)) {
@@ -108,15 +124,24 @@ public final class RevenueBonus {
         return result;
     }
     
-    public boolean checkConditions(TrainTypeI trainType, PhaseI phase) {
+    public boolean checkConditions(TrainI train, PhaseI phase) {
         boolean result = true;
+
+        // check train
+        if (!trains.isEmpty()) {
+            if (train == null) {
+                result = false;
+            } else {
+                result = result && trains.contains(train); 
+            }
+        }
 
         // check trainTypes
         if (!trainTypes.isEmpty()) {
-            if (trainType == null) {
+            if (train == null) {
                 result = false;
             } else {
-                result = result && trainTypes.contains(trainType); 
+                result = result && trainTypes.contains(train.getType()); 
             }
         }
         

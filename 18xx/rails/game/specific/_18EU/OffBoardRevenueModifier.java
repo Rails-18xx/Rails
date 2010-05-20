@@ -42,7 +42,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier, Configura
         } else if (phase.isTileColourAllowed("brown")) {
             bonusValue = 20;
         } else if (phase.isTileColourAllowed("green")) {
-            bonusValue = 100;
+            bonusValue = 10;
         } else {
             return;
         }
@@ -61,7 +61,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier, Configura
         NetworkVertex hamburgCity = NetworkVertex.getVertexByIdentifier(revenueAdapter.getVertices(), "B7.-1");
         if (hamburgCity != null) {
             // ... and duplicate the vertex
-            NetworkVertex hamburgTerminal = NetworkVertex.duplicateVertex(revenueAdapter.getGraph(), hamburgCity, "Hamburg(T)", true);
+            NetworkVertex hamburgTerminal = NetworkVertex.duplicateVertex(revenueAdapter.getGraph(), hamburgCity, "B7", true);
             hamburgTerminal.setSink(true);
             offBoard.add(hamburgTerminal);
             

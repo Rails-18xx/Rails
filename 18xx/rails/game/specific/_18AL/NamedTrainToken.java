@@ -2,11 +2,21 @@ package rails.game.specific._18AL;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import rails.algorithms.NetworkVertex;
+import rails.algorithms.RevenueAdapter;
+import rails.algorithms.RevenueBonus;
+import rails.algorithms.RevenueManager;
+import rails.algorithms.RevenueStaticModifier;
 import rails.game.*;
 import rails.util.Tag;
 import rails.util.Util;
 
-public class NamedTrainToken extends Token implements ConfigurableComponentI {
+public class NamedTrainToken extends Token implements ConfigurableComponentI /*, RevenueStaticModifier */ {
+
+    protected static Logger log =
+        Logger.getLogger(NamedTrainToken.class.getPackage().getName());
 
     private String name;
     private String longName;
@@ -50,6 +60,10 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI {
         if (hexesString != null) {
             hexes = gameManager.getMapManager().parseLocations(hexesString);
         }
+        
+        // add them to the call list of the RevenueManager
+//        GameManager.getInstance().getRevenueManager().addStaticModifier(this);
+        
     }
 
     public String getName() {
@@ -72,5 +86,24 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI {
     public List<MapHex> getHexesToPass() {
         return hexes;
     }
+
+//    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+//
+//        // 1. check if holder is a NameableTrain
+//        if (!(this.holder instanceof NameableTrain)) return;
+//        NameableTrain train = (NameableTrain)this.holder;
+//        
+//        // 2. check if operating company is owner of the train
+//        if (train.getOwner() == revenueAdapter.getCompany()) {
+//            // 2. define revenue bonus
+//            RevenueBonus bonus = new RevenueBonus(value, name);
+//            bonus.addTrain(train);
+//            for (NetworkVertex vertex:NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), hexes)) {
+//                if (!vertex.isStation()) continue;
+//                bonus.addVertex(vertex);
+//            }
+//            revenueAdapter.addRevenueBonus(bonus);
+//        }
+//    }
 
 }

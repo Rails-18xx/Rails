@@ -16,18 +16,18 @@ public final class NetworkTrain {
     private final int multiplyMajors;
     private final int multiplyMinors;
     private final String trainName;
-    private final TrainTypeI railsTrainType;
+    private final TrainI railsTrain;
+    
     
     NetworkTrain(int majors, int minors, boolean ignoreMinors,
-            int multiplyMajors, int multiplyMinors, String trainName,
-            TrainTypeI trainType) {
+            int multiplyMajors, int multiplyMinors, String trainName, TrainI train) {
         this.majors = majors;
         this.minors = minors;
         this.ignoreMinors = ignoreMinors;
         this.multiplyMajors = multiplyMajors;
         this.multiplyMinors = multiplyMinors;
         this.trainName = trainName;
-        this.railsTrainType = trainType;
+        this.railsTrain = train;
         log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
     }
 
@@ -44,13 +44,12 @@ public final class NetworkTrain {
             ignoreMinors = true;
         }
         String trainName = railsTrain.getName();
-        TrainTypeI trainType = railsTrain.getType();
 
         if (majors == -1) {
             return null;// protection against pullman
         } else {
             return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
-                trainName, trainType); 
+                trainName, railsTrain); 
         }
     }
     
@@ -115,9 +114,14 @@ public final class NetworkTrain {
         return ignoreMinors;
     }
     
-    TrainTypeI getRailsTrainType() {
-        return railsTrainType;
+    public TrainI getRailsTrain() {
+        return railsTrain;
     }
+    
+    public TrainTypeI getRailsTrainType() {
+        return railsTrain.getType();
+    }
+    
 
     public String attributes() {
        StringBuffer attributes = new StringBuffer();
