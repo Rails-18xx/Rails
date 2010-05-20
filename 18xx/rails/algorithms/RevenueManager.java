@@ -29,9 +29,11 @@ public final class RevenueManager implements ConfigurableComponentI {
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
     private Set<RevenueStaticModifier> staticModifiers;
+    private Set<RevenueDynamicModifier> dynamicModifiers;
 
     public RevenueManager() {
         staticModifiers = new HashSet<RevenueStaticModifier>(); 
+        dynamicModifiers = new HashSet<RevenueDynamicModifier>(); 
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -60,6 +62,31 @@ public final class RevenueManager implements ConfigurableComponentI {
                 log.info("Added modifier " + className);
             }
         }
+
+        // define dynamic modifiers
+        modifierTags = tag.getChildren("DynamicModifier");
+        
+        if (modifierTags != null) {
+            for (Tag modifierTag:modifierTags) {
+                // get classname
+                String className = modifierTag.getAttributeAsString("class");
+                if (className == null) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "ComponentHasNoClass", "DynamicModifier"));
+                }
+                // create modifier
+                RevenueDynamicModifier modifier;
+                try {
+                    modifier = (RevenueDynamicModifier) Class.forName(className).newInstance();
+                } catch (Exception e) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "ClassCannotBeInstantiated", className), e);
+                }
+                // add them to the revenueManager
+                dynamicModifiers.add(modifier);
+                log.info("Added modifier " + className);
+            }
+        }
     }
 
     public void finishConfiguration(GameManagerI parent)
@@ -73,14 +100,40 @@ public final class RevenueManager implements ConfigurableComponentI {
     
     public void addStaticModifier(RevenueStaticModifier modifier) {
         staticModifiers.add(modifier);
-        log.info("Added modifier " + modifier);
+        log.info("Revenue Manager: Added modifier " + modifier);
+    }
+    
+    public boolean removeStaticModifier(RevenueStaticModifier modifier) {
+        boolean result = staticModifiers.remove(modifier);
+        if (result) {
+            log.info("RevenueManager: Removed modifier " + modifier);
+        } else {
+            log.info("RevenueManager: Cannot remove" + modifier);
+        }
+        return result;
+    }
+
+    Set<RevenueStaticModifier> getStaticModifiers() {
+        return staticModifiers;
+    }
+
+    Set<RevenueDynamicModifier> getDynamicModifiers() {
+        return dynamicModifiers;
     }
     
     void callStaticModifiers(RevenueAdapter revenueAdapter) {
         for (RevenueStaticModifier modifier:staticModifiers) {
             modifier.modifyCalculator(revenueAdapter);
         }
-        
+    }
+
+    Set<RevenueDynamicModifier> callDynamicModifiers(RevenueAdapter revenueAdapter) {
+        Set<RevenueDynamicModifier> activeModifiers = new HashSet<RevenueDynamicModifier>();
+        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+            if (modifier.prepareModifier(revenueAdapter))
+                activeModifiers.add(modifier);
+        }
+        return activeModifiers;
     }
 
 }

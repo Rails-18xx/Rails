@@ -297,6 +297,17 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
     }
 
+    /**
+     * Returns the maximum positive value (lower bound zero)
+     */
+    public static int maxVertexValue(Collection<NetworkVertex> vertices) {
+        int maximum = 0;
+        for (NetworkVertex vertex:vertices) {
+            maximum = Math.max(maximum, vertex.getValue());
+        }
+        return maximum;
+    }
+    
     public static void initAllRailsVertices(Collection<NetworkVertex> vertices, 
             PublicCompanyI company,  PhaseI phase) {
         for (NetworkVertex v:vertices) {

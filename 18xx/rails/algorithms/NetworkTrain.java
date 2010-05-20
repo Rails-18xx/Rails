@@ -45,12 +45,8 @@ public final class NetworkTrain {
         }
         String trainName = railsTrain.getName();
 
-        if (majors == -1) {
-            return null;// protection against pullman
-        } else {
-            return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
+        return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 trainName, railsTrain); 
-        }
     }
     
     static NetworkTrain createFromString(String trainString) {
