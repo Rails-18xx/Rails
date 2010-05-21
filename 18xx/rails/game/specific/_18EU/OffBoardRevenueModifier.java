@@ -10,27 +10,14 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueAdapter.VertexVisit;
-import rails.game.ConfigurableComponentI;
-import rails.game.ConfigurationException;
-import rails.game.GameManagerI;
 import rails.game.PhaseI;
 import rails.game.Station;
-import rails.util.Tag;
 
-public class OffBoardRevenueModifier implements RevenueStaticModifier, ConfigurableComponentI {
+public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
     protected static Logger log =
         Logger.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
     
-
-    public void configureFromXML(Tag tag) throws ConfigurationException {
-        // does nothing
-    }
-
-    public void finishConfiguration(GameManagerI parent)
-            throws ConfigurationException {
-        // does nothing
-    }
 
     public void modifyCalculator(RevenueAdapter revenueAdapter) {
         
