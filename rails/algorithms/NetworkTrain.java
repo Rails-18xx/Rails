@@ -115,6 +115,8 @@ public final class NetworkTrain {
     }
     
     public TrainTypeI getRailsTrainType() {
+        if (railsTrain == null) return null;
+        
         return railsTrain.getType();
     }
     

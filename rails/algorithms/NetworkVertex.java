@@ -246,10 +246,16 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         
         // define locationName
+        cityName = null;
         if (station.getType().equals(Station.OFF_MAP_AREA)) {
-            cityName = hex.getCityName();
+            if (hex.getCityName() != null && !hex.getCityName().equals("")) {
+                cityName = hex.getCityName();
+            }
         } else {
-            cityName = station.getCityName();
+            if (hex.getCityName() != null && !hex.getCityName().equals("")
+                    && station.getCityName() != null && !station.getCityName().equals("")) {
+                cityName = hex.getCityName() + "." + station.getCityName();
+            }
         }
     }
     
