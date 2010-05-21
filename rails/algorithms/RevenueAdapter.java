@@ -256,7 +256,7 @@ public final class RevenueAdapter implements Runnable {
         if (gameManager.getRevenueManager() != null) {
             dynamicModifiers = gameManager.getRevenueManager().callDynamicModifiers(this);
         } else {
-            dynamicModifiers = null;
+            dynamicModifiers = new HashSet<RevenueDynamicModifier>();
         }
         
         // optimize graph (optimizeGraph clones the graph)
@@ -410,7 +410,7 @@ public final class RevenueAdapter implements Runnable {
         }
         
         // activate dynamic modifiers
-        rc.setDynamicModifiers(dynamicModifiers != null);
+        rc.setDynamicModifiers(!dynamicModifiers.isEmpty());
     }
 
     public int getVertexValue(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {
