@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.65 2010/05/20 23:13:21 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.66 2010/05/22 18:42:26 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -590,11 +590,11 @@ implements ActionListener, KeyListener, RevenueListener {
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
         MapManager mapManager = gm.getMapManager();
         
-        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
-        nwGraph.generateGraph(mapManager.getHexesAsList());
-        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
-        
         if (companyName.equals("All")) {
+            NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
+            nwGraph.generateGraph(mapManager.getHexesAsList());
+            SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
+            
             NetworkGraphBuilder.visualize(mapGraph, "Map Network");
             mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
@@ -605,8 +605,7 @@ implements ActionListener, KeyListener, RevenueListener {
             boolean anotherTrain = true;
             RevenueAdapter ra = null;
             while (anotherTrain) {
-                ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
-                ra.populateFromRails();
+                ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
                 for (String addTrain:addTrainList) {
                     ra.addTrainByString(addTrain);
                 }
@@ -784,17 +783,10 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
-
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
-        MapManager mapManager = gm.getMapManager();
-
-        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
-        nwGraph.generateGraph(mapManager.getHexesAsList());
-        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, gm.getCurrentPhase());
-        ra.populateFromRails();
+        RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
         ra.initRevenueCalculator();
         ra.addRevenueListener(this);
-
         return ra;
     }
     

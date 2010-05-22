@@ -98,7 +98,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     log.error("Track " + track + " on hex " + hex + "has identical start/end");
                 } else {
                     mapGraph.addEdge(startVertex, endVertex, edge);
-                    log.info("Added edge " + edge.getConnection());
+                    log.info("Added non-greedy edge " + edge.getConnection());
                 }
             }
 
@@ -142,7 +142,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkEdge edge =  new NetworkEdge(vertex, otherVertex, true);
                 mapGraph.addEdge(vertex, otherVertex, 
                         edge);
-                log.info("Added edge " + edge.getConnection());
+                log.info("Added greedy edge " + edge.getConnection());
             }
         }
     }        
@@ -285,6 +285,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
             if ((source.isSide() && graph.edgesOf(source).size() == 2 || source.isStation()) &&
                     target.isSide() && graph.edgesOf(target).size() == 2 || target.isStation()) {
                 edge.setGreedy(true);
+                log.info("Increased greedness for " + edge.getConnection());
             }
         }
       
@@ -301,8 +302,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         for (NetworkVertex vertex:graph.vertexSet()) {
             Set<NetworkEdge> vertexEdges = graph.edgesOf(vertex);
             
-            // remove singletons
+            // remove hermit
             if (vertexEdges.size() == 0) {
+                log.info("Remove hermit (no connection) = "  + vertex);
                 graph.removeVertex(vertex);
                 removed = true;
                 break;
@@ -312,6 +314,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
             if (!vertex.isSide()) continue;
 
             if (vertexEdges.size() == 1) { 
+                log.info("Remove deadend side (single connection) = "  + vertex);
                 graph.removeVertex(vertex);
                 removed = true;
                 break;
@@ -320,6 +323,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
                 if (edges[0].isGreedy() == edges[1].isGreedy()) {
                     if (!edges[0].isGreedy()) {
+                        log.info("Remove deadend side (no greedy connection) = "  + vertex);
                         // two non greedy edges indicate a deadend
                         graph.removeVertex(vertex);
                         removed = true;
