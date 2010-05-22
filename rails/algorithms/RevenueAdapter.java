@@ -18,6 +18,7 @@ import org.jgrapht.graph.SimpleGraph;
 
 import rails.game.GameManagerI;
 import rails.game.MapHex;
+import rails.game.MapManager;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.TrainI;
@@ -78,6 +79,16 @@ public final class RevenueAdapter implements Runnable {
         this.revenueBonuses = new ArrayList<RevenueBonus>();
         this.protectedVertices = new HashSet<NetworkVertex>();
     }
+    
+    public static RevenueAdapter createRevenueAdapter(GameManagerI gm, PublicCompanyI company, PhaseI phase) {
+        MapManager mapManager = gm.getMapManager();
+        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
+        nwGraph.generateGraph(mapManager.getHexesAsList());
+        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, phase);
+        ra.populateFromRails();
+        return ra;
+    }
+    
     
     public PublicCompanyI getCompany() {
         return company;
