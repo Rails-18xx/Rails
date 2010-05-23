@@ -393,6 +393,19 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return hexVertices;
     }
     
+    /**
+     * Returns all vertices for a specified hex
+     */
+    public static Set<NetworkVertex> getVerticesByHex(Collection<NetworkVertex> vertices, MapHex hex) {
+        Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
+        for (NetworkVertex vertex:vertices) {
+            if (vertex.getHex() != null && hex == vertex.getHex()) {
+                hexVertices.add(vertex);
+            }
+        }
+        return hexVertices;
+    }
+    
     public static NetworkVertex getVertexByIdentifier(Collection<NetworkVertex> vertices, String identifier) {
         for (NetworkVertex vertex:vertices) {
             if (vertex.getIdentifier().equals(identifier)) {
