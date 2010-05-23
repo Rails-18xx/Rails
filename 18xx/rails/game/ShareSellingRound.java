@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.32 2010/05/18 22:07:18 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ShareSellingRound.java,v 1.33 2010/05/23 08:18:24 evos Exp $
  *
  * Created on 21-May-2006
  * Change Log:
@@ -22,6 +22,8 @@ public class ShareSellingRound extends StockRound {
     Player sellingPlayer;
     IntegerState cashToRaise;
     PublicCompanyI unsellableCompany = null;
+    
+    private List<SellShares> sellableShares;
 
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
@@ -53,7 +55,7 @@ public class ShareSellingRound extends StockRound {
         this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
         this.unsellableCompany = unsellableCompany;
         setCurrentPlayerIndex(sellingPlayer.getIndex());
-        setPossibleActions();
+        getSellableShares();
     }
 
     @Override
@@ -73,14 +75,6 @@ public class ShareSellingRound extends StockRound {
 
         setSellableShares();
 
-        if (possibleActions.isEmpty() && cashToRaise.intValue() > 0) {
-            DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
-                    Bank.format(cashToRaise.intValue())));
-
-            gameManager.registerBankruptcy();
-            if (gameManager.isGameOver()) return false;
-        }
-
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(currentPlayer.getName() + " may: " + pa.toString());
         }
@@ -88,14 +82,19 @@ public class ShareSellingRound extends StockRound {
         return true;
     }
 
-    /**
-     * Create a list of certificates that a player may sell in a Stock Round,
-     * taking all rules taken into account.
-     *
-     * @return List of sellable certificates.
-     */
     @Override
     public void setSellableShares() {
+        possibleActions.addAll(sellableShares);
+    }
+    
+    /**
+     * Create a list of certificates that a player may sell in an emergency 
+     * share selling round, taking all rules taken into account.
+     */
+    private List<SellShares> getSellableShares () {
+        
+        sellableShares = new ArrayList<SellShares> ();
+        
         String compName;
         int price;
         int number;
@@ -191,11 +190,12 @@ public class ShareSellingRound extends StockRound {
                     number--;
 
                 if (number > 0) {
-                    possibleActions.add(new SellShares(compName, i, number,
+                    sellableShares.add(new SellShares(compName, i, number,
                             price));
                 }
             }
         }
+        return sellableShares;
     }
 
     @Override
@@ -379,6 +379,11 @@ public class ShareSellingRound extends StockRound {
 
         if (cashToRaise.intValue() <= 0) {
             gameManager.finishShareSellingRound();
+        } else if (getSellableShares().isEmpty()) {
+            DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
+                    Bank.format(cashToRaise.intValue())));
+
+            gameManager.registerBankruptcy();
         }
 
         return true;

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.132 2010/05/18 22:07:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.133 2010/05/23 08:18:24 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -1468,14 +1468,16 @@ public class OperatingRound extends Round implements Observer {
 
     protected void finishTurn() {
 
-        operatingCompany.setOperated();
-        companiesOperatedThisRound.add(operatingCompany);
-
-        // Check if any privates must be closed (now only applies to 1856 W&SR)
-        // Copy list first to avoid concurrent modifications
-        for (PrivateCompanyI priv : 
-                new ArrayList<PrivateCompanyI> (operatingCompany.getPortfolio().getPrivateCompanies())) {
-            priv.checkClosingIfExercised(true);
+        if (!operatingCompany.isClosed()) {
+            operatingCompany.setOperated();
+            companiesOperatedThisRound.add(operatingCompany);
+    
+            // Check if any privates must be closed (now only applies to 1856 W&SR)
+            // Copy list first to avoid concurrent modifications
+            for (PrivateCompanyI priv : 
+                    new ArrayList<PrivateCompanyI> (operatingCompany.getPortfolio().getPrivateCompanies())) {
+                priv.checkClosingIfExercised(true);
+            }
         }
 
         if (!finishTurnSpecials()) return;
