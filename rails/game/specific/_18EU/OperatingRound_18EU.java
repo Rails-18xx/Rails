@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.15 2010/05/15 16:36:09 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.16 2010/05/23 08:18:24 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.*;
@@ -126,7 +126,7 @@ public class OperatingRound_18EU extends OperatingRound {
             List<PublicCompanyI> companies;
             // Sort out which players preside over wich companies.
             for (PublicCompanyI c : operatingCompanies) {
-                if (c == operatingCompany) continue;
+                if (c == operatingCompany || c.isClosed()) continue;
                 p = c.getPresident();
                 index = p.getIndex();
                 companiesPerPlayer.get(index).add(c);
@@ -234,6 +234,16 @@ public class OperatingRound_18EU extends OperatingRound {
     
     private boolean hasPullmann () {
         return operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null;
+    }
+
+    @Override
+    public void resume() {
+        if (getCurrentPlayer().isBankrupt()) {
+            // Do not complete the train buying action
+            savedAction = null;
+            finishTurn();
+        }
+        super.resume();
     }
 
 }
