@@ -28,18 +28,23 @@ public final class RevenueManager implements ConfigurableComponentI {
     protected static Logger log =
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
-    private Set<RevenueStaticModifier> staticModifiers;
-    private Set<RevenueDynamicModifier> dynamicModifiers;
+    
+    private final Set<NetworkGraphModifier> graphModifiers;
+    private final Set<RevenueStaticModifier> staticModifiers;
+    private final Set<RevenueDynamicModifier> dynamicModifiers;
+    private final Set<ConfigurableComponentI> configurableModifiers;
 
     public RevenueManager() {
+        graphModifiers = new HashSet<NetworkGraphModifier>(); 
         staticModifiers = new HashSet<RevenueStaticModifier>(); 
-        dynamicModifiers = new HashSet<RevenueDynamicModifier>(); 
+        dynamicModifiers = new HashSet<RevenueDynamicModifier>();
+        configurableModifiers = new HashSet<ConfigurableComponentI>();
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
-        // define static modifiers
-        List<Tag> modifierTags = tag.getChildren("StaticModifier");
+        // define modifiers
+        List<Tag> modifierTags = tag.getChildren("Modifier");
         
         if (modifierTags != null) {
             for (Tag modifierTag:modifierTags) {
@@ -47,78 +52,101 @@ public final class RevenueManager implements ConfigurableComponentI {
                 String className = modifierTag.getAttributeAsString("class");
                 if (className == null) {
                     throw new ConfigurationException(LocalText.getText(
-                            "ComponentHasNoClass", "StaticModifier"));
+                            "ComponentHasNoClass", "Modifier"));
                 }
                 // create modifier
-                RevenueStaticModifier modifier;
+                Object modifier;
                 try {
                     modifier = (RevenueStaticModifier) Class.forName(className).newInstance();
                 } catch (Exception e) {
                     throw new ConfigurationException(LocalText.getText(
                             "ClassCannotBeInstantiated", className), e);
                 }
+                boolean isModifier = false;
                 // add them to the revenueManager
-                staticModifiers.add(modifier);
-                log.info("Added modifier " + className);
+                if (modifier instanceof NetworkGraphModifier) {
+                    graphModifiers.add((NetworkGraphModifier)modifier);
+                    isModifier = true;
+                    log.info("Added as graph modifier = " + className);
+                }
+                if (modifier instanceof RevenueStaticModifier) {
+                    staticModifiers.add((RevenueStaticModifier)modifier);
+                    isModifier = true;
+                    log.info("Added as static modifier = " + className);
+                }
+                if (modifier instanceof RevenueDynamicModifier) {
+                    dynamicModifiers.add((RevenueDynamicModifier)modifier);
+                    isModifier = true;
+                    log.info("Added as dynamic modifier = " + className);
+                }
+                if (!isModifier) {
+                    throw new ConfigurationException(LocalText.getText(
+                            "ClassIsNotAModifier", className));
+                }
+                if (isModifier && modifier instanceof ConfigurableComponentI) {
+                    configurableModifiers.add((ConfigurableComponentI)modifier);
+                }
             }
         }
 
-        // define dynamic modifiers
-        modifierTags = tag.getChildren("DynamicModifier");
-        
-        if (modifierTags != null) {
-            for (Tag modifierTag:modifierTags) {
-                // get classname
-                String className = modifierTag.getAttributeAsString("class");
-                if (className == null) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "ComponentHasNoClass", "DynamicModifier"));
-                }
-                // create modifier
-                RevenueDynamicModifier modifier;
-                try {
-                    modifier = (RevenueDynamicModifier) Class.forName(className).newInstance();
-                } catch (Exception e) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "ClassCannotBeInstantiated", className), e);
-                }
-                // add them to the revenueManager
-                dynamicModifiers.add(modifier);
-                log.info("Added modifier " + className);
-            }
-        }
     }
 
     public void finishConfiguration(GameManagerI parent)
             throws ConfigurationException {
-        for (RevenueStaticModifier modifier:staticModifiers) {
-            if (modifier instanceof ConfigurableComponentI) {
-                ((ConfigurableComponentI)modifier).finishConfiguration(parent);
-            }
+        for (ConfigurableComponentI modifier:configurableModifiers) {
+                modifier.finishConfiguration(parent);
         }
     }
     
     public void addStaticModifier(RevenueStaticModifier modifier) {
         staticModifiers.add(modifier);
-        log.info("Revenue Manager: Added modifier " + modifier);
+        log.info("Revenue Manager: Added static modifier " + modifier);
     }
     
     public boolean removeStaticModifier(RevenueStaticModifier modifier) {
         boolean result = staticModifiers.remove(modifier);
         if (result) {
-            log.info("RevenueManager: Removed modifier " + modifier);
+            log.info("RevenueManager: Removed static modifier " + modifier);
         } else {
             log.info("RevenueManager: Cannot remove" + modifier);
         }
         return result;
     }
 
-    Set<RevenueStaticModifier> getStaticModifiers() {
-        return staticModifiers;
+    public void addGraphModifier(NetworkGraphModifier modifier) {
+        graphModifiers.add(modifier);
+        log.info("Revenue Manager: Added graph modifier " + modifier);
+    }
+    
+    public boolean removeGraphModifier(NetworkGraphModifier modifier) {
+        boolean result = graphModifiers.remove(modifier);
+        if (result) {
+            log.info("RevenueManager: Removed graph modifier " + modifier);
+        } else {
+            log.info("RevenueManager: Cannot remove" + modifier);
+        }
+        return result;
     }
 
-    Set<RevenueDynamicModifier> getDynamicModifiers() {
-        return dynamicModifiers;
+    public void addDynamicModifier(RevenueDynamicModifier modifier) {
+        dynamicModifiers.add(modifier);
+        log.info("Revenue Manager: Added dynamic modifier " + modifier);
+    }
+    
+    public boolean removeDynamicModifier(RevenueDynamicModifier modifier) {
+        boolean result = dynamicModifiers.remove(modifier);
+        if (result) {
+            log.info("RevenueManager: Removed dynamic modifier " + modifier);
+        } else {
+            log.info("RevenueManager: Cannot remove" + modifier);
+        }
+        return result;
+    }
+
+    void callGraphModifiers(NetworkGraphBuilder graphBuilder) {
+        for (NetworkGraphModifier modifier:graphModifiers) {
+            modifier.modifyGraph(graphBuilder);
+        }
     }
     
     void callStaticModifiers(RevenueAdapter revenueAdapter) {
