@@ -154,7 +154,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         }
         
         // add graph modifiers
-        revenueManager.callGraphModifiers(this);
+        if (revenueManager != null) {
+            revenueManager.callGraphModifiers(this);
+        }
     }        
 
     
