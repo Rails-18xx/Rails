@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.7 2010/05/24 11:20:42 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.8 2010/05/24 11:42:35 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -133,13 +133,15 @@ implements ActionListener, KeyListener {
         private ModelObject modelObject;
         private int rowIndex;
         private boolean lastValue;
+        private boolean reverseValue;
 
-        public RowVisibility (GridPanel parent, int rowIndex, ModelObject model) {
+        public RowVisibility (GridPanel parent, int rowIndex, ModelObject model, boolean reverseValue) {
             this.parent = parent;
             this.modelObject = model;
             this.rowIndex = rowIndex;
+            this.reverseValue = reverseValue;
             modelObject.addObserver(this);
-            lastValue = ((BooleanState)modelObject).booleanValue();
+            lastValue = ((BooleanState)modelObject).booleanValue() != reverseValue;
         }
 
         public boolean lastValue () {

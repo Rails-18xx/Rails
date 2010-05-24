@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.68 2010/05/24 11:20:42 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.69 2010/05/24 11:42:35 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -393,7 +393,7 @@ implements ActionListener, KeyListener, RevenueListener {
         for (int i = 0; i < nc; i++) {
             c = companies[i];
             rowVisibilityObservers[i]
-                    = new RowVisibility (this, leftCompNameYOffset + i, c.getInGameModel());
+                    = new RowVisibility (this, leftCompNameYOffset + i, c.getInGameModel(), true);
             observers.add(rowVisibilityObservers[i]);
 
             boolean visible = !c.isClosed();

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.97 2010/05/24 11:20:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.98 2010/05/24 11:42:35 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -1024,6 +1024,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     
     public ModelObject getInGameModel () {
         return inGameState;
+    }
+
+    public ModelObject getIsClosedModel () {
+        return closedObject;
     }
 
     /**
