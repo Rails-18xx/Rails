@@ -29,11 +29,15 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         // 2. combine those to revenueBonuses
         // always two offboard areas and one other
         Set<NetworkVertex> destOffBoard = new HashSet<NetworkVertex>(offBoard);
+        RevenueBonus bonus;
         for (NetworkVertex offA:offBoard) {
             destOffBoard.remove(offA);
             for (NetworkVertex offB:destOffBoard) {
+                bonus = new RevenueBonus(2*BONUS_VALUE, "OFFBOARD");
+                bonus.addVertex(offA); bonus.addVertex(offB);;
+                revenueAdapter.addRevenueBonus(bonus);
                 for (NetworkVertex station:otherStations) {
-                    RevenueBonus bonus = new RevenueBonus(BONUS_VALUE, "OB/" + station.toString());
+                    bonus = new RevenueBonus(BONUS_VALUE, "OFFBOARD");
                     bonus.addVertex(offA); bonus.addVertex(offB); bonus.addVertex(station);
                     revenueAdapter.addRevenueBonus(bonus);
                 }

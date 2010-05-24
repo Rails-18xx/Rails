@@ -124,9 +124,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     private SimpleGraph<NetworkVertex, NetworkEdge> getCompanyGraph(){
-        MapManager mapManager = gameUIManager.getGameManager().getMapManager();
-        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
-        nwGraph.generateGraph(mapManager.getHexesAsList());
+        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.createMapGraph(gameUIManager.getGameManager());
         SimpleGraph<NetworkVertex, NetworkEdge> graph =
             nwGraph.getRailRoadGraph(orComp, true);
         return graph;

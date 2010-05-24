@@ -2,6 +2,7 @@ package rails.game.specific._1851;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.NetworkEdge;
@@ -14,6 +15,9 @@ import rails.game.MapHex;
 
 public class BirminghamTileModifier implements NetworkGraphModifier {
 
+    protected static Logger log =
+        Logger.getLogger(BirminghamTileModifier.class.getPackage().getName());
+
     public void modifyGraph(NetworkGraphBuilder graphBuilder) {
         
         GameManagerI gm = GameManager.getInstance();
@@ -22,7 +26,11 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
         // but not on other things (like phases)
-        if (gm.getCurrentPhase().getIndex() >= 2 ) return;
+        int phaseIndex = gm.getCurrentPhase().getIndex(); 
+        if (phaseIndex >= 2 ) {
+            log.debug("Birmingham active, index of phase = " + phaseIndex);
+            return;
+        }
         
         // 2. retrieve Birmingham vertices ...
         MapHex birmingHex = gm.getMapManager().getHex("J12");
@@ -30,6 +38,7 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(birmingVertices);
+        log.debug("Birmingham inactive, index of phase = " + phaseIndex);
         
     }
 

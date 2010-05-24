@@ -4,6 +4,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -120,14 +121,18 @@ public class RevenueTrainRun {
         }
         
         // check revenueBonuses (complex)
+        List<RevenueBonus> activeBonuses = new ArrayList<RevenueBonus>();
         for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
             if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
-                runPrettyPrint.append(" + ");
-                runPrettyPrint.append(bonus.getName() + "(" + bonus.getValue() + ")");
-                multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+                activeBonuses.add(bonus);
             }
         }
-
+        Map<String,Integer> printBonuses = RevenueBonus.combineBonuses(activeBonuses);
+        for (String bonusName:printBonuses.keySet()) {
+            runPrettyPrint.append(" + ");
+            runPrettyPrint.append(bonusName + "(" + printBonuses.get(bonusName) + ")");
+            multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+        }
         runPrettyPrint.append("\n");
 
         return runPrettyPrint.toString(); 
