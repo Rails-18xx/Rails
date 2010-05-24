@@ -3,12 +3,17 @@ package rails.algorithms;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import rails.algorithms.NetworkVertex.StationType;
+import rails.algorithms.NetworkVertex.VertexType;
 import rails.ui.swing.hexmap.HexMap;
+import rails.util.LocalText;
 
 /**
  * Links the results from the revenue calculator to the rails program
@@ -19,6 +24,7 @@ import rails.ui.swing.hexmap.HexMap;
 public class RevenueTrainRun {
 
     private static final int PRETTY_PRINT_LENGTH = 100;
+    private static final int PRETTY_PRINT_INDENT = 10;
     
     protected static Logger log =
         Logger.getLogger(RevenueTrainRun.class.getPackage().getName());
@@ -36,8 +42,12 @@ public class RevenueTrainRun {
         vertices = new ArrayList<NetworkVertex>();
     }
     
-    public List<NetworkVertex> getVertices() {
+    public List<NetworkVertex> getRunVertices() {
         return vertices;
+    }
+    
+    public Set<NetworkVertex> getUniqueVertices() {
+        return new HashSet<NetworkVertex>(vertices);
     }
     
     public NetworkTrain getTrain() {
@@ -60,6 +70,16 @@ public class RevenueTrainRun {
         }
         return value;
     }
+    
+    boolean hasButtomRun() {
+        boolean buttomRun = false;
+        NetworkVertex startVertex = null; 
+        for (NetworkVertex vertex:vertices) {
+            if (startVertex == vertex) buttomRun = true;
+            if (startVertex == null) startVertex = vertex;
+        }
+        return buttomRun;
+    }
 
     void addVertex(NetworkVertex vertex)  {
         vertices.add(vertex);
@@ -74,10 +94,11 @@ public class RevenueTrainRun {
     }
     
     private int prettyPrintNewLine(StringBuffer runPrettyPrint, int multiple, int initLength) {
-        if (runPrettyPrint.length() / PRETTY_PRINT_LENGTH != multiple) {
-            multiple = runPrettyPrint.length() / PRETTY_PRINT_LENGTH;
+        int length = runPrettyPrint.length() - initLength;
+        if (length / PRETTY_PRINT_LENGTH != multiple) {
+            multiple = length / PRETTY_PRINT_LENGTH;
             runPrettyPrint.append("\n");
-            for (int i=0; i < initLength; i++)
+            for (int i=0; i < PRETTY_PRINT_INDENT; i++)
                 runPrettyPrint.append(" ") ;
         }
         return multiple;
@@ -85,9 +106,20 @@ public class RevenueTrainRun {
     
     String prettyPrint() {
         StringBuffer runPrettyPrint = new StringBuffer();
-        runPrettyPrint.append("Train " + train + ": " + getRunValue() + " -> ");
+        runPrettyPrint.append(LocalText.getText("N_Train", train.toString()));
+        runPrettyPrint.append(": " + getRunValue());
+        
+        Set<NetworkVertex> uniqueVertices = getUniqueVertices();
+        int majors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MAJOR);
+        int minors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MINOR);
+        if (train.ignoresMinors()) {
+            runPrettyPrint.append(LocalText.getText("RevenueStationsIgnoreMinors", majors));
+        } else {
+            runPrettyPrint.append(LocalText.getText("RevenueStations", majors, minors));
+        }
+
         int initLength = runPrettyPrint.length();
-        int multiple = runPrettyPrint.length() / PRETTY_PRINT_LENGTH;
+        int multiple = prettyPrintNewLine(runPrettyPrint, -1, initLength);
         String currentHexName = null;
         NetworkVertex startVertex = null;
         for (NetworkVertex vertex:vertices) {

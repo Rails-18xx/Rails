@@ -8,6 +8,7 @@ import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueTrainRun;
+import rails.util.LocalText;
 
 public class PullmanRevenueModifier implements RevenueDynamicModifier {
 
@@ -38,7 +39,7 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
     private int pullmanValue(List<RevenueTrainRun> trainRuns) {
         int maximum = 0;
         for (RevenueTrainRun trainRun:trainRuns) {
-            maximum = Math.max(maximum, maximumMajorValue(trainRun.getVertices()));
+            maximum = Math.max(maximum, maximumMajorValue(trainRun.getRunVertices()));
             if (maximum == maxValue) break; 
         }
         return maximum; 
@@ -49,7 +50,7 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
     }
 
     public String prettyPrint(RevenueAdapter revenueAdapter) {
-        return "Pullman: " + pullmanValue(revenueAdapter.getOptimalRun());
+        return LocalText.getText("Pullman") + ": " + pullmanValue(revenueAdapter.getOptimalRun());
     }
 
     private int maximumMajorValue(Collection<NetworkVertex> vertices) {
