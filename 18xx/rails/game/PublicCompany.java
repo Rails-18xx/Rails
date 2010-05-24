@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.96 2010/05/07 20:03:49 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.97 2010/05/24 11:20:42 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -117,6 +117,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Are company shares buyable (i.e. before started)? */
     protected BooleanState buyable = null;
+    
+    /** In-game state.
+     * <p> Will only be set false if the company is closed and cannot ever be reopened. 
+     * By default it will be set false if a company is closed. */
+    protected BooleanState inGameState = null;
 
     /**
      * A map per tile colour. Each entry contains a map per phase, of which each
@@ -156,6 +161,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected boolean canUseSpecialProperties = false;
 
+    /** Can a company be restarted once it is closed? */
+    protected boolean canBeRestarted = false;
+    
     /**
      * Minimum price for buying privates, to be multiplied by the original price
      */
@@ -298,6 +306,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         certsAreInitiallyAvailable
                 = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
 
+        canBeRestarted = tag.getAttributeAsBoolean("restartable", canBeRestarted);
+
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
             shareUnit = new IntegerState (name+"_ShareUnit",
@@ -338,7 +348,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag canUseSpecTag = tag.getChild("CanUseSpecialProperties");
         if (canUseSpecTag != null) canUseSpecialProperties = true;
-
+        
         // Extra info text(usually related to extra-share special properties)
         Tag infoTag = tag.getChild("Info");
         if (infoTag != null) {
@@ -601,6 +611,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 	public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
+        inGameState = new BooleanState(name + "_InGame", true);
+
         this.portfolio = new Portfolio(name, this);
         treasury = new CashModel(this);
         lastRevenue = new MoneyModel(name + "_lastRevenue");
@@ -857,10 +869,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void start(StockSpaceI startSpace) {
 
         hasStarted.set(true);
-        buyable.set(true);
-        setParSpace(startSpace);
-        // The current price is set via the Stock Market
-        stockMarket.start(this, startSpace);
+        if (hasStockPrice) buyable.set(true);
+        
+        if (startSpace != null) {
+            setParSpace(startSpace);
+            //  The current price is set via the Stock Market
+            stockMarket.start(this, startSpace);
+        }
 
        if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
@@ -877,18 +892,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
-     * Start a company with a fixed par price.
+     * Start a company.
      */
     public void start() {
-        if (hasStockPrice) {
-            start (getStartSpace());
-        } else {
-            hasStarted.set(true);
-            buyable.set(true);
-            if (homeBaseTokensLayTime == WHEN_STARTED) {
-                layHomeBaseTokens();
-            }
-        }
+        start (getStartSpace());
     }
 
     public void transferAssetsFrom(PublicCompanyI otherCompany) {
@@ -923,6 +930,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void setFloated() {
 
         hasFloated.set(true);
+        // In case of a restart
+        if (hasOperated.booleanValue()) hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
         getPresident().getPortfolio().getShareModel(this).update();
@@ -969,12 +978,28 @@ public class PublicCompany extends Company implements PublicCompanyI {
     @Override
     public void setClosed() {
         super.setClosed();
-        Portfolio scrapHeap = bank.getScrapHeap();
+
+        Portfolio shareDestination;
+        // If applicable, prepare for a restart
+        if (canBeRestarted) {
+            if (certsAreInitiallyAvailable) {
+                shareDestination = bank.getIpo();
+            } else {
+                shareDestination = bank.getUnavailable();
+            }
+            reinitialise();
+        } else {
+            shareDestination = bank.getScrapHeap();
+            inGameState.set(false);
+        }
+        
+        // Dispose of the certificates
         for (PublicCertificateI cert : certificates) {
-            if (cert.getHolder() != scrapHeap) {
-                cert.moveTo(scrapHeap);
+            if (cert.getHolder() != shareDestination) {
+                cert.moveTo(shareDestination);
             }
         }
+        
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
         setLastRevenue(0);
         treasury.setOption(CashModel.SUPPRESS_ZERO);
@@ -984,9 +1009,21 @@ public class PublicCompany extends Company implements PublicCompanyI {
         stockMarket.close(this);
 
     }
-
-    public ModelObject getClosedModel () {
-        return closedObject;
+    
+    /** Reinitialise a company, i.e. close it and make the shares available for a new company start.
+     * IMplemented rules are now as in 18EU.
+     * TODO Will see later if this is generic enough.
+     *
+     */
+    protected void reinitialise () {
+        hasStarted.set(false);
+        hasFloated.set(false);
+        if (parPrice != null && fixedPrice <= 0) parPrice.setPrice(null);
+        if (currentPrice != null) currentPrice.setPrice(null);
+    }
+    
+    public ModelObject getInGameModel () {
+        return inGameState;
     }
 
     /**

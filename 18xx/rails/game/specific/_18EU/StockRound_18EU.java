@@ -110,6 +110,7 @@ public class StockRound_18EU extends StockRound {
             for (String compName : map.keySet()) {
                 certs = map.get(compName);
                 if (certs == null || certs.isEmpty()) continue;
+
                 /* Only the top certificate is buyable from the IPO */
                 cert = certs.get(0);
                 comp = cert.getCompany();
