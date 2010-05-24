@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.6 2010/04/02 20:03:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.7 2010/05/24 11:20:42 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -139,7 +139,7 @@ implements ActionListener, KeyListener {
             this.modelObject = model;
             this.rowIndex = rowIndex;
             modelObject.addObserver(this);
-            lastValue = !((BooleanState)modelObject).booleanValue();
+            lastValue = ((BooleanState)modelObject).booleanValue();
         }
 
         public boolean lastValue () {
@@ -155,7 +155,7 @@ implements ActionListener, KeyListener {
          * The closedObject model will send true if the company is closed. */
         public void update(Observable o1, Object o2) {
             if (o2 instanceof Boolean) {
-                lastValue = !(Boolean)o2;
+                lastValue = (Boolean)o2;
                 parent.setRowVisibility(rowIndex, lastValue);
             }
         }

@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.17 2010/03/23 18:44:38 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.18 2010/05/24 11:20:42 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
      */
     protected int certLimitCount = 2;
 
+    /** Closed state */
     protected BooleanState closedObject;
     
     // Moved here from PrivayeCOmpany on behalf of 1835
