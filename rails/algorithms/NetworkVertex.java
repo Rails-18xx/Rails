@@ -30,6 +30,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         SIDE,
         HQ,
     }
+    public static enum StationType {
+        MAJOR,
+        MINOR
+    }
 
     // vertex types and flag for virtual (thus not related to a rails object)
     private final VertexType type;
@@ -39,8 +43,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     private final String virtualId;
 
     // general vertex properties
-    private boolean major = false;
-    private boolean minor = false;
+    private StationType stationType;
     private int value = 0;
     private boolean sink = false;
     private String cityName = null;
@@ -106,7 +109,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
 
     void addToRevenueCalculator(RevenueCalculator rc, int vertexId) {
-        rc.setVertex(vertexId, major, minor, sink);
+        rc.setVertex(vertexId, isMajor(), isMinor(), sink);
     }
 
     public String getIdentifier(){
@@ -140,22 +143,20 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return type;
     }
     
-    
     public boolean isMajor(){
-        return major;
-    }
-
-    public NetworkVertex setMajor(boolean major) {
-        this.major = major;
-        return this;
+        return (stationType != null && stationType == StationType.MAJOR);
     }
     
     public boolean isMinor(){
-        return minor;
+        return (stationType != null && stationType == StationType.MINOR);
+    }
+    
+    public StationType getStationType() {
+        return stationType;
     }
 
-    public NetworkVertex setMinor(boolean minor) {
-        this.minor = minor;
+    public NetworkVertex setStationType(StationType stationType) {
+        this.stationType = stationType;
         return this;
     }
 
@@ -165,9 +166,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     
     public int getValueByTrain(NetworkTrain train) {
         int valueByTrain;
-        if (major) {
+        if (isMajor()) {
             valueByTrain = value * train.getMultiplyMajors();
-        } else if (minor) {
+        } else if (isMinor()) {
             if (train.ignoresMinors()) {
                 valueByTrain = 0;
             } else {
@@ -218,8 +219,11 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public int getSide(){
         return side;
     }
- 
-    
+
+    public boolean isOfType(VertexType vertexType, StationType stationType) {
+        return (type == vertexType && (!isStation() || getStationType() == stationType));
+    }
+       
     /** 
      * Initialize for rails vertexes
      */
@@ -231,10 +235,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         
         // check if it is a major or minor
         if (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA)) {
-            major = true;
+            setStationType(StationType.MAJOR);
         } else if (station.getType().equals(Station.TOWN) || station.getType().equals(Station.PORT)
                 || station.getType().equals(Station.HALT)) {
-            minor = true;
+            setStationType(StationType.MINOR);
         }
         
         // check if it is a sink 
@@ -303,6 +307,16 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
     }
 
+    public static void initAllRailsVertices(Collection<NetworkVertex> vertices, 
+            PublicCompanyI company,  PhaseI phase) {
+        for (NetworkVertex v:vertices) {
+            if (company != null)
+                v.initRailsVertex(company);
+            if (phase != null)
+                v.setRailsVertexValue(phase);
+        }
+    }
+
     /**
      * Returns the maximum positive value (lower bound zero)
      */
@@ -314,14 +328,17 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return maximum;
     }
     
-    public static void initAllRailsVertices(Collection<NetworkVertex> vertices, 
-            PublicCompanyI company,  PhaseI phase) {
-        for (NetworkVertex v:vertices) {
-            if (company != null)
-                v.initRailsVertex(company);
-            if (phase != null)
-                v.setRailsVertexValue(phase);
+    
+    /**
+     * Returns the number of specified vertex type in a vertex collection
+     * If station then specify station type
+     */
+    public static int numberOfVertexType(Collection<NetworkVertex> vertices, VertexType vertexType, StationType stationType) {
+        int number = 0;
+        for (NetworkVertex vertex:vertices) {
+            if (vertex.isOfType(vertexType, stationType)) number++;
         }
+        return number;
     }
     
     /**
@@ -332,8 +349,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // create new vertex
         NetworkVertex newVertex = NetworkVertex.getVirtualVertex(vertex.type, newIdentifier); 
         // copy values
-        newVertex.major = vertex.major;
-        newVertex.minor = vertex.minor;
+        newVertex.stationType = vertex.stationType;
         newVertex.value = vertex.value;
         newVertex.sink = vertex.sink;
         newVertex.cityName = vertex.cityName;
