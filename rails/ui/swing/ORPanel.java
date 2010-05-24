@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.66 2010/05/22 18:42:26 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.67 2010/05/24 07:49:26 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -591,8 +591,7 @@ implements ActionListener, KeyListener, RevenueListener {
         MapManager mapManager = gm.getMapManager();
         
         if (companyName.equals("All")) {
-            NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
-            nwGraph.generateGraph(mapManager.getHexesAsList());
+            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.createMapGraph(gm);
             SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
             
             NetworkGraphBuilder.visualize(mapGraph, "Map Network");

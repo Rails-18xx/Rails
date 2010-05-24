@@ -12,6 +12,7 @@ import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueAdapter.VertexVisit;
 import rails.game.PhaseI;
 import rails.game.Station;
+import rails.game.Tile;
 
 public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
@@ -24,11 +25,11 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         // 1. define value
         PhaseI phase = revenueAdapter.getPhase();
         int bonusValue;
-        if (phase.isTileColourAllowed("gray")) {
+        if (phase.isTileColourAllowed(Tile.GREY_COLOUR_NAME)) {
             bonusValue = 30;
-        } else if (phase.isTileColourAllowed("brown")) {
+        } else if (phase.isTileColourAllowed(Tile.BROWN_COLOUR_NAME)) {
             bonusValue = 20;
-        } else if (phase.isTileColourAllowed("green")) {
+        } else if (phase.isTileColourAllowed(Tile.GREEN_COLOUR_NAME)) {
             bonusValue = 10;
         } else {
             return;
@@ -72,7 +73,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
             destOffBoard.remove(offA);
             for (NetworkVertex offB:destOffBoard) {
                 for (NetworkVertex base:bases) {
-                    RevenueBonus bonus = new RevenueBonus(bonusValue, "OB/" + base.toString());
+                    RevenueBonus bonus = new RevenueBonus(bonusValue, "OFFBOARD");
                     bonus.addVertex(offA); bonus.addVertex(offB); bonus.addVertex(base);
                     revenueAdapter.addRevenueBonus(bonus);
                 }

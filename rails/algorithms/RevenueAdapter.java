@@ -81,9 +81,7 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public static RevenueAdapter createRevenueAdapter(GameManagerI gm, PublicCompanyI company, PhaseI phase) {
-        MapManager mapManager = gm.getMapManager();
-        NetworkGraphBuilder nwGraph = new NetworkGraphBuilder();
-        nwGraph.generateGraph(mapManager.getHexesAsList());
+        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.createMapGraph(gm);
         RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, company, phase);
         ra.populateFromRails();
         return ra;
@@ -475,17 +473,19 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public int calculateRevenue(int startTrain, int finalTrain) {
+        optimalRun = null;
         if (startTrain < 0 || finalTrain >= trains.size() || startTrain > finalTrain) {
-            optimalRun = null;
             return 0;
         }
         rc.initialPredictionRuns(startTrain, finalTrain);
         int value = rc.calculateRevenue(startTrain, finalTrain);
-        optimalRun = convertRcRun(rc.getOptimalRun());
         return value;
     }
     
     public  List<RevenueTrainRun> getOptimalRun() {
+        if (optimalRun == null) {
+            optimalRun = convertRcRun(rc.getOptimalRun());
+        }
         return optimalRun;
     }
     
@@ -541,10 +541,11 @@ public final class RevenueAdapter implements Runnable {
     
 
     public String getOptimalRunPrettyPrint() {
-        if (optimalRun == null) return "No Optimal Run";
+        List<RevenueTrainRun> listRuns = getOptimalRun();
+        if (listRuns== null) return "No Optimal Run";
 
         StringBuffer runPrettyPrint = new StringBuffer();
-        for (RevenueTrainRun run:optimalRun) {
+        for (RevenueTrainRun run:listRuns) {
             runPrettyPrint.append(run.prettyPrint());
         }
         // add dynamic Modifier
@@ -556,9 +557,11 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public void drawOptimalRunAsPath(HexMap map) {
+        List<RevenueTrainRun> listRuns = getOptimalRun();
+        
         List<GeneralPath> pathList = new ArrayList<GeneralPath>();
-        if (optimalRun != null) {
-            for (RevenueTrainRun run:optimalRun) {
+        if (listRuns != null) {
+            for (RevenueTrainRun run:listRuns) {
                 pathList.add(run.getAsPath(map));
             }
         }

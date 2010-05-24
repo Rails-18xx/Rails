@@ -1,8 +1,10 @@
 package rails.algorithms;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -171,6 +173,18 @@ public final class RevenueBonus {
         return s.toString();
     }
   
+    public static Map<String, Integer> combineBonuses(Collection<RevenueBonus> bonuses){
+        Map<String, Integer> combined = new HashMap<String, Integer>();
+        for (RevenueBonus bonus:bonuses) {
+            String name = bonus.getName();
+            if (combined.containsKey(name)) {
+                combined.put(name, combined.get(name) + bonus.getValue());
+            } else {
+                combined.put(name, bonus.getValue());
+            }
+         }
+        return combined;
+    }
     
     public static int getNumberNonSimpleBonuses(List<RevenueBonus> bonuses) {
         int number = 0;

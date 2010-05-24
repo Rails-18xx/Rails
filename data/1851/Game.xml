@@ -103,6 +103,7 @@
 		</Phase>
 	</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1851.OffBoardRevenueModifier" /> 
+		<Modifier class="rails.game.specific._1851.OffBoardRevenueModifier" />
+		<Modifier class="rails.game.specific._1851.BirminghamTileModifier" />
 	</Component>
 </ComponentManager>

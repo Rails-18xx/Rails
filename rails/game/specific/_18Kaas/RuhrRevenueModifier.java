@@ -45,7 +45,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             if (!ruhrGebied.contains(vertex) && vertex.isStation() && (vertex.isMajor() || !doublesOnlyMajors)) {
                 for (NetworkVertex ruhrVertex:ruhrGebied) {
-                    RevenueBonus bonus = new RevenueBonus(vertex.getValue(), "Ruhr/" + vertex.toString());
+                    RevenueBonus bonus = new RevenueBonus(vertex.getValue(), "Ruhrgebied");
                     bonus.addVertex(vertex);
                     bonus.addVertex(ruhrVertex);
                     revenueAdapter.addRevenueBonus(bonus);

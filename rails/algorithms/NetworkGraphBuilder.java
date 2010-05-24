@@ -29,7 +29,9 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
 import rails.game.City;
+import rails.game.GameManagerI;
 import rails.game.MapHex;
+import rails.game.MapManager;
 import rails.game.PublicCompanyI;
 import rails.game.Station;
 import rails.game.TileI;
@@ -42,22 +44,27 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     protected static Logger log =
         Logger.getLogger(NetworkGraphBuilder.class.getPackage().getName());
     
-    private SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;  
-
-    private Map<String, NetworkVertex> mapVertexes;
+    private final SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;
+    
+    private final Map<String, NetworkVertex> mapVertexes;
     
     private NetworkIterator iterator;
     
-    public NetworkGraphBuilder() {
-        this.mapGraph = null;
-    }
-
-    public void generateGraph(List<MapHex> mHexes ) {
-        
+    private NetworkGraphBuilder() {
         mapGraph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         mapVertexes = new HashMap<String, NetworkVertex> ();
+    }
+    
+    public static NetworkGraphBuilder createMapGraph(GameManagerI gameManager) {
+        NetworkGraphBuilder graphBuilder = new NetworkGraphBuilder();
+        graphBuilder.generateGraph(gameManager.getMapManager(), gameManager.getRevenueManager());
+        return graphBuilder;
+    }
+    
+
+    public void generateGraph(MapManager mapManager, RevenueManager revenueManager) {
         
-        for (MapHex hex:mHexes) {
+        for (MapHex hex:mapManager.getHexesAsList()) {
             // get Tile
             TileI tile = hex.getCurrentTile();
             
@@ -82,7 +89,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         }
         
         // loop over all maps and add tracks
-        for (MapHex hex:mHexes) {
+        for (MapHex hex:mapManager.getHexesAsList()) {
             // get Tile
             TileI tile = hex.getCurrentTile();
             // get Tracks
@@ -145,6 +152,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 log.info("Added greedy edge " + edge.getConnection());
             }
         }
+        
+        // add graph modifiers
+        revenueManager.callGraphModifiers(this);
     }        
 
     

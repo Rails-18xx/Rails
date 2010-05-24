@@ -57,7 +57,7 @@ public final class RevenueManager implements ConfigurableComponentI {
                 // create modifier
                 Object modifier;
                 try {
-                    modifier = (RevenueStaticModifier) Class.forName(className).newInstance();
+                    modifier = Class.forName(className).newInstance();
                 } catch (Exception e) {
                     throw new ConfigurationException(LocalText.getText(
                             "ClassCannotBeInstantiated", className), e);
