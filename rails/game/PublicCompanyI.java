@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.55 2010/05/24 11:20:42 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompanyI.java,v 1.56 2010/05/24 11:42:35 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -358,6 +358,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public String getExtraShareMarks ();
 
     public ModelObject getInGameModel ();
+    public ModelObject getIsClosedModel ();
 
 
 }

@@ -297,7 +297,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
             rowVisibilityObservers[i]
-                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel());
+                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel(), false);
             boolean visible = rowVisibilityObservers[i].lastValue();
 
             f = new Caption(c.getName());
