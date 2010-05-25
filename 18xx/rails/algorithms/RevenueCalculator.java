@@ -290,7 +290,6 @@ final class RevenueCalculator {
         maxMajorRevenues = new int[nbTrains][nbVertexes];
         maxMinorRevenues = new int[nbTrains][nbVertexes];
         maxBonusRevenues = new int[nbTrains][nbVertexes + nbBonuses];
-        int cumulatedRevenues = 0;
         for (int t=startTrain; t <= finalTrain; t++) {
             int[] majorValues = new int[nbVertexes];
             int[] minorValues = new int[nbVertexes];
@@ -317,9 +316,10 @@ final class RevenueCalculator {
             maxMajorRevenues[t] = bestRevenues(majorValues, trainMaxMajors[t]);
             maxMinorRevenues[t] = bestRevenues(minorValues, trainMaxMinors[t]);
             maxBonusRevenues[t] = bestRevenues(bonusValues, trainMaxBonuses[t]);
-            cumulatedRevenues += maxMajorRevenues[t][trainMaxMajors[t]] + maxMinorRevenues[t][trainMaxMinors[t]] 
+            // initially the cumulated train revenues are the individual run revenues
+            int trainRevenues = maxMajorRevenues[t][trainMaxMajors[t]] + maxMinorRevenues[t][trainMaxMinors[t]] 
                      + maxBonusRevenues[t][trainMaxBonuses[t]];
-            maxCumulatedTrainRevenues[t] = cumulatedRevenues;
+            maxCumulatedTrainRevenues[t] = trainRevenues;
         }
         log.info("maxMajorRevenues = " + Arrays.deepToString(maxMajorRevenues));
         log.info("maxMinorRevenues = " + Arrays.deepToString(maxMinorRevenues));
