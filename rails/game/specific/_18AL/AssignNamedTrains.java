@@ -95,6 +95,16 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
     public void setPostTrainPerToken(List<NameableTrain> postTokensPerTrain) {
         this.postTrainPerToken = postTokensPerTrain;
+        // convert to postTrainIds
+        if (postTokensPerTrain != null) {
+            for (NameableTrain train : postTokensPerTrain) {
+                if (train == null) {
+                    postTrainIds[postTokensPerTrain.indexOf(train)] = null;
+                } else {
+                    postTrainIds[postTokensPerTrain.indexOf(train)] = train.getUniqueId();
+                }
+            }
+        }
     }
 
     /** Deserialize */
@@ -116,7 +126,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
         if (preTrainIds != null) {
             for (String trainId : preTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
-                    preTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
+//                    preTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
+                  preTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
                 } else {
                     preTrainPerToken.add(null);
                 }
@@ -127,7 +138,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
         if (postTrainIds != null) {
             for (String trainId : postTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
-                    postTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
+//                    postTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
+                    postTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
                 } else {
                     postTrainPerToken.add(null);
                 }
