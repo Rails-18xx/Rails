@@ -112,7 +112,7 @@ public class RevenueTrainRun {
         Set<NetworkVertex> uniqueVertices = getUniqueVertices();
         int majors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MAJOR);
         int minors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MINOR);
-        if (train.ignoresMinors()) {
+        if (train.ignoresMinors() || minors == 0) {
             runPrettyPrint.append(LocalText.getText("RevenueStationsIgnoreMinors", majors));
         } else {
             runPrettyPrint.append(LocalText.getText("RevenueStations", majors, minors));
