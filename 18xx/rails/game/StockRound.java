@@ -1223,7 +1223,7 @@ public class StockRound extends Round {
             }
         }
 
-        if (numPasses.intValue() >= numberOfPlayers) {
+        if (numPasses.intValue() >= getNumberOfActivePlayers()) {
 
             ReportBuffer.add(LocalText.getText("END_SR",
                     String.valueOf(getStockRoundNumber())));

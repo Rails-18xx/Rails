@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.41 2010/05/15 16:36:09 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.42 2010/05/25 20:27:17 evos Exp $
  *
  * Created on 17-Sep-2006
  * Change Log:
@@ -112,6 +112,14 @@ public abstract class Round implements RoundI {
 
     protected int getNumberOfPlayers() {
         return gameManager.getNumberOfPlayers();
+    }
+    
+    protected int getNumberOfActivePlayers () {
+        int number = 0;
+        for (Player player : getPlayers()) {
+            if (!player.isBankrupt()) number++;
+        }
+        return number;
     }
 
     public PhaseI getCurrentPhase() {
