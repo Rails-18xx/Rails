@@ -68,7 +68,7 @@
 				<Attributes amount="5"/>
 			</IfOption>
 			<Reach countTowns="no"/>
-			<Score cities="double"/>
+			<Score scoreCities="double"/>
 			<Exchange cost="800"/>
 		</Train>
 	</Component>
