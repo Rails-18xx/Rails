@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.98 2010/05/24 11:42:35 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.99 2010/05/25 20:27:17 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -870,14 +870,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         hasStarted.set(true);
         if (hasStockPrice) buyable.set(true);
-        
+
+        // In case of a restart: undo closing
+        if (closedObject.booleanValue()) closedObject.set(false); 
+
         if (startSpace != null) {
             setParSpace(startSpace);
             //  The current price is set via the Stock Market
             stockMarket.start(this, startSpace);
         }
 
-       if (homeBaseTokensLayTime == WHEN_STARTED) {
+        
+        if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
         }
     }
