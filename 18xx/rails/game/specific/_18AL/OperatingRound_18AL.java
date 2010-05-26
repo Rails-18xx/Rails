@@ -17,7 +17,9 @@ public class OperatingRound_18AL extends OperatingRound {
 
     @Override
     protected void setGameSpecificPossibleActions() {
-
+        // if optimized no need to assign
+        if (getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes")) return;
+        
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
             List<TrainI> trains =
                     operatingCompany.getPortfolio().getTrainList();
