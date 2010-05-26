@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18AL"/>
+		<GameOption name ="18ALOptimizeNamedTrains" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<GameOption name="Obsolete4Trains" type="toggle" default="yes"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>

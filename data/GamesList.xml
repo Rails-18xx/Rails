@@ -89,6 +89,7 @@ Both the original and the final version (without/with delayed 4-train obsolescen
 Limitation: 
 - Privates cannot be traded between players.
 		</Description>
+		<Option name ="18ALOptimizeNamedTrains"  type="toggle" default="yes"/>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
