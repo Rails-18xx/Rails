@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.25 2010/03/28 17:05:56 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.26 2010/05/29 09:38:58 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -172,7 +172,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
                 hexLabel.setName(tile.getName());
-                hexLabel.setText("" + tile.getExternalId());
+                hexLabel.setText("<HTML><BODY>" + tile.getExternalId() + "<BR/>#" + tile.countFreeTiles() + "</BODY></HTML>");
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
                 hexLabel.setBorder(border);
@@ -190,7 +190,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     // populate version for corrections
-    public void showCorrectionUpgrades() {
+    public void showCorrectionTileUpgrades() {
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<TileI> tiles = orUIManager.tileUpgrades;
@@ -217,7 +217,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
                 hexLabel.setName(tile.getName());
                 if (tile.getExternalId() > 0)
-                    hexLabel.setText("" + tile.getExternalId());
+                    hexLabel.setText("<HTML><BODY>" + tile.getExternalId() + "<BR/>#" + tile.countFreeTiles() + "</BODY></HTML>");
                 else
                     hexLabel.setText("");
                 hexLabel.setOpaque(true);
@@ -236,6 +236,53 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         revalidate();
     }
 
+    // populate version for corrections
+    public void showCorrectionTokenUpgrades() {
+        upgradePanel.removeAll();
+        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
+        List<? extends TokenI> tokens = orUIManager.tokenLays;
+        
+        if (tokens == null || tokens.size() == 0) {
+            // reset to the number of elements
+            panelLayout.setRows(defaultNbPanelElements);
+            // set to position 0
+            scrollPane.getVerticalScrollBar().setValue(0);
+        } else {
+            Color fgColour = null;
+            Color bgColour = null;
+            String text = null;
+            String description = null;
+            TokenIcon icon;
+            ActionLabel tokenLabel;
+            tokenLabels = new ArrayList<ActionLabel>();
+            for (TokenI token:tokens) {
+                if (token instanceof BaseToken) {
+                    PublicCompanyI comp = ((BaseToken)token).getCompany();
+                    fgColour = comp.getFgColour();
+                    bgColour = comp.getBgColour();
+                    description = text = comp.getName();
+                }
+                icon = new TokenIcon(25, fgColour, bgColour, text);
+                tokenLabel = new ActionLabel(icon);
+                tokenLabel.setName(description);
+                tokenLabel.setText(description);
+                tokenLabel.setBackground(defaultLabelBgColour);
+                tokenLabel.setOpaque(true);
+                tokenLabel.setVisible(true);
+                tokenLabel.setBorder(border);
+                tokenLabel.addMouseListener(this);
+                tokenLabels.add(tokenLabel);
+                upgradePanel.add(tokenLabel);
+            }
+            
+        }
+        upgradePanel.add(doneButton);
+        upgradePanel.add(cancelButton);
+
+//      repaint();
+        revalidate();
+        
+    }
     
     public void clear() {
         upgradePanel.removeAll();

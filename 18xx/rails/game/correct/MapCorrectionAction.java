@@ -3,13 +3,18 @@ package rails.game.correct;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rails.game.correct.MapCorrectionManager.*;
+import rails.game.BaseToken;
+import rails.game.Station;
 import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.TileI;
 import rails.game.TileManager;
+import rails.game.TokenI;
 import rails.game.action.PossibleAction;
 import rails.util.Util;
 
@@ -37,7 +42,15 @@ public class MapCorrectionAction extends CorrectionAction {
     
     /** Orientation: how to lay the tile */
     private int orientation;
-
+    
+    /** RelayBaseTokens: how to relay the base tokens */
+    transient private List<BaseToken> tokensToRelay;
+    private String[]tokensToRelayOwner;
+    transient private List<Station> stationsForRelay;
+    private int[] stationForRelayId;
+    transient private List<Station> possibleStations;
+    private int[] possibleStationsId;
+                
     /**
      * Instantiates a new map tile correction action.
      * start with select hex
@@ -62,17 +75,41 @@ public class MapCorrectionAction extends CorrectionAction {
     }
     
     public TileI getChosenTile() {
-        if (step.ordinal() > ActionStep.SELECT_TILE.ordinal())
+        if (nextStep.ordinal() > ActionStep.SELECT_TILE.ordinal())
             return tiles.get(0);
         else
             return null;
     }
     
-    public void setTiles(List<TileI> tiles) {
+    void setTiles(List<TileI> tiles) {
         this.tiles = tiles;
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++)
             tileIds[i] = tiles.get(i).getId();
+    }
+    
+    public List<Station> getStationsForRelay() {
+        return stationsForRelay;
+    }
+    
+    private void setStationsForRelay(List<Station> stations) {
+        this.stationsForRelay = stations;
+    }
+
+    public List<BaseToken> getTokensToRelay() {
+        return tokensToRelay;
+    }
+    
+    void setTokensToRelay(List<BaseToken> tokens) {
+        this.tokensToRelay = tokens;
+    }
+    
+    public List<Station> getPossibleStations() {
+        return possibleStations;
+    }
+    
+    void setPossibleStations(List<Station> possibleStations) {
+        this.possibleStations = possibleStations;
     }
     
     public int getOrientation(){
@@ -87,7 +124,7 @@ public class MapCorrectionAction extends CorrectionAction {
         return nextStep;
     }
     
-    private void setNextStep(ActionStep step) {
+    void setNextStep(ActionStep step) {
         this.nextStep = step;
         if (step == null)
             nextStepName = null;
@@ -118,6 +155,11 @@ public class MapCorrectionAction extends CorrectionAction {
 
     public void selectOrientation(int orientation) {
         setOrientation(orientation);
+        setNextStep(ActionStep.RELAY_BASETOKENS);
+    }
+    
+    public void selectRelayBaseTokens(List<Station> chosenStations) {
+        setStationsForRelay(chosenStations);
         setNextStep(ActionStep.FINISHED);
     }
     
@@ -159,6 +201,12 @@ public class MapCorrectionAction extends CorrectionAction {
             b.append(" Chosen tile=" + tiles);
         if (step.ordinal() > ActionStep.SELECT_ORIENTATION.ordinal())
             b.append(" Orientation=" + orientation);
+        if (step.ordinal() >= ActionStep.RELAY_BASETOKENS.ordinal())
+            b.append(" Tokens to relay=" + tokensToRelay);
+        if (step.ordinal() == ActionStep.RELAY_BASETOKENS.ordinal())
+            b.append(" Possible Stations=" + possibleStations);
+        if (step.ordinal() > ActionStep.RELAY_BASETOKENS.ordinal())
+            b.append(" Selected stations for relay=" + stationsForRelay);
         return b.toString();
     }
     
