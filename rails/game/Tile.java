@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.42 2010/05/18 04:12:23 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.43 2010/05/29 09:38:58 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -393,15 +393,18 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     }
 
     /**
-     * Get all possible upgrades for a specific tile 
+     * Get all possible upgrades for a specific tile on a certain hex
      *
      * @return A List of valid upgrade TileI objects.
      */
     
-    public List<TileI> getAllUpgrades() {
+    public List<TileI> getAllUpgrades(MapHex hex) {
         List<TileI> upgr = new ArrayList<TileI>();
         for (Upgrade upgrade : upgrades) {
-            upgr.add(upgrade.getTile());
+            TileI tile = upgrade.getTile();
+            if (upgrade.isAllowedForHex(hex)) {
+                upgr.add(tile);
+            }
         }
         return upgr;
     }

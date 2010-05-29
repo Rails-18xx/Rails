@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.20 2010/05/15 19:05:39 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileI.java,v 1.21 2010/05/29 09:38:58 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface TileI {
 
     public List<TileI> getUpgrades(MapHex hex, PhaseI phase);
 
-    public List<TileI> getAllUpgrades();
+    public List<TileI> getAllUpgrades(MapHex hex);
 
     public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase);
 
