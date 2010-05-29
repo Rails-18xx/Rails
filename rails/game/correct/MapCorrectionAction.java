@@ -3,9 +3,7 @@ package rails.game.correct;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import rails.game.correct.MapCorrectionManager.*;
 import rails.game.BaseToken;
@@ -14,7 +12,6 @@ import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.TileI;
 import rails.game.TileManager;
-import rails.game.TokenI;
 import rails.game.action.PossibleAction;
 import rails.util.Util;
 
@@ -153,6 +150,10 @@ public class MapCorrectionAction extends CorrectionAction {
         setNextStep(ActionStep.SELECT_ORIENTATION);
     }
 
+    public void selectConfirmed() {
+        setNextStep(ActionStep.RELAY_BASETOKENS);
+    }
+    
     public void selectOrientation(int orientation) {
         setOrientation(orientation);
         setNextStep(ActionStep.RELAY_BASETOKENS);
@@ -191,21 +192,26 @@ public class MapCorrectionAction extends CorrectionAction {
             b.append(" (not acted)");
         }
         b.append(" Step=" + step);
-        if (nextStep != null) 
+        ActionStep executedStep;
+        if (nextStep != null) { 
             b.append(" NextStep=" + nextStep);
+            executedStep = nextStep;
+        } else {
+            executedStep = step;
+        }
         if (step.ordinal() > ActionStep.SELECT_HEX.ordinal()) 
             b.append(" Hex=" + location.getName());
         if (step == ActionStep.SELECT_TILE)
             b.append(" Possible tiles=" + tiles);
-        if (step.ordinal() > ActionStep.SELECT_TILE.ordinal())
+        if (executedStep.ordinal() >= ActionStep.SELECT_TILE.ordinal())
             b.append(" Chosen tile=" + tiles);
-        if (step.ordinal() > ActionStep.SELECT_ORIENTATION.ordinal())
+        if (executedStep.ordinal() >= ActionStep.SELECT_ORIENTATION.ordinal())
             b.append(" Orientation=" + orientation);
         if (step.ordinal() >= ActionStep.RELAY_BASETOKENS.ordinal())
             b.append(" Tokens to relay=" + tokensToRelay);
         if (step.ordinal() == ActionStep.RELAY_BASETOKENS.ordinal())
             b.append(" Possible Stations=" + possibleStations);
-        if (step.ordinal() > ActionStep.RELAY_BASETOKENS.ordinal())
+        if (executedStep.ordinal() >= ActionStep.RELAY_BASETOKENS.ordinal())
             b.append(" Selected stations for relay=" + stationsForRelay);
         return b.toString();
     }

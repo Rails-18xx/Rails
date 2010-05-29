@@ -12,6 +12,7 @@ import rails.algorithms.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
+import rails.game.correct.MapCorrectionManager.ActionStep;
 import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
@@ -878,6 +879,40 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
+        GUIHex selectedHex = map.getSelectedHex();
+
+        PublicCompanyI company = token.getCompany();
+        List<String> prompts = new ArrayList<String>();
+        
+        Map<String, Station> promptToStationMap = new HashMap<String, Station>();
+        String prompt;
+        for (Station station:possibleStations) {
+                prompt = LocalText.getText(
+                        "SelectStationForTokenOption",
+                                station.getNumber(),
+                                ((MapHex) selectedHex.getModel()).getConnectionString(
+                                        selectedHex.getProvisionalTile(),
+                                        selectedHex.getProvisionalTileRotation(),
+                                        station.getNumber())) ;
+                prompts.add(prompt);
+                promptToStationMap.put(prompt, station);
+        }
+        String selected =
+            (String) JOptionPane.showInputDialog(orWindow,
+                    LocalText.getText("SelectStationForToken",
+                            "",
+                            selectedHex.getName(),
+                            company.getName()),
+                            LocalText.getText("WhichStation"),
+                            JOptionPane.PLAIN_MESSAGE, null,
+                            prompts.toArray(), prompts.get(0));
+        if (selected == null) return null;
+        Station station = promptToStationMap.get(selected);
+        return station;
+    }
+    
+    
     /**
      * Lay Token finished.
      *
@@ -1209,7 +1244,11 @@ public class ORUIManager implements DialogOwner {
         // map correction override
         if (mapCorrectionEnabled) {
             if (selectedHex != null && selectedHex.getProvisionalTile() != null) {
-                mapCorrectionAction.selectOrientation(selectedHex.getProvisionalTileRotation());
+                if (mapCorrectionAction.getStep() == ActionStep.SELECT_ORIENTATION) {
+                    mapCorrectionAction.selectOrientation(selectedHex.getProvisionalTileRotation());
+                } else if (mapCorrectionAction.getStep() == ActionStep.CONFIRM) {
+                    mapCorrectionAction.selectConfirmed();
+                }
                 if (orWindow.process(mapCorrectionAction)) {
                     selectedHex.fixTile();
                 } else {
@@ -1693,8 +1732,8 @@ public class ORUIManager implements DialogOwner {
 
     public void updateUpgradesPanel(MapCorrectionAction action) {
         setLocalStep(MAP_CORRECTION);
-
         GUIHex selectedHex = map.getSelectedHex();
+
         boolean showTilesInUpgrade = true;
         switch (action.getStep()) {
         case SELECT_HEX:
@@ -1705,6 +1744,10 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setCancelEnabled(false);
             tileUpgrades = new ArrayList<TileI>();
             showTilesInUpgrade = true;
+            // checks if there is still a hex selected (due to errors)
+            if (selectedHex != null) {
+                map.selectHex(null);
+            }
             break;
         case SELECT_TILE:
             upgradePanel.setDoneText("LayTile");
@@ -1712,12 +1755,14 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setCancelText("Cancel");
             upgradePanel.setCancelEnabled(true);
             tileUpgrades = action.getTiles();
-            // checks if there is still a tile displayed (due to errors)
-            if (selectedHex.canFixTile()){
-                selectedHex.removeTile();
-                map.setSelectedHex(selectedHex);
-            }
             showTilesInUpgrade = true;
+            // checks if there is still a tile displayed (due to errors)
+            if (selectedHex != null && selectedHex.canFixTile()){
+                selectedHex.removeTile();
+            }
+            // activate hex selection
+            map.selectHex(null);
+            map.selectHex(map.getHexByName(action.getLocation().getName()));
             break;
         case SELECT_ORIENTATION:
             upgradePanel.setDoneText("LayTile");
@@ -1725,33 +1770,60 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setCancelText("Cancel");
             upgradePanel.setCancelEnabled(true);
             // next step already set to finished => preprinted tile with fixed orientation
-            if (action.getNextStep() == MapCorrectionManager.ActionStep.FINISHED) {
-                selectedHex.setTileOrientation(action.getOrientation());
-                map.repaint(selectedHex.getBounds());
-                if (orWindow.process(mapCorrectionAction)) {
-                    selectedHex.fixTile();
-                } else {
-                    selectedHex.removeTile();
-                }
-                map.selectHex(null);
-                return;
-            }
+//            if (action.getNextStep() == MapCorrectionManager.ActionStep.FINISHED) {
+//                selectedHex.setTileOrientation(action.getOrientation());
+//                map.repaint(selectedHex.getBounds());
+//                if (orWindow.process(mapCorrectionAction)) {
+//                    selectedHex.fixTile();
+//                } else {
+//                    selectedHex.removeTile();
+//                }
+//                map.selectHex(null);
+//                return;            }
+
+//            }
             showTilesInUpgrade = true;
             break;
         case RELAY_BASETOKENS:
-            upgradePanel.setDoneText("RelayToken");
+            // define open slots for each station
+            List<Station> possibleStations = new ArrayList<Station>(action.getPossibleStations());
+            Map<Station, Integer> openSlots = new HashMap<Station, Integer>();
+            for (Station station:possibleStations) {
+                openSlots.put(station, station.getBaseSlots());
+            }
+            // ask for the new stations
+            List<Station> chosenStations = new ArrayList<Station>();
+            for (BaseToken token:action.getTokensToRelay()) {
+                Station chosenStation = correctionRelayBaseToken(token, possibleStations);
+                chosenStations.add(chosenStation);
+                // check the number of available slots
+                openSlots.put(chosenStation, openSlots.get(chosenStation) - 1);
+                if (openSlots.get(chosenStation) == 0) {
+                    possibleStations.remove(chosenStation);
+                }
+            }
+            action.selectRelayBaseTokens(chosenStations);
+            if (orWindow.process(mapCorrectionAction)) {
+                selectedHex.fixTile();
+            } else {
+                selectedHex.removeTile();
+            }
+            map.selectHex(null);
+            return;
+        case CONFIRM:
+            // only wait for laytile or cancel command, for those lays that do not need adjustment of orientation
+            upgradePanel.setDoneText("LayTile");
             upgradePanel.setDoneEnabled(true);
             upgradePanel.setCancelText("Cancel");
             upgradePanel.setCancelEnabled(true);
-            tokenLays= action.getTokensToRelay();
-            showTilesInUpgrade = false;
+            showTilesInUpgrade = true;
         }
-
+        
         log.debug("Active map tile correction");
         if (showTilesInUpgrade) {
             upgradePanel.showCorrectionTileUpgrades();
         } else {
-            upgradePanel.showCorrectionTokenUpgrades();
+            upgradePanel.showCorrectionTokenUpgrades(action);
         }
     }
 
