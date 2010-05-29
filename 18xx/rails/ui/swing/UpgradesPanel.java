@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.26 2010/05/29 09:38:58 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.27 2010/05/29 23:33:43 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.correct.CorrectionAction;
 import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
@@ -27,6 +26,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     
     private ORUIManager orUIManager;
     private List<ActionLabel> tokenLabels;
+    private List<CorrectionTokenLabel> correctionTokenLabels;
     private int selectedTokenIndex;
     private List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
 
@@ -41,6 +41,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private final String INIT_CANCEL_TEXT = "NoTile";
     private final String INIT_DONE_TEXT = "LayTile";
     private boolean tokenMode = false;
+    private boolean correctionTokenMode = false;
     private JButton cancelButton =
             new JButton(LocalText.getText(INIT_CANCEL_TEXT));
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
@@ -172,7 +173,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
                 hexLabel.setName(tile.getName());
-                hexLabel.setText("<HTML><BODY>" + tile.getExternalId() + "<BR/>#" + tile.countFreeTiles() + "</BODY></HTML>");
+                hexLabel.setTextFromTile(tile);
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
                 hexLabel.setBorder(border);
@@ -191,6 +192,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     // populate version for corrections
     public void showCorrectionTileUpgrades() {
+        // deactivate correctionTokenMode and tokenmode
+        correctionTokenMode = false;
+        tokenMode = false;
+        
+        // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<TileI> tiles = orUIManager.tileUpgrades;
@@ -216,10 +222,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
                 HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
                 hexLabel.setName(tile.getName());
-                if (tile.getExternalId() > 0)
-                    hexLabel.setText("<HTML><BODY>" + tile.getExternalId() + "<BR/>#" + tile.countFreeTiles() + "</BODY></HTML>");
-                else
-                    hexLabel.setText("");
+                hexLabel.setTextFromTile(tile);
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
                 hexLabel.setBorder(border);
@@ -237,7 +240,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     // populate version for corrections
-    public void showCorrectionTokenUpgrades() {
+    public void showCorrectionTokenUpgrades(MapCorrectionAction action) {
+        // activate correctionTokenMode and deactivate standard tokenMode
+        correctionTokenMode = true;
+        tokenMode = false;
+        
+        // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<? extends TokenI> tokens = orUIManager.tokenLays;
@@ -253,8 +261,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             String text = null;
             String description = null;
             TokenIcon icon;
-            ActionLabel tokenLabel;
-            tokenLabels = new ArrayList<ActionLabel>();
+            CorrectionTokenLabel tokenLabel;
+            correctionTokenLabels = new ArrayList<CorrectionTokenLabel>();
             for (TokenI token:tokens) {
                 if (token instanceof BaseToken) {
                     PublicCompanyI comp = ((BaseToken)token).getCompany();
@@ -263,7 +271,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     description = text = comp.getName();
                 }
                 icon = new TokenIcon(25, fgColour, bgColour, text);
-                tokenLabel = new ActionLabel(icon);
+                tokenLabel = new CorrectionTokenLabel(icon, token);
                 tokenLabel.setName(description);
                 tokenLabel.setText(description);
                 tokenLabel.setBackground(defaultLabelBgColour);
@@ -271,7 +279,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 tokenLabel.setVisible(true);
                 tokenLabel.setBorder(border);
                 tokenLabel.addMouseListener(this);
-                tokenLabels.add(tokenLabel);
+                tokenLabel.addPossibleAction(action);
+                correctionTokenLabels.add(tokenLabel);
                 upgradePanel.add(tokenLabel);
             }
             
@@ -301,6 +310,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         if (tokenLabels == null || tokenLabels.isEmpty()) return;
         int index = -1;
         for (ActionLabel tokenLabel : tokenLabels) {
+            tokenLabel.setBackground(++index == selectedTokenIndex
+                    ? selectedLabelBgColour : defaultLabelBgColour);
+        }
+    }
+
+    private void setSelectedCorrectionToken() {
+        if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
+        int index = -1;
+        for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
             tokenLabel.setBackground(++index == selectedTokenIndex
                     ? selectedLabelBgColour : defaultLabelBgColour);
         }
@@ -386,6 +404,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 orUIManager.tokenSelected(null);
             }
             setSelectedToken();
+        } else if (correctionTokenMode) {
+            int id = correctionTokenLabels.indexOf(source);
+            selectedTokenIndex = id;
+            log.info("Correction Token index = " + selectedTokenIndex + " selected");
         } else {
 
             int id = ((HexLabel) e.getSource()).getInternalId();
@@ -399,7 +421,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
 
-        if (!tokenMode) {
+        if (!tokenMode && !correctionTokenMode) {
             // tile mode
             HexLabel tile = (HexLabel) e.getSource();
             String tooltip = tile.getToolTip();
@@ -413,7 +435,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         Object source = e.getSource();
         if (!(source instanceof JLabel)) return;
 
-        if (!tokenMode) {
+        if (!tokenMode && !correctionTokenMode) {
             // tile mode
             HexLabel tile = (HexLabel) e.getSource();
             tile.setToolTipText(null);
@@ -429,6 +451,25 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         setCancelEnabled(false);
     }
 
+   
+    /** ActionLabel extension that allows to attach the token */
+    private class CorrectionTokenLabel extends ActionLabel {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private TokenI token;
+        
+        CorrectionTokenLabel(Icon tokenIcon, TokenI token) {
+            super(tokenIcon);
+            this.token = token;
+        }
+        
+        TokenI getToken() {
+            return token;
+        }
+        
+    }
+    
     /** JLabel extension to allow attaching the internal hex ID */
     private class HexLabel extends JLabel {
 
@@ -449,6 +490,18 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         public String getToolTip() {
             return toolTip;
+        }
+        
+        void setTextFromTile(TileI tile) {
+            StringBuffer text = new StringBuffer();
+            if (tile.getExternalId() > 0) {
+                text.append("<HTML><BODY>" + tile.getExternalId()); 
+                if (tile.countFreeTiles() != -1) {
+                    text.append("<BR/>#" + tile.countFreeTiles());
+                }
+                text.append("</BODY></HTML>");
+            }
+            this.setText(text.toString());
         }
 
         protected void setToolTip() {

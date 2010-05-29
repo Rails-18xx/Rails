@@ -3,7 +3,6 @@ package rails.game.correct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import rails.game.BaseToken;
 import rails.game.City;
@@ -20,7 +19,7 @@ import rails.util.LocalText;
 public class MapCorrectionManager extends CorrectionManager {
     
     public static enum ActionStep {
-        SELECT_HEX,SELECT_TILE,SELECT_ORIENTATION,RELAY_BASETOKENS,FINISHED,CANCELLED;
+        SELECT_HEX,SELECT_TILE,SELECT_ORIENTATION,CONFIRM,RELAY_BASETOKENS,FINISHED,CANCELLED;
     }
     
     private MapCorrectionAction activeTileAction = null;
@@ -55,6 +54,10 @@ public class MapCorrectionManager extends CorrectionManager {
         if (action.getStep() == ActionStep.FINISHED) {
             // already finished, thus on reload
             action.setNextStep(ActionStep.FINISHED);
+        } else if (action.getNextStep() == ActionStep.CANCELLED) {
+            // cancelled => set to null and return
+            activeTileAction = null;
+            return true;
         }
         
         MapHex hex = action.getLocation();
@@ -72,7 +75,7 @@ public class MapCorrectionManager extends CorrectionManager {
                 errMsg =
                     LocalText.getText("TileNotAvailable",
                             chosenTile.getExternalId());
-                // return to step of hex selection
+                // return to step of tile selection
                 action.selectHex(hex);
                 break;
             }
@@ -89,7 +92,19 @@ public class MapCorrectionManager extends CorrectionManager {
                 if (baseTokens.size() > nbSlots) {
                     errMsg =
                         LocalText.getText("CorrectMapNotEnoughSlots", chosenTile.getExternalId());
-                    // return to step of hex selection
+                    // return to step of tile selection
+                    action.selectHex(hex);
+                    break;
+                }
+                // check if chosenTile requires relays
+                // this is not implemented yet, thus error message
+                if (chosenTile.getNumStations() >= 2 
+                        && hex.getCurrentTile().getColourNumber() >= chosenTile.getColourNumber()
+                        // B. or the current tile requires relays
+                        || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
+                    errMsg =
+                        LocalText.getText("CorrectMapRequiresRelays", chosenTile.getExternalId());
+                    // return to step of tile selection
                     action.selectHex(hex);
                     break;
                 }
@@ -103,8 +118,6 @@ public class MapCorrectionManager extends CorrectionManager {
                     hex.getName(),
                     errMsg ));
             ;
-            // stay at the same step
-            action.setNextStep(action.getStep());
         }
 
         ActionStep nextStep;
@@ -127,10 +140,12 @@ public class MapCorrectionManager extends CorrectionManager {
             // default orientation for preprinted files
             if (preprintedTile == chosenTile) {
                 action.selectOrientation(hex.getPreprintedTileRotation());
-                return execute(action);
+                action.setNextStep(ActionStep.CONFIRM);
+                break;
             } else if (chosenTile.getFixedOrientation() != -1) {
                 action.selectOrientation(chosenTile.getFixedOrientation());
-                return execute(action);
+                action.setNextStep(ActionStep.CONFIRM);
+                break;
             } else {
                 break;
             }
@@ -160,9 +175,9 @@ public class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            // lays tiles
             gameManager.getMoveStack().start(false);
             
+            // lays tile
             int orientation = action.getOrientation();
             hex.upgrade(chosenTile, orientation, new HashMap<String,Integer>());
             
@@ -171,10 +186,19 @@ public class MapCorrectionManager extends CorrectionManager {
             ReportBuffer.add(msg);
             gameManager.addToNextPlayerMessages(msg, true);
 
+            // relays tokens
+//            if (action.getTokensToRelay() != null) {
+//                for (BaseToken token:action.getTokensToRelay()) {
+//                    int i = action.getTokensToRelay().indexOf(token);
+//                    
+//                }
+//            }
+           
             activeTileAction = null;
             break;
         
         case CANCELLED:
+            // should be captured above
             activeTileAction = null;
         }
 
