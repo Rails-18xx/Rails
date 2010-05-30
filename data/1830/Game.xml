@@ -24,7 +24,7 @@
 		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 
