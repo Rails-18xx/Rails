@@ -17,7 +17,9 @@
 		--> 
 		<GameOption name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
-        <GameOption name="BeginnerGame" type="toggle" default="no" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+		<GameOption name="BeginnerGame" type="toggle" default="no" />
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>

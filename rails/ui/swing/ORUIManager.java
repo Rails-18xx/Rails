@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
@@ -197,36 +198,40 @@ public class ORUIManager implements DialogOwner {
             // check actions for allowed hexes
             boolean mapHexes = false;
             hexUpgrades = new ArrayList<MapHex>();
-            for (LayTile layTile:allowedTileLays) {
-                switch (layTile.getType()) {
-                case (LayTile.GENERIC):
-                    mapHexes = true;
+            
+            if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
+                for (LayTile layTile:allowedTileLays) {
+                    switch (layTile.getType()) {
+                    case (LayTile.GENERIC):
+                        mapHexes = true;
                     break;
-                case (LayTile.SPECIAL_PROPERTY):
-                    SpecialPropertyI sp = layTile.getSpecialProperty();
+                    case (LayTile.SPECIAL_PROPERTY):
+                        SpecialPropertyI sp = layTile.getSpecialProperty();
                     if (sp == null || !(sp instanceof SpecialTileLay) ||
                             ((SpecialTileLay)sp).requiresConnection())
                         break;
-                case (LayTile.LOCATION_SPECIFIC):
-                    if (layTile.getLocations() != null)
-                        hexUpgrades.addAll(layTile.getLocations());
+                    case (LayTile.LOCATION_SPECIFIC):
+                        if (layTile.getLocations() != null)
+                            hexUpgrades.addAll(layTile.getLocations());
+                    }
                 }
-            }
 
-            // standard upgrades
-            if (mapHexes) {
-                // generate network graph to indicate the allowed tiles
-                List<MapHex> mapHexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
-                for (MapHex hex:mapHexUpgrades) {
-                    if (hex.isUpgradeableNow(gameUIManager.getCurrentPhase()))
-                        hexUpgrades.add(hex);
+                // standard upgrades
+                if (mapHexes) {
+                    // generate network graph to indicate the allowed tiles
+                    List<MapHex> mapHexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
+                    for (MapHex hex:mapHexUpgrades) {
+                        if (hex.isUpgradeableNow(gameUIManager.getCurrentPhase()))
+                            hexUpgrades.add(hex);
+                    }
                 }
-            }
 
-            // activate upgrades
-            for (MapHex hex:hexUpgrades) {
-                GUIHex guiHex = map.getHexByName(hex.getName());
-                guiHex.setSelectable(true);
+                // activate upgrades
+                for (MapHex hex:hexUpgrades) {
+                    GUIHex guiHex = map.getHexByName(hex.getName());
+                    guiHex.setSelectable(true);
+                }
+                
             }
         }
 
@@ -244,25 +249,28 @@ public class ORUIManager implements DialogOwner {
             // check actions for allowed hexes
             boolean mapHexes = false;
             hexUpgrades = new ArrayList<MapHex>();
-            for (LayToken layToken:allowedTokenLays) {
-                SpecialPropertyI sp = layToken.getSpecialProperty();
-                if (sp == null) {
-                    mapHexes = true;
-                } else if (layToken.getLocations() != null)
-                    hexUpgrades.addAll(layToken.getLocations());
-            }
+            if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
 
-            // standard tokens
-            if (mapHexes) {
-                // generate network graph to indicate the token lays
-                hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), orComp);
                 for (LayToken layToken:allowedTokenLays) {
-                    if (layToken.getLocations() != null)
+                    SpecialPropertyI sp = layToken.getSpecialProperty();
+                    if (sp == null) {
+                        mapHexes = true;
+                    } else if (layToken.getLocations() != null)
                         hexUpgrades.addAll(layToken.getLocations());
                 }
-                for (MapHex hex:hexUpgrades) {
-                    GUIHex guiHex = map.getHexByName(hex.getName());
-                    guiHex.setSelectable(true);
+
+                // standard tokens
+                if (mapHexes) {
+                    // generate network graph to indicate the token lays
+                    hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), orComp);
+                    for (LayToken layToken:allowedTokenLays) {
+                        if (layToken.getLocations() != null)
+                            hexUpgrades.addAll(layToken.getLocations());
+                    }
+                    for (MapHex hex:hexUpgrades) {
+                        GUIHex guiHex = map.getHexByName(hex.getName());
+                        guiHex.setSelectable(true);
+                    }
                 }
             }
         }

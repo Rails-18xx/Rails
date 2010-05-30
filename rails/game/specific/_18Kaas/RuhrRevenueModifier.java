@@ -27,7 +27,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
 
     public void finishConfiguration(GameManagerI parent)
             throws ConfigurationException {
-        doublesOnlyMajors = parent.getGameOption("RuhrgebiedDoublesOnlyMajors").equalsIgnoreCase("yes");
+        doublesOnlyMajors = parent.getGameOption("18KaasRuhrgebiedDoublesOnlyMajors").equalsIgnoreCase("yes");
         log.debug("Finish configuration of RuhrRevenueModifier, doublesOnlyMajors = " + doublesOnlyMajors);
     }
 

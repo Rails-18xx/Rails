@@ -2,6 +2,8 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.specific._18EU.GameManager_18EU">
 		<Game name="18EU"/>
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 		<GameOption name="Extra3Trains" values="0,1,2" default="0"/>
 		<GameOption name="Extra4Trains" values="0,1" default="0"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />

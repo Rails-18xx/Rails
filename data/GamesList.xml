@@ -22,13 +22,15 @@ Limitations:
 			  in a dropdown the first item is always the default).
 		-->
 		<Option name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-		<Players minimum="3" maximum="6"/>
+		<Players minimum="2" maximum="6"/>
 	</Game>
 
 	<Game name="1851">
@@ -39,6 +41,8 @@ Limitations:
 Limitation:
 - No random assignment of private companies (players should do this off-line and enter the result)
 		</Description>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
@@ -54,7 +58,9 @@ Designed by Bill Dixon
 Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 		</Description>
-<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
 		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
@@ -71,6 +77,8 @@ Limitation:
 - Forced Selling: Change of director in other company is not prevented by Rails (see rule 10.6.2)
 		</Description>
 		<Players minimum="2" maximum="6"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
         <Option name="BeginnerGame" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
@@ -89,6 +97,8 @@ Both the original and the final version (without/with delayed 4-train obsolescen
 Limitation: 
 - Privates cannot be traded between players.
 		</Description>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name ="18ALOptimizeNamedTrains"  type="toggle" default="yes"/>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
@@ -107,6 +117,8 @@ Not yet implemented:
 - High mountain yellow to green upgrade cost ($60)
 - Bankruptcy rules (game currently hangs when a player goes bankrupt)
 		</Description>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="Extra3Trains" values="0,1,2" default="0"/>
 		<Option name="Extra4Trains" values="0,1" default="0"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
@@ -121,7 +133,9 @@ Not yet implemented:
 
 Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
-		<Option name="RuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
@@ -148,6 +162,8 @@ Known bugs:
       Workaround: use Correction mode.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
@@ -164,6 +180,8 @@ Designed by Bill Dixon
 
 Aspects not present in 1830 have not been implemented yet.
 		</Description>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
@@ -178,8 +196,10 @@ Designed by Francis Tresham
 Limitation: 
 - No random assignment of private companies (players should do this off-line and enter the result)	
 		</Description>
-    <Players minimum="3" maximum="5" /><Option name="UnlimitedTiles" type="toggle" default="no">
-</Option>
+    <Players minimum="3" maximum="5" />
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+        <Option name="UnlimitedTiles" type="toggle" default="no"/>
   </Game>
 	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
