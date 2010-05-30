@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.69 2010/05/24 11:42:35 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.70 2010/05/30 10:42:39 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -566,35 +566,43 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     protected void addNetworkInfo() {
-        CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
 
+        boolean route_highlight = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT);
+        boolean revenue_suggest = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST); 
+        
+        if (!route_highlight && !revenue_suggest) return; 
+        
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
         networkMenu.setEnabled(true);
         infoMenu.add(networkMenu);
         
-        JMenuItem item = new JMenuItem("All");
-        item.addActionListener(this);
-        item.setActionCommand(NETWORK_INFO_CMD);
-        networkMenu.add(item);
-        
-        for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
-            if (!comp.hasFloated() || comp.isClosed()) continue;
-            item = new JMenuItem(comp.getName());
+        if (route_highlight) {
+            JMenuItem item = new JMenuItem("Network");
             item.addActionListener(this);
             item.setActionCommand(NETWORK_INFO_CMD);
             networkMenu.add(item);
+        }
+        
+        if (revenue_suggest) {
+            CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+            for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
+                if (!comp.hasFloated() || comp.isClosed()) continue;
+                JMenuItem item = new JMenuItem(comp.getName());
+                item.addActionListener(this);
+                item.setActionCommand(NETWORK_INFO_CMD);
+                networkMenu.add(item);
+            }
         }
     }
     
     protected void executeNetworkInfo(String companyName) {
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
-        MapManager mapManager = gm.getMapManager();
         
-        if (companyName.equals("All")) {
+        if (companyName.equals("Network")) {
             NetworkGraphBuilder nwGraph = NetworkGraphBuilder.createMapGraph(gm);
             SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
             
-            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
+//            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
             mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
@@ -776,9 +784,11 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setVisible(true);
 
         // initialize and start the revenue adapter
-        revenueAdapter = initRevenueCalculation(orComp);
-        revenueThread = new Thread(revenueAdapter);
-        revenueThread.start();
+        if (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST)) {
+            revenueAdapter = initRevenueCalculation(orComp);
+            revenueThread = new Thread(revenueAdapter);
+            revenueThread.start();
+        }
     }
 
     private RevenueAdapter initRevenueCalculation(PublicCompanyI company){

@@ -2,7 +2,9 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.specific._1856.GameManager_1856">
 		<Game name="1856"/>
-<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+	<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
 		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>

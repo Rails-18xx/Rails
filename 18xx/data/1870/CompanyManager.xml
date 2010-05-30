@@ -27,9 +27,11 @@
 	<Company name="GRSC"  type="Private" basePrice="20" revenue="5" longname="Great River Shipping Company"/>
 	
 	<Company name="Brdg" type="Private" basePrice="40" revenue="10"
-		longname="Mississippi River Bridge Company" />
-	
-	<Company name="Cattl" type="Private" tokens="1" basePrice="50"
+		longname="Mississippi River Bridge Company" >
+	<ClosingConditions><CloseManually/></ClosingConditions>
+	</Company>	
+
+		<Company name="Cattl" type="Private" tokens="1" basePrice="50"
 		revenue="10" longname="The Southern Cattle Company" />
 	
 	<Company name="Gulf" type="Private" tokens="2" tokenValue="20/10,10"

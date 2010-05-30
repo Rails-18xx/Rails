@@ -12,6 +12,8 @@
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 		<PlayerShareLimit percentage="100"/>
 		<BankPoolLimit percentage="100"></BankPoolLimit>
 		<EndOfGame>
