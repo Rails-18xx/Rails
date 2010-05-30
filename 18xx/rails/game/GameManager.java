@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.104 2010/05/30 10:42:39 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.105 2010/05/30 17:03:30 stefanfrey Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -509,14 +509,18 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         }
 
         // define guiParameters from gameOptions
-        if (GameOption.convertValueToBoolean(getGameOption("NoMapMode")))
+        if (GameOption.convertValueToBoolean(getGameOption("NoMapMode"))) {
             guiParameters.put(GuiDef.Parm.NO_MAP_MODE, true);
-        
-        if (getGameOption("RouteAwareness").equalsIgnoreCase("Highlight"))
-            guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, true);
-            
-        if (getGameOption("RevenueCalculation").equalsIgnoreCase("Suggest"))
-            guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, true);
+            guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, false);
+            guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, false);
+        } else { 
+            if (getGameOption("RouteAwareness").equalsIgnoreCase("Highlight")) {
+                guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, true);
+            }
+            if (getGameOption("RevenueCalculation").equalsIgnoreCase("Suggest")) {
+                guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, true);
+            }
+        }
 
     }
 
