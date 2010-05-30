@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.43 2010/04/09 07:20:27 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.44 2010/05/30 11:31:47 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -111,14 +111,14 @@ public class StatusWindow extends JFrame implements ActionListener,
         saveItem.setPossibleAction(new GameAction(GameAction.SAVE));
         fileMenu.add(saveItem);
 
-        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
-        exportItem.setActionCommand(EXPORT_CMD);
-        exportItem.addActionListener(this);
-        exportItem.setEnabled(true);
-        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
-        fileMenu.add(exportItem);
-
-        fileMenu.addSeparator();
+        // export menu item
+//        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
+//        exportItem.setActionCommand(EXPORT_CMD);
+//        exportItem.addActionListener(this);
+//        exportItem.setEnabled(true);
+//        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
+//        fileMenu.add(exportItem);
+//        fileMenu.addSeparator();
 
         menuItem = new JMenuItem(LocalText.getText("QUIT"));
         menuItem.setActionCommand(QUIT_CMD);
