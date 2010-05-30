@@ -39,7 +39,9 @@
 	<Tile id="-809"><!--Frankfurt (Y)-->
 		<Upgrade id="216"/>
 	</Tile>
-	<Tile id="-810"/>
+	<Tile id="-810"><!-- Nuernberg -->
+		<Upgrade id="218"/>
+	</Tile>
 	<Tile id="-901"/>
 	
 	<!-- yellow tiles -->
