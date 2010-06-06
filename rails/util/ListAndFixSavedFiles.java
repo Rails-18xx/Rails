@@ -257,7 +257,7 @@ implements ActionListener, KeyListener {
         // append actionText
         int i=0;
         for (PossibleAction action : executedActions) {
-            reportText.append("Action "+(i++)+": "+action.toString());
+            reportText.append("Action "+(i++)+" "+action.getPlayerName()+": "+action.toString());
             reportText.append("\n");
         }
         scrollDown(vbarPos);
