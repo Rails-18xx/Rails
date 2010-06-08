@@ -4,7 +4,7 @@
 		<Game name="18Kaas"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="RuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
+		<GameOption name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
