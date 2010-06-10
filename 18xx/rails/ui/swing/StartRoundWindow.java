@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.37 2010/02/03 05:37:55 wakko666 Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.38 2010/06/10 20:54:31 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -182,10 +182,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         setLocation(300, 150);
         setSize(275, 325);
         setVisible(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         requestFocus();
 
         addKeyListener(this);
+        
 
         pack();
     }
@@ -321,6 +321,19 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         dummyButton = new ClickField("", "", "", this, itemGroup);
 
+        // set closing behavior and listener
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
+        final JFrame thisFrame = this;
+        addWindowListener(new WindowAdapter () {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(thisFrame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
+                        == JOptionPane.OK_OPTION) {
+                    thisFrame.dispose();
+                    System.exit(0);
+                }
+            }
+        });
     }
 
     private void addField(JComponent comp, int x, int y, int width, int height,

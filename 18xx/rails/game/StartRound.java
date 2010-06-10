@@ -48,7 +48,7 @@ public abstract class StartRound extends Round {
         super (gameManager);
         this.startPacket = gameManager.getStartPacket();
 
-        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, false);
+        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);

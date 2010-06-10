@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.44 2010/05/30 11:31:47 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.45 2010/06/10 20:54:31 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -281,7 +281,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         addWindowListener(new WindowAdapter () {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(frame, "Do you really want to exit the game?", "Select", JOptionPane.OK_CANCEL_OPTION)
+                if (JOptionPane.showConfirmDialog(frame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
                         == JOptionPane.OK_OPTION) {
                     frame.dispose();
                     System.exit(0);
