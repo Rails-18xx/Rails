@@ -123,6 +123,7 @@ public class OperatingRound_1835 extends OperatingRound {
         
         if (operatingCompany.getName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.keySet()) {
+                if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
