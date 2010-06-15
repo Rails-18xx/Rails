@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.105 2010/05/30 17:03:30 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.106 2010/06/15 20:16:54 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -896,7 +896,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             }
 
             try {
-                log.debug("Action: " + action);
+                log.debug("Action ("+action.getPlayerName()+"): " + action);
                 if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
                     String msg = "Player "+action.getPlayerName()+"\'s action \""
                         +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
@@ -916,6 +916,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             new AddToList<PossibleAction>(executedActions, action,
                     "ExecutedActions");
             if (moveStack.isOpen()) moveStack.finish();
+            
+            log.debug("Turn: "+getCurrentPlayer().getName());
         }
 
 //        DisplayBuffer.clear();

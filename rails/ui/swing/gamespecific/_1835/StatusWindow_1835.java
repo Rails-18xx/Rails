@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.JDialog;
 
 import rails.game.*;
+import rails.game.action.DiscardTrain;
 import rails.game.special.ExchangeForShare;
 import rails.game.specific._1835.*;
 import rails.ui.swing.GameUIManager;
@@ -36,6 +37,8 @@ public class StatusWindow_1835 extends StatusWindow {
             super.updateStatus();
         } else if (possibleActions.contains(FoldIntoPrussian.class)) {
             immediateAction = possibleActions.getType(FoldIntoPrussian.class).get(0);
+        } else if (possibleActions.contains(DiscardTrain.class)) {
+            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
         }
     }
 
