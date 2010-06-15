@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.45 2010/06/10 20:54:31 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -380,6 +380,13 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound)) 
             return;
+        
+        // Moved here from StatusWindow_1856. It's getting generic...
+        if (possibleActions.contains(DiscardTrain.class)) {
+            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
+            return;
+        }
+
 
         if (currentRound instanceof TreasuryShareRound) {
 
@@ -608,7 +615,13 @@ public class StatusWindow extends JFrame implements ActionListener,
     }
 
     public boolean processImmediateAction() {
-        // No such actions here
+        if (immediateAction instanceof DiscardTrain) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            DiscardTrain nextAction = (DiscardTrain) immediateAction;
+            immediateAction = null;
+            gameUIManager.discardTrains (nextAction);
+        }
         return true;
     }
 

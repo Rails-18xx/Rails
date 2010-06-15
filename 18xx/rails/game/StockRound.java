@@ -489,6 +489,7 @@ public class StockRound extends Round {
         return result;
     }
 
+    // Return value indicates whether the action has been processed.
     protected boolean processGameSpecificAction(PossibleAction action) {
 
         return false;

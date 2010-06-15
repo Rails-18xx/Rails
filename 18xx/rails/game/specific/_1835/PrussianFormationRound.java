@@ -6,6 +6,7 @@ import java.util.List;
 
 import rails.common.GuiDef;
 import rails.game.*;
+import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.move.CashMove;
 import rails.game.special.ExchangeForShare;
@@ -22,10 +23,13 @@ public class PrussianFormationRound extends StockRound {
 	private boolean forcedStart;
 	private boolean mergePr;
 	private boolean forcedMerge;
+    
+    private List<CompanyI> foldablePrePrussians;
 
     private enum Step {
         START,
-        MERGE
+        MERGE,
+        DISCARD_TRAINS
     };
 
     Step step;
@@ -70,9 +74,11 @@ public class PrussianFormationRound extends StockRound {
         if (step == Step.MERGE) {
             startingPlayer
                     = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
+            log.debug("Original Prussian starting player was "+startingPlayer.getName());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
                 List<SpecialPropertyI> sps;
+                setFoldablePrePrussians();
                 List<CompanyI> foldables = new ArrayList<CompanyI> ();
                 for (PrivateCompanyI company : gameManager.getAllPrivateCompanies()) {
                     sps = company.getSpecialProperties();
@@ -89,6 +95,8 @@ public class PrussianFormationRound extends StockRound {
                 }
                 executeExchange (foldables, false, true);
                 finishRound();
+            } else {
+                findNextMergingPlayer(false);
             }
         }
     }
@@ -107,44 +115,41 @@ public class PrussianFormationRound extends StockRound {
 
         } else if (step == Step.MERGE) {
 
-        	while (true) {
-        		List<CompanyI> foldables = new ArrayList<CompanyI> ();
-	            SpecialPropertyI sp;
-	            for (PrivateCompanyI company : currentPlayer.getPortfolio().getPrivateCompanies()) {
-	                sp = company.getSpecialProperties().get(0);
-	                if (sp instanceof ExchangeForShare) {
-	                    foldables.add(company);
-	                }
-	            }
-	            PublicCompanyI company;
-	            List<SpecialPropertyI> sps;
-	            for (PublicCertificateI cert : currentPlayer.getPortfolio().getCertificates()) {
-	                if (!cert.isPresidentShare()) continue;
-	                company = cert.getCompany();
-	                sps = company.getSpecialProperties();
-	                if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
-	                	foldables.add(company);
-	                }
-	            }
-	            if (foldables.isEmpty()) {
-	            	// No merge options for the current player, try the next one
-	            	setNextPlayer();
-	            	if (getCurrentPlayer() == startingPlayer) {
-	            		finishRound();
-	            		break;
-	            	} else {
-	            		continue;
-	            	}
-	            } else {
-	                possibleActions.add(new FoldIntoPrussian(foldables));
-	                break;
-	            }
-	        }
+            possibleActions.add(new FoldIntoPrussian(foldablePrePrussians));
+            
+        } else if (step == Step.DISCARD_TRAINS) {
+            
+            if (prussian.getNumberOfTrains() > prussian.getTrainLimit(getCurrentPhase().getIndex())) {
+                possibleActions.add(new DiscardTrain(prussian,
+                        prussian.getPortfolio().getUniqueTrains(), true));
+            }
         }
         return true;
 
     }
 
+    private void setFoldablePrePrussians () {
+
+        foldablePrePrussians = new ArrayList<CompanyI> ();
+        SpecialPropertyI sp;
+        for (PrivateCompanyI company : currentPlayer.getPortfolio().getPrivateCompanies()) {
+            sp = company.getSpecialProperties().get(0);
+            if (sp instanceof ExchangeForShare) {
+                foldablePrePrussians.add(company);
+            }
+        }
+        PublicCompanyI company;
+        List<SpecialPropertyI> sps;
+        for (PublicCertificateI cert : currentPlayer.getPortfolio().getCertificates()) {
+            if (!cert.isPresidentShare()) continue;
+            company = cert.getCompany();
+            sps = company.getSpecialProperties();
+            if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                foldablePrePrussians.add(company);
+            }
+        }
+    }
+    
     @Override
 	protected boolean processGameSpecificAction(PossibleAction action) {
 
@@ -157,24 +162,49 @@ public class PrussianFormationRound extends StockRound {
                     finishRound();
                 } else {
                     step = Step.MERGE;
+                    findNextMergingPlayer(false);
                 }
+                
             } else if (step == Step.MERGE) {
                 
                 mergeIntoPrussian (a);
-
-            	// No merge options for the current player, try the next one
-            	setNextPlayer();
-            	if (getCurrentPlayer() == startingPlayer) {
-            		finishRound();
-            	}
-
+                
             }
+            
             return true;
+            
+        } else if (action instanceof DiscardTrain) {
+            
+            discardTrain ((DiscardTrain) action);
+            return true;
+            
         } else {
             return false;
         }
     }
 
+    protected boolean findNextMergingPlayer(boolean skipCurrentPlayer) {
+        
+        while (true) {
+            
+            if (skipCurrentPlayer) {
+                setNextPlayer();
+                if (getCurrentPlayer() == startingPlayer) {
+                    if (prussian.getNumberOfTrains() > prussian.getTrainLimit(getCurrentPhase().getIndex())) {
+                        step = Step.DISCARD_TRAINS;
+                    } else {
+                        finishRound();
+                    }
+                    return false;
+                }
+            }
+            
+            setFoldablePrePrussians();
+            if (!foldablePrePrussians.isEmpty()) return true;
+            skipCurrentPlayer = true;
+        }
+    }
+    
     private boolean startPrussian (FoldIntoPrussian action) {
 
         // Validate
@@ -247,6 +277,8 @@ public class PrussianFormationRound extends StockRound {
 
         // Execute
         if (folding) executeExchange (folded, false, false);
+        
+        findNextMergingPlayer(true);
 
         return folding;
     }
@@ -325,25 +357,62 @@ public class PrussianFormationRound extends StockRound {
             company.setClosed();
         }
 
-        // Check the trains, autodiscard any excess non-permanent trains
-        int trainLimit = prussian.getTrainLimit(gameManager.getCurrentPlayerIndex());
-        List<TrainI> trains = prussian.getPortfolio().getTrainList();
-        if (prussian.getNumberOfTrains() > trainLimit) {
-            ReportBuffer.add("");
-            int numberToDiscard = prussian.getNumberOfTrains() - trainLimit;
-            List<TrainI> trainsToDiscard = new ArrayList<TrainI>(4);
-            for (TrainI train : trains) {
-                if (!train.getType().isPermanent()) {
-                    trainsToDiscard.add(train);
-                    if (--numberToDiscard == 0) break;
-                }
+    }
+
+    public boolean discardTrain(DiscardTrain action) {
+
+        TrainI train = action.getDiscardedTrain();
+        PublicCompanyI company = action.getCompany();
+
+        String errMsg = null;
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+            // Checks
+            // Must be correct step
+            if (company != prussian) {
+                errMsg = LocalText.getText("WrongCompany", company.getName(), prussian.getName());
+                break;
             }
-            for (TrainI train : trainsToDiscard) {
-                train.moveTo(pool);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                        PR_ID, train.getName()));
+
+            if (train == null && action.isForced()) {
+                errMsg = LocalText.getText("NoTrainSpecified");
+                break;
             }
+
+            // Does the company own such a train?
+            if (!company.getPortfolio().getTrainList().contains(train)) {
+                errMsg =
+                        LocalText.getText("CompanyDoesNotOwnTrain",
+                                company.getName(),
+                                train.getName() );
+                break;
+            }
+
+            break;
         }
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
+                    company.getName(),
+                    (train != null ?train.getName() : "?"),
+                    errMsg ));
+            return false;
+        }
+
+        /* End of validation, start of execution */
+        moveStack.start(true);
+        //
+        if (action.isForced()) moveStack.linkToPreviousMoveSet();
+
+        pool.buyTrain(train, 0);
+        ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                company.getName(),
+                train.getName() ));
+
+        // This always finished this type of round
+        finishRound();
+        
+        return true;
     }
 
     protected void finishRound() {

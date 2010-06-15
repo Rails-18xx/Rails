@@ -26,8 +26,9 @@ public class StatusWindow_1856 extends StatusWindow {
             //RepayLoans action = possibleActions.getType(RepayLoans.class).get(0);
             //repayLoans (action);
             immediateAction = possibleActions.getType(RepayLoans.class).get(0);
-        } else if (possibleActions.contains(DiscardTrain.class)) {
-            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
+        // Moved up
+        //} else if (possibleActions.contains(DiscardTrain.class)) {
+        //    immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
         } else if (possibleActions.contains(ExchangeTokens.class)) {
             immediateAction = possibleActions.getType(ExchangeTokens.class).get(0);
         }
@@ -46,6 +47,8 @@ public class StatusWindow_1856 extends StatusWindow {
             immediateAction = null;
             repayLoans (nextAction);
             return true;
+           
+            /* Moved up
         } else if (immediateAction instanceof DiscardTrain) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
@@ -53,6 +56,7 @@ public class StatusWindow_1856 extends StatusWindow {
             immediateAction = null;
             gameUIManager.discardTrains (nextAction);
             return true;
+            */
         } else if (immediateAction instanceof ExchangeTokens) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
