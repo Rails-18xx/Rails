@@ -27,8 +27,8 @@ public class StatusWindow_1856 extends StatusWindow {
             //repayLoans (action);
             immediateAction = possibleActions.getType(RepayLoans.class).get(0);
         // Moved up
-        //} else if (possibleActions.contains(DiscardTrain.class)) {
-        //    immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
+        } else if (possibleActions.contains(DiscardTrain.class)) {
+            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
         } else if (possibleActions.contains(ExchangeTokens.class)) {
             immediateAction = possibleActions.getType(ExchangeTokens.class).get(0);
         }
