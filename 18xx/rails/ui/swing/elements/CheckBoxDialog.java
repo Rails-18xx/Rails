@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.8 2010/03/28 20:14:20 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.9 2010/06/16 20:59:10 evos Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.*;
@@ -30,22 +30,24 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     String[] options;
     boolean selectedOptions[];
     int chosenOption = -1;
+    boolean hasCancelButton = false;
 
     protected static Logger log =
             Logger.getLogger(CheckBoxDialog.class.getPackage().getName());
 
     public CheckBoxDialog(DialogOwner owner, String title, String message,
             String[] options) {
-        this (owner, title, message, options, null);
+        this (owner, title, message, options, null, false);
     }
 
     public CheckBoxDialog(DialogOwner owner, String title, String message,
-            String[] options, boolean[] selectedOptions) {
+            String[] options, boolean[] selectedOptions, boolean addCancelButton) {
         super((Frame) null, title, false); // Non-modal
         this.owner = owner;
         this.message = message;
         this.options = options;
         this.numOptions = options.length;
+        this.hasCancelButton = addCancelButton;
         if (selectedOptions != null) {
             this.selectedOptions = selectedOptions;
         } else {
@@ -83,10 +85,12 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         okButton.addActionListener(this);
         buttonPane.add(okButton);
 
-        cancelButton = new JButton(LocalText.getText("Cancel"));
-        cancelButton.setMnemonic(KeyEvent.VK_C);
-        cancelButton.addActionListener(this);
-        buttonPane.add(cancelButton);
+        if (hasCancelButton) {
+            cancelButton = new JButton(LocalText.getText("Cancel"));
+            cancelButton.setMnemonic(KeyEvent.VK_C);
+            cancelButton.addActionListener(this);
+            buttonPane.add(cancelButton);
+        }
 
         checkBoxes = new JCheckBox[numOptions];
 
