@@ -5,6 +5,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -12,7 +13,7 @@ import org.jgrapht.Graph;
 
 import rails.ui.swing.hexmap.HexMap;
 
-public final class NetworkEdge {
+public final class NetworkEdge implements Comparable<NetworkEdge> {
 
     protected static Logger log =
         Logger.getLogger(NetworkEdge.class.getPackage().getName());
@@ -27,6 +28,9 @@ public final class NetworkEdge {
     
     private final List<NetworkVertex> hiddenVertexes;
     // list of vertexes that were merged into the edge
+    
+    private int routeCosts;
+    // for the multigraph approach defines the number of routes excluded
     
     public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy) {
         this.source = source;
@@ -55,6 +59,42 @@ public final class NetworkEdge {
     public NetworkVertex getTarget() {
         return target;
     }
+    
+    private NetworkVertex getLowVertex() {
+        if (source.compareTo(target) <= 0) {
+            return source;
+        } else {
+            return target;
+        }
+    }
+
+    private NetworkVertex getHighVertex() {
+        if (source.compareTo(target) <= 0) {
+            return target;
+        } else {
+            return source;
+        }
+    }
+    
+    /** returns the other vertex, if given vertex is not source/target of vertex, returns null */
+    NetworkVertex getOtherVertex(NetworkVertex vertex) {
+        if (this.source == vertex) {
+            return target;
+        } else if (this.target == vertex) {
+            return source;
+        }
+        return null;
+    }
+    
+    /** gets common vertex, if both source and target are common, returns source of this edge */
+    NetworkVertex getCommonVertex(NetworkEdge otherEdge) {
+       if (this.source == otherEdge.source || this.source == otherEdge.target) {
+           return this.source;
+       } else if (this.target == otherEdge.source || this.target == otherEdge.target) {
+           return this.target;
+       }
+       return null;
+    }
 
     public boolean isGreedy() {
         return greedy;
@@ -68,10 +108,18 @@ public final class NetworkEdge {
         return distance;
     }
     
+    int getRouteCosts() {
+        return routeCosts;
+    }
+    
+    void setRouteCosts(int routeCosts) {
+        this.routeCosts = routeCosts;
+    }
+    
     public List<NetworkVertex> getHiddenVertexes() {
         return hiddenVertexes;
     }
-    
+   
     public String toFullInfoString() {
         StringBuffer info = new StringBuffer();
         info.append("Edge " + getConnection());
@@ -79,6 +127,10 @@ public final class NetworkEdge {
         info.append(", distance = " + distance);
         info.append(", hidden vertexes = " + hiddenVertexes);
         return info.toString();
+    }
+    
+    public String getOrderedConnection() {
+        return getLowVertex() + " -> " + getHighVertex();
     }
     
     public String getConnection() {
@@ -93,10 +145,42 @@ public final class NetworkEdge {
         else
           return "" + distance;
     }
-    
-    public static boolean mergeEdges(Graph<NetworkVertex, NetworkEdge> graph,
-            NetworkEdge edgeA, NetworkEdge edgeB) {
 
+    /** 
+     * Natural order based on the ordering of the connected vertices
+     */
+    public int compareTo(NetworkEdge otherEdge) {
+        int result = this.getLowVertex().compareTo(otherEdge.getLowVertex());
+        if (result == 0) {
+            result = this.getHighVertex().compareTo(otherEdge.getHighVertex());
+        }
+        return result;
+    }
+    
+    /**
+     * Ordering based on routecosts
+     */
+    public static final class CostOrder implements Comparator<NetworkEdge> {
+        
+        public int compare(NetworkEdge edgeA, NetworkEdge edgeB) {
+            int result = ((Integer)edgeA.getRouteCosts()).compareTo(edgeB.getRouteCosts()); 
+            if (result == 0)
+                result = edgeA.compareTo(edgeB); // otherwise use natural ordering
+            return result;
+        }
+    }
+
+ 
+    static class MergeResult {
+        NetworkEdge newEdge;
+        NetworkVertex removedVertex;
+        MergeResult(NetworkEdge newEdge, NetworkVertex removedVertex) {
+            this.newEdge = newEdge;
+            this.removedVertex = removedVertex;
+        }
+    }
+    
+    public static MergeResult mergeEdges(NetworkEdge edgeA, NetworkEdge edgeB) {
         log.info("Merge of edge " + edgeA.toFullInfoString() + " and edge " + edgeB.toFullInfoString());
 
         NetworkVertex sourceA = edgeA.getSource();
@@ -128,13 +212,10 @@ public final class NetworkEdge {
             vertex = targetA;
             reverseB = true;
         } else {
-            return false;
+            return null;
         }
 
         log.info("Merge newSource = " + newSource + " newTarget = " + newTarget + " remove vertex = " + vertex);
-        
-        // check if graph contains the edge already
-        if (graph.containsEdge(newSource, newTarget)) return false;
         
         // define new edge
         int distance = edgeA.getDistance() + edgeB.getDistance();
@@ -142,22 +223,45 @@ public final class NetworkEdge {
         // create new hiddenVertexes
         List<NetworkVertex> hiddenVertexes = new ArrayList<NetworkVertex>();
         List<NetworkVertex> hiddenA = edgeA.getHiddenVertexes();
-        if (reverseA)
+        if (reverseA) {
+            hiddenA = new ArrayList<NetworkVertex>(hiddenA); // clone
             Collections.reverse(hiddenA);
+        }
         List<NetworkVertex> hiddenB = edgeB.getHiddenVertexes();
-        if (reverseB)
+        if (reverseB) {
+            hiddenB = new ArrayList<NetworkVertex>(hiddenB); // clone
             Collections.reverse(hiddenB);
+        }
         hiddenVertexes.addAll(hiddenA);
         hiddenVertexes.add(vertex);
         hiddenVertexes.addAll(hiddenB);
         NetworkEdge newEdge = 
             new NetworkEdge(newSource, newTarget, true, distance, hiddenVertexes);
-        graph.addEdge(newSource, newTarget, newEdge);
+        log.info("New edge = " + newEdge.toFullInfoString());
+        
+        // returns newEdge
+        return new MergeResult(newEdge, vertex);
+    }
+    
+    public static boolean mergeEdgesInGraph(Graph<NetworkVertex, NetworkEdge> graph,
+            NetworkEdge edgeA, NetworkEdge edgeB) {
+
+        // use generic merge function
+        MergeResult mergeResult = mergeEdges(edgeA, edgeB);
+        NetworkEdge newEdge = mergeResult.newEdge;
+        NetworkVertex removedVertex = mergeResult.removedVertex;
+
+        if (newEdge == null) return false;
+        
+        // check if graph contains the edge already
+        if (graph.containsEdge(newEdge.getSource(), newEdge.getTarget())) return false;
+        
+        graph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
 
         log.info("New edge =  " + newEdge.toFullInfoString());
 
         // remove vertex
-        graph.removeVertex(vertex);
+        graph.removeVertex(removedVertex);
 
         return true;
     }
@@ -190,7 +294,5 @@ public final class NetworkEdge {
         }
         return edgeShape;
     }
-
-    
     
 }

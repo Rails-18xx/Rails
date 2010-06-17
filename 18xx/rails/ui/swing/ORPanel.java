@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.70 2010/05/30 10:42:39 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.71 2010/06/17 22:10:53 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -10,6 +10,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
@@ -599,7 +600,7 @@ implements ActionListener, KeyListener, RevenueListener {
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
         
         if (companyName.equals("Network")) {
-            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.createMapGraph(gm);
+            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
             SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
             
 //            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
@@ -608,17 +609,42 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
+//
+//            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
+//            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
+//            companyGraph.createRouteGraph(false);
+//            companyGraph.createRevenueGraph(new ArrayList<NetworkVertex>());
+//            Multigraph<NetworkVertex, NetworkEdge> graph= companyGraph.createPhaseTwoGraph();
+//            NetworkGraphBuilder.visualize(graph, "Phase Two Company Network");
+//            JOptionPane.showMessageDialog(orWindow, 
+//                    "Vertices = " + graph.vertexSet().size() + ", Edges = " + graph.edgeSet().size());
             List<String> addTrainList = new ArrayList<String>();
             boolean anotherTrain = true;
             RevenueAdapter ra = null;
             while (anotherTrain) {
+                // multi
                 ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
                 for (String addTrain:addTrainList) {
                     ra.addTrainByString(addTrain);
                 }
-                ra.initRevenueCalculator();
+                ra.initRevenueCalculator(true);
                 log.info("Revenue Adapter:" + ra);
                 int revenueValue = ra.calculateRevenue();
+                log.info("Revenue Value:" + revenueValue);
+                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
+                ra.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+                JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
+                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint());
+                
+                // simple
+                ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
+                for (String addTrain:addTrainList) {
+                    ra.addTrainByString(addTrain);
+                }
+                ra.initRevenueCalculator(false);
+                log.info("Revenue Adapter:" + ra);
+                revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
                 log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
@@ -794,7 +820,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
         RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
-        ra.initRevenueCalculator();
+        ra.initRevenueCalculator(false);
         ra.addRevenueListener(this);
         return ra;
     }
