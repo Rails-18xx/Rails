@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.106 2010/06/15 20:16:54 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.107 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -907,10 +907,14 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                     return false;
                 }
                 getCurrentRound().setPossibleActions();
+                //String playerName = getCurrentPlayer().getName();
+                //for (PossibleAction a : possibleActions.getList()) {
+                //    log.debug(playerName+" may: "+a.toString());
+                //}
                 if (!isGameOver()) setCorrectionActions();
 
             } catch (Exception e) {
-                log.debug("Error while reprocessing " + action.toString(), e);
+                log.error("Error while reprocessing " + action.toString(), e);
                 throw new Exception("Reload failure", e);
             }
             new AddToList<PossibleAction>(executedActions, action,

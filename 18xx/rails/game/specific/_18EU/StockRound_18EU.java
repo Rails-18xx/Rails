@@ -112,7 +112,17 @@ public class StockRound_18EU extends StockRound {
                 if (certs == null || certs.isEmpty()) continue;
 
                 /* Only the top certificate is buyable from the IPO */
-                cert = certs.get(0);
+                int lowestIndex = 99;
+                cert = null;
+                int index;
+                for (PublicCertificateI c : certs) {
+                    index = c.getIndexInCompany();
+                    if (index < lowestIndex) {
+                        lowestIndex = index;
+                        cert = c;
+                    }
+                }
+
                 comp = cert.getCompany();
                 if (isSaleRecorded(currentPlayer, comp)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,

@@ -167,8 +167,19 @@ public class StockRound extends Round {
             for (String compName : map.keySet()) {
                 certs = map.get(compName);
                 if (certs == null || certs.isEmpty()) continue;
+                
                 /* Only the top certificate is buyable from the IPO */
-                cert = certs.get(0);
+                int lowestIndex = 99;
+                cert = null;
+                int index;
+                for (PublicCertificateI c : certs) {
+                    index = c.getIndexInCompany();
+                    if (index < lowestIndex) {
+                        lowestIndex = index;
+                        cert = c;
+                    }
+                }
+                
                 comp = cert.getCompany();
                 unitsForPrice = comp.getShareUnitsForSharePrice();
                 if (isSaleRecorded(currentPlayer, comp)) continue;

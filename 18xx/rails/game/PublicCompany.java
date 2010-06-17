@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.99 2010/05/25 20:27:17 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.100 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -486,6 +486,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
+        int certIndex = 0;
         List<Tag> certificateTags = tag.getChildren("Certificate");
         if (certificateTags != null) {
             int shareTotal = 0;
@@ -520,7 +521,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
                 for (int k = 0; k < number; k++) {
                     certificate = new PublicCertificate(shares, president,
-                            certIsInitiallyAvailable, certificateCount);
+                            certIsInitiallyAvailable, certificateCount, certIndex++);
                     addCertificate(certificate);
                     shareTotal += shares * shareUnit.intValue();
                 }

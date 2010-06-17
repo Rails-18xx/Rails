@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.18 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.19 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -33,6 +33,9 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     /** A key identifying the certificate's unique ID */
     protected String certId;
+    
+    /** Index within company (to be maintained in the IPO) */
+    protected int indexInCompany;
 
     /** A map allowing to find certificates by unique id */
     protected static Map<String, PublicCertificateI> certMap =
@@ -42,11 +45,12 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
             Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
     public PublicCertificate(int shares, boolean president, 
-            boolean available, float certificateCount) {
+            boolean available, float certificateCount, int index) {
         this.shares = shares;
         this.president = president;
         this.initiallyAvailable = available;
         this.certificateCount = certificateCount;
+        this.indexInCompany = index;
     }
 
     public PublicCertificate(PublicCertificateI oldCert) {
@@ -54,6 +58,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();
         this.certificateCount = oldCert.getCertificateCount();
+        this.indexInCompany = oldCert.getIndexInCompany();
     }
 
     public void setUniqueId(String name, int index) {
@@ -63,6 +68,10 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     public String getUniqueId() {
         return certId;
+    }
+    
+    public int getIndexInCompany() {
+        return indexInCompany;
     }
 
     public static PublicCertificateI getByUniqueId(String certId) {
