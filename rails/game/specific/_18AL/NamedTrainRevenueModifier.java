@@ -1,7 +1,9 @@
 package rails.game.specific._18AL;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import rails.algorithms.NetworkTrain;
 import rails.algorithms.NetworkVertex;
@@ -13,6 +15,7 @@ import rails.algorithms.RevenueTrainRun;
 import rails.game.ConfigurableComponentI;
 import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
+import rails.game.MapHex;
 import rails.game.TrainI;
 import rails.util.Tag;
 
@@ -31,6 +34,31 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         dynamic = parent.getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes");
     }
     
+    private RevenueBonus defineBonus(RevenueAdapter revenueAdapter, NamedTrainToken token, boolean useLongname) {
+        RevenueBonus bonus;
+        if (useLongname) {
+            bonus = new RevenueBonus(token.getValue(), token.getLongName()); 
+        } else {
+            bonus = new RevenueBonus(token.getValue(), token.getName());
+        }
+
+        for (MapHex hex:token.getHexesToPass()) {
+            boolean stationWasFound = false;
+            for (NetworkVertex vertex:NetworkVertex.getVerticesByHex(revenueAdapter.getVertices(), hex)) {
+                if (!vertex.isStation()) continue;
+                bonus.addVertex(vertex);
+                stationWasFound = true;
+            }
+            // if for one vertex no station is found then the bonus is set null
+            if (!stationWasFound) {
+                bonus = null;
+                break;
+            }
+        }
+        return bonus;
+    }
+    
+    
     public void modifyCalculator(RevenueAdapter revenueAdapter) {
         // static modifier
         if (dynamic) return;
@@ -42,12 +70,9 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
             NamedTrainToken token = ((NameableTrain)train).getNameToken();
             if (token == null) continue;
             // 2. define revenue bonus
-            RevenueBonus bonus = new RevenueBonus(token.getValue(), token.getName());
+            RevenueBonus bonus = defineBonus(revenueAdapter, token, false);
+            if (bonus == null) continue;
             bonus.addTrain(train);
-            for (NetworkVertex vertex:NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), token.getHexesToPass())) {
-                if (!vertex.isStation()) continue;
-                bonus.addVertex(vertex);
-            }
             revenueAdapter.addRevenueBonus(bonus);
         }
     }
@@ -65,12 +90,8 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         bonusMaximum = 0;
         // 3. there is only one special property in 18AL, thus get tokens from it
         for (NamedTrainToken token:sp.get(0).getTokens()) {
-            RevenueBonus bonus = new RevenueBonus(token.getValue(), token.getLongName());
-            // 4. define vertices
-            for (NetworkVertex vertex:NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), token.getHexesToPass())) {
-                if (!vertex.isStation()) continue;
-                bonus.addVertex(vertex);
-            }
+            RevenueBonus bonus = defineBonus(revenueAdapter, token, true);
+            if (bonus == null) continue;
             bonuses.add(bonus);
             bonusMaximum += token.getValue();
         }
