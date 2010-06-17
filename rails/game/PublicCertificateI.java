@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.11 2009/08/30 18:15:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.12 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import rails.game.move.Moveable;
@@ -10,6 +10,8 @@ public interface PublicCertificateI extends Certificate, Moveable {
 
     /** Set the certificate's unique ID */
     public String getUniqueId();
+    
+    public int getIndexInCompany();
 
     /**
      * @return if this certificate is a president's share
