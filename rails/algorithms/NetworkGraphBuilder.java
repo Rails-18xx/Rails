@@ -20,6 +20,7 @@ import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.Subgraph;
 
@@ -27,6 +28,7 @@ import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
+import rails.algorithms.NetworkEdge.MergeResult;
 import rails.game.BaseToken;
 import rails.game.City;
 import rails.game.GameManagerI;
@@ -55,7 +57,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         mapVertexes = new HashMap<String, NetworkVertex> ();
     }
     
-    public static NetworkGraphBuilder createMapGraph(GameManagerI gameManager) {
+    public static NetworkGraphBuilder create(GameManagerI gameManager) {
         NetworkGraphBuilder graphBuilder = new NetworkGraphBuilder();
         graphBuilder.generateGraph(gameManager.getMapManager(), gameManager.getRevenueManager());
         return graphBuilder;
@@ -164,59 +166,6 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapGraph;
     }
 
-    public SimpleGraph<NetworkVertex, NetworkEdge> getRailRoadGraph(PublicCompanyI company, boolean addHQ) {
-
-        // set sinks on mapgraph
-        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), company, null);
-        
-        // initialized simple graph
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
-        // add Company HQ
-        NetworkVertex hqVertex = new NetworkVertex(company); 
-        graph.addVertex(hqVertex);
-        
-        // create vertex set for subgraph
-        List<NetworkVertex> tokenVertexes = getCompanyBaseTokenVertexes(company);
-        Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
-        
-        for (NetworkVertex vertex:tokenVertexes){
-            // allow to leave tokenVertices even if those are sinks
-            boolean storeSink = vertex.isSink(); vertex.setSink(false);
-            vertexes.add(vertex);
-            // add connection to graph
-            graph.addVertex(vertex);
-            graph.addEdge(vertex, hqVertex, new NetworkEdge(vertex, hqVertex, false));
-            NetworkIterator iterator = new NetworkIterator(mapGraph, vertex, company);
-            for (;iterator.hasNext();)
-                vertexes.add(iterator.next());
-            // restore sink property
-            vertex.setSink(storeSink);
-        }
-
-        Subgraph<NetworkVertex, NetworkEdge, SimpleGraph<NetworkVertex, NetworkEdge>> subGraph = 
-            new Subgraph<NetworkVertex, NetworkEdge, SimpleGraph<NetworkVertex, NetworkEdge>>
-            (mapGraph, vertexes);
-        // now add all vertexes and edges to the graph
-        Graphs.addGraph(graph, subGraph);
-
-        // if addHQ is not set remove HQ vertex
-        if (!addHQ) graph.removeVertex(hqVertex);
-        
-        // deactivate sinks on mapgraph
-        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), null, null);
-        
-        return graph;
-    }
-    
-    public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompanyI company) {
-        List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
-        for (TokenI token:company.getTokens()){
-            NetworkVertex vertex = getVertex(token);
-            if (vertex == null) continue;
-            vertexes.add(vertex);
-        }
-        return vertexes;
-    }
     
     public void setIteratorStart(MapHex hex, Station station) {
         iterator = new NetworkIterator(mapGraph, getVertex(hex, station));
@@ -277,6 +226,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         }
         return hexes;
     }
+    
+    
     
     public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(
             SimpleGraph<NetworkVertex, NetworkEdge> inGraph) {
@@ -344,7 +295,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     // greedy case:
                     // merge greed edges if the vertexes are not already connected
                     if (edges[0].isGreedy()) {
-                        removed = NetworkEdge.mergeEdges(graph, edges[0], edges[1]);
+                        removed = NetworkEdge.mergeEdgesInGraph(graph, edges[0], edges[1]);
                         if (removed) break;
                     }
                 }

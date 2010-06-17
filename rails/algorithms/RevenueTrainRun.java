@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.GraphPath;
+import org.jgrapht.Graphs;
 
 import rails.algorithms.NetworkVertex.StationType;
 import rails.algorithms.NetworkVertex.VertexType;
@@ -35,11 +37,13 @@ public class RevenueTrainRun {
     
     // converted data
     private List<NetworkVertex> vertices;
+    private List<NetworkEdge> edges;
     
     RevenueTrainRun(RevenueAdapter revenueAdapter, NetworkTrain train) {
         this.revenueAdapter = revenueAdapter;
         this.train = train;
         vertices = new ArrayList<NetworkVertex>();
+        edges = new ArrayList<NetworkEdge>();
     }
     
     public List<NetworkVertex> getRunVertices() {
@@ -83,6 +87,100 @@ public class RevenueTrainRun {
 
     void addVertex(NetworkVertex vertex)  {
         vertices.add(vertex);
+    }
+    
+    void addEdge(NetworkEdge edge) {
+        edges.add(edge);
+    }
+    
+    /** defines the vertices from the list of edges */
+    void convertEdgesToVertices()  {
+        vertices = new ArrayList<NetworkVertex>();
+       
+        // check for empty edges 
+        if (edges.size() == 0) {
+            return;
+        } else if (edges.size() == 1) {
+            // and for 1-edge routes
+            vertices.add(edges.get(0).getSource());
+            vertices.add(edges.get(0).getTarget());
+            return;
+        }
+        
+        // figure out, what are the vertices contained
+        NetworkEdge previousEdge = null;
+        NetworkVertex startVertex = null;
+        for (NetworkEdge edge:edges) {
+            log.info("Processing edge " + edge.toFullInfoString() );
+            // process startEdge
+            if (previousEdge == null) {
+                previousEdge = edge;
+                continue;
+            } 
+            // check if the current edge has a common vertex with the previous one => continuous route
+            NetworkVertex commonVertex = edge.getCommonVertex(previousEdge);
+            // identify start vertex first
+            if (startVertex == null) {
+                // if there is a joint route => other vertex of previousEdge
+                if (commonVertex != null) {
+                    log.info("Head Run");
+                    startVertex = previousEdge.getOtherVertex(commonVertex);
+                    vertices.add(startVertex);
+                    vertices.add(commonVertex);
+                } else {
+                    // otherwise it is a mistake
+                    log.error("Error in revenue train run: cannot identify startVertex");
+                }
+            } else { // start vertex is known
+                // if there is a common vertex => continuous route
+                if (commonVertex != null) {
+                    log.info("Added common vertex");
+                    vertices.add(commonVertex);
+                } else {
+                    // otherwise it is bottom run
+                    // add the last vertex of the head train
+                    log.info("Bottom Run");
+                    vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size()-1)));
+                    vertices.add(startVertex);
+                }
+            }
+            previousEdge = edge;
+        }
+        // add the last vertex of the route 
+        vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size()-1)));
+        log.info("Converted edges to vertices " + vertices);
+    }
+    
+    /** defines the edges from the list of vertices */
+    void convertVerticesToEdges() {
+        edges = new ArrayList<NetworkEdge>();
+        
+        // check for empty or only one vertices
+        if (vertices.size() <= 1) {
+            return;
+        }
+        
+        NetworkVertex startVertex = null;
+        NetworkVertex previousVertex = null;
+        for (NetworkVertex vertex:vertices) {
+            if (startVertex == null) {
+                startVertex = vertex;
+                previousVertex = vertex;
+                continue;
+            }
+            // return to startVertex needs no edge
+            if (vertex != startVertex) {
+                NetworkEdge edge = revenueAdapter.getRCGraph().getEdge(previousVertex, vertex);
+                if (edge != null) {
+                    // found edge between vertices
+                    edges.add(edge);
+                } else {
+                    // otherwise it is a mistake
+                    log.error("Error in revenue train run: cannot find according edge");
+                }
+            }
+            previousVertex = vertex;
+        }
     }
     
     private String prettyPrintHexName(NetworkVertex vertex) {
@@ -171,51 +269,70 @@ public class RevenueTrainRun {
     }
 
     GeneralPath getAsPath(HexMap map) {
-
         GeneralPath path = new GeneralPath();
-        NetworkVertex startVertex = null;
-        NetworkVertex previousVertex = null;
-        for (NetworkVertex vertex:vertices) {
-            log.debug("RA: Next vertex " + vertex);
-            Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
-            if (startVertex == null) {
-                startVertex = vertex;
-                previousVertex = vertex;
-                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-                continue;
-            } else if (startVertex == vertex) {
-                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-                previousVertex = vertex;
-                continue;
-            } 
-            // draw hidden vertexes
-            NetworkEdge edge = revenueAdapter.getRCGraph().getEdge(previousVertex, vertex);
-            if (edge != null) {
-                log.debug("RA: draw edge "+ edge.toFullInfoString());
-                List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
-                if (edge.getSource() == vertex) {
-                    log.debug("RA: reverse hiddenVertexes");
-                    for (int i = hiddenVertexes.size() - 1; i >= 0; i--) {
-                        NetworkVertex v = hiddenVertexes.get(i);
-                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
-                        if (vPoint != null) {
-                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
-                        }
-                    }
-                } else {
-                    for (NetworkVertex v:hiddenVertexes) {
-                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
-                        if (vPoint != null) {
-                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
-                        }
+//        if (edges.size() != 0) {
+            for (NetworkEdge edge:edges) {
+                Point2D sourcePoint = NetworkVertex.getVertexPoint2D(map, edge.getSource());
+                if (sourcePoint != null) { 
+                    path.moveTo((float)sourcePoint.getX(), (float)sourcePoint.getY());
+                }
+                for (NetworkVertex hiddenVertex:edge.getHiddenVertexes()) {
+                    Point2D hiddenPoint = NetworkVertex.getVertexPoint2D(map, hiddenVertex);
+                    if (hiddenPoint != null) {
+                        path.lineTo((float)hiddenPoint.getX(), (float)hiddenPoint.getY());
                     }
                 }
+                Point2D targetPoint = NetworkVertex.getVertexPoint2D(map, edge.getTarget());
+                if (targetPoint != null) { 
+                    path.lineTo((float)targetPoint.getX(), (float)targetPoint.getY());
+                }
             }
-            if (vertexPoint != null) {
-                path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-            }
-            previousVertex = vertex;
-        }
-        return path;
+            return path;
+//        }
+        
+//        NetworkVertex startVertex = null;
+//        NetworkVertex previousVertex = null;
+//        for (NetworkVertex vertex:vertices) {
+//            log.debug("Revenue Path: Next vertex " + vertex);
+//            Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
+//            if (startVertex == null) {
+//                startVertex = vertex;
+//                previousVertex = vertex;
+//                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+//                continue;
+//            } else if (startVertex == vertex) {
+//                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+//                previousVertex = vertex;
+//                continue;
+//            } 
+//            // draw hidden vertexes
+//            NetworkEdge edge = revenueAdapter.getRCGraph().getEdge(previousVertex, vertex);
+//            if (edge != null) {
+//                log.debug("Revenue Path: draw edge "+ edge.toFullInfoString());
+//                List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
+//                if (edge.getSource() == vertex) {
+//                    log.debug("Revenue Path: reverse hiddenVertexes");
+//                    for (int i = hiddenVertexes.size() - 1; i >= 0; i--) {
+//                        NetworkVertex v = hiddenVertexes.get(i);
+//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
+//                        if (vPoint != null) {
+//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
+//                        }
+//                    }
+//                } else {
+//                    for (NetworkVertex v:hiddenVertexes) {
+//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
+//                        if (vPoint != null) {
+//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
+//                        }
+//                    }
+//                }
+//            }
+//            if (vertexPoint != null) {
+//                path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
+//            }
+//            previousVertex = vertex;
+//        }
+//        return path;
     }
 }

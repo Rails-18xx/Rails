@@ -397,7 +397,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
     
     /**
-     * Returns all vertices in a specified collection of hexes
+     * Filters all vertices from a collection of vertices that lay in a specified collection of hexes
      */
     public static Set<NetworkVertex> getVerticesByHexes(Collection<NetworkVertex> vertices, Collection<MapHex> hexes) {
         Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
