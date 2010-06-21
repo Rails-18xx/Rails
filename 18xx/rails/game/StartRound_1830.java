@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.32 2010/04/20 19:21:27 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.33 2010/06/21 22:57:53 stefanfrey Exp $ */
 package rails.game;
 
 import rails.game.action.*;
@@ -325,6 +325,7 @@ public class StartRound_1830 extends StartRound {
 
                 if (GameOption.OPTION_VALUE_YES.equalsIgnoreCase(getGameOption("LeaveAuctionOnPass"))) {
                     // Game option: player to leave auction after a pass (default no).
+                    player.unblockCash(auctionItem.getBid(player));
                     auctionItem.setBid(-1, player);
                 }
 
