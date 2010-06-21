@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.21 2010/05/13 09:51:32 evos Exp $
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.22 2010/06/21 21:35:50 stefanfrey Exp $
  *
  * Created on 20-May-2006
  * Change Log:
@@ -64,8 +64,8 @@ public class BuyTrain extends PossibleORAction {
         if (trains != null) {
             trainsForExchangeUniqueIds = new String[trains.size()];
             for (int i = 0; i < trains.size(); i++) {
-                trainsForExchangeUniqueIds[i] = trains.get(i).getName();
-                // TODO: Must be replaced by unique Ids
+                trainsForExchangeUniqueIds[i] = trains.get(i).getUniqueId();
+                // Must be replaced by unique Ids - why was this a todo?
             }
         }
         return this;
@@ -201,7 +201,7 @@ public class BuyTrain extends PossibleORAction {
     public void setExchangedTrain(TrainI exchangedTrain) {
         this.exchangedTrain = exchangedTrain;
         if (exchangedTrain != null)
-            this.exchangedTrainUniqueId = exchangedTrain.getName();
+            this.exchangedTrainUniqueId = exchangedTrain.getUniqueId();
     }
 
     @Override
