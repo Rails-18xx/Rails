@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.21 2010/01/31 22:22:28 macfreek Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.22 2010/06/21 22:57:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -276,6 +276,7 @@ public class StartItem {
      *
      * @param amount The bid amount.
      * @param bidder The bidding player.
+     * special amounts are 0 for 18EU as buy price, -1 as standard pass, -2 and below as pass in 18EU 
      */
     public void setBid(int amount, Player bidder) {
         int index = bidder.getIndex();
@@ -289,12 +290,11 @@ public class StartItem {
             // (in fact: buy price) visible
             bids[index].resetOption(MoneyModel.SUPPRESS_ZERO);
             bids[index].update();
-        } else {
-            // Passed
+        } else if (amount == -1) {
+            // Passed (standard type)
             bids[index].set(0);
             bids[index].update();
         }
-
     }
 
     /**

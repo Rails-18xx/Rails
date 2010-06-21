@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.10 2009/11/27 20:35:18 evos Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.11 2010/06/21 22:57:52 stefanfrey Exp $ */
 package rails.game.specific._18EU;
 
 import rails.game.*;
@@ -323,7 +323,7 @@ public class StartRound_18EU extends StartRound {
 
         case BID_STEP:
 
-            auctionedItem.setBid(-1, currentPlayer);
+            auctionedItem.setBid(-2, currentPlayer);
 
             // We are done if the next still bidding player
             // is equal to the current highest bidder.
