@@ -1,10 +1,12 @@
 package rails.ui.swing;
 
+import java.awt.Font;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 
 import org.apache.log4j.Logger;
 
@@ -106,15 +108,44 @@ public class GameUIManager implements DialogOwner {
 
         configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
 
+        // font settings
+        String fontType = Config.get("font.global.name");
+        Font font = null;
+        if (Util.hasValue(fontType)) {
+            boolean boldStyle = true;
+            String fontStyle = Config.get("font.global.style");
+            if (Util.hasValue(fontStyle)) {
+                if (fontStyle.equalsIgnoreCase("plain")) {
+                   boldStyle = false;
+                }
+            }
+            if (boldStyle) {
+                font = new Font(fontType, Font.BOLD, 12);
+            } else {
+                font = new Font(fontType, Font.PLAIN, 12);
+            }
+            if (font != null) log.debug("Change text fonts globally to " + font.getName() + " / " + (boldStyle ? "Bold" : "Plain"));
+        }
+        
+        String fontScale = Config.get("font.global.scale");
+        if (Util.hasValue(fontScale)) {
+            try {
+                changeGlobalFont(font, Double.parseDouble(fontScale));
+                log.debug("Change text fonts to relative scale " + fontScale);
+            } catch (NumberFormatException e) {
+                // do nothing
+            }
+        }
     }
 
     public void gameUIInit() {
+        
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
         reportWindow = new ReportWindow(gameManager);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
-
+        
         String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);
         try {
             Class<? extends StatusWindow> statusWindowClass =
@@ -602,6 +633,33 @@ public class GameUIManager implements DialogOwner {
         currentDialogAction = action;
     }
 
+    /**
+     * Change global font size
+     * @param scale
+     */
+    public void changeGlobalFont(Font replaceFont, double scale) {
+        UIDefaults defaults = UIManager.getDefaults();
+        Enumeration<Object> keys = defaults.keys();
+        while(keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = defaults.get(key);
+            if(value != null && value instanceof Font) {
+                UIManager.put(key, null);
+                Font font;
+                if (replaceFont != null) {
+                    font = replaceFont;
+                } else {
+                    font = UIManager.getFont(key);
+                }
+                if(font != null) {
+                    float newSize = font.getSize2D() * (float)scale;
+                    UIManager.put(key, new FontUIResource(font.deriveFont(newSize)));
+                } 
+            } 
+        } 
+    }
+    
+    
     public void exportGame(GameAction exportAction) {
         JFileChooser jfc = new JFileChooser();
         String filename;
