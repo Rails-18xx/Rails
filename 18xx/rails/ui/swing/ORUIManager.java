@@ -271,11 +271,7 @@ public class ORUIManager implements DialogOwner {
                 // standard tokens
                 if (mapHexes) {
                     // generate network graph to indicate the token lays
-                    hexUpgrades = NetworkGraphBuilder.getStationHexes(getCompanyGraph(), orComp);
-                    for (LayToken layToken:allowedTokenLays) {
-                        if (layToken.getLocations() != null)
-                            hexUpgrades.addAll(layToken.getLocations());
-                    }
+                    hexUpgrades.addAll(NetworkGraphBuilder.getTokenableStationHexes(getCompanyGraph(), orComp));
                     for (MapHex hex:hexUpgrades) {
                         GUIHex guiHex = map.getHexByName(hex.getName());
                         guiHex.setSelectable(true);

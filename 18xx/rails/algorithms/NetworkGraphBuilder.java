@@ -215,12 +215,12 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return hexes;
     }
     
-    public static List<MapHex> getStationHexes(Graph<NetworkVertex, NetworkEdge> graph,
+    public static List<MapHex> getTokenableStationHexes(Graph<NetworkVertex, NetworkEdge> graph,
                                 PublicCompanyI company){
         List<MapHex> hexes = new ArrayList<MapHex>();
         for(NetworkVertex vertex:graph.vertexSet()) {
             City city = vertex.getCity();
-            if (city != null && city.hasTokenSlotsLeft()) {
+            if (city != null && city.hasTokenSlotsLeft() && !city.hasTokenOf(company)) {
                 hexes.add(vertex.getHex());
             }
         }
