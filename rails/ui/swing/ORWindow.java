@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.35 2010/02/17 00:21:33 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.36 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
@@ -67,6 +67,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         mapPanel = new MapPanel(gameUIManager);
         getContentPane().add(mapPanel, BorderLayout.CENTER);
 
+        
         upgradePanel = new UpgradesPanel(orUIManager);
         getContentPane().add(upgradePanel, BorderLayout.WEST);
         addMouseListener(upgradePanel);
@@ -87,6 +88,9 @@ public class ORWindow extends JFrame implements ActionPerformer {
             setSize(800, 500);
         } else
             setSize(800, 600);
+
+        log.debug("OrWindow: MapPanel size = " + mapPanel.getSize());
+        log.debug("OrWindow size = " + this.getSize());
 
         final JFrame frame = this;
         addWindowListener(new WindowAdapter() {

@@ -1,7 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.14 2010/01/31 22:22:34 macfreek Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.15 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -52,11 +54,39 @@ public class MapPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         scrollPane.setSize(map.getPreferredSize());
-
+        
         setSize(map.getPreferredSize().width, map.getPreferredSize().height);
+        
         setLocation(25, 25);
     }
 
+    
+    public void scrollPaneShowRectangle(Rectangle rectangle) {
+        
+        JViewport viewport = scrollPane.getViewport();
+        log.debug("ScrollPane viewPort =" + viewport);
+
+        // check dimensions
+        log.debug("Map size =" + map.getSize());
+        log.debug("ScrollPane visibleRect =" + scrollPane.getVisibleRect());
+        log.debug("viewport size =" + viewport.getSize());
+        
+        double setX, setY;
+        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / 2));
+        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / 2));
+        
+        setX = Math.min(setX, Math.max(0, map.getSize().getWidth() -  viewport.getWidth()));
+        setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));
+        
+        final Point viewPosition = new Point((int)setX, (int)setY);
+        log.debug("ViewPosition for ScrollPane = " + viewPosition);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            scrollPane.getViewport().setViewPosition(viewPosition);
+            }
+        });
+    }
+    
     public void setAllowedTileLays(List<LayTile> allowedTileLays) {
         map.setAllowedTileLays(allowedTileLays);
     }

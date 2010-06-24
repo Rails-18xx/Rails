@@ -1,10 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.12 2010/05/15 22:44:46 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.13 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.util;
 
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+
+import rails.game.GameManager;
 
 /**
  * This is a simple utility class with a collection of static functions to load
@@ -38,6 +40,24 @@ public final class Config {
         load();
     }
 
+    /**
+     * First tries to return {key}.{gameName}, if undefined returns {key} 
+     */
+    public static String getGameSpecific(String key) {
+        return Config.getSpecific(key, GameManager.getInstance().getGameName());
+    }
+    
+    /**
+     * First tries to return {key}.{appendix}, if undefined returns {key}
+     */
+    public static String getSpecific(String key, String appendix) {
+        String value = Config.get(key + "." + appendix);
+        if (value == "") {
+            value = Config.get(key);
+        }
+        return value;
+    }
+    
     public static String get(String key) {
 
         if (prop.isEmpty() || !loaded) {

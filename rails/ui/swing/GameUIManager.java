@@ -108,12 +108,12 @@ public class GameUIManager implements DialogOwner {
 
         configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
 
-        // font settings
-        String fontType = Config.get("font.global.name");
+        // font settings, can be game specific
+        String fontType = Config.getGameSpecific("font.ui.name");
         Font font = null;
         if (Util.hasValue(fontType)) {
             boolean boldStyle = true;
-            String fontStyle = Config.get("font.global.style");
+            String fontStyle = Config.getGameSpecific("font.ui.style");
             if (Util.hasValue(fontStyle)) {
                 if (fontStyle.equalsIgnoreCase("plain")) {
                    boldStyle = false;
@@ -127,7 +127,7 @@ public class GameUIManager implements DialogOwner {
             if (font != null) log.debug("Change text fonts globally to " + font.getName() + " / " + (boldStyle ? "Bold" : "Plain"));
         }
         
-        String fontScale = Config.get("font.global.scale");
+        String fontScale = Config.getGameSpecific("font.ui.scale");
         if (Util.hasValue(fontScale)) {
             try {
                 changeGlobalFont(font, Double.parseDouble(fontScale));
