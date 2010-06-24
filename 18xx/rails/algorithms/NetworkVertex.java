@@ -1,6 +1,8 @@
 package rails.algorithms;
 
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -438,7 +440,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (vertex.isMajor()) {
             return guiHex.getCityPoint2D(vertex.getCity());
         } else if (vertex.isMinor()) {
-            return guiHex.getCenterPoint2D();
+            return guiHex.getCityPoint2D(vertex.getCity());
+//            return guiHex.getCenterPoint2D();
         } else if (vertex.isSide()) {
             if (map instanceof EWHexMap) 
                 return guiHex.getSidePoint2D(5-vertex.getSide());
@@ -448,6 +451,33 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             return null;
         }
     }
-    
-    
+
+    public static Rectangle getVertexMapCoverage(HexMap map, Collection<NetworkVertex> vertices) {
+        
+        Rectangle rectangle = null;
+        
+        // find coverage are of the vertices
+        double minX=0,minY=0,maxX=0,maxY=0;
+        for (NetworkVertex vertex:vertices) {
+            Point2D point = getVertexPoint2D(map, vertex);
+            if (point != null) {
+                if (minX == 0) { // init
+                    rectangle = new Rectangle((int)point.getX(), (int)point.getY(), 0, 0);
+                    minX = point.getX();
+                    minY = point.getY();
+                    maxX = minX; maxY = minY;
+                } else {
+                    rectangle.add(point);
+                    minX = Math.min(minX, point.getX());
+                    minY = Math.min(minY, point.getY());
+                    maxX = Math.max(maxX, point.getX());
+                    maxY = Math.max(maxY, point.getY());
+                }
+            }   
+        }
+        log.info("Vertex Map Coverage minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY );
+//        Rectangle rectangle = new Rectangle((int)minX, (int)minY, (int)maxX, (int)maxY);
+        log.info("Created rectangle=" + rectangle);
+        return (rectangle);
+    }
 }

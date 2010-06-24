@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.26 2010/05/15 22:44:46 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.27 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -15,6 +15,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.ORUIManager;
+import rails.ui.swing.Scale;
 import rails.util.*;
 
 /**
@@ -30,22 +31,19 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected ORUIManager orUIManager;
     protected MapManager mapManager;
 
-    // Abstract Methods
-    protected abstract void setupHexesGUI();
-    protected abstract void scaleHexesGUI();
-
     // GUI hexes need to be recreated for each object, since scale varies.
     protected GUIHex[][] h;
 
     protected MapHex[][] hexArray;
     protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
     protected ArrayList<GUIHex> hexes;
-    protected int defaultScale;
     protected int scale;
-    protected int zoomStep = 10;
-    protected double zoomFactor = 1.0;
-    protected int cx;
-    protected int cy;
+    protected int zoomStep = 10; // can be overwritten in config
+    protected double zoomFactor = 1;  // defined dynamically if zoomStep changed
+    protected double peakMargin = 1.0;
+    protected double flatMargin = 0.80;
+    protected double coordinatePeakMargin = 0.80;
+    protected double coordinateFlatMargin = 0.60;
     protected GUIHex selectedHex = null;
     protected Dimension preferredSize;
     protected int minX, minY, maxX, maxY;
@@ -75,7 +73,18 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected int strokeWidth = 5;
     protected int strokeCap = BasicStroke.CAP_ROUND;
     protected int strokeJoin = BasicStroke.JOIN_BEVEL;
-        
+
+    // Abstract Methods, implemented depending on the map type (EW or NS)
+    protected abstract double calcXCoordinates(int col, double offset);
+    protected abstract double calcYCoordinates(int row, double offset);
+    protected abstract void setSize();
+
+    // ("Abstract") Variables to be initialized by map type subclasses
+    protected double tileXOffset;
+    protected double tileYOffset;
+    protected double coordinateXMargin;
+    protected double coordinateYMargin;
+    
     static {
         try {
             colour1 = Util.parseColour(Config.get("route.colour.1", null));
@@ -92,8 +101,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
     
     public void init(ORUIManager orUIManager, MapManager mapManager) {
+
         this.orUIManager = orUIManager;
         this.mapManager = mapManager;
+
         minX = mapManager.getMinX();
         minY = mapManager.getMinY();
         maxX = mapManager.getMaxX();
@@ -102,11 +113,121 @@ public abstract class HexMap extends JComponent implements MouseListener,
         minCol = mapManager.getMinCol();
         maxRow = mapManager.getMaxRow();
         maxCol = mapManager.getMaxCol();
-        setupHexes();
+        log.debug("HexMap init: minX="+ minX + ",minY=" + minY + ",maxX=" +maxX + ",maxY=" + maxY);
+        log.debug("HexMap init: minCol="+ minCol + ",minRow=" + minRow + ",maxCol=" +maxCol + ",maxRow=" + maxRow);
         
-        trainColors = new Color[]{colour1, colour2, colour3, colour4};
+        setScale();
+        setupHexes();
+
+        initializeSettings();
     }
 
+    /**
+     * defines settings from the config files
+     */
+    private void initializeSettings() {
+        trainColors = new Color[]{colour1, colour2, colour3, colour4};
+        
+        // define zoomStep from config
+        String zoomStepSetting = Config.getGameSpecific("map.zoomstep");
+        if (Util.hasValue(zoomStepSetting)) {
+            try {
+                int newZoomStep = Integer.parseInt(zoomStepSetting);
+                if (zoomStep != newZoomStep) {
+                    zoomStep = newZoomStep;
+                    zoom();
+                }
+            } catch (NumberFormatException e) {
+                // otherwise keep default defined above
+            }
+        }
+    }
+
+    protected void setupHexesGUI() {
+
+        hexes = new ArrayList<GUIHex>();
+
+        hexArray = mapManager.getHexes();
+        MapHex mh;
+        
+        h = new GUIHex[hexArray.length][hexArray[0].length];
+        for (int i = minX; i < hexArray.length; i++) {
+            for (int j = minY; j < hexArray[0].length; j++) {
+                mh = hexArray[i][j];
+                if (mh != null) { 
+                    GUIHex hex = new GUIHex(this, calcXCoordinates(mh.getColumn(), tileXOffset), 
+                            calcYCoordinates(mh.getRow(), tileYOffset),
+                            scale, i-minX+1, j-minY+1);
+                    hex.setHexModel(mh);
+                    hex.originalTileId = hex.currentTileId;
+                    hexesByName.put(mh.getName(), hex);
+                    h[i][j] = hex;
+                    hexes.add(hex);
+                }
+            }
+        }
+        setSize();
+    }
+    
+    protected void scaleHexesGUI  () {
+        hexArray = mapManager.getHexes();
+        GUIHex hex;
+        for (int i = minX; i < hexArray.length; i++) {
+            for (int j = minY; j < hexArray[0].length; j++) {
+                hex = h[i][j];
+                MapHex mh = hexArray[i][j];
+                if (hex != null) {
+                    hex.scaleHex(calcXCoordinates(mh.getColumn(), tileXOffset), calcYCoordinates(mh.getRow(), tileYOffset),
+                                 scale, zoomFactor);
+                }
+            }
+        }
+        setSize();
+    }
+
+    protected void drawLabel(Graphics2D g2, int index, int xCoordinate, int yCoordinate, boolean letter) {
+        String label = letter
+        ? String.valueOf((char)('@'+index))
+        : String.valueOf(index);
+
+        xCoordinate -= 4.0*label.length();
+        yCoordinate += 4.0;
+        g2.drawString(label,
+                xCoordinate,
+                yCoordinate);
+        
+//        log.debug("Draw Label " + label + " for " + index + " at x = " + xCoordinate + ", y = " + yCoordinate);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+
+        super.paint(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
+        int xLeft = (int)calcXCoordinates(minCol, - coordinateXMargin);
+        int xRight = (int)calcXCoordinates(maxCol, coordinateXMargin);
+
+        int yTop = (int)calcYCoordinates(minRow, - coordinateYMargin);
+        int yBottom = (int)calcYCoordinates(maxRow,  coordinateYMargin);
+        
+        for (int iCol = minCol; iCol <= maxCol; iCol++) {
+            int xCoordinate = (int)(calcXCoordinates(iCol, 0));
+            drawLabel(g2, iCol, xCoordinate, yTop, lettersGoHorizontal);
+            drawLabel(g2, iCol, xCoordinate, yBottom, lettersGoHorizontal);
+        }
+
+        for (int iRow = minRow; iRow <= maxRow; iRow++) {
+            int yCoordinate = (int)(calcYCoordinates(iRow, 0));
+            drawLabel(g2, iRow, xLeft, yCoordinate, !lettersGoHorizontal);
+            drawLabel(g2, iRow, xRight, yCoordinate, !lettersGoHorizontal);
+        }
+
+
+    }
+
+    
     public void setupHexes() {
         setupHexesGUI();
         setupBars();
@@ -200,10 +321,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
         setScale();
         scaleHexesGUI();
         revalidate();
+//        orUIManager.getMapPanel().resizeMapPanel();
     }
 
     protected void setScale() {
-        scale = (int)(defaultScale * zoomFactor);
+        scale = (int)(Scale.get() * zoomFactor);
     }
 
     public int getZoomStep () {

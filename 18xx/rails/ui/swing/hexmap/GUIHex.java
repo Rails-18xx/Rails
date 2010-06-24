@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.44 2010/04/20 22:07:09 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.45 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
@@ -81,7 +81,7 @@ public class GUIHex implements ViewObject {
     // GUI variables
     double[] xVertex = new double[6];
     double[] yVertex = new double[6];
-    double len;
+//    double len;
     GeneralPath hexagon;
     Rectangle rectBound;
     int baseRotation = 0;
@@ -113,23 +113,23 @@ public class GUIHex implements ViewObject {
         tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
 
         if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
-            len = scale;
-            xVertex[0] = cx + SQRT3 / 2 * scale;
-            yVertex[0] = cy + 0.5 * scale;
-            xVertex[1] = cx + SQRT3 * scale;
+//            len = scale;
+            xVertex[0] = cx + SQRT3 * scale;
+            yVertex[0] = cy + scale;
+            xVertex[1] = cx + 2 * SQRT3 * scale;
             yVertex[1] = cy;
-            xVertex[2] = cx + SQRT3 * scale;
-            yVertex[2] = cy - 1 * scale;
-            xVertex[3] = cx + SQRT3 / 2 * scale;
-            yVertex[3] = cy - 1.5 * scale;
+            xVertex[2] = cx + 2 * SQRT3 * scale;
+            yVertex[2] = cy - 2 * scale;
+            xVertex[3] = cx + SQRT3 * scale;
+            yVertex[3] = cy - 3 * scale;
             xVertex[4] = cx;
-            yVertex[4] = cy - 1 * scale;
+            yVertex[4] = cy - 2 * scale;
             xVertex[5] = cx;
             yVertex[5] = cy;
 
             baseRotation = 30; // degrees
         } else {
-            len = scale / 3.0;
+//            len = scale / 3.0;
             xVertex[0] = cx;
             yVertex[0] = cy;
             xVertex[1] = cx + 2 * scale;

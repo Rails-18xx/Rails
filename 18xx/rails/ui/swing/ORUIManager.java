@@ -18,6 +18,7 @@ import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
+import rails.util.Config;
 import rails.util.LocalText;
 import rails.util.Util;
 
@@ -219,10 +220,18 @@ public class ORUIManager implements DialogOwner {
                 // standard upgrades
                 if (mapHexes) {
                     // generate network graph to indicate the allowed tiles
-                    List<MapHex> mapHexUpgrades = NetworkGraphBuilder.getMapHexes(getCompanyGraph());
+                    SimpleGraph<NetworkVertex, NetworkEdge> companyGraph = getCompanyGraph();
+                    List<MapHex> mapHexUpgrades = NetworkGraphBuilder.getMapHexes(companyGraph);
                     for (MapHex hex:mapHexUpgrades) {
                         if (hex.isUpgradeableNow(gameUIManager.getCurrentPhase()))
                             hexUpgrades.add(hex);
+                    }
+                    String autoScroll = Config.getGameSpecific("map.autoscroll");
+                    if (Util.hasValue(autoScroll) &&  autoScroll.equalsIgnoreCase("no")) {
+                        // do nothing
+                    } else {
+                        mapPanel.scrollPaneShowRectangle(
+                                NetworkVertex.getVertexMapCoverage(map, companyGraph.vertexSet()));
                     }
                 }
 

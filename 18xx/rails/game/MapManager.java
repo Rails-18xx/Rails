@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.22 2010/04/04 22:02:53 stefanfrey Exp $ */
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.23 2010/06/24 21:48:08 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -28,6 +28,7 @@ public class MapManager implements ConfigurableComponentI {
     // upgrade costs on the map for noMapMode
     protected SortedSet<Integer> possibleTileCosts;
 
+    // information to define neighbors
     protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
     protected static final int[] yXEvenDeltaNS =
             new int[] { +1, 0, -1, -1, -1, 0 };
