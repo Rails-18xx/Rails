@@ -1,4 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.28 2010/05/30 10:42:39 stefanfrey Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.29 2010/06/25 20:47:45 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -497,7 +497,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             if (tile.getExternalId() > 0) {
                 text.append("<HTML><BODY>" + tile.getExternalId()); 
                 if (tile.countFreeTiles() != -1) {
-                    text.append("<BR> #" + tile.countFreeTiles());
+                    text.append("<BR> (" + tile.countFreeTiles() + ")");
                 }
                 text.append("</BODY></HTML>");
             }
