@@ -196,6 +196,7 @@
 		<Certificate shares="1" number="4"/>
 	</Company>
 	<Company name="Pr" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000">
+        <Home hex="E19"/>
 		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
 		<Certificate type="President" shares="2"/>
