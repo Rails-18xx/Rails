@@ -742,7 +742,7 @@ public class StockRound extends Round {
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
             if (!currentSpace.isNoCertLimit()
-                && !mayPlayerBuyCertificate(currentPlayer, company, shares)) {
+                && !mayPlayerBuyCertificate(currentPlayer, company, number)) {
                 errMsg =
                         currentPlayer.getName()
                                 + LocalText.getText("WouldExceedCertLimit",
