@@ -13999,7 +13999,7 @@ object TTilesWrapper
       Code = 439
       LongName = '1889 Kotohira green'
       Category = 'Kotohira'
-      CategoryPosition = tp3SideA
+      CategoryPosition = tp2SideD
       Level = tlGreen
       Connections = <
         item
@@ -14017,8 +14017,7 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtDoubleCity
-          Revenue = 50
-          RevenuePosition = tp3CornerF
+          Revenue = 60
         end>
     end
     item

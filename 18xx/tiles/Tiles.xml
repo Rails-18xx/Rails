@@ -3379,7 +3379,7 @@
         <Track from="city1" gauge="normal" to="side4"/>
     </Tile>
     <Tile colour="green" id="439" name="1889 Kotohira green">
-        <Station id="city1" position="0" slots="2" type="City" value="50"/>
+        <Station id="city1" position="0" slots="2" type="City" value="60"/>
         <Track from="city1" gauge="normal" to="side4"/>
         <Track from="city1" gauge="normal" to="side2"/>
         <Track from="city1" gauge="normal" to="side0"/>
