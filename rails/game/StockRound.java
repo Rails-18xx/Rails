@@ -813,7 +813,7 @@ public class StockRound extends Round {
                 log.error("Cannot find " + companyName + " " + shareUnit
                           + "% share in " + from.getName());
             }
-            cert.moveTo(currentPlayer.getPortfolio());
+            cert2.moveTo(currentPlayer.getPortfolio());
         }
         new CashMove (currentPlayer, priceRecipient, cost);
 
