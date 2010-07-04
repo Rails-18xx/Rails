@@ -1,29 +1,12 @@
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import rails.common.GuiDef;
-import rails.game.action.BuyCertificate;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.RequestTurn;
-import rails.game.action.SellShares;
-import rails.game.action.StartCompany;
-import rails.game.action.UseSpecialProperty;
-import rails.game.move.AddToList;
-import rails.game.move.CashMove;
-import rails.game.move.DoubleMapChange;
-import rails.game.special.ExchangeForShare;
-import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialPropertyI;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
-import rails.game.state.State;
+import rails.game.action.*;
+import rails.game.move.*;
+import rails.game.special.*;
+import rails.game.state.*;
 import rails.util.LocalText;
 
 /**
