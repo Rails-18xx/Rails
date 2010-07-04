@@ -1,10 +1,22 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.107 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
@@ -12,15 +24,28 @@ import org.apache.log4j.NDC;
 import rails.algorithms.RevenueManager;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
-import rails.game.action.*;
-import rails.game.correct.*;
-import rails.game.move.*;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.RepayLoans;
+import rails.game.correct.CorrectionAction;
+import rails.game.correct.CorrectionManagerI;
+import rails.game.correct.CorrectionType;
+import rails.game.move.AddToList;
+import rails.game.move.CashMove;
+import rails.game.move.MoveStack;
+import rails.game.move.Moveable;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
-import rails.util.*;
+import rails.util.BuildInfo;
+import rails.util.Config;
+import rails.util.LocalText;
+import rails.util.Tag;
+import rails.util.Util;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -34,11 +59,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * action package.
      */
     public static final long saveFileVersionID =
-            saveFileHeaderVersionID * PossibleAction.serialVersionUID;
+        saveFileHeaderVersionID * PossibleAction.serialVersionUID;
 
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass =
-            OperatingRound.class;
+        OperatingRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -75,7 +100,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-            = new IntegerState ("PlayerCertificateLimit", 0);
+    = new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -85,10 +110,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean gameEndsAfterSetOfORs = true;
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
-            = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+    = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
-//    protected EnumSet<CorrectionType> activeCorrections
-//        = EnumSet.noneOf(CorrectionType.class);
+    //    protected EnumSet<CorrectionType> activeCorrections
+    //        = EnumSet.noneOf(CorrectionType.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -103,9 +128,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected IntegerState srNumber = new IntegerState ("SRNumber");
 
     protected IntegerState absoluteORNumber =
-            new IntegerState("AbsoluteORNUmber");
+        new IntegerState("AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
-            new IntegerState("RelativeORNumber");
+        new IntegerState("RelativeORNumber");
     protected int numOfORs;
 
     protected BooleanState gameOver = new BooleanState("GameOver" ,false);
@@ -142,7 +167,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * For now, the key is a fixed string, but that may change in the future.
      */
     protected static Map<String, GameManagerI> gameManagerMap
-        = new HashMap<String, GameManagerI>();
+    = new HashMap<String, GameManagerI>();
 
     /**
      * The temporary fixed key to the currently single GameManager instance
@@ -188,10 +213,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
-            new ArrayList<GameOption>();
+        new ArrayList<GameOption>();
 
     protected static Logger log =
-            Logger.getLogger(GameManager.class.getPackage().getName());
+        Logger.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
         gmName = GM_NAME;
@@ -209,7 +234,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         Tag gameTag = tag.getChild("Game");
         if (gameTag == null)
             throw new ConfigurationException(
-                    "No Game tag specified in GameManager tag");
+            "No Game tag specified in GameManager tag");
         gameName = gameTag.getAttributeAsString("name");
         if (gameName == null)
             throw new ConfigurationException("No name specified in Game tag");
@@ -261,19 +286,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
 
             // StockRound class and other properties
-               Tag srTag = gameParmTag.getChild("StockRound");
+            Tag srTag = gameParmTag.getChild("StockRound");
             if (srTag != null) {
                 String srClassName =
-                        srTag.getAttributeAsString("class", "rails.game.StockRound");
+                    srTag.getAttributeAsString("class", "rails.game.StockRound");
                 try {
                     stockRoundClass =
-                            Class.forName(srClassName).asSubclass(StockRound.class);
+                        Class.forName(srClassName).asSubclass(StockRound.class);
                 } catch (ClassNotFoundException e) {
                     throw new ConfigurationException("Cannot find class "
-                                                     + srClassName, e);
+                            + srClassName, e);
                 }
                 String stockRoundSequenceRuleString =
-                        srTag.getAttributeAsString("sequence");
+                    srTag.getAttributeAsString("sequence");
                 if (Util.hasValue(stockRoundSequenceRuleString)) {
                     if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
@@ -288,8 +313,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 }
 
                 skipFirstStockRound =
-                        srTag.getAttributeAsBoolean("skipFirst",
-                                skipFirstStockRound);
+                    srTag.getAttributeAsBoolean("skipFirst",
+                            skipFirstStockRound);
 
                 for (String ruleTagName : srTag.getChildren().keySet()) {
                     if (ruleTagName.equals("NoSaleInFirstSR")) {
@@ -301,21 +326,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     }
 
                 }
-        }
+            }
 
             // OperatingRound class
             Tag orTag = gameParmTag.getChild("OperatingRound");
             if (orTag != null) {
                 String orClassName =
-                        orTag.getAttributeAsString("class",
-                                "rails.game.OperatingRound");
+                    orTag.getAttributeAsString("class",
+                    "rails.game.OperatingRound");
                 try {
                     operatingRoundClass =
-                            Class.forName(orClassName).asSubclass(
-                                    OperatingRound.class);
+                        Class.forName(orClassName).asSubclass(
+                                OperatingRound.class);
                 } catch (ClassNotFoundException e) {
                     throw new ConfigurationException("Cannot find class "
-                                                     + orClassName, e);
+                            + orClassName, e);
                 }
             }
 
@@ -354,8 +379,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag bankBreaksTag = endOfGameTag.getChild("BankBreaks");
             if (bankBreaksTag != null) {
                 gameEndsWhenBankHasLessOrEqual =
-                        bankBreaksTag.getAttributeAsInteger("limit",
-                                gameEndsWhenBankHasLessOrEqual);
+                    bankBreaksTag.getAttributeAsInteger("limit",
+                            gameEndsWhenBankHasLessOrEqual);
                 String attr = bankBreaksTag.getAttributeAsString("finish");
                 if (attr.equalsIgnoreCase("SetOfORs")) {
                     gameEndsAfterSetOfORs = true;
@@ -372,7 +397,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag gameUIMgrTag = guiClassesTag.getChild("GameUIManager");
             if (gameUIMgrTag != null) {
                 gameUIManagerClassName =
-                        gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
+                    gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
                 // Check instantiatability (not sure if this belongs here)
                 canClassBeInstantiated (gameUIManagerClassName);
             }
@@ -381,7 +406,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag orMgrTag = guiClassesTag.getChild("ORUIManager");
             if (orMgrTag != null) {
                 orUIManagerClassName =
-                        orMgrTag.getAttributeAsString("class", orUIManagerClassName);
+                    orMgrTag.getAttributeAsString("class", orUIManagerClassName);
                 // Check instantiatability (not sure if this belongs here)
                 canClassBeInstantiated (orUIManagerClassName);
             }
@@ -390,7 +415,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag gameStatusTag = guiClassesTag.getChild("GameStatus");
             if (gameStatusTag != null) {
                 gameStatusClassName =
-                        gameStatusTag.getAttributeAsString("class", gameStatusClassName);
+                    gameStatusTag.getAttributeAsString("class", gameStatusClassName);
                 // Check instantiatability (not sure if this belongs here)
                 canClassBeInstantiated (gameStatusClassName);
             }
@@ -399,8 +424,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag statusWindowTag = guiClassesTag.getChild("StatusWindow");
             if (statusWindowTag != null) {
                 statusWindowClassName =
-                        statusWindowTag.getAttributeAsString("class",
-                                statusWindowClassName);
+                    statusWindowTag.getAttributeAsString("class",
+                            statusWindowClassName);
                 // Check instantiatability (not sure if this belongs here)
                 canClassBeInstantiated (statusWindowClassName);
             }
@@ -431,7 +456,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Cannot find class "
-                                             + className, e);
+                    + className, e);
         }
     }
 
@@ -497,7 +522,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);
         }
 
-loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
+        loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
@@ -513,7 +538,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             guiParameters.put(GuiDef.Parm.NO_MAP_MODE, true);
             guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, false);
             guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, false);
-        } else { 
+        } else {
             if (getGameOption("RouteAwareness").equalsIgnoreCase("Highlight")) {
                 guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, true);
             }
@@ -561,7 +586,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 startOperatingRound(false);
             } else if (skipFirstStockRound) {
                 PhaseI currentPhase =
-                        phaseManager.getCurrentPhase();
+                    phaseManager.getCurrentPhase();
                 numOfORs = currentPhase.getNumberOfOperatingRounds();
                 log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
@@ -612,7 +637,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         } catch (Exception e) {
             log.fatal("Cannot find class "
                     + startRoundClassName, e);
-          System.exit(1);
+            System.exit(1);
         }
         StartRound startRound = createRound (startRoundClass);
         startRound.start ();
@@ -640,7 +665,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             round = cons.newInstance(this);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
-                      + roundClass.getName(), e);
+                    + roundClass.getName(), e);
             System.exit(1);
         }
         setRound (round);
@@ -648,7 +673,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     }
 
     protected <T extends RoundI, U extends RoundI>
-            T createRound (Class<T> roundClass, U parentRound) {
+    T createRound (Class<T> roundClass, U parentRound) {
 
         if (parentRound == null) {
             return createRound (roundClass);
@@ -660,7 +685,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             round = cons.newInstance(this, parentRound);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
-                      + roundClass.getName(), e);
+                    + roundClass.getName(), e);
             System.exit(1);
         }
         setRound (round);
@@ -710,7 +735,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         interruptedRound = getCurrentRound();
         createRound (ShareSellingRound.class, interruptedRound)
-            .start(player, cashToRaise, unsellableCompany);
+        .start(player, cashToRaise, unsellableCompany);
     }
 
     /* (non-Javadoc)
@@ -799,7 +824,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
             if (result && !(action instanceof GameAction) && action.hasActed()) {
                 new AddToList<PossibleAction>(executedActions, action,
-                        "ExecutedActions");
+                "ExecutedActions");
             }
         }
 
@@ -834,7 +859,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
-                      + pa.toString());
+                    + pa.toString());
         }
 
         return result;
@@ -865,9 +890,9 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
     private boolean processCorrectionActions(PossibleAction a){
 
-       boolean result = false;
+        boolean result = false;
 
-       if (a instanceof CorrectionAction) {
+        if (a instanceof CorrectionAction) {
             CorrectionAction ca= (CorrectionAction)a;
             CorrectionType ct = ca.getCorrectionType();
             CorrectionManagerI cm = getCorrectionManager(ct);
@@ -899,8 +924,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 log.debug("Action ("+action.getPlayerName()+"): " + action);
                 if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
                     String msg = "Player "+action.getPlayerName()+"\'s action \""
-                        +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
-                        +" is considered invalid by the game engine";
+                    +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
+                    +" is considered invalid by the game engine";
                     log.error(msg);
                     DisplayBuffer.add(msg);
                     if (moveStack.isOpen()) moveStack.finish();
@@ -918,14 +943,14 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 throw new Exception("Reload failure", e);
             }
             new AddToList<PossibleAction>(executedActions, action,
-                    "ExecutedActions");
+            "ExecutedActions");
             if (moveStack.isOpen()) moveStack.finish();
-            
+
             log.debug("Turn: "+getCurrentPlayer().getName());
         }
 
-//        DisplayBuffer.clear();
-//        previous line removed to allow display of nextPlayerMessages
+        //        DisplayBuffer.clear();
+        //        previous line removed to allow display of nextPlayerMessages
         guiHints.clearVisibilityHints();
 
         return true;
@@ -938,8 +963,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
         try {
             ObjectOutputStream oos =
-                    new ObjectOutputStream(new FileOutputStream(new File(
-                            filepath)));
+                new ObjectOutputStream(new FileOutputStream(new File(
+                        filepath)));
             oos.writeObject(Game.version+" "+BuildInfo.buildDate);
             oos.writeObject(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             oos.writeObject(saveFileVersionID);
@@ -973,8 +998,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 for (MapHex hex:hexRow)
                     if (hex != null) {
                         pw.println(hex.getName() + "," + hex.getCurrentTile().getExternalId() + ","
-                               + hex.getCurrentTileRotation() + ","
-                               + hex.getOrientationName(hex.getCurrentTileRotation())
+                                + hex.getCurrentTileRotation() + ","
+                                + hex.getOrientationName(hex.getCurrentTileRotation())
                         ) ;
                     }
 
@@ -1019,8 +1044,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public void registerBankruptcy() {
         endedByBankruptcy.set(true);
         String message =
-                LocalText.getText("PlayerIsBankrupt",
-                        getCurrentPlayer().getName());
+            LocalText.getText("PlayerIsBankrupt",
+                    getCurrentPlayer().getName());
         ReportBuffer.add(message);
         DisplayBuffer.add(message);
         if (gameEndsWithBankruptcy) {
@@ -1044,7 +1069,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
                 newPresident = null;
                 maxShare = 0;
                 for (int index=getCurrentPlayerIndex()+1;
-                        index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
+                index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
                     player = getPlayerByIndex(index%numberOfPlayers);
                     share = player.getPortfolio().getShare(company);
                     if (share >= company.getPresidentsShare().getShare()
@@ -1068,7 +1093,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
 
             // Finish the share selling round
             if (getCurrentRound() instanceof ShareSellingRound) {
-            	finishShareSellingRound();
+                finishShareSellingRound();
             }
         }
     }
@@ -1142,7 +1167,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
         int i = 0;
         for (Player p : rankedPlayers) {
             b.add((++i) + ". " + Bank.format(p.getWorth()) + " "
-                     + p.getName());
+                    + p.getName());
         }
 
         return b;
@@ -1167,8 +1192,8 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
-//        currentPlayer.set(players.get(currentPlayerIndex));
-//      changed to activate nextPlayerMessages
+        //        currentPlayer.set(players.get(currentPlayerIndex));
+        //      changed to activate nextPlayerMessages
         setCurrentPlayer(players.get(currentPlayerIndex));
     }
 
@@ -1192,7 +1217,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
      */
     public void setPriorityPlayer() {
         int priorityPlayerIndex =
-                (getCurrentPlayer().getIndex() + 1) % numberOfPlayers;
+            (getCurrentPlayer().getIndex() + 1) % numberOfPlayers;
         setPriorityPlayer(players.get(priorityPlayerIndex));
 
     }
@@ -1203,7 +1228,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
         log.debug("Priority player set to " + player.getIndex() + " "
-                  + player.getName());
+                + player.getName());
     }
 
     /* (non-Javadoc)
@@ -1280,7 +1305,7 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
     public void setNextPlayer() {
         int currentPlayerIndex = getCurrentPlayerIndex();
         do {
-        	currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
+            currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
         } while (players.get(currentPlayerIndex).isBankrupt());
         setCurrentPlayerIndex(currentPlayerIndex);
     }
@@ -1546,8 +1571,41 @@ loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) 
             cm=ct.newCorrectionManager(this);
             correctionManagers.put(ct, cm);
             log.debug("Added CorrectionManager for " + ct);
-}
+        }
         return cm;
+    }
+
+    /** Return a list of companies in operation order.
+     * <p>Note that, unlike Round.setOperatingCompanies(), this method does <b>not</b> check
+     * if the companies are actualy allowed to operate. One purpose is to check for upping the
+     * share price at the end of an SR un sucn a way, that the token order gets preserved.
+     * @return
+     */
+    public List<PublicCompanyI> getCompaniesInRunningOrder () {
+
+        Map<Integer, PublicCompanyI> operatingCompanies =
+            new TreeMap<Integer, PublicCompanyI>();
+        StockSpaceI space;
+        int key;
+        int minorNo = 0;
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+
+            // Key must put companies in reverse operating order, because sort
+            // is ascending.
+            if (company.hasStockPrice() && company.hasStarted()) {
+                space = company.getCurrentSpace();
+                key =
+                    1000000 * (999 - space.getPrice()) + 10000
+                    * (99 - space.getColumn()) + 100
+                    * space.getRow()
+                    + space.getStackPosition(company);
+            } else {
+                key = ++minorNo;
+            }
+            operatingCompanies.put(new Integer(key), company);
+        }
+
+        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
     }
 
 }

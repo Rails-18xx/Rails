@@ -56,7 +56,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public abstract boolean process(PossibleAction action);
 
     public abstract boolean processOnReload(List<PossibleAction> actions)
-            throws Exception;
+    throws Exception;
 
     public abstract void finishShareSellingRound();
 
@@ -147,7 +147,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void addPortfolio (Portfolio portfolio);
     public Portfolio getPortfolioByName (String name);
 
-        /**
+    /**
      * @return the StartPacket
      */
     public abstract StartPacket getStartPacket();
@@ -194,9 +194,11 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public String getGMKey ();
     public MoveStack getMoveStack ();
     public DisplayBuffer getDisplayBuffer();
-    public void addToNextPlayerMessages(String s, boolean undoable); 
+    public void addToNextPlayerMessages(String s, boolean undoable);
     public ReportBuffer getReportBuffer();
     public GuiHints getUIHints();
 
     public CorrectionManagerI getCorrectionManager(CorrectionType ct);
+    public List<PublicCompanyI> getCompaniesInRunningOrder ();
+
 }
