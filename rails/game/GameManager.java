@@ -1,22 +1,10 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.107 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
@@ -24,28 +12,13 @@ import org.apache.log4j.NDC;
 import rails.algorithms.RevenueManager;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
-import rails.game.action.GameAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.RepayLoans;
-import rails.game.correct.CorrectionAction;
-import rails.game.correct.CorrectionManagerI;
-import rails.game.correct.CorrectionType;
-import rails.game.move.AddToList;
-import rails.game.move.CashMove;
-import rails.game.move.MoveStack;
-import rails.game.move.Moveable;
+import rails.game.action.*;
+import rails.game.correct.*;
+import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
-import rails.game.state.State;
-import rails.util.BuildInfo;
-import rails.util.Config;
-import rails.util.LocalText;
-import rails.util.Tag;
-import rails.util.Util;
+import rails.game.state.*;
+import rails.util.*;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
