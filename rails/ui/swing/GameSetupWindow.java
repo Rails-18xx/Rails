@@ -25,7 +25,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     GridBagConstraints gc;
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
-    JButton newButton, loadButton, quitButton, optionButton, infoButton;
+    JButton newButton, loadButton, recoveryButton, quitButton, optionButton, infoButton;
     JButton creditsButton, randomizeButton;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -66,6 +66,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         newButton = new JButton(LocalText.getText("NewGame"));
         loadButton = new JButton(LocalText.getText("LoadGame"));
+        recoveryButton = new JButton(LocalText.getText("RecoverGame"));
         quitButton = new JButton(LocalText.getText("QUIT"));
         optionButton = new JButton(LocalText.getText("OPTIONS"));
         infoButton = new JButton(LocalText.getText("INFO"));
@@ -73,6 +74,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         newButton.setMnemonic(KeyEvent.VK_N);
         loadButton.setMnemonic(KeyEvent.VK_L);
+        recoveryButton.setMnemonic(KeyEvent.VK_R);
         quitButton.setMnemonic(KeyEvent.VK_Q);
         optionButton.setMnemonic(KeyEvent.VK_O);
         infoButton.setMnemonic(KeyEvent.VK_G);
@@ -85,12 +87,15 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         populateGameList(GamesInfo.getGameNames(), gameNameBox);
 
         gameListPane.add(new JLabel("Available Games:"));
+        gameListPane.add(new JLabel("")); // empty slot
         gameListPane.add(gameNameBox);
+        gameListPane.add(optionButton);
         gameListPane.setLayout(new GridLayout(2, 2));
         gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
         newButton.addActionListener(this);
         loadButton.addActionListener(this);
+        recoveryButton.addActionListener(this);
         quitButton.addActionListener(this);
         optionButton.addActionListener(this);
         infoButton.addActionListener(this);
@@ -99,7 +104,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         buttonPane.add(newButton);
         buttonPane.add(loadButton);
-        buttonPane.add(optionButton);
+        if (!Config.get("save.recovery.active", "yes").equalsIgnoreCase("no")) {
+            buttonPane.add(recoveryButton);
+        }
         buttonPane.add(infoButton);
         buttonPane.add(quitButton);
         buttonPane.add(creditsButton);
@@ -187,6 +194,26 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         }
     }
 
+    /*
+     * loads and start the game given a filename
+     */
+    private void loadAndStartGame(String filePath, String saveDirectory) {
+        if ((game = Game.load(filePath)) == null) {
+            JOptionPane.showMessageDialog(this,
+                    DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
+            return;
+        } else if (DisplayBuffer.getSize() > 0) {
+            JOptionPane.showMessageDialog(this,
+                    DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
+        }
+        startGameUIManager(game);
+        if (saveDirectory != null) {
+            gameUIManager.setSaveDirectory (saveDirectory);
+        }
+        gameUIManager.startLoadedGame();
+        setVisible(false);
+    }
+    
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(newButton)) {
             startNewGame();
@@ -200,24 +227,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
             if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = jfc.getSelectedFile();
-                String filepath = selectedFile.getPath();
-                saveDirectory = selectedFile.getParent();
-                if ((game = Game.load(filepath)) == null) {
-                    JOptionPane.showMessageDialog(this,
-                            DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
-                    return;
-                } else if (DisplayBuffer.getSize() > 0) {
-                    JOptionPane.showMessageDialog(this,
-                            DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
-                }
+                loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
             } else { // cancel pressed
                 return;
             }
-
-            startGameUIManager(game);
-            gameUIManager.setSaveDirectory (saveDirectory);
-            gameUIManager.startLoadedGame();
-            setVisible(false);
+        } else if (arg0.getSource().equals(recoveryButton)) {
+            String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
+            loadAndStartGame(filePath, null);
         } else if (arg0.getSource().equals(infoButton)) {
             JOptionPane.showMessageDialog(this,
                     GamesInfo.getDescription(gameName), "Information about "

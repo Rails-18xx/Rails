@@ -73,13 +73,26 @@ public final class DisplayBuffer {
     }
 
     private static DisplayBuffer getInstance() {
-        return GameManager.getInstance().getDisplayBuffer();
+        GameManagerI gm = GameManager.getInstance();
+        if (gm == null) {
+            return null;
+        } else {
+            return gm.getDisplayBuffer();
+        }
     }
 
     /** Get the current message buffer, and clear it */
     public static String[] get() {
         DisplayBuffer instance = getInstance();
-        if (instance.displayBuffer.size() > 0) {
+        if (instance == null) {
+            if (initialQueue.isEmpty()) {
+                return null;
+            } else {
+                String[] message = initialQueue.toArray(new String[0]);
+                initialQueue.clear();
+                return message;
+            }
+        } else if (instance.displayBuffer.size() > 0) {
             String[] message = instance.displayBuffer.toArray(new String[0]);
             instance.displayBuffer.clear();
             return message;
