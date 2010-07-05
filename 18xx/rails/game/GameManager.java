@@ -187,6 +187,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
         new ArrayList<GameOption>();
+    
+    /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
+    protected boolean recoverySaveWarning = true;
 
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
@@ -810,6 +813,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (action != null) {
             if (result && !(action instanceof GameAction) && action.hasActed()) {
                 if (moveStack.isOpen()) moveStack.finish();
+                recoverySave();
             } else {
                 if (moveStack.isOpen()) moveStack.cancel();
             }
@@ -929,15 +933,72 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return true;
     }
 
-    protected boolean save(GameAction saveAction) {
+    /** recoverySave method
+     * Uses filePath defined in save.recovery.filepath
+     *  */
+    protected void recoverySave() {
+        if (Config.get("save.recovery.active", "yes").equalsIgnoreCase("no")) return;
+        
+        String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
+        // create temporary new save file
+        File tempFile = null;
+        tempFile = new File(filePath + ".tmp");
+        if (!save(tempFile, recoverySaveWarning, "RecoverySaveFailed")) {
+            recoverySaveWarning = false;
+            return;
+        }
 
-        String filepath = saveAction.getFilepath();
+        // rename the temp file to the recover file
+        File recoveryFile = null;
+        boolean result;
+        try {
+            log.debug("Created temporary recovery file, path = "  + tempFile.getAbsolutePath());
+            // check if previous save file exists
+            recoveryFile = new File(filePath);
+            log.debug("Potential recovery filePath = "  + recoveryFile.getAbsolutePath());
+            if (recoveryFile.exists()) {
+                log.debug("Potential recovery filePath = "  + recoveryFile.getAbsolutePath());
+                File backupFile = new File(filePath + ".bak");
+                if (recoveryFile.renameTo(backupFile)) {
+                    result = tempFile.renameTo(recoveryFile);
+                } else {
+                    result = backupFile.renameTo(recoveryFile);
+                }
+            } else {
+                log.debug("Tries to rename temporary file");
+                result = tempFile.renameTo(recoveryFile);
+            }
+        } catch (Exception e) {
+            DisplayBuffer.add(LocalText.getText("RecoverySaveFailed", e.getMessage()));
+            recoverySaveWarning = false;
+            return;
+        }
+ 
+        if (result) {
+            log.debug("Renamed to recovery file, path = "  + recoveryFile.getAbsolutePath());
+            if (!recoverySaveWarning) {
+                DisplayBuffer.add(LocalText.getText("RecoverySaveSuccessAgain"));
+                recoverySaveWarning = true;
+            }
+        } else {
+            if (recoverySaveWarning) {
+                DisplayBuffer.add(LocalText.getText("RecoverySaveFailed", "file renaming not possible"));
+                recoverySaveWarning = false;
+            }
+        }
+    }
+    
+    protected boolean save(GameAction saveAction) {
+        File file = new File(saveAction.getFilepath());
+        return save(file, true, "SaveFailed");
+    }
+    
+    protected boolean save(File file, boolean displayErrorMessage, String errorMessageKey) {
         boolean result = false;
 
         try {
             ObjectOutputStream oos =
-                new ObjectOutputStream(new FileOutputStream(new File(
-                        filepath)));
+                new ObjectOutputStream(new FileOutputStream(file));
             oos.writeObject(Game.version+" "+BuildInfo.buildDate);
             oos.writeObject(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             oos.writeObject(saveFileVersionID);
@@ -949,10 +1010,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
             result = true;
         } catch (IOException e) {
-            log.error("Save failed", e);
-            DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+            log.error(errorMessageKey, e);
+            if (displayErrorMessage) {
+                DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+            }
         }
-
         return result;
     }
 
