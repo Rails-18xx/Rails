@@ -721,6 +721,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         // Need to separate selection and execution,
         // otherwise we get a ConcurrentModificationException on trains.
         for (TrainI train : trainsToRust) {
+            ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
+                    train.getName(), name));
             log.debug("Obsolete train " + train.getUniqueId() + " (owned by "
                       + name + ") rusted");
             train.setRusted();
