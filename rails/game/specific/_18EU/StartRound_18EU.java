@@ -56,7 +56,6 @@ public class StartRound_18EU extends StartRound {
     public boolean setPossibleActions() {
 
         possibleActions.clear();
-        boolean passAllowed = false;
 
         // Refresh player, may have been reset by Undo/Redo
         currentPlayer = getCurrentPlayer();
@@ -81,30 +80,32 @@ public class StartRound_18EU extends StartRound {
                 }
             }
             break;
-
         case BUY_STEP:
-
-            possibleActions.add(new BuyStartItem(
-                    (StartItem) currentAuctionItem.getObject(),
-                    currentBuyPrice.intValue(), true));
-            passAllowed = true;
-
+            // only offer buy if enough money
+            if (currentBuyPrice.intValue() <= currentPlayer.getFreeCash()) {
+                possibleActions.add(new BuyStartItem(
+                        (StartItem) currentAuctionItem.getObject(),
+                        currentBuyPrice.intValue(), true));
+            }
+            possibleActions.add(new NullAction(NullAction.PASS));
             break;
-
         case OPEN_STEP:
         case BID_STEP:
-
             StartItem item = (StartItem) currentAuctionItem.getObject();
-            BidStartItem possibleAction =
+            // only offer if enough money
+            if (item.getMinimumBid() <= currentPlayer.getFreeCash()) {
+                BidStartItem possibleAction =
                     new BidStartItem(item, item.getMinimumBid(),
                             startPacket.getModulus(), true);
-            possibleActions.add(possibleAction);
-            passAllowed = true;
-
+                possibleActions.add(possibleAction);
+            }
+            if (getStep() == OPEN_STEP) {
+                possibleActions.add(new NullAction(NullAction.PASS).setLabel("DeclineToBid"));
+            } else {
+                possibleActions.add(new NullAction(NullAction.PASS));
+            }
             break;
         }
-
-        if (passAllowed) possibleActions.add(new NullAction(NullAction.PASS));
 
         return true;
     }

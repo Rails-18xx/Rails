@@ -82,6 +82,16 @@ public class PossibleActions {
     public boolean isEmpty() {
         return possibleActions.isEmpty();
     }
+    
+    public boolean containsOnlyPass() {
+        if (possibleActions.size() != 1) return false;
+        PossibleAction action = possibleActions.get(0);
+        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.PASS) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {
