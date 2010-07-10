@@ -10,8 +10,11 @@ public class NullAction extends PossibleAction {
     public static final int START_GAME = 4; // For use after loading
     public static final int MAX_MODE = 4;
 
-    private static String[] name = new String[] { "Done", "Pass", "Skip", "Autopass", "StartGame" };
+    // optional label that is returned on toString instead of the standard labels defined below
+    private String optionalLabel = null;
 
+    // standard labels defined
+    private static String[] name = new String[] { "Done", "Pass", "Skip", "Autopass", "StartGame" };
 
     protected int mode = -1;
 
@@ -26,6 +29,12 @@ public class NullAction extends PossibleAction {
     public int getMode() {
         return mode;
     }
+    
+    /** returns the NullAction itself */
+    public NullAction setLabel(String label) {
+        this.optionalLabel = label;
+        return this;
+    }
 
     @Override
     public boolean equals(PossibleAction action) {
@@ -36,6 +45,8 @@ public class NullAction extends PossibleAction {
 
     @Override
     public String toString() {
+        if (optionalLabel != null) return optionalLabel;
         return name[mode];
     }
+    
 }

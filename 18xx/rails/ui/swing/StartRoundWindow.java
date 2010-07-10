@@ -103,7 +103,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private final boolean includeBidding;
     private final boolean showBasePrices;
 
-    private boolean repacked = false;
+//    private boolean repacked = false;
 
     protected static Logger log =
             Logger.getLogger(StartRoundWindow.class.getPackage().getName());
@@ -464,18 +464,14 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         List<NullAction> inactiveItems =
                 possibleActions.getType(NullAction.class);
-        if (inactiveItems != null) {
-
-            for (NullAction na : inactiveItems) {
-                switch (na.getMode()) {
-                case NullAction.PASS:
-                    passButton.setText(LocalText.getText("PASS"));
-                    passAllowed = true;
-                    passButton.setPossibleAction(na);
-                    passButton.setMnemonic(KeyEvent.VK_P);
-                    break;
-                }
-            }
+        if (inactiveItems != null && !inactiveItems.isEmpty()) {
+            // only one NullAction is allowed
+            NullAction na = inactiveItems.get(0);
+            // nullActions differ in text to display
+            passButton.setText(LocalText.getText(na.toString()));
+            passAllowed = true;
+            passButton.setPossibleAction(na);
+            passButton.setMnemonic(KeyEvent.VK_P);
         }
 
         buyButton.setEnabled(buyAllowed);
@@ -485,6 +481,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
         passButton.setEnabled(passAllowed);
 
+        pack(); // to avoid not displaying after label size changes
         requestFocus();
     }
 
@@ -538,10 +535,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     passButton.setEnabled(true);
                     passButton.setText(LocalText.getText("SelectNoBid"));
                     passButton.setVisible(true);
-                    if (!repacked) {
+//                    if (!repacked) {
                         pack();
-                        repacked = true;
-                    }
+//                        repacked = true;
+//                    }
 
                 }
                 if (includeBidding) {
