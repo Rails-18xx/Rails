@@ -383,17 +383,26 @@ public class GUIHex implements ViewObject {
         Map<PublicCompanyI, City> homes = getHexModel().getHomes();
 
         if (homes  != null) {
-           City city;
+            City homeCity;
             Point p;
             for (PublicCompanyI company : homes.keySet()) {
                 if (company.isClosed()) continue;
 
                 // Only draw the company name if there isn't yet a token of that company
                 if (model.hasTokenOfCompany(company)) continue;
-                
-                city = homes.get(company);
+                homeCity = homes.get(company);
+                if (homeCity == null) { // not yet decided where the token will be
+                    // find a free slot
+                    List<City> cities = getHexModel().getCities();
+                    for (City city:cities) {
+                        if (city.hasTokenSlotsLeft()) {
+                            homeCity = city;
+                            break;
+                        }
+                    }
+                }
                 p = getTokenCenter (1, 0, getHexModel().getCities().size(),
-                        city.getNumber()-1);
+                        homeCity.getNumber()-1);
                 drawHome (g2, company, p);
             }
         }

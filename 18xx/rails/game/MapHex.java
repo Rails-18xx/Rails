@@ -921,7 +921,15 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
         if (cities.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
-            homes.put(company, cities.get(Math.max(cityNumber - 1, 0)));
+            // not yet decided
+            if (cityNumber == 0) {
+                homes.put(company, null);
+                log.debug("Added home of " + company  + " in hex " + this.toString() +  " city not yet decided");
+            } else {
+                City homeCity = cities.get(Math.max(cityNumber - 1, 0));
+                homes.put(company, homeCity);
+                log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getUniqueId());
+            }
         }
     }
 
@@ -994,30 +1002,44 @@ public class MapHex extends ModelObject implements ConfigurableComponentI,
     /**
      * @return Returns false if no base tokens may yet be laid on this hex and station.
      * NOTE: this method currently only checks for prohibitions caused
-     * by the presence of unlaid hoem base tokens.
+     * by the presence of unlaid home base tokens.
      * It does NOT (yet) check for free space.
+     * 
+     * Remark: There are the following cases to check
+     * A) isBlockedForTokenLays is active for the MapHex => return the state of this
+     *    (Example: Erie home base in 1830)
+     * otherwise
+     * B) City is decided => check the city if a slot is left (standard)
+     * C) City is undecided => check all cities if there is a slot left
      */
     public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
         
         if (isHomeFor(company))
             // Company can always lay a home base
             return false;
-        else if (isBlockedForTokenLays != null) {
+        else if (isBlockedForTokenLays != null) { // case A)
             // if true: token lay blocked because a required home base is not yet laid
             // if false: token lay allowed if there is any free space
             // Free space is not checked here (yet)
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
-            City city;
             // Check if this token lay does not block an unlaid home base
             for (PublicCompanyI comp : homes.keySet()) {
                 if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
-                city = homes.get(comp);
-                if (cityNumber == city.getNumber()
-                        // Assume that a city is never home to more than one company
-                        && city.getTokens().isEmpty()
-                        && city.getTokenSlotsLeft() < 2) {
-                    return true;
+                City homeCity = homes.get(comp);
+                if (homeCity != null) { // case B)
+                    if (cityNumber == homeCity.getNumber()
+                            // Assume that a city is never home to more than one company
+                            && homeCity.getTokens().isEmpty()
+                            && homeCity.getTokenSlotsLeft() < 2) {
+                        return true;
+                    }
+                } else { // case C)
+                    int tokenSlotsLeft = 0;
+                    for (City city:cities) {
+                        tokenSlotsLeft += city.getTokenSlotsLeft();
+                    }
+                    if (tokenSlotsLeft < 2) return true; // not enough tokens left, assume only one company
                 }
             }
         }
