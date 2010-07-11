@@ -184,7 +184,13 @@ public class StockRound extends Round {
                 unitsForPrice = comp.getShareUnitsForSharePrice();
                 if (isSaleRecorded(currentPlayer, comp)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
-                        cert.getShare()) < 1) continue;
+                        cert.getShare()) < 1 ) continue;
+
+                /* Would the player exceed the total certificate limit? */
+                stockSpace = comp.getCurrentSpace();
+                if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
+                        currentPlayer, comp, cert.getCertificateCount())) continue;
+                
                 shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
@@ -279,7 +285,8 @@ public class StockRound extends Round {
 
                     /* Would the player exceed the total certificate limit? */
                     if (!stockSpace.isNoCertLimit()
-                            && !mayPlayerBuyCertificate(currentPlayer, comp, number))
+                            && !mayPlayerBuyCertificate(currentPlayer, comp, 
+                                    number * uniqueCerts[shares].getCertificateCount()))
                         continue;
                 }
 
@@ -742,7 +749,7 @@ public class StockRound extends Round {
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
             if (!currentSpace.isNoCertLimit()
-                    && !mayPlayerBuyCertificate(currentPlayer, company, number)) {
+                    && !mayPlayerBuyCertificate(currentPlayer, company, number * cert.getCertificateCount())) {
                 errMsg =
                     currentPlayer.getName()
                     + LocalText.getText("WouldExceedCertLimit",
@@ -1401,7 +1408,7 @@ public class StockRound extends Round {
      * so).
      * @return True if it is allowed.
      */
-    public boolean mayPlayerBuyCertificate(Player player, PublicCompanyI comp, int number) {
+    public boolean mayPlayerBuyCertificate(Player player, PublicCompanyI comp, float number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
         if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit(player))
@@ -1454,7 +1461,9 @@ public class StockRound extends Round {
                 company.getCurrentSpace().isNoHoldLimit() ? 100
                         : playerShareLimit;
         }
-        return (limit - player.getPortfolio().getShare(company)) / shareSize;
+        int maxAllowed = (limit - player.getPortfolio().getShare(company)) / shareSize; 
+//        log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
+        return maxAllowed;
     }
 
 
