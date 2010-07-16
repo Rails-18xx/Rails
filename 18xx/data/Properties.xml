@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Supported properties
+Defines rails configuration options, but do not stores the actual values
+ -->
+<Properties>
+	<Panel name="General">
+		<Property name="locale" type="STRING"/>
+	</Panel>
+	<Panel name="Colors">
+		<Property name="route.colour.1" type="COLOR"/>
+	</Panel>
+</Properties>
