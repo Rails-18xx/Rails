@@ -414,7 +414,7 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // Company may not sell after buying
-            if (hasSold.booleanValue()) {
+            if (hasBought.booleanValue()) {
                 errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
                 break;
             }
