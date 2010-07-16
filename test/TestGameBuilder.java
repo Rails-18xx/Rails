@@ -23,7 +23,6 @@ import rails.util.Config;
 
 public final class TestGameBuilder extends TestCase {
 
-    private static String configFile = "test/test.properties";
     private static char extensionSeparator = '.';
     private static int maxRecursionLevel = 5;
 
@@ -147,13 +146,7 @@ public final class TestGameBuilder extends TestCase {
     
     public static Test suite() {
         
-        // Activate logger
-        System.setProperty("log4j.configuration", configFile);
-        
-        /* Tell the properties loader to read this file. */
-        Config.setConfigFile(configFile);
-        System.out.println("Configuration file = " + configFile);
-
+        Config.setConfigTest();
         
         // Main test directory 
         File testDir = new File(Config.get("save.directory"));
@@ -177,12 +170,7 @@ public final class TestGameBuilder extends TestCase {
      */
     public static void main(String[] args) {
 
-        // Activate logger
-        System.setProperty("log4j.configuration", configFile);
-    
-        /* Tell the properties loader to read this file. */
-        Config.setConfigFile(configFile);
-        System.out.println("Configuration file = " + configFile);
+        Config.setConfigTest();
     
         // Main test directory 
         String rootPath = Config.get("save.directory");
