@@ -39,32 +39,15 @@ implements ActionListener, KeyListener {
     private String filepath;
 
     protected static Logger log;
-    
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-    // TODO Auto-generated method stub
-
-        String myConfigFile = System.getProperty("configfile");
-        System.out.println("Cmdline configfile setting = " + myConfigFile);
-
-        /* If not, use the default configuration file name */
-        if (!Util.hasValue(myConfigFile)) {
-            myConfigFile = "my.properties";
-        }
-
-        /*
-         * Set the system property that tells log4j to use this file. (Note:
-         * this MUST be done before updating Config)
-         */
-        System.setProperty("log4j.configuration", myConfigFile);
-        log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
-
-        /* Tell the properties loader to read this file. */
-        Config.setConfigFile(myConfigFile);
-        System.out.println("Configuration file = " + myConfigFile);
+        
+        // intialize configuration
+        Config.setConfigSelection();
+        
         saveDirectory = Config.get("save.directory");
         System.out.println("Save directory = " + saveDirectory);
 

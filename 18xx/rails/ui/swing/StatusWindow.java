@@ -3,6 +3,8 @@ package rails.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+//import java.awt.GraphicsConfiguration;
+//import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +50,8 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     protected static final String REPORT_CMD = "Report";
 
+    protected static final String CONFIG_CMD = "Config";
+
     protected static final String BUY_CMD = "Buy";
 
     protected static final String SELL_CMD = "Sell";
@@ -80,12 +84,20 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     private JMenuItem menuItem;
 
-    private ActionMenuItem saveItem, exportItem;
+    private ActionMenuItem saveItem;
+//    private ActionMenuItem exportItem;
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
     protected static Logger log =
             Logger.getLogger(StatusWindow.class.getPackage().getName());
+
+//    GraphicsConfiguration graphicsConfiguration;
+    
+//    public StatusWindow(GraphicsConfiguration gc) {
+//        super(gc);
+//        this.graphicsConfiguration = gc;
+//    }
 
     public void initMenu() {
         menuBar = new JMenuBar();
@@ -161,6 +173,13 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuItem.setName(REPORT_CMD);
         menuItem.setActionCommand(REPORT_CMD);
         menuItem.setMnemonic(KeyEvent.VK_R);
+        menuItem.addActionListener(this);
+        optMenu.add(menuItem);
+        
+        menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
+        menuItem.setName(CONFIG_CMD);
+        menuItem.setActionCommand(CONFIG_CMD);
+        menuItem.setMnemonic(KeyEvent.VK_C);
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -257,7 +276,9 @@ public class StatusWindow extends JFrame implements ActionListener,
         autopassButton.addActionListener(this);
 
         setSize(800, 300);
-        setLocation(25, 450);
+
+//        Rectangle bounds = graphicsConfiguration.getBounds();
+//        setLocation(bounds.x+ 25, bounds.y + 450);
 
         buttonPanel.setBorder(BorderFactory.createEtchedBorder());
         buttonPanel.setOpaque(false);
@@ -583,6 +604,10 @@ public class StatusWindow extends JFrame implements ActionListener,
             gameUIManager.stockChart.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(MAP_CMD)) {
             gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+        } else if (command.equals(CONFIG_CMD)) {
+            JFrame configWindow = new ConfigWindow();
+            configWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            configWindow.setVisible(true);
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {
