@@ -401,7 +401,8 @@ public class GUIHex implements ViewObject {
                         }
                     }
                 }
-                p = getTokenCenter (1, 0, getHexModel().getCities().size(),
+                // check the number of tokens laid there already
+                p = getTokenCenter (1, homeCity.getTokens().size(), getHexModel().getCities().size(),
                         homeCity.getNumber()-1);
                 drawHome (g2, company, p);
             }
