@@ -190,7 +190,7 @@ public class StockRound extends Round {
                 stockSpace = comp.getCurrentSpace();
                 if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
                         currentPlayer, comp, cert.getCertificateCount())) continue;
-                
+
                 shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
@@ -285,7 +285,7 @@ public class StockRound extends Round {
 
                     /* Would the player exceed the total certificate limit? */
                     if (!stockSpace.isNoCertLimit()
-                            && !mayPlayerBuyCertificate(currentPlayer, comp, 
+                            && !mayPlayerBuyCertificate(currentPlayer, comp,
                                     number * uniqueCerts[shares].getCertificateCount()))
                         continue;
                 }
@@ -766,7 +766,6 @@ public class StockRound extends Round {
                 break;
             }
 
-            //price = currentSpace.getPrice();
             price = getBuyPrice (action, currentSpace);
             cost = shares * price / company.getShareUnitsForSharePrice();
 
@@ -1461,8 +1460,8 @@ public class StockRound extends Round {
                 company.getCurrentSpace().isNoHoldLimit() ? 100
                         : playerShareLimit;
         }
-        int maxAllowed = (limit - player.getPortfolio().getShare(company)) / shareSize; 
-//        log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
+        int maxAllowed = (limit - player.getPortfolio().getShare(company)) / shareSize;
+        //        log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
         return maxAllowed;
     }
 

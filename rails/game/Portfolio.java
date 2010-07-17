@@ -107,14 +107,9 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     }
 
     public void addPrivate(PrivateCompanyI privateCompany, int position) {
-        if (position == -1) {
-            privateCompanies.add(privateCompany);
-        } else {
-            try {
-                privateCompanies.add(position, privateCompany);
-            } catch (IndexOutOfBoundsException e) {
-            }
-        }
+
+        if (!Util.addToList(privateCompanies, privateCompany, position)) return;
+
         privateCompany.setHolder(this);
         log.debug("Adding " + privateCompany.getName() + " to portfolio of "
                 + name);
@@ -135,16 +130,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             certPerCompany.put(companyName, new ArrayList<PublicCertificateI>());
         }
 
-        if (position == -1) {
-            certificates.add(certificate);
-            (certPerCompany.get(companyName)).add(certificate);
-        } else {
-            try {
-                certificates.add(position, certificate);
-                (certPerCompany.get(companyName)).add(position, certificate);
-            } catch (IndexOutOfBoundsException e) {
-            }
-        }
+        Util.addToList(certificates, certificate, position);
+        (certPerCompany.get(companyName)).add(certificate);
 
         String certTypeId = certificate.getTypeId();
         if (!certsPerType.containsKey(certTypeId)) {
@@ -387,14 +374,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     }
 
     public void addTrain(TrainI train, int position) {
-        if (position == -1) {
-            trains.add(train);
-        } else {
-            try {
-                trains.add(position, train);
-            } catch (IndexOutOfBoundsException e) {
-            }
-        }
+
+        Util.addToList(trains, train, position);
         TrainTypeI type = train.getType();
         if (!trainsPerType.containsKey(type)) {
             trainsPerType.put(type, new ArrayList<TrainI>());
@@ -534,19 +515,14 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public boolean addSpecialProperty(SpecialPropertyI property, int position) {
 
-        boolean result = false;
 
         if (specialProperties == null) {
             specialProperties = new ArrayList<SpecialPropertyI>(2);
         }
-        if (position == -1) {
-            specialProperties.add(property);
-        } else {
-            try {
-                specialProperties.add(position, property);
-            } catch (IndexOutOfBoundsException e) {
-            }
-        }
+
+        boolean result = Util.addToList(specialProperties, property, position);
+        if (!result) return false;
+
         property.setHolder(this);
 
         // Special case for bonuses with predefined locations
@@ -734,16 +710,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     }
 
     public boolean addToken(TokenI token, int position) {
-        if (position == -1) {
-            return tokens.add(token);
-        } else {
-            try {
-                tokens.add(position, token);
-                return true;
-            } catch (IndexOutOfBoundsException e) {
-                return false;
-            }
-        }
+
+        return Util.addToList(tokens, token, position);
     }
 
     public boolean removeToken(TokenI token) {

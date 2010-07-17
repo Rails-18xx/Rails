@@ -2,6 +2,7 @@
 package rails.game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import rails.game.move.*;
@@ -54,7 +55,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
             // sfy 1889 changed to IntegerArray
             revenue = tag.getAttributeAsIntegerArray("revenue", new int[0]);
-
+            
+            // pld: adding revenue to info text
+            infoText += "<br>Revenue: ";
+            for (int i = 0; i < revenue.length;i++) {
+                infoText += (Bank.format(revenue[i]));
+                if (i < revenue.length-1) {infoText += ", ";};
+            }
+            
             // Blocked hexes (until bought by a company)
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
@@ -327,16 +335,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
      */
     public boolean addObject(Moveable object, int position) {
         if (object instanceof SpecialPropertyI) {
-            if (position == -1) {
-                return specialProperties.add((SpecialPropertyI)object);
-            } else {
-                try {
-                    specialProperties.add(position, (SpecialPropertyI)object);
-                    return true;
-                } catch (IndexOutOfBoundsException e) {
-                    return false;
-                }
-            }
+            return Util.addToList(specialProperties, (SpecialPropertyI)object, position);
         } else {
             return false;
         }

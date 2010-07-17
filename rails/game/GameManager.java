@@ -1537,16 +1537,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (commonSpecialProperties == null) {
             commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
         }
-        if (position == -1) {
-            return commonSpecialProperties.add(property);
-        } else {
-            try {
-                commonSpecialProperties.add(position, property);
-                return true;
-            } catch (IndexOutOfBoundsException e) {
-                return false;
-            }
-        }
+        return Util.addToList(commonSpecialProperties, property, position);
     }
 
     /**
