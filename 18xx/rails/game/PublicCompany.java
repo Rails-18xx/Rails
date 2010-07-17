@@ -1809,18 +1809,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean addToken(TokenI token, int position) {
 
         boolean result = false;
-        if (token instanceof BaseToken && laidBaseTokens.remove(token)) {
+        if (token instanceof BaseToken
+                && laidBaseTokens.remove(token)
+                && Util.addToList(freeBaseTokens, token, position)) {
             token.setHolder(this);
-            if (position == -1) {
-                result = freeBaseTokens.add(token);
-            } else {
-                try {
-                    freeBaseTokens.add(position, token);
-                    result = true;
-                } catch (IndexOutOfBoundsException e) {
-                    result = false;
-                }
-            }
             this.baseTokensModel.update();
         }
         return result;
@@ -1864,9 +1856,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object, position);
+            return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
             return false;
         }
@@ -1880,11 +1872,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof BaseToken) {
-            return freeBaseTokens.indexOf(object);
+            return new int[] {freeBaseTokens.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 

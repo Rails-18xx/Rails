@@ -230,7 +230,7 @@ implements TrainTypeI {
 
         for (TrainI train : trains) {
             train.init(this, lastIndex++);
-            unavailable.addTrain(train, -1);
+            unavailable.addTrain(train);
         }
     }
 

@@ -121,23 +121,28 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         privatesOwnedModel.update();
     }
 
-    public void addCertificate(PublicCertificateI certificate, int position) {
+    public void addCertificate(PublicCertificateI certificate){
+        addCertificate (certificate, new int[] {-1,-1,-1});
+    }
+
+    public void addCertificate(PublicCertificateI certificate, int[] position) {
         // When undoing a company start, put the President back at the top.
-        if (certificate.isPresidentShare()) position = 0;
+        if (certificate.isPresidentShare()) position = new int[] {0,0,0};
+
+        Util.addToList(certificates, certificate, position[0]);
 
         String companyName = certificate.getCompany().getName();
         if (!certPerCompany.containsKey(companyName)) {
             certPerCompany.put(companyName, new ArrayList<PublicCertificateI>());
         }
 
-        Util.addToList(certificates, certificate, position);
-        (certPerCompany.get(companyName)).add(certificate);
+        Util.addToList(certPerCompany.get(companyName), certificate, position[1]);
 
         String certTypeId = certificate.getTypeId();
         if (!certsPerType.containsKey(certTypeId)) {
             certsPerType.put(certTypeId, new ArrayList<PublicCertificateI>());
         }
-        certsPerType.get(certTypeId).add(certificate);
+        Util.addToList(certsPerType.get(certTypeId), certificate, position[2]);
 
         certificate.setPortfolio(this);
 
@@ -373,14 +378,18 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return swapped;
     }
 
-    public void addTrain(TrainI train, int position) {
+    public void addTrain (TrainI train) {
+        addTrain (train, new int[] {-1,-1});
+    }
 
-        Util.addToList(trains, train, position);
+    public void addTrain(TrainI train, int[] position) {
+
+        Util.addToList(trains, train, position[0]);
         TrainTypeI type = train.getType();
         if (!trainsPerType.containsKey(type)) {
             trainsPerType.put(type, new ArrayList<TrainI>());
         }
-        trainsPerType.get(train.getType()).add(train);
+        Util.addToList(trainsPerType.get(train.getType()), train, position[1]);
         train.setHolder(this);
         trainsModel.update();
     }
@@ -574,20 +583,22 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      * @param object The object to add.
      * @return True if successful.
      */
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof PublicCertificateI) {
+            if (position == null) position = new int[] {-1, -1, -1};
             addCertificate((PublicCertificateI) object, position);
             return true;
         } else if (object instanceof PrivateCompanyI) {
-            addPrivate((PrivateCompanyI) object, position);
+            addPrivate((PrivateCompanyI) object, position == null ? -1 : position[0]);
             return true;
         } else if (object instanceof TrainI) {
+            if (position == null) position = new int[] {-1, -1};
             addTrain((TrainI) object, position);
             return true;
         } else if (object instanceof SpecialPropertyI) {
-            return addSpecialProperty((SpecialPropertyI) object, position);
+            return addSpecialProperty((SpecialPropertyI) object, position == null ? -1 : position[0]);
         } else if (object instanceof TokenI) {
-            return addToken((TokenI) object, position);
+            return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
             return false;
         }
@@ -618,19 +629,28 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         }
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof PublicCertificateI) {
-            return certificates.indexOf(object);
+            PublicCertificateI cert = (PublicCertificateI) object;
+            return new int[] {
+                   certificates.indexOf(object),
+                   certPerCompany.get(cert.getCompany().getName()).indexOf(cert),
+                   certsPerType.get(cert.getTypeId()).indexOf(cert)
+            };
         } else if (object instanceof PrivateCompanyI) {
-            return privateCompanies.indexOf(object);
+            return new int[] {privateCompanies.indexOf(object)};
         } else if (object instanceof TrainI) {
-            return trains.indexOf(object);
+            TrainI train = (TrainI) object;
+            return new int[] {
+                    trains.indexOf(train),
+                    trainsPerType.get(train.getType()).indexOf(train)
+            };
         } else if (object instanceof SpecialPropertyI) {
-            return specialProperties.indexOf(object);
+            return new int[] {specialProperties.indexOf(object)};
         } else if (object instanceof TokenI) {
-            return tokens.indexOf(object);
+            return new int[] {tokens.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 

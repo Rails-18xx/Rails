@@ -1500,21 +1500,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @param object The object to add.
      * @return True if successful.
      */
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof SpecialPropertyI) {
             SpecialPropertyI sp = (SpecialPropertyI) object;
             sp.setHolder(null);
-            return addSpecialProperty(sp, position);
+            return addSpecialProperty(sp, position == null ? -1 : position[0]);
         } else {
             return false;
         }
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof SpecialPropertyI) {
-            return commonSpecialProperties.indexOf(object);
+            return new int[] {commonSpecialProperties.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 

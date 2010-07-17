@@ -23,7 +23,7 @@ import rails.util.Util;
  * tile. However, the City numbers will not change, unless cities are merged
  * during upgrades; but even then it is attempted to retain the old city numbers
  * as much as possible.
- * 
+ *
  * @author Erik Vos
  */
 public class City implements TokenHolder {
@@ -100,9 +100,9 @@ public class City implements TokenHolder {
         return result;
     }
 
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object, position);
+            return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
             return false;
         }
@@ -163,11 +163,11 @@ public class City implements TokenHolder {
         return false;
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof BaseToken) {
-            return tokens.indexOf(object);
+            return new int[] {tokens.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 

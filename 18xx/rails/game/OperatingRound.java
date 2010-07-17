@@ -1716,7 +1716,7 @@ public class OperatingRound extends Round implements Observer {
             train.getType().addToBoughtFromIPO();
             // Clone the train if infinitely available
             if (train.getType().hasInfiniteAmount()) {
-                ipo.addTrain(train.getType().cloneTrain(), -1);
+                ipo.addTrain(train.getType().cloneTrain());
             }
 
         }
@@ -2670,7 +2670,7 @@ public class OperatingRound extends Round implements Observer {
      * This method can be extended to perform other generic checks,
      * such as if a route exists,
      * and possibly in subclasses for game-specific checks.
-     * 
+     *
      * @param company The company laying a tile.
      * @param hex The hex on which a tile is laid.
      * @param station The number of the station/city on which the token
