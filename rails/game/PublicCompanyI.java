@@ -81,8 +81,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      * @return Returns true is the company has started.
      */
     public boolean hasStarted();
-	public void setBuyable(boolean buyable);
-	public boolean isBuyable();
+    public void setBuyable(boolean buyable);
+    public boolean isBuyable();
 
     /**
      * Float the company, put its initial cash in the treasury.
@@ -304,10 +304,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public boolean hasLaidHomeBaseTokens();
 
     public BaseToken getFreeToken();
-
-    public boolean addToken(TokenI token);
-
-    public boolean removeToken(TokenI token);
 
     public int getNumberOfBaseTokens();
 

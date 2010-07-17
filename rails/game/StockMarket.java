@@ -10,9 +10,9 @@ import rails.util.Tag;
 public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     protected HashMap<String, StockSpaceTypeI> stockSpaceTypes =
-            new HashMap<String, StockSpaceTypeI>();
+        new HashMap<String, StockSpaceTypeI>();
     protected HashMap<String, StockSpaceI> stockChartSpaces =
-            new HashMap<String, StockSpaceI>();
+        new HashMap<String, StockSpaceI>();
     protected StockSpaceI stockChart[][];
     protected StockSpaceI currentSquare;
     protected int numRows = 0;
@@ -23,15 +23,15 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     /* Game-specific flags */
     protected boolean upOrDownRight = false; /*
-                                                 * Sold out and at top: go down
-                                                 * right (1870)
-                                                 */
+     * Sold out and at top: go down
+     * right (1870)
+     */
 
     /* States */
     protected boolean gameOver = false; /*
-                                         * Some games have "rails.game over"
-                                         * stockmarket squares
-                                         */
+     * Some games have "rails.game over"
+     * stockmarket squares
+     */
 
     ArrayList<PublicCertificate> ipoPile;
 
@@ -57,13 +57,13 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             for (Tag typeTag : typeTags) {
                 /* Extract the attributes of the Stock space type */
                 String name =
-                        typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
+                    typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
                 if (name == null) {
                     throw new ConfigurationException(
                             LocalText.getText("UnnamedStockSpaceType"));
                 }
                 String colour =
-                        typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
+                    typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
 
                 /* Check for duplicates */
                 if (stockSpaceTypes.get(name) != null) {
@@ -101,9 +101,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
                         "StockSpaceHasNoPrice", name));
             }
             String typeName =
-                    spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
+                spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
             if (typeName != null
-                && (type = stockSpaceTypes.get(typeName)) == null) {
+                    && (type = stockSpaceTypes.get(typeName)) == null) {
                 throw new ConfigurationException(LocalText.getText(
                         "StockSpaceTypeUndefined", type));
             }
@@ -115,7 +115,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             }
 
             StockSpaceI space =
-                    new StockSpace(name, Integer.parseInt(price), type);
+                new StockSpace(name, Integer.parseInt(price), type);
             stockChartSpaces.put(name, space);
 
             row = Integer.parseInt(name.substring(1));
@@ -214,7 +214,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         } else if (upOrDownRight && col < numCols - 1) {
             newsquare = getStockSpace(row + 1, col + 1);
         }
-        prepareMove(company, oldsquare, newsquare);
+        if (newsquare != null) prepareMove(company, oldsquare, newsquare);
     }
 
     public void close (PublicCompanyI company) {
@@ -243,7 +243,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
          * by the bottom of the chart, it will stay just above the ledge.
          */
         if (getStockSpace(newrow, col).isBelowLedge()
-            && newrow == row + numberOfSpaces) newrow--;
+                && newrow == row + numberOfSpaces) newrow--;
 
         if (newrow > row) {
             newsquare = getStockSpace(newrow, col);
@@ -252,7 +252,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             company.setClosed();
             oldsquare.removeToken(company);
             ReportBuffer.add(company.getName() + " closes at "
-                             + newsquare.getName());
+                    + newsquare.getName());
         } else {
             prepareMove(company, oldsquare, newsquare);
         }
@@ -287,7 +287,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             company.setClosed();
             oldsquare.removeToken(company);
             ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT")
-                             + " " + newsquare.getName());
+                    + " " + newsquare.getName());
         } else {
             prepareMove(company, oldsquare, newsquare);
         }

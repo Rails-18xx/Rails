@@ -10,7 +10,7 @@ import rails.game.special.SpecialPropertyI;
 import rails.util.*;
 
 public class PrivateCompany extends Company implements PrivateCompanyI {
-    
+
     protected static int numberOfPrivateCompanies = 0;
     protected int privateNumber; // For internal use
 
@@ -31,8 +31,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected String closeAtPhaseName = null;
     // Manual close possible
     protected boolean closeManually = false;
-    
-    protected String blockedHexesString = null; 
+
+    protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
 
     public PrivateCompany() {
@@ -43,10 +43,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /**
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
-            
+
             longName= tag.getAttributeAsString("longname", name);
             infoText = "<html>"+longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
@@ -58,7 +59,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
                 blockedHexesString =
-                        blockedTag.getAttributeAsString("hex");
+                    blockedTag.getAttributeAsString("hex");
                 infoText += "<br>Blocking: "+blockedHexesString;
             }
 
@@ -70,10 +71,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
             }
 
-            
+
             // For special properties (now included in Company).
             super.configureFromXML(tag);
-            
+
             // Closing conditions
             // Currently only used to handle closure following laying
             // tiles and/or tokens because of special properties.
@@ -89,7 +90,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                     String ifAttribute = spTag.getAttributeAsString("condition");
                     if (ifAttribute != null) {
                         closeIfAllExercised = ifAttribute.equalsIgnoreCase("ifExercised")
-                            || ifAttribute.equalsIgnoreCase("ifAllExercised");
+                        || ifAttribute.equalsIgnoreCase("ifAllExercised");
                         closeIfAnyExercised = ifAttribute.equalsIgnoreCase("ifAnyExercised");
                     }
                     String whenAttribute = spTag.getAttributeAsString("when");
@@ -97,7 +98,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("endOfORTurn");
                     }
                 }
-            
+
                 /* conditions that prevent closing */
                 List<Tag> preventTags = closureTag.getChildren("PreventClosing");
                 if (preventTags != null) {
@@ -108,13 +109,13 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                         }
                     }
                 }
-                
+
                 /* allow manual closure */
                 Tag manualTag = closureTag.getChild("CloseManually");
                 if (manualTag != null) {
                     closeManually = true;
                 }
-                
+
                 // Close at start of phase
                 Tag closeTag = closureTag.getChild("Phase");
                 if (closeTag != null) {
@@ -123,7 +124,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             }
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
-                                             + name, e);
+                    + name, e);
         }
 
     }
@@ -147,7 +148,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
         infoText += parentInfoText;
         parentInfoText = "";
-        
+
         if (Util.hasValue(closeAtPhaseName)) {
             PhaseI closingPhase = gameManager.getPhaseManager().getPhaseByName(closeAtPhaseName);
             if (closingPhase != null) {
@@ -158,7 +159,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-	public void init(String name, CompanyTypeI type) {
+    public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
         specialProperties = new ArrayList<SpecialPropertyI>();
@@ -214,6 +215,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /**
      * @return Portfolio (holder) of this Private
      */
+    @Override
     public Portfolio getPortfolio() {
         return portfolio;
     }
@@ -225,7 +227,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void setClosed() {
 
         if (isClosed()) return;
-//        if (!isCloseable()) return;  /* moved hat to call in closeAllPrivates, to allow other closing actions */
+        //        if (!isCloseable()) return;  /* moved hat to call in closeAllPrivates, to allow other closing actions */
 
         super.setClosed();
         unblockHexes();
@@ -251,20 +253,20 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     /* start sfy 1889 */
     public boolean isCloseable() {
 
-      if ((preventClosingConditions == null) || preventClosingConditions.isEmpty()) return true;
+        if ((preventClosingConditions == null) || preventClosingConditions.isEmpty()) return true;
 
-      if (preventClosingConditions.contains("doesNotClose")) {
-          log.debug("Private Company "+getName()+" does not close (unconditional).");
-          return false;
-      }
-      if (preventClosingConditions.contains("ifOwnedByPlayer")
-              && portfolio.getOwner() instanceof Player) {
-          log.debug("Private Company "+getName()+" does not close, as it is owned by a player.");
-          return false;
-      }
-      return true;
+        if (preventClosingConditions.contains("doesNotClose")) {
+            log.debug("Private Company "+getName()+" does not close (unconditional).");
+            return false;
+        }
+        if (preventClosingConditions.contains("ifOwnedByPlayer")
+                && portfolio.getOwner() instanceof Player) {
+            log.debug("Private Company "+getName()+" does not close, as it is owned by a player.");
+            return false;
+        }
+        return true;
     }
-    
+
     public List<String> getPreventClosingConditions() {
         return preventClosingConditions;
     }
@@ -300,7 +302,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
     }
 
-   @Override
+    @Override
     public String toString() {
         return "Private: " + name;
     }
@@ -323,8 +325,21 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
      * Stub to satisfy MoveableHolderI. Special properties are never added after
      * completing the initial setup.
      */
-    public boolean addObject(Moveable object) {
-        return false;
+    public boolean addObject(Moveable object, int position) {
+        if (object instanceof SpecialPropertyI) {
+            if (position == -1) {
+                return specialProperties.add((SpecialPropertyI)object);
+            } else {
+                try {
+                    specialProperties.add(position, (SpecialPropertyI)object);
+                    return true;
+                } catch (IndexOutOfBoundsException e) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -339,6 +354,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
             return specialProperties.remove(object);
         } else {
             return false;
+        }
+    }
+
+    public int getListIndex (Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return specialProperties.indexOf(object);
+        } else {
+            return -1;
         }
     }
 
@@ -357,7 +380,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public boolean closesAtEndOfTurn() {
         return closeAtEndOfTurn;
     }
-    
+
     public boolean closesManually() {
         return closeManually;
     }

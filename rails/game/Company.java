@@ -13,13 +13,13 @@ import rails.util.Tag;
 import rails.util.Util;
 
 public abstract class Company implements CompanyI, ConfigurableComponentI,
-        Cloneable, Comparable<Company> {
+Cloneable, Comparable<Company> {
 
     protected String name;
     protected String longName;
     protected CompanyTypeI type;
     protected int companyNumber; // For internal use
-    
+
     /* Note: portfolio is used in two ways:
      * In private companies, it is primarily the portfolio that holds this private.
      * In public companies, it is the portfolio of this company.
@@ -42,12 +42,12 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 
     /** Closed state */
     protected BooleanState closedObject;
-    
+
     // Moved here from PrivayeCOmpany on behalf of 1835
     protected List<SpecialPropertyI> specialProperties = null;
-    
+
     protected static Logger log =
-            Logger.getLogger(Company.class.getPackage().getName());
+        Logger.getLogger(Company.class.getPackage().getName());
 
     public Company() {
     }
@@ -60,7 +60,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
 
     /** Only to be called from subclasses */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         // Special properties
         Tag spsTag = tag.getChild("SpecialProperties");
         if (spsTag != null) {
@@ -71,7 +71,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
                 className = spTag.getAttributeAsString("class");
                 if (!Util.hasValue(className))
                     throw new ConfigurationException(
-                            "Missing class in private special property");
+                    "Missing class in private special property");
                 SpecialPropertyI sp = null;
                 try {
                     sp = (SpecialPropertyI) Class.forName(className).newInstance();
@@ -87,7 +87,7 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
             }
         }
     }
-    
+
     /**
      * @return ArrayList of all special properties we have.
      */
@@ -214,30 +214,30 @@ public abstract class Company implements CompanyI, ConfigurableComponentI,
      *
      * Use addToken(MapHex hex) method instead.
      */
-    public boolean addToken(CompanyI company) {
+    public boolean addToken(CompanyI company, int position) {
         return false;
     }
 
     @Override
     public String toString() {
         return getTypeName() + ": " + getCompanyNumber() + ". " + getName()
-               + " $" + this.getValue();
+        + " $" + this.getValue();
     }
 
     public boolean equals(CompanyI company) {
         if (this.companyNumber == company.getCompanyNumber()
-            && this.name.equals(company.getName())
-            && this.type.equals(company.getType())) return true;
+                && this.name.equals(company.getName())
+                && this.type.equals(company.getType())) return true;
 
         return false;
     }
-    
+
     public int compareTo(Company otherCompany){
         int result;
         // compare typeNames first
         result = this.getTypeName().compareTo(otherCompany.getTypeName());
         // if same typeName then name
-        if (result == 0) 
+        if (result == 0)
             result = this.getName().compareTo(otherCompany.getName());
 
         return result;

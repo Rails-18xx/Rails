@@ -75,10 +75,12 @@ public abstract class Token implements TokenI {
      * @param from
      * @param to
      */
+    /*
     public static void transfer(TokenI token, TokenHolder from, TokenHolder to) {
-        to.addToken(token);
+        to.addToken(token, -1);
         from.removeToken(token);
         token.setHolder(to);
     }
+     */
 
 }

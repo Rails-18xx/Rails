@@ -187,7 +187,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
         new ArrayList<GameOption>();
-    
+
     /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
     protected boolean recoverySaveWarning = true;
 
@@ -812,7 +812,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
             result = process(possibleActions.getList().get(0));
         }
-        
+
         // moveStack closing is done here to allow state changes to occur
         // when setting possible actions
         if (action != null) {
@@ -943,7 +943,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      *  */
     protected void recoverySave() {
         if (Config.get("save.recovery.active", "yes").equalsIgnoreCase("no")) return;
-        
+
         String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
         // create temporary new save file
         File tempFile = null;
@@ -978,7 +978,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             recoverySaveWarning = false;
             return;
         }
- 
+
         if (result) {
             log.debug("Renamed to recovery file, path = "  + recoveryFile.getAbsolutePath());
             if (!recoverySaveWarning) {
@@ -992,12 +992,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             }
         }
     }
-    
+
     protected boolean save(GameAction saveAction) {
         File file = new File(saveAction.getFilepath());
         return save(file, true, "SaveFailed");
     }
-    
+
     protected boolean save(File file, boolean displayErrorMessage, String errorMessageKey) {
         boolean result = false;
 
@@ -1500,13 +1500,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @param object The object to add.
      * @return True if successful.
      */
-    public boolean addObject(Moveable object) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof SpecialPropertyI) {
             SpecialPropertyI sp = (SpecialPropertyI) object;
             sp.setHolder(null);
-            return addSpecialProperty(sp);
+            return addSpecialProperty(sp, position);
         } else {
             return false;
+        }
+    }
+
+    public int getListIndex (Moveable object) {
+        if (object instanceof SpecialPropertyI) {
+            return commonSpecialProperties.indexOf(object);
+        } else {
+            return -1;
         }
     }
 
@@ -1524,12 +1532,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
     }
 
-    public boolean addSpecialProperty(SpecialPropertyI property) {
+    public boolean addSpecialProperty(SpecialPropertyI property, int position) {
 
         if (commonSpecialProperties == null) {
             commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
         }
-        return commonSpecialProperties.add(property);
+        if (position == -1) {
+            return commonSpecialProperties.add(property);
+        } else {
+            try {
+                commonSpecialProperties.add(position, property);
+                return true;
+            } catch (IndexOutOfBoundsException e) {
+                return false;
+            }
+        }
     }
 
     /**
