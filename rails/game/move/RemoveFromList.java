@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/move/RemoveFromList.java,v 1.3 2009/09/23 21:38:57 evos Exp $
- * 
+ *
  * Created on 18-Jul-2006
  * Change Log:
  */
@@ -32,18 +32,21 @@ public class RemoveFromList<E> extends Move {
 
     public RemoveFromList(List<E> list, E object, String listName) {
         this (list, object, listName, null);
-     }
+    }
 
-        public boolean execute() {
+    @Override
+    public boolean execute() {
         list.remove(object);
         return true;
     }
 
+    @Override
     public boolean undo() {
         list.add(index, object);
         return true;
     }
 
+    @Override
     public String toString() {
         return "RemoveFromList " + listName + ": " + object.toString();
     }

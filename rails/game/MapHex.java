@@ -827,9 +827,9 @@ StationHolder, TokenHolder {
         return offStationTokens.remove(token);
     }
 
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object, position);
+            return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
             return false;
         }
@@ -843,11 +843,11 @@ StationHolder, TokenHolder {
         }
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof TokenI) {
-            return offStationTokens.indexOf(object);
+            return new int[] {offStationTokens.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 
@@ -1015,7 +1015,7 @@ StationHolder, TokenHolder {
      * NOTE: this method currently only checks for prohibitions caused
      * by the presence of unlaid home base tokens.
      * It does NOT (yet) check for free space.
-     * 
+     *
      * Remark: There are the following cases to check
      * A) isBlockedForTokenLays is active for the MapHex => return the state of this
      *    (Example: Erie home base in 1830)

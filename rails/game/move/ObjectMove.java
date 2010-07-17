@@ -14,8 +14,8 @@ public class ObjectMove extends Move {
     MoveableHolder from;
     MoveableHolder to;
     String objectClassName;
-    int fromPosition;
-    int toPosition = -1; // Default: at end
+    int[] fromPosition;
+    int[] toPosition = new int[] {-1}; // Default: at end
 
     /**
      * Create a generic ObjectMove object. Any specific side effects must be
@@ -30,7 +30,7 @@ public class ObjectMove extends Move {
 
     public ObjectMove(Moveable moveableObject, MoveableHolder from,
             MoveableHolder to) {
-        this (moveableObject, from, to, -1);
+        this (moveableObject, from, to, null);
     }
 
     /**
@@ -46,13 +46,13 @@ public class ObjectMove extends Move {
      */
 
     public ObjectMove(Moveable moveableObject, MoveableHolder from,
-            MoveableHolder to, int toPosition) {
+            MoveableHolder to, int[] toPosition) {
 
         this.moveableObject = moveableObject;
         this.from = from;
         this.to = to;
         objectClassName = moveableObject.getClass().getSimpleName();
-        this.fromPosition = from.getListIndex(moveableObject);
+        this.fromPosition = from != null ? from.getListIndex(moveableObject) : null;
         this.toPosition = toPosition;
 
         MoveSet.add(this);
@@ -78,8 +78,8 @@ public class ObjectMove extends Move {
         if (from == null) log.warn("From is null");
         if (to == null) log.error("To is null");
         return "Move " + objectClassName + ": " + moveableObject.getName()
-        + " from " + (from == null ? from : from.getName()) + "["+fromPosition
-        + "] to " + to.getName() + "["+toPosition+"]";
+            + " from " + (from == null ? from : from.getName()) + "["+fromPosition
+            + "] to " + to.getName() + "["+toPosition+"]";
     }
 
 }

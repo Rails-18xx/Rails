@@ -2,7 +2,6 @@
 package rails.game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import rails.game.move.*;
@@ -55,14 +54,14 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
             // sfy 1889 changed to IntegerArray
             revenue = tag.getAttributeAsIntegerArray("revenue", new int[0]);
-            
+
             // pld: adding revenue to info text
             infoText += "<br>Revenue: ";
             for (int i = 0; i < revenue.length;i++) {
                 infoText += (Bank.format(revenue[i]));
                 if (i < revenue.length-1) {infoText += ", ";};
             }
-            
+
             // Blocked hexes (until bought by a company)
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
@@ -333,9 +332,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
      * Stub to satisfy MoveableHolderI. Special properties are never added after
      * completing the initial setup.
      */
-    public boolean addObject(Moveable object, int position) {
+    public boolean addObject(Moveable object, int[] position) {
         if (object instanceof SpecialPropertyI) {
-            return Util.addToList(specialProperties, (SpecialPropertyI)object, position);
+            return Util.addToList(specialProperties, (SpecialPropertyI)object,
+                    position == null ? -1 : position[0]);
         } else {
             return false;
         }
@@ -356,11 +356,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
     }
 
-    public int getListIndex (Moveable object) {
+    public int[] getListIndex (Moveable object) {
         if (object instanceof SpecialPropertyI) {
-            return specialProperties.indexOf(object);
+            return new int[] {specialProperties.indexOf(object)};
         } else {
-            return -1;
+            return Moveable.AT_END;
         }
     }
 

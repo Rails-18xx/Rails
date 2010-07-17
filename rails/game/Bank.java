@@ -107,9 +107,9 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         for (PublicCompanyI comp : companies) {
             for (PublicCertificateI cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    ipo.addCertificate(cert, -1);
+                    ipo.addCertificate(cert);
                 } else {
-                    unavailable.addCertificate(cert, -1);
+                    unavailable.addCertificate(cert);
                 }
             }
         }
