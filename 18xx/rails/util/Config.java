@@ -8,10 +8,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -31,13 +34,6 @@ public final class Config {
     protected static Logger log =
         Logger.getLogger(Config.class.getPackage().getName());
 
-    
-    /**
-     * Defines possible types (Java classes used as types in ConfigItem below
-     */
-    public static enum ConfigType {
-        INTEGER, FLOAT, STRING, BOOLEAN, DIRECTORY, COLOR;
-    }
 
     /** XML setup */
     private static final String CONFIG_XML_DIR = "data";
@@ -59,12 +55,11 @@ public final class Config {
     private static final String TEST_PROFILE_SELECTION = "test";
     private static final String DEFAULT_PROFILE_SELECTION = "default";
     private static final String DEFAULT_PROFILE_PROPERTY = "default.profile";
-    private static final String STANDARD_PROFILE_PROPERTY = "standard.profile";
+    private static final String STANDARD_PROFILE_SELECTION = "user";
     
     /** selected profile */
     private static String selectedProfile;
     private static boolean legacyConfigFile;
-    private static boolean standardProfile;
     
     /** properties storage. */
     private static Properties defaultProperties = new Properties();
@@ -157,19 +152,12 @@ public final class Config {
     }
     
 
-//    /** 
-//     * store user config file
-//     */
-//    public static boolean saveUserConfig() {
-//    }
-//    
-//    /**
-//     * @return if user location is defined
-//     */
-//    public static boolean hasUserLocation() {
-//        return userConfigFile != null;
-//    }
-    
+    /**
+     * @return if user location is defined
+     */
+    public static boolean isFilePathDefined() {
+        return Util.hasValue(userProfiles.getProperty(selectedProfile));
+    }
     
     private static boolean storePropertyFile(Properties properties, String filepath) {
         File outFile = new File(filepath);
@@ -192,24 +180,46 @@ public final class Config {
     /**
      * change active Profile 
      */
-    public static boolean setActiveProfile(String profileName) {
-        boolean result = loadPropertyProfile(profileName);
-        if (result) selectedProfile = profileName;
-        return result;
+    public static boolean changeActiveProfile(String profileName) {
+        readConfigSetupXML();
+        loadPropertyProfile(profileName);
+        selectedProfile = profileName;
+        return true;
+    }
+    
+    private static Map<String, String> convertProperties(Properties properties) {
+        Map<String, String> converted = new HashMap<String, String>();
+        for (Object key:properties.keySet()) {
+            converted.put((String) key, (String) properties.get(key));
+        }
+        return converted;
+    }
+    
+    
+    /** 
+     * get all default profiles 
+     */
+    public static List<String> getDefaultProfiles() {
+        List<String> profiles = new ArrayList<String>(convertProperties(defaultProfiles).keySet());
+        profiles.remove(DEFAULT_PROFILE_PROPERTY);
+        Collections.sort(profiles);
+        return profiles;
+    }
+
+    /** 
+     * get all user profiles 
+     */
+    public static List<String> getUserProfiles() {
+        List<String> profiles = new ArrayList<String>(convertProperties(userProfiles).keySet());
+        Collections.sort(profiles);
+        return profiles;
     }
     
     /**
      * returns name of (active) default profile
      */
     public static String getDefaultProfileName() {
-        String defaultProfileName = null;
-        if (isUserProfileActive()) {
-            defaultProfileName = userProfiles.getProperty(DEFAULT_PROFILE_PROPERTY);
-            if (defaultProfileName == null) {
-//                return 
-            }
-        }
-        return defaultProfileName;
+        return userProperties.getProperty(DEFAULT_PROFILE_PROPERTY);
     }
     
     /**
@@ -232,13 +242,6 @@ public final class Config {
      */
     public static String getActiveFilepath() {
         return userProfiles.getProperty(selectedProfile);
-    }
-    
-    /**
-     * returns true if active profile is a user profile 
-     */
-    public static boolean isUserProfileActive() {
-        return userProfiles.getProperty(selectedProfile) != null;
     }
     
     /**
@@ -290,9 +293,8 @@ public final class Config {
         }
         
         /* if nothing has selected so far, choose standardProfile */
-        standardProfile = false;
         if (!Util.hasValue(configSelection)) {
-            standardProfile = true;
+            configSelection = STANDARD_PROFILE_SELECTION;
         }
         
         selectedProfile = configSelection;
@@ -303,7 +305,7 @@ public final class Config {
     private static void initialLoad() {
         if (legacyConfigFile) {
             if (!propertiesLoaded) {
-                loadPropertyFile(defaultProperties, selectedProfile, true, false);
+                loadPropertyFile(defaultProperties, selectedProfile, false);
                 propertiesLoaded = true;
                 setSaveDirDefaults();
             }
@@ -311,45 +313,47 @@ public final class Config {
         }
         
         if (!profilesLoaded) {
-            loadPropertyFile(defaultProfiles, defaultProfilesFile, true, false);
-            loadPropertyFile(userProfiles, userProfilesFile, false, false);
+            loadPropertyFile(defaultProfiles, defaultProfilesFile, true);
+            loadPropertyFile(userProfiles, userProfilesFile, false);
             profilesLoaded = true;
-        }
-        
-        if (standardProfile) {
-            selectedProfile = userProfiles.getProperty(STANDARD_PROFILE_PROPERTY);
-            if (selectedProfile == null) {
-                selectedProfile = defaultProfiles.getProperty(STANDARD_PROFILE_PROPERTY);
-            }
-            if (selectedProfile == null) {
-                selectedProfile = DEFAULT_PROFILE_SELECTION;
-            }
         }
         
         /* Tell the properties loader to read this file. */
         log.info("Selected profile = " + selectedProfile);
 
         if (!propertiesLoaded) {
-            propertiesLoaded = loadPropertyProfile(selectedProfile);
+            loadPropertyProfile(selectedProfile);
+            propertiesLoaded  = true;
         }
     }
     
-    private static boolean loadPropertyProfile(String profileName) {
+    /**
+     * loads a user profile and the according default profile
+     * if not defined or loadable, creates a default user profile
+     */
+    private static void loadPropertyProfile(String userProfile) {
+        // reset properties
+        userProperties = new Properties();
+        defaultProperties = new Properties();
         
-        /* first check if it is a default profile */
-        String defaultConfigFile = defaultProfiles.getProperty(profileName);
-        if (defaultConfigFile == null) {
-            String userConfigFile = userProfiles.getProperty(profileName);
-            if (userConfigFile == null) return false;
-            loadPropertyFile(userProperties, userConfigFile, false, false);
-            defaultConfigFile = userProperties.getProperty(DEFAULT_PROFILE_PROPERTY);
-            if (defaultConfigFile == null) {
-                defaultConfigFile = defaultProfiles.getProperty(DEFAULT_PROFILE_SELECTION);
-            }
+        // check if the profile is already defined under userProfiles 
+        String userConfigFile = userProfiles.getProperty(userProfile);
+        String defaultConfigFile = null;
+        if (Util.hasValue(userConfigFile) && // load user profile
+             loadPropertyFile(userProperties, userConfigFile, false)) {
+                String defaultConfig = userProperties.getProperty(DEFAULT_PROFILE_PROPERTY);
+                if (defaultConfig != null) {
+                    defaultConfigFile = defaultProfiles.getProperty(defaultConfig);
+                }
+        } else {
+            userProfiles.setProperty(userProfile, "");
         }
-        loadPropertyFile(defaultProperties, defaultConfigFile, true, false);
+        if (defaultConfigFile == null) {
+            defaultConfigFile = defaultProfiles.getProperty(DEFAULT_PROFILE_SELECTION);
+            userProperties.setProperty(DEFAULT_PROFILE_PROPERTY, DEFAULT_PROFILE_SELECTION);
+        }
+        loadPropertyFile(defaultProperties, defaultConfigFile, true);
         setSaveDirDefaults();
-        return true;
     }
 
     /**
@@ -357,11 +361,11 @@ public final class Config {
      *
      * @param filename - file key name as a String.
      * @param resource - if TRUE, loaded from jar (via classloader), otherwise from filesystem
-     * @param required - if TRUE, an exception will be logged if the file does
-     * not exist.
+     * @return TRUE if load was successful
      */
-    private static void loadPropertyFile(Properties properties, String filename, boolean resource, boolean required) {
+    private static boolean loadPropertyFile(Properties properties, String filename, boolean resource) {
         
+        boolean result = true; 
         try {
             log.info("Loading properties from file " + filename);
             InputStream inFile;
@@ -371,15 +375,13 @@ public final class Config {
                 inFile = new FileInputStream(filename);
             }
             properties.load(inFile);
-        } catch (FileNotFoundException FNFE) {
-            if (required) {
-                System.err.println("File not found: " + filename);
-            }
         } catch (Exception e) {
             System.err.println(e + " whilst loading properties file "
                                + filename);
             e.printStackTrace(System.err);
+            result = false;
         }
+        return result;
     }
     
     private static void setSaveDirDefaults() {
