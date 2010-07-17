@@ -31,8 +31,8 @@ public class Bank implements CashHolder, ConfigurableComponentI {
 
     /** Is the bank broken (remains true once set) */
     private BooleanState broken = new BooleanState("Bank.broken", false);
-//    /** Is the bank just broken (returns true exactly once) */
-//    private BooleanState brokenReported = new BooleanState("Bank.brokenReported", false);
+    //    /** Is the bank just broken (returns true exactly once) */
+    //    private BooleanState brokenReported = new BooleanState("Bank.brokenReported", false);
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -41,7 +41,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private String moneyFormat = null;
 
     protected static Logger log =
-            Logger.getLogger(Bank.class.getPackage().getName());
+        Logger.getLogger(Bank.class.getPackage().getName());
 
     public Bank() {
 
@@ -98,7 +98,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         List<PrivateCompanyI> privates =
             gameManager.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompanyI priv : privates) {
-            ipo.addPrivate(priv);
+            ipo.addPrivate(priv, -1);
         }
 
         // Add public companies
@@ -107,13 +107,13 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         for (PublicCompanyI comp : companies) {
             for (PublicCertificateI cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    ipo.addCertificate(cert);
-                 } else {
-                    unavailable.addCertificate(cert);
-               }
+                    ipo.addCertificate(cert, -1);
+                } else {
+                    unavailable.addCertificate(cert, -1);
+                }
             }
         }
-}
+    }
 
     /**
      * @return IPO Portfolio
@@ -154,11 +154,11 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         return broken.booleanValue();
     }
 
-//    public boolean isJustBroken() {
-//        boolean result = broken.booleanValue() && !brokenReported.booleanValue();
-//        brokenReported.set(true);
-//        return result;
-//    }
+    //    public boolean isJustBroken() {
+    //        boolean result = broken.booleanValue() && !brokenReported.booleanValue();
+    //        brokenReported.set(true);
+    //        return result;
+    //    }
 
     /**
      * @return Portfolio of stock in Bank Pool

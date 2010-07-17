@@ -36,7 +36,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public static final String BASE_COST_DISTANCE = "distance";
 
     protected static final String[] tokenLayTimeNames =
-            new String[] { "whenStarted", "whenFloated", "firstOR" };
+        new String[] { "whenStarted", "whenFloated", "firstOR" };
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
@@ -117,9 +117,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Are company shares buyable (i.e. before started)? */
     protected BooleanState buyable = null;
-    
+
     /** In-game state.
-     * <p> Will only be set false if the company is closed and cannot ever be reopened. 
+     * <p> Will only be set false if the company is closed and cannot ever be reopened.
      * By default it will be set false if a company is closed. */
     protected BooleanState inGameState = null;
 
@@ -163,7 +163,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Can a company be restarted once it is closed? */
     protected boolean canBeRestarted = false;
-    
+
     /**
      * Minimum price for buying privates, to be multiplied by the original price
      */
@@ -281,7 +281,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * element
      */
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
         longName = tag.getAttributeAsString("longname", name);
         infoText = "<html>"+longName;
@@ -304,7 +304,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
 
         certsAreInitiallyAvailable
-                = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
+        = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
 
         canBeRestarted = tag.getAttributeAsBoolean("restartable", canBeRestarted);
 
@@ -313,7 +313,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             shareUnit = new IntegerState (name+"_ShareUnit",
                     shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
-            	= shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
+            = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
         }
 
         Tag homeBaseTag = tag.getChild("Home");
@@ -332,23 +332,23 @@ public class PublicCompany extends Company implements PublicCompanyI {
             canBuyPrivates = true;
 
             String lower =
-                    privateBuyTag.getAttributeAsString("lowerPriceFactor");
+                privateBuyTag.getAttributeAsString("lowerPriceFactor");
             if (!Util.hasValue(lower))
                 throw new ConfigurationException(
-                        "Lower private price factor missing");
+                "Lower private price factor missing");
             lowerPrivatePriceFactor = Float.parseFloat(lower);
 
             String upper =
-                    privateBuyTag.getAttributeAsString("upperPriceFactor");
+                privateBuyTag.getAttributeAsString("upperPriceFactor");
             if (!Util.hasValue(upper))
                 throw new ConfigurationException(
-                        "Upper private price factor missing");
+                "Upper private price factor missing");
             upperPrivatePriceFactor = Float.parseFloat(upper);
         }
 
         Tag canUseSpecTag = tag.getChild("CanUseSpecialProperties");
         if (canUseSpecTag != null) canUseSpecialProperties = true;
-        
+
         // Extra info text(usually related to extra-share special properties)
         Tag infoTag = tag.getChild("Info");
         if (infoTag != null) {
@@ -388,8 +388,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             splitAllowed = split.equalsIgnoreCase("allowed");
 
             payoutMustExceedPriceToMove =
-                    payoutTag.getAttributeAsBoolean("mustExceedPriceToMove",
-                            false);
+                payoutTag.getAttributeAsBoolean("mustExceedPriceToMove",
+                        false);
         }
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
@@ -398,35 +398,35 @@ public class PublicCompany extends Company implements PublicCompanyI {
             treasuryPaysOut = true;
 
             maxPercOfOwnShares =
-                    ownSharesTag.getAttributeAsInteger("maxPerc",
-                            maxPercOfOwnShares);
+                ownSharesTag.getAttributeAsInteger("maxPerc",
+                        maxPercOfOwnShares);
         }
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
             trainLimit = trainsTag.getAttributeAsIntegerArray("number");
             mustOwnATrain =
-                    trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
+                trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
             initialTrain = trainsTag.getAttributeAsString("initial");
         }
 
         Tag firstTrainTag = tag.getChild("FirstTrainCloses");
         if (firstTrainTag != null) {
             String typeName =
-                    firstTrainTag.getAttributeAsString("type", "Private");
+                firstTrainTag.getAttributeAsString("type", "Private");
             if (typeName.equalsIgnoreCase("Private")) {
                 privateToCloseOnFirstTrainName =
-                        firstTrainTag.getAttributeAsString("name");
+                    firstTrainTag.getAttributeAsString("name");
             } else {
                 throw new ConfigurationException(
-                        "Only Privates can be closed on first train buy");
+                "Only Privates can be closed on first train buy");
             }
         }
 
         Tag capitalisationTag = tag.getChild("Capitalisation");
         if (capitalisationTag != null) {
             String capType =
-                    capitalisationTag.getAttributeAsString("type", "full");
+                capitalisationTag.getAttributeAsString("type", "full");
             if (capType.equalsIgnoreCase("full")) {
                 setCapitalisation(CAPITALISE_FULL);
             } else if (capType.equalsIgnoreCase("incremental")) {
@@ -447,16 +447,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 String colourString = numberTag.getAttributeAsString("colour");
                 if (colourString == null)
                     throw new ConfigurationException(
-                            "No colour entry for NumberOfTileLays");
+                    "No colour entry for NumberOfTileLays");
                 String phaseString = numberTag.getAttributeAsString("phase");
                 if (phaseString == null)
                     throw new ConfigurationException(
-                            "No phase entry for NumberOfTileLays");
+                    "No phase entry for NumberOfTileLays");
                 int number = numberTag.getAttributeAsInteger("number");
                 Integer lays = new Integer(number);
 
                 int validForTurns =
-                        numberTag.getAttributeAsInteger("occurrences", 0);
+                    numberTag.getAttributeAsInteger("occurrences", 0);
 
                 String[] colours = colourString.split(",");
                 HashMap<String, Integer> phaseMap;
@@ -468,16 +468,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 for (int i = 0; i < colours.length; i++) {
                     if (extraTileLays == null)
                         extraTileLays =
-                                new HashMap<String, HashMap<String, Integer>>();
+                            new HashMap<String, HashMap<String, Integer>>();
                     extraTileLays.put(colours[i], (phaseMap =
-                            new HashMap<String, Integer>()));
+                        new HashMap<String, Integer>()));
                     for (int k = 0; k < phases.length; k++) {
                         phaseMap.put(phases[k], lays);
                     }
                     if (validForTurns > 0) {
                         if (turnsWithExtraTileLaysInit == null) {
                             turnsWithExtraTileLaysInit =
-                                    new HashMap<String, Integer>();
+                                new HashMap<String, Integer>();
                         }
                         turnsWithExtraTileLaysInit.put(colours[i],
                                 validForTurns);
@@ -500,13 +500,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
 
                 boolean president =
-                        "President".equals(certificateTag.getAttributeAsString(
-                                "type", ""));
+                    "President".equals(certificateTag.getAttributeAsString(
+                            "type", ""));
                 int number = certificateTag.getAttributeAsInteger("number", 1);
 
                 boolean certIsInitiallyAvailable
-                        = certificateTag.getAttributeAsBoolean("available",
-                                certsAreInitiallyAvailable);
+                = certificateTag.getAttributeAsBoolean("available",
+                        certsAreInitiallyAvailable);
 
                 float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
@@ -514,8 +514,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     if (number > 1 || gotPresident)
                         throw new ConfigurationException(
                                 "Company type "
-                                        + name
-                                        + " cannot have multiple President shares");
+                                + name
+                                + " cannot have multiple President shares");
                     gotPresident = true;
                 }
 
@@ -528,7 +528,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
             if (shareTotal != 100)
                 throw new ConfigurationException("Company type " + name
-                                                 + " total shares is not 100%");
+                        + " total shares is not 100%");
         }
         nameCertificates();
 
@@ -540,8 +540,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             Tag layCostTag = baseTokenTag.getChild("LayCost");
             if (layCostTag != null) {
                 baseTokenLayCostMethod =
-                        layCostTag.getAttributeAsString("method",
-                                baseTokenLayCostMethod);
+                    layCostTag.getAttributeAsString("method",
+                            baseTokenLayCostMethod);
                 if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_SEQUENCE)) {
                     baseTokenLayCostMethod = BASE_COST_SEQUENCE;
                 } else if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_DISTANCE)) {
@@ -553,14 +553,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 }
 
                 baseTokenLayCost =
-                        layCostTag.getAttributeAsIntegerArray("cost");
+                    layCostTag.getAttributeAsIntegerArray("cost");
             }
 
             /* Cost of buying a token (mutually exclusive with laying cost) */
             Tag buyCostTag = baseTokenTag.getChild("BuyCost");
             if (buyCostTag != null) {
                 baseTokensBuyCost =
-                        buyCostTag.getAttributeAsInteger("initialTokenCost", 0);
+                    buyCostTag.getAttributeAsInteger("initialTokenCost", 0);
             }
 
             Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
@@ -569,7 +569,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 // Note: if not before, home tokens are in any case laid
                 // at the start of the first OR
                 String layTimeString =
-                        tokenLayTimeTag.getAttributeAsString("lay");
+                    tokenLayTimeTag.getAttributeAsString("lay");
                 if (Util.hasValue(layTimeString)) {
                     for (int i = 0; i < tokenLayTimeNames.length; i++) {
                         if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
@@ -585,8 +585,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (sellSharesTag != null) {
             mayTradeShares = true;
             mustHaveOperatedToTradeShares =
-                    sellSharesTag.getAttributeAsBoolean("mustHaveOperated",
-                            mustHaveOperatedToTradeShares);
+                sellSharesTag.getAttributeAsBoolean("mustHaveOperated",
+                        mustHaveOperatedToTradeShares);
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -602,14 +602,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Tag optionsTag = tag.getChild("Options");
         if (optionsTag != null) {
             mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean
-                ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
+            ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
             canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-	public void init(String name, CompanyTypeI type) {
+    public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
         inGameState = new BooleanState(name + "_InGame", true);
@@ -692,8 +692,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     startSpace));
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
-                                                 + startSpace + " for company "
-                                                 + name);
+                        + startSpace + " for company "
+                        + name);
             currentPrice.setPrice(parPrice.getPrice());
 
         }
@@ -722,8 +722,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             homeHex = mapManager.getHex(homeHexName);
             if (homeHex == null) {
                 throw new ConfigurationException("Invalid home hex "
-                                                 + homeHexName
-                                                 + " for company " + name);
+                        + homeHexName
+                        + " for company " + name);
             }
             infoText += "<br>Home: " + homeHex.getInfo();
         }
@@ -734,8 +734,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
             } else {
                 throw new ConfigurationException("Invalid destination hex "
-                                                 + destinationHexName
-                                                 + " for company " + name);
+                        + destinationHexName
+                        + " for company " + name);
             }
             infoText += "<br>Destination: "+destinationHex.getInfo();
         }
@@ -743,7 +743,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
             privateToCloseOnFirstTrain =
                 gameManager.getCompanyManager().getPrivateCompany(
-                            privateToCloseOnFirstTrainName);
+                        privateToCloseOnFirstTrainName);
         }
 
         infoText += parentInfoText;
@@ -840,7 +840,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean hasReachedDestination() {
         return hasReachedDestination != null &&
-            hasReachedDestination.booleanValue();
+        hasReachedDestination.booleanValue();
     }
 
     public void setReachedDestination (boolean value) {
@@ -873,7 +873,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasStockPrice) buyable.set(true);
 
         // In case of a restart: undo closing
-        if (closedObject.booleanValue()) closedObject.set(false); 
+        if (closedObject.booleanValue()) closedObject.set(false);
 
         if (startSpace != null) {
             setParSpace(startSpace);
@@ -881,7 +881,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             stockMarket.start(this, startSpace);
         }
 
-        
+
         if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
         }
@@ -921,15 +921,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Make company shares buyable. Only useful where shares become
      * buyable before the company has started (e.g. 1835 Prussian).
      * */
-	public void setBuyable(boolean buyable) {
-		this.buyable.set(buyable);
-	}
+    public void setBuyable(boolean buyable) {
+        this.buyable.set(buyable);
+    }
 
-	public boolean isBuyable() {
-		return buyable.booleanValue();
-	}
+    public boolean isBuyable() {
+        return buyable.booleanValue();
+    }
 
-	/**
+    /**
      * Float the company, put its initial cash in the treasury.
      */
     public void setFloated() {
@@ -997,14 +997,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
             shareDestination = bank.getScrapHeap();
             inGameState.set(false);
         }
-        
+
         // Dispose of the certificates
         for (PublicCertificateI cert : certificates) {
             if (cert.getHolder() != shareDestination) {
                 cert.moveTo(shareDestination);
             }
         }
-        
+
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
         setLastRevenue(0);
         treasury.setOption(CashModel.SUPPRESS_ZERO);
@@ -1014,7 +1014,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         stockMarket.close(this);
 
     }
-    
+
     /** Reinitialise a company, i.e. close it and make the shares available for a new company start.
      * IMplemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
@@ -1026,7 +1026,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (parPrice != null && fixedPrice <= 0) parPrice.setPrice(null);
         if (currentPrice != null) currentPrice.setPrice(null);
     }
-    
+
     public ModelObject getInGameModel () {
         return inGameState;
     }
@@ -1248,7 +1248,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean isAvailable() {
         Portfolio presLoc = certificates.get(0).getPortfolio();
         return presLoc != bank.getUnavailable()
-               && presLoc != bank.getScrapHeap();
+        && presLoc != bank.getScrapHeap();
     }
 
     /**
@@ -1355,10 +1355,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean canUseSpecialProperties() {
-		return canUseSpecialProperties;
-	}
+        return canUseSpecialProperties;
+    }
 
-	/**
+    /**
      * Get the unit of share.
      *
      * @return The percentage of ownership that is called "one share".
@@ -1368,10 +1368,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public int getShareUnitsForSharePrice() {
-		return shareUnitsForSharePrice;
-	}
+        return shareUnitsForSharePrice;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return name;
     }
@@ -1473,7 +1473,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         GameManagerI gmgr = GameManager.getInstance();
 
         for (int i = presIndex + 1; i < presIndex
-                                        + gmgr.getNumberOfPlayers(); i++) {
+        + gmgr.getNumberOfPlayers(); i++) {
             player = gmgr.getPlayerByIndex(i);
             share = player.getPortfolio().getShare(this);
             if (share > presShare) {
@@ -1499,7 +1499,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int share;
 
         for (int i = presIndex + 1; i < presIndex
-                                        + gmgr.getNumberOfPlayers(); i++) {
+        + gmgr.getNumberOfPlayers(); i++) {
             player = gmgr.getPlayerByIndex(i);
             share = player.getPortfolio().getShare(this);
             if (share > presShare) {
@@ -1560,7 +1560,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         portfolio.buyTrain(train, price);
         trainsCostThisTurn.add(price);
         if (privateToCloseOnFirstTrain != null
-            && !privateToCloseOnFirstTrain.isClosed()) {
+                && !privateToCloseOnFirstTrain.isClosed()) {
             privateToCloseOnFirstTrain.setClosed();
         }
     }
@@ -1594,9 +1594,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (sps != null) {
             // Need intermediate List to avoid ConcurrentModificationException
             List<SpecialPropertyI> spsToMoveHere =
-                    new ArrayList<SpecialPropertyI>(2);
+                new ArrayList<SpecialPropertyI>(2);
             List<SpecialPropertyI> spsToMoveToGM =
-                    new ArrayList<SpecialPropertyI>(2);
+                new ArrayList<SpecialPropertyI>(2);
             for (SpecialPropertyI sp : sps) {
                 if (sp.getTransferText().equalsIgnoreCase("toCompany")) {
                     spsToMoveHere.add(sp);
@@ -1628,8 +1628,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void layTile(MapHex hex, TileI tile, int orientation, int cost) {
 
         String tileLaid =
-                "#" + tile.getExternalId() + "/" + hex.getName() + "/"
-                        + hex.getOrientationName(orientation);
+            "#" + tile.getExternalId() + "/" + hex.getName() + "/"
+            + hex.getOrientationName(orientation);
         tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 
         if (cost > 0) tilesCostThisTurn.add(cost);
@@ -1773,17 +1773,17 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasLaidHomeBaseTokens()) return true;
 
         if (homeCityNumber == 0) {
-        	// This applies to cases like 1830 Erie and 1856 THB.
-        	// On a trackless tile it does not matter, but if
-        	// the tile has track (such as the green OO tile),
-        	// the player must select a city.
-        	Map<Integer, List<Track>> tracks
-        			= homeHex.getCurrentTile().getTracksPerStationMap();
-        	if (tracks == null || tracks.isEmpty()) {
-        		homeCityNumber = 1;
-        	} else {
-        		return false;
-        	}
+            // This applies to cases like 1830 Erie and 1856 THB.
+            // On a trackless tile it does not matter, but if
+            // the tile has track (such as the green OO tile),
+            // the player must select a city.
+            Map<Integer, List<Track>> tracks
+            = homeHex.getCurrentTile().getTracksPerStationMap();
+            if (tracks == null || tracks.isEmpty()) {
+                homeCityNumber = 1;
+            } else {
+                return false;
+            }
         }
         log.debug(name + " lays home base on " + homeHex.getName() + " city "
                 + homeCityNumber);
@@ -1806,12 +1806,21 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * to the free token list.
      */
 
-    public boolean addToken(TokenI token) {
+    public boolean addToken(TokenI token, int position) {
 
         boolean result = false;
         if (token instanceof BaseToken && laidBaseTokens.remove(token)) {
             token.setHolder(this);
-            result = freeBaseTokens.add(token);
+            if (position == -1) {
+                result = freeBaseTokens.add(token);
+            } else {
+                try {
+                    freeBaseTokens.add(position, token);
+                    result = true;
+                } catch (IndexOutOfBoundsException e) {
+                    result = false;
+                }
+            }
             this.baseTokensModel.update();
         }
         return result;
@@ -1855,9 +1864,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    public boolean addObject(Moveable object) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object);
+            return addToken((TokenI) object, position);
         } else {
             return false;
         }
@@ -1868,6 +1877,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
             return removeToken((TokenI) object);
         } else {
             return false;
+        }
+    }
+
+    public int getListIndex (Moveable object) {
+        if (object instanceof BaseToken) {
+            return freeBaseTokens.indexOf(object);
+        } else {
+            return -1;
         }
     }
 

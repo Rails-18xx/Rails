@@ -37,12 +37,12 @@ public class City implements TokenHolder {
     private String trackEdges;
 
     protected static Logger log =
-            Logger.getLogger(City.class.getPackage().getName());
+        Logger.getLogger(City.class.getPackage().getName());
 
     public City(MapHex mapHex, int number, Station station) {
         this.mapHex = mapHex;
         this.number = number;
-        
+
         uniqueId = mapHex.getName() + "_" + number;
         relatedStation = new GenericState<Station>("City_"+uniqueId+"_station", station);
         setRelatedStation(station);
@@ -53,7 +53,7 @@ public class City implements TokenHolder {
 
     public String getName() {
         return mapHex.getName() + "/" + number;
-                
+
     }
 
     /**
@@ -75,9 +75,9 @@ public class City implements TokenHolder {
         this.relatedStation.set(relatedStation);
         slots = relatedStation.getBaseSlots();
         trackEdges =
-                mapHex.getConnectionString(mapHex.getCurrentTile(),
-                        mapHex.getCurrentTileRotation(),
-                        relatedStation.getNumber());
+            mapHex.getConnectionString(mapHex.getCurrentTile(),
+                    mapHex.getCurrentTileRotation(),
+                    relatedStation.getNumber());
     }
 
     public void setSlots(int slots) {
@@ -91,20 +91,28 @@ public class City implements TokenHolder {
         return uniqueId;
     }
 
-    public boolean addToken(TokenI token) {
+    public boolean addToken(TokenI token, int position) {
 
         if (tokens.contains(token)) {
             return false;
         } else {
             token.setHolder(this);
-            boolean result = tokens.add(token);
-            return result;
+            if (position == -1) {
+                return tokens.add(token);
+            } else {
+                try {
+                    tokens.add(position, token);
+                    return true;
+                } catch (IndexOutOfBoundsException e) {
+                    return false;
+                }
+            }
         }
     }
 
-    public boolean addObject(Moveable object) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object);
+            return addToken((TokenI) object, position);
         } else {
             return false;
         }
@@ -133,7 +141,7 @@ public class City implements TokenHolder {
     public boolean hasTokenSlotsLeft() {
         return tokens.size() < slots;
     }
-    
+
     public int getTokenSlotsLeft () {
         return slots - tokens.size();
     }
@@ -148,13 +156,13 @@ public class City implements TokenHolder {
      * @param company
      * @return true if this City already contains an instance of the specified
      * company's token. Do this by calling the hasTokenOf with Company Name.
-     * Using a tokens.contains(company) fails since the tokens are a ArrayList 
+     * Using a tokens.contains(company) fails since the tokens are a ArrayList
      * of TokenI not a ArrayList of PublicCompanyI.
      */
     public boolean hasTokenOf(PublicCompanyI company) {
         return hasTokenOf (company.getName());
     }
-    
+
     public boolean hasTokenOf (String companyName) {
         for (TokenI token : tokens) {
             if (token instanceof BaseToken
@@ -163,6 +171,14 @@ public class City implements TokenHolder {
             }
         }
         return false;
+    }
+
+    public int getListIndex (Moveable object) {
+        if (object instanceof BaseToken) {
+            return tokens.indexOf(object);
+        } else {
+            return -1;
+        }
     }
 
     public void setTokens(ArrayList<TokenI> tokens) {

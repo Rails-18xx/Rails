@@ -76,7 +76,7 @@ implements TrainTypeI {
     protected String initialPortfolio = "IPO";
 
     protected static Logger log =
-            Logger.getLogger(TrainType.class.getPackage().getName());
+        Logger.getLogger(TrainType.class.getPackage().getName());
 
     /**
      * @param real False for the default type, else real. The default type does
@@ -95,7 +95,7 @@ implements TrainTypeI {
             trainClass = Class.forName(trainClassName).asSubclass(Train.class);
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Class " + trainClassName
-                                             + "not found", e);
+                    + "not found", e);
         }
 
         if (real) {
@@ -148,8 +148,8 @@ implements TrainTypeI {
 
             // From where is this type initially available
             initialPortfolio =
-                    tag.getAttributeAsString("initialPortfolio",
-                            initialPortfolio);
+                tag.getAttributeAsString("initialPortfolio",
+                        initialPortfolio);
         } else {
             name = "";
             amount = 0;
@@ -163,7 +163,7 @@ implements TrainTypeI {
 
             // Are towns counted (only relevant is reachBasis = "stops")
             countTowns =
-                    reachTag.getAttributeAsString("countTowns", countTowns);
+                reachTag.getAttributeAsString("countTowns", countTowns);
         }
 
         // Score
@@ -171,11 +171,11 @@ implements TrainTypeI {
         if (scoreTag != null) {
             // Reach basis
             scoreTowns =
-                    scoreTag.getAttributeAsString("scoreTowns", scoreTowns);
+                scoreTag.getAttributeAsString("scoreTowns", scoreTowns);
 
             // Are towns counted (only relevant is reachBasis = "stops")
             scoreCities =
-                    scoreTag.getAttributeAsString("scoreCities", scoreCities);
+                scoreTag.getAttributeAsString("scoreCities", scoreCities);
         }
 
         // Exchangeable
@@ -190,29 +190,29 @@ implements TrainTypeI {
             // Check the reach and score values
             countHexes = reachBasis.equals("hexes");
             townCountIndicator =
-                    countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0
-                            ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
-            cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
-            townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
-            // Actually we should meticulously check all values....
+                countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0
+                        ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
+                cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
+                townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
+                // Actually we should meticulously check all values....
 
-            // log.debug("Train type "+name+": class "+trainClassName);
+                // log.debug("Train type "+name+": class "+trainClassName);
 
-            // Now create the trains of this type
-            TrainI train;
-            if (infiniteAmount) {
-                /*
-                 * We create one train, but will add one more each time a train
-                 * of this type is bought.
-                 */
-                train = createTrain();
-                trains.add(train);
-            } else {
-                for (int i = 0; i < amount; i++) {
-                    train = createTrain ();
+                // Now create the trains of this type
+                TrainI train;
+                if (infiniteAmount) {
+                    /*
+                     * We create one train, but will add one more each time a train
+                     * of this type is bought.
+                     */
+                    train = createTrain();
                     trains.add(train);
+                } else {
+                    for (int i = 0; i < amount; i++) {
+                        train = createTrain ();
+                        trains.add(train);
+                    }
                 }
-            }
         }
 
         // Final initialisations
@@ -230,7 +230,7 @@ implements TrainTypeI {
 
         for (TrainI train : trains) {
             train.init(this, lastIndex++);
-            unavailable.addTrain(train);
+            unavailable.addTrain(train, -1);
         }
     }
 
@@ -244,8 +244,8 @@ implements TrainTypeI {
                     "Cannot instantiate class " + trainClassName, e);
         } catch (IllegalAccessException e) {
             throw new ConfigurationException("Cannot access class "
-                                             + trainClassName
-                                             + "constructor", e);
+                    + trainClassName
+                    + "constructor", e);
         }
         return train;
     }
@@ -419,8 +419,8 @@ implements TrainTypeI {
         available.set(true);
 
         Portfolio to =
-                (initialPortfolio.equalsIgnoreCase("Pool") ? bank.getPool()
-                        : bank.getIpo());
+            (initialPortfolio.equalsIgnoreCase("Pool") ? bank.getPool()
+                    : bank.getIpo());
 
         for (TrainI train : trains) {
             new ObjectMove(train, bank.getUnavailable(), to);
@@ -436,12 +436,12 @@ implements TrainTypeI {
         for (TrainI train : trains) {
             if (obsoleting && train.getHolder() != lastBuyingCompany) {
                 log.debug("Train " + train.getUniqueId() + " (owned by "
-                          + train.getHolder().getName() + ") obsoleted");
+                        + train.getHolder().getName() + ") obsoleted");
                 train.setObsolete();
                 train.getHolder().getTrainsModel().update();
             } else {
                 log.debug("Train " + train.getUniqueId() + " (owned by "
-                          + train.getHolder().getName() + ") rusted");
+                        + train.getHolder().getName() + ") rusted");
                 train.setRusted();
             }
         }
@@ -496,7 +496,8 @@ implements TrainTypeI {
         if (b.length() > 6) b.append("<br>");
         b.append(text);
     }
-    
+
+    @Override
     public String toString() {
         return name;
     }
