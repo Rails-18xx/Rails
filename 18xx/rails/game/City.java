@@ -93,21 +93,11 @@ public class City implements TokenHolder {
 
     public boolean addToken(TokenI token, int position) {
 
-        if (tokens.contains(token)) {
-            return false;
-        } else {
-            token.setHolder(this);
-            if (position == -1) {
-                return tokens.add(token);
-            } else {
-                try {
-                    tokens.add(position, token);
-                    return true;
-                } catch (IndexOutOfBoundsException e) {
-                    return false;
-                }
-            }
-        }
+        if (tokens.contains(token)) return false;
+
+        boolean result = Util.addToList(tokens, token, position);
+        if (result) token.setHolder(this);
+        return result;
     }
 
     public boolean addObject(Moveable object, int position) {

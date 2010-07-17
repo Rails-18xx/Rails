@@ -794,19 +794,11 @@ StationHolder, TokenHolder {
             offStationTokens = new ArrayList<TokenI>();
         if (offStationTokens.contains(token)) {
             return false;
-        } else {
-            token.setHolder(this);
-            if (position == -1) {
-                return offStationTokens.add(token);
-            } else {
-                try {
-                    offStationTokens.add(position, token);
-                    return true;
-                } catch (IndexOutOfBoundsException e) {
-                    return false;
-                }
-            }
         }
+
+        boolean result = Util.addToList(offStationTokens, token, position);
+        if (result) token.setHolder(this);
+        return result;
     }
 
     public List<BaseToken> getBaseTokens () {

@@ -65,13 +65,13 @@ public final class Util {
             return bitmask | value;
         } else {
             System.out.println("Reset bit " + value + ": from " + bitmask
-                               + " to " + (bitmask & ~value));
+                    + " to " + (bitmask & ~value));
             return bitmask & ~value;
         }
     }
 
     /**
-     * Safely move objects from one holder to another, avoiding
+     * Safely move a list of objects from one holder to another, avoiding
      * ConcurrentModificationExceptions.
      *
      * @param from
@@ -91,6 +91,29 @@ public final class Util {
             object.moveTo(to);
         }
 
+    }
+
+    /** Safely add an object to a List at a given position
+     * @param objects The List to add the object to.
+     * @param object The object to be added.
+     * @param position The position at which the object must be added.
+     * <br>If between 0 and the current list size (inclusive), the object is inserted at
+     * the given position.<br>If -1, the object is inserted at the end.
+     * <br>If any other value, nothing is done.
+     * @return True if the insertion was successful.
+     * */
+    public static <T extends Moveable, U extends T> boolean addToList (List<T> objects,
+            U object, int position) {
+        if (objects == null || object == null) {
+            return false;
+        }
+        if (position == -1) {
+            return objects.add(object);
+        } else if (position >= 0 && position <= objects.size()){
+            objects.add(position, object);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -117,8 +140,8 @@ public final class Util {
             try {
                 String[] parts = s.split(",");
                 c = new Color (Integer.parseInt(parts[0]),
-                               Integer.parseInt(parts[1]),
-                               Integer.parseInt(parts[2]));
+                        Integer.parseInt(parts[1]),
+                        Integer.parseInt(parts[2]));
             } catch (NumberFormatException e) {
                 getLogger().error ("Invalid nummeric RGB colour: "+s, e);
                 throw new ConfigurationException (e);
@@ -133,8 +156,8 @@ public final class Util {
     public static boolean isDark(Color c) {
         if (c == null) return false;
         return Math.sqrt(0.241*c.getRed()*c.getRed()
-                        + 0.691*c.getBlue()*c.getBlue()
-                        + 0.068*c.getGreen()*c.getGreen()) < 128;
+                + 0.691*c.getBlue()*c.getBlue()
+                + 0.068*c.getGreen()*c.getGreen()) < 128;
         // Copied this formula from
         // http://www.nbdtech.com/blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
     }

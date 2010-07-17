@@ -19,21 +19,31 @@ public class ObjectMove extends Move {
 
     /**
      * Create a generic ObjectMove object. Any specific side effects must be
-     * implemented in the addToken and removeToken methods of the 'from' and
-     * 'to' TokenHolders. <p>The parameter descriptions cover the usual case of
-     * a Base Token lay, which is physically removed from a PublicCompany and
-     * added to a Station on a MapHex.
+     * implemented in the various addXxxx and removeXxxx methods of the 'from' and
+     * 'to' MoveableHolders, depending on the object type.
      *
-     * @param moveableObject The moveableObject to be moved (e.g. a BaseToken).
-     * @param from Where the moveableObject is removed from (e.g. a
-     * PublicCompany charter).
+     * @param moveableObject The object to be moved (e.g. a BaseToken).
+     * @param from Where the moveableObject is removed from (e.g. a PublicCompany charter).
      * @param to Where the moveableObject is moved to (e.g. a MapHex).
+     * It is moved to the end of the List in which the moved object type is stored.
      */
 
     public ObjectMove(Moveable moveableObject, MoveableHolder from,
             MoveableHolder to) {
         this (moveableObject, from, to, -1);
     }
+
+    /**
+     * Create a generic ObjectMove object. Any specific side effects must be
+     * implemented in the various addXxxx and removeXxxx methods of the 'from' and
+     * 'to' MoveableHolders, depending on the object type.
+     *
+     * @param moveableObject The object to be moved (e.g. a BaseToken).
+     * @param from Where the moveableObject is removed from (e.g. a PublicCompany charter).
+     * @param to Where the moveableObject is moved to (e.g. a MapHex).
+     * @param toPosition At which List index in the 'to' holder the object must be inserted,
+     * -1 means at the end.
+     */
 
     public ObjectMove(Moveable moveableObject, MoveableHolder from,
             MoveableHolder to, int toPosition) {
