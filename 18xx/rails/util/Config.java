@@ -34,6 +34,10 @@ public final class Config {
     protected static Logger log =
         Logger.getLogger(Config.class.getPackage().getName());
 
+    /** Commandline options */
+    private static final String LOG4J_CMDLINE = "log4j";
+    private static final String CONFIGFILE_CMDLINE = "configfile";
+    private static final String PROFILE_CMDLINE = "profile";
 
     /** XML setup */
     private static final String CONFIG_XML_DIR = "data";
@@ -173,8 +177,13 @@ public final class Config {
     /**
      * save active Profile
      */
-    public static boolean saveActiveProfile(String filepath) { 
-        return storePropertyFile(userProperties, filepath);
+    public static boolean saveActiveProfile() {
+        String filepath = userProfiles.getProperty(selectedProfile);
+        if (Util.hasValue(filepath)) {
+            return storePropertyFile(userProperties, filepath);
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -267,13 +276,18 @@ public final class Config {
          * Set the system property that tells log4j to use this file. (Note:
          * this MUST be done before updating Config)
          */
-        System.setProperty("log4j.configuration", LOG4J_CONFIG_FILE);
+        String log4jSelection = System.getProperty(LOG4J_CMDLINE);
+        if (!Util.hasValue(log4jSelection)) {
+            log4jSelection = LOG4J_CONFIG_FILE;
+        }
+        System.setProperty("log4j.configuration", log4jSelection);
+        System.out.println("Log4j selection = " + log4jSelection);
         
         /*
          * Check if the profile has been set from the command line
          * to do this is adding an option to the java command: -Dprofile=<profile-name>
          */
-        String configSelection = System.getProperty("profile");
+        String configSelection = System.getProperty(PROFILE_CMDLINE);
         System.out.println("Cmdline profile selection = " + configSelection);
 
         legacyConfigFile = false;
@@ -284,9 +298,9 @@ public final class Config {
              * 
              * This is for legacy reasons only
              */
-            configSelection = System.getProperty("configfile");
+            configSelection = System.getProperty(CONFIGFILE_CMDLINE);
             
-            if (configSelection != null) {
+            if (Util.hasValue(configSelection)) {
                 System.out.println("Cmdline configfile selection (legacy!) = " + configSelection);
                 legacyConfigFile = true;
             }
@@ -298,6 +312,10 @@ public final class Config {
         }
         
         selectedProfile = configSelection;
+        if (!legacyConfigFile) {
+            System.out.println("Profile selection = " + selectedProfile);
+        }
+        
         initialLoad();
     }
 
@@ -378,7 +396,7 @@ public final class Config {
         } catch (Exception e) {
             System.err.println(e + " whilst loading properties file "
                                + filename);
-            e.printStackTrace(System.err);
+//            e.printStackTrace(System.err);
             result = false;
         }
         return result;
