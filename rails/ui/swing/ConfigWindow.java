@@ -242,7 +242,7 @@ class ConfigWindow extends JFrame {
     }
     
     private void saveConfig() {
-        this.dispose();
+        Config.saveActiveProfile();
     }
 
     private void saveAsConfig() {
@@ -264,6 +264,8 @@ class ConfigWindow extends JFrame {
         {
             File file = fc.getSelectedFile();
             Config.setActiveFilepath(file.getPath());
+            saveConfig();
+            setupButtonPanel();
         }
     }
 
