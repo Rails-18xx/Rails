@@ -83,8 +83,8 @@ public class LocalText extends ResourceBundle {
             }
         }
       
-        // special treatment for test
-        if (localeCode.equals("te_st0")) {
+        // special treatment for te_ST (test)
+        if (localeCode.equals("te_ST")) {
             StringBuffer s = new StringBuffer(key);
             if (parameters != null)
                 for (Object o:parameters)
