@@ -1,7 +1,6 @@
 package rails.ui.swing;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,20 +17,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
-import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import rails.game.ConfigurationException;
 import rails.util.Config;
@@ -41,6 +36,9 @@ import rails.util.Util;
 
 class ConfigWindow extends JFrame {
     private static final long serialVersionUID = 1L;
+
+    private static final String CONFIG_EXTENSION = ".rails_config";
+    private static final String CONFIG_DESCRIPTION = "Rails configuration files (.rails_config)";
     
     private JPanel profilePanel;
     private JTabbedPane configPane;
@@ -90,18 +88,22 @@ class ConfigWindow extends JFrame {
         comboBoxUser.setSelectedItem(Config.getActiveProfileName());
         comboBoxUser.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
-                Config.changeActiveProfile((String)comboBoxUser.getSelectedItem());
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        init();
-                        ConfigWindow.this.repaint();
-                    }
-                }
-                );
+                changeProfile((String)comboBoxUser.getSelectedItem());
             }
         }
         );
         profilePanel.add(comboBoxUser);
+
+        // new button
+        JButton newButton = new JButton(LocalText.getText("NEW"));
+        newButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        newProfile();
+                    }
+                }
+        );
+       profilePanel.add(newButton);
 
     }
     
@@ -206,6 +208,17 @@ class ConfigWindow extends JFrame {
     private void setupButtonPanel() {
         buttonPanel.removeAll();
         
+        // saveas button
+        JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
+        saveAsButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        ConfigWindow.this.saveAsConfig();
+                    }
+                }
+        );
+        buttonPanel.add(saveAsButton);
+
         // save button
         if (Config.isFilePathDefined()) {
             JButton saveButton = new JButton(LocalText.getText("SAVE"));
@@ -219,15 +232,6 @@ class ConfigWindow extends JFrame {
             buttonPanel.add(saveButton);
         }
 
-        JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
-        saveAsButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.saveAsConfig();
-                    }
-                }
-        );
-        buttonPanel.add(saveAsButton);
 
         JButton cancelButton = new JButton(LocalText.getText("CANCEL"));
         cancelButton.addActionListener(
@@ -241,12 +245,47 @@ class ConfigWindow extends JFrame {
         
     }
     
+    private void newProfile() {
+        String newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
+                LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
+        if (Util.hasValue(newProfile)) {
+            String defaultProfile = (String)JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_DEFAULT_MESSAGE"),
+                    LocalText.getText("CONFIG_DEFAULT_TITLE"), JOptionPane.QUESTION_MESSAGE, null, 
+                    Config.getDefaultProfiles().toArray(), Config.getDefaultProfileSelection());
+                Config.createUserProfile(newProfile, defaultProfile);
+        }
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                init();
+                ConfigWindow.this.repaint();
+            }
+        });
+    }
+    
+    private void changeProfile(String profileName) {
+        Config.changeActiveProfile(profileName);
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                init();
+                ConfigWindow.this.repaint();
+            }
+        });
+    }
+    
     private void saveConfig() {
         Config.saveActiveProfile();
     }
 
     private void saveAsConfig() {
+        String directory = Config.get("save.directory");
+        String filepath;
+        if (Util.hasValue(directory)) {
+            filepath = directory + File.separator + Config.getActiveProfileName() + CONFIG_EXTENSION;
+        } else {
+            filepath = Config.getActiveProfileName() + CONFIG_EXTENSION;
+        }
         JFileChooser fc = new JFileChooser();
+        fc.setSelectedFile(new File(filepath));
         fc.setFileFilter(
                 new FileFilter() {
                     public boolean accept( File f ){
@@ -254,12 +293,11 @@ class ConfigWindow extends JFrame {
                         f.getName().toLowerCase().endsWith( ".rails_config" );
                     }
                     public String getDescription() {
-                        return "Rails Config";
+                        return CONFIG_DESCRIPTION;
                     }
                 }
         );
-
-        int state = fc.showOpenDialog( null );
+        int state = fc.showSaveDialog(this);
         if ( state == JFileChooser.APPROVE_OPTION )
         {
             File file = fc.getSelectedFile();

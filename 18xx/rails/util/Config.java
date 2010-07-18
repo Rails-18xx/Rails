@@ -3,7 +3,6 @@ package rails.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -26,8 +24,8 @@ import rails.game.GameManager;
  * a property object from a property file, to retrieve a particular value from
  * the property file etc.
  *
- * @author Ramiah Bala, rewritten by Erik Vos
- * @version 1.0
+ * @author Ramiah Bala, rewritten by Erik Vos, rewritten by Stefan Frey
+ * @version 2.0
  */
 public final class Config {
 
@@ -48,8 +46,7 @@ public final class Config {
 
     /** Log 4j configuration */
     private static final String LOG4J_CONFIG_FILE = "log4j.properties";
-    
-    
+        
     /** Rails profile configurations */
     private static String defaultProfilesFile = "default.profiles";
     private static Properties defaultProfiles = new Properties();
@@ -156,13 +153,6 @@ public final class Config {
     }
     
 
-    /**
-     * @return if user location is defined
-     */
-    public static boolean isFilePathDefined() {
-        return Util.hasValue(userProfiles.getProperty(selectedProfile));
-    }
-    
     private static boolean storePropertyFile(Properties properties, String filepath) {
         File outFile = new File(filepath);
         boolean result = true;
@@ -196,6 +186,27 @@ public final class Config {
         return true;
     }
     
+    /**
+     * create new profile
+     */
+    public static boolean createUserProfile(String profileName, String defaultProfile) {
+        userProperties = new Properties();
+        defaultProperties = new Properties();
+
+        
+        // add to list of user profiles
+        userProfiles.setProperty(profileName, "");
+        // define and load default profile
+        String defaultConfigFile = defaultProfiles.getProperty(defaultProfile);
+        userProperties.setProperty(DEFAULT_PROFILE_PROPERTY, defaultProfile);
+        loadPropertyFile(defaultProperties, defaultConfigFile, true);
+        setSaveDirDefaults();
+
+        selectedProfile = profileName;
+        return true;
+    }
+    
+    
     private static Map<String, String> convertProperties(Properties properties) {
         Map<String, String> converted = new HashMap<String, String>();
         for (Object key:properties.keySet()) {
@@ -204,15 +215,17 @@ public final class Config {
         return converted;
     }
     
-    
     /** 
      * get all default profiles 
      */
     public static List<String> getDefaultProfiles() {
         List<String> profiles = new ArrayList<String>(convertProperties(defaultProfiles).keySet());
-        profiles.remove(DEFAULT_PROFILE_PROPERTY);
         Collections.sort(profiles);
         return profiles;
+    }
+    
+    public static String getDefaultProfileSelection() {
+        return DEFAULT_PROFILE_SELECTION;
     }
 
     /** 
@@ -239,6 +252,13 @@ public final class Config {
     }
     
     /**
+     * returns true if legacy configfile is used
+     */
+    public static boolean isLegacyConfigFile() {
+        return legacyConfigFile;
+    }
+    
+    /**
      * sets filename for an active profile (and store list of profiles)
      */
     public static boolean setActiveFilepath(String filepath) {
@@ -252,6 +272,14 @@ public final class Config {
     public static String getActiveFilepath() {
         return userProfiles.getProperty(selectedProfile);
     }
+
+    /**
+     * @return if user location is defined
+     */
+    public static boolean isFilePathDefined() {
+        return Util.hasValue(userProfiles.getProperty(selectedProfile));
+    }
+
     
     /**
      * activates settings used for testing
