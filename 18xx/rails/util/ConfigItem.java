@@ -68,7 +68,7 @@ public final class ConfigItem {
         formatMask = tag.getAttributeAsString("formatMask");
 
         // optional: helpText
-        helpText = tag.getAttributeAsString("formatMask");
+        helpText = tag.getAttributeAsString("helpText");
         
         newValue = null;
     }
@@ -82,7 +82,7 @@ public final class ConfigItem {
     }
     
     public void setNewValue(String newValue) {
-        if (newValue.equals(getConfigValue())) {
+        if (newValue == null || newValue.equals(getConfigValue())) {
             this.newValue = null;
         } else {
             this.newValue = newValue;
