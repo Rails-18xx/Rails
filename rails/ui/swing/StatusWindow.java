@@ -176,12 +176,15 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
         
-        menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
-        menuItem.setName(CONFIG_CMD);
-        menuItem.setActionCommand(CONFIG_CMD);
-        menuItem.setMnemonic(KeyEvent.VK_C);
-        menuItem.addActionListener(this);
-        optMenu.add(menuItem);
+        // new config menu only for non legacy configgfiles
+        if (!Config.isLegacyConfigFile()) {
+            menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
+            menuItem.setName(CONFIG_CMD);
+            menuItem.setActionCommand(CONFIG_CMD);
+            menuItem.setMnemonic(KeyEvent.VK_C);
+            menuItem.addActionListener(this);
+            optMenu.add(menuItem);
+        }
 
         menuBar.add(optMenu);
 
