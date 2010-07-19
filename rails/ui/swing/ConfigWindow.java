@@ -2,13 +2,18 @@ package rails.ui.swing;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -19,6 +24,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 import rails.game.ConfigurationException;
@@ -38,7 +45,7 @@ class ConfigWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String CONFIG_EXTENSION = ".rails_config";
-    private static final String CONFIG_DESCRIPTION = "Rails configuration files (.rails_config)";
+    private static final String CONFIG_DESCRIPTION = "Rails configuration files ( *.rails_config )";
     
     private JPanel profilePanel;
     private JTabbedPane configPane;
@@ -61,10 +68,17 @@ class ConfigWindow extends JFrame {
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
-        init();
+        // hide on close and inform  
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancelConfig();
+            }
+        });
     }
     
-    private void init() {
+    public void init() {
         setupProfilePanel();
         setupConfigPane();
         setupButtonPanel();
@@ -94,7 +108,9 @@ class ConfigWindow extends JFrame {
         );
         profilePanel.add(comboBoxUser);
 
-        // new button
+        JPanel buttonPanel = new JPanel(); 
+        
+        // button to create a new profile
         JButton newButton = new JButton(LocalText.getText("NEW"));
         newButton.addActionListener(
                 new ActionListener() {
@@ -103,7 +119,20 @@ class ConfigWindow extends JFrame {
                     }
                 }
         );
-       profilePanel.add(newButton);
+        buttonPanel.add(newButton);
+        
+        // button to load a new profile
+        JButton loadButton = new JButton(LocalText.getText("LOAD"));
+        loadButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        loadProfile();
+                    }
+                }
+        );
+        buttonPanel.add(loadButton);
+        
+        profilePanel.add(buttonPanel);
 
     }
     
@@ -118,64 +147,47 @@ class ConfigWindow extends JFrame {
         
         for (String panelName:configPanels.keySet()) {
             JPanel newPanel = new JPanel();
-            newPanel.setLayout(new GridLayout(0,3));
+            newPanel.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.gridx = 0;
+            gbc.weightx = 0.8;
+            gbc.weighty = 0.8;
+            gbc.insets = new Insets(10,10,10,10);
+            gbc.anchor = GridBagConstraints.WEST;
             for (ConfigItem item:configPanels.get(panelName)) {
-                defineElement(newPanel, item);
+                gbc.gridx = 0;
+                defineElement(newPanel, item, gbc);
+                gbc.gridy ++;
             }
             configPane.addTab(panelName, newPanel);
         }
     }
     
-    private void defineElement(JPanel panel, final ConfigItem item) {
-        // item label
-        panel.add(new JLabel(LocalText.getText("Config." + item.name)));
+    
+    private void addToGridBag(JComponent container, JComponent element, GridBagConstraints gbc) {
+        container.add(element, gbc);
+        gbc.gridx ++;
+    }
+    
+    private void defineElement(JPanel panel, final ConfigItem item, GridBagConstraints gbc) {
         
         // standard components
         final String configValue = item.getCurrentValue();
+        final String toolTip = item.helpText;
 
+        // item label
+        JLabel label = new JLabel(LocalText.getText("Config." + item.name));
+        label.setToolTipText(toolTip);
+        gbc.fill = GridBagConstraints.NONE;
+        addToGridBag(panel, label, gbc);
         
         switch (item.type) {
-        case COLOR:
-            final JLabel label = new JLabel(configValue);
-            Color selectedColor;
-            try {
-                selectedColor = Util.parseColour(configValue);
-            } catch (ConfigurationException e) {
-               selectedColor = Color.WHITE;
-            }
-            label.setOpaque(true);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setBackground(selectedColor);
-            if (Util.isDark(selectedColor)) {
-                label.setForeground(Color.WHITE);
-            } else {
-                label.setForeground(Color.BLACK);
-            }
-            panel.add(label);
-            JButton button = new JButton("Choose...");
-            final Color oldColor = selectedColor; 
-            button.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            Color selectedColor=JColorChooser.showDialog(ConfigWindow.this, "", oldColor);
-                            if (selectedColor == null) return;
-                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(3); 
-                            label.setText(newValue);
-                            item.setNewValue(newValue);
-                            label.setBackground(selectedColor);
-                            if (Util.isDark(selectedColor)) {
-                                label.setForeground(Color.WHITE);
-                            } else {
-                                label.setForeground(Color.BLACK);
-                            }
-                        }
-                    }
-            );
-            panel.add(button);
-            break;
         case LIST:
             final JComboBox comboBox = new JComboBox(item.allowedValues.toArray());
             comboBox.setSelectedItem(configValue);
+            comboBox.setToolTipText(toolTip);
             comboBox.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent arg0) {
                     // do nothing
@@ -185,7 +197,72 @@ class ConfigWindow extends JFrame {
                 }
             }
             );
-            panel.add(comboBox);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, comboBox, gbc);
+            break;
+        case DIRECTORY:
+            final JLabel dirLabel = new JLabel(configValue);
+            dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            dirLabel.setToolTipText(toolTip);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, dirLabel, gbc);
+            JButton dirButton = new JButton("Choose...");
+            dirButton.addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            JFileChooser fc = new JFileChooser(dirLabel.getText());
+                            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                            int state = fc.showOpenDialog(ConfigWindow.this);
+                            if ( state == JFileChooser.APPROVE_OPTION ){
+                                File file = fc.getSelectedFile();
+                                dirLabel.setText(file.getAbsolutePath());
+                                item.setNewValue(file.getAbsolutePath());
+                            }
+                        }
+                    }
+            );
+            gbc.fill = GridBagConstraints.NONE;
+            addToGridBag(panel, dirButton, gbc);
+            break;
+        case COLOR:
+            final JLabel colorLabel = new JLabel(configValue);
+            Color selectedColor;
+            try {
+                selectedColor = Util.parseColour(configValue);
+            } catch (ConfigurationException e) {
+               selectedColor = Color.WHITE;
+            }
+            colorLabel.setOpaque(true);
+            colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            colorLabel.setBackground(selectedColor);
+            if (Util.isDark(selectedColor)) {
+                colorLabel.setForeground(Color.WHITE);
+            } else {
+                colorLabel.setForeground(Color.BLACK);
+            }
+            colorLabel.setToolTipText(toolTip);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, colorLabel, gbc);
+            JButton colorButton = new JButton("Choose...");
+            colorButton.addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            Color selectedColor=JColorChooser.showDialog(ConfigWindow.this, "", colorLabel.getBackground());
+                            if (selectedColor == null) return;
+                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(3); 
+                            colorLabel.setText(newValue);
+                            item.setNewValue(newValue);
+                            colorLabel.setBackground(selectedColor);
+                            if (Util.isDark(selectedColor)) {
+                                colorLabel.setForeground(Color.WHITE);
+                            } else {
+                                colorLabel.setForeground(Color.BLACK);
+                            }
+                        }
+                    }
+            );
+            gbc.fill = GridBagConstraints.NONE;
+            addToGridBag(panel, colorButton, gbc);
             break;
         case STRING:
         default: // default like String
@@ -200,7 +277,8 @@ class ConfigWindow extends JFrame {
                 }
             }
             );
-            panel.add(textField);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, textField, gbc);
             break;
         }
     }
@@ -262,6 +340,31 @@ class ConfigWindow extends JFrame {
         });
     }
     
+    private void loadProfile() {
+        String directory = Config.get("save.directory");
+
+        JFileChooser fc = new JFileChooser(directory);
+        fc.setFileFilter(
+                new FileFilter() {
+                    public boolean accept( File f ){
+                        return f.isDirectory() ||
+                        f.getName().toLowerCase().endsWith( ".rails_config" );
+                    }
+                    public String getDescription() {
+                        return CONFIG_DESCRIPTION;
+                    }
+                }
+        );
+        int state = fc.showOpenDialog(this);
+        if ( state == JFileChooser.APPROVE_OPTION )
+        {
+            File file = fc.getSelectedFile();
+            if (Config.loadProfileFromFile(file)) {
+                changeProfile(Config.getActiveProfileName());
+            }
+        }
+    }
+    
     private void changeProfile(String profileName) {
         Config.changeActiveProfile(profileName);
         EventQueue.invokeLater(new Runnable() {
@@ -273,7 +376,10 @@ class ConfigWindow extends JFrame {
     }
     
     private void saveConfig() {
+        Config.updateProfile(); // transfer the configitem to the active profile
         Config.saveActiveProfile();
+        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_MESSAGE"),
+                LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void saveAsConfig() {
@@ -303,12 +409,19 @@ class ConfigWindow extends JFrame {
             File file = fc.getSelectedFile();
             Config.setActiveFilepath(file.getPath());
             saveConfig();
-            setupButtonPanel();
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    setupButtonPanel();
+                    ConfigWindow.this.pack();
+                    ConfigWindow.this.repaint();
+                }
+            });
         }
     }
 
     private void cancelConfig() {
-        this.dispose();
+        StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+        this.setVisible(false);
     }
 
 }

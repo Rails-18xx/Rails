@@ -608,9 +608,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         } else if (command.equals(MAP_CMD)) {
             gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(CONFIG_CMD)) {
-            JFrame configWindow = new ConfigWindow();
-            configWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            configWindow.setVisible(true);
+            gameUIManager.configWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {

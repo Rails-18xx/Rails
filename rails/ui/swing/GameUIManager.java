@@ -1,6 +1,9 @@
 package rails.ui.swing;
 
 import java.awt.Font;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -26,6 +29,7 @@ public class GameUIManager implements DialogOwner {
     public StockChart stockChart;
     public StatusWindow statusWindow;
     public ReportWindow reportWindow;
+    public ConfigWindow configWindow;
     public ORUIManager orUIManager;
     public ORWindow orWindow; // TEMPORARY
     private StartRoundWindow startRoundWindow;
@@ -151,6 +155,13 @@ public class GameUIManager implements DialogOwner {
             Class<? extends StatusWindow> statusWindowClass =
                 Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
             statusWindow = statusWindowClass.newInstance();
+
+//            GraphicsEnvironment ge = GraphicsEnvironment.
+//            getLocalGraphicsEnvironment();
+//            GraphicsDevice[] gs = ge.getScreenDevices();
+//            log.debug("ScreenDevices = " + Arrays.toString(gs));
+//            statusWindow = statusWindowClass.getConstructor(GraphicsConfiguration.class).newInstance(gs[1].getDefaultConfiguration());
+            
             statusWindow.init(this);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class " + statusWindowClassName, e);
@@ -160,6 +171,10 @@ public class GameUIManager implements DialogOwner {
         updateUI();
 
         reportWindow.scrollDown();
+
+        // define configWindow
+        configWindow = new ConfigWindow();
+        configWindow.init();
     }
 
     public void startLoadedGame() {
