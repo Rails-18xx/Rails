@@ -4,7 +4,11 @@ Defines rails configuration options, but do not stores the actual values
  -->
 <Properties>
 	<Panel name="General">
-		<Property name="locale" type="LIST" values="en_US,de" />
+		<Property name="locale" type="LIST" values="en_US,te_ST" helpText="Language Selection" />
+	</Panel>
+	<Panel name="Save">
+		<Property name="save.dir" type="DIRECTORY" helpText="Default save file directory" />
+			
 	</Panel>
 	<Panel name="Colors">
 		<Property name="route.colour.1" type="COLOR"/>
