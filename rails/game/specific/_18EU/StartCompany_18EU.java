@@ -78,6 +78,15 @@ public class StartCompany_18EU extends StartCompany {
     }
 
     public City getSelectedHomeStation() {
+        // use delayed selectedHomeStation initialization
+        // as not all cities are defined immediately
+        if (selectedHomeStation == null && selectedHomeStationName != null) {
+            MapManager mapManager = GameManager.getInstance().getMapManager();
+            String[] parts = parseStationName (selectedHomeStationName);
+            MapHex hex = mapManager.getHex(parts[0]);
+            selectedHomeStation = hex.getCity(Integer.parseInt(parts[1]));
+        }
+        
         return selectedHomeStation;
     }
 
@@ -130,11 +139,7 @@ public class StartCompany_18EU extends StartCompany {
                 availableHomeStations.add (hex.getCity(Integer.parseInt(parts[1])));
             }
         }
-        if (selectedHomeStationName != null) {
-            String[] parts = parseStationName (selectedHomeStationName);
-            MapHex hex = mapManager.getHex(parts[0]);
-            selectedHomeStation = hex.getCity(Integer.parseInt(parts[1]));
-        }
+        // selectedHomeStation is delayed
     }
 
     private String[] parseStationName (String name) {
