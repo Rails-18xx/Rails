@@ -47,6 +47,9 @@ implements ActionListener, KeyListener {
         
         // intialize configuration
         Config.setConfigSelection();
+
+        // delayed setting of logger
+        log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
         
         saveDirectory = Config.get("save.directory");
         System.out.println("Save directory = " + saveDirectory);
