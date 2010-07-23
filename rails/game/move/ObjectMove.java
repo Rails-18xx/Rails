@@ -5,6 +5,8 @@
  */
 package rails.game.move;
 
+import rails.util.Util;
+
 /**
  * @author Erik Vos
  */
@@ -77,9 +79,18 @@ public class ObjectMove extends Move {
         if (moveableObject == null) log.error("Token is null");
         if (from == null) log.warn("From is null");
         if (to == null) log.error("To is null");
-        return "Move " + objectClassName + ": " + moveableObject.getName()
-            + " from " + (from == null ? from : from.getName()) + "["+fromPosition
-            + "] to " + to.getName() + "["+toPosition+"]";
+        StringBuilder buf = new StringBuilder();
+
+        buf.append("Move ").append(objectClassName).append(": ").append(moveableObject.getName())
+            .append(" from ").append(from == null ? from : from.getName());
+        if (fromPosition != null) {
+            buf.append("[").append(Util.joinWithDelimiter(fromPosition, ",")).append("]");
+        }
+        buf.append(" to ").append(to == null ? to : to.getName());
+        if (toPosition != null) {
+            buf.append("[").append(Util.joinWithDelimiter(toPosition, ",")).append("]");
+        }
+        return buf.toString();
     }
 
 }

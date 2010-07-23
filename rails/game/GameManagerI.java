@@ -146,6 +146,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public void addPortfolio (Portfolio portfolio);
     public Portfolio getPortfolioByName (String name);
+    public Portfolio getPortfolioByUniqueName (String name);
 
     /**
      * @return the StartPacket

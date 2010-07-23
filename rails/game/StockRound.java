@@ -196,14 +196,14 @@ public class StockRound extends Round {
                 if (!cert.isPresidentShare()) {
                     price = comp.getIPOPrice() / unitsForPrice;
                     if (price <= playerCash) {
-                        possibleActions.add(new BuyCertificate(cert, from,
-                                price));
+                        possibleActions.add(new BuyCertificate(comp, cert.getShare(),
+                                from, price));
                     }
                 } else if (!comp.hasStarted()) {
                     if (comp.getIPOPrice() != 0) {
                         price = comp.getIPOPrice() * cert.getShares() / unitsForPrice;
                         if (price <= playerCash) {
-                            possibleActions.add(new StartCompany(cert, price));
+                            possibleActions.add(new StartCompany(comp, price));
                         }
                     } else {
                         List<Integer> startPrices = new ArrayList<Integer>();
@@ -218,7 +218,7 @@ public class StockRound extends Round {
                             for (int i = 0; i < prices.length; i++) {
                                 prices[i] = startPrices.get(i);
                             }
-                            possibleActions.add(new StartCompany(cert, prices));
+                            possibleActions.add(new StartCompany(comp, prices));
                         }
                     }
                 }
@@ -247,7 +247,7 @@ public class StockRound extends Round {
             price = stockSpace.getPrice() / unitsForPrice;
             shareUnit = comp.getShareUnit();
             maxNumberOfSharesToBuy
-            = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
+                    = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
@@ -296,7 +296,8 @@ public class StockRound extends Round {
                 }
 
                 if (number > 0) {
-                    possibleActions.add(new BuyCertificate(uniqueCerts[shares],
+                    possibleActions.add(new BuyCertificate(comp,
+                            uniqueCerts[shares].getShare(),
                             from, price,
                             number));
                 }
@@ -320,7 +321,7 @@ public class StockRound extends Round {
                 if (!stockSpace.isNoCertLimit()
                         && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
-                    possibleActions.add(new BuyCertificate(cert,
+                    possibleActions.add(new BuyCertificate(company, cert.getShare(),
                             company.getPortfolio(), company.getMarketPrice()));
                 }
             }
@@ -524,7 +525,7 @@ public class StockRound extends Round {
      * @return True if the company could be started. False indicates an error.
      */
     public boolean startCompany(String playerName, StartCompany action) {
-        PublicCompanyI company = action.getCertificate().getCompany();
+        PublicCompanyI company = action.getCompany();
         int price = action.getPrice();
         int shares = action.getNumberBought();
 
@@ -618,7 +619,7 @@ public class StockRound extends Round {
         // All is OK, now start the company
         company.start(startSpace);
 
-        CashHolder priceRecipient = getSharePriceRecipient (cert, price);
+        CashHolder priceRecipient = getSharePriceRecipient (company, ipo, price);
 
         // Transfer the President's certificate
         cert.moveTo(currentPlayer.getPortfolio());
@@ -668,17 +669,18 @@ public class StockRound extends Round {
      */
     public boolean buyShares(String playerName, BuyCertificate action) {
 
-        PublicCertificateI cert = action.getCertificate();
-        Portfolio from = cert.getPortfolio();
-        String companyName = cert.getCompany().getName();
+        PublicCompanyI company = action.getCompany();
+        Portfolio from = action.getFromPortfolio();
+        String companyName = company.getName();
         int number = action.getNumberBought();
-        int shares = number * cert.getShares();
-        int shareUnit = cert.getShare();
+        int shareUnit = company.getShareUnit();
+        int sharePerCert = action.getSharePerCertificate();
+        int share = number * sharePerCert;
+        int shares = share / shareUnit;
 
         String errMsg = null;
         int price = 0;
         int cost = 0;
-        PublicCompanyI company = null;
 
         currentPlayer = getCurrentPlayer();
 
@@ -748,6 +750,10 @@ public class StockRound extends Round {
 
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
+            PublicCertificateI cert = from.findCertificate(company, sharePerCert/shareUnit, false);
+            if (cert == null) {
+                log.fatal("Cannot find "+sharePerCert+"% of "+company.getName()+" in "+from.getName());
+            }
             if (!currentSpace.isNoCertLimit()
                     && !mayPlayerBuyCertificate(currentPlayer, company, number * cert.getCertificateCount())) {
                 errMsg =
@@ -791,7 +797,7 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         moveStack.start(true);
 
-        CashHolder priceRecipient = getSharePriceRecipient (cert, cost);
+        CashHolder priceRecipient = getSharePriceRecipient (company, from, cost);
 
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -814,9 +820,9 @@ public class StockRound extends Round {
 
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
-            cert2 = from.findCertificate(company, cert.getShares(), false);
+            cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
             if (cert2 == null) {
-                log.error("Cannot find " + companyName + " " + shareUnit
+                log.error("Cannot find " + companyName + " " + shareUnit*sharePerCert
                         + "% share in " + from.getName());
             }
             cert2.moveTo(currentPlayer.getPortfolio());
@@ -864,17 +870,16 @@ public class StockRound extends Round {
      * @param cert
      * @return
      */
-    protected CashHolder getSharePriceRecipient (PublicCertificateI cert, int price) {
+    protected CashHolder getSharePriceRecipient (PublicCompanyI comp,
+            Portfolio from, int price) {
 
-        Portfolio oldHolder = (Portfolio) cert.getHolder();
-        PublicCompanyI comp;
         CashHolder recipient;
-        if ((comp = (cert).getCompany()).hasFloated()
-                && oldHolder == ipo
+        if (comp.hasFloated()
+                && from == ipo
                 && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
             recipient = comp;
         } else {
-            recipient = oldHolder.getOwner();
+            recipient = from.getOwner();
         }
         return recipient;
     }

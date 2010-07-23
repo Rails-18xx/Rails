@@ -16,10 +16,22 @@ import rails.game.*;
 public class BuyCertificate extends PossibleAction {
 
     // Server-side settings
-    transient protected PublicCertificateI certificate;
-    protected String certUniqueId;
+
+    /* Some obsolete properties, which are only retained for backwards compatibility
+     * (i.e. to remain able to load older saved files).
+     * The certificate was in fact only used to find the below replacement
+     * attributes. It was NOT actually used to select the bought certificate!
+     */
+    transient protected PublicCertificateI certificate = null;
+    protected String certUniqueId = null;
+
+    /* Replacement for the above.*/
+    transient protected PublicCompanyI company;
+    protected String companyName;
+    protected int sharePerCert; // Share % per buyable certificate.
+
     transient protected Portfolio from;
-    protected String fromName;
+    protected String fromName; // Old: portfolio name. New: portfolio unique name.
     protected int price;
     protected int maximumNumber;
 
@@ -28,30 +40,24 @@ public class BuyCertificate extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    /**
-     * Common constructor.
-     */
-    public BuyCertificate(PublicCertificateI certificate, Portfolio from,
+    public BuyCertificate(PublicCompanyI company, int sharePerCert,
+            Portfolio from,
             int price, int maximumNumber) {
-        this.certificate = certificate;
-        this.certUniqueId = certificate.getUniqueId(); // TODO: Must be
-        // replaced by a unique
-        // Id!
+        this.company = company;
+        this.sharePerCert = sharePerCert;
         this.from = from;
-        this.fromName = from.getName();
+        this.fromName = from.getUniqueName();
         this.price = price;
         this.maximumNumber = maximumNumber;
+
+        companyName = company.getName();
     }
 
-    /** Buy a certificate from some portfolio at the current price */
-    //public BuyCertificate(PublicCertificateI certificate, Portfolio from) {
-    //    this(certificate, from, certificate.getCertificatePrice(), 1);
-    //}
-
     /** Buy a certificate from some portfolio at a given price */
-    public BuyCertificate(PublicCertificateI certificate, Portfolio from,
+    public BuyCertificate(PublicCompanyI company, int sharePerCert,
+            Portfolio from,
             int price) {
-        this(certificate, from, price, 1);
+        this(company, sharePerCert, from, price, 1);
     }
 
     /** Required for deserialization */
@@ -59,10 +65,6 @@ public class BuyCertificate extends PossibleAction {
 
     public Portfolio getFromPortfolio() {
         return from;
-    }
-
-    public String getFromName() {
-        return fromName;
     }
 
     /**
@@ -79,11 +81,20 @@ public class BuyCertificate extends PossibleAction {
         return price;
     }
 
-    /**
-     * @return Returns the certificate.
-     */
-    public PublicCertificateI getCertificate() {
-        return certificate;
+    public PublicCompanyI getCompany() {
+        return company;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public int getSharePerCertificate() {
+        return sharePerCert;
+    }
+
+    public int getSharesPerCertificate() {
+        return sharePerCert / company.getShareUnit();
     }
 
     public int getNumberBought() {
@@ -106,26 +117,46 @@ public class BuyCertificate extends PossibleAction {
     public String toString() {
         StringBuffer text = new StringBuffer();
         text.append("BuyCertificate: ");
-        if (numberBought > 1) {
-            text.append(numberBought).append(" of ");
-        } else if (numberBought == 0 && maximumNumber > 1) {
-            text.append("up to ").append(maximumNumber).append(" of ");
-        }
-        text.append(certificate.getName()).append(" from ").append(
-                from.getName()).append(" price=").append(
-                Bank.format(certificate.getShares() * price));
+        if (acted) text.append("Bought "+numberBought +" of ");
+        if (maximumNumber > 1) text.append ("max."+maximumNumber+" of ");
+        text.append(sharePerCert).append("% ").append(companyName)
+            .append(" from ").append(from.getName())
+            .append(" price=").append(Bank.format((sharePerCert/company.getShareUnit()) * price));
         return text.toString();
     }
 
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+        ObjectInputStream.GetField fields = in.readFields();
+
+        certUniqueId = (String) fields.get("certUniqueId", null);
+        companyName = (String) fields.get("companyName", null);
+        fromName = (String) fields.get("fromName", fromName);
+        price = fields.get("price", price);
+        maximumNumber = fields.get("maximumNumber", maximumNumber);
+        sharePerCert = fields.get("sharePerCert", -1);
+
+        numberBought = fields.get("numberBought", numberBought);
 
         GameManagerI gameManager = GameManager.getInstance();
 
-        certificate = PublicCertificate.getByUniqueId(certUniqueId);
-        from = gameManager.getPortfolioByName(fromName);
+        if (certUniqueId != null) {
+            // Old style
+            certificate = PublicCertificate.getByUniqueId(certUniqueId);
+            from = gameManager.getPortfolioByName(fromName);
+            company = certificate.getCompany();
+            companyName = company.getName();
+            sharePerCert = certificate.getShare();
+        } else if (companyName != null) {
+            // New style (since Rails.1.3.1)
+            company = gameManager.getCompanyManager().getPublicCompany(companyName);
+            from = gameManager.getPortfolioByUniqueName(fromName);
+            // We don't need the certificate anymore.
+        }
+
 
     }
 }
