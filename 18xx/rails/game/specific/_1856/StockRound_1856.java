@@ -85,16 +85,15 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashHolder getSharePriceRecipient(PublicCertificateI cert, int cost) {
+    protected CashHolder getSharePriceRecipient(PublicCompanyI company, Portfolio from, int price) {
 
         CashHolder recipient;
-        Portfolio oldHolder = (Portfolio) cert.getHolder();
 
-        if (cost != 0
-                && !cert.getCompany().getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
-                && oldHolder == ipo) {
+        if (price != 0
+                && !company.getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
+                && from == ipo) {
 
-            PublicCompany_1856 comp = (PublicCompany_1856)(cert).getCompany();
+            PublicCompany_1856 comp = (PublicCompany_1856)company;
 
             switch (comp.getTrainNumberAvailableAtStart()) {
             case 2:
@@ -104,9 +103,9 @@ public class StockRound_1856 extends StockRound {
                 if (getSoldPercentage(comp) >= 50
                         && !comp.hasReachedDestination()) {
                     recipient = bank;
-                    comp.addMoneyInEscrow(cost);
+                    comp.addMoneyInEscrow(price);
                     ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
-                            Bank.format(cost),
+                            Bank.format(price),
                             Bank.format(comp.getMoneyInEscrow()),
                             comp.getName() ));
                     break;
@@ -120,7 +119,7 @@ public class StockRound_1856 extends StockRound {
                 recipient = bank;
             }
         } else {
-            recipient = oldHolder.getOwner();
+            recipient = from.getOwner();
         }
         return recipient;
     }
@@ -183,10 +182,10 @@ public class StockRound_1856 extends StockRound {
             } else {
                 // Player has enough cash
                 if (cert1 != null && price1 <= cash) {
-                    possibleActions.add(new BuyCertificate(cert1, ipo, price1));
+                    possibleActions.add(new BuyCertificate(cgr, 1, ipo, price1));
                 }
                 if (cert2 != null && price2 <= cash) {
-                    possibleActions.add(new BuyCertificate(cert2, pool, price2));
+                    possibleActions.add(new BuyCertificate(cgr, 1, pool, price2));
                 }
             }
 

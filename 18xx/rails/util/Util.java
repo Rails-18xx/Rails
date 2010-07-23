@@ -42,6 +42,15 @@ public final class Util {
         return b.toString();
     }
 
+    public static String joinWithDelimiter (int[] sa, String delimiter) {
+        StringBuilder b = new StringBuilder();
+        for (int s : sa) {
+            if (b.length() > 0) b.append(delimiter);
+            b.append(s);
+        }
+        return b.toString();
+    }
+
     public static int parseInt(String value) throws ConfigurationException {
 
         if (!hasValue(value)) return 0;

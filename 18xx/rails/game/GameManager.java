@@ -68,12 +68,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected State currentPlayer = new State("CurrentPlayer", Player.class);
     protected State priorityPlayer = new State("PriorityPlayer", Player.class);
 
-    /** Map relating portfolio names and objects, to enable deserialization */
+    /** Map relating portfolio names and objects, to enable deserialization.
+     * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
     protected Map<String, Portfolio> portfolioMap =
+        new HashMap<String, Portfolio> ();
+    /** Map relating portfolio unique names and objects, to enable deserialization */
+    protected Map<String, Portfolio> portfolioUniqueNameMap =
         new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-    = new IntegerState ("PlayerCertificateLimit", 0);
+            = new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -83,7 +87,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean gameEndsAfterSetOfORs = true;
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
-    = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+            = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
     //    protected EnumSet<CorrectionType> activeCorrections
     //        = EnumSet.noneOf(CorrectionType.class);
@@ -893,11 +897,15 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
             DisplayBuffer.clear();
             // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
-            if (!possibleActions.contains(action.getClass())
-                    && possibleActions.contains(RepayLoans.class)) {
+            if (gameName.equals("1856")
+                    && possibleActions.contains(RepayLoans.class)
+                    && (!possibleActions.contains(action.getClass())
+                        || (action.getClass() == NullAction.class
+                                && ((NullAction)action).getMode() != NullAction.DONE))) {
                 // Insert "Done"
                 log.debug("Action DONE inserted");
                 getCurrentRound().process(new NullAction (NullAction.DONE));
+                possibleActions.clear();
                 getCurrentRound().setPossibleActions();
                 if (!isGameOver()) setCorrectionActions();
             }
@@ -913,11 +921,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     if (moveStack.isOpen()) moveStack.finish();
                     return false;
                 }
+                possibleActions.clear();
                 getCurrentRound().setPossibleActions();
-                //String playerName = getCurrentPlayer().getName();
-                //for (PossibleAction a : possibleActions.getList()) {
-                //    log.debug(playerName+" may: "+a.toString());
-                //}
+
+                // Log possible actions (normally this is outcommented)
+                String playerName = getCurrentPlayer().getName();
+                for (PossibleAction a : possibleActions.getList()) {
+                    log.debug(playerName+" may: "+a.toString());
+                }
+
+
                 if (!isGameOver()) setCorrectionActions();
 
             } catch (Exception e) {
@@ -1352,10 +1365,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     public void addPortfolio (Portfolio portfolio) {
         portfolioMap.put(portfolio.getName(), portfolio);
+        portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);
     }
 
+    /*  since Rails 1.3.1, but still required to enable loading old saved files */
     public Portfolio getPortfolioByName (String name) {
         return portfolioMap.get(name);
+    }
+
+    public Portfolio getPortfolioByUniqueName (String name) {
+        return portfolioUniqueNameMap.get(name);
     }
 
     /* (non-Javadoc)

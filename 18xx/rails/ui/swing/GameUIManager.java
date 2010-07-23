@@ -130,7 +130,7 @@ public class GameUIManager implements DialogOwner {
             }
             if (font != null) log.debug("Change text fonts globally to " + font.getName() + " / " + (boldStyle ? "Bold" : "Plain"));
         }
-        
+
         String fontScale = Config.getGameSpecific("font.ui.scale");
         if (Util.hasValue(fontScale)) {
             try {
@@ -143,13 +143,13 @@ public class GameUIManager implements DialogOwner {
     }
 
     public void gameUIInit() {
-        
+
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
         reportWindow = new ReportWindow(gameManager);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
-        
+
         String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);
         try {
             Class<? extends StatusWindow> statusWindowClass =
@@ -230,7 +230,7 @@ public class GameUIManager implements DialogOwner {
 //
 //            return true;
 //
-//        } 
+//        }
 //        else if (gameManager.getBank().isJustBroken()) {
 //
 //            statusWindow.reportBankBroken();
@@ -252,7 +252,7 @@ public class GameUIManager implements DialogOwner {
                 return true;
             }
         }
-        
+
         // display the end of game report
         if (gameManager.isGameOver()) statusWindow.endOfGameReport();
 
@@ -412,8 +412,8 @@ public class GameUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
         }
-            
-        
+
+
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
@@ -554,7 +554,7 @@ public class GameUIManager implements DialogOwner {
     public void dialogActionPerformed (boolean ready) {
 
         if (!ready) {
-            
+
             if (checkGameSpecificDialogAction()) {
                 ;
             } else if (currentDialog instanceof RadioButtonDialog
@@ -567,7 +567,7 @@ public class GameUIManager implements DialogOwner {
                 if (index >= 0) {
                     int price = action.getStartPrices()[index];
                     action.setStartPrice(price);
-                    action.setNumberBought(action.getCertificate().getShares());
+                    action.setNumberBought(action.getSharesPerCertificate());
                 } else {
                     // No selection done - no action
                     return;
@@ -669,12 +669,12 @@ public class GameUIManager implements DialogOwner {
                 if(font != null) {
                     float newSize = font.getSize2D() * (float)scale;
                     UIManager.put(key, new FontUIResource(font.deriveFont(newSize)));
-                } 
-            } 
-        } 
+                }
+            }
+        }
     }
-    
-    
+
+
     public void exportGame(GameAction exportAction) {
         JFileChooser jfc = new JFileChooser();
         String filename;
@@ -699,8 +699,8 @@ public class GameUIManager implements DialogOwner {
             processOnServer(exportAction);
         }
     }
-    
-    
+
+
     public void saveGame(GameAction saveAction) {
 
         JFileChooser jfc = new JFileChooser();

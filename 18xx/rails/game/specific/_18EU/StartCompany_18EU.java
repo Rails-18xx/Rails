@@ -29,8 +29,8 @@ public class StartCompany_18EU extends StartCompany {
 
     public static final long serialVersionUID = 1L;
 
-    public StartCompany_18EU(PublicCertificateI certificate, int[] prices) {
-        super(certificate, prices, 1);
+    public StartCompany_18EU(PublicCompanyI company, int[] prices) {
+        super(company, prices, 1);
     }
 
     public void setMinorsToMerge(List<PublicCompanyI> minors) {

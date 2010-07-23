@@ -14,12 +14,12 @@ import rails.util.Util;
 /**
  * Class to write a log, and also to maintain a log message stack for writing to
  * the UI.
- * 
+ *
  * Each gameManager has one unique ReportBuffer, which is used by the public static methods.
  * Messages before the creation of that buffer are kept in an internal initial queue.
- * 
+ *
  * Also used for regression testing comparing the output of the report buffer.
- * 
+ *
  */
 public final class ReportBuffer {
     /**
@@ -28,7 +28,7 @@ public final class ReportBuffer {
      * rails.game report.
      */
     private List<String> reportQueue = new ArrayList<String>();
-    
+
     /** Another stack for messages that must "wait" for other messages */
     private List<String> waitQueue = new ArrayList<String> ();
 
@@ -44,7 +44,7 @@ public final class ReportBuffer {
     private static final String DEFAULT_REPORT_EXTENSION = "txt";
 
     static {
-        reportDirectory = Config.get("report.directory");
+        reportDirectory = Config.get("report.directory").trim();
         wantReport = Util.hasValue(reportDirectory);
     }
 
@@ -69,7 +69,7 @@ public final class ReportBuffer {
     private void clearReportQueue() {
         reportQueue.clear();
     }
-    
+
     private void addMessage (String message) {
         if (message != null) {
             if (message.equals(""))
@@ -81,11 +81,11 @@ public final class ReportBuffer {
             if (wantReport) writeToReport(message);
         }
     }
-    
+
     private void writeToReport(String message) {
 
         /* Get out if we don't want a report */
-        if (!Util.hasValue(reportDirectory) || !wantReport) return;
+        if (!wantReport) return;
 
         if (report == null) openReportFile();
 
@@ -96,6 +96,9 @@ public final class ReportBuffer {
     }
 
     private void openReportFile() {
+
+        /* Get out if we don't want a report */
+        if (!wantReport) return;
 
         /* Get any configured date/time pattern, or else set the default */
         String reportFilenamePattern =
@@ -132,15 +135,15 @@ public final class ReportBuffer {
     /** Get the current log buffer, and clear it */
     public static String get() {
         ReportBuffer instance = getInstance();
-        
+
         // convert to String
         StringBuffer result = new StringBuffer();
-        for (String msg:instance.getReportQueue()) 
+        for (String msg:instance.getReportQueue())
           result.append(msg).append("\n");
 
         // clear current queue
         instance.clearReportQueue();
-        
+
         return result.toString();
     }
 
@@ -160,23 +163,23 @@ public final class ReportBuffer {
    /** return the current buffer as list */
     public static List<String> getAsList() {
         ReportBuffer instance = getInstance();
-        
-        if (instance == null) 
+
+        if (instance == null)
             return initialQueue;
         else
             return instance.getReportQueue();
     }
-    
+
     /** clear the current buffer */
     public static void clear() {
         ReportBuffer instance = getInstance();
-        
-        if (instance == null) 
+
+        if (instance == null)
             initialQueue.clear();
         else
             instance.clearReportQueue();
     }
-    
+
     private static ReportBuffer getInstance() {
         return GameManager.getInstance().getReportBuffer();
     }

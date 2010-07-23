@@ -9,24 +9,28 @@ public class StartCompany extends BuyCertificate {
 
     public static final long serialVersionUID = 1L;
 
-    public StartCompany(PublicCertificateI certificate, int[] prices,
+    public StartCompany(PublicCompanyI company, int[] prices,
             int maximumNumber) {
-        super(certificate, GameManager.getInstance().getBank().getIpo(), 0, maximumNumber);
+        super(company, company.getPresidentsShare().getShare(),
+                GameManager.getInstance().getBank().getIpo(),
+                0, maximumNumber);
         this.startPrices = prices.clone();
     }
 
-    public StartCompany(PublicCertificateI certificate, int[] startPrice) {
-        this(certificate, startPrice, 1);
+    public StartCompany(PublicCompanyI company, int[] startPrice) {
+        this(company, startPrice, 1);
     }
 
-    public StartCompany(PublicCertificateI certificate, int price,
+    public StartCompany(PublicCompanyI company, int price,
             int maximumNumber) {
-        super(certificate, GameManager.getInstance().getBank().getIpo(), 0, maximumNumber);
+        super(company, company.getPresidentsShare().getShare(),
+                GameManager.getInstance().getBank().getIpo(),
+                0, maximumNumber);
         this.price = price;
     }
 
-    public StartCompany(PublicCertificateI certificate, int price) {
-        this(certificate, price, 1);
+    public StartCompany(PublicCompanyI company, int price) {
+        this(company, price, 1);
     }
 
     public int[] getStartPrices() {
@@ -44,7 +48,7 @@ public class StartCompany extends BuyCertificate {
     @Override
     public String toString() {
         StringBuffer text = new StringBuffer();
-        text.append("StartCompany: ").append(certificate.getName());
+        text.append("StartCompany: ").append(company.getName());
         if (price > 0) {
             text.append(" price=").append(Bank.format(price));
             if (numberBought > 1) {

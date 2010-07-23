@@ -149,7 +149,7 @@ public class StockRound_18EU extends StockRound {
                             prices[i] = startPrices.get(i);
                         }
                         StartCompany_18EU action =
-                                new StartCompany_18EU(cert, prices);
+                                new StartCompany_18EU(comp, prices);
                         if (mustMergeMinor) {
                             action.setMinorsToMerge(minors);
                         } else {
@@ -158,7 +158,8 @@ public class StockRound_18EU extends StockRound {
                         possibleActions.add(action);
                     }
                 } else if (comp.getMarketPrice() <= playerCash) {
-                    possibleActions.add(new BuyCertificate(cert, from,
+                    possibleActions.add(new BuyCertificate(comp, cert.getShare(),
+                            from,
                             comp.getMarketPrice()));
                 }
 
@@ -187,7 +188,7 @@ public class StockRound_18EU extends StockRound {
             // Does the player have enough cash?
             if (playerCash < price) continue;
 
-            possibleActions.add(new BuyCertificate(cert, from, price, 1));
+            possibleActions.add(new BuyCertificate(comp, cert.getShare(), from, price, 1));
         }
 
         // Get any shares in company treasuries that can be bought
@@ -207,7 +208,7 @@ public class StockRound_18EU extends StockRound {
                 if (!stockSpace.isNoCertLimit()
                     && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
-                    possibleActions.add(new BuyCertificate(cert,
+                    possibleActions.add(new BuyCertificate(company, cert.getShare(),
                             company.getPortfolio(),
                             company.getMarketPrice()));
                 }
@@ -271,7 +272,7 @@ public class StockRound_18EU extends StockRound {
      */
     @Override
     public boolean startCompany(String playerName, StartCompany action) {
-        PublicCompanyI company = action.getCertificate().getCompany();
+        PublicCompanyI company = action.getCompany();
         int price = action.getPrice();
         int shares = action.getNumberBought();
 

@@ -71,6 +71,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /** Name of portfolio */
     protected String name;
+    /** Unique name (including owner class name) */
+    protected String uniqueName;
 
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";
@@ -84,7 +86,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     public Portfolio(String name, CashHolder holder) {
         this.name = name;
         this.owner = holder;
-        //portfolioMap.put(name, this);
+        this.uniqueName = holder.getClass().getSimpleName() + "_" + name;
+
         GameManager.getInstance().addPortfolio(this);
 
         if (owner instanceof PublicCompanyI) {
@@ -301,6 +304,14 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public String getName() {
         return name;
+    }
+
+    /** Get unique name (prefixed by the owners class type, to avoid Bank, Player and Company
+     * namespace clashes).
+     * @return
+     */
+    public String getUniqueName () {
+        return uniqueName;
     }
 
     /**

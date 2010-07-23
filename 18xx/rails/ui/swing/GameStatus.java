@@ -509,14 +509,14 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
 
-        // Train cost overview 
+        // Train cost overview
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
         addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
                 futureTrainsWidth + 2, 1, 0, true);
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
     }
-    
+
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
         List<PossibleAction> actions;
@@ -589,13 +589,19 @@ public class GameStatus extends GridPanel implements ActionListener {
                 PublicCertificateI cert;
                 String companyName = "";
                 String playerName = "";
+                int sharePerCert;
+                int sharesPerCert;
+                int shareUnit;
 
                 for (PossibleAction action : actions) {
                     buy = (BuyCertificate) action;
-                    cert = buy.getCertificate();
+                    //cert = buy.getCertificate();
                     playerName = buy.getPlayerName ();
-                    PublicCompanyI company = cert.getCompany();
+                    PublicCompanyI company = buy.getCompany();
                     companyName = company.getName();
+                    sharePerCert = buy.getSharePerCertificate();
+                    shareUnit = company.getShareUnit();
+                    sharesPerCert = sharePerCert / shareUnit;
 
                     if (buy instanceof StartCompany) {
 
@@ -608,9 +614,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                             for (int i = 0; i < startPrices.length; i++) {
                                 options.add(LocalText.getText("StartCompany",
                                         Bank.format(startPrices[i]),
-                                        cert.getShare(),
-                                        Bank.format(cert.getShares()
-                                                            * startPrices[i]) ));
+                                        sharePerCert,
+                                        Bank.format(sharesPerCert * startPrices[i]) ));
                                 buyActions.add(buy);
                                 buyAmounts.add(startPrices[i]);
                             }
@@ -618,7 +623,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                             startPrices = new int[] {((StartCompany) buy).getPrice()};
                             options.add(LocalText.getText("StartCompanyFixed",
                                     companyName,
-                                    cert.getShare(),
+                                    sharePerCert,
                                     Bank.format(startPrices[0]) ));
                             buyActions.add(buy);
                             buyAmounts.add(startPrices[0]);
@@ -627,20 +632,19 @@ public class GameStatus extends GridPanel implements ActionListener {
                     } else {
 
                         options.add(LocalText.getText("BuyCertificate",
-                                cert.getShare(),
-                                cert.getCompany().getName(),
-                                cert.getPortfolio().getName(),
-                                Bank.format(cert.getShares()
-                                                    * buy.getPrice()) ));
+                                sharePerCert,
+                                companyName,
+                                buy.getFromPortfolio().getName(),
+                                Bank.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
                         for (int i = 2; i <= buy.getMaximumNumber(); i++) {
                             options.add(LocalText.getText("BuyCertificates",
                                     i,
-                                    cert.getShare(),
-                                    cert.getCompany().getName(),
-                                    cert.getPortfolio().getName(),
-                                    Bank.format(i * cert.getShares()
+                                    sharePerCert,
+                                    companyName,
+                                    buy.getFromPortfolio().getName(),
+                                    Bank.format(i * sharesPerCert
                                                         * buy.getPrice()) ));
                             buyActions.add(buy);
                             buyAmounts.add(i);
@@ -683,7 +687,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 } else if (startCompany) {
                     chosenAction = buyActions.get(index);
                     ((StartCompany) chosenAction).setStartPrice(buyAmounts.get(index));
-                    ((StartCompany) chosenAction).setNumberBought(((StartCompany) chosenAction).getCertificate().getShares());
+                    ((StartCompany) chosenAction).setNumberBought(((StartCompany) chosenAction).getSharesPerCertificate());
                 } else {
                     chosenAction = buyActions.get(index);
                     ((BuyCertificate) chosenAction).setNumberBought(buyAmounts.get(index));
@@ -767,7 +771,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 treasurySharesCaption.setHighlight(true);
             }
 
-            PublicCertificateI cert;
+            PublicCompanyI company;
             Portfolio holder;
             int index;
             CashHolder owner;
@@ -776,8 +780,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                     possibleActions.getType(BuyCertificate.class);
             if (buyableCerts != null) {
                 for (BuyCertificate bCert : buyableCerts) {
-                    cert = bCert.getCertificate();
-                    index = cert.getCompany().getPublicNumber();
+                    company = bCert.getCompany();
+                    index = company.getPublicNumber();
                     holder = bCert.getFromPortfolio();
                     owner = holder.getOwner();
                     if (holder == ipo) {
@@ -792,7 +796,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
             }
 
-            PublicCompanyI company;
             List<SellShares> sellableShares =
                     possibleActions.getType(SellShares.class);
             if (sellableShares != null) {
@@ -831,7 +834,7 @@ public class GameStatus extends GridPanel implements ActionListener {
      * Initializes the CashCorrectionActions
      */
     public boolean initCashCorrectionActions() {
-        
+
         // Clear all buttons
         for (int i = 0; i < nc; i++) {
             setCompanyCashButton(i, false, null);
@@ -839,7 +842,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int j = 0; j < np; j++) {
             setPlayerCashButton(j, false, null);
         }
-        
+
         List<CashCorrectionAction> actions =
             possibleActions.getType(CashCorrectionAction.class);
 
@@ -860,9 +863,9 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
 
         return (actions != null && !actions.isEmpty());
-    
+
     }
-    
+
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
@@ -990,7 +993,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
         playerCash[i].setVisible(!clickable);
         playerCashButton[i].setVisible(clickable);
-        
+
         if (action != null)
             playerCashButton[i].addPossibleAction(action);
     }

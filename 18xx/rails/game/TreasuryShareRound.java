@@ -141,7 +141,7 @@ public class TreasuryShareRound extends StockRound {
                 number--;
 
             if (number > 0) {
-                possibleActions.add(new BuyCertificate(cert, from, price,
+                possibleActions.add(new BuyCertificate(comp, cert.getShare(), from, price,
                         number));
             }
         }
@@ -240,16 +240,16 @@ public class TreasuryShareRound extends StockRound {
     @Override
     public boolean buyShares(String playerName, BuyCertificate action) {
 
-        PublicCertificateI cert = action.getCertificate();
-        Portfolio from = cert.getPortfolio();
-        String companyName = cert.getCompany().getName();
+        PublicCompanyI company = action.getCompany();
+        Portfolio from = action.getFromPortfolio();
+        String companyName = company.getName();
         int number = action.getNumberBought();
-        int shares = number * cert.getShares();
-        int shareUnit = cert.getShare();
+        int shareUnit = company.getShareUnit();
+        int sharePerCert = action.getSharePerCertificate();
+        int shares = number * sharePerCert;
 
         String errMsg = null;
         int price = 0;
-        PublicCompanyI company = null;
         Portfolio portfolio = null;
 
         currentPlayer = getCurrentPlayer();
@@ -359,7 +359,7 @@ public class TreasuryShareRound extends StockRound {
         moveStack.start(true);
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
-            cert2 = from.findCertificate(company, cert.getShares(), false);
+            cert2 = from.findCertificate(company, sharePerCert, false);
             executeTradeCertificate(cert2, portfolio, cert2.getShares() * price);
         }
 

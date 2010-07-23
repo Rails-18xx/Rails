@@ -76,7 +76,7 @@ public class GameUIManager_18EU extends GameUIManager {
                                LocalText.getText("PleaseSelect"),
                                LocalText.getText(
                                        "SelectMinorToMerge",
-                                       action.getCertificate().getCompany().getName()),
+                                       action.getCompanyName()),
                                        options, -1);
                        setCurrentDialog(dialog, action);
                        return;
@@ -93,7 +93,7 @@ public class GameUIManager_18EU extends GameUIManager {
                                    LocalText.getText("PleaseSelect"),
                                    LocalText.getText(
                                            "SelectHomeStation",
-                                           action.getCertificate().getCompany().getName()),
+                                           action.getCompanyName()),
                                            options, -1);
                            setCurrentDialog(dialog, action);
                            return;

@@ -12,7 +12,7 @@ import rails.game.action.BuyCertificate;
 import rails.util.LocalText;
 
 public class StockRound_1835 extends StockRound {
-    
+
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
      *
@@ -22,19 +22,21 @@ public class StockRound_1835 extends StockRound {
     public StockRound_1835 (GameManagerI aGameManager) {
         super (aGameManager);
     }
-    
+
     /** Add nationalisations */
+    @Override
     protected void setGameSpecificActions() {
         if (!mayCurrentPlayerBuyAnything()) return;
         if (companyBoughtThisTurnWrapper.getObject() != null) return;
-        
+
         List<Player> otherPlayers = new ArrayList<Player>();
         Portfolio holder;
         CashHolder owner;
         Player otherPlayer;
         int price;
         int cash = currentPlayer.getCash();
-       
+
+        // Nationalization
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (!company.getTypeName().equalsIgnoreCase("Major")) continue;
             if (!company.hasFloated()) continue;
@@ -49,7 +51,8 @@ public class StockRound_1835 extends StockRound {
                         if (!otherPlayers.contains(otherPlayer)) {
                             price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
                             if (price <= cash) {
-                                possibleActions.add(new BuyCertificate (cert, holder,
+                                possibleActions.add(new BuyCertificate (company, cert.getShare(),
+                                        holder,
                                     (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
                                     1));
                             }
@@ -61,10 +64,12 @@ public class StockRound_1835 extends StockRound {
         }
     }
 
+    @Override
     public boolean checkAgainstHoldLimit(Player player, PublicCompanyI company, int number) {
         return true;
     }
 
+    @Override
     protected int getBuyPrice (BuyCertificate action, StockSpaceI currentSpace) {
         int price = currentSpace.getPrice();
         if (action.getFromPortfolio().getOwner() instanceof Player) {
@@ -72,9 +77,10 @@ public class StockRound_1835 extends StockRound {
         }
         return price;
     }
- 
+
     /** Share price goes down 1 space for any number of shares sold.
      */
+    @Override
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
