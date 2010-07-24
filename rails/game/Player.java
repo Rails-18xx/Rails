@@ -73,9 +73,8 @@ public class Player implements CashHolder, Comparable<Player> {
         return wallet;
     }
 
-    public boolean addCash(int amount) {
-        boolean result = wallet.addCash(amount);
-        return result;
+    public void addCash(int amount) {
+        wallet.addCash(amount);
     }
 
     /**

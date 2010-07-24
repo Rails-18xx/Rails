@@ -246,7 +246,8 @@ public class TreasuryShareRound extends StockRound {
         int number = action.getNumberBought();
         int shareUnit = company.getShareUnit();
         int sharePerCert = action.getSharePerCertificate();
-        int shares = number * sharePerCert;
+        int share = number * sharePerCert;
+        int shares = share/shareUnit;
 
         String errMsg = null;
         int price = 0;
@@ -296,7 +297,7 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // Check if that many shares are available
-            if (shares > from.getShare(company)) {
+            if (share > from.getShare(company)) {
                 errMsg =
                         LocalText.getText("NotAvailable",
                                 companyName,
@@ -308,8 +309,7 @@ public class TreasuryShareRound extends StockRound {
 
             // Check if company would exceed the per-company share limit
             int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
-            if (portfolio.getShare(company) + shares * company.getShareUnit()
-                    > treasuryShareLimit) {
+            if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",
                                 String.valueOf(treasuryShareLimit));
@@ -359,7 +359,7 @@ public class TreasuryShareRound extends StockRound {
         moveStack.start(true);
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
-            cert2 = from.findCertificate(company, sharePerCert, false);
+            cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
             executeTradeCertificate(cert2, portfolio, cert2.getShares() * price);
         }
 

@@ -18,7 +18,7 @@ public interface CashHolder {
     /**
      * Add (or subtract) cash.
      */
-    public abstract boolean addCash(int amount);
+    public abstract void addCash(int amount);
 
     /** Get the cash owner's name (needed for logging) */
     public abstract String getName();

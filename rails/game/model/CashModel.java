@@ -1,9 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CashModel.java,v 1.5 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
-import rails.game.Bank;
-import rails.game.CashHolder;
-import rails.game.PublicCompanyI;
+import rails.game.*;
 
 public class CashModel extends ModelObject {
 
@@ -22,14 +20,9 @@ public class CashModel extends ModelObject {
         update();
     }
 
-    public boolean addCash(int addedCash) {
+    public void addCash(int addedCash) {
         cash += addedCash;
         update();
-
-        if (cash <= 0)
-            return false;
-        else
-            return true;
     }
 
     public int getCash() {
@@ -38,9 +31,10 @@ public class CashModel extends ModelObject {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.rails.game.model.ModelObject#getValue()
      */
+    @Override
     public String getText() {
         if (cash == 0 && (option & SUPPRESS_ZERO) > 0
             || owner instanceof PublicCompanyI

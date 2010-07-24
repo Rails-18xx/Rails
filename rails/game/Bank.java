@@ -136,8 +136,9 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     /**
      * Adds cash back to the bank
      */
-    public boolean addCash(int amount) {
-        boolean negative = money.addCash(amount);
+    public void addCash(int amount) {
+
+        money.addCash(amount);
 
         /*
          * Check if the bank has broken. In some games <0 could apply, so this
@@ -147,7 +148,6 @@ public class Bank implements CashHolder, ConfigurableComponentI {
             broken.set(true);
             GameManager.getInstance().registerBrokenBank();
         }
-        return negative;
     }
 
     public boolean isBroken() {
