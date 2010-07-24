@@ -48,9 +48,10 @@ public class CashMove extends Move {
         return true;
     }
 
-    private boolean transferCash(CashHolder from, CashHolder to,
+    private void transferCash(CashHolder from, CashHolder to,
             int amount) {
-        return to.addCash(amount) && from.addCash(-amount);
+        to.addCash(amount);
+        from.addCash(-amount);
     }
 
     @Override

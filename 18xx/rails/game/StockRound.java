@@ -28,7 +28,7 @@ public class StockRound extends Round {
     protected BooleanState hasSoldThisTurnBeforeBuying =
         new BooleanState("HoldSoldBeforeBuyingThisTurn", false);
 
-    protected BooleanState hasActed = new BooleanState("HasActed", false); // Is
+    protected BooleanState hasActed = new BooleanState("HasActed", false);
 
     protected IntegerState numPasses = new IntegerState("StockRoundPasses");
 
