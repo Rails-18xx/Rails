@@ -32,7 +32,6 @@ public final class Config {
     protected static Logger log;
 
     /** Commandline options */
-    private static final String LOG4J_CMDLINE = "log4j";
     private static final String CONFIGFILE_CMDLINE = "configfile";
     private static final String PROFILE_CMDLINE = "profile";
 
@@ -52,7 +51,7 @@ public final class Config {
     private static String userProfilesFile = "user.profiles";
     private static Properties userProfiles = new Properties();
     private static boolean profilesLoaded = false;
-    private static final String TEST_PROFILE_SELECTION = "test";
+    private static final String TEST_PROFILE_SELECTION = ".test";
     private static final String DEFAULT_PROFILE_SELECTION = "default";
     private static final String STANDARD_PROFILE_SELECTION = "user";
     private static final String DEFAULTPROFILE_PROPERTY = "default.profile";
@@ -128,6 +127,7 @@ public final class Config {
             for (ConfigItem item:items) {
                 if (!item.hasNewValue() || item.getNewValue().equals(defaultProperties.get(item.name))) continue;
                 userProperties.setProperty(item.name, item.getNewValue());
+                item.callInitMethod();
                 log.debug("Changed property name = " + item.name + " to value = " + item.getNewValue());
                 item.setNewValue(null);
             }
@@ -210,9 +210,10 @@ public final class Config {
     }
     
     
-    private static Map<String, String> convertProperties(Properties properties) {
+    private static Map<String, String> convertProperties(Properties properties, boolean visibleOnly) {
         Map<String, String> converted = new HashMap<String, String>();
         for (Object key:properties.keySet()) {
+            if (visibleOnly && ((String)key).substring(0,1).equals(".")) continue;
             converted.put((String) key, (String) properties.get(key));
         }
         return converted;
@@ -221,8 +222,8 @@ public final class Config {
     /** 
      * get all default profiles 
      */
-    public static List<String> getDefaultProfiles() {
-        List<String> profiles = new ArrayList<String>(convertProperties(defaultProfiles).keySet());
+    public static List<String> getDefaultProfiles(boolean visibleOnly) {
+        List<String> profiles = new ArrayList<String>(convertProperties(defaultProfiles, visibleOnly).keySet());
         Collections.sort(profiles);
         return profiles;
     }
@@ -235,7 +236,7 @@ public final class Config {
      * get all user profiles 
      */
     public static List<String> getUserProfiles() {
-        List<String> profiles = new ArrayList<String>(convertProperties(userProfiles).keySet());
+        List<String> profiles = new ArrayList<String>(convertProperties(userProfiles, true).keySet());
         Collections.sort(profiles);
         return profiles;
     }
@@ -509,4 +510,5 @@ public final class Config {
             defaultProperties.put("save.directory", System.getProperty("user.dir"));
         }
     }
+    
 }

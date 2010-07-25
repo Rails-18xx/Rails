@@ -117,7 +117,9 @@ public class LocalText extends ResourceBundle {
         String[] codes = localeCode.split("_");
         if (codes.length > 0) language = codes[0];
         if (codes.length > 1) country = codes[1];
-
+        
+        // reset localised text
+        localisedText = null;
     }
 
     public Enumeration<String> getKeys() {

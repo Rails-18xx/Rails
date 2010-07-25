@@ -1,2 +1,2 @@
-default=my.properties
-test=test/test.properties
+default=data/profiles/default.profile
+.test=data/profiles/test.profile

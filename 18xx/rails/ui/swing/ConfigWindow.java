@@ -53,7 +53,7 @@ class ConfigWindow extends JFrame {
     
     ConfigWindow() {
        // JFrame properties
-        setTitle(LocalText.getText("ConfigWindowTitle"));
+        setTitle(LocalText.getText("CONFIG_WINDOW_TITLE"));
 //        setSize(400,300);
         
         // add profile panel
@@ -96,7 +96,7 @@ class ConfigWindow extends JFrame {
         Border titled = BorderFactory.createTitledBorder(etched, LocalText.getText("CONFIG_CURRENT_PROFILE", activeProfile, defaultProfile));
         profilePanel.setBorder(titled);
         
-        JLabel userLabel = new JLabel(LocalText.getText("CONFIG_SELECT_USER"));
+        JLabel userLabel = new JLabel(LocalText.getText("CONFIG_SELECT_PROFILE"));
         profilePanel.add(userLabel);
         final JComboBox comboBoxUser = new JComboBox(Config.getUserProfiles().toArray());
         comboBoxUser.setSelectedItem(Config.getActiveProfileName());
@@ -151,17 +151,17 @@ class ConfigWindow extends JFrame {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridwidth = 1;
             gbc.gridheight = 1;
-            gbc.gridx = 0;
             gbc.weightx = 0.8;
             gbc.weighty = 0.8;
             gbc.insets = new Insets(10,10,10,10);
             gbc.anchor = GridBagConstraints.WEST;
+            int y = 0;
             for (ConfigItem item:configPanels.get(panelName)) {
                 gbc.gridx = 0;
+                gbc.gridy = y++;
                 defineElement(newPanel, item, gbc);
-                gbc.gridy ++;
             }
-            configPane.addTab(panelName, newPanel);
+            configPane.addTab(LocalText.getText("Config.panel." + panelName), newPanel);
         }
     }
     
@@ -175,7 +175,7 @@ class ConfigWindow extends JFrame {
         
         // standard components
         final String configValue = item.getCurrentValue();
-        final String toolTip = item.helpText;
+        final String toolTip = item.toolTip;
 
         // item label
         JLabel label = new JLabel(LocalText.getText("Config." + item.name));
@@ -329,8 +329,10 @@ class ConfigWindow extends JFrame {
         if (Util.hasValue(newProfile)) {
             String defaultProfile = (String)JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_DEFAULT_MESSAGE"),
                     LocalText.getText("CONFIG_DEFAULT_TITLE"), JOptionPane.QUESTION_MESSAGE, null, 
-                    Config.getDefaultProfiles().toArray(), Config.getDefaultProfileSelection());
+                    Config.getDefaultProfiles(true).toArray(), Config.getDefaultProfileSelection());
+            if (Util.hasValue(defaultProfile)) {
                 Config.createUserProfile(newProfile, defaultProfile);
+            }
         }
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -378,7 +380,7 @@ class ConfigWindow extends JFrame {
     private void saveConfig() {
         Config.updateProfile(); // transfer the configitem to the active profile
         Config.saveActiveProfile();
-        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_MESSAGE"),
+        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_MESSAGE", Config.getActiveProfileName()),
                 LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
     }
 
