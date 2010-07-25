@@ -4,13 +4,14 @@ Defines rails configuration options, but do not stores the actual values
  -->
 <Properties>
 	<Panel name="General">
-		<Property name="locale" type="LIST" values="en_US,te_ST" helpText="Language Selection" />
+		<Property name="locale" type="LIST" values="en_US,te_ST" toolTip="Language Selection" 
+		initClass="rails.util.LocalText" initMethod="setLocale" initParameter="yes"/>
 	</Panel>
 	<Panel name="Save">
-		<Property name="save.dir" type="DIRECTORY" helpText="Default save file directory" />
-			
+		<Property name="save.directory" type="DIRECTORY" toolTip="Default save file directory" />
+		<Property name="save.filename.date_time_pattern" type="STRING" toolTip="Datetime pattern for filename" />
 	</Panel>
 	<Panel name="Colors">
-		<Property name="route.colour.1" type="COLOR"/>
+		<Property name="route.colour.1" type="COLOR" toolTip="Route color of first train" />
 	</Panel>
 </Properties>

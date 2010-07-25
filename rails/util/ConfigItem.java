@@ -1,5 +1,6 @@
 package rails.util;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +30,14 @@ public final class ConfigItem {
     public final ConfigType type;
     public final List<String> allowedValues;
     public final String formatMask;
+    public final String toolTip;
     public final String helpText;
+    
+    // method call attributes
+    private final String initClass;
+    private final String initMethod;
+    private final boolean initParameter;
+    
     
     // dynamic attributes
     private String newValue;
@@ -67,9 +75,16 @@ public final class ConfigItem {
         // optional: formatMask
         formatMask = tag.getAttributeAsString("formatMask");
 
-        // optional: helpText
+        // optional: helpText and toolTip
+        toolTip = tag.getAttributeAsString("toolTip");
         helpText = tag.getAttributeAsString("helpText");
+    
+        // optional: init method attributes
+        initClass = tag.getAttributeAsString("initClass");
+        initMethod = tag.getAttributeAsString("initMethod");
+        initParameter = tag.getAttributeAsBoolean("initParameter", false);
         
+        // initialize newValue
         newValue = null;
     }
     
@@ -98,6 +113,25 @@ public final class ConfigItem {
     public String getConfigValue() {
         return Config.get(this.name);
     }
+    
+    void callInitMethod() {
+        if (initClass == null || initMethod == null) return;
+        
+        // call without parameter
+        try {
+            Class<?> clazz = Class.forName(initClass);
+            
+            if (initParameter) {
+                clazz.getMethod(initMethod, String.class).invoke(null, newValue);
+               
+            } else {
+                clazz.getMethod(initMethod).invoke(null);
+            }
+        } catch (Exception e) {
+            log.error("Config profile: cannot call initMethod");
+        }
+    }
+    
     
     public String toString() {
         StringBuffer s = new StringBuffer();
