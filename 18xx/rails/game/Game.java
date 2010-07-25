@@ -94,7 +94,7 @@ public class Game {
             // set special properties and token static variables
             SpecialProperty.init();
             Token.init();
-            
+
             // Have the ComponentManager work through the other rails.game files
             componentManager.finishPreparation();
 
@@ -163,7 +163,7 @@ public class Game {
                         "No TileManager XML element found in file "
                                 + GAME_XML_FILE);
             }
-            
+
             revenueManager =
                 (RevenueManager) componentManager.findComponent("RevenueManager");
             // revenueManager is optional so far
@@ -189,7 +189,7 @@ public class Game {
             bank.finishConfiguration(gameManager);
             stockMarket.finishConfiguration(gameManager);
             tileManager.finishConfiguration(gameManager);
-            if (revenueManager != null) 
+            if (revenueManager != null)
                 revenueManager.finishConfiguration(gameManager);
         } catch (Exception e) {
             String message =
@@ -251,24 +251,59 @@ public class Game {
                 throw new ConfigurationException("Error in setting up " + name);
             }
 
-            List<PossibleAction> executedActions =
-                    (List<PossibleAction>) ois.readObject();
-            ois.close();
-            log.debug("Number of loaded actions: " + executedActions.size());
-
             String startError = game.start();
             if (startError != null) {
                 DisplayBuffer.add(startError);
                 return null;
             }
+            GameManagerI gameManager = game.getGameManager();
+            int numberOfActions = 0;
 
             log.debug("Starting to execute loaded actions");
 
-            if (!game.getGameManager().processOnReload(executedActions)) {
-                log.error ("Load interrupted");
-                DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
-            }
+            while (true) { // Single-pass loop.
+                Object firstActionObject;
+                try {
+                    firstActionObject = ois.readObject();
+                } catch (EOFException e) {
+                    // Allow saved file at start of game (with no actions).
+                    break;
+                }
+                if (firstActionObject instanceof List) {
+                    // Old-style: one List of PossibleActions
+                    List<PossibleAction> executedActions =
+                        (List<PossibleAction>) firstActionObject;
+                    numberOfActions = executedActions.size();
+                    for (PossibleAction action : executedActions) {
+                        if (!gameManager.processOnReload(action)) {
+                            log.error ("Load interrupted");
+                            DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
+                            break;
+                        }
+                    }
 
+                } else {
+                    // New style: separate PossibleActionsObjects, since Rails 1.3.1
+                    PossibleAction action = (PossibleAction) firstActionObject;
+                    while (true) {
+                        numberOfActions++;
+                        if (!gameManager.processOnReload(action)) {
+                            log.error ("Load interrupted");
+                            DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
+                            break;
+                        }
+                        try {
+                            action = (PossibleAction) ois.readObject();
+                        } catch (EOFException e) {
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            ois.close();
+
+            game.getGameManager().finishLoading();
             return game;
 
         } catch (Exception e) {

@@ -29,12 +29,12 @@ implements ActionListener, KeyListener {
     private JMenuItem trimItem, deleteItem;
 
     private StringBuffer headerText = new StringBuffer();
-    
+
     private List<Object> savedObjects = new ArrayList<Object>(512);
     private List<PossibleAction> executedActions;
-    
+
     private int vbarPos;
-    
+
     private static String saveDirectory;
     private String filepath;
 
@@ -44,13 +44,13 @@ implements ActionListener, KeyListener {
      * @param args
      */
     public static void main(String[] args) {
-        
+
         // intialize configuration
         Config.setConfigSelection();
 
         // delayed setting of logger
         log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
-        
+
         saveDirectory = Config.get("save.directory");
         System.out.println("Save directory = " + saveDirectory);
 
@@ -142,11 +142,12 @@ implements ActionListener, KeyListener {
         setVisible(true);
 
         saveDirectory = Config.get("save.directory");
-        
+
         load();
 
     }
 
+    @SuppressWarnings("unchecked")
     private void load() {
 
         JFileChooser jfc = new JFileChooser();
@@ -211,10 +212,26 @@ implements ActionListener, KeyListener {
                     throw new ConfigurationException("Error in setting up " + name);
                 }
 
-                executedActions =
-                        (List<PossibleAction>) ois.readObject();
-                savedObjects.add(executedActions);
-                
+                Object firstActionObject = ois.readObject();
+                if (firstActionObject instanceof List) {
+                    // Old-style: one List of PossibleActions
+                    executedActions =
+                        (List<PossibleAction>) firstActionObject;
+                    savedObjects.add(executedActions);
+                } else {
+                    // New style: separate PossibleActionsObjects, since Rails 1.3.1
+                    executedActions = new ArrayList<PossibleAction>();
+                    PossibleAction action = (PossibleAction) firstActionObject;
+                    while (true) {
+                        savedObjects.add (action);
+                        executedActions.add(action);
+                        try {
+                            action = (PossibleAction) ois.readObject();
+                        } catch (EOFException e) {
+                            break;
+                        }
+                    }
+                }
                 setReportText(true);
 
                 ois.close();
@@ -232,13 +249,13 @@ implements ActionListener, KeyListener {
             headerText.append("\n");
         }
     }
-    
+
     private void setReportText(boolean initial) {
         if (initial)
             vbarPos = -1;
         else
             vbarPos = this.vbar.getValue();
-        
+
         reportText.setText(headerText.toString());
         // append actionText
         int i=0;
@@ -248,7 +265,7 @@ implements ActionListener, KeyListener {
         }
         scrollDown(vbarPos);
     }
-    
+
 
     public void scrollDown (int pos) {
         SwingUtilities.invokeLater(new Runnable() {
