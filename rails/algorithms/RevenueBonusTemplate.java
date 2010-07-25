@@ -13,6 +13,7 @@ import rails.game.PhaseI;
 import rails.game.PhaseManager;
 import rails.game.TrainManager;
 import rails.game.TrainTypeI;
+import rails.util.LocalText;
 import rails.util.Tag;
 
 /** 
@@ -132,6 +133,32 @@ public final class RevenueBonusTemplate implements ConfigurableComponentI {
             }
         }
     }
+    
+    /**
+     *  @return bonus name for display
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return bonus toolTip text
+     */
+    public String getToolTip() {
+        StringBuffer s = new StringBuffer();
+        s.append(value);
+        if (identPhases.size() != 0) {
+            s.append(identPhases);
+            if (identTrainTypes.size() != 0) {
+                s.append("");
+            }
+        } 
+        if (identTrainTypes.size() != 0) {
+            s.append(identTrainTypes);
+        }
+        return s.toString();
+    }
+    
     public String toString() {
         StringBuffer s = new StringBuffer();
         s.append("RevenueBonusTemplate");

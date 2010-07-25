@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.algorithms.RevenueBonus;
+import rails.algorithms.RevenueBonusTemplate;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.ui.swing.GUIToken;
@@ -662,6 +664,29 @@ public class GUIHex implements ViewObject {
         return toolTip;
     }
 
+    
+    private String bonusToolTipText(List<RevenueBonusTemplate> bonuses) {
+        StringBuffer tt = new StringBuffer();
+        if (bonuses != null) {
+            if (bonuses.size() == 1) {
+                tt.append("<br>Bonus:");
+                tt.append(bonuses.get(0).getToolTip());
+            } else {
+                Set<String> bonusNames = new HashSet<String>();
+                for (RevenueBonusTemplate bonus:bonuses) {
+                    bonusNames.add(bonus.getName());
+                }
+                tt.append("<br>Bonus:");
+                int i=0;
+                for (String bonusName:bonusNames) {
+                    if (i++ != 0) tt.append(",");
+                    tt.append(bonusName);
+                }
+            }
+        }
+        return tt.toString();
+    }
+    
     protected void setToolTip() {
         StringBuffer tt = new StringBuffer("<html>");
         tt.append("<b>Hex</b>: ").append(hexName);
@@ -708,7 +733,12 @@ public class GUIHex implements ViewObject {
                 // TEMPORARY
                 tt.append(" <small>pos=" + st.getPosition() + "</small>");
             }
+            tt.append(bonusToolTipText(currentTile.getRevenueBonuses()));
         }
+
+        // revenueBonuses
+        tt.append(bonusToolTipText(model.getRevenueBonuses()));
+        
         String upgrades = currentTile.getUpgradesString(model);
         if (upgrades.equals("")) {
             tt.append("<br>No upgrades");
@@ -726,6 +756,8 @@ public class GUIHex implements ViewObject {
                 tt.append(dest.getName());
             }
         }
+        
+        
         tt.append("</html>");
         toolTip = tt.toString();
     }
