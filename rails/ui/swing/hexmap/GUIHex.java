@@ -668,19 +668,14 @@ public class GUIHex implements ViewObject {
     private String bonusToolTipText(List<RevenueBonusTemplate> bonuses) {
         StringBuffer tt = new StringBuffer();
         if (bonuses != null) {
-            if (bonuses.size() == 1) {
-                tt.append("<br>Bonus:");
-                tt.append(bonuses.get(0).getToolTip());
-            } else {
-                Set<String> bonusNames = new HashSet<String>();
-                for (RevenueBonusTemplate bonus:bonuses) {
+            Set<String> bonusNames = new HashSet<String>();
+            for (RevenueBonusTemplate bonus:bonuses) {
+                if (bonus.getName() == null) {
+                    tt.append("<br>Bonus:");
+                    tt.append(bonus.getToolTip());
+                } else if (!bonusNames.contains(bonus.getName())) {
+                    tt.append("<br>Bonus:" + bonus.getName());
                     bonusNames.add(bonus.getName());
-                }
-                tt.append("<br>Bonus:");
-                int i=0;
-                for (String bonusName:bonusNames) {
-                    if (i++ != 0) tt.append(",");
-                    tt.append(bonusName);
                 }
             }
         }
