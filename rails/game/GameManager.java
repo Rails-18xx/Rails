@@ -891,64 +891,60 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */
-    public boolean processOnReload(List<PossibleAction> actions) throws Exception {
+    public boolean processOnReload(PossibleAction action) throws Exception {
 
-        for (PossibleAction action : actions) {
-
-            DisplayBuffer.clear();
-            // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
-            if (gameName.equals("1856")
-                    && possibleActions.contains(RepayLoans.class)
-                    && (!possibleActions.contains(action.getClass())
-                        || (action.getClass() == NullAction.class
-                                && ((NullAction)action).getMode() != NullAction.DONE))) {
-                // Insert "Done"
-                log.debug("Action DONE inserted");
-                getCurrentRound().process(new NullAction (NullAction.DONE));
-                possibleActions.clear();
-                getCurrentRound().setPossibleActions();
-                if (!isGameOver()) setCorrectionActions();
-            }
-
-            try {
-                log.debug("Action ("+action.getPlayerName()+"): " + action);
-                if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
-                    String msg = "Player "+action.getPlayerName()+"\'s action \""
-                    +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
-                    +" is considered invalid by the game engine";
-                    log.error(msg);
-                    DisplayBuffer.add(msg);
-                    if (moveStack.isOpen()) moveStack.finish();
-                    return false;
-                }
-                possibleActions.clear();
-                getCurrentRound().setPossibleActions();
-
-                // Log possible actions (normally this is outcommented)
-                String playerName = getCurrentPlayer().getName();
-                for (PossibleAction a : possibleActions.getList()) {
-                    log.debug(playerName+" may: "+a.toString());
-                }
-
-
-                if (!isGameOver()) setCorrectionActions();
-
-            } catch (Exception e) {
-                log.error("Error while reprocessing " + action.toString(), e);
-                throw new Exception("Reload failure", e);
-            }
-            new AddToList<PossibleAction>(executedActions, action,
-            "ExecutedActions");
-            if (moveStack.isOpen()) moveStack.finish();
-
-            log.debug("Turn: "+getCurrentPlayer().getName());
+        DisplayBuffer.clear();
+        // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
+        if (gameName.equals("1856")
+                && possibleActions.contains(RepayLoans.class)
+                && (!possibleActions.contains(action.getClass())
+                    || (action.getClass() == NullAction.class
+                            && ((NullAction)action).getMode() != NullAction.DONE))) {
+            // Insert "Done"
+            log.debug("Action DONE inserted");
+            getCurrentRound().process(new NullAction (NullAction.DONE));
+            possibleActions.clear();
+            getCurrentRound().setPossibleActions();
+            if (!isGameOver()) setCorrectionActions();
         }
 
-        //        DisplayBuffer.clear();
-        //        previous line removed to allow display of nextPlayerMessages
-        guiHints.clearVisibilityHints();
+        try {
+            log.debug("Action ("+action.getPlayerName()+"): " + action);
+            if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
+                String msg = "Player "+action.getPlayerName()+"\'s action \""
+                +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
+                +" is considered invalid by the game engine";
+                log.error(msg);
+                DisplayBuffer.add(msg);
+                if (moveStack.isOpen()) moveStack.finish();
+                return false;
+            }
+            possibleActions.clear();
+            getCurrentRound().setPossibleActions();
 
+            // Log possible actions (normally this is outcommented)
+            String playerName = getCurrentPlayer().getName();
+            for (PossibleAction a : possibleActions.getList()) {
+                log.debug(playerName+" may: "+a.toString());
+            }
+
+
+            if (!isGameOver()) setCorrectionActions();
+
+        } catch (Exception e) {
+            log.error("Error while reprocessing " + action.toString(), e);
+            throw new Exception("Reload failure", e);
+        }
+        new AddToList<PossibleAction>(executedActions, action, "ExecutedActions");
+        if (moveStack.isOpen()) moveStack.finish();
+
+        log.debug("Turn: "+getCurrentPlayer().getName());
         return true;
+    }
+
+    public void finishLoading () {
+
+        guiHints.clearVisibilityHints();
     }
 
     /** recoverySave method
@@ -1023,7 +1019,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             oos.writeObject(gameName);
             oos.writeObject(gameOptions);
             oos.writeObject(playerNames);
-            oos.writeObject(executedActions);
+            for (PossibleAction action : executedActions) {
+                oos.writeObject(action);
+            }
             oos.close();
 
             result = true;
