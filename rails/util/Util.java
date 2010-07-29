@@ -126,6 +126,18 @@ public final class Util {
     }
 
     /**
+     * Parse a boolean value for Rails
+     * @param value string (allowed values for true: standard Boolean.parseBoolean and yes (after conversion to lowercase)
+     * @return parsed value
+     */
+    public static boolean parseBoolean(String s) {
+        if (s.toLowerCase().equals("yes")) {
+            return true;
+        }
+        return Boolean.parseBoolean(s);
+    }
+    
+    /**
      * Parse a colour definition string.
      * Currently supported formats:
      *   "RRGGBB" - each character being a hexadecimal digit
@@ -159,6 +171,9 @@ public final class Util {
         return c;
     }
 
+    
+    
+    
     /**
      * Is a colour dark? (to check if FG colour needs be reversed)
      */

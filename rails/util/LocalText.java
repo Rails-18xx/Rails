@@ -32,7 +32,6 @@ public class LocalText extends ResourceBundle {
         return getText(key, new Object[] { parameter });
     }
     
-    //public static String getText(String key, Object[] parameters) {
     public static String getText(String key, Object... parameters) {
         String result = "";
 
