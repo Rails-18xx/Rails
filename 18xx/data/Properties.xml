@@ -1,17 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Supported properties
-Defines rails configuration options, but do not stores the actual values
- -->
+<!-- Supported properties Defines rails configuration options, but do not 
+	stores the actual values -->
 <Properties>
 	<Panel name="General">
-		<Property name="locale" type="LIST" values="en_US,te_ST" toolTip="Language Selection" 
-		initClass="rails.util.LocalText" initMethod="setLocale" initParameter="yes"/>
+		<Property name="locale" type="LIST" values="en_US,te_ST"
+			initClass="rails.util.LocalText" initMethod="setLocale"
+			initParameter="yes" />
+		<Property name="default_game" type="STRING" />
+		<Property name="default_players" type="STRING" />
+		<Property name="local.player.name" type="STRING" />
+
 	</Panel>
 	<Panel name="Save">
-		<Property name="save.directory" type="DIRECTORY" toolTip="Default save file directory" />
-		<Property name="save.filename.date_time_pattern" type="STRING" toolTip="Datetime pattern for filename" />
+		<Property name="save.directory" type="DIRECTORY" />
+		<Property name="save.filename.date_time_pattern" type="STRING" />
+		<Property name="save.filename.suffix" type="STRING" />
+		<Property name="save.filename.extension" type="STRING" />
+		<Property name="save.recovery.active" type="BOOLEAN" />
+		<Property name="save.recovery.filepath" type="FILE" />
 	</Panel>
-	<Panel name="Colors">
-		<Property name="route.colour.1" type="COLOR" toolTip="Route color of first train" />
+	<Panel name="UI">
+		<Property name="report.window.open" type="BOOLEAN" />
+		<Property name="report.window.editable" type="BOOLEAN" />
+		<Property name="stockchart.window.open" type="BOOLEAN" />
+		<Property name="font.ui.scale" type="PERCENT" />
+		<Property name="font.ui.name" type="FONT" />
+		<Property name="font.ui.style" type="LIST" values="plain,bold" />
+	</Panel>
+	<Panel name="Map">
+		<Property name="map.autoscroll" type="BOOLEAN" />
+		<Property name="map.zoomstep" type="INTEGER" />
+	</Panel>
+	<Panel name="Format">
+		<Property name="money_format" type="STRING" />
+		<Property name="or.number_format" type="LIST" values="simple,composite" />
+		<Property name="route.colour.1" type="COLOR" 
+		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		<Property name="route.colour.2" type="COLOR" 
+		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		<Property name="route.colour.3" type="COLOR" 
+		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		<Property name="route.colour.4" type="COLOR" 
+		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+	</Panel>
+	<Panel name="Log">
+		<Property name="report.directory" type="DIRECTORY" />
+		<Property name="report.filename.date_time_pattern" type="STRING" />
+		<Property name="report.filename.extension" type="STRING" />
 	</Panel>
 </Properties>

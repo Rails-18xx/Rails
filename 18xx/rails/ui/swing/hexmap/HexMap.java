@@ -69,7 +69,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected List<GeneralPath> trainPaths;
     
     private static Color colour1, colour2, colour3, colour4;
-    protected Color[] trainColors = new Color[4];
     protected int strokeWidth = 5;
     protected int strokeCap = BasicStroke.CAP_ROUND;
     protected int strokeJoin = BasicStroke.JOIN_BEVEL;
@@ -85,7 +84,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected double coordinateXMargin;
     protected double coordinateYMargin;
     
-    static {
+    public static void setRouteColours () {
         try {
             colour1 = Util.parseColour(Config.get("route.colour.1", null));
             colour2 = Util.parseColour(Config.get("route.colour.2", null));
@@ -99,7 +98,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
             if (colour4 == null) colour4 = Color.GRAY;
         }
     }
-    
+
     public void init(ORUIManager orUIManager, MapManager mapManager) {
 
         this.orUIManager = orUIManager;
@@ -120,14 +119,15 @@ public abstract class HexMap extends JComponent implements MouseListener,
         setupHexes();
 
         initializeSettings();
+        
+        setRouteColours();
     }
 
     /**
      * defines settings from the config files
      */
     private void initializeSettings() {
-        trainColors = new Color[]{colour1, colour2, colour3, colour4};
-        
+
         // define zoomStep from config
         String zoomStepSetting = Config.getGameSpecific("map.zoomstep");
         if (Util.hasValue(zoomStepSetting)) {
@@ -143,6 +143,9 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
     }
 
+    
+
+    
     protected void setupHexesGUI() {
 
         hexes = new ArrayList<GUIHex>();
@@ -296,6 +299,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
             Stroke trainStroke = 
                 new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
             g2.setStroke(trainStroke);
+
+            Color[] trainColors = new Color[]{colour1, colour2, colour3, colour4};
             int color = 0;
             for (GeneralPath path:trainPaths) {
                 g2.setColor(trainColors[color++ % trainColors.length]);

@@ -107,7 +107,7 @@ public final class Config {
             }
             
         } catch (ConfigurationException e) {
-            log.error("Configuration error in setup of ");
+            log.error("Configuration error in setup of " + CONFIG_XML_FILE + ", exception = " + e);
         }
     }
     
@@ -117,6 +117,15 @@ public final class Config {
         }
         log.debug("Configuration setup = " + configPanels);
         return configPanels;
+    }
+    
+    public static int getMaxElementsInPanels() {
+        int maxElements = 0;
+        for (List<ConfigItem> panel:configPanels.values()) {
+            maxElements = Math.max(maxElements, panel.size());
+        }
+        log.debug("maxelements" + maxElements);
+        return maxElements;
     }
     
     /**
@@ -129,6 +138,17 @@ public final class Config {
                 userProperties.setProperty(item.name, item.getNewValue());
                 item.callInitMethod();
                 log.debug("Changed property name = " + item.name + " to value = " + item.getNewValue());
+                item.setNewValue(null);
+            }
+        }
+    }
+    
+    /**
+     * reverts all changes in configitems
+     */
+    public static void revertProfile() {
+        for (List<ConfigItem> items:configPanels.values()) {
+            for (ConfigItem item:items) {
                 item.setNewValue(null);
             }
         }

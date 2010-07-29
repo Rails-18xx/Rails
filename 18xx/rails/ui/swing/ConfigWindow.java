@@ -2,6 +2,8 @@ package rails.ui.swing;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -24,14 +26,18 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
@@ -73,7 +79,7 @@ class ConfigWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                cancelConfig();
+                closeConfig();
             }
         });
     }
@@ -136,6 +142,8 @@ class ConfigWindow extends JFrame {
 
     }
     
+    
+    
     private void setupConfigPane() {
         configPane.removeAll();
         
@@ -144,7 +152,8 @@ class ConfigWindow extends JFrame {
         configPane.setBorder(titled);
         
         Map<String, List<ConfigItem>> configPanels = Config.getConfigPanels();
-        
+        int maxElements = Config.getMaxElementsInPanels();
+       
         for (String panelName:configPanels.keySet()) {
             JPanel newPanel = new JPanel();
             newPanel.setLayout(new GridBagLayout());
@@ -153,13 +162,18 @@ class ConfigWindow extends JFrame {
             gbc.gridheight = 1;
             gbc.weightx = 0.8;
             gbc.weighty = 0.8;
-            gbc.insets = new Insets(10,10,10,10);
+            gbc.insets = new Insets(5,5,5,5);
             gbc.anchor = GridBagConstraints.WEST;
-            int y = 0;
             for (ConfigItem item:configPanels.get(panelName)) {
                 gbc.gridx = 0;
-                gbc.gridy = y++;
+                gbc.gridy++;
                 defineElement(newPanel, item, gbc);
+            }
+            // fill up to maxElements
+            gbc.gridx = 0;
+            for (gbc.gridy++; gbc.gridy < maxElements;  gbc.gridy++) {
+                JLabel emptyLabel = new JLabel("");
+                newPanel.add(emptyLabel, gbc);
             }
             configPane.addTab(LocalText.getText("Config.panel." + panelName), newPanel);
         }
@@ -171,23 +185,94 @@ class ConfigWindow extends JFrame {
         gbc.gridx ++;
     }
     
+    private void addEmptyLabel(JComponent container, GridBagConstraints gbc) {
+        JLabel label = new JLabel("");
+        addToGridBag(container, label, gbc );
+    }
+    
     private void defineElement(JPanel panel, final ConfigItem item, GridBagConstraints gbc) {
         
         // standard components
-        final String configValue = item.getCurrentValue();
-        final String toolTip = item.toolTip;
+        String configValue = item.getCurrentValue();
+//        final String toolTip = item.toolTip;
 
         // item label
         JLabel label = new JLabel(LocalText.getText("Config." + item.name));
-        label.setToolTipText(toolTip);
+//        label.setToolTipText(toolTip);
         gbc.fill = GridBagConstraints.NONE;
         addToGridBag(panel, label, gbc);
         
         switch (item.type) {
+        case BOOLEAN:
+            final JCheckBox checkBox = new JCheckBox();
+            boolean selected = Util.parseBoolean(configValue);
+            checkBox.setSelected(selected);
+            checkBox.addFocusListener(new FocusListener() {
+                public void focusGained(FocusEvent arg0) {
+                    // do nothing
+                }
+                public void focusLost(FocusEvent arg0) {
+                    if (checkBox.isSelected()) {
+                        item.setNewValue("yes");
+                    } else {
+                        item.setNewValue("no");
+                    }
+                }
+            }
+            );
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, checkBox, gbc);
+            break;
+        case PERCENT: // percent uses a spinner with 5 changes
+        case INTEGER:
+            int spinnerStepSize;
+            final int spinnerMultiple;
+            if (item.type == ConfigItem.ConfigType.PERCENT) {
+                spinnerStepSize = 5;
+                spinnerMultiple = 100;
+            } else {
+                spinnerStepSize = 1;
+                spinnerMultiple = 1;
+            }
+            int spinnerValue;
+            try {
+                spinnerValue = (int)Math.round(Double.parseDouble(configValue) * spinnerMultiple);
+            } catch (NumberFormatException e) {
+                spinnerValue = 0;
+            }
+            final JSpinner spinner = new JSpinner(new SpinnerNumberModel
+                   (spinnerValue, Integer.MIN_VALUE, Integer.MAX_VALUE, spinnerStepSize));
+            ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().
+                addFocusListener(new FocusListener() {
+                public void focusGained(FocusEvent arg0) {
+                    // do nothing
+                }
+                public void focusLost(FocusEvent arg0) {
+                    int value = (Integer)spinner.getValue();
+                    Double adjValue = (double)value / spinnerMultiple;
+                    item.setNewValue(adjValue.toString());
+                }
+            }
+            );
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            addToGridBag(panel, spinner, gbc);
+            addEmptyLabel(panel, gbc);
+        break;
+        case FONT: // fonts are a special list
+            if (!Util.hasValue(configValue)) {
+                configValue = ((Font)UIManager.getDefaults().get("Label.font")).getFamily();
+            }
         case LIST:
-            final JComboBox comboBox = new JComboBox(item.allowedValues.toArray());
+            String[] allowedValues; 
+            if (item.type == ConfigItem.ConfigType.FONT) {
+                allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().
+                getAvailableFontFamilyNames(); 
+            } else {
+                allowedValues = (String[])item.allowedValues.toArray();
+            }
+            final JComboBox comboBox = new JComboBox(allowedValues);
             comboBox.setSelectedItem(configValue);
-            comboBox.setToolTipText(toolTip);
+//            comboBox.setToolTipText(toolTip));
             comboBox.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent arg0) {
                     // do nothing
@@ -199,11 +284,13 @@ class ConfigWindow extends JFrame {
             );
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, comboBox, gbc);
+            addEmptyLabel(panel, gbc);
             break;
         case DIRECTORY:
+        case FILE:
             final JLabel dirLabel = new JLabel(configValue);
             dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            dirLabel.setToolTipText(toolTip);
+//            dirLabel.setToolTipText(toolTip);
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, dirLabel, gbc);
             JButton dirButton = new JButton("Choose...");
@@ -211,7 +298,11 @@ class ConfigWindow extends JFrame {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             JFileChooser fc = new JFileChooser(dirLabel.getText());
-                            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                            if (item.type == ConfigItem.ConfigType.DIRECTORY) { 
+                                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                            } else {
+                                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            }
                             int state = fc.showOpenDialog(ConfigWindow.this);
                             if ( state == JFileChooser.APPROVE_OPTION ){
                                 File file = fc.getSelectedFile();
@@ -240,7 +331,7 @@ class ConfigWindow extends JFrame {
             } else {
                 colorLabel.setForeground(Color.BLACK);
             }
-            colorLabel.setToolTipText(toolTip);
+//            colorLabel.setToolTipText(toolTip);
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, colorLabel, gbc);
             JButton colorButton = new JButton("Choose...");
@@ -249,7 +340,7 @@ class ConfigWindow extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                             Color selectedColor=JColorChooser.showDialog(ConfigWindow.this, "", colorLabel.getBackground());
                             if (selectedColor == null) return;
-                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(3); 
+                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(2); 
                             colorLabel.setText(newValue);
                             item.setNewValue(newValue);
                             colorLabel.setBackground(selectedColor);
@@ -279,6 +370,7 @@ class ConfigWindow extends JFrame {
             );
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, textField, gbc);
+            addEmptyLabel(panel, gbc);
             break;
         }
     }
@@ -310,12 +402,22 @@ class ConfigWindow extends JFrame {
             buttonPanel.add(saveButton);
         }
 
+        JButton applyButton = new JButton(LocalText.getText("APPLY"));
+        applyButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        ConfigWindow.this.applyConfig();
+                    }
+                }
+        );
+        buttonPanel.add(applyButton);
+        
 
         JButton cancelButton = new JButton(LocalText.getText("CANCEL"));
         cancelButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.cancelConfig();
+                        ConfigWindow.this.closeConfig();
                     }
                 }
         );
@@ -420,8 +522,13 @@ class ConfigWindow extends JFrame {
             });
         }
     }
-
-    private void cancelConfig() {
+    
+    private void applyConfig() {
+        Config.updateProfile(); // transfer the configitem to the active profile
+    }
+    
+    private void closeConfig() {
+        Config.revertProfile();
         StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
         this.setVisible(false);
     }

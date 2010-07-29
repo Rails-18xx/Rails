@@ -1,6 +1,5 @@
 package rails.util;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public final class ConfigItem {
      * Defines possible types (Java classes used as types in ConfigItem below
      */
     public static enum ConfigType {
-        INTEGER, FLOAT, STRING, BOOLEAN, LIST, DIRECTORY, COLOR;
+        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR;
     }
     
     // static attributes
@@ -30,8 +29,6 @@ public final class ConfigItem {
     public final ConfigType type;
     public final List<String> allowedValues;
     public final String formatMask;
-    public final String toolTip;
-    public final String helpText;
     
     // method call attributes
     private final String initClass;
@@ -62,7 +59,7 @@ public final class ConfigItem {
                 try {
                     this.type = ConfigType.valueOf(type.toUpperCase());
                 } catch (Exception e) {
-                    throw new ConfigurationException("Missing or invalid type for configuration item");
+                    throw new ConfigurationException("Missing or invalid type for configuration item, exception = " + e);
                 }
             } else {
                 throw new ConfigurationException("Missing or invalid type for configuration item");
@@ -74,10 +71,6 @@ public final class ConfigItem {
         
         // optional: formatMask
         formatMask = tag.getAttributeAsString("formatMask");
-
-        // optional: helpText and toolTip
-        toolTip = tag.getAttributeAsString("toolTip");
-        helpText = tag.getAttributeAsString("helpText");
     
         // optional: init method attributes
         initClass = tag.getAttributeAsString("initClass");
@@ -143,9 +136,6 @@ public final class ConfigItem {
         }
         if (formatMask != null) {
             s.append(", formatMask = " + formatMask);
-        }
-        if (helpText != null) {
-            s.append(", helpText = " + helpText);
         }
         
         return s.toString();
