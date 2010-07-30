@@ -30,6 +30,7 @@ Limitations:
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+		<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 

@@ -412,7 +412,8 @@ public class StockRound extends Round {
              * Check the price. If a cert was sold before this turn, the
              * original price is still valid
              */
-            if (sellPrices.containsKey(compName)) {
+            if (sellPrices.containsKey(compName)
+                    && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
                 price = (sellPrices.get(compName)).getPrice();
             } else {
                 price = company.getMarketPrice();
@@ -1039,7 +1040,8 @@ public class StockRound extends Round {
 
         boolean soldBefore = sellPrices.containsKey(companyName);
         // Get the sell price (does not change within a turn)
-        if (soldBefore) {
+        if (soldBefore
+                && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
             sellPrice = company.getCurrentSpace();
