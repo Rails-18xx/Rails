@@ -22,7 +22,7 @@ public class ShareSellingRound extends StockRound {
     Player sellingPlayer;
     IntegerState cashToRaise;
     PublicCompanyI unsellableCompany = null;
-    
+
     private List<SellShares> sellableShares;
 
     /**
@@ -86,15 +86,15 @@ public class ShareSellingRound extends StockRound {
     public void setSellableShares() {
         possibleActions.addAll(sellableShares);
     }
-    
+
     /**
-     * Create a list of certificates that a player may sell in an emergency 
+     * Create a list of certificates that a player may sell in an emergency
      * share selling round, taking all rules taken into account.
      */
     private List<SellShares> getSellableShares () {
-        
+
         sellableShares = new ArrayList<SellShares> ();
-        
+
         String compName;
         int price;
         int number;
@@ -318,7 +318,8 @@ public class ShareSellingRound extends StockRound {
         int price;
 
         // Get the sell price (does not change within a turn)
-        if (sellPrices.containsKey(companyName)) {
+        if (sellPrices.containsKey(companyName)
+                && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
             sellPrice = company.getCurrentSpace();
