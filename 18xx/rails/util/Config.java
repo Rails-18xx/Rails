@@ -134,7 +134,11 @@ public final class Config {
     public static void updateProfile() {
         for (List<ConfigItem> items:configPanels.values()) {
             for (ConfigItem item:items) {
-                if (!item.hasNewValue() || item.getNewValue().equals(defaultProperties.get(item.name))) continue;
+                if (!item.hasNewValue()) continue;
+                if (item.getNewValue().equals(defaultProperties.get(item.name))) {
+                    userProperties.remove(item.name);
+                    continue;
+                }
                 userProperties.setProperty(item.name, item.getNewValue());
                 item.callInitMethod();
                 log.debug("Changed property name = " + item.name + " to value = " + item.getNewValue());
