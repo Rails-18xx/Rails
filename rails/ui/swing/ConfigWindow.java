@@ -248,9 +248,14 @@ class ConfigWindow extends JFrame {
                     // do nothing
                 }
                 public void focusLost(FocusEvent arg0) {
-                    int value = (Integer)spinner.getValue();
-                    Double adjValue = (double)value / spinnerMultiple;
-                    item.setNewValue(adjValue.toString());
+                    Integer value = (Integer)spinner.getValue();
+                    if (item.type == ConfigItem.ConfigType.PERCENT) {
+                        Double adjValue = (double)value / spinnerMultiple;
+                        item.setNewValue(adjValue.toString());
+                    } else {
+                        item.setNewValue(value.toString());
+                    }
+                    
                 }
             }
             );
@@ -525,6 +530,8 @@ class ConfigWindow extends JFrame {
     
     private void applyConfig() {
         Config.updateProfile(); // transfer the configitem to the active profile
+        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_APPLY_MESSAGE"),
+                LocalText.getText("CONFIG_APPLY_TITLE"), JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void closeConfig() {
