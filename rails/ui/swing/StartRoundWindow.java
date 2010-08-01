@@ -702,15 +702,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     }
 
     private ImageIcon createInfoIcon() {
-
-        String path = "/rails/ui/images/Inform.gif";
-        java.net.URL imgURL = getClass().getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL, "Info");
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
+        return RailsIcon.INFO.icon;
     }
 
     public void keyPressed(KeyEvent e) {

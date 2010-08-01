@@ -39,7 +39,7 @@ public final class Config {
     private static final String CONFIG_XML_DIR = "data";
     private static final String CONFIG_XML_FILE = "Properties.xml";
     private static final String CONFIG_TAG = "Properties";
-    private static final String PANEL_TAG = "Panel";
+    private static final String SECTION_TAG = "Section";
     private static final String ITEM_TAG = "Property";
 
     /** Log 4j configuration */
@@ -67,7 +67,7 @@ public final class Config {
     private static boolean propertiesLoaded = false;
     
     /** Map that holds the panel, which contains config items */
-    private static Map<String, List<ConfigItem>> configPanels = null; 
+    private static Map<String, List<ConfigItem>> configSections = null; 
     
     /**
      * Hidden constructor, the class is never instantiated, everything is static
@@ -81,28 +81,30 @@ public final class Config {
         List<String> directories = new ArrayList<String>();
         directories.add(CONFIG_XML_DIR);
         try {
-            // Find the <Config> tag
+            // Find the config tag inside the the config xml file
             Tag configTag =
                     Tag.findTopTagInFile(CONFIG_XML_FILE, directories, CONFIG_TAG);
             log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
             
-            configPanels = new LinkedHashMap<String, List<ConfigItem>>();
-            // find panels
-            List<Tag> panelTags = configTag.getChildren(PANEL_TAG);
-            if (panelTags != null) {
-                for (Tag panelTag:panelTags) {
+            // define sections
+            configSections = new LinkedHashMap<String, List<ConfigItem>>();
+
+            // find sections
+            List<Tag> sectionTags = configTag.getChildren(SECTION_TAG);
+            if (sectionTags != null) {
+                for (Tag sectionTag:sectionTags) {
                     // find name attribute
-                    String panelName = panelTag.getAttributeAsString("name");
-                    if (!Util.hasValue(panelName)) continue;
+                    String sectionName = sectionTag.getAttributeAsString("name");
+                    if (!Util.hasValue(sectionName)) continue;
                     
                     // find items
-                    List<Tag> itemTags = panelTag.getChildren(ITEM_TAG);
+                    List<Tag> itemTags = sectionTag.getChildren(ITEM_TAG);
                     if (itemTags == null || itemTags.size() == 0) continue;
-                    List<ConfigItem> panelItems = new ArrayList<ConfigItem>();
+                    List<ConfigItem> sectionItems = new ArrayList<ConfigItem>();
                     for (Tag itemTag:itemTags) {
-                        panelItems.add(new ConfigItem(itemTag));
+                        sectionItems.add(new ConfigItem(itemTag));
                     }
-                    configPanels.put(panelName, panelItems);
+                    configSections.put(sectionName, sectionItems);
                 }
             }
             
@@ -111,20 +113,20 @@ public final class Config {
         }
     }
     
-    public static Map<String, List<ConfigItem>> getConfigPanels() {
-        if (configPanels == null) {
+    public static Map<String, List<ConfigItem>> getConfigSections() {
+        if (configSections == null) {
             readConfigSetupXML();
         }
-        log.debug("Configuration setup = " + configPanels);
-        return configPanels;
+        log.debug("Configuration setup = " + configSections);
+        return configSections;
     }
     
     public static int getMaxElementsInPanels() {
         int maxElements = 0;
-        for (List<ConfigItem> panel:configPanels.values()) {
+        for (List<ConfigItem> panel:configSections.values()) {
             maxElements = Math.max(maxElements, panel.size());
         }
-        log.debug("maxelements" + maxElements);
+        log.debug("Configuration sections with maximum elements of " + maxElements);
         return maxElements;
     }
     
@@ -132,7 +134,7 @@ public final class Config {
      * updates the profile according to the changes in configitems
      */
     public static void updateProfile() {
-        for (List<ConfigItem> items:configPanels.values()) {
+        for (List<ConfigItem> items:configSections.values()) {
             for (ConfigItem item:items) {
                 if (!item.hasNewValue()) continue;
                 if (item.getNewValue().equals(defaultProperties.get(item.name))) {
@@ -151,7 +153,7 @@ public final class Config {
      * reverts all changes in configitems
      */
     public static void revertProfile() {
-        for (List<ConfigItem> items:configPanels.values()) {
+        for (List<ConfigItem> items:configSections.values()) {
             for (ConfigItem item:items) {
                 item.setNewValue(null);
             }

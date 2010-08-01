@@ -29,10 +29,20 @@ public class LocalText extends ResourceBundle {
     }
 
     public static String getText(String key, Object parameter) {
-        return getText(key, new Object[] { parameter });
+        return getText(key,  new Object[] { parameter });
+    }
+
+    public static String getText(String key, Object... parameters) {
+        /* If the text is not found, return the key in brackets */
+        return getTextExecute(key, "<" + key + ">", true, parameters);
+    }
+        
+    public static String getTextWithDefault(String key, String defaultText) {
+        return getTextExecute(key, defaultText, false, (Object[]) null);
     }
     
-    public static String getText(String key, Object... parameters) {
+    // actual procedure to retrieve the local text
+    private static String getTextExecute(String key, String defaultText, boolean errorOnMissing, Object... parameters) {
         String result = "";
 
         if (key == null || key.length() == 0) return "";
@@ -95,11 +105,12 @@ public class LocalText extends ResourceBundle {
         try {
             result = localisedText.getString(key);
         } catch (Exception e) {
-            System.out.println("Missing text for key " + key + " in locale "
+            if (errorOnMissing) {
+                System.out.println("Missing text for key " + key + " in locale "
                                + locale.getDisplayName() + " (" + localeCode
                                + ")");
-            /* If the text is not found, return the key in brackets */
-            return "<" + key + ">";
+            }
+            return defaultText;
         }
 
         if (parameters != null) {
