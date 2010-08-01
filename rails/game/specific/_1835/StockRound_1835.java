@@ -78,6 +78,22 @@ public class StockRound_1835 extends StockRound {
         return price;
     }
 
+    @Override
+    // The sell-in-same-turn-at-decreasing-price option does not apply here
+    protected int getCurrentSellPrice (PublicCompanyI company) {
+
+        String companyName = company.getName();
+        int price;
+
+        if (sellPrices.containsKey(companyName)) {
+            price = (sellPrices.get(companyName)).getPrice();
+        } else {
+            price = company.getCurrentSpace().getPrice() / company.getShareUnitsForSharePrice();
+        }
+        return price;
+    }
+
+
     /** Share price goes down 1 space for any number of shares sold.
      */
     @Override

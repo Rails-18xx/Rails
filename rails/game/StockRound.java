@@ -412,12 +412,7 @@ public class StockRound extends Round {
              * Check the price. If a cert was sold before this turn, the
              * original price is still valid
              */
-            if (sellPrices.containsKey(compName)
-                    && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
-                price = (sellPrices.get(compName)).getPrice();
-            } else {
-                price = company.getMarketPrice();
-            }
+            price = getCurrentSellPrice(company);
             price /= company.getShareUnitsForSharePrice();
 
             /* Allow for different share units (as in 1835) */
@@ -1035,18 +1030,14 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now do the selling.
-        StockSpaceI sellPrice;
-        int price;
 
+        // Selling price
+        int price = getCurrentSellPrice (company);
+
+        // Save original price as it may be reused in subsequent sale actions in the same turn
         boolean soldBefore = sellPrices.containsKey(companyName);
-        // Get the sell price (does not change within a turn)
-        if (soldBefore
-                && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
-            price = (sellPrices.get(companyName)).getPrice();
-        } else {
-            sellPrice = company.getCurrentSpace();
-            price = sellPrice.getPrice() / company.getShareUnitsForSharePrice();
-            sellPrices.put(companyName, sellPrice);
+        if (!soldBefore) {
+            sellPrices.put(companyName, company.getCurrentSpace());
         }
 
         moveStack.start(true);
@@ -1116,6 +1107,20 @@ public class StockRound extends Round {
         setPriority();
 
         return true;
+    }
+
+    protected int getCurrentSellPrice (PublicCompanyI company) {
+
+        String companyName = company.getName();
+        int price;
+
+        if (sellPrices.containsKey(companyName)
+                && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
+            price = (sellPrices.get(companyName)).getPrice();
+        } else {
+            price = company.getCurrentSpace().getPrice() / company.getShareUnitsForSharePrice();
+        }
+        return price;
     }
 
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
