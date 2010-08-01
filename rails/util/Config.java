@@ -46,7 +46,7 @@ public final class Config {
     private static final String LOG4J_CONFIG_FILE = "log4j.properties";
         
     /** Rails profile configurations */
-    private static String defaultProfilesFile = "default.profiles";
+    private static String defaultProfilesFile = "data/profiles/default.profiles";
     private static Properties defaultProfiles = new Properties();
     private static String userProfilesFile = "user.profiles";
     private static Properties userProfiles = new Properties();
