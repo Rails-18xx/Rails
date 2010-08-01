@@ -14,6 +14,7 @@
 		-->
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<PlayerShareLimit percentage="100"/>
 		<BankPoolLimit percentage="100"></BankPoolLimit>
 		<EndOfGame>

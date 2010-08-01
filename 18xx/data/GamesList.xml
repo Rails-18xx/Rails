@@ -47,6 +47,7 @@ Limitation:
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 
@@ -65,6 +66,7 @@ Limitation:
 		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 
@@ -85,6 +87,7 @@ Limitation:
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	</Game>
 	
 	<Game name="18AL">
@@ -105,6 +108,7 @@ Limitation:
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 
@@ -142,6 +146,7 @@ Should work, but has not been extensively tested. Limitations as with 1830.
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
 
@@ -185,6 +190,7 @@ Aspects not present in 1830 have not been implemented yet.
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	
@@ -201,13 +207,14 @@ Limitation:
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
         <Option name="UnlimitedTiles" type="toggle" default="no"/>
+        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
   </Game>
 	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
 that are collectively known as the "18xx" railway game system.		
 Rails is a Sourceforge project.
 Project founder: Brett Lentz.
-Developers: Erik Vos and Brett Lentz.
+Developers: Erik Vos, Stefan Frey and Brett Lentz.
 
 The 18xx railway game system was originated by Francis Tresham and Hartland Trefoil Ltd.
 

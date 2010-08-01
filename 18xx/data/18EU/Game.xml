@@ -8,6 +8,7 @@
 		<GameOption name="Extra4Trains" values="0,1" default="0"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
 				sequence="sellBuy"

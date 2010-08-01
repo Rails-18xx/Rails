@@ -9,6 +9,7 @@
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>

@@ -8,6 +8,7 @@
 		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<StockRound class="rails.game.specific._1856.StockRound_1856" 
 				sequence="SellBuyOrBuySell">

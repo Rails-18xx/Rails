@@ -7,6 +7,7 @@
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>

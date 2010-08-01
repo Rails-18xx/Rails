@@ -6,6 +6,7 @@
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<PriceProtection/>
