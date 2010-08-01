@@ -14,8 +14,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -28,6 +32,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -42,6 +47,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 import rails.game.ConfigurationException;
+import rails.ui.swing.elements.RailsIcon;
 import rails.util.Config;
 import rails.util.ConfigItem;
 import rails.util.LocalText;
@@ -151,10 +157,10 @@ class ConfigWindow extends JFrame {
         Border titled = BorderFactory.createTitledBorder(etched, LocalText.getText("CONFIG_SETTINGS"));
         configPane.setBorder(titled);
         
-        Map<String, List<ConfigItem>> configPanels = Config.getConfigPanels();
+        Map<String, List<ConfigItem>> configSections = Config.getConfigSections();
         int maxElements = Config.getMaxElementsInPanels();
        
-        for (String panelName:configPanels.keySet()) {
+        for (String sectionName:configSections.keySet()) {
             JPanel newPanel = new JPanel();
             newPanel.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
@@ -164,18 +170,18 @@ class ConfigWindow extends JFrame {
             gbc.weighty = 0.8;
             gbc.insets = new Insets(5,5,5,5);
             gbc.anchor = GridBagConstraints.WEST;
-            for (ConfigItem item:configPanels.get(panelName)) {
+            for (ConfigItem item:configSections.get(sectionName)) {
                 gbc.gridx = 0;
                 gbc.gridy++;
                 defineElement(newPanel, item, gbc);
             }
             // fill up to maxElements
             gbc.gridx = 0;
-            for (gbc.gridy++; gbc.gridy < maxElements;  gbc.gridy++) {
+            while (++gbc.gridy < maxElements) {
                 JLabel emptyLabel = new JLabel("");
                 newPanel.add(emptyLabel, gbc);
             }
-            configPane.addTab(LocalText.getText("Config.panel." + panelName), newPanel);
+            configPane.addTab(LocalText.getText("Config.section." + sectionName), newPanel);
         }
     }
     
@@ -192,13 +198,17 @@ class ConfigWindow extends JFrame {
     
     private void defineElement(JPanel panel, final ConfigItem item, GridBagConstraints gbc) {
         
-        // standard components
+        // current value (based on current changes and properties)
         String configValue = item.getCurrentValue();
-//        final String toolTip = item.toolTip;
 
-        // item label
-        JLabel label = new JLabel(LocalText.getText("Config." + item.name));
-//        label.setToolTipText(toolTip);
+        // item label, toolTip and infoText
+        final String itemLabel = LocalText.getText("Config.label." + item.name);
+        final String toolTip = LocalText.getTextWithDefault("Config.toolTip." + item.name, null);
+        final String infoText = LocalText.getTextWithDefault("Config.infoText." + item.name, null);
+  
+        // define label        
+        JLabel label = new JLabel(itemLabel);
+        label.setToolTipText(toolTip);
         gbc.fill = GridBagConstraints.NONE;
         addToGridBag(panel, label, gbc);
         
@@ -277,7 +287,7 @@ class ConfigWindow extends JFrame {
             }
             final JComboBox comboBox = new JComboBox(allowedValues);
             comboBox.setSelectedItem(configValue);
-//            comboBox.setToolTipText(toolTip));
+            comboBox.setToolTipText(toolTip);
             comboBox.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent arg0) {
                     // do nothing
@@ -295,19 +305,20 @@ class ConfigWindow extends JFrame {
         case FILE:
             final JLabel dirLabel = new JLabel(configValue);
             dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//            dirLabel.setToolTipText(toolTip);
+            dirLabel.setToolTipText(toolTip);
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, dirLabel, gbc);
             JButton dirButton = new JButton("Choose...");
             dirButton.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            JFileChooser fc = new JFileChooser(dirLabel.getText());
+                            JFileChooser fc = new JFileChooser();
                             if (item.type == ConfigItem.ConfigType.DIRECTORY) { 
                                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                             } else {
                                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                             }
+                            fc.setSelectedFile(new File(dirLabel.getText()));
                             int state = fc.showOpenDialog(ConfigWindow.this);
                             if ( state == JFileChooser.APPROVE_OPTION ){
                                 File file = fc.getSelectedFile();
@@ -336,7 +347,7 @@ class ConfigWindow extends JFrame {
             } else {
                 colorLabel.setForeground(Color.BLACK);
             }
-//            colorLabel.setToolTipText(toolTip);
+            colorLabel.setToolTipText(toolTip);
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, colorLabel, gbc);
             JButton colorButton = new JButton("Choose...");
@@ -377,6 +388,43 @@ class ConfigWindow extends JFrame {
             addToGridBag(panel, textField, gbc);
             addEmptyLabel(panel, gbc);
             break;
+        }
+        // add info icon for infoText 
+        if (infoText != null) {
+            JLabel infoIcon = new JLabel(RailsIcon.INFO.icon);
+            infoIcon.addMouseListener(new MouseListener() {
+                public void mousePressed(MouseEvent e) {
+                    final JDialog dialog = new JDialog(ConfigWindow.this, false);
+                    final JOptionPane optionPane = new JOptionPane();
+                    optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+                    optionPane.setMessage(infoText);
+                    optionPane.addPropertyChangeListener(JOptionPane.VALUE_PROPERTY,
+                            new PropertyChangeListener() {
+                                public void propertyChange(PropertyChangeEvent e) {
+                                       dialog.dispose();
+                                   }
+                            }
+                    );
+                    dialog.setTitle(LocalText.getText("CONFIG_INFO_TITLE", itemLabel));
+                    dialog.getContentPane().add(optionPane);
+                    dialog.pack();
+                    dialog.setVisible(true);
+                }
+
+                public void mouseClicked(MouseEvent e) {
+                }
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                public void mouseExited(MouseEvent e) {
+                }
+            });
+            gbc.fill = GridBagConstraints.NONE;
+            addToGridBag(panel, infoIcon, gbc);
+            addEmptyLabel(panel, gbc);
         }
     }
 
