@@ -1,5 +1,6 @@
 package rails.ui.swing;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -87,6 +88,14 @@ public class GameUIManager implements DialogOwner {
         this.gameManager = gameManager;
         uiHints = gameManager.getUIHints();
 
+        initSaveSettings();
+        initFontSettings();
+        
+        configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
+
+    }
+    
+    private void initSaveSettings() {
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
             saveDirectory = DEFAULT_SAVE_DIRECTORY;
@@ -109,9 +118,10 @@ public class GameUIManager implements DialogOwner {
         if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = "_" + saveSuffixSpec;
         }
+    }
 
-        configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
-
+    private void initFontSettings() {
+    
         // font settings, can be game specific
         String fontType = Config.getGameSpecific("font.ui.name");
         Font font = null;
@@ -120,7 +130,7 @@ public class GameUIManager implements DialogOwner {
             String fontStyle = Config.getGameSpecific("font.ui.style");
             if (Util.hasValue(fontStyle)) {
                 if (fontStyle.equalsIgnoreCase("plain")) {
-                   boldStyle = false;
+                    boldStyle = false;
                 }
             }
             if (boldStyle) {
@@ -141,6 +151,7 @@ public class GameUIManager implements DialogOwner {
             }
         }
     }
+    
 
     public void gameUIInit() {
 
@@ -807,5 +818,31 @@ public class GameUIManager implements DialogOwner {
     public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
         return (Boolean) getGameParameter(key);
     }
-
+    
+    private void updateWindowsLookAndFeel() {
+        SwingUtilities.updateComponentTreeUI(statusWindow);
+        statusWindow.pack();
+        SwingUtilities.updateComponentTreeUI(orWindow);
+        orWindow.pack();
+        SwingUtilities.updateComponentTreeUI(reportWindow);
+        reportWindow.pack();
+        SwingUtilities.updateComponentTreeUI(configWindow);
+        configWindow.pack();
+        SwingUtilities.updateComponentTreeUI(stockChart);
+        stockChart.pack();
+    }
+  
+    /** update fonts settings
+     * (after configuration changes)
+     */
+    public static void updateUILookAndFeel() {
+        instance.initFontSettings();
+        instance.updateWindowsLookAndFeel();
+        
+//        EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                instance.repaintWindows();
+//            }
+//        });
+    }
 }
