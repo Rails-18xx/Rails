@@ -121,7 +121,7 @@ public final class ConfigItem {
                 clazz.getMethod(initMethod).invoke(null);
             }
         } catch (Exception e) {
-            log.error("Config profile: cannot call initMethod");
+            log.error("Config profile: cannot call initMethod, Exception = " + e.toString());
         }
     }
     

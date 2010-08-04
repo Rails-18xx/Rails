@@ -23,9 +23,12 @@
 		<Property name="report.window.open" type="BOOLEAN" />
 		<Property name="report.window.editable" type="BOOLEAN" />
 		<Property name="stockchart.window.open" type="BOOLEAN" />
-		<Property name="font.ui.scale" type="PERCENT" />
-		<Property name="font.ui.name" type="FONT" />
-		<Property name="font.ui.style" type="LIST" values="plain,bold" />
+		<Property name="font.ui.scale" type="PERCENT" 
+			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
+		<Property name="font.ui.name" type="FONT"
+			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
+		<Property name="font.ui.style" type="LIST" values="plain,bold" 
+			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 	</Section>
 	<Section name="Map">
 		<Property name="map.autoscroll" type="BOOLEAN" />
