@@ -101,7 +101,15 @@ public class StockRound extends Round {
 
         setSellableShares();
 
-        if (isPlayerOverLimits (currentPlayer)) return true;
+        // check certification limits and display warning
+        if (isPlayerOverLimits (currentPlayer)) {
+            DisplayBuffer.add(LocalText.getText("ExceedCertificateLimit"
+                    , currentPlayer.getName()
+                    , isPlayerOverLimitsDetail(currentPlayer)
+                    )
+            );
+            return true;
+        }
 
         passAllowed = true;
 
@@ -1398,18 +1406,36 @@ public class StockRound extends Round {
     }
 
     protected boolean isPlayerOverLimits(Player player) {
-
+        return (isPlayerOverLimitsDetail(player) != null);
+    }
+        
+    protected String isPlayerOverLimitsDetail(Player player) {
+        StringBuffer violations = new StringBuffer();
+        
         // Over the total certificate hold Limit?
-        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit(player))
-            return true;
+        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit(player)) {
+            violations.append(LocalText.getText("ExceedCertificateLimitTotal",
+                    player.getPortfolio().getCertificateCount(),
+                    gameManager.getPlayerCertificateLimit(player)));
+        }
+                ;
 
         // Over the hold limit of any company?
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
-                    && !checkAgainstHoldLimit(player, company, 0)) return true;
+                    && !checkAgainstHoldLimit(player, company, 0)) { 
+                violations.append(LocalText.getText("ExceedCertificateLimitCompany",
+                        company.getName(),
+                        player.getPortfolio().getShare(company),
+                        getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
+                ));
+            }
         }
-
-        return false;
+        if (violations.length() != 0) {
+            return violations.toString();
+        } else {
+            return null;
+        }
     }
 
     /**
