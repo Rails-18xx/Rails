@@ -143,10 +143,9 @@ public final class RevenueAdapter implements Runnable {
         return startVertices;
     }
     
-    public boolean addStartVertex(NetworkVertex startVertex) {
-        if (startVertices.contains(startVertex)) return false;
-        
-        startVertices.add(startVertex);
+    public boolean addStartVertices(Collection<NetworkVertex> startVertices) {
+        this.startVertices.addAll(startVertices);
+        protectedVertices.addAll(startVertices);
         return true;
     }
     
@@ -208,7 +207,7 @@ public final class RevenueAdapter implements Runnable {
         NetworkVertex.initAllRailsVertices(graph.vertexSet(), company, phase);
 
         // define startVertexes
-        startVertices.addAll(companyGraph.getCompanyBaseTokenVertexes(company));
+        addStartVertices(companyGraph.getCompanyBaseTokenVertexes(company));
         
         // define visit sets
         defineVertexVisitSets();

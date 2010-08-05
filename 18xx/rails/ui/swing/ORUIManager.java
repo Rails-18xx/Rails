@@ -879,7 +879,11 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.size () > 1) {
                     String selected =
                     (String) JOptionPane.showInputDialog(orWindow,
-                            							 LocalText.getText("SelectStationForToken"),
+                            							 LocalText.getText("SelectStationForToken",
+                            							         action.getPlayerName(),
+                            							         hex.getName(),
+                            							         company.getName()
+                            							 ),
                             							 LocalText.getText("WhichStation"),
                             							 JOptionPane.PLAIN_MESSAGE, null,
                             							 prompts.toArray(), prompts.get(0));

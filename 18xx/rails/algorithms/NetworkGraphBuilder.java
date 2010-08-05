@@ -265,6 +265,11 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         for (NetworkVertex vertex:graph.vertexSet()) {
             Set<NetworkEdge> vertexEdges = graph.edgesOf(vertex);
             
+            // always keep protected vertices
+            if (protectedVertices.contains(vertex)) {
+                continue;
+            }
+            
             // remove hermit
             if (vertexEdges.size() == 0) {
                 log.info("Remove hermit (no connection) = "  + vertex);
@@ -282,7 +287,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 removed = true;
                 break;
             } // vertex is not necessary and not on the protected list
-                else if (vertexEdges.size() == 2 && !protectedVertices.contains(vertex)) { 
+                else if (vertexEdges.size() == 2) { 
                 NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
                 if (edges[0].isGreedy() == edges[1].isGreedy()) {
                     if (!edges[0].isGreedy()) {
