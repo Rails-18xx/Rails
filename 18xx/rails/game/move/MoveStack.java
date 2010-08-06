@@ -99,6 +99,7 @@ public class MoveStack {
     public void linkToPreviousMoveSet() {
         if (currentMoveSet != null) {
             currentMoveSet.linkToPreviousMoveSet();
+            log.debug("Moveset linked to previous one");
         } else {
             log.warn("No MoveSet open");
         }
