@@ -642,7 +642,8 @@ bonuses:        for (Bonus bonus : bonuses) {
         }
 
         // Check the trains, autodiscard any excess non-permanent trains
-        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
+//        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
+        int trainLimit = cgr.getCurrentTrainLimit();
         List<TrainI> trains = cgr.getPortfolio().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
             ReportBuffer.add("");
@@ -815,8 +816,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         if (train != null) {
 
-            if (action.isForced()) moveStack.linkToPreviousMoveSet();
-
+//            if (action.isForced()) moveStack.linkToPreviousMoveSet();
             train.moveTo(pool);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                     companyName,
@@ -825,6 +825,8 @@ bonuses:        for (Bonus bonus : bonuses) {
         } else {
             cgrHasDiscardedTrains.set(true);
         }
+        // new: link always, see above uncommented
+        moveStack.linkToPreviousMoveSet();
 
         return true;
     }
