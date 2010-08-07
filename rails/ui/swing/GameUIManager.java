@@ -305,6 +305,9 @@ public class GameUIManager implements DialogOwner {
             /* Finish previous round UI processing */
             if (previousRoundType != null) {
 
+                /* close current dialog */
+                setCurrentDialog(null, null);
+                
                 if (StockRound.class.isAssignableFrom(previousRoundType)) {
                     log.debug("UI leaving Stock Round "+previousRoundName);
                     statusWindow.finishRound();

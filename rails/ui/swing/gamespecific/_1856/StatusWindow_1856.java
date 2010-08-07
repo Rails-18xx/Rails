@@ -1,5 +1,8 @@
 package rails.ui.swing.gamespecific._1856;
 
+import javax.swing.JDialog;
+import javax.swing.WindowConstants;
+
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
@@ -19,7 +22,6 @@ public class StatusWindow_1856 extends StatusWindow {
     @Override
     public void updateStatus() {
         RoundI currentRound = gameUIManager.getCurrentRound();
-        //if (!(currentRound instanceof OperatingRound)) {
         if (!(currentRound instanceof CGRFormationRound)) {
             super.updateStatus();
         } else if (possibleActions.contains(RepayLoans.class)) {
@@ -97,10 +99,11 @@ public class StatusWindow_1856 extends StatusWindow {
         }
 
        RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
-                LocalText.getText("Select"),
+                LocalText.getText("1856MergerDialog", action.getCompanyName()),
                 message,
                 options,
                 0);
+       currentDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
        gameUIManager.setCurrentDialog (currentDialog, action);
     }
 

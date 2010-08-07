@@ -15,13 +15,23 @@ import rails.util.LocalText;
 public class CGRFormationRound extends SwitchableUIRound {
 
     private Player startingPlayer;
-    private Map<Player, List<PublicCompanyI>> companiesToRepayLoans = null;
-    private PublicCompanyI currentCompany = null;
     private int maxLoansToRepayByPresident = 0;
+    private Map<Player, List<PublicCompanyI>> companiesToRepayLoans = null;
+    
+    private PublicCompanyI currentCompany = null;
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
+
+    /*
+     * pointers to cgr company
+     */
     private String cgrName = PublicCompany_CGR.NAME;
     private PublicCompany_CGR cgr
         = (PublicCompany_CGR)gameManager.getCompanyManager().getPublicCompany(cgrName);
+    
+    /* 
+     * effects from the merger, processed at the end
+     * thus no need for state variables
+     */
     private List<TrainI> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
@@ -187,14 +197,14 @@ public class CGRFormationRound extends SwitchableUIRound {
                             numberOfLoans,
                             currentCompany.getName()),
                         false);
-                    currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+//                    currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 }
                 maxLoansToRepayByPresident = maxNumber;
                 break;
             } else {
                 // President cannot help, this company will merge into CGR anyway
                 mergingCompanies.add(currentCompany);
-                currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+//                currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 message = LocalText.getText("WillMergeInto",
                         currentCompany.getName(),
                         PublicCompany_CGR.NAME);
@@ -237,7 +247,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        moveStack.start(true);
+        moveStack.start(true).linkToPreviousMoveSet();
 
         PublicCompanyI company = action.getCompany();
         int numberRepaid = action.getNumberRepaid();
@@ -273,7 +283,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
          if (action.getCompany().getCurrentNumberOfLoans() > 0) {
             mergingCompanies.add(currentCompany);
-            currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+//            currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
             String message = LocalText.getText("WillMergeInto",
                     currentCompany.getName(),
                     PublicCompany_CGR.NAME);
@@ -633,7 +643,7 @@ bonuses:        for (Bonus bonus : bonuses) {
                         key, oldTokens.get(key)));
             }
         } else {
-            executeExchangeTokens (nonHomeTokens);
+            executeExchangeTokens(nonHomeTokens);
         }
 
         // Close the merged companies
@@ -692,7 +702,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         } else if (action instanceof DiscardTrain) {
             result = discardTrain((DiscardTrain)action);
         } else if (action instanceof ExchangeTokens) {
-            result = exchangeTokens ((ExchangeTokens)action);
+            result = exchangeTokens((ExchangeTokens)action, true); // 2nd parameter: linked moveset
         }
         if (!result) return false;
 
@@ -812,7 +822,8 @@ bonuses:        for (Bonus bonus : bonuses) {
         }
 
         /* End of validation, start of execution */
-        moveStack.start(true);
+        // new: link always, see below commented
+        moveStack.start(true).linkToPreviousMoveSet();
 
         if (train != null) {
 
@@ -825,8 +836,6 @@ bonuses:        for (Bonus bonus : bonuses) {
         } else {
             cgrHasDiscardedTrains.set(true);
         }
-        // new: link always, see above uncommented
-        moveStack.linkToPreviousMoveSet();
 
         return true;
     }

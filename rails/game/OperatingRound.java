@@ -233,7 +233,7 @@ public class OperatingRound extends Round implements Observer {
 
         } else if (selectedAction instanceof ExchangeTokens) {
 
-            result = exchangeTokens ((ExchangeTokens)selectedAction);
+            result = exchangeTokens ((ExchangeTokens)selectedAction, false); // 2nd parameter: unlinked moveset
 
         } else if (selectedAction instanceof ClosePrivate) {
 

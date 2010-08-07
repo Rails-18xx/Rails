@@ -13,6 +13,8 @@ public class ShareModel extends ModelObject {
         this.portfolio = portfolio;
         this.company = company;
         this.share = 0;
+        // add companies president model as observer
+        this.addObserver(company.getPresidentModel());
     }
 
     public void setShare() {

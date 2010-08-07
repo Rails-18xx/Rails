@@ -167,7 +167,7 @@ public abstract class Round implements RoundI {
         return true;
     }
 
-    protected boolean exchangeTokens (ExchangeTokens action) {
+    protected boolean exchangeTokens(ExchangeTokens action, boolean linkedMoveSet) {
 
         String errMsg = null;
 
@@ -199,6 +199,7 @@ public abstract class Round implements RoundI {
         }
 
         moveStack.start(true);
+        if (linkedMoveSet) moveStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
             MapHex hex;

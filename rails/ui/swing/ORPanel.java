@@ -407,8 +407,9 @@ implements ActionListener, KeyListener, RevenueListener {
 
             f =
                     president[i] =
-                            new Field(c.hasStarted() && !c.isClosed()
-                                    ? c.getPresident().getNameAndPriority() : "");
+//                            new Field(c.hasStarted() && !c.isClosed()
+//                                    ? c.getPresident().getNameAndPriority() : "");
+                        new Field(c.getPresidentModel());
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
@@ -468,7 +469,8 @@ implements ActionListener, KeyListener, RevenueListener {
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
             addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
-            revenue[i].addDependent(revenueSelect[i]);
+            // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
+            //            revenue[i].addDependent(revenueSelect[i]);
 
             f = decision[i] = new Field(c.getLastRevenueAllocationModel());
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
@@ -749,6 +751,10 @@ implements ActionListener, KeyListener, RevenueListener {
             president[i].setHighlight(false);
         }
 
+        if (hasCompanyLoans) {
+            loansCaption.setHighlight(false);
+        }
+        
         for (JMenuItem item : menuItemsToReset) {
             item.setEnabled(false);
             if (item instanceof ActionMenuItem) {
@@ -764,6 +770,11 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
+    public void resetCurrentRevenueDisplay() {
+        setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
+    }
+    
+    
     public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
 
         this.orComp = orComp;

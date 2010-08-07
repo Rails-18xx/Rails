@@ -128,8 +128,14 @@ public class MoveStack {
 
     public boolean redoMoveSet () {
         if (currentMoveSet == null && lastIndex < moveStack.size() - 1) {
-            ReportBuffer.add(LocalText.getText("REDO"));
-            (moveStack.get(++lastIndex)).reexecute();
+            MoveSet redoAction;
+            redoAction= moveStack.get(++lastIndex);
+            do {
+                ReportBuffer.add(LocalText.getText("REDO"));
+                redoAction.reexecute();
+                if (lastIndex == moveStack.size() - 1) break;
+                redoAction= moveStack.get(++lastIndex);
+            } while (redoAction.isLinkedToPreviousMove());
             // log.debug ("MoveStack redo index is "+lastIndex);
             return true;
         } else {
