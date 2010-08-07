@@ -209,6 +209,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public Player getPresident();
 
+    public PresidentModel getPresidentModel();
+
     public PublicCertificateI getPresidentsShare();
 
     public int getFloatPercentage();
@@ -355,6 +357,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public ModelObject getInGameModel ();
     public ModelObject getIsClosedModel ();
+    
 
 
 }

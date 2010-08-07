@@ -93,6 +93,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Company treasury, holding cash */
     protected CashModel treasury = null;
+    
+    /** PresidentModel */
+    protected PresidentModel presidentModel = null;
 
     /** Has the company started? */
     protected BooleanState hasStarted = null;
@@ -620,6 +623,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
         lastRevenueAllocation = new StringState(name + "_lastAllocation");
         baseTokensModel = new BaseTokensModel(this);
+        presidentModel = new PresidentModel(this);
 
         hasStarted = new BooleanState(name + "_hasStarted", false);
         hasFloated = new BooleanState(name + "_hasFloated", false);
@@ -1239,6 +1243,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
+    }
+
+    public PresidentModel getPresidentModel() {
+        return presidentModel;
     }
 
     public PublicCertificateI getPresidentsShare () {
@@ -1982,4 +1990,5 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public String getExtraShareMarks () {
         return "";
     }
+    
 }

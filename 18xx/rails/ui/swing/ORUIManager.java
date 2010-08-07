@@ -619,6 +619,12 @@ public class ORUIManager implements DialogOwner {
                 orWindow.process(mapCorrectionAction);
             }
         } else if (tokenLayingEnabled) {
+            // if clickedHex == null, then go back to select hex step
+            if (clickedHex == null) {
+                upgradePanel.setPossibleTokenLays(null);
+                setLocalStep(SELECT_HEX_FOR_TOKEN);
+                return;
+            }
             List<LayToken> allowances =
                     map.getTokenAllowanceForHex(clickedHex.getHexModel());
             if (allowances.size() > 0) {
@@ -640,16 +646,18 @@ public class ORUIManager implements DialogOwner {
                 && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
                 map.repaint(selectedHex.getBounds());
-
                 return;
 
             } else {
-
                 if (selectedHex != null && clickedHex != selectedHex) {
                     selectedHex.removeTile();
                     map.selectHex(null);
                 }
-                if (clickedHex != null) {
+                // if clickedHex == null, then go back to select hex step
+                if (clickedHex == null) {
+                    upgradePanel.setTileUpgrades(null);
+                    setLocalStep(SELECT_HEX_FOR_TILE);
+                } else {
                     if (clickedHex.getHexModel().isUpgradeableNow())
                     /*
                      * Direct call to Model to be replaced later by use of
@@ -1443,6 +1451,7 @@ public class ORUIManager implements DialogOwner {
         // initial deactivation of revenue calculation
         if (!possibleActions.contains(SetDividend.class)) {
             orPanel.stopRevenueUpdate();
+            orPanel.resetCurrentRevenueDisplay();
         }
         
         if (possibleActions.contains(MapCorrectionAction.class)) {
