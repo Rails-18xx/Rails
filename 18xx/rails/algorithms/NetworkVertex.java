@@ -361,14 +361,14 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         for (NetworkEdge edge:edges) {
             List<NetworkVertex> hiddenVertices;
             if (edge.getSource() == vertex) {
-                 hiddenVertices = edge.getHiddenVertexes();
+                 hiddenVertices = edge.getHiddenVertices();
                 if (addOldVertexAsHidden) hiddenVertices.add(vertex);
                 NetworkEdge newEdge = new NetworkEdge(newVertex, edge.getTarget(), edge.isGreedy(), edge.getDistance(), hiddenVertices);
                 graph.addEdge(newVertex, edge.getTarget(), newEdge);
             } else {
                 hiddenVertices = new ArrayList<NetworkVertex>();
                 if (addOldVertexAsHidden) hiddenVertices.add(vertex);
-                hiddenVertices.addAll(edge.getHiddenVertexes());
+                hiddenVertices.addAll(edge.getHiddenVertices());
                 NetworkEdge newEdge = new NetworkEdge(edge.getSource(), newVertex, edge.isGreedy(), edge.getDistance(), hiddenVertices);
                 graph.addEdge(newEdge.getSource(), newVertex, newEdge);
             }

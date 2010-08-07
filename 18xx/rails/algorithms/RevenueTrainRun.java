@@ -270,25 +270,22 @@ public class RevenueTrainRun {
 
     GeneralPath getAsPath(HexMap map) {
         GeneralPath path = new GeneralPath();
-//        if (edges.size() != 0) {
-            for (NetworkEdge edge:edges) {
-                Point2D sourcePoint = NetworkVertex.getVertexPoint2D(map, edge.getSource());
-                if (sourcePoint != null) { 
-                    path.moveTo((float)sourcePoint.getX(), (float)sourcePoint.getY());
-                }
-                for (NetworkVertex hiddenVertex:edge.getHiddenVertexes()) {
-                    Point2D hiddenPoint = NetworkVertex.getVertexPoint2D(map, hiddenVertex);
-                    if (hiddenPoint != null) {
-                        path.lineTo((float)hiddenPoint.getX(), (float)hiddenPoint.getY());
-                    }
-                }
-                Point2D targetPoint = NetworkVertex.getVertexPoint2D(map, edge.getTarget());
-                if (targetPoint != null) { 
-                    path.lineTo((float)targetPoint.getX(), (float)targetPoint.getY());
+        for (NetworkEdge edge:edges) {
+            // check vertices if they exist as points and start from there
+            List<NetworkVertex> edgeVertices = edge.getVertexPath();
+            boolean initPath = false;
+            for (NetworkVertex edgeVertex:edgeVertices) {
+                Point2D edgePoint = NetworkVertex.getVertexPoint2D(map, edgeVertex);
+                if (edgePoint == null) continue;
+                if (!initPath) {
+                    path.moveTo((float)edgePoint.getX(), (float)edgePoint.getY());
+                    initPath = true;
+                } else {
+                    path.lineTo((float)edgePoint.getX(), (float)edgePoint.getY());
                 }
             }
-            return path;
-//        }
+        }
+        return path;
         
 //        NetworkVertex startVertex = null;
 //        NetworkVertex previousVertex = null;
