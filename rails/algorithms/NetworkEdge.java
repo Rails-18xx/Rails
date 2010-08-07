@@ -26,7 +26,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
     
     private final int distance;
     
-    private final List<NetworkVertex> hiddenVertexes;
+    private final List<NetworkVertex> hiddenVertices;
     // list of vertexes that were merged into the edge
     
     private int routeCosts;
@@ -40,7 +40,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
             this.distance = 1;
         else
             this.distance = 0;
-        hiddenVertexes = new ArrayList<NetworkVertex>();
+        hiddenVertices = new ArrayList<NetworkVertex>();
     }
     
     public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy, 
@@ -49,7 +49,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         this.target = target;
         this.greedy = greedy;
         this.distance = distance;
-        this.hiddenVertexes = hiddenVertexes;
+        this.hiddenVertices = hiddenVertexes;
     }
     
     public NetworkVertex getSource() {
@@ -116,16 +116,27 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         this.routeCosts = routeCosts;
     }
     
-    public List<NetworkVertex> getHiddenVertexes() {
-        return hiddenVertexes;
+    public List<NetworkVertex> getHiddenVertices() {
+        return hiddenVertices;
     }
    
+    /**
+     * all vertices from source to target, including hidden vertices
+     */
+    public List<NetworkVertex> getVertexPath() {
+        List<NetworkVertex> vertexPath = new ArrayList<NetworkVertex>();
+        vertexPath.add(source);
+        vertexPath.addAll(hiddenVertices);
+        vertexPath.add(target);
+        return vertexPath;
+    }
+    
     public String toFullInfoString() {
         StringBuffer info = new StringBuffer();
         info.append("Edge " + getConnection());
         info.append(", greedy = " + greedy);
         info.append(", distance = " + distance);
-        info.append(", hidden vertexes = " + hiddenVertexes);
+        info.append(", hidden vertexes = " + hiddenVertices);
         return info.toString();
     }
     
@@ -222,12 +233,12 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
 
         // create new hiddenVertexes
         List<NetworkVertex> hiddenVertexes = new ArrayList<NetworkVertex>();
-        List<NetworkVertex> hiddenA = edgeA.getHiddenVertexes();
+        List<NetworkVertex> hiddenA = edgeA.getHiddenVertices();
         if (reverseA) {
             hiddenA = new ArrayList<NetworkVertex>(hiddenA); // clone
             Collections.reverse(hiddenA);
         }
-        List<NetworkVertex> hiddenB = edgeB.getHiddenVertexes();
+        List<NetworkVertex> hiddenB = edgeB.getHiddenVertices();
         if (reverseB) {
             hiddenB = new ArrayList<NetworkVertex>(hiddenB); // clone
             Collections.reverse(hiddenB);
@@ -274,9 +285,9 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
     public static NetworkEdge replaceVertex(NetworkEdge edge, NetworkVertex oldVertex, NetworkVertex newVertex) {
         NetworkEdge newEdge;
         if (edge.source == oldVertex) {
-            newEdge= new NetworkEdge(newVertex, edge.target, edge.greedy, edge.distance, edge.hiddenVertexes);
+            newEdge= new NetworkEdge(newVertex, edge.target, edge.greedy, edge.distance, edge.hiddenVertices);
         } else if (edge.target == oldVertex) {
-            newEdge= new NetworkEdge(edge.source, newVertex, edge.greedy, edge.distance, edge.hiddenVertexes);
+            newEdge= new NetworkEdge(edge.source, newVertex, edge.greedy, edge.distance, edge.hiddenVertices);
         } else {
             newEdge = null;
         }
