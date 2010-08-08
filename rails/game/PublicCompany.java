@@ -93,7 +93,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /** Company treasury, holding cash */
     protected CashModel treasury = null;
-    
+
     /** PresidentModel */
     protected PresidentModel presidentModel = null;
 
@@ -196,9 +196,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
-    /** Privates and Certificates owned by the public company */
-    //protected Portfolio portfolio;
-
     /** What percentage of ownership constitutes "one share" */
     protected IntegerState shareUnit;
 
@@ -289,13 +286,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
         longName = tag.getAttributeAsString("longname", name);
         infoText = "<html>"+longName;
 
+        alias = tag.getAttributeAsString("alias", alias);
+
         /* Configure public company features */
         fgHexColour = tag.getAttributeAsString("fgColour", fgHexColour);
-        //fgColour = new Color(Integer.parseInt(fgHexColour, 16));
         fgColour = Util.parseColour(fgHexColour);
 
         bgHexColour = tag.getAttributeAsString("bgColour", bgHexColour);
-        //bgColour = new Color(Integer.parseInt(bgHexColour, 16));
         bgColour = Util.parseColour(bgHexColour);
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
@@ -1990,5 +1987,5 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public String getExtraShareMarks () {
         return "";
     }
-    
+
 }

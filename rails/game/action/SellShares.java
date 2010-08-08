@@ -8,8 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.Bank;
-import rails.game.PublicCompanyI;
+import rails.game.*;
 import rails.util.Util;
 
 /**
@@ -115,7 +114,9 @@ public class SellShares extends PossibleAction {
 
         in.defaultReadObject();
 
+        CompanyManagerI companyManager = getCompanyManager();
         if (Util.hasValue(companyName))
-            company = getCompanyManager().getPublicCompany(companyName);
+            companyName = companyManager.checkAlias(companyName);
+            company = companyManager.getPublicCompany(companyName);
     }
 }

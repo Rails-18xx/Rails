@@ -17,6 +17,7 @@ Cloneable, Comparable<Company> {
 
     protected String name;
     protected String longName;
+    protected String alias = null; // To allow reloading files with old names after name changes
     protected CompanyTypeI type;
     protected int companyNumber; // For internal use
 
@@ -158,6 +159,10 @@ Cloneable, Comparable<Company> {
 
     public String getLongName() {
         return longName;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 
     public String getInfoText(){

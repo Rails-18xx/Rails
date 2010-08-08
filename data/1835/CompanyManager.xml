@@ -155,29 +155,34 @@
 		</SpecialProperties>
 	</Company>
 
-	<Company name="Bay" longname="Bayerische Eisenbahn" type="Major" startspace="C3" tokens="5" fgColour="FFFFFF" bgColour="0000FF">
+	<Company name="BY" longname="Bayerische Eisenbahn" type="Major" startspace="C3" tokens="5" fgColour="FFFFFF" bgColour="0000FF"
+			alias="Bay">
 		<Home hex="O15"/>
         <IfOption name="BYFloatsAt" value="20%">
             <Float percentage="20"/>
         </IfOption>
 	</Company>
-	<Company name="Sax" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+	<Company name="SX" longname="S&#228;chsische Eisenbahn" type="Major" startspace="C4" tokens="3" fgColour="FFFFFF" bgColour="FF0000"
+			alias="Sax">
 		<Home hex="H16"/>
 		<FirstTrainCloses type="Private" name="LD"/>
 	</Company>
-	<Company name="Bad" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="FFFFFF" bgColour="808000">
+	<Company name="BA" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="FFFFFF" bgColour="808000"
+			alias="Bad">
 		<Home hex="L6"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
 		<Certificate shares="2" number="1"/>
 	</Company>
-	<Company name="Wrt" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="FFFF00">
+	<Company name="WT" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="FFFF00"
+			alias="Wrt">
 		<Home hex="M9"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
 		<Certificate shares="2" number="1"/>
 	</Company>
-	<Company name="Hes" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="00CC00">
+	<Company name="HE" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="00CC00"
+			alias="Hes">
 		<Home hex="J8"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
@@ -189,13 +194,15 @@
 		<Certificate shares="2" number="2"/>
 		<Certificate shares="1" number="4"/>
 	</Company>
-	<Company name="Old" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" available="no" tokens="2" fgColour="000000" bgColour="C0C0C0">
+	<Company name="OL" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" available="no" tokens="2" fgColour="000000" bgColour="C0C0C0"
+			alias="Old">
 		<Home hex="D6"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="2" number="2"/>
 		<Certificate shares="1" number="4"/>
 	</Company>
-	<Company name="Pr" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000">
+	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000"
+			alias="Pr">
         <Home hex="E19"/>
 		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
