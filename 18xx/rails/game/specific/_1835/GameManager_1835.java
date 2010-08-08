@@ -7,16 +7,16 @@ public class GameManager_1835 extends GameManager {
 
 	private RoundI previousRound = null;
 	private Player prFormStartingPlayer = null;
-    
+
     public static String M2_ID = "M2";
-    public static String PR_ID = "Pr";
-    public static String OL_ID = "Old";
+    public static String PR_ID = "PR";
+    public static String OL_ID = "OL";
     public static String MS_ID = "MS";
-    public static String WT_ID = "Wrt";
-    public static String HE_ID = "Hes";
-    public static String BA_ID = "Bad";
-    public static String SX_ID = "Sax";
-    public static String BY_ID = "Bay";
+    public static String WT_ID = "WT";
+    public static String HE_ID = "HE";
+    public static String BA_ID = "BA";
+    public static String SX_ID = "SX";
+    public static String BY_ID = "BY";
 
     public GameManager_1835() {
     	super();
@@ -47,7 +47,7 @@ public class GameManager_1835 extends GameManager {
         }
 
     }
-    
+
     public void startPrussianFormationRound(OperatingRound_1835 or) {
 
         interruptedRound = or;
@@ -61,12 +61,13 @@ public class GameManager_1835 extends GameManager {
 	public Player getPrussianFormationStartingPlayer() {
     	return prFormStartingPlayer;
     }
-    
+
+    @Override
     public int getPlayerCertificateLimit(Player player) {
         int limit = playerCertificateLimit.intValue();
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.getTypeName().equalsIgnoreCase("Major")
-                    && company.getPresident() == player 
+                    && company.getPresident() == player
                     && player.getPortfolio().getShare(company) >= 80) limit++;
         }
         return limit;

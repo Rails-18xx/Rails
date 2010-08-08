@@ -1,45 +1,24 @@
 package rails.game.specific._1835;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import rails.game.Bank;
-import rails.game.CashHolder;
-import rails.game.DisplayBuffer;
-import rails.game.GameDef;
-import rails.game.GameManagerI;
-import rails.game.GameOption;
-import rails.game.OperatingRound;
-import rails.game.PhaseI;
-import rails.game.Player;
-import rails.game.Portfolio;
-import rails.game.PrivateCompanyI;
-import rails.game.PublicCertificateI;
-import rails.game.PublicCompanyI;
-import rails.game.ReportBuffer;
-import rails.game.StockSpaceI;
+import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
-import rails.game.special.ExchangeForShare;
-import rails.game.special.SpecialPropertyI;
-import rails.game.special.SpecialTileLay;
+import rails.game.special.*;
 import rails.game.state.BooleanState;
 import rails.util.LocalText;
 
 public class OperatingRound_1835 extends OperatingRound {
-    
-    private BooleanState needPrussianFormationCall 
+
+    private BooleanState needPrussianFormationCall
             = new BooleanState ("NeedPrussianFormationCall", false);
     private BooleanState hasLaidExtraOBBTile
             = new BooleanState ("HasLaidExtraOBBTile", false);
-    
-    /** 
+
+    /**
      * Registry of percentage of PR revenue to be denied per player
      * because of having produced revenue in the same OR.
      */
@@ -51,6 +30,7 @@ public class OperatingRound_1835 extends OperatingRound {
     }
 
     /** Can a public company operate? (1835 special version) */
+    @Override
     protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
         if (!company.hasFloated() || company.isClosed()) {
             return false;
@@ -66,6 +46,7 @@ public class OperatingRound_1835 extends OperatingRound {
         return true;
     }
 
+    @Override
     protected void privatesPayOut() {
         int count = 0;
         for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
@@ -79,8 +60,8 @@ public class OperatingRound_1835 extends OperatingRound {
                             Bank.format(revenue),
                             priv.getName()));
                     new CashMove(bank, recipient, revenue);
-                    
-                    /* Register black private equivalent PR share value 
+
+                    /* Register black private equivalent PR share value
                      * so it can be subtracted if PR operates */
                     if (recipient instanceof Player && priv.getSpecialProperties() != null
                             && priv.getSpecialProperties().size() > 0) {
@@ -92,7 +73,7 @@ public class OperatingRound_1835 extends OperatingRound {
                                 Player player = (Player) recipient;
                                 addIncomeDenialShare (player, share);
                             }
-                            
+
                         }
                     }
                 }
@@ -103,11 +84,11 @@ public class OperatingRound_1835 extends OperatingRound {
     }
 
     private void addIncomeDenialShare (Player player, int share) {
-        
+
         if (!deniedIncomeShare.containsKey(player)) {
             new MapChange<Player, Integer> (deniedIncomeShare, player, share);
         } else {
-            new MapChange<Player, Integer> (deniedIncomeShare, player, 
+            new MapChange<Player, Integer> (deniedIncomeShare, player,
                     share + deniedIncomeShare.get(player));
         }
         //log.debug("+++ Denied "+share+"% share of PR income to "+player.getName());
@@ -117,10 +98,11 @@ public class OperatingRound_1835 extends OperatingRound {
      * A special rule applies to 1835 to prevent black privates and minors providing
      * income twice during an OR.
      */
+    @Override
     protected  Map<CashHolder, Integer>  countSharesPerRecipient () {
-        
+
         Map<CashHolder, Integer> sharesPerRecipient = super.countSharesPerRecipient();
-        
+
         if (operatingCompany.getName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.keySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
@@ -131,19 +113,20 @@ public class OperatingRound_1835 extends OperatingRound {
                         player.getName(),
                         share,
                         GameManager_1835.PR_ID));
-                
+
             }
         }
-        
+
         return sharesPerRecipient;
     }
 
-     /** 
-      * Register black minors as having operated 
+     /**
+      * Register black minors as having operated
      * for the purpose of denying income after conversion to a PR share
      */
+    @Override
     protected void initTurn() {
-        
+
         super.initTurn();
 
         List<SpecialPropertyI> sps = operatingCompany.getSpecialProperties();
@@ -152,32 +135,32 @@ public class OperatingRound_1835 extends OperatingRound {
             addIncomeDenialShare (operatingCompany.getPresident(), efs.getShare());
         }
     }
-    
+
     @Override
     public void resume() {
-        
+
         PublicCompanyI prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
-        
+
         if (prussian.hasFloated() && !prussian.hasOperated()
                 // PR has just started. Check if it can operate this round
-                // That's only the case if M1 has just bought 
+                // That's only the case if M1 has just bought
                 // the first 4-train or 4+4-train
                 && operatingCompany == companyManager.getPublicCompany("M1")) {
             log.debug("M2 has not operated: PR can operate");
-            
+
             // Insert the Prussian before the first major company
             // with a lower current price that hoas not yet operated
             // and isn't currently operating
-            
+
             int index = 0;
             int operatingCompanyIndex = getOperatingCompanyIndex();
             for (PublicCompanyI company : setOperatingCompanies()) {
                 if (index > operatingCompanyIndex
-                        && company.hasStockPrice() 
+                        && company.hasStockPrice()
                         && company.hasFloated()
                         && !company.isClosed()
                         && company != operatingCompany
-                        && company.getCurrentSpace().getPrice() 
+                        && company.getCurrentSpace().getPrice()
                             < prussian.getCurrentSpace().getPrice()) {
                     log.debug("PR will operate before "+company.getName());
                     break;
@@ -189,15 +172,16 @@ public class OperatingRound_1835 extends OperatingRound {
             log.debug("PR will operate at order position "+index);
 
         } else {
-            
+
             log.debug("M2 has operated: PR cannot operate");
-               
+
         }
-        
+
         guiHints.setCurrentRoundType(getClass());
         super.resume();
     }
-    
+
+    @Override
     protected void setSpecialTileLays() {
 
         /* Special-property tile lays */
@@ -207,16 +191,17 @@ public class OperatingRound_1835 extends OperatingRound {
 
         for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
             if (stl.isExtra() || !currentNormalTileLays.isEmpty()) {
-                
+
                 // Exclude the second OBB free tile if the first was laid in this round
                 if (stl.getLocationNameString().matches("M1(7|9)")
                         && hasLaidExtraOBBTile.booleanValue()) continue;
-                
+
                 currentSpecialTileLays.add(new LayTile(stl));
             }
         }
     }
 
+    @Override
     public boolean layTile(LayTile action) {
 
         // The extra OBB tiles may not both be laid in the same round
@@ -233,17 +218,18 @@ public class OperatingRound_1835 extends OperatingRound {
                 return false;
             }
         }
-        
+
         boolean result = super.layTile(action);
-        
+
         if (result && action.getSpecialProperty() != null
                 && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)")) {
             hasLaidExtraOBBTile.set(true);
         }
-        
+
         return result;
     }
 
+    @Override
     protected void newPhaseChecks() {
         PhaseI phase = getCurrentPhase();
         if (phase.getName().equals("4") || phase.getName().equals("4+4")
@@ -259,13 +245,14 @@ public class OperatingRound_1835 extends OperatingRound {
             }
         }
     }
-    
+
+    @Override
     public boolean discardTrain(DiscardTrain action) {
-        
+
         boolean result = super.discardTrain(action);
-        if (result && getStep() == GameDef.OrStep.BUY_TRAIN 
+        if (result && getStep() == GameDef.OrStep.BUY_TRAIN
                 && needPrussianFormationCall.booleanValue()) {
-            // Do the postponed formation calls 
+            // Do the postponed formation calls
             ((GameManager_1835)gameManager).startPrussianFormationRound (this);
             needPrussianFormationCall.set(false);
         }

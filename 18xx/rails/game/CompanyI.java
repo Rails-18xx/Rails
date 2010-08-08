@@ -53,6 +53,8 @@ public interface CompanyI extends ConfigurableComponentI, MoveableHolder {
 
     public String getInfoText();
 
+    public String getAlias();
+
     /**
      * Returns the CompanyType of the Company
      *

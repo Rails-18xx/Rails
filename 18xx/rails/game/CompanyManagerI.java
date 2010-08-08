@@ -54,7 +54,9 @@ public interface CompanyManagerI extends ConfigurableComponentI {
      */
     public CompanyI getCompany(String type, String name);
 
-    //public PublicCompanyI getCompanyByName(String name);
+    public String checkAlias (String alias);
+    public String checkAliasInCertId (String certId);
+
     public List<CompanyTypeI> getCompanyTypes();
 
     public void closeAllPrivates();

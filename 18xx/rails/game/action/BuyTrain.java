@@ -29,17 +29,17 @@ public class BuyTrain extends PossibleORAction {
     private boolean forcedBuyIfNoRoute = false; // TODO Remove once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
-    
+
     /** Obsolete, but left in for backwards compatibility of saved files */
     private boolean forcedExchange = false;
-    
+
     private boolean presidentMustAddCash = false;
     private boolean presidentMayAddCash = false;
     private int presidentCashToAdd = 0;
 
     transient private SpecialTrainBuy specialProperty = null;
     private int specialPropertyId = 0;
-    
+
     private String extraMessage = null;
 
     // User settings
@@ -91,7 +91,7 @@ public class BuyTrain extends PossibleORAction {
     public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
         this.forcedBuyIfNoRoute = hasNoTrains;
     }
-    
+
     public void setExtraMessage (String message) {
         extraMessage = message;
     }
@@ -119,14 +119,14 @@ public class BuyTrain extends PossibleORAction {
         return specialProperty != null;
     }
 
-    /** 
-     * To be used for all usage of train, also within this class. 
-     * After reloading the 2nd copy etc. of a train with unlimited quantity, 
+    /**
+     * To be used for all usage of train, also within this class.
+     * After reloading the 2nd copy etc. of a train with unlimited quantity,
      * the train attribute will be null (because readObject() is called and the
      * train is initiated before the actions have been executed - the second
      * train is in this case only created after buying the first one).
      * @return
-     */ 
+     */
     public TrainI getTrain() {
         if (train == null) {
             train = GameManager.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
@@ -269,11 +269,14 @@ public class BuyTrain extends PossibleORAction {
 
         GameManagerI gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
+        CompanyManagerI companyManager = gameManager.getCompanyManager();
+
+        fromName = companyManager.checkAlias (fromName);
 
         train = trainManager.getTrainByUniqueId(trainUniqueId);
         // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
         // Set getTrain() for how this is fixed.
-        
+
         from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
