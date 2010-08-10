@@ -358,12 +358,8 @@ public class StockRound extends Round {
          */
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
 
-            // Can't sell shares that have no price
-            if (!company.hasStarted() || !company.hasStockPrice()) continue;
-
-            // In some games, can't sell shares if not operated
-            if (company.mustHaveOperatedToTradeShares()
-                    && !company.hasOperated()) continue;
+            // Check if shares of this company can be sold at all
+            if (!mayPlayerSellShareOfCompany(company)) continue;
 
             share = maxShareToSell = playerPortfolio.getShare(company);
             if (maxShareToSell == 0) continue;
@@ -957,6 +953,12 @@ public class StockRound extends Round {
                 break;
             }
 
+            // May player sell this company
+            if (!mayPlayerSellShareOfCompany(company)) {
+            	errMsg = LocalText.getText("SaleNotAllowed", companyName);
+            	break;
+            }
+
             // The player must have the share(s)
             if (portfolio.getShare(company) < numberToSell) {
                 errMsg = LocalText.getText("NoShareOwned");
@@ -1395,6 +1397,19 @@ public class StockRound extends Round {
         return true;
     }
 
+    public boolean mayPlayerSellShareOfCompany(PublicCompanyI company) {
+
+        // Can't sell shares that have no price
+        if (!company.hasStarted() || !company.hasStockPrice()) return false;
+
+        // In some games, can't sell shares if not operated
+        if (noSaleIfNotOperated()
+                && !company.hasOperated()) return false;
+
+    	return true;
+    }
+
+
     /**
      * Can the current player do any buying?
      *
@@ -1408,10 +1423,10 @@ public class StockRound extends Round {
     protected boolean isPlayerOverLimits(Player player) {
         return (isPlayerOverLimitsDetail(player) != null);
     }
-        
+
     protected String isPlayerOverLimitsDetail(Player player) {
         StringBuffer violations = new StringBuffer();
-        
+
         // Over the total certificate hold Limit?
         if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit(player)) {
             violations.append(LocalText.getText("ExceedCertificateLimitTotal",
@@ -1423,7 +1438,7 @@ public class StockRound extends Round {
         // Over the hold limit of any company?
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
-                    && !checkAgainstHoldLimit(player, company, 0)) { 
+                    && !checkAgainstHoldLimit(player, company, 0)) {
                 violations.append(LocalText.getText("ExceedCertificateLimitCompany",
                         company.getName(),
                         player.getPortfolio().getShare(company),
