@@ -146,10 +146,10 @@ public class BuyCertificate extends PossibleAction {
         /* Check for aliases (old company names) */
         CompanyManagerI companyManager = gameManager.getCompanyManager();
         companyName = companyManager.checkAlias (companyName);
-        certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
 
         if (certUniqueId != null) {
             // Old style
+            certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
             from = gameManager.getPortfolioByName(fromName);
             company = certificate.getCompany();
