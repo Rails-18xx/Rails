@@ -19,7 +19,7 @@ public class GameManager_18EU extends GameManager {
     public void nextRound(RoundI round) {
         if (round instanceof OperatingRound_18EU) {
             if (playerToStartFMERound.getObject() != null
-                    && relativeORNumber.intValue() == numOfORs) {
+                    && relativeORNumber.intValue() == numOfORs.intValue()) {
                 createRound (FinalMinorExchangeRound.class).start 
                         ((Player)playerToStartFMERound.getObject());
                 playerToStartFMERound.set(null);
