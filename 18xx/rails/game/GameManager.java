@@ -108,7 +108,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new IntegerState("AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
         new IntegerState("RelativeORNumber");
-    protected int numOfORs;
+    protected IntegerState numOfORs = new IntegerState("numOfORs");
 
     protected BooleanState gameOver = new BooleanState("GameOver" ,false);
     protected Boolean gameOverReportedUI = false;
@@ -567,7 +567,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             } else if (skipFirstStockRound) {
                 PhaseI currentPhase =
                     phaseManager.getCurrentPhase();
-                numOfORs = currentPhase.getNumberOfOperatingRounds();
+                if (currentPhase.getNumberOfOperatingRounds() != numOfORs.intValue()) {
+                    numOfORs.set(currentPhase.getNumberOfOperatingRounds());
+                }
                 log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
                 // Create a new OperatingRound (never more than one Stock Round)
@@ -581,7 +583,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         } else if (round instanceof StockRound) {
             PhaseI currentPhase = getCurrentPhase();
             if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
-            numOfORs = currentPhase.getNumberOfOperatingRounds();
+            numOfORs.set(currentPhase.getNumberOfOperatingRounds());
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
@@ -594,7 +596,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
                 finishGame();
 
-            } else if (relativeORNumber.add(1) <= numOfORs) {
+            } else if (relativeORNumber.add(1) <= numOfORs.intValue()) {
                 // There will be another OR
                 startOperatingRound(true);
             } else if (startPacket != null && !startPacket.areAllSold()) {
@@ -697,7 +699,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     }
 
     public String getNumOfORs () {
-        return new Integer(numOfORs).toString();
+        return numOfORs.getText();
     }
 
     /* (non-Javadoc)
@@ -1639,7 +1641,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
         return cm;
     }
-
     /** Return a list of companies in operation order.
      * <p>Note that, unlike Round.setOperatingCompanies(), this method does <b>not</b> check
      * if the companies are actualy allowed to operate. One purpose is to check for upping the
