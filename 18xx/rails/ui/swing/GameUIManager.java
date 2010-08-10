@@ -29,7 +29,7 @@ public class GameUIManager implements DialogOwner {
 
     public StockChart stockChart;
     public StatusWindow statusWindow;
-    public ReportWindow reportWindow;
+    public AbstractReportWindow reportWindow;
     public ConfigWindow configWindow;
     public ORUIManager orUIManager;
     public ORWindow orWindow; // TEMPORARY
@@ -157,7 +157,11 @@ public class GameUIManager implements DialogOwner {
 
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
-        reportWindow = new ReportWindow(gameManager);
+        if (Config.get("report.window.type").equalsIgnoreCase("static")) {
+            reportWindow = new ReportWindow(gameManager);
+        } else {
+            reportWindow = new ReportWindowDynamic(this);
+        }
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
 
@@ -223,7 +227,7 @@ public class GameUIManager implements DialogOwner {
 
             // Follow-up the result
             log.debug("==Result from server: " + result);
-            reportWindow.addLog();
+            reportWindow.updateLog();
             /*
             if (DisplayBuffer.getAutoDisplay()) {
                 if (displayServerMessage()) {
@@ -449,6 +453,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         updateStatus(activeWindow);
+        
     }
 
     /** Stub, to be overridden in subclasses for special round types */

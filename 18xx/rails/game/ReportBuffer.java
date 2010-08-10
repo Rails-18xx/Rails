@@ -9,6 +9,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.util.Config;
+import rails.util.LocalText;
 import rails.util.Util;
 
 /**
@@ -22,16 +23,69 @@ import rails.util.Util;
  *
  */
 public final class ReportBuffer {
+    
+    /** defines the collection of data that is stored in the report buffer */
+    private class ReportItem {
+        private List<String> messages = new ArrayList<String>();
+        private int index = 0;
+        private Player player = null;
+        private RoundI round = null;
+      
+        private void addMessage(String message) {
+            // ignore undos and redos
+            messages.add(message);
+        }
+        
+        private String getMessages() {
+            StringBuffer s = new StringBuffer();
+            for (String message:messages) {
+                s.append(message);
+            }
+            return s.toString();
+        }
+        
+        private String toHtml() {
+            StringBuffer s = new StringBuffer();
+            boolean init = true;
+            for (String message:messages) {
+                if (init) {
+                    s.append("<a href=http://rails:"  + index + ">");
+                    s.append(message);
+                    s.append("</a><br>");
+                    init = false;
+                } else {
+                    s.append(message + "<br>");
+                }
+            }
+            return s.toString();
+        }
+        
+        public String toString() {
+            StringBuffer s = new StringBuffer();
+            s.append("ReportItem for MoveStackIndex = " + index);
+            s.append(", player = " + player);
+            s.append(", round = " + round);
+            s.append(", messages = "); s.append(getMessages());
+            return s.toString();
+        }
+    }
+
+    
     /**
      * A stack for displaying messages in the Log Window. Such messages are
      * intended to record the progress of the rails.game and can be used as a
      * rails.game report.
      */
-    private List<String> reportQueue = new ArrayList<String>();
+    private List<String> reportQueue = new ArrayList<String> ();
 
     /** Another stack for messages that must "wait" for other messages */
     private List<String> waitQueue = new ArrayList<String> ();
 
+    /** Archive stack, the integer index corresponds with the moveset items */
+    private SortedMap<Integer, ReportItem> reportItems = new TreeMap<Integer, ReportItem>();
+    /** Indicator string to find the active message position in the parsed html document */
+    public static final String ACTIVE_MESSAGE_INDICATOR = "(**)"; 
+    
     private String reportPathname = null;
     private PrintWriter report = null;
 
@@ -42,6 +96,7 @@ public final class ReportBuffer {
     private static String reportDirectory = null;
     private static final String DEFAULT_DTS_PATTERN = "yyyyMMdd_HHmm";
     private static final String DEFAULT_REPORT_EXTENSION = "txt";
+    
 
     static {
         reportDirectory = Config.get("report.directory").trim();
@@ -53,15 +108,16 @@ public final class ReportBuffer {
 
 
     public ReportBuffer() {
+        reportItems.put(0, new ReportItem());
         if (!initialQueue.isEmpty()) {
             for (String s : initialQueue) {
-                addMessage (s);
+                addMessage(s, -1); // start of the game
             }
             initialQueue.clear();
         }
     }
 
-
+    
     private List<String> getReportQueue() {
         return reportQueue;
     }
@@ -70,11 +126,15 @@ public final class ReportBuffer {
         reportQueue.clear();
     }
 
-    private void addMessage (String message) {
+    private void addMessage(String message, int moveStackIndex) {
         if (message != null) {
-            if (message.equals(""))
+            if (message.equals("")) {
                 message = "---"; // workaround for testing
+            }
+            // legacy report queue
             reportQueue.add(message);
+            // new queue
+            reportItems.get(moveStackIndex).addMessage(message);
             /* Also log the message */
             if (message.length() > 0) log.info(message);
             /* Also write it to the report file, if requested */
@@ -130,7 +190,57 @@ public final class ReportBuffer {
             wantReport = false;
         }
     }
+    
+    private void addReportItem(int index, Player player, RoundI round) {
+        ReportItem newItem = new ReportItem();
+        newItem.index = index;
+        newItem.player = player;
+        newItem.round = round;
+        reportItems.put(index, newItem);
+        Set<Integer> deleteIndices = new HashSet<Integer>
+            (reportItems.tailMap(index + 1).keySet());
+        for (Integer i:deleteIndices) {
+            reportItems.remove(i);
+        }
+    }
 
+    /** Movestack calls the report item to update */
+    public static void createNewReportItem(int index) {
+        // check availablity
+        GameManagerI gm = GameManager.getInstance();
+        ReportBuffer instance = null;
+        if (gm != null) {
+            instance = gm.getReportBuffer();
+        }
+        if (gm == null || instance == null) {
+            return;
+        }
+        // all there, add new report item
+        Player player = gm.getCurrentPlayer();
+        RoundI round = gm.getCurrentRound();
+        instance.addReportItem(index, player, round);
+    }
+
+    
+    public static String getReportItems() {
+        int index = GameManager.getInstance().getMoveStack().getIndex();
+        ReportBuffer instance = getInstance();
+        
+        StringBuffer s = new StringBuffer();
+        s.append("<html>");
+        for (ReportItem item:instance.reportItems.values()) {
+            if (item.index == index-1) {
+                s.append("<p bgcolor=Yellow>" + ACTIVE_MESSAGE_INDICATOR) ;
+            }
+            s.append(item.toHtml());
+            if (item.index == (index-1)) {
+                s.append("</p><");
+            }
+        }
+        s.append("</html>");
+        
+        return s.toString();
+    }
 
     /** Get the current log buffer, and clear it */
     public static String get() {
@@ -146,17 +256,25 @@ public final class ReportBuffer {
 
         return result.toString();
     }
-
+    
     /** Add a message to the log buffer (and display it on the console) */
     public static void add(String message) {
         GameManagerI gm = GameManager.getInstance();
         ReportBuffer instance = null;
-        if (gm != null) instance = gm.getReportBuffer();
-        if (gm == null || instance == null) {
+        if (gm != null) {
+            instance = gm.getReportBuffer();
+        }
+        if (instance == null) {
             // Queue in a static buffer until the instance is created
             initialQueue.add(message);
         } else {
-            instance.addMessage(message);
+            // ignore undo and redo for the new reportItems
+            if (message.equals(LocalText.getText("UNDO")) || message.equals(LocalText.getText("REDO"))) {
+                instance.reportQueue.add(message);
+                return;
+            }
+            int moveStackIndex = gm.getMoveStack().getIndex();
+            instance.addMessage(message, moveStackIndex);
         }
     }
 
@@ -169,7 +287,7 @@ public final class ReportBuffer {
         else
             return instance.getReportQueue();
     }
-
+    
     /** clear the current buffer */
     public static void clear() {
         ReportBuffer instance = getInstance();
@@ -184,18 +302,17 @@ public final class ReportBuffer {
         return GameManager.getInstance().getReportBuffer();
     }
 
-
-
-    public static void addWaiting (String string) {
-        getInstance().waitQueue.add (string);
+    public static void addWaiting (String message) {
+        getInstance().waitQueue.add(message);
     }
 
     public static void getAllWaiting () {
         ReportBuffer instance = getInstance();
         for (String message : instance.waitQueue) {
-            instance.addMessage (message);
+            add(message);
         }
         instance.waitQueue.clear();
     }
+
 
 }

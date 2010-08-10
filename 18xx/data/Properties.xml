@@ -19,10 +19,7 @@
 		<Property name="save.recovery.active" type="BOOLEAN" />
 		<Property name="save.recovery.filepath" type="FILE" />
 	</Section>
-	<Section name="UI">
-		<Property name="report.window.open" type="BOOLEAN" />
-		<Property name="report.window.editable" type="BOOLEAN" />
-		<Property name="stockchart.window.open" type="BOOLEAN" />
+	<Section name="Font">
 		<Property name="font.ui.scale" type="PERCENT" 
 			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 		<Property name="font.ui.name" type="FONT"
@@ -30,9 +27,13 @@
 		<Property name="font.ui.style" type="LIST" values="plain,bold" 
 			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 	</Section>
-	<Section name="Map">
+	<Section name="UI">
 		<Property name="map.autoscroll" type="BOOLEAN" />
 		<Property name="map.zoomstep" type="INTEGER" />
+		<Property name="report.window.type" type="LIST" values="static,dynamic" />
+		<Property name="report.window.open" type="BOOLEAN" />
+		<Property name="report.window.editable" type="BOOLEAN" />
+		<Property name="stockchart.window.open" type="BOOLEAN" />
 	</Section>
 	<Section name="Format">
 		<Property name="money_format" type="STRING" />

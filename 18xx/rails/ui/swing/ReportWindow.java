@@ -25,7 +25,7 @@ import rails.util.Util;
  * This is the UI for the LogWindow. It displays logged messages to the user
  * during the rails.game.
  */
-public class ReportWindow extends JFrame implements ActionListener, KeyListener {
+public class ReportWindow extends AbstractReportWindow implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
     private JTextArea reportText;
@@ -156,23 +156,16 @@ public class ReportWindow extends JFrame implements ActionListener, KeyListener 
         
         setContentPane(messagePanel);
 
-        setSize(400, 400);
-        setLocation(600, 400);
-        setTitle(LocalText.getText("GameReportTitle"));
-
-        final JFrame frame = this;
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                StatusWindow.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
-                frame.dispose();
-            }
-        });
         addKeyListener(this);
-        setVisible("yes".equalsIgnoreCase(Config.get("report.window.open")));
+        
+        // default report window settings
+        super.init();
     }
 
-    public void addLog() {
+    /* (non-Javadoc)
+     * @see rails.ui.swing.ReportWindowI#updateLog()
+     */
+    public void updateLog() {
         String newText = ReportBuffer.get();
         if (newText.length() > 0) {
             reportText.append(newText);
