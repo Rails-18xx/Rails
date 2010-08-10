@@ -108,8 +108,8 @@ public class ShareSellingRound extends StockRound {
          */
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
 
-            // Can't sell shares that have no price
-            if (!company.hasStarted()) continue;
+            // Check if shares of this company can be sold at all
+            if (!mayPlayerSellShareOfCompany(company)) continue;
 
             share = maxShareToSell = playerPortfolio.getShare(company);
             if (maxShareToSell == 0) continue;
@@ -229,6 +229,12 @@ public class ShareSellingRound extends StockRound {
             if (company == null) {
                 errMsg = LocalText.getText("NoCompany");
                 break;
+            }
+
+            // May player sell this company
+            if (!mayPlayerSellShareOfCompany(company)) {
+            	errMsg = LocalText.getText("SaleNotAllowed", companyName);
+            	break;
             }
 
             // The player must have the share(s)

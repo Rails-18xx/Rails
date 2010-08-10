@@ -71,7 +71,8 @@ public class TreasuryShareRound extends StockRound {
 
         possibleActions.clear();
 
-        if (!operatingCompany.hasOperated()) return true;
+        if (operatingCompany.mustHaveOperatedToTradeShares()
+                && !operatingCompany.hasOperated()) return true;
 
         if (!hasSold.booleanValue()) setBuyableCerts();
         if (!hasBought.booleanValue()) setSellableCerts();
