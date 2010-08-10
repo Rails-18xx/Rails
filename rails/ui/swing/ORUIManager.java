@@ -472,7 +472,7 @@ public class ORUIManager implements DialogOwner {
 
         }
 
-        gameUIManager.reportWindow.addLog();
+        gameUIManager.reportWindow.updateLog();
     }
 
     /** Stub, can be overridden in subclasses */

@@ -101,7 +101,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
             }
         });
 
-        gameUIManager.reportWindow.addLog();
+        gameUIManager.reportWindow.updateLog();
     }
 
     public ORUIManager getORUIManager() {

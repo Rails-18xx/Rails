@@ -14,6 +14,7 @@ save.recovery.active=no
 save.recovery.filepath=18xx_autosave.rails
 
 ### Panel UI
+report.window.type=dynamic
 report.window.open=yes
 report.window.editable=no
 stockchart.window.open=yes

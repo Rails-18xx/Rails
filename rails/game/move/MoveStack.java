@@ -68,6 +68,7 @@ public class MoveStack {
             moveStack.add(currentMoveSet);
             lastIndex++;
             currentMoveSet = null;
+            ReportBuffer.createNewReportItem(this.getIndex());
             return true;
         }
     }
@@ -112,7 +113,7 @@ public class MoveStack {
             MoveSet undoAction;
             do {
                 ReportBuffer.add(LocalText.getText("UNDO"));
-                // log.debug ("MoveStack undo index is "+lastIndex);
+                log.debug ("MoveStack undo index is "+lastIndex);
                 undoAction = moveStack.get(lastIndex--);
                 undoAction.unexecute();
             } while (undoAction.isLinkedToPreviousMove());
@@ -129,14 +130,13 @@ public class MoveStack {
     public boolean redoMoveSet () {
         if (currentMoveSet == null && lastIndex < moveStack.size() - 1) {
             MoveSet redoAction;
-            redoAction= moveStack.get(++lastIndex);
             do {
+                redoAction = moveStack.get(++lastIndex);
                 ReportBuffer.add(LocalText.getText("REDO"));
+                log.debug ("MoveStack redo index is "+lastIndex);
                 redoAction.reexecute();
                 if (lastIndex == moveStack.size() - 1) break;
-                redoAction= moveStack.get(++lastIndex);
-            } while (redoAction.isLinkedToPreviousMove());
-            // log.debug ("MoveStack redo index is "+lastIndex);
+            } while (moveStack.get(lastIndex + 1).isLinkedToPreviousMove());
             return true;
         } else {
             log.error("Invalid redo: index=" + lastIndex + " size="
@@ -164,5 +164,21 @@ public class MoveStack {
     public int getIndex() {
         return lastIndex + 1;
     }
-
+    
+    /**
+     * undo/redo to a given moveStack index
+     */
+    public boolean gotoIndex(int index) {
+        if (getIndex() == index) return true;
+        else if (getIndex() < index) {
+            while (getIndex() < index) {
+                if (!redoMoveSet()) return false;
+            }
+        } else {
+            while (getIndex() > index) {
+                if (!undoMoveSet(true)) return false;
+            }
+        };
+        return true;
+    }
 }

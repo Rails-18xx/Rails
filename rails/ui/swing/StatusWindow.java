@@ -602,6 +602,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             System.exit(0);
         } else if (command.equals(REPORT_CMD)) {
             gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+            gameUIManager.reportWindow.scrollDown();
             return;
         } else if (command.equals(MARKET_CMD)) {
             gameUIManager.stockChart.setVisible(((JMenuItem) actor.getSource()).isSelected());
