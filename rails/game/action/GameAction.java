@@ -20,6 +20,7 @@ public class GameAction extends PossibleAction {
 
     // Client-side settings
     protected String filepath; // Only applies to SAVE and LOAD
+    protected int moveStackIndex = -1; // target moveStackIndex, only for FORCED_UNDO and REDO
 
     public static final long serialVersionUID = 1L;
 
@@ -37,6 +38,14 @@ public class GameAction extends PossibleAction {
         return filepath;
     }
 
+    public void setmoveStackIndex(int moveStackIndex) {
+        this.moveStackIndex = moveStackIndex;
+    }
+
+    public int getmoveStackIndex() {
+        return moveStackIndex;
+    }
+    
     public int getMode() {
         return mode;
     }
