@@ -51,10 +51,10 @@ public final class ReportBuffer {
                 if (init) {
                     s.append("<a href=http://rails:"  + index + ">");
                     s.append(message);
-                    s.append("</a><br>");
+                    s.append("</a><br>&#10;"); // &#10; is the linefeed character to induce line feed on copy & paste
                     init = false;
                 } else {
-                    s.append(message + "<br>");
+                    s.append(message + "<br>&#10;"); // see above
                 }
             }
             return s.toString();

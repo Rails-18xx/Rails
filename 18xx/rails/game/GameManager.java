@@ -773,30 +773,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
                 // Process undo/redo centrally
                 if (action instanceof GameAction) {
-
                     GameAction gameAction = (GameAction) action;
-                    switch (gameAction.getMode()) {
-                    case GameAction.SAVE:
-                        result = save(gameAction);
-                        break;
-                    case GameAction.UNDO:
-                        moveStack.undoMoveSet(false);
-                        result = true;
-                        break;
-                    case GameAction.FORCED_UNDO:
-                        moveStack.undoMoveSet(true);
-                        result = true;
-                        break;
-                    case GameAction.REDO:
-                        moveStack.redoMoveSet();
-                        result = true;
-                        break;
-                    case GameAction.EXPORT:
-                        result = export(gameAction);
-                        break;
-                    }
+                    result = processGameActions(gameAction);
                     if (result) break;
-
                 }
 
                 // All other actions: process per round
@@ -890,6 +869,43 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return result;
     }
 
+    private boolean processGameActions(GameAction gameAction) {
+        // Process undo/redo centrally
+        boolean result = false;
+        
+        int index = gameAction.getmoveStackIndex();
+        switch (gameAction.getMode()) {
+        case GameAction.SAVE:
+            result = save(gameAction);
+            break;
+        case GameAction.UNDO:
+            moveStack.undoMoveSet(true);
+            result = true;
+            break;
+        case GameAction.FORCED_UNDO:
+            if (index != -1) {
+                moveStack.gotoIndex(index);
+            } else {
+                moveStack.undoMoveSet(false);
+            }
+            result = true;
+            break;
+        case GameAction.REDO:
+            if (index != -1) {
+                moveStack.gotoIndex(index);
+            } else {
+                moveStack.redoMoveSet();
+            }
+            result = true;
+            break;
+        case GameAction.EXPORT:
+            result = export(gameAction);
+            break;
+        }
+
+        return result;
+    }
+    
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */

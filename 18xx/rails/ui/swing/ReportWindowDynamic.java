@@ -146,16 +146,12 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         MoveStack stack = gameUIManager.getGameManager().getMoveStack();
         int currentIndex = stack.getIndex();
         if (index > currentIndex) { // move forward
-            if (index != currentIndex +1) {
-                stack.gotoIndex(index - 1);
-            }
             GameAction action = new GameAction(GameAction.REDO);
+            action.setmoveStackIndex(index);
             gameUIManager.processOnServer(action);
         } else if (index < currentIndex) { // move backward
-            if (index != currentIndex - 1) {
-                stack.gotoIndex(index + 1);
-            }
             GameAction action = new GameAction(GameAction.FORCED_UNDO);
+            action.setmoveStackIndex(index);
             gameUIManager.processOnServer(action);
         }
     }
