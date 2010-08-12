@@ -879,14 +879,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             result = save(gameAction);
             break;
         case GameAction.UNDO:
-            moveStack.undoMoveSet(true);
+            moveStack.undoMoveSet(false);
             result = true;
             break;
         case GameAction.FORCED_UNDO:
             if (index != -1) {
                 moveStack.gotoIndex(index);
             } else {
-                moveStack.undoMoveSet(false);
+                moveStack.undoMoveSet(true);
             }
             result = true;
             break;

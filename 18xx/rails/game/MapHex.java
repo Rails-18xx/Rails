@@ -1047,25 +1047,43 @@ StationHolder, TokenHolder {
             // Return MapHex attribute if defined
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
-            // Check if this token lay does not block an unlaid home base
+            City cityToLay = this.getCity(cityNumber);
+            if (cityToLay == null) { // city does not exist, this does not block itself
+                return false;
+            }
+            // check if the city is potential home for other companies
+            int allBlockCompanies = 0;
+            int anyBlockCompanies = 0;
+            int cityBlockCompanies = 0;
             for (PublicCompanyI comp : homes.keySet()) {
                 if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
-                // home base not laid yet, define list of cities to check
-                List<City> citiesToCheck = new ArrayList<City>();
+                // home base not laid yet
                 City homeCity = homes.get(comp);
-                if (homeCity != null) {
-                    citiesToCheck.add(homeCity);
-                } else {
-                    citiesToCheck.addAll(cities);
-                }
-                int tokenSlotsLeft = 0;
-                for (City city:cities) {
-                    tokenSlotsLeft += city.getTokenSlotsLeft();
-                    if (comp.isHomeBlockedForAllCities() & city.getTokenSlotsLeft() < 2) {
-                            return true; 
+                if (homeCity == null) {
+                    if (comp.isHomeBlockedForAllCities()) {
+                        allBlockCompanies ++; // undecided companies that block all cities
+                    } else {
+                        anyBlockCompanies ++; // undecided companies that block any cities
                     }
+                } else if (cityToLay == homeCity) {
+                    cityBlockCompanies ++; // companies which are located in the city in question
+                } else {
+                    anyBlockCompanies ++; // companies which are located somewhere else
                 }
-                if (tokenSlotsLeft < 2) return true; // not enough tokens left, assume only one company
+            }
+            log.debug("IsBlockedForTokenLays: allBlockCompanies = " + allBlockCompanies + 
+                    ", anyBlockCompanies = " + anyBlockCompanies + " , cityBlockCompanies = " + cityBlockCompanies);
+            // check if there are sufficient individual city slots
+            if (allBlockCompanies + cityBlockCompanies + 1 > cityToLay.getTokenSlotsLeft()) {
+                return true; // the additional token exceeds the number of available slots
+            }
+            // check if the overall hex slots are sufficient
+            int allTokenSlotsLeft = 0;
+            for (City city:cities) {
+                allTokenSlotsLeft += city.getTokenSlotsLeft();
+            }
+            if (allBlockCompanies + anyBlockCompanies  + cityBlockCompanies + 1 > allTokenSlotsLeft) {
+                return true; // all located companies plus the additonal token exceeds the available slots
             }
         }
         return false;

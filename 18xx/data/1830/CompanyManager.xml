@@ -89,7 +89,7 @@
 			longname="Erie Railroad">
 	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
 			in each city one slot has to be available -->
-		<Home hex="E11" city="0" AllCitiesBlocked="yes"/>
+		<Home hex="E11" city="0" allCitiesBlocked="yes"/>
 	</Company>
 	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
 			longname="Boston &amp; Maine">
@@ -106,7 +106,7 @@
 	<IfOption name="Variant" value="Pere Marquette">
 		<Company name="PM" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
 				longname="Pere Marquette">
-			<Home hex="E5" city="0" AllCitiesBlocked="yes" />
+			<Home hex="E5" city="0" allCitiesBlocked="yes" />
 		</Company>
 	</IfOption>
 		<StartPacket roundClass="rails.game.StartRound_1830">
