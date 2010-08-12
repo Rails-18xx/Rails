@@ -36,7 +36,7 @@
 	<Hex name="E5" tile="-20" label="OO" cost="80"/>
 	<Hex name="E7" tile="-1" impassable="F8"/>
 	<Hex name="E9" tile="-7" orientation="4"/>
-	<Hex name="E11" tile="-20" label="OO" unlaidHomeBlocksTokens="yes"/>
+	<Hex name="E11" tile="-20" label="OO"/>
 	<Hex name="E13" tile="0"/>
 	<Hex name="E15" tile="0"/>
 	<Hex name="E17" tile="0" cost="120"/>

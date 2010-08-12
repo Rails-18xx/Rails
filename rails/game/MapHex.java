@@ -1012,46 +1012,60 @@ StationHolder, TokenHolder {
 
     /**
      * @return Returns false if no base tokens may yet be laid on this hex and station.
+     * 
      * NOTE: this method currently only checks for prohibitions caused
      * by the presence of unlaid home base tokens.
      * It does NOT (yet) check for free space.
      *
-     * Remark: There are the following cases to check
-     * A) isBlockedForTokenLays is active for the MapHex => return the state of this
-     *    (Example: Erie home base in 1830)
-     * otherwise
-     * B) City is decided => check the city if a slot is left (standard)
-     * C) City is undecided => check all cities if there is a slot left
+     *
+     * There are the following cases to check for each company located there
+     * 
+     * A) City is decided or there is only one city 
+     *   => check if the city has a free slot or not
+     *   (examples: NYNH in 1830 for a two city tile, NYC for a one city tile)
+     * B) City is not decided (example: Erie in 1830)
+     *   two subcases depending on isHomeBlockedForAllCities
+     *   - (true): all cities of the hex have remaining slots available
+     *   - (false): no city of the hex has remaining slots available
+     * C) Or the company does not block its home city at all (example:Pr in 1835)
+     *    then isBlockedForTokenLays attribute is used
+     * 
+     * NOTE: It assumes that not two company share the same home city.  
+     * Undecided companies cannot share the same hex with any other company.
+     * 
+     * Previously used was the variable isBlockedForTokenLays
+     * which is set to yes to block the whole hex for the token lays
+     * until the (home) company laid their token
+     * 
      */
     public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
 
-        if (isHomeFor(company))
+        if (isHomeFor(company)) {
             // Company can always lay a home base
             return false;
-        else if (isBlockedForTokenLays != null) { // case A)
-            // if true: token lay blocked because a required home base is not yet laid
-            // if false: token lay allowed if there is any free space
-            // Free space is not checked here (yet)
+        } else if (isBlockedForTokenLays != null) {
+            // Return MapHex attribute if defined
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
             // Check if this token lay does not block an unlaid home base
             for (PublicCompanyI comp : homes.keySet()) {
                 if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
+                // home base not laid yet, define list of cities to check
+                List<City> citiesToCheck = new ArrayList<City>();
                 City homeCity = homes.get(comp);
-                if (homeCity != null) { // case B)
-                    if (cityNumber == homeCity.getNumber()
-                            // Assume that a city is never home to more than one company
-                            && homeCity.getTokens().isEmpty()
-                            && homeCity.getTokenSlotsLeft() < 2) {
-                        return true;
-                    }
-                } else { // case C)
-                    int tokenSlotsLeft = 0;
-                    for (City city:cities) {
-                        tokenSlotsLeft += city.getTokenSlotsLeft();
-                    }
-                    if (tokenSlotsLeft < 2) return true; // not enough tokens left, assume only one company
+                if (homeCity != null) {
+                    citiesToCheck.add(homeCity);
+                } else {
+                    citiesToCheck.addAll(cities);
                 }
+                int tokenSlotsLeft = 0;
+                for (City city:cities) {
+                    tokenSlotsLeft += city.getTokenSlotsLeft();
+                    if (comp.isHomeBlockedForAllCities() & city.getTokenSlotsLeft() < 2) {
+                            return true; 
+                    }
+                }
+                if (tokenSlotsLeft < 2) return true; // not enough tokens left, assume only one company
             }
         }
         return false;
