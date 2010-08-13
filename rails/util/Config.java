@@ -51,8 +51,8 @@ public final class Config {
     private static String userProfilesFile = "user.profiles";
     private static Properties userProfiles = new Properties();
     private static boolean profilesLoaded = false;
-    private static final String TEST_PROFILE_SELECTION = ".test";
-    private static final String DEFAULT_PROFILE_SELECTION = "default";
+    private static String DEFAULT_PROFILE_SELECTION = "default"; // can be overwritten
+    private static final String TEST_PROFILE_SELECTION = ".test"; // used as default profile for integration tests
     private static final String STANDARD_PROFILE_SELECTION = "user";
     private static final String DEFAULTPROFILE_PROPERTY = "default.profile";
     private static final String PROFILENAME_PROPERTY = "profile.name";
@@ -329,8 +329,11 @@ public final class Config {
         // delayed setting of logger
         log = Logger.getLogger(Config.class.getPackage().getName());
 
+        // define settings for testing 
         legacyConfigFile = false;
-        selectedProfile = TEST_PROFILE_SELECTION;
+        DEFAULT_PROFILE_SELECTION = TEST_PROFILE_SELECTION;
+        selectedProfile = null;
+
         initialLoad();
     }
 
@@ -447,19 +450,23 @@ public final class Config {
         userProperties = new Properties();
         defaultProperties = new Properties();
         
-        // check if the profile is already defined under userProfiles 
-        String userConfigFile = userProfiles.getProperty(userProfile);
-        if (Util.hasValue(userConfigFile) && // load user profile
-             loadPropertyFile(userProperties, userConfigFile, false)) {
-            // do nothing, only side effects
-        } else { // if not defined or loadable, define userprofile with file association
-            userProfiles.setProperty(userProfile, "");
+        String userConfigFile = null;
+        if (Util.hasValue(userProfile)) {
+            // check if the profile is already defined under userProfiles 
+            userConfigFile = userProfiles.getProperty(userProfile);
+            if (Util.hasValue(userConfigFile) && // load user profile
+                    loadPropertyFile(userProperties, userConfigFile, false)) {
+                // do nothing, only side effects
+            } else { // if not defined or loadable, define userprofile with file association
+                userProfiles.setProperty(userProfile, "");
+            }
+
+            // check if profilename is defined in user properties
+            if (!Util.hasValue(userProfiles.getProperty(PROFILENAME_PROPERTY))) {
+                userProperties.setProperty(PROFILENAME_PROPERTY, userProfile);
+            }
         }
 
-        // check if profilename is defined in user properties
-        if (!Util.hasValue(userProfiles.getProperty(PROFILENAME_PROPERTY))) {
-            userProperties.setProperty(PROFILENAME_PROPERTY, userProfile);
-        }
         loadDefaultProfile();
         setSaveDirDefaults();
     }

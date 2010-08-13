@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 
 public class LocalText extends ResourceBundle {
 
+    private static final String TEST_LOCALE = "te_ST";
+    
     protected static String language = "en";
 
     protected static String country = "";
@@ -92,8 +94,8 @@ public class LocalText extends ResourceBundle {
             }
         }
       
-        // special treatment for te_ST (test)
-        if (localeCode.equals("te_ST")) {
+        // special treatment for test locale
+        if (localeCode.equals(TEST_LOCALE)) {
             StringBuffer s = new StringBuffer(key);
             if (parameters != null)
                 for (Object o:parameters)
