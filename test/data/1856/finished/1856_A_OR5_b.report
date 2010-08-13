@@ -251,11 +251,11 @@ LaysTileAt,TGB,57,K8,SE
 CompanyTakesLoan,TGB,$100,$100
 BuysPrivateFromFor,TGB,W&SR,Wesaq,$80
 LAYS_FREE_TOKEN_ON,TGB,I12
-PrivateCloses,W&SR
 InterestPaidFromTreasury,TGB,$10
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,$70,E5,$65,D5
 BuysTrain,TGB,3,IPO,$225
+PrivateCloses,W&SR
 CompanyOperates,GT,Wesaq
 LaysTileAt,GT,9,O8,NW
 CompanyRevenue,GT,$60
