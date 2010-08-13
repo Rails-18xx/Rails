@@ -633,11 +633,11 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.info("Revenue Adapter:" + ra);
                 int revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
+                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
-                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint());
+                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
                 
                 // simple
                 ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
@@ -648,11 +648,11 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.info("Revenue Adapter:" + ra);
                 revenueValue = ra.calculateRevenue();
                 log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint());
+                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
-                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint());
+                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
 
                 String trainString =
                     JOptionPane.showInputDialog(orWindow, "Another train",
@@ -831,7 +831,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
         RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
-        ra.initRevenueCalculator(false);
+        ra.initRevenueCalculator(true);
         ra.addRevenueListener(this);
         return ra;
     }
@@ -841,8 +841,9 @@ implements ActionListener, KeyListener, RevenueListener {
         if (finalResult) {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             orUIManager.getMap().repaint();
-            JOptionPane.showMessageDialog(orWindow, "Best Run Value = " + bestRevenue +
-                    "\n" + revenueAdapter.getOptimalRunPrettyPrint());
+            orUIManager.addInformation("Best Run Value = " + bestRevenue +
+                    " with " + revenueAdapter.getOptimalRunPrettyPrint(false));
+            orUIManager.addDetail(revenueAdapter.getOptimalRunPrettyPrint(true));
         }
     }
     

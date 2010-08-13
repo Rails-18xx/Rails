@@ -141,15 +141,8 @@ public class GameUIManager implements DialogOwner {
             if (font != null) log.debug("Change text fonts globally to " + font.getName() + " / " + (boldStyle ? "Bold" : "Plain"));
         }
 
-        String fontScale = Config.getGameSpecific("font.ui.scale");
-        if (Util.hasValue(fontScale)) {
-            try {
-                changeGlobalFont(font, Double.parseDouble(fontScale));
-                log.debug("Change text fonts to relative scale " + fontScale);
-            } catch (NumberFormatException e) {
-                // do nothing
-            }
-        }
+        log.debug("Change text fonts to relative scale " + Scale.getFontScale());
+        changeGlobalFont(font, Scale.getFontScale());
     }
     
 
@@ -183,7 +176,8 @@ public class GameUIManager implements DialogOwner {
             System.exit(1);
         }
 
-        updateUI();
+        // uncommented by sfy on 13/08/10 to avoid double revenue calculation
+//        updateUI();
 
         reportWindow.scrollDown();
 
@@ -844,6 +838,7 @@ public class GameUIManager implements DialogOwner {
      * (after configuration changes)
      */
     public static void updateUILookAndFeel() {
+        Scale.initFromConfiguration();
         instance.initFontSettings();
         instance.updateWindowsLookAndFeel();
         

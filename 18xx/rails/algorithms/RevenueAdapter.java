@@ -628,17 +628,23 @@ public final class RevenueAdapter implements Runnable {
     }
     
 
-    public String getOptimalRunPrettyPrint() {
+    public String getOptimalRunPrettyPrint(boolean includeDetails) {
         List<RevenueTrainRun> listRuns = getOptimalRun();
         if (listRuns== null) return "No Optimal Run";
 
         StringBuffer runPrettyPrint = new StringBuffer();
         for (RevenueTrainRun run:listRuns) {
-            runPrettyPrint.append(run.prettyPrint());
+            runPrettyPrint.append(run.prettyPrint(includeDetails));
+            if (includeDetails) 
+                runPrettyPrint.append("<BR>");
+            else if (run != listRuns.get(listRuns.size()-1)) 
+                runPrettyPrint.append("; ");
         }
-        // add dynamic Modifier
-        for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            runPrettyPrint.append(modifier.prettyPrint(this));
+        if (includeDetails) {
+            // add dynamic Modifier
+            for (RevenueDynamicModifier modifier:dynamicModifiers) {
+                runPrettyPrint.append(modifier.prettyPrint(this));
+            }
         }
         
         return runPrettyPrint.toString();

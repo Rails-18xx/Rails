@@ -195,75 +195,76 @@ public class RevenueTrainRun {
         int length = runPrettyPrint.length() - initLength;
         if (length / PRETTY_PRINT_LENGTH != multiple) {
             multiple = length / PRETTY_PRINT_LENGTH;
-            runPrettyPrint.append("\n");
+            runPrettyPrint.append("<BR>");
             for (int i=0; i < PRETTY_PRINT_INDENT; i++)
                 runPrettyPrint.append(" ") ;
         }
         return multiple;
     }
     
-    String prettyPrint() {
+    String prettyPrint(boolean includeDetails) {
         StringBuffer runPrettyPrint = new StringBuffer();
         runPrettyPrint.append(LocalText.getText("N_Train", train.toString()));
-        runPrettyPrint.append(": " + getRunValue());
-        
-        Set<NetworkVertex> uniqueVertices = getUniqueVertices();
-        int majors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MAJOR);
-        int minors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MINOR);
-        if (train.ignoresMinors() || minors == 0) {
-            runPrettyPrint.append(LocalText.getText("RevenueStationsIgnoreMinors", majors));
-        } else {
-            runPrettyPrint.append(LocalText.getText("RevenueStations", majors, minors));
-        }
-
-        int initLength = runPrettyPrint.length();
-        int multiple = prettyPrintNewLine(runPrettyPrint, -1, initLength);
-        String currentHexName = null;
-        NetworkVertex startVertex = null;
-        for (NetworkVertex vertex:vertices) {
-            if (startVertex == null) {
-                currentHexName = prettyPrintHexName(vertex);
-                startVertex = vertex;
-                runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
-            } else if (startVertex == vertex) {
-                currentHexName = prettyPrintHexName(vertex);
-                runPrettyPrint.append(") / ");
-                multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
-                runPrettyPrint.append(prettyPrintHexName(vertex) + "(0");
-                continue;
-            } else if (!currentHexName.equals(prettyPrintHexName(vertex))) {
-                currentHexName = prettyPrintHexName(vertex);
-                runPrettyPrint.append("), ");
-                multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
-                runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
+        runPrettyPrint.append(" = " + getRunValue());
+        if (includeDetails)  {
+            // details of the run
+            Set<NetworkVertex> uniqueVertices = getUniqueVertices();
+            int majors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MAJOR);
+            int minors = NetworkVertex.numberOfVertexType(uniqueVertices, VertexType.STATION, StationType.MINOR);
+            if (train.ignoresMinors() || minors == 0) {
+                runPrettyPrint.append(LocalText.getText("RevenueStationsIgnoreMinors", majors));
             } else {
-                runPrettyPrint.append(",");
+                runPrettyPrint.append(LocalText.getText("RevenueStations", majors, minors));
             }
-            if (vertex.isStation()) {
-                runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
-            }  else {
-                runPrettyPrint.append(vertex.getHex().getOrientationName(vertex.getSide()));
+            int initLength = runPrettyPrint.length();
+            int multiple = prettyPrintNewLine(runPrettyPrint, -1, initLength);
+            String currentHexName = null;
+            NetworkVertex startVertex = null;
+            for (NetworkVertex vertex:vertices) {
+                if (startVertex == null) {
+                    currentHexName = prettyPrintHexName(vertex);
+                    startVertex = vertex;
+                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
+                } else if (startVertex == vertex) {
+                    currentHexName = prettyPrintHexName(vertex);
+                    runPrettyPrint.append(") / ");
+                    multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(0");
+                    continue;
+                } else if (!currentHexName.equals(prettyPrintHexName(vertex))) {
+                    currentHexName = prettyPrintHexName(vertex);
+                    runPrettyPrint.append("), ");
+                    multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
+                } else {
+                    runPrettyPrint.append(",");
+                }
+                if (vertex.isStation()) {
+                    runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
+                }  else {
+                    runPrettyPrint.append(vertex.getHex().getOrientationName(vertex.getSide()));
+                }
             }
-        }
-        
-        if (currentHexName != null) {
-            runPrettyPrint.append(")");
-        }
-        
-        // check revenueBonuses (complex)
-        List<RevenueBonus> activeBonuses = new ArrayList<RevenueBonus>();
-        for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
-            if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
-                activeBonuses.add(bonus);
+
+            if (currentHexName != null) {
+                runPrettyPrint.append(")");
             }
+
+            // check revenueBonuses (complex)
+            List<RevenueBonus> activeBonuses = new ArrayList<RevenueBonus>();
+            for (RevenueBonus bonus:revenueAdapter.getRevenueBonuses()) {
+                if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
+                    activeBonuses.add(bonus);
+                }
+            }
+            Map<String,Integer> printBonuses = RevenueBonus.combineBonuses(activeBonuses);
+            for (String bonusName:printBonuses.keySet()) {
+                runPrettyPrint.append(" + ");
+                runPrettyPrint.append(bonusName + "(" + printBonuses.get(bonusName) + ")");
+                multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+            }
+            runPrettyPrint.append("\n");
         }
-        Map<String,Integer> printBonuses = RevenueBonus.combineBonuses(activeBonuses);
-        for (String bonusName:printBonuses.keySet()) {
-            runPrettyPrint.append(" + ");
-            runPrettyPrint.append(bonusName + "(" + printBonuses.get(bonusName) + ")");
-            multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
-        }
-        runPrettyPrint.append("\n");
 
         return runPrettyPrint.toString(); 
     }
@@ -286,50 +287,5 @@ public class RevenueTrainRun {
             }
         }
         return path;
-        
-//        NetworkVertex startVertex = null;
-//        NetworkVertex previousVertex = null;
-//        for (NetworkVertex vertex:vertices) {
-//            log.debug("Revenue Path: Next vertex " + vertex);
-//            Point2D vertexPoint = NetworkVertex.getVertexPoint2D(map, vertex);
-//            if (startVertex == null) {
-//                startVertex = vertex;
-//                previousVertex = vertex;
-//                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-//                continue;
-//            } else if (startVertex == vertex) {
-//                path.moveTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-//                previousVertex = vertex;
-//                continue;
-//            } 
-//            // draw hidden vertexes
-//            NetworkEdge edge = revenueAdapter.getRCGraph().getEdge(previousVertex, vertex);
-//            if (edge != null) {
-//                log.debug("Revenue Path: draw edge "+ edge.toFullInfoString());
-//                List<NetworkVertex> hiddenVertexes = edge.getHiddenVertexes();
-//                if (edge.getSource() == vertex) {
-//                    log.debug("Revenue Path: reverse hiddenVertexes");
-//                    for (int i = hiddenVertexes.size() - 1; i >= 0; i--) {
-//                        NetworkVertex v = hiddenVertexes.get(i);
-//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
-//                        if (vPoint != null) {
-//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
-//                        }
-//                    }
-//                } else {
-//                    for (NetworkVertex v:hiddenVertexes) {
-//                        Point2D vPoint = NetworkVertex.getVertexPoint2D(map, v);
-//                        if (vPoint != null) {
-//                            path.lineTo((float)vPoint.getX(), (float)vPoint.getY());
-//                        }
-//                    }
-//                }
-//            }
-//            if (vertexPoint != null) {
-//                path.lineTo((float)vertexPoint.getX(), (float)vertexPoint.getY());
-//            }
-//            previousVertex = vertex;
-//        }
-//        return path;
     }
 }

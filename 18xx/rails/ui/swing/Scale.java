@@ -4,12 +4,17 @@ package rails.ui.swing;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import rails.util.Config;
+import rails.util.Util;
+
 /**
  * Class Scale holds static information used to scale all GUI elements.
  */
 
 public final class Scale {
     public static int scale = 15;
+    
+    public static double fontScale = 0;
 
     static {
         fitScreenRes();
@@ -23,10 +28,31 @@ public final class Scale {
         Scale.scale = scale;
     }
 
+    public static double getFontScale() {
+        if (fontScale == 0) {
+            initFromConfiguration();
+        }
+        return fontScale;
+    }
+    
+    public static void initFromConfiguration() {
+        String fontScaleString = Config.getGameSpecific("font.ui.scale");
+        if (Util.hasValue(fontScaleString)) {
+            try {
+                fontScale = Double.parseDouble(fontScaleString);
+            } catch (NumberFormatException e) {
+                fontScale = 1;
+            }
+        }
+
+    }
+    
+    
     /**
      * Set the scale so that the MasterBoard fits on the screen. Default scale
      * should be 15 for screen resolutions with height 1000 or more. For less,
      * scale it down linearly.
+     * 
      */
     public static void fitScreenRes() {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
