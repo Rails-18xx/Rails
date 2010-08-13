@@ -416,7 +416,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 System.exit(-1);
             }
             startGameUIManager (game);
-            gameUIManager.gameUIInit();
+            gameUIManager.gameUIInit(true); // true indicates new game
         }
 
         this.setVisible(false); // XXX: At some point we should destroy this

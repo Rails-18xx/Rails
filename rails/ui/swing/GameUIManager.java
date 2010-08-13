@@ -146,7 +146,7 @@ public class GameUIManager implements DialogOwner {
     }
     
 
-    public void gameUIInit() {
+    public void gameUIInit(boolean newGame) {
 
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
@@ -176,8 +176,10 @@ public class GameUIManager implements DialogOwner {
             System.exit(1);
         }
 
-        // uncommented by sfy on 13/08/10 to avoid double revenue calculation
-//        updateUI();
+        // removed for reloaded games to avoid double revenue calculation
+        if (newGame) {
+            updateUI();
+        }
 
         reportWindow.scrollDown();
 
@@ -187,7 +189,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     public void startLoadedGame() {
-        gameUIInit();
+        gameUIInit(false); // false indicates reload
         processOnServer(new NullAction(NullAction.START_GAME));
         statusWindow.setGameActions();
     }
