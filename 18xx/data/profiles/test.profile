@@ -17,7 +17,7 @@
 # (implying a language variant of that country; no default).
 # Locale: concatenation of the above. If present, overrides any of the above.
 # Examples: en, en_US, en_UK, fr_FR, fr_CA.
-locale=te_st
+locale=te_ST
 #language=
 #country=
 
@@ -25,7 +25,7 @@ locale=te_st
 # Each game has a specific format for monetary amounts (e.g. $100, 100M).
 # An overriding format can be specified here, but then applies to all games.
 # The @ character must be present and is replaced by the amount.
-# Example: £@ to specify a pound sign prefix: £100.
+# Example: ï¿½@ to specify a pound sign prefix: ï¿½100.
 #money_format=$@
 
 ### Save file directory
