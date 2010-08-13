@@ -1030,10 +1030,10 @@ StationHolder, TokenHolder {
      * C) Or the company does not block its home city at all (example:Pr in 1835)
      *    then isBlockedForTokenLays attribute is used
      * 
-     * NOTE: It assumes that not two company share the same home city.  
-     * Undecided companies cannot share the same hex with any other company.
+     * NOTE: It now deals with more than one company with a home base on the
+     * same hex.  
      * 
-     * Previously used was the variable isBlockedForTokenLays
+     * Previously there was only the variable isBlockedForTokenLays
      * which is set to yes to block the whole hex for the token lays
      * until the (home) company laid their token
      * 
