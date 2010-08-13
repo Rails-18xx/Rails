@@ -67,6 +67,7 @@ Limitation:
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+        <Option name="1856THBHomeBlocked" type="toggle" default="no" />
 		<Players minimum="3" maximum="6"/>
 	</Game>
 
