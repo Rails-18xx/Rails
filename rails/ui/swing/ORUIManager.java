@@ -1856,6 +1856,14 @@ public class ORUIManager implements DialogOwner {
     public void setMessage(String message) {
         messagePanel.setMessage(message);
     }
+    
+    public void addInformation(String infoText) {
+        messagePanel.addInformation(infoText);
+    }
+    
+    public void addDetail(String detailText) {
+        messagePanel.addDetail(detailText);
+    }
 
     public void setLocalAction(boolean value) {
         localAction = value;

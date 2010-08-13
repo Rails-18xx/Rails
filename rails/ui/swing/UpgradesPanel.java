@@ -19,6 +19,7 @@ import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
+import rails.util.Config;
 import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
@@ -36,7 +37,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     
     private JPanel upgradePanel;
     private JScrollPane scrollPane;
-    private Dimension preferredSize = new Dimension(100, 200);
+    private Dimension preferredSize;
     private Border border = new EtchedBorder();
     private final String INIT_CANCEL_TEXT = "NoTile";
     private final String INIT_DONE_TEXT = "LayTile";
@@ -55,6 +56,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         this.orUIManager = orUIManager;
 
+        preferredSize = new Dimension((int)Math.round(100 * (2 +  Scale.getFontScale())/3), 200);
         setSize(preferredSize);
         setVisible(true);
 
