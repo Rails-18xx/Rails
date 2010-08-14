@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -40,6 +42,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     private JPanel buttonPanel;
     private ActionButton forwardButton;
     private ActionButton backwardButton;
+    private JButton commentButton;
     
     protected static Logger log =
         Logger.getLogger(ReportWindowDynamic.class.getPackage().getName());
@@ -79,6 +82,29 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         forwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_FORWARD"));
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
+        
+        commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
+        commentButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        String newComment = (String)JOptionPane.showInputDialog(
+                                ReportWindowDynamic.this,
+                                LocalText.getText("REPORT_COMMENT_ASK"),
+                                LocalText.getText("REPORT_COMMENT_TITLE"),
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                null,
+                                ReportBuffer.getComment()
+                        );
+                        if (newComment != null) {
+                            ReportBuffer.addComment(newComment);
+                            updateLog();
+                            scrollDown();
+                        }
+                    }
+                }
+        );
+        buttonPanel.add(commentButton);
         
         super.init();
     }

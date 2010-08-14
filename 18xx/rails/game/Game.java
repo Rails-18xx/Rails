@@ -261,18 +261,18 @@ public class Game {
 
             log.debug("Starting to execute loaded actions");
 
+            Object actionObject = null;
             while (true) { // Single-pass loop.
-                Object firstActionObject;
                 try {
-                    firstActionObject = ois.readObject();
+                    actionObject = ois.readObject();
                 } catch (EOFException e) {
                     // Allow saved file at start of game (with no actions).
                     break;
                 }
-                if (firstActionObject instanceof List) {
+                if (actionObject instanceof List) {
                     // Old-style: one List of PossibleActions
                     List<PossibleAction> executedActions =
-                        (List<PossibleAction>) firstActionObject;
+                        (List<PossibleAction>) actionObject;
                     numberOfActions = executedActions.size();
                     for (PossibleAction action : executedActions) {
                         if (!gameManager.processOnReload(action)) {
@@ -281,19 +281,17 @@ public class Game {
                             break;
                         }
                     }
-
-                } else {
+                } else if (actionObject instanceof PossibleAction) {
                     // New style: separate PossibleActionsObjects, since Rails 1.3.1
-                    PossibleAction action = (PossibleAction) firstActionObject;
-                    while (true) {
+                    while (actionObject instanceof PossibleAction) {
                         numberOfActions++;
-                        if (!gameManager.processOnReload(action)) {
+                        if (!gameManager.processOnReload((PossibleAction)actionObject)) {
                             log.error ("Load interrupted");
                             DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
                             break;
                         }
                         try {
-                            action = (PossibleAction) ois.readObject();
+                            actionObject = ois.readObject();
                         } catch (EOFException e) {
                             break;
                         }
@@ -301,6 +299,22 @@ public class Game {
                 }
                 break;
             }
+            
+            // load user comments (is the last
+            if (actionObject instanceof SortedMap) {
+                ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
+                log.debug("Found sorted map");
+            } else {
+                try {
+                    object = ois.readObject();
+                    if (object instanceof SortedMap) {
+                        ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
+                    }
+                } catch (EOFException e) {
+                    // continue without comments
+                }
+            }
+            
             ois.close();
 
             game.getGameManager().finishLoading();

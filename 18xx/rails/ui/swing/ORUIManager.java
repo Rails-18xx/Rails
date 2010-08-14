@@ -1419,6 +1419,8 @@ public class ORUIManager implements DialogOwner {
         mapRelatedActions.clear();
 
         orPanel.resetActions();
+        
+        messagePanel.setMessage(null);
 
         if (actionToComplete != null) {
             log.debug("ExecutedAction: " + actionToComplete);

@@ -62,22 +62,21 @@ public class MessagePanel extends JPanel {
             messageText.append("</span>");
         }
         if (showDetails) {
-            messageText.append("<span style='color:blue'>");
+            messageText.append("<span style='color:blue; font-size:80%'>");
             for (String detail:currentDetails) {
                 messageText.append(detail);
             }
             messageText.append("</span>");
         } else if (currentDetails.size() != 0) {
-            messageText.append("<span style='color:blue'>");
+            messageText.append("<span style='color:blue; font-size:80%'>");
             messageText.append("<BR> Click for more details");
             messageText.append("</span>");
         }
-        if (currentMessage != null) {
-            String text = messageText.toString();
-            int lines = text.split("<[Bb][Rr]>").length + 1;
-            setLines(lines);
-            message.setText("<html><center>" + text + "</center></html>");
-        }
+        // display
+        String text = messageText.toString();
+        int lines = text.split("<[Bb][Rr]>").length + 1;
+        setLines(lines);
+        message.setText("<html><center>" + text + "</center></html>");
         
     }
     
