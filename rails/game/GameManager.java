@@ -1040,6 +1040,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             for (PossibleAction action : executedActions) {
                 oos.writeObject(action);
             }
+            oos.writeObject(ReportBuffer.getCommentItems());
             oos.close();
 
             result = true;

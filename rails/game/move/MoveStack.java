@@ -48,6 +48,7 @@ public class MoveStack {
             while (lastIndex < moveStack.size() - 1) {
                 moveStack.remove(moveStack.size() - 1);
             }
+            ReportBuffer.createNewReportItem(getCurrentIndex());
             return currentMoveSet;
         } else {
             log.warn("MoveSet is already open");
@@ -68,7 +69,6 @@ public class MoveStack {
             moveStack.add(currentMoveSet);
             lastIndex++;
             currentMoveSet = null;
-            ReportBuffer.createNewReportItem(this.getIndex());
             return true;
         }
     }
@@ -117,6 +117,7 @@ public class MoveStack {
                 undoAction = moveStack.get(lastIndex--);
                 undoAction.unexecute();
             } while (undoAction.isLinkedToPreviousMove());
+            
             return true;
         } else {
             log.error("Invalid undo: index=" + lastIndex + " size="
@@ -163,6 +164,18 @@ public class MoveStack {
     
     public int getIndex() {
         return lastIndex + 1;
+    }
+    
+    /** 
+     * the current index is the one of either the open moveset or
+     * if none is open of the latest added
+     */
+    public int getCurrentIndex() {
+        if (isOpen()) {
+            return lastIndex + 1;
+        } else {
+            return lastIndex;
+        }
     }
     
     /**

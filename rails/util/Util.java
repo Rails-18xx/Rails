@@ -79,6 +79,18 @@ public final class Util {
         }
     }
 
+    
+    /**
+     * Convert java string to html string
+     * Transformations:
+     * - Converts \n to <br>
+     */
+    public static String convertToHtml(String javaString) {
+        return javaString.replace("\n", "<br>");
+    }
+    
+    
+    
     /**
      * Safely move a list of objects from one holder to another, avoiding
      * ConcurrentModificationExceptions.

@@ -27,13 +27,12 @@ public final class ReportBuffer {
     /** defines the collection of data that is stored in the report buffer */
     private class ReportItem {
         private List<String> messages = new ArrayList<String>();
-        private int index = 0;
+        private int index = -1;
         private Player player = null;
         private RoundI round = null;
       
         private void addMessage(String message) {
-            // ignore undos and redos
-            messages.add(message);
+            messages.add(Util.convertToHtml(message));
         }
         
         private String getMessages() {
@@ -44,17 +43,38 @@ public final class ReportBuffer {
             return s.toString();
         }
         
-        private String toHtml() {
+        /**
+         * converts messages to html string
+         * @param activeMessage if true, adds indicator and highlighting for active message
+         */
+        
+        private String toHtml(boolean activeMessage) {
+            if (messages.isEmpty()) {
+                if (activeMessage) {
+                    return ("<span bgcolor=Yellow>" + ACTIVE_MESSAGE_INDICATOR + "</span>"
+                            + NEWLINE_STRING);
+                } else { 
+                    return null;
+                }
+            }
+
             StringBuffer s = new StringBuffer();
             boolean init = true;
             for (String message:messages) {
                 if (init) {
+                    if (activeMessage) {
+                        s.append("<span bgcolor=Yellow>" + ACTIVE_MESSAGE_INDICATOR) ;
+                    }
                     s.append("<a href=http://rails:"  + index + ">");
                     s.append(message);
-                    s.append("</a><br>&#10;"); // &#10; is the linefeed character to induce line feed on copy & paste
+                    s.append("</a>"); 
+                    if (activeMessage) {
+                        s.append("</span>");
+                    }
+                    s.append(NEWLINE_STRING);
                     init = false;
                 } else {
-                    s.append(message + "<br>&#10;"); // see above
+                    s.append(message + NEWLINE_STRING); // see above
                 }
             }
             return s.toString();
@@ -70,8 +90,25 @@ public final class ReportBuffer {
         }
     }
 
+    /* 
+     * All variables below are required for the dynamic preprot window
+    */
+    /** Indicator string to find the active message position in the parsed html document */
+    public static final String ACTIVE_MESSAGE_INDICATOR = "(**)";
     
-    /**
+    /** Newline string
+     * &#10; is the linefeed character to induce line feed on copy & paste
+     */
+    private static final String NEWLINE_STRING = "<br>&#10;";
+
+    /** Archive stack of messages, the integer index corresponds with the moveset items */
+    private SortedMap<Integer, ReportItem> reportItems = new TreeMap<Integer, ReportItem>();
+    
+    /** Archive stack of user supplied comments, integer index corresponds with moveset items */
+    private SortedMap<Integer, String> commentItems = new TreeMap<Integer, String>();
+    
+    /* 
+     * All variables below are required for the static report window
      * A stack for displaying messages in the Log Window. Such messages are
      * intended to record the progress of the rails.game and can be used as a
      * rails.game report.
@@ -81,11 +118,6 @@ public final class ReportBuffer {
     /** Another stack for messages that must "wait" for other messages */
     private List<String> waitQueue = new ArrayList<String> ();
 
-    /** Archive stack, the integer index corresponds with the moveset items */
-    private SortedMap<Integer, ReportItem> reportItems = new TreeMap<Integer, ReportItem>();
-    /** Indicator string to find the active message position in the parsed html document */
-    public static final String ACTIVE_MESSAGE_INDICATOR = "(**)"; 
-    
     private String reportPathname = null;
     private PrintWriter report = null;
 
@@ -108,7 +140,7 @@ public final class ReportBuffer {
 
 
     public ReportBuffer() {
-        reportItems.put(0, new ReportItem());
+        reportItems.put(-1, new ReportItem());
         if (!initialQueue.isEmpty()) {
             for (String s : initialQueue) {
                 addMessage(s, -1); // start of the game
@@ -129,7 +161,8 @@ public final class ReportBuffer {
     private void addMessage(String message, int moveStackIndex) {
         if (message != null) {
             if (message.equals("")) {
-                message = "---"; // workaround for testing
+                return;
+                //                message = "---"; // workaround for testing
             }
             // legacy report queue
             reportQueue.add(message);
@@ -191,20 +224,25 @@ public final class ReportBuffer {
         }
     }
     
+    private void clearFutureItems(int index) {
+        // delete future items
+        Set<Integer> deleteIndices = new HashSet<Integer>
+        (reportItems.tailMap(index + 1).keySet());
+        for (Integer i:deleteIndices) {
+            reportItems.remove(i);
+            commentItems.remove(i);
+        }
+    }
+    
     private void addReportItem(int index, Player player, RoundI round) {
         ReportItem newItem = new ReportItem();
         newItem.index = index;
         newItem.player = player;
         newItem.round = round;
         reportItems.put(index, newItem);
-        Set<Integer> deleteIndices = new HashSet<Integer>
-            (reportItems.tailMap(index + 1).keySet());
-        for (Integer i:deleteIndices) {
-            reportItems.remove(i);
-        }
     }
-
-    /** Movestack calls the report item to update */
+    
+    /** Creates a new report item */
     public static void createNewReportItem(int index) {
         // check availablity
         GameManagerI gm = GameManager.getInstance();
@@ -219,23 +257,33 @@ public final class ReportBuffer {
         Player player = gm.getCurrentPlayer();
         RoundI round = gm.getCurrentRound();
         instance.addReportItem(index, player, round);
+        instance.clearFutureItems(index);
     }
 
     
     public static String getReportItems() {
-        int index = GameManager.getInstance().getMoveStack().getIndex();
+        // activeIndex is the index one before the current index for the next action
+        int activeIndex = GameManager.getInstance().getMoveStack().getCurrentIndex();
         ReportBuffer instance = getInstance();
         
         StringBuffer s = new StringBuffer();
         s.append("<html>");
-        for (ReportItem item:instance.reportItems.values()) {
-            if (item.index == index-1) {
-                s.append("<p bgcolor=Yellow>" + ACTIVE_MESSAGE_INDICATOR) ;
+        for (Integer index:instance.reportItems.keySet()) {
+            ReportItem item = instance.reportItems.get(index);
+            String text = item.toHtml(index == activeIndex);
+            String comment = instance.commentItems.get(index);
+            if (text == null && comment == null) continue;
+            s.append("<p>");
+            // comments first
+            if (comment != null) {
+                s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
+                s.append(item.player.getName() + " says: ' ");
+                s.append(comment + "'"  + NEWLINE_STRING);
+                s.append("</span>");
             }
-            s.append(item.toHtml());
-            if (item.index == (index-1)) {
-                s.append("</p><");
-            }
+            // text afterwards
+            if (text != null) s.append(text);
+            s.append("</p>");
         }
         s.append("</html>");
         
@@ -273,10 +321,69 @@ public final class ReportBuffer {
                 instance.reportQueue.add(message);
                 return;
             }
-            int moveStackIndex = gm.getMoveStack().getIndex();
+            int moveStackIndex = gm.getMoveStack().getCurrentIndex();
             instance.addMessage(message, moveStackIndex);
         }
     }
+    
+   /** Add a user comment to the report window */
+   public static void addComment(String comment) {
+       GameManagerI gm = GameManager.getInstance();
+       ReportBuffer instance = null;
+       if (gm != null) {
+           instance = gm.getReportBuffer();
+       }
+       if (instance != null) {
+           int index = gm.getMoveStack().getCurrentIndex(); // add one index before (active)
+           instance.commentItems.put(index, comment);
+           log.debug("Added comment = " + comment + " at index = " + index);
+       }
+   }
+   
+   /** Retrieves the current user comment */
+   public static String getComment() {
+       GameManagerI gm = GameManager.getInstance();
+       ReportBuffer instance = null;
+       if (gm != null) {
+           instance = gm.getReportBuffer();
+       }
+       String comment = null;
+       if (instance != null) {
+           int index = gm.getMoveStack().getCurrentIndex();
+           comment = instance.commentItems.get(index);
+       }
+       return comment;
+   }
+   
+   /** Retrieves all user comments */
+   public static SortedMap<Integer, String> getCommentItems() {
+       GameManagerI gm = GameManager.getInstance();
+       ReportBuffer instance = null;
+       if (gm != null) {
+           instance = gm.getReportBuffer();
+       }
+       if (instance != null) {
+           return instance.commentItems;
+       } else {
+           // return empty map
+           return new TreeMap<Integer, String>();
+       }
+   }
+   
+   /** sets user comments */
+   public static void setCommentItems(SortedMap<Integer, String> commentItems) {
+       GameManagerI gm = GameManager.getInstance();
+       ReportBuffer instance = null;
+       if (gm != null) {
+           instance = gm.getReportBuffer();
+       }
+       if (instance != null) {
+           instance.commentItems = commentItems;
+       }
+   }
+   
+   
+   
 
    /** return the current buffer as list */
     public static List<String> getAsList() {

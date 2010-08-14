@@ -803,6 +803,10 @@ public class OperatingRound extends Round implements Observer {
 
         moveStack.start(true);
 
+        ReportBuffer.add(LocalText.getText("CompanyRevenue",
+                action.getCompanyName(),
+                Bank.format(action.getActualRevenue())));
+        
         int remainingAmount = checkForDeductions (action);
         if (remainingAmount < 0) {
             // A share selling round will be run to raise cash to pay debts
@@ -890,9 +894,6 @@ public class OperatingRound extends Round implements Observer {
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
-            ReportBuffer.add(LocalText.getText("CompanyRevenue",
-                    action.getCompanyName(),
-                    Bank.format(amount)));
             if (amount == 0 && operatingCompany.getNumberOfTrains() == 0) {
                 DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
                         operatingCompany.getName(),
