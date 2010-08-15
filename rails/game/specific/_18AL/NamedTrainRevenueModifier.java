@@ -98,14 +98,13 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return true;
     }
 
-    public int predictionValue(RevenueAdapter revenueAdapter) {
+    public int predictionValue() {
         return bonusMaximum;
     }
 
-    public int evaluationValue(RevenueAdapter revenueAdapter) {
-        List<RevenueTrainRun> runs = revenueAdapter.getCurrentRun();
+    public int evaluationValue(List<RevenueTrainRun> runs) {
         int bonusValue = 0;
-        // due to the geography each train can only score one bonus
+        // due to the geography (off-map areas!) each train can only score one bonus
         for (RevenueBonus bonus:bonuses) {
             for (RevenueTrainRun run:runs) {
                 if (run.getUniqueVertices().containsAll(bonus.getVertices())) {
@@ -123,7 +122,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         for (RevenueBonus bonus:bonuses) {
             for (RevenueTrainRun run:runs) {
                 if (run.getUniqueVertices().containsAll(bonus.getVertices())) {
-                    prettyPrint.append(bonus.getName() + ": " + bonus.getValue() + "\n");
+                    prettyPrint.append(bonus.getName() + " = " + bonus.getValue() + "\n");
                     continue; // each bonus can only be scored once
                 }
             }

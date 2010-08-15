@@ -1,4 +1,7 @@
 package rails.algorithms;
+
+import java.util.List;
+
 /**
  * Classes that change properties of the revenue calculation
  * after the actual calculation started implement the dynamic modifier.
@@ -15,12 +18,12 @@ public interface RevenueDynamicModifier {
     public boolean prepareModifier(RevenueAdapter revenueAdapter);
     
     /** returns the value used for prediction */
-    public int predictionValue(RevenueAdapter revenueAdapter);
+    public int predictionValue();
     
-    /** returns the value used for evaluation */
-    public int evaluationValue(RevenueAdapter revenueAdapter);
+    /** returns the value used for evaluation (at the run supplied) */
+    public int evaluationValue(List<RevenueTrainRun> runs);
     
-    /** returns the prettyPrintName */
-    public String prettyPrint(RevenueAdapter revenueAdapter);
+    /** returns the results as pretty prints */
+    public String prettyPrint(RevenueAdapter adapter);
     
 }

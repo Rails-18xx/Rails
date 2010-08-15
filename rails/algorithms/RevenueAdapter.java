@@ -19,12 +19,12 @@ import org.jgrapht.graph.SimpleGraph;
 
 import rails.game.GameManagerI;
 import rails.game.MapHex;
-import rails.game.MapManager;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.TrainI;
 import rails.game.TrainTypeI;
 import rails.ui.swing.hexmap.HexMap;
+import rails.util.LocalText;
 
 
 public final class RevenueAdapter implements Runnable {
@@ -587,7 +587,7 @@ public final class RevenueAdapter implements Runnable {
     int dynamicEvaluation() {
         int value = 0;
         for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.evaluationValue(this);
+            value += modifier.evaluationValue(this.getCurrentRun());
         }
         return value;
     }
@@ -598,7 +598,7 @@ public final class RevenueAdapter implements Runnable {
     int dynamicPrediction() {
         int value = 0;
         for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.predictionValue(this);
+            value += modifier.predictionValue();
         }
         return value;
     }
@@ -630,7 +630,7 @@ public final class RevenueAdapter implements Runnable {
 
     public String getOptimalRunPrettyPrint(boolean includeDetails) {
         List<RevenueTrainRun> listRuns = getOptimalRun();
-        if (listRuns== null) return "No Optimal Run";
+        if (listRuns== null) return LocalText.getText("RevenueNoRun");
 
         StringBuffer runPrettyPrint = new StringBuffer();
         for (RevenueTrainRun run:listRuns) {
@@ -641,12 +641,19 @@ public final class RevenueAdapter implements Runnable {
                 runPrettyPrint.append("; ");
         }
         if (includeDetails) {
-            // add dynamic Modifier
             for (RevenueDynamicModifier modifier:dynamicModifiers) {
                 runPrettyPrint.append(modifier.prettyPrint(this));
             }
+        } else {
+            int dynamicBonuses = 0;
+            for (RevenueDynamicModifier modifier:dynamicModifiers) {
+                dynamicBonuses += modifier.evaluationValue(this.getOptimalRun());
+            }
+            if (dynamicBonuses != 0) {
+                runPrettyPrint.append("; " + 
+                        LocalText.getText("RevenueBonus", dynamicBonuses));
+            }
         }
-        
         return runPrettyPrint.toString();
     }
     
