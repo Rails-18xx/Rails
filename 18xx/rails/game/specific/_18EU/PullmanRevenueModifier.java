@@ -32,8 +32,8 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return true;
     }
 
-    public int evaluationValue(RevenueAdapter revenueAdapter) {
-        return pullmanValue(revenueAdapter.getCurrentRun());
+    public int evaluationValue(List<RevenueTrainRun> runs) {
+        return pullmanValue(runs);
     }
     
     private int pullmanValue(List<RevenueTrainRun> trainRuns) {
@@ -45,12 +45,12 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return maximum; 
     }
     
-    public int predictionValue(RevenueAdapter revenueAdapter) {
+    public int predictionValue() {
         return maxValue;
     }
 
     public String prettyPrint(RevenueAdapter revenueAdapter) {
-        return LocalText.getText("Pullman") + ": " + pullmanValue(revenueAdapter.getOptimalRun());
+        return LocalText.getText("Pullman") + " = " + pullmanValue(revenueAdapter.getOptimalRun());
     }
 
     private int maximumMajorValue(Collection<NetworkVertex> vertices) {
