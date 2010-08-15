@@ -43,8 +43,9 @@ public final class Scale {
             } catch (NumberFormatException e) {
                 fontScale = 1;
             }
+        } else {
+            fontScale = 1;
         }
-
     }
     
     
