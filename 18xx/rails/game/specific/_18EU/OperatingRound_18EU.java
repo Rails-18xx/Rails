@@ -58,7 +58,7 @@ public class OperatingRound_18EU extends OperatingRound {
         int costOfCheapestTrain = 0;
 
         String extraMessage = null;
-        boolean mustExchangePullmann = !isBelowTrainLimit() 
+        boolean mustExchangePullmann = !isBelowTrainLimit()
                 && hasPullmannAtStart.booleanValue()
                 && !possibleActions.contains(BuyTrain.class);
         if (mustExchangePullmann) {
@@ -88,7 +88,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
             if (train.getType().getName().equals("P")
-                    &&(operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null 
+                    &&(operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null
                             || !hasTrains)) {
                 continue;
             }
@@ -150,7 +150,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 }
             }
         }
-        
+
     }
 
     /** In 18EU, a company can (effectively) exchange a Pullmann */
@@ -162,9 +162,9 @@ public class OperatingRound_18EU extends OperatingRound {
 
     @Override
     public boolean buyTrain(BuyTrain action) {
-        
+
         boolean mustDiscardPullmann = !super.isBelowTrainLimit() && hasPullmann ();
-        
+
         boolean result = super.buyTrain(action);
 
         // If we are at train limit and have a Pullmann, discard it
@@ -178,7 +178,30 @@ public class OperatingRound_18EU extends OperatingRound {
 
             }
         }
-        
+
+        // If train was bought from another company, check for a lone Pullmann
+        Portfolio seller = action.getFromPortfolio();
+        if (seller.getOwner() instanceof PublicCompanyI
+                && !action.getTrain().getName().equalsIgnoreCase("P")) {
+            boolean hasPullmann = false;
+            boolean hasNonPullmann = false;
+            TrainI pullmann = null;
+            for (TrainI sellerTrain : seller.getTrainList()) {
+                if ("P".equalsIgnoreCase(sellerTrain.getName())) {
+                    hasPullmann = true;
+                    pullmann = sellerTrain;
+                } else if (sellerTrain != null){
+                    hasNonPullmann = true;
+                }
+            }
+            if (hasPullmann && !hasNonPullmann) {
+                pullmann.moveTo (pool);
+                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                        seller.getOwner().getName(),
+                        pullmann.getName() ));
+            }
+        }
+
         // Check if we have just started Phase 5 and
         // if we still have at least one Minor operating.
         // If so, record the current player as the first
@@ -231,7 +254,7 @@ public class OperatingRound_18EU extends OperatingRound {
         }
         return !excessTrainCompanies.isEmpty();
     }
-    
+
     private boolean hasPullmann () {
         return operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null;
     }
