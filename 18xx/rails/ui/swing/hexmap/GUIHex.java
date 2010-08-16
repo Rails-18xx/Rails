@@ -224,7 +224,7 @@ public class GUIHex implements ViewObject {
         currentTileOrientation = model.getCurrentTileRotation();
         currentGUITile = new GUITile(currentTileId, this);
         currentGUITile.setRotation(currentTileOrientation);
-        setToolTip();
+        toolTip = null;
 
         model.addObserver(this);
 
@@ -661,7 +661,10 @@ public class GUIHex implements ViewObject {
     }
 
     public String getToolTip() {
-        return toolTip;
+        if (toolTip != null)
+            return toolTip;
+        else 
+            return getDefaultToolTip();
     }
 
     
@@ -682,7 +685,7 @@ public class GUIHex implements ViewObject {
         return tt.toString();
     }
     
-    protected void setToolTip() {
+    private String getDefaultToolTip() {
         StringBuffer tt = new StringBuffer("<html>");
         tt.append("<b>Hex</b>: ").append(hexName);
         String name = model.getCityName();
@@ -754,7 +757,7 @@ public class GUIHex implements ViewObject {
         
         
         tt.append("</html>");
-        toolTip = tt.toString();
+        return tt.toString();
     }
 
     public boolean dropTile(int tileId, boolean upgradeMustConnect) {
@@ -786,7 +789,7 @@ public class GUIHex implements ViewObject {
     public void removeTile() {
         provisionalGUITile = null;
         setSelected(false);
-        setToolTip();
+        toolTip = null;
     }
 
     public boolean canFixTile() {
@@ -804,18 +807,18 @@ public class GUIHex implements ViewObject {
     public void fixTile() {
 
         setSelected(false);
-        setToolTip();
+        toolTip = null;
     }
 
     public void removeToken() {
         provisionalGUIToken = null;
         setSelected(false);
-        setToolTip();
+        toolTip = null;
     }
 
     public void fixToken() {
         setSelected(false);
-        setToolTip();
+        toolTip = null;
     }
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */

@@ -561,10 +561,11 @@ public abstract class HexMap extends JComponent implements MouseListener,
     public void mouseReleased(MouseEvent arg0) {}
 
     public void updateOffBoardToolTips() {
-        for (GUIHex hex : hexes) {
-            if (hex.getHexModel().hasOffBoardValues()) {
-                hex.setToolTip();
-            }
-        }
+//        for (GUIHex hex : hexes) {
+//            if (hex.getHexModel().hasOffBoardValues()) {
+//                hex.setToolTip();
+//            }
+//        }
+        // do nothing as tooltip update before display
     }
 }
