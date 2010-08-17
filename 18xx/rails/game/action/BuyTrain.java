@@ -209,7 +209,11 @@ public class BuyTrain extends PossibleORAction {
 
         StringBuffer b = new StringBuffer();
         b.append(company.getName());
-        b.append(": buy ").append(getTrain().getName());
+        if (train != null) { 
+            b.append(": buy ").append(getTrain().getName());
+        } else {
+            b.append(": buy unlimited train, unique id = ").append(trainUniqueId);
+        }
         b.append("-train from ").append(from.getName());
         if (fixedCost > 0) {
             b.append(" for ").append(Bank.format(fixedCost));
