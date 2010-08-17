@@ -310,8 +310,10 @@ public class Game {
                     if (object instanceof SortedMap) {
                         ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
                     }
-                } catch (EOFException e) {
-                    // continue without comments
+                } catch (IOException e) {
+                    // continue without comments, if any IOException occurs
+                    // sometimes not only the EOF Exception is raised
+                    // but also the java.io.StreamCorruptedException: invalid type code
                 }
             }
             

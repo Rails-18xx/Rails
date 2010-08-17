@@ -949,7 +949,7 @@ StationHolder, TokenHolder {
     }
 
     public boolean isHomeFor(PublicCompanyI company) {
-        boolean result = homes != null && homes.get(company) != null;
+        boolean result = homes != null && homes.containsKey(company);
         return result;
     }
 
