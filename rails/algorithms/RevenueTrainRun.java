@@ -195,7 +195,7 @@ public class RevenueTrainRun {
         int length = runPrettyPrint.length() - initLength;
         if (length / PRETTY_PRINT_LENGTH != multiple) {
             multiple = length / PRETTY_PRINT_LENGTH;
-            runPrettyPrint.append("<BR>");
+            runPrettyPrint.append("\n");
             for (int i=0; i < PRETTY_PRINT_INDENT; i++)
                 runPrettyPrint.append(" ") ;
         }
