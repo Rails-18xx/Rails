@@ -635,10 +635,9 @@ public final class RevenueAdapter implements Runnable {
         StringBuffer runPrettyPrint = new StringBuffer();
         for (RevenueTrainRun run:listRuns) {
             runPrettyPrint.append(run.prettyPrint(includeDetails));
-            if (includeDetails) 
-                runPrettyPrint.append("<BR>");
-            else if (run != listRuns.get(listRuns.size()-1)) 
-                runPrettyPrint.append("; ");
+            if (!includeDetails && run != listRuns.get(listRuns.size()-1)) {
+                    runPrettyPrint.append("; ");
+            }
         }
         if (includeDetails) {
             for (RevenueDynamicModifier modifier:dynamicModifiers) {

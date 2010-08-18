@@ -629,33 +629,18 @@ implements ActionListener, KeyListener, RevenueListener {
                 for (String addTrain:addTrainList) {
                     ra.addTrainByString(addTrain);
                 }
-                ra.initRevenueCalculator(true);
-                log.info("Revenue Adapter:" + ra);
+                ra.initRevenueCalculator(true); // true => multigraph, false => simplegraph
+                log.debug("Revenue Adapter:" + ra);
                 int revenueValue = ra.calculateRevenue();
-                log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
+                log.debug("Revenue Value:" + revenueValue);
+                log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
                         "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
                 
-                // simple
-                ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
-                for (String addTrain:addTrainList) {
-                    ra.addTrainByString(addTrain);
-                }
-                ra.initRevenueCalculator(false);
-                log.info("Revenue Adapter:" + ra);
-                revenueValue = ra.calculateRevenue();
-                log.info("Revenue Value:" + revenueValue);
-                log.info("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
-                ra.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-                JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
-                        "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
-
                 String trainString =
-                    JOptionPane.showInputDialog(orWindow, "Another train",
+                    JOptionPane.showInputDialog(null, "Enter train string (Examples: 5, 3+3, 4D, 6E, D)",
                     "Add another train to run?",
                     JOptionPane.QUESTION_MESSAGE);
                 if (trainString == null || trainString.equals("")) {
@@ -842,8 +827,8 @@ implements ActionListener, KeyListener, RevenueListener {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             orUIManager.getMap().repaint();
             orUIManager.addInformation("Best Run Value = " + bestRevenue +
-                    " with " + revenueAdapter.getOptimalRunPrettyPrint(false));
-            orUIManager.addDetail(revenueAdapter.getOptimalRunPrettyPrint(true));
+                    " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
+            orUIManager.addDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
         }
     }
     

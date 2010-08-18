@@ -3,11 +3,13 @@ package rails.game.specific._1856;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.algorithms.RevenueAdapter;
+import rails.algorithms.RevenueStaticModifier;
 import rails.game.*;
 import rails.game.move.*;
 import rails.game.state.*;
 
-public class PublicCompany_CGR extends PublicCompany {
+public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
 
     public static final String NAME = "CGR";
 
@@ -29,8 +31,17 @@ public class PublicCompany_CGR extends PublicCompany {
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
+        
     }
+    
+    @Override
+    public void finishConfiguration(GameManagerI gameManager) throws ConfigurationException {
+        super.finishConfiguration(gameManager);
 
+        // add revenue modifier for the case that there is no train
+        gameManager.getRevenueManager().addStaticModifier(this);
+    }
+    
     public boolean hadPermanentTrain() {
         return hadPermanentTrain.booleanValue();
     }
@@ -148,5 +159,15 @@ public class PublicCompany_CGR extends PublicCompany {
     @Override
     public String getExtraShareMarks () {
         return (hasTemporaryPresident() ? "T" : "");
+    }
+
+    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+        // check if the running company is the cgr
+        if (revenueAdapter.getCompany() != this) return;
+         
+        // add the diesel train
+        if (runsWithBorrowedTrain()) {
+            revenueAdapter.addTrainByString("D");
+        }
     }
 }
