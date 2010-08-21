@@ -251,8 +251,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         if (newsquare != oldsquare && newsquare.closesCompany()) {
             company.setClosed();
             oldsquare.removeToken(company);
-            ReportBuffer.add(company.getName() + " closes at "
-                    + newsquare.getName());
+            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
+                    company.getName(),
+                    newsquare.getName()));
         } else {
             prepareMove(company, oldsquare, newsquare);
         }
@@ -286,8 +287,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             if (!company.canClose()) return; // E.g. 1856 CGR
             company.setClosed();
             oldsquare.removeToken(company);
-            ReportBuffer.add(company.getName() + LocalText.getText("CLOSES_AT")
-                    + " " + newsquare.getName());
+            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
+                    company.getName(),
+                    newsquare.getName()));
         } else {
             prepareMove(company, oldsquare, newsquare);
         }
