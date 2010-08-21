@@ -46,13 +46,13 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected boolean setNextOperatingCompany(boolean initial) {
 
-        //log.debug("+++ old OC is "+(operatingCompany!=null?operatingCompany.getName():"null"));
+        //log.debug("+++ old OC is "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
         while (true) {
-            if (initial || operatingCompany == null || operatingCompanyObject == null) {
+            if (initial || operatingCompany.get() == null || operatingCompany == null) {
                 setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
-                int index = operatingCompanies.indexOf(operatingCompany);
+                int index = operatingCompanies.indexOf(operatingCompany.get());
                 if (++index >= operatingCompanies.size()) {
                     return false;
                 }
@@ -61,12 +61,12 @@ public class OperatingRound_1856 extends OperatingRound {
 
             // 1856 special: check if the company has sold enough shares to operate
             // This check does not apply to the CGR
-            if (operatingCompany instanceof PublicCompany_CGR) return true;
+            if (operatingCompany.get() instanceof PublicCompany_CGR) return true;
 
-            if (operatingCompany.isClosed()) continue;
+            if (operatingCompany.get().isClosed()) continue;
 
-            if (!operatingCompany.hasOperated()) {
-                int soldPercentage = getSoldPercentage (operatingCompany);
+            if (!operatingCompany.get().hasOperated()) {
+                int soldPercentage = getSoldPercentage (operatingCompany.get());
 
                 TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
                 int trainNumber;
@@ -83,7 +83,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 if (soldPercentage < floatPercentage) {
                     DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
-                            operatingCompany.getName(),
+                            operatingCompany.get().getName(),
                             String.valueOf(soldPercentage),
                             String.valueOf(floatPercentage)
                     ));
@@ -91,7 +91,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     continue;
                 }
             }
-            //log.debug("+++ new OC is "+(operatingCompany!=null?operatingCompany.getName():"null"));
+            //log.debug("+++ new OC is "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
             return true;
         }
     }
@@ -102,21 +102,21 @@ public class OperatingRound_1856 extends OperatingRound {
         int requiredCash = 0;
 
         // There is only revenue if there are any trains
-        if (operatingCompany.canRunTrains()) {
+        if (operatingCompany.get().canRunTrains()) {
 
-            if (operatingCompany instanceof PublicCompany_CGR
-                    && ((PublicCompany_CGR)operatingCompany).runsWithBorrowedTrain()) {
+            if (operatingCompany.get() instanceof PublicCompany_CGR
+                    && ((PublicCompany_CGR)operatingCompany.get()).runsWithBorrowedTrain()) {
                 DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
                         PublicCompany_CGR.NAME, "D"));
                 possibleActions.add(new SetDividend(
-                        operatingCompany.getLastRevenue(), true,
+                        operatingCompany.get().getLastRevenue(), true,
                         new int[] {SetDividend.WITHHOLD }));
             } else {
 
                 int[] allowedRevenueActions =
-                        operatingCompany.isSplitAlways()
+                        operatingCompany.get().isSplitAlways()
                                 ? new int[] { SetDividend.SPLIT }
-                                : operatingCompany.isSplitAllowed()
+                                : operatingCompany.get().isSplitAllowed()
                                         ? new int[] { SetDividend.PAYOUT,
                                                 SetDividend.SPLIT,
                                                 SetDividend.WITHHOLD }
@@ -124,17 +124,17 @@ public class OperatingRound_1856 extends OperatingRound {
                                                 SetDividend.WITHHOLD };
 
                 // Check if any loan interest can be paid
-                if (operatingCompany.canLoan()) {
-                    int loanValue = operatingCompany.getLoanValueModel().intValue();
+                if (operatingCompany.get().canLoan()) {
+                    int loanValue = operatingCompany.get().getLoanValueModel().intValue();
                     if (loanValue > 0) {
-                        int interest = loanValue * operatingCompany.getLoanInterestPct() / 100;
-                        int compCash = (operatingCompany.getCash() / 10) * 10;
+                        int interest = loanValue * operatingCompany.get().getLoanInterestPct() / 100;
+                        int compCash = (operatingCompany.get().getCash() / 10) * 10;
                         requiredCash = Math.max(interest - compCash, 0);
                     }
                 }
 
                 possibleActions.add(new SetDividend(
-                        operatingCompany.getLastRevenue(), true,
+                        operatingCompany.get().getLastRevenue(), true,
                         allowedRevenueActions,
                         requiredCash));
             }
@@ -152,17 +152,17 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int checkForDeductions (SetDividend action) {
 
         int amount = action.getActualRevenue();
-        if (!operatingCompany.canLoan()) return amount;
-        int due = calculateLoanInterest(operatingCompany.getCurrentNumberOfLoans());
+        if (!operatingCompany.get().canLoan()) return amount;
+        int due = calculateLoanInterest(operatingCompany.get().getCurrentNumberOfLoans());
         if (due == 0) return amount;
         int remainder = due;
 
         ReportBuffer.add((LocalText.getText("CompanyMustPayLoanInterest",
-                operatingCompany.getName(),
+                operatingCompany.get().getName(),
                 Bank.format(due))));
 
         // Can it be paid from company treasury?
-        int payment = Math.min(due, (operatingCompany.getCash() / 10) * 10);
+        int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
             remainder -= payment;
         }
@@ -179,7 +179,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         // Pay any remainder from president cash
         // First check if president has enough cash
-        Player president = operatingCompany.getPresident();
+        Player president = operatingCompany.get().getPresident();
         int presCash = president.getCash();
         if (remainder > presCash) {
             // Start a share selling round
@@ -188,8 +188,8 @@ public class OperatingRound_1856 extends OperatingRound {
                     + remainder + " loan interest");
             log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
             savedAction = action;
-            gameManager.startShareSellingRound(operatingCompany.getPresident(),
-                    cashToBeRaisedByPresident, operatingCompany);
+            gameManager.startShareSellingRound(operatingCompany.get().getPresident(),
+                    cashToBeRaisedByPresident, operatingCompany.get(), false);
             // Return arbitrary negative value to signal end of processing to caller.
             return -remainder;
 
@@ -204,22 +204,22 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int executeDeductions (SetDividend action) {
 
         int amount = action.getActualRevenue();
-        if (!operatingCompany.canLoan()) return amount;
-        int due = calculateLoanInterest(operatingCompany.getCurrentNumberOfLoans());
+        if (!operatingCompany.get().canLoan()) return amount;
+        int due = calculateLoanInterest(operatingCompany.get().getCurrentNumberOfLoans());
         if (due == 0) return amount;
         int remainder = due;
 
         // Pay from company treasury
-        int payment = Math.min(due, (operatingCompany.getCash() / 10) * 10);
+        int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
-            new CashMove (operatingCompany, bank, payment);
+            new CashMove (operatingCompany.get(), bank, payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
-                        operatingCompany.getName(),
+                        operatingCompany.get().getName(),
                         Bank.format(payment)));
             } else {
                 ReportBuffer.add (LocalText.getText("InterestPartlyPaidFromTreasury",
-                        operatingCompany.getName(),
+                        operatingCompany.get().getName(),
                         Bank.format(payment),
                         Bank.format(due)));
             }
@@ -233,7 +233,7 @@ public class OperatingRound_1856 extends OperatingRound {
             // Payment money remains in the bank
             remainder -= payment;
             ReportBuffer.add (LocalText.getText("InterestPaidFromRevenue",
-                    operatingCompany.getName(),
+                    operatingCompany.get().getName(),
                     Bank.format(payment),
                     Bank.format(due)));
             // This reduces train income
@@ -243,7 +243,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         // Pay any remainder from president cash
         // First check if president has enough cash
-        Player president = operatingCompany.getPresident();
+        Player president = operatingCompany.get().getPresident();
         int presCash = president.getCash();
         if (remainder > presCash) {
             // This can't happen in this stage, log an error
@@ -256,7 +256,7 @@ public class OperatingRound_1856 extends OperatingRound {
             payment = remainder;
             new CashMove (president, bank, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
-                    operatingCompany.getName(),
+                    operatingCompany.get().getName(),
                     Bank.format(payment),
                     Bank.format(due),
                     president.getName()));
@@ -269,7 +269,7 @@ public class OperatingRound_1856 extends OperatingRound {
     protected void setDestinationActions() {
 
         List<PublicCompanyI> possibleDestinations = new ArrayList<PublicCompanyI>();
-        for (PublicCompanyI comp : operatingCompanies) {
+        for (PublicCompanyI comp : operatingCompanies.viewList()) {
             if (comp.hasDestination()
                     && ((PublicCompany_1856)comp).getTrainNumberAvailableAtStart() < 5
                     && !comp.hasReachedDestination()) {
@@ -300,29 +300,29 @@ public class OperatingRound_1856 extends OperatingRound {
     protected void setGameSpecificPossibleActions() {
         // Take a loan
         if (getCurrentPhase().isLoanTakingAllowed()
-            && operatingCompany.canLoan()
+            && operatingCompany.get().canLoan()
             && (loansThisRound == null
-                || !loansThisRound.containsKey(operatingCompany)
-                || loansThisRound.get(operatingCompany) == 0)
-            && operatingCompany.getCurrentNumberOfLoans()
-                < operatingCompany.sharesOwnedByPlayers()) {
-            possibleActions.add(new TakeLoans(operatingCompany,
-                    1, operatingCompany.getValuePerLoan()));
+                || !loansThisRound.containsKey(operatingCompany.get())
+                || loansThisRound.get(operatingCompany.get()) == 0)
+            && operatingCompany.get().getCurrentNumberOfLoans()
+                < operatingCompany.get().sharesOwnedByPlayers()) {
+            possibleActions.add(new TakeLoans(operatingCompany.get(),
+                    1, operatingCompany.get().getValuePerLoan()));
         }
 
         if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
-            if (operatingCompany.getMaxNumberOfLoans() != 0
-                && operatingCompany.getCurrentNumberOfLoans() > 0) {
+            if (operatingCompany.get().getMaxNumberOfLoans() != 0
+                && operatingCompany.get().getCurrentNumberOfLoans() > 0) {
 
                 // Minimum number to repay
                 int minNumber = Math.max(0,
-                        operatingCompany.getCurrentNumberOfLoans()
-                            - operatingCompany.sharesOwnedByPlayers());
+                        operatingCompany.get().getCurrentNumberOfLoans()
+                            - operatingCompany.get().sharesOwnedByPlayers());
                 // Maximum number to repay (dependent on cash)
-                int maxNumber = Math.min(operatingCompany.getCurrentNumberOfLoans(),
-                        operatingCompany.getCash() / operatingCompany.getValuePerLoan());
+                int maxNumber = Math.min(operatingCompany.get().getCurrentNumberOfLoans(),
+                        operatingCompany.get().getCash() / operatingCompany.get().getValuePerLoan());
 
                 if (maxNumber < minNumber) {
                     // Company doesn't have the cash, president must contribute.
@@ -332,13 +332,13 @@ public class OperatingRound_1856 extends OperatingRound {
                 if (minNumber > 0) {
                     // Mandatory repayment
                     DisplayBuffer.add(LocalText.getText("MustRepayLoans",
-                            operatingCompany.getName(),
+                            operatingCompany.get().getName(),
                             minNumber,
-                            Bank.format(operatingCompany.getValuePerLoan()),
-                            Bank.format(minNumber * operatingCompany.getValuePerLoan())));
+                            Bank.format(operatingCompany.get().getValuePerLoan()),
+                            Bank.format(minNumber * operatingCompany.get().getValuePerLoan())));
                 }
-                possibleActions.add(new RepayLoans(operatingCompany,
-                        minNumber, maxNumber, operatingCompany.getValuePerLoan()));
+                possibleActions.add(new RepayLoans(operatingCompany.get(),
+                        minNumber, maxNumber, operatingCompany.get().getValuePerLoan()));
 
                 // Step may only be skipped if repayment is optional
                 if (minNumber == 0) doneAllowed = true;
@@ -396,9 +396,9 @@ public class OperatingRound_1856 extends OperatingRound {
                     break;
                 }
                 // Exceeds number of shares in player hands?
-                int newLoans = operatingCompany.getCurrentNumberOfLoans()
+                int newLoans = operatingCompany.get().getCurrentNumberOfLoans()
                         + action.getNumberTaken();
-                int maxLoans = operatingCompany.sharesOwnedByPlayers();
+                int maxLoans = operatingCompany.get().sharesOwnedByPlayers();
                 if (newLoans > maxLoans) {
                     errMsg = LocalText.getText("WouldExceedSharesAtPlayers",
                             newLoans, maxLoans);
@@ -416,7 +416,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int amount = super.calculateLoanAmount(numberOfLoans);
 
         // Deduct interest immediately?
-        if (((GameDef.OrStep) stepObject.getObject()).compareTo(GameDef.OrStep.PAYOUT) > 0) {
+        if (((GameDef.OrStep) stepObject.get()).compareTo(GameDef.OrStep.PAYOUT) > 0) {
             amount -= calculateLoanInterest(numberOfLoans);
         }
 
@@ -426,8 +426,8 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int calculateLoanInterest (int numberOfLoans) {
 
         return numberOfLoans
-            * operatingCompany.getValuePerLoan()
-            * operatingCompany.getLoanInterestPct() / 100;
+            * operatingCompany.get().getValuePerLoan()
+            * operatingCompany.get().getLoanInterestPct() / 100;
     }
 
     @Override
@@ -436,16 +436,16 @@ public class OperatingRound_1856 extends OperatingRound {
         if (step == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
-            if (operatingCompany.getMaxNumberOfLoans() == 0
-                || operatingCompany.getCurrentNumberOfLoans() == 0) {
+            if (operatingCompany.get().getMaxNumberOfLoans() == 0
+                || operatingCompany.get().getCurrentNumberOfLoans() == 0) {
                 return false;
             // Is company required to repay loans?
-            } else if (operatingCompany.sharesOwnedByPlayers()
-                    < operatingCompany.getCurrentNumberOfLoans()) {
+            } else if (operatingCompany.get().sharesOwnedByPlayers()
+                    < operatingCompany.get().getCurrentNumberOfLoans()) {
                 return true;
             // Has company enough money to repay at least one loan?
-            } else if (operatingCompany.getCash()
-                    < operatingCompany.getValuePerLoan()) {
+            } else if (operatingCompany.get().getCash()
+                    < operatingCompany.get().getValuePerLoan()) {
                 return false;
             } else {
                 // Loan repayment is possible but optional
@@ -485,7 +485,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // Find the first company that has not yet operated
         // and is not closed.
         //while (setNextOperatingCompany(false)
-        //        && operatingCompany.isClosed());
+        //        && operatingCompany.getObject().isClosed());
 
         // Remove closed companies from the operating company list
         // (PLEASE leave this code in case we need it; it works)
@@ -496,11 +496,11 @@ public class OperatingRound_1856 extends OperatingRound {
         //    }
         //}
 
-        //if (operatingCompany != null) {
-        //    operatingCompanyIndex = companies.indexOf(operatingCompany);
+        //if (operatingCompany.getObject() != null) {
+        //    operatingCompanyIndex = companies.indexOf(operatingCompany.getObject());
         //}
 
-        for (PublicCompanyI c : operatingCompanies) {
+        for (PublicCompanyI c : operatingCompanies.viewList()) {
             if (c.isClosed()) {
                 log.info(c.getName()+" is closed");
             } else {
@@ -533,7 +533,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // Find the first company that has not yet operated
         // and is not closed.
         if (!roundFinished) {
-            log.debug ("Next operating company: "+operatingCompany.getName());
+            log.debug ("Next operating company: "+operatingCompany.get().getName());
         } else {
             finishOR();
             return false;

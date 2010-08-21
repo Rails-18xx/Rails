@@ -68,7 +68,7 @@ public class City implements TokenHolder {
     }
 
     public Station getRelatedStation() {
-        return relatedStation.getObject();
+        return relatedStation.get();
     }
 
     public void setRelatedStation(Station relatedStation) {

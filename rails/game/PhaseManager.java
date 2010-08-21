@@ -55,7 +55,7 @@ public class PhaseManager implements ConfigurableComponentI {
     }
 
     public PhaseI getCurrentPhase() {
-        return (PhaseI) currentPhase.getObject();
+        return (PhaseI) currentPhase.get();
     }
 
     public int getCurrentPhaseIndex() {

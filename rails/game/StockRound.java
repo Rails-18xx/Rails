@@ -165,7 +165,7 @@ public class StockRound extends Round {
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
         PublicCompanyI companyBoughtThisTurn =
-            (PublicCompanyI) companyBoughtThisTurnWrapper.getObject();
+            (PublicCompanyI) companyBoughtThisTurnWrapper.get();
         if (companyBoughtThisTurn == null) {
             from = ipo;
             Map<String, List<PublicCertificateI>> map =
@@ -430,7 +430,7 @@ public class StockRound extends Round {
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
                 if ((Boolean)gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT)
-                        && company.equals(companyBoughtThisTurnWrapper.getObject())) {
+                        && company.equals(companyBoughtThisTurnWrapper.get())) {
                     number--;
                 }
                 if (number <= 0) continue;
@@ -549,7 +549,7 @@ public class StockRound extends Round {
             }
 
             // The player may not have bought this turn.
-            if (companyBoughtThisTurnWrapper.getObject() != null) {
+            if (companyBoughtThisTurnWrapper.get() != null) {
                 errMsg = LocalText.getText("AlreadyBought", playerName);
                 break;
             }
@@ -718,7 +718,7 @@ public class StockRound extends Round {
             // The player may not have bought this turn, unless the company
             // bought before and now is in the brown area.
             PublicCompanyI companyBoughtThisTurn =
-                (PublicCompanyI) companyBoughtThisTurnWrapper.getObject();
+                (PublicCompanyI) companyBoughtThisTurnWrapper.get();
             if (companyBoughtThisTurn != null
                     && (companyBoughtThisTurn != company || !company.getCurrentSpace().isNoBuyLimit())) {
                 errMsg = LocalText.getText("AlreadyBought", playerName);
@@ -1111,7 +1111,7 @@ public class StockRound extends Round {
         // Remember that the player has sold this company this round.
         recordSale(currentPlayer, company);
 
-        if (companyBoughtThisTurnWrapper.getObject() == null)
+        if (companyBoughtThisTurnWrapper.get() == null)
             hasSoldThisTurnBeforeBuying.set(true);
         hasActed.set(true);
         setPriority();
@@ -1390,7 +1390,7 @@ public class StockRound extends Round {
 
         if (getStockRoundNumber() == 1 && noSaleInFirstSR()) return false;
 
-        if (companyBoughtThisTurnWrapper.getObject() != null
+        if (companyBoughtThisTurnWrapper.get() != null
                 && (sequenceRule == SELL_BUY_OR_BUY_SELL
                         && hasSoldThisTurnBeforeBuying.booleanValue() || sequenceRule == SELL_BUY))
             return false;
@@ -1417,7 +1417,7 @@ public class StockRound extends Round {
      */
     public boolean mayCurrentPlayerBuyAnything() {
         return !isPlayerOverLimits(currentPlayer)
-        && companyBoughtThisTurnWrapper.getObject() == null;
+        && companyBoughtThisTurnWrapper.get() == null;
     }
 
     protected boolean isPlayerOverLimits(Player player) {

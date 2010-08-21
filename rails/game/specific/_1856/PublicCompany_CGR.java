@@ -57,7 +57,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
     public Player getTemporaryPresident() {
         if (temporaryPresident != null) {
-            return (Player) temporaryPresident.getObject();
+            return (Player) temporaryPresident.get();
         } else {
             return null;
         }

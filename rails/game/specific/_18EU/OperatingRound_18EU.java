@@ -28,7 +28,7 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     protected void initTurn() {
         super.initTurn();
-        hasPullmannAtStart.set(operatingCompany.getPortfolio()
+        hasPullmannAtStart.set(operatingCompany.get().getPortfolio()
                 .getTrainOfType(pullmannType) != null);
     }
 
@@ -38,22 +38,22 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     public void setBuyableTrains() {
 
-        if (operatingCompany == null) return;
+        if (operatingCompany.get() == null) return;
 
         TrainManager trainMgr = gameManager.getTrainManager();
 
-        int cash = operatingCompany.getCash();
+        int cash = operatingCompany.get().getCash();
         int cost;
         List<TrainI> trains;
         BuyTrain bt;
 
         boolean hasTrains =
-                operatingCompany.getPortfolio().getNumberOfTrains() > 0;
+                operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
         boolean canBuyTrainNow = canBuyTrainNow();
 
         if (!canBuyTrainNow) return;
 
-        boolean presidentMayHelp = operatingCompany.mustOwnATrain();
+        boolean presidentMayHelp = operatingCompany.get().mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
 
@@ -88,7 +88,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
             if (train.getType().getName().equals("P")
-                    &&(operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null
+                    &&(operatingCompany.get().getPortfolio().getTrainOfType(pullmannType) != null
                             || !hasTrains)) {
                 continue;
             }
@@ -125,15 +125,15 @@ public class OperatingRound_18EU extends OperatingRound {
                 companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
             List<PublicCompanyI> companies;
             // Sort out which players preside over wich companies.
-            for (PublicCompanyI c : operatingCompanies) {
-                if (c == operatingCompany || c.isClosed()) continue;
+            for (PublicCompanyI c : operatingCompanies.viewList()) {
+                if (c == operatingCompany.get() || c.isClosed()) continue;
                 p = c.getPresident();
                 index = p.getIndex();
                 companiesPerPlayer.get(index).add(c);
             }
             // Scan trains per company per player, operating company president
             // first
-            int currentPlayerIndex = operatingCompany.getPresident().getIndex();
+            int currentPlayerIndex = operatingCompany.get().getPresident().getIndex();
             for (int i = currentPlayerIndex; i < currentPlayerIndex
                                                  + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
@@ -169,11 +169,11 @@ public class OperatingRound_18EU extends OperatingRound {
 
         // If we are at train limit and have a Pullmann, discard it
         if (mustDiscardPullmann) {
-            TrainI pullmann = operatingCompany.getPortfolio().getTrainOfType(pullmannType);
+            TrainI pullmann = operatingCompany.get().getPortfolio().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
                 pullmann.moveTo(pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                        operatingCompany.getName(),
+                        operatingCompany.get().getName(),
                         pullmann.getName() ));
 
             }
@@ -209,7 +209,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (result && gameManager.getPhaseManager().hasReachedPhase("5")
             && operatingCompanies.get(0).getTypeName().equalsIgnoreCase("Minor")
             && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
-            ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.getPresident());
+            ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.get().getPresident());
         }
 
         return result;
@@ -226,7 +226,7 @@ public class OperatingRound_18EU extends OperatingRound {
         Portfolio portfolio;
         int numberOfTrains;
 
-        for (PublicCompanyI comp : operatingCompanies) {
+        for (PublicCompanyI comp : operatingCompanies.viewList()) {
             portfolio = comp.getPortfolio();
             numberOfTrains = portfolio.getNumberOfTrains();
 
@@ -256,7 +256,7 @@ public class OperatingRound_18EU extends OperatingRound {
     }
 
     private boolean hasPullmann () {
-        return operatingCompany.getPortfolio().getTrainOfType(pullmannType) != null;
+        return operatingCompany.get().getPortfolio().getTrainOfType(pullmannType) != null;
     }
 
     @Override

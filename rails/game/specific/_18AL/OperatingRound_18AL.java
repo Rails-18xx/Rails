@@ -22,7 +22,7 @@ public class OperatingRound_18AL extends OperatingRound {
         
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
             List<TrainI> trains =
-                    operatingCompany.getPortfolio().getTrainList();
+                    operatingCompany.get().getPortfolio().getTrainList();
             if (trains != null && !trains.isEmpty()) {
                 possibleActions.add(new AssignNamedTrains(stl, trains));
             }
@@ -66,7 +66,7 @@ public class OperatingRound_18AL extends OperatingRound {
                     trains.get(i).setNameToken(newToken);
                     if (newToken != null) {
                         ReportBuffer.add(LocalText.getText("NamesTrain",
-                                operatingCompany.getName(),
+                                operatingCompany.get().getName(),
                                 trains.get(i).getName(),
                                 newToken.getLongName() ));
                     }
@@ -83,11 +83,11 @@ public class OperatingRound_18AL extends OperatingRound {
     public boolean layBaseToken(LayBaseToken action) {
         if (super.layBaseToken(action)) {
             MapHex hex = action.getChosenHex();
-            if (hex == operatingCompany.getDestinationHex()) {
+            if (hex == operatingCompany.get().getDestinationHex()) {
                 int payout = 100;
-                new CashMove(bank, operatingCompany, payout);
+                new CashMove(bank, operatingCompany.get(), payout);
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
-                        operatingCompany.getName(),
+                        operatingCompany.get().getName(),
                         Bank.format(payout),
                         hex.getName() ));
             }

@@ -48,7 +48,7 @@ public class PriceModel extends ModelObject implements StateI {
     }
 
     // StateI required methods
-    public Object getObject() {
+    public Object get() {
         return stockPrice;
     }
 

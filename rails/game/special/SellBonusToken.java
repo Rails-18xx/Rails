@@ -98,7 +98,7 @@ public class SellBonusToken extends SpecialProperty {
     }
 
     public CashHolder getSeller() {
-        return (CashHolder) seller.getObject();
+        return (CashHolder) seller.get();
     }
 
     public void setSeller(CashHolder seller) {

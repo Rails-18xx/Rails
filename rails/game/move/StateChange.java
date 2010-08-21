@@ -25,7 +25,7 @@ public class StateChange extends Move {
     public StateChange(StateI object, Object newValue,
             ModelObject relatedModelObject) {
         this.object = object;
-        this.oldValue = object.getObject();
+        this.oldValue = object.get();
         this.newValue = newValue;
         this.relatedModelObject = relatedModelObject;
 

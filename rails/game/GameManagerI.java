@@ -41,8 +41,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract int getSRNumber();
 
-    public abstract void startShareSellingRound(Player sellingPlayer,
-            int cashToRaise, PublicCompanyI unsellableCompany);
+    public abstract void startShareSellingRound(Player player, int cashToRaise,
+            PublicCompanyI cashNeedingCompany, boolean checkDumpOtherCompanies);
 
     public abstract void startTreasuryShareTradingRound();
 
