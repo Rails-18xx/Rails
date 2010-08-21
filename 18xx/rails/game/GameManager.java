@@ -82,6 +82,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
 
+    protected boolean forcedSellingCompanyDump = true;
     protected boolean gameEndsWithBankruptcy = false;
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
@@ -353,6 +354,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         /* End of rails.game criteria */
         Tag endOfGameTag = tag.getChild("EndOfGame");
         if (endOfGameTag != null) {
+            Tag forcedSellingTag = endOfGameTag.getChild("ForcedSelling");
+            if (forcedSellingTag != null) {
+                forcedSellingCompanyDump = 
+                    forcedSellingTag.getAttributeAsBoolean("CompanyDump", true);
+            }
             if (endOfGameTag.getChild("Bankruptcy") != null) {
                 gameEndsWithBankruptcy = true;
             }
@@ -713,11 +719,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @see rails.game.GameManagerI#startShareSellingRound(rails.game.OperatingRound, rails.game.PublicCompanyI, int)
      */
     public void startShareSellingRound(Player player, int cashToRaise,
-            PublicCompanyI unsellableCompany) {
+            PublicCompanyI cashNeedingCompany, boolean problemDumpOtherCompanies) {
 
         interruptedRound = getCurrentRound();
+
+        // check if other companies can be dumped
         createRound (ShareSellingRound.class, interruptedRound)
-        .start(player, cashToRaise, unsellableCompany);
+            .start(player, cashToRaise, cashNeedingCompany, 
+                    !problemDumpOtherCompanies || forcedSellingCompanyDump);
+        // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
+        // the action does not require that check
     }
 
     /* (non-Javadoc)
@@ -825,7 +836,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(((Player) currentPlayer.getObject()).getName() + " may: "
+            log.debug(((Player) currentPlayer.get()).getName() + " may: "
                     + pa.toString());
         }
 
@@ -1247,7 +1258,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @see rails.game.GameManagerI#getCurrentRound()
      */
     public RoundI getCurrentRound() {
-        return (RoundI) currentRound.getObject();
+        return (RoundI) currentRound.get();
     }
 
     /* (non-Javadoc)
@@ -1272,7 +1283,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      */
     public void setCurrentPlayer(Player player) {
         // transfer messages for the next player to the display buffer
-        if ((Player)currentPlayer.getObject() != player && !nextPlayerMessages.isEmpty()) {
+        if ((Player)currentPlayer.get() != player && !nextPlayerMessages.isEmpty()) {
             DisplayBuffer.add(
                     LocalText.getText("NextPlayerMessage", getCurrentPlayer().getName()));
             for (String s:nextPlayerMessages)
@@ -1305,14 +1316,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @see rails.game.GameManagerI#getPriorityPlayer()
      */
     public Player getPriorityPlayer() {
-        return (Player) priorityPlayer.getObject();
+        return (Player) priorityPlayer.get();
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
-        return (Player) currentPlayer.getObject();
+        return (Player) currentPlayer.get();
     }
 
     /* (non-Javadoc)

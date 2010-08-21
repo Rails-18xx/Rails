@@ -33,7 +33,7 @@ public final class GenericState<E> extends ModelObject implements StateI {
         set(object, true);
     }
 
-    public E getObject() {
+    public E get() {
         return stateObject;
     }
 

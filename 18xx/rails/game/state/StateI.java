@@ -5,7 +5,7 @@ public interface StateI {
 
     public String getName();
 
-    public Object getObject();
+    public Object get();
 
     public void setState(Object value);
 

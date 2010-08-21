@@ -59,7 +59,7 @@ public class State extends ModelObject implements StateI {
         set(object, true);
     }
 
-    public Object getObject() {
+    public Object get() {
         return object;
     }
 

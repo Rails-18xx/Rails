@@ -32,7 +32,7 @@ public class GuiHints implements Serializable {
     private EnumState<GuiDef.Panel> activePanel = null;
 
     public Class<? extends RoundI> getCurrentRoundType() {
-        return currentRoundType.getObject();
+        return currentRoundType.get();
     }
 
     public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
@@ -63,7 +63,7 @@ public class GuiHints implements Serializable {
     }
 
     public GuiDef.Panel getActivePanel() {
-        return (GuiDef.Panel)activePanel.getObject();
+        return (GuiDef.Panel)activePanel.get();
     }
 
     public void setActivePanel(GuiDef.Panel activePanel) {

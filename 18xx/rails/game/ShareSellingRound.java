@@ -21,7 +21,8 @@ public class ShareSellingRound extends StockRound {
     RoundI parentRound;
     Player sellingPlayer;
     IntegerState cashToRaise;
-    PublicCompanyI unsellableCompany = null;
+    PublicCompanyI cashNeedingCompany;
+    boolean dumpOtherCompaniesAllowed;
 
     private List<SellShares> sellableShares;
 
@@ -45,15 +46,17 @@ public class ShareSellingRound extends StockRound {
     }
 
     public void start(Player sellingPlayer, int cashToRaise,
-            PublicCompanyI unsellableCompany) {
+            PublicCompanyI cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getName()+" cash="+cashToRaise);
         ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getName(),
                 Bank.format(cashToRaise)));
         currentPlayer = this.sellingPlayer = sellingPlayer;
+        this.cashNeedingCompany = cashNeedingCompany;
         this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
-        this.unsellableCompany = unsellableCompany;
+        this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
+        log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         setCurrentPlayerIndex(sellingPlayer.getIndex());
         getSellableShares();
     }
@@ -99,7 +102,6 @@ public class ShareSellingRound extends StockRound {
         int price;
         int number;
         int share, maxShareToSell;
-        boolean dumpAllowed;
         Portfolio playerPortfolio = currentPlayer.getPortfolio();
 
         /*
@@ -124,26 +126,58 @@ public class ShareSellingRound extends StockRound {
             /*
              * If the current Player is president, check if he can dump the
              * presidency onto someone else
+             * 
+             * Two reasons for the check:
+             * A) President not allowed to sell that company
+             * Thus keep enough shares to stay president
+             * 
+             * Example here
+             * share = 60%, other player holds 40%, maxShareToSell > 30%
+             * => requires selling of president 
+
+             * B) President allowed to sell that company
+             * In that case the president share can be sold
+             * 
+             * Example here
+             * share = 60%, , president share = 20%, maxShareToSell > 40%
+             * => requires selling of president 
              */
             if (company.getPresident() == currentPlayer) {
                 int presidentShare =
-                        company.getCertificates().get(0).getShare();
-                if (maxShareToSell > share - presidentShare) {
-                    dumpAllowed = false;
-                    if (company != unsellableCompany) {
-                        int playerShare;
-                        List<Player> players = gameManager.getPlayers();
-                        for (Player player : players) {
+                    company.getCertificates().get(0).getShare();
+                boolean dumpPossible;
+                log.debug("Forced selling check: company = " + company + 
+                        ", share = " + share + ", maxShareToSell = " + maxShareToSell);
+                if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
+                    // case A: selling of president not allowed (either company triggered share selling or no dump of others)
+                    int maxOtherShares = 0;
+                    for (Player player : gameManager.getPlayers()) {
+                        if (player == currentPlayer) continue;
+                        maxOtherShares = Math.max(maxOtherShares, player.getPortfolio().getShare(company));
+                    }
+                    // limit shares to sell to difference between president and second largest ownership
+                    maxShareToSell = Math.min(maxShareToSell, share - maxOtherShares);
+                    dumpPossible = false; // and no dump is possible by definition
+                } else {
+                    // case B: potential sale of president certificate possible
+                    if (share - maxShareToSell < presidentShare) {
+                        // dump necessary
+                        dumpPossible = false;
+                        for (Player player : gameManager.getPlayers()) {
                             if (player == currentPlayer) continue;
-                            playerShare =
-                                    player.getPortfolio().getShare(company);
-                            if (playerShare >= presidentShare) {
-                                dumpAllowed = true;
+                            // there is a player with holding exceeding the president share
+                            if (player.getPortfolio().getShare(company) >= presidentShare) {
+                                dumpPossible = true;
                                 break;
                             }
                         }
+                    } else {
+                        dumpPossible = false; // no dump necessary
                     }
-                    if (!dumpAllowed) maxShareToSell = share - presidentShare;
+                }
+                if (!dumpPossible) {
+                    // keep presidentShare at minimum
+                    maxShareToSell = Math.min(maxShareToSell, share - presidentShare);
                 }
             }
 
@@ -272,7 +306,7 @@ public class ShareSellingRound extends StockRound {
             if (numberToSell > 0 && presCert != null
                 && numberToSell <= presCert.getShares()) {
                 // Not allowed to dump the company that needs the train
-                if (company == unsellableCompany) {
+                if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
                     errMsg =
                             LocalText.getText("CannotDumpTrainBuyingPresidency");
                     break;
@@ -401,7 +435,7 @@ public class ShareSellingRound extends StockRound {
     }
 
     public PublicCompanyI getCompanyNeedingCash() {
-        return unsellableCompany;
+        return cashNeedingCompany;
     }
 
     @Override

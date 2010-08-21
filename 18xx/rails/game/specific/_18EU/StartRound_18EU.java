@@ -84,14 +84,14 @@ public class StartRound_18EU extends StartRound {
             // only offer buy if enough money
             if (currentBuyPrice.intValue() <= currentPlayer.getFreeCash()) {
                 possibleActions.add(new BuyStartItem(
-                        (StartItem) currentAuctionItem.getObject(),
+                        (StartItem) currentAuctionItem.get(),
                         currentBuyPrice.intValue(), true));
             }
             possibleActions.add(new NullAction(NullAction.PASS));
             break;
         case OPEN_STEP:
         case BID_STEP:
-            StartItem item = (StartItem) currentAuctionItem.getObject();
+            StartItem item = (StartItem) currentAuctionItem.get();
             // only offer if enough money
             if (item.getMinimumBid() <= currentPlayer.getFreeCash()) {
                 BidStartItem possibleAction =
@@ -166,7 +166,7 @@ public class StartRound_18EU extends StartRound {
     protected boolean bid(String playerName, BidStartItem bidItem) {
 
         StartItem item = bidItem.getStartItem();
-        StartItem auctionedItem = (StartItem) currentAuctionItem.getObject();
+        StartItem auctionedItem = (StartItem) currentAuctionItem.get();
         String errMsg = null;
         Player player = getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
@@ -263,7 +263,7 @@ public class StartRound_18EU extends StartRound {
         case OPEN_STEP:
         case BUY_STEP:
             setNextPlayer();
-            if (currentPlayer == selectingPlayer.getObject()) {
+            if (currentPlayer == selectingPlayer.get()) {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
                 setStep(BUY_STEP);
@@ -295,13 +295,13 @@ public class StartRound_18EU extends StartRound {
 
         moveStack.start(false);
 
-        StartItem auctionedItem = (StartItem) currentAuctionItem.getObject();
+        StartItem auctionedItem = (StartItem) currentAuctionItem.get();
 
         switch (getStep()) {
         case OPEN_STEP:
         case BUY_STEP:
             setNextPlayer();
-            if (currentPlayer == selectingPlayer.getObject()) {
+            if (currentPlayer == selectingPlayer.get()) {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
                 auctionedItem.setMinimumBid(currentBuyPrice.intValue());
@@ -345,11 +345,11 @@ public class StartRound_18EU extends StartRound {
 
         do {
             setNextPlayer();
-        } while (((StartItem) currentAuctionItem.getObject()).getBid(currentPlayer) < 0);
+        } while (((StartItem) currentAuctionItem.get()).getBid(currentPlayer) < 0);
     }
 
     private void setNextSelectingPlayer() {
-        setPlayer((Player) selectingPlayer.getObject());
+        setPlayer((Player) selectingPlayer.get());
         setNextPlayer();
     }
 
