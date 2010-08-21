@@ -495,6 +495,7 @@ public class StockRound_18EU extends StockRound {
         PublicCompanyI major = action.getSelectedTargetCompany();
         PublicCertificateI cert = null;
         CashHolder cashDestination = null; // Bank
+        TrainI pullmannToDiscard = null;
 
         // TODO Validation to be added?
 
@@ -521,6 +522,18 @@ public class StockRound_18EU extends StockRound {
         } else {
             // Assets go to the major company
             major.transferAssetsFrom(minor);
+
+            // Check for multiple Pullmanns
+            boolean hasPullmann = false;
+            for (TrainI train : major.getPortfolio().getTrainList()) {
+                if (train.getName().equalsIgnoreCase("P")) {
+                    if (!hasPullmann) {
+                        hasPullmann = true;
+                    } else {
+                        pullmannToDiscard = train; // Can only have two Pullmanns.
+                    }
+                }
+            }
         }
 
         MapHex homeHex = minor.getHomeHex();
@@ -572,6 +585,13 @@ public class StockRound_18EU extends StockRound {
             cert.moveTo(currentPlayer.getPortfolio());
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getName()));
             checkFlotation(major);
+
+            if (pullmannToDiscard != null) {
+                pullmannToDiscard.moveTo(pool);
+                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                        major.getName(),
+                        pullmannToDiscard.getName() ));
+            }
         } else {
             ReportBuffer.add("");
             ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG",
