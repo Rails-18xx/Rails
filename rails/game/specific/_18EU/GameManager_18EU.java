@@ -1,10 +1,14 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.5 2010/01/18 22:51:47 evos Exp $ */
 package rails.game.specific._18EU;
 
-import rails.game.GameManager;
-import rails.game.Player;
-import rails.game.RoundI;
+import java.util.ArrayList;
+import java.util.List;
+
+import rails.game.*;
+import rails.game.move.CashMove;
 import rails.game.state.State;
+import rails.util.LocalText;
+import rails.util.Util;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -12,7 +16,7 @@ import rails.game.state.State;
  */
 public class GameManager_18EU extends GameManager {
 
-    protected State playerToStartFMERound = 
+    protected State playerToStartFMERound =
         new State("playerToStartFMERound", Player.class);
 
     @Override
@@ -20,7 +24,7 @@ public class GameManager_18EU extends GameManager {
         if (round instanceof OperatingRound_18EU) {
             if (playerToStartFMERound.get() != null
                     && relativeORNumber.intValue() == numOfORs.intValue()) {
-                createRound (FinalMinorExchangeRound.class).start 
+                createRound (FinalMinorExchangeRound.class).start
                         ((Player)playerToStartFMERound.get());
                 playerToStartFMERound.set(null);
             } else {
@@ -41,7 +45,53 @@ public class GameManager_18EU extends GameManager {
     public Player getPlayerToStartFMERound() {
         return (Player) playerToStartFMERound.get();
     }
-    
-    
 
+    @Override
+    protected void processBankruptcy () {
+        Player player, newPresident;
+        int numberOfPlayers = getNumberOfPlayers();
+        int maxShare;
+        int share;
+
+        // Assume default case as in 18EU: all assets to Bank/Pool
+        Player bankrupter = getCurrentPlayer();
+        new CashMove (bankrupter, bank, bankrupter.getCash());
+        Portfolio bpf = bankrupter.getPortfolio();
+        List<PublicCompanyI> presidencies = new ArrayList<PublicCompanyI>();
+        for (PublicCertificateI cert : bpf.getCertificates()) {
+            if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
+        }
+        for (PublicCompanyI company : presidencies) {
+            // Check if the presidency is dumped on someone
+            newPresident = null;
+            maxShare = 0;
+            for (int index=getCurrentPlayerIndex()+1;
+            index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
+                player = getPlayerByIndex(index%numberOfPlayers);
+                share = player.getPortfolio().getShare(company);
+                if (share >= company.getPresidentsShare().getShare()
+                        && (share > maxShare)) {
+                    maxShare = share;
+                    newPresident = player;
+                }
+            }
+            if (newPresident != null) {
+                bankrupter.getPortfolio().swapPresidentCertificate(company,
+                        newPresident.getPortfolio());
+            } else {
+                company.setClosed();
+                ReportBuffer.add(LocalText.getText("CompanyCloses", company.getName()));
+                // TODO: can be restarted (in 18EU)
+            }
+        }
+        // Dump all shares
+        Util.moveObjects(bankrupter.getPortfolio().getCertificates(), bank.getPool());
+
+        bankrupter.setBankrupt();
+
+        // Finish the share selling round
+        if (getCurrentRound() instanceof ShareSellingRound) {
+            finishShareSellingRound();
+        }
+    }
 }

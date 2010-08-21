@@ -266,7 +266,9 @@ public class OperatingRound_18EU extends OperatingRound {
             savedAction = null;
             finishTurn();
         }
-        super.resume();
+        if (gameManager.getCurrentRound() == this) {
+            super.resume();
+        }
     }
 
 }

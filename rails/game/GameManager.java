@@ -356,7 +356,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (endOfGameTag != null) {
             Tag forcedSellingTag = endOfGameTag.getChild("ForcedSelling");
             if (forcedSellingTag != null) {
-                forcedSellingCompanyDump = 
+                forcedSellingCompanyDump =
                     forcedSellingTag.getAttributeAsBoolean("CompanyDump", true);
             }
             if (endOfGameTag.getChild("Bankruptcy") != null) {
@@ -725,7 +725,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         // check if other companies can be dumped
         createRound (ShareSellingRound.class, interruptedRound)
-            .start(player, cashToRaise, cashNeedingCompany, 
+            .start(player, cashToRaise, cashNeedingCompany,
                     !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
         // the action does not require that check
@@ -883,7 +883,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     private boolean processGameActions(GameAction gameAction) {
         // Process undo/redo centrally
         boolean result = false;
-        
+
         int index = gameAction.getmoveStackIndex();
         switch (gameAction.getMode()) {
         case GameAction.SAVE:
@@ -916,7 +916,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         return result;
     }
-    
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#processOnReload(java.util.List)
      */
@@ -1132,52 +1132,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (gameEndsWithBankruptcy) {
             finishGame();
         } else {
-            Player player, newPresident;
-            int numberOfPlayers = getNumberOfPlayers();
-            int maxShare;
-            int share;
-
-            // Assume default case as in 18EU: all assets to Bank/Pool
-            Player bankrupter = getCurrentPlayer();
-            new CashMove (bankrupter, bank, bankrupter.getCash());
-            Portfolio bpf = bankrupter.getPortfolio();
-            List<PublicCompanyI> presidencies = new ArrayList<PublicCompanyI>();
-            for (PublicCertificateI cert : bpf.getCertificates()) {
-                if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
-            }
-            for (PublicCompanyI company : presidencies) {
-                // Check if the presidency is dumped on someone
-                newPresident = null;
-                maxShare = 0;
-                for (int index=getCurrentPlayerIndex()+1;
-                index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
-                    player = getPlayerByIndex(index%numberOfPlayers);
-                    share = player.getPortfolio().getShare(company);
-                    if (share >= company.getPresidentsShare().getShare()
-                            && (share > maxShare)) {
-                        maxShare = share;
-                        newPresident = player;
-                    }
-                }
-                if (newPresident != null) {
-                    bankrupter.getPortfolio().swapPresidentCertificate(company,
-                            newPresident.getPortfolio());
-                } else {
-                    company.setClosed();
-                    // TODO: can be restarted (in 18EU)
-                }
-            }
-            // Dump all shares
-            Util.moveObjects(bankrupter.getPortfolio().getCertificates(), bank.getPool());
-
-            bankrupter.setBankrupt();
-
-            // Finish the share selling round
-            if (getCurrentRound() instanceof ShareSellingRound) {
-                finishShareSellingRound();
-            }
+            processBankruptcy ();
         }
     }
+
+    protected void processBankruptcy () {
+        // Currently a stub, don't know if there is any generic handling (EV)
+    }
+
 
     public void registerBrokenBank(){
         ReportBuffer.add(LocalText.getText("BankIsBrokenReportText"));
