@@ -78,7 +78,7 @@ Limitation:
 Published by Wild Heaven Productions and Deep Thought Games
 
 Limitation:
-- Forced Selling: Change of director in other company is not prevented by Rails (see rule 10.6.2)
+- Privates cannot be traded between players.
 		</Description>
 		<Players minimum="2" maximum="6"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
