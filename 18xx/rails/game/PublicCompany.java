@@ -829,15 +829,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void setHomeCityNumber(int number) {
         this.homeCityNumber = number;
     }
-    
+
     /**
      * @return true -> requires an open slot in each city of the hex, false -> one slot on the hex
-     * 
+     *
      */
     public boolean isHomeBlockedForAllCities() {
         return homeAllCitiesBlocked;
     }
-    
+
 
     /**
      * @return Returns the destinationHex.
@@ -1035,6 +1035,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected void reinitialise () {
         hasStarted.set(false);
         hasFloated.set(false);
+        hasOperated.set(false);
         if (parPrice != null && fixedPrice <= 0) parPrice.setPrice(null);
         if (currentPrice != null) currentPrice.setPrice(null);
     }
