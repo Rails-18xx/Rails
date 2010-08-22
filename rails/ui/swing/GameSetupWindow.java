@@ -25,8 +25,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     GridBagConstraints gc;
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
-    JButton newButton, loadButton, recoveryButton, quitButton, optionButton, infoButton;
-    JButton creditsButton, randomizeButton;
+    JButton newButton, loadButton, recoveryButton, quitButton, optionButton, infoButton,
+        creditsButton, randomizeButton, configureButton;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
     JTextField[] playerNameFields = new JTextField[Player.MAX_PLAYERS];
@@ -40,6 +40,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     String gameName;
     Game game;
 
+    private ConfigWindow configWindow;
+    
     // Used by the player selection combo box.
     static final int NONE_PLAYER = 0;
     static final int HUMAN_PLAYER = 1;
@@ -71,6 +73,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         optionButton = new JButton(LocalText.getText("OPTIONS"));
         infoButton = new JButton(LocalText.getText("INFO"));
         creditsButton = new JButton(LocalText.getText("CREDITS"));
+        configureButton= new JButton(LocalText.getText("CONFIG"));
 
         newButton.setMnemonic(KeyEvent.VK_N);
         loadButton.setMnemonic(KeyEvent.VK_L);
@@ -78,7 +81,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         quitButton.setMnemonic(KeyEvent.VK_Q);
         optionButton.setMnemonic(KeyEvent.VK_O);
         infoButton.setMnemonic(KeyEvent.VK_G);
-        creditsButton.setMnemonic(KeyEvent.VK_C);
+        creditsButton.setMnemonic(KeyEvent.VK_E);
+        configureButton.setMnemonic(KeyEvent.VK_C);
 
         this.getContentPane().setLayout(new GridBagLayout());
         this.setTitle("Rails: New Game");
@@ -87,9 +91,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         populateGameList(GamesInfo.getGameNames(), gameNameBox);
 
         gameListPane.add(new JLabel("Available Games:"));
-        gameListPane.add(new JLabel("")); // empty slot
         gameListPane.add(gameNameBox);
         gameListPane.add(optionButton);
+        gameListPane.add(configureButton); // empty slot
         gameListPane.setLayout(new GridLayout(2, 2));
         gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
@@ -101,12 +105,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         infoButton.addActionListener(this);
         creditsButton.addActionListener(this);
         gameNameBox.addActionListener(this);
+        configureButton.addActionListener(this);
 
         buttonPane.add(newButton);
         buttonPane.add(loadButton);
-        if (!Config.get("save.recovery.active", "yes").equalsIgnoreCase("no")) {
-            buttonPane.add(recoveryButton);
-        }
+        recoveryButton.setEnabled(Config.get("save.recovery.active", "no").equalsIgnoreCase("yes"));
+        buttonPane.add(recoveryButton);
+
         buttonPane.add(infoButton);
         buttonPane.add(quitButton);
         buttonPane.add(creditsButton);
@@ -212,6 +217,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         }
         gameUIManager.startLoadedGame();
         setVisible(false);
+        killConfigWindow();
+    }
+    
+    private void killConfigWindow() {
+        if (configWindow == null) return;
+        configWindow.dispose();
+        configWindow = null;
     }
     
     public void actionPerformed(ActionEvent arg0) {
@@ -220,6 +232,15 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         } else if (arg0.getSource().equals(optionButton)) {
             toggleOptions();
             this.pack();
+        } else if (arg0.getSource().equals(configureButton)) {
+            // start configureWindow
+            if (configWindow == null) {
+                configWindow = new ConfigWindow(false);
+                configWindow.init();
+                configWindow.setVisible(true);
+            } else {
+                configWindow.setVisible(true);
+            }
         } else if (arg0.getSource().equals(loadButton)) {
             String saveDirectory = Config.get("save.directory");
             JFileChooser jfc = new JFileChooser();
@@ -421,6 +442,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         this.setVisible(false); // XXX: At some point we should destroy this
         // XXX: object rather than just making it invisible
+        killConfigWindow();
     }
 
     private void startGameUIManager(Game game) {
