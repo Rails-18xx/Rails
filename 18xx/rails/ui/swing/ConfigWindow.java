@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,16 +56,21 @@ class ConfigWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String CONFIG_EXTENSION = ".rails_config";
-    private static final String CONFIG_DESCRIPTION = "Rails configuration files ( *.rails_config )";
+    private static final String LEGACY_EXTENSION = ".properties";
+    private static final String CONFIG_DESCRIPTION = "Rails configuration files ( *.rails_config, *.properties)";
     
     private JPanel profilePanel;
     private JTabbedPane configPane;
     private JPanel buttonPanel;
     
-    ConfigWindow() {
-       // JFrame properties
+    private boolean fromStatusWindow;
+    
+    ConfigWindow(boolean fromStatusWindow) {
+        // store for handling of close
+        this.fromStatusWindow = fromStatusWindow;
+
+        // JFrame properties
         setTitle(LocalText.getText("CONFIG_WINDOW_TITLE"));
-//        setSize(400,300);
         
         // add profile panel
         profilePanel = new JPanel();
@@ -80,12 +84,13 @@ class ConfigWindow extends JFrame {
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
+        
         // hide on close and inform  
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                closeConfig();
+                closeConfig(false);
             }
         });
     }
@@ -95,13 +100,12 @@ class ConfigWindow extends JFrame {
         setupConfigPane();
         setupButtonPanel();
         this.pack();
+        setSize(600,400);
     }
 
     private void setupProfilePanel() {
         profilePanel.removeAll();
-        
-        profilePanel.setLayout(new GridLayout(0,4));
-        
+
         String activeProfile = Config.getActiveProfileName();
         String defaultProfile = Config.getDefaultProfileName();
         Border etched = BorderFactory.createEtchedBorder();
@@ -134,15 +138,26 @@ class ConfigWindow extends JFrame {
         buttonPanel.add(newButton);
         
         // button to load a new profile
-        JButton loadButton = new JButton(LocalText.getText("LOAD"));
-        loadButton.addActionListener(
+        JButton importButton = new JButton(LocalText.getText("IMPORT"));
+        importButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
-                        loadProfile();
+                        importProfile();
                     }
                 }
         );
-        buttonPanel.add(loadButton);
+        buttonPanel.add(importButton);
+        
+        // saveas button
+//        JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
+//        saveAsButton.addActionListener(
+//                new ActionListener() {
+//                    public void actionPerformed(ActionEvent arg0) {
+//                        ConfigWindow.this.saveAsConfig();
+//                    }
+//                }
+//        );
+//        buttonPanel.add(saveAsButton);
         
         profilePanel.add(buttonPanel);
 
@@ -322,8 +337,8 @@ class ConfigWindow extends JFrame {
                             int state = fc.showOpenDialog(ConfigWindow.this);
                             if ( state == JFileChooser.APPROVE_OPTION ){
                                 File file = fc.getSelectedFile();
-                                dirLabel.setText(file.getAbsolutePath());
-                                item.setNewValue(file.getAbsolutePath());
+                                dirLabel.setText(file.getPath());
+                                item.setNewValue(file.getPath());
                             }
                         }
                     }
@@ -430,47 +445,43 @@ class ConfigWindow extends JFrame {
 
     private void setupButtonPanel() {
         buttonPanel.removeAll();
+
+        String activeFilePath = Config.getActiveFilepath();
+        Border etched = BorderFactory.createEtchedBorder();
+        Border titled = BorderFactory.createTitledBorder(etched, LocalText.getText("CONFIG_CURRENT_PATH", activeFilePath));
+        buttonPanel.setBorder(titled);
         
-        // saveas button
-        JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
-        saveAsButton.addActionListener(
+        // save button
+        JButton saveButton = new JButton(LocalText.getText("SAVE_AND_APPLY"));
+        saveButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.saveAsConfig();
-                    }
-                }
-        );
-        buttonPanel.add(saveAsButton);
-
-        // save button
-        if (Config.isFilePathDefined()) {
-            JButton saveButton = new JButton(LocalText.getText("SAVE"));
-            saveButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent arg0) {
+                        if (Config.isFilePathDefined()) {
                             ConfigWindow.this.saveConfig();
+                        } else {
+                            ConfigWindow.this.saveAsConfig();
                         }
                     }
-            );
-            buttonPanel.add(saveButton);
-        }
-
-        JButton applyButton = new JButton(LocalText.getText("APPLY"));
-        applyButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.applyConfig();
-                    }
                 }
         );
-        buttonPanel.add(applyButton);
+        buttonPanel.add(saveButton);
+
+//        JButton applyButton = new JButton(LocalText.getText("APPLY"));
+//        applyButton.addActionListener(
+//                new ActionListener() {
+//                    public void actionPerformed(ActionEvent arg0) {
+//                        ConfigWindow.this.applyConfig();
+//                    }
+//                }
+//        );
+//        buttonPanel.add(applyButton);
         
 
         JButton cancelButton = new JButton(LocalText.getText("CANCEL"));
         cancelButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.closeConfig();
+                        ConfigWindow.this.closeConfig(true);
                     }
                 }
         );
@@ -479,8 +490,13 @@ class ConfigWindow extends JFrame {
     }
     
     private void newProfile() {
-        String newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
+        List<String> allProfileNames = Config.getAllProfiles();
+        String newProfile = null;
+        do {
+            newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
                 LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
+        } while (allProfileNames.contains(newProfile)); 
+        
         if (Util.hasValue(newProfile)) {
             String defaultProfile = (String)JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_DEFAULT_MESSAGE"),
                     LocalText.getText("CONFIG_DEFAULT_TITLE"), JOptionPane.QUESTION_MESSAGE, null, 
@@ -497,7 +513,7 @@ class ConfigWindow extends JFrame {
         });
     }
     
-    private void loadProfile() {
+    private void importProfile() {
         String directory = Config.get("save.directory");
 
         JFileChooser fc = new JFileChooser(directory);
@@ -505,7 +521,9 @@ class ConfigWindow extends JFrame {
                 new FileFilter() {
                     public boolean accept( File f ){
                         return f.isDirectory() ||
-                        f.getName().toLowerCase().endsWith( ".rails_config" );
+                        f.getName().toLowerCase().endsWith( CONFIG_EXTENSION) ||
+                        f.getName().toLowerCase().endsWith( LEGACY_EXTENSION)
+                        ;
                     }
                     public String getDescription() {
                         return CONFIG_DESCRIPTION;
@@ -516,8 +534,11 @@ class ConfigWindow extends JFrame {
         if ( state == JFileChooser.APPROVE_OPTION )
         {
             File file = fc.getSelectedFile();
-            if (Config.loadProfileFromFile(file)) {
+            if (Config.importProfileFromFile(file)) {
                 changeProfile(Config.getActiveProfileName());
+            } else {
+                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_LOAD_ERROR_MESSAGE", Config.getActiveProfileName()),
+                        LocalText.getText("CONFIG_LOAD_TITLE"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -532,11 +553,17 @@ class ConfigWindow extends JFrame {
         });
     }
     
-    private void saveConfig() {
-        Config.updateProfile(); // transfer the configitem to the active profile
-        Config.saveActiveProfile();
-        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_MESSAGE", Config.getActiveProfileName()),
+    private boolean saveConfig() {
+        Config.updateProfile(fromStatusWindow); // transfer the configitem to the active profile
+        if (Config.saveActiveProfile()) {
+            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", Config.getActiveProfileName()),
                 LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", Config.getActiveProfileName()),
+                    LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     private void saveAsConfig() {
@@ -561,11 +588,14 @@ class ConfigWindow extends JFrame {
                 }
         );
         int state = fc.showSaveDialog(this);
-        if ( state == JFileChooser.APPROVE_OPTION )
-        {
+        if ( state == JFileChooser.APPROVE_OPTION ) {
             File file = fc.getSelectedFile();
-            Config.setActiveFilepath(file.getPath());
+            if (!Config.setActiveFilepath(file.getPath())) {
+                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_PROFILE_ERROR_MESSAGE", Config.getActiveProfileName()),
+                        LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
+            }
             saveConfig();
+            // update panel for file path
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     setupButtonPanel();
@@ -576,16 +606,18 @@ class ConfigWindow extends JFrame {
         }
     }
     
-    private void applyConfig() {
-        Config.updateProfile(); // transfer the configitem to the active profile
-        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_APPLY_MESSAGE"),
-                LocalText.getText("CONFIG_APPLY_TITLE"), JOptionPane.INFORMATION_MESSAGE);
-    }
+//    private void applyConfig() {
+//        Config.updateProfile(fromStatusWindow); // transfer the configitem to the active profile
+//        JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_APPLY_MESSAGE"),
+//                LocalText.getText("CONFIG_APPLY_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+//    }
     
-    private void closeConfig() {
-        Config.revertProfile();
-        StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+    private void closeConfig(boolean cancel) {
+        if (cancel) Config.revertProfile();
         this.setVisible(false);
+        if (fromStatusWindow) {
+            StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+        }
     }
 
 }

@@ -133,7 +133,7 @@ public final class Config {
     /**
      * updates the profile according to the changes in configitems
      */
-    public static void updateProfile() {
+    public static void updateProfile(boolean applyInitMethods) {
         for (List<ConfigItem> items:configSections.values()) {
             for (ConfigItem item:items) {
                 if (!item.hasNewValue()) continue;
@@ -142,7 +142,7 @@ public final class Config {
                     continue;
                 }
                 userProperties.setProperty(item.name, item.getNewValue());
-                item.callInitMethod();
+                if (applyInitMethods) item.callInitMethod();
                 log.debug("Changed property name = " + item.name + " to value = " + item.getNewValue());
                 item.setNewValue(null);
             }
@@ -224,6 +224,7 @@ public final class Config {
         
         // add to list of user profiles
         userProfiles.setProperty(profileName, "");
+        
         // define and load default profile
         String defaultConfigFile = defaultProfiles.getProperty(defaultProfile);
         userProperties.setProperty(PROFILENAME_PROPERTY, profileName);
@@ -268,6 +269,22 @@ public final class Config {
     }
     
     /**
+     * get all (visible default + user) profiles
+     */
+    public static List<String> getAllProfiles() {
+        List<String> profiles = getDefaultProfiles(true);
+        profiles.addAll(getUserProfiles());
+        return profiles;
+    }
+    
+    /**
+     * checks if profile is default profile
+     */
+    public static boolean isDefaultProfile(String profileName) {
+        return !(defaultProfiles.get(profileName) == null);
+    }
+        
+    /**
      * returns name of (active) default profile
      */
     public static String getDefaultProfileName() {
@@ -290,6 +307,7 @@ public final class Config {
     
     /**
      * sets filename for an active profile (and store list of profiles)
+     * @return false if list of profiles cannot be stored
      */
     public static boolean setActiveFilepath(String filepath) {
         userProfiles.setProperty(selectedProfile, filepath);
@@ -423,15 +441,15 @@ public final class Config {
      * loads an external user profile
      * defined by the filepath
      */
-    public static boolean loadProfileFromFile(File file) {
-        String filepath = file.getAbsolutePath();
+    public static boolean importProfileFromFile(File file) {
+        String filepath = file.getPath();
         if (loadPropertyFile(userProperties, filepath, false)) {
             String profile = userProperties.getProperty(PROFILENAME_PROPERTY);
             if (!Util.hasValue(profile)) {
                 profile = STANDARD_PROFILE_SELECTION;
             }
             selectedProfile = profile;
-            setActiveFilepath(filepath);
+//           setActiveFilepath(filepath); // do not set filepath on import
             loadDefaultProfile();
             setSaveDirDefaults();
             return true;
@@ -509,9 +527,8 @@ public final class Config {
             }
             properties.load(inFile);
         } catch (Exception e) {
-            System.err.println(e + " whilst loading properties file "
+            log.error(e + " whilst loading properties file "
                                + filepath);
-//            e.printStackTrace(System.err);
             result = false;
         }
         return result;
@@ -531,6 +548,8 @@ public final class Config {
             properties.store(new FileOutputStream(outFile), "Automatically generated, do not edit");
             log.info("Storing properties to file " + filepath);
         } catch (IOException e) {
+            log.error(e + " whilst storing properties file "
+                    + filepath);
             result = false;
         }
         return result;

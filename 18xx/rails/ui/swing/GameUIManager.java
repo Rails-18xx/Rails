@@ -184,7 +184,7 @@ public class GameUIManager implements DialogOwner {
         reportWindow.scrollDown();
 
         // define configWindow
-        configWindow = new ConfigWindow();
+        configWindow = new ConfigWindow(true);
         configWindow.init();
     }
 
