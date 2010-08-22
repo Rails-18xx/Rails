@@ -79,9 +79,8 @@ public class GameManager_18EU extends GameManager {
                 bankrupter.getPortfolio().swapPresidentCertificate(company,
                         newPresident.getPortfolio());
             } else {
-                company.setClosed();
+                company.setClosed();  // This also makes majors restartable
                 ReportBuffer.add(LocalText.getText("CompanyCloses", company.getName()));
-                // TODO: can be restarted (in 18EU)
             }
         }
         // Dump all shares
