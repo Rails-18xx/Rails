@@ -83,8 +83,15 @@ public class Player implements CashHolder, Comparable<Player> {
      * @return Total worth
      */
     public int getWorth() {
-        int worth = wallet.getCash();
-
+        // if player is bankrupt cash is not counted
+        // as this was generated during forced selling
+        int worth;
+        if (bankrupt.booleanValue()) {
+            worth = 0;
+        } else { 
+            worth = wallet.getCash();
+        }
+        
         for (PublicCertificateI cert : portfolio.getCertificates()) {
             worth += cert.getCompany().getGameEndPrice() * cert.getShares();
         }

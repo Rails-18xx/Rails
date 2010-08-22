@@ -995,12 +995,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         File recoveryFile = null;
         boolean result;
         try {
-            log.debug("Created temporary recovery file, path = "  + tempFile.getAbsolutePath());
+            log.debug("Created temporary recovery file, path = "  + tempFile.getPath());
             // check if previous save file exists
             recoveryFile = new File(filePath);
-            log.debug("Potential recovery filePath = "  + recoveryFile.getAbsolutePath());
+            log.debug("Potential recovery filePath = "  + recoveryFile.getPath());
             if (recoveryFile.exists()) {
-                log.debug("Potential recovery filePath = "  + recoveryFile.getAbsolutePath());
+                log.debug("Potential recovery filePath = "  + recoveryFile.getPath());
                 File backupFile = new File(filePath + ".bak");
                 if (recoveryFile.renameTo(backupFile)) {
                     result = tempFile.renameTo(recoveryFile);
@@ -1018,7 +1018,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
 
         if (result) {
-            log.debug("Renamed to recovery file, path = "  + recoveryFile.getAbsolutePath());
+            log.debug("Renamed to recovery file, path = "  + recoveryFile.getPath());
             if (!recoverySaveWarning) {
                 DisplayBuffer.add(LocalText.getText("RecoverySaveSuccessAgain"));
                 recoverySaveWarning = true;

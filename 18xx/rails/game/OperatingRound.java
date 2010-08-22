@@ -13,6 +13,7 @@ import rails.game.special.*;
 import rails.game.state.ArrayListState;
 import rails.game.state.EnumState;
 import rails.game.state.GenericState;
+import rails.game.state.HashMapState;
 import rails.util.LocalText;
 import rails.util.SequenceUtil;
 
@@ -49,8 +50,8 @@ public class OperatingRound extends Round implements Observer {
 
     protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
 
-    protected Map<String, Integer> tileLaysPerColour =
-        new HashMap<String, Integer>();
+    protected HashMapState<String, Integer> tileLaysPerColour =
+        new HashMapState<String, Integer>("tileLaysPerColour");
 
     protected List<LayBaseToken> currentNormalTokenLays =
         new ArrayList<LayBaseToken>();
@@ -450,10 +451,6 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean checkNormalTileLay(TileI tile, boolean update) {
 
-        //        Map<String,Integer> tileLaysPerColour = tileLaysPerColourState.getObject();
-
-        //        if (tileLaysPerColour.isEmpty()) return false;
-
         String colour = tile.getColourName();
         Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
 
@@ -471,28 +468,23 @@ public class OperatingRound extends Round implements Observer {
          * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
          */
 
-        //        Map<String,Integer> tileLaysPerColourUpdated = new HashMap<String, Integer>(); // new (empty) map
-
         if (oldAllowedNumber <= 1) {
-            for (String key:tileLaysPerColour.keySet())
-                new MapChange<String,Integer>(tileLaysPerColour, key, new Integer(0));
+            for (String key:tileLaysPerColour.viewKeySet()) {
+                tileLaysPerColour.put(key, new Integer(0));
+            }
             log.debug("No more normal tile lays allowed");
             currentNormalTileLays.clear();
         } else {
-            //            tileLaysPerColourUpdated.put(colour, new Integer(oldAllowedNumber - 1));
-            for (String key:tileLaysPerColour.keySet())
-                if (colour.equals(key))
-                    new MapChange<String,Integer>
-            (tileLaysPerColour, colour, new Integer(oldAllowedNumber-1));
-                else
-                    new MapChange<String,Integer>(tileLaysPerColour, key, new Integer(0));
-
+            for (String key:tileLaysPerColour.viewKeySet()) {
+                if (colour.equals(key)) {
+                    tileLaysPerColour.put(colour, new Integer(oldAllowedNumber-1));
+                } else  {
+                    tileLaysPerColour.put(key, new Integer(0));
+                }
+            }
             log.debug((oldAllowedNumber - 1) + " more " + colour
                     + " tile lays allowed");
         }
-
-        //        tileLaysPerColourState.set(tileLaysPerColourUpdated);
-
         return true;
     }
 
@@ -1306,20 +1298,16 @@ public class OperatingRound extends Round implements Observer {
      * of the tile laying step.
      */
     protected void getNormalTileLays() {
-
-        //        Map<String,Integer>
-        tileLaysPerColour =
-            new HashMap<String, Integer>(getCurrentPhase().getTileColours()); // Clone
-
-        int allowedNumber;
-        for (String colour : tileLaysPerColour.keySet()) {
-            allowedNumber = operatingCompany.get().getNumberOfTileLays(colour);
+        
+        // duplicate the phase colours 
+        Map<String, Integer> newTileColours = new HashMap<String, Integer>(getCurrentPhase().getTileColours());
+        for (String colour : newTileColours.keySet()) {
+            int allowedNumber = operatingCompany.get().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
-            new MapChange<String, Integer>(tileLaysPerColour, colour, new Integer(allowedNumber));
+            newTileColours.put(colour, new Integer(allowedNumber));
         }
-
-        // store state
-        //        tileLaysPerColourState = new GenericState<Map<String,Integer>>("tileLaysPerColour", tileLaysPerColour);
+        // store to state
+        tileLaysPerColour.initFromMap(newTileColours); 
     }
 
     protected void setNormalTileLays() {
@@ -1330,11 +1318,11 @@ public class OperatingRound extends Round implements Observer {
         //        Map<String,Integer> tileLaysPerColour = (Map<String,Integer>)(tileLaysPerColourState.getObject());
 
         int sumLays = 0;
-        for (Integer i: tileLaysPerColour.values())
+        for (Integer i: tileLaysPerColour.viewValues())
             sumLays = sumLays + i;
         if (sumLays != 0) {
             //        if (!tileLaysPerColour.isEmpty()) {
-            currentNormalTileLays.add(new LayTile(tileLaysPerColour));
+            currentNormalTileLays.add(new LayTile(tileLaysPerColour.viewMap()));
         }
 
     }

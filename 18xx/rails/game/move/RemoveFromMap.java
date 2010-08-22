@@ -8,28 +8,25 @@ package rails.game.move;
 import java.util.Map;
 
 /**
- * This Move class handles adding an entry to a Map.
+ * This Move class handles removable from a stateful map (collection)
  *
  * @author Erik Vos
  */
-public class MapChange<K, V> extends Move {
+public class RemoveFromMap<K, V> extends Move {
 
     protected Map<K, V> map;
     protected K key;
-    protected V newValue;
     protected V oldValue;
     protected boolean keyExisted;
 
     /**
-     * Creates a move that changes a map <key,value> pair
+     * Creates a move that removes key from map
      */
     
-    public MapChange (Map<K, V> map, K key, V newValue) {
+    public RemoveFromMap (Map<K, V> map, K key) {
 
         this.map = map;
         this.key = key;
-        this.newValue = newValue;
-        this.oldValue = map.get(key);
         this.keyExisted = map.containsKey(key);
 
         MoveSet.add(this);
@@ -37,7 +34,9 @@ public class MapChange<K, V> extends Move {
     
     @Override
     public boolean execute() {
-        map.put(key, newValue);
+        if (keyExisted) {
+            map.remove(key);
+        }
         return true;
     }
 
@@ -50,6 +49,7 @@ public class MapChange<K, V> extends Move {
     }
     
     public String toString() {
-        return "MapChange: key="+key+" from "+oldValue+" to "+newValue;
+        return "RemoveFromMap: remove key="+key+" from map";
     }
+
 }

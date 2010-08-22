@@ -423,7 +423,7 @@ public class ShareSellingRound extends StockRound {
         } else if (getSellableShares().isEmpty()) {
             DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
                     Bank.format(cashToRaise.intValue())));
-
+            currentPlayer.setBankrupt();
             gameManager.registerBankruptcy();
         }
 
