@@ -180,12 +180,12 @@ Known bugs:
 	</Game>
 
 	<Game name="1870">
-		<Note>Partly playable</Note>
+		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
-
-Aspects not present in 1830 have not been implemented yet.
+Limitations:
+All aspects not present in 1830 have not been implemented yet.
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
