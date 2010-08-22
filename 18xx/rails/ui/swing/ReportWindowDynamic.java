@@ -164,10 +164,16 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
         boolean haveRedo = false;
         List<GameAction> gameActions = PossibleActions.getInstance().getType(GameAction.class);
+        boolean undoFlag = false;
         for (GameAction action:gameActions) {
             switch (action.getMode()) {
             case GameAction.UNDO:
+                undoFlag = true;
+                backwardButton.setPossibleAction(action);
+                backwardButton.setEnabled(true);
+                break;
             case GameAction.FORCED_UNDO:
+                if (undoFlag) break; // only activate forced undo, if no other undo available 
                 backwardButton.setPossibleAction(action);
                 backwardButton.setEnabled(true);
                 break;
@@ -175,7 +181,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
                 forwardButton.setPossibleAction(action);
                 forwardButton.setEnabled(true);
                 haveRedo = true;
-                if (!timeWarpMode) activateTimeWarp();
                 break;
             }
         }
@@ -205,6 +210,13 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     public void actionPerformed(ActionEvent e) {
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
+        if (action instanceof GameAction && (action.getMode() == GameAction.FORCED_UNDO)) {
+            if (!timeWarpMode) {
+                activateTimeWarp();
+            }
+        }
+            
+        
         gameUIManager.processOnServer(action);
     }
 
@@ -214,6 +226,9 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 //            String protocol = e.getURL().getProtocol();
             int index = url.getPort();
             gotoIndex(index + 1);
+            if (!timeWarpMode) {
+                activateTimeWarp();
+            }
         }
     }
 
