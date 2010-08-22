@@ -1,7 +1,10 @@
 package rails.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -9,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,13 +40,19 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
     private GameUIManager gameUIManager;
     
+    private JLabel message;
+    
     private JScrollPane reportPane;
     private JEditorPane editorPane;
     
     private JPanel buttonPanel;
     private ActionButton forwardButton;
     private ActionButton backwardButton;
+    private JButton returnButton;
+    private JButton playFromHereButton;
     private JButton commentButton;
+    
+    private boolean timeWarpMode;
     
     protected static Logger log =
         Logger.getLogger(ReportWindowDynamic.class.getPackage().getName());
@@ -54,6 +64,41 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     }
 
     public void init() {
+        super.init();
+
+        setLayout(new BorderLayout());
+        
+        JPanel messagePanel = new JPanel();
+        messagePanel.setLayout(new BorderLayout());
+
+        message = new JLabel();
+        message.setText( LocalText.getText("REPORT_TIMEWARP_ACTIVE"));
+        message.setHorizontalAlignment(JLabel.CENTER);
+        messagePanel.add(message, "North");
+        
+        JPanel timeWarpButtons = new JPanel();
+        returnButton = new JButton(LocalText.getText("REPORT_LEAVE_TIMEWARP"));
+        returnButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        gotoLastIndex();
+                    }
+                }
+        );
+        timeWarpButtons.add(returnButton);
+
+        playFromHereButton = new JButton(LocalText.getText("REPORT_PLAY_FROM_HERE"));
+        playFromHereButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        deactivateTimeWarp();
+                    }
+                }
+        );
+        timeWarpButtons.add(playFromHereButton);
+        messagePanel.add(timeWarpButtons, "South");
+        add(messagePanel, "North");
+        
         editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
@@ -74,7 +119,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
         
-        
         backwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_BACKWARD"));
         backwardButton.addActionListener(this);
         buttonPanel.add(backwardButton);
@@ -82,6 +126,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         forwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_FORWARD"));
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
+        
         
         commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
         commentButton.addActionListener(
@@ -106,7 +151,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         );
         buttonPanel.add(commentButton);
         
-        super.init();
     }
     
     @Override
@@ -116,7 +160,9 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         scrollDown();
         
         forwardButton.setEnabled(false);
-        backwardButton.setEnabled(true);
+        backwardButton.setEnabled(false);
+
+        boolean haveRedo = false;
         List<GameAction> gameActions = PossibleActions.getInstance().getType(GameAction.class);
         for (GameAction action:gameActions) {
             switch (action.getMode()) {
@@ -128,9 +174,12 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
             case GameAction.REDO:
                 forwardButton.setPossibleAction(action);
                 forwardButton.setEnabled(true);
+                haveRedo = true;
+                if (!timeWarpMode) activateTimeWarp();
                 break;
             }
         }
+        if (!haveRedo) deactivateTimeWarp();
     }
 
     @Override
@@ -168,6 +217,10 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         }
     }
 
+    private void gotoLastIndex() {
+       gotoIndex(gameUIManager.getGameManager().getMoveStack().size());
+    }
+    
     private void gotoIndex(int index) {
         MoveStack stack = gameUIManager.getGameManager().getMoveStack();
         int currentIndex = stack.getIndex();
@@ -182,4 +235,21 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         }
     }
 
+    private void activateTimeWarp() {
+        message.setVisible(true);
+        playFromHereButton.setVisible(true);
+        returnButton.setVisible(true);
+        gameUIManager.setEnabledAllWindows(false, this);
+        timeWarpMode = true;
+        closeable = false;
+    }
+
+    private void deactivateTimeWarp() {
+        gameUIManager.setEnabledAllWindows(true, this);
+        message.setVisible(false);
+        playFromHereButton.setVisible(false);
+        returnButton.setVisible(false);
+        timeWarpMode = false;
+        closeable = true;
+    }
 }
