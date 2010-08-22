@@ -178,6 +178,10 @@ public class MoveStack {
         }
     }
     
+    public int size() {
+        return moveStack.size();
+    }
+    
     /**
      * undo/redo to a given moveStack index
      */

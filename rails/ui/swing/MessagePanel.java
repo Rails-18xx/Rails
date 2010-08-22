@@ -75,7 +75,7 @@ public class MessagePanel extends JPanel {
         // display
         String text = messageText.toString();
         int lines = text.split("<[Bb][Rr]>").length + 1;
-        setLines(lines);
+//        setLines(lines);
         message.setText("<html><center>" + text + "</center></html>");
         
     }

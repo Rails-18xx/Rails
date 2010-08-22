@@ -1,5 +1,7 @@
 package rails.ui.swing;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
@@ -822,6 +824,25 @@ public class GameUIManager implements DialogOwner {
     public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
         return (Boolean) getGameParameter(key);
     }
+   
+    private void setEnabledWindow(boolean enabled, JFrame window, JFrame exceptionWindow) {
+        
+        if (window != null && window != exceptionWindow) {
+            window.setEnabled(enabled);
+        }
+    }
+    /** 
+     * deactivate all game windows, except the argument one
+     */
+    public void setEnabledAllWindows(boolean enabled, JFrame exceptionWindow) {
+        setEnabledWindow(enabled, stockChart, exceptionWindow);
+        setEnabledWindow(enabled, reportWindow, exceptionWindow);
+        setEnabledWindow(enabled, configWindow, exceptionWindow);
+        setEnabledWindow(enabled, orWindow, exceptionWindow);
+        setEnabledWindow(enabled, startRoundWindow, exceptionWindow);
+        setEnabledWindow(enabled, statusWindow, exceptionWindow);
+    }
+    
     
     private void updateWindowsLookAndFeel() {
         SwingUtilities.updateComponentTreeUI(statusWindow);
@@ -843,11 +864,5 @@ public class GameUIManager implements DialogOwner {
         Scale.initFromConfiguration();
         instance.initFontSettings();
         instance.updateWindowsLookAndFeel();
-        
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                instance.repaintWindows();
-//            }
-//        });
     }
 }

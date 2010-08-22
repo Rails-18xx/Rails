@@ -555,6 +555,12 @@ class ConfigWindow extends JFrame {
     
     private boolean saveConfig() {
         Config.updateProfile(fromStatusWindow); // transfer the configitem to the active profile
+
+        if (fromStatusWindow) {
+            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_APPLY_MESSAGE"),
+                LocalText.getText("CONFIG_APPLY_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+        }
+
         if (Config.saveActiveProfile()) {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", Config.getActiveProfileName()),
                 LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
