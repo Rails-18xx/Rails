@@ -13,7 +13,7 @@ import rails.util.LocalText;
 import rails.util.Tag;
 
 public class Game {
-    public static final String version = "1.3+";
+    public static final String version = "1.4";
 
     /** The component Manager */
     protected ComponentManager componentManager;
