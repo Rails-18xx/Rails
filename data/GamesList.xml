@@ -104,6 +104,7 @@ Limitation:
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name ="18ALOptimizeNamedTrains"  type="toggle" default="yes"/>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
