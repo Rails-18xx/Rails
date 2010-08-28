@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import rails.game.ConfigurableComponentI;
 import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
+import rails.game.state.HashSetState;
 import rails.util.LocalText;
 import rails.util.Tag;
 
@@ -29,15 +30,15 @@ public final class RevenueManager implements ConfigurableComponentI {
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
     
-    private final Set<NetworkGraphModifier> graphModifiers;
-    private final Set<RevenueStaticModifier> staticModifiers;
-    private final Set<RevenueDynamicModifier> dynamicModifiers;
-    private final Set<ConfigurableComponentI> configurableModifiers;
+    private final HashSetState<NetworkGraphModifier> graphModifiers;
+    private final HashSetState<RevenueStaticModifier> staticModifiers;
+    private final HashSetState<RevenueDynamicModifier> dynamicModifiers;
+    private final HashSet<ConfigurableComponentI> configurableModifiers;
 
     public RevenueManager() {
-        graphModifiers = new HashSet<NetworkGraphModifier>(); 
-        staticModifiers = new HashSet<RevenueStaticModifier>(); 
-        dynamicModifiers = new HashSet<RevenueDynamicModifier>();
+        graphModifiers = new HashSetState<NetworkGraphModifier>("NetworkGraphModifiers"); 
+        staticModifiers = new HashSetState<RevenueStaticModifier>("RevenueStaticModifiers"); 
+        dynamicModifiers = new HashSetState<RevenueDynamicModifier>("RevenueDynamicModifiers");
         configurableModifiers = new HashSet<ConfigurableComponentI>();
     }
     
@@ -144,20 +145,20 @@ public final class RevenueManager implements ConfigurableComponentI {
     }
 
     void callGraphModifiers(NetworkGraphBuilder graphBuilder) {
-        for (NetworkGraphModifier modifier:graphModifiers) {
+        for (NetworkGraphModifier modifier:graphModifiers.viewSet()) {
             modifier.modifyGraph(graphBuilder);
         }
     }
     
     void callStaticModifiers(RevenueAdapter revenueAdapter) {
-        for (RevenueStaticModifier modifier:staticModifiers) {
+        for (RevenueStaticModifier modifier:staticModifiers.viewSet()) {
             modifier.modifyCalculator(revenueAdapter);
         }
     }
 
     Set<RevenueDynamicModifier> callDynamicModifiers(RevenueAdapter revenueAdapter) {
         Set<RevenueDynamicModifier> activeModifiers = new HashSet<RevenueDynamicModifier>();
-        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+        for (RevenueDynamicModifier modifier:dynamicModifiers.viewSet()) {
             if (modifier.prepareModifier(revenueAdapter))
                 activeModifiers.add(modifier);
         }

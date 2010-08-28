@@ -40,8 +40,8 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     
         // add them to the call list of the RevenueManager
         GameManager.getInstance().getRevenueManager().addStaticModifier(this);
-    }
 
+    }
     public boolean isExecutionable() {
         return false;
     }
@@ -77,38 +77,15 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     }
 
     /**
-     * Remove the token.
+     * Remove the bonus
      * This method can be called by a certain phase when it starts.
      * See prepareForRemovel().
      */
     public void close() {
-        owner.removeBonus(name);
-        // remove it from the call list of the RevenueManager
         GameManager.getInstance().getRevenueManager().removeStaticModifier(this);
     }
 
-    /**
-     * Prepare the bonus token for removal, if so configured.
-     * The only case currently implemented to trigger removal
-     * is the start of a given phase.
-     */
-    public void prepareForRemoval (PhaseManager phaseManager) {
-
-        if (removingObjectDesc == null) return;
-
-        if (removingObject == null) {
-            String[] spec = removingObjectDesc.split(":");
-            if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject =
-                        phaseManager.getPhaseByName(spec[1]);
-            }
-        }
-
-        if (removingObject instanceof Phase) {
-            ((Phase) removingObject).addObjectToClose(this);
-        }
-    }
-
+    
     public boolean equals (Bonus b) {
         return (b.name.equals(name))
                && b.value == value;

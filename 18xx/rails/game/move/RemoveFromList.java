@@ -37,12 +37,14 @@ public class RemoveFromList<E> extends Move {
     @Override
     public boolean execute() {
         list.remove(object);
+        updateModels();
         return true;
     }
 
     @Override
     public boolean undo() {
         list.add(index, object);
+        updateModels();
         return true;
     }
 
