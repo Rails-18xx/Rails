@@ -1755,6 +1755,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public boolean removeBonus(Bonus bonus) {
+        bonus.close(); // close the bonus
         new RemoveFromList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
         return true;
     }
