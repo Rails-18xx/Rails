@@ -229,7 +229,8 @@ public class PrussianFormationRound extends StockRound {
             return false;
         }
 
-        moveStack.start(false);
+        // all actions linked during formation round to avoid serious undo problems
+        moveStack.start(false).linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
 
@@ -246,6 +247,21 @@ public class PrussianFormationRound extends StockRound {
         ReportBuffer.add(message);
         if (display) DisplayBuffer.add(message);
 
+        // add money from sold shares
+        // Move cash and shares where required
+        int capFactor = getSoldPercentage(prussian) / (prussian.getShareUnit() * prussian.getShareUnitsForSharePrice());
+        int cash = capFactor * prussian.getIPOPrice();
+
+        if (cash > 0) {
+            new CashMove(bank, prussian, cash);
+            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+                prussian.getName(),
+                Bank.format(cash) ));
+        } else {
+            ReportBuffer.add(LocalText.getText("Floats",
+                    prussian.getName()));
+        }
+        
         executeExchange (Arrays.asList(new CompanyI[]{m2}), true, false);
         prussian.setFloated();
     }
@@ -271,7 +287,8 @@ public class PrussianFormationRound extends StockRound {
             return false;
         }
 
-        moveStack.start(false);
+        // all actions linked during formation round to avoid serious undo problems
+        moveStack.start(false).linkToPreviousMoveSet();
 
         // Execute
         if (folding) executeExchange (folded, false, false);
@@ -415,9 +432,19 @@ public class PrussianFormationRound extends StockRound {
 
     @Override
     protected void finishRound() {
+        RoundI interruptedRound = gameManager.getInterruptedRound();
+        if (interruptedRound != null) {  
+            ReportBuffer.add(LocalText.getText("EndOfFormationRound", PR_ID, 
+                interruptedRound.getRoundName()));
+        } else {
+            ReportBuffer.add(LocalText.getText("EndOfFormationRoundNoInterrupt", PR_ID));
+        }
+
         if (prussian.hasStarted()) prussian.checkPresidency();
         prussian.setOperated(); // To allow immediate share selling
-        super.finishRound();
+        //        super.finishRound();
+        // Inform GameManager
+        gameManager.nextRound(this);
     }
 
     public static boolean prussianIsComplete(GameManagerI gameManager) {
