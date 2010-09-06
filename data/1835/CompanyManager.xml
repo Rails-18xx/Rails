@@ -55,6 +55,7 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
+			<CloseManually/> <!-- If second tile is laid not via special property -->
 		</ClosingConditions>
 	</Company>
 	<Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">

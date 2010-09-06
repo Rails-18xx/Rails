@@ -417,7 +417,9 @@ public class StockRound extends Round {
              * original price is still valid
              */
             price = getCurrentSellPrice(company);
-            price /= company.getShareUnitsForSharePrice();
+            
+            // removed as this is done in getCurrentSellPrice      
+            // price /= company.getShareUnitsForSharePrice();
 
             /* Allow for different share units (as in 1835) */
             for (int i = 1; i <= 4; i++) {
@@ -802,7 +804,7 @@ public class StockRound extends Round {
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
                     playerName,
-                    shareUnit,
+                    share,
                     companyName,
                     from.getName(),
                     Bank.format(cost) ));
@@ -810,8 +812,8 @@ public class StockRound extends Round {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
                     playerName,
                     number,
-                    shareUnit,
-                    number * shareUnit,
+                    share,
+                    shares,
                     companyName,
                     from.getName(),
                     Bank.format(cost) ));
@@ -1055,17 +1057,17 @@ public class StockRound extends Round {
         if (numberSold == 1) {
             ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
                     playerName,
-                    company.getShareUnit(),
+                    company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(numberSold * price) ));
+                    Bank.format(numberSold * price * shareUnits) ));
         } else {
             ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                     playerName,
                     numberSold,
-                    company.getShareUnit(),
-                    numberSold * company.getShareUnit(),
+                    company.getShareUnit() * shareUnits,
+                    numberSold * company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(numberSold * price) ));
+                    Bank.format(numberSold * price * shareUnits) ));
         }
 
         // Check if the presidency has changed
@@ -1128,8 +1130,10 @@ public class StockRound extends Round {
                 && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
-            price = company.getCurrentSpace().getPrice() / company.getShareUnitsForSharePrice();
+            price = company.getCurrentSpace().getPrice();
         }
+        // stored price is the previous unadjusted price
+        price = price / company.getShareUnitsForSharePrice();
         return price;
     }
 

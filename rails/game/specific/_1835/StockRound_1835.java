@@ -45,8 +45,13 @@ public class StockRound_1835 extends StockRound {
                 otherPlayers.clear();
                 for (PublicCertificateI cert : company.getCertificates()) {
                     holder = (Portfolio)cert.getHolder();
-                    owner = holder.getOwner();
-                    if (owner instanceof Player) {
+                    owner = holder.getOwner(); 
+                    /* Would the player exceed the total certificate limit? */
+                    StockSpaceI stockSpace = company.getCurrentSpace();
+                    if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
+                            currentPlayer, company, cert.getCertificateCount())) continue;
+                    // only nationalize other players
+                    if (owner instanceof Player && owner != currentPlayer) {
                         otherPlayer = (Player) owner;
                         if (!otherPlayers.contains(otherPlayer)) {
                             price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
@@ -88,9 +93,11 @@ public class StockRound_1835 extends StockRound {
         if (sellPrices.containsKey(companyName)) {
             price = (sellPrices.get(companyName)).getPrice();
         } else {
-            price = company.getCurrentSpace().getPrice() / company.getShareUnitsForSharePrice();
+            price = company.getCurrentSpace().getPrice();
         }
-        return price;
+        // stored price is the previous unadjusted price
+        price = price / company.getShareUnitsForSharePrice();
+    return price;
     }
 
 
