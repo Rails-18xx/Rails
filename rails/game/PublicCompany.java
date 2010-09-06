@@ -1017,6 +1017,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
+        // Any trains go to the pool (from the 1856 rules)
+        Util.moveObjects(portfolio.getTrainList(), bank.getPool());
+
+        // Any cash goes to the bank (from the 1856 rules)
+        int cash = treasury.getCash();
+        if (cash > 0) new CashMove (this, bank, cash);
+
         lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
         setLastRevenue(0);
         treasury.setOption(CashModel.SUPPRESS_ZERO);
