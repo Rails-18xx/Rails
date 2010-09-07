@@ -64,24 +64,21 @@ public class StockRound_1856 extends StockRound {
     @Override
 	protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
 
+        if (!company.canSharePriceVary()) return;
+
+        int numberOfSpaces = numberSold;
         if (company instanceof PublicCompany_CGR) {
-            if (company.canSharePriceVary()) {
-                int numberOfSpaces;
-                if (company.getShareUnit() == 5) {
-                    // Take care for selling 5% shares in multiple blocks per turn
-                    numberOfSpaces
-                        = (sharesSoldSoFar.intValue() + numberSold)/2
-                        - squaresDownSoFar.intValue();
-                    sharesSoldSoFar.add(numberSold);
-                    squaresDownSoFar.add(numberOfSpaces);
-                } else {
-                    numberOfSpaces = numberSold;
-                }
-                stockMarket.sell(company, numberOfSpaces);
+            if (company.getShareUnit() == 5) {
+                // Take care for selling 5% shares in multiple blocks per turn
+                numberOfSpaces
+                    = (sharesSoldSoFar.intValue() + numberSold)/2
+                    - squaresDownSoFar.intValue();
+                sharesSoldSoFar.add(numberSold);
+                squaresDownSoFar.add(numberOfSpaces);
             }
-        } else {
-            super.adjustSharePrice (company, numberSold, soldBefore);
         }
+
+        super.adjustSharePrice (company, numberOfSpaces, soldBefore);
     }
 
     @Override
