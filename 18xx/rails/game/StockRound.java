@@ -417,8 +417,8 @@ public class StockRound extends Round {
              * original price is still valid
              */
             price = getCurrentSellPrice(company);
-            
-            // removed as this is done in getCurrentSellPrice      
+
+            // removed as this is done in getCurrentSellPrice
             // price /= company.getShareUnitsForSharePrice();
 
             /* Allow for different share units (as in 1835) */
@@ -1070,44 +1070,51 @@ public class StockRound extends Round {
                     Bank.format(numberSold * price * shareUnits) ));
         }
 
-        // Check if the presidency has changed
-        if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                    dumpedPlayer.getName(),
-                    companyName ));
-            // First swap the certificates
-            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-            List<PublicCertificateI> swapped =
-                portfolio.swapPresidentCertificate(company, dumpedPortfolio);
-            for (int i = 0; i < presSharesToSell; i++) {
-                certsToSell.add(swapped.get(i));
-            }
-        }
-
-        // Transfer the sold certificates
-        Iterator<PublicCertificateI> it = certsToSell.iterator();
-        while (it.hasNext()) {
-            cert = it.next();
-            if (cert != null) {
-                executeTradeCertificate(cert, pool, cert.getShares() * price);
-            }
-        }
+        // PROVISIONALLY MOVED UPWARDS
         adjustSharePrice (company, numberSold, soldBefore);
 
-        // Check if we still have the presidency
-        if (currentPlayer == company.getPresident()) {
-            Player otherPlayer;
-            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = gameManager.getPlayerByIndex(i);
-                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
-                    portfolio.swapPresidentCertificate(company,
-                            otherPlayer.getPortfolio());
-                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                            otherPlayer.getName(),
-                            company.getName() ));
-                    break;
-                }
+        if (!company.isClosed()) {
+
+	        // Check if the presidency has changed
+	        if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
+	            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+	                    dumpedPlayer.getName(),
+	                    companyName ));
+	            // First swap the certificates
+	            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
+	            List<PublicCertificateI> swapped =
+	                portfolio.swapPresidentCertificate(company, dumpedPortfolio);
+	            for (int i = 0; i < presSharesToSell; i++) {
+	                certsToSell.add(swapped.get(i));
+	            }
             }
+
+	        // Transfer the sold certificates
+	        Iterator<PublicCertificateI> it = certsToSell.iterator();
+	        while (it.hasNext()) {
+	            cert = it.next();
+	            if (cert != null) {
+	                executeTradeCertificate(cert, pool, cert.getShares() * price);
+	            }
+	        }
+	        // PROVISIONALLY MOVED UPWARDS
+	        //adjustSharePrice (company, numberSold, soldBefore);
+
+	        // Check if we still have the presidency
+	        if (currentPlayer == company.getPresident()) {
+	            Player otherPlayer;
+	            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
+	                otherPlayer = gameManager.getPlayerByIndex(i);
+	                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
+	                    portfolio.swapPresidentCertificate(company,
+	                            otherPlayer.getPortfolio());
+	                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+	                            otherPlayer.getName(),
+	                            company.getName() ));
+	                    break;
+	                }
+	            }
+	        }
         }
 
         // Remember that the player has sold this company this round.
