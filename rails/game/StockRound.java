@@ -1070,7 +1070,6 @@ public class StockRound extends Round {
                     Bank.format(numberSold * price * shareUnits) ));
         }
 
-        // PROVISIONALLY MOVED UPWARDS
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
@@ -1097,8 +1096,6 @@ public class StockRound extends Round {
 	                executeTradeCertificate(cert, pool, cert.getShares() * price);
 	            }
 	        }
-	        // PROVISIONALLY MOVED UPWARDS
-	        //adjustSharePrice (company, numberSold, soldBefore);
 
 	        // Check if we still have the presidency
 	        if (currentPlayer == company.getPresident()) {
