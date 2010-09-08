@@ -100,6 +100,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 }
             } else {
                 for (TileI tile : tiles) {
+                    // special check: does the tile increase the colour number?
+                    // this avoids that a special tile lay down or equalgrades existing tiles
+                    if (tile.getColourNumber() <= uiHex.getCurrentTile().getColourNumber()) continue;
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
