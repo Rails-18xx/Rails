@@ -39,7 +39,7 @@
 		<Blocking hex="F16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="F16" extra="no" free="no"/>
+				<SpecialTileLay location="F16" extra="no" free="no" tile="57" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="F16" extra="no" free="yes"/>
