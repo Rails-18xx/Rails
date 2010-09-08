@@ -535,7 +535,7 @@ class ConfigWindow extends JFrame {
         {
             File file = fc.getSelectedFile();
             if (Config.importProfileFromFile(file)) {
-                changeProfile(Config.getActiveProfileName());
+                repaintLater();
             } else {
                 JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_LOAD_ERROR_MESSAGE", Config.getActiveProfileName()),
                         LocalText.getText("CONFIG_LOAD_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -545,6 +545,10 @@ class ConfigWindow extends JFrame {
     
     private void changeProfile(String profileName) {
         Config.changeActiveProfile(profileName);
+        repaintLater();
+    }
+    
+    private void repaintLater() {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 init();

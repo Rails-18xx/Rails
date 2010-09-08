@@ -441,7 +441,7 @@ public final class Config {
      * loads an external user profile
      * defined by the filepath
      */
-    public static boolean importProfileFromFile(File file) {
+    public static boolean loadProfileFromFile(File file) {
         String filepath = file.getPath();
         if (loadPropertyFile(userProperties, filepath, false)) {
             String profile = userProperties.getProperty(PROFILENAME_PROPERTY);
@@ -449,8 +449,24 @@ public final class Config {
                 profile = STANDARD_PROFILE_SELECTION;
             }
             selectedProfile = profile;
-//           setActiveFilepath(filepath); // do not set filepath on import
+            setActiveFilepath(filepath); // do not set filepath on import
             loadDefaultProfile();
+            setSaveDirDefaults();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * imports an external user profile into an existing profile
+     * defined by the filepath
+     */
+    public static boolean importProfileFromFile(File file) {
+        String filepath = file.getPath();
+        Properties importProperties = new Properties();
+        if (loadPropertyFile(importProperties, filepath, false)) {
+            userProperties.putAll(importProperties);
             setSaveDirDefaults();
             return true;
         } else {
