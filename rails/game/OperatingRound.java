@@ -1339,9 +1339,11 @@ public class OperatingRound extends Round implements Observer {
         if (!operatingCompany.get().canUseSpecialProperties()) return;
 
         for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
-            if (getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName())
+            if (
+//                 stl.getTile() != null && getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName()) &&
                  // if a tile is specified it must have a tile colour currently available
-                 &&  (stl.isExtra() || !currentNormalTileLays.isEmpty())) {
+                 // commented out as it is not required and makes 1856 save files invalid
+                  (stl.isExtra() || !currentNormalTileLays.isEmpty())) {
                 // If the special tile lay is not extra, it is only allowed if
                 // normal tile lays are also (still) allowed
                 currentSpecialTileLays.add(new LayTile(stl));
