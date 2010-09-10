@@ -366,6 +366,7 @@ public class ShareSellingRound extends StockRound {
             price = sellPrice.getPrice();
             sellPrices.put(companyName, sellPrice);
         }
+        int cashAmount = numberSold * price * shareUnits;
 
         moveStack.start(true).linkToPreviousMoveSet();
 
@@ -375,48 +376,17 @@ public class ShareSellingRound extends StockRound {
                 company.getShareUnit(),
                 numberSold * company.getShareUnit(),
                 companyName,
-                Bank.format(numberSold * price) ));
+                Bank.format(cashAmount) ));
 
         boolean soldBefore = sellPrices.containsKey(companyName);
+
+        pay (bank, company, cashAmount);
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
-	        // Check if the presidency has changed
-	        if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
-	            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-	                    dumpedPlayer.getName(),
-	                    companyName));
-	            // First swap the certificates
-	            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-	            List<PublicCertificateI> swapped =
-	                    portfolio.swapPresidentCertificate(company, dumpedPortfolio);
-	            for (int i = 0; i < presSharesToSell; i++) {
-	                certsToSell.add(swapped.get(i));
-	            }
-	        }
 
-	        // Transfer the sold certificates
-	        for (PublicCertificateI cert2 : certsToSell) {
-	            if (cert2 != null) {
-	                executeTradeCertificate (cert2, pool, cert2.getShares() * price);
-	            }
-	        }
-
-	        // Check if we still have the presidency
-	        if (currentPlayer == company.getPresident()) {
-	            Player otherPlayer;
-	            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-	                otherPlayer = gameManager.getPlayerByIndex(i);
-	                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
-	                    portfolio.swapPresidentCertificate(company,
-	                            otherPlayer.getPortfolio());
-	                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-	                            otherPlayer.getName(),
-	                            company.getName()));
-	                    break;
-	                }
-	            }
-	        }
+            executeShareTransfer (company, certsToSell,
+                    dumpedPlayer, presSharesToSell);
         }
 
         cashToRaise.add(-numberSold * price);

@@ -1045,6 +1045,7 @@ public class StockRound extends Round {
 
         // Selling price
         int price = getCurrentSellPrice (company);
+        int cashAmount = numberSold * price * shareUnits;
 
         // Save original price as it may be reused in subsequent sale actions in the same turn
         boolean soldBefore = sellPrices.containsKey(companyName);
@@ -1059,7 +1060,7 @@ public class StockRound extends Round {
                     playerName,
                     company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(numberSold * price * shareUnits) ));
+                    Bank.format(cashAmount) ));
         } else {
             ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                     playerName,
@@ -1067,51 +1068,16 @@ public class StockRound extends Round {
                     company.getShareUnit() * shareUnits,
                     numberSold * company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(numberSold * price * shareUnits) ));
+                    Bank.format(cashAmount) ));
         }
 
+        pay (bank, currentPlayer, cashAmount);
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
 
-	        // Check if the presidency has changed
-	        if (presCert != null && dumpedPlayer != null && presSharesToSell > 0) {
-	            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-	                    dumpedPlayer.getName(),
-	                    companyName ));
-	            // First swap the certificates
-	            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-	            List<PublicCertificateI> swapped =
-	                portfolio.swapPresidentCertificate(company, dumpedPortfolio);
-	            for (int i = 0; i < presSharesToSell; i++) {
-	                certsToSell.add(swapped.get(i));
-	            }
-            }
-
-	        // Transfer the sold certificates
-	        Iterator<PublicCertificateI> it = certsToSell.iterator();
-	        while (it.hasNext()) {
-	            cert = it.next();
-	            if (cert != null) {
-	                executeTradeCertificate(cert, pool, cert.getShares() * price);
-	            }
-	        }
-
-	        // Check if we still have the presidency
-	        if (currentPlayer == company.getPresident()) {
-	            Player otherPlayer;
-	            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-	                otherPlayer = gameManager.getPlayerByIndex(i);
-	                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
-	                    portfolio.swapPresidentCertificate(company,
-	                            otherPlayer.getPortfolio());
-	                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-	                            otherPlayer.getName(),
-	                            company.getName() ));
-	                    break;
-	                }
-	            }
-	        }
+        	executeShareTransfer (company, certsToSell,
+        			dumpedPlayer, presSharesToSell);
         }
 
         // Remember that the player has sold this company this round.
@@ -1123,6 +1089,46 @@ public class StockRound extends Round {
         setPriority();
 
         return true;
+    }
+
+    protected void executeShareTransfer (PublicCompanyI company,
+    		List<PublicCertificateI> certsToSell,
+    		Player dumpedPlayer, int presSharesToSell) {
+
+        Portfolio portfolio = currentPlayer.getPortfolio();
+
+        // Check if the presidency has changed
+        if (dumpedPlayer != null && presSharesToSell > 0) {
+            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getName(),
+                    company.getName() ));
+            // First swap the certificates
+            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
+            List<PublicCertificateI> swapped =
+                portfolio.swapPresidentCertificate(company, dumpedPortfolio);
+            for (int i = 0; i < presSharesToSell; i++) {
+                certsToSell.add(swapped.get(i));
+            }
+        }
+
+        transferCertificates (certsToSell, pool);
+
+        // Check if we still have the presidency
+        if (currentPlayer == company.getPresident()) {
+            Player otherPlayer;
+            int currentIndex = getCurrentPlayerIndex();
+            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
+                otherPlayer = gameManager.getPlayerByIndex(i);
+                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
+                    portfolio.swapPresidentCertificate(company,
+                            otherPlayer.getPortfolio());
+                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                            otherPlayer.getName(),
+                            company.getName() ));
+                    break;
+                }
+            }
+        }
     }
 
     protected int getCurrentSellPrice (PublicCompanyI company) {
@@ -1143,9 +1149,22 @@ public class StockRound extends Round {
 
     protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
 
-        if (company.canSharePriceVary()) {
-            stockMarket.sell(company, numberSold);
+        if (!company.canSharePriceVary()) return;
+
+        stockMarket.sell(company, numberSold);
+
+        StockSpaceI newSpace = company.getCurrentSpace();
+
+        if (newSpace.closesCompany() && company.canClose()) {
+            company.setClosed();
+            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
+                    company.getName(),
+                    newSpace.getName()));
+            return;
         }
+
+        // Company is still open
+
     }
 
     public boolean useSpecialProperty(UseSpecialProperty action) {

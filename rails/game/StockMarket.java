@@ -248,6 +248,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         if (newrow > row) {
             newsquare = getStockSpace(newrow, col);
         }
+        /*
         if (newsquare != oldsquare && newsquare.closesCompany()) {
             company.setClosed();
             oldsquare.removeToken(company);
@@ -255,6 +256,10 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
                     company.getName(),
                     newsquare.getName()));
         } else {
+            prepareMove(company, oldsquare, newsquare);
+        }
+        */
+        if (newsquare != oldsquare) {
             prepareMove(company, oldsquare, newsquare);
         }
     }

@@ -113,7 +113,7 @@ public abstract class Round implements RoundI {
     protected int getNumberOfPlayers() {
         return gameManager.getNumberOfPlayers();
     }
-    
+
     protected int getNumberOfActivePlayers () {
         int number = 0;
         for (Player player : getPlayers()) {
@@ -268,7 +268,7 @@ public abstract class Round implements RoundI {
         int minorNo = 0;
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (!canCompanyOperateThisRound(company)) continue;
-            
+
             // Key must put companies in reverse operating order, because sort
             // is ascending.
             if (company.hasStockPrice()) {
@@ -291,7 +291,7 @@ public abstract class Round implements RoundI {
     protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
         return company.hasFloated() && !company.isClosed();
     }
-    
+
     /**
      * Check if a company must be floated, and if so, do it. <p>This method is
      * included here because it is used in various types of Round.
@@ -423,15 +423,32 @@ public abstract class Round implements RoundI {
         return getClass().getName().replaceAll(".*\\.", "");
     }
 
-    protected void executeTradeCertificate(Certificate cert, Portfolio newHolder, int price) {
+    protected void transferCertificate(Certificate cert, Portfolio newHolder) {
 
-        Portfolio oldHolder = (Portfolio) cert.getHolder();
         cert.moveTo(newHolder);
+    }
 
-        if (price != 0) {
-            new CashMove(newHolder.getOwner(), oldHolder.getOwner(), price);
+    // Note: all transferred shares must come from the same old shareholder.
+    protected void transferCertificates(List<? extends Certificate> certs,
+    		Portfolio newHolder) {
+
+    	for (Certificate cert : certs) {
+    		if (cert != null) {
+		        cert.moveTo(newHolder);
+    		}
+    	}
+    }
+
+    protected void pay (CashHolder from, CashHolder to, int amount) {
+        if (to != null && amount != 0) {
+            new CashMove (from, to, amount);
         }
+    }
 
+    protected void pay (Portfolio from, Portfolio to, int amount) {
+        if (to != null && amount != 0) {
+            new CashMove (from.getOwner(), to.getOwner(), amount);
+        }
     }
 
     public GameManagerI getGameManager() {
