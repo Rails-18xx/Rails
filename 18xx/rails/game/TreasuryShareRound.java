@@ -338,6 +338,8 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
+        int cashAmount = shares * price;
+
         // All seems OK, now buy the shares.
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -345,7 +347,7 @@ public class TreasuryShareRound extends StockRound {
                     shareUnit,
                     companyName,
                     from.getName(),
-                    Bank.format(shares * price) ));
+                    Bank.format(cashAmount) ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
                     companyName,
@@ -354,14 +356,16 @@ public class TreasuryShareRound extends StockRound {
                     number * shareUnit,
                     companyName,
                     from.getName(),
-                    Bank.format(shares * price) ));
+                    Bank.format(cashAmount) ));
         }
 
         moveStack.start(true);
+
+        pay (company, bank, cashAmount);
         PublicCertificateI cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
-            executeTradeCertificate(cert2, portfolio, cert2.getShares() * price);
+            transferCertificate(cert2, portfolio);
         }
 
         hasBought.set(true);
@@ -481,20 +485,25 @@ public class TreasuryShareRound extends StockRound {
 
         moveStack.start(true);
 
+        int cashAmount = numberSold * price;
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 companyName,
                 numberSold,
                 company.getShareUnit(),
                 (numberSold * company.getShareUnit()),
                 companyName,
-                Bank.format(numberSold * price) ));
+                Bank.format(cashAmount) ));
 
+        pay (bank, company, cashAmount);
         // Transfer the sold certificates
+        transferCertificates (certsToSell, pool);
+        /*
         for (PublicCertificateI cert2 : certsToSell) {
             if (cert2 != null) {
-                 executeTradeCertificate (cert2, pool, cert2.getShares() * price);
+                 transferCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
+        */
         stockMarket.sell(company, numberSold);
 
         hasSold.set(true);
