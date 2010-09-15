@@ -358,7 +358,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public ModelObject getInGameModel ();
     public ModelObject getIsClosedModel ();
-    
 
-
+    public int getFormationOrderIndex ();
+    public void setFormationOrderIndex (int formationOrderIndex);
 }

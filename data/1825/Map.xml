@@ -1,4 +1,16 @@
 <Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="R">
+	<!-- The Q row doesn't exist on the board - it is there to facilitate edge tile placement-->
+	<Hex name="Q9" tile="0"/>
+	<Hex name="Q11" tile="0"/>
+	<Hex name="Q13" tile="0"/>
+	<Hex name="Q15" tile="0"/>
+	<Hex name="Q17" tile="0"/>
+	<Hex name="Q19" tile="0"/>
+	<Hex name="Q21" tile="0"/>
+	<Hex name="Q23" tile="0"/>		
+	<Hex name="Q25" tile="0"/>
+	<Hex name="Q27" tile="0"/>
+	<!-- End of nonexistent Q row -->
 	<Hex name="R8" tile="0"/>
 	<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3" />
 	<Hex name="R12" tile="-20" orientation="1" city="Wolverhampton, Walsall"/>
