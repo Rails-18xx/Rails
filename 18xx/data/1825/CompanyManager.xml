@@ -2,10 +2,10 @@
 <CompanyManager>
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
-		<PoolPaysOut/>
+	
+	<CompanyType name="Public" class="rails.game.specific._1825.PublicCompany_1825">
 		<Float percentage="60"/>
-		<ShareUnit percentage="10"/>
+		<StockPrice par="yes"></StockPrice><ShareUnit percentage="10"/>
         <BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 `		    <HomeBase lay="firstOR"/>
@@ -14,8 +14,9 @@
         </BaseTokens>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
-		<Trains number="4,4,3,-1,-1"/>
-	</CompanyType>
+		<Trains number="4,4,3"/>
+		<TileLays>
+			<Number colour="yellow" number="2" phase="1,2,3,4,5"></Number></TileLays></CompanyType>
 	<Company name="S&amp;M" type="Private" basePrice="30" revenue="5" longname="Swansea and Mumbles">
   </Company>
 	<Company name="CHP" type="Private" basePrice="75" revenue="12"
@@ -31,39 +32,47 @@
 	<!-- Note two supported colour specification formats:
 		RGB decimal with commas and RGB hexadecimal without commas -->
 	<Company name="LNWR" type="Public" tokens="6" fgColour="FFFFFF"
-		bgColour="000000" longname="London &amp; North Western Railway">
+		bgColour="000000" longname="London &amp; North Western Railway" startspace="P1">
 		<Home hex="T16" />
 	</Company>
 	<Company name="GWR" type="Public" tokens="6" fgColour="FFFFFF"
-		bgColour="006600" longname="Great Western Railway">
+		bgColour="006600" longname="Great Western Railway" available="no"
+		startspace="O1">
 		<Home hex="V14" />
 	</Company>
-	
-	
+
+
 	<Company name="LSWR" type="Public" tokens="5" fgColour="000000"
-		bgColour="99FF66" longname="London &amp; South Western Railway">
-		<Home hex="V20" city="1"/>
+		bgColour="99FF66" longname="London &amp; South Western Railway"
+		available="no" startspace="M1">
+		<Home hex="V20" city="6" />
 	</Company>
 	<Company name="GER" type="Public" tokens="5" fgColour="FFFFFF"
-		bgColour="000066" longname="Great Eastern">
-		<Home hex="V20" city="5" />
+		bgColour="000066" longname="Great Eastern" available="no"
+		startspace="M1">
+		<Home hex="V20" city="4" />
 	</Company>
-	<Company name="SECR" type="Public" tokens="5" fgColour="000000" bgColour="FFFF00"
-		longname="South Eastern &amp; Chatham Railway">
+	<Company name="SECR" type="Public" tokens="5" fgColour="000000"
+		bgColour="FFFF00" longname="South Eastern &amp; Chatham Railway"
+		available="no" startspace="L1">
 		<Home hex="W23"></Home>
 	</Company>
 	<Company name="LBSC" type="Public" tokens="4" fgColour="000000"
-		bgColour="FF9900" longname="London, Brighton &amp; South Coast Railway">
+		bgColour="FF9900"
+		longname="London, Brighton &amp; South Coast Railway" available="no"
+		startspace="K1">
 		<Home hex="X20"></Home>
 	</Company>
-	
-	<StartPacket roundClass="rails.game.specific._1851.StartRound_1851">
+
+	<StartPacket roundClass="rails.game.specific._1825.StartRound_1825">
 		<Item name="S&amp;M" type="Private" basePrice="30"/>
 		<Item name="CHP" type="Private" basePrice="75"/>
 		<Item name="C&amp;W" type="Private" basePrice="130"/>
 		<Item name="L&amp;M" type="Private" basePrice="210"/>
 		<IfOption name="NumberOfPlayers" value="5">
-			<Item name="LNWR" type="Public" president="yes"></Item></IfOption></StartPacket>
+			<Item name="LNWR" type="Public" president="yes"
+				basePrice="200">
+			</Item></IfOption></StartPacket>
 	<StockRoundRules>
 		<!-- Will probably move later to a GameManager XML-->
 		<NoSaleInFirstSR/>

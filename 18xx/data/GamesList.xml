@@ -201,9 +201,31 @@ All aspects not present in 1830 have not been implemented yet.
 (c) 1994 Hartland Trefoil Ltd.
 Designed by Francis Tresham
 
-Limitation: 
-- No random assignment of private companies (players should do this off-line and enter the result)	
-		</Description>
+Known Issues:
+- BUG: prompt on placing GWR token when upgrading London, needs investigation
+- BUG: Trains do not have to own a train and directors cannot fund the purchase of one
+- Tile lays that send track off the board are legal in 1825 as long as they don't run into the
+	 sea or the edge of a pre-placed tile with no track on.  Currently Rails will not allow some
+	 of these edge placements.  The workaround is to use map correction mode to place the tile you want.
+	 ADDITIONAL NOTE: Map correction might still not work, I think route awareness is confused by track going out of the board...
+	 We might need a different fix
+- Upgrades to pre-printed tiles are lays, not promotions so you are allowed two of these in a turn.
+  Rails currently only allows you to lay 2 yellow tiles in a turn. Again, use map correction
+  for a workaround
+- The rule about the two tiles place on your turn not being adjacent is currently not enforced by rails
+	and must be enforced manually by players
+- Revenue Calc: Routes BEGIN and END with large stations, this is currently not checked
+- Revenue Calc: Trains may not visit two stations on the same tile, this is currently not checked
+- Revenue Calc: 2 2T's can be double headed as a 3T
+- The minimum ¬£10 for a train purchase between companies is not enforced
+- Money: The boardgame uses company credits, rails does not, as such the bank will potentially break slightly earlier
+- Game currently doesn't end when a company reaches the top of the stock market
+	It needs to end at the end of that companies turn.
+- Hexags reserved for certain companies (currently not enforced in EU either)
+- Corps that reach the top of the market should end the game at the end of that corps turn
+- Not implemented: selling privates back to the bank
+- Not implemented: receivership
+</Description>
     <Players minimum="3" maximum="5" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
