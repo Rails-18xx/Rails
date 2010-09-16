@@ -1,8 +1,9 @@
 <TileManager tiles="Tiles.xml">
 	<!-- Preprinted tiles -->
 	<Tile id="0"><!-- Empty space -->
-		<Upgrade id="7,8,9" hex="-Q9,Q11,Q13,Q15,Q17,Q19,Q21,Q23,Q25,Q27"/>
+		<Upgrade id="7,8,9"/>
 	</Tile>
+    <Tile id="-10000"/><!-- Empty space, not upgradeable (for borders between units and kits) -->
 	<Tile id="-1"><!-- 1 town -->
 		<Upgrade id="3,4"/>
 	</Tile>

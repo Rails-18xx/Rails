@@ -62,6 +62,7 @@
         <Station id="city1" position="002" type="Town"/>
     </Tile>
     <Tile colour="white" id="0" name="empty"/>
+    <Tile colour="white" id="-10000" name="empty"/>
     <Tile colour="yellow" id="1" name="1">
         <Station id="city1" position="408" type="Town" value="10"/>
         <Station id="city2" position="108" type="Town" value="10"/>
