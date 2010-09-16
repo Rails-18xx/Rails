@@ -2,7 +2,7 @@
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>
 	<Hex name="B7" value="30,50" tile="-939" orientation="1" city="Hamburg"/>
-	<Hex name="C4" label="Y" tile="-10" city="Amsterdam"/>
+	<Hex name="C4" label="Y" tile="-3007" city="Amsterdam"/>
 	<Hex name="C6" tile="-1" city="Bremen"/>
 	<Hex name="C8" tile="0" />
 	<Hex name="C10" tile="0" />
@@ -19,19 +19,19 @@
 	<Hex name="E14" value="20,30" tile="-901" orientation="2" city="Warsaw"/>
 	<Hex name="F1" value="40,70" tile="-902" orientation="1" city="London"/>
 	<Hex name="F3" tile="-1" city="Antwerp"/>
-	<Hex name="F5" tile="-10" city="Dortmund"/>
+	<Hex name="F5" tile="-3008" city="Dortmund"/>
 	<Hex name="F7" tile="-1" city="Hannover"/>
 	<Hex name="F9" tile="0" />
 	<Hex name="F11" tile="0" />
 	<Hex name="F13" tile="0" />
 	<Hex name="G2" tile="-1" city="Lille"/>
-	<Hex name="G4" tile="-10" city="Cologne"/>
+	<Hex name="G4" tile="-3008" city="Cologne"/>
 	<Hex name="G6" tile="0" />
 	<Hex name="G8" tile="-1" city="Magdeburg"/>
-	<Hex name="G10" label="Y" tile="-10" city="Dresden"/>
+	<Hex name="G10" label="Y" tile="-3007" city="Dresden"/>
 	<Hex name="G12" tile="0" />
 	<Hex name="H1" tile="0" />
-	<Hex name="H3" label="Y" tile="-10" city="Brussels"/>
+	<Hex name="H3" label="Y" tile="-3007" city="Brussels"/>
 	<Hex name="H5" tile="0" />
 	<Hex name="H7" tile="0" />
 	<Hex name="H9" tile="-1" city="Leipzig"/>
@@ -39,7 +39,7 @@
 	<Hex name="H13" tile="0" />
 	<Hex name="I2" tile="0" />
 	<Hex name="I4" cost="60" tile="0" />
-	<Hex name="I6" tile="-10" city="Frankfurt"/>
+	<Hex name="I6" tile="-3008" city="Frankfurt"/>
 	<Hex name="I8" tile="0" />
 	<Hex name="I10" cost="60" tile="0" />
 	<Hex name="I12" cost="60" tile="0" />
@@ -54,17 +54,17 @@
 	<Hex name="K4" cost="60" tile="0" />
 	<Hex name="K6" tile="-1" city="Augsburg"/>
 	<Hex name="K8" tile="0" />
-	<Hex name="K10" tile="-10" city="Prague"/>
+	<Hex name="K10" tile="-3008" city="Prague"/>
 	<Hex name="K12" tile="0" />
 	<Hex name="L1" tile="0" />
 	<Hex name="L3" tile="0" />
 	<Hex name="L5" tile="-1" city="Stuttgart"/>
-	<Hex name="L7" tile="-10" city="Munich"/>
+	<Hex name="L7" tile="-3007" label="Y" city="Munich"/>
 	<Hex name="L9" cost="60" tile="0" />
 	<Hex name="L11" tile="-1" city="Brünn"/>
 	<Hex name="L13" tile="0" />
 	<Hex name="M2" tile="-1" city="Dijon"/>
-	<Hex name="M4" label="Y" tile="-10" city="Strasbourg"/>
+	<Hex name="M4" label="Y" tile="-3007" city="Strasbourg"/>
 	<Hex name="M6" tile="0" />
 	<Hex name="M8" tile="0" />
 	<Hex name="M10" cost="60" tile="0" />
@@ -91,8 +91,8 @@
 	<Hex name="P7" cost="60" tile="0" />
 	<Hex name="P9" cost="120,60" label="M" tile="0" /><!-- Arlberg -->
 	<Hex name="P11" cost="60" label="M" tile="8" orientation="1"/><!-- Semmering -->
-	<Hex name="P13" label="Y" tile="-10" city="Budapest"/>
-	<Hex name="Q2" label="Y" tile="-10" city="Lyon"/>
+	<Hex name="P13" label="Y" tile="-3007" city="Budapest"/>
+	<Hex name="Q2" label="Y" tile="-3007" city="Lyon"/>
 	<Hex name="Q4" cost="120,60" label="M" tile="0" /><!-- Lotschberg -->
 	<Hex name="Q6" cost="120,60" label="M" tile="0" /><!-- Gotthard -->
 	<Hex name="Q8" cost="120,60" label="M" tile="0" /><!-- Brenner -->
@@ -101,18 +101,18 @@
 	<Hex name="Q14" value="30,50" tile="-901" orientation="3" city="Bucharest"/>
 	<Hex name="R1" tile="0" />
 	<Hex name="R3" cost="120,60" label="M" tile="0" /><!-- Frejus -->
-	<Hex name="R5" label="Y" tile="-10" city="Milan"/>
+	<Hex name="R5" label="Y" tile="-3007" city="Milan"/>
 	<Hex name="R7" cost="120,60" label="M" tile="0" /><!-- Albula -->
-	<Hex name="R9" tile="-10" orientation="4" city="Trieste"/>
+	<Hex name="R9" tile="-3008" orientation="4" city="Trieste"/>
 	<Hex name="R11" tile="0" />
-	<Hex name="S2" tile="-10" city="Marseille"/>
-	<Hex name="S4" tile="-10" city="Turin"/>
+	<Hex name="S2" tile="-3008" city="Marseille"/>
+	<Hex name="S4" tile="-3008" city="Turin"/>
 	<Hex name="S6" tile="0" />
-	<Hex name="S8" label="Y" tile="-10" city="Venice"/>
+	<Hex name="S8" label="Y" tile="-3007" city="Venice"/>
 	<Hex name="S10" tile="0" />
 	<Hex name="T1" tile="0" />
 	<Hex name="T3" cost="60" tile="-1" city="Nice"/>
-	<Hex name="T5" tile="-10" city="Genoa"/>
+	<Hex name="T5" tile="-3008" city="Genoa"/>
 	<Hex name="T7" tile="-1" city="Bologna"/>
 	<Hex name="T9" port="yes" value="10" tile="-800" orientation="3"/>
 	<Hex name="U2" port="yes" value="10" tile="-800" orientation="3"/>

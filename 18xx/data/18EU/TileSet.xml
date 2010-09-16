@@ -6,9 +6,11 @@
 	<Tile id="-1"><!-- 1 town -->
 		<Upgrade id="3,4,58"/>
 	</Tile>
-	<Tile id="-10"><!-- 1 city -->
-		<Upgrade id="57" hex="F5,G4,I6,K10,R9,S2,S4,T5" />
-		<Upgrade id="201,202" hex="C4,G10,H3,L7,M4,P13,Q2,R5,S8" />
+	<Tile id="-3008"><!-- 1 city -->
+		<Upgrade id="57"/>
+	</Tile>
+	<Tile id="-3007"><!-- 1 Y city -->
+		<Upgrade id="201,202"/>
 	</Tile>
 	<Tile id="-3"/>
 	<Tile id="-800"/>

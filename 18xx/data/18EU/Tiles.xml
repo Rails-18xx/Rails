@@ -4,8 +4,11 @@
     <Tile colour="white" id="-1" name="1 village">
         <Station id="city1" position="002" type="Town"/>
     </Tile>
-    <Tile colour="white" id="-10" name="1 city">
-        <Station id="city1" position="302" slots="1" type="City"/>
+    <Tile colour="white" id="-3007" name="Y city (cent)">
+        <Station id="city1" position="0" slots="1" type="City"/>
+    </Tile>
+    <Tile colour="white" id="-3008" name="city (cent.)">
+        <Station id="city1" position="0" slots="1" type="City"/>
     </Tile>
     <Tile colour="fixed" id="-3" name="MF 3">
         <Station id="city1" position="252" type="Town" value="10"/>
