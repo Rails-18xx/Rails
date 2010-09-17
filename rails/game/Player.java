@@ -3,6 +3,7 @@ package rails.game;
 
 import rails.game.model.*;
 import rails.game.state.BooleanState;
+import rails.game.state.IntegerState;
 
 /**
  * Player class holds all player-specific data
@@ -26,6 +27,8 @@ public class Player implements CashHolder, Comparable<Player> {
     private CalculatedMoneyModel freeCash;
     private CalculatedMoneyModel worth;
     private BooleanState bankrupt;
+    private MoneyModel lastORWorthIncrease;
+    private IntegerState worthAtORStart;
 
     private boolean hasBoughtStockThisTurn = false;
 
@@ -42,6 +45,9 @@ public class Player implements CashHolder, Comparable<Player> {
         worth = new CalculatedMoneyModel(this, "getWorth");
         wallet.addDependent(worth);
         bankrupt = new BooleanState (name+"_isBankrupt", false);
+        lastORWorthIncrease = new MoneyModel (name+"_lastORIncome");
+        lastORWorthIncrease.setOption(MoneyModel.ALLOW_NEGATIVE);
+        worthAtORStart = new IntegerState (name+"_worthAtORStart");
     }
 
     /**
@@ -88,10 +94,10 @@ public class Player implements CashHolder, Comparable<Player> {
         int worth;
         if (bankrupt.booleanValue()) {
             worth = 0;
-        } else { 
+        } else {
             worth = wallet.getCash();
         }
-        
+
         for (PublicCertificateI cert : portfolio.getCertificates()) {
             worth += cert.getCompany().getGameEndPrice() * cert.getShares();
         }
@@ -103,6 +109,18 @@ public class Player implements CashHolder, Comparable<Player> {
 
     public CalculatedMoneyModel getWorthModel() {
         return worth;
+    }
+
+    public MoneyModel getLastORWorthIncrease () {
+        return lastORWorthIncrease;
+    }
+
+    public void setWorthAtORStart () {
+        worthAtORStart.set(getWorth());
+    }
+
+    public void setLastORWorthIncrease () {
+        lastORWorthIncrease.set(getWorth() - worthAtORStart.intValue());
     }
 
     public void updateWorth () {

@@ -68,6 +68,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected int playerPrivatesXOffset, playerPrivatesYOffset;
     protected Field playerWorth[];
     protected int playerWorthXOffset, playerWorthYOffset;
+    protected Field playerORWorthIncrease[];
+    protected int playerORWorthIncreaseXOffset, playerORWorthIncreaseYOffset;
     protected Field playerCertCount[];
     protected int playerCertCountXOffset, playerCertCountYOffset;
     protected int certLimitXOffset, certLimitYOffset;
@@ -173,6 +175,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         playerCashButton = new ClickField[np];
         playerPrivates = new Field[np];
         playerWorth = new Field[np];
+        playerORWorthIncrease = new Field[np];
         playerCertCount = new Field[np];
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
@@ -219,6 +222,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         playerPrivatesYOffset = ++lastY;
         playerWorthXOffset = certPerPlayerXOffset;
         playerWorthYOffset = ++lastY;
+        playerORWorthIncreaseXOffset = certPerPlayerXOffset;
+        playerORWorthIncreaseYOffset = ++lastY;
         playerCertCountXOffset = certPerPlayerXOffset;
         playerCertCountYOffset = ++lastY;
         certLimitXOffset = certInPoolXOffset;
@@ -453,6 +458,13 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f = playerWorth[i] = new Field(players[i].getWorthModel());
             addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, 0, true);
+        }
+
+        addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
+                playerORWorthIncreaseYOffset, 1, 1, WIDE_RIGHT, true);
+        for (int i = 0; i < np; i++) {
+            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+            addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, 0, true);
         }
 
         addField(new Caption("Certs"), 0, playerCertCountYOffset, 1, 1,

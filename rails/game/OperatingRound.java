@@ -10,10 +10,7 @@ import rails.game.correct.OperatingCost;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
 import rails.game.special.*;
-import rails.game.state.ArrayListState;
-import rails.game.state.EnumState;
-import rails.game.state.GenericState;
-import rails.game.state.HashMapState;
+import rails.game.state.*;
 import rails.util.LocalText;
 import rails.util.SequenceUtil;
 
@@ -41,8 +38,8 @@ public class OperatingRound extends Round implements Observer {
 
     protected GenericState<PublicCompanyI> operatingCompany;
     // do not use a operatingCompany.getObject() as reference
-    //    protected PublicCompanyI operatingCompany.getObject() = null; 
-    
+    //    protected PublicCompanyI operatingCompany.getObject() = null;
+
     // Non-persistent lists (are recreated after each user action)
     protected List<SpecialPropertyI> currentSpecialProperties = null;
 
@@ -113,6 +110,10 @@ public class OperatingRound extends Round implements Observer {
         thisOrNumber = gameManager.getORId();
 
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
+
+        for (Player player : gameManager.getPlayers()) {
+            player.setWorthAtORStart();
+        }
 
         privatesPayOut();
 
@@ -800,7 +801,7 @@ public class OperatingRound extends Round implements Observer {
         ReportBuffer.add(LocalText.getText("CompanyRevenue",
                 action.getCompanyName(),
                 Bank.format(action.getActualRevenue())));
-        
+
         int remainingAmount = checkForDeductions (action);
         if (remainingAmount < 0) {
             // A share selling round will be run to raise cash to pay debts
@@ -1298,8 +1299,8 @@ public class OperatingRound extends Round implements Observer {
      * of the tile laying step.
      */
     protected void getNormalTileLays() {
-        
-        // duplicate the phase colours 
+
+        // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>(getCurrentPhase().getTileColours());
         for (String colour : newTileColours.keySet()) {
             int allowedNumber = operatingCompany.get().getNumberOfTileLays(colour);
@@ -1307,7 +1308,7 @@ public class OperatingRound extends Round implements Observer {
             newTileColours.put(colour, new Integer(allowedNumber));
         }
         // store to state
-        tileLaysPerColour.initFromMap(newTileColours); 
+        tileLaysPerColour.initFromMap(newTileColours);
     }
 
     protected void setNormalTileLays() {
@@ -1528,6 +1529,11 @@ public class OperatingRound extends Round implements Observer {
         //for (PrivateCompanyI priv : gameManager.getAllPrivateCompanies()) {
         //    priv.checkClosingIfExercised(true);
         //}
+
+        // Update the worth increase per player
+        for (Player player : gameManager.getPlayers()) {
+            player.setLastORWorthIncrease();
+        }
 
         // OR done. Inform GameManager.
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
