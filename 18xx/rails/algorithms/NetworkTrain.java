@@ -19,7 +19,7 @@ public final class NetworkTrain {
     private final TrainI railsTrain;
     
     
-    NetworkTrain(int majors, int minors, boolean ignoreMinors,
+    public NetworkTrain(int majors, int minors, boolean ignoreMinors,
             int multiplyMajors, int multiplyMinors, String trainName, TrainI train) {
         this.majors = majors;
         this.minors = minors;
@@ -108,6 +108,10 @@ public final class NetworkTrain {
     
     boolean ignoresMinors() {
         return ignoreMinors;
+    }
+    
+    public String getTrainName() {
+        return trainName;
     }
     
     public TrainI getRailsTrain() {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import rails.game.move.AddToList;
 import rails.game.move.RemoveFromList;
+import rails.game.move.SetChange;
 
 /**
  * State class that wraps an ArrayList
@@ -49,8 +50,13 @@ public class ArrayListState<E>  {
         new AddToList<E>(list, element, listName).atIndex(index);
     }
     
-    public void remove(E element) {
-        new RemoveFromList<E>(list, element, listName);
+    public boolean remove(E element) {
+        if (list.contains(element)) {
+            new RemoveFromList<E>(list, element, listName);
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public void clear() {

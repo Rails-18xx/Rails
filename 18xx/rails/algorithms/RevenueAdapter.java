@@ -75,7 +75,7 @@ public final class RevenueAdapter implements Runnable {
     private List<NetworkVertex> rcVertices;
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
-    private Set<RevenueDynamicModifier> dynamicModifiers;
+    private List<RevenueDynamicModifier> dynamicModifiers;
     
     
     // revenue listener to communicate results
@@ -161,6 +161,10 @@ public final class RevenueAdapter implements Runnable {
             trains.add(train);
             return true;
         }
+    }
+    
+    public void addTrain(NetworkTrain train) {
+        trains.add(train);
     }
     
     public void removeTrain(NetworkTrain train) {
@@ -285,7 +289,7 @@ public final class RevenueAdapter implements Runnable {
         if (gameManager.getRevenueManager() != null) {
             dynamicModifiers = gameManager.getRevenueManager().callDynamicModifiers(this);
         } else {
-            dynamicModifiers = new HashSet<RevenueDynamicModifier>();
+            dynamicModifiers = new ArrayList<RevenueDynamicModifier>();
         }
         
         // define optimized graph
@@ -573,6 +577,10 @@ public final class RevenueAdapter implements Runnable {
     public  List<RevenueTrainRun> getOptimalRun() {
         if (optimalRun == null) {
             optimalRun = convertRcRun(rc.getOptimalRun());
+            // allow dynamic modifiers to change the optimal run
+            for (RevenueDynamicModifier modifier:dynamicModifiers) {
+                modifier.adjustOptimalRun(optimalRun);
+            }
         }
         return optimalRun;
     }
@@ -587,7 +595,7 @@ public final class RevenueAdapter implements Runnable {
     int dynamicEvaluation() {
         int value = 0;
         for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.evaluationValue(this.getCurrentRun());
+            value += modifier.evaluationValue(this.getCurrentRun(), false);
         }
         return value;
     }
@@ -641,12 +649,15 @@ public final class RevenueAdapter implements Runnable {
         }
         if (includeDetails) {
             for (RevenueDynamicModifier modifier:dynamicModifiers) {
-                runPrettyPrint.append(modifier.prettyPrint(this));
+                String modifierText = modifier.prettyPrint(this);
+                if (modifierText != null) {
+                    runPrettyPrint.append(modifierText);
+                }
             }
         } else {
             int dynamicBonuses = 0;
             for (RevenueDynamicModifier modifier:dynamicModifiers) {
-                dynamicBonuses += modifier.evaluationValue(this.getOptimalRun());
+                dynamicBonuses += modifier.evaluationValue(this.getOptimalRun(), true);
             }
             if (dynamicBonuses != 0) {
                 runPrettyPrint.append("; " + 

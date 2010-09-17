@@ -20,8 +20,11 @@ public interface RevenueDynamicModifier {
     /** returns the value used for prediction */
     public int predictionValue();
     
-    /** returns the value used for evaluation (at the run supplied) */
-    public int evaluationValue(List<RevenueTrainRun> runs);
+    /** returns the value used for evaluation (at the runs supplied) */
+    public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns);
+    
+    /** allows to adjust the run list of the optimal train run output */
+    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns);
     
     /** returns the results as pretty prints */
     public String prettyPrint(RevenueAdapter adapter);

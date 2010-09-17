@@ -1,8 +1,8 @@
 package rails.algorithms;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import rails.game.ConfigurableComponentI;
 import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
-import rails.game.state.HashSetState;
+import rails.game.state.ArrayListState;
 import rails.util.LocalText;
 import rails.util.Tag;
 
@@ -30,15 +30,15 @@ public final class RevenueManager implements ConfigurableComponentI {
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
     
-    private final HashSetState<NetworkGraphModifier> graphModifiers;
-    private final HashSetState<RevenueStaticModifier> staticModifiers;
-    private final HashSetState<RevenueDynamicModifier> dynamicModifiers;
+    private final ArrayListState<NetworkGraphModifier> graphModifiers;
+    private final ArrayListState<RevenueStaticModifier> staticModifiers;
+    private final ArrayListState<RevenueDynamicModifier> dynamicModifiers;
     private final HashSet<ConfigurableComponentI> configurableModifiers;
 
     public RevenueManager() {
-        graphModifiers = new HashSetState<NetworkGraphModifier>("NetworkGraphModifiers"); 
-        staticModifiers = new HashSetState<RevenueStaticModifier>("RevenueStaticModifiers"); 
-        dynamicModifiers = new HashSetState<RevenueDynamicModifier>("RevenueDynamicModifiers");
+        graphModifiers = new ArrayListState<NetworkGraphModifier>("NetworkGraphModifiers"); 
+        staticModifiers = new ArrayListState<RevenueStaticModifier>("RevenueStaticModifiers"); 
+        dynamicModifiers = new ArrayListState<RevenueDynamicModifier>("RevenueDynamicModifiers");
         configurableModifiers = new HashSet<ConfigurableComponentI>();
     }
     
@@ -145,20 +145,20 @@ public final class RevenueManager implements ConfigurableComponentI {
     }
 
     void callGraphModifiers(NetworkGraphBuilder graphBuilder) {
-        for (NetworkGraphModifier modifier:graphModifiers.viewSet()) {
+        for (NetworkGraphModifier modifier:graphModifiers.viewList()) {
             modifier.modifyGraph(graphBuilder);
         }
     }
     
     void callStaticModifiers(RevenueAdapter revenueAdapter) {
-        for (RevenueStaticModifier modifier:staticModifiers.viewSet()) {
+        for (RevenueStaticModifier modifier:staticModifiers.viewList()) {
             modifier.modifyCalculator(revenueAdapter);
         }
     }
 
-    Set<RevenueDynamicModifier> callDynamicModifiers(RevenueAdapter revenueAdapter) {
-        Set<RevenueDynamicModifier> activeModifiers = new HashSet<RevenueDynamicModifier>();
-        for (RevenueDynamicModifier modifier:dynamicModifiers.viewSet()) {
+    List<RevenueDynamicModifier> callDynamicModifiers(RevenueAdapter revenueAdapter) {
+        List<RevenueDynamicModifier> activeModifiers = new ArrayList<RevenueDynamicModifier>();
+        for (RevenueDynamicModifier modifier:dynamicModifiers.viewList()) {
             if (modifier.prepareModifier(revenueAdapter))
                 activeModifiers.add(modifier);
         }
