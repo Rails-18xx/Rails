@@ -32,7 +32,7 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return true;
     }
 
-    public int evaluationValue(List<RevenueTrainRun> runs) {
+    public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         return pullmanValue(runs);
     }
     
@@ -49,6 +49,10 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return maxValue;
     }
 
+    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
+        // do nothing here (all is done by changing the evaluation value)
+    }
+
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return LocalText.getText("Pullman") + " = " + pullmanValue(revenueAdapter.getOptimalRun());
     }
@@ -61,4 +65,5 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         }
         return maximum;
     }
+
 }

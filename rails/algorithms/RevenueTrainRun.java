@@ -3,6 +3,7 @@ package rails.algorithms;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +21,9 @@ import rails.util.LocalText;
 /**
  * Links the results from the revenue calculator to the rails program
  * Each object defines the run of one train
- * @author freystef
  *
  */
-public class RevenueTrainRun {
+public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
 
     private static final int PRETTY_PRINT_LENGTH = 100;
     private static final int PRETTY_PRINT_INDENT = 10;
@@ -49,16 +49,44 @@ public class RevenueTrainRun {
     public List<NetworkVertex> getRunVertices() {
         return vertices;
     }
+ 
+    /** 
+     * returns true if train has a valid run (at least two vertices)
+     */
+    public boolean hasAValidRun() {
+        return vertices.size() >= 2;
+    }
+    
+    /**
+     * returns the first vertex of a train run
+     */
+    public NetworkVertex getFirstVertex() {
+        NetworkVertex startVertex = null; 
+        NetworkVertex firstVertex = null;
+        for (NetworkVertex vertex:vertices) {
+            if (startVertex == vertex) return firstVertex;
+            if (startVertex == null) startVertex = vertex;
+            firstVertex = vertex;
+        }
+        return startVertex;
+    }
+    
+    /**
+     * returns the last vertex of a train run
+     */
+    public NetworkVertex getLastVertex() {
+        return vertices.get(vertices.size()-1);
+    }
     
     public Set<NetworkVertex> getUniqueVertices() {
         return new HashSet<NetworkVertex>(vertices);
     }
-    
+      
     public NetworkTrain getTrain() {
         return train;
     }
     
-    int getRunValue() {
+    public int getRunValue() {
         int value = 0;
         NetworkVertex startVertex = null; 
         for (NetworkVertex vertex:vertices) {
@@ -288,4 +316,9 @@ public class RevenueTrainRun {
         }
         return path;
     }
+
+     public int compareTo(RevenueTrainRun other) {
+        return ((Integer)this.getRunValue()).compareTo(other.getRunValue());
+    }
+    
 }

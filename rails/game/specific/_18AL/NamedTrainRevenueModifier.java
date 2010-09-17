@@ -102,7 +102,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return bonusMaximum;
     }
 
-    public int evaluationValue(List<RevenueTrainRun> runs) {
+    public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         int bonusValue = 0;
         // due to the geography (off-map areas!) each train can only score one bonus
         for (RevenueBonus bonus:bonuses) {
@@ -114,6 +114,10 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
             }
         }
         return bonusValue;
+    }
+
+    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
+        // do nothing here (all is done by changing the evaluation value)
     }
 
     public String prettyPrint(RevenueAdapter revenueAdapter) {
@@ -129,6 +133,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         }
         return prettyPrint.toString();
     }
+
 
 
 }
