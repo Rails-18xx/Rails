@@ -43,8 +43,10 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
     }
 
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
-        // remove invalid runs
-        optimalRuns.removeAll(identifyInvalidRuns(optimalRuns));
+        // set invalid runs to be empty
+        for (RevenueTrainRun run:identifyInvalidRuns(optimalRuns)) {
+            run.getRunVertices().clear();
+        }
     }
 
     public String prettyPrint(RevenueAdapter adapter) {
