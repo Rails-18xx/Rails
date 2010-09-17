@@ -1,17 +1,32 @@
 <Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="R">
-	<!-- The Q row doesn't exist on the board - it is there to facilitate edge tile placement.
-		The tiles are not upgradable, i.e. no tiles can be laid here-->
+	<!-- The tiles numbered -10000 do not exist on the board.
+		These are there only to enable edge tile placement, 
+		which is allowed where board extensions exist.
+        The tiles are not upgradable, i.e. no yellow tiles can be laid on these hexes -->
+ 	<!-- Edge tiles in case Unit 2 is not used -->
 	<Hex name="Q9" tile="-10000"/>
 	<Hex name="Q11" tile="-10000"/>
 	<Hex name="Q13" tile="-10000"/>
 	<Hex name="Q15" tile="-10000"/>
 	<Hex name="Q17" tile="-10000"/>
 	<Hex name="Q19" tile="-10000"/>
-	<Hex name="Q21" tile="-10000"/>
+    <!-- End of U2 edge tiles -->
+    <!-- Edge tiles in case kit R3 (North Norfolk) is not used -->
 	<Hex name="Q23" tile="-10000"/>		
 	<Hex name="Q25" tile="-10000"/>
-	<Hex name="Q27" tile="-10000"/>
-	<!-- End of nonexistent Q row -->
+	<!-- End of R3 edge tiles -->
+	<!-- Edge tiles in case kit R1 (Wales) is not used -->
+    <Hex name="Q7" tile="-10000"/>
+    <Hex name="R6" tile="-10000"/>
+    <Hex name="S7" tile="-10000"/>
+    <Hex name="T6" tile="-10000"/>
+    <Hex name="U7" tile="-10000"/>
+    <Hex name="V6" tile="-10000"/>
+    <!-- End of R1 edge tiles -->
+    <!-- Edge tiles in case kit R2 (S/W England) is not used -->
+    <Hex name="X6" tile="-10000"/>
+    <Hex name="Y7" tile="-10000"/>     
+    <!-- End of R2 edge tiles -->
 	<Hex name="R8" tile="0"/>
 	<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3" />
 	<Hex name="R12" tile="-20" orientation="1" city="Wolverhampton, Walsall"/>
