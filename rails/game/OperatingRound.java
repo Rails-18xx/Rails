@@ -1530,13 +1530,20 @@ public class OperatingRound extends Round implements Observer {
         //    priv.checkClosingIfExercised(true);
         //}
 
+        ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
+
         // Update the worth increase per player
+        int orWorthIncrease;
         for (Player player : gameManager.getPlayers()) {
             player.setLastORWorthIncrease();
+            orWorthIncrease = player.getLastORWorthIncrease().intValue();
+            ReportBuffer.add(LocalText.getText("ORWorthIncrease",
+                    player.getName(),
+                    thisOrNumber,
+                    Bank.format(orWorthIncrease)));
         }
 
         // OR done. Inform GameManager.
-        ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
         finishRound();
     }
 
