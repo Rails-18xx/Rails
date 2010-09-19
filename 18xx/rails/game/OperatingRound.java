@@ -984,7 +984,7 @@ public class OperatingRound extends Round implements Observer {
                     Bank.format(part),
                     shares,
                     operatingCompany.get().getShareUnit()));
-            new CashMove(bank, recipient, part);
+            pay (bank, recipient, part);
         }
 
         // Move the token
@@ -1031,9 +1031,26 @@ public class OperatingRound extends Round implements Observer {
      * @param The revenue amount.
      */
     public void withhold(int amount) {
-        if (amount > 0) new CashMove(bank, operatingCompany.get(), amount);
+
+        PublicCompanyI company = operatingCompany.get();
+
+        // Payout revenue to company
+        pay (bank, company, amount);
+
         // Move the token
-        operatingCompany.get().withhold(amount);
+        company.withhold(amount);
+
+        // Check if company has entered a closing area
+        StockSpaceI newSpace = company.getCurrentSpace();
+        if (newSpace.closesCompany() && company.canClose()) {
+            company.setClosed();
+            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
+                    company.getName(),
+                    newSpace.getName()));
+            finishTurn();
+            return;
+        }
+
     }
 
     /** Split a dividend. TODO Optional rounding down the payout
@@ -1048,7 +1065,7 @@ public class OperatingRound extends Round implements Observer {
             int numberOfShares = operatingCompany.get().getNumberOfShares();
             int withheld =
                 (amount / (2 * numberOfShares)) * numberOfShares;
-            new CashMove(bank, operatingCompany.get(), withheld);
+            pay (bank, operatingCompany.get(), withheld);
             ReportBuffer.add(operatingCompany.get().getName() + " receives " + Bank.format(withheld));
 
             // Payout the remainder

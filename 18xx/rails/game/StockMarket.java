@@ -248,17 +248,6 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         if (newrow > row) {
             newsquare = getStockSpace(newrow, col);
         }
-        /*
-        if (newsquare != oldsquare && newsquare.closesCompany()) {
-            company.setClosed();
-            oldsquare.removeToken(company);
-            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
-                    company.getName(),
-                    newsquare.getName()));
-        } else {
-            prepareMove(company, oldsquare, newsquare);
-        }
-        */
         if (newsquare != oldsquare) {
             prepareMove(company, oldsquare, newsquare);
         }
@@ -288,16 +277,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         else {
             newsquare = oldsquare;
         }
-        if (newsquare.closesCompany()) {
-            if (!company.canClose()) return; // E.g. 1856 CGR
-            company.setClosed();
-            oldsquare.removeToken(company);
-            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
-                    company.getName(),
-                    newsquare.getName()));
-        } else {
-            prepareMove(company, oldsquare, newsquare);
-        }
+        prepareMove(company, oldsquare, newsquare);
     }
 
     protected void prepareMove(PublicCompanyI company, StockSpaceI from,
