@@ -80,7 +80,7 @@ public class GUITile {
         MapHex nHex;
 
         boolean connected;
-        
+
         int fixedRotation = getTile().getFixedOrientation();
         if (fixedRotation >= 0) {
             setRotation (fixedRotation);
@@ -102,7 +102,7 @@ public class GUITile {
                 if (tile.hasTracks(tempTileSide)) {
                     // If the tile has tracks against that side, but there is no
                     // neighbour, forbid this rotation.
-                    if (!hex.hasNeighbour(j)) {
+                    if (!hex.hasNeighbour(j) && !hex.isOpenSide(j)) {
                         continue rot;
                     }
                     // If the tile must be connected (i.e. not laid on the
@@ -111,7 +111,7 @@ public class GUITile {
                     // a side of this tile that also has a track.
                     if (mustConnect) {
                         nHex = hex.getNeighbor(j);
-                        if (nHex.getCurrentTile().hasTracks(
+                        if (nHex != null && nHex.getCurrentTile().hasTracks(
                                 j + 3 - nHex.getCurrentTileRotation())) {
                             connected = true;
                         }

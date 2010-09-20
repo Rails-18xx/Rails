@@ -1,43 +1,15 @@
 <Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="R">
-	<!-- The tiles numbered -10000 do not exist on the board.
-		These are there only to enable edge tile placement, 
-		which is allowed where board extensions exist.
-        The tiles are not upgradable, i.e. no yellow tiles can be laid on these hexes -->
- 	<!-- Edge tiles in case Unit 2 is not used -->
-	<Hex name="Q9" tile="-10000"/>
-	<Hex name="Q11" tile="-10000"/>
-	<Hex name="Q13" tile="-10000"/>
-	<Hex name="Q15" tile="-10000"/>
-	<Hex name="Q17" tile="-10000"/>
-	<Hex name="Q19" tile="-10000"/>
-    <!-- End of U2 edge tiles -->
-    <!-- Edge tiles in case kit R3 (North Norfolk) is not used -->
-	<Hex name="Q23" tile="-10000"/>		
-	<Hex name="Q25" tile="-10000"/>
-	<!-- End of R3 edge tiles -->
-	<!-- Edge tiles in case kit R1 (Wales) is not used -->
-    <Hex name="Q7" tile="-10000"/>
-    <Hex name="R6" tile="-10000"/>
-    <Hex name="S7" tile="-10000"/>
-    <Hex name="T6" tile="-10000"/>
-    <Hex name="U7" tile="-10000"/>
-    <Hex name="V6" tile="-10000"/>
-    <!-- End of R1 edge tiles -->
-    <!-- Edge tiles in case kit R2 (S/W England) is not used -->
-    <Hex name="X6" tile="-10000"/>
-    <Hex name="Y7" tile="-10000"/>     
-    <!-- End of R2 edge tiles -->
-	<Hex name="R8" tile="0"/>
-	<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3" />
-	<Hex name="R12" tile="-20" orientation="1" city="Wolverhampton, Walsall"/>
-	<Hex name="R14" tile="0"/>
-	<Hex name="R16" tile="-10" city="Leicester" />
-	<Hex name="R18" tile="0"/>
-	<Hex name="R20" tile="-1" city="Peterborough" orientation="3" />
-	<Hex name="R22" tile="0"/>
-	<Hex name="R24" tile="-10" city="Norwich" orientation="4" />
-	<Hex name="R26" tile="-1" city="Great Yarmouth" orientation="1" />
-	<Hex name="S9" tile="0"/>
+	<Hex name="R8" tile="0" open="0,1,2,3"/>
+	<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3" open="2,3"/>
+	<Hex name="R12" tile="-20" orientation="1" city="Wolverhampton, Walsall" open="2,3"/>
+	<Hex name="R14" tile="0" open="2,3"/>
+	<Hex name="R16" tile="-10" city="Leicester" open="2,3"/>
+	<Hex name="R18" tile="0" open="2,3"/>
+	<Hex name="R20" tile="-1" city="Peterborough" orientation="3"  open="2"/>
+	<Hex name="R22" tile="0" open="3"/>
+	<Hex name="R24" tile="-10" city="Norwich" orientation="4"  open="2,3"/>
+	<Hex name="R26" tile="-1" city="Great Yarmouth" orientation="1"  open="2"/>
+	<Hex name="S9" tile="0" open="1"/>
 	<Hex name="S11" tile="0"/>
 	<Hex name="S13" tile="-25002" city="Birmingham" />
 	<Hex name="S15" tile="-1" city="Northampton" orientation="2" />
@@ -46,7 +18,7 @@
 	<Hex name="S21" tile="0"/>
 	<Hex name="S23" tile="0"/>
 	<Hex name="S25" tile="0"/>
-	<Hex name="T8" tile="0" cost="100"></Hex>
+	<Hex name="T8" tile="0" cost="100" open="0,1,2"></Hex>
 	<Hex name="T10" tile="0"/>
 	<Hex name="T12" tile="0"/>
 	<Hex name="T14" tile="0"/>
@@ -55,7 +27,7 @@
 	<Hex name="T20" tile="-1" city="Cambridge" />
 	<Hex name="T22" tile="0"/>
 	<Hex name="T24" tile="-1" city="Ipswich" orientation="1" />
-	<Hex name="U9" tile="0"/>
+	<Hex name="U9" tile="0" open="1"/>
 	<Hex name="U11" tile="-1" cost="40" city="Gloucester"
 		orientation="1" ></Hex>
 	<Hex name="U13" tile="0"/>
@@ -65,7 +37,7 @@
 	<Hex name="U21" tile="0"/>
 	<Hex name="U23" tile="-1" city="Colchester" />
 	<Hex name="U25" tile="-104" orientation="2" city="Harwich"/>
-	<Hex name="V8" tile="-20" city="Cardiff, Newport" />
+	<Hex name="V8" tile="-20" city="Cardiff, Newport"  open="1,2"/>
 	<Hex name="V10" tile="-25003" city="Bristol"/>
 	<Hex name="V12" tile="0"/>
 	<Hex name="V14" tile="-25005" city="Swindon"/>
@@ -83,7 +55,7 @@
 	<Hex name="W21" tile="0"/>
 	<Hex name="W23" tile="-10" city="Ashford" orientation="5" />
 	<Hex name="W25" tile="-5" orientation="2" city="Dover"/>
-	<Hex name="X8" tile="0"/>
+	<Hex name="X8" tile="0" open="0,1"/>
 	<Hex name="X10" tile="0"/>
 	<Hex name="X12" tile="0"/>
 	<Hex name="X14" tile="-10" city="Southampton" orientation="5" />
@@ -93,7 +65,7 @@
 	<Hex name="X20" tile="-10" city="Brighton" orientation="5" />
 	<Hex name="X22" tile="-1" city="Hastings" orientation="2" />
 	<Hex name="X24" tile="0"/>
-	<Hex name="Y9" tile="0"/>
+	<Hex name="Y9" tile="0" open="1"/>
 	<Hex name="Y11" tile="-1" city="Weymouth" orientation="3" />
 	<Hex name="Y13" tile="-25007" city="Bournemouth"/>
 	<Hex name="Y17" tile="-7" orientation="4" />
