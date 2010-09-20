@@ -112,6 +112,9 @@ StationHolder, TokenHolder {
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
 
+    /** Any open sides against which track may be laid even at board edges (1825) */
+    protected boolean[] openHexSides;
+
     protected MapManager mapManager = null;
 
     protected static Logger log =
@@ -207,6 +210,12 @@ StationHolder, TokenHolder {
                 revenueBonuses.add(bonus);
             }
         }
+
+        // Open sides (as in 1825, track may be laid against some board edges)
+        for (int side : tag.getAttributeAsIntegerArray("open", new int[0])) {
+            if (openHexSides == null) openHexSides = new boolean[6];
+            openHexSides[side%6] = true;
+        }
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
@@ -256,6 +265,10 @@ StationHolder, TokenHolder {
             return false;
 
         return true;
+    }
+
+    public boolean isOpenSide (int side) {
+        return openHexSides != null && openHexSides[side%6];
     }
 
     public int getTileOrientation() {
@@ -1012,15 +1025,15 @@ StationHolder, TokenHolder {
 
     /**
      * @return Returns false if no base tokens may yet be laid on this hex and station.
-     * 
+     *
      * NOTE: this method currently only checks for prohibitions caused
      * by the presence of unlaid home base tokens.
      * It does NOT (yet) check for free space.
      *
      *
      * There are the following cases to check for each company located there
-     * 
-     * A) City is decided or there is only one city 
+     *
+     * A) City is decided or there is only one city
      *   => check if the city has a free slot or not
      *   (examples: NYNH in 1830 for a two city tile, NYC for a one city tile)
      * B) City is not decided (example: Erie in 1830)
@@ -1029,14 +1042,14 @@ StationHolder, TokenHolder {
      *   - (false): no city of the hex has remaining slots available
      * C) Or the company does not block its home city at all (example:Pr in 1835)
      *    then isBlockedForTokenLays attribute is used
-     * 
+     *
      * NOTE: It now deals with more than one company with a home base on the
-     * same hex.  
-     * 
+     * same hex.
+     *
      * Previously there was only the variable isBlockedForTokenLays
      * which is set to yes to block the whole hex for the token lays
      * until the (home) company laid their token
-     * 
+     *
      */
     public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
 
@@ -1071,7 +1084,7 @@ StationHolder, TokenHolder {
                     anyBlockCompanies ++; // companies which are located somewhere else
                 }
             }
-            log.debug("IsBlockedForTokenLays: allBlockCompanies = " + allBlockCompanies + 
+            log.debug("IsBlockedForTokenLays: allBlockCompanies = " + allBlockCompanies +
                     ", anyBlockCompanies = " + anyBlockCompanies + " , cityBlockCompanies = " + cityBlockCompanies);
             // check if there are sufficient individual city slots
             if (allBlockCompanies + cityBlockCompanies + 1 > cityToLay.getTokenSlotsLeft()) {
