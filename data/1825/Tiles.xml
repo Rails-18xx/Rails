@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Tiles>
 	<Tile colour="white" id="0" name="empty"/>
-    <Tile colour="white" id="-10000" name="empty"/>
+    <!--Tile colour="white" id="-10000" name="empty"/-->
 	<Tile colour="white" id="-1" name="1 village">
         <Station id="city1" position="002" type="Town"/>
     </Tile><Tile colour="white" id="-2" name="2 villages">
