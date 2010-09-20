@@ -3,7 +3,7 @@
 	<Tile id="0"><!-- Empty space -->
 		<Upgrade id="7,8,9"/>
 	</Tile>
-    <Tile id="-10000"/><!-- Empty space, not upgradeable (for borders between units and kits) -->
+    <!--Tile id="-10000"/--><!-- Empty space, not upgradeable (for borders between units and kits) -->
 	<Tile id="-1"><!-- 1 town -->
 		<Upgrade id="3,4"/>
 	</Tile>
