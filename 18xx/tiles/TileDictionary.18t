@@ -110,6 +110,7 @@ object TTilesWrapper
         item
           JunType = jtCity
           Position = tp1CornerD
+          Revenue = 20
         end>
     end
     item

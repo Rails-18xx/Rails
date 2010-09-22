@@ -41,7 +41,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     Game game;
 
     private ConfigWindow configWindow;
-    
+
     // Used by the player selection combo box.
     static final int NONE_PLAYER = 0;
     static final int HUMAN_PLAYER = 1;
@@ -219,13 +219,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         setVisible(false);
         killConfigWindow();
     }
-    
+
     private void killConfigWindow() {
         if (configWindow == null) return;
         configWindow.dispose();
         configWindow = null;
     }
-    
+
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(newButton)) {
             startNewGame();
@@ -297,14 +297,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
                     break;
                 }
-            } 
+            }
         } else if (arg0.getSource().equals(randomizeButton)) {
             // randomize the order of the players
-            if (playerNameFields.length > 0) { 
+            if (playerNameFields.length > 0) {
                 List<String> playerList = new ArrayList<String>();
                 for (int i = 0; i < playerNameFields.length; i++) {
                     if (playerNameFields[i] != null
-                        && playerNameFields[i].getText().length() > 0) { 
+                        && playerNameFields[i].getText().length() > 0) {
                             playerList.add(playerNameFields[i].getText());
                             playerNameFields[i].setText("");
                     }
@@ -312,7 +312,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 Collections.shuffle(playerList);
                 for (int i = 0; i < playerList.size(); i++) {
                     playerNameFields[i].setText(playerList.get(i));
-                    
+
                 }
             }
         }

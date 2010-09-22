@@ -233,21 +233,28 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         GameOption option;
         String optionName, optionType, optionValues, optionDefault;
         String optionNameParameters;
+        String[] optionParameters;
         List<Tag> optionTags = tag.getChildren("GameOption");
         if (optionTags != null) {
             for (Tag optionTag : optionTags) {
                 optionName = optionTag.getAttributeAsString("name");
                 if (optionName == null)
                     throw new ConfigurationException("GameOption without name");
+                optionParameters = null;
+                optionNameParameters =
+                    optionTag.getAttributeAsString("parm");
+	            if (optionNameParameters != null) {
+	            	optionParameters = optionNameParameters.split(",");
+	            }
+                optionName = GameOption.constructParametrisedName (
+                		optionName, optionParameters);
+
                 if (gameOptions.containsKey(optionName)) continue;
 
                 // Include missing option
-                option = new GameOption(optionName);
+                option = new GameOption(optionName, optionParameters);
                 availableGameOptions.add(option);
-                optionNameParameters = optionTag.getAttributeAsString("parm");
-                if (optionNameParameters != null) {
-                    option.setParameters(optionNameParameters.split(","));
-                }
+
                 optionType = optionTag.getAttributeAsString("type");
                 if (optionType != null) option.setType(optionType);
                 optionValues = optionTag.getAttributeAsString("values");

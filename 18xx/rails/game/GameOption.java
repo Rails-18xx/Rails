@@ -8,6 +8,7 @@ import rails.util.LocalText;
 public class GameOption {
 
     private String name;
+    private String parametrisedName;
     private boolean isBoolean = false;
     private String type;
     private String defaultValue = null;
@@ -22,14 +23,16 @@ public class GameOption {
 
     // A default option that will always be set
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
-    
-    // Some other common game options
-    public static final String VARIANT = "Variant"; 
-        
 
-    public GameOption(String name) {
-        this.name = name;
-        optionsMap.put(name, this);
+    // Some other common game options
+    public static final String VARIANT = "Variant";
+
+
+    public GameOption(String name, String[] parameters) {
+    	this.name = name;
+    	if (parameters != null) parm = parameters.clone();
+        parametrisedName = constructParametrisedName (name, parameters);
+        optionsMap.put(parametrisedName, this);
     }
 
     public void setType(String type) {
@@ -43,7 +46,7 @@ public class GameOption {
     }
 
     public String getName() {
-        return name;
+        return parametrisedName;
     }
 
     public String getLocalisedName() {
@@ -58,13 +61,11 @@ public class GameOption {
         return isBoolean;
     }
 
+    /*
     public void setParameters(String[] parameters) {
         parm = parameters.clone();
     }
-
-    public String[] getParameters() {
-        return parm;
-    }
+    */
 
     public void setAllowedValues(List<String> values) {
         allowedValues = values;
@@ -107,7 +108,18 @@ public class GameOption {
 
     /** Get GameOption Value as Boolean Value */
     public static boolean convertValueToBoolean(String value) {
-        return value != null 
+        return value != null
             && OPTION_VALUE_YES.equalsIgnoreCase(value);
+    }
+
+    public static String constructParametrisedName (String optionName,
+    		String[] optionNameParameters) {
+        String parametrisedName = optionName;
+    	if (optionNameParameters != null) {
+    		for (String parameter : optionNameParameters) {
+    			parametrisedName += "_" + parameter;
+    		}
+    	}
+    	return parametrisedName;
     }
 }

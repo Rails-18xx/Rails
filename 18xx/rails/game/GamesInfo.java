@@ -129,7 +129,6 @@ public class GamesInfo {
         // Get the options
         List<Tag> optionTagList = gameTag.getChildren(OPTION_TAG);
         List<GameOption> gameOptions = new ArrayList<GameOption>();
-        options.put(gameName, gameOptions);
 
         if (optionTagList != null) {
             for (Tag optionTag : optionTagList) {
@@ -141,14 +140,16 @@ public class GamesInfo {
                     throw new ConfigurationException("Option name missing in "
                                                      + GAMES_XML);
                 }
-                GameOption option = new GameOption(optionName);
-                gameOptions.add(option);
 
+                // Option name parameters (optional)
+                String[] optionParameters = null;
                 String optionNameParameters =
-                        optionTag.getAttributeAsString("parm");
-                if (optionNameParameters != null) {
-                    option.setParameters(optionNameParameters.split(","));
-                }
+                    optionTag.getAttributeAsString("parm");
+	            if (optionNameParameters != null) {
+	            	optionParameters = optionNameParameters.split(",");
+	            }
+                GameOption option = new GameOption(optionName, optionParameters);
+                gameOptions.add(option);
 
                 // Option type (optional).
                 // "toggle" means this is a boolean option,
@@ -173,6 +174,7 @@ public class GamesInfo {
                 }
             }
         }
+        options.put(gameName, gameOptions);
 
     }
 

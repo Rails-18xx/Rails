@@ -227,6 +227,12 @@ Known Issues:
 - Not implemented: receivership
 </Description>
     <Players minimum="3" maximum="5" />
+	    <Option name="Include" parm="Unit1" type="toggle" default="yes"/>
+        <Option name="Include" parm="Unit2" type="toggle" default="no"/>
+        <Option name="Include" parm="Unit3" type="toggle" default="no"/>
+        <Option name="Include" parm="R1" type="toggle" default="no"/>
+        <Option name="Include" parm="R2" type="toggle" default="no"/>
+        <Option name="Include" parm="R3" type="toggle" default="no"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
         <Option name="UnlimitedTiles" type="toggle" default="no"/>
