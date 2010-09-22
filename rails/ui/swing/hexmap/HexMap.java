@@ -13,10 +13,9 @@ import org.apache.log4j.Logger;
 
 import rails.game.*;
 import rails.game.action.*;
-import rails.ui.swing.GameUIManager;
-import rails.ui.swing.ORUIManager;
-import rails.ui.swing.Scale;
-import rails.util.*;
+import rails.ui.swing.*;
+import rails.util.Config;
+import rails.util.Util;
 
 /**
  * Base class that stores common info for HexMap independant of Hex
@@ -64,10 +63,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
 
     protected boolean bonusTokenLayingEnabled = false;
-    
+
     /** list of generalpath elements to indicate train runs */
     protected List<GeneralPath> trainPaths;
-    
+
     private static Color colour1, colour2, colour3, colour4;
     protected int strokeWidth = 5;
     protected int strokeCap = BasicStroke.CAP_ROUND;
@@ -83,7 +82,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected double tileYOffset;
     protected double coordinateXMargin;
     protected double coordinateYMargin;
-    
+
     public static void setRouteColours () {
         try {
             colour1 = Util.parseColour(Config.get("route.colour.1", null));
@@ -114,12 +113,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
         maxCol = mapManager.getMaxCol();
         log.debug("HexMap init: minX="+ minX + ",minY=" + minY + ",maxX=" +maxX + ",maxY=" + maxY);
         log.debug("HexMap init: minCol="+ minCol + ",minRow=" + minRow + ",maxCol=" +maxCol + ",maxRow=" + maxRow);
-        
+
         setScale();
         setupHexes();
 
         initializeSettings();
-        
+
         setRouteColours();
     }
 
@@ -143,22 +142,22 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
     }
 
-    
 
-    
+
+
     protected void setupHexesGUI() {
 
         hexes = new ArrayList<GUIHex>();
 
         hexArray = mapManager.getHexes();
         MapHex mh;
-        
+
         h = new GUIHex[hexArray.length][hexArray[0].length];
         for (int i = minX; i < hexArray.length; i++) {
             for (int j = minY; j < hexArray[0].length; j++) {
                 mh = hexArray[i][j];
-                if (mh != null) { 
-                    GUIHex hex = new GUIHex(this, calcXCoordinates(mh.getColumn(), tileXOffset), 
+                if (mh != null) {
+                    GUIHex hex = new GUIHex(this, calcXCoordinates(mh.getColumn(), tileXOffset),
                             calcYCoordinates(mh.getRow(), tileYOffset),
                             scale, i-minX+1, j-minY+1);
                     hex.setHexModel(mh);
@@ -171,7 +170,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
         setSize();
     }
-    
+
     protected void scaleHexesGUI  () {
         hexArray = mapManager.getHexes();
         GUIHex hex;
@@ -189,17 +188,31 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     protected void drawLabel(Graphics2D g2, int index, int xCoordinate, int yCoordinate, boolean letter) {
-        String label = letter
-        ? String.valueOf((char)('@'+index))
-        : String.valueOf(index);
+        String label = letter ? getLetterLabel (index) : getNumberLabel (index);
 
         xCoordinate -= 4.0*label.length();
         yCoordinate += 4.0;
         g2.drawString(label,
                 xCoordinate,
                 yCoordinate);
-        
+
 //        log.debug("Draw Label " + label + " for " + index + " at x = " + xCoordinate + ", y = " + yCoordinate);
+    }
+
+    private String getLetterLabel (int index) {
+    	if (index > 26) {
+    		return "A" + String.valueOf((char)('@'+(index-26)));  // For 1825U1 row "AA"
+    	} else {
+    		return String.valueOf((char)('@'+index));
+    	}
+    }
+
+    private String getNumberLabel (int index) {
+    	if (index < 0) {
+    		return String.valueOf(100 + index); // For 1825U1 column "99"
+    	} else {
+    		return String.valueOf(index);
+    	}
     }
 
     @Override
@@ -214,7 +227,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
         int yTop = (int)calcYCoordinates(minRow, - coordinateYMargin);
         int yBottom = (int)calcYCoordinates(maxRow,  coordinateYMargin);
-        
+
         for (int iCol = minCol; iCol <= maxCol; iCol++) {
             int xCoordinate = (int)(calcXCoordinates(iCol, 0));
             drawLabel(g2, iCol, xCoordinate, yTop, lettersGoHorizontal);
@@ -230,7 +243,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     }
 
-    
+
     public void setupHexes() {
         setupHexesGUI();
         setupBars();
@@ -293,10 +306,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
                     hex.paintBars(g);
                 }
             }
-            
+
             // paint train paths
             Graphics2D g2 = (Graphics2D) g;
-            Stroke trainStroke = 
+            Stroke trainStroke =
                 new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
             g2.setStroke(trainStroke);
 
@@ -506,7 +519,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     public void setTrainPaths(List<GeneralPath> trainPaths) {
         this.trainPaths = trainPaths;
     }
-    
+
     /**
      * Off-board tiles must be able to retrieve the current phase.
      *

@@ -287,6 +287,11 @@ return getAttributeAsInteger(name, 0);
                                 "IfOption has no optionName attribute");
                     name = nameAttr.getNodeValue();
 
+                    Node parmAttr = nnp.getNamedItem("parm");
+                    if (parmAttr != null) {
+                    	value = parmAttr.getNodeValue();
+                    	name = GameOption.constructParametrisedName(name, value.split(","));
+                    }
                     Node valueAttr = nnp.getNamedItem("value");
                     if (valueAttr == null)
                         throw new ConfigurationException(
@@ -301,6 +306,18 @@ return getAttributeAsInteger(name, 0);
                     }
 
                     String optionValue = gameOptions.get(name);
+
+                	// For backwards compatibility: search for an extended name
+                    if (optionValue == null) {
+                    	for (String optName : gameOptions.keySet()) {
+                    		if (optName.startsWith(name)) {
+                    			optionValue = gameOptions.get(optName);
+                    			log.warn("Option name "+name+" replaced by "+optName);
+                    			break;
+                    		}
+                    	}
+                    }
+
                     if (optionValue == null) {
                         // Take the default value
                         GameOption go = GameOption.getByName(name);
@@ -309,6 +326,7 @@ return getAttributeAsInteger(name, 0);
                                  + " but no assigned value found, assumed "+optionValue);
 
                     }
+
                     if (optionValue.equalsIgnoreCase(value)) {
                         parseSubTags(childElement);
                     }

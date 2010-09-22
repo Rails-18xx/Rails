@@ -12,6 +12,12 @@
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
+        <GameOption name="Include" parm="Unit1" type="toggle" default="yes"/>
+        <GameOption name="Include" parm="Unit2" type="toggle" default="no"/>
+        <GameOption name="Include" parm="Unit3" type="toggle" default="no"/>
+        <GameOption name="Include" parm="R1" type="toggle" default="no"/>
+        <GameOption name="Include" parm="R2" type="toggle" default="no"/>
+        <GameOption name="Include" parm="R3" type="toggle" default="no"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
         <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>

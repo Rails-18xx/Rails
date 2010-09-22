@@ -114,7 +114,7 @@ StationHolder, TokenHolder {
 
     /** Any open sides against which track may be laid even at board edges (1825) */
     protected boolean[] openHexSides;
-
+    
     protected MapManager mapManager = null;
 
     protected static Logger log =
@@ -128,16 +128,22 @@ StationHolder, TokenHolder {
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        Pattern namePattern = Pattern.compile("(\\D)(\\d+)");
+        Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");
 
         infoText = name = tag.getAttributeAsString("name");
         Matcher m = namePattern.matcher(name);
         if (!m.matches()) {
             throw new ConfigurationException("Invalid name format: " + name);
         }
-        letter = m.group(1).charAt(0);
+        String letters = m.group(1);
+        if (letters.length() == 1) {
+        	letter = letters.charAt(0);
+        } else { // for row 'AA' in 1825U1
+        	letter = 26 + letters.charAt(1);
+        }
         try {
             number = Integer.parseInt(m.group(2));
+            if (number > 90) number -= 100;  // For 1825U1 column 99 (= -1)
         } catch (NumberFormatException e) {
             // Cannot occur!
         }
@@ -266,7 +272,7 @@ StationHolder, TokenHolder {
 
         return true;
     }
-
+    
     public boolean isOpenSide (int side) {
         return openHexSides != null && openHexSides[side%6];
     }
