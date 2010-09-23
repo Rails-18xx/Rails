@@ -27,6 +27,15 @@
     <Tile id="-25005"/>
     <Tile id="-25006"/>
     <Tile id="-25007"/>
+    <Tile id="-25008"/>
+    <Tile id="-25009"><!--Liverpool--><Upgrade id="33"/></Tile>
+    <Tile id="-25010"/>
+    <Tile id="-25011"/>
+    <Tile id="-25012"/>
+    <Tile id="-25013"/>
+    <Tile id="-25014"/>
+    <Tile id="-25015"/>
+    <Tile id="-25016"/>
 	<!-- Yellow tiles -->
 	<Tile id="1" quantity="1" >
 		<Upgrade id="14"></Upgrade></Tile>
@@ -103,6 +112,7 @@
 	<Tile id="88" quantity="1"></Tile>
 	<!-- Brown tiles -->
 	<Tile id="32" quantity="1" />
+    <Tile id="33" quantity="1" />
 	<Tile id="34" quantity="1" />
 	<Tile id="38" quantity="2" />
 	<Tile id="41" quantity="1" />

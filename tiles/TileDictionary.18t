@@ -12816,7 +12816,7 @@ object TTilesWrapper
         item
           JunType = jtCity
           Position = tp2SideF
-          Revenue = 40
+          Revenue = 20
           RevenuePosition = tpCenter
         end
         item
@@ -12837,25 +12837,25 @@ object TTilesWrapper
       LongName = 'Schwerin'
       Connections = <
         item
-          Position1 = tp2SideA
-          Position2 = tp4SideA
-        end
-        item
           Position1 = tp4SideE
           Position2 = tp4SideC
         end
         item
-          Position1 = tp2SideA
+          Position1 = tp1SideA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1SideA
           Position2 = tp4SideE
         end
         item
-          Position1 = tp2SideA
+          Position1 = tp1SideA
           Position2 = tp4SideC
         end>
       Junctions = <
         item
           JunType = jtCity
-          Position = tp2SideA
+          Position = tp1SideA
           Revenue = 10
         end>
     end
@@ -14000,7 +14000,7 @@ object TTilesWrapper
       Code = 439
       LongName = '1889 Kotohira green'
       Category = 'Kotohira'
-      CategoryPosition = tp2SideD
+      CategoryPosition = tp3SideA
       Level = tlGreen
       Connections = <
         item
@@ -14018,7 +14018,8 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtDoubleCity
-          Revenue = 60
+          Revenue = 50
+          RevenuePosition = tp3CornerF
         end>
     end
     item
@@ -14268,8 +14269,8 @@ object TTilesWrapper
     end
     item
       Code = -25002
-      LongName = 'Birmingham'
-      Category = 'Birmingham'
+      LongName = 'B/M/G'
+      Category = ' '
       CategoryPosition = tp1SideF
       Level = tlMapUpgradableToBrown
       Connections = <
@@ -14426,6 +14427,238 @@ object TTilesWrapper
         item
           JunType = jtCity
           Revenue = 20
+        end>
+    end
+    item
+      Code = -25008
+      LongName = 'Barrow'
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerC
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp2CornerC
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp2CornerF
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerC
+          Revenue = 10
+          RevenuePosition = tp2CornerD
+        end>
+    end
+    item
+      Code = -25009
+      LongName = 'Liverpool'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tp2SideA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2SideC
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideA
+          Revenue = 40
+          RevenuePosition = tp2CornerF
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideC
+          Revenue = 40
+          RevenuePosition = tp2CornerF
+        end>
+    end
+    item
+      Code = -25010
+      LongName = 'Doncaster'
+      Connections = <
+        item
+          Position1 = tp1CornerE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp1CornerE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp1CornerE
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1CornerE
+          Revenue = 20
+        end
+        item
+          JunType = jtCity
+          Position = tp1CornerB
+          Revenue = 20
+          RevenuePosition = tp3CornerD
+        end>
+    end
+    item
+      Code = -25011
+      LongName = 'Aberdeen'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = -25012
+      LongName = 'Helensburgh'
+      Connections = <
+        item
+          Position1 = tp2SideB
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp2SideC
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2SideC
+          Revenue = 10
+          RevenuePosition = tp3CornerB
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2SideB
+          Revenue = 10
+          RevenuePosition = tp3CornerD
+        end>
+    end
+    item
+      Code = -25013
+      LongName = 'Anstruther'
+      Connections = <
+        item
+          Position1 = tp4SideC
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2SideF
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2SideF
+          Revenue = 10
+        end>
+    end
+    item
+      Code = -25014
+      LongName = 'Maryport'
+      Connections = <
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1CornerB
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1CornerB
+          Revenue = 10
+        end>
+    end
+    item
+      Code = -25015
+      LongName = 'Milford H.'
+      Connections = <
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerB
+          Revenue = 10
+        end>
+    end
+    item
+      Code = -25016
+      LongName = 'Highbridge'
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp1CornerC
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1CornerC
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp1CornerC
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1CornerC
+          Revenue = 10
+          RevenuePosition = tp3CornerB
         end>
     end>
 end
