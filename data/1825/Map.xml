@@ -69,7 +69,7 @@
     <Hex name="N16" tile="0"/>
     <Hex name="N18" tile="-10" cost="40" city="Hull"/>
     <Hex name="O9" tile="-25009" cost="40" city="Liverpool"/>
-    <Hex name="O11" tile="-25002" city="Manchester"/>
+    <Hex name="O11" tile="-25002" orientation="1" city="Manchester"/>
     <Hex name="O13" tile="0" cost="100"/>
     <Hex name="O15" tile="-25010" city="Barnsley, Doncaster"/>
     <Hex name="O17" tile="0" cost="40"/>
