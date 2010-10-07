@@ -23,11 +23,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     public static final int WITHHOLD = 0;
     public static final int SPLIT = 1;
     public static final int PAYOUT = 2;
-    public static final int NUM_OPTIONS = 3;
+    public static final int NO_TRAIN = 3;
+    public static final int NUM_OPTIONS = 4;
 
     /** Allocation name keys in the resource bundle */
     public static final String[] allocationNameKeys =
-            new String[] { "WITHHOLD", "SPLIT", "PAYOUT" };
+            new String[] { "WITHHOLD", "SPLIT", "PAYOUT", "NO_TRAIN" };
 
     /*--- Server-side settings ---*/
     /**
