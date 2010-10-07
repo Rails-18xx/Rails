@@ -14660,5 +14660,93 @@ object TTilesWrapper
           Revenue = 10
           RevenuePosition = tp3CornerB
         end>
+    end
+    item
+      Code = 119
+      LongName = '119'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = 166
+      LongName = '166'
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 200
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 10
+        end>
     end>
 end
