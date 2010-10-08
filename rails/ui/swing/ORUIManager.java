@@ -18,9 +18,7 @@ import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.Config;
-import rails.util.LocalText;
-import rails.util.Util;
+import rails.util.*;
 
 public class ORUIManager implements DialogOwner {
 
@@ -199,7 +197,7 @@ public class ORUIManager implements DialogOwner {
             // check actions for allowed hexes
             boolean mapHexes = false;
             hexUpgrades = new ArrayList<MapHex>();
-            
+
             if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
                 for (LayTile layTile:allowedTileLays) {
                     switch (layTile.getType()) {
@@ -240,7 +238,7 @@ public class ORUIManager implements DialogOwner {
                     GUIHex guiHex = map.getHexByName(hex.getName());
                     guiHex.setSelectable(true);
                 }
-                
+
             }
         }
 
@@ -909,7 +907,7 @@ public class ORUIManager implements DialogOwner {
 
         PublicCompanyI company = token.getCompany();
         List<String> prompts = new ArrayList<String>();
-        
+
         Map<String, Station> promptToStationMap = new HashMap<String, Station>();
         String prompt;
         for (Station station:possibleStations) {
@@ -936,8 +934,8 @@ public class ORUIManager implements DialogOwner {
         Station station = promptToStationMap.get(selected);
         return station;
     }
-    
-    
+
+
     /**
      * Lay Token finished.
      *
@@ -1419,7 +1417,7 @@ public class ORUIManager implements DialogOwner {
         mapRelatedActions.clear();
 
         orPanel.resetActions();
-        
+
         messagePanel.setMessage(null);
 
         if (actionToComplete != null) {
@@ -1446,22 +1444,21 @@ public class ORUIManager implements DialogOwner {
         // initialize operating costs actions
         orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
 
-        // initial deactivation of MapTileCorrection Actions 
+        // initial deactivation of MapTileCorrection Actions
         mapCorrectionEnabled = false;
         mapCorrectionAction = null;
-        
+
         // initial deactivation of revenue calculation
         if (!possibleActions.contains(SetDividend.class)) {
             orPanel.stopRevenueUpdate();
             orPanel.resetCurrentRevenueDisplay();
         }
-        
+
         if (possibleActions.contains(MapCorrectionAction.class)) {
             orPanel.initTileLayingStep();
             orWindow.requestFocus();
 
-            MapCorrectionAction action = (MapCorrectionAction)
-                    (possibleActions.getType(MapCorrectionAction.class)).get(0);
+            MapCorrectionAction action = (possibleActions.getType(MapCorrectionAction.class)).get(0);
 
             mapCorrectionEnabled = true;
             mapCorrectionAction = action;
@@ -1526,9 +1523,10 @@ public class ORUIManager implements DialogOwner {
             }
             setMessage(message);
 
-        } else if (possibleActions.contains(BuyTrain.class)) {
+        } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
 
-            orPanel.initTrainBuying(true);
+        	boolean canBuyTrain = possibleActions.contains(BuyTrain.class);
+            orPanel.initTrainBuying(canBuyTrain);
 
             StringBuffer b = new StringBuffer(LocalText.getText("BuyTrain"));
 
@@ -1846,7 +1844,7 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setCancelEnabled(true);
             showTilesInUpgrade = true;
         }
-        
+
         log.debug("Active map tile correction");
         if (showTilesInUpgrade) {
             upgradePanel.showCorrectionTileUpgrades();
@@ -1858,11 +1856,11 @@ public class ORUIManager implements DialogOwner {
     public void setMessage(String message) {
         messagePanel.setMessage(message);
     }
-    
+
     public void addInformation(String infoText) {
         messagePanel.addInformation(infoText);
     }
-    
+
     public void addDetail(String detailText) {
         messagePanel.addDetail(detailText);
     }
