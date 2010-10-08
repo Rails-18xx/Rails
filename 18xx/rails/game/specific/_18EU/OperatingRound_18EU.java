@@ -40,22 +40,25 @@ public class OperatingRound_18EU extends OperatingRound {
 
         if (operatingCompany.get() == null) return;
 
-        TrainManager trainMgr = gameManager.getTrainManager();
-
         int cash = operatingCompany.get().getCash();
+
         int cost;
         List<TrainI> trains;
         BuyTrain bt;
 
         boolean hasTrains =
                 operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
-        boolean canBuyTrainNow = canBuyTrainNow();
 
+        // Cannot buy a train without any cash, unless you have to
+        if (cash == 0 && hasTrains) return;
+
+        boolean canBuyTrainNow = canBuyTrainNow();
         if (!canBuyTrainNow) return;
 
         boolean presidentMayHelp = operatingCompany.get().mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
+        TrainManager trainMgr = gameManager.getTrainManager();
 
         String extraMessage = null;
         boolean mustExchangePullmann = !isBelowTrainLimit()
