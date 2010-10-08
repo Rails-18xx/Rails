@@ -363,7 +363,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 new ClickField(
                                         certInTreasury[i].getText(),
                                         BUY_FROM_POOL_CMD,
-                                        LocalText.getText("ClickToSelectForBuying"),
+                                        LocalText.getText("ClickForSell"),
                                         this, buySellGroup);
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
                         1, 1, WIDE_RIGHT, false);
