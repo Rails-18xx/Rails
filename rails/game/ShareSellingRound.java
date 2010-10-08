@@ -380,7 +380,7 @@ public class ShareSellingRound extends StockRound {
 
         boolean soldBefore = sellPrices.containsKey(companyName);
 
-        pay (bank, company, cashAmount);
+        pay (bank, currentPlayer, cashAmount);
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
