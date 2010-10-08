@@ -1040,6 +1040,8 @@ public class OperatingRound extends Round implements Observer {
         // Move the token
         company.withhold(amount);
 
+        if (!company.hasStockPrice()) return;
+
         // Check if company has entered a closing area
         StockSpaceI newSpace = company.getCurrentSpace();
         if (newSpace.closesCompany() && company.canClose()) {
@@ -2491,18 +2493,22 @@ public class OperatingRound extends Round implements Observer {
 
         if (operatingCompany.get() == null) return;
 
-        TrainManager trainMgr = gameManager.getTrainManager();
-
         int cash = operatingCompany.get().getCash();
+
         int cost;
         List<TrainI> trains;
 
         boolean hasTrains =
             operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
+
+        // Cannot buy a train without any cash, unless you have to
+        if (cash == 0 && hasTrains) return;
+
         boolean canBuyTrainNow = canBuyTrainNow();
         boolean presidentMayHelp = !hasTrains && operatingCompany.get().mustOwnATrain();
         TrainI cheapestTrain = null;
         int costOfCheapestTrain = 0;
+        TrainManager trainMgr = gameManager.getTrainManager();
 
         // First check if any more trains may be bought from the Bank
         // Postpone train limit checking, because an exchange might be possible
