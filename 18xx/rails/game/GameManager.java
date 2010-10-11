@@ -87,6 +87,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
 
+    protected boolean dynamicOperatingOrder = true;
+
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
@@ -329,6 +331,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 } catch (ClassNotFoundException e) {
                     throw new ConfigurationException("Cannot find class "
                             + orClassName, e);
+                }
+
+                Tag orderTag = orTag.getChild("OperatingOrder");
+                if (orderTag != null) {
+                	dynamicOperatingOrder = orderTag.getAttributeAsBoolean("dynamic",
+                			dynamicOperatingOrder);
                 }
             }
 
@@ -1179,7 +1187,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         createRound(EndOfGameRound.class);
     }
 
-    /* (non-Javadoc)
+
+    public boolean isDynamicOperatingOrder() {
+		return dynamicOperatingOrder;
+	}
+
+	/* (non-Javadoc)
      * @see rails.game.GameManagerI#isGameOver()
      */
     public boolean isGameOver() {
