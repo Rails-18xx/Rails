@@ -1678,10 +1678,11 @@ public class ORUIManager implements DialogOwner {
             if (newCompanies.get(i) != oldCompanies[i]) {
                 log.debug("Detected a OR company sequence change: "+oldCompanies[i].getName()
                         +" becomes "+newCompanies.get(i).getName());
+                orPanel.recreate(oRound);
+                break;
             }
-            orPanel.recreate(oRound);
-            return;
         }
+        return;
     }
 
     public void setORCompanyTurn(int orCompIndex) {
