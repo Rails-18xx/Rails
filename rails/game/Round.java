@@ -260,26 +260,44 @@ public abstract class Round implements RoundI {
 
     /** Set the operating companies in their current acting order */
     public List<PublicCompanyI> setOperatingCompanies() {
+        return setOperatingCompanies (null, null);
+    }
+
+    public List<PublicCompanyI> setOperatingCompanies(List<PublicCompanyI> oldOperatingCompanies,
+            PublicCompanyI lastOperatingCompany) {
 
         Map<Integer, PublicCompanyI> operatingCompanies =
                 new TreeMap<Integer, PublicCompanyI>();
         StockSpaceI space;
         int key;
         int minorNo = 0;
+        boolean reorder = gameManager.isDynamicOperatingOrder()
+        		&& oldOperatingCompanies != null && lastOperatingCompany != null;
+
+        int lastOperatingCompanyIndex;
+        if (reorder) {
+            lastOperatingCompanyIndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
+        } else {
+            lastOperatingCompanyIndex = -1;
+        }
+
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (!canCompanyOperateThisRound(company)) continue;
 
-            // Key must put companies in reverse operating order, because sort
-            // is ascending.
-            if (company.hasStockPrice()) {
+            if (reorder
+                    && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyIndex) {
+                // Companies that have operated this round get lowest keys
+                key = oldOperatingCompanies.indexOf(company);
+            } else if (company.hasStockPrice()) {
+                // Key must put companies in reverse operating order, because sort
+                // is ascending.
                 space = company.getCurrentSpace();
-                key =
-                        1000000 * (999 - space.getPrice()) + 10000
-                                * (99 - space.getColumn()) + 100
-                                * space.getRow()
-                                + space.getStackPosition(company);
+                key = 1000000 * (999 - space.getPrice())
+                        + 10000 * (99 - space.getColumn())
+                        + 100 * (space.getRow()+1)
+                        + space.getStackPosition(company);
             } else {
-                key = ++minorNo;
+                key = 50 + ++minorNo;
             }
             operatingCompanies.put(new Integer(key), company);
         }
