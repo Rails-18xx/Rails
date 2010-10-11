@@ -68,6 +68,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract void registerBrokenBank();
 
+    public boolean isDynamicOperatingOrder();
+
     /**
      * To be called by the UI to check if the rails.game is over.
      *
