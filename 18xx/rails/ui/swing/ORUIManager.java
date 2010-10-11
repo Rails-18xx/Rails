@@ -1433,6 +1433,9 @@ public class ORUIManager implements DialogOwner {
 
         if (oRound.getOperatingCompanyIndex() != orCompIndex) {
             if (orCompIndex >= 0) orPanel.finishORCompanyTurn(orCompIndex);
+
+            // Check if sequence has changed
+            checkORCompanySequence(companies, oRound.getOperatingCompanies());
             setORCompanyTurn(oRound.getOperatingCompanyIndex());
         }
 
@@ -1667,6 +1670,18 @@ public class ORUIManager implements DialogOwner {
     /** Stub, can be overridden by game-specific subclasses */
     protected void checkForGameSpecificActions() {
 
+    }
+
+    /** Redraw the ORPanel if the company operating order has changed */
+    protected void checkORCompanySequence (PublicCompanyI[] oldCompanies, List<PublicCompanyI> newCompanies) {
+        for (int i=0; i<newCompanies.size(); i++) {
+            if (newCompanies.get(i) != oldCompanies[i]) {
+                log.debug("Detected a OR company sequence change: "+oldCompanies[i].getName()
+                        +" becomes "+newCompanies.get(i).getName());
+            }
+            orPanel.recreate(oRound);
+            return;
+        }
     }
 
     public void setORCompanyTurn(int orCompIndex) {
