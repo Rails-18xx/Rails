@@ -1,13 +1,9 @@
 package rails.game.state;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import rails.game.move.AddToList;
 import rails.game.move.RemoveFromList;
-import rails.game.move.SetChange;
 
 /**
  * State class that wraps an ArrayList
@@ -16,16 +12,16 @@ import rails.game.move.SetChange;
  * Remark: Does not extend State or implements StateI do avoid additional overhead
  * All state/move mechanisms already contained in Move objects
  * For the future a simpler unified StateI would make things clearer
- * 
+ *
  * TODO: Replace all stateful lists by this class and simplify according move objects
- * 
+ *
  */
 
 public class ArrayListState<E>  {
-    
+
     private final ArrayList<E> list = new ArrayList<E>();
     private String listName;
-    
+
     /**
      * constructor for an empty list
      * @param name
@@ -41,15 +37,15 @@ public class ArrayListState<E>  {
         this(listName);
         list.addAll(collection);
     }
-    
+
     public void add(E element) {
         new AddToList<E>(list, element, listName);
     }
-    
+
     public void add(int index, E element) {
         new AddToList<E>(list, element, listName).atIndex(index);
     }
-    
+
     public boolean remove(E element) {
         if (list.contains(element)) {
             new RemoveFromList<E>(list, element, listName);
@@ -58,28 +54,32 @@ public class ArrayListState<E>  {
             return false;
         }
     }
-    
+
+    public void move (E element, int toIndex) {
+        if (remove (element)) add (toIndex, element);
+    }
+
     public void clear() {
         for (E element:list) {
             remove(element);
         }
     }
-    
-    /** 
+
+    /**
      * returns unmodifiable view of list
      */
     public List<E> viewList() {
         return Collections.unmodifiableList(list);
     }
-    
+
     public int size() {
         return list.size();
     }
-    
+
     public int indexOf(Object o) {
         return list.indexOf(o);
     }
-    
+
     public E get(int index) {
         return list.get(index);
     }
