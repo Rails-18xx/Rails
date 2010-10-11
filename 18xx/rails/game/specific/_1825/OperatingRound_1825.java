@@ -1,13 +1,8 @@
 package rails.game.specific._1825;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import rails.game.GameManagerI;
-import rails.game.OperatingRound;
-import rails.game.PublicCompanyI;
+import rails.game.*;
 
 public class OperatingRound_1825 extends OperatingRound {
 
@@ -21,7 +16,7 @@ public class OperatingRound_1825 extends OperatingRound {
         int space;
         int key;
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-            if (!canCompanyOperateThisRound(company)) continue;    
+            if (!canCompanyOperateThisRound(company)) continue;
             // Key must put companies in reverse operating order, because sort
             // is ascending.
             space = company.getIPOPrice();
@@ -34,7 +29,12 @@ public class OperatingRound_1825 extends OperatingRound {
             key = 1000000 - (space - company.getFormationOrderIndex());
             operatingCompanies.put(new Integer(key), company);
             }
-        return new ArrayList<PublicCompanyI>(operatingCompanies.values());        
-        }
-    
+        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
+     }
+
+    @Override
+    public List<PublicCompanyI> setOperatingCompanies(List<PublicCompanyI> oldOperatingCompanies,
+            PublicCompanyI lastOperatingCompany) {
+        return setOperatingCompanies();
+    }
 }

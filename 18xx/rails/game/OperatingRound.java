@@ -1523,6 +1523,20 @@ public class OperatingRound extends Round implements Observer {
                 if (++index >= operatingCompanies.size()) {
                     return false;
                 }
+
+                // Check if the operating order has changed
+                List<PublicCompanyI> newOperatingCompanies
+                    = setOperatingCompanies (operatingCompanies.viewList(), operatingCompany.get());
+                PublicCompanyI company;
+                for (int i=0; i<newOperatingCompanies.size(); i++) {
+                    company = newOperatingCompanies.get(i);
+                    log.debug("+++ Index "+i+" new company="+company.getName());
+                    if (company != operatingCompanies.get(i)) {
+                        log.debug("+++ Index "+i+" old company="+operatingCompanies.get(i).getName());
+                        operatingCompanies.move(company, i);
+                    }
+                }
+
                 setOperatingCompany(operatingCompanies.get(index));
             }
 
