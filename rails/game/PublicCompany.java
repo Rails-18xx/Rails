@@ -269,8 +269,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
 
-    //PD: used to track floatation order for games that need this (1825)
-    protected int formationOrderIndex = 0;
     /**
      * The constructor. The way this class is instantiated does not allow
      * arguments.
@@ -2010,12 +2008,4 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return "";
     }
     
-    public int getFormationOrderIndex() {
-        return formationOrderIndex;
-    }
-
-    public void setFormationOrderIndex(int formationOrderIndex) {
-        this.formationOrderIndex = formationOrderIndex;
-    }
-
 }
