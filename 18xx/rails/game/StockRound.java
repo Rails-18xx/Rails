@@ -35,6 +35,11 @@ public class StockRound extends Round {
     protected Map<String, StockSpaceI> sellPrices =
         new HashMap<String, StockSpaceI>();
 
+    /** Records lifted share selling obligations in the current round<p>
+     * Example: >60% ownership allowed after a merger in 18EU.
+     */
+    protected HashSetState<PublicCompanyI> sellObligationLifted = null;
+
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
     protected HashMap<Player, HashMap<PublicCompanyI, Object>> playersThatSoldThisRound =
@@ -1013,9 +1018,6 @@ public class StockRound extends Round {
                         }
                     }
                 }
-                if (potentialDirector == null) {
-                    //TODO: No one to dump the Presidency onto, work out how to handle the receivership
-                }
                 // The poor sod.
                 dumpedPlayer = potentialDirector;
                 presSharesToSell = numberToSell;
@@ -1463,7 +1465,6 @@ public class StockRound extends Round {
                     player.getPortfolio().getCertificateCount(),
                     gameManager.getPlayerCertificateLimit(player)));
         }
-                ;
 
         // Over the hold limit of any company?
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
@@ -1514,7 +1515,8 @@ public class StockRound extends Round {
         if (player.getPortfolio().getShare(company)
                 + number * company.getShareUnit()
                 > getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
-                && !company.getCurrentSpace().isNoHoldLimit()) return false;
+                && !company.getCurrentSpace().isNoHoldLimit()
+                && !isSellObligationLifted(company)) return false;
         return true;
     }
 
@@ -1571,5 +1573,17 @@ public class StockRound extends Round {
     public String getRoundName() {
         return toString();
     }
+
+	public boolean isSellObligationLifted(PublicCompanyI company) {
+		return sellObligationLifted != null
+				&& sellObligationLifted.contains(company);
+	}
+
+	public void setSellObligationLifted (PublicCompanyI company) {
+		if (sellObligationLifted == null) {
+			sellObligationLifted = new HashSetState<PublicCompanyI>("SellObligationLifted");
+		}
+		sellObligationLifted.add(company);
+	}
 
 }

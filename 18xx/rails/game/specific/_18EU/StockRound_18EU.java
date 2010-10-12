@@ -604,6 +604,13 @@ public class StockRound_18EU extends StockRound {
 
         if (!(this instanceof FinalMinorExchangeRound)) {
             companyBoughtThisTurnWrapper.set(major);
+
+            // If >60% shares owned, lift sell obligation this round.
+            if (currentPlayer.getPortfolio().getShare(major)
+            		> getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+            	setSellObligationLifted (major);
+            }
+
             setPriority();
         }
 

@@ -1,9 +1,6 @@
 package rails.game.state;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import rails.game.move.SetChange;
 /**
@@ -12,14 +9,14 @@ import rails.game.move.SetChange;
  *
  * Remark: Does not extend State or implements StateI do avoid additional overhead
  * All state/move mechanisms already contained in Move objects
- * 
+ *
  * TODO: Replace all stateful sets by this class and simplify according move objects
  */
 public class HashSetState<E>  {
-    
+
     private final HashSet<E> set = new HashSet<E>();
     private final String setName;
-    
+
     /**
      * constructor for an empty set
      * @param name
@@ -35,11 +32,11 @@ public class HashSetState<E>  {
         this(setName);
         set.addAll(collection);
     }
-    
+
     public void add(E element) {
         new SetChange<E>(set, element, true);
     }
-    
+
     public boolean remove(E element) {
         if (set.contains(element)) {
             new SetChange<E>(set, element, false);
@@ -48,22 +45,26 @@ public class HashSetState<E>  {
             return false;
         }
     }
-    
+
+    public boolean contains (E element) {
+    	return set.contains(element);
+    }
+
     public void clear() {
         for (E element:set) {
             remove(element);
         }
     }
-    
-    /** 
+
+    /**
      * returns unmodifiable view of set
      */
     public Set<E> viewSet() {
         return Collections.unmodifiableSet(set);
     }
-    
+
     public int size() {
         return set.size();
     }
-    
+
 }

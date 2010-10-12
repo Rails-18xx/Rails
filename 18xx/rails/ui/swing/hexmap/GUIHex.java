@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueBonusTemplate;
 import rails.game.*;
 import rails.game.model.ModelObject;
@@ -161,9 +160,9 @@ public class GUIHex implements ViewObject {
         innerHexagonSelected = defineInnerHexagon(0.8, center2D);
         innerHexagonSelectable = defineInnerHexagon(0.9, center2D);
     }
-    
+
     private GeneralPath defineInnerHexagon(double innerScale, Point2D.Double center2D) {
-    
+
         AffineTransform at =
                 AffineTransform.getScaleInstance(innerScale, innerScale);
         GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
@@ -182,7 +181,7 @@ public class GUIHex implements ViewObject {
 
         return innerHexagon;
     }
-    
+
     /**
      * returns point that corresponds to the definition as networkvertex
      */
@@ -208,14 +207,14 @@ public class GUIHex implements ViewObject {
     }
 
     public Point2D getSidePoint2D(int side){
-        return new Point2D.Double((xVertex[side] + xVertex[(side+1)%6])/2, 
+        return new Point2D.Double((xVertex[side] + xVertex[(side+1)%6])/2,
                     (yVertex[side] + yVertex[(side+1)%6])/2);
     }
-    
+
     public Point2D getCenterPoint2D() {
         return center;
     }
-    
+
     public void setHexModel(MapHex model) {
         this.model = model;
         currentTile = model.getCurrentTile();
@@ -280,7 +279,7 @@ public class GUIHex implements ViewObject {
             provisionalGUITile = null;
         }
     }
-    
+
     public boolean isSelectable() {
         return selectable;
     }
@@ -418,12 +417,11 @@ public class GUIHex implements ViewObject {
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
                         if (getHexModel().equals(hex)) {
+                        	String text = "(" + p.getName() + ")";
                             g2.drawString(
-                                  "(" + p.getName() + ")",
+                                  text,
                                   rectBound.x
-                                  + (rectBound.width - fontMetrics.stringWidth("("
-                                           + p.getName()
-                                           + ")"))
+                                  + (rectBound.width - fontMetrics.stringWidth(text))
                                   * 1 / 2,
                                   rectBound.y
                                   + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
@@ -431,6 +429,18 @@ public class GUIHex implements ViewObject {
                     }
                 }
             }
+        }
+
+        if (model.isReservedForCompany()
+        		&& currentTileId == model.getPreprintedTileId() ) {
+        	String text = "[" + model.getReservedForCompany() + "]";
+            g2.drawString(
+                  text,
+                  rectBound.x
+                  + (rectBound.width - fontMetrics.stringWidth(text))
+                  * 1 / 2,
+                  rectBound.y
+                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 25));
         }
 
     }
@@ -468,7 +478,7 @@ public class GUIHex implements ViewObject {
     }
 
     private void paintStationTokens(Graphics2D g2) {
-        
+
         if (getHexModel().getCities().size() > 1) {
             paintSplitStations(g2);
             return;
@@ -575,7 +585,7 @@ public class GUIHex implements ViewObject {
             provisionalGUITile.rotate(1, currentGUITile, upgradeMustConnect);
         }
     }
-    
+
     public void forcedRotateTile() {
         provisionalGUITile.setRotation(provisionalGUITile.getRotation() + 1);
     }
@@ -663,11 +673,11 @@ public class GUIHex implements ViewObject {
     public String getToolTip() {
         if (toolTip != null)
             return toolTip;
-        else 
+        else
             return getDefaultToolTip();
     }
 
-    
+
     private String bonusToolTipText(List<RevenueBonusTemplate> bonuses) {
         StringBuffer tt = new StringBuffer();
         if (bonuses != null) {
@@ -684,7 +694,7 @@ public class GUIHex implements ViewObject {
         }
         return tt.toString();
     }
-    
+
     private String getDefaultToolTip() {
         StringBuffer tt = new StringBuffer("<html>");
         tt.append("<b>Hex</b>: ").append(hexName);
@@ -736,7 +746,7 @@ public class GUIHex implements ViewObject {
 
         // revenueBonuses
         tt.append(bonusToolTipText(model.getRevenueBonuses()));
-        
+
         String upgrades = currentTile.getUpgradesString(model);
         if (upgrades.equals("")) {
             tt.append("<br>No upgrades");
@@ -754,8 +764,8 @@ public class GUIHex implements ViewObject {
                 tt.append(dest.getName());
             }
         }
-        
-        
+
+
         tt.append("</html>");
         return tt.toString();
     }
@@ -777,7 +787,7 @@ public class GUIHex implements ViewObject {
         }
 
     }
-    
+
     /** forces the tile to drop */
     public void forcedDropTile(int tileId, int orientation) {
         provisionalGUITile = new GUITile(tileId, this);
