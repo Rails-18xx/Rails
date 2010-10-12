@@ -66,6 +66,7 @@ StationHolder, TokenHolder {
     protected int[] tileCost;
     protected String cityName;
     protected String infoText;
+    protected String reservedForCompany = null;
 
     /** Neighbouring hexes <i>to which track may be laid</i>. */
     protected MapHex[] neighbours = new MapHex[6];
@@ -114,7 +115,7 @@ StationHolder, TokenHolder {
 
     /** Any open sides against which track may be laid even at board edges (1825) */
     protected boolean[] openHexSides;
-    
+
     protected MapManager mapManager = null;
 
     protected static Logger log =
@@ -206,6 +207,8 @@ StationHolder, TokenHolder {
             setBlockedForTokenLays(tag.getAttributeAsBoolean("unlaidHomeBlocksTokens", false));
         }
 
+        reservedForCompany = tag.getAttributeAsString("reserved");
+
         // revenue bonus
         List<Tag> bonusTags = tag.getChildren("RevenueBonus");
         if (bonusTags != null) {
@@ -272,7 +275,7 @@ StationHolder, TokenHolder {
 
         return true;
     }
-    
+
     public boolean isOpenSide (int side) {
         return openHexSides != null && openHexSides[side%6];
     }
@@ -1144,7 +1147,15 @@ StationHolder, TokenHolder {
         return infoText;
     }
 
-    public List<RevenueBonusTemplate> getRevenueBonuses() {
+    public String getReservedForCompany() {
+		return reservedForCompany;
+	}
+
+    public boolean isReservedForCompany () {
+    	return reservedForCompany != null;
+    }
+
+	public List<RevenueBonusTemplate> getRevenueBonuses() {
         return revenueBonuses;
     }
 

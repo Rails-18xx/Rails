@@ -909,11 +909,13 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.get().setLastRevenue(amount);
         operatingCompany.get().setLastRevenueAllocation(revenueAllocation);
 
+        /* Seems people don't like this popup...
         if (amount == 0 && operatingCompany.get().getNumberOfTrains() == 0) {
             DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
                     operatingCompany.get().getName(),
                     Bank.format(0) ));
         }
+        */
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
@@ -1530,9 +1532,10 @@ public class OperatingRound extends Round implements Observer {
                 PublicCompanyI company;
                 for (int i=0; i<newOperatingCompanies.size(); i++) {
                     company = newOperatingCompanies.get(i);
-                    log.debug("+++ Index "+i+" new company="+company.getName());
                     if (company != operatingCompanies.get(i)) {
-                        log.debug("+++ Index "+i+" old company="+operatingCompanies.get(i).getName());
+                        log.debug("Company "+company.getName()
+                        		+" replaces "+operatingCompanies.get(i).getName()
+                        		+" in operating sequence");
                         operatingCompanies.move(company, i);
                     }
                 }
