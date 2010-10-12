@@ -202,6 +202,7 @@ All aspects not present in 1830 have not been implemented yet.
 Designed by Francis Tresham
 
 Known Issues:
+- change the formationOrderIndex from an Integer variable to an IntegerState variable
 - BUG: prompt on placing GWR token when upgrading London, needs investigation
 - BUG: Trains do not have to own a train and directors cannot fund the purchase of one
 - Tile lays that send track off the board are legal in 1825 as long as they don't run into the

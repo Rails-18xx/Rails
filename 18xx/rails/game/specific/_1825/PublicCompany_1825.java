@@ -2,10 +2,27 @@ package rails.game.specific._1825;
 
 import rails.game.PublicCompany;
 import rails.game.PublicCompanyI;
+import rails.game.StockSpaceI;
+import rails.game.state.IntegerState;
 
 public class PublicCompany_1825 extends PublicCompany {
     
+    protected IntegerState formationOrderIndex;
     
+    public void start(StockSpaceI startSpace) {
+        super.start(startSpace);
+        //PD: used to track flotation order
+        formationOrderIndex = new IntegerState(name+"_formationOrderIndex");
+    }
+
+    public int getFormationOrderIndex() {
+        return formationOrderIndex.intValue();
+    }
+
+    public void setFormationOrderIndex(int formationOrderIndex) {
+        this.formationOrderIndex.set(formationOrderIndex);
+    }
+
     @Override
     public void payout(int amount) {
         if (amount == 0) return;
@@ -39,7 +56,7 @@ public class PublicCompany_1825 extends PublicCompany {
                 //Yes, we share IPO prices, has this other company been launched yet?
                 if (company.hasFloated()){
                     //it has, we need to skip ahead of this corp
-                    formationOrderIndex++;
+                    formationOrderIndex.add(1);
                 }
             }
                 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
+import rails.game.action.SellShares;
 
 public class StockRound_1825 extends StockRound {
     
@@ -78,5 +79,88 @@ public class StockRound_1825 extends StockRound {
         }
 
     }
+
+    @Override
+    public void setSellableShares() {
+        if (!mayCurrentPlayerSellAnything()) return;
+
+        String compName;
+        int price;
+        int number;
+        int share, maxShareToSell;
+        boolean dumpAllowed;
+        Portfolio playerPortfolio = currentPlayer.getPortfolio();
+
+        /*
+         * First check of which companies the player owns stock, and what
+         * maximum percentage he is allowed to sell.
+         */
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+
+            // Check if shares of this company can be sold at all
+            if (!mayPlayerSellShareOfCompany(company)) continue;
+
+            share = maxShareToSell = playerPortfolio.getShare(company);
+            if (maxShareToSell == 0) continue;
+
+            /* May not sell more than the Pool can accept */
+            maxShareToSell =
+                Math.min(maxShareToSell,
+                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                        - pool.getShare(company));
+            if (maxShareToSell == 0) continue;
+
+            /*
+             * Check what share units the player actually owns. In some games
+             * (e.g. 1835) companies may have different ordinary shares: 5% and
+             * 10%, or 10% and 20%. The president's share counts as a multiple
+             * of the smallest ordinary share unit type.
+             */
+            // Take care for max. 4 share units per share
+            int[] shareCountPerUnit = new int[5];
+            compName = company.getName();
+            for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
+                if (c.isPresidentShare()) {
+                    shareCountPerUnit[1] += c.getShares();
+                } else {
+                    ++shareCountPerUnit[c.getShares()];
+                }
+            }
+            // TODO The above ignores that a dumped player must be
+            // able to exchange the president's share.
+
+            /*
+             * Check the price. If a cert was sold before this turn, the
+             * original price is still valid
+             */
+            price = getCurrentSellPrice(company);
+
+            // removed as this is done in getCurrentSellPrice
+            // price /= company.getShareUnitsForSharePrice();
+
+            /* Allow for different share units (as in 1835) */
+            for (int i = 1; i <= 4; i++) {
+                number = shareCountPerUnit[i];
+                if (number == 0) continue;
+                number =
+                    Math.min(number, maxShareToSell
+                            / (i * company.getShareUnit()));
+
+                /* In some games (1856), a just bought share may not be sold */
+                // This code ignores the possibility of different share units
+                if ((Boolean)gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT)
+                        && company.equals(companyBoughtThisTurnWrapper.get())) {
+                    number--;
+                }
+                if (number <= 0) continue;
+
+                possibleActions.add(new SellShares(compName, i, number, price));
+
+            }
+        }
+        
+        
+    }
+    
 
 }

@@ -1013,6 +1013,9 @@ public class StockRound extends Round {
                         }
                     }
                 }
+                if (potentialDirector == null) {
+                    //TODO: No one to dump the Presidency onto, work out how to handle the receivership
+                }
                 // The poor sod.
                 dumpedPlayer = potentialDirector;
                 presSharesToSell = numberToSell;
