@@ -89,6 +89,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected boolean dynamicOperatingOrder = true;
 
+    /** Will only be set during game reload */
+    protected boolean reloading = false;
+
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
@@ -197,6 +200,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
     protected boolean recoverySaveWarning = true;
+
+    /** Flag to skip a subsequent Done action (if present) during reloading.
+     * <br>This is a fix to maintain backwards compatibility when redundant
+     * actions are skipped in new code versions (such as the bypassing of
+     * a treasury trading step if it cannot be executed).
+     * <br>This flag will be reset after processing <i>any</i> action (not just Done).
+     */
+    protected boolean skipNextDone = false;
 
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
@@ -938,7 +949,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public boolean processOnReload(PossibleAction action) throws Exception {
 
         DisplayBuffer.clear();
-        // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
+
+        // XXX TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
         if (gameName.equals("1856")
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
@@ -954,7 +966,20 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         try {
             log.debug("Action ("+action.getPlayerName()+"): " + action);
-            if (!processCorrectionActions(action) && !getCurrentRound().process(action)) {
+
+            // XXX FOR BACKWARDS COMPATIBILITY
+            boolean doProcess = true;
+            log.debug("SkipNextDone="+skipNextDone);
+            if (skipNextDone) {
+            	if (action instanceof NullAction
+            			&& ((NullAction)action).getMode() == NullAction.DONE) {
+           		    log.info("Skipping processing a Done action during reload");
+           			doProcess = false;
+            	}
+            }
+            skipNextDone = false;
+
+            if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
                 String msg = "Player "+action.getPlayerName()+"\'s action \""
                 +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
                 +" is considered invalid by the game engine";
@@ -1684,5 +1709,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return new ArrayList<PublicCompanyI>(operatingCompanies.values());
     }
 
+	public boolean isReloading() {
+		return reloading;
+	}
+
+	public void setReloading(boolean reloading) {
+		this.reloading = reloading;
+	}
+
+	public void setSkipDone () {
+		skipNextDone = true;
+	}
 }
 

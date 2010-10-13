@@ -261,6 +261,8 @@ public class Game {
 
             log.debug("Starting to execute loaded actions");
 
+            gameManager.setReloading(true);
+
             Object actionObject = null;
             while (true) { // Single-pass loop.
                 try {
@@ -299,7 +301,7 @@ public class Game {
                 }
                 break;
             }
-            
+
             // load user comments (is the last
             if (actionObject instanceof SortedMap) {
                 ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
@@ -316,10 +318,11 @@ public class Game {
                     // but also the java.io.StreamCorruptedException: invalid type code
                 }
             }
-            
+
             ois.close();
 
-            game.getGameManager().finishLoading();
+            gameManager.setReloading(false);
+            gameManager.finishLoading();
             return game;
 
         } catch (Exception e) {
