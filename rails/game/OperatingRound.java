@@ -247,8 +247,8 @@ public class OperatingRound extends Round implements Observer {
 
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
-            case NullAction.PASS:
             case NullAction.DONE:
+            case NullAction.PASS:
                 result = done();
                 break;
             case NullAction.SKIP:
@@ -1201,6 +1201,9 @@ public class OperatingRound extends Round implements Observer {
 
     /** Take the next step after a given one (see nextStep()) */
     protected void nextStep(GameDef.OrStep step) {
+
+    	PublicCompanyI company = operatingCompany.get();
+
         // Cycle through the steps until we reach one where a user action is
         // expected.
         int stepIndex;
@@ -1212,13 +1215,13 @@ public class OperatingRound extends Round implements Observer {
             log.debug("Step " + step);
 
             if (step == GameDef.OrStep.LAY_TOKEN
-                    && operatingCompany.get().getNumberOfFreeBaseTokens() == 0) {
+                    && company.getNumberOfFreeBaseTokens() == 0) {
                 continue;
             }
 
             if (step == GameDef.OrStep.CALC_REVENUE) {
 
-                if (!operatingCompany.get().canRunTrains()) {
+                if (!company.canRunTrains()) {
                     // No trains, then the revenue is zero.
                     executeSetRevenueAndDividend (
                             new SetDividend (0, false, new int[] {SetDividend.NO_TRAIN}));
@@ -1235,9 +1238,38 @@ public class OperatingRound extends Round implements Observer {
             if (step == GameDef.OrStep.TRADE_SHARES) {
 
                 // Is company allowed to trade trasury shares?
-                if (!operatingCompany.get().mayTradeShares()
-                        || !operatingCompany.get().hasOperated()) {
+                if (!company.mayTradeShares()
+                        || !company.hasOperated()) {
                     continue;
+                }
+
+                /* Check if any trading is possible.
+                 * If not, skip this step.
+                 * (but register a Done action for BACKWARDS COMPATIBILITY only)
+                 */
+                // Preload some expensive results
+                int ownShare = company.getPortfolio().getShare(company);
+                int poolShare = pool.getShare(company); // Expensive, do it once
+                // Can it buy?
+                boolean canBuy =
+                	ownShare < getGameParameterAsInt (GameDef.Parm.TREASURY_SHARE_LIMIT)
+                		&& company.getCash() >= company.getCurrentSpace().getPrice()
+                		&& poolShare > 0;
+                // Can it sell?
+                boolean canSell =
+                	company.getPortfolio().getShare(company) > 0
+                		&& poolShare < getGameParameterAsInt (GameDef.Parm.POOL_SHARE_LIMIT);
+                // Above we ignore the possible existence of double shares (as in 1835).
+
+                if (!canBuy && !canSell) {
+                    // XXX For BACKWARDS COMPATIBILITY only,
+                	// register a Done skip action during reloading.
+                	if (gameManager.isReloading()) {
+                		gameManager.setSkipDone();
+                        log.debug("If the next saved action is 'Done', skip it");
+                	}
+                	log.info("Skipping Treasury share trading step");
+                	continue;
                 }
 
                 gameManager.startTreasuryShareTradingRound();

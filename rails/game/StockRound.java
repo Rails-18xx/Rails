@@ -1365,8 +1365,13 @@ public class StockRound extends Round {
         setNextPlayer();
         sellPrices.clear();
         if (hasAutopassed(currentPlayer)) {
-            // Process a pass for a player that has set Autopass
-            done (currentPlayer.getName(), true);
+        	if (isPlayerOverLimits(currentPlayer)) {
+        		// Being over a share/certificate limit undoes an Autopass setting
+        		setAutopass (currentPlayer, false);
+        	} else {
+        		// Process a pass for a player that has set Autopass
+        		done (currentPlayer.getName(), true);
+        	}
         }
     }
 

@@ -205,5 +205,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public CorrectionManagerI getCorrectionManager(CorrectionType ct);
     public List<PublicCompanyI> getCompaniesInRunningOrder ();
-
+	public boolean isReloading();
+	public void setReloading(boolean reloading);
+	public void setSkipDone ();
 }
