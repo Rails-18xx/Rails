@@ -70,11 +70,11 @@
 	
 	<!-- Green tiles -->
 	<Tile id="14" quantity="4">
-		<Upgrade id="63" hex="D17,G12,H15,I8,J11,J13,J15,K8"/>
+		<Upgrade id="63" hex="-B19,C14,F17,L13,N3,O18,P9"/>
 		<Upgrade id="125" hex="B19,C14,F17,L13,N3,O18,P9"/>
 	</Tile>
 	<Tile id="15" quantity="4">
-		<Upgrade id="63" hex="D17,G12,H15,I8,J11,J13,J15,K8"/>
+		<Upgrade id="63" hex="-B19,C14,F17,L13,N3,O18,P9"/>
 		<Upgrade id="125" hex="B19,C14,F17,L13,N3,O18,P9"/>
 	</Tile>
 	<Tile id="16" quantity="1">
