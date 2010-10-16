@@ -95,5 +95,10 @@
 			<OperatingRounds number="3"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager"/>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager"> 
+<!--		The terminate modifier has to evaluated before DoubleHeading -->
+		<Modifier class="rails.game.specific._1825.TerminateAtMajorModifier" />
+		<Modifier class="rails.game.specific._1825.DoubleHeadingModifier" />
+		<Modifier class="rails.game.specific._1825.ScoreTileOnlyOnceModifier" />
+	</Component>
 </ComponentManager>
