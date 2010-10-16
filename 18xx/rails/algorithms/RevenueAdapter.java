@@ -272,7 +272,6 @@ public final class RevenueAdapter implements Runnable {
             List<RevenueBonusTemplate> tileBonuses = hex.getCurrentTile().getRevenueBonuses();
             if (tileBonuses != null) bonuses.addAll(tileBonuses);
 
-            if (bonuses == null) continue;
             for (RevenueBonusTemplate bonus:bonuses) {
                 addRevenueBonus(bonus.toRevenueBonus(hex, gameManager, graphBuilder));
             }

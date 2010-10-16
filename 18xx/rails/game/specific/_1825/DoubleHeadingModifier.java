@@ -2,13 +2,7 @@ package rails.game.specific._1825;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.apache.log4j.Logger;
 
 import rails.algorithms.NetworkTrain;
 import rails.algorithms.RevenueAdapter;
@@ -20,9 +14,6 @@ import rails.algorithms.RevenueTrainRun;
  * Allows two 2-trains to run as a 3-train (double heading)
  */
 public class DoubleHeadingModifier implements RevenueDynamicModifier {
-
-    protected static Logger log =
-        Logger.getLogger(DoubleHeadingModifier.class.getPackage().getName());
 
     private final static String TRAIN_2_NAME = "2";
     private final static String DUALHEAD_NAME = "2&2";
@@ -67,8 +58,6 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
             }
         }
         Collections.sort(train2Runs);
-        
-        log.debug("Train2Runs=" + train2Runs);
         
         // keep index on train2Runs
         int index2Runs = 0;
