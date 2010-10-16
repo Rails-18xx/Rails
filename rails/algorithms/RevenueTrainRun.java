@@ -139,7 +139,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         NetworkEdge previousEdge = null;
         NetworkVertex startVertex = null;
         for (NetworkEdge edge:edges) {
-            log.info("Processing edge " + edge.toFullInfoString() );
+            log.debug("Processing edge " + edge.toFullInfoString() );
             // process startEdge
             if (previousEdge == null) {
                 previousEdge = edge;
@@ -151,7 +151,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
             if (startVertex == null) {
                 // if there is a joint route => other vertex of previousEdge
                 if (commonVertex != null) {
-                    log.info("Head Run");
+                    log.debug("Head Run");
                     startVertex = previousEdge.getOtherVertex(commonVertex);
                     vertices.add(startVertex);
                     vertices.add(commonVertex);
@@ -162,12 +162,12 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
             } else { // start vertex is known
                 // if there is a common vertex => continuous route
                 if (commonVertex != null) {
-                    log.info("Added common vertex");
+                    log.debug("Added common vertex");
                     vertices.add(commonVertex);
                 } else {
                     // otherwise it is bottom run
                     // add the last vertex of the head train
-                    log.info("Bottom Run");
+                    log.debug("Bottom Run");
                     vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size()-1)));
                     vertices.add(startVertex);
                 }
@@ -176,7 +176,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         }
         // add the last vertex of the route 
         vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size()-1)));
-        log.info("Converted edges to vertices " + vertices);
+        log.debug("Converted edges to vertices " + vertices);
     }
     
     /** defines the edges from the list of vertices */
