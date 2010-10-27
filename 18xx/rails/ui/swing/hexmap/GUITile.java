@@ -51,7 +51,8 @@ public class GUITile {
         this.guiHex = guiHex;
         this.tileId = tileId;
         this.hex = (MapHex)guiHex.getModel();
-        tile = GameManager.getInstance().getTileManager().getTile(tileId);
+        TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
+        tile = tileManager.getTile(tileId);
 
         if (hex.getTileOrientation() == MapHex.EW) {
             baseRotation = 0.5 * DEG60;
@@ -248,6 +249,7 @@ public class GUITile {
     public void paintTile(Graphics2D g2, int x, int y) {
 
         int zoomStep = guiHex.getHexMap().getZoomStep();
+
         tileImage = imageLoader.getTile(tileId, zoomStep);
 
         if (tileImage != null) {
@@ -280,6 +282,8 @@ public class GUITile {
             AffineTransformOp aop = new AffineTransformOp(af, rh);
 
             g2.drawImage(tileImage, aop, x - xCenter, y - yCenter);
+        } else {
+        	log.error("No image for tile "+tileId+" on hex "+guiHex.getName());
         }
     }
 
