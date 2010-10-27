@@ -19,12 +19,11 @@ import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.Config;
 import rails.util.LocalText;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
-    
+
     private ORUIManager orUIManager;
     private List<ActionLabel> tokenLabels;
     private List<CorrectionTokenLabel> correctionTokenLabels;
@@ -34,7 +33,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     static private Color defaultLabelBgColour = new JLabel("").getBackground();
     static private Color selectedLabelBgColour = new Color(255, 220, 150);
     private static final int defaultNbPanelElements = 15;
-    
+
     private JPanel upgradePanel;
     private JScrollPane scrollPane;
     private Dimension preferredSize;
@@ -109,10 +108,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             }
         }
     }
-    
+
     public void showUpgrades() {
         upgradePanel.removeAll();
-        
+
         // reset to the number of elements
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         panelLayout.setRows(defaultNbPanelElements);
@@ -200,12 +199,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // deactivate correctionTokenMode and tokenmode
         correctionTokenMode = false;
         tokenMode = false;
-        
+
         // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<TileI> tiles = orUIManager.tileUpgrades;
-        
+
         if (tiles == null || tiles.size() == 0) {
             // reset to the number of elements
             panelLayout.setRows(defaultNbPanelElements);
@@ -249,12 +248,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // activate correctionTokenMode and deactivate standard tokenMode
         correctionTokenMode = true;
         tokenMode = false;
-        
+
         // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<? extends TokenI> tokens = orUIManager.tokenLays;
-        
+
         if (tokens == null || tokens.size() == 0) {
             // reset to the number of elements
             panelLayout.setRows(defaultNbPanelElements);
@@ -288,16 +287,16 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 correctionTokenLabels.add(tokenLabel);
                 upgradePanel.add(tokenLabel);
             }
-            
+
         }
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
 
 //      repaint();
         revalidate();
-        
+
     }
-    
+
     public void clear() {
         upgradePanel.removeAll();
         upgradePanel.add(doneButton);
@@ -456,25 +455,25 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         setCancelEnabled(false);
     }
 
-   
+
     /** ActionLabel extension that allows to attach the token */
     private class CorrectionTokenLabel extends ActionLabel {
-        
+
         private static final long serialVersionUID = 1L;
-        
+
         private TokenI token;
-        
+
         CorrectionTokenLabel(Icon tokenIcon, TokenI token) {
             super(tokenIcon);
             this.token = token;
         }
-        
+
         TokenI getToken() {
             return token;
         }
-        
+
     }
-    
+
     /** JLabel extension to allow attaching the internal hex ID */
     private class HexLabel extends JLabel {
 
@@ -496,11 +495,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         public String getToolTip() {
             return toolTip;
         }
-        
+
         void setTextFromTile(TileI tile) {
             StringBuffer text = new StringBuffer();
             if (tile.getExternalId() > 0) {
-                text.append("<HTML><BODY>" + tile.getExternalId()); 
+                text.append("<HTML><BODY>" + tile.getExternalId());
                 if (tile.countFreeTiles() != -1) {
                     text.append("<BR> (" + tile.countFreeTiles() + ")");
                 }

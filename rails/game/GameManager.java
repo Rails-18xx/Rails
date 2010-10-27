@@ -158,7 +158,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * It will only be used inside the GM objects.
      * All other objects will access it via NDC.
      */
-    protected static final String GM_KEY = "01";
+    public static final String GM_KEY = "01";
     public static final String GM_NAME = "GameManager";
 
     /**
@@ -205,9 +205,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * <br>This is a fix to maintain backwards compatibility when redundant
      * actions are skipped in new code versions (such as the bypassing of
      * a treasury trading step if it cannot be executed).
-     * <br>This flag will be reset after processing <i>any</i> action (not just Done).
+     * <br>This flag must be reset after processing <i>any</i> action (not just Done).
      */
     protected boolean skipNextDone = false;
+    /** Step that must be in effect to do an actual Done skip during reloading.
+     * <br> This is to ensure that Done actions in different OR steps are
+     * considered separately.
+     */
+    protected GameDef.OrStep skippedStep = null;
 
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
@@ -950,7 +955,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         DisplayBuffer.clear();
 
-        // XXX TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
+        // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
         if (gameName.equals("1856")
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
@@ -967,17 +972,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         try {
             log.debug("Action ("+action.getPlayerName()+"): " + action);
 
-            // XXX FOR BACKWARDS COMPATIBILITY
+            // FOR BACKWARDS COMPATIBILITY
             boolean doProcess = true;
-            log.debug("SkipNextDone="+skipNextDone);
             if (skipNextDone) {
             	if (action instanceof NullAction
             			&& ((NullAction)action).getMode() == NullAction.DONE) {
-           		    log.info("Skipping processing a Done action during reload");
-           			doProcess = false;
+            		if (currentRound.get() instanceof OperatingRound
+            				&& ((OperatingRound)currentRound.get()).getStep() == skippedStep) {
+            			doProcess = false;
+            		}
             	}
             }
             skipNextDone = false;
+            skippedStep = null;
 
             if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
                 String msg = "Player "+action.getPlayerName()+"\'s action \""
@@ -1717,8 +1724,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 		this.reloading = reloading;
 	}
 
-	public void setSkipDone () {
+	public void setSkipDone (GameDef.OrStep step) {
 		skipNextDone = true;
+		skippedStep = step;
 	}
 }
 

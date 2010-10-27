@@ -1265,7 +1265,7 @@ public class OperatingRound extends Round implements Observer {
                     // XXX For BACKWARDS COMPATIBILITY only,
                 	// register a Done skip action during reloading.
                 	if (gameManager.isReloading()) {
-                		gameManager.setSkipDone();
+                		gameManager.setSkipDone(GameDef.OrStep.TRADE_SHARES);
                         log.debug("If the next saved action is 'Done', skip it");
                 	}
                 	log.info("Skipping Treasury share trading step");

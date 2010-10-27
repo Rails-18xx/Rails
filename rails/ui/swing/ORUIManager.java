@@ -31,6 +31,7 @@ public class ORUIManager implements DialogOwner {
     private RemainingTilesWindow remainingTiles;
 
     public GameUIManager gameUIManager;
+    protected TileManager tileManager;
 
     private OperatingRound oRound;
     private PublicCompanyI[] companies;
@@ -95,6 +96,7 @@ public class ORUIManager implements DialogOwner {
 
     public void setGameUIManager (GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
+        this.tileManager = gameUIManager.getGameManager().getTileManager();
     }
 
     public void init(ORWindow orWindow) {
@@ -1904,7 +1906,11 @@ public class ORUIManager implements DialogOwner {
         return gameUIManager;
     }
 
-    private void displayRemainingTiles() {
+    public TileManager getTileManager() {
+		return tileManager;
+	}
+
+	private void displayRemainingTiles() {
 
         if (remainingTiles == null) {
             remainingTiles = new RemainingTilesWindow(orWindow);

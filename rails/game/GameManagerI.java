@@ -207,5 +207,5 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public List<PublicCompanyI> getCompaniesInRunningOrder ();
 	public boolean isReloading();
 	public void setReloading(boolean reloading);
-	public void setSkipDone ();
+	public void setSkipDone (GameDef.OrStep step);
 }
