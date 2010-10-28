@@ -411,7 +411,9 @@ public class GUIHex implements ViewObject {
 
         if (getHexModel().isBlockedForTileLays()) {
             List<PrivateCompanyI> privates =
-                    GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
+                    //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
+            		hexMap.getOrUIManager().getGameUIManager().getGameManager()
+            			.getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompanyI p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();
                 if (blocked != null) {

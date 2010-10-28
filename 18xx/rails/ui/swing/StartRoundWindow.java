@@ -158,7 +158,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         gbc = new GridBagConstraints();
 
         players = gameUIManager.getGameManager().getPlayers().toArray(new Player[0]);
-        np = GameManager.getInstance().getNumberOfPlayers();
+        np = gameUIManager.getGameManager().getNumberOfPlayers();
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];
 
@@ -185,7 +185,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         requestFocus();
 
         addKeyListener(this);
-        
+
 
         pack();
     }
@@ -692,7 +692,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                         b.append("<br>").append(condition);
                    }
                 }
-                
+
             }
             if (item.getSecondary() != null) {
                 b.append("<br><b>Also contains:</b><br>");

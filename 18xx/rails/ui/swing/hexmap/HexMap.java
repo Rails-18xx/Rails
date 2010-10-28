@@ -540,7 +540,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
         return mapManager;
     }
 
-    public void mouseClicked(MouseEvent arg0) {
+    public ORUIManager getOrUIManager() {
+		return orUIManager;
+	}
+	public void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
 
