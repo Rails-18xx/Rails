@@ -32,13 +32,17 @@ public final class ReportBuffer {
         private RoundI round = null;
       
         private void addMessage(String message) {
-            messages.add(Util.convertToHtml(message));
+            messages.add(message);
         }
         
-        private String getMessages() {
+        private String getMessages(boolean html) {
             StringBuffer s = new StringBuffer();
             for (String message:messages) {
-                s.append(message);
+                if (html) {
+                    s.append(Util.convertToHtml(message)); 
+                } else {
+                    s.append(message);
+                }
             }
             return s.toString();
         }
@@ -61,6 +65,7 @@ public final class ReportBuffer {
             StringBuffer s = new StringBuffer();
             boolean init = true;
             for (String message:messages) {
+                message = Util.convertToHtml(message);
                 if (init) {
                     if (activeMessage) {
                         s.append("<span bgcolor=Yellow>" + ACTIVE_MESSAGE_INDICATOR) ;
@@ -80,12 +85,21 @@ public final class ReportBuffer {
             return s.toString();
         }
         
+        public String toText() {
+            StringBuffer s = new StringBuffer();
+            for (String message:messages) {
+                s.append(message + "\n");
+            }
+            return s.toString();
+        }
+        
+        
         public String toString() {
             StringBuffer s = new StringBuffer();
             s.append("ReportItem for MoveStackIndex = " + index);
             s.append(", player = " + player);
             s.append(", round = " + round);
-            s.append(", messages = "); s.append(getMessages());
+            s.append(", messages = "); s.append(getMessages(false));
             return s.toString();
         }
     }
@@ -260,6 +274,40 @@ public final class ReportBuffer {
         instance.clearFutureItems(index);
     }
 
+    /**
+     * returns the latest report items
+     */
+    public static String getLatestReportItems(){
+        ReportBuffer instance = getInstance();
+        
+        // search for a change of the player
+        Player currentPlayer = null;
+        int currentPlayerIndex = 0;
+        for (ReportItem item:instance.reportItems.values()) {
+            if (item.player != currentPlayer) {
+                currentPlayer = item.player;
+                currentPlayerIndex = item.index;
+            }
+        }
+        
+        // start with that index and connect data
+        StringBuffer s = new StringBuffer();
+        int index = currentPlayerIndex;
+        do {
+            ReportItem item = instance.reportItems.get(index);
+            String text = item.toText();
+            String comment = instance.commentItems.get(index);
+            if (text == null && comment == null) continue;
+            // comments first
+            if (comment != null) {
+                s.append(item.player.getName() + " says: ' ");
+                s.append(comment + "'"  + NEWLINE_STRING);
+            }
+            // text afterwards
+            if (text != null) s.append(text);
+        } while (instance.reportItems.containsKey(++index));
+        return s.toString();
+    }
     
     public static String getReportItems() {
         // activeIndex is the index one before the current index for the next action
