@@ -7,6 +7,9 @@ import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -705,6 +708,7 @@ public class GameUIManager implements DialogOwner {
 
         File proposedFile = new File(filename);
         jfc.setSelectedFile(proposedFile);
+        
         if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             String filepath = selectedFile.getPath();
@@ -719,6 +723,11 @@ public class GameUIManager implements DialogOwner {
 
 
     public void saveGame(GameAction saveAction) {
+
+        // copy latest report buffer entries to clipboard
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection reportText = new StringSelection(ReportBuffer.getLatestReportItems());
+        clipboard.setContents(reportText, null);
 
         JFileChooser jfc = new JFileChooser();
         String filename;
@@ -737,6 +746,10 @@ public class GameUIManager implements DialogOwner {
 
         File proposedFile = new File(filename);
         jfc.setSelectedFile(proposedFile);
+
+        // allows adjustment of the save dialog title, to add hint about copy to clipboard
+        jfc.setDialogTitle(LocalText.getText("SaveDialogTitle"));
+
         if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             String filepath = selectedFile.getPath();
@@ -747,6 +760,7 @@ public class GameUIManager implements DialogOwner {
             saveAction.setFilepath(filepath);
             processOnServer(saveAction);
         }
+        
     }
 
     public void setSaveDirectory(String saveDirectory) {
